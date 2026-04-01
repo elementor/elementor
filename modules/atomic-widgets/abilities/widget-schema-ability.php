@@ -3,8 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Abilities;
 
 use Elementor\Core\Abilities\Abstract_Ability;
-use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Schema_Ability extends Abstract_Ability {
 
-	private Elements_Manager $elements_manager;
+	private Widgets_Manager $widgets_manager;
 
-	public function __construct( Elements_Manager $elements_manager ) {
-		$this->elements_manager = $elements_manager;
+	public function __construct( Widgets_Manager $widgets_manager ) {
+		$this->widgets_manager = $widgets_manager;
 	}
 
 	protected function get_name(): string {
@@ -32,7 +32,7 @@ class Widget_Schema_Ability extends Abstract_Ability {
 				'properties' => [
 					'widget_type' => [
 						'type'        => 'string',
-						'description' => 'Atomic widget type identifier, e.g. "e-heading", "e-flexbox", "e-image".',
+						'description' => 'Atomic widget type identifier, e.g. "e-heading", "e-image", "e-paragraph".',
 					],
 				],
 				'required'             => [ 'widget_type' ],
@@ -65,7 +65,7 @@ class Widget_Schema_Ability extends Abstract_Ability {
 						'Use this to discover what settings keys a widget accepts and their default values.',
 						'props_schema keys map directly to the element settings object.',
 						'defaults shows the default $$type-wrapped values you can use as a starting point.',
-						'Call elementor/atomic-widgets to get the list of registered widget types first.',
+						'Use the available_types list or elementor/context widget_types to find registered types.',
 					] ),
 					'readonly'    => true,
 					'destructive' => false,
@@ -76,34 +76,21 @@ class Widget_Schema_Ability extends Abstract_Ability {
 	}
 
 	public function execute( array $input ): array {
-		$widget_type = $input['widget_type'];
+		$widget_type  = $input['widget_type'];
+		$widget_types = $this->widgets_manager->get_widget_types();
 
-		$element_types = $this->elements_manager->get_element_types();
-
-		// Widgets_Manager is constructed before Modules_Manager in init_components(),
-		// so it can cache _element_types before the atomic module hooks in.
-		// Re-fire the action if no atomic types are found — their hook is now registered.
-		$has_atomic = false;
-		foreach ( $element_types as $obj ) {
-			if ( $obj instanceof Atomic_Widget_Base ) {
-				$has_atomic = true;
-				break;
-			}
-		}
-
-		if ( ! $has_atomic ) {
-			do_action( 'elementor/elements/elements_registered', $this->elements_manager );
-			$element_types = $this->elements_manager->get_element_types();
-		}
-
+		// Build available atomic types for reference.
 		$available = [];
-		foreach ( $element_types as $type => $object ) {
+		foreach ( $widget_types as $type => $object ) {
 			if ( $object instanceof Atomic_Widget_Base ) {
 				$available[] = $type;
 			}
 		}
 
-		if ( ! isset( $element_types[ $widget_type ] ) ) {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[Elementor widget-schema] execute: requested=' . $widget_type . ', total_widgets=' . count( $widget_types ) . ', atomic_count=' . count( $available ) . ', atomic_types=' . implode( ', ', $available ) );
+
+		if ( ! isset( $widget_types[ $widget_type ] ) ) {
 			return [
 				'widget_type'     => $widget_type,
 				'error'           => "Widget type \"$widget_type\" is not registered.",
@@ -111,9 +98,9 @@ class Widget_Schema_Ability extends Abstract_Ability {
 			];
 		}
 
-		$element = $element_types[ $widget_type ];
+		$widget = $widget_types[ $widget_type ];
 
-		if ( ! ( $element instanceof Atomic_Widget_Base ) ) {
+		if ( ! ( $widget instanceof Atomic_Widget_Base ) ) {
 			return [
 				'widget_type'     => $widget_type,
 				'error'           => "\"$widget_type\" is registered but is not an atomic widget.",
@@ -121,7 +108,7 @@ class Widget_Schema_Ability extends Abstract_Ability {
 			];
 		}
 
-		$props_schema = $element::get_props_schema();
+		$props_schema = $widget::get_props_schema();
 		$defaults     = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {

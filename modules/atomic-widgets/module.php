@@ -253,7 +253,7 @@ class Module extends BaseModule {
 				Plugin::$instance->breakpoints
 			) )->register_hooks();
 			( new V4_Styles_Ability( Plugin::$instance->breakpoints ) )->register_hooks();
-			( new Widget_Schema_Ability( Plugin::$instance->elements_manager ) )->register_hooks();
+			( new Widget_Schema_Ability( Plugin::$instance->widgets_manager ) )->register_hooks();
 		}
 	}
 

@@ -22,7 +22,7 @@ class Abilities_Bootstrap {
 		( new Create_From_Template_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
-			Plugin::$instance->elements_manager,
+			Plugin::$instance->widgets_manager,
 			Plugin::$instance->breakpoints
 		) )->register_hooks();
 	}

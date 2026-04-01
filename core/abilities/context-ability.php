@@ -4,12 +4,12 @@ namespace Elementor\Core\Abilities;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Kits\Manager as Kits_Manager;
-use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\Abilities\V4_Styles_Reference;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Variables\Storage\Constants;
+use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,16 +18,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Context_Ability extends Abstract_Ability {
 
 	private Kits_Manager $kits_manager;
-	private Elements_Manager $elements_manager;
+	private Widgets_Manager $widgets_manager;
 	private Breakpoints_Manager $breakpoints_manager;
 
 	public function __construct(
 		Kits_Manager $kits_manager,
-		Elements_Manager $elements_manager,
+		Widgets_Manager $widgets_manager,
 		Breakpoints_Manager $breakpoints_manager
 	) {
 		$this->kits_manager        = $kits_manager;
-		$this->elements_manager    = $elements_manager;
+		$this->widgets_manager     = $widgets_manager;
 		$this->breakpoints_manager = $breakpoints_manager;
 
 		add_action( 'elementor/global_classes/update', [ $this, 'clear_cache' ] );
@@ -119,11 +119,17 @@ class Context_Ability extends Abstract_Ability {
 	public function execute( array $input ): array {
 		$since_watermark = $input['since_watermark'] ?? null;
 
-		$cached = get_transient( $this->get_cache_key() );
+		$cache_key = $this->get_cache_key();
+		$cached    = get_transient( $cache_key );
 
 		if ( false !== $cached ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Elementor context] execute: cache HIT key=' . $cache_key . ', widget_types_count=' . count( $cached['widget_types'] ?? [] ) );
 			return $this->apply_since_watermark( $cached, $since_watermark );
 		}
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[Elementor context] execute: cache MISS key=' . $cache_key . ', building fresh response' );
 
 		$result = [
 			'global_classes'  => $this->get_global_classes(),
@@ -133,7 +139,10 @@ class Context_Ability extends Abstract_Ability {
 			'breakpoints'     => $this->get_breakpoints(),
 		];
 
-		set_transient( $this->get_cache_key(), $result, HOUR_IN_SECONDS );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[Elementor context] execute: caching result, widget_types_count=' . count( $result['widget_types'] ?? [] ) );
+
+		set_transient( $cache_key, $result, HOUR_IN_SECONDS );
 
 		return $this->apply_since_watermark( $result, $since_watermark );
 	}
@@ -202,35 +211,26 @@ class Context_Ability extends Abstract_Ability {
 
 	private function get_widget_types(): array {
 		try {
-			$element_types = $this->elements_manager->get_element_types();
+			// Atomic widgets (e-heading, e-paragraph, e-button, e-image, etc.) are
+			// registered into Widgets_Manager via the elementor/widgets/register filter,
+			// NOT into Elements_Manager. Elements_Manager only holds container-type
+			// atomic elements (e-flexbox, e-div-block) which extend Atomic_Element_Base.
+			$all_widget_types = $this->widgets_manager->get_widget_types();
+			$atomic_types     = [];
 
-			// Widgets_Manager is constructed before Modules_Manager in init_components(),
-			// so it can trigger init_elements() (and cache _element_types) before the
-			// atomic module has registered its elementor/elements/elements_registered hook.
-			// Detect this by checking whether any atomic types are present; if not,
-			// re-fire the action — the atomic module's hook is now in place.
-			$has_atomic = false;
-			foreach ( $element_types as $obj ) {
-				if ( $obj instanceof Atomic_Widget_Base ) {
-					$has_atomic = true;
-					break;
-				}
-			}
-
-			if ( ! $has_atomic ) {
-				do_action( 'elementor/elements/elements_registered', $this->elements_manager );
-				$element_types = $this->elements_manager->get_element_types();
-			}
-
-			$widget_types = [];
-			foreach ( $element_types as $type => $object ) {
+			foreach ( $all_widget_types as $type => $object ) {
 				if ( $object instanceof Atomic_Widget_Base ) {
-					$widget_types[] = $type;
+					$atomic_types[] = $type;
 				}
 			}
 
-			return $widget_types;
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Elementor context] get_widget_types: total_widgets=' . count( $all_widget_types ) . ', atomic_count=' . count( $atomic_types ) . ', atomic_types=' . implode( ', ', $atomic_types ) );
+
+			return $atomic_types;
 		} catch ( \Throwable $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( '[Elementor context] get_widget_types exception: ' . $e->getMessage() );
 			return [ 'error' => $e->getMessage() ];
 		}
 	}
