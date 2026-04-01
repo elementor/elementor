@@ -1,8 +1,8 @@
 <?php
-/**
+/*
  * Template: hero-banner
  *
- * Produces a single container with an h1 heading, a paragraph, and a button.
+ * Produces a single e-flexbox container with an h1 heading, a paragraph, and a button.
  *
  * Params:
  *   heading    (string) — heading text. Default: 'Welcome'.
@@ -16,17 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return function ( array $params ): array {
-	$uid = fn() => sprintf( '%08x', mt_rand() );
+	$uid = fn() => sprintf( '%08x', wp_rand() );
 
-	$heading    = $params['heading']    ?? 'Welcome';
+	$heading    = $params['heading'] ?? 'Welcome';
 	$subheading = $params['subheading'] ?? 'Add your description here.';
-	$cta_text   = $params['cta_text']   ?? 'Get Started';
-	$classes    = $params['classes']    ?? [];
+	$cta_text   = $params['cta_text'] ?? 'Get Started';
+	$classes    = $params['classes'] ?? [];
 
 	return [
 		[
 			'id'       => $uid(),
-			'elType'   => 'container',
+			'elType'   => 'e-flexbox',
 			'settings' => [
 				'classes' => [
 					'$$type' => 'classes',

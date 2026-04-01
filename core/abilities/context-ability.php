@@ -21,8 +21,6 @@ class Context_Ability extends Abstract_Ability {
 	private Elements_Manager $elements_manager;
 	private Breakpoints_Manager $breakpoints_manager;
 
-	const CACHE_KEY = 'elementor_context_cache';
-
 	public function __construct(
 		Kits_Manager $kits_manager,
 		Elements_Manager $elements_manager,
@@ -37,7 +35,11 @@ class Context_Ability extends Abstract_Ability {
 	}
 
 	public function clear_cache(): void {
-		delete_transient( self::CACHE_KEY );
+		delete_transient( $this->get_cache_key() );
+	}
+
+	private function get_cache_key(): string {
+		return 'elementor_ctx_' . substr( md5( ELEMENTOR_VERSION ), 0, 8 );
 	}
 
 	protected function get_name(): string {
@@ -117,7 +119,7 @@ class Context_Ability extends Abstract_Ability {
 	public function execute( array $input ): array {
 		$since_watermark = $input['since_watermark'] ?? null;
 
-		$cached = get_transient( self::CACHE_KEY );
+		$cached = get_transient( $this->get_cache_key() );
 
 		if ( false !== $cached ) {
 			return $this->apply_since_watermark( $cached, $since_watermark );
@@ -131,7 +133,7 @@ class Context_Ability extends Abstract_Ability {
 			'breakpoints'     => $this->get_breakpoints(),
 		];
 
-		set_transient( self::CACHE_KEY, $result, HOUR_IN_SECONDS );
+		set_transient( $this->get_cache_key(), $result, HOUR_IN_SECONDS );
 
 		return $this->apply_since_watermark( $result, $since_watermark );
 	}

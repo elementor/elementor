@@ -1,13 +1,12 @@
 <?php
-/**
+/*
  * Template: card-grid
  *
- * Produces an outer grid container containing card containers,
+ * Produces an outer e-flexbox container containing card e-flexbox containers,
  * each with a heading and a paragraph.
  *
  * Params:
- *   cards   (array) — array of { heading, body }. Default: 3 placeholder cards.
- *                     Maximum 6 cards.
+ *   cards   (array) — array of { heading, body }. Default: 3 placeholder cards. Max 6.
  *   classes (array) — class IDs to apply to the outer container.
  */
 
@@ -16,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return function ( array $params ): array {
-	$uid = fn() => sprintf( '%08x', mt_rand() );
+	$uid = fn() => sprintf( '%08x', wp_rand() );
 
-	$classes      = $params['classes'] ?? [];
+	$classes = $params['classes'] ?? [];
 	$default_cards = [
 		[
 			'heading' => 'Feature One',
@@ -40,11 +39,11 @@ return function ( array $params ): array {
 	$card_elements = [];
 	foreach ( $cards as $card ) {
 		$card_heading = $card['heading'] ?? 'Card Heading';
-		$card_body    = $card['body']    ?? 'Card body text goes here.';
+		$card_body    = $card['body'] ?? 'Card body text goes here.';
 
 		$card_elements[] = [
 			'id'       => $uid(),
-			'elType'   => 'container',
+			'elType'   => 'e-flexbox',
 			'settings' => [],
 			'elements' => [
 				[
@@ -94,7 +93,7 @@ return function ( array $params ): array {
 	return [
 		[
 			'id'       => $uid(),
-			'elType'   => 'container',
+			'elType'   => 'e-flexbox',
 			'settings' => [
 				'classes' => [
 					'$$type' => 'classes',

@@ -1,14 +1,14 @@
 <?php
-/**
+/*
  * Template: two-column-hero
  *
- * Produces an outer row container with two column containers.
- * Left column: heading + paragraph. Right column: paragraph.
+ * Produces an outer row e-flexbox with two column e-flexbox containers.
+ * Left column: heading + paragraph + button. Right column: image.
  *
  * Params:
  *   heading    (string) — left-column heading text. Default: 'Your Headline Here'.
  *   subheading (string) — left-column paragraph text. Default: 'Add your description.'.
- *   col2_text  (string) — right-column paragraph text. Default: 'Supporting content goes here.'.
+ *   cta_text   (string) — left-column button label. Default: 'Learn More'.
  *   classes    (array)  — class IDs to apply to the outer container.
  */
 
@@ -17,17 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 return function ( array $params ): array {
-	$uid = fn() => sprintf( '%08x', mt_rand() );
+	$uid = fn() => sprintf( '%08x', wp_rand() );
 
-	$heading    = $params['heading']    ?? 'Your Headline Here';
+	$heading    = $params['heading'] ?? 'Your Headline Here';
 	$subheading = $params['subheading'] ?? 'Add your description.';
-	$col2_text  = $params['col2_text']  ?? 'Supporting content goes here.';
-	$classes    = $params['classes']    ?? [];
+	$cta_text   = $params['cta_text'] ?? 'Learn More';
+	$classes    = $params['classes'] ?? [];
 
 	return [
 		[
 			'id'       => $uid(),
-			'elType'   => 'container',
+			'elType'   => 'e-flexbox',
 			'settings' => [
 				'classes' => [
 					'$$type' => 'classes',
@@ -37,7 +37,7 @@ return function ( array $params ): array {
 			'elements' => [
 				[
 					'id'       => $uid(),
-					'elType'   => 'container',
+					'elType'   => 'e-flexbox',
 					'settings' => [],
 					'elements' => [
 						[
@@ -80,29 +80,36 @@ return function ( array $params ): array {
 							],
 							'elements'   => [],
 						],
-					],
-				],
-				[
-					'id'       => $uid(),
-					'elType'   => 'container',
-					'settings' => [],
-					'elements' => [
 						[
 							'id'         => $uid(),
 							'elType'     => 'widget',
-							'widgetType' => 'e-paragraph',
+							'widgetType' => 'e-button',
 							'settings'   => [
-								'paragraph' => [
+								'text' => [
 									'$$type' => 'html-v3',
 									'value'  => [
 										'content'  => [
 											'$$type' => 'string',
-											'value'  => $col2_text,
+											'value'  => $cta_text,
 										],
 										'children' => [],
 									],
 								],
 							],
+							'elements'   => [],
+						],
+					],
+				],
+				[
+					'id'       => $uid(),
+					'elType'   => 'e-flexbox',
+					'settings' => [],
+					'elements' => [
+						[
+							'id'         => $uid(),
+							'elType'     => 'widget',
+							'widgetType' => 'e-image',
+							'settings'   => [],
 							'elements'   => [],
 						],
 					],
