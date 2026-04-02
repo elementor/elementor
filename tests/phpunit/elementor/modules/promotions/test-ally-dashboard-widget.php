@@ -70,7 +70,7 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		$output = ob_get_clean();
 
 		// Assert.
-		$this->assertStringContainsString( 'update.php?action=install-plugin&amp;plugin=pojo-accessibility', $output );
+		$this->assertStringContainsString( 'update.php?action=install-plugin&#038;plugin=pojo-accessibility', $output );
 		$this->assertStringNotContainsString( 'target="_blank"', $output );
 		$this->assertStringContainsString( 'id="e-dashboard-ally-submitted"', $output );
 		$this->assertStringContainsString( 'plg_campaign=acc-dashboard-plg', $output );
