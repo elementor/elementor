@@ -80,7 +80,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
-		add_filter( 'elementor/document/save/data', [ $this, 'handle_document_save' ], 10, 2 );
+		add_filter( 'elementor/document/save/data', [ $this, 'handle_interactions' ], 10, 2 );
 		add_action( 'elementor/document/after_save', [ $this, 'handle_interactions_cache' ], 10, 2 );
 
 		// Collect interactions from documents before they render (header, footer, post content)
@@ -99,7 +99,7 @@ class Module extends BaseModule {
 	 * @throws \Exception When validation fails.
 	 * @return array
 	 */
-	public function handle_document_save( $data, $document ) {
+	public function handle_interactions( $data, $document ) {
 		$validation = new Validation();
 		$document_after_sanitization = $validation->sanitize( $data );
 
