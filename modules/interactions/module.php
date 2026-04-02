@@ -93,6 +93,7 @@ class Module extends BaseModule {
 				$validation = new Validation();
 				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
+
 				return $document_after_sanitization;
 			},
 		10, 2 );
