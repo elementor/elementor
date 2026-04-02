@@ -111,16 +111,18 @@ class Interactions_Frontend_Handler {
 		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
 	}
 
+	private function get_interactions_config() {
+		return $this->config_provider ? call_user_func( $this->config_provider ) : [];
+	}
+
 	private function enqueue_interactions_assets() {
 		wp_enqueue_script( Module::HANDLE_MOTION_JS );
 		wp_enqueue_script( Module::HANDLE_FRONTEND );
 
-		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
-
 		wp_localize_script(
 			Module::HANDLE_FRONTEND,
 			Module::JS_CONFIG_OBJECT,
-			$config
+			$this->get_interactions_config()
 		);
 	}
 }
