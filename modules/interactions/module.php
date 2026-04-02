@@ -4,6 +4,7 @@ namespace Elementor\Modules\Interactions;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -110,11 +111,8 @@ class Module extends BaseModule {
 	}
 
 	public function handle_interactions_cache( $document, $data ) {
-		if ( Interactions_Cache::should_skip_sync_for_save_data( $data ) ) {
-			return;
-		}
-		$elements = isset( $data['elements'] ) && is_array( $data['elements'] ) ? $data['elements'] : [];
-		Interactions_Cache::sync( $document->get_main_id(), $elements );
+		$postmeta = new Interactions_Postmeta();
+		$postmeta->process_content( $document, $data );
 	}
 
 	public function get_config() {
