@@ -25,12 +25,14 @@ const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number 
 		name: 'firefox',
 		use: {
 			...devices[ 'Desktop Firefox' ],
+			viewport: { width: 1920, height: 1080 },
 		},
 	},
 	webkit: {
 		name: 'webkit',
 		use: {
 			...devices[ 'Desktop Safari' ],
+			viewport: { width: 1920, height: 1080 },
 		},
 	},
 };
