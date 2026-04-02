@@ -25,7 +25,7 @@ _config( {
 const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number ]> = {
 	chromium: {
 		name: 'chromium',
-		snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{-snapshotSuffix}{ext}',
+		snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 		use: {
 			...devices[ 'Desktop Chrome' ],
 			launchOptions: {
