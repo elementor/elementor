@@ -70,6 +70,10 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_hooks();
+	}
+
+	private function register_hooks() {
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
