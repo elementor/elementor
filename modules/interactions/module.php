@@ -29,8 +29,6 @@ class Module extends BaseModule {
 
 	private $preset_animations;
 
-	private $frontend_handler;
-
 	private function get_presets() {
 		if ( ! $this->preset_animations ) {
 			$this->preset_animations = new Presets();
@@ -38,6 +36,8 @@ class Module extends BaseModule {
 
 		return $this->preset_animations;
 	}
+
+	private $frontend_handler;
 
 	private function get_frontend_handler() {
 		if ( ! $this->frontend_handler ) {
