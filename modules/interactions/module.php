@@ -75,40 +75,46 @@ class Module extends BaseModule {
 
 	private function register_hooks() {
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
+		add_filter( 'elementor/document/save/data', [ $this, 'handle_document_save' ], 10, 2 );
+		add_action( 'elementor/document/after_save', [ $this, 'handle_interactions_cache' ], 10, 2 );
+
 		// Collect interactions from documents before they render (header, footer, post content)
-		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
+		add_filter( 'elementor/frontend/builder_content_data', [
+			$this->get_frontend_handler(),
+			'collect_document_interactions',
+		], 10, 2 );
 
 		// Output centralized interaction data in footer
 		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
+	}
 
-		add_filter( 'elementor/document/save/data',
-			/**
-			 * @throws \Exception
-			 */
-			function( $data, $document ) {
-				$validation = new Validation();
-				$document_after_sanitization = $validation->sanitize( $data );
-				$validation->validate();
+	/**
+	 * Sanitize and validate data before saving the document.
+	 *
+	 * @throws \Exception When validation fails.
+	 * @return array
+	 */
+	public function handle_document_save( $data, $document ) {
+		$validation = new Validation();
+		$document_after_sanitization = $validation->sanitize( $data );
 
-				return $document_after_sanitization;
-			},
-		10, 2 );
+		$validation->validate();
 
-		add_filter( 'elementor/document/save/data', function( $data, $document ) {
-			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
-		}, 11, 2 );
+		$parser = new Parser( $document->get_main_id() );
+		return $parser->assign_interaction_ids( $document_after_sanitization );
+	}
 
-		add_action( 'elementor/document/after_save', function( $document, $data ) {
-			if ( Interactions_Cache::should_skip_sync_for_save_data( $data ) ) {
-				return;
-			}
-			$elements = isset( $data['elements'] ) && is_array( $data['elements'] ) ? $data['elements'] : [];
-			Interactions_Cache::sync( $document->get_main_id(), $elements );
-		}, 10, 2 );
+	public function handle_interactions_cache( $document, $data ) {
+		if ( Interactions_Cache::should_skip_sync_for_save_data( $data ) ) {
+			return;
+		}
+		$elements = isset( $data['elements'] ) && is_array( $data['elements'] ) ? $data['elements'] : [];
+		Interactions_Cache::sync( $document->get_main_id(), $elements );
 	}
 
 	public function get_config() {
