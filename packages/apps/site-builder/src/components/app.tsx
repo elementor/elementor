@@ -35,6 +35,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 						},
 					},
 				},
+				siteIdentifier: config?.siteIdentifier,
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},

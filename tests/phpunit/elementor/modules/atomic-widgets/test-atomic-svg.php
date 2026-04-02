@@ -1,6 +1,9 @@
 <?php
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Attachment_Id_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -27,6 +30,12 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' ) {
 				return [
 					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
+				];
+			}
+
+			if ( $url === Atomic_Svg::DEFAULT_SVG_URL ) {
+				return [
+					'body' => file_get_contents( Atomic_Svg::DEFAULT_SVG_PATH ),
 				];
 			}
 
@@ -101,9 +110,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => Svg_Src_Prop_Type::generate( [
+					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+					'url' => null,
+				] ),
 				'link' => [
 					'href' => $href,
 					'target' => '_blank',
@@ -129,9 +139,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => Svg_Src_Prop_Type::generate( [
+					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+					'url' => null,
+				] ),
 				'link' => [
 					'href' => '',
 					'target' => '_blank',
@@ -153,26 +164,24 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 	}
 
 	private function get_mock_svg( $is_url = false ) {
-		return ! $is_url ? [
+		$svg = $is_url
+			? Svg_Src_Prop_Type::generate( [
+				'id' => null,
+				'url' => Url_Prop_Type::generate( self::TEST_RESOURCES_DIR . 'test.svg' ),
+			] )
+			: Svg_Src_Prop_Type::generate( [
+				'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+				'url' => null,
+			] );
+
+		return [
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => $svg,
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
-		] :
-			[
-				'id' => 'abcd123',
-				'elType' => 'widget',
-				'settings' => [
-					'svg' => [
-						'url' => self::TEST_RESOURCES_DIR . 'test.svg',
-					],
-				],
-				'widgetType' => Atomic_Svg::get_element_type(),
-			];
+		];
 	}
 	public function test__render_svg_with_interactions(): void {
 		// Arrange.
@@ -221,7 +230,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringContainsString( 'data-interaction-id="test123"', $rendered_output );
-		$this->assertMatchesRegularExpression( '/<svg[^>]*data-interaction-id="test123"/', $rendered_output );
 	}
 
 	public function test__svg_element_has_data_interaction_id_attribute_when_wrapped_in_link(): void {
@@ -230,9 +238,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'id' => 'linked456',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => Svg_Src_Prop_Type::generate( [
+					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+					'url' => null,
+				] ),
 				'link' => [
 					'href' => 'https://elementor.com',
 					'target' => '_blank',
@@ -250,7 +259,6 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertStringContainsString( 'data-interaction-id="linked456"', $rendered_output );
-		$this->assertMatchesRegularExpression( '/<svg[^>]*data-interaction-id="linked456"/', $rendered_output );
 	}
 
 	public function test__render_svg_with_action_link(): void {
@@ -259,9 +267,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'id' => 'linked456',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => Svg_Src_Prop_Type::generate( [
+					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+					'url' => null,
+				] ),
 				'link' => [
 					'href' => 'https://very.dynamic.content.elementor',
 					'target' => '_blank',

@@ -165,6 +165,7 @@ declare global {
 			isAdmin?: boolean;
 			siteTitle?: string;
 			siteAbout?: string[];
+			siteIdentifier?: string;
 			connectAuth?: {
 					signature: string;
 					accessToken: string;

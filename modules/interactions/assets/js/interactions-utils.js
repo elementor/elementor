@@ -2,7 +2,7 @@
 
 import {
 	config as getConfig,
-	skipInteraction,
+	skipInteraction as utilsSkipInteraction,
 	extractInteractionId,
 	getAnimateFunction,
 	getInViewFunction,
@@ -15,14 +15,23 @@ import {
 	preserveTransformKeyframes,
 } from './interactions-shared-utils.js';
 
-/**
- * Triggers the Core `interactions.js` / `editor-interactions.js` bundles run. Pro-only triggers
- * (e.g. hover, click) must not fall through to the load-time default path.
- */
-const FREE_FRONTEND_SUPPORTED_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+function isSupportedInteraction( animationConfig ) {
+	if ( ! [ 'load', 'scrollIn', 'scrollOut' ].includes( animationConfig.trigger ) ) {
+		return false;
+	}
 
-export function isFreeFrontendSupportedTrigger( trigger ) {
-	return FREE_FRONTEND_SUPPORTED_TRIGGERS.includes( trigger );
+	if ( 'custom' === animationConfig.effect ) {
+		return false;
+	}
+
+	return true;
+}
+
+function skipInteraction( animationConfig ) {
+	if ( ! isSupportedInteraction( animationConfig ) ) {
+		return true;
+	}
+	return utilsSkipInteraction( animationConfig );
 }
 
 export {

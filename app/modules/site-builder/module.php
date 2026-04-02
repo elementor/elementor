@@ -51,6 +51,7 @@ class Module extends BaseModule {
 			'isAdmin' => current_user_can( 'manage_options' ),
 			'siteTitle' => get_bloginfo( 'name' ),
 			'siteAbout' => $this->get_site_about(),
+			'siteIdentifier' => Site_Identity::get_id(),
 		];
 
 		$connect_auth = $this->get_connect_auth();

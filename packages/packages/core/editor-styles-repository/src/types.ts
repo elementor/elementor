@@ -14,6 +14,12 @@ export type UserCapabilities = {
 	updateProps: string;
 };
 
+export type PregeneratedLinkItem = {
+	id: string;
+	href: string;
+	media: string;
+};
+
 export type UpdatePropsActionPayload = {
 	id: StyleDefinitionID;
 	meta: StyleDefinitionVariant[ 'meta' ];
@@ -49,4 +55,5 @@ export type StylesProvider = {
 		tracking?: ( data: { event: string; [ key: string ]: unknown } ) => void;
 	};
 	capabilities?: UserCapabilities;
+	isPregeneratedLink?: ( pregeneratedLinkItem: PregeneratedLinkItem ) => boolean;
 };
