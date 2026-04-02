@@ -74,11 +74,19 @@ class Build_Page_Ability extends Abstract_Ability {
 						'Variable labels in class variant props (e.g. {"$$type":"global-color-variable","value":"ajax-red"}) are resolved to variable IDs before the classes are saved.',
 						'Class labels in elements (e.g. "ajax-hero-outer") are resolved to full IDs automatically using the classes just upserted plus any existing ones.',
 						'PROP FORMAT: ALL typed prop values use $$type (double dollar sign), never $type.',
+						'ELEMENT TYPES:',
+						'  e-flexbox → container/row/column. Uses elType:"e-flexbox", has an "elements" children array, NO widgetType. Do NOT call widget-schema for e-flexbox.',
+						'  widget    → leaf element. Uses elType:"widget" + widgetType (e.g. "e-heading"). Has no children elements array.',
 						'WIDGET PROP KEYS:',
 						'  e-heading   → title',
 						'  e-paragraph → paragraph',
 						'  e-button    → text',
 						'  e-image     → image (optional)',
+						'COMMON CLASS PROP FORMATS (for global class variant props):',
+						'  Solid background: {"$$type":"background","value":{"background-overlay":{"$$type":"background-overlay","value":[{"$$type":"background-color-overlay","value":{"color":{"$$type":"color","value":"#ffffff"}}}]}}}',
+						'  Padding/margin:   {"$$type":"linked-dimensions","value":{"top":{"$$type":"size","value":{"size":80,"unit":"px"}},"right":{...},"bottom":{...},"left":{...}}}',
+						'  Font size:        {"$$type":"size","value":{"size":16,"unit":"px"}}  — NOT a plain string like "16px"',
+						'  Color:            {"$$type":"color","value":"#333333"}',
 						'The ability validates class IDs and $$type usage before saving — errors are returned with clear messages.',
 					] ),
 					'readonly'    => false,
@@ -135,7 +143,10 @@ class Build_Page_Ability extends Abstract_Ability {
 		$this->resolve_class_labels( $elements, $label_to_id );
 
 		// Step 5: validate (single-dollar $type, truncated IDs, unknown IDs).
-		$this->validate_elements( $elements, $known_ids );
+		// Collect local element-scoped style IDs so they pass the unknown-ID check.
+		$local_ids = [];
+		$this->collect_local_style_ids( $elements, $local_ids );
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
 		// Step 6: save.
 		$saved = $document->save( [ 'elements' => $elements ] );

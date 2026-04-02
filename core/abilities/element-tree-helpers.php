@@ -58,12 +58,33 @@ trait Element_Tree_Helpers {
 	}
 
 	/**
+	 * Collect all local style IDs (keys of each element's 'styles' map) from the tree.
+	 * These are element-scoped IDs (e.g. "e-dh-s-a101e0c") that are valid references
+	 * but are not registered in the global classes store.
+	 *
+	 * @param array $elements The element tree.
+	 * @param array $ids      Accumulator array (modified in-place).
+	 */
+	private function collect_local_style_ids( array $elements, array &$ids ): void {
+		foreach ( $elements as $el ) {
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				array_push( $ids, ...array_keys( $el['styles'] ) );
+			}
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->collect_local_style_ids( $el['elements'], $ids );
+			}
+		}
+	}
+
+	/**
 	 * Recursively walk a settings object, resolving labels inside $$type:"classes" nodes.
 	 */
 	private function resolve_class_labels_in_settings( array &$settings, array $label_to_id ): void {
 		if ( isset( $settings['$$type'] ) && 'classes' === $settings['$$type'] && isset( $settings['value'] ) && is_array( $settings['value'] ) ) {
 			foreach ( $settings['value'] as &$val ) {
-				if ( is_string( $val ) && ! str_starts_with( $val, 'e-gc-' ) ) {
+				// Skip any ID that already looks like an Elementor-generated ID (e-gc-*, e-dh-*, etc.)
+				// Only strings that do not start with "e-" are treated as human-readable labels.
+				if ( is_string( $val ) && ! str_starts_with( $val, 'e-' ) ) {
 					if ( ! isset( $label_to_id[ $val ] ) ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 						throw new \InvalidArgumentException( "Class label \"$val\" not found — create it first with set-global-classes or check the label spelling." );
@@ -122,6 +143,14 @@ trait Element_Tree_Helpers {
 					if ( preg_match( '/^e-gc-[0-9a-f]{8}$/', $class_id ) ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 						throw new \InvalidArgumentException( "Class ID \"$class_id\" appears truncated — use the full UUID returned by set-global-classes (e.g. e-gc-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)." );
+					}
+
+					// Local element-scoped style IDs (e.g. "e-dh-s-a101e0c") start with "e-"
+					// but are not global classes — skip validation for them.
+					// NOTE: this guard lives in the ability layer; the authoritative check for
+					// what constitutes a local ID is in collect_local_style_ids().
+					if ( str_starts_with( $class_id, 'e-' ) && ! str_starts_with( $class_id, 'e-gc-' ) ) {
+						continue;
 					}
 
 					if ( ! in_array( $class_id, $known_ids, true ) ) {

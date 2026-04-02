@@ -63,6 +63,17 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 						'  e-image     → image:     optional — omit to rely on class-based styling',
 						'  Run elementor/widget-schema for any other widget type before first use.',
 						'CLASS IDs: classes.value must contain the FULL UUID returned by set-global-classes, e.g. "e-gc-9705bfbc-2335-4e75-b761-71e4973977df". Truncated IDs (e.g. "e-gc-9705bfbc") silently save but render no styles and will now be rejected. You may also pass the human-readable label (e.g. "ajax-hero-outer") — it will be resolved to the full ID internally.',
+						'ELEMENT TYPES:',
+						'  e-flexbox → container/row/column. Uses elType:"e-flexbox", has an "elements" children array, NO widgetType. Do NOT call widget-schema for e-flexbox.',
+						'  widget    → leaf element. Uses elType:"widget" + widgetType (e.g. "e-heading"). Has no children elements array.',
+						'COMMON CLASS PROP FORMATS (for global class variant props):',
+						'  Solid background: {"$$type":"background","value":{"background-overlay":{"$$type":"background-overlay","value":[{"$$type":"background-color-overlay","value":{"color":{"$$type":"color","value":"#ffffff"}}}]}}}',
+						'  Padding/margin:   {"$$type":"linked-dimensions","value":{"top":{"$$type":"size","value":{"size":80,"unit":"px"}},"right":{...},"bottom":{...},"left":{...}}}',
+						'  Font size:        {"$$type":"size","value":{"size":16,"unit":"px"}}  — NOT a plain string like "16px"',
+						'  Color:            {"$$type":"color","value":"#333333"}',
+						'  Width %:          {"$$type":"size","value":{"size":50,"unit":"%"}}',
+						'For new pages, prefer elementor/build-page — creates variables, classes, and elements atomically in one call.',
+						'For existing pages: use get-post-content → modify → set-post-content.',
 					] ),
 					'readonly'    => false,
 					'destructive' => true,
@@ -94,7 +105,11 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 		}
 
 		$this->resolve_class_labels( $elements, $label_to_id );
-		$this->validate_elements( $elements, $known_ids );
+
+		// Collect local element-scoped style IDs so they pass the unknown-ID check.
+		$local_ids = [];
+		$this->collect_local_style_ids( $elements, $local_ids );
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
 		$saved = $document->save( [ 'elements' => $elements ] );
 

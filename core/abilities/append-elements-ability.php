@@ -134,7 +134,10 @@ class Append_Elements_Ability extends Abstract_Ability {
 		}
 
 		$this->resolve_class_labels( $elements, $label_to_id );
-		$this->validate_elements( $elements, $known_ids );
+
+		$local_ids = [];
+		$this->collect_local_style_ids( $elements, $local_ids );
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
 		$saved = $document->save( [ 'elements' => $elements ] );
 
