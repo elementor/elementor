@@ -95,6 +95,9 @@ class Append_Elements_Ability extends Abstract_Ability {
 		$post_id       = (int) $input['post_id'];
 		$items         = $input['elements'];
 
+		// Bust the WP object cache so get_elements_data reads from DB, not a stale cache.
+		wp_cache_delete( $post_id, 'post_meta' );
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {

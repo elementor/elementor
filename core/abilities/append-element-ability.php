@@ -78,6 +78,9 @@ class Append_Element_Ability extends Abstract_Ability {
 		$element   = $input['element'];
 		$parent_id = $input['parent_id'] ?? null;
 
+		// Bust the WP object cache so get_elements_data reads from DB, not a stale cache.
+		wp_cache_delete( $post_id, 'post_meta' );
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\Abilities;
 
 use Elementor\Core\Abilities\Abstract_Ability;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -101,7 +102,7 @@ class Set_Variables_Ability extends Abstract_Ability {
 
 		foreach ( $input['variables'] as $var_input ) {
 			$label       = $var_input['label'];
-			$value       = $var_input['value'];
+			$value       = $this->normalize_size_value( $var_input['value'], $var_input['type'] ?? null );
 			$type        = $var_input['type'] ?? null;
 			$label_lower = strtolower( $label );
 
@@ -158,6 +159,14 @@ class Set_Variables_Ability extends Abstract_Ability {
 			throw new \RuntimeException( 'Failed to save variables batch.' ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
+		// Regenerate the kit's CSS file so CSS variable references (e.g. var(--e-gv-...))
+		// resolve immediately without a manual cache flush. Variables are stored in the kit
+		// post meta and compiled into the kit's Post CSS file.
+		$kit_id = Plugin::$instance->kits_manager->get_active_kit()->get_id();
+		if ( $kit_id ) {
+			Post_CSS::create( $kit_id )->update();
+		}
+
 		return [
 			'results'   => $results,
 			'count'     => count( $results ),
@@ -169,6 +178,43 @@ class Set_Variables_Ability extends Abstract_Ability {
 		return new Variables_Repository(
 			Plugin::$instance->kits_manager->get_active_kit()
 		);
+	}
+
+	/**
+	 * Normalize size variable values.
+	 *
+	 * Prop_Type_Adapter::to_storage() calls parse_size_value() which expects a string
+	 * (e.g. "72px"). When the caller passes an array {"size":72,"unit":"px"}, the adapter
+	 * sees is_array($value) and bails early, storing the raw array without the V2 $$type
+	 * wrapper. from_storage() then reads $value['value'] which is null, producing "px"
+	 * (no number) in the rendered CSS.
+	 *
+	 * Fix: convert array inputs for size variables to the canonical "NUunit" string so
+	 * parse_size_value() can correctly produce the V2-wrapped value.
+	 *
+	 * Non-size types and already-string values are returned unchanged.
+	 *
+	 * @param mixed       $value Raw input value.
+	 * @param string|null $type  Raw input type (shorthand or full key).
+	 * @return mixed Normalized value.
+	 */
+	private function normalize_size_value( $value, ?string $type ) {
+		$resolved_type = $type ? $this->map_type( $type ) : null;
+
+		if ( 'global-size-variable' !== $resolved_type ) {
+			return $value;
+		}
+
+		if ( ! is_array( $value ) || ! isset( $value['size'], $value['unit'] ) ) {
+			return $value;
+		}
+
+		// "auto" unit has no numeric component.
+		if ( 'auto' === strtolower( $value['unit'] ) ) {
+			return 'auto';
+		}
+
+		return $value['size'] . $value['unit'];
 	}
 
 	/**

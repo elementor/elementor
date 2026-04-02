@@ -83,6 +83,12 @@ class Update_Element_Ability extends Abstract_Ability {
 			throw new \InvalidArgumentException( 'At least one of "settings" or "styles" must be provided.' );
 		}
 
+		// Bust the WP object cache so get_elements_data reads from DB, not a stale cache.
+		// Required when post meta was written outside Elementor's document layer (e.g. raw
+		// update_post_meta), which can leave a double-unslashed value in the object cache
+		// that json_decode then cannot parse, silently returning an empty tree.
+		wp_cache_delete( $post_id, 'post_meta' );
+
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
