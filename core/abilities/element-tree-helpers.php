@@ -105,20 +105,24 @@ trait Element_Tree_Helpers {
 	}
 
 	/**
-	 * Walk the element tree and throw on invalid class IDs or single-dollar $type keys.
+	 * Walk the element tree and validate class IDs and $$type usage.
 	 *
-	 * @param array $elements  Element tree.
-	 * @param array $known_ids All valid global class IDs.
-	 * @throws \InvalidArgumentException On the first violation found.
+	 * When $errors is null (default), throws on the first violation.
+	 * When $errors is an array reference, all violations are collected and no exception is thrown.
+	 *
+	 * @param array      $elements  Element tree.
+	 * @param array      $known_ids All valid global class IDs.
+	 * @param array|null $errors    When provided, violations are appended here instead of thrown.
+	 * @throws \InvalidArgumentException On the first violation when $errors is null.
 	 */
-	private function validate_elements( array $elements, array $known_ids ): void {
+	private function validate_elements( array $elements, array $known_ids, ?array &$errors = null ): void {
 		foreach ( $elements as $element ) {
 			if ( isset( $element['settings'] ) && is_array( $element['settings'] ) ) {
-				$this->validate_settings( $element['settings'], $known_ids );
+				$this->validate_settings( $element['settings'], $known_ids, $errors );
 			}
 
 			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$this->validate_elements( $element['elements'], $known_ids );
+				$this->validate_elements( $element['elements'], $known_ids, $errors );
 			}
 		}
 	}
@@ -126,12 +130,20 @@ trait Element_Tree_Helpers {
 	/**
 	 * Recursively validate a settings object.
 	 *
-	 * @throws \InvalidArgumentException On the first violation found.
+	 * When $errors is null (default), throws on the first violation.
+	 * When $errors is an array reference, all violations are appended and execution continues.
+	 *
+	 * @throws \InvalidArgumentException On the first violation when $errors is null.
 	 */
-	private function validate_settings( array $settings, array $known_ids ): void {
+	private function validate_settings( array $settings, array $known_ids, ?array &$errors = null ): void {
 		foreach ( $settings as $key => $value ) {
 			if ( '$type' === $key ) {
-				throw new \InvalidArgumentException( 'Found $type key in element settings — use $$type (double dollar sign). Example: {"$$type":"classes","value":["e-gc-..."]}.' );
+				$msg = 'Found $type key in element settings — use $$type (double dollar sign). Example: {"$$type":"classes","value":["e-gc-..."]}.';
+				if ( null === $errors ) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \InvalidArgumentException( $msg );
+				}
+				$errors[] = $msg;
 			}
 
 			if ( '$$type' === $key && 'classes' === $value && isset( $settings['value'] ) && is_array( $settings['value'] ) ) {
@@ -141,8 +153,13 @@ trait Element_Tree_Helpers {
 					}
 
 					if ( preg_match( '/^e-gc-[0-9a-f]{8}$/', $class_id ) ) {
-						// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-						throw new \InvalidArgumentException( "Class ID \"$class_id\" appears truncated — use the full UUID returned by set-global-classes (e.g. e-gc-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)." );
+						$msg = "Class ID \"$class_id\" appears truncated — use the full UUID returned by set-global-classes (e.g. e-gc-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx).";
+						if ( null === $errors ) {
+							// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+							throw new \InvalidArgumentException( $msg );
+						}
+						$errors[] = $msg;
+						continue;
 					}
 
 					// Local element-scoped style IDs (e.g. "e-dh-s-a101e0c") start with "e-"
@@ -154,16 +171,44 @@ trait Element_Tree_Helpers {
 					}
 
 					if ( ! in_array( $class_id, $known_ids, true ) ) {
-						// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-						throw new \InvalidArgumentException( "Unknown class ID \"$class_id\" — verify against set-global-classes results or call elementor/context to list available classes." );
+						$msg = "Unknown class ID \"$class_id\" — verify against set-global-classes results or call elementor/context to list available classes.";
+						if ( null === $errors ) {
+							// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+							throw new \InvalidArgumentException( $msg );
+						}
+						$errors[] = $msg;
 					}
 				}
 			}
 
 			if ( is_array( $value ) ) {
-				$this->validate_settings( $value, $known_ids );
+				$this->validate_settings( $value, $known_ids, $errors );
 			}
 		}
+	}
+
+	/**
+	 * Recursively search the element tree for an element by its ID.
+	 *
+	 * @param array  $elements   Element tree to search.
+	 * @param string $element_id Target element ID.
+	 * @return array|null The matching element node, or null if not found.
+	 */
+	private function find_element( array $elements, string $element_id ): ?array {
+		foreach ( $elements as $el ) {
+			if ( isset( $el['id'] ) && $el['id'] === $element_id ) {
+				return $el;
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$found = $this->find_element( $el['elements'], $element_id );
+				if ( null !== $found ) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/**

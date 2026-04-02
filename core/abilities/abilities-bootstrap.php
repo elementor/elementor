@@ -16,11 +16,13 @@ class Abilities_Bootstrap {
 		( new Get_Post_Content_Ability() )->register_hooks();
 		( new Set_Post_Content_Ability() )->register_hooks();
 		( new Delete_Post_Content_Ability() )->register_hooks();
+		( new Get_Element_Ability() )->register_hooks();
 		( new Append_Element_Ability() )->register_hooks();
 		( new Append_Elements_Ability() )->register_hooks();
 		( new Update_Element_Ability() )->register_hooks();
 		( new Create_From_Template_Ability() )->register_hooks();
 		( new Build_Page_Ability() )->register_hooks();
+		( new Validate_Elements_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->widgets_manager,
