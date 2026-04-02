@@ -19,7 +19,6 @@ function getConfig() {
 
 function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
 	const config = getConfig();
-	const siteAbout = config?.siteAbout?.join( ' ' ) ?? '';
 
 	iframe.contentWindow?.postMessage(
 		{
@@ -32,7 +31,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 					elementorAiCurrentContext: {
 						site: {
 							siteTitle: config?.siteTitle ?? '',
-							siteAbout,
+							siteAbout: config?.siteAbout?.join( ' ' ) ?? '',
 						},
 					},
 				},

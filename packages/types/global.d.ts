@@ -164,7 +164,7 @@ declare global {
 			iframeUrl?: string;
 			isAdmin?: boolean;
 			siteTitle?: string;
-			siteAbout?: string;
+			siteAbout?: string[];
 			siteIdentifier?: string;
 			connectAuth?: {
 					signature: string;
