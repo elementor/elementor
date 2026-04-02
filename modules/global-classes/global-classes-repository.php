@@ -69,12 +69,19 @@ class Global_Classes_Repository {
 	}
 
 	/**
-	 * @param bool $preserve_preview When true, skip deleting the preview context after writing
-	 *                               to the frontend. Pass true from MCP ability writes to avoid
-	 *                               destroying in-editor unpublished changes. The default (false)
-	 *                               preserves the existing editor publish-flow behavior.
+	 * @param array $items            Map of class ID → class data.
+	 * @param array $order            Ordered list of class IDs.
+	 * @param bool  $preserve_preview When true, skip deleting the preview context after writing
+	 *                                to the frontend. Pass true from MCP ability writes to avoid
+	 *                                destroying in-editor unpublished changes. The default (false)
+	 *                                preserves the existing editor publish-flow behavior.
+	 * @param bool  $force_write      When true, skip the equality check and always write. Needed
+	 *                                when mirroring data to preview: the preview fallback to
+	 *                                frontend makes the two look equal, so the guard would fire
+	 *                                and skip the write even though no preview meta exists yet.
+	 * @throws \Exception When the meta update fails.
 	 */
-	public function put( array $items, array $order, bool $preserve_preview = false ) {
+	public function put( array $items, array $order, bool $preserve_preview = false, bool $force_write = false ) {
 		$current_value = $this->all()->get();
 
 		$updated_value = [
@@ -83,7 +90,8 @@ class Global_Classes_Repository {
 		];
 
 		// `update_metadata` fails for identical data, so we skip it.
-		if ( $current_value === $updated_value ) {
+		// $force_write bypasses this when the equality is an artefact of the preview fallback.
+		if ( ! $force_write && $current_value === $updated_value ) {
 			return;
 		}
 

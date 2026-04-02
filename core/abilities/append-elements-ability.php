@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Abilities;
 
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -122,6 +123,18 @@ class Append_Elements_Ability extends Abstract_Ability {
 				'found'       => $found,
 			];
 		}
+
+		$repo        = new Global_Classes_Repository();
+		$all_classes = $repo->all()->get_items()->all();
+		$label_to_id = [];
+		$known_ids   = [];
+		foreach ( $all_classes as $id => $item ) {
+			$known_ids[]                         = $id;
+			$label_to_id[ $item['label'] ?? '' ] = $id;
+		}
+
+		$this->resolve_class_labels( $elements, $label_to_id );
+		$this->validate_elements( $elements, $known_ids );
 
 		$saved = $document->save( [ 'elements' => $elements ] );
 

@@ -129,6 +129,11 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 
 		$repository->put( $items, $order, true );
 
+		// Mirror to preview so the editor's classes panel sees the new/updated classes.
+		// The preview fallback reads frontend when preview is empty, making the two appear
+		// equal — $force_write=true ensures the preview meta is explicitly written.
+		$repository->context( Global_Classes_Repository::CONTEXT_PREVIEW )->put( $items, $order, true, true );
+
 		return [
 			'results' => $results,
 			'count'   => count( $results ),
@@ -139,6 +144,8 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 	 * Normalize variants:
 	 * - custom_css: accept plain string or structured ['raw' => '<base64>'] format.
 	 * - meta.state: always present as null for default state; reject "normal" (invalid).
+	 *
+	 * @throws \InvalidArgumentException When meta.state is "normal".
 	 */
 	private function normalize_variants( array $variants ): array {
 		foreach ( $variants as &$variant ) {
