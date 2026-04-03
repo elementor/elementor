@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
-import { CollapsibleContent } from '@elementor/editor-ui';
+import { CollapsibleContent, InfoAlert } from '@elementor/editor-ui';
 import { Box, Divider, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -49,12 +49,15 @@ const MessageField = () => (
 				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
 			</Grid>
 			<Grid item>
-				<TextAreaControl
-					placeholder={ __(
-						'By default, all form fields are sent via [all-fields] shortcode.',
+				<TextAreaControl />
+			</Grid>
+			<Grid item>
+				<InfoAlert>
+					{ __(
+						'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
 						'elementor'
 					) }
-				/>
+				</InfoAlert>
 			</Grid>
 		</Grid>
 	</PropKeyProvider>
