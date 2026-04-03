@@ -8,9 +8,10 @@ import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-conte
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
+import { useFormFieldSuggestions } from '../hooks/use-form-field-suggestions';
 import { ChipsControl } from './chips-control';
+import { MentionTextAreaControl } from './mention-text-area-control';
 import { SelectControl } from './select-control';
-import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
 const EmailField = ( { bind, label, placeholder }: { bind: string; label: string; placeholder?: string } ) => (
@@ -42,26 +43,30 @@ const SubjectField = () => (
 	/>
 );
 
-const MessageField = () => (
-	<PropKeyProvider bind="message">
-		<Grid container direction="column" gap={ 0.5 }>
-			<Grid item>
-				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+const MessageField = () => {
+	const suggestions = useFormFieldSuggestions();
+
+	return (
+		<PropKeyProvider bind="message">
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl suggestions={ suggestions } />
+				</Grid>
+				<Grid item>
+					<InfoAlert>
+						{ __(
+							'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
+							'elementor'
+						) }
+					</InfoAlert>
+				</Grid>
 			</Grid>
-			<Grid item>
-				<TextAreaControl />
-			</Grid>
-			<Grid item>
-				<InfoAlert>
-					{ __(
-						'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
-						'elementor'
-					) }
-				</InfoAlert>
-			</Grid>
-		</Grid>
-	</PropKeyProvider>
-);
+		</PropKeyProvider>
+	);
+};
 
 const FromEmailField = () => (
 	<EmailField
