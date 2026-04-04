@@ -41,10 +41,8 @@ class Interactions_Postmeta {
 	}
 
 	private function extract_elements_interactions( array $data ) {
-		if ( ! isset( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
-			return [];
-		}
-
-		return ( new Elements_Interactions() )->parse_from( $data['elements'] );
+		$parser = new Elements_Interactions();
+		$parser->parse_from( $data );
+		return $parser->all();
 	}
 }
