@@ -11,21 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Interactions_Postmeta {
 	const META_KEY = 'elementor-interactions-cache';
 
-	public function process_content( Document $document, $data ) {
+	public function load_content( $post_id ) {
+		return get_post_meta( $post_id, self::META_KEY, true );
+	}
+
+	public function process_content( $post_id, $data ) {
 		if ( $this->skip_processing( $data ) ) {
 			return;
 		}
 
 		$elements_interactions = $this->extract_elements_interactions( $data );
 
-		if ( empty( $elements_interactions ) ) {
-			delete_post_meta( $document->get_main_id(), self::META_KEY );
-		} else {
-			update_post_meta( $document->get_main_id(), self::META_KEY, $elements_interactions );
+		$this->save_postmeta( $post_id, $elements_interactions );
+	}
+
+	private function save_postmeta( $post_id, array $interactions ) {
+		if ( empty( $interactions ) ) {
+			delete_post_meta( $post_id, self::META_KEY );
+			return;
 		}
 
-		$elements = isset( $data['elements'] ) && is_array( $data['elements'] ) ? $data['elements'] : [];
-		\Elementor\Modules\Interactions\Interactions_Cache::sync( $document->get_main_id(), $elements );
+		update_post_meta( $post_id, self::META_KEY, $interactions );
 	}
 
 	private function skip_processing( array $data ) {

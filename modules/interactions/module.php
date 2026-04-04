@@ -1,13 +1,14 @@
 <?php
+
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 use Elementor\Plugin;
 use Elementor\Utils;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -110,9 +111,9 @@ class Module extends BaseModule {
 		return $parser->assign_interaction_ids( $document_after_sanitization );
 	}
 
-	public function handle_interactions_cache( $document, $data ) {
+	public function handle_interactions_cache( Document $document, $data ) {
 		$postmeta = new Interactions_Postmeta();
-		$postmeta->process_content( $document, $data );
+		$postmeta->process_content( $document->get_main_id(), $data );
 	}
 
 	public function get_config() {
