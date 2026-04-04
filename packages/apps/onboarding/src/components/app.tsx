@@ -6,6 +6,7 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { TrackingProvider } from '../analytics/tracking-context';
 import { initFromConfig, registerOnboardingSlice } from '../store';
+import { isRtl } from '../utils/is-rtl';
 import { AppContent } from './app-content';
 import { ToastProvider } from './toast/toast-context';
 
@@ -53,7 +54,7 @@ export function App( props: AppProps ) {
 	return (
 		<StoreProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
+				<DirectionProvider rtl={ isRtl() }>
 					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<ToastProvider>
 							<TrackingProvider>
