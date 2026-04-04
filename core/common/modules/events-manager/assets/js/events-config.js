@@ -217,6 +217,7 @@ const eventsConfig = {
 		},
 		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
 		elementorEditor: {
+			editorLoaded: 'editor_loaded',
 			checklist: {
 				checklistHeaderClose: 'checklist_header_close_icon',
 				checklistFirstPopup: 'checklist popup triggered',
@@ -234,6 +235,7 @@ const eventsConfig = {
 			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
+			variableSyncToV3: 'variable_sync_to_v3',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
@@ -266,6 +268,9 @@ const eventsConfig = {
 			classStateClicked: 'class_state_clicked',
 			classUsageClicked: 'class_usage_clicked',
 			classDuplicate: 'class_duplicate',
+			classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+			classSyncToV3: 'class_sync_to_v3',
+			classSyncToV3PopupClick: 'class_sync_to_v3_popup_click',
 		},
 		editorOne: {
 			topBarPublishDropdown: 'top_bar_publish_dropdown',
@@ -282,7 +287,7 @@ const eventsConfig = {
 		},
 		interactions: {
 			created: 'interactions_created',
-    },
+		},
 		promotions: {
 			viewPromotion: 'view_promotion',
 			upgradePromotionClick: 'upgrade_promotion_click',

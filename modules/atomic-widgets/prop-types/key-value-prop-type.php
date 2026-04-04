@@ -20,4 +20,17 @@ class Key_Value_Prop_Type extends Object_Prop_Type {
 			'value' => String_Prop_Type::make(),
 		];
 	}
+
+	public function sanitize_value( $value ) {
+		$prop_type = String_Prop_Type::make();
+		if ( isset( $value['key'] ) ) {
+			$clean_key = esc_attr( $prop_type->sanitize( $value['key'] )['value'] );
+			$value['key'] = String_Prop_Type::generate( $clean_key );
+		}
+		if ( isset( $value['value'] ) ) {
+			$clean_value = esc_attr( $prop_type->sanitize( $value['value'] )['value'] );
+			$value['value'] = String_Prop_Type::generate( $clean_value );
+		}
+		return $value;
+	}
 }

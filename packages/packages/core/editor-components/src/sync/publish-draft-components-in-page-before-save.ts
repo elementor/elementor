@@ -9,7 +9,7 @@ import { type DocumentSaveStatus } from '../types';
 import { getComponentDocuments } from '../utils/get-component-documents';
 
 const INSUFFICIENT_PERMISSIONS_ERROR_CODE = 'insufficient_permissions';
-const PUBLISH_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-edit/';
+const PUBLISH_UPGRADE_URL = 'https://go.elementor.com/go-pro-components-Instance-draft-failure/';
 const PUBLISH_UPGRADE_NOTIFICATION_ID = 'component-publish-upgrade';
 
 type Options = {

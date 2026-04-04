@@ -47,7 +47,7 @@ export function App( props: AppProps ) {
 
 	const queryClient = useMemo( () => createQueryClient(), [] );
 
-	const uiTheme = window.elementorAppConfig?.[ 'e-onboarding' ]?.uiTheme ?? 'auto';
+	const uiTheme = window.elementorAppConfig?.onboarding?.uiTheme ?? 'auto';
 	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
 
 	return (

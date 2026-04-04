@@ -13,10 +13,10 @@ export const FeatureItem = ( { title, subtitle, selected, onClick }: FeatureItem
 		<Box
 			onClick={ onClick }
 			sx={ {
-				pl: 2,
-				pr: 1,
+				pl: 1.5,
+				pr: 0.75,
 				cursor: 'pointer',
-				borderLeft: '3px solid',
+				borderLeft: '2px solid',
 				borderColor: selected ? 'common.black' : 'transparent',
 				transition: ( theme: Theme ) =>
 					theme.transitions.create( [ 'border-color' ], {
@@ -28,7 +28,7 @@ export const FeatureItem = ( { title, subtitle, selected, onClick }: FeatureItem
 			<Typography variant="subtitle2" color="text.primary">
 				{ title }
 			</Typography>
-			<Typography variant="body2" color="text.tertiary">
+			<Typography variant="caption" color="text.tertiary" sx={ { fontSize: '11px', lineHeight: 'normal' } }>
 				{ subtitle }
 			</Typography>
 		</Box>

@@ -4,6 +4,7 @@ import { Box, Chip, styled, Typography, useTheme } from '@elementor/ui';
 
 import { SelectionBadge } from '../../../components/ui/selection-badge';
 import { t } from '../../../utils/translations';
+import { ProPlanNotice } from './pro-plan-notice';
 
 export interface FeatureOption {
 	id: string;
@@ -58,6 +59,20 @@ const FeatureCard = styled( Box, {
 
 export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
 	const theme = useTheme();
+
+	const selectedPaidFeatures = selectedValues.filter( ( id ) => {
+		const featureOption = options.find( ( item ) => item.id === id );
+		return featureOption && featureOption.licenseType !== 'core';
+	} );
+
+	const shouldDisplayProPlanNotice = selectedPaidFeatures.length > 0;
+
+	const planName: 'Pro' | 'One' = selectedPaidFeatures.some( ( id ) => {
+		const featureOption = options.find( ( item ) => item.id === id );
+		return featureOption?.licenseType === 'one';
+	} )
+		? 'One'
+		: 'Pro';
 
 	const handleKeyDown = ( event: React.KeyboardEvent, handler: () => void ) => {
 		if ( [ 'Enter', ' ' ].includes( event.key ) ) {
@@ -136,6 +151,8 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 					</FeatureCard>
 				);
 			} ) }
+
+			{ shouldDisplayProPlanNotice && <ProPlanNotice planName={ planName } /> }
 		</Box>
 	);
 }

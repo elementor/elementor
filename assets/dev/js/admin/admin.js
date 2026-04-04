@@ -119,38 +119,31 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 				} );
 			} );
 
-			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
-				const $notice = $( this ).closest( '.e-notice' );
-				const source = $notice.data( 'source' ) || 'io-wp-media-library-install';
+			const campaignNotices = {
+				plugin_image_optimization: 'elementor_image_optimization_campaign',
+				site_mailer_promotion: 'elementor_core_site_mailer_campaign',
+			};
 
-				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
-					data: {
-						source,
-					},
+			Object.keys( campaignNotices ).forEach( ( noticeId ) => {
+				$( `.e-notice--cta.e-notice--dismissible[data-notice_id="${ noticeId }"] a.e-button--cta` ).on( 'click', function() {
+					const $button = $( this );
+					elementorCommon.ajax.addRequest( campaignNotices[ noticeId ], {
+						data: {
+							campaign: $button?.data( 'campaign' ) || '',
+							source: $button?.data( 'source' ) || '',
+							medium: $button?.data( 'medium' ) || '',
+						},
+					} );
 				} );
 			} );
 
 			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
-				const $item = $( this ).closest( '.e-a-item' );
-				const source = $item.data( 'source' ) || 'io-esetting-addons-install';
-
+				const $button = $( this );
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source,
-					},
-				} );
-			} );
-
-			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
-				const $button = $( this );
-				const $notice = $button.closest( '.e-notice' );
-				const source = $button.data( 'source' ) || $notice.data( 'source' ) || ( $notice.hasClass( 'sm-notice-wc' )
-					? 'sm-core-woo-install'
-					: 'sm-core-form-install' );
-
-				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
-					data: {
-						source,
+						campaign: $button?.data( 'campaign' ) || '',
+						source: $button?.data( 'source' ) || '',
+						medium: $button?.data( 'medium' ) || '',
 					},
 				} );
 			} );

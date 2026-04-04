@@ -356,4 +356,94 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		// Assert.
 		$this->assertEquals( 'global-variables', $name );
 	}
+
+	public function test_import__merges_with_previous_kit_variables_after_kit_creation() {
+		// Arrange - save variables on the current (soon-to-be previous) kit.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Existing Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Simulate what site-settings runner does: create a new empty active kit.
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act - import with imported_data indicating a new kit was created.
+		$result = ( new Import_Runner() )->import(
+			[
+				'include' => [ 'settings' ],
+				'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - merged result on the new active kit should contain both existing and imported variables.
+		$new_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$new_repository = new Variables_Repository( $new_kit );
+		$updated_collection = $new_repository->load();
+
+		$this->assertCount( 3, $updated_collection->all() );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-existing' ) );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-123' ) );
+		$this->assertNotNull( $updated_collection->get( 'e-gv-456' ) );
+	}
+
+	public function test_import__merges_with_previous_kit_resolves_label_conflict() {
+		// Arrange - save a variable with the same label as one being imported.
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act.
+		( new Import_Runner() )->import(
+			[
+				'include' => [ 'settings' ],
+				'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - existing "Primary Color" preserved, imported "Primary Color" gets a suffix.
+		$new_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$new_repository = new Variables_Repository( $new_kit );
+		$updated_collection = $new_repository->load();
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Color_1', $labels );
+	}
 }

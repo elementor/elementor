@@ -38,6 +38,7 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
+export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -46,6 +47,7 @@ export { AttributesControl } from './components/promotions/attributes-control';
 export { PromotionTrigger } from './components/promotions/promotion-trigger';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
+export { StyledToggleButtonGroup, StyledToggleButton } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export {
 	Repeater,
@@ -58,6 +60,7 @@ export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 export { UnstableSizeField } from './components/size/unstable-size-field';
 export { NumberInput } from './components/number-input';
+export { SizeComponent } from './controls/size-control/size-component';
 
 // types
 export type { ControlComponent } from './create-control';

@@ -66,7 +66,6 @@ function getEmptyState(): OnboardingState {
 		exitType: null,
 		lastActiveTimestamp: null,
 		startedAt: null,
-		completedAt: null,
 		choices: getDefaultChoices(),
 		isLoading: false,
 		error: null,
@@ -82,7 +81,7 @@ function getEmptyState(): OnboardingState {
 }
 
 function buildStateFromConfig(
-	config: NonNullable< typeof window.elementorAppConfig >[ 'e-onboarding' ]
+	config: NonNullable< typeof window.elementorAppConfig >[ 'onboarding' ]
 ): OnboardingState {
 	if ( ! config ) {
 		return getEmptyState();
@@ -107,7 +106,6 @@ function buildStateFromConfig(
 		exitType: progress.exit_type ?? null,
 		lastActiveTimestamp: progress.last_active_timestamp ?? null,
 		startedAt: progress.started_at ?? null,
-		completedAt: progress.completed_at ?? null,
 		choices: { ...getDefaultChoices(), ...config.choices },
 		isLoading: false,
 		error: null,
@@ -133,7 +131,7 @@ export const slice = __createSlice( {
 	initialState: getEmptyState(),
 	reducers: {
 		initFromConfig: ( state ) => {
-			const config = window.elementorAppConfig?.[ 'e-onboarding' ];
+			const config = window.elementorAppConfig?.onboarding;
 
 			if ( config ) {
 				return buildStateFromConfig( config );
@@ -207,7 +205,6 @@ export const slice = __createSlice( {
 		},
 
 		completeOnboarding: ( state ) => {
-			state.completedAt = Date.now();
 			state.exitType = 'user_exit';
 		},
 

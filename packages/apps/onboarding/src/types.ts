@@ -39,7 +39,6 @@ export interface OnboardingProgress {
 	exitType: string | null;
 	lastActiveTimestamp: number | null;
 	startedAt: number | null;
-	completedAt: number | null;
 }
 
 export interface OnboardingChoices {
@@ -80,7 +79,6 @@ export interface OnboardingState {
 	exitType: string | null;
 	lastActiveTimestamp: number | null;
 	startedAt: number | null;
-	completedAt: number | null;
 	choices: OnboardingChoices;
 	isLoading: boolean;
 	error: string | null;

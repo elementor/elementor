@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useMemo } from 'react';
+import { type RefObject, useCallback, useEffect, useMemo } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -168,7 +168,7 @@ export const SizeControl = createControl(
 			}
 		};
 
-		const maybeClosePopup = React.useCallback( () => {
+		const maybeClosePopup = useCallback( () => {
 			if ( popupState && popupState.isOpen ) {
 				popupState.close();
 			}

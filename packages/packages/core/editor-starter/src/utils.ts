@@ -1,6 +1,6 @@
 import type { StarterConfig } from './types';
 
-const ONBOARDING_ASSETS_PATH = 'images/app/e-onboarding/';
+const ONBOARDING_ASSETS_PATH = 'images/app/onboarding/';
 
 export function getStarterConfig(): StarterConfig | null {
 	return ( ( window.elementor?.config as Record< string, unknown > )?.starter as StarterConfig | null ) ?? null;

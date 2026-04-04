@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Video_Control;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
@@ -73,6 +74,7 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 			])
 			->get();
 
+		// NOTE: restore the dependency when dependencies works in overridables
 		$poster_dependencies = Dependency_Manager::make()
 			->where([
 				'operator' => 'eq',
@@ -108,8 +110,14 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 				->enum( array_keys( self::get_preload_options() ) ),
 			'download' => Boolean_Prop_Type::make()->default( false )
 				->set_dependencies( $allow_download_dependencies ),
-			'start_time' => Number_Prop_Type::make()->default( null )->meta( 'suffix', 'SEC' ),
-			'end_time' => Number_Prop_Type::make()->default( null )->meta( 'suffix', 'SEC' ),
+			'start_time' => Number_Prop_Type::make()
+				->default( null )
+				->meta( Dynamic_Prop_Type::ignore() )
+				->meta( 'suffix', 'SEC' ),
+			'end_time' => Number_Prop_Type::make()
+				->default( null )
+				->meta( 'suffix', 'SEC' )
+				->meta( Dynamic_Prop_Type::ignore() ),
 			'poster_enabled' => Boolean_Prop_Type::make()->default( false ),
 			'poster' => Image_Prop_Type::make()
 				->default_size( 'medium_large' )

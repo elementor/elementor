@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 
 import { ComponentsUpgradeAlert } from '../components-upgrade-alert';
 
-const UPGRADE_URL = 'https://go.elementor.com/go-pro-components-create/';
+export const UPGRADE_URL = 'https://go.elementor.com/go-pro-components-exist-footer/';
 
 export function ComponentsProNotification() {
 	return (

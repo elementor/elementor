@@ -139,6 +139,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 				setCanSendEvents( true );
 			}
 
+			updateLibraryConnectConfig( data );
+
 			if ( shouldEnableTracking ) {
 				initializeAndEnableTracking( ( mp ) => {
 					( mp as { set_config?: ( c: object ) => void } )?.set_config?.( {
@@ -148,8 +150,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 					flushQueue();
 				} );
 			}
-
-			updateLibraryConnectConfig( data );
 
 			const result = await checkProInstallScreen();
 			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
@@ -176,7 +176,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			isConnected,
 			isGuest,
 		} );
-		window.dispatchEvent( new CustomEvent( 'e-onboarding-user-exit' ) );
+		window.dispatchEvent( new CustomEvent( 'onboarding-user-exit' ) );
 
 		updateProgress.mutate(
 			{ user_exit: true },

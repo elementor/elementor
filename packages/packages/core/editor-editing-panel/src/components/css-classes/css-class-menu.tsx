@@ -16,6 +16,7 @@ import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
+import { DuplicateClassMenuItem } from './duplicate-class-menu-item';
 import { LocalClassSubMenu } from './local-class-sub-menu';
 import { useUnapplyClass } from './use-apply-and-unapply-class';
 
@@ -179,10 +180,12 @@ function getMenuItemsByProvider( {
 	const providerActions = providerInstance?.actions;
 
 	const canUpdate = providerActions?.update;
+	const canDuplicate = providerActions?.create && providerActions?.get;
 	const canUnapply = ! fixed;
 
 	const actions = [
 		canUpdate && <RenameClassMenuItem key="rename-class" closeMenu={ closeMenu } />,
+		canDuplicate && <DuplicateClassMenuItem key="duplicate-class" closeMenu={ closeMenu } />,
 		canUnapply && <UnapplyClassMenuItem key="unapply-class" closeMenu={ closeMenu } />,
 	].filter( Boolean );
 
@@ -302,7 +305,7 @@ function RenameClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 			<MenuItemInfotip
 				showInfoTip={ ! isAllowed }
 				content={ __(
-					'With your current role, you can use existing classes but can’t modify them.',
+					"With your current role, you can use existing classes but can't modify them.",
 					'elementor'
 				) }
 			>

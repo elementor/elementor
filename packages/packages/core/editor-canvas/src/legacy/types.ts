@@ -1,3 +1,4 @@
+import { type Root } from 'react-dom/client';
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
@@ -203,6 +204,7 @@ type BackboneCollection< Model extends object > = {
 
 export type ElementModel = {
 	id: string;
+	originId?: string;
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
@@ -240,4 +242,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };

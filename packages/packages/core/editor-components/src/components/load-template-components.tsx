@@ -1,9 +1,18 @@
+import * as React from 'react';
 import { useEffect } from 'react';
-import { useLoadedTemplates } from '@elementor/editor-templates';
+import { isHandlingTemplateStyles, useLoadedTemplates } from '@elementor/editor-templates';
 
 import { loadComponentsAssets } from '../store/actions/load-components-assets';
 
 export const LoadTemplateComponents = () => {
+	if ( isHandlingTemplateStyles() ) {
+		return <LoadTemplateComponentsInternal />;
+	}
+
+	return null;
+};
+
+function LoadTemplateComponentsInternal() {
 	const templates = useLoadedTemplates();
 
 	useEffect( () => {
@@ -11,4 +20,4 @@ export const LoadTemplateComponents = () => {
 	}, [ templates ] );
 
 	return null;
-};
+}
