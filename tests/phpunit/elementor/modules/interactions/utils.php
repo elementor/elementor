@@ -97,4 +97,11 @@ trait Interactions_Utils {
 			'version' => 1,
 		] );
 	}
+
+	public function create_interactions_list_array( array $interactions ) {
+		return [
+			'items' => $interactions,
+			'version' => 1,
+		];
+	}
 }

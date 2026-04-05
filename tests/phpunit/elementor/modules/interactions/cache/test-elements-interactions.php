@@ -115,4 +115,37 @@ class Test_Elements_Interactions extends TestCase {
 			],
 		];
 	}
+
+	// ------------------------------------------------------------------------
+
+	public function test_parse_from__with_interactions_as_array() {
+		$parser = new Elements_Interactions();
+		$parser->parse_from( $this->sample_payload_with_interactions_as_array() );
+		$this->assertEquals( [
+			'element-1' => [
+				$this->create_interaction_item( 'id-1', [
+					'trigger' => $this->create_trigger(),
+					'animation' => $this->create_animation(),
+				] ),
+			],
+		], $parser->all() );
+	}
+
+	private function sample_payload_with_interactions_as_array() {
+		return [
+			'elements' => [
+				[
+					'id' => 'element-1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => $this->create_interactions_list_array( [
+						$this->create_interaction_item( 'id-1', [
+							'trigger' => $this->create_trigger(),
+							'animation' => $this->create_animation(),
+						] ),
+					] ),
+				],
+			],
+		];
+	}
 }

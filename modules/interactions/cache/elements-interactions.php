@@ -56,6 +56,8 @@ class Elements_Interactions {
 
 		if ( is_string( $element['interactions'] ) ) {
 			$raw_value = json_decode( $element['interactions'], true );
+		} elseif ( is_array( $element['interactions'] ) ) {
+			$raw_value = $element['interactions'];
 		}
 
 		if ( ! is_array( $raw_value ) ) {

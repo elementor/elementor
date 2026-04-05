@@ -51,8 +51,10 @@ class Interactions_Frontend_Handler {
 		$interactions_postmeta = new Interactions_Postmeta();
 		$cached_rows = $interactions_postmeta->load_content( $post_id );
 
-		if ( null === $cached_rows ) {
-			$cached_rows = $interactions_postmeta->process_content( $post_id, $elements_data );
+		if ( empty( $cached_rows ) ) {
+			$cached_rows = $interactions_postmeta->process_content( $post_id, [
+				'elements' => $elements_data,
+			] );
 		}
 
 		$collector = Interactions_Collector::instance();
