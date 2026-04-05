@@ -148,4 +148,6 @@ class Test_Elements_Interactions extends TestCase {
 			],
 		];
 	}
+
+	// ------------------------------------------------------------------------
 }

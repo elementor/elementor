@@ -52,22 +52,28 @@ class Elements_Interactions {
 			return null;
 		}
 
-		$raw_value = null;
+		$interactions_value = $this->decode_interactions( $element['interactions'] );
 
-		if ( is_string( $element['interactions'] ) ) {
-			$raw_value = json_decode( $element['interactions'], true );
-		} elseif ( is_array( $element['interactions'] ) ) {
-			$raw_value = $element['interactions'];
-		}
-
-		if ( ! is_array( $raw_value ) ) {
+		if ( ! is_array( $interactions_value ) ) {
 			return null;
 		}
 
-		if ( ! isset( $raw_value['items'] ) || ! is_array( $raw_value['items'] ) ) {
+		if ( ! isset( $interactions_value['items'] ) || ! is_array( $interactions_value['items'] ) ) {
 			return null;
 		}
 
-		return $raw_value['items'];
+		return $interactions_value['items'];
+	}
+
+	private function decode_interactions( $source ) {
+		if ( is_string( $source ) ) {
+			$decoded = json_decode( $source, true );
+
+			if ( JSON_ERROR_NONE === json_last_error() && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		return $source;
 	}
 }
