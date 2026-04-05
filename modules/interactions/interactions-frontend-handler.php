@@ -53,16 +53,6 @@ class Interactions_Frontend_Handler {
 
 		if ( null === $cached_rows ) {
 			$cached_rows = $interactions_postmeta->process_content( $post_id, $elements_data );
-
-			do_action( 'local-wp-debug/write', [
-				'subject' => 'Interactions_Frontend_Handler::collect_document_interactions[build]',
-				'payload' => $interactions_postmeta->load_content( $post_id ),
-			] );
-		} else {
-			do_action( 'local-wp-debug/write', [
-				'subject' => 'Interactions_Frontend_Handler::collect_document_interactions[load]',
-				'payload' => $interactions_postmeta->load_content( $post_id ),
-			] );
 		}
 
 		$collector = Interactions_Collector::instance();
@@ -92,11 +82,6 @@ class Interactions_Frontend_Handler {
 		}
 
 		$this->enqueue_interactions_assets();
-
-		do_action( 'local-wp-debug/write', [
-			'subject' => 'Interactions_Frontend_Handler::print_interactions_data',
-			'payload' => $elements_with_interactions,
-		] );
 
 		// Output as JSON script tag
 		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
