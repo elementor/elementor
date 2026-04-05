@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Plugin;
+use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,16 +48,26 @@ class Interactions_Frontend_Handler {
 			return $elements_data;
 		}
 
-		$collector = Interactions_Collector::instance();
+		$interactions_postmeta = new Interactions_Postmeta();
+		$cached_rows = $interactions_postmeta->load_content( $post_id );
 
-		$cached_rows = Interactions_Cache::get_valid_rows( $post_id );
+		if ( null === $cached_rows ) {
+			$cached_rows = $interactions_postmeta->process_content( $post_id, $elements_data );
 
-		if ( null !== $cached_rows ) {
-			foreach ( $cached_rows as $row ) {
-				$collector->register( $row['elementId'], [ 'items' => $row['interactions'] ] );
-			}
+			do_action( 'local-wp-debug/write', [
+				'subject' => 'Interactions_Frontend_Handler::collect_document_interactions[build]',
+				'payload' => $interactions_postmeta->load_content( $post_id ),
+			] );
 		} else {
-			Interactions_Data_Builder::collect_into_collector( $elements_data, $collector );
+			do_action( 'local-wp-debug/write', [
+				'subject' => 'Interactions_Frontend_Handler::collect_document_interactions[load]',
+				'payload' => $interactions_postmeta->load_content( $post_id ),
+			] );
+		}
+
+		$collector = Interactions_Collector::instance();
+		foreach ( $cached_rows as $element_id => $interactions ) {
+			$collector->register( $element_id, $interactions );
 		}
 
 		return $elements_data;
@@ -74,29 +85,7 @@ class Interactions_Frontend_Handler {
 			return;
 		}
 
-		$collector = Interactions_Collector::instance();
-		$all_interactions = $collector->get_all();
-
-		if ( empty( $all_interactions ) ) {
-			return;
-		}
-
-		// Format: array of elements, each with elementId, dataId, and cleaned interactions
-		$elements_with_interactions = [];
-		foreach ( $all_interactions as $element_id => $interactions ) {
-			$items = Interactions_Data_Builder::extract_interaction_items( $interactions );
-
-			if ( empty( $items ) ) {
-				continue;
-			}
-
-			// Build element entry with elementId, dataId, and cleaned interactions array
-			$elements_with_interactions[] = [
-				'elementId' => $element_id,
-				'dataId' => $element_id,
-				'interactions' => $items,
-			];
-		}
+		$elements_with_interactions = $this->elements_with_interactions();
 
 		if ( empty( $elements_with_interactions ) ) {
 			return;
@@ -104,11 +93,32 @@ class Interactions_Frontend_Handler {
 
 		$this->enqueue_interactions_assets();
 
+		do_action( 'local-wp-debug/write', [
+			'subject' => 'Interactions_Frontend_Handler::print_interactions_data',
+			'payload' => $elements_with_interactions,
+		] );
+
 		// Output as JSON script tag
 		$json_data = wp_json_encode( $elements_with_interactions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON data is already encoded
 		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
+	}
+
+	private function elements_with_interactions() {
+		$all_interactions = Interactions_Collector::instance()->get_all();
+
+		$elements_with_interactions = [];
+
+		foreach ( $all_interactions as $element_id => $interactions ) {
+			$elements_with_interactions[] = [
+				'elementId' => $element_id,
+				'dataId' => $element_id,
+				'interactions' => $interactions,
+			];
+		}
+
+		return $elements_with_interactions;
 	}
 
 	private function get_interactions_config() {

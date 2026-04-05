@@ -23,6 +23,8 @@ class Interactions_Postmeta {
 		$elements_interactions = $this->extract_elements_interactions( $data );
 
 		$this->save_postmeta( $post_id, $elements_interactions );
+
+		return $elements_interactions;
 	}
 
 	private function save_postmeta( $post_id, array $interactions ) {
