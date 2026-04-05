@@ -355,6 +355,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.1 - 2026-04-01 =
+
+* Fix: Interactions on canvas do not work across various elements - Atomic Editor
+* Fix: Inline editing affects button width when clicking inside a Tabs content container - Atomic Editor
+* Fix: Styling changes to atomic elements appear on canvas only after refresh in Firefox browser - Atomic Editor
+* Fix: Importing classes with duplicate names prevents elements from being edited - Atomic Editor
+
 = 4.0.0 - 2026-03-30 =
 
 * New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
