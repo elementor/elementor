@@ -3,6 +3,8 @@
 namespace Elementor\Modules\GlobalClasses\Abilities;
 
 use Elementor\Core\Abilities\Abstract_Ability;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -144,8 +146,9 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 	 * Normalize variants:
 	 * - custom_css: accept plain string or structured ['raw' => '<base64>'] format.
 	 * - meta.state: always present as null for default state; reject "normal" (invalid).
+	 * - props: coerce flex/text-align mistakes, then validate against Style_Schema.
 	 *
-	 * @throws \InvalidArgumentException When meta.state is "normal".
+	 * @throws \InvalidArgumentException When meta.state is "normal" or props fail validation.
 	 */
 	private function normalize_variants( array $variants ): array {
 		foreach ( $variants as &$variant ) {
@@ -162,9 +165,59 @@ class Set_Global_Classes_Ability extends Abstract_Ability {
 					$variant['meta']['state'] = null;
 				}
 			}
+
+			if ( ! empty( $variant['props'] ) && is_array( $variant['props'] ) ) {
+				$this->coerce_class_props( $variant['props'] );
+
+				$parser = Props_Parser::make( Style_Schema::get() );
+				$result = $parser->validate( $variant['props'] );
+				if ( ! $result->is_valid() ) {
+					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+					throw new \InvalidArgumentException( 'Global class prop validation failed: ' . implode( ', ', $result->errors() ) );
+				}
+			}
 		}
 		unset( $variant );
 
 		return $variants;
+	}
+
+	/**
+	 * Coerce predictable style prop mistakes in a global class props array.
+	 *
+	 * @param array $props Props array (modified in-place).
+	 */
+	private function coerce_class_props( array &$props ): void {
+		// Coerce flex: {"$$type":"string","value":"<number>"} → correct flex object.
+		if (
+			isset( $props['flex'] ) &&
+			is_array( $props['flex'] ) &&
+			( $props['flex']['$$type'] ?? '' ) === 'string' &&
+			isset( $props['flex']['value'] ) &&
+			is_numeric( $props['flex']['value'] )
+		) {
+			$props['flex'] = [
+				'$$type' => 'flex',
+				'value'  => [
+					'flexGrow' => [
+						'$$type' => 'number',
+						'value'  => (float) $props['flex']['value'],
+					],
+				],
+			];
+		}
+
+		// Coerce text-align: "left" → "start", "right" → "end".
+		if (
+			isset( $props['text-align'] ) &&
+			is_array( $props['text-align'] ) &&
+			( $props['text-align']['$$type'] ?? '' ) === 'string' &&
+			isset( $props['text-align']['value'] )
+		) {
+			$map = [ 'left' => 'start', 'right' => 'end' ];
+			if ( isset( $map[ $props['text-align']['value'] ] ) ) {
+				$props['text-align']['value'] = $map[ $props['text-align']['value'] ];
+			}
+		}
 	}
 }

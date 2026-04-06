@@ -119,6 +119,15 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 		$this->collect_local_style_ids( $elements, $local_ids );
 		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
+		// Coerce common style prop mistakes (flex, text-align) before validating.
+		$this->coerce_style_props( $elements );
+
+		$style_errors = $this->validate_element_styles( $elements );
+		if ( ! empty( $style_errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \InvalidArgumentException( 'Style prop validation failed: ' . implode( '; ', $style_errors ) );
+		}
+
 		$saved = $document->save( [ 'elements' => $elements ] );
 
 		return [
@@ -126,5 +135,4 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 			'success' => (bool) $saved,
 		];
 	}
-
 }

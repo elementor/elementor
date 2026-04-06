@@ -78,6 +78,8 @@ trait Element_Tree_Helpers {
 
 	/**
 	 * Recursively walk a settings object, resolving labels inside $$type:"classes" nodes.
+	 *
+	 * @throws \InvalidArgumentException When a label cannot be resolved.
 	 */
 	private function resolve_class_labels_in_settings( array &$settings, array $label_to_id ): void {
 		if ( isset( $settings['$$type'] ) && 'classes' === $settings['$$type'] && isset( $settings['value'] ) && is_array( $settings['value'] ) ) {
@@ -209,6 +211,124 @@ trait Element_Tree_Helpers {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Walk the element tree and coerce common style prop mistakes to their correct format.
+	 *
+	 * Coercions applied:
+	 * - flex: {"$$type":"string","value":"<number>"} → {"$$type":"flex","value":{"flexGrow":{"$$type":"number","value":<n>}}}
+	 * - text-align: value "left" → "start", "right" → "end" (CSS logical values)
+	 *
+	 * @param array $elements Element tree (modified in-place).
+	 */
+	private function coerce_style_props( array &$elements ): void {
+		foreach ( $elements as &$el ) {
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				foreach ( $el['styles'] as &$style ) {
+					if ( empty( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
+						continue;
+					}
+					foreach ( $style['variants'] as &$variant ) {
+						if ( empty( $variant['props'] ) || ! is_array( $variant['props'] ) ) {
+							continue;
+						}
+						$this->coerce_props( $variant['props'] );
+					}
+					unset( $variant );
+				}
+				unset( $style );
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->coerce_style_props( $el['elements'] );
+			}
+		}
+		unset( $el );
+	}
+
+	/**
+	 * Apply coercions to a single props array in-place.
+	 *
+	 * @param array $props Props array (modified in-place).
+	 */
+	private function coerce_props( array &$props ): void {
+		// Coerce flex: {"$$type":"string","value":"<number>"} → correct flex object.
+		if (
+			isset( $props['flex'] ) &&
+			is_array( $props['flex'] ) &&
+			( $props['flex']['$$type'] ?? '' ) === 'string' &&
+			isset( $props['flex']['value'] ) &&
+			is_numeric( $props['flex']['value'] )
+		) {
+			$props['flex'] = [
+				'$$type' => 'flex',
+				'value'  => [
+					'flexGrow' => [
+						'$$type' => 'number',
+						'value'  => (float) $props['flex']['value'],
+					],
+				],
+			];
+		}
+
+		// Coerce text-align: "left" → "start", "right" → "end".
+		if (
+			isset( $props['text-align'] ) &&
+			is_array( $props['text-align'] ) &&
+			( $props['text-align']['$$type'] ?? '' ) === 'string' &&
+			isset( $props['text-align']['value'] )
+		) {
+			$map = [ 'left' => 'start', 'right' => 'end' ];
+			if ( isset( $map[ $props['text-align']['value'] ] ) ) {
+				$props['text-align']['value'] = $map[ $props['text-align']['value'] ];
+			}
+		}
+	}
+
+	/**
+	 * Walk the element tree and validate all inline element styles against Style_Schema.
+	 *
+	 * Returns an array of error strings. An empty array means all styles are valid.
+	 *
+	 * @param array $elements Element tree.
+	 * @return string[] Validation error messages.
+	 */
+	private function validate_element_styles( array $elements ): array {
+		$errors = [];
+		$parser = \Elementor\Modules\AtomicWidgets\Parsers\Style_Parser::make(
+			\Elementor\Modules\AtomicWidgets\Styles\Style_Schema::get()
+		);
+		$this->collect_style_errors( $elements, $parser, $errors );
+		return $errors;
+	}
+
+	/**
+	 * Recursively collect style validation errors from the element tree.
+	 *
+	 * @param array    $elements Element tree.
+	 * @param object   $parser   Style_Parser instance (reused across recursion).
+	 * @param string[] $errors   Accumulator (modified in-place).
+	 */
+	private function collect_style_errors( array $elements, object $parser, array &$errors ): void {
+		foreach ( $elements as $el ) {
+			$el_id = $el['id'] ?? '(unknown)';
+
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				foreach ( $el['styles'] as $style_id => $style ) {
+					$result = $parser->parse( $style );
+					if ( ! $result->is_valid() ) {
+						foreach ( $result->errors() as $error ) {
+							$errors[] = "Element \"$el_id\" style \"$style_id\": $error";
+						}
+					}
+				}
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->collect_style_errors( $el['elements'], $parser, $errors );
+			}
+		}
 	}
 
 	/**

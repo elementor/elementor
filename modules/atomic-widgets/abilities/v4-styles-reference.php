@@ -28,6 +28,8 @@ class V4_Styles_Reference {
 			'SIMPLE UNIFORM VALUES: For uniform border-width/border-radius/padding, pass {"$$type":"size","value":{...}} directly (schema is Union type).',
 			'SHADOW SIZE FIELDS: box-shadow hOffset/vOffset/blur/spread are {"$$type":"size","value":{"size":n,"unit":"px"}} objects. NOT plain strings.',
 			'FONT FAMILY: font-family is String_Prop_Type — use {"$$type":"string","value":"Arial, sans-serif"} or {"$$type":"global-font-variable","value":"variable-id"}.',
+			'FLEX PROP: flex uses $$type:"flex" with an object value — NOT $$type:"string". Example: {"$$type":"flex","value":{"flexGrow":{"$$type":"number","value":1}}}. Passing {"$$type":"string","value":"1"} is INVALID and will be rejected.',
+			'TEXT-ALIGN ENUM: text-align only accepts "start", "center", "end", "justify". "left" and "right" are INVALID — use "start" for left-aligned text, "end" for right-aligned.',
 			'STYLES LOCATION: Styles are stored INLINE in each element\'s own "styles" property — there is NO separate _elementor_styles post meta.',
 			'STYLE ID CONVENTION: Style ID = "e-{elementId}-s". The element settings.classes value references this same ID.',
 			'VALIDATE FIRST: Always use validate_props before saving. valid=true + non-empty declarations = correct props.',
@@ -38,7 +40,7 @@ class V4_Styles_Reference {
 	public static function get_prop_types(): array {
 		return [
 			'string' => [
-				'description' => 'Plain string. Used for flex-direction, justify-content, align-items, text-align, font-weight, text-transform, border-style, display, position, font-family, cursor, overflow, clip-path, font-style, flex-wrap.',
+				'description' => 'Plain string. Used for flex-direction, justify-content, align-items, font-weight, text-transform, border-style, display, position, font-family, cursor, overflow, clip-path, font-style, flex-wrap. NOTE: text-align has an enum constraint — see the dedicated text-align entry below, not this generic string type.',
 				'format'      => [
 					'$$type' => 'string',
 					'value' => '<string>',
@@ -521,6 +523,51 @@ class V4_Styles_Reference {
 					],
 				],
 			],
+
+			'flex' => [
+				'description' => 'CSS flex shorthand for flex items (e.g. flex: 1). Uses $$type:"flex" with an object value containing flexGrow, flexShrink, and flexBasis. All sub-fields are optional.',
+				'warning'     => 'DO NOT use $$type:"string" for flex. {"$$type":"string","value":"1"} is INVALID and will be rejected. Always use the object format below.',
+				'format'      => [
+					'$$type' => 'flex',
+					'value'  => [
+						'flexGrow'   => [ '$$type' => 'number', 'value' => 1 ],
+						'flexShrink' => [ '$$type' => 'number', 'value' => 0 ],
+						'flexBasis'  => [ '$$type' => 'size', 'value' => [ 'size' => 0, 'unit' => '%' ] ],
+					],
+				],
+				'examples'    => [
+					'flex: 1 (grow to fill)' => [
+						'$$type' => 'flex',
+						'value'  => [
+							'flexGrow' => [ '$$type' => 'number', 'value' => 1 ],
+						],
+					],
+					'flex: 0 0 auto (fixed size)' => [
+						'$$type' => 'flex',
+						'value'  => [
+							'flexGrow'   => [ '$$type' => 'number', 'value' => 0 ],
+							'flexShrink' => [ '$$type' => 'number', 'value' => 0 ],
+							'flexBasis'  => [ '$$type' => 'size', 'value' => [ 'size' => 100, 'unit' => '%' ] ],
+						],
+					],
+				],
+			],
+
+			'text-align' => [
+				'description' => 'Horizontal text alignment. Uses $$type:"string" with a restricted enum — only 4 values are valid.',
+				'warning'     => '"left" and "right" are INVALID enum values. Use "start" (left-aligned) and "end" (right-aligned) — these are CSS logical values.',
+				'enum'        => [ 'start', 'center', 'end', 'justify' ],
+				'format'      => [
+					'$$type' => 'string',
+					'value'  => 'start|center|end|justify',
+				],
+				'examples'    => [
+					'left-aligned'  => [ '$$type' => 'string', 'value' => 'start' ],
+					'centered'      => [ '$$type' => 'string', 'value' => 'center' ],
+					'right-aligned' => [ '$$type' => 'string', 'value' => 'end' ],
+					'justified'     => [ '$$type' => 'string', 'value' => 'justify' ],
+				],
+			],
 		];
 	}
 
@@ -529,7 +576,7 @@ class V4_Styles_Reference {
 			'note'             => 'Full list of style prop keys from Style_Schema::get(). Use these exact key names in your props objects.',
 			'size_props'       => [ 'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height', 'overflow', 'aspect-ratio', 'object-fit' ],
 			'position_props'   => [ 'position', 'inset-block-start', 'inset-inline-end', 'inset-block-end', 'inset-inline-start', 'z-index', 'scroll-margin-top' ],
-			'typography_props' => [ 'font-family', 'font-weight', 'font-size', 'color', 'letter-spacing', 'word-spacing', 'column-count', 'column-gap', 'line-height', 'text-align', 'font-style', 'text-decoration', 'text-transform', 'direction', 'stroke', 'all', 'cursor' ],
+			'typography_props' => [ 'font-family', 'font-weight', 'font-size', 'color', 'letter-spacing', 'word-spacing', 'column-count', 'column-gap', 'line-height', 'text-align (enum: start|center|end|justify — NOT left/right)', 'font-style', 'text-decoration', 'text-transform', 'direction', 'stroke', 'all', 'cursor' ],
 			'spacing_props'    => [
 				'padding' => 'Union(dimensions|size)',
 				'margin'  => 'Union(dimensions|size)',
@@ -537,7 +584,7 @@ class V4_Styles_Reference {
 			'border_props'     => [ 'border-radius', 'border-width', 'border-color', 'border-style', 'outline-width', 'outline-color', 'outline-style', 'outline-offset' ],
 			'background_props' => [ 'background' ],
 			'effects_props'    => [ 'mix-blend-mode', 'box-shadow', 'opacity', 'filter', 'backdrop-filter', 'transform', 'transition' ],
-			'layout_props'     => [ 'display', 'flex-direction', 'gap', 'flex-wrap', 'flex' ],
+			'layout_props'     => [ 'display', 'flex-direction', 'gap', 'flex-wrap', 'flex ($$type:"flex" object — see prop_types.flex — NOT $$type:"string")' ],
 			'alignment_props'  => [ 'justify-content', 'justify-items', 'align-content', 'align-items', 'align-self', 'order' ],
 			'special_props'    => [ 'content', 'appearance', 'clip-path' ],
 		];

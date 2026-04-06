@@ -108,6 +108,15 @@ class Update_Element_Ability extends Abstract_Ability {
 			];
 		}
 
+		// Coerce common style prop mistakes (flex, text-align) before validating.
+		$this->coerce_style_props( $elements );
+
+		$style_errors = $this->validate_element_styles( $elements );
+		if ( ! empty( $style_errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \InvalidArgumentException( 'Style prop validation failed: ' . implode( '; ', $style_errors ) );
+		}
+
 		$saved = $document->save( [ 'elements' => $elements ] );
 
 		return [
@@ -116,5 +125,4 @@ class Update_Element_Ability extends Abstract_Ability {
 			'success'    => (bool) $saved,
 		];
 	}
-
 }
