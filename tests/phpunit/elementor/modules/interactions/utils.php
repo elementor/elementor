@@ -91,17 +91,14 @@ trait Interactions_Utils {
 		];
 	}
 
-	public function create_interactions_list( array $interactions ) {
-		return json_encode( [
-			'items' => $interactions,
-			'version' => 1,
-		] );
-	}
-
 	public function create_interactions_list_array( array $interactions ) {
 		return [
 			'items' => $interactions,
 			'version' => 1,
 		];
+	}
+
+	public function create_interactions_list( array $interactions ) {
+		return json_encode( $this->create_interactions_list_array( $interactions ) );
 	}
 }
