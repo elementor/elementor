@@ -120,7 +120,7 @@ class Module extends BaseModule {
 			'userName' => $this->get_user_display_name(),
 			'steps' => $steps,
 			'uiTheme' => $this->get_ui_theme_preference(),
-			'translations' => $this->get_translated_strings(),
+			'translations' => self::get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
 			'urls' => [
 				'dashboard' => admin_url(),
@@ -273,8 +273,8 @@ class Module extends BaseModule {
 		} ) );
 	}
 
-	private function get_translated_strings(): array {
-		$locale = $this->get_onboarding_locale();
+	public static function get_translated_strings(): array {
+		$locale = self::get_onboarding_locale();
 
 		$api = new EditorAssetsAPI( [
 			EditorAssetsAPI::ASSETS_DATA_URL => self::ASSETS_BASE_URL . $locale . '.json',
@@ -285,7 +285,7 @@ class Module extends BaseModule {
 		return $api->get_assets_data();
 	}
 
-	private function get_onboarding_locale(): string {
+	public static function get_onboarding_locale(): string {
 		static $flipped_locales = null;
 
 		if ( null === $flipped_locales ) {

@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\SiteBuilder;
 
+use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
@@ -48,6 +49,8 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'siteTitle' => get_bloginfo( 'name' ),
+			'siteAbout' => $this->get_site_about(),
 			'siteIdentifier' => Site_Identity::get_id(),
 		];
 
@@ -58,6 +61,34 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
+
+	private const SITE_ABOUT_TRANSLATION_KEYS = [
+		'small_business' => 'steps.site_about.option_small_med_business',
+		'online_store' => 'steps.site_about.option_online_store',
+		'company_site' => 'steps.site_about.option_company_site',
+		'blog' => 'steps.site_about.option_blog',
+		'landing_page' => 'steps.site_about.option_landing_page',
+		'booking' => 'steps.site_about.option_booking',
+		'organization' => 'steps.site_about.option_organization',
+		'other' => 'steps.site_about.option_other',
+	];
+
+	private function get_site_about(): array {
+		$choices = get_option( 'elementor_onboarding_choices', [] );
+		$keys = $choices['site_about'] ?? [];
+
+		if ( empty( $keys ) ) {
+			return [];
+		}
+
+		$strings = OnboardingModule::get_translated_strings();
+
+		return array_map( function ( $key ) use ( $strings ) {
+			$translation_key = self::SITE_ABOUT_TRANSLATION_KEYS[ $key ] ?? '';
+
+			return $strings[ $translation_key ] ?? $key;
+		}, $keys );
 	}
 
 	private function get_iframe_url(): string {

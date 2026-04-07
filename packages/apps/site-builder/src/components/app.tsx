@@ -26,8 +26,16 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
+				page: {
+					url: window.location.href,
+					elementorAiCurrentContext: {
+						site: {
+							siteTitle: config?.siteTitle ?? '',
+							siteAbout: config?.siteAbout?.join( ' ' ) ?? '',
+						},
+					},
+				},
 				siteIdentifier: config?.siteIdentifier,
-				page: { url: window.location.href },
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},

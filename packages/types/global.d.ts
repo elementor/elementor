@@ -163,6 +163,8 @@ declare global {
 		'site-builder'?: {
 			iframeUrl?: string;
 			isAdmin?: boolean;
+			siteTitle?: string;
+			siteAbout?: string[];
 			siteIdentifier?: string;
 			connectAuth?: {
 					signature: string;
