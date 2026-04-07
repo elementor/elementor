@@ -185,13 +185,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'user_exit',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
@@ -204,8 +198,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		isConnected,
 		isGuest,
 		onClose,
-		stepId,
-		trackErrorReported,
 		trackSummary,
 		updateProgress,
 	] );
@@ -239,18 +231,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			},
 			{
 				onSuccess: redirectToNewPage,
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'complete_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					redirectToNewPage();
 				},
 			}
 		);
-	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage, trackErrorReported ] );
+	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage ] );
 
 	const handleSkip = useCallback( () => {
 		trackSkipClicked( stepId );
@@ -273,13 +259,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: redirectToNewPage,
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'skip_and_complete',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						redirectToNewPage();
 					},
 				}
@@ -297,13 +277,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				onSuccess: () => {
 					actions.nextStep();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'skip_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.nextStep();
 				},
 			}
@@ -318,7 +292,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		stepId,
 		stepIndex,
 		totalSteps,
-		trackErrorReported,
 		trackSkipClicked,
 		trackSummary,
 		updateProgress,
@@ -327,18 +300,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData, {
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'save',
-						targetName: Object.keys( choiceData )[ 0 ] ?? stepId,
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to save choices',
-					} );
-				},
-			} );
+			updateChoices.mutate( choiceData );
 		},
-		[ updateChoices, trackErrorReported, stepId ]
+		[ updateChoices ]
 	);
 
 	const handleContinue = useCallback(
@@ -418,13 +382,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'complete_step',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
