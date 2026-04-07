@@ -16,6 +16,7 @@ const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number 
 		snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 		use: {
 			...devices[ 'Desktop Chrome' ],
+			viewport: { width: 1920, height: 1080 },
 			launchOptions: {
 				args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 			},
