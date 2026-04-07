@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import type { ExtendedWindow } from '@elementor/editor-components';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { TrackingProvider } from '../analytics/tracking-context';
 import { initFromConfig, registerOnboardingSlice } from '../store';
+import type { ExtendedWindow } from '../types';
 import { AppContent } from './app-content';
 import { ToastProvider } from './toast/toast-context';
 
