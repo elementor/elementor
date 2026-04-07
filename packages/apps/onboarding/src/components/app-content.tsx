@@ -191,16 +191,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 			}
 		);
-	}, [
-		actions,
-		choices,
-		completedSteps,
-		isConnected,
-		isGuest,
-		onClose,
-		trackSummary,
-		updateProgress,
-	] );
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
 
 	function handleBack() {
 		trackBackClicked( stepId );
