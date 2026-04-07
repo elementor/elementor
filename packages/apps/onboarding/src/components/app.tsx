@@ -50,10 +50,7 @@ export function App( props: AppProps ) {
 
 	const uiTheme = window.elementorAppConfig?.onboarding?.uiTheme ?? 'auto';
 	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
-	const isRtl =
-		( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ??
-		window.elementorFrontend?.config?.is_rtl ??
-		false;
+	const isRtl = ( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ?? false;
 
 	return (
 		<StoreProvider store={ store }>
