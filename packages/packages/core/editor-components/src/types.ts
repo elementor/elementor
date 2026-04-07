@@ -72,6 +72,9 @@ export type ElementorStorage = {
 
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
+		config: {
+			isRTL?: boolean;
+		};
 		eventsManager: {
 			config: {
 				locations: Record< string, string | Record< string, string > >;

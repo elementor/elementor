@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
+import type { ExtendedWindow } from '@elementor/editor-components';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { TrackingProvider } from '../analytics/tracking-context';
 import { initFromConfig, registerOnboardingSlice } from '../store';
-import { isRtl } from '../utils/is-rtl';
 import { AppContent } from './app-content';
 import { ToastProvider } from './toast/toast-context';
 
@@ -50,11 +50,13 @@ export function App( props: AppProps ) {
 
 	const uiTheme = window.elementorAppConfig?.onboarding?.uiTheme ?? 'auto';
 	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
+	const isRtl = ( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ??
+		window.elementorFrontend?.config?.is_rtl ?? false;
 
 	return (
 		<StoreProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<DirectionProvider rtl={ isRtl() }>
+				<DirectionProvider rtl={ isRtl }>
 					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<ToastProvider>
 							<TrackingProvider>
