@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useMemo } from 'react';
+import type { ExtendedWindow } from '@elementor/editor-components';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __getStore, __StoreProvider as StoreProvider } from '@elementor/store';
-import type { ExtendedWindow } from '@elementor/editor-components';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { TrackingProvider } from '../analytics/tracking-context';
@@ -50,8 +50,10 @@ export function App( props: AppProps ) {
 
 	const uiTheme = window.elementorAppConfig?.onboarding?.uiTheme ?? 'auto';
 	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
-	const isRtl = ( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ??
-		window.elementorFrontend?.config?.is_rtl ?? false;
+	const isRtl =
+		( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ??
+		window.elementorFrontend?.config?.is_rtl ??
+		false;
 
 	return (
 		<StoreProvider store={ store }>
