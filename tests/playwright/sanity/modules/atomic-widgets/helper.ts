@@ -82,9 +82,21 @@ export class AtomicHelper {
 	}
 
 	public async isNewTabSwitchOn() {
-		const classList = await this.getNewTabSwitch().getAttribute( 'class' );
+		const switchLocator = this.getNewTabSwitch();
 
-		return !! classList.split( ' ' ).includes( 'Mui-checked' );
+		if ( 0 === await switchLocator.count() ) {
+			return false;
+		}
+
+		const first = switchLocator.first();
+
+		if ( ! await first.isVisible() ) {
+			return false;
+		}
+
+		const classList = await first.getAttribute( 'class' );
+
+		return !! classList?.split( ' ' ).includes( 'Mui-checked' );
 	}
 
 	public async addAtomicElement( elementType: ElementType, container: string = 'document' ) {

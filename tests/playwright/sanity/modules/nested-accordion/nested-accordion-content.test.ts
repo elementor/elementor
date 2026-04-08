@@ -168,7 +168,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 				await editor.publishAndViewPage();
 				const firstItem = page.locator( '.e-n-accordion-item' ).first();
 				await editor.isUiStable( firstItem );
-				await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem );
+				await expectScreenshotToMatchLocator( 'nested-accordion-fe-no-icons.png', firstItem, { snapshotViewportPage: page } );
 			} );
 		} );
 

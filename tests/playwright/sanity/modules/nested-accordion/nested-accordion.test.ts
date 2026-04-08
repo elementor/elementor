@@ -172,7 +172,7 @@ test.describe( 'Nested Accordion tests @nested-accordion', () => {
 
 		await test.step( 'Widget FrontEnd Screenshot matches intended design', async () => {
 			await editor.publishAndViewPage();
-			await expectScreenshotToMatchLocator( `nested-accordion-title-and-icons-fe.png`, page.locator( '.e-n-accordion' ).first() );
+			await expectScreenshotToMatchLocator( `nested-accordion-title-and-icons-fe.png`, page.locator( '.e-n-accordion' ).first(), { snapshotViewportPage: page } );
 		} );
 	} );
 

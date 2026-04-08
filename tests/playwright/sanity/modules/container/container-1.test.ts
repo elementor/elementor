@@ -1,8 +1,22 @@
-import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { getElementSelector } from '../../../assets/elements-utils';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
+
+async function dragPreviewWidgetsByMouse( page: Page, source: Locator, target: Locator ) {
+	await source.scrollIntoViewIfNeeded();
+	await target.scrollIntoViewIfNeeded();
+	const from = await source.boundingBox();
+	const to = await target.boundingBox();
+	if ( ! from || ! to ) {
+		throw new Error( 'DnD: missing bounding box for source or target' );
+	}
+	await page.mouse.move( from.x + ( from.width / 2 ), from.y + ( from.height / 2 ) );
+	await page.mouse.down();
+	await page.mouse.move( to.x + ( to.width / 2 ), to.y + ( to.height / 2 ), { steps: 15 } );
+	await page.mouse.up();
+}
 
 test.describe( 'Container tests #1 @container', () => {
 	test( 'Background slideshow', async ( { page, apiRequests }, testInfo ) => {
@@ -34,27 +48,30 @@ test.describe( 'Container tests #1 @container', () => {
 	} );
 
 	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 
-		// Act.
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		const button = await editor.addWidget( { widgetType: widgets.button, container: containerId } );
 		const heading = await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
 		const image = await editor.addWidget( { widgetType: widgets.image, container: containerId } );
 
-		// Act - Move the button to be last.
-		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996]
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
-		);
-		await editor.previewFrame.dragAndDrop(
-			getElementSelector( button ),
-			getElementSelector( image ),
-		);
+		const preview = editor.previewFrame;
+		const buttonInPreview = preview.locator( getElementSelector( button ) );
+		const imageInPreview = preview.locator( getElementSelector( image ) );
+		const containerInPreview = preview.locator( getElementSelector( containerId ) );
+
+		await page.locator( '#elementor-preview-iframe' ).scrollIntoViewIfNeeded();
+		await containerInPreview.scrollIntoViewIfNeeded();
+		await buttonInPreview.evaluate( ( el ) => el.scrollIntoView( { block: 'center', inline: 'center' } ) );
+		await imageInPreview.evaluate( ( el ) => el.scrollIntoView( { block: 'center', inline: 'center' } ) );
+
+		await dragPreviewWidgetsByMouse( page, buttonInPreview, imageInPreview );
+		await buttonInPreview.evaluate( ( el ) => el.scrollIntoView( { block: 'center', inline: 'center' } ) );
+		await imageInPreview.evaluate( ( el ) => el.scrollIntoView( { block: 'center', inline: 'center' } ) );
+		await dragPreviewWidgetsByMouse( page, buttonInPreview, imageInPreview );
 		const buttonEl = await editor.getElementHandle( button );
 		const headingEl = await editor.getElementHandle( heading );
 		const elBeforeButton = await buttonEl.evaluate( ( node ) => node.previousElementSibling );

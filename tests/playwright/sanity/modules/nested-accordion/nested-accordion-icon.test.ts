@@ -34,7 +34,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await editor.publishAndViewPage();
 			const nestedAccordionWidget = page.locator( '.e-n-accordion' );
 			await editor.isUiStable( nestedAccordionWidget );
-			await expectScreenshotToMatchLocator( 'header-style-editor-test-off-frontend.png', nestedAccordionWidget );
+			await expectScreenshotToMatchLocator( 'header-style-editor-test-off-frontend.png', nestedAccordionWidget, { snapshotViewportPage: page } );
 			url = page.url();
 		} );
 
@@ -48,7 +48,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await page.goto( url );
 			const nestedAccordionWidget = page.locator( '.e-n-accordion' );
 			await editor.isUiStable( nestedAccordionWidget );
-			await expectScreenshotToMatchLocator( 'header-style-editor-test-on-frontend.png', nestedAccordionWidget );
+			await expectScreenshotToMatchLocator( 'header-style-editor-test-on-frontend.png', nestedAccordionWidget, { snapshotViewportPage: page } );
 		} );
 	} );
 
