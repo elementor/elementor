@@ -13,6 +13,11 @@ on:
         description: 'Update Firefox snapshots'
         required: false
         default: false
+      reset_snapshot_baselines:
+        type: boolean
+        description: 'Delete existing Playwright baseline PNGs under tests/playwright before updating (use when baselines are corrupt or unreadable)'
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -97,6 +102,10 @@ jobs:
 
       - name: Install playwright/test
         run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
+
+      - name: Remove existing Playwright baseline PNGs
+        if: ${{ inputs.reset_snapshot_baselines }}
+        run: find tests/playwright -type f -path '*/*-snapshots/*.png' -delete
 
       - name: Update snapshots
         continue-on-error: true
