@@ -26,7 +26,9 @@ class Size_Prop_Type extends Object_Prop_Type {
 			}
 		}
 
+		/** @deprecated Use the 'units' key instead of 'available_units'. */
 		$this->settings['available_units'] = $units;
+		$this->settings['units'] = $units;
 
 		return $this;
 	}
