@@ -15,7 +15,7 @@ on:
         default: false
       reset_snapshot_baselines:
         type: boolean
-        description: 'Delete existing Playwright baseline PNGs under tests/playwright before updating (use when baselines are corrupt or unreadable)'
+        description: 'Delete baseline PNGs for the browser(s) selected above only (Firefox: *firefox*; Chromium: other *.png in *-snapshots)'
         required: false
         default: false
 
@@ -105,7 +105,17 @@ jobs:
 
       - name: Remove existing Playwright baseline PNGs
         if: ${{ inputs.reset_snapshot_baselines }}
-        run: find tests/playwright -type f -path '*/*-snapshots/*.png' -delete
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+        run: |
+          set -euo pipefail
+          if echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
+            find tests/playwright -type f -path '*/*-snapshots/*.png' -delete
+          elif echo "$BROWSERS" | grep -qw firefox; then
+            find tests/playwright -type f -path '*/*-snapshots/*firefox*.png' -delete
+          elif echo "$BROWSERS" | grep -qw chromium; then
+            find tests/playwright -type f -path '*/*-snapshots/*.png' ! -name '*firefox*' -delete
+          fi
 
       - name: Update snapshots
         continue-on-error: true
