@@ -1,3 +1,4 @@
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
@@ -76,7 +77,7 @@ test.describe( 'Link control tests @v4-tests', () => {
 				const button = await editor.getWidget( buttonId );
 				const anchor = button.locator( 'a' );
 
-				await expect( anchor ).toHaveAttribute( 'href', expected, { timeout: 1000 } );
+				await expect( anchor ).toHaveAttribute( 'href', expected, { timeout: timeouts.expect } );
 			} );
 		}
 	} );

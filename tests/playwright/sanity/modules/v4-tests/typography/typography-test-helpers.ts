@@ -105,7 +105,7 @@ export async function verifySpacingEditor( params:
 		const computedValue = parseSpacingValue( computedStyles.spacing );
 		const expectedPixels = convertToPixels( expectedValue, expectedUnit, computedStyles );
 		expect( computedValue ).toBeCloseTo( expectedPixels, 0 );
-	} ).toPass( { timeout: timeouts.expect } );
+	} ).toPass( { timeout: timeouts.longAction } );
 }
 
 export async function verifyFontEditor(

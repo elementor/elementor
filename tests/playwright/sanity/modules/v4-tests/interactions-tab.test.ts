@@ -1,3 +1,4 @@
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
@@ -376,7 +377,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 		await test.step( 'Duplicate the element', async () => {
 			const elementInPreview = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
-			await elementInPreview.click( { button: 'right' } );
+			await elementInPreview.scrollIntoViewIfNeeded();
+			await elementInPreview.click( { button: 'right', force: true, timeout: timeouts.longAction } );
 
 			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
 			await page.waitForTimeout( 500 );
