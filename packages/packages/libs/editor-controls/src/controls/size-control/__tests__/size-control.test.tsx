@@ -1064,6 +1064,43 @@ describe( 'SizeControl', () => {
 			expect( unitButton ).toHaveTextContent( 'em' );
 		} );
 
+		it( 'should prefer prop placeholder over context placeholder when value is unresolved', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const units = mockLengthUnits();
+
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType: createSizePropType( {
+					settings: {
+						units,
+					},
+				} ),
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 99,
+						unit: 'em',
+					},
+				},
+			};
+
+			// Act.
+			renderControl(
+				<UnstableSizeControl placeholder={ { size: 24, unit: 'rem' as const } } />,
+				props
+			);
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', '24' );
+			expect( unitButton ).toHaveTextContent( 'rem' );
+		} );
+
 		it( 'should show value if provided even if placeholder is available', () => {
 			// Arrange.
 			const setValue = jest.fn();
