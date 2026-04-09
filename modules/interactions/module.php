@@ -1,12 +1,14 @@
 <?php
+
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 use Elementor\Plugin;
 use Elementor\Utils;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,8 +31,6 @@ class Module extends BaseModule {
 
 	private $preset_animations;
 
-	private $frontend_handler;
-
 	private function get_presets() {
 		if ( ! $this->preset_animations ) {
 			$this->preset_animations = new Presets();
@@ -38,6 +38,8 @@ class Module extends BaseModule {
 
 		return $this->preset_animations;
 	}
+
+	private $frontend_handler;
 
 	private function get_frontend_handler() {
 		if ( ! $this->frontend_handler ) {
@@ -70,33 +72,48 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_hooks();
+	}
+
+	private function register_hooks() {
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
+		add_filter( 'elementor/document/save/data', [ $this, 'handle_interactions' ], 10, 2 );
+		add_action( 'elementor/document/after_save', [ $this, 'handle_interactions_cache' ], 10, 2 );
+
 		// Collect interactions from documents before they render (header, footer, post content)
-		add_filter( 'elementor/frontend/builder_content_data', [ $this->get_frontend_handler(), 'collect_document_interactions' ], 10, 2 );
+		add_filter( 'elementor/frontend/builder_content_data', [
+			$this->get_frontend_handler(),
+			'collect_document_interactions',
+		], 10, 2 );
 
 		// Output centralized interaction data in footer
 		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
+	}
 
-		add_filter( 'elementor/document/save/data',
-			/**
-			 * @throws \Exception
-			 */
-			function( $data, $document ) {
-				$validation = new Validation();
-				$document_after_sanitization = $validation->sanitize( $data );
-				$validation->validate();
+	/**
+	 * Sanitize and validate data before saving the document.
+	 *
+	 * @throws \Exception When validation fails.
+	 * @return array
+	 */
+	public function handle_interactions( $data, $document ) {
+		$validation = new Validation();
+		$document_after_sanitization = $validation->sanitize( $data );
 
-				return $document_after_sanitization;
-			},
-		10, 2 );
+		$validation->validate();
 
-		add_filter( 'elementor/document/save/data', function( $data, $document ) {
-			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
-		}, 11, 2 );
+		$parser = new Parser( $document->get_main_id() );
+		return $parser->assign_interaction_ids( $document_after_sanitization );
+	}
+
+	public function handle_interactions_cache( Document $document, $data ) {
+		$postmeta = new Interactions_Postmeta();
+		$postmeta->process_content( $document->get_main_id(), $data );
 	}
 
 	public function get_config() {
