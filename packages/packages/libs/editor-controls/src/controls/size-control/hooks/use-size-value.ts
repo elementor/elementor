@@ -53,7 +53,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	} );
 
 	const setSize = ( newSize: string, isInputValid = true ) => {
-		if ( isExtendedUnit( sizeValue.unit ) ) {
+		if ( isExtendedUnit( unit ) ) {
 			return;
 		}
 
