@@ -19,10 +19,11 @@ export const resolveBoundPropValue = < T extends SizeValue >(
 	] );
 
 	const placeholderSource = propPlaceholder ?? boundPropPlaceholder;
+	const hasValue = Boolean( value );
 
 	return {
 		sizeValue,
-		placeholder: resolvePlaceholder( placeholderSource ),
+		placeholder: hasValue ? undefined : resolvePlaceholder( placeholderSource ),
 	};
 };
 
