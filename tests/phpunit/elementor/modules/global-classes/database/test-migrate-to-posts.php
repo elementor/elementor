@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Modules\GlobalClasses\Database;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Migrate_To_Posts;
-use Elementor\Modules\GlobalClasses\Document_Global_Classes_Tracker;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Index;

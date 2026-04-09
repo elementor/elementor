@@ -6,7 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
-use Elementor\Modules\GlobalClasses\Document_Global_Classes_Tracker;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -72,21 +72,21 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 	}
 
 	private function create_atomic_global_styles(): Atomic_Global_Styles {
-		$tracker = new Document_Global_Classes_Tracker();
+		$relations = new Global_Classes_Relations();
 
-		return new Atomic_Global_Styles( $tracker );
+		return new Atomic_Global_Styles( $relations );
 	}
 
 	public function test_register_styles__for_document_with_tracked_classes() {
 		// Arrange.
-		$tracker = new Document_Global_Classes_Tracker();
-		$global_classes = new Atomic_Global_Styles( $tracker );
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
 		$global_classes->register_hooks();
 
 		$post_id = $this->factory()->post->create();
 		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
 
-		$tracker->set_document_class_ids( $post_id, [ 'g-4-123', 'g-4-124' ] );
+		$relations->set_styles_for_post( $post_id, [ 'g-4-123', 'g-4-124' ] );
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
@@ -121,14 +121,14 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_register_styles__returns_only_document_classes() {
 		// Arrange.
-		$tracker = new Document_Global_Classes_Tracker();
-		$global_classes = new Atomic_Global_Styles( $tracker );
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
 		$global_classes->register_hooks();
 
 		$post_id = $this->factory()->post->create();
 		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
 
-		$tracker->set_document_class_ids( $post_id, [ 'g-4-123' ] );
+		$relations->set_styles_for_post( $post_id, [ 'g-4-123' ] );
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
@@ -154,8 +154,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_register_styles__returns_empty_for_document_without_classes() {
 		// Arrange.
-		$tracker = new Document_Global_Classes_Tracker();
-		$global_classes = new Atomic_Global_Styles( $tracker );
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
 		$global_classes->register_hooks();
 
 		$post_id = $this->factory()->post->create();

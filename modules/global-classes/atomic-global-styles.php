@@ -8,10 +8,10 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
 
-	private Document_Global_Classes_Tracker $tracker;
+	private Global_Classes_Relations $relations;
 
-	public function __construct( Document_Global_Classes_Tracker $tracker ) {
-		$this->tracker = $tracker;
+	public function __construct( Global_Classes_Relations $relations ) {
+		$this->relations = $relations;
 	}
 
 	public function register_hooks() {
@@ -24,9 +24,9 @@ class Atomic_Global_Styles {
 
 		add_action(
 			'elementor/global_classes/update',
-			fn( string $context ) => $this->invalidate_cache_for_updated_classes( $context ),
+			fn( string $context, array $changes ) => $this->invalidate_cache_for_updated_classes( $context, $changes ),
 			10,
-			1
+			2
 		);
 
 		add_action(
@@ -59,7 +59,7 @@ class Atomic_Global_Styles {
 	}
 
 	private function get_document_global_styles( int $post_id, string $context ): array {
-		$class_ids = $this->tracker->get_document_class_ids( $post_id );
+		$class_ids = $this->relations->get_styles_by_post( $post_id );
 
 		if ( empty( $class_ids ) ) {
 			return [];
@@ -104,12 +104,38 @@ class Atomic_Global_Styles {
 		}
 	}
 
-	private function invalidate_cache_for_updated_classes( string $context ) {
-		$this->invalidate_all_cache( $context );
+	private function invalidate_cache_for_updated_classes( string $context, array $changes ) {
+		$affected = array_unique( array_merge(
+			$changes['added'] ?? [],
+			$changes['deleted'] ?? [],
+			$changes['modified'] ?? []
+		) );
+
+		if ( empty( $affected ) ) {
+			return;
+		}
+
+		$document_ids = [];
+
+		foreach ( $affected as $class_id ) {
+			foreach ( $this->relations->get_posts_by_style( $class_id ) as $doc_id ) {
+				$document_ids[ $doc_id ] = true;
+			}
+		}
+
+		if ( empty( $document_ids ) ) {
+			$this->invalidate_all_cache( $context );
+
+			return;
+		}
+
+		foreach ( array_keys( $document_ids ) as $post_id ) {
+			$this->invalidate_document_cache( $post_id, $context );
+		}
 	}
 
 	private function invalidate_cache_for_class( string $class_id, ?string $context = null ) {
-		$document_ids = $this->tracker->get_documents_using_class( $class_id );
+		$document_ids = $this->relations->get_posts_by_style( $class_id );
 
 		foreach ( $document_ids as $doc_id ) {
 			$this->invalidate_document_cache( $doc_id, $context );

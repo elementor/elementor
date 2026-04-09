@@ -13,7 +13,7 @@ import {
 	selectClass,
 	selectData,
 	selectGlobalClasses,
-	selectOrderedClasses,
+	selectLoadedOrderedClasses,
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
@@ -36,7 +36,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
-		all: () => selectOrderedClasses( getState() ),
+		all: () => selectLoadedOrderedClasses( getState() ),
 		get: ( id ) => selectClass( getState(), id ),
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;

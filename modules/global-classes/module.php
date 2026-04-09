@@ -41,14 +41,14 @@ class Module extends BaseModule {
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			( new Global_Class_Post_Type() )->register();
 
-			$tracker = new Document_Global_Classes_Tracker();
-			$tracker->register_hooks();
+			$relations = new Global_Classes_Relations();
+			$relations->register_hooks();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
-			( new Atomic_Global_Styles( $tracker ) )->register_hooks();
+			( new Atomic_Global_Styles( $relations ) )->register_hooks();
 			( new Global_Classes_Cleanup() )->register_hooks();
 			( new Import_Export() )->register_hooks();
 			( new Import_Export_Customization() )->register_hooks();

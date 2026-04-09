@@ -7,6 +7,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Index;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrate_To_Posts extends Base_Migration {
-	const META_KEY_USED_CLASS = '_elementor_used_global_class';
 
 	public function up() {
 		$this->ensure_cpt_registered();
@@ -64,7 +64,7 @@ class Migrate_To_Posts extends Base_Migration {
 		$created_order = [];
 
 		foreach ( $items as $class_id => $class_data ) {
-			$menu_order = $order_index[ $class_id ] ?? 0;
+			$index = $order_index[ $class_id ] ?? 0;
 
 			$post = Global_Class_Post::create(
 				$class_id,
@@ -73,11 +73,11 @@ class Migrate_To_Posts extends Base_Migration {
 					'type' => $class_data['type'] ?? 'class',
 					'variants' => $class_data['variants'] ?? [],
 				],
-				$menu_order
+				$index
 			);
 
 			if ( $post ) {
-				$created_order[ $menu_order ] = $class_id;
+				$created_order[ $index ] = $class_id;
 			}
 		}
 
@@ -97,59 +97,24 @@ class Migrate_To_Posts extends Base_Migration {
 	}
 
 	private function update_document_tracking(): void {
-		$class_ids = Global_Classes_Index::make()->get_order();
+		$valid_class_ids = Global_Classes_Index::make()->get_order();
 
-		if ( empty( $class_ids ) ) {
+		if ( empty( $valid_class_ids ) ) {
 			return;
 		}
 
+		$relations = new Global_Classes_Relations();
+
 		Plugin::$instance->db->iterate_elementor_documents(
-			function ( $document ) use ( $class_ids ) {
+			function ( $document ) use ( $relations, $valid_class_ids ) {
 				$post_id = $document->get_main_id();
-				$used_class_ids = $this->extract_used_class_ids_from_document( $document, $class_ids );
+				$used_class_ids = $relations->collect_class_ids_from_post( $post_id, $valid_class_ids );
 
 				if ( ! empty( $used_class_ids ) ) {
-					$this->set_document_class_ids( $post_id, $used_class_ids );
+					$relations->set_styles_for_post( $post_id, $used_class_ids );
 				}
 			}
 		);
-	}
-
-	private function extract_used_class_ids_from_document( $document, array $valid_class_ids ): array {
-		$elements_data = $document->get_elements_raw_data() ?? [];
-
-		if ( empty( $elements_data ) ) {
-			return [];
-		}
-
-		$used_class_ids = [];
-
-		Plugin::$instance->db->iterate_data(
-			$elements_data,
-			function ( $element_data ) use ( &$used_class_ids, $valid_class_ids ) {
-				$class_values = $element_data['settings']['classes']['value'] ?? [];
-
-				if ( empty( $class_values ) || ! is_array( $class_values ) ) {
-					return;
-				}
-
-				foreach ( $class_values as $class_id ) {
-					if ( in_array( $class_id, $valid_class_ids, true ) ) {
-						$used_class_ids[] = $class_id;
-					}
-				}
-			}
-		);
-
-		return array_unique( $used_class_ids );
-	}
-
-	private function set_document_class_ids( int $post_id, array $class_ids ): void {
-		delete_post_meta( $post_id, self::META_KEY_USED_CLASS );
-
-		foreach ( array_unique( $class_ids ) as $class_id ) {
-			add_post_meta( $post_id, self::META_KEY_USED_CLASS, $class_id );
-		}
 	}
 
 	private function cleanup_kit_meta(): void {

@@ -1,0 +1,251 @@
+<?php
+
+namespace Elementor\Modules\GlobalClasses;
+
+use Elementor\Core\Base\Document;
+use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Global_Classes_Relations {
+	const META_KEY = '_elementor_used_global_class';
+	const META_KEY_USAGE_INDEXED = '_elementor_global_class_usage_indexed';
+	const META_KEY_CLASS_RELATED_POSTS = '_elementor_global_class_using_documents';
+
+	private const ATOMIC_GLOBAL_STYLES_KEY = 'global';
+
+	public function register_hooks(): void {
+		add_action(
+			'elementor/document/after_save',
+			fn( Document $document ) => $this->on_document_save( $document )
+		);
+	}
+
+	public function collect_class_ids_from_post( int $post_id, ?array $restrict_to_ids = null ): array {
+		$ids = $this->extract_class_ids_from_post( $post_id );
+
+		if ( null === $restrict_to_ids ) {
+			return $ids;
+		}
+
+		return array_values( array_intersect( $ids, $restrict_to_ids ) );
+	}
+
+	public function get_posts_by_style( string $style_id ): array {
+		$from_index = $this->get_posts_from_reverse_index( $style_id );
+
+		if ( ! empty( $from_index ) ) {
+			return $from_index;
+		}
+
+		$post_ids = get_posts( [
+			'fields' => 'ids',
+			'meta_query' => [
+				[
+					'key' => self::META_KEY,
+					'value' => $style_id,
+					'compare' => '=',
+				],
+			],
+			'no_found_rows' => true,
+			'post_status' => 'any',
+			'post_type' => 'any',
+			'posts_per_page' => -1,
+			'update_post_meta_cache' => false,
+		] );
+
+		return array_map( 'intval', $post_ids );
+	}
+
+	public function get_styles_by_post( int $post_id ): array {
+		$ids = $this->get_stored_style_ids( $post_id );
+
+		if ( ! empty( $ids ) ) {
+			$this->mark_usage_indexed( $post_id );
+
+			return $ids;
+		}
+
+		if ( $this->is_usage_indexed( $post_id ) ) {
+			return [];
+		}
+
+		$new_ids = $this->collect_class_ids_from_post( $post_id );
+
+		if ( empty( $new_ids ) ) {
+			$this->clear_post_styles( $post_id );
+			$this->mark_usage_indexed( $post_id );
+
+			return [];
+		}
+
+		foreach ( $new_ids as $class_id ) {
+			$this->link_post_to_class( $class_id, $post_id );
+		}
+
+		$this->replace_stored_style_ids( $post_id, $new_ids );
+		$this->mark_usage_indexed( $post_id );
+
+		return $new_ids;
+	}
+
+	public function add_style_to_post( int $post_id, string $style_id ): void {
+		$existing = $this->get_stored_style_ids( $post_id );
+
+		if ( in_array( $style_id, $existing, true ) ) {
+			return;
+		}
+
+		add_post_meta( $post_id, self::META_KEY, $style_id );
+		$this->link_post_to_class( $style_id, $post_id );
+	}
+
+	public function clear_post_styles( int $post_id ): void {
+		$old_ids = $this->get_stored_style_ids( $post_id );
+
+		delete_post_meta( $post_id, self::META_KEY );
+		delete_post_meta( $post_id, self::META_KEY_USAGE_INDEXED );
+
+		foreach ( $old_ids as $class_id ) {
+			$this->unlink_post_from_class( $class_id, $post_id );
+		}
+	}
+
+	public function set_styles_for_post( int $post_id, array $style_ids ): void {
+		$old_ids = $this->get_stored_style_ids( $post_id );
+
+		foreach ( array_diff( $old_ids, $style_ids ) as $class_id ) {
+			$this->unlink_post_from_class( $class_id, $post_id );
+		}
+
+		$this->replace_stored_style_ids( $post_id, $style_ids );
+
+		foreach ( array_diff( $style_ids, $old_ids ) as $class_id ) {
+			$this->link_post_to_class( $class_id, $post_id );
+		}
+
+		$this->mark_usage_indexed( $post_id );
+	}
+
+	private function get_posts_from_reverse_index( string $class_id ): array {
+		$post = Global_Class_Post::find_by_class_id( $class_id );
+
+		if ( ! $post ) {
+			return [];
+		}
+
+		$ids = get_post_meta( $post->get_post_id(), self::META_KEY_CLASS_RELATED_POSTS, true );
+
+		if ( ! is_array( $ids ) ) {
+			return [];
+		}
+
+		return array_values( array_unique( array_map( 'intval', $ids ) ) );
+	}
+
+	private function link_post_to_class( string $class_id, int $document_post_id ): void {
+		$post = Global_Class_Post::find_by_class_id( $class_id );
+
+		if ( ! $post ) {
+			return;
+		}
+
+		$cpt_id = $post->get_post_id();
+		$ids = get_post_meta( $cpt_id, self::META_KEY_CLASS_RELATED_POSTS, true );
+		$ids = is_array( $ids ) ? array_map( 'intval', $ids ) : [];
+
+		if ( in_array( $document_post_id, $ids, true ) ) {
+			return;
+		}
+
+		$ids[] = $document_post_id;
+
+		update_post_meta( $cpt_id, self::META_KEY_CLASS_RELATED_POSTS, $ids );
+	}
+
+	private function unlink_post_from_class( string $class_id, int $document_post_id ): void {
+		$post = Global_Class_Post::find_by_class_id( $class_id );
+
+		if ( ! $post ) {
+			return;
+		}
+
+		$cpt_id = $post->get_post_id();
+		$ids = get_post_meta( $cpt_id, self::META_KEY_CLASS_RELATED_POSTS, true );
+
+		if ( ! is_array( $ids ) ) {
+			return;
+		}
+
+		$ids = array_values(
+			array_filter(
+				array_map( 'intval', $ids ),
+				fn( $id ) => $id !== $document_post_id
+			)
+		);
+
+		update_post_meta( $cpt_id, self::META_KEY_CLASS_RELATED_POSTS, $ids );
+	}
+
+	private function on_document_save( Document $document ): void {
+		$post_id = $document->get_main_id();
+
+		$this->invalidate_document_styles_cache( $post_id );
+
+		$new_ids = $this->collect_class_ids_from_post( $post_id );
+
+		$this->set_styles_for_post( $post_id, $new_ids );
+	}
+
+	private function extract_class_ids_from_post( int $post_id ): array {
+		$used_class_ids = [];
+
+		Atomic_Utils::traverse_post_elements( (string) $post_id, function ( $element_data ) use ( &$used_class_ids ) {
+			$used_class_ids = array_merge(
+				$used_class_ids,
+				Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
+			);
+		} );
+
+		return array_values( array_unique( $used_class_ids ) );
+	}
+
+	private function get_stored_style_ids( int $post_id ): array {
+		$meta_values = get_post_meta( $post_id, self::META_KEY, false );
+
+		if ( ! is_array( $meta_values ) ) {
+			return [];
+		}
+
+		return array_values( array_unique( $meta_values ) );
+	}
+
+	private function replace_stored_style_ids( int $post_id, array $style_ids ): void {
+		delete_post_meta( $post_id, self::META_KEY );
+
+		$unique_ids = array_unique( $style_ids );
+
+		foreach ( $unique_ids as $class_id ) {
+			add_post_meta( $post_id, self::META_KEY, $class_id );
+		}
+	}
+
+	private function is_usage_indexed( int $post_id ): bool {
+		return '1' === get_post_meta( $post_id, self::META_KEY_USAGE_INDEXED, true );
+	}
+
+	private function mark_usage_indexed( int $post_id ): void {
+		update_post_meta( $post_id, self::META_KEY_USAGE_INDEXED, '1' );
+	}
+
+	private function invalidate_document_styles_cache( int $post_id ): void {
+		do_action( 'elementor/atomic-widgets/styles/clear', [ self::ATOMIC_GLOBAL_STYLES_KEY, $post_id ] );
+		do_action(
+			'elementor/atomic-widgets/styles/clear',
+			[ self::ATOMIC_GLOBAL_STYLES_KEY, $post_id, Global_Classes_Repository::CONTEXT_PREVIEW ]
+		);
+	}
+}

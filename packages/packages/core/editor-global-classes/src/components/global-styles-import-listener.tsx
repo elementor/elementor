@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __useDispatch as useDispatch } from '@elementor/store';
 
-import { apiClient } from '../api';
+import { fetchAndDispatchGlobalClasses } from '../load-global-classes-state';
 import { slice } from '../store';
 
 export function GlobalStylesImportListener() {
@@ -12,6 +13,8 @@ export function GlobalStylesImportListener() {
 			const importedClasses = event.detail?.global_classes;
 
 			if ( importedClasses?.items && importedClasses?.order ) {
+				const items = importedClasses.items as Record< string, { id: string; label: string } >;
+
 				dispatch(
 					slice.actions.load( {
 						preview: {
@@ -22,29 +25,14 @@ export function GlobalStylesImportListener() {
 							items: importedClasses.items,
 							order: importedClasses.order,
 						},
+						classLabels: Object.fromEntries(
+							Object.entries( items ).map( ( [ id, item ] ) => [ id, item.label ] )
+						),
 					} )
 				);
 			}
 
-			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] )
-				.then( ( [ previewRes, frontendRes ] ) => {
-					const { data: previewData } = previewRes;
-					const { data: frontendData } = frontendRes;
-
-					dispatch(
-						slice.actions.load( {
-							preview: {
-								items: previewData.data,
-								order: previewData.meta.order,
-							},
-							frontend: {
-								items: frontendData.data,
-								order: frontendData.meta.order,
-							},
-						} )
-					);
-				} )
-				.catch( () => {} );
+			fetchAndDispatchGlobalClasses( getCurrentDocument()?.id ).catch( () => {} );
 		};
 
 		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );

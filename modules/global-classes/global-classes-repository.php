@@ -76,6 +76,18 @@ class Global_Classes_Repository {
 			return;
 		}
 
+		$current_ids = array_keys( $current_value['items'] );
+		$new_ids = array_keys( $items );
+
+		$changes = [
+			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
+			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
+			'modified' => array_values( array_filter(
+				array_intersect( $new_ids, $current_ids ),
+				fn( $id ) => $items[ $id ] !== $current_value['items'][ $id ]
+			) ),
+		];
+
 		if ( $this->is_using_posts() ) {
 			$this->put_to_posts( $items, $order, $current_value );
 		} else {
@@ -84,7 +96,7 @@ class Global_Classes_Repository {
 
 		$this->cache = null;
 
-		do_action( 'elementor/global_classes/update', $this->context, $updated_value, $current_value );
+		do_action( 'elementor/global_classes/update', $this->context, $changes );
 	}
 
 	public function is_using_posts(): bool {
@@ -105,6 +117,10 @@ class Global_Classes_Repository {
 
 	public static function reset_storage_mode_cache(): void {
 		self::$uses_posts = null;
+	}
+
+	public function invalidate_cache(): void {
+		$this->cache = null;
 	}
 
 	private function all_from_posts(): Global_Classes {

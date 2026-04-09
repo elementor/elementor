@@ -2,10 +2,9 @@
 
 namespace Elementor\Modules\GlobalClasses\Utils;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
 use Elementor\Plugin;
 
 class Atomic_Elements_Utils {
@@ -13,6 +12,39 @@ class Atomic_Elements_Utils {
 	public static function is_classes_prop( $prop ) {
 		// phpcs:ignore
 		return 'plain' === $prop::$KIND && 'classes' === $prop->get_key();
+	}
+
+	public static function collect_class_ids_from_element_data( array $element_data ): array {
+		$element_type = self::get_element_type( $element_data );
+		$element_instance = self::get_element_instance( $element_type );
+
+		if ( ! Atomic_Utils::is_atomic( $element_instance ) ) {
+			return [];
+		}
+
+		$schema = call_user_func( [ get_class( $element_instance ), 'get_props_schema' ] );
+		$settings = $element_data['settings'] ?? [];
+		$class_ids = [];
+
+		foreach ( $schema as $settings_key => $prop ) {
+			if ( ! self::is_classes_prop( $prop ) ) {
+				continue;
+			}
+
+			$values = $settings[ $settings_key ]['value'] ?? [];
+
+			if ( ! is_array( $values ) ) {
+				continue;
+			}
+
+			foreach ( $values as $class_id ) {
+				if ( is_string( $class_id ) && '' !== $class_id ) {
+					$class_ids[] = $class_id;
+				}
+			}
+		}
+
+		return $class_ids;
 	}
 
 	public static function get_element_type( $element ) {

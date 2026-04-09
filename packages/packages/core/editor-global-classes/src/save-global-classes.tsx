@@ -17,10 +17,17 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 	const state = selectData( getState() );
 	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
 	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
+	const changes = calculateChanges( state, currentContext( getState() ) );
+
+	const touchedIds = [ ...changes.added, ...changes.modified ];
+	const touchedItems = Object.fromEntries(
+		touchedIds.map( ( id ) => [ id, state.items[ id ] ] ).filter( ( [ , v ] ) => v )
+	);
+
 	const response = await apiAction( {
-		items: state.items,
+		items: touchedItems,
 		order: state.order,
-		changes: calculateChanges( state, currentContext( getState() ) ),
+		changes,
 	} );
 
 	dispatch( slice.actions.reset( { context } ) );
