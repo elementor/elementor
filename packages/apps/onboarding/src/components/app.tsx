@@ -6,6 +6,7 @@ import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import { TrackingProvider } from '../analytics/tracking-context';
 import { initFromConfig, registerOnboardingSlice } from '../store';
+import type { ExtendedWindow } from '../types';
 import { AppContent } from './app-content';
 import { ToastProvider } from './toast/toast-context';
 
@@ -49,11 +50,12 @@ export function App( props: AppProps ) {
 
 	const uiTheme = window.elementorAppConfig?.onboarding?.uiTheme ?? 'auto';
 	const colorScheme = useMemo( () => resolveColorScheme( uiTheme ), [ uiTheme ] );
+	const isRtl = ( window as unknown as ExtendedWindow ).elementorCommon?.config?.isRTL ?? false;
 
 	return (
 		<StoreProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<DirectionProvider rtl={ window.document.dir === 'rtl' }>
+				<DirectionProvider rtl={ isRtl }>
 					<ThemeProvider colorScheme={ colorScheme } palette="argon-beta">
 						<ToastProvider>
 							<TrackingProvider>
