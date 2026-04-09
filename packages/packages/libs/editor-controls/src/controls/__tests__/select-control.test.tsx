@@ -248,6 +248,25 @@ describe( 'SelectControl', () => {
 		expect( screen.getByText( 'Default text' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should display label for option with null value when there is no placeholder', () => {
+		const optionsWithNullOutset = [
+			{ label: 'Inset', value: 'inset' },
+			{ label: 'Outset', value: null },
+		];
+
+		const propsOutsetSelected = {
+			setValue: jest.fn(),
+			value: { $$type: 'string', value: null },
+			placeholder: undefined,
+			bind: 'tag',
+			propType,
+		};
+
+		renderControl( <SelectControl options={ optionsWithNullOutset } />, propsOutsetSelected );
+
+		expect( screen.getByRole( 'combobox' ) ).toHaveTextContent( 'Outset' );
+	} );
+
 	it( 'should handle options with null values correctly with placeholder', () => {
 		// Arrange.
 		const optionsWithNull = [
