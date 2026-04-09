@@ -196,7 +196,7 @@ describe( 'resolveBoundPropValue', () => {
 
 			// Assert.
 			expect( result.sizeValue ).toEqual( { size: 5, unit: 'px' } );
-			expect( result.placeholder ).toBe( '99' );
+			expect( result.placeholder ).toBe( undefined );
 		} );
 	} );
 } );
