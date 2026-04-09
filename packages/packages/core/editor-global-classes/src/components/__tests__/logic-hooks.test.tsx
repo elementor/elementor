@@ -3,7 +3,7 @@ import { createMockHttpResponse, createMockStyleDefinition, renderWithStore } fr
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
 import { waitFor } from '@testing-library/react';
 
-import { apiClient, type GlobalClassesGetAllResponse, type GlobalClassesIndexResponse } from '../../api';
+import { apiClient, type GlobalClassesGetAllResponse } from '../../api';
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { slice } from '../../store';
 import { PopulateStore } from '../populate-store';
@@ -11,7 +11,6 @@ import { PopulateStore } from '../populate-store';
 jest.mock( '../../api', () => ( {
 	apiClient: {
 		all: jest.fn(),
-		getIndex: jest.fn(),
 	},
 } ) );
 
@@ -40,16 +39,12 @@ describe( '<LogicHooks />', () => {
 			meta: { order: [ 'global-2', 'global-1' ] },
 		} );
 
-		const mockIndexResponse = createMockHttpResponse< GlobalClassesIndexResponse >( {
-			data: {
-				'global-1': { label: globalClass1.label },
-				'global-2': { label: globalClass2.label },
-			},
-			meta: { order: [ 'global-2', 'global-1' ] },
-		} );
-
 		jest.mocked( apiClient.all ).mockResolvedValue( mockResponse );
-		jest.mocked( apiClient.getIndex ).mockResolvedValue( mockIndexResponse );
+
+		const loadedItems = {
+			'global-1': globalClass1,
+			'global-2': globalClass2,
+		};
 
 		// Act
 		renderWithStore( <PopulateStore />, store );
@@ -58,6 +53,8 @@ describe( '<LogicHooks />', () => {
 		await waitFor( () => {
 			expect( subscriber ).toHaveBeenCalledTimes( 1 );
 		} );
+
+		expect( subscriber ).toHaveBeenNthCalledWith( 1, {}, loadedItems );
 
 		expect( globalClassesStylesProvider.actions.all() ).toEqual( [ globalClass2, globalClass1 ] );
 	} );

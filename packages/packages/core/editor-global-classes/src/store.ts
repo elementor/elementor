@@ -14,17 +14,12 @@ import {
 	type SliceState,
 } from '@elementor/store';
 
-import type { ApiContext, GlobalClassesIndexMap } from './api';
+import type { ApiContext } from './api';
 import { GlobalClassNotFoundError } from './errors';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
 	items: Record< StyleDefinitionID, StyleDefinition >;
-	order: StyleDefinitionID[];
-};
-
-export type ClassIndex = {
-	items: GlobalClassesIndexMap;
 	order: StyleDefinitionID[];
 };
 
@@ -34,7 +29,6 @@ type GlobalClassesState = {
 		frontend: GlobalClasses;
 		preview: GlobalClasses;
 	};
-	classIndex: ClassIndex;
 	isDirty: boolean;
 };
 
@@ -53,7 +47,6 @@ const initialState: GlobalClassesState = {
 		frontend: { items: {}, order: [] },
 		preview: { items: {}, order: [] },
 	},
-	classIndex: { items: {}, order: [] },
 	isDirty: false,
 };
 
@@ -82,17 +75,10 @@ export const slice = createSlice( {
 			state.isDirty = false;
 		},
 
-		loadIndex( state, { payload }: PayloadAction< ClassIndex > ) {
-			state.classIndex = payload;
-		},
-
 		add( state, { payload }: PayloadAction< StyleDefinition > ) {
 			localHistory.next( state.data );
 			state.data.items[ payload.id ] = payload;
 			state.data.order.unshift( payload.id );
-
-			state.classIndex.items[ payload.id ] = { label: payload.label };
-			state.classIndex.order.unshift( payload.id );
 
 			state.isDirty = true;
 		},
@@ -105,18 +91,12 @@ export const slice = createSlice( {
 
 			state.data.order = state.data.order.filter( ( id ) => id !== payload );
 
-			state.classIndex.items = Object.fromEntries(
-				Object.entries( state.classIndex.items ).filter( ( [ id ] ) => id !== payload )
-			);
-			state.classIndex.order = state.classIndex.order.filter( ( id ) => id !== payload );
-
 			state.isDirty = true;
 		},
 
 		setOrder( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
 			localHistory.next( state.data );
 			state.data.order = payload;
-			state.classIndex.order = payload;
 
 			state.isDirty = true;
 		},
@@ -132,10 +112,6 @@ export const slice = createSlice( {
 
 			state.data.items[ payload.style.id ] = mergedData;
 
-			if ( payload.style.label && state.classIndex.items[ payload.style.id ] ) {
-				state.classIndex.items[ payload.style.id ].label = payload.style.label;
-			}
-
 			state.isDirty = true;
 		},
 
@@ -143,10 +119,6 @@ export const slice = createSlice( {
 			localHistory.next( state.data );
 			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
 				state.data.items[ id ].label = modified;
-
-				if ( state.classIndex.items[ id ] ) {
-					state.classIndex.items[ id ].label = modified;
-				}
 			} );
 
 			state.isDirty = false;
@@ -280,12 +252,3 @@ export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
 	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
 );
 
-export const selectClassIndex = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].classIndex;
-
-export const selectClassIndexOrder = createSelector( selectClassIndex, ( { order } ) => order );
-
-export const selectClassIndexItems = createSelector( selectClassIndex, ( { items } ) => items );
-
-export const selectOrderedClassIndex = createSelector( selectClassIndexItems, selectClassIndexOrder, ( items, order ) =>
-	order.map( ( id ) => ( { id, ...items[ id ] } ) )
-);
