@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { stringPropTypeUtil } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { SelectControl } from '../select-control';
@@ -250,13 +251,13 @@ describe( 'SelectControl', () => {
 
 	it( 'should display label for option with null value when there is no placeholder', () => {
 		const optionsWithNullOutset = [
-			{ label: 'Inset', value: 'inset' },
-			{ label: 'Outset', value: null },
+			{ label: 'With value', value: 'some-value' },
+			{ label: 'Without value', value: null },
 		];
 
 		const propsOutsetSelected = {
 			setValue: jest.fn(),
-			value: { $$type: 'string', value: null },
+			value: stringPropTypeUtil.create( null ),
 			placeholder: undefined,
 			bind: 'tag',
 			propType,
@@ -264,7 +265,7 @@ describe( 'SelectControl', () => {
 
 		renderControl( <SelectControl options={ optionsWithNullOutset } />, propsOutsetSelected );
 
-		expect( screen.getByRole( 'combobox' ) ).toHaveTextContent( 'Outset' );
+		expect( screen.getByRole( 'combobox' ) ).toHaveTextContent( 'Without value' );
 	} );
 
 	it( 'should handle options with null values correctly with placeholder', () => {
