@@ -6,13 +6,7 @@ import {
 	__registerSlice as registerSlice,
 } from '@elementor/store';
 
-import {
-	selectData,
-	selectFrontendInitialData,
-	selectIsDirty,
-	selectPreviewInitialData,
-	slice,
-} from '../store';
+import { selectData, selectFrontendInitialData, selectIsDirty, selectPreviewInitialData, slice } from '../store';
 
 const classLabelsFor = ( order: string[], items: Record< string, ReturnType< typeof createMockStyleDefinition > > ) =>
 	Object.fromEntries( order.map( ( id ) => [ id, items[ id ]?.label ?? id ] ) );
