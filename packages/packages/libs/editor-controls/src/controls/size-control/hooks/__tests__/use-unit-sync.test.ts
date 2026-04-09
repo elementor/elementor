@@ -62,6 +62,30 @@ describe( 'useUnitSync', () => {
 		expect( result.current[ 0 ] ).toBe( 'rem' );
 	} );
 
+	it.each( [ 'auto', 'custom' ] as const )(
+		'should call setUnit when selecting extended unit %s even if persistWhen returns false',
+		( extendedUnit ) => {
+			// Arrange.
+			const setUnit = jest.fn();
+
+			const { result } = renderHook( () =>
+				useUnitSync( {
+					unit: 'px',
+					setUnit,
+					persistWhen: () => false,
+				} )
+			);
+
+			// Act.
+			act( () => result.current[ 1 ]( extendedUnit ) );
+
+			// Assert.
+			expect( setUnit ).toHaveBeenCalledTimes( 1 );
+			expect( setUnit ).toHaveBeenCalledWith( extendedUnit );
+			expect( result.current[ 0 ] ).toBe( extendedUnit );
+		}
+	);
+
 	it( 'should sync state when unit prop changes', () => {
 		// Arrange.
 		const setUnit = jest.fn();
