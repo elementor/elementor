@@ -1088,10 +1088,7 @@ describe( 'SizeControl', () => {
 			};
 
 			// Act.
-			renderControl(
-				<UnstableSizeControl placeholder={ { size: 24, unit: 'rem' as const } } />,
-				props
-			);
+			renderControl( <UnstableSizeControl placeholder={ { size: 24, unit: 'rem' as const } } />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 			const unitButton = screen.getByRole( 'button' );
