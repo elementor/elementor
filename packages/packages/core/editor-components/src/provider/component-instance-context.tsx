@@ -16,6 +16,16 @@ export function ComponentInstanceProvider( { children, ...props }: PropsWithChil
 	return <ComponentInstanceContext.Provider value={ props }>{ children }</ComponentInstanceContext.Provider>;
 }
 
-export const useComponentId = () => useContext( ComponentInstanceContext )?.componentId;
-export const useComponentInstanceOverrides = () => useContext( ComponentInstanceContext )?.overrides;
-export const useComponentOverridableProps = () => useContext( ComponentInstanceContext )?.overridableProps;
+function useComponentInstanceContext() {
+	const context = useContext( ComponentInstanceContext );
+
+	if ( ! context ) {
+		throw new Error( 'useComponentInstanceContext must be used within a ComponentInstanceProvider' );
+	}
+
+	return context;
+}
+
+export const useComponentId = () => useComponentInstanceContext().componentId;
+export const useComponentInstanceOverrides = () => useComponentInstanceContext().overrides;
+export const useComponentOverridableProps = () => useComponentInstanceContext().overridableProps;

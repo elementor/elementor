@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import * as React from 'react';
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -16,6 +17,7 @@ type TabValue = 'settings' | 'style' | 'interactions';
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
+
 	return (
 		// When switching between elements, the local states should be reset. We are using key to rerender the tabs.
 		// Reference: https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key
@@ -26,11 +28,14 @@ export const EditingPanelTabs = () => {
 };
 
 const PanelTabContent = () => {
+	const { element } = useElement();
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 	const isInteractionsActive = isExperimentActive( 'e_interactions' );
+	const isPromotedElement = !! getWidgetsCache()?.[ element.type ]?.meta?.is_pro_promotion;
 
-	const [ currentTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
+	const [ storedTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
+	const currentTab = isPromotedElement && storedTab === 'settings' ? 'style' : storedTab;
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
 	return (
 		<ScrollProvider>
@@ -46,7 +51,9 @@ const PanelTabContent = () => {
 							setCurrentTab( newValue );
 						} }
 					>
-						<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
+						{ ! isPromotedElement && (
+							<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
+						) }
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
 						{ isInteractionsActive && (
 							<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
@@ -54,9 +61,11 @@ const PanelTabContent = () => {
 					</Tabs>
 					<Divider />
 				</Stack>
-				<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
-					<SettingsTab />
-				</TabPanel>
+				{ ! isPromotedElement && (
+					<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
+						<SettingsTab />
+					</TabPanel>
+				) }
 				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
 				</TabPanel>

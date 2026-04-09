@@ -107,8 +107,15 @@ export default class extends Marionette.CompositeView {
 		return helpers;
 	}
 
+	isProPromotion() {
+		const elType = this.model.get( 'elType' );
+		return !! elementor.widgetsCache?.[ elType ]?.meta?.is_pro_promotion;
+	}
+
 	initialize() {
-		this.collection = this.model.get( 'elements' );
+		this.collection = this.isProPromotion()
+			? new Backbone.Collection()
+			: this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
@@ -148,6 +155,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
+		if ( this.isProPromotion() ) {
+			return false;
+		}
+
 		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
 	}
 

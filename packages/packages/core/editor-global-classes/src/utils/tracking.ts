@@ -9,7 +9,7 @@ import { selectClass } from '../store';
 
 type EventMap = {
 	classCreated: {
-		source?: 'created' | 'converted';
+		source?: 'created' | 'converted' | 'duplicated';
 		classId: StyleDefinitionID;
 		classTitle?: string;
 	};
