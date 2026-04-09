@@ -401,7 +401,7 @@ const RepeaterItem = < T, >( {
 				<ClickAwayListener
 					mouseEvent="onMouseDown"
 					touchEvent="onTouchStart"
-					onClickAway={ () => onPopoverClose?.() }
+					onClickAway={ popoverProps.onClose }
 				>
 					<Box>{ children( { anchorEl: ref } ) }</Box>
 				</ClickAwayListener>
