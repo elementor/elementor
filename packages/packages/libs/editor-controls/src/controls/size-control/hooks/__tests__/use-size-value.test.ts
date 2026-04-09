@@ -611,6 +611,48 @@ describe( 'useSizeValue', () => {
 			act( () => result.current.setUnit( 'px' ) );
 			expect( setValue ).not.toHaveBeenLastCalledWith( null );
 		} );
+
+		it( 'should not persist unit change to setValue when size is empty', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			// Act.
+			const { result } = renderSizeValueHook( {
+				value: {
+					size: '',
+					unit: 'px',
+				},
+				units: [ 'px', 'rem' ],
+				setValue,
+			} );
+
+			act( () => result.current.setUnit( 'rem' ) );
+
+			// Assert.
+			expect( setValue ).not.toHaveBeenCalled();
+			expect( result.current.unit ).toBe( 'rem' );
+		} );
+
+		it( 'should persist unit change to setValue when size is zero', () => {
+			// Arrange.
+			const setValue = jest.fn();
+
+			// Act.
+			const { result } = renderSizeValueHook( {
+				value: {
+					size: 0,
+					unit: 'px',
+				},
+				units: [ 'px', 'rem' ],
+				setValue,
+			} );
+
+			act( () => result.current.setUnit( 'rem' ) );
+
+			// Assert.
+			expect( setValue ).toHaveBeenCalledWith( { size: 0, unit: 'rem' }, undefined, undefined );
+			expect( result.current.unit ).toBe( 'rem' );
+		} );
 	} );
 
 	describe( 'sync from external', () => {
