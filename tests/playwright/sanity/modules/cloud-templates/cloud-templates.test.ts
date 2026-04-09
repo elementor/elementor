@@ -1,10 +1,7 @@
 import { expect, Page, TestInfo } from '@playwright/test';
-import ApiRequests from '../../../assets/api-requests';
-import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-
-const CLOUD_LIBRARY_SNAPSHOT_VIEWPORT = { width: 1584, height: 900 } as const;
+import ApiRequests from '../../../assets/api-requests';
 
 declare global {
 	interface Window {
@@ -327,9 +324,6 @@ test.describe( 'Cloud Templates', () => {
 		await expect( page.locator( 'text=Modern Landing Page' ).first() ).toBeVisible();
 		await expect( page.locator( 'text=Business Portfolio' ).first() ).toBeVisible();
 		await expect( page.locator( 'text=E-commerce Homepage' ).first() ).toBeVisible();
-
-		await page.setViewportSize( CLOUD_LIBRARY_SNAPSHOT_VIEWPORT );
-		await page.waitForTimeout( timeouts.short );
 
 		const modal = page.locator( '#elementor-template-library-modal .dialog-widget-content' );
 

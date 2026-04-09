@@ -1,12 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
-import { timeouts } from '../../../config/timeouts';
 import EditorPage from '../../../pages/editor-page';
-
-export const NESTED_ACCORDION_SNAPSHOT_VIEWPORT = { width: 1140, height: 900 } as const;
-
-type ExpectNestedAccordionScreenshotOptions = {
-	snapshotViewportPage?: Page;
-};
 
 /**
  * Set nested accordion title tag (H1-H6,div,span,p).
@@ -27,21 +20,12 @@ export async function setTitleTextTag( optionToSelect: string, nestedAccordionWi
 /**
  * Take a screenshot of this widget.
  *
- * @param {string}  fileName  - Snapshot file name for toMatchSnapshot.
- * @param {Locator} locator   - Locator whose bounding box is captured.
- * @param {Object}  [options] - Optional snapshotViewportPage for frontend snapshot width.
+ * @param {string}  fileName
+ * @param {Locator} locator
  *
  * @return {Promise<void>}
  */
-export async function expectScreenshotToMatchLocator(
-	fileName: string,
-	locator: Locator,
-	options?: ExpectNestedAccordionScreenshotOptions,
-): Promise<void> {
-	if ( options?.snapshotViewportPage ) {
-		await options.snapshotViewportPage.setViewportSize( NESTED_ACCORDION_SNAPSHOT_VIEWPORT );
-		await options.snapshotViewportPage.waitForTimeout( 100 );
-	}
+export async function expectScreenshotToMatchLocator( fileName: string, locator: Locator ): Promise<void> {
 	expect.soft( await locator.screenshot( {
 		type: 'png',
 	} ) ).toMatchSnapshot( fileName );
@@ -201,10 +185,8 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 	await nestedAccordionItemTitle.nth( 0 ).locator( 'summary' ).click();
 	await cloneItemButton.click();
 
-	const clonedTitle = nestedAccordionItemTitle.nth( index + 1 );
-	await clonedTitle.locator( '.e-con' ).first().waitFor( { state: 'attached', timeout: timeouts.longAction } );
-
-	const clonedTitleId = await clonedTitle.getAttribute( 'id' ),
+	const clonedTitle = nestedAccordionItemTitle.nth( index + 1 ),
+		clonedTitleId = await clonedTitle.getAttribute( 'id' ),
 		clonedTitleIndex = await clonedTitle.locator( 'summary' ).getAttribute( 'data-accordion-index' ),
 		clonedTitleText = await clonedTitle.locator( '.e-n-accordion-item-title-text' ).innerText(),
 		clonedContainerId = await clonedTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'data-id' ),
