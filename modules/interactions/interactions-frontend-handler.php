@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Plugin;
+use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,72 +48,21 @@ class Interactions_Frontend_Handler {
 			return $elements_data;
 		}
 
-		$collector = Interactions_Collector::instance();
+		$interactions_postmeta = new Interactions_Postmeta();
+		$cached_rows = $interactions_postmeta->load_content( $post_id );
 
-		// Recursively collect interactions from all elements
-		$this->collect_interactions_recursive( $elements_data, $collector );
+		if ( empty( $cached_rows ) ) {
+			$cached_rows = $interactions_postmeta->process_content( $post_id, [
+				'elements' => $elements_data,
+			] );
+		}
+
+		$collector = Interactions_Collector::instance();
+		foreach ( $cached_rows as $element_id => $interactions ) {
+			$collector->register( $element_id, $interactions );
+		}
 
 		return $elements_data;
-	}
-
-	/**
-	 * Recursively iterate through all elements and collect interactions.
-	 *
-	 * @param array                  $elements  Array of element data.
-	 * @param Interactions_Collector $collector The collector instance.
-	 */
-	private function collect_interactions_recursive( $elements, $collector ) {
-		if ( ! is_array( $elements ) ) {
-			return;
-		}
-
-		foreach ( $elements as $element ) {
-			if ( ! is_array( $element ) ) {
-				continue;
-			}
-
-			// Check if this element has interactions
-			if ( ! empty( $element['id'] ) && isset( $element['interactions'] ) ) {
-				$element_id = $element['id'];
-				$interactions = $element['interactions'];
-
-				// Decode if it's a JSON string
-				if ( is_string( $interactions ) ) {
-					$decoded = json_decode( $interactions, true );
-					if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-						$interactions = $decoded;
-					} else {
-						$interactions = null;
-					}
-				}
-
-				// Normalize the interactions format - ensure we have items array
-				if ( is_array( $interactions ) ) {
-					// If interactions has 'items' key, it's already in the right format
-					// If not, check if it's a direct array of items or has other structure
-					if ( ! isset( $interactions['items'] ) ) {
-						// Check if this looks like a direct array of interaction items
-						// (first element has 'trigger' or 'animation' or '$$type')
-						$first_item = reset( $interactions );
-						if ( is_array( $first_item ) && ( isset( $first_item['trigger'] ) || isset( $first_item['animation'] ) || isset( $first_item['$$type'] ) ) ) {
-							// It's a direct array of items, wrap it
-							$interactions = [ 'items' => $interactions ];
-						}
-					}
-
-					// Register with collector if we have valid items
-					$items = $interactions['items'] ?? [];
-					if ( ! empty( $items ) || ! empty( $interactions ) ) {
-						$collector->register( $element_id, $interactions );
-					}
-				}
-			}
-
-			// Recursively process child elements
-			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$this->collect_interactions_recursive( $element['elements'], $collector );
-			}
-		}
 	}
 
 	/**
@@ -127,29 +77,7 @@ class Interactions_Frontend_Handler {
 			return;
 		}
 
-		$collector = Interactions_Collector::instance();
-		$all_interactions = $collector->get_all();
-
-		if ( empty( $all_interactions ) ) {
-			return;
-		}
-
-		// Format: array of elements, each with elementId, dataId, and cleaned interactions
-		$elements_with_interactions = [];
-		foreach ( $all_interactions as $element_id => $interactions ) {
-			$items = $this->extract_interaction_items( $interactions );
-
-			if ( empty( $items ) ) {
-				continue;
-			}
-
-			// Build element entry with elementId, dataId, and cleaned interactions array
-			$elements_with_interactions[] = [
-				'elementId' => $element_id,
-				'dataId' => $element_id,
-				'interactions' => $items,
-			];
-		}
+		$elements_with_interactions = $this->elements_with_interactions();
 
 		if ( empty( $elements_with_interactions ) ) {
 			return;
@@ -164,53 +92,34 @@ class Interactions_Frontend_Handler {
 		echo '<script type="application/json" id="' . Module::SCRIPT_ID_INTERACTIONS_DATA . '">' . $json_data . '</script>';
 	}
 
-	/**
-	 * Extract interaction items from various data formats.
-	 *
-	 * Handles multiple formats:
-	 * - v1 format: { items: [...] }
-	 * - v2 format with $$type: { items: { $$type: '...', value: [...] } }
-	 * - Direct arrays: [{ trigger: ..., animation: ... }, ...]
-	 *
-	 * @param array $interactions The interactions data.
-	 * @return array The extracted items array.
-	 */
-	private function extract_interaction_items( $interactions ) {
-		if ( ! is_array( $interactions ) ) {
-			return [];
+	private function elements_with_interactions() {
+		$all_interactions = Interactions_Collector::instance()->get_all();
+
+		$elements_with_interactions = [];
+
+		foreach ( $all_interactions as $element_id => $interactions ) {
+			$elements_with_interactions[] = [
+				'elementId' => $element_id,
+				'dataId' => $element_id,
+				'interactions' => $interactions,
+			];
 		}
 
-		// Check if it has 'items' key (standard format)
-		if ( isset( $interactions['items'] ) ) {
-			$items = $interactions['items'];
+		return $elements_with_interactions;
+	}
 
-			return is_array( $items ) ? $items : [];
-		}
-
-		// Check if interactions itself is a direct array of items
-		// (first element has interaction-related keys)
-		$first_item = reset( $interactions );
-		if ( is_array( $first_item ) && (
-			isset( $first_item['trigger'] ) ||
-			isset( $first_item['animation'] ) ||
-			isset( $first_item['$$type'] )
-		) ) {
-			return $interactions;
-		}
-
-		return [];
+	private function get_interactions_config() {
+		return $this->config_provider ? call_user_func( $this->config_provider ) : [];
 	}
 
 	private function enqueue_interactions_assets() {
 		wp_enqueue_script( Module::HANDLE_MOTION_JS );
 		wp_enqueue_script( Module::HANDLE_FRONTEND );
 
-		$config = $this->config_provider ? call_user_func( $this->config_provider ) : [];
-
 		wp_localize_script(
 			Module::HANDLE_FRONTEND,
 			Module::JS_CONFIG_OBJECT,
-			$config
+			$this->get_interactions_config()
 		);
 	}
 }
