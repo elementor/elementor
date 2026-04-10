@@ -1,21 +1,13 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { expect, type BrowserContext, type Locator } from '@playwright/test';
+import { expect, type Locator } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'V4 activation welcome modal @promotions', () => {
-	let context: BrowserContext;
-	let wpAdmin: WpAdminPage;
 	let dialog: Locator;
 
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
-		const page = await context.newPage();
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			e_atomic_elements: 'active',
-			e_opt_in_v4: 'active',
-		} );
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_opt_in_v4' );
 	} );
 
 	test.beforeEach( async ( { page, apiRequests }, testInfo ) => {
@@ -23,16 +15,16 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await wpCli( 'wp user meta update 1 _e_welcome_popover_displayed 0' );
 		await wpCli( "wp eval update_option('elementor_install_history',['0.0.1'=>1]);" );
 
-		const testWpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await testWpAdmin.openNewPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.createNewPostWithAPI();
+		await page.waitForLoadState( 'load', { timeout: 20000 } );
 
 		dialog = page.getByRole( 'dialog' ).filter( { hasText: 'Atomic editor' } );
 	} );
 
 	test.afterAll( async () => {
 		await wpCli( 'wp user meta delete 1 _e_welcome_popover_displayed' );
-		await wpAdmin?.resetExperiments();
-		await context?.close();
+		await wpCli( 'wp elementor experiments deactivate e_atomic_elements,e_opt_in_v4' );
 	} );
 
 	test( 'Welcome modal shows header content', async () => {

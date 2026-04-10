@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
+import { timeouts } from '../../../config/timeouts';
 import EditorPage from '../../../pages/editor-page';
 
 /**
@@ -185,15 +186,17 @@ export async function cloneItemFromRepeater( editor: EditorPage, position: strin
 	await nestedAccordionItemTitle.nth( 0 ).locator( 'summary' ).click();
 	await cloneItemButton.click();
 
-	const clonedTitle = nestedAccordionItemTitle.nth( index + 1 ),
-		clonedTitleId = await clonedTitle.getAttribute( 'id' ),
+	await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
+
+	const clonedTitle = nestedAccordionItemTitle.nth( index + 1 );
+	await expect( clonedTitle.locator( '.e-con' ).first() ).toBeAttached( { timeout: timeouts.heavyAction } );
+
+	const clonedTitleId = await clonedTitle.getAttribute( 'id' ),
 		clonedTitleIndex = await clonedTitle.locator( 'summary' ).getAttribute( 'data-accordion-index' ),
 		clonedTitleText = await clonedTitle.locator( '.e-n-accordion-item-title-text' ).innerText(),
 		clonedContainerId = await clonedTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'data-id' ),
 		clonedContainerAriaLabeledBy = await clonedTitle.locator( '.e-con' ).nth( 0 ).getAttribute( 'aria-labelledby' ),
 		clonedContainerWidgetTitle = await clonedTitle.getByText( 'Add Your' ).textContent();
-
-	await editor.getPreviewFrame().locator( `.e-n-accordion` ).waitFor();
 
 	// Assert
 	await expect( nestedAccordionItemTitle ).toHaveCount( numberOfTitles + 1 );
