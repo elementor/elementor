@@ -2,8 +2,11 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect, type Locator } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
+import { timeouts } from '../../../config/timeouts';
 
 test.describe( 'V4 activation welcome modal @promotions', () => {
+	test.use( { navigationTimeout: timeouts.heavyAction } );
+
 	let dialog: Locator;
 
 	test.beforeAll( async () => {
