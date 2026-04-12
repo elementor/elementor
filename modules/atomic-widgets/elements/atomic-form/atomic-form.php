@@ -41,7 +41,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
 
-	
+
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -94,8 +94,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				'effect' => 'hide',
 			] )
 			->get();
-
-		
 
 		return [
 			'classes' => Classes_Prop_Type::make()

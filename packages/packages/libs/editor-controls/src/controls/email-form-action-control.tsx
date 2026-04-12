@@ -26,7 +26,7 @@ const EmailField = ( { bind, label, placeholder }: { bind: string; label: string
 	</PropKeyProvider>
 );
 
-const SendToField = ( { placeholder }: { placeholder: string } ) => (
+const SendToField = ( { placeholder }: { placeholder?: string } ) => (
 	<EmailField bind="to" label={ __( 'Send to', 'elementor' ) } placeholder={ placeholder } />
 );
 
@@ -129,7 +129,7 @@ const AdvancedSettings = () => (
 	</CollapsibleContent>
 );
 
-export const EmailFormActionControl = createControl( ( { toPlaceholder }: { toPlaceholder: string } ) => {
+export const EmailFormActionControl = createControl( ( { toPlaceholder }: { toPlaceholder?: string } ) => {
 	const { value, setValue, ...propContext } = useBoundProp( emailPropTypeUtil );
 
 	return (
@@ -145,5 +145,3 @@ export const EmailFormActionControl = createControl( ( { toPlaceholder }: { toPl
 		</PropProvider>
 	);
 } );
-
-EmailFormActionControl.displayName = 'EmailFormActionControl';
