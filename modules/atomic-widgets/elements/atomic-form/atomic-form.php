@@ -37,6 +37,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
+
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
