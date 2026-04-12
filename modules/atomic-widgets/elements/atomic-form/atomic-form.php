@@ -41,9 +41,19 @@ class Atomic_Form extends Atomic_Element_Base {
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
 
+
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
+	}
+
+	public static function get_default_recipient_email(): string {
+		return sanitize_email( (string) get_option( 'admin_email', '' ) );
+	}
+
+	public static function get_default_sender_email(): string {
+		return sanitize_email( (string) 'email@' . wp_parse_url( home_url(), PHP_URL_HOST ) );
 	}
 
 	public static function get_type() {
@@ -105,7 +115,10 @@ class Atomic_Form extends Atomic_Element_Base {
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( [] ),
+				->default( [
+					'to' => String_Prop_Type::generate( self::get_default_recipient_email() ),
+					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+				] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
