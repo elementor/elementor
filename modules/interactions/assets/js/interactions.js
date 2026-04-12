@@ -110,13 +110,9 @@ function initInteractions() {
 					return;
 				}
 
-				const element = document.querySelector( `[data-interaction-id="${ elementId }"]` );
-
-				if ( ! element ) {
-					return;
-				}
-
-				processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				document.querySelectorAll( `[data-interaction-id="${ elementId }"]` ).forEach( ( element ) => {
+					processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				} );
 			} );
 
 			return;
