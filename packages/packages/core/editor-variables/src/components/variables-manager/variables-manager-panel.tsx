@@ -11,7 +11,7 @@ import {
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -75,6 +75,7 @@ export function VariablesManagerPanel() {
 		isSaveDisabled,
 		handleOnChange,
 		createVariable,
+		duplicateVariable,
 		handleDeleteVariable,
 		handleStartSync: startSyncFromState,
 		handleStopSync: stopSyncFromState,
@@ -200,6 +201,23 @@ export function VariablesManagerPanel() {
 				},
 			} );
 
+			const duplicateAction = {
+				name: __( 'Duplicate', 'elementor' ),
+				icon: CopyIcon,
+				color: 'text.primary',
+				onClick: ( itemId: string ) => {
+					const newId = duplicateVariable( itemId );
+					if ( newId ) {
+						startAutoEdit( newId );
+						const variableTypeOptions = getVariableType( variable.type );
+						trackVariablesManagerEvent( {
+							action: 'duplicate',
+							varType: variableTypeOptions?.variableType,
+						} );
+					}
+				},
+			};
+
 			const deleteAction = {
 				name: __( 'Delete', 'elementor' ),
 				icon: TrashIcon,
@@ -215,9 +233,9 @@ export function VariablesManagerPanel() {
 				},
 			};
 
-			return [ ...typeActions, deleteAction ];
+			return [ ...typeActions, duplicateAction, deleteAction ];
 		},
-		[ variables, handleStartSync, handleStopSync ]
+		[ variables, handleStartSync, handleStopSync, duplicateVariable, startAutoEdit ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;

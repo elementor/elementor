@@ -5,6 +5,7 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
+import { generateDuplicateLabel } from '../../../utils/validations';
 import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
 import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
@@ -38,6 +39,35 @@ export const useVariablesManagerState = () => {
 
 		return newId;
 	}, [] );
+
+	const duplicateVariable = useCallback(
+		( sourceId: string ): string | null => {
+			const source = variables[ sourceId ];
+			if ( ! source ) {
+				return null;
+			}
+
+			const existingLabels = Object.values( variables )
+				.filter( ( v ) => ! v.deleted )
+				.map( ( v ) => v.label );
+
+			const newId = generateTempId();
+			const newLabel = generateDuplicateLabel( source.label, existingLabels );
+
+			setVariables( ( prev ) => ( {
+				...prev,
+				[ newId ]: {
+					label: newLabel,
+					value: source.value,
+					type: source.type,
+				},
+			} ) );
+			setIsDirty( true );
+
+			return newId;
+		},
+		[ variables ]
+	);
 
 	const handleDeleteVariable = useCallback( ( itemId: string ) => {
 		setDeletedVariables( ( prev ) => [ ...prev, itemId ] );
@@ -97,6 +127,7 @@ export const useVariablesManagerState = () => {
 		isSaveDisabled,
 		handleOnChange,
 		createVariable,
+		duplicateVariable,
 		handleDeleteVariable,
 		handleStartSync,
 		handleStopSync,
