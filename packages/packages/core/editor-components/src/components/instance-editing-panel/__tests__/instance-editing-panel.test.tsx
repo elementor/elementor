@@ -8,7 +8,13 @@ import {
 } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getElementLabel,
+	getElementSettings,
+	getElementType,
+	getWidgetsCache,
+} from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
 import {
 	__createStore,
@@ -339,6 +345,7 @@ describe( '<InstanceEditingPanel />', () => {
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
 		jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
+		jest.mocked( getElementSettings ).mockReturnValue( {} );
 	} );
 
 	afterEach( () => {
