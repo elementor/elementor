@@ -14,14 +14,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const elementType = this.get( 'elType' );
 		this.config = elementor.config.elements[ elementType ];
 
-		const shouldSkipDefaults = this.get( 'skipDefaultChildren' );
-
-		if ( shouldSkipDefaults ) {
-			this.unset( 'skipDefaultChildren', { silent: true } );
-		}
-
-		const isNewElementCreate = ! shouldSkipDefaults &&
-			0 === this.get( 'elements' ).length &&
+		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
 
 		if ( isNewElementCreate ) {
@@ -38,6 +31,11 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	onElementCreate() {
+		if ( this.get( 'skipDefaultChildren' ) ) {
+			this.unset( 'skipDefaultChildren', { silent: true } );
+			return;
+		}
+
 		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
 	}
 
