@@ -10,22 +10,18 @@ export async function loadComponentsOverridableProps( componentIds: number[] ) {
 		return;
 	}
 
-	const { data, meta } = await apiClient.getOverridableProps( unloadedIds );
+	const { data } = await apiClient.getOverridableProps( unloadedIds );
 
-	for ( const [ componentId, overridableProps ] of Object.entries( data ) ) {
-		if ( ! overridableProps ) {
-			continue;
+	componentIds.forEach( ( componentId ) => {
+		if ( ! data[ componentId ] ) {
+			return;
 		}
 
 		dispatch(
 			slice.actions.setOverridableProps( {
-				componentId: Number( componentId ),
-				overridableProps,
+				componentId,
+				overridableProps: data[ componentId ],
 			} )
 		);
-	}
-
-	if ( meta?.errors && Object.keys( meta.errors ).length ) {
-		throw new Error( `Failed to load overridable props for some components: ${ JSON.stringify( meta.errors ) }` );
-	}
+	} );
 }
