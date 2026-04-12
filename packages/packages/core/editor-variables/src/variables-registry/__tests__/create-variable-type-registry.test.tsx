@@ -136,6 +136,23 @@ describe( 'createVariableTypeRegistry', () => {
 			expect( registry.hasVariableType( 'existing-key' ) ).toBe( true );
 			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
 		} );
+
+		it( 'should return a variable type registered with isActive false', () => {
+			// Arrange.
+			registry.registerVariableType( {
+				key: 'inactive-key',
+				icon: BrushIcon,
+				valueField: ColorField,
+				variableType: 'size',
+				isActive: false,
+				propTypeUtil: createMockPropTypeUtil( 'inactive-key' ),
+				fallbackPropTypeUtil: createMockPropTypeUtil( 'fallback-key' ),
+			} );
+
+			// Assert.
+			expect( registry.hasVariableType( 'inactive-key' ) ).toBe( false );
+			expect( registry.getVariableType( 'inactive-key' ) ).toBeDefined();
+		} );
 	} );
 
 	describe( 'isCompatible by default', () => {

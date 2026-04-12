@@ -16,7 +16,7 @@ import { registerVariableTypes } from './register-variable-types';
 import { StyleVariablesRenderer } from './renderers/style-variables-renderer';
 import { registerRepeaterInjections } from './repeater-injections';
 import { service as variablesService } from './service';
-import { hasVariableType } from './variables-registry/variable-type-registry';
+import { getVariableType } from './variables-registry/variable-type-registry';
 
 const { registerPopoverAction } = controlActionsMenu;
 
@@ -74,7 +74,7 @@ export function init() {
 
 function hasVariableAssigned( value: PropValue ) {
 	if ( isTransformable( value ) ) {
-		return hasVariableType( value.$$type );
+		return !! getVariableType( value.$$type );
 	}
 
 	return false;
