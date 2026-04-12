@@ -24,6 +24,10 @@ export const generatePrompt = () => {
 - All PropValues require \`$$type\` matching schema
 - NO LINKS in configuration
 - Retry on errors up to 10x
+- **CRITICAL**: Use EXACT property names from widget schemas. Common mistakes:
+  - e-heading text property is "title" (NOT "text")
+  - e-paragraph text property is "paragraph" (NOT "text")
+  - Always verify property names against [elementor://widgets/schema/{type}]
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
@@ -105,14 +109,16 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
   ` );
 
 	buildCompositionsToolPrompt.example( `
-Section with heading + button (NO explicit heights - content sizes naturally):
+Section with heading + paragraph + button (NO explicit heights - content sizes naturally):
 {
-  xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
+  xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-paragraph configuration-id="Section Description"></e-paragraph><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
   elementConfig: {
-    "section1": { "tag": { "$$type": "string", "value": "section" } }
+    "Main Section": { "tag": { "$$type": "string", "value": "section" } },
+    "Section Title": { "title": { "$$type": "html-v3", "value": { "content": { "$$type": "string", "value": "Welcome" }, "children": [] } } },
+    "Section Description": { "paragraph": { "$$type": "html-v3", "value": { "content": { "$$type": "string", "value": "Discover what we offer." }, "children": [] } } }
   },
   customCSS: {
-    "Section Title": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
+    "Main Section": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
   },
   stylesConfig: {
     "Section Title": {
@@ -122,6 +128,7 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   }
 }
 Note: No height/width specified on any element - flexbox handles layout automatically.
+Note: Use "title" for e-heading and "paragraph" for e-paragraph (NOT "text").
 ` );
 
 	buildCompositionsToolPrompt.parameter(
