@@ -82,7 +82,7 @@ describe( 'generateDuplicateLabel', () => {
 
 			// Assert
 			expect( result.length ).toBeLessThanOrEqual( VARIABLE_LABEL_MAX_LENGTH );
-			expect( result ).toMatch( new RegExp( `${ expectedSuffix.replace( '-', '\\-' ) }$` ) );
+			expect( result.endsWith( expectedSuffix ) ).toBe( true );
 		}
 	);
 } );
