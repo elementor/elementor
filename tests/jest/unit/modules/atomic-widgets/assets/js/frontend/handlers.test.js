@@ -25,7 +25,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	let runAction;
 
 	const importHandlers = async () => {
-		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/action-link-handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/form-handlers' );
 
 		const { registerBySelector: mockedRegisterBySelector } = jest.requireMock( '@elementor/frontend-handlers' );
 		const registrations = mockedRegisterBySelector.mock.calls
