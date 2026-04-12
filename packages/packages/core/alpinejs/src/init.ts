@@ -2,7 +2,7 @@ import { Alpine } from '@alpinejs/csp';
 
 export function init() {
 	document.addEventListener(
-		'DOMContentLoaded',
+		'elementor/frontend/init',
 		() => {
 			Alpine.start();
 		},

@@ -6,6 +6,8 @@ jest.mock( '@elementor/alpinejs', () => ( {
 	Alpine: {
 		data: jest.fn(),
 		destroyTree: jest.fn(),
+		initTree: jest.fn(),
+		nextTick: jest.fn( ( callback ) => callback() ),
 	},
 } ), { virtual: true } );
 
