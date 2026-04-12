@@ -24,6 +24,8 @@ abstract class Form_Message extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A container for form status messages (success or error). Hidden by default, shown based on form submission state.';
+
 	abstract protected static function get_background_color(): string;
 
 	abstract protected static function get_text_color(): string;
