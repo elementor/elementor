@@ -8,7 +8,9 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Component_Override_Parser;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -234,6 +236,10 @@ class Migrations_Orchestrator {
 					$has_changes = true;
 				}
 			}
+		} elseif ( $actual_prop_type instanceof Override_Prop_Type && is_array( $value['value'] ) ) {
+			if ( $this->migrate_override_value( $value['value'] ) ) {
+				$has_changes = true;
+			}
 		}
 
 		$found_type = $value['$$type'];
@@ -271,6 +277,30 @@ class Migrations_Orchestrator {
 		}
 
 		return null;
+	}
+
+	private function migrate_override_value( array &$data ): bool {
+		$override_key = $data['override_key'] ?? null;
+		$override_value = $data['override_value'] ?? null;
+		$schema_source = $data['schema_source'] ?? null;
+
+		if ( ! $override_key || ! is_array( $override_value ) || ! isset( $override_value['$$type'] ) || ! is_array( $schema_source ) ) {
+			return false;
+		}
+
+		$component_id = $schema_source['id'] ?? null;
+
+		if ( ! $component_id ) {
+			return false;
+		}
+
+		$prop_type = Component_Override_Parser::make()->resolve_override_value_prop_type( $override_key, (int) $component_id );
+
+		if ( ! ( $prop_type instanceof Prop_Type ) ) {
+			return false;
+		}
+
+		return $this->migrate_prop( $data['override_value'], $prop_type );
 	}
 
 	private function execute_prop_migration( $prop_value, array $migrations, string $direction ) {
@@ -311,6 +341,8 @@ class Migrations_Orchestrator {
 					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
+
+				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
 			}
 		);
 

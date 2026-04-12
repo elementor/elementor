@@ -14,11 +14,12 @@ type ImageMediaControlProps = {
 };
 
 export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: ImageMediaControlProps ) => {
-	const { value, setValue, propType } = useBoundProp( imageSrcPropTypeUtil );
+	const { value, setValue, propType, placeholder } = useBoundProp( imageSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
-	const src = attachment?.url ?? url?.value ?? null;
+	const { data: placeholderAttachment } = useWpMediaAttachment( placeholder?.id?.value || null );
+	const src = attachment?.url ?? url?.value ?? placeholderAttachment?.url ?? null;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes,
