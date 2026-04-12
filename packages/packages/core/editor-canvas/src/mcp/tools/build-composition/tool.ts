@@ -50,19 +50,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const {
-					configErrors,
-					invalidStyles,
-					rootContainers: generatedRootContainers,
-				} = await compositionBuilder.build( targetContainer );
+				const { invalidStyles, rootContainers: generatedRootContainers } =
+					await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
-
-				if ( configErrors.length ) {
-					errors.push( ...configErrors.map( ( e ) => new Error( e ) ) );
-					throw new Error( 'Configuration errors occurred during composition building.' );
-				}
 
 				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
 					const customCss = {

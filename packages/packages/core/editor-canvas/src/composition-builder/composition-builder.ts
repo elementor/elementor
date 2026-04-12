@@ -114,6 +114,8 @@ export class CompositionBuilder {
 		const view = element.view as Record< string, unknown > | undefined;
 		if ( view?._currentRenderPromise instanceof Promise ) {
 			await view._currentRenderPromise;
+		} else {
+			await Promise.resolve();
 		}
 	}
 
@@ -166,64 +168,34 @@ export class CompositionBuilder {
 		};
 	}
 
-	applyStyles() {
-		const errors: string[] = [];
+	private async applyProperties() {
+		const configErrors: string[] = [];
+		const styleErrors: string[] = [];
 		const invalidStyles: Record< string, string[] > = {};
-		for ( const [ styleId, styleConfig ] of Object.entries( this.elementStylesConfig ) ) {
-			const { element, node } = this.matchNodeByConfigId( styleId );
-			const validStylesPropValues: Record< string, AnyValue > = {};
-			for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
-				const { valid, errors: validationErrors } = validateInput.validateStyles( {
-					[ styleName ]: stylePropValue,
-				} );
-				if ( ! valid ) {
-					if ( styleConfig.$intention ) {
-						invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
-						invalidStyles[ element.id ].push( styleName );
-					}
-					errors.push( ...( validationErrors || [] ) );
-				} else {
-					validStylesPropValues[ styleName ] = stylePropValue;
+
+		const allConfigIds = new Set( [
+			...Object.keys( this.elementConfig ),
+			...Object.keys( this.elementStylesConfig ),
+			...Object.keys( this.elementCusomCSS ),
+		] );
+
+		for ( const configId of allConfigIds ) {
+			let element, node;
+			try {
+				( { element, node } = this.matchNodeByConfigId( configId ) );
+			} catch ( matchErr ) {
+				const msg = ( matchErr as Error ).message;
+				if ( this.elementConfig[ configId ] ) {
+					configErrors.push( msg );
 				}
-			}
-			if ( Object.keys( validStylesPropValues ).length === 0 ) {
+				if ( this.elementStylesConfig[ configId ] || this.elementCusomCSS[ configId ] ) {
+					styleErrors.push( msg );
+				}
 				continue;
 			}
-			try {
-				this.api.doUpdateElementProperty( {
-					elementId: element.id,
-					propertyName: '_styles',
-					propertyValue: validStylesPropValues,
-					elementType: node.tagName,
-				} );
-			} catch ( error ) {
-				errors.push( String( error ) );
-			}
-		}
-		for ( const [ customCSSId, customCSS ] of Object.entries( this.elementCusomCSS ) ) {
-			const { element, node } = this.matchNodeByConfigId( customCSSId );
-			this.api.doUpdateElementProperty( {
-				elementId: element.id,
-				propertyName: '_styles',
-				propertyValue: { custom_css: customCSS },
-				elementType: node.tagName,
-			} );
-		}
-		return {
-			errors,
-			invalidStyles,
-		};
-	}
 
-	applyConfigs() {
-		const errors: string[] = [];
-		for ( const [ configId, config ] of Object.entries( this.elementConfig ) ) {
-			const { element, node } = this.matchNodeByConfigId( configId );
-			const propSchema = this.findSchemaForNode( node );
-			const result = validateInput.validateProps( propSchema, config );
-			if ( ! result.valid && result.errors?.length ) {
-				errors.push( ...result.errors );
-			} else {
+			const config = this.elementConfig[ configId ];
+			if ( config ) {
 				for ( const [ propertyName, propertyValue ] of Object.entries( config ) ) {
 					try {
 						this.api.doUpdateElementProperty( {
@@ -233,12 +205,60 @@ export class CompositionBuilder {
 							elementType: node.tagName,
 						} );
 					} catch ( error ) {
-						errors.push( ( error as Error ).message );
+						configErrors.push( ( error as Error ).message );
 					}
 				}
 			}
+
+			const styleConfig = this.elementStylesConfig[ configId ];
+			if ( styleConfig ) {
+				const validStylesPropValues: Record< string, AnyValue > = {};
+				for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
+					const { valid, errors: validationErrors } = validateInput.validateStyles( {
+						[ styleName ]: stylePropValue,
+					} );
+					if ( ! valid ) {
+						if ( styleConfig.$intention ) {
+							invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
+							invalidStyles[ element.id ].push( styleName );
+						}
+						styleErrors.push( ...( validationErrors || [] ) );
+					} else {
+						validStylesPropValues[ styleName ] = stylePropValue;
+					}
+				}
+				if ( Object.keys( validStylesPropValues ).length > 0 ) {
+					try {
+						this.api.doUpdateElementProperty( {
+							elementId: element.id,
+							propertyName: '_styles',
+							propertyValue: validStylesPropValues,
+							elementType: node.tagName,
+						} );
+					} catch ( error ) {
+						styleErrors.push( String( error ) );
+					}
+				}
+			}
+
+			const customCSS = this.elementCusomCSS[ configId ];
+			if ( customCSS ) {
+				try {
+					this.api.doUpdateElementProperty( {
+						elementId: element.id,
+						propertyName: '_styles',
+						propertyValue: { custom_css: customCSS },
+						elementType: node.tagName,
+					} );
+				} catch ( cssErr ) {
+					styleErrors.push( String( cssErr ) );
+				}
+			}
+
+			await this.awaitViewRender( element );
 		}
-		return errors;
+
+		return { configErrors, styleErrors, invalidStyles };
 	}
 
 	async build( rootContainer: V1Element ) {
@@ -273,8 +293,7 @@ export class CompositionBuilder {
 			await this.awaitViewRender( newElement );
 		}
 
-		const { errors: styleErrors, invalidStyles } = this.applyStyles();
-		const configErrors = this.applyConfigs();
+		const { configErrors, styleErrors, invalidStyles } = await this.applyProperties();
 
 		return {
 			configErrors,
