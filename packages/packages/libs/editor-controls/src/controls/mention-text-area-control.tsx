@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
+import { Mention } from 'primereact/mention';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import { styled } from '@elementor/ui';
-import { Mention } from 'primereact/mention';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -84,65 +84,70 @@ type Props = {
 	suggestions: Suggestion[];
 };
 
-export const MentionTextAreaControl = createControl( ( { placeholder, ariaLabel, suggestions: allSuggestions }: Props ) => {
-	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
-	const [ filteredSuggestions, setFilteredSuggestions ] = useState< Suggestion[] >( [] );
+export const MentionTextAreaControl = createControl(
+	( { placeholder, ariaLabel, suggestions: allSuggestions }: Props ) => {
+		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+		const [ filteredSuggestions, setFilteredSuggestions ] = useState< Suggestion[] >( [] );
 
-	const transformMentionsToShortcodes = useCallback(
-		( text: string ): string => {
-			let result = text;
+		const transformMentionsToShortcodes = useCallback(
+			( text: string ): string => {
+				let result = text;
 
-			for ( const suggestion of allSuggestions ) {
-				const mentionPattern = new RegExp( `@${ suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }(?=\\s|$|[^a-zA-Z0-9_-])`, 'g' );
-				result = result.replace( mentionPattern, `[${ suggestion.value }]` );
-			}
+				for ( const suggestion of allSuggestions ) {
+					const mentionPattern = new RegExp(
+						`@${ suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }(?=\\s|$|[^a-zA-Z0-9_-])`,
+						'g'
+					);
+					result = result.replace( mentionPattern, `[${ suggestion.value }]` );
+				}
 
-			return result;
-		},
-		[ allSuggestions ],
-	);
+				return result;
+			},
+			[ allSuggestions ]
+		);
 
-	const handleChange = useCallback(
-		( e: React.FormEvent< HTMLInputElement > ) => {
-			const rawValue = ( e.target as HTMLTextAreaElement ).value;
-			const transformed = transformMentionsToShortcodes( rawValue );
-			setValue( transformed );
-		},
-		[ setValue, transformMentionsToShortcodes ],
-	);
+		const handleChange = useCallback(
+			( e: React.FormEvent< HTMLInputElement > ) => {
+				const rawValue = ( e.target as HTMLTextAreaElement ).value;
+				const transformed = transformMentionsToShortcodes( rawValue );
+				setValue( transformed );
+			},
+			[ setValue, transformMentionsToShortcodes ]
+		);
 
-	const handleSearch = useCallback(
-		( event: { query: string } ) => {
-			const query = event.query.toLowerCase();
-			const filtered = allSuggestions.filter(
-				( item ) => item.label.toLowerCase().includes( query ) || item.value.toLowerCase().includes( query ),
-			);
-			setFilteredSuggestions( filtered );
-		},
-		[ allSuggestions ],
-	);
+		const handleSearch = useCallback(
+			( event: { query: string } ) => {
+				const query = event.query.toLowerCase();
+				const filtered = allSuggestions.filter(
+					( item ) => item.label.toLowerCase().includes( query ) || item.value.toLowerCase().includes( query )
+				);
+				setFilteredSuggestions( filtered );
+			},
+			[ allSuggestions ]
+		);
 
-	const itemTemplate = useCallback( ( suggestion: Suggestion ) => {
-		return <span>{ suggestion.label }</span>;
-	}, [] );
+		const itemTemplate = useCallback( ( suggestion: Suggestion ) => {
+			return <span>{ suggestion.label }</span>;
+		}, [] );
 
-	return (
-		<ControlActions>
-			<MentionWrapper>
-				<Mention
-					value={ value ?? '' }
-					onChange={ handleChange }
-					suggestions={ filteredSuggestions }
-					onSearch={ handleSearch }
-					field="value"
-					trigger="@"
-					rows={ 5 }
-					disabled={ disabled }
-					placeholder={ placeholder }
-					itemTemplate={ itemTemplate }
-					{ ...( ariaLabel ? { 'aria-label': ariaLabel } : {} ) }
-				/>
-			</MentionWrapper>
-		</ControlActions>
-	);
-} );
+		return (
+			<ControlActions>
+				<MentionWrapper>
+					<Mention
+						value={ value ?? '' }
+						onChange={ handleChange }
+						suggestions={ filteredSuggestions }
+						onSearch={ handleSearch }
+						field="value"
+						trigger="@"
+						rows={ 5 }
+						disabled={ disabled }
+						placeholder={ placeholder }
+						itemTemplate={ itemTemplate }
+						{ ...( ariaLabel ? { 'aria-label': ariaLabel } : {} ) }
+					/>
+				</MentionWrapper>
+			</ControlActions>
+		);
+	}
+);
