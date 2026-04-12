@@ -1,6 +1,7 @@
 export type ExtendedWindow = Window & {
 	elementorCommon?: {
 		config?: {
+			isRTL?: boolean;
 			library_connect?: Record< string, unknown >;
 		};
 	};

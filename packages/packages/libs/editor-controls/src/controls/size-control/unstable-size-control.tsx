@@ -13,7 +13,7 @@ import { getSizeUnits } from './utils/settings/get-size-units';
 import { shouldNullifyValue } from './utils/should-nullify-value';
 
 type Props = {
-	placeholder?: string;
+	placeholder?: string | SizePropValue[ 'value' ];
 	variant?: SizeVariant;
 	anchorRef?: RefObject< HTMLDivElement | null >;
 	startIcon?: React.ReactNode;
