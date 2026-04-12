@@ -13,7 +13,13 @@ class Email_Form_Action_Control extends Atomic_Control_Base {
 		return 'email';
 	}
 
+	public static function get_default_recipient_email(): string {
+		return sanitize_email( (string) get_option( 'admin_email', '' ) );
+	}
+
 	public function get_props(): array {
-		return [];
+		return [
+			'toPlaceholder' => self::get_default_recipient_email(),
+		];
 	}
 }

@@ -69,8 +69,10 @@ describe( 'EmailFormActionControl', () => {
 
 	it( 'should allow filling in email values', () => {
 		// Arrange
+		const toPlaceholder = 'placeholder@email.text';
 		const testEmail = 'test@example.com';
-		renderControl( <EmailFormActionControl />, {
+
+		renderControl( <EmailFormActionControl toPlaceholder={ toPlaceholder } />, {
 			setValue,
 			value: {
 				to: wrap( '' ),
@@ -86,7 +88,7 @@ describe( 'EmailFormActionControl', () => {
 		} );
 
 		// Act
-		const toInput = screen.getByPlaceholderText( /where should we send new submissions/i );
+		const toInput = screen.getByPlaceholderText( toPlaceholder );
 		fireEvent.change( toInput, { target: { value: testEmail } } );
 
 		// Assert
