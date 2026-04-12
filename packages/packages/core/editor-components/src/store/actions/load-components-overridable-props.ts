@@ -12,16 +12,5 @@ export async function loadComponentsOverridableProps( componentIds: number[] ) {
 
 	const { data } = await apiClient.getOverridableProps( unloadedIds );
 
-	componentIds.forEach( ( componentId ) => {
-		if ( ! data[ componentId ] ) {
-			return;
-		}
-
-		dispatch(
-			slice.actions.setOverridableProps( {
-				componentId,
-				overridableProps: data[ componentId ],
-			} )
-		);
-	} );
+	dispatch( slice.actions.loadOverridableProps( data ) );
 }
