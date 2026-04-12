@@ -47,21 +47,24 @@ export const useVariablesManagerState = () => {
 				return null;
 			}
 
-			const existingLabels = Object.values( variables )
-				.filter( ( v ) => ! v.deleted )
-				.map( ( v ) => v.label );
-
 			const newId = generateTempId();
-			const newLabel = generateDuplicateLabel( source.label, existingLabels );
 
-			setVariables( ( prev ) => ( {
-				...prev,
-				[ newId ]: {
-					label: newLabel,
-					value: source.value,
-					type: source.type,
-				},
-			} ) );
+			setVariables( ( prev ) => {
+				const existingLabels = Object.values( prev )
+					.filter( ( v ) => ! v.deleted )
+					.map( ( v ) => v.label );
+
+				const newLabel = generateDuplicateLabel( source.label, existingLabels );
+
+				return {
+					...prev,
+					[ newId ]: {
+						label: newLabel,
+						value: source.value,
+						type: source.type,
+					},
+				};
+			} );
 			setIsDirty( true );
 
 			return newId;
