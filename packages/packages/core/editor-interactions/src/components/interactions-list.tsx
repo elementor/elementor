@@ -128,8 +128,6 @@ export function InteractionsList( props: InteractionListProps ) {
 					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
 					Icon: () => null,
 					Content: InteractionsListItem,
-<<<<<<< HEAD
-=======
 					onPopoverOpen: ( value: InteractionItemPropValue ) => {
 						const { trigger, start, end, relativeTo } = extractScrollOverlayParams(
 							value.value,
@@ -145,7 +143,6 @@ export function InteractionsList( props: InteractionListProps ) {
 							trackInteractionCreated( elementId, value );
 						}
 					},
->>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 					actions: ( value: InteractionItemPropValue ) => (
 						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 							<IconButton

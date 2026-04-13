@@ -79,11 +79,8 @@ type BaseItemSettings< T > = {
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
-<<<<<<< HEAD
-=======
 	onPopoverOpen?: ( value: T ) => void;
 	onPopoverClose?: ( value: T ) => void;
->>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -312,11 +309,8 @@ type RepeaterItemProps< T > = {
 	children: ( props: Pick< RepeaterItemContentProps< T >, 'anchorEl' > ) => React.ReactNode;
 	openOnMount: boolean;
 	onOpen: () => void;
-<<<<<<< HEAD
-=======
 	onPopoverOpen?: ( value: T ) => void;
 	onPopoverClose?: ( value: T ) => void;
->>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -340,11 +334,10 @@ const RepeaterItem = < T, >( {
 	showRemove,
 	disabled,
 	actions,
+	onPopoverOpen,
+	onPopoverClose,
 	value,
 }: RepeaterItemProps< T > ) => {
-<<<<<<< HEAD
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
-=======
 	const wrappedOnPopoverClose = onPopoverClose ? () => onPopoverClose( value ) : undefined;
 	const { popoverState, popoverProps, ref, setRef } = usePopover(
 		openOnMount,
@@ -354,9 +347,6 @@ const RepeaterItem = < T, >( {
 		},
 		wrappedOnPopoverClose
 	);
-	const triggerProps = bindTrigger( popoverState );
->>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
-
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );
@@ -404,7 +394,7 @@ const RepeaterItem = < T, >( {
 	);
 };
 
-const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
+const usePopover = ( openOnMount: boolean, onOpen: () => void, onPopoverClose?: () => void ) => {
 	const [ ref, setRef ] = useState< HTMLElement | null >( null );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
