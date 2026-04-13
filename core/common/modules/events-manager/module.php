@@ -32,12 +32,32 @@ class Module extends BaseModule {
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
 		$is_flags_enabled = false;
+		$session_recording_events = [];
 
 		if ( $can_send_events ) {
 			$mixpanel_config = self::get_remote_mixpanel_config();
-			$is_flags_enabled = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] )
-				? (bool) ( $mixpanel_config[0]['flags'] ?? false )
-				: false;
+			$has_config = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] );
+
+			if ( $has_config ) {
+				$is_flags_enabled = (bool) ( $mixpanel_config[0]['flags'] ?? false );
+
+				$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
+				$is_session_replays_enabled = (bool) ( $session_replays['enabled'] ?? false );
+				$raw_events = $session_replays['events'] ?? null;
+				$events_map = is_array( $raw_events ) ? $raw_events : [];
+
+				if ( $is_session_replays_enabled ) {
+					$session_recording_events = array_values( array_filter(
+						self::get_session_recording_events(),
+						function ( $pair ) use ( $events_map ) {
+							if ( ! isset( $pair['start'] ) ) {
+								return false;
+							}
+							return (bool) ( $events_map[ $pair['start'] ] ?? false );
+						}
+					) );
+				}
+			}
 		}
 
 		$settings = [
@@ -53,7 +73,7 @@ class Module extends BaseModule {
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'flags_enabled' => $is_flags_enabled,
 			'user_id' => self::get_user_id(),
-			'session_recording_events' => self::get_session_recording_events(),
+			'session_recording_events' => $session_recording_events,
 		];
 
 		return $settings;
