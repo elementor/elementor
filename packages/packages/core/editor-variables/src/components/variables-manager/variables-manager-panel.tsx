@@ -207,14 +207,13 @@ export function VariablesManagerPanel() {
 				color: 'text.primary',
 				onClick: ( itemId: string ) => {
 					const newId = duplicateVariable( itemId );
-					if ( newId ) {
-						startAutoEdit( newId );
-						const variableTypeOptions = getVariableType( variable.type );
-						trackVariablesManagerEvent( {
-							action: 'duplicate',
-							varType: variableTypeOptions?.variableType,
-						} );
-					}
+					startAutoEdit( newId );
+
+					const variableTypeOptions = getVariableType( variable.type );
+					trackVariablesManagerEvent( {
+						action: 'duplicate',
+						varType: variableTypeOptions?.variableType,
+					} );
 				},
 			};
 

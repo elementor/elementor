@@ -5,7 +5,7 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
-import { generateDuplicateLabel } from '../../../utils/validations';
+import { generateDuplicateLabel } from '../../../utils/duplicate-label';
 import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
 import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
@@ -40,37 +40,32 @@ export const useVariablesManagerState = () => {
 		return newId;
 	}, [] );
 
-	const duplicateVariable = useCallback(
-		( sourceId: string ): string | null => {
-			const source = variables[ sourceId ];
-			if ( ! source ) {
-				return null;
+	const duplicateVariable = useCallback( ( sourceId: string ): string => {
+		const newId = generateTempId();
+
+		setVariables( ( prev ) => {
+			const source = prev[ sourceId ];
+			if ( ! source || source.deleted ) {
+				return prev;
 			}
 
-			const newId = generateTempId();
+			const existingLabels = Object.values( prev )
+				.filter( ( v ) => ! v.deleted )
+				.map( ( v ) => v.label );
 
-			setVariables( ( prev ) => {
-				const existingLabels = Object.values( prev )
-					.filter( ( v ) => ! v.deleted )
-					.map( ( v ) => v.label );
+			return {
+				...prev,
+				[ newId ]: {
+					label: generateDuplicateLabel( source.label, existingLabels ),
+					value: source.value,
+					type: source.type,
+				},
+			};
+		} );
 
-				const newLabel = generateDuplicateLabel( source.label, existingLabels );
-
-				return {
-					...prev,
-					[ newId ]: {
-						label: newLabel,
-						value: source.value,
-						type: source.type,
-					},
-				};
-			} );
-			setIsDirty( true );
-
-			return newId;
-		},
-		[ variables ]
-	);
+		setIsDirty( true );
+		return newId;
+	}, [] );
 
 	const handleDeleteVariable = useCallback( ( itemId: string ) => {
 		setDeletedVariables( ( prev ) => [ ...prev, itemId ] );
