@@ -28,14 +28,14 @@ class Controller extends Controller_Base {
 			if ( Plugin::$instance->data_manager_v2->is_internal() ) {
 				return true;
 			}
-	
+
 			return current_user_can( 'edit_posts' );
 		}
-	
+
 		if ( \WP_REST_Server::CREATABLE === $method_type || \WP_REST_Server::DELETABLE === $method_type ) {
 			return current_user_can( 'manage_options' );
 		}
-	
+
 		return false;
 	}
 
