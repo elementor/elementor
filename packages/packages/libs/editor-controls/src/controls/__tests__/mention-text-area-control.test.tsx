@@ -111,12 +111,12 @@ describe( 'MentionTextAreaControl', () => {
 		const textarea = screen.getByRole( 'textbox' );
 
 		// Act.
-		fireEvent.change( textarea, { target: { value: 'Hello world' } } );
+		fireEvent.change( textarea, { target: { value: 'Hello name email' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'string',
-			value: 'Hello world',
+			value: 'Hello name email',
 		} );
 	} );
 } );

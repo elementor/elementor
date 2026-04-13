@@ -1,4 +1,5 @@
 import { getContainer, getSelectedElements } from '@elementor/editor-elements';
+import { isTransformable } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 export type Suggestion = {
@@ -39,8 +40,8 @@ export function useFormFieldSuggestions(): Suggestion[] {
 					return;
 				}
 
-				const cssIdProp = child.settings.get( '_cssid' ) as { value?: string } | string | undefined;
-				const fieldId = typeof cssIdProp === 'object' && cssIdProp?.value ? cssIdProp.value : cssIdProp;
+				const cssIdProp = child.settings.get( '_cssid' );
+				const fieldId = isTransformable( cssIdProp ) ? cssIdProp.value : cssIdProp;
 
 				if ( fieldId && typeof fieldId === 'string' ) {
 					suggestions.push( { label: fieldId, value: fieldId } );

@@ -126,10 +126,6 @@ export const MentionTextAreaControl = createControl(
 			[ allSuggestions ]
 		);
 
-		const itemTemplate = useCallback( ( suggestion: Suggestion ) => {
-			return <span>{ suggestion.label }</span>;
-		}, [] );
-
 		return (
 			<ControlActions>
 				<MentionWrapper>
@@ -143,7 +139,7 @@ export const MentionTextAreaControl = createControl(
 						rows={ 5 }
 						disabled={ disabled }
 						placeholder={ placeholder }
-						itemTemplate={ itemTemplate }
+						itemTemplate={ SuggestionItem }
 						{ ...( ariaLabel ? { 'aria-label': ariaLabel } : {} ) }
 					/>
 				</MentionWrapper>
@@ -151,3 +147,5 @@ export const MentionTextAreaControl = createControl(
 		);
 	}
 );
+
+const SuggestionItem = ( suggestion: Suggestion ) => <span>{ suggestion.label }</span>;
