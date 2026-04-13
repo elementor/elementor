@@ -40,7 +40,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	} );
 
 	const [ unit, setUnit ] = useUnitSync( {
-		unit: sizeValue?.unit,
+		sizeValue,
 		setUnit: ( newUnit ) => {
 			setSizeValue( {
 				unit: newUnit,

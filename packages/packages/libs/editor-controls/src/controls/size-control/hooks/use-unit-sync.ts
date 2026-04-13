@@ -1,30 +1,33 @@
 import { useEffect, useState } from 'react';
+import { type SizePropValue } from '@elementor/editor-props';
 
 import { EXTENDED_UNITS } from '../utils/resolve-size-value';
 
-type UseUnitSyncProps< U > = {
-	unit: U;
-	setUnit: ( unit: U ) => void;
+type SizeValue = SizePropValue[ 'value' ];
+
+type UseUnitSyncProps = {
+	sizeValue: SizeValue;
+	setUnit: ( unit: SizeValue[ 'unit' ] ) => void;
 	persistWhen: () => boolean;
 };
 
 type ExtendedUnit = ( typeof EXTENDED_UNITS )[ keyof typeof EXTENDED_UNITS ];
 
-export const useUnitSync = < U >( { unit, setUnit, persistWhen }: UseUnitSyncProps< U > ) => {
-	const [ state, setState ] = useState( unit );
+export const useUnitSync = ( { sizeValue, setUnit, persistWhen }: UseUnitSyncProps ) => {
+	const [ state, setState ] = useState( sizeValue.unit );
 
 	useEffect( () => {
-		if ( unit !== state ) {
-			setState( unit );
+		if ( sizeValue.unit !== state ) {
+			setState( sizeValue.unit );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ unit ] );
+	}, [ sizeValue.unit, sizeValue.size ] );
 
-	const isExtendedUnit = ( value: U ): value is ExtendedUnit & U => {
+	const isExtendedUnit = ( value: SizeValue[ 'unit' ] ): value is ExtendedUnit => {
 		return Object.values( EXTENDED_UNITS ).includes( value as ExtendedUnit );
 	};
 
-	const setInternalValue = ( newUnit: U ) => {
+	const setInternalValue = ( newUnit: SizeValue[ 'unit' ] ) => {
 		setState( newUnit );
 
 		if ( isExtendedUnit( newUnit ) || persistWhen() ) {
