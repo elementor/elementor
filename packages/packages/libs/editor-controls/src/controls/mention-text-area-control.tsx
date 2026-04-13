@@ -23,14 +23,14 @@ const MentionWrapper = styled( 'div' )( ( { theme } ) => ( {
 		lineHeight: 1.4375,
 		padding: '4px 8px',
 		borderRadius: theme.shape.borderRadius,
-		border: '1px solid rgba(255, 255, 255, 0.23)',
+		border: `1px solid ${ theme.palette.divider }`,
 		backgroundColor: 'transparent',
 		color: 'inherit',
 		resize: 'vertical',
 		outline: 'none',
 		transition: 'border-color 150ms ease-in-out',
 		'&:hover': {
-			borderColor: 'rgba(255, 255, 255, 0.6)',
+			borderColor: theme.palette.action.active,
 		},
 		'&:focus': {
 			borderColor: theme.palette.primary.main,

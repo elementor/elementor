@@ -2,6 +2,7 @@ import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
 import { CollapsibleContent, InfoAlert } from '@elementor/editor-ui';
 import { Box, Divider, Grid, Stack } from '@elementor/ui';
+import { hasProInstalled, isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -39,6 +40,22 @@ const SubjectField = () => (
 	/>
 );
 
+const MIN_PRO_VERSION_FOR_MENTIONS = '4.1.0';
+
+const shouldShowMentionsInfo = (): boolean => {
+	if ( ! hasProInstalled() ) {
+		return true;
+	}
+
+	const proVersion = window.elementorPro?.config?.version;
+
+	if ( ! proVersion ) {
+		return false;
+	}
+
+	return isVersionGreaterOrEqual( proVersion, MIN_PRO_VERSION_FOR_MENTIONS );
+};
+
 const MessageField = () => {
 	const suggestions = useFormFieldSuggestions();
 
@@ -53,10 +70,13 @@ const MessageField = () => {
 				</Grid>
 				<Grid item>
 					<InfoAlert>
-						{ __(
-							'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
-							'elementor'
-						) }
+						{ shouldShowMentionsInfo()
+							? __(
+								'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
+								'elementor'
+							)
+							: __( '[all-fields] shortcode sends all fields.', 'elementor' )
+						}
 					</InfoAlert>
 				</Grid>
 			</Grid>
