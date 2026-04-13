@@ -23,6 +23,9 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Migrations_Loader::destroy();
+		delete_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY );
+		delete_option( Migrations_Loader::MANIFEST_TRANSIENT_KEY . '_stale' );
+		remove_all_filters( 'pre_http_request' );
 		parent::tearDown();
 	}
 
@@ -250,6 +253,91 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 'svg', $result );
+	}
+
+	public function test_remote_manifest_returns_cached_transient() {
+		// Arrange
+		$manifest_json = wp_json_encode( [ 'propTypes' => [], 'widgetKeys' => [] ] );
+		set_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY, $manifest_json, HOUR_IN_SECONDS );
+
+		$loader = Migrations_Loader::make( 'https://migrations.elementor.com/' );
+
+		// Act
+		$hash = $loader->get_manifest_hash();
+
+		// Assert
+		$this->assertNotEmpty( $hash );
+	}
+
+	public function test_remote_manifest_fetches_and_caches_on_transient_miss() {
+		// Arrange
+		$manifest = [ 'propTypes' => [], 'widgetKeys' => [] ];
+		$manifest_json = wp_json_encode( $manifest );
+
+		delete_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY );
+		delete_option( Migrations_Loader::MANIFEST_TRANSIENT_KEY . '_stale' );
+
+		add_filter( 'pre_http_request', function ( $pre, $args, $url ) use ( $manifest_json ) {
+			if ( false !== strpos( $url, 'migrations.elementor.com' ) ) {
+				return [ 'response' => [ 'code' => 200 ], 'body' => $manifest_json ];
+			}
+			return $pre;
+		}, 10, 3 );
+
+		$loader = Migrations_Loader::make( 'https://migrations.elementor.com/' );
+
+		// Act
+		$hash = $loader->get_manifest_hash();
+
+		// Assert
+		$this->assertNotEmpty( $hash );
+		$this->assertEquals( $manifest_json, get_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY ) );
+		$this->assertEquals( $manifest_json, get_option( Migrations_Loader::MANIFEST_TRANSIENT_KEY . '_stale' ) );
+	}
+
+	public function test_remote_manifest_falls_back_to_stale_on_fetch_failure() {
+		// Arrange
+		$stale_manifest = wp_json_encode( [ 'propTypes' => [], 'widgetKeys' => [] ] );
+
+		delete_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY );
+		update_option( Migrations_Loader::MANIFEST_TRANSIENT_KEY . '_stale', $stale_manifest, false );
+
+		add_filter( 'pre_http_request', function ( $pre, $args, $url ) {
+			if ( false !== strpos( $url, 'migrations.elementor.com' ) ) {
+				return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+			}
+			return $pre;
+		}, 10, 3 );
+
+		$loader = Migrations_Loader::make( 'https://migrations.elementor.com/' );
+
+		// Act
+		$hash = $loader->get_manifest_hash();
+
+		// Assert
+		$this->assertNotEmpty( $hash );
+		$this->assertEquals( md5( $stale_manifest ), $hash );
+	}
+
+	public function test_remote_manifest_returns_empty_when_no_cache_and_fetch_fails() {
+		// Arrange
+		delete_transient( Migrations_Loader::MANIFEST_TRANSIENT_KEY );
+		delete_option( Migrations_Loader::MANIFEST_TRANSIENT_KEY . '_stale' );
+
+		add_filter( 'pre_http_request', function ( $pre, $args, $url ) {
+			if ( false !== strpos( $url, 'migrations.elementor.com' ) ) {
+				return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+			}
+			return $pre;
+		}, 10, 3 );
+
+		$loader = Migrations_Loader::make( 'https://migrations.elementor.com/' );
+
+		// Act
+		$hash = $loader->get_manifest_hash();
+
+		// Assert
+		$this->assertEmpty( $hash );
 	}
 }
 

@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Loader {
+	const MANIFEST_TRANSIENT_KEY = 'elementor_migrations_manifest';
+	const MANIFEST_TRANSIENT_TTL = 12 * HOUR_IN_SECONDS;
+
 	private static ?self $instance = null;
 
 	private ?array $manifest = null;
@@ -265,17 +268,16 @@ class Migrations_Loader {
 
 		$manifest_path = $this->base_path . $this->manifest_file;
 
-		$contents = $this->read_source( $manifest_path );
+		$contents = $this->is_url( $manifest_path )
+			? $this->read_remote_manifest( $manifest_path )
+			: $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
 			Logger::warning( 'Migrations manifest not found', [
 				'path' => $manifest_path,
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = self::empty_manifest();
 			return $this->manifest;
 		}
 
@@ -287,10 +289,7 @@ class Migrations_Loader {
 				'error' => json_last_error_msg(),
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = self::empty_manifest();
 			return $this->manifest;
 		}
 
@@ -299,9 +298,43 @@ class Migrations_Loader {
 		return $this->manifest;
 	}
 
+	private function read_remote_manifest( string $url ) {
+		$transient_key = self::MANIFEST_TRANSIENT_KEY;
+		$stale_key = self::MANIFEST_TRANSIENT_KEY . '_stale';
+
+		$cached = get_transient( $transient_key );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
+		$body = $this->read_source( $url );
+
+		if ( false !== $body ) {
+			set_transient( $transient_key, $body, self::MANIFEST_TRANSIENT_TTL );
+			update_option( $stale_key, $body, false );
+			return $body;
+		}
+
+		$stale = get_option( $stale_key );
+
+		if ( false !== $stale ) {
+			return $stale;
+		}
+
+		return false;
+	}
+
+	private static function empty_manifest(): array {
+		return [
+			'widgetKeys' => [],
+			'propTypes' => [],
+		];
+	}
+
 	private function read_source( string $path ) {
 		if ( $this->is_url( $path ) ) {
-			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
+			$response = wp_remote_get( $path, [ 'timeout' => 3 ] );
 
 			if ( is_wp_error( $response ) ) {
 				return false;

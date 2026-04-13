@@ -259,7 +259,7 @@ class Global_Classes_REST_API {
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
 			return Error_Builder::make( 'unexpected_error' )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();

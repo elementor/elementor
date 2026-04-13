@@ -54,14 +54,16 @@ class Global_Classes_Repository {
 			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
 
-		Migrations_Orchestrator::make()->migrate(
-			$all,
-			$kit->get_id(),
-			$meta_key,
-			function( $migrated_data ) use ( $kit, $meta_key ) {
-				$kit->update_json_meta( $meta_key, $migrated_data );
-			}
-		);
+		if ( Migrations_Orchestrator::is_active() ) {
+			Migrations_Orchestrator::make()->migrate(
+				$all,
+				$kit->get_id(),
+				$meta_key,
+				function( $migrated_data ) use ( $kit, $meta_key ) {
+					$kit->update_json_meta( $meta_key, $migrated_data );
+				}
+			);
+		}
 
 		$this->cache = Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 

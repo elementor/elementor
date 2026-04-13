@@ -8,8 +8,8 @@ export function PopulateStore() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
-			( [ previewRes, frontendRes ] ) => {
+		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] )
+			.then( ( [ previewRes, frontendRes ] ) => {
 				const { data: previewData } = previewRes;
 				const { data: frontendData } = frontendRes;
 
@@ -25,8 +25,11 @@ export function PopulateStore() {
 						},
 					} )
 				);
-			}
-		);
+			} )
+			.catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( error );
+			} );
 	}, [ dispatch ] );
 
 	return null;
