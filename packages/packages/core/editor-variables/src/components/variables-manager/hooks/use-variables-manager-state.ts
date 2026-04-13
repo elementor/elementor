@@ -4,8 +4,8 @@ import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
-import { filterBySearch } from '../../../utils/filter-by-search';
 import { generateDuplicateLabel } from '../../../utils/duplicate-label';
+import { filterBySearch } from '../../../utils/filter-by-search';
 import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
 import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
