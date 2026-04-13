@@ -51,6 +51,8 @@ jobs:
         include:
           - shardIndex: "plugin_tester_section"
           - shardIndex: "plugin_tester_container"
+          - shardIndex: "elements-regression-core"
+          - shardIndex: "elements-regression-atomic"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -129,12 +131,14 @@ jobs:
       - name: Update snapshots
         if: ${{
           matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section'
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'elements-regression-core' &&
+          matrix.shardIndex != 'elements-regression-atomic'
           }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
-          PLAYWRIGHT_SLOW_MO: 100
+
         run: |
           npm run test:playwright -- \
             --update-snapshots \
@@ -146,7 +150,7 @@ jobs:
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
-          PLAYWRIGHT_SLOW_MO: 100
+
         run: |
           npm run test:playwright -- \
             --update-snapshots \
@@ -157,11 +161,31 @@ jobs:
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
-          PLAYWRIGHT_SLOW_MO: 100
+
         run: |
           npm run test:playwright -- \
             --update-snapshots \
             --grep="@plugin_tester_section"
+
+      - name: Update elements regression core snapshots
+        if: ${{ matrix.shardIndex == 'elements-regression-core' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+
+        run: |
+          npm run test:playwright:elements-regression:core -- \
+            --update-snapshots
+
+      - name: Update elements regression atomic snapshots
+        if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+
+        run: |
+          npm run test:playwright:elements-regression:atomic -- \
+            --update-snapshots
 
       - name: Upload updated snapshots
         uses: actions/upload-artifact@v4
@@ -242,7 +266,7 @@ jobs:
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
-          PLAYWRIGHT_SLOW_MO: 100
+
         run: |
           npm run test:playwright -- \
             --update-snapshots \

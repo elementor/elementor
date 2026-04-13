@@ -22,8 +22,6 @@ _config( {
 	path: resolve( __dirname, '../../.env' ),
 } );
 
-const slowMo = Number( process.env.PLAYWRIGHT_SLOW_MO ) || 0;
-
 const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number ]> = {
 	chromium: {
 		name: 'chromium',
@@ -32,7 +30,6 @@ const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number 
 			...devices[ 'Desktop Chrome' ],
 			viewport: { width: 1920, height: 1080 },
 			launchOptions: {
-				slowMo,
 				args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 			},
 		},
@@ -42,7 +39,6 @@ const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number 
 		use: {
 			...devices[ 'Desktop Firefox' ],
 			viewport: { width: 1920, height: 1080 },
-			launchOptions: { slowMo },
 		},
 	},
 	webkit: {
@@ -50,7 +46,6 @@ const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number 
 		use: {
 			...devices[ 'Desktop Safari' ],
 			viewport: { width: 1920, height: 1080 },
-			launchOptions: { slowMo },
 		},
 	},
 };
