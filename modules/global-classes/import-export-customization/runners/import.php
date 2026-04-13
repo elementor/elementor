@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Data;
+use Elementor\Modules\GlobalClasses\Global_Classes_Sanitization;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
@@ -47,7 +47,7 @@ class Import extends Import_Runner_Base {
 			return [];
 		}
 
-		$global_classes = Global_Classes_Data::sanitize_order(
+		$global_classes['order'] = Global_Classes_Sanitization::order(
 			$global_classes['items'] ?? [],
 			$global_classes['order'] ?? []
 		);

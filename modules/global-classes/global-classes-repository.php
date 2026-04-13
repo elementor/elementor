@@ -54,7 +54,7 @@ class Global_Classes_Repository {
 			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
 
-		$all = Global_Classes_Data::sanitize_order( $all['items'] ?? [], $all['order'] ?? [] );
+		$all['order'] = Global_Classes_Sanitization::order( $all['items'] ?? [], $all['order'] ?? [] );
 
 		Migrations_Orchestrator::make()->migrate(
 			$all,

@@ -6,8 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Global_Classes_Data {
-	public static function sanitize_order( array $items, array $order ): array {
+class Global_Classes_Sanitization {
+	public static function order( array $items, array $order ): array {
 		if ( empty( $items ) ) {
 			return [
 				'items' => $items,
@@ -21,9 +21,6 @@ class Global_Classes_Data {
 		$missing = array_diff( $item_ids, $order_existing );
 		sort( $missing, SORT_STRING );
 
-		return [
-			'items' => $items,
-			'order' => array_merge( $order_existing, $missing ),
-		];
+		return array_merge( $order_existing, $missing );
 	}
 }

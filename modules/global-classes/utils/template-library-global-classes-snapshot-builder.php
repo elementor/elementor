@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
-use Elementor\Modules\GlobalClasses\Global_Classes_Data;
+use Elementor\Modules\GlobalClasses\Global_Classes_Sanitization;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;
@@ -187,7 +187,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	private static function parse_snapshot_or_null( array $snapshot ): ?array {
-		$snapshot = Global_Classes_Data::sanitize_order(
+		$snapshot['order'] = Global_Classes_Sanitization::order(
 			$snapshot['items'] ?? [],
 			$snapshot['order'] ?? []
 		);
