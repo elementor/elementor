@@ -79,6 +79,11 @@ type BaseItemSettings< T > = {
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
+<<<<<<< HEAD
+=======
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: ( value: T ) => void;
+>>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -307,6 +312,11 @@ type RepeaterItemProps< T > = {
 	children: ( props: Pick< RepeaterItemContentProps< T >, 'anchorEl' > ) => React.ReactNode;
 	openOnMount: boolean;
 	onOpen: () => void;
+<<<<<<< HEAD
+=======
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: ( value: T ) => void;
+>>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -332,7 +342,20 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
+<<<<<<< HEAD
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
+=======
+	const wrappedOnPopoverClose = onPopoverClose ? () => onPopoverClose( value ) : undefined;
+	const { popoverState, popoverProps, ref, setRef } = usePopover(
+		openOnMount,
+		() => {
+			onOpen();
+			onPopoverOpen?.( value );
+		},
+		wrappedOnPopoverClose
+	);
+	const triggerProps = bindTrigger( popoverState );
+>>>>>>> 327432e373 (Internal: Update Editor flow handling trigger and effect [ED-23659] (#35454))
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
