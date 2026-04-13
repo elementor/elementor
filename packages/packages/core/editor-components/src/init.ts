@@ -13,6 +13,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { apiClient } from './api';
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
@@ -25,7 +26,6 @@ import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-t
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
-import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
@@ -63,7 +63,7 @@ export function init() {
 		const { id, config } = getV1CurrentDocument();
 
 		if ( id ) {
-			removeComponentStyles( id );
+			apiClient.invalidateComponentConfigCache( id );
 		}
 
 		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
