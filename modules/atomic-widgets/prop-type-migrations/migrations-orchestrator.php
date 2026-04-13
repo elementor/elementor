@@ -342,6 +342,8 @@ class Migrations_Orchestrator {
 					$migrated_data
 				);
 
+				$document->delete_meta( Document::CACHE_META_KEY );
+
 				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
 			}
 		);
