@@ -72,11 +72,10 @@ const MessageField = () => {
 					<InfoAlert>
 						{ shouldShowMentionsInfo()
 							? __(
-								'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
-								'elementor'
-							)
-							: __( '[all-fields] shortcode sends all fields.', 'elementor' )
-						}
+									'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
+									'elementor'
+							  )
+							: __( '[all-fields] shortcode sends all fields.', 'elementor' ) }
 					</InfoAlert>
 				</Grid>
 			</Grid>
