@@ -355,6 +355,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.2 - 2026-04-13 =
+
+* Security Fix: Improved code security enforcement in global style settings
+Fix: Exposed props are not displayed on first load in instance panel for nested components - Atomic Editor
+* Fix: Interactions apply only to the first matching element instead of all instances on the page - Atomic Editor
+
 = 4.0.1 - 2026-04-01 =
 
 * Fix: Interactions on canvas do not work across various elements - Atomic Editor
