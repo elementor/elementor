@@ -167,6 +167,7 @@ describe( 'VariablesManagerPanel', () => {
 		isSaving: false,
 		handleOnChange: jest.fn(),
 		createVariable: jest.fn(),
+		duplicateVariable: jest.fn(),
 		handleDeleteVariable: jest.fn(),
 		handleStartSync: jest.fn(),
 		handleStopSync: jest.fn(),
@@ -222,6 +223,12 @@ describe( 'VariablesManagerPanel', () => {
 		const props = JSON.parse( table.getAttribute( 'data-props' ) || '{}' );
 		expect( props.variables ).toBeDefined();
 		expect( props.menuActions ).toEqual( [
+			{
+				name: 'Duplicate',
+				icon: 'IconComponent',
+				color: 'text.primary',
+				onClick: 'function',
+			},
 			{
 				name: 'Delete',
 				icon: 'IconComponent',
