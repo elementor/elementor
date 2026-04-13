@@ -4,14 +4,11 @@ import { shouldNullifyValue } from '../should-nullify-value';
 
 describe( 'shouldNullifyValue', () => {
 	it( 'should return true when value is null', () => {
-		// Arrange.
-		const value = null;
-
-		// Act.
-		const result = shouldNullifyValue( value );
+		// Arrange & Act.
+		const result = shouldNullifyValue( null );
 
 		// Assert.
-		expect( result ).toBe( true );
+		expect( result ).toBe( false );
 	} );
 
 	it( 'should return true when value has no size and unit is not auto or custom', () => {

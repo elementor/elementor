@@ -4,27 +4,36 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { LinkedDimensionsControl } from '../linked-dimensions-control';
 
+const settings = {
+	units: [ 'px', 'rem' ],
+};
+
 const propType = createMockPropType( {
 	kind: 'union',
 	prop_types: {
 		size: createMockPropType( {
 			key: 'size',
 			kind: 'plain',
+			settings,
 		} ),
 		dimensions: createMockPropType( {
 			kind: 'object',
 			shape: {
 				'block-start': createMockPropType( {
 					kind: 'plain',
+					settings,
 				} ),
 				'block-end': createMockPropType( {
 					kind: 'plain',
+					settings,
 				} ),
 				'inline-start': createMockPropType( {
 					kind: 'plain',
+					settings,
 				} ),
 				'inline-end': createMockPropType( {
 					kind: 'plain',
+					settings,
 				} ),
 			},
 		} ),
