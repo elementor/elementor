@@ -13,6 +13,11 @@ on:
         description: 'Update Firefox snapshots'
         required: false
         default: false
+      test_grep:
+        type: string
+        description: 'Update only tests matching this @tag or keyword (runs a single job instead of all shards)'
+        required: false
+        default: ''
       reset_snapshot_baselines:
         type: boolean
         description: 'Delete baseline PNGs for the browser(s) selected above only (Firefox: *firefox*; Chromium: other *.png in *-snapshots)'
@@ -37,11 +42,15 @@ jobs:
     name: Update snapshots - shard ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
+    if: ${{ !inputs.test_grep }}
     strategy:
       fail-fast: false
       matrix:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         shardTotal: [17]
+        include:
+          - shardIndex: "plugin_tester_section"
+          - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -118,14 +127,41 @@ jobs:
           fi
 
       - name: Update snapshots
+        if: ${{
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section'
+          }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.browsers.outputs.list }}
+          PLAYWRIGHT_SLOW_MO: 100
         run: |
           npm run test:playwright -- \
             --update-snapshots \
             --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Update plugin tester container snapshots
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+          PLAYWRIGHT_SLOW_MO: 100
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep="@plugin_tester_container"
+
+      - name: Update plugin tester section snapshots
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+          PLAYWRIGHT_SLOW_MO: 100
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep="@plugin_tester_section"
 
       - name: Upload updated snapshots
         uses: actions/upload-artifact@v4
@@ -136,10 +172,95 @@ jobs:
           if-no-files-found: ignore
           retention-days: 1
 
+  update-snapshots-targeted:
+    name: Update snapshots for "${{ inputs.test_grep }}" on PHP (${{ needs.get-php-version.outputs.php_version }})
+    runs-on: ubuntu-22.04
+    needs: [build-plugin, get-php-version]
+    if: ${{ inputs.test_grep != '' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.5.0
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm run install:ci
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+      - name: Install WordPress environment
+        run: npm run start-local-server
+
+      - name: Setup test data
+        run: npm run test:setup:playwright
+
+      - name: Resolve browsers to install
+        id: browsers
+        run: |
+          BROWSERS=""
+          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+            BROWSERS="chromium"
+          fi
+          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+            BROWSERS="$BROWSERS firefox"
+          fi
+          BROWSERS=$(echo "$BROWSERS" | xargs)
+          if [[ -z "$BROWSERS" ]]; then
+            BROWSERS="chromium"
+          fi
+          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+
+      - name: Install playwright/test
+        run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
+
+      - name: Update snapshots for "${{ inputs.test_grep }}"
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
+          PLAYWRIGHT_SLOW_MO: 100
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep="${{ inputs.test_grep }}"
+
+      - name: Upload updated snapshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-targeted
+          path: tests/**/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 1
+
   commit-snapshots:
     name: Commit updated snapshots
     runs-on: ubuntu-22.04
-    needs: [update-snapshots]
+    needs: [update-snapshots, update-snapshots-targeted]
     if: always()
     steps:
       - name: Checkout source code
@@ -151,7 +272,7 @@ jobs:
       - name: Download all snapshot artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: snapshots-shard-*
+          pattern: snapshots-*
           path: tests/
           merge-multiple: true
 
