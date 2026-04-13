@@ -25,7 +25,6 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'llm_support', false );
 	}
 
 	public static function get_type() {
