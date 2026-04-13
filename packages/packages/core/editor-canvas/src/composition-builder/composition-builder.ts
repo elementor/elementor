@@ -1,9 +1,11 @@
 import {
 	createElement,
+	type CreateElementParams,
 	generateElementId,
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
+	type V1ElementConfig,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
@@ -34,7 +36,6 @@ export class CompositionBuilder {
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementCusomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
-	private containerElements: string[] = [];
 	private api: API = {
 		createElement,
 		getWidgetsCache,
@@ -82,50 +83,63 @@ export class CompositionBuilder {
 		return this.xml;
 	}
 
-	private iterateBuild( node: Element, containerElement: V1Element, childIndex: number ) {
+	private buildModelTree(
+		node: Element,
+		widgetsCache: Record< string, V1ElementConfig >
+	): Record< string, unknown > {
 		const elementTag = node.tagName;
-		const isContainer = this.containerElements.includes( elementTag );
-		const parentElType = containerElement.model.get( 'elType' );
-		let targetContainer =
-			parentElType === 'e-tabs'
-				? containerElement.children?.[ 1 ].children?.[ childIndex ] || containerElement.children?.[ 1 ]
-				: containerElement;
-		if ( ! targetContainer ) {
-			targetContainer = containerElement;
+		const isWidget = widgetsCache[ elementTag ]?.elType === 'widget';
+		const id = this.api.generateElementId();
+		const children = Array.from( node.children ).map( ( child ) => this.buildModelTree( child, widgetsCache ) );
+
+		node.setAttribute( 'id', id );
+
+		const base = {
+			id,
+			skipDefaultChildren: true,
+			elements: children,
+			editor_settings: {
+				title: node.getAttribute( 'configuration-id' ) ?? undefined,
+			},
+		};
+
+		if ( isWidget ) {
+			return { ...base, elType: 'widget' as const, widgetType: elementTag };
 		}
-		const newElement = isContainer
-			? this.api.createElement( {
-					container: targetContainer,
-					model: {
-						elType: elementTag,
-						id: generateElementId(),
-						editor_settings: {
-							title: node.getAttribute( 'configuration-id' ) ?? undefined,
-						},
-					},
-					options: { useHistory: false },
-			  } )
-			: this.api.createElement( {
-					container: targetContainer,
-					model: {
-						elType: 'widget',
-						widgetType: elementTag,
-						id: generateElementId(),
-						editor_settings: {
-							title: node.getAttribute( 'configuration-id' ) ?? undefined,
-						},
-					},
-					options: { useHistory: false },
-			  } );
-		if ( containerElement.id === 'document' ) {
-			this.rootContainers.push( newElement );
+
+		return { ...base, elType: elementTag };
+	}
+
+	private async awaitViewRender( element: V1Element ) {
+		const view = element.view as Record< string, unknown > | undefined;
+		if ( view?._currentRenderPromise instanceof Promise ) {
+			await view._currentRenderPromise;
+		} else {
+			await Promise.resolve();
 		}
-		node.setAttribute( 'id', newElement.id );
-		let currentChild = 0;
-		for ( const childNode of Array.from( node.children ) ) {
-			this.iterateBuild( childNode, newElement, currentChild );
-			currentChild++;
+	}
+
+	private validateChildTypes( node: Element, widgetsCache: Record< string, V1ElementConfig > ): string[] {
+		const errors: string[] = [];
+		const allowedChildTypes = widgetsCache[ node.tagName ]?.allowed_child_types;
+
+		if ( allowedChildTypes?.length ) {
+			for ( const child of Array.from( node.children ) ) {
+				if ( ! allowedChildTypes.includes( child.tagName ) ) {
+					errors.push(
+						`"${ child.tagName }" is not allowed as a child of "${
+							node.tagName
+						}". Allowed: ${ allowedChildTypes.join( ', ' ) }`
+					);
+				}
+			}
 		}
+
+		for ( const child of Array.from( node.children ) ) {
+			errors.push( ...this.validateChildTypes( child, widgetsCache ) );
+		}
+
+		return errors;
 	}
 
 	private findSchemaForNode( node: Element ) {
@@ -154,64 +168,34 @@ export class CompositionBuilder {
 		};
 	}
 
-	applyStyles() {
-		const errors: string[] = [];
+	private async applyProperties() {
+		const configErrors: string[] = [];
+		const styleErrors: string[] = [];
 		const invalidStyles: Record< string, string[] > = {};
-		for ( const [ styleId, styleConfig ] of Object.entries( this.elementStylesConfig ) ) {
-			const { element, node } = this.matchNodeByConfigId( styleId );
-			const validStylesPropValues: Record< string, AnyValue > = {};
-			for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
-				const { valid, errors: validationErrors } = validateInput.validateStyles( {
-					[ styleName ]: stylePropValue,
-				} );
-				if ( ! valid ) {
-					if ( styleConfig.$intention ) {
-						invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
-						invalidStyles[ element.id ].push( styleName );
-					}
-					errors.push( ...( validationErrors || [] ) );
-				} else {
-					validStylesPropValues[ styleName ] = stylePropValue;
+
+		const allConfigIds = new Set( [
+			...Object.keys( this.elementConfig ),
+			...Object.keys( this.elementStylesConfig ),
+			...Object.keys( this.elementCusomCSS ),
+		] );
+
+		for ( const configId of allConfigIds ) {
+			let element, node;
+			try {
+				( { element, node } = this.matchNodeByConfigId( configId ) );
+			} catch ( matchErr ) {
+				const msg = ( matchErr as Error ).message;
+				if ( this.elementConfig[ configId ] ) {
+					configErrors.push( msg );
 				}
-			}
-			if ( Object.keys( validStylesPropValues ).length === 0 ) {
+				if ( this.elementStylesConfig[ configId ] || this.elementCusomCSS[ configId ] ) {
+					styleErrors.push( msg );
+				}
 				continue;
 			}
-			try {
-				this.api.doUpdateElementProperty( {
-					elementId: element.id,
-					propertyName: '_styles',
-					propertyValue: validStylesPropValues,
-					elementType: node.tagName,
-				} );
-			} catch ( error ) {
-				errors.push( String( error ) );
-			}
-		}
-		for ( const [ customCSSId, customCSS ] of Object.entries( this.elementCusomCSS ) ) {
-			const { element, node } = this.matchNodeByConfigId( customCSSId );
-			this.api.doUpdateElementProperty( {
-				elementId: element.id,
-				propertyName: '_styles',
-				propertyValue: { custom_css: customCSS },
-				elementType: node.tagName,
-			} );
-		}
-		return {
-			errors,
-			invalidStyles,
-		};
-	}
 
-	applyConfigs() {
-		const errors: string[] = [];
-		for ( const [ configId, config ] of Object.entries( this.elementConfig ) ) {
-			const { element, node } = this.matchNodeByConfigId( configId );
-			const propSchema = this.findSchemaForNode( node );
-			const result = validateInput.validateProps( propSchema, config );
-			if ( ! result.valid && result.errors?.length ) {
-				errors.push( ...result.errors );
-			} else {
+			const config = this.elementConfig[ configId ];
+			if ( config ) {
 				for ( const [ propertyName, propertyValue ] of Object.entries( config ) ) {
 					try {
 						this.api.doUpdateElementProperty( {
@@ -221,36 +205,95 @@ export class CompositionBuilder {
 							elementType: node.tagName,
 						} );
 					} catch ( error ) {
-						errors.push( ( error as Error ).message );
+						configErrors.push( ( error as Error ).message );
 					}
 				}
 			}
+
+			const styleConfig = this.elementStylesConfig[ configId ];
+			if ( styleConfig ) {
+				const validStylesPropValues: Record< string, AnyValue > = {};
+				for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
+					const { valid, errors: validationErrors } = validateInput.validateStyles( {
+						[ styleName ]: stylePropValue,
+					} );
+					if ( ! valid ) {
+						if ( styleConfig.$intention ) {
+							invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
+							invalidStyles[ element.id ].push( styleName );
+						}
+						styleErrors.push( ...( validationErrors || [] ) );
+					} else {
+						validStylesPropValues[ styleName ] = stylePropValue;
+					}
+				}
+				if ( Object.keys( validStylesPropValues ).length > 0 ) {
+					try {
+						this.api.doUpdateElementProperty( {
+							elementId: element.id,
+							propertyName: '_styles',
+							propertyValue: validStylesPropValues,
+							elementType: node.tagName,
+						} );
+					} catch ( error ) {
+						styleErrors.push( String( error ) );
+					}
+				}
+			}
+
+			const customCSS = this.elementCusomCSS[ configId ];
+			if ( customCSS ) {
+				try {
+					this.api.doUpdateElementProperty( {
+						elementId: element.id,
+						propertyName: '_styles',
+						propertyValue: { custom_css: customCSS },
+						elementType: node.tagName,
+					} );
+				} catch ( cssErr ) {
+					styleErrors.push( String( cssErr ) );
+				}
+			}
+
+			await this.awaitViewRender( element );
 		}
-		return errors;
+
+		return { configErrors, styleErrors, invalidStyles };
 	}
 
-	build( rootContainer: V1Element ) {
+	async build( rootContainer: V1Element ) {
 		const widgetsCache = this.api.getWidgetsCache() || {};
-		const CONTAINER_ELEMENTS = Object.values( widgetsCache )
-			.filter( ( widget ) => widget.meta?.is_container )
-			.map( ( widget ) => widget.elType )
-			.filter( ( x ) => typeof x === 'string' );
-		this.containerElements = CONTAINER_ELEMENTS;
+
 		new Set( this.xml.querySelectorAll( '*' ) ).forEach( ( node ) => {
 			if ( ! widgetsCache[ node.tagName ] ) {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
 			}
 		} );
 
-		const children = Array.from( this.xml.children );
-		let currentChild = 0;
-		for ( const childNode of children ) {
-			this.iterateBuild( childNode, rootContainer, currentChild );
-			currentChild++;
+		const childTypeErrors: string[] = [];
+		for ( const rootChild of Array.from( this.xml.children ) ) {
+			childTypeErrors.push( ...this.validateChildTypes( rootChild, widgetsCache ) );
+		}
+		if ( childTypeErrors.length ) {
+			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
 		}
 
-		const { errors: styleErrors, invalidStyles } = this.applyStyles();
-		const configErrors = this.applyConfigs();
+		const children = Array.from( this.xml.children );
+		for ( const childNode of children ) {
+			const modelTree = this.buildModelTree( childNode, widgetsCache );
+
+			const newElement = this.api.createElement( {
+				container: rootContainer,
+				model: modelTree as CreateElementParams[ 'model' ],
+				options: { useHistory: false },
+			} );
+
+			this.rootContainers.push( newElement );
+
+			await this.awaitViewRender( newElement );
+		}
+
+		const { configErrors, styleErrors, invalidStyles } = await this.applyProperties();
 
 		return {
 			configErrors,
