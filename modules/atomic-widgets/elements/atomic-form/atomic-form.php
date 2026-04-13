@@ -358,7 +358,6 @@ class Atomic_Form extends Atomic_Element_Base {
 					] )
 					->build(),
 			] )
-			->is_locked( true )
 			->build();
 	}
 
