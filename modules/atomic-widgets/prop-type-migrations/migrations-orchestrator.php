@@ -337,12 +337,12 @@ class Migrations_Orchestrator {
 			$document->get_post()->ID,
 			Document::ELEMENTOR_DATA_META_KEY,
 			function( $migrated_data ) use ( $document ) {
+				$document->delete_meta( Document::CACHE_META_KEY );
+
 				$document->update_json_meta(
 					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
-
-				$document->delete_meta( Document::CACHE_META_KEY );
 
 				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
 			}
