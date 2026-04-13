@@ -65,6 +65,11 @@ const baseSlice = createSlice( {
 		resetUnpublished: ( state ) => {
 			state.unpublishedData = [];
 		},
+		removeStyles( state, { payload }: PayloadAction< { id: ComponentId } > ) {
+			const { [ payload.id ]: _, ...rest } = state.styles;
+
+			state.styles = rest;
+		},
 		addStyles: ( state, { payload } ) => {
 			state.styles = { ...state.styles, ...payload };
 		},
