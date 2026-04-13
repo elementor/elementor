@@ -62,14 +62,14 @@ function registerAtomicLinkAlpineData( actionLinkElement, registrationElement ) 
 	} ) );
 }
 
-function handleLinkActions( element ) {
-	if ( ! element ) {
+function handleLinkActions( button ) {
+	if ( ! button ) {
 		return;
 	}
 
-	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
-		? element
-		: element.querySelector( ACTION_LINK_SELECTOR );
+	const actionLinkElement = button.matches( ACTION_LINK_SELECTOR )
+		? button
+		: button.querySelector( ACTION_LINK_SELECTOR );
 
 	if ( ! actionLinkElement ) {
 		return;
@@ -84,20 +84,9 @@ function handleLinkActions( element ) {
 		return;
 	}
 
-	registerAtomicLinkAlpineData( actionLinkElement, element );
+	registerAtomicLinkAlpineData( actionLinkElement, button );
 
-	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
-		return;
-	}
-
-	Alpine.nextTick( () => {
-		Alpine.destroyTree( actionLinkElement );
-		Alpine.initTree( actionLinkElement );
-	} );
-
-	return () => {
-		Alpine.destroyTree( actionLinkElement );
-	};
+	return refreshDom( actionLinkElement );
 }
 
 function registerAtomicFormAlpineData( form ) {
@@ -160,17 +149,10 @@ function registerAtomicFormAlpineData( form ) {
 	} ) );
 }
 
-function handleAtomicFormSubmit( element ) {
-	registerAtomicFormAlpineData( element );
+function handleAtomicFormSubmit( form ) {
+	registerAtomicFormAlpineData( form );
 
-	Alpine.nextTick( () => {
-		Alpine.destroyTree( element );
-		Alpine.initTree( element );
-	} );
-
-	return () => {
-		Alpine.destroyTree( element );
-	};
+	return refreshDom( form );
 }
 
 function getFormAlpineId( form ) {
@@ -352,4 +334,17 @@ function shouldFireLinkActionHandler( url ) {
 
 function isEditorContext() {
 	return !! window.elementor || !! window.parent?.elementor;
+}
+
+function refreshDom( element ) {
+	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
+		return;
+	}
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( element );
+		Alpine.initTree( element );
+	} );
+
+	return () => Alpine.destroyTree( element );
 }

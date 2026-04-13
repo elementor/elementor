@@ -186,7 +186,7 @@ export function createTemplatedElementView( {
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			return settings;
+			return this._getLinkAttributes( settings );
 		}
 
 		_beforeRender() {
@@ -213,6 +213,41 @@ export function createTemplatedElementView( {
 			const id = this.model.get( 'id' );
 
 			return originId ?? id;
+		}
+
+		_getLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			const linkAttributes = Object.entries( this._handleActionLinkAttributes( settings ) )
+				.map( ( [ key, value ] ) => `${ key }="${ value }"` )
+				.join( ' ' );
+
+			return {
+				...settings,
+				link_attributes: linkAttributes,
+			};
+		}
+
+		_handleActionLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			if ( ! settings?.link || typeof settings.link !== 'object' || ! ( 'href' in settings.link ) ) {
+				return {};
+			}
+
+			const isActionLink = 'tag' in settings.link && 'button' === settings?.link?.tag;
+			const urlAttrKey = isActionLink ? 'data-action-link' : 'href';
+
+			const shared = {
+				[ urlAttrKey ]: settings?.link?.href,
+				target: ( 'target' in settings.link && settings?.link?.target ) ?? '_self',
+			};
+
+			if ( isActionLink ) {
+				return {
+					...shared,
+					'x-data': 'eActionLink' + this.model.get( 'id' ),
+					'x-on:click': 'runAction',
+				};
+			}
+
+			return shared;
 		}
 	};
 }
