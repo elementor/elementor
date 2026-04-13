@@ -12,12 +12,7 @@ class CSS_Files_Manager {
 		$filesystem = $this->get_filesystem();
 		$path = $this->get_path( $handle );
 
-		if ( $is_valid_cache ) {
-			if ( ! $filesystem->exists( $path ) ) {
-				return null;
-			}
-
-			// Return the existing file
+		if ( $is_valid_cache && $filesystem->exists( $path ) ) {
 			return Style_File::create(
 				$this->sanitize_handle( $handle ),
 				$this->get_filesystem_path( $this->get_path( $handle ) ),

@@ -134,11 +134,11 @@ class Atomic_Styles_Manager {
 
 				$this->cache_validity->validate( $breakpoint_path );
 
-				if ( ! $style_file ) {
-					continue;
-				}
+			if ( ! $style_file ) {
+				continue;
+			}
 
-				wp_enqueue_style(
+			wp_enqueue_style(
 					$style_file->get_handle(),
 					$style_file->get_url(),
 					[],
@@ -152,8 +152,12 @@ class Atomic_Styles_Manager {
 	private function render_css( array $styles, string $style_key ) {
 		$style_fonts = Style_Fonts::make( $style_key );
 
+		$is_document_style = strpos( $style_key, 'document-local-' ) === 0 || $style_key === 'document-base';
+
 		return Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
+			Plugin::$instance->breakpoints->get_breakpoints_config(),
+			Styles_Renderer::DEFAULT_SELECTOR_PREFIX,
+			$is_document_style
 		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
 			if ( 'font-family' !== $key ) {
 				return;

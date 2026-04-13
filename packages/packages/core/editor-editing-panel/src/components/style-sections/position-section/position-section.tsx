@@ -64,15 +64,24 @@ export const PositionSection = () => {
 	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
 
 	const clearPositionDependentProps = useCallback( () => {
+		// When positionDependentValues is null there is no active style at all —
+		// nothing can be cleared, so bail out immediately. (Without this guard,
+		// `positionDependentValues?.['key']` returns `undefined`, and
+		// `undefined !== null` is true, which incorrectly treats a missing style
+		// as having values to clear and creates a spurious empty local style.)
+		if ( positionDependentValues === null ) {
+			return;
+		}
+
 		const dimensions: DimensionsValues = {
-			'inset-block-start': positionDependentValues?.[ 'inset-block-start' ],
-			'inset-block-end': positionDependentValues?.[ 'inset-block-end' ],
-			'inset-inline-start': positionDependentValues?.[ 'inset-inline-start' ],
-			'inset-inline-end': positionDependentValues?.[ 'inset-inline-end' ],
+			'inset-block-start': positionDependentValues[ 'inset-block-start' ],
+			'inset-block-end': positionDependentValues[ 'inset-block-end' ],
+			'inset-inline-start': positionDependentValues[ 'inset-inline-start' ],
+			'inset-inline-end': positionDependentValues[ 'inset-inline-end' ],
 		};
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
 		const hasValuesToClear =
-			Object.values( dimensions ).some( ( v ) => v !== null ) || positionDependentValues?.[ 'z-index' ] !== null;
+			Object.values( dimensions ).some( ( v ) => v !== null ) || positionDependentValues[ 'z-index' ] !== null;
 
 		if ( hasValuesToClear ) {
 			updateDimensionsHistory( dimensions );
