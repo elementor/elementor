@@ -25,9 +25,10 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A tab content panel. Accepts any widget type inside. The index of this e-tab-content MUST match the index of the corresponding e-tab in the e-tabs-menu.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'llm_support', false );
 	}
 
 	public static function get_type() {

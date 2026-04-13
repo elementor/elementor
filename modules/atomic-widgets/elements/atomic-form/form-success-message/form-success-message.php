@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Form_Success_Message extends Form_Message {
 
+	public static $widget_description = 'Shown when the form is submitted successfully. Hidden by default, displayed automatically when the form submission result is success.';
+
 	public static function get_type() {
 		return 'e-form-success-message';
 	}
