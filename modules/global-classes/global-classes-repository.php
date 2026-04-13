@@ -3,6 +3,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\GlobalClasses\Utils\Global_Classes_Sanitization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {

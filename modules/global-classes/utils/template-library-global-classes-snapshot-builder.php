@@ -5,7 +5,6 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 use Elementor\Core\Utils\Template_Library_Element_Iterator;
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
 use Elementor\Core\Utils\Template_Library_Snapshot_Processor;
-use Elementor\Modules\GlobalClasses\Global_Classes_Sanitization;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Rest_Api;

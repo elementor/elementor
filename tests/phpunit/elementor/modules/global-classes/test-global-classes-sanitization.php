@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses;
 
-use Elementor\Modules\GlobalClasses\Global_Classes_Sanitization;
+use Elementor\Modules\GlobalClasses\Utils\Global_Classes_Sanitization;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

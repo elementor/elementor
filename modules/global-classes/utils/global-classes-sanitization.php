@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses;
+namespace Elementor\Modules\GlobalClasses\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

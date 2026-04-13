@@ -4,9 +4,9 @@ namespace Elementor\Modules\GlobalClasses\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Sanitization;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Global_Classes_Sanitization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
