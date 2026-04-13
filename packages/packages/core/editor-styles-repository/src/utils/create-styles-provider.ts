@@ -18,6 +18,7 @@ export type CreateStylesProviderOptions = {
 		update?: StylesProvider[ 'actions' ][ 'update' ];
 		updateProps?: StylesProvider[ 'actions' ][ 'updateProps' ];
 		updateCustomCss?: StylesProvider[ 'actions' ][ 'updateCustomCss' ];
+		updateCss?: StylesProvider[ 'actions' ][ 'updateCss' ];
 		tracking?: StylesProvider[ 'actions' ][ 'tracking' ];
 	};
 	capabilities?: UserCapabilities;
@@ -56,6 +57,7 @@ export function createStylesProvider( {
 			update: actions.update,
 			updateProps: actions.updateProps,
 			updateCustomCss: actions.updateCustomCss,
+			updateCss: actions.updateCss,
 			tracking: actions.tracking,
 		},
 		isPregeneratedLink,

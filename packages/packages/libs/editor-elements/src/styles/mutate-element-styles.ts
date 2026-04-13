@@ -55,9 +55,13 @@ function mutateStyles( container: V1Element, mutator: Mutator ) {
 }
 
 function removeEmptyVariants( style: StyleDefinition ) {
-	return style.variants.filter(
-		( { props, custom_css: customCss } ) => Object.keys( props ).length > 0 || customCss?.raw
-	);
+	return style.variants.filter( ( variant ) => {
+		if ( 'css' in variant ) {
+			return true;
+		}
+		const { props, custom_css: customCss } = variant;
+		return Object.keys( props ).length > 0 || customCss?.raw;
+	} );
 }
 
 function isStyleEmpty( style: StyleDefinition ) {

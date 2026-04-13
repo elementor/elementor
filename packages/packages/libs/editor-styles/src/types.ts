@@ -25,16 +25,24 @@ export type CustomCss = {
 	raw: string;
 };
 
-export type StyleDefinitionVariant = {
-	meta: {
-		breakpoint: null | BreakpointId;
-		state: StyleDefinitionState;
-	};
-	props: Props;
-	custom_css: CustomCss | null;
-};
+export type StyleDefinitionVariant =
+	| {
+			meta: {
+				breakpoint: null | BreakpointId;
+				state: StyleDefinitionState;
+			};
+			props: Props;
+			custom_css: CustomCss | null;
+	  }
+	| {
+			meta: {
+				breakpoint: null | BreakpointId;
+				state: StyleDefinitionState;
+			};
+			css: string;
+	  };
 
-export type StyleDefinitionType = 'class';
+export type StyleDefinitionType = 'class' | 'css-class';
 
 export type StyleDefinitionID = string;
 

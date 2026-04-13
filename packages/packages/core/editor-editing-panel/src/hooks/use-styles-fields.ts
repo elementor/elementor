@@ -8,6 +8,8 @@ import {
 } from '@elementor/editor-elements';
 import type { Props } from '@elementor/editor-props';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
+
+type PropsVariant = Extract<StyleDefinitionVariant, { props: unknown }>;
 import { isElementsStylesProvider, type StylesProvider } from '@elementor/editor-styles-repository';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
@@ -69,8 +71,10 @@ function getProps< T extends Props >( { styleId, elementId, provider, meta, prop
 
 	const variant = getVariantByMeta( style, meta );
 
+	const variantProps = ( variant && 'props' in variant ) ? ( variant as PropsVariant ).props : {};
+
 	return Object.fromEntries(
-		propNames.map( ( key ) => [ key, variant?.props[ key ] ?? null ] )
+		propNames.map( ( key ) => [ key, variantProps[ key ] ?? null ] )
 	) as NullableValues< T >;
 }
 
@@ -186,7 +190,7 @@ function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVa
 
 	const variant = getVariantByMeta( style, meta );
 
-	const props = variant?.props ?? {};
+	const props = ( variant && 'props' in variant ) ? ( variant as PropsVariant ).props : {};
 
 	return structuredClone( props );
 }

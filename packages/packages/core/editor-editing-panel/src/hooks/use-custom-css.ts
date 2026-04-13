@@ -12,6 +12,15 @@ import {
 	type StyleDefinition,
 	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
+
+type PropsVariant = Extract<StyleDefinitionVariant, { custom_css: unknown }>;
+
+function getVariantCustomCss( variant: StyleDefinitionVariant | null | undefined ): CustomCss | null {
+	if ( variant && 'custom_css' in variant ) {
+		return ( variant as PropsVariant ).custom_css;
+	}
+	return null;
+}
 import { ELEMENTS_STYLES_RESERVED_LABEL, type StylesProvider } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { decodeString, encodeString } from '@elementor/utils';
@@ -79,7 +88,8 @@ export const useCustomCss = () => {
 		} as UndoableUpdateStylePayload );
 	};
 
-	const customCss = variant?.custom_css?.raw ? { raw: decodeString( variant.custom_css.raw ) } : null;
+	const variantCustomCss = getVariantCustomCss( variant );
+	const customCss = variantCustomCss?.raw ? { raw: decodeString( variantCustomCss.raw ) } : null;
 
 	return {
 		customCss,
@@ -176,7 +186,7 @@ function getCurrentCustomCss( style: StyleDefinition | null, meta: StyleDefiniti
 
 	const variant = getVariantByMeta( style, meta );
 
-	return variant?.custom_css ?? null;
+	return getVariantCustomCss( variant );
 }
 
 function sanitize( raw: string ) {

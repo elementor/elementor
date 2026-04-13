@@ -32,6 +32,12 @@ export type UpdateCustomCssActionPayload = {
 	custom_css: CustomCss;
 };
 
+export type UpdateCssActionPayload = {
+	id: StyleDefinitionID;
+	meta: StyleDefinitionVariant[ 'meta' ];
+	css: string;
+};
+
 export type StylesCollection = Record< StyleDefinitionID, StyleDefinition >;
 
 export type StylesProvider = {
@@ -52,6 +58,7 @@ export type StylesProvider = {
 		update?: ( data: UpdateActionPayload ) => void;
 		updateProps?: ( args: UpdatePropsActionPayload, meta?: Meta ) => void;
 		updateCustomCss?: ( args: UpdateCustomCssActionPayload, meta?: Meta ) => void;
+		updateCss?: ( args: UpdateCssActionPayload, meta?: Meta ) => void;
 		tracking?: ( data: { event: string; [ key: string ]: unknown } ) => void;
 	};
 	capabilities?: UserCapabilities;

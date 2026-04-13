@@ -11,14 +11,16 @@ import { updateElementSettings } from '../sync/update-element-settings';
 import { type ElementID } from '../types';
 import { mutateElementStyles } from './mutate-element-styles';
 
+type PropsVariant = Extract<StyleDefinitionVariant, { props: unknown }>;
+
 export type CreateElementStyleArgs = {
 	styleId?: StyleDefinitionID;
 	elementId: ElementID;
 	classesProp: string;
 	label: string;
 	meta: StyleDefinitionVariant[ 'meta' ];
-	props: StyleDefinitionVariant[ 'props' ];
-	custom_css?: StyleDefinitionVariant[ 'custom_css' ];
+	props: PropsVariant[ 'props' ];
+	custom_css?: PropsVariant[ 'custom_css' ];
 	additionalVariants?: StyleDefinitionVariant[];
 };
 

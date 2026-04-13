@@ -75,10 +75,11 @@ class Styles_Renderer {
 			return '';
 		}
 
+		$type = $style['type'] ?? 'class';
 		$stylesheet = [];
 
 		foreach ( $style['variants'] as $variant ) {
-			$style_declaration = $this->variant_to_css_string( $base_selector, $variant );
+			$style_declaration = $this->variant_to_css_string( $base_selector, $variant, $type );
 
 			if ( $style_declaration ) {
 				$stylesheet[] = $style_declaration;
@@ -90,7 +91,8 @@ class Styles_Renderer {
 
 	private function get_base_selector( array $style_def ): ?string {
 		$map = [
-			'class' => '.',
+			'class'     => '.',
+			'css-class' => '.',
 		];
 
 		if (
@@ -113,9 +115,14 @@ class Styles_Renderer {
 		return null;
 	}
 
-	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
-		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
+	private function variant_to_css_string( string $base_selector, array $variant, string $type = 'class' ): string {
+		if ( 'css-class' === $type ) {
+			$css = $variant['css'] ?? '';
+			$custom_css = '';
+		} else {
+			$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+			$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
+		}
 
 		if ( ! $css && ! $custom_css ) {
 			return '';

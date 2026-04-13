@@ -138,9 +138,13 @@ function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): Styles
 	const snapshot: StylesInheritanceSnapshot = {};
 
 	styles.forEach( ( styleData ) => {
-		const {
-			variant: { props },
-		} = styleData;
+		const { variant } = styleData;
+
+		if ( ! ( 'props' in variant ) || ! variant.props ) {
+			return;
+		}
+
+		const { props } = variant;
 
 		Object.entries( props ).forEach( ( [ key, value ] ) => {
 			const filteredValue = filterEmptyValues( value );

@@ -13,6 +13,12 @@ class Style_Definition {
 		return new self();
 	}
 
+	public static function make_css(): self {
+		$instance = new self();
+		$instance->type = 'css-class';
+		return $instance;
+	}
+
 	public function set_type( string $type ): self {
 		$this->type = $type;
 
@@ -26,16 +32,18 @@ class Style_Definition {
 	}
 
 	public function add_variant( Style_Variant $variant ): self {
-		$this->variants[] = $variant->build();
+		$this->variants[] = 'css-class' === $this->type
+			? $variant->build_css()
+			: $variant->build();
 
 		return $this;
 	}
 
 	public function build( string $id ): array {
 		return [
-			'id' => $id,
-			'type' => $this->type,
-			'label' => $this->label,
+			'id'       => $id,
+			'type'     => $this->type,
+			'label'    => $this->label,
 			'variants' => $this->variants,
 		];
 	}

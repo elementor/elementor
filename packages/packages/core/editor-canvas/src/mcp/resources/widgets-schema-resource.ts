@@ -9,7 +9,7 @@ import {
 	type TransformablePropType,
 	type UnionPropType,
 } from '@elementor/editor-props';
-import { getStylesSchema } from '@elementor/editor-styles';
+import { getStylesSchema, type StyleDefinitionVariant } from '@elementor/editor-styles';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
@@ -124,7 +124,9 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 			if ( baseStyleSchema ) {
 				Object.values( baseStyleSchema ).forEach( ( stylePropType ) => {
 					stylePropType.variants.forEach( ( variant ) => {
-						Object.assign( defaultStyles, variant.props );
+						if ( 'props' in variant ) {
+							Object.assign( defaultStyles, ( variant as Extract<StyleDefinitionVariant, { props: unknown }> ).props );
+						}
 					} );
 				} );
 			}

@@ -3,8 +3,11 @@ import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@eleme
 import { dimensionsPropTypeUtil, type PropKey, type PropValue, sizePropTypeUtil } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
+import { useElement } from '../contexts/element-context';
+import { useStyle } from '../contexts/style-context';
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
 import { getFieldIndicators } from '../field-indicators-registry';
+import { useCssClassField } from '../hooks/use-css-class-field';
 import { useStylesField } from '../hooks/use-styles-field';
 import { ConditionalField } from './conditional-field';
 import { createTopLevelObjectType } from './create-top-level-object-type';
@@ -93,11 +96,32 @@ export type StylesFieldProps = {
 	propDisplayName: string;
 };
 
+function CssClassField( { bind }: { bind: string } ) {
+	const { value, setValue } = useCssClassField( bind );
+
+	if ( ! value ) {
+		return null;
+	}
+
+	return (
+		<input
+			type="text"
+			value={ value }
+			onChange={ ( e ) => setValue( e.target.value ) }
+			placeholder="e.g. 100px"
+			style={ { display: 'block', width: '100%', padding: '4px 8px', fontSize: '12px', boxSizing: 'border-box', border: '1.5px solid red', fontFamily: 'Courier, monospace', borderRadius: '3px' } }
+		/>
+	);
+}
+
 export const StylesField = ( { bind, propDisplayName, children }: StylesFieldProps ) => {
+	const { element: { id: elementId } } = useElement();
+	const { id: styleId, provider } = useStyle();
+	const style = styleId ? ( provider?.actions.get( styleId, { elementId } ) ?? null ) : null;
+	const isCssClass = style?.type === 'css-class';
+
 	const stylesSchema = getStylesSchema();
-
 	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
-
 	const { value, canEdit, ...fields } = useStylesField( bind, { history: { propDisplayName } } );
 
 	const propType = createTopLevelObjectType( { schema: stylesSchema } );
@@ -121,18 +145,21 @@ export const StylesField = ( { bind, propDisplayName, children }: StylesFieldPro
 	};
 
 	return (
-		<ControlAdornmentsProvider items={ getFieldIndicators( 'styles' ) }>
-			<PropProvider
-				propType={ propType }
-				value={ { [ bind ]: value } }
-				setValue={ setValue }
-				placeholder={ placeholderValues }
-				isDisabled={ () => ! canEdit }
-			>
-				<PropKeyProvider bind={ bind }>
-					<ConditionalField>{ children }</ConditionalField>
-				</PropKeyProvider>
-			</PropProvider>
-		</ControlAdornmentsProvider>
+		<>
+			{ isCssClass && <CssClassField bind={ bind } /> }
+			<ControlAdornmentsProvider items={ getFieldIndicators( 'styles' ) }>
+				<PropProvider
+					propType={ propType }
+					value={ { [ bind ]: value } }
+					setValue={ setValue }
+					placeholder={ placeholderValues }
+					isDisabled={ () => ! canEdit }
+				>
+					<PropKeyProvider bind={ bind }>
+						<ConditionalField>{ children }</ConditionalField>
+					</PropKeyProvider>
+				</PropProvider>
+			</ControlAdornmentsProvider>
+		</>
 	);
 };

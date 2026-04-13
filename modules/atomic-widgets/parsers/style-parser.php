@@ -15,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 class Style_Parser {
 	const VALID_TYPES = [
 		'class',
+		'css-class',
 	];
 
 
@@ -62,7 +63,8 @@ class Style_Parser {
 			return $result->wrap( $validated_style );
 		}
 
-		$props_parser = Props_Parser::make( $this->schema );
+		$is_css_class = isset( $style['type'] ) && 'css-class' === $style['type'];
+		$props_parser = $is_css_class ? null : Props_Parser::make( $this->schema );
 
 		foreach ( $style['variants'] as $variant_index => $variant ) {
 			if ( ! isset( $variant['meta'] ) ) {
@@ -72,19 +74,26 @@ class Style_Parser {
 			}
 
 			$meta_result = $this->validate_meta( $variant['meta'] );
-			$custom_css_result = $this->validate_custom_css( $variant );
 
 			$result->errors()->merge( $meta_result->errors(), 'meta' );
-			$result->errors()->merge( $custom_css_result->errors(), 'custom_css' );
 
-			if ( $meta_result->is_valid() ) {
+			if ( ! $meta_result->is_valid() ) {
+				unset( $validated_style['variants'][ $variant_index ] );
+				continue;
+			}
+
+			if ( $is_css_class ) {
+				if ( ! isset( $variant['css'] ) || ! is_string( $variant['css'] ) ) {
+					$result->errors()->add( "variants[$variant_index]", 'css_missing_or_invalid' );
+				}
+			} else {
+				$custom_css_result = $this->validate_custom_css( $variant );
+				$result->errors()->merge( $custom_css_result->errors(), 'custom_css' );
+
 				$variant_result = $props_parser->validate( $variant['props'] );
-
 				$result->errors()->merge( $variant_result->errors(), "variants[$variant_index]" );
 
 				$validated_style['variants'][ $variant_index ]['props'] = $variant_result->unwrap();
-			} else {
-				unset( $validated_style['variants'][ $variant_index ] );
 			}
 		}
 
@@ -222,7 +231,8 @@ class Style_Parser {
 	 * the style object to sanitize
 	 */
 	private function sanitize( array $style ): Parse_Result {
-		$props_parser = Props_Parser::make( $this->schema );
+		$is_css_class = isset( $style['type'] ) && 'css-class' === $style['type'];
+		$props_parser = $is_css_class ? null : Props_Parser::make( $this->schema );
 
 		if ( isset( $style['label'] ) ) {
 			$style['label'] = sanitize_text_field( $style['label'] );
@@ -238,9 +248,14 @@ class Style_Parser {
 
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
-				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
 				$style['variants'][ $variant_index ]['meta'] = $this->sanitize_meta( $variant['meta'] );
-				$style['variants'][ $variant_index ]['custom_css'] = $this->sanitize_custom_css( $variant );
+
+				if ( $is_css_class ) {
+					$style['variants'][ $variant_index ]['css'] = CSS_Sanitizer::sanitize( $variant['css'] ?? '' );
+				} else {
+					$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
+					$style['variants'][ $variant_index ]['custom_css'] = $this->sanitize_custom_css( $variant );
+				}
 			}
 		}
 

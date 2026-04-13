@@ -44,6 +44,7 @@ type PropsToCssArgs = {
 
 const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 	class: '.',
+	'css-class': '.',
 };
 
 const DEFAULT_BREAKPOINT = 'desktop';
@@ -69,15 +70,32 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 
 		const stylesCssPromises = uniqueStyles.map( async ( style ) => {
 			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
-				const css = await propsToCss( { props: variant.props, resolve, signal } );
-				const customCss = customCssToString( variant.custom_css );
+				let css: string;
+
+				if ( style.type === 'css-class' ) {
+					const rawCss = 'css' in variant ? variant.css : '';
+					let propsCss = '';
+					if ( 'props' in variant && variant.props && Object.keys( variant.props ).length > 0 ) {
+						propsCss = await propsToCss( { props: variant.props, resolve, signal } );
+					}
+					if ( rawCss && propsCss ) {
+						css = rawCss.trimEnd().replace( /;$/, '' ) + ';' + propsCss;
+					} else {
+						css = rawCss + propsCss;
+					}
+				} else if ( 'props' in variant ) {
+					css = await propsToCss( { props: variant.props, resolve, signal } );
+					css += customCssToString( variant.custom_css );
+				} else {
+					css = '';
+				}
 
 				return createStyleWrapper()
 					.for( style.cssName, style.type )
 					.withPrefix( selectorPrefix )
 					.withState( variant.meta.state )
 					.withMediaQuery( variant.meta.breakpoint ? breakpoints[ variant.meta.breakpoint ] : null )
-					.wrap( css + customCss );
+					.wrap( css );
 			} );
 
 			const variantsCss = await Promise.all( variantCssPromises );

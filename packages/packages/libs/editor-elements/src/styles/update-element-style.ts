@@ -5,12 +5,16 @@ import { StyleNotFoundError } from '../errors';
 import { type ElementID } from '../types';
 import { mutateElementStyles } from './mutate-element-styles';
 
+type PropsVariant = Extract<StyleDefinitionVariant, { props: unknown }>;
+type CssVariant = Extract<StyleDefinitionVariant, { css: string }>;
+
 export type UpdateElementStyleArgs = {
 	elementId: ElementID;
 	styleId: StyleDefinition[ 'id' ];
 	meta: StyleDefinitionVariant[ 'meta' ];
-	props: StyleDefinitionVariant[ 'props' ];
-	custom_css?: StyleDefinitionVariant[ 'custom_css' ];
+	props: PropsVariant[ 'props' ];
+	custom_css?: PropsVariant[ 'custom_css' ];
+	css?: string;
 };
 
 export function updateElementStyle( args: UpdateElementStyleArgs ) {
@@ -22,13 +26,23 @@ export function updateElementStyle( args: UpdateElementStyleArgs ) {
 		}
 
 		const variant = getVariantByMeta( style, args.meta );
-		const customCss = ( 'custom_css' in args ? args.custom_css : variant?.custom_css ) ?? null;
 
-		if ( variant ) {
-			variant.props = mergeProps( variant.props, args.props );
-			variant.custom_css = customCss?.raw ? customCss : null;
+		if ( 'css' in args && args.css !== undefined ) {
+			if ( variant ) {
+				( variant as CssVariant ).css = args.css;
+			} else {
+				style.variants.push( { meta: args.meta, css: args.css } as StyleDefinitionVariant );
+			}
 		} else {
-			style.variants.push( { meta: args.meta, props: args.props, custom_css: customCss } );
+			const propsVariant = variant as PropsVariant | undefined;
+			const customCss = ( 'custom_css' in args ? args.custom_css : propsVariant?.custom_css ) ?? null;
+
+			if ( propsVariant ) {
+				propsVariant.props = mergeProps( propsVariant.props ?? {}, args.props );
+				propsVariant.custom_css = customCss?.raw ? customCss : null;
+			} else {
+				style.variants.push( { meta: args.meta, props: args.props, custom_css: customCss } );
+			}
 		}
 
 		return styles;

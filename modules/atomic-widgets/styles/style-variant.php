@@ -9,6 +9,8 @@ class Style_Variant {
 	/** @var array<string, array> */
 	private array $props = [];
 
+	private ?string $css = null;
+
 	public static function make(): self {
 		return new self();
 	}
@@ -33,6 +35,11 @@ class Style_Variant {
 		return $this;
 	}
 
+	public function set_css( string $css ): self {
+		$this->css = $css;
+		return $this;
+	}
+
 	public function build(): array {
 		return [
 			'meta' => [
@@ -40,6 +47,16 @@ class Style_Variant {
 				'state' => $this->state,
 			],
 			'props' => $this->props,
+		];
+	}
+
+	public function build_css(): array {
+		return [
+			'meta' => [
+				'breakpoint' => $this->breakpoint,
+				'state'      => $this->state,
+			],
+			'css' => $this->css ?? '',
 		];
 	}
 }

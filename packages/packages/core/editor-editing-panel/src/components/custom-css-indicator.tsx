@@ -58,11 +58,14 @@ const hasInheritedCustomCss = (
 			return undefined;
 		}
 
+		const variant = getVariantByMeta( style, {
+			breakpoint: node.id as BreakpointId,
+			state,
+		} );
 		const hasHere = Boolean(
-			getVariantByMeta( style, {
-				breakpoint: node.id as BreakpointId,
-				state,
-			} )?.custom_css?.raw?.trim()
+			variant && 'custom_css' in variant
+				? ( variant as Extract<StyleDefinitionVariant, { custom_css: unknown }> ).custom_css?.raw?.trim()
+				: false
 		);
 
 		if ( node.id === target ) {
