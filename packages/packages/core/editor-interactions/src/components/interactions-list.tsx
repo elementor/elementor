@@ -90,7 +90,7 @@ export function InteractionsList( props: InteractionListProps ) {
 				}
 			}
 		},
-		[ interactions, handleUpdateInteractions, elementId ]
+		[ interactions, handleUpdateInteractions ]
 	);
 
 	const handleInteractionChange = useCallback(
