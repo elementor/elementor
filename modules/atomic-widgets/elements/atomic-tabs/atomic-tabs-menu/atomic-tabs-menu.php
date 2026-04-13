@@ -23,6 +23,7 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public static function get_type() {
