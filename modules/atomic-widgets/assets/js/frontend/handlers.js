@@ -1,13 +1,13 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 
-const ELEMENTOR_DOCUMENT_SELECTOR = '[data-elementor-id]';
 const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
 const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
 const ACTION_LINK_SELECTOR = '[data-action-link]';
 const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_SELECTOR })`;
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
 const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
+const ELEMENTOR_DOCUMENT_SELECTOR = '[data-elementor-id]';
 
 registerBySelector( {
 	id: 'atomic-link-action-handler',
@@ -21,36 +21,83 @@ registerBySelector( {
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
 
-function handleLinkActions( element ) {
-	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
-		? element
-		: element.querySelector( ACTION_LINK_SELECTOR );
-	const url = actionLinkElement?.dataset.actionLink;
+function registerAtomicLinkAlpineData( actionLinkElement, registrationElement ) {
+	if ( ! actionLinkElement || ! Alpine?.data ) {
+		return;
+	}
+
+	const alpineId = getActionLinkAlpineId( actionLinkElement );
+
+	if ( ! alpineId ) {
+		return;
+	}
+
+	const url = actionLinkElement.dataset.actionLink;
 
 	if ( ! url ) {
 		return;
 	}
 
-	const handler = ( event ) => {
-		if ( actionLinkElement && actionLinkElement !== element && ! actionLinkElement.contains( event.target ) ) {
-			return;
-		}
+	Alpine.data( alpineId, () => ( {
+		runAction( event ) {
+			if (
+				actionLinkElement &&
+				actionLinkElement !== registrationElement &&
+				! actionLinkElement.contains( event.target )
+			) {
+				return;
+			}
 
-		if ( ! shouldFireLinkActionHandler( url ) ) {
-			return;
-		}
+			if ( ! shouldFireLinkActionHandler( url ) ) {
+				return;
+			}
 
-		if ( ! window.elementorFrontend?.utils?.urlActions ) {
-			return;
-		}
+			if ( ! window.elementorFrontend?.utils?.urlActions ) {
+				return;
+			}
 
-		event.preventDefault();
-		elementorFrontend.utils.urlActions.runAction( url, event );
+			event.preventDefault();
+			elementorFrontend.utils.urlActions.runAction( url, event );
+		},
+	} ) );
+}
+
+function handleLinkActions( element ) {
+	if ( ! element ) {
+		return;
+	}
+
+	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
+		? element
+		: element.querySelector( ACTION_LINK_SELECTOR );
+
+	if ( ! actionLinkElement ) {
+		return;
+	}
+
+	const url =
+		actionLinkElement.dataset.actionLink ||
+		actionLinkElement.getAttribute( 'href' ) ||
+		'';
+
+	if ( ! url ) {
+		return;
+	}
+
+	registerAtomicLinkAlpineData( actionLinkElement, element );
+
+	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
+		return;
+	}
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( actionLinkElement );
+		Alpine.initTree( actionLinkElement );
+	} );
+
+	return () => {
+		Alpine.destroyTree( actionLinkElement );
 	};
-
-	element.addEventListener( 'click', handler );
-
-	return () => element.removeEventListener( 'click', handler );
 }
 
 function registerAtomicFormAlpineData( form ) {
@@ -116,22 +163,22 @@ function registerAtomicFormAlpineData( form ) {
 function handleAtomicFormSubmit( element ) {
 	registerAtomicFormAlpineData( element );
 
-	try {
-		Alpine.nextTick( () => {
-			Alpine.destroyTree( element );
-			Alpine.initTree( element );
-		} );
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( element );
+		Alpine.initTree( element );
+	} );
 
-		return () => {
-			Alpine.destroyTree( element );
-		};
-	} catch ( error ) {
-
-	}
+	return () => {
+		Alpine.destroyTree( element );
+	};
 }
 
 function getFormAlpineId( form ) {
 	return form.getAttribute( 'x-data' );
+}
+
+function getActionLinkAlpineId( actionLinkElement ) {
+	return actionLinkElement.getAttribute( 'x-data' );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
@@ -276,7 +323,7 @@ function setFormState( element, state ) {
 }
 
 function getPostId( form ) {
-	const innerDocumentId = form.closest( ELEMENTOR_DOCUMENT_SELECTOR )?.dataset?.elementorId;
+	const innerDocumentId = form?.closest?.( ELEMENTOR_DOCUMENT_SELECTOR )?.dataset?.elementorId;
 	const ownerDocument = elementorFrontend?.config?.post?.id;
 
 	return innerDocumentId || ownerDocument || null;

@@ -6,8 +6,7 @@
 	>
 	
 			<a 
-						href="https://example.com"
-			target="_blank" 
+			href="https://example.com" target="_blank"
 			class="e-heading-link-base">
 			This is a title
 		</a>
