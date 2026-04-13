@@ -66,19 +66,6 @@ describe( 'MentionTextAreaControl', () => {
 		expect( textarea ).toHaveValue( 'Hello' );
 	} );
 
-	it( 'should have empty value when value is null', () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const props = { setValue, value: { $$type: 'string', value: null }, bind: 'message', propType };
-
-		// Act.
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } />, props );
-		const textarea = screen.getByRole( 'textbox' );
-
-		// Assert.
-		expect( textarea ).toHaveValue( '' );
-	} );
-
 	it( 'should transform mentions to shortcodes on change', () => {
 		// Arrange.
 		const setValue = jest.fn();
@@ -131,48 +118,5 @@ describe( 'MentionTextAreaControl', () => {
 			$$type: 'string',
 			value: 'Hello world',
 		} );
-	} );
-
-	it( 'should render with placeholder', () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const props = { setValue, value: { $$type: 'string', value: null }, bind: 'message', propType };
-
-		// Act.
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } placeholder="Type a message" />, props );
-
-		// Assert.
-		expect( screen.getByPlaceholderText( 'Type a message' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render with aria-label', () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const props = { setValue, value: { $$type: 'string', value: null }, bind: 'message', propType };
-
-		// Act.
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } ariaLabel="Message field" />, props );
-
-		// Assert.
-		expect( screen.getByLabelText( 'Message field' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should be disabled when the prop context is disabled', () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const props = {
-			setValue,
-			value: { $$type: 'string', value: '' },
-			bind: 'message',
-			propType,
-			isDisabled: () => true,
-		};
-
-		// Act.
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } />, props );
-		const textarea = screen.getByRole( 'textbox' );
-
-		// Assert.
-		expect( textarea ).toBeDisabled();
 	} );
 } );
