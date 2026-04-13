@@ -11,10 +11,7 @@ import {
 
 import * as animationData from '../assets/atomic-form-animation.json';
 
-const PromotionCard = ( { doClose, promotionData, ctaUrl } ) => {
-	const title = promotionData?.title;
-	const content = promotionData?.content;
-	const ctaText = promotionData?.ctaText;
+const PromotionCard = ( { doClose, promotionData: { title, content, ctaText } = {}, ctaUrl } ) => {
 
 	const redirectHandler = () => {
 		window.open( ctaUrl, '_blank' );
