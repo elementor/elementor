@@ -20,7 +20,6 @@ class Migrations_Cache {
 	 * @return bool
 	 */
 	public static function is_migrated( int $id, string $data_identifier, string $manifest_hash ): bool {
-		return false;
 		$cache_meta_key = self::get_cache_meta_key( $data_identifier );
 		$current_state = self::get_migration_state( $manifest_hash );
 
