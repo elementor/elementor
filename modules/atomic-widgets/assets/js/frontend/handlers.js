@@ -7,6 +7,7 @@ const ACTION_LINK_SELECTOR = '[data-action-link]';
 const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_SELECTOR })`;
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
 const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
+const ELEMENTOR_DOCUMENT_SELECTOR = '[data-elementor-id]';
 
 registerBySelector( {
 	id: 'atomic-link-action-handler',
@@ -20,46 +21,95 @@ registerBySelector( {
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
 
-function handleLinkActions( element ) {
-	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
-		? element
-		: element.querySelector( ACTION_LINK_SELECTOR );
-	const url = actionLinkElement?.dataset.actionLink;
+function registerAtomicLinkAlpineData( actionLinkElement, registrationElement ) {
+	if ( ! actionLinkElement || ! Alpine?.data ) {
+		return;
+	}
+
+	const alpineId = getActionLinkAlpineId( actionLinkElement );
+
+	if ( ! alpineId ) {
+		return;
+	}
+
+	const url = actionLinkElement.dataset.actionLink;
 
 	if ( ! url ) {
 		return;
 	}
 
-	const handler = ( event ) => {
-		if ( actionLinkElement && actionLinkElement !== element && ! actionLinkElement.contains( event.target ) ) {
-			return;
-		}
+	Alpine.data( alpineId, () => ( {
+		runAction( event ) {
+			if (
+				actionLinkElement &&
+				actionLinkElement !== registrationElement &&
+				! actionLinkElement.contains( event.target )
+			) {
+				return;
+			}
 
-		if ( ! shouldFireLinkActionHandler( url ) ) {
-			return;
-		}
+			if ( ! shouldFireLinkActionHandler( url ) ) {
+				return;
+			}
 
-		if ( ! window.elementorFrontend?.utils?.urlActions ) {
-			return;
-		}
+			if ( ! window.elementorFrontend?.utils?.urlActions ) {
+				return;
+			}
 
-		event.preventDefault();
-		elementorFrontend.utils.urlActions.runAction( url, event );
-	};
-
-	element.addEventListener( 'click', handler );
-
-	return () => element.removeEventListener( 'click', handler );
+			event.preventDefault();
+			elementorFrontend.utils.urlActions.runAction( url, event );
+		},
+	} ) );
 }
 
-function handleAtomicFormSubmit( element ) {
-	const form = element;
+function handleLinkActions( element ) {
+	if ( ! element ) {
+		return;
+	}
 
+	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
+		? element
+		: element.querySelector( ACTION_LINK_SELECTOR );
+
+	if ( ! actionLinkElement ) {
+		return;
+	}
+
+	const url =
+		actionLinkElement.dataset.actionLink ||
+		actionLinkElement.getAttribute( 'href' ) ||
+		'';
+
+	if ( ! url ) {
+		return;
+	}
+
+	registerAtomicLinkAlpineData( actionLinkElement, element );
+
+	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
+		return;
+	}
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( actionLinkElement );
+		Alpine.initTree( actionLinkElement );
+	} );
+
+	return () => {
+		Alpine.destroyTree( actionLinkElement );
+	};
+}
+
+function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
 		return;
 	}
 
 	const alpineId = getFormAlpineId( form );
+
+	if ( ! alpineId ) {
+		return;
+	}
 
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
@@ -88,34 +138,47 @@ function handleAtomicFormSubmit( element ) {
 					const response = await submitAtomicForm( payload );
 					const state = response?.success ? 'success' : 'error';
 
-					setFormState( element, state );
+					setFormState( form, state );
 
 					if ( response?.success ) {
 						form.reset();
 
 						form.addEventListener( 'input', () => {
-							setFormState( element, 'default' );
+							setFormState( form, 'default' );
 						}, { once: true } );
 					}
 				} catch ( error ) {
-					setFormState( element, 'error' );
+					setFormState( form, 'error' );
 				} finally {
 					clearAtomicFormSubmittingState( form, submitButtons );
 				}
 			} else {
-				setFormState( element, 'error' );
+				setFormState( form, 'error' );
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
 	} ) );
+}
+
+function handleAtomicFormSubmit( element ) {
+	registerAtomicFormAlpineData( element );
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( element );
+		Alpine.initTree( element );
+	} );
 
 	return () => {
-		Alpine.destroyTree( form );
+		Alpine.destroyTree( element );
 	};
 }
 
 function getFormAlpineId( form ) {
 	return form.getAttribute( 'x-data' );
+}
+
+function getActionLinkAlpineId( actionLinkElement ) {
+	return actionLinkElement.getAttribute( 'x-data' );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
@@ -127,7 +190,7 @@ function clearAtomicFormSubmittingState( form, submitButtons ) {
 }
 
 function buildAtomicFormPayload( form ) {
-	const postId = getPostId();
+	const postId = getPostId( form );
 	const formId = form.dataset.id;
 	const formName = form.dataset.formName || '';
 	const formFields = getAtomicFormFields( form );
@@ -259,8 +322,11 @@ function setFormState( element, state ) {
 	element.classList.add( `form-state-${ state }` );
 }
 
-function getPostId() {
-	return elementorFrontend?.config?.post?.id || null;
+function getPostId( form ) {
+	const innerDocumentId = form?.closest?.( ELEMENTOR_DOCUMENT_SELECTOR )?.dataset?.elementorId;
+	const ownerDocument = elementorFrontend?.config?.post?.id;
+
+	return innerDocumentId || ownerDocument || null;
 }
 
 function shouldFireLinkActionHandler( url ) {

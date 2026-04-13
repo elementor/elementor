@@ -2,12 +2,53 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 	registerBySelector: jest.fn(),
 } ), { virtual: true } );
 
-jest.mock( '@elementor/alpinejs', () => ( {
-	Alpine: {
-		data: jest.fn(),
-		destroyTree: jest.fn(),
-	},
-} ), { virtual: true } );
+jest.mock( '@elementor/alpinejs', () => {
+	const alpineDataFactories = {};
+	const treeListeners = new WeakMap();
+
+	return {
+		Alpine: {
+			data: jest.fn( ( name, factory ) => {
+				alpineDataFactories[ name ] = factory;
+			} ),
+			destroyTree: jest.fn( ( el ) => {
+				const listeners = treeListeners.get( el );
+				if ( listeners ) {
+					if ( listeners.click ) {
+						el.removeEventListener( 'click', listeners.click );
+					}
+					if ( listeners.submit ) {
+						el.removeEventListener( 'submit', listeners.submit );
+					}
+					treeListeners.delete( el );
+				}
+			} ),
+			initTree: jest.fn( ( el ) => {
+				const name = el.getAttribute( 'x-data' );
+				if ( ! name || ! alpineDataFactories[ name ] ) {
+					return;
+				}
+				const component = alpineDataFactories[ name ]();
+				const listeners = {};
+
+				if ( 'function' === typeof component.runAction ) {
+					const fn = ( event ) => component.runAction( event );
+					el.addEventListener( 'click', fn );
+					listeners.click = fn;
+				}
+				if ( 'function' === typeof component.submit ) {
+					const fn = ( event ) => component.submit( event );
+					el.addEventListener( 'submit', fn );
+					listeners.submit = fn;
+				}
+				if ( Object.keys( listeners ).length ) {
+					treeListeners.set( el, listeners );
+				}
+			} ),
+			nextTick: jest.fn( ( callback ) => callback() ),
+		},
+	};
+}, { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
 const SELECTOR = '[data-action-link], :has(> [data-action-link])';
@@ -20,6 +61,8 @@ const BLOCKED_ACTION = 'popup';
 const ALLOWED_ACTION_URL = `https://example.com/?action=${ ALLOWED_ACTION }`;
 const BLOCKED_ACTION_URL = `https://example.com/?action=${ BLOCKED_ACTION }`;
 const ANY_CONTEXT_URL = 'https://example.com/?action=anything';
+
+const LINK_X_DATA_ID = 'eActionLinkTest';
 
 describe( 'Atomic Widgets frontend handlers', () => {
 	let runAction;
@@ -91,6 +134,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
+		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = ALLOWED_ACTION_URL;
 
 		const cleanup = registration.callback( { element } );
@@ -116,6 +160,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		global.elementor = {};
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
+		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = BLOCKED_ACTION_URL;
 		registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
@@ -133,6 +178,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
+		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = ANY_CONTEXT_URL;
 		registration.callback( { element } );
 
@@ -153,6 +199,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const element = document.createElement( 'h2' );
 		const nestedLink = document.createElement( 'a' );
 
+		nestedLink.setAttribute( 'x-data', LINK_X_DATA_ID );
 		nestedLink.dataset.actionLink = ANY_CONTEXT_URL;
 		element.appendChild( nestedLink );
 		registration.callback( { element } );
@@ -377,6 +424,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		const element = document.createElement( 'button' );
 
+		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = BLOCKED_ACTION_URL;
 		registration.callback( { element } );
 

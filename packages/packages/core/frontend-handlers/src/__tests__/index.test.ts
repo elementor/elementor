@@ -735,8 +735,7 @@ describe( 'Frontend Handlers', () => {
 	} );
 
 	describe( 'DOMContentLoaded Initialization', () => {
-		it( 'should skip selector initialization on page load when in editor', () => {
-			// Arrange
+		it( 'should skip selector attachment on alpine:init when in editor', () => {
 			const ELEMENT_ID = 'element-1';
 			const selectorHandler = jest.fn();
 
@@ -756,9 +755,11 @@ describe( 'Frontend Handlers', () => {
 
 			editorWindow.elementor = {};
 
-			document.dispatchEvent( new Event( 'DOMContentLoaded' ) );
+			document.dispatchEvent( new CustomEvent( 'alpine:init' ) );
 
-			expect( selectorHandler ).toHaveBeenCalledTimes( 1 );
+			expect( selectorHandler ).toHaveBeenCalledTimes( 0 );
+
+			delete editorWindow.elementor;
 		} );
 
 		it( 'should initialize selector handlers on page load', () => {
