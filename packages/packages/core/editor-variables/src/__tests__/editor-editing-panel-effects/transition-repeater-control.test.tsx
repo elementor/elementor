@@ -104,7 +104,7 @@ describe( 'TransitionRepeaterControl with editor-variables', () => {
 		variablesSpy.mockReturnValue( {
 			[ SIZE_VARIABLE_ID ]: {
 				type: sizeVariablePropTypeUtil.key,
-				label: 'Named duration',
+				label: 'named-duration',
 				value: RESOLVED_DURATION,
 			},
 		} );
@@ -129,7 +129,7 @@ describe( 'TransitionRepeaterControl with editor-variables', () => {
 		variablesSpy.mockReturnValue( {
 			[ CUSTOM_SIZE_VARIABLE_ID ]: {
 				type: customSizeVariablePropTypeUtil.key,
-				label: 'Custom duration',
+				label: 'custom-duration',
 				value: RESOLVED_DURATION,
 			},
 		} );
