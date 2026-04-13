@@ -1153,7 +1153,7 @@ class Frontend extends App {
 		 * Allows modification of elements data when loading (not saving).
 		 * Useful for migrations, transformations, or data enrichment.
 		 *
-		 * @since 3.35.0
+		 * @since 4.0.0
 		 *
 		 * @param array                         $data      The elements data array.
 		 * @param \Elementor\Core\Base\Document $document  The document instance.
