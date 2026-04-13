@@ -46,6 +46,7 @@ export type UndoRedoOptions< TUndoData = unknown > = {
 	onRedo?: UndoRedoCallback< TUndoData >;
 };
 
+
 export declare class DataHook< TArgs extends Args = Args, TResult = unknown > {
 	getCommand(): string;
 	getId(): string;
