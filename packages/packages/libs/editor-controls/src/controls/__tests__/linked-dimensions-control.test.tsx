@@ -5,7 +5,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { LinkedDimensionsControl } from '../linked-dimensions-control';
 
 const settings = {
-	units: [ 'px', 'rem' ],
+	available_units: [ 'px', 'rem' ],
 };
 
 const propType = createMockPropType( {

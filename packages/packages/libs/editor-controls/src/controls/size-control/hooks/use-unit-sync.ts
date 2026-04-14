@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { type SizePropValue } from '@elementor/editor-props';
 
-import { EXTENDED_UNITS } from '../utils/resolve-size-value';
+import { isExtendedUnit } from '../utils/is-extended-unit';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -10,8 +10,6 @@ type UseUnitSyncProps = {
 	setUnit: ( unit: SizeValue[ 'unit' ] ) => void;
 	persistWhen: () => boolean;
 };
-
-type ExtendedUnit = ( typeof EXTENDED_UNITS )[ keyof typeof EXTENDED_UNITS ];
 
 export const useUnitSync = ( { sizeValue, setUnit, persistWhen }: UseUnitSyncProps ) => {
 	const [ state, setState ] = useState( sizeValue.unit );
@@ -22,10 +20,6 @@ export const useUnitSync = ( { sizeValue, setUnit, persistWhen }: UseUnitSyncPro
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ sizeValue.unit, sizeValue.size ] );
-
-	const isExtendedUnit = ( value: SizeValue[ 'unit' ] ): value is ExtendedUnit => {
-		return Object.values( EXTENDED_UNITS ).includes( value as ExtendedUnit );
-	};
 
 	const setInternalValue = ( newUnit: SizeValue[ 'unit' ] ) => {
 		setState( newUnit );
