@@ -114,16 +114,11 @@ describe( 'TimeFrameIndicator', () => {
 		it( 'should reset to default value on blur when input is cleared after unit change', () => {
 			// Arrange.
 			mockOnChange.mockClear();
-			const { rerender } = render(
-				<TimeFrameIndicator value="0.6s" onChange={ mockOnChange } defaultValue="600ms" />,
-			);
-
-			const input = screen.getByRole( 'spinbutton' );
+			render( <TimeFrameIndicator value="0.6s" onChange={ mockOnChange } defaultValue="600ms" /> );
 
 			// Act.
+			const input = screen.getByRole( 'spinbutton' );
 			fireEvent.input( input, { target: { value: '' } } );
-			rerender( <TimeFrameIndicator value="s" onChange={ mockOnChange } defaultValue="600ms" /> );
-
 			fireEvent.blur( input );
 
 			// Assert.

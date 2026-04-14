@@ -15,6 +15,7 @@ export function TimeFrameIndicator( {
 }: FieldProps & { defaultValue: SizeStringValue } ) {
 	const sizeValue = parseSizeValue( value as SizeStringValue, TIME_UNITS, defaultValue, DEFAULT_TIME_UNIT );
 	const prevUnitRef = useRef< Unit >( sizeValue.unit as Unit );
+	const prevSizeRef = useRef( sizeValue.size );
 
 	const setValue = useCallback(
 		( size: SizePropValue[ 'value' ] ) => {
@@ -28,6 +29,7 @@ export function TimeFrameIndicator( {
 				prevUnitRef.current = toUnit;
 			}
 
+			prevSizeRef.current = size.size;
 			onChange( formatSizeValue( size ) as string );
 		},
 		[ onChange ]
@@ -38,7 +40,7 @@ export function TimeFrameIndicator( {
 	};
 
 	const handleBlur = () => {
-		if ( ! sizeValue.size ) {
+		if ( ! prevSizeRef.current ) {
 			const parsedDefault = parseSizeValue( defaultValue, TIME_UNITS, undefined, DEFAULT_TIME_UNIT );
 
 			prevUnitRef.current = parsedDefault.unit as Unit;
