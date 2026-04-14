@@ -14,6 +14,10 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const elementType = this.get( 'elType' );
 		this.config = elementor.config.elements[ elementType ];
 
+		if ( this.config?.meta?.permanently_locked ) {
+			this.set( 'isLocked', true );
+		}
+
 		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
 

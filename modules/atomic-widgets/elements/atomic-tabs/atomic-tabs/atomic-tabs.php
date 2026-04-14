@@ -138,11 +138,9 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					'title' => "Tab {$i} trigger",
 					'initial_position' => $i,
 				] )
-				->is_locked( true )
 				->build();
 
 			$tab_content_elements[] = Atomic_Tab_Content::generate()
-				->is_locked( true )
 				->editor_settings( [
 					'title' => "Tab {$i} content",
 					'initial_position' => $i,
@@ -152,12 +150,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 		$tabs_menu = Atomic_Tabs_Menu::generate()
 			->children( $tab_elements )
-			->is_locked( true )
 			->build();
 
 		$tabs_content_area = Atomic_Tabs_Content_Area::generate()
 			->children( $tab_content_elements )
-			->is_locked( true )
 			->build();
 
 		return [
