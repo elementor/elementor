@@ -16,9 +16,11 @@ export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
-	const { mcpServer } = reg;
+	const { resource } = reg;
 
-	mcpServer.resource( 'styles-best-practices', BEST_PRACTICES_URI, async () => {
+	resource( 'styles-best-practices', BEST_PRACTICES_URI, {
+		description: 'Styling best practices',
+	}, async () => {
 		return {
 			contents: [
 				{
@@ -40,7 +42,7 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 		};
 	} );
 
-	mcpServer.resource(
+	resource(
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
@@ -77,7 +79,7 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 		}
 	);
 
-	mcpServer.resource(
+	resource(
 		'widget-schema-by-type',
 		new ResourceTemplate( WIDGET_SCHEMA_URI, {
 			list: () => {

@@ -3,6 +3,7 @@ import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 
 import {
 	ANGIE_MODEL_PREFERENCES,
@@ -12,6 +13,7 @@ import {
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getSDK } from './utils/get-sdk';
+import { registerWebMCPResource, registerWebMCPTool } from './web-mcp-adapter';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -89,6 +91,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 			},
 			{
 				instructions: options?.instructions,
+				capabilities: { resources: { subscribe: true } },
 			}
 		);
 	}
@@ -99,6 +102,9 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		// @ts-expect-error: TS is unable to infer the type here
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
 			await getSDK().waitForReady();
+			const [ name, uriOrTemplate, ...rest ] = args as [ string, unknown, ...unknown[] ];
+			const handler = rest[ rest.length - 1 ] as ( uri: URL, variables: Record< string, string | string[] > ) => Promise< { contents: Array< { text?: string } > } >;
+			registerWebMCPResource( name, uriOrTemplate as string | { uriTemplate: { toString(): string; match( uri: string ): Record< string, string | string[] > | null } }, handler );
 			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
@@ -108,6 +114,9 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 				.catch( ( error: Error ) => {
 					if ( error?.message?.includes( 'Not connected' ) ) {
 						return; // Expected when no MCP client is connected yet
+					}
+					if ( error?.message?.includes( 'does not support notifying about resources' ) ) {
+						return; // Server capability not declared — safe to ignore
 					}
 					throw error;
 				} );
@@ -246,6 +255,12 @@ function createToolRegistry( server: McpServer ) {
 			},
 			toolCallback
 		);
+		registerWebMCPTool( {
+			name: opts.name,
+			description: opts.description,
+			inputSchema: zodToJsonSchema( z.object( inputSchema ) ),
+			execute: ( params ) => Promise.resolve( toolCallback( params as Parameters< typeof toolCallback >[ 0 ], {} as RequestHandlerExtra< ServerRequest, ServerNotification > ) ),
+		} );
 		if ( isMcpRegistrationActivated ) {
 			server.sendToolListChanged();
 		}
