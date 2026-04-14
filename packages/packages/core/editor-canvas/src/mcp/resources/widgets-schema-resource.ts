@@ -141,6 +141,20 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 				llmGuidance.default_styles = defaultStyles;
 			}
 
+			const allowedChildTypes = widgetData.allowed_child_types;
+
+			const allWidgets = getWidgetsCache() || {};
+			const allowedParents = Object.entries( allWidgets )
+				.filter( ( [ , parentConfig ] ) => parentConfig.allowed_child_types?.includes( widgetType ) )
+				.map( ( [ parentType ] ) => parentType );
+
+			if ( allowedChildTypes?.length || allowedParents.length ) {
+				llmGuidance.nesting = {
+					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
+					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
+				};
+			}
+
 			return {
 				contents: [
 					{
