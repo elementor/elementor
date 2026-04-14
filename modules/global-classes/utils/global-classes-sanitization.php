@@ -9,10 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_Sanitization {
 	public static function order( array $items, array $order ): array {
 		if ( empty( $items ) ) {
-			return [
-				'items' => $items,
-				'order' => [],
-			];
+			return [];
 		}
 
 		$item_ids = array_keys( $items );
