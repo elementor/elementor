@@ -1,22 +1,14 @@
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { AngieMcpAdapter } from './adapters/angie-adapter';
+import { WebMCPAdapter } from './adapters/web-mcp-adapter';
+import { activateAdapters, registerMcpAdapter, signalMcpReady } from './mcp-registry';
 
-import { activateMcpRegistration } from './mcp-registry';
-import { getSDK } from './utils/get-sdk';
-import { isAngieAvailable } from './utils/is-angie-available';
-
-export function init() {
-	if ( isExperimentActive( 'editor_mcp' ) && isAngieAvailable() ) {
-		return getSDK().waitForReady();
-	}
-	return Promise.resolve();
-}
+// Register adapters at module load — before any addTool/resource calls from domain modules.
+registerMcpAdapter( new WebMCPAdapter() );
+registerMcpAdapter( new AngieMcpAdapter() );
 
 export function startMCPServer() {
-	if ( isExperimentActive( 'editor_mcp' ) && isAngieAvailable() ) {
-		const sdk = getSDK();
-		sdk.waitForReady().then( () => activateMcpRegistration( sdk ) );
-	}
-	return Promise.resolve();
+	activateAdapters();
+	signalMcpReady();
 }
 
 document.addEventListener(

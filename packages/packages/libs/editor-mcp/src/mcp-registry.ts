@@ -1,5 +1,4 @@
 import { z, type z3 } from '@elementor/schema';
-import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
@@ -11,9 +10,8 @@ import {
 	type AngieModelPreferences,
 	createDefaultModelPreferences,
 } from './angie-annotations';
+import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
-import { getSDK } from './utils/get-sdk';
-import { registerWebMCPResource, registerWebMCPTool } from './web-mcp-adapter';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -22,39 +20,42 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 // @ts-ignore - QUnit fails this
 const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
+const registrationAdapters: IMcpRegistrationAdapter[] = [];
+
+let resolveReady!: () => void;
+const readyPromise = new Promise< void >( ( resolve ) => {
+	resolveReady = resolve;
+} );
+
+export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => {
+	registrationAdapters.push( adapter );
+};
+
+export const signalMcpReady = (): void => resolveReady();
+
+export const activateAdapters = (): void => callAdapters( ( adapter ) => adapter.activate() );
+
+function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void ): void {
+	for ( const adapter of registrationAdapters ) {
+		if ( ! adapter.isAvailable() ) {
+			continue;
+		}
+		try {
+			fn( adapter );
+		} catch {
+			// adapter failed — exit quietly, continue to next
+		}
+	}
+}
+
 export const registerMcp = ( mcp: McpServer, name: string ) => {
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;
 };
 
-export async function activateMcpRegistration( sdk: AngieMcpSdk, entries = Object.entries( mcpRegistry ), retry = 3 ) {
-	if ( retry === 0 ) {
-		/* eslint-disable-next-line no-console */
-		console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries );
-		return;
-	}
-	if ( entries.length === 0 ) {
-		return;
-	}
-	const failed = [];
-	for await ( const entry of entries ) {
-		const [ key, mcpServer ] = entry;
-		try {
-			await sdk.registerLocalServer( {
-				title: toMCPTitle( key ),
-				name: `editor-${ key }`,
-				server: mcpServer,
-				version: '1.0.0',
-				description: mcpDescriptions[ key ] || key,
-			} );
-		} catch {
-			failed.push( entry );
-		}
-	}
-	if ( failed.length > 0 ) {
-		return activateMcpRegistration( sdk, failed, retry - 1 );
-	}
-}
+export const getRegisteredMcpServers = (): Array< [ string, McpServer, string ] > => {
+	return Object.entries( mcpRegistry ).map( ( [ key, server ] ) => [ key, server, mcpDescriptions[ key ] || key ] );
+};
 
 const isAlphabet = ( str: string ): string | never => {
 	const passes = !! str && /^[a-z_]+$/.test( str );
@@ -98,47 +99,29 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistry( mcpServer );
 	return {
-		waitForReady: () => getSDK().waitForReady(),
+		waitForReady: () => readyPromise,
 		// @ts-expect-error: TS is unable to infer the type here
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
-			await getSDK().waitForReady();
 			const [ name, uriOrTemplate, ...rest ] = args as [ string, unknown, ...unknown[] ];
-			const handler = rest[ rest.length - 1 ] as ( uri: URL, variables: Record< string, string | string[] > ) => Promise< { contents: Array< { text?: string } > } >;
-			registerWebMCPResource( name, uriOrTemplate as string | { uriTemplate: { toString(): string; match( uri: string ): Record< string, string | string[] > | null } }, handler );
+			const handler = rest[ rest.length - 1 ] as McpResourceHandler;
+			callAdapters( ( adapter ) => adapter.onResourceRegistered( name, uriOrTemplate as McpResourceUriOrTemplate, handler ) );
 			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
-			return getSDK()
-				.waitForReady()
-				.then( () => mcpServer.server.sendResourceUpdated( ...args ) )
-				.catch( ( error: Error ) => {
-					if ( error?.message?.includes( 'Not connected' ) ) {
-						return; // Expected when no MCP client is connected yet
-					}
-					if ( error?.message?.includes( 'does not support notifying about resources' ) ) {
-						return; // Server capability not declared — safe to ignore
-					}
-					throw error;
-				} );
+			callAdapters( ( adapter ) => adapter.sendResourceUpdated( { uri: args[ 0 ].uri } ) );
+			return Promise.resolve( mcpServer.server.sendResourceUpdated( ...args ) ).catch( ( error: Error ) => {
+				if ( error?.message?.includes( 'Not connected' ) ) {
+					return; // Expected when no MCP client is connected yet
+				}
+				if ( error?.message?.includes( 'does not support notifying about resources' ) ) {
+					return; // Server capability not declared — safe to ignore
+				}
+				throw error;
+			} );
 		},
-		mcpServer,
 		addTool,
 		setMCPDescription: ( description: string ) => {
 			mcpDescriptions[ namespace ] = description;
-		},
-		getActiveChatInfo: () => {
-			const info = localStorage.getItem( 'angie_active_chat_id' );
-			if ( ! info ) {
-				return {
-					expiresAt: 0,
-					sessionId: '',
-				};
-			}
-			const rawData = JSON.parse( info );
-			return {
-				expiresAt: rawData.expiresAt as number,
-				sessionId: rawData.sessionId as string,
-			};
 		},
 	};
 };
@@ -148,10 +131,8 @@ export interface MCPRegistryEntry {
 		opts: ToolRegistrationOptions< T, O >
 	) => void;
 	setMCPDescription: ( description: string ) => void;
-	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
 	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
 	resource: McpServer[ 'registerResource' ];
-	mcpServer: McpServer;
 	waitForReady: () => Promise< void >;
 }
 
@@ -255,19 +236,21 @@ function createToolRegistry( server: McpServer ) {
 			},
 			toolCallback
 		);
-		registerWebMCPTool( {
-			name: opts.name,
-			description: opts.description,
-			inputSchema: zodToJsonSchema( z.object( inputSchema ) ),
-			execute: ( params ) =>
-				Promise.resolve(
-					toolCallback(
-						params as Parameters< typeof toolCallback >[ 0 ],
-						/* WebMCP: no protocol session — handlers must not rely on `extra` here */
-						{} as RequestHandlerExtra< ServerRequest, ServerNotification >
-					)
-				),
-		} );
+		callAdapters( ( adapter ) =>
+			adapter.onToolRegistered( {
+				name: opts.name,
+				description: opts.description,
+				inputSchema: zodToJsonSchema( z.object( inputSchema ) ),
+				execute: ( params ) =>
+					Promise.resolve(
+						toolCallback(
+							params as Parameters< typeof toolCallback >[ 0 ],
+							/* WebMCP: no protocol session — handlers must not rely on `extra` here */
+							{} as RequestHandlerExtra< ServerRequest, ServerNotification >
+						)
+					),
+			} )
+		);
 		if ( isMcpRegistrationActivated ) {
 			server.sendToolListChanged();
 		}
