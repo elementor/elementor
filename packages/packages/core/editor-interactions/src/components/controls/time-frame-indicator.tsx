@@ -39,7 +39,10 @@ export function TimeFrameIndicator( {
 
 	const handleBlur = () => {
 		if ( ! sizeValue.size ) {
-			setValue( parseSizeValue( defaultValue, TIME_UNITS, undefined, DEFAULT_TIME_UNIT ) );
+			const parsedDefault = parseSizeValue( defaultValue, TIME_UNITS, undefined, DEFAULT_TIME_UNIT );
+
+			prevUnitRef.current = parsedDefault.unit as Unit;
+			setValue( parsedDefault );
 		}
 	};
 
