@@ -139,7 +139,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 			expect( screen.getByText( `opacity: ${ RESOLVED_SIZE_DISPLAY }` ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render empty label and call useVariable with empty id when prop is not selection-size', () => {
+		it( 'should render empty label and call useVariable with empty string when prop is not selection-size', () => {
 			// Arrange.
 			const nonSelectionSizeProp = { $$type: 'string' as const, value: 'not-a-selection-size' };
 
