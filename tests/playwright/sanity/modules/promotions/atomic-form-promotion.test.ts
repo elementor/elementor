@@ -19,7 +19,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await page.close();
 	} );
 
-	test.only( 'Upgrade button visible on Atomic Form section', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Upgrade button visible on Atomic Form section', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
@@ -31,7 +31,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( promotionLink ).toHaveAttribute( 'href', /go-pro-atomic-form-section/ );
 	} );
 
-	test.only( 'Promotion popover shown on widget click', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotion popover shown on widget click', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
