@@ -301,7 +301,7 @@ class Migrations_Loader {
 
 	private function read_source( string $path ) {
 		if ( $this->is_url( $path ) ) {
-			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
+			$response = wp_remote_get( $path, [ 'timeout' => 3 ] );
 
 			if ( is_wp_error( $response ) ) {
 				return false;
