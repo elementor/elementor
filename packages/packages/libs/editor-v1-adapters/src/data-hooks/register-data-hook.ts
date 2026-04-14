@@ -28,7 +28,6 @@ export type Args = Record< string, unknown >;
 
 export type HookOptions = {
 	commandsCurrentTrace?: string[];
-	setUndoData?: ( data: unknown ) => void;
 };
 
 export type AfterHookCallback< TArgs extends Args = Args, TResult = unknown > = (
@@ -39,14 +38,6 @@ export type AfterHookCallback< TArgs extends Args = Args, TResult = unknown > = 
 
 export type DependencyHookCallback< TArgs extends Args = Args > = ( args: TArgs, options?: HookOptions ) => boolean;
 
-export type UndoRedoCallback< TUndoData = unknown > = ( data: TUndoData ) => void;
-
-export type UndoRedoOptions< TUndoData = unknown > = {
-	onUndo?: UndoRedoCallback< TUndoData >;
-	onRedo?: UndoRedoCallback< TUndoData >;
-};
-
-
 export declare class DataHook< TArgs extends Args = Args, TResult = unknown > {
 	getCommand(): string;
 	getId(): string;
@@ -54,83 +45,24 @@ export declare class DataHook< TArgs extends Args = Args, TResult = unknown > {
 	register(): void;
 }
 
-type HistoryItem = { get: ( key: string ) => unknown };
-
-const undoRedoMap = new Map<
-	number,
-	{
-		onUndo?: UndoRedoCallback;
-		onRedo?: UndoRedoCallback;
-		doArgs?: Args;
-	}
->();
-
 let hookId = 0;
-let undoRedoListenersRegistered = false;
-
-function getHistoryId(): number | null {
-	const eWindow = window as unknown as WindowWithDataHooks;
-
-	return eWindow.elementor?.documents?.getCurrent()?.history?.getCurrentId() ?? null;
-}
-
-function registerUndoRedoListeners() {
-	if ( undoRedoListenersRegistered ) {
-		return;
-	}
-	undoRedoListenersRegistered = true;
-
-	const handleUndoOrRedo = ( _args: Args, result: unknown, isRedo: boolean ) => {
-		const item = result as HistoryItem | undefined;
-		const historyId = item?.get?.( 'id' ) as number | undefined;
-
-		if ( ! historyId ) {
-			return;
-		}
-
-		const callbacks = undoRedoMap.get( historyId );
-
-		if ( callbacks ) {
-			if ( isRedo ) {
-				callbacks.onRedo?.( callbacks.doArgs );
-			} else {
-				callbacks.onUndo?.( callbacks.doArgs );
-			}
-		}
-	};
-
-	registerDataHook( 'after', 'document/history/undo', ( args: Args, result: unknown ) => {
-		handleUndoOrRedo( args, result, false );
-	} );
-
-	registerDataHook( 'after', 'document/history/redo', ( args: Args, result: unknown ) => {
-		handleUndoOrRedo( args, result, true );
-	} );
-
-	registerDataHook( 'after', 'document/history/undo-all', ( args: Args, result: unknown ) => {
-		handleUndoOrRedo( args, result, false );
-	} );
-}
 
 export function registerDataHook< TArgs extends Args = Args >(
 	type: 'dependency',
 	command: string,
-	callback: DependencyHookCallback< TArgs >,
-	undoRedoOptions?: UndoRedoOptions
+	callback: DependencyHookCallback< TArgs >
 ): DataHook< TArgs >;
 
 export function registerDataHook< TArgs extends Args = Args, TResult = unknown >(
 	type: 'after',
 	command: string,
-	callback: AfterHookCallback< TArgs, TResult >,
-	undoRedoOptions?: UndoRedoOptions
+	callback: AfterHookCallback< TArgs, TResult >
 ): DataHook< TArgs, TResult >;
 
 export function registerDataHook< TArgs extends Args = Args, TResult = unknown >(
 	type: HookType,
 	command: string,
-	callback: AfterHookCallback< TArgs, TResult > | DependencyHookCallback< TArgs >,
-	undoRedoOptions?: UndoRedoOptions
+	callback: AfterHookCallback< TArgs, TResult > | DependencyHookCallback< TArgs >
 ): DataHook< TArgs, TResult > {
 	const eWindow = window as unknown as WindowWithDataHooks;
 	const hooksClasses = eWindow.$e?.modules?.hookData;
@@ -164,19 +96,6 @@ export function registerDataHook< TArgs extends Args = Args, TResult = unknown >
 			const commandsCurrentTrace = currentWindow.$e?.commands?.currentTrace;
 			if ( commandsCurrentTrace ) {
 				hookOptions.commandsCurrentTrace = commandsCurrentTrace;
-			}
-
-			if ( undoRedoOptions?.onUndo || undoRedoOptions?.onRedo ) {
-				registerUndoRedoListeners();
-
-				const historyId = getHistoryId();
-				if ( historyId !== null ) {
-					undoRedoMap.set( historyId, {
-						onUndo: undoRedoOptions.onUndo,
-						onRedo: undoRedoOptions.onRedo,
-						doArgs: args,
-					} );
-				}
 			}
 
 			if ( type === 'dependency' ) {
