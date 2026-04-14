@@ -16,7 +16,7 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		Plugin::$instance->experiments->set_feature_default_value(
+		Plugin::$instance->experiments->set_feature_default_state(
 			Module::EXPERIMENT_TWIG_CONTAINERS,
 			\Elementor\Core\Experiments\Manager::STATE_ACTIVE
 		);
@@ -25,7 +25,7 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 	public function tearDown(): void {
 		parent::tearDown();
 
-		Plugin::$instance->experiments->set_feature_default_value(
+		Plugin::$instance->experiments->set_feature_default_state(
 			Module::EXPERIMENT_TWIG_CONTAINERS,
 			\Elementor\Core\Experiments\Manager::STATE_INACTIVE
 		);
