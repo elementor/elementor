@@ -8,10 +8,16 @@ export const useOpenAtomicDocumentPanel = () => {
 	const { open } = useAtomicDocumentPanelActions();
 
 	useEffect( () => {
-		return listenTo( commandStartEvent( 'panel/page-settings/style' ), () => {
-			if ( isAtomicDocumentOpen() ) {
-				open();
+		return listenTo(
+			[
+				commandStartEvent( 'panel/page-settings/settings' ),
+				commandStartEvent( 'panel/page-settings/style' ),
+			],
+			() => {
+				if ( isAtomicDocumentOpen() ) {
+					open();
+				}
 			}
-		} );
+		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 };

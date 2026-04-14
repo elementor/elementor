@@ -53,6 +53,11 @@ const blockV1Panel = () => {
 
 const blockV1DocumentPanel = () => {
 	blockCommand( {
+		command: 'panel/page-settings/settings',
+		condition: isAtomicDocumentOpen,
+	} );
+
+	blockCommand( {
 		command: 'panel/page-settings/style',
 		condition: isAtomicDocumentOpen,
 	} );

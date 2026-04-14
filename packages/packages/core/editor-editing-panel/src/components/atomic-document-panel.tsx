@@ -11,10 +11,10 @@ import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/edit
 import { ThemeProvider } from '@elementor/editor-ui';
 import { controlActionsMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
-import { ErrorBoundary, Box, Divider, Tab, Tabs } from '@elementor/ui';
+import { ErrorBoundary, Box, Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import {
 	__privateListenTo as listenTo,
-	__privateOpenRoute as openRoute,
+	commandEndEvent,
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -22,7 +22,8 @@ import { __ } from '@wordpress/i18n';
 import { ElementProvider } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
 
-import { StyleTab } from './style-tab';
+import { SettingsTab } from './settings-tab';
+import { stickyHeaderStyles, StyleTab } from './style-tab';
 
 // ---------------------------------------------------------------------------
 // Shared constants
@@ -41,6 +42,25 @@ const getDocumentConfig = (): any => ( window as any )?.elementor?.config?.docum
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getDocumentContainer = (): any =>
 	( window as any )?.elementor?.documents?.getCurrent?.()?.container ?? null;
+
+/**
+ * Coerces a raw settings value into the v4 atomic prop format { $$type, value }.
+ * Values already in that format pass through unchanged; raw strings (from the v3
+ * Backbone model) are wrapped so v4 controls can read them via extract().
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const wrapAsAtomicProp = ( val: unknown ): AnyTransformable | null => {
+	if ( val === undefined || val === null ) {
+		return null;
+	}
+	if ( typeof val === 'object' && val !== null && '$$type' in ( val as any ) ) {
+		return val as AnyTransformable;
+	}
+	if ( typeof val === 'string' ) {
+		return { $$type: 'string', value: val } as unknown as AnyTransformable;
+	}
+	return val as AnyTransformable;
+};
 
 type DocumentElementContext = {
 	element: Element;
@@ -85,12 +105,26 @@ const buildDocumentElementContext = (): DocumentElementContext | null => {
 		widgetsCache[ elType ] = { title };
 	}
 
-	// Read prop values from the container's settings model for all props except 'classes'.
+	// Resolve prop values using a three-tier priority:
+	// 1. Live v4-wrapped value from container.settings (user edited in this session).
+	// 2. Saved v4 value from config.panel.atomic_settings (persisted from a prior v4 save).
+	// 3. Raw v3 string from container.settings, wrapped so v4 controls can extract it.
+	// Without this, stringPropTypeUtil.isValid() rejects raw strings and controls show blank.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const savedAtomicSettings: Record< string, unknown > = config.panel?.atomic_settings ?? {};
+
 	const settings: Record< string, AnyTransformable | null > = Object.fromEntries(
-		Object.keys( propsSchema ).map( ( key ) => [
-			key,
-			( container.settings?.get?.( key ) as AnyTransformable ) ?? null,
-		] )
+		Object.keys( propsSchema ).map( ( key ) => {
+			const live = container.settings?.get?.( key );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			if ( typeof live === 'object' && live !== null && '$$type' in ( live as any ) ) {
+				return [ key, live as AnyTransformable ];
+			}
+			if ( key in savedAtomicSettings ) {
+				return [ key, savedAtomicSettings[ key ] as AnyTransformable ];
+			}
+			return [ key, wrapAsAtomicProp( live ) ];
+		} )
 	);
 
 	// Derive the 'classes' prop directly from the styles stored in the container model.
@@ -112,28 +146,49 @@ const buildDocumentElementContext = (): DocumentElementContext | null => {
 };
 
 // ---------------------------------------------------------------------------
-// Document-level tab bar
-// Style tab is handled by v4 panel, Content tab routes to v3 panel.
+// Document-level tab bar and content
+// Both Content and Style tabs are handled by v4 panel.
 // ---------------------------------------------------------------------------
 
 const { useMenuItems } = controlActionsMenu;
 
-const DocumentTabBar = () => {
+type TabValue = 'content' | 'style';
+
+const DocumentTabs = ( { hasContentControls }: { hasContentControls: boolean } ) => {
+	const defaultTab: TabValue = hasContentControls ? 'content' : 'style';
+	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( defaultTab );
+
+	if ( ! hasContentControls ) {
+		return (
+			<ScrollProvider>
+				<StyleTab />
+			</ScrollProvider>
+		);
+	}
+
 	return (
-		<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
-			<Tabs value="style" variant="fullWidth" size="small" sx={ { mt: 0.5 } }>
-				<Tab
-					label={ __( 'Content', 'elementor' ) }
-					value="content"
-					onClick={ () => openRoute( 'panel/page-settings/settings' ) }
-				/>
-				<Tab
-					label={ __( 'Style', 'elementor' ) }
-					value="style"
-				/>
-			</Tabs>
-			<Divider />
-		</Box>
+		<ScrollProvider>
+			<Stack direction="column" sx={ { width: '100%' } }>
+				<Stack sx={ { ...stickyHeaderStyles, top: 0 } }>
+					<Tabs
+						variant="fullWidth"
+						size="small"
+						sx={ { mt: 0.5 } }
+						{ ...getTabsProps() }
+					>
+						<Tab label={ __( 'Content', 'elementor' ) } { ...getTabProps( 'content' ) } />
+						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
+					</Tabs>
+					<Divider />
+				</Stack>
+				<TabPanel { ...getTabPanelProps( 'content' ) } disablePadding>
+					<SettingsTab />
+				</TabPanel>
+				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
+					<StyleTab />
+				</TabPanel>
+			</Stack>
+		</ScrollProvider>
 	);
 };
 
@@ -157,39 +212,61 @@ const AtomicDocumentContent = () => {
 	useEffect( () => {
 		const rebuild = () => {
 			const container = getDocumentContainer();
-			if ( container ) {
+			const config = getDocumentConfig();
+			if ( container && config ) {
 				const styles = container.model?.get?.( 'styles' ) ?? {};
 				container.settings?.set?.( 'atomic_styles', styles, { silent: true } );
+
+				const propsSchema = config.panel?.atomic_props_schema ?? {};
+				const atomicSettings: Record< string, unknown > = {};
+
+				Object.keys( propsSchema ).forEach( ( key ) => {
+					if ( key !== 'classes' && key !== '_cssid' ) {
+						const value = container.settings?.get?.( key );
+						if ( value !== undefined && value !== null ) {
+							// Wrap raw strings (v3 Backbone values) into v4 prop format so
+							// PHP Props_Parser::validate() receives the expected { $$type, value } shape.
+							atomicSettings[ key ] = wrapAsAtomicProp( value ) ?? value;
+						}
+					}
+				} );
+
+				if ( Object.keys( atomicSettings ).length > 0 ) {
+					container.settings?.set?.( 'atomic_settings', atomicSettings, { silent: true } );
+				}
 			}
 			setCtx( buildDocumentElementContext() );
 		};
 
-		return listenTo( [ windowEvent( ELEMENT_STYLE_CHANGE_EVENT ) ], rebuild );
+		return listenTo(
+			[
+				windowEvent( ELEMENT_STYLE_CHANGE_EVENT ),
+				commandEndEvent( 'document/elements/set-settings' ),
+			],
+			rebuild
+		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if ( ! ctx ) {
 		return null;
 	}
 
+	const hasContentControls = ctx.elementType.controls.length > 0;
+
 	return (
-		<>
-			<DocumentTabBar />
-			<PanelBody>
-				<ControlActionsProvider items={ menuItems }>
-					<ControlReplacementsProvider replacements={ controlReplacements }>
-						<ElementProvider
-							element={ ctx.element }
-							elementType={ ctx.elementType }
-							settings={ ctx.settings }
-						>
-							<ScrollProvider>
-								<StyleTab />
-							</ScrollProvider>
-						</ElementProvider>
-					</ControlReplacementsProvider>
-				</ControlActionsProvider>
-			</PanelBody>
-		</>
+		<PanelBody>
+			<ControlActionsProvider items={ menuItems }>
+				<ControlReplacementsProvider replacements={ controlReplacements }>
+					<ElementProvider
+						element={ ctx.element }
+						elementType={ ctx.elementType }
+						settings={ ctx.settings }
+					>
+						<DocumentTabs hasContentControls={ hasContentControls } />
+					</ElementProvider>
+				</ControlReplacementsProvider>
+			</ControlActionsProvider>
+		</PanelBody>
 	);
 };
 
