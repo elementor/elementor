@@ -62,10 +62,6 @@ const transitionsRepeaterInjections = () => {
 	} );
 };
 
-const hasAssignedColorVariable = ( value: PropValue ): boolean => {
-	return !! colorVariablePropTypeUtil.isValid( value );
-};
-
 const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
 	if ( sizeVariablePropTypeUtil.isValid( value ) ) {
 		return true;
@@ -76,4 +72,8 @@ const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
 	}
 
 	return false;
+};
+
+const hasAssignedColorVariable = ( value: PropValue ): boolean => {
+	return !! colorVariablePropTypeUtil.isValid( value );
 };
