@@ -224,6 +224,8 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'post_id', payload.postId );
 	formData.append( 'form_id', payload.formId );
 	formData.append( 'form_name', payload.formName );
+	formData.append( 'referer_title', document?.title ?? '' );
+	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => {
 		formData.append( `form_fields[${ index }][id]`, field.id );
 		formData.append( `form_fields[${ index }][type]`, field.type );
