@@ -5,6 +5,7 @@ import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 
+
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
