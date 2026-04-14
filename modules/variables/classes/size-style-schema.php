@@ -18,7 +18,6 @@ class Size_Style_Schema {
 		'filter',
 		'backdrop-filter',
 		'transform',
-		'transition',
 	];
 
 	private function ignore( $css_property ): bool {
