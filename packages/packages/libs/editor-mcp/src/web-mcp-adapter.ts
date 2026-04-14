@@ -32,7 +32,11 @@ function flushPendingTools() {
 	pendingTools.clear();
 }
 
-document.addEventListener( 'DOMContentLoaded', flushPendingTools, { once: true } );
+if ( typeof document !== 'undefined' ) {
+	document.addEventListener( 'DOMContentLoaded', flushPendingTools, { once: true } );
+} else {
+	flushPendingTools();
+}
 
 export function registerWebMCPTool( tool: WebMCPToolDescriptor ): void {
 	if ( flushed ) {
@@ -114,7 +118,13 @@ export function registerWebMCPResource(
 				for ( const entry of resourceEntries ) {
 					const variables = entry.match( query );
 					if ( variables !== null ) {
-						const result = await entry.handler( new URL( query ), variables );
+						let resourceUrl: URL;
+						try {
+							resourceUrl = new URL( query );
+						} catch {
+							return `Invalid URI '${ query }'. Provide a valid resource URI or a partial string to search patterns.`;
+						}
+						const result = await entry.handler( resourceUrl, variables );
 						return result.contents?.[ 0 ]?.text ?? JSON.stringify( result );
 					}
 				}

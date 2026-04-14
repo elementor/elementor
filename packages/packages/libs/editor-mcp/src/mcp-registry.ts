@@ -259,7 +259,14 @@ function createToolRegistry( server: McpServer ) {
 			name: opts.name,
 			description: opts.description,
 			inputSchema: zodToJsonSchema( z.object( inputSchema ) ),
-			execute: ( params ) => Promise.resolve( toolCallback( params as Parameters< typeof toolCallback >[ 0 ], {} as RequestHandlerExtra< ServerRequest, ServerNotification > ) ),
+			execute: ( params ) =>
+				Promise.resolve(
+					toolCallback(
+						params as Parameters< typeof toolCallback >[ 0 ],
+						/* WebMCP: no protocol session — handlers must not rely on `extra` here */
+						{} as RequestHandlerExtra< ServerRequest, ServerNotification >
+					)
+				),
 		} );
 		if ( isMcpRegistrationActivated ) {
 			server.sendToolListChanged();
