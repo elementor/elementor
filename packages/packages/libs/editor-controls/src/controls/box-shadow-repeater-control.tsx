@@ -90,7 +90,7 @@ const Content = () => {
 				</PopoverGridContainer>
 				<PopoverGridContainer ref={ rowRef[ 1 ] }>
 					<Control bind="blur" label={ __( 'Blur', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 1 ] }/>
+						<SizeControl anchorRef={ rowRef[ 1 ] } />
 					</Control>
 					<Control bind="spread" label={ __( 'Spread', 'elementor' ) }>
 						<SizeControl anchorRef={ rowRef[ 1 ] } min={ -Number.MAX_SAFE_INTEGER } />
