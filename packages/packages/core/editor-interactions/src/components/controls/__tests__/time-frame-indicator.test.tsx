@@ -201,5 +201,4 @@ describe( 'TimeFrameIndicator', () => {
 			expect( mockOnChange ).toHaveBeenLastCalledWith( '250ms' );
 		} );
 	} );
-
 } );
