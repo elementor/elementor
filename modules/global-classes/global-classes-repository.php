@@ -3,7 +3,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
-use Elementor\Modules\GlobalClasses\Utils\Global_Classes_Sanitization;
+use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -55,7 +55,7 @@ class Global_Classes_Repository {
 			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
 
-		$all['order'] = Global_Classes_Sanitization::order( $all['items'] ?? [], $all['order'] ?? [] );
+		$all['order'] = Global_Classes_Parser::sanitize_order( $all['items'] ?? [], $all['order'] ?? [] );
 
 		Migrations_Orchestrator::make()->migrate(
 			$all,

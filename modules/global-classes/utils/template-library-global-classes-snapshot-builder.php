@@ -186,7 +186,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	private static function parse_snapshot_or_null( array $snapshot ): ?array {
-		$snapshot['order'] = Global_Classes_Sanitization::order(
+		$snapshot['order'] = Global_Classes_Parser::sanitize_order(
 			$snapshot['items'] ?? [],
 			$snapshot['order'] ?? []
 		);

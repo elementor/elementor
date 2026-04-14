@@ -6,7 +6,6 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Utils\Global_Classes_Sanitization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,7 +37,7 @@ class Import_Runner extends Import_Runner_Base {
 			return [];
 		}
 
-		$global_classes['order'] = Global_Classes_Sanitization::order(
+		$global_classes['order'] = Global_Classes_Parser::sanitize_order(
 			$global_classes['items'] ?? [],
 			$global_classes['order'] ?? []
 		);
