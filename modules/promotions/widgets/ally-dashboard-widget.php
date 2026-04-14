@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Promotions\Widgets;
 
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Promotions\Module as Promotions;
 
@@ -12,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Ally_Dashboard_Widget {
 	public const ALLY_SCANNER_RUN = 'ea11y_dashboard_widget_scanner_run';
 	public const ALLY_NONCE_KEY = 'ea11y_dashboard_widget_nonce';
-	public const ALLY_PUBLIC_URL = 'https://wordpress.org/plugins/pojo-accessibility/';
 
 	/**
 	 * Check is widget already submitted
@@ -31,7 +31,17 @@ class Ally_Dashboard_Widget {
 	public static function ally_widget_render(): void {
 		$is_scanner_run = self::is_scanner_run();
 		$submit_id = $is_scanner_run ? 'e-dashboard-ally-submitted' : 'e-dashboard-ally-submit';
-		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Promotions::get_ally_external_scanner_url() . '?url=' . home_url();
+		$link = $is_scanner_run
+			? Admin_Notices::add_plg_campaign_data(
+				Hints::get_plugin_action_url( 'pojo-accessibility' ),
+				[
+					'name' => 'elementor_acc_campaign',
+					'campaign' => 'acc-dashboard-plg',
+					'source' => 'acc-checker-dashboard-plg-install',
+					'medium' => 'wp-dash',
+				]
+			)
+			: Promotions::get_ally_external_scanner_url() . '?url=' . home_url();
 		?>
 		<div class="e-dashboard-ally e-dashboard-widget">
 			<div class="e-dashboard-ally-img">
@@ -51,7 +61,7 @@ class Ally_Dashboard_Widget {
 						? esc_html_e( 'Install Ally for free to fix accessibility issues directly in WordPress.', 'elementor' )
 						: esc_html_e( 'Most sites have accessibility gaps. Run a free scan to see how yours performs.', 'elementor' ) ?>
 				</p>
-				<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noreferrer" id="<?php echo esc_attr( $submit_id ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( $link ); ?>" <?php echo $is_scanner_run ? '' : 'target="_blank" rel="noreferrer"'; ?> id="<?php echo esc_attr( $submit_id ); ?>" class="button button-primary">
 					<?php $is_scanner_run
 						? esc_html_e( 'Get it free', 'elementor' )
 						: esc_html_e( 'Run free scan', 'elementor' ); ?>

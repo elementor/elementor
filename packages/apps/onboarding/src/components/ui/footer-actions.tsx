@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowLeftIcon } from '@elementor/icons';
-import { Box, Button, styled } from '@elementor/ui';
+import { Box, Button, styled, useTheme, withDirection } from '@elementor/ui';
 
 import { t } from '../../utils/translations';
 
@@ -15,6 +15,7 @@ const RightActions = styled( Box )( {
 	alignItems: 'center',
 	gap: 8,
 } );
+const DirectionalArrowLeftIcon = withDirection( ArrowLeftIcon );
 
 const BackButton = styled( Button )( ( { theme } ) => ( {
 	color: theme.palette.text.primary,
@@ -91,6 +92,10 @@ export function FooterActions( {
 	onSkip,
 	onContinue,
 }: FooterActionsProps ) {
+	const { direction } = useTheme();
+	const isRtl = direction === 'rtl';
+	const backIcon = <DirectionalArrowLeftIcon fontSize="tiny" />;
+
 	return (
 		<>
 			<LeftActions>
@@ -99,7 +104,8 @@ export function FooterActions( {
 						variant="text"
 						onClick={ onBack }
 						disabled={ isBackDisabled }
-						startIcon={ <ArrowLeftIcon fontSize="tiny" /> }
+						startIcon={ isRtl ? undefined : backIcon }
+						endIcon={ isRtl ? backIcon : undefined }
 					>
 						{ backLabel }
 					</BackButton>

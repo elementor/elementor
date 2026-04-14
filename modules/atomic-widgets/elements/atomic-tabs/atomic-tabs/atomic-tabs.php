@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -37,7 +39,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TAB = 'e-tab';
 	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
 
-	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. LLM support: Each child element will be represented as a tab, the menu auto-generates based on the children';
+	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. Structure: e-tabs contains e-tabs-menu (with e-tab triggers) and e-tabs-content-area (with e-tab-content panels). The number of e-tab elements MUST equal the number of e-tab-content elements. Each e-tab at index N is paired with the e-tab-content at index N.';
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -136,11 +138,9 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					'title' => "Tab {$i} trigger",
 					'initial_position' => $i,
 				] )
-				->is_locked( true )
 				->build();
 
 			$tab_content_elements[] = Atomic_Tab_Content::generate()
-				->is_locked( true )
 				->editor_settings( [
 					'title' => "Tab {$i} content",
 					'initial_position' => $i,
@@ -150,12 +150,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 		$tabs_menu = Atomic_Tabs_Menu::generate()
 			->children( $tab_elements )
-			->is_locked( true )
 			->build();
 
 		$tabs_content_area = Atomic_Tabs_Content_Area::generate()
 			->children( $tab_content_elements )
-			->is_locked( true )
 			->build();
 
 		return [
