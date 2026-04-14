@@ -44,9 +44,6 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertSame( 'text', $url_control->get_type() );
 	}
 
-	/**
-	 * @param Section[]|Atomic_Control_Base[] $controls
-	 */
 	private function find_control_by_bind( array $controls, string $bind ): ?Atomic_Control_Base {
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
