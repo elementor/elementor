@@ -111,18 +111,23 @@ describe( 'TimeFrameIndicator', () => {
 			expect( mockOnChange ).toHaveBeenCalledWith( '800ms' );
 		} );
 
-		it( 'should reset to default value on blur when input is cleared', () => {
+		it( 'should reset to default value on blur when input is cleared after unit change', () => {
 			// Arrange.
 			mockOnChange.mockClear();
-			render( <TimeFrameIndicator value="0ms" onChange={ mockOnChange } defaultValue="600ms" /> );
+			const { rerender } = render(
+				<TimeFrameIndicator value="0.6s" onChange={ mockOnChange } defaultValue="600ms" />,
+			);
 
 			const input = screen.getByRole( 'spinbutton' );
 
 			// Act.
+			fireEvent.input( input, { target: { value: '' } } );
+			rerender( <TimeFrameIndicator value="s" onChange={ mockOnChange } defaultValue="600ms" /> );
+
 			fireEvent.blur( input );
 
 			// Assert.
-			expect( mockOnChange ).toHaveBeenCalledWith( '600ms' );
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '600ms' );
 		} );
 
 		it( 'should not call onChange on blur when value is non-zero', () => {
@@ -201,4 +206,5 @@ describe( 'TimeFrameIndicator', () => {
 			expect( mockOnChange ).toHaveBeenLastCalledWith( '250ms' );
 		} );
 	} );
+
 } );
