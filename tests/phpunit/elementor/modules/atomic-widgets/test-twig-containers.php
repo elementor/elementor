@@ -1,7 +1,9 @@
 <?php
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block_Twig;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox_Twig;
 use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Plugin;
@@ -143,15 +145,113 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'href="', $rendered_output );
 	}
 
+	public function test__twig_div_block_output_matches_php(): void {
+		// Arrange.
+		$php_output = $this->render_element( Div_Block::class, 'e8e55a1' );
+		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1' );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
+	public function test__twig_div_block_with_link_output_matches_php(): void {
+		// Arrange.
+		$settings = [
+			'link' => [
+				'href' => 'https://example.com',
+				'target' => '_blank',
+				'tag' => 'a',
+			],
+		];
+		$php_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
+		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
+	public function test__twig_div_block_with_action_link_output_matches_php(): void {
+		// Arrange.
+		$settings = [
+			'link' => [
+				'href' => 'https://very.dynamic.content.elementor',
+				'target' => '_blank',
+				'tag' => 'button',
+			],
+		];
+		$php_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
+		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
+	public function test__twig_flexbox_output_matches_php(): void {
+		// Arrange.
+		$php_output = $this->render_element( Flexbox::class, 'e8e55a1' );
+		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1' );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
+	public function test__twig_flexbox_with_link_output_matches_php(): void {
+		// Arrange.
+		$settings = [
+			'link' => [
+				'href' => 'https://example.com',
+				'target' => '_blank',
+				'tag' => 'a',
+			],
+		];
+		$php_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
+		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
+	public function test__twig_flexbox_with_action_link_output_matches_php(): void {
+		// Arrange.
+		$settings = [
+			'link' => [
+				'href' => 'https://very.dynamic.content.elementor',
+				'target' => '_blank',
+				'tag' => 'button',
+			],
+		];
+		$php_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
+		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
+
+		// Assert.
+		$this->assertSame(
+			$this->normalize_html( $php_output ),
+			$this->normalize_html( $twig_output )
+		);
+	}
+
 	private function create_element_instance( string $element_type, string $id, array $settings = [] ) {
-		$mock = [
+		return Plugin::$instance->elements_manager->create_element_instance( [
 			'id' => $id,
 			'elType' => $element_type,
 			'settings' => $settings,
 			'widgetType' => $element_type,
-		];
-
-		return Plugin::$instance->elements_manager->create_element_instance( $mock );
+		] );
 	}
 
 	private function make_paragraph_child( string $id ): array {
@@ -167,5 +267,26 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 		ob_start();
 		$instance->print_element();
 		return ob_get_clean();
+	}
+
+	private function render_element( string $class, string $id, array $settings = [] ): string {
+		$element = new $class( [
+			'id' => $id,
+			'elType' => $class::get_element_type(),
+			'settings' => $settings,
+		] );
+
+		$element->add_child( $this->make_paragraph_child( $id ) );
+
+		return $this->render( $element );
+	}
+
+	private function normalize_html( string $html ): string {
+		$html = preg_replace( '/\s+/', ' ', $html );
+		$html = preg_replace( '/>\s+</', '><', $html );
+		$html = preg_replace( '/\s+>/', '>', $html );
+		$html = preg_replace( '/\s+"/', '"', $html );
+
+		return trim( $html );
 	}
 }
