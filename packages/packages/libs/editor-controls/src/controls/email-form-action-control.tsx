@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
-import { CollapsibleContent } from '@elementor/editor-ui';
+import { CollapsibleContent, InfoAlert } from '@elementor/editor-ui';
 import { Box, Divider, Grid, Stack } from '@elementor/ui';
+import { hasProInstalled, isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
+import { useFormFieldSuggestions } from '../hooks/use-form-field-suggestions';
 import { ChipsControl } from './chips-control';
+import { MentionTextAreaControl } from './mention-text-area-control';
 import { SelectControl } from './select-control';
-import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
 const EmailField = ( { bind, label, placeholder }: { bind: string; label: string; placeholder?: string } ) => (
@@ -38,23 +40,48 @@ const SubjectField = () => (
 	/>
 );
 
-const MessageField = () => (
-	<PropKeyProvider bind="message">
-		<Grid container direction="column" gap={ 0.5 }>
-			<Grid item>
-				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+const MIN_PRO_VERSION_FOR_MENTIONS = '4.1.0';
+
+const shouldShowMentionsInfo = (): boolean => {
+	if ( ! hasProInstalled() ) {
+		return true;
+	}
+
+	const proVersion = window.elementorPro?.config?.version;
+
+	if ( ! proVersion ) {
+		return false;
+	}
+
+	return isVersionGreaterOrEqual( proVersion, MIN_PRO_VERSION_FOR_MENTIONS );
+};
+
+const MessageField = () => {
+	const suggestions = useFormFieldSuggestions();
+
+	return (
+		<PropKeyProvider bind="message">
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl suggestions={ suggestions } />
+				</Grid>
+				<Grid item>
+					<InfoAlert>
+						{ shouldShowMentionsInfo()
+							? __(
+									'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
+									'elementor'
+							  )
+							: __( '[all-fields] shortcode sends all fields.', 'elementor' ) }
+					</InfoAlert>
+				</Grid>
 			</Grid>
-			<Grid item>
-				<TextAreaControl
-					placeholder={ __(
-						'By default, all form fields are sent via [all-fields] shortcode.',
-						'elementor'
-					) }
-				/>
-			</Grid>
-		</Grid>
-	</PropKeyProvider>
-);
+		</PropKeyProvider>
+	);
+};
 
 const FromEmailField = () => (
 	<EmailField

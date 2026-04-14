@@ -24,7 +24,7 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 };
 
 type VariablesManagerEventData = {
-	action: 'openManager' | 'add' | 'saveChanges' | 'delete';
+	action: 'openManager' | 'add' | 'saveChanges' | 'delete' | 'duplicate';
 	varType?: string;
 	controlPath?: string;
 };

@@ -94,7 +94,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://go.elementor.com/acc-checker-dashboard-plg' );
 	}
 
 	private function handle_external_redirects() {

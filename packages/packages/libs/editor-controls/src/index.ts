@@ -2,6 +2,7 @@
 export { ImageControl } from './controls/image-control';
 export { TextControl } from './controls/text-control';
 export { TextAreaControl } from './controls/text-area-control';
+export { MentionTextAreaControl } from './controls/mention-text-area-control';
 export { SizeControl } from './controls/size-control';
 export { StrokeControl } from './controls/stroke-control';
 export { BoxShadowRepeaterControl } from './controls/box-shadow-repeater-control';
