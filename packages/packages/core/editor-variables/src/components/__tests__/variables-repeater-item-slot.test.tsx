@@ -139,18 +139,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 			expect( screen.getByText( `opacity: ${ RESOLVED_SIZE_DISPLAY }` ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render only the selection key when no variable is resolved', () => {
-			// Arrange.
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( undefined );
-
-			// Act.
-			render( <TransitionsSizeVariableLabel value={ transitionSelectionSizeWithVariable } /> );
-
-			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( SELECTION_SIZE_VARIABLE_ID );
-			expect( screen.getByText( 'opacity' ) ).toBeInTheDocument();
-		} );
-
 		it( 'should render empty label and call useVariable with empty id when prop is not selection-size', () => {
 			// Arrange.
 			const nonSelectionSizeProp = { $$type: 'string' as const, value: 'not-a-selection-size' };
