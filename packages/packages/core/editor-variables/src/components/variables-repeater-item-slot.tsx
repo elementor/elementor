@@ -45,11 +45,12 @@ export const TransitionsSizeVariableLabel = ( { value: prop }: Props ) => {
 	const variableId = ( prop as SelectionSizePropValue )?.value?.size?.value || '';
 	const variable = useVariable( variableId );
 
-	if ( selectionSizePropTypeUtil.isValid( prop ) ) {
-		label += ( prop.value?.selection as KeyValuePropValue )?.value?.key?.value;
-		if ( variable ) {
-			label += `: ${ variable?.value }`;
+	if ( variable && selectionSizePropTypeUtil.isValid( prop ) ) {
+		const selection = ( prop.value?.selection as KeyValuePropValue )?.value?.key?.value;
+		if ( selection ) {
+			label += `${ selection }: `;
 		}
+		label += variable?.value;
 	}
 
 	return <span>{ label }</span>;
