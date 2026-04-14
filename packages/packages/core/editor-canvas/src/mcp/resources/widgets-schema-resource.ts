@@ -18,14 +18,18 @@ export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
 
-	resource( 'styles-best-practices', BEST_PRACTICES_URI, {
-		description: 'Styling best practices',
-	}, async () => {
-		return {
-			contents: [
-				{
-					uri: BEST_PRACTICES_URI,
-					text: `# Styling best practices
+	resource(
+		'styles-best-practices',
+		BEST_PRACTICES_URI,
+		{
+			description: 'Styling best practices',
+		},
+		async () => {
+			return {
+				contents: [
+					{
+						uri: BEST_PRACTICES_URI,
+						text: `# Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
@@ -37,10 +41,11 @@ When using global variables, ensure that the variables are defined in the ${ 'el
 Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 
 `,
-				},
-			],
-		};
-	} );
+					},
+				],
+			};
+		}
+	);
 
 	resource(
 		'styles-schema',

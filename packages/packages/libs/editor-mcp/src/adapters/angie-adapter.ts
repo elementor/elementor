@@ -1,8 +1,7 @@
-import { toMCPTitle } from '../mcp-registry';
-import { getRegisteredMcpServers } from '../mcp-registry';
+import { getRegisteredMcpServers, toMCPTitle } from '../mcp-registry';
 import { getSDK } from '../utils/get-sdk';
 import { isAngieAvailable } from '../utils/is-angie-available';
-import { type IMcpRegistrationAdapter, type McpToolDescriptor, type McpResourceUriOrTemplate, type McpResourceHandler } from './types';
+import { type IMcpRegistrationAdapter } from './types';
 
 const MAX_RETRIES = 3;
 
@@ -35,7 +34,10 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	): Promise< void > {
 		if ( retry === 0 ) {
 			/* eslint-disable-next-line no-console */
-			console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries.map( ( [ key ] ) => key ) );
+			console.error(
+				'Failed to register MCP after 3 retries. failed entries: ',
+				entries.map( ( [ key ] ) => key )
+			);
 			return;
 		}
 
@@ -59,16 +61,16 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 		}
 	}
 
-	onToolRegistered( _tool: McpToolDescriptor ): void {
+	onToolRegistered(): void {
 		// Angie tools are registered via McpServer (at activate time).
 		// The McpServer already holds the tool — no per-tool action needed here.
 	}
 
-	onResourceRegistered( _name: string, _uriOrTemplate: McpResourceUriOrTemplate, _handler: McpResourceHandler ): void {
+	onResourceRegistered(): void {
 		// Resources are registered on the McpServer instance directly.
 	}
 
-	sendResourceUpdated( _params: { uri: string } ): void {
+	sendResourceUpdated(): void {
 		// Resource update notifications are sent via the per-namespace McpServer instance,
 		// which is managed in MCPRegistryEntry.sendResourceUpdated.
 	}

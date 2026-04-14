@@ -11,8 +11,12 @@ type ModelContext = {
 };
 
 function getModelContext(): ModelContext | null {
-	if ( typeof navigator === 'undefined' ) return null;
-	if ( ! ( 'modelContext' in navigator ) ) return null;
+	if ( typeof navigator === 'undefined' ) {
+		return null;
+	}
+	if ( ! ( 'modelContext' in navigator ) ) {
+		return null;
+	}
 	return ( navigator as unknown as { modelContext: ModelContext } ).modelContext;
 }
 
@@ -24,7 +28,9 @@ let flushed = false;
 function flushPendingTools() {
 	flushed = true;
 	const ctx = getModelContext();
-	if ( ! ctx ) return;
+	if ( ! ctx ) {
+		return;
+	}
 	for ( const tool of pendingTools.values() ) {
 		ctx.registerTool( tool );
 		registeredToolNames.add( tool.name );
@@ -41,7 +47,9 @@ if ( typeof document !== 'undefined' ) {
 export function registerWebMCPTool( tool: WebMCPToolDescriptor ): void {
 	if ( flushed ) {
 		const ctx = getModelContext();
-		if ( ! ctx ) return;
+		if ( ! ctx ) {
+			return;
+		}
 		if ( registeredToolNames.has( tool.name ) ) {
 			ctx.unregisterTool( tool.name );
 		}
@@ -58,8 +66,8 @@ export function unregisterWebMCPTool( name: string ): void {
 
 // Duck-typed UriTemplate — matches the shape exposed by ResourceTemplate.uriTemplate
 type UriTemplate = {
-	toString(): string;
-	match( uri: string ): Record< string, string | string[] > | null;
+	toString: () => string;
+	match: ( uri: string ) => Record< string, string | string[] > | null;
 };
 
 type ResourceHandler = (
@@ -100,13 +108,15 @@ export function registerWebMCPResource(
 	if ( isFirst ) {
 		registerWebMCPTool( {
 			name: 'editor-resource-getter',
-			description: 'Get an editor resource by URI, or search for available resources by partial URI. Pass a full URI to retrieve content, or a partial string to discover matching patterns.',
+			description:
+				'Get an editor resource by URI, or search for available resources by partial URI. Pass a full URI to retrieve content, or a partial string to discover matching patterns.',
 			inputSchema: {
 				type: 'object',
 				properties: {
 					uri: {
 						type: 'string',
-						description: 'A full resource URI (e.g. elementor://styles/best-practices) or a partial string to search across available resource patterns.',
+						description:
+							'A full resource URI (e.g. elementor://styles/best-practices) or a partial string to search across available resource patterns.',
 					},
 				},
 				required: [ 'uri' ],
@@ -135,7 +145,9 @@ export function registerWebMCPResource(
 					.filter( ( pattern ) => pattern.includes( query ) );
 
 				if ( matches.length > 0 ) {
-					return `Found ${ matches.length } matching resource pattern(s):\n${ matches.join( '\n' ) }\n\nProvide a full URI to retrieve the resource content.`;
+					return `Found ${ matches.length } matching resource pattern(s):\n${ matches.join(
+						'\n'
+					) }\n\nProvide a full URI to retrieve the resource content.`;
 				}
 
 				const available = resourceEntries.map( ( e ) => e.pattern ).join( '\n' );

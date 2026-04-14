@@ -1,7 +1,7 @@
 // Duck-typed UriTemplate — matches the shape exposed by ResourceTemplate.uriTemplate
 type UriTemplate = {
-	toString(): string;
-	match( uri: string ): Record< string, string | string[] > | null;
+	toString: () => string;
+	match: ( uri: string ) => Record< string, string | string[] > | null;
 };
 
 export type McpToolDescriptor = {
@@ -23,25 +23,29 @@ export interface IMcpRegistrationAdapter {
 	 * Whether this adapter's target is currently available.
 	 * The registry skips all other methods if this returns false.
 	 */
-	isAvailable(): boolean;
+	isAvailable: () => boolean;
 
 	/**
 	 * Called once at startup to activate the adapter's server registrations.
 	 */
-	activate(): void | Promise< void >;
+	activate: () => void | Promise< void >;
 
 	/**
 	 * Called once per tool when addTool() is invoked.
 	 */
-	onToolRegistered( tool: McpToolDescriptor ): void;
+	onToolRegistered: ( tool: McpToolDescriptor ) => void;
 
 	/**
 	 * Called once per resource when resource() is invoked.
 	 */
-	onResourceRegistered( name: string, uriOrTemplate: McpResourceUriOrTemplate, handler: McpResourceHandler ): void;
+	onResourceRegistered: (
+		name: string,
+		uriOrTemplate: McpResourceUriOrTemplate,
+		handler: McpResourceHandler
+	) => void;
 
 	/**
 	 * Called when a resource update notification should be sent.
 	 */
-	sendResourceUpdated( params: { uri: string } ): void | Promise< void >;
+	sendResourceUpdated: ( params: { uri: string } ) => void | Promise< void >;
 }

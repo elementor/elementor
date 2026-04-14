@@ -1,5 +1,10 @@
 import { registerWebMCPResource, registerWebMCPTool } from '../web-mcp-adapter';
-import { type IMcpRegistrationAdapter, type McpToolDescriptor, type McpResourceUriOrTemplate, type McpResourceHandler } from './types';
+import {
+	type IMcpRegistrationAdapter,
+	type McpResourceHandler,
+	type McpResourceUriOrTemplate,
+	type McpToolDescriptor,
+} from './types';
 
 export class WebMCPAdapter implements IMcpRegistrationAdapter {
 	isAvailable(): boolean {
@@ -20,7 +25,7 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		registerWebMCPResource( name, uriOrTemplate, handler );
 	}
 
-	sendResourceUpdated( _params: { uri: string } ): void {
+	sendResourceUpdated(): void {
 		// WebMCP has no server-push mechanism — no-op
 	}
 }

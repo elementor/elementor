@@ -1,16 +1,16 @@
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z, type z3 } from '@elementor/schema';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
-import { zodToJsonSchema } from 'zod-to-json-schema';
 
+import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
 import {
 	ANGIE_MODEL_PREFERENCES,
 	ANGIE_REQUIRED_RESOURCES,
 	type AngieModelPreferences,
 	createDefaultModelPreferences,
 } from './angie-annotations';
-import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 
 type ZodRawShape = z3.ZodRawShape;
@@ -104,7 +104,9 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
 			const [ name, uriOrTemplate, ...rest ] = args as [ string, unknown, ...unknown[] ];
 			const handler = rest[ rest.length - 1 ] as McpResourceHandler;
-			callAdapters( ( adapter ) => adapter.onResourceRegistered( name, uriOrTemplate as McpResourceUriOrTemplate, handler ) );
+			callAdapters( ( adapter ) =>
+				adapter.onResourceRegistered( name, uriOrTemplate as McpResourceUriOrTemplate, handler )
+			);
 			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
