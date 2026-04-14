@@ -125,19 +125,19 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'href="', $rendered_output );
 	}
 
-	public function test__twig_div_block_output_matches_php(): void {
+	public function test__twig_div_block_output_matches_non_templated(): void {
 		// Arrange.
-		$php_output = $this->render_element( Div_Block::class, 'e8e55a1' );
-		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1' );
+		$non_templated_output = $this->render_element( Div_Block::class, 'e8e55a1' );
+		$templated_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1' );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
-	public function test__twig_div_block_with_link_output_matches_php(): void {
+	public function test__twig_div_block_with_link_output_matches_non_templated(): void {
 		// Arrange.
 		$settings = [
 			'link' => [
@@ -146,17 +146,17 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 				'tag' => 'a',
 			],
 		];
-		$php_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
-		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
+		$non_templated_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
+		$templated_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
-	public function test__twig_div_block_with_action_link_output_matches_php(): void {
+	public function test__twig_div_block_with_action_link_output_matches_non_templated(): void {
 		// Arrange.
 		$settings = [
 			'link' => [
@@ -165,29 +165,29 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 				'tag' => 'button',
 			],
 		];
-		$php_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
-		$twig_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
+		$non_templated_output = $this->render_element( Div_Block::class, 'e8e55a1', $settings );
+		$templated_output = $this->render_element( Div_Block_Twig::class, 'e8e55a1', $settings );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
-	public function test__twig_flexbox_output_matches_php(): void {
+	public function test__twig_flexbox_output_matches_non_templated(): void {
 		// Arrange.
-		$php_output = $this->render_element( Flexbox::class, 'e8e55a1' );
-		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1' );
+		$non_templated_output = $this->render_element( Flexbox::class, 'e8e55a1' );
+		$templated_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1' );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
-	public function test__twig_flexbox_with_link_output_matches_php(): void {
+	public function test__twig_flexbox_with_link_output_matches_non_templated(): void {
 		// Arrange.
 		$settings = [
 			'link' => [
@@ -196,17 +196,17 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 				'tag' => 'a',
 			],
 		];
-		$php_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
-		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
+		$non_templated_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
+		$templated_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
-	public function test__twig_flexbox_with_action_link_output_matches_php(): void {
+	public function test__twig_flexbox_with_action_link_output_matches_non_templated(): void {
 		// Arrange.
 		$settings = [
 			'link' => [
@@ -215,13 +215,13 @@ class Test_Twig_Containers extends Elementor_Test_Base {
 				'tag' => 'button',
 			],
 		];
-		$php_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
-		$twig_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
+		$non_templated_output = $this->render_element( Flexbox::class, 'e8e55a1', $settings );
+		$templated_output = $this->render_element( Flexbox_Twig::class, 'e8e55a1', $settings );
 
 		// Assert.
 		$this->assertSame(
-			$this->normalize_html( $php_output ),
-			$this->normalize_html( $twig_output )
+			$this->normalize_html( $non_templated_output ),
+			$this->normalize_html( $templated_output )
 		);
 	}
 
