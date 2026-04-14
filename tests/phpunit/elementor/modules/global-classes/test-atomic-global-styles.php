@@ -111,7 +111,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
-		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$items = $this->mock_global_classes['items'];
 		$order_with_orphans = [ 'g-missing-1', 'g-4-124', 'g-4-123', 'g-missing-2' ];
