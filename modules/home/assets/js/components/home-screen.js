@@ -25,6 +25,10 @@ const EditorScreen = ( props ) => {
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2.5 } }>
 					<Stack sx={ { flex: 1, gap: 2.5 } }>
 						{ props.homeScreenData.site_planner && <SitePlanner sitePlannerData={ props.homeScreenData.site_planner } /> }
+						<SitePlanner sitePlannerData={ props.homeScreenData.site_planner } />
+						{
+							console.log( 'testje', props?.homeScreenData )
+						}
 						{ props.homeScreenData.create_with_ai && <CreateWithAIBanner createWithAIData={ props.homeScreenData.create_with_ai } /> }
 						<GetStarted
 							getStartedData={ props.homeScreenData.get_started }

@@ -151,6 +151,8 @@ class Module extends BaseApp {
 			],
 			'apiOrigin' => $api_origin,
 			'siteBuilderUrl' => $site_builder_url,
+			'previewImage' => ELEMENTOR_ASSETS_URL . 'images/site-planner-preview.png',
+			'bgImage' => ELEMENTOR_ASSETS_URL . 'images/site-planner-bg.png',
 		];
 	}
 
