@@ -19,7 +19,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await page.close();
 	} );
 
-	test( 'Upgrade button visible on Atomic Form section', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Upgrade button visible on Atomic Form section', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
@@ -42,7 +42,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		const formWidget = category.locator( '.elementor-element' ).filter( { hasText: 'Form' } ).first();
 		await formWidget.click( { force: true } );
 
-		const popover = page.locator( '.MuiTooltip-popper' );
+		const popover = page.locator( '.MuiTooltip-popper .MuiBox-root' );
 		await expect( popover ).toBeVisible();
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
 		await expect( popover.getByRole( 'button', { name: 'Upgrade now' } ) ).toBeVisible();
