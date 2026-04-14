@@ -11,15 +11,18 @@ import {
 
 import * as animationData from '../assets/atomic-form-animation.json';
 
-const PromotionCard = ( { doClose, promotionData: { title, content, ctaText } = {}, ctaUrl } ) => {
+const PromotionCard = ( props ) => {
+	const title = props.promotionData?.title;
+	const content = props.promotionData?.content;
+	const ctaText = props.promotionData?.ctaText;
 
 	const redirectHandler = () => {
-		window.open( ctaUrl, '_blank' );
-		return doClose();
+		window.open( props.ctaUrl, '_blank' );
+		return props.doClose();
 	};
 
 	return (
-		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
+		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ props.doClose }>
 			<Box sx={ { width: 296 } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
@@ -27,7 +30,7 @@ const PromotionCard = ( { doClose, promotionData: { title, content, ctaText } = 
 						icon: {
 							fontSize: 'small',
 						},
-					} } onClick={ doClose } />
+					} } onClick={ props.doClose } />
 				</Stack>
 				<Box sx={ { height: 150, width: '100%', overflow: 'hidden' } }>
 					<Lottie
@@ -57,6 +60,12 @@ const PromotionCard = ( { doClose, promotionData: { title, content, ctaText } = 
 			</Box>
 		</ClickAwayListener>
 	);
+};
+
+PromotionCard.propTypes = {
+	doClose: PropTypes.func,
+	promotionData: PropTypes.object,
+	ctaUrl: PropTypes.string,
 };
 
 export default PromotionCard;

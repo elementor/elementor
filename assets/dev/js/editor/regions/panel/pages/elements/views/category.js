@@ -15,7 +15,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	events: {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
-		'click .elementor-panel-heading-promotion a': 'onPromotionClick',
 	},
 
 	id() {
@@ -103,18 +102,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		} ) );
 	},
 
-	onPromotionClick( event ) {
-		if ( 'atomic-form' !== this.model.get( 'name' ) ) {
-			return;
-		}
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:section-open', {
-			detail: { target: event.currentTarget },
-		} ) );
-	},
 } );
 
 module.exports = PanelElementsCategoryView;

@@ -20,12 +20,6 @@ export class AppManager {
 
 			this.mount( event.detail.target, promotionData.widgetCtaUrl );
 		} );
-
-		document.addEventListener( 'atomic-form-promotion:section-open', ( event ) => {
-			const promotionData = this.getPromotionData();
-
-			this.mount( event.detail.target, promotionData.sectionCtaUrl );
-		} );
 	}
 
 	mount( targetEl, ctaUrl ) {

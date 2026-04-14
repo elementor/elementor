@@ -6,17 +6,17 @@ import {
 } from '@elementor/ui';
 import PromotionCard from './components/promotion-card';
 
-const App = ( { isRTL, colorScheme, onClose, promotionData, ctaUrl } ) => {
+const App = ( props ) => {
 	return (
-		<DirectionProvider rtl={ isRTL }>
+		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
-				<ThemeProvider colorScheme={ colorScheme }>
+				<ThemeProvider colorScheme={ props.colorScheme }>
 					<Infotip
 						content={
 							<PromotionCard
-								doClose={ onClose }
-								promotionData={ promotionData }
-								ctaUrl={ ctaUrl }
+								doClose={ props.onClose }
+								promotionData={ props.promotionData }
+								ctaUrl={ props.ctaUrl }
 							/>
 						}
 						placement="right"
@@ -38,6 +38,14 @@ const App = ( { isRTL, colorScheme, onClose, promotionData, ctaUrl } ) => {
 			</LocalizationProvider>
 		</DirectionProvider>
 	);
+};
+
+App.propTypes = {
+	colorScheme: PropTypes.oneOf( [ 'auto', 'light', 'dark' ] ),
+	isRTL: PropTypes.bool,
+	promotionData: PropTypes.object,
+	ctaUrl: PropTypes.string,
+	onClose: PropTypes.func.isRequired,
 };
 
 export default App;
