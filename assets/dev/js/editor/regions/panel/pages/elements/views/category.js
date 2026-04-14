@@ -101,7 +101,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			detail: { target: this.$el },
 		} ) );
 	},
-
 } );
 
 module.exports = PanelElementsCategoryView;

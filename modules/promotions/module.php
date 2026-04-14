@@ -85,7 +85,8 @@ class Module extends Base_Module {
 		Ally_Dashboard_Widget::init();
 
 		$this->register_atomic_promotions();
-		$this->register_atomic_form_promotion();
+
+		( new Widgets\Atomic_Form_Widget_Promotion() )->register();
 	}
 
 	/**
@@ -292,86 +293,4 @@ class Module extends Base_Module {
 		return $element_controls;
 	}
 
-	private function register_atomic_form_promotion(): void {
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_atomic_form_promotion_data' ] );
-		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_atomic_form_promotion' ] );
-	}
-
-	public function add_atomic_form_promotion_data( array $settings ): array {
-		if ( ! current_user_can( 'manage_options' ) || ! $this->is_atomic_widgets_active() ) {
-			return $settings;
-		}
-
-		$settings['atomicFormPromotionWidgets'] = [
-			[
-				'name' => 'e-form',
-				'title' => __( 'Form', 'elementor' ),
-				'icon' => 'eicon-atomic-form',
-				'categories' => '["atomic-form"]',
-			],
-			[
-				'name' => 'e-form-input',
-				'title' => __( 'Input', 'elementor' ),
-				'icon' => 'eicon-atomic-input',
-				'categories' => '["atomic-form"]',
-			],
-			[
-				'name' => 'e-form-label',
-				'title' => __( 'Label', 'elementor' ),
-				'icon' => 'eicon-atomic-label',
-				'categories' => '["atomic-form"]',
-			],
-			[
-				'name' => 'e-form-textarea',
-				'title' => __( 'Text area', 'elementor' ),
-				'icon' => 'eicon-atomic-text-area',
-				'categories' => '["atomic-form"]',
-			],
-			[
-				'name' => 'e-form-submit-button',
-				'title' => __( 'Submit button', 'elementor' ),
-				'icon' => 'eicon-atomic-submit-button',
-				'categories' => '["atomic-form"]',
-			],
-			[
-				'name' => 'e-form-checkbox',
-				'title' => __( 'Checkbox', 'elementor' ),
-				'icon' => 'eicon-atomic-checkbox',
-				'categories' => '["atomic-form"]',
-			],
-		];
-
-		$settings['atomicFormPromotion'] = [
-			'title' => __( 'Atomic form', 'elementor' ),
-			'content' => __( 'Design fully customized forms to capture leads without compromising on style.', 'elementor' ),
-			'ctaText' => __( 'Upgrade now', 'elementor' ),
-			'widgetCtaUrl' => 'https://go.elementor.com/go-pro-atomic-form-modal/',
-			'sectionCtaUrl' => 'https://go.elementor.com/go-pro-atomic-form-section/',
-		];
-
-		return $settings;
-	}
-
-	public function enqueue_atomic_form_promotion(): void {
-		if ( ! current_user_can( 'manage_options' ) || ! $this->is_atomic_widgets_active() ) {
-			return;
-		}
-
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
-
-		wp_enqueue_script(
-			'e-atomic-form-promotion',
-			ELEMENTOR_ASSETS_URL . 'js/e-atomic-form-promotion' . $min_suffix . '.js',
-			[
-				'react',
-				'react-dom',
-				'elementor-editor-modules',
-				'elementor-v2-ui',
-			],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_set_script_translations( 'e-atomic-form-promotion', 'elementor' );
-	}
 }

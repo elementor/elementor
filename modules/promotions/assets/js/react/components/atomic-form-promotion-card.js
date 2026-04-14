@@ -11,15 +11,10 @@ import {
 
 import * as animationData from '../assets/atomic-form-animation.json';
 
-const PromotionCard = ( props ) => {
+const AtomicFormPromotionCard = ( props ) => {
 	const title = props.promotionData?.title;
 	const content = props.promotionData?.content;
 	const ctaText = props.promotionData?.ctaText;
-
-	const redirectHandler = () => {
-		window.open( props.ctaUrl, '_blank' );
-		return props.doClose();
-	};
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ props.doClose }>
@@ -54,7 +49,9 @@ const PromotionCard = ( props ) => {
 						size="small"
 						color="promotion"
 						startIcon={ <CrownFilledIcon /> }
-						onClick={ redirectHandler }
+						href={ props.ctaUrl }
+						target="_blank"
+						rel="noopener noreferrer"
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>
@@ -62,10 +59,10 @@ const PromotionCard = ( props ) => {
 	);
 };
 
-PromotionCard.propTypes = {
+AtomicFormPromotionCard.propTypes = {
 	doClose: PropTypes.func,
 	promotionData: PropTypes.object,
 	ctaUrl: PropTypes.string,
 };
 
-export default PromotionCard;
+export default AtomicFormPromotionCard;
