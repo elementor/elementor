@@ -1,0 +1,29 @@
+{% set tag = settings.tag | default('div') %}
+{% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
+    {% set tag = settings.link.tag | default('a') %}
+{% endif %}
+{% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+<{{ tag }} class="{{ classes }} {{ editor_classes | default('') }}"
+    data-id="{{ id }}"
+    data-element_type="{{ type }}"
+    data-e-type="{{ type }}"
+    data-interaction-id="{{ interaction_id }}"
+    {% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
+        {% if tag == 'button' %}
+            data-action-link="{{ settings.link.href | e('html_attr') }}"
+        {% else %}
+            href="{{ settings.link.href | e('html_attr') }}"
+        {% endif %}
+        {% if settings.link.target is defined and settings.link.target is not empty %}
+            target="{{ settings.link.target | e('html_attr') }}"
+        {% endif %}
+    {% endif %}
+    {% if settings._cssid is defined and settings._cssid is not empty %}
+        id="{{ settings._cssid | e('html_attr') }}"
+    {% endif %}
+    {% if settings.attributes is defined and settings.attributes is not empty %}
+        {{ settings.attributes | raw }}
+    {% endif %}
+    {{ editor_attributes | default('') | raw }}>
+    <!-- elementor-children-placeholder -->
+</{{ tag }}>
