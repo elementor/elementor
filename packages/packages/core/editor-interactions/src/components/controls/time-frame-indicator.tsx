@@ -26,7 +26,7 @@ export function TimeFrameIndicator( {
 				const toUnit = size.unit as Unit;
 
 				size.size = convertTimeUnit( Number( size.size ), fromUnit, toUnit );
-				lastSizeRef.current = toUnit;
+				prevUnitRef.current = toUnit;
 			}
 
 			lastSizeRef.current = size.size;
