@@ -45,7 +45,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		const popover = page.locator( '.MuiTooltip-tooltip > .MuiBox-root' );
 		await expect( popover ).toBeVisible();
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
-		await expect( popover.getByRole( 'button', { name: 'Upgrade now' } ) ).toBeVisible();
+		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 
 		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png' );
 	} );
