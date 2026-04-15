@@ -22,12 +22,21 @@ class Controller extends Controller_Base {
 	}
 
 	public function get_permission_callback( $request ) {
-		// Allow internal get global values. (e.g render global.css for a visitor)
-		if ( 'GET' === $request->get_method() && Plugin::$instance->data_manager_v2->is_internal() ) {
-			return true;
+		$method_type = $request->get_method();
+		if ( \WP_REST_Server::READABLE === $method_type ) {
+			// Allow internal get global values. (e.g render global.css for a visitor)
+			if ( Plugin::$instance->data_manager_v2->is_internal() ) {
+				return true;
+			}
+
+			return current_user_can( 'edit_posts' );
 		}
 
-		return current_user_can( 'edit_posts' );
+		if ( \WP_REST_Server::CREATABLE === $method_type || \WP_REST_Server::DELETABLE === $method_type ) {
+			return current_user_can( 'manage_options' );
+		}
+
+		return false;
 	}
 
 	protected function register_index_endpoint() {

@@ -1,39 +1,79 @@
 import { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from '@elementor/editor-controls';
-import { backgroundColorOverlayPropTypeUtil, type PropValue, shadowPropTypeUtil } from '@elementor/editor-props';
+import {
+	backgroundColorOverlayPropTypeUtil,
+	type PropValue,
+	selectionSizePropTypeUtil,
+	shadowPropTypeUtil,
+} from '@elementor/editor-props';
 
 import {
 	BackgroundRepeaterColorIndicator,
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
+	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
-import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
+import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
+
+type Args = {
+	value: PropValue;
+};
 
 export function registerRepeaterInjections() {
+	backgroundOverlayRepeaterInjections();
+	boxShadowRepeaterInjections();
+	transitionsRepeaterInjections();
+}
+
+const backgroundOverlayRepeaterInjections = () => {
 	injectIntoRepeaterItemIcon( {
 		id: 'color-variables-background-icon',
 		component: BackgroundRepeaterColorIndicator,
-		condition: ( { value: prop }: { value: PropValue } ) => {
-			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( prop )?.color );
-		},
-	} );
-
-	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-icon',
-		component: BoxShadowRepeaterColorIndicator,
-		condition: ( { value: prop }: { value: PropValue } ) => {
-			return hasAssignedColorVariable( shadowPropTypeUtil.extract( prop )?.color );
+		condition: ( { value }: Args ) => {
+			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
 		},
 	} );
 
 	injectIntoRepeaterItemLabel( {
 		id: 'color-variables-label',
 		component: BackgroundRepeaterLabel,
-		condition: ( { value: prop }: { value: PropValue } ) => {
-			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( prop )?.color );
+		condition: ( { value }: Args ) => {
+			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
 		},
 	} );
-}
+};
 
-const hasAssignedColorVariable = ( propValue: PropValue ): boolean => {
-	return !! colorVariablePropTypeUtil.isValid( propValue );
+const boxShadowRepeaterInjections = () => {
+	injectIntoRepeaterItemIcon( {
+		id: 'color-variables-box-shadow-icon',
+		component: BoxShadowRepeaterColorIndicator,
+		condition: ( { value }: Args ) => {
+			return hasAssignedColorVariable( shadowPropTypeUtil.extract( value )?.color );
+		},
+	} );
+};
+
+const transitionsRepeaterInjections = () => {
+	injectIntoRepeaterItemLabel( {
+		id: 'transition-size-variables-label',
+		component: TransitionsSizeVariableLabel,
+		condition: ( { value }: Args ) => {
+			return hasAssignedSizeVariable( selectionSizePropTypeUtil.extract( value )?.size );
+		},
+	} );
+};
+
+const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
+	if ( sizeVariablePropTypeUtil.isValid( value ) ) {
+		return true;
+	}
+
+	if ( customSizeVariablePropTypeUtil.isValid( value ) ) {
+		return true;
+	}
+
+	return false;
+};
+
+const hasAssignedColorVariable = ( value: PropValue ): boolean => {
+	return !! colorVariablePropTypeUtil.isValid( value );
 };

@@ -19,6 +19,12 @@ export const generatePrompt = () => {
 - Every element needs unique "configuration-id"
 - No attributes, classes, IDs, or text nodes in XML
 
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`allowed_child_types\` lists which element types can be nested inside
+- \`allowed_parents\` lists which element types this element can be placed inside
+
 # CONFIGURATION
 - Map configuration-id → elementConfig (props) + stylesConfig (layout only)
 - All PropValues require \`$$type\` matching schema

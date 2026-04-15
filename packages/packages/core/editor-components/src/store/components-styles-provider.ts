@@ -1,3 +1,4 @@
+import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
@@ -15,7 +16,8 @@ export const componentsStylesProvider = createStylesProvider( {
 		),
 	actions: {
 		all: () => {
-			return selectFlatStyles( getState() );
+			const currentDocumentId = getCurrentDocumentId();
+			return selectFlatStyles( getState(), currentDocumentId );
 		},
 		get: ( id ) => {
 			return selectFlatStyles( getState() ).find( ( style ) => style.id === id ) ?? null;
