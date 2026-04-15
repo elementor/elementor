@@ -134,7 +134,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( String_Prop_Type::generate( '' ) ),
+				->default( '' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
