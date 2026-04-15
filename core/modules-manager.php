@@ -138,6 +138,7 @@ class Modules_Manager {
 			'feedback',
 			'widget-creation',
 			'editor-one',
+			'elementor-capabilities-mcp',
 		];
 	}
 
