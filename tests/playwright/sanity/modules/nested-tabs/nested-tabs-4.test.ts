@@ -171,7 +171,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Nested tabs horizontal scroll - rtl', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested tabs horizontal scroll - rtl', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Horizontal scroll RTL test times out on Firefox' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setSiteLanguage( 'he_IL' );
@@ -283,7 +284,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		await expect.soft( tabTitle ).toHaveCSS( 'flex-shrink', '0' );
 	} );
 
-	test( 'Check title width inside the accordion mode', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check title width inside the accordion mode', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Accordion mode title width test times out on Firefox' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();

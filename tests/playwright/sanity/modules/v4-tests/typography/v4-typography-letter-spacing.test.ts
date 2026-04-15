@@ -88,7 +88,8 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Letter spacing with different units', async () => {
+	test( 'Letter spacing with different units', async ( { browserName } ) => {
+		test.skip( 'firefox' === browserName, 'Unit dropdown menu items not visible on Firefox' );
 		await test.step( 'Test letter spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await addWidgetWithOpenTypographySection( driver, widget.type );

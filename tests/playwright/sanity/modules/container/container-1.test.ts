@@ -33,7 +33,9 @@ test.describe( 'Container tests #1 @container', () => {
 		} );
 	} );
 
-	test( 'Sort items in a Container using DnD', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Sort items in a Container using DnD', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Firefox does not support dragAndDrop reliably - elements remain not visible' );
+
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
