@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions;
 
+use Elementor\Modules\Promotions\Module as Promotions;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -42,5 +43,38 @@ class Test_Ally_Dashboard_Widget extends Elementor_Test_Base {
 		$widget = $wp_meta_boxes['dashboard']['column3']['high']['e-dashboard-ally'];
 		$this->assertSame( [ Ally_Dashboard_Widget::class, 'ally_widget_render' ], $widget['callback'] );
 		$this->assertStringContainsString( 'Accessibility', $widget['title'] );
+	}
+
+	public function test_render_contains_external_scanner_link_before_scan() {
+		// Arrange.
+		delete_option( Ally_Dashboard_Widget::ALLY_SCANNER_RUN );
+
+		// Act.
+		ob_start();
+		Ally_Dashboard_Widget::ally_widget_render();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( Promotions::get_ally_external_scanner_url(), $output );
+		$this->assertStringContainsString( 'target="_blank"', $output );
+		$this->assertStringContainsString( 'id="e-dashboard-ally-submit"', $output );
+	}
+
+	public function test_render_contains_install_plugin_link_after_scan() {
+		// Arrange.
+		update_option( Ally_Dashboard_Widget::ALLY_SCANNER_RUN, true );
+
+		// Act.
+		ob_start();
+		Ally_Dashboard_Widget::ally_widget_render();
+		$output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'update.php?action=install-plugin&#038;plugin=pojo-accessibility', $output );
+		$this->assertStringNotContainsString( 'target="_blank"', $output );
+		$this->assertStringContainsString( 'id="e-dashboard-ally-submitted"', $output );
+		$this->assertStringContainsString( 'plg_campaign=acc-dashboard-plg', $output );
+		$this->assertStringContainsString( 'plg_source=acc-checker-dashboard-plg-install', $output );
+		$this->assertStringContainsString( 'plg_medium=wp-dash', $output );
 	}
 }

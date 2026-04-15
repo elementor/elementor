@@ -182,6 +182,24 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $post_id ] );
 	}
 
+	public function test_register_styles_ignores_order_entries_without_matching_items() {
+		// Arrange.
+		$global_classes = new Atomic_Global_Styles();
+		$global_classes->register_hooks();
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$items = $this->mock_global_classes['items'];
+		$order_with_orphans = [ 'g-missing-1', 'g-4-124', 'g-4-123', 'g-missing-2' ];
+
+		$styles_repository = Global_Classes_Repository::make();
+
+		$styles_repository->put( $items, $order_with_orphans );
+
+		$synced_order = $styles_repository->all()->get_order()->all();
+
+		$this->assertSame( [ 'g-4-124', 'g-4-123' ], $synced_order );
+	}
+
 	public function test_transform_classes_names() {
 		// Arrange.
 		$global_classes = $this->create_atomic_global_styles();

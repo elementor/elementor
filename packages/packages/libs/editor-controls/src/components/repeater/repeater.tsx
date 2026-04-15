@@ -81,7 +81,7 @@ type BaseItemSettings< T > = {
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
 	onPopoverOpen?: ( value: T ) => void;
-	onPopoverClose?: () => void;
+	onPopoverClose?: ( value: T ) => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -313,7 +313,7 @@ type RepeaterItemProps< T > = {
 	openOnMount: boolean;
 	onOpen: () => void;
 	onPopoverOpen?: ( value: T ) => void;
-	onPopoverClose?: () => void;
+	onPopoverClose?: ( value: T ) => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -341,13 +341,14 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
+	const wrappedOnPopoverClose = onPopoverClose ? () => onPopoverClose( value ) : undefined;
 	const { popoverState, popoverProps, ref, setRef } = usePopover(
 		openOnMount,
 		() => {
 			onOpen();
 			onPopoverOpen?.( value );
 		},
-		onPopoverClose
+		wrappedOnPopoverClose
 	);
 	const triggerProps = bindTrigger( popoverState );
 
