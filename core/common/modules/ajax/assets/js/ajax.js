@@ -85,7 +85,10 @@ export default class extends elementorModules.Module {
 				data: request.data,
 				unique_id: request.unique_id,
 				success: ( data ) => this.cache[ cacheKey ] = data,
-			}, immediately ).done( request.success );
+				error: request.error,
+			}, immediately )
+				.done( request.success )
+				.fail( request.error );
 		}
 
 		return deferred;
