@@ -26,6 +26,14 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'actions-after-submit', $schema );
 	}
 
+	public function test_webhook_url_default_passes_validation() {
+		$schema = Atomic_Form::get_props_schema();
+		$prop = $schema['webhook_url'];
+		$default = $prop->get_default();
+
+		$this->assertTrue( $prop->validate( $default ) );
+	}
+
 	public function test_actions_after_submit_control_includes_webhook_chip() {
 		$form = $this->make_atomic_form_instance();
 
