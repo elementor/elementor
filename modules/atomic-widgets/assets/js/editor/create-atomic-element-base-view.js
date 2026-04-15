@@ -29,11 +29,19 @@ export default function createAtomicElementBaseView( type ) {
 
 		_resolveTag() {
 			const renderContext = this.getResolverRenderContext?.();
+
 			const tagSetting = this.model.getSetting( 'tag' );
 			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
+
+			const linkTag = resolvedLink?.value?.tag ?? resolvedLink?.tag;
+			const baseTag = resolvedTag?.value ?? resolvedTag;
+
+			const resultTag = linkTag ?? baseTag;
+
+			return resultTag || this.model.config.default_html_tag || 'div';
 		},
 
 		getChildViewContainer() {

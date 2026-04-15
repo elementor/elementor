@@ -30,6 +30,7 @@ const createLinkProp = ( destination ) => ( {
 	$$type: 'link',
 	value: {
 		destination,
+		tag: 'a',
 	},
 } );
 
