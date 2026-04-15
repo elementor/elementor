@@ -24,6 +24,9 @@
     "env:setup:with-playwright": "bash scripts/setup-test-environment.sh && npx playwright install chromium",
     "wp-env": "wp-env",
     "test:linux": "node ./run-on-linux.js",
+    "update-snapshots:linux": "node ./update-snapshots-linux.js",
+    "update-snapshots:linux:chromium": "BROWSERS=chromium node ./update-snapshots-linux.js",
+    "update-snapshots:linux:firefox": "BROWSERS=firefox node ./update-snapshots-linux.js",
     "setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
     "start-local-server": "npm run setup-templates && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889",
     "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -173,7 +176,7 @@
   "dependencies": {
     "@elementor/elementor-one-assets": "0.4.33",
     "@elementor/icons": "1.72.0",
-    "@elementor/ui": "1.37.5",
+    "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",
     "@woocommerce/admin-layout": "^1.1.0",
