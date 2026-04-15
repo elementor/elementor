@@ -1,8 +1,8 @@
 import { type SizePropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
-import { useUnitSync } from '../use-unit-sync';
 import { isExtendedUnit } from '../../utils/is-extended-unit';
+import { useUnitSync } from '../use-unit-sync';
 
 jest.mock( '../../utils/is-extended-unit' );
 
