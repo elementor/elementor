@@ -46,6 +46,11 @@ class Import extends Import_Runner_Base {
 			return [];
 		}
 
+		$global_classes['order'] = Global_Classes_Parser::sanitize_order(
+			$global_classes['items'] ?? [],
+			$global_classes['order'] ?? []
+		);
+
 		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
 
 		if ( ! $global_classes_result->is_valid() ) {
