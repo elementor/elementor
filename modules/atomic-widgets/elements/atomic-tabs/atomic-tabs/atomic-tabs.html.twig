@@ -4,7 +4,21 @@
     'default-active-tab': default_active_tab_id,
 } %}
 {% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
-<div class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ interaction_id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" x-data="eTabs{{ id }}" data-e-settings="{{ e_settings | json_encode | e('html_attr') }}" {{ editor_attributes | default('') | raw }}>
+<div class="{{ classes }} {{ editor_classes | default('') }}"
+    data-id="{{ id }}"
+    data-element_type="{{ type }}"
+    data-e-type="{{ type }}"
+    data-interaction-id="{{ interaction_id }}"
+    data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+    x-data="eTabs{{ id }}"
+    data-e-settings="{{ e_settings | json_encode | e('html_attr') }}"
+    {% if settings._cssid is defined and settings._cssid is not empty %}
+        id="{{ settings._cssid | e('html_attr') }}"
+    {% endif %}
+    {% if settings.attributes is defined and settings.attributes is not empty %}
+        {{ settings.attributes | raw }}
+    {% endif %}
+    {{ editor_attributes | default('') | raw }}>
     <!-- elementor-children-placeholder -->
 </div>
 		
