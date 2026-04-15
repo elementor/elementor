@@ -153,6 +153,8 @@ class Global_Classes_Repository {
 			$items[ $class_data['id'] ] = $class_data;
 		}
 
+		$order = Global_Classes_Parser::sanitize_order( $items, $order );
+
 		return Global_Classes::make( $items, $order );
 	}
 
