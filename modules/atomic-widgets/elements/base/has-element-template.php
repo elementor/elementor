@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Element_Template {
 
+	const MACROS_TEMPLATE_KEY = 'elementor/macros';
+
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
@@ -29,10 +31,16 @@ trait Has_Element_Template {
 		return $config;
 	}
 
+	protected function get_shared_templates(): array {
+		return [
+			self::MACROS_TEMPLATE_KEY => __DIR__ . '/_macros.html.twig',
+		];
+	}
+
 	protected function get_templates_contents() {
 		return array_map(
 			fn ( $path ) => Utils::file_get_contents( $path ),
-			$this->get_templates()
+			array_merge( $this->get_shared_templates(), $this->get_templates() )
 		);
 	}
 
@@ -40,7 +48,9 @@ trait Has_Element_Template {
 		try {
 			$renderer = Template_Renderer::instance();
 
-			foreach ( $this->get_templates() as $name => $path ) {
+			$all_templates = array_merge( $this->get_shared_templates(), $this->get_templates() );
+
+			foreach ( $all_templates as $name => $path ) {
 				if ( $renderer->is_registered( $name ) ) {
 					continue;
 				}
