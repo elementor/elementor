@@ -1,4 +1,5 @@
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
+export { getAngieIframe, MessageEventType } from '@elementor-external/angie-sdk';
 
 let sdk: AngieMcpSdk;
 
