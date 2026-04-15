@@ -6,8 +6,7 @@
 	>
 	
 			<button 
-						data-action-link="https://very.dynamic.content.elementor"
-			target="_blank" 
+			data-action-link="https://very.dynamic.content.elementor" target="_blank"
 			class="e-heading-link-base">
 			This is a title
 		</button>
