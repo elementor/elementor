@@ -2,7 +2,8 @@ export class Undo extends $e.modules.CommandBase {
 	apply() {
 		const historyItem = elementor.documents.getCurrent().history.navigate();
 
-		return { historyItemId: historyItem?.get( 'id' ) ?? null };
+		// The history item that was just undone.
+		return { originHistoryItemId: historyItem?.get( 'id' ) ?? null };
 	}
 }
 
