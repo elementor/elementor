@@ -23,8 +23,8 @@ export {
 } from './elements';
 
 export { callWpApi, extractJSONFromResponse } from './rest-client';
-
 export { initNonceRefresh, refreshNonce, isNonceError } from './nonce-refresh';
+export { requireConfirmationMessage } from './validation-utils';
 
 export type {
 	ElementorChannels,
