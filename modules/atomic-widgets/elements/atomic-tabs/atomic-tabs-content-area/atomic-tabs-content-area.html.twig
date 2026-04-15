@@ -5,6 +5,9 @@
     data-e-type="{{ type }}"
     data-interaction-id="{{ interaction_id }}"
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+    {% if settings._cssid is defined and settings._cssid is not empty %}
+        id="{{ settings._cssid | e }}"
+    {% endif %}
     {% if settings.attributes is defined and settings.attributes is not empty %}
         {{ settings.attributes | raw }}
     {% endif %}
