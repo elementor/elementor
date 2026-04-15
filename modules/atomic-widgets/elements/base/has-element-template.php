@@ -18,7 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Element_Template {
 
-	const MACROS_TEMPLATE_KEY = 'elementor/macros';
+	private static function get_macros_template_key(): string {
+		return 'elementor/macros';
+	}
 
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
@@ -33,7 +35,7 @@ trait Has_Element_Template {
 
 	protected function get_shared_templates(): array {
 		return [
-			self::MACROS_TEMPLATE_KEY => __DIR__ . '/_macros.html.twig',
+			self::get_macros_template_key() => __DIR__ . '/_macros.html.twig',
 		];
 	}
 
