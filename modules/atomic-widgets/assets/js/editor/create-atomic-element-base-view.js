@@ -34,7 +34,7 @@ export default function createAtomicElementBaseView( type ) {
 			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
 
 			const linkSetting = this.model.getSetting( 'link' );
-			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
+			const resolvedLink = this._resolvePropValue( linkSetting?.value?.tag, renderContext );
 
 			const linkTag = resolvedLink?.value?.tag ?? resolvedLink?.tag;
 			const baseTag = resolvedTag?.value ?? resolvedTag;
