@@ -1,6 +1,11 @@
 export class Redo extends $e.modules.CommandBase {
 	apply() {
-		return elementor.documents.getCurrent().history.navigate( true );
+		const historyItem = elementor.documents.getCurrent().history.navigate( true );
+
+		return {
+			historyItemId: historyItem?.get( 'id' ),
+			historyItem,
+		};
 	}
 }
 

@@ -12,8 +12,8 @@ export type WindowWithDataHooks = Window & {
 	elementor?: {
 		documents?: {
 			getCurrent: () => {
-				history: {
-					getCurrentId: () => number | null;
+				history?: {
+					getCurrentId: () => number | undefined;
 				};
 			};
 		};
@@ -28,6 +28,7 @@ export type Args = Record< string, unknown >;
 
 export type HookOptions = {
 	commandsCurrentTrace?: string[];
+	currentHistoryItemId?: number;
 };
 
 export type AfterHookCallback< TArgs extends Args = Args, TResult = unknown > = (
@@ -96,6 +97,10 @@ export function registerDataHook< TArgs extends Args = Args, TResult = unknown >
 			const commandsCurrentTrace = currentWindow.$e?.commands?.currentTrace;
 			if ( commandsCurrentTrace ) {
 				hookOptions.commandsCurrentTrace = commandsCurrentTrace;
+			}
+			const currentHistoryItemId = currentWindow.elementor?.documents?.getCurrent()?.history?.getCurrentId();
+			if ( currentHistoryItemId ) {
+				hookOptions.currentHistoryItemId = currentHistoryItemId;
 			}
 
 			if ( type === 'dependency' ) {
