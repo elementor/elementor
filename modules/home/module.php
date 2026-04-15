@@ -25,10 +25,21 @@ class Module extends BaseApp {
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
 	}
 
+	public function enqueue_fonts(): void {
+		wp_enqueue_style(
+			'elementor-onboarding-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+	}
+
 	public function enqueue_home_screen_scripts(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+
+		$this->enqueue_fonts();
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
