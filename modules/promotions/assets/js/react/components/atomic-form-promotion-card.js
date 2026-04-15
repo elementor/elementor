@@ -12,9 +12,7 @@ import {
 import * as animationData from '../assets/atomic-form-animation.json';
 
 const AtomicFormPromotionCard = ( props ) => {
-	const title = props.promotionData?.title;
-	const content = props.promotionData?.content;
-	const ctaText = props.promotionData?.ctaText;
+	const { title, content, ctaText } = props.promotionData ?? {};
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ props.doClose }>
