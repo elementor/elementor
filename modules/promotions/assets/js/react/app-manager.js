@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
-		this.atomicFormWrapper = null;
+		this.atomicFormPromotionWrapper = null;
 		this.onRoute = () => {};
 
 		this.attachAtomicFormListeners();
@@ -48,12 +48,12 @@ export class AppManager {
 		);
 	}
 
-	mountAtomicForm( targetEl, ctaUrl ) {
+	mountAtomicFormPromotion( targetEl, ctaUrl ) {
 		this.unmount();
 
-		this.atomicFormWrapper = document.createElement( 'span' );
-		this.atomicFormWrapper.className = 'e-atomic-form-promotion-wrapper';
-		targetEl.appendChild( this.atomicFormWrapper );
+		this.atomicFormPromotionWrapper = document.createElement( 'span' );
+		this.atomicFormPromotionWrapper.className = 'e-atomic-form-promotion-wrapper';
+		targetEl.appendChild( this.atomicFormPromotionWrapper );
 
 		this.attachEditorEventListeners();
 
@@ -61,7 +61,7 @@ export class AppManager {
 		const isRTL = elementorCommon.config.isRTL;
 		const promotionData = this.getAtomicFormPromotionData();
 
-		this.promotionInfoTip = createRoot( this.atomicFormWrapper );
+		this.promotionInfoTip = createRoot( this.atomicFormPromotionWrapper );
 		this.promotionInfoTip.render(
 			<App
 				colorScheme={ colorScheme }
@@ -78,7 +78,7 @@ export class AppManager {
 		document.addEventListener( 'atomic-form-promotion:open', ( event ) => {
 			const promotionData = this.getAtomicFormPromotionData();
 
-			this.mountAtomicForm( event.detail.target, promotionData.widgetCtaUrl );
+			this.mountAtomicFormPromotion( event.detail.target, promotionData.widgetCtaUrl );
 		} );
 	}
 
@@ -88,12 +88,12 @@ export class AppManager {
 			this.promotionInfoTip.unmount();
 		}
 
-		if ( this.atomicFormWrapper && this.atomicFormWrapper.parentNode ) {
-			this.atomicFormWrapper.parentNode.removeChild( this.atomicFormWrapper );
+		if ( this.atomicFormPromotionWrapper && this.atomicFormPromotionWrapper.parentNode ) {
+			this.atomicFormPromotionWrapper.parentNode.removeChild( this.atomicFormPromotionWrapper );
 		}
 
 		this.promotionInfoTip = null;
-		this.atomicFormWrapper = null;
+		this.atomicFormPromotionWrapper = null;
 	}
 
 	attachEditorEventListeners() {
