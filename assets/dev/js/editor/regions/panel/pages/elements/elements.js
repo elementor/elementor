@@ -106,6 +106,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		jQuery.each( elementor.config.atomicFormPromotionWidgets || [], ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+				atomicFormPromotion: true,
+			} );
+		} );
+
 		if ( elementor.config.integrationWidgets ) {
 			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
 
