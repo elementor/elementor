@@ -1,22 +1,24 @@
 import { AngieMcpAdapter } from './adapters/angie-adapter';
-import { WebMCPAdapter } from './adapters/web-mcp-adapter';
+import { type ModelContext, WebMCPAdapter } from './adapters/web-mcp-adapter';
 import { activateAdapters, registerMcpAdapter, signalMcpReady } from './mcp-registry';
-
-// Register adapters at module load — before any addTool/resource calls from domain modules.
-registerMcpAdapter( new WebMCPAdapter() );
-registerMcpAdapter( new AngieMcpAdapter() );
+import { getSDK } from './utils/get-sdk';
+import { isAngieAvailable } from './utils/is-angie-available';
 
 export function startMCPServer() {
+	if ( typeof navigator !== 'undefined' && 'modelContext' in navigator ) {
+		registerMcpAdapter( new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext ) );
+	}
+
+	if ( isAngieAvailable() ) {
+		registerMcpAdapter( new AngieMcpAdapter( getSDK() ) );
+	}
+
 	activateAdapters();
 	signalMcpReady();
 }
 
-document.addEventListener(
-	'DOMContentLoaded',
-	() => {
-		startMCPServer();
-	},
-	{
-		once: true,
-	}
-);
+if ( typeof document !== 'undefined' ) {
+	document.addEventListener( 'DOMContentLoaded', () => startMCPServer(), { once: true } );
+} else {
+	startMCPServer();
+}

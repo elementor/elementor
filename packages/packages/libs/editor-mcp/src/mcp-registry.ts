@@ -1,4 +1,3 @@
-import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z, type z3 } from '@elementor/schema';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
@@ -21,6 +20,8 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 const registrationAdapters: IMcpRegistrationAdapter[] = [];
+const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >[ 0 ][] = [];
+const bufferedResources: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] >[] = [];
 
 let resolveReady!: () => void;
 const readyPromise = new Promise< void >( ( resolve ) => {
@@ -29,6 +30,20 @@ const readyPromise = new Promise< void >( ( resolve ) => {
 
 export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => {
 	registrationAdapters.push( adapter );
+	for ( const tool of bufferedTools ) {
+		try {
+			adapter.onToolRegistered( tool );
+		} catch {
+			// exit quietly
+		}
+	}
+	for ( const resource of bufferedResources ) {
+		try {
+			adapter.onResourceRegistered( ...resource );
+		} catch {
+			// exit quietly
+		}
+	}
 };
 
 export const signalMcpReady = (): void => resolveReady();
@@ -104,9 +119,13 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
 			const [ name, uriOrTemplate, ...rest ] = args as [ string, unknown, ...unknown[] ];
 			const handler = rest[ rest.length - 1 ] as McpResourceHandler;
-			callAdapters( ( adapter ) =>
-				adapter.onResourceRegistered( name, uriOrTemplate as McpResourceUriOrTemplate, handler )
-			);
+			const resourceArgs: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] > = [
+				name,
+				uriOrTemplate as McpResourceUriOrTemplate,
+				handler,
+			];
+			bufferedResources.push( resourceArgs );
+			callAdapters( ( adapter ) => adapter.onResourceRegistered( ...resourceArgs ) );
 			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
@@ -238,21 +257,21 @@ function createToolRegistry( server: McpServer ) {
 			},
 			toolCallback
 		);
-		callAdapters( ( adapter ) =>
-			adapter.onToolRegistered( {
-				name: opts.name,
-				description: opts.description,
-				inputSchema: zodToJsonSchema( z.object( inputSchema ) ),
-				execute: ( params ) =>
-					Promise.resolve(
-						toolCallback(
-							params as Parameters< typeof toolCallback >[ 0 ],
-							/* WebMCP: no protocol session — handlers must not rely on `extra` here */
-							{} as RequestHandlerExtra< ServerRequest, ServerNotification >
-						)
-					),
-			} )
-		);
+		const toolDescriptor = {
+			name: opts.name,
+			description: opts.description,
+			inputSchema: inputSchema as object,
+			execute: ( params: Record< string, unknown > ) =>
+				Promise.resolve(
+					toolCallback(
+						params as Parameters< typeof toolCallback >[ 0 ],
+						/* WebMCP: no protocol session — handlers must not rely on `extra` here */
+						{} as RequestHandlerExtra< ServerRequest, ServerNotification >
+					)
+				),
+		};
+		bufferedTools.push( toolDescriptor );
+		callAdapters( ( adapter ) => adapter.onToolRegistered( toolDescriptor ) );
 		if ( isMcpRegistrationActivated ) {
 			server.sendToolListChanged();
 		}

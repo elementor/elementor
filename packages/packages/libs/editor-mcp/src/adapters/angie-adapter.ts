@@ -1,50 +1,36 @@
+import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+
 import { getRegisteredMcpServers, toMCPTitle } from '../mcp-registry';
-import { getSDK } from '../utils/get-sdk';
-import { isAngieAvailable } from '../utils/is-angie-available';
 import { type IMcpRegistrationAdapter } from './types';
 
 const MAX_RETRIES = 3;
 
 export class AngieMcpAdapter implements IMcpRegistrationAdapter {
+	constructor( private readonly sdk: AngieMcpSdk ) {}
+
 	isAvailable(): boolean {
-		return isAngieAvailable();
+		return true; // availability is guaranteed by the constructor — only create when Angie is present
 	}
 
 	async activate(): Promise< void > {
-		const entries = getRegisteredMcpServers();
-		if ( entries.length === 0 ) {
-			return;
-		}
-
-		let sdk;
-		try {
-			sdk = getSDK();
-			await sdk.waitForReady();
-		} catch {
-			return; // Angie SDK not available — exit quietly
-		}
-
-		await this.registerEntries( sdk, entries, MAX_RETRIES );
+		await this.sdk.waitForReady();
+		await this.registerEntries( getRegisteredMcpServers(), MAX_RETRIES );
 	}
 
 	private async registerEntries(
-		sdk: ReturnType< typeof getSDK >,
 		entries: ReturnType< typeof getRegisteredMcpServers >,
 		retry: number
 	): Promise< void > {
 		if ( retry === 0 ) {
 			/* eslint-disable-next-line no-console */
-			console.error(
-				'Failed to register MCP after 3 retries. failed entries: ',
-				entries.map( ( [ key ] ) => key )
-			);
+			console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries.map( ( [ key ] ) => key ) );
 			return;
 		}
 
 		const failed: typeof entries = [];
 		for ( const [ key, mcpServer, description ] of entries ) {
 			try {
-				await sdk.registerLocalServer( {
+				await this.sdk.registerLocalServer( {
 					title: toMCPTitle( key ),
 					name: `editor-${ key }`,
 					server: mcpServer,
@@ -57,13 +43,12 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 		}
 
 		if ( failed.length > 0 ) {
-			return this.registerEntries( sdk, failed, retry - 1 );
+			return this.registerEntries( failed, retry - 1 );
 		}
 	}
 
 	onToolRegistered(): void {
 		// Angie tools are registered via McpServer (at activate time).
-		// The McpServer already holds the tool — no per-tool action needed here.
 	}
 
 	onResourceRegistered(): void {
@@ -71,7 +56,6 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	}
 
 	sendResourceUpdated(): void {
-		// Resource update notifications are sent via the per-namespace McpServer instance,
-		// which is managed in MCPRegistryEntry.sendResourceUpdated.
+		// Resource update notifications are sent via MCPRegistryEntry.sendResourceUpdated.
 	}
 }
