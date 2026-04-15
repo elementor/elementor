@@ -3,6 +3,19 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { deployWebsite } from '../deploy';
 
+type SiteBuilderConfig = {
+	connectAuth?: {
+		accessToken?: string;
+		clientId?: string;
+		homeUrl?: string;
+		siteKey?: string;
+		signature?: string;
+	};
+	elementorAiCurrentContext?: Record< string, unknown >;
+	iframeUrl?: string;
+	isAdmin?: boolean;
+};
+
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
 	top: 0,
@@ -13,8 +26,12 @@ const iframeStyle: React.CSSProperties = {
 	zIndex: 10000,
 };
 
-function getConfig() {
+function getConfig(): SiteBuilderConfig {
 	return window.elementorAppConfig?.[ 'site-builder' ];
+}
+
+function getElementorAiCurrentContext(): Record< string, unknown > {
+	return getConfig()?.elementorAiCurrentContext || {};
 }
 
 function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
@@ -26,7 +43,10 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
-				page: { url: window.location.href },
+				page: {
+					url: window.location.href,
+					elementorAiCurrentContext: getElementorAiCurrentContext(),
+				},
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},

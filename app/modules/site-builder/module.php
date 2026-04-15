@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+
 	public function get_name() {
 		return 'site-builder';
 	}
@@ -27,13 +28,13 @@ class Module extends BaseModule {
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+		Plugin::$instance->experiments->add_feature([
 			'name' => 'site-builder',
 			'title' => esc_html__( 'Site Builder', 'elementor' ),
 			'description' => esc_html__( 'Enable Site Builder.', 'elementor' ),
 			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
 			'hidden' => true,
-		] );
+		]);
 	}
 
 	private function is_experiment_active(): bool {
@@ -48,6 +49,7 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
 		];
 
 		$connect_auth = $this->get_connect_auth();
@@ -57,6 +59,16 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
+
+	private function get_elementor_ai_current_context(): array {
+
+		$choices = get_option( 'elementor_onboarding_choices', [] );
+		$site_about = $choices['site_about'] ?? [];
+		return [
+			'siteTitle' => (string) get_bloginfo( 'name' ),
+			'siteAbout' => $site_about,
+		];
 	}
 
 	private function get_iframe_url(): string {
