@@ -3,10 +3,13 @@ import { useState, useEffect } from 'react';
 const useSessionStatus = ( sitePlannerData ) => {
 	const [ sessionState, setSessionState ] = useState( 'no-usage' );
 	const [ sessionStep, setSessionStep ] = useState( null );
+	const [ sessionId, setSessionId ] = useState( null );
 
 	useEffect( () => {
 		if ( ! sitePlannerData?.connectAuth || ! sitePlannerData?.apiOrigin ) {
 			setSessionState( 'no-usage' );
+			setSessionId( null );
+			setSessionStep( null );
 			return;
 		}
 
@@ -32,19 +35,28 @@ const useSessionStatus = ( sitePlannerData ) => {
 
 				if ( ! data?.sessionId ) {
 					setSessionState( 'no-usage' );
+					setSessionId( null );
+					setSessionStep( null );
 				} else {
 					setSessionState( 'has-session' );
 					setSessionStep( data.step );
+					setSessionId( data.sessionId );
 				}
 			} catch {
 				setSessionState( 'no-usage' );
+				setSessionId( null );
+				setSessionStep( null );
 			}
 		};
 
 		fetchSessionStatus();
 	}, [ sitePlannerData ] );
 
-	return { sessionState, sessionStep };
+	return {
+		sessionState,
+		sessionStep,
+		sessionId,
+	};
 };
 
 export default useSessionStatus;

@@ -7,6 +7,7 @@ import ArrowRightIcon from '../../icons/arrow-right-icon';
 import AiLoaderIcon from '../../icons/ai-loader-icon';
 import GenerateSiteIcon from '../../icons/generate-site-icon';
 import useSessionStatus from './hooks/use-session-status';
+import usePageNameSuggestions from './hooks/use-page-name-suggestions';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -37,15 +38,11 @@ const PLANNER_STEPS = {
 	DEPLOYED_TO_HOSTING: 5,
 };
 
-const SUGGESTION_CHIPS = [
-	__( 'Jewelry store', 'elementor' ),
-	__( 'Travel guide blog', 'elementor' ),
-	__( 'Real estate agency', 'elementor' ),
-];
-
 const SitePlanner = ( { sitePlannerData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ selectedChip, setSelectedChip ] = useState( null );
 	const { sessionState, sessionStep } = useSessionStatus( sitePlannerData );
+	const { pageSuggestions: suggestionChips } = usePageNameSuggestions( sitePlannerData );
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -53,6 +50,7 @@ const SitePlanner = ( { sitePlannerData } ) => {
 
 	const handleChipClick = ( value ) => {
 		setInputValue( value );
+		setSelectedChip( value );
 	};
 
 	const handleCreateClick = () => {
@@ -177,17 +175,20 @@ const SitePlanner = ( { sitePlannerData } ) => {
 					</CreateSiteButton>
 				</PlannerInputRow>
 
-				<PlannerChipsRow>
-					{ SUGGESTION_CHIPS.map( ( suggestion ) => (
-						<SuggestionChip
-							key={ suggestion }
-							label={ suggestion }
-							onClick={ () => handleChipClick( suggestion ) }
-							size="small"
-							variant="outlined"
-						/>
-					) ) }
-				</PlannerChipsRow>
+				{ suggestionChips.length > 0 && (
+					<PlannerChipsRow>
+						{ suggestionChips.map( ( suggestion ) => (
+							<SuggestionChip
+								key={ suggestion }
+								label={ suggestion }
+								onClick={ () => handleChipClick( suggestion ) }
+								size="small"
+								variant="outlined"
+								selected={ selectedChip === suggestion }
+							/>
+						) ) }
+					</PlannerChipsRow>
+				) }
 			</PlannerContent>
 		</PlannerRoot>
 	);

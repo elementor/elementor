@@ -140,7 +140,7 @@ export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
 		},
 		'&.Mui-focused fieldset': {
 			borderColor: theme.palette.text.primary,
-			borderWidth: '2px',
+			borderWidth: '1px',
 		},
 	},
 	'& .MuiInputBase-input': {
@@ -198,10 +198,13 @@ export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const SuggestionChip = styled( Chip )( ( { theme } ) => ( {
-	cursor: 'pointer',
-	backgroundColor: theme.palette.common.white,
+export const SuggestionChip = styled( Chip )( ( { theme, selected } ) => ( {
+	cursor: selected ? 'default' : 'pointer',
+	backgroundColor: selected ? theme.palette.action.hover : theme.palette.common.white,
 	borderColor: theme.palette.divider,
 	color: theme.palette.text.secondary,
 	fontSize: theme.spacing( 1.625 ),
+	'&:hover': {
+		backgroundColor: theme.palette.action.hover,
+	},
 } ) );
