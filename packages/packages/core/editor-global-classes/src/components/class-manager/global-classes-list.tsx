@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -41,17 +42,17 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 				event.stopImmediatePropagation();
 				event.preventDefault();
 				if ( event.shiftKey ) {
-					dispatch( slice.actions.redo() );
+					runCommand( 'document/history/redo' );
 					return;
 				}
-				dispatch( slice.actions.undo() );
+				runCommand( 'document/history/undo' );
 			}
 		};
 		window.addEventListener( 'keydown', handler, {
 			capture: true,
 		} );
 		return () => window.removeEventListener( 'keydown', handler );
-	}, [ dispatch ] );
+	}, [] );
 
 	if ( ! cssClasses?.length ) {
 		return <EmptyState />;

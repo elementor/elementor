@@ -140,8 +140,6 @@ export const slice = createSlice( {
 				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
 			}
 
-			localHistory.next( state.data );
-
 			const variant = getVariantByMeta( style, payload.meta );
 			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
 			customCss = customCss?.raw ? customCss : null;
@@ -172,34 +170,10 @@ export const slice = createSlice( {
 			state.initialData.preview = state.data;
 		},
 
-		undo( state ) {
-			if ( localHistory.isLast() ) {
-				localHistory.next( state.data ); // store current before undo
-			}
-			const data = localHistory.prev();
-			if ( data ) {
-				state.data = data;
-				state.isDirty = true;
-			} else {
-				state.data = state.initialData.preview;
-			}
-		},
-
 		resetToInitialState( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
 			localHistory.reset();
 			state.data = state.initialData[ context ];
 			state.isDirty = false;
-		},
-
-		redo( state ) {
-			const data = localHistory.next();
-			if ( localHistory.isLast() ) {
-				localHistory.prev();
-			}
-			if ( data ) {
-				state.data = data;
-				state.isDirty = true;
-			}
 		},
 	},
 } );

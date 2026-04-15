@@ -9,6 +9,7 @@ import {
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
+import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import {
 	__createStore as createStore,
 	__dispatch as dispatch,
@@ -24,6 +25,7 @@ import { GlobalClassesList } from '../global-classes-list';
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	blockCommand: jest.fn(),
+	__privateRunCommand: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../../../hooks/use-filters' );
@@ -608,6 +610,30 @@ describe( 'GlobalClassesList', () => {
 
 		expect( triggers ).toHaveLength( 0 );
 		expect( mockTracking ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should call document history undo on Ctrl+Z', () => {
+		// Arrange.
+		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+		renderWithStore( <GlobalClassesList />, store );
+
+		// Act.
+		fireEvent.keyDown( window, { key: 'z', ctrlKey: true } );
+
+		// Assert.
+		expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/history/undo' );
+	} );
+
+	it( 'should call document history redo on Ctrl+Shift+Z', () => {
+		// Arrange.
+		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
+		renderWithStore( <GlobalClassesList />, store );
+
+		// Act.
+		fireEvent.keyDown( window, { key: 'z', ctrlKey: true, shiftKey: true } );
+
+		// Assert.
+		expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/history/redo' );
 	} );
 } );
 
