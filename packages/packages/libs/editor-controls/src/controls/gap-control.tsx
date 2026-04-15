@@ -5,7 +5,8 @@ import {
 	type LayoutDirectionPropValue,
 	type PropKey,
 	type PropValue,
-	sizePropTypeUtil, SizePropValue,
+	sizePropTypeUtil,
+	type SizePropValue,
 } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { DetachIcon, LinkIcon } from '@elementor/icons';
