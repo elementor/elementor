@@ -40,10 +40,6 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 
 	constructor( private readonly ctx: ModelContext ) {}
 
-	isAvailable(): boolean {
-		return true;
-	}
-
 	activate(): void {
 		this.ctx.registerTool( {
 			name: 'editor-resource-getter',

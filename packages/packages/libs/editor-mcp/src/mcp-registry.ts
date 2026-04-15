@@ -52,9 +52,6 @@ export const activateAdapters = (): void => callAdapters( ( adapter ) => adapter
 
 function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void ): void {
 	for ( const adapter of registrationAdapters ) {
-		if ( ! adapter.isAvailable() ) {
-			continue;
-		}
 		try {
 			fn( adapter );
 		} catch {

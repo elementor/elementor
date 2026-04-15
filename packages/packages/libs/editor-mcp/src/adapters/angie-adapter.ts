@@ -8,10 +8,6 @@ const MAX_RETRIES = 3;
 export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	constructor( private readonly sdk: AngieMcpSdk ) {}
 
-	isAvailable(): boolean {
-		return true; // availability is guaranteed by the constructor — only create when Angie is present
-	}
-
 	async activate(): Promise< void > {
 		await this.sdk.waitForReady();
 		await this.registerEntries( getRegisteredMcpServers(), MAX_RETRIES );

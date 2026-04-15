@@ -20,12 +20,6 @@ export type McpResourceHandler = (
 
 export interface IMcpRegistrationAdapter {
 	/**
-	 * Whether this adapter's target is currently available.
-	 * The registry skips all other methods if this returns false.
-	 */
-	isAvailable: () => boolean;
-
-	/**
 	 * Called once at startup to activate the adapter's server registrations.
 	 */
 	activate: () => void | Promise< void >;
