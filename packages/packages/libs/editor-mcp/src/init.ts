@@ -6,7 +6,9 @@ import { isAngieAvailable } from './utils/is-angie-available';
 
 export function startMCPServer() {
 	if ( typeof navigator !== 'undefined' && 'modelContext' in navigator ) {
-		registerMcpAdapter( new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext ) );
+		registerMcpAdapter(
+			new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext )
+		);
 	}
 
 	if ( isAngieAvailable() ) {

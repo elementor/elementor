@@ -23,7 +23,10 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	): Promise< void > {
 		if ( retry === 0 ) {
 			/* eslint-disable-next-line no-console */
-			console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries.map( ( [ key ] ) => key ) );
+			console.error(
+				'Failed to register MCP after 3 retries. failed entries: ',
+				entries.map( ( [ key ] ) => key )
+			);
 			return;
 		}
 

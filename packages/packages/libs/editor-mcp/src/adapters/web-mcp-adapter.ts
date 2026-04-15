@@ -1,7 +1,12 @@
-import { z, type z3 } from '@elementor/schema';
 import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z, type z3 } from '@elementor/schema';
 
-import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate, type McpToolDescriptor } from './types';
+import {
+	type IMcpRegistrationAdapter,
+	type McpResourceHandler,
+	type McpResourceUriOrTemplate,
+	type McpToolDescriptor,
+} from './types';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -81,7 +86,9 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 				// Partial search fallback
 				const matches = entries.map( ( e ) => e.pattern ).filter( ( pattern ) => pattern.includes( query ) );
 				if ( matches.length > 0 ) {
-					return `Found ${ matches.length } matching resource pattern(s):\n${ matches.join( '\n' ) }\n\nProvide a full URI to retrieve the resource content.`;
+					return `Found ${ matches.length } matching resource pattern(s):\n${ matches.join(
+						'\n'
+					) }\n\nProvide a full URI to retrieve the resource content.`;
 				}
 
 				const available = entries.map( ( e ) => e.pattern ).join( '\n' );
@@ -101,7 +108,12 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		if ( this.registeredToolNames.has( tool.name ) ) {
 			this.ctx.unregisterTool( tool.name );
 		}
-		this.ctx.registerTool( { name: tool.name, description: tool.description, inputSchema: jsonSchema, execute: tool.execute } );
+		this.ctx.registerTool( {
+			name: tool.name,
+			description: tool.description,
+			inputSchema: jsonSchema,
+			execute: tool.execute,
+		} );
 		this.registeredToolNames.add( tool.name );
 	}
 
