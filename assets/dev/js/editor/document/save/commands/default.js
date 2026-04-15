@@ -2,8 +2,15 @@ import Base from './base/base';
 
 export class Default extends Base {
 	apply() {
-		const document = this.document,
-			postStatus = document.container.settings.get( 'post_status' );
+		const document = this.document;
+
+		// container.settings may hold a v4 atomic prop { $$type, value } when the
+		// document was edited via the atomic (v4) panel. Unwrap it so the switch
+		// below receives the plain string that all v3 save commands expect.
+		let rawStatus = document.container.settings.get( 'post_status' );
+		const postStatus = ( rawStatus && typeof rawStatus === 'object' && '$$type' in rawStatus )
+			? rawStatus.value
+			: rawStatus;
 
 		let deferred;
 
