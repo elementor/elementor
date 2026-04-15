@@ -2,6 +2,11 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
 import { useUnitSync } from '../use-unit-sync';
+import { isExtendedUnit } from '../../utils/is-extended-unit';
+
+jest.mock( '../../utils/is-extended-unit' );
+
+const mockIsExtendedUnit = jest.mocked( isExtendedUnit );
 
 const sizeValue: SizePropValue[ 'value' ] = {
 	unit: 'px',
@@ -9,6 +14,11 @@ const sizeValue: SizePropValue[ 'value' ] = {
 };
 
 describe( 'useUnitSync', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockIsExtendedUnit.mockReturnValue( false );
+	} );
+
 	it( 'should initialize state from unit prop', () => {
 		// Arrange.
 		const setUnit = jest.fn();
@@ -72,6 +82,7 @@ describe( 'useUnitSync', () => {
 		'should call setUnit when selecting extended unit %s even if persistWhen returns false',
 		( extendedUnit ) => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const setUnit = jest.fn();
 
 			const { result } = renderHook( () =>

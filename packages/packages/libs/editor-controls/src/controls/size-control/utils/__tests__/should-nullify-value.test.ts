@@ -3,7 +3,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { shouldNullifyValue } from '../should-nullify-value';
 
 describe( 'shouldNullifyValue', () => {
-	it( 'should return true when value is null', () => {
+	it( 'should return false when value is null', () => {
 		// Arrange & Act.
 		const result = shouldNullifyValue( null );
 
