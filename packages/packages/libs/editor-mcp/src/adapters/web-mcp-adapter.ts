@@ -6,26 +6,14 @@ import {
 	type McpResourceHandler,
 	type McpResourceUriOrTemplate,
 	type McpToolDescriptor,
+	type UriTemplate,
 } from './types';
 
 type ZodRawShape = z3.ZodRawShape;
 
-type WebMCPToolDescriptor = {
-	name: string;
-	description: string;
-	inputSchema: object;
-	execute: ( params: Record< string, unknown > ) => Promise< unknown >;
-};
-
 export type ModelContext = {
-	registerTool: ( tool: WebMCPToolDescriptor ) => void;
+	registerTool: ( tool: McpToolDescriptor ) => void;
 	unregisterTool: ( name: string ) => void;
-};
-
-// Duck-typed UriTemplate — matches the shape exposed by ResourceTemplate.uriTemplate
-type UriTemplate = {
-	toString: () => string;
-	match: ( uri: string ) => Record< string, string | string[] > | null;
 };
 
 type ResourceEntry = {
@@ -37,10 +25,15 @@ type ResourceEntry = {
 export class WebMCPAdapter implements IMcpRegistrationAdapter {
 	private readonly registeredToolNames = new Set< string >();
 	private readonly resourceEntries: ResourceEntry[] = [];
+	private activated = false;
 
 	constructor( private readonly ctx: ModelContext ) {}
 
 	activate(): void {
+		if ( this.activated ) {
+			return;
+		}
+		this.activated = true;
 		this.ctx.registerTool( {
 			name: 'editor-resource-getter',
 			description:

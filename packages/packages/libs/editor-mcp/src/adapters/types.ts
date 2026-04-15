@@ -1,5 +1,5 @@
 // Duck-typed UriTemplate — matches the shape exposed by ResourceTemplate.uriTemplate
-type UriTemplate = {
+export type UriTemplate = {
 	toString: () => string;
 	match: ( uri: string ) => Record< string, string | string[] > | null;
 };
