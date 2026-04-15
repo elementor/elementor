@@ -1,4 +1,5 @@
 import { getSDK } from './utils/get-sdk';
+export { getAngieIframe, MessageEventType as AngieMessageEvenetType } from './utils/get-sdk';
 
 export {
 	McpServer,

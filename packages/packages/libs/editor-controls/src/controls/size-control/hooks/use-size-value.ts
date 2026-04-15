@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { type SetSizeValue, type SizeUnit } from '../types';
+import { type SetSizeValue } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
 import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
 import { useUnitSync } from './use-unit-sync';
@@ -16,7 +16,7 @@ type UseSizeValueProps< T, U > = {
 	defaultUnit?: U;
 };
 
-export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
+export const useSizeValue = < T extends SizeValue, U extends SizeValue[ 'unit' ] >( {
 	value,
 	setValue,
 	units,
@@ -40,7 +40,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 	} );
 
 	const [ unit, setUnit ] = useUnitSync( {
-		unit: sizeValue?.unit,
+		sizeValue,
 		setUnit: ( newUnit ) => {
 			setSizeValue( {
 				unit: newUnit,
@@ -48,7 +48,7 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 			} as T );
 		},
 		persistWhen: () => {
-			return Boolean( sizeValue.size ) || sizeValue.size !== '';
+			return Boolean( sizeValue.size ) || sizeValue.size !== '' || isExtendedUnit( sizeValue.unit );
 		},
 	} );
 
