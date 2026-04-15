@@ -13,7 +13,7 @@
     x-data="eTabs{{ id }}"
     data-e-settings="{{ e_settings | json_encode | e('html_attr') }}"
     {% if settings._cssid is defined and settings._cssid is not empty %}
-        id="{{ settings._cssid | e }}"
+        id="{{ settings._cssid | e('html_attr') }}"
     {% endif %}
     {% if settings.attributes is defined and settings.attributes is not empty %}
         {{ settings.attributes | raw }}

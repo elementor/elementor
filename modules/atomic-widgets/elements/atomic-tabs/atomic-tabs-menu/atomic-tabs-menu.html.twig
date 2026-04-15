@@ -7,7 +7,7 @@
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
     role="tablist"
     {% if settings._cssid is defined and settings._cssid is not empty %}
-        id="{{ settings._cssid | e }}"
+        id="{{ settings._cssid | e('html_attr') }}"
     {% endif %}
     {% if settings.attributes is defined and settings.attributes is not empty %}
         {{ settings.attributes | raw }}
