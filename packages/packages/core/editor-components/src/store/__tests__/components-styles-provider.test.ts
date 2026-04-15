@@ -1,8 +1,11 @@
 import { createMockStyleDefinition } from 'test-utils';
+import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { __getState as getState } from '@elementor/store';
 
 import { componentsStylesProvider } from '../components-styles-provider';
 import { SLICE_NAME } from '../store';
+
+jest.mock( '@elementor/editor-elements' );
 
 jest.mock( '@elementor/store', () => {
 	const actual = jest.requireActual( '@elementor/store' );
@@ -45,6 +48,23 @@ describe( 'componentsStylesProvider', () => {
 		// Assert.
 		expect( style ).toStrictEqual( expected );
 	} );
+
+	it.each( [
+		{ excludedDocumentId: DOC_ID_1, expectedStyles: [ STYLE_3 ] },
+		{ excludedDocumentId: DOC_ID_2, expectedStyles: [ STYLE_1, STYLE_2 ] },
+	] )(
+		'should exclude styles for document $excludedDocumentId when listing all',
+		( { excludedDocumentId, expectedStyles } ) => {
+			// Arrange.
+			jest.mocked( getCurrentDocumentId ).mockReturnValue( excludedDocumentId );
+
+			// Act.
+			const styles = componentsStylesProvider.actions.all();
+
+			// Assert.
+			expect( styles ).toStrictEqual( expectedStyles );
+		}
+	);
 
 	it( 'should expose the static key', () => {
 		// Act.

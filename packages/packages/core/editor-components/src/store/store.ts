@@ -47,7 +47,20 @@ export const selectUnpublishedComponents = createSelector(
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
 export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
-export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data ) => Object.values( data ).flat() );
+export const selectFlatStyles = createSelector(
+	selectStylesDefinitions,
+	( _state: ComponentsSlice, excludeComponentId: ComponentId | null = null ) => excludeComponentId,
+	( data, excludeComponentId ) => {
+		if ( excludeComponentId === null ) {
+			return Object.values( data ).flat();
+		}
+
+		return Object.entries( data )
+			.filter( ( [ id ] ) => id !== String( excludeComponentId ) )
+			.map( ( [ , styles ] ) => styles )
+			.flat();
+	}
+);
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
