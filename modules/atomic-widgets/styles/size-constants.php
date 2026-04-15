@@ -86,7 +86,7 @@ class Size_Constants {
 
 	private static function presets(): array {
 		return [
-			'layout' => self::NUMERIC_UNITS,
+			'layout' => self::sort_by_preferred_order( self::NUMERIC_UNITS ),
 			'spacing' => self::sort_by_preferred_order( self::NUMERIC_UNITS ),
 			'position' => self::NUMERIC_UNITS,
 			'typography' => self::NUMERIC_UNITS,
