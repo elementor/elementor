@@ -119,7 +119,8 @@ class Module extends BaseApp {
 			'apiOrigin'      => defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' )
 				? ELEMENTOR_SITE_PLANNER_API_ORIGIN
 				: 'https://my.elementor.com/api/v2/ai',
-			'previewImage'   => ELEMENTOR_ASSETS_URL . 'images/site-planner-preview.png',
+			'previewImage1'  => ELEMENTOR_ASSETS_URL . 'images/site-planner-01.jpg',
+			'previewImage2'  => ELEMENTOR_ASSETS_URL . 'images/site-planner-02.jpg',
 			'bgImage'        => ELEMENTOR_ASSETS_URL . 'images/site-planner-bg.png',
 		] );
 	}

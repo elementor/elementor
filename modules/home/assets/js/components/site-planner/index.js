@@ -14,7 +14,8 @@ import {
 	PlannerPreviewContainer,
 	PlannerPreviewInner,
 	PlannerPreviewFrame,
-	PlannerPreviewImage,
+	PlannerPreviewImage1,
+	PlannerPreviewImage2,
 	PlannerLoaderBadge,
 	PlannerContent,
 	PlannerHeading,
@@ -67,6 +68,21 @@ const SitePlanner = ( { sitePlannerData } ) => {
 		window.open( url.toString(), '_blank' );
 	};
 
+	const inputEndAdornment = {
+		endAdornment: (
+			<InputAdornment position="end">
+				<GenerateSiteButton
+					variant="contained"
+					size="small"
+					startIcon={ <GenerateSiteIcon /> }
+					onClick={ handleCreateClick }
+				>
+					{ __( 'Generate site', 'elementor' ) }
+				</GenerateSiteButton>
+			</InputAdornment>
+		),
+	};
+
 	const handleKeyDown = ( event ) => {
 		if ( 'Enter' === event.key ) {
 			event.preventDefault();
@@ -114,10 +130,17 @@ const SitePlanner = ( { sitePlannerData } ) => {
 			<PlannerPreviewContainer>
 				<PlannerPreviewInner>
 					<PlannerPreviewFrame>
-						{ sitePlannerData?.previewImage && (
-							<PlannerPreviewImage
+						{ sitePlannerData?.previewImage1 && (
+							<PlannerPreviewImage1
 								component="img"
-								src={ sitePlannerData.previewImage }
+								src={ sitePlannerData.previewImage1 }
+								alt=""
+							/>
+						) }
+						{ sitePlannerData?.previewImage2 && (
+							<PlannerPreviewImage2
+								component="img"
+								src={ sitePlannerData.previewImage2 }
 								alt=""
 							/>
 						) }
@@ -141,20 +164,8 @@ const SitePlanner = ( { sitePlannerData } ) => {
 						value={ inputValue }
 						onChange={ handleInputChange }
 						onKeyDown={ handleKeyDown }
-						InputProps={ {
-							endAdornment: (
-								<InputAdornment position="end">
-									<GenerateSiteButton
-										variant="contained"
-										size="small"
-										startIcon={ <GenerateSiteIcon /> }
-										onClick={ handleCreateClick }
-									>
-										{ __( 'Generate site', 'elementor' ) }
-									</GenerateSiteButton>
-								</InputAdornment>
-							),
-						} }
+						autoComplete="off"
+						// InputProps={ inputEndAdornment }
 					/>
 					<CreateSiteButton
 						variant="contained"

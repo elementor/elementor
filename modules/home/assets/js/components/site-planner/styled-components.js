@@ -1,16 +1,16 @@
 import { Box, Button, Chip, Paper, Stack, TextField, Typography, styled } from '@elementor/ui';
 
-export const PlannerRoot = styled( Paper )( {
+export const PlannerRoot = styled( Paper )( ( { theme } ) => ( {
 	position: 'relative',
 	display: 'flex',
 	flexDirection: 'row',
 	alignItems: 'center',
 	overflow: 'hidden',
-	borderRadius: '8px',
+	borderRadius: theme.spacing( 1 ),
 	border: '1px solid',
 	borderColor: 'divider',
-	minHeight: '214px',
-} );
+	minHeight: theme.spacing( 26.75 ),
+} ) );
 
 export const PlannerBackground = styled( Box )( ( { bgimage } ) => ( {
 	position: 'absolute',
@@ -40,7 +40,7 @@ export const PlannerPreviewContainer = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	flexShrink: 0,
-	width: '252px',
+	width: theme.spacing( 31.5 ),
 	height: '100%',
 	marginLeft: theme.spacing( -8 ),
 	[ theme.breakpoints.up( 'md' ) ]: {
@@ -48,39 +48,48 @@ export const PlannerPreviewContainer = styled( Box )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const PlannerPreviewInner = styled( Box )( {
+export const PlannerPreviewInner = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
-	width: '252px',
-	height: '148px',
-} );
+	width: theme.spacing( 31.5 ),
+	height: theme.spacing( 18.5 ),
+} ) );
 
-export const PlannerPreviewFrame = styled( Box )( {
+export const PlannerPreviewFrame = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
 	border: '1px dashed',
 	borderColor: '#696199',
-	borderRadius: '14px',
-	overflow: 'hidden',
+	borderRadius: theme.spacing( 1.75 ),
 	display: 'flex',
 	alignItems: 'center',
-	justifyContent: 'center',
+	justifyContent: 'flex-end',
 	gap: '3.7px',
 	padding: '8.5px',
-} );
+	paddingInlineEnd: '0',
+} ) );
 
-export const PlannerPreviewImage = styled( Box )( {
-	height: '120px',
-	width: '151px',
+export const PlannerPreviewImage1 = styled( Box )( ( { theme } ) => ( {
+	height: '121px',
+	width: 'auto',
 	objectFit: 'cover',
-	borderRadius: '4px',
+	borderRadius: theme.spacing( 1.25 ),
 	flexShrink: 0,
-} );
+} ) );
 
-export const PlannerLoaderBadge = styled( Box )( {
+export const PlannerPreviewImage2 = styled( Box )( ( { theme } ) => ( {
+	height: '121px',
+	width: 'auto',
+	objectFit: 'cover',
+	borderRadius: theme.spacing( 1.25 ),
+	flexShrink: 0,
+	marginInlineEnd: '-1px',
+} ) );
+
+export const PlannerLoaderBadge = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
-	top: '-12px',
-	right: '-12px',
-} );
+	top: theme.spacing( -1.5 ),
+	right: theme.spacing( -1.5 ),
+} ) );
 
 export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
 	position: 'relative',
@@ -93,17 +102,17 @@ export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const PlannerHeading = styled( Typography )( {
+export const PlannerHeading = styled( Typography )( ( { theme } ) => ( {
 	fontFamily: '"Poppins", sans-serif',
 	fontWeight: 400,
-	fontSize: '24px',
-	lineHeight: '48px',
+	fontSize: theme.spacing( 3 ),
+	lineHeight: theme.spacing( 6 ),
 	letterSpacing: '0.15px',
 	background: 'linear-gradient(77deg, #212121 25.85%, #696199 46.02%, #C945C9 60.81%, #212121 82.38%)',
 	backgroundClip: 'text',
 	WebkitBackgroundClip: 'text',
 	WebkitTextFillColor: 'transparent',
-} );
+} ) );
 
 export const PlannerInputRow = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
@@ -119,16 +128,24 @@ export const PlannerInputRow = styled( Box )( ( { theme } ) => ( {
 export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
 	width: '100%',
 	[ theme.breakpoints.up( 'sm' ) ]: {
-		width: '400px',
+		width: theme.spacing( 50 ),
 	},
 	'& .MuiOutlinedInput-root': {
-		backgroundColor: 'white',
-		borderRadius: '8px',
-		height: '40px',
+		borderRadius: theme.spacing( 1 ),
+		height: theme.spacing( 5 ),
 		boxShadow: '0px 3px 14px 0px rgba(0, 0, 0, 0.06)',
+		overflow: 'hidden',
 		'& fieldset': {
-			borderColor: '#212121',
+			borderColor: theme.palette.text.primary,
 		},
+		'&.Mui-focused fieldset': {
+			borderColor: theme.palette.text.primary,
+			borderWidth: '2px',
+		},
+	},
+	'& .MuiInputBase-input': {
+		border: 'none',
+		borderRadius: 0,
 	},
 } ) );
 
@@ -155,10 +172,10 @@ export const SessionStatusCard = styled( Paper )( ( { theme } ) => ( {
 export const GenerateSiteButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.text.primary,
 	color: theme.palette.common.white,
-	borderRadius: '6px',
+	borderRadius: theme.spacing( 0.75 ),
 	textTransform: 'none',
 	fontWeight: 500,
-	fontSize: '13px',
+	fontSize: theme.spacing( 1.625 ),
 	whiteSpace: 'nowrap',
 	minWidth: 'auto',
 	paddingBlock: theme.spacing( 0.25 ),
@@ -171,12 +188,13 @@ export const GenerateSiteButton = styled( Button )( ( { theme } ) => ( {
 export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.text.primary,
 	color: theme.palette.common.white,
-	borderRadius: '8px',
+	borderRadius: theme.spacing( 1 ),
 	textTransform: 'none',
 	fontWeight: 500,
 	whiteSpace: 'nowrap',
 	'&:hover': {
-		backgroundColor: theme.palette.text.secondary,
+		backgroundColor: theme.palette.primary.dark,
+		color: theme.palette.primary.contrastText,
 	},
 } ) );
 
@@ -185,5 +203,5 @@ export const SuggestionChip = styled( Chip )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.common.white,
 	borderColor: theme.palette.divider,
 	color: theme.palette.text.secondary,
-	fontSize: '13px',
+	fontSize: theme.spacing( 1.625 ),
 } ) );
