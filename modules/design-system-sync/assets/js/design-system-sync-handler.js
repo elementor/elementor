@@ -5,7 +5,6 @@
 	const SYNC_STYLESHEET_ID = 'elementor-design-system-sync-css';
 	const DEBOUNCE_MS = 500;
 
-
 	let syncTimeout;
 
 	function syncDesignSystem() {
