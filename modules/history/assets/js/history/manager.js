@@ -211,8 +211,6 @@ export default class HistoryManager {
 		if ( viewToScroll && ! elementor.helpers.isInViewport( viewToScroll.$el[ 0 ], elementor.$previewContents.find( 'html' )[ 0 ] ) ) {
 			elementor.helpers.scrollToView( viewToScroll.$el );
 		}
-
-		return item;
 	}
 
 	undoItem( index ) {
