@@ -32,7 +32,7 @@ jest.mock( '@elementor/alpinejs', () => {
 				const listeners = {};
 
 				if ( 'function' === typeof component.runAction ) {
-					const fn = ( event ) => component.runAction( event );
+					const fn = ( event ) => component.runAction.call( { $el: el }, event );
 					el.addEventListener( 'click', fn );
 					listeners.click = fn;
 				}
@@ -51,7 +51,7 @@ jest.mock( '@elementor/alpinejs', () => {
 }, { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
-const SELECTOR = '[data-action-link], :has(> [data-action-link])';
+const SELECTOR = '[data-action-link], :has([data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
 const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
@@ -61,8 +61,6 @@ const BLOCKED_ACTION = 'popup';
 const ALLOWED_ACTION_URL = `https://example.com/?action=${ ALLOWED_ACTION }`;
 const BLOCKED_ACTION_URL = `https://example.com/?action=${ BLOCKED_ACTION }`;
 const ANY_CONTEXT_URL = 'https://example.com/?action=anything';
-
-const LINK_X_DATA_ID = 'eActionLinkTest';
 
 describe( 'Atomic Widgets frontend handlers', () => {
 	let runAction;
@@ -78,6 +76,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const registration = getRegistration( HANDLER_ID );
 
 		expect( registration ).toBeDefined();
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
 
 		return {
 			registration,
@@ -98,49 +97,38 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		global.elementorFrontend = { utils: { urlActions: { runAction } } };
 	} );
 
-	it( 'registers link action handler by selector', async () => {
-		// Arrange
+	it( 'registers link and form handlers by selector', async () => {
 		const { registration, registerBySelector, getRegistration } = await importHandlers();
 
-		// Act
-		const { id, selector, callback } = registration;
-
-		// Assert
 		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
-		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
-		expect( typeof callback ).toBe( 'function' );
-		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
+		expect( { id: registration.id, selector: registration.selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
+		expect( typeof registration.callback ).toBe( 'function' );
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ).selector ).toBe( '[data-element_type="e-form"]' );
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-		// Act
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( cleanup ).toBeUndefined();
 		expect( event.defaultPrevented ).toBe( false );
 	} );
 
 	it( 'runs whitelisted editor link actions and cleans up listeners', async () => {
-		// Arrange
 		global.elementor = {};
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = ALLOWED_ACTION_URL;
 
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 		cleanup?.();
 
@@ -148,7 +136,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		element.dispatchEvent( secondEvent );
 
-		// Assert
 		expect( event.defaultPrevented ).toBe( true );
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ALLOWED_ACTION_URL, event );
@@ -156,50 +143,40 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	it( 'skips non-whitelisted editor link actions', async () => {
-		// Arrange
 		global.elementor = {};
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
-		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = BLOCKED_ACTION_URL;
 		registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( runAction ).not.toHaveBeenCalled();
 		expect( event.defaultPrevented ).toBe( false );
 	} );
 
 	it( 'runs link actions outside editor context regardless of whitelist', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = ANY_CONTEXT_URL;
 		registration.callback( { element } );
 
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, event );
 		expect( event.defaultPrevented ).toBe( true );
 	} );
 
 	it( 'runs nested link actions only when clicking inside the nested element', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'h2' );
 		const nestedLink = document.createElement( 'a' );
 
-		nestedLink.setAttribute( 'x-data', LINK_X_DATA_ID );
 		nestedLink.dataset.actionLink = ANY_CONTEXT_URL;
 		element.appendChild( nestedLink );
 		registration.callback( { element } );
@@ -207,11 +184,9 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const linkEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 		const elementEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		nestedLink.dispatchEvent( linkEvent );
 		element.dispatchEvent( elementEvent );
 
-		// Assert
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, linkEvent );
 		expect( linkEvent.defaultPrevented ).toBe( true );
@@ -442,24 +417,20 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 	} );
 
-	it( 'adds non-whitelisted editor link actions', async () => {
-		// Arrange
+	it( 'adds non-whitelisted editor link actions via filter', async () => {
 		global.elementor = {};
 		global.elementorFrontend = { ...global.elementorFrontend, hooks: { applyFilters: () => [ BLOCKED_ACTION ] } };
 		const { registration } = await importHandlers();
 
 		const element = document.createElement( 'button' );
 
-		element.setAttribute( 'x-data', LINK_X_DATA_ID );
 		element.dataset.actionLink = BLOCKED_ACTION_URL;
 		registration.callback( { element } );
 
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( event.defaultPrevented ).toBe( true );
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( BLOCKED_ACTION_URL, event );

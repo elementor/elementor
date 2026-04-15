@@ -1,8 +1,8 @@
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}	
-	{% if settings.link.href and settings.link_attributes is not empty %}
+	{% if settings.link and settings.link.attributes is not empty %}
 		<{{ settings.link.tag | e('html_tag') }}
-			{{ settings.link_attributes | raw }}
+			{{ settings.link.attributes | raw }}
 			class="{{ base_styles['link-base'] }}"
 			data-interaction-id="{{ interaction_id }}"
 		>

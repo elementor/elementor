@@ -251,9 +251,10 @@ trait Has_Atomic_Base {
 		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
 		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
 
-		if ( ! empty( $link_attributes ) ) {
-			$parsed['link_attributes'] = $link_attributes;
-		}
+		$parsed['link'] = ! empty( $link_attributes ) ? [
+			'tag' => $parsed['link']['tag'],
+			'attributes' => $link_attributes,
+		] : null;
 
 		return $parsed;
 	}
@@ -371,19 +372,10 @@ trait Has_Atomic_Base {
 		$is_action_link = 'button' === $tag;
 		$url_attr_key = $is_action_link ? 'data-action-link' : 'href';
 
-		$shared = [
+		return [
 			$url_attr_key => $url,
 			'target' => $target,
 		];
-
-		if ( $is_action_link ) {
-			return array_merge( $shared, [
-				'x-data' => 'eActionLink' . $this->get_id(),
-				'x-on:click' => 'runAction',
-			] );
-		}
-
-		return $shared;
 	}
 
 	private function get_link_attributes_string( $link_settings ) {

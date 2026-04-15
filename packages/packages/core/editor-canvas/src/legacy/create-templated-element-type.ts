@@ -222,32 +222,29 @@ export function createTemplatedElementView( {
 
 			return {
 				...settings,
-				link_attributes: linkAttributes,
+				link: linkAttributes
+					? {
+							tag: ( settings?.link as { tag?: string } )?.tag,
+							attributes: linkAttributes,
+					  }
+					: null,
 			};
 		}
 
 		_handleActionLinkAttributes( settings: { [ key: string ]: unknown } ) {
-			if ( ! settings?.link || typeof settings.link !== 'object' || ! ( 'href' in settings.link ) ) {
+			const link = settings.link;
+
+			if ( ! link || typeof link !== 'object' || ! ( 'href' in link ) || ! link.href ) {
 				return {};
 			}
 
-			const isActionLink = 'tag' in settings.link && 'button' === settings?.link?.tag;
+			const isActionLink = 'tag' in link && link.tag === 'button';
 			const urlAttrKey = isActionLink ? 'data-action-link' : 'href';
 
-			const shared = {
-				[ urlAttrKey ]: settings?.link?.href,
-				target: ( 'target' in settings.link && settings?.link?.target ) ?? '_self',
+			return {
+				[ urlAttrKey ]: link.href,
+				target: ( 'target' in link && link.target ) ?? '_self',
 			};
-
-			if ( isActionLink ) {
-				return {
-					...shared,
-					'x-data': 'eActionLink' + this.model.get( 'id' ),
-					'x-on:click': 'runAction',
-				};
-			}
-
-			return shared;
 		}
 	};
 }

@@ -1,5 +1,5 @@
 			    	            <button
-            data-action-link="https://very.dynamic.content.elementor" target="_blank" x-data="eActionLinke8e55a1" x-on:click="runAction"
+            data-action-link="https://very.dynamic.content.elementor" target="_blank"
             class="e-button-base"
             data-interaction-id="e8e55a1"
              

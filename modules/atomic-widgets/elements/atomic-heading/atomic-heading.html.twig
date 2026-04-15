@@ -8,9 +8,9 @@
 	>
 	{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
 
-	{% if settings.link.href and settings.link_attributes is not empty %}
+	{% if settings.link and settings.link.attributes is not empty %}
 		<{{ settings.link.tag | e('html_tag') }} 
-			{{ settings.link_attributes | raw }}
+			{{ settings.link.attributes | raw }}
 			class="{{ base_styles['link-base'] }}">
 			{{ settings.title | striptags(allowed_tags) | raw }}
 		</{{ settings.link.tag | e('html_tag') }}>
