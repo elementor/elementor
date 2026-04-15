@@ -2,6 +2,8 @@ import * as React from 'react';
 import {
 	type BackgroundColorOverlayPropValue,
 	type BoxShadowPropValue,
+	cssFilterFunctionPropUtil,
+	dropShadowFilterPropTypeUtil,
 	type KeyValuePropValue,
 	type PropValue,
 	selectionSizePropTypeUtil,
@@ -35,6 +37,14 @@ export const BackgroundRepeaterLabel = ( { value }: Props ) => {
 
 export const BoxShadowRepeaterColorIndicator = ( { value }: Props ) => {
 	const colorVariable = useColorVariable( value as BoxShadowPropValue );
+
+	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
+};
+
+export const DropShadowFilterIconIndicator = ( { value }: Props ) => {
+	const args = cssFilterFunctionPropUtil.extract( value )?.args;
+	const color = dropShadowFilterPropTypeUtil.extract( args )?.color;
+	const colorVariable = useVariable( color?.value || '' );
 
 	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
 };

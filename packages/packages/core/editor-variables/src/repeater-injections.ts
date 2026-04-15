@@ -1,6 +1,8 @@
 import { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from '@elementor/editor-controls';
 import {
 	backgroundColorOverlayPropTypeUtil,
+	cssFilterFunctionPropUtil,
+	dropShadowFilterPropTypeUtil,
 	type PropValue,
 	selectionSizePropTypeUtil,
 	shadowPropTypeUtil,
@@ -10,6 +12,7 @@ import {
 	BackgroundRepeaterColorIndicator,
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
+	DropShadowFilterIconIndicator,
 	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
 import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
@@ -22,9 +25,10 @@ export function registerRepeaterInjections() {
 	backgroundOverlayRepeaterInjections();
 	boxShadowRepeaterInjections();
 	transitionsRepeaterInjections();
+	filterRepeaterInjections();
 }
 
-const backgroundOverlayRepeaterInjections = () => {
+function backgroundOverlayRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
 		id: 'color-variables-background-icon',
 		component: BackgroundRepeaterColorIndicator,
@@ -40,9 +44,9 @@ const backgroundOverlayRepeaterInjections = () => {
 			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
 		},
 	} );
-};
+}
 
-const boxShadowRepeaterInjections = () => {
+function boxShadowRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
 		id: 'color-variables-box-shadow-icon',
 		component: BoxShadowRepeaterColorIndicator,
@@ -50,9 +54,9 @@ const boxShadowRepeaterInjections = () => {
 			return hasAssignedColorVariable( shadowPropTypeUtil.extract( value )?.color );
 		},
 	} );
-};
+}
 
-const transitionsRepeaterInjections = () => {
+function transitionsRepeaterInjections() {
 	injectIntoRepeaterItemLabel( {
 		id: 'transition-size-variables-label',
 		component: TransitionsSizeVariableLabel,
@@ -60,9 +64,24 @@ const transitionsRepeaterInjections = () => {
 			return hasAssignedSizeVariable( selectionSizePropTypeUtil.extract( value )?.size );
 		},
 	} );
-};
+}
 
-const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
+function filterRepeaterInjections() {
+	injectIntoRepeaterItemIcon( {
+		id: 'color-variables-filter-icon',
+		component: DropShadowFilterIconIndicator,
+		condition: ( { value }: Args ) => {
+			const cssFilterFunc = cssFilterFunctionPropUtil.extract( value );
+			if ( dropShadowFilterPropTypeUtil.isValid( cssFilterFunc?.args ) ) {
+				const color = dropShadowFilterPropTypeUtil.extract( cssFilterFunc.args )?.color;
+				return hasAssignedColorVariable( color );
+			}
+			return false;
+		},
+	} );
+}
+
+function hasAssignedSizeVariable( value: PropValue ): boolean {
 	if ( sizeVariablePropTypeUtil.isValid( value ) ) {
 		return true;
 	}
@@ -72,8 +91,8 @@ const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
 	}
 
 	return false;
-};
+}
 
-const hasAssignedColorVariable = ( value: PropValue ): boolean => {
+function hasAssignedColorVariable( value: PropValue ): boolean {
 	return !! colorVariablePropTypeUtil.isValid( value );
-};
+}
