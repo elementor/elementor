@@ -24,6 +24,26 @@ class Library extends Common_App {
 		return 'library';
 	}
 
+	public function get_connect_auth(): array {
+		$hyphen_keyed_payload = [
+			'access-token' => $this->get( 'access_token' ),
+			'app'          => $this->get_slug(),
+			'client-id'    => $this->get( 'client_id' ),
+			'home-url'     => trailingslashit( home_url() ),
+			'site-key'     => $this->get_site_key(),
+		];
+
+		ksort( $hyphen_keyed_payload );
+
+		return [
+			'signature'   => $this->generate_signature( $hyphen_keyed_payload ),
+			'accessToken' => $this->get( 'access_token' ),
+			'clientId'    => $this->get( 'client_id' ),
+			'homeUrl'     => trailingslashit( home_url() ),
+			'siteKey'     => $this->get_site_key(),
+		];
+	}
+
 	public function get_template_content( $id ) {
 		if ( ! $this->is_connected() ) {
 			return new \WP_Error( '401', esc_html__( 'Connecting to the Library failed. Please try reloading the page and try again', 'elementor' ) );

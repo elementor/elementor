@@ -67,6 +67,23 @@ class Module extends BaseModule {
 		return 'https://planner.elementor.com/chat.html';
 	}
 
+	public function get_planner_config(): ?array {
+		if ( ! $this->is_experiment_active() ) {
+			return null;
+		}
+
+		$connect_auth = $this->get_connect_auth();
+
+		if ( ! $connect_auth ) {
+			return null;
+		}
+
+		return [
+			'iframeUrl'   => $this->get_iframe_url(),
+			'connectAuth' => $connect_auth,
+		];
+	}
+
 	private function get_connect_auth(): ?array {
 		if ( ! Plugin::instance()->common ) {
 			return null;
@@ -84,34 +101,6 @@ class Module extends BaseModule {
 			return null;
 		}
 
-		$access_token = $app->get( 'access_token' );
-		$client_id = $app->get( 'client_id' );
-		$home_url = trailingslashit( home_url() );
-		$site_key = $app->get_site_key();
-		$access_token_secret = $app->get( 'access_token_secret' );
-
-		$connect_data = [
-			'access-token' => $access_token,
-			'app' => 'library',
-			'client-id' => $client_id,
-			'home-url' => $home_url,
-			'site-key' => $site_key,
-		];
-
-		ksort( $connect_data );
-
-		$signature = hash_hmac(
-			'sha256',
-			wp_json_encode( $connect_data, JSON_NUMERIC_CHECK ),
-			$access_token_secret
-		);
-
-		return [
-			'signature' => $signature,
-			'accessToken' => $access_token,
-			'clientId' => $client_id,
-			'homeUrl' => $home_url,
-			'siteKey' => $site_key,
-		];
+		return $app->get_connect_auth();
 	}
 }
