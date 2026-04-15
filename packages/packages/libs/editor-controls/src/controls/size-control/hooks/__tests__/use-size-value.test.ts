@@ -633,6 +633,25 @@ describe( 'useSizeValue', () => {
 			expect( result.current.unit ).toBe( 'rem' );
 		} );
 
+		it( 'should persist unit change to setValue when size is empty and current unit is extended', () => {
+			mockIsExtendedUnit.mockImplementation( ( unit ) => unit === 'auto' || unit === 'custom' );
+			const setValue = jest.fn();
+
+			const { result } = renderSizeValueHook( {
+				value: {
+					size: '',
+					unit: 'auto',
+				},
+				units: [ 'px', 'auto' ],
+				setValue,
+			} );
+
+			act( () => result.current.setUnit( 'px' ) );
+
+			expect( setValue ).toHaveBeenCalledWith( { size: '', unit: 'px' }, undefined, undefined );
+			expect( result.current.unit ).toBe( 'px' );
+		} );
+
 		it( 'should persist unit change to setValue when size is zero', () => {
 			// Arrange.
 			const setValue = jest.fn();
