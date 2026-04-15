@@ -6,8 +6,7 @@
 	>
 	
 			<a 
-						href="https://example.com"
-			target="_self" 
+			href="https://example.com" target="_self"
 			class="e-heading-link-base">
 			This is a title
 		</a>

@@ -188,6 +188,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Change effect type to "Out"
 			const effectTypeButton = popover.getByLabel( 'Out', { exact: true } );
+
+			// Done to avoid tooltip blocking mouse actions
+			const label = effectTypeButton.locator( '../../..' ).locator( 'label' );
+			await label.hover();
+
 			await expect( effectTypeButton ).toBeVisible();
 			await effectTypeButton.click();
 
