@@ -69,7 +69,7 @@ export class AppManager {
 				cardType="atomicForm"
 				promotionData={ promotionData }
 				ctaUrl={ ctaUrl }
-				onClose={ () => this.unmount() }
+				doClose={ () => this.unmount() }
 			/>,
 		);
 	}

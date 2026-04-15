@@ -9,7 +9,7 @@ import PromotionCard from './components/promotion-card';
 
 const App = ( props ) => {
 	const cardContent = 'atomicForm' === props.cardType
-		? <AtomicFormPromotionCard doClose={ props.onClose } promotionData={ props.promotionData } ctaUrl={ props.ctaUrl } />
+		? <AtomicFormPromotionCard doClose={ props.doClose } promotionData={ props.promotionData } ctaUrl={ props.ctaUrl } />
 		: <PromotionCard doClose={ props.onClose } promotionsData={ props.promotionsData } />;
 
 	return (
@@ -45,7 +45,8 @@ App.propTypes = {
 	promotionsData: PropTypes.object,
 	promotionData: PropTypes.object,
 	ctaUrl: PropTypes.string,
-	onClose: PropTypes.func.isRequired,
+	doClose: PropTypes.func,
+	onClose: PropTypes.func,
 };
 
 export default App;
