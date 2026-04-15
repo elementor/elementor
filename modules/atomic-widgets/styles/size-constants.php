@@ -27,6 +27,26 @@ class Size_Constants {
 
 	const DEFAULT_UNIT = self::UNIT_PX;
 
+	private const ORDER = [
+		self::UNIT_PX,
+		self::UNIT_PERCENT,
+		self::UNIT_EM,
+		self::UNIT_REM,
+		self::UNIT_VW,
+		self::UNIT_VH,
+		self::UNIT_CH,
+		self::UNIT_VMIN,
+		self::UNIT_VMAX,
+		self::UNIT_DEG,
+		self::UNIT_RAD,
+		self::UNIT_GRAD,
+		self::UNIT_TURN,
+		self::UNIT_SECOND,
+		self::UNIT_MILLI_SECOND,
+		self::UNIT_AUTO,
+		self::UNIT_CUSTOM,
+	];
+
 	private const LENGTH_UNITS = [
 		self::UNIT_PX,
 		self::UNIT_EM,
@@ -66,8 +86,8 @@ class Size_Constants {
 
 	private static function presets(): array {
 		return [
-			'layout' => self::NUMERIC_UNITS,
-			'spacing' => self::NUMERIC_UNITS,
+			'layout' => self::sort_by_preferred_order( self::NUMERIC_UNITS ),
+			'spacing' => self::sort_by_preferred_order( self::NUMERIC_UNITS ),
 			'position' => self::NUMERIC_UNITS,
 			'typography' => self::NUMERIC_UNITS,
 			'border' => self::NUMERIC_UNITS,
@@ -130,13 +150,23 @@ class Size_Constants {
 		];
 	}
 
+	private static function sort_by_preferred_order( array $units ): array {
+		$index = array_flip( self::ORDER );
+
+		usort( $units, fn( $a, $b ) =>
+			( $index[ $a ] ?? PHP_INT_MAX ) <=> ( $index[ $b ] ?? PHP_INT_MAX )
+		);
+
+		return $units;
+	}
+
 	public static function standard_units(): array {
-		return [
+		return self::sort_by_preferred_order( [
 			...self::LENGTH_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
 			self::UNIT_CUSTOM,
-		];
+		] );
 	}
 
 	public static function all_supported_units(): array {

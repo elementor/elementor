@@ -251,7 +251,7 @@ BaseElementView = BaseContainer.extend( {
 						return __( 'Delete', 'elementor' );
 					},
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ), callerName: 'context_menu' } ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
@@ -1080,7 +1080,7 @@ BaseElementView = BaseContainer.extend( {
 		event.stopPropagation();
 		this.handleAnchorClick( event );
 
-		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+		$e.run( 'document/elements/delete', { container: this.getContainer(), callerName: 'remove_button' } );
 	},
 
 	handleAnchorClick( event ) {

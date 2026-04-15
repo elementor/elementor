@@ -6,6 +6,7 @@ import { type ServerNotification, type ServerRequest } from '@modelcontextprotoc
 
 import {
 	ANGIE_MODEL_PREFERENCES,
+	ANGIE_REQUIRED_RESOURCES,
 	type AngieModelPreferences,
 	createDefaultModelPreferences,
 } from './angie-annotations';
@@ -17,27 +18,39 @@ type ZodRawShape = z3.ZodRawShape;
 const mcpRegistry: { [ namespace: string ]: McpServer } = {};
 const mcpDescriptions: { [ namespace: string ]: string } = {};
 // @ts-ignore - QUnit fails this
-let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
+const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 export const registerMcp = ( mcp: McpServer, name: string ) => {
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;
 };
 
-export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
-	if ( isMcpRegistrationActivated ) {
+export async function activateMcpRegistration( sdk: AngieMcpSdk, entries = Object.entries( mcpRegistry ), retry = 3 ) {
+	if ( retry === 0 ) {
+		/* eslint-disable-next-line no-console */
+		console.error( 'Failed to register MCP after 3 retries. failed entries: ', entries );
 		return;
 	}
-	isMcpRegistrationActivated = true;
-	const mcpServerList = Object.entries( mcpRegistry );
-	for await ( const entry of mcpServerList ) {
+	if ( entries.length === 0 ) {
+		return;
+	}
+	const failed = [];
+	for await ( const entry of entries ) {
 		const [ key, mcpServer ] = entry;
-		await sdk.registerLocalServer( {
-			name: `editor-${ key }`,
-			server: mcpServer,
-			version: '1.0.0',
-			description: mcpDescriptions[ key ] || key,
-		} );
+		try {
+			await sdk.registerLocalServer( {
+				title: toMCPTitle( key ),
+				name: `editor-${ key }`,
+				server: mcpServer,
+				version: '1.0.0',
+				description: mcpDescriptions[ key ] || key,
+			} );
+		} catch {
+			failed.push( entry );
+		}
+	}
+	if ( failed.length > 0 ) {
+		return activateMcpRegistration( sdk, failed, retry - 1 );
 	}
 }
 
@@ -49,6 +62,11 @@ const isAlphabet = ( str: string ): string | never => {
 	return str;
 };
 
+export const toMCPTitle = ( namespace: string ): string => {
+	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
+	return `Editor ${ capitalized }`;
+};
+
 /**
  *
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
@@ -57,6 +75,7 @@ const isAlphabet = ( str: string ): string | never => {
  */
 export const getMCPByDomain = ( namespace: string, options?: { instructions?: string } ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
+	const title = toMCPTitle( namespace );
 	// @ts-ignore - QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return mockMcpRegistry();
@@ -65,6 +84,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		mcpRegistry[ namespace ] = new McpServer(
 			{
 				name: mcpName,
+				title,
 				version: '1.0.0',
 			},
 			{
@@ -77,15 +97,20 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	return {
 		waitForReady: () => getSDK().waitForReady(),
 		// @ts-expect-error: TS is unable to infer the type here
-		resource: async ( ...args: Parameters< McpServer[ 'resource' ] > ) => {
+		resource: async ( ...args: Parameters< McpServer[ 'registerResource' ] > ) => {
 			await getSDK().waitForReady();
-			return mcpServer.resource( ...args );
+			return mcpServer.registerResource( ...args );
 		},
 		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
-			return new Promise( async () => {
-				await getSDK().waitForReady();
-				mcpServer.server.sendResourceUpdated( ...args );
-			} );
+			return getSDK()
+				.waitForReady()
+				.then( () => mcpServer.server.sendResourceUpdated( ...args ) )
+				.catch( ( error: Error ) => {
+					if ( error?.message?.includes( 'Not connected' ) ) {
+						return; // Expected when no MCP client is connected yet
+					}
+					throw error;
+				} );
 		},
 		mcpServer,
 		addTool,
@@ -116,7 +141,7 @@ export interface MCPRegistryEntry {
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
 	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
-	resource: McpServer[ 'resource' ];
+	resource: McpServer[ 'registerResource' ];
 	mcpServer: McpServer;
 	waitForReady: () => Promise< void >;
 }
@@ -173,7 +198,6 @@ function createToolRegistry( server: McpServer ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
 				return {
-					// TODO: Uncomment this when the outputSchema is stable
 					// structuredContent: typeof invocationResult === 'string' ? undefined : invocationResult,
 					content: [
 						{
@@ -205,10 +229,10 @@ function createToolRegistry( server: McpServer ) {
 			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
-		if ( opts.requiredResources ) {
-			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
-		}
-		annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences ?? createDefaultModelPreferences();
+		const angieAnnotations = {
+			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
+			[ ANGIE_REQUIRED_RESOURCES ]: opts.requiredResources ?? undefined,
+		};
 		server.registerTool(
 			opts.name,
 			{
@@ -218,6 +242,7 @@ function createToolRegistry( server: McpServer ) {
 				// outputSchema,
 				title: opts.name,
 				annotations,
+				_meta: angieAnnotations,
 			},
 			toolCallback
 		);

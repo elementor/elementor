@@ -73,74 +73,6 @@ describe( 'resolveBoundPropValue', () => {
 		} );
 	} );
 
-	describe( 'isUnitActive', () => {
-		it( 'should return false when value is null', () => {
-			// Arrange.
-			const value = null;
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( false );
-		} );
-
-		it( 'should return true when unit is auto', () => {
-			// Arrange.
-			const value = { size: '', unit: 'auto' } as unknown as SizePropValue[ 'value' ];
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( true );
-		} );
-
-		it( 'should return true when size is a number', () => {
-			// Arrange.
-			const value = { size: 10, unit: 'px' as const };
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( true );
-		} );
-
-		it( 'should return true when size is zero', () => {
-			// Arrange.
-			const value = { size: 0, unit: 'px' as const };
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( true );
-		} );
-
-		it( 'should return false when size is empty string and unit is not auto', () => {
-			// Arrange.
-			const value = { size: '', unit: 'px' } as unknown as SizePropValue[ 'value' ];
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( false );
-		} );
-
-		it( 'should return false when size is null and unit is standard', () => {
-			// Arrange.
-			const value = { size: null, unit: 'rem' } as unknown as SizePropValue[ 'value' ];
-
-			// Act.
-			const result = resolveBoundPropValue( value );
-
-			// Assert.
-			expect( result.isUnitHighlighted ).toBe( false );
-		} );
-	} );
-
 	describe( 'placeholder', () => {
 		it( 'should return propPlaceholder when provided', () => {
 			// Arrange.
@@ -212,6 +144,59 @@ describe( 'resolveBoundPropValue', () => {
 
 			// Assert.
 			expect( result.placeholder ).toBe( 'Prop wins' );
+		} );
+
+		it( 'should derive placeholder from propPlaceholder when it is a SizeValue', () => {
+			// Arrange.
+			const value = null;
+			const propPlaceholder = { size: 12, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.placeholder ).toBe( '12' );
+		} );
+	} );
+
+	describe( 'propPlaceholder as SizeValue', () => {
+		it( 'should use propPlaceholder as sizeValue with empty size when value is null', () => {
+			// Arrange.
+			const value = null;
+			const propPlaceholder = { size: 16, unit: 'px' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: '', unit: 'px' } );
+		} );
+
+		it( 'should prefer propPlaceholder SizeValue over boundPropPlaceholder for sizeValue', () => {
+			// Arrange.
+			const value = null;
+			const boundPropPlaceholder = { size: 8, unit: 'em' as const };
+			const propPlaceholder = { size: 24, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, boundPropPlaceholder, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: '', unit: 'rem' } );
+			expect( result.placeholder ).toBe( '24' );
+		} );
+
+		it( 'should not use propPlaceholder SizeValue when value is valid', () => {
+			// Arrange.
+			const value = { size: 5, unit: 'px' as const };
+			const propPlaceholder = { size: 99, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: 5, unit: 'px' } );
+			expect( result.placeholder ).toBe( undefined );
 		} );
 	} );
 } );

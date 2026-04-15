@@ -611,8 +611,6 @@ class Manager {
 		remove_filter( 'elementor/files/allow_unfiltered_upload', [ $this, 'enable_json_template_upload' ] );
 
 		if ( is_wp_error( $upload_result ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $upload_result['tmp_name'] ) );
-
 			return $upload_result;
 		}
 

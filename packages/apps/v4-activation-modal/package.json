@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@elementor/icons": "1.68.0",
-    "@elementor/ui": "1.36.17",
+    "@elementor/ui": "1.37.5",
     "@wordpress/i18n": "^5.13.0",
     "lottie-react": "^2.4.1"
   },

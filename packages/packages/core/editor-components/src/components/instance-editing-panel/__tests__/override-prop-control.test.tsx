@@ -2,7 +2,15 @@ import * as React from 'react';
 import { createMockContainer, createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl, useBoundProp } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getElementLabel,
+	getElementSettings,
+	getElementType,
+	getWidgetsCache,
+	type V1Element,
+} from '@elementor/editor-elements';
+import { linkPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -14,7 +22,6 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { componentInstanceOverridePropTypeUtil } from '../../../prop-types/component-instance-override-prop-type';
 import { type ComponentInstanceOverridesPropValue } from '../../../prop-types/component-instance-overrides-prop-type';
-import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { ComponentInstanceProvider } from '../../../provider/component-instance-context';
 import { slice } from '../../../store/store';
@@ -28,8 +35,6 @@ jest.mock( '@elementor/editor-controls', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-elements' );
-
-jest.mock( '../../../prop-types/component-instance-prop-type' );
 
 jest.mock( '../../../utils/get-container-by-origin-id', () => ( {
 	getContainerByOriginId: jest.fn(),
@@ -94,13 +99,6 @@ describe( '<OverridePropControl />', () => {
 			propType: MOCK_COMPONENT_INSTANCE_PROP_TYPE,
 			path: [ 'component_instance' ],
 		} );
-
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
-			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
-			overrides: { $$type: 'overrides', value: [] },
-		} );
-
-		setupElementsMocks();
 	} );
 
 	const MOCK_OVERRIDABLE_PROP: OverridableProp = {
@@ -115,10 +113,13 @@ describe( '<OverridePropControl />', () => {
 	};
 
 	describe( 'createOverrideValue structure', () => {
+		beforeEach( () => {
+			setupElementsMocks();
+		} );
+
 		it.each( [
 			{
 				should: 'create simple override structure when no matchingOverride',
-				currentComponentId: null,
 				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: null,
 				expectedOverrideStructure: {
@@ -132,7 +133,6 @@ describe( '<OverridePropControl />', () => {
 			},
 			{
 				should: 'create simple override structure when updating existing plain override',
-				currentComponentId: MOCK_COMPONENT_ID_2,
 				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: componentInstanceOverridePropTypeUtil.create( {
 					override_key: 'prop-1',
@@ -150,7 +150,6 @@ describe( '<OverridePropControl />', () => {
 			},
 			{
 				should: 'create nested overridable structure when matchingOverride is overridable',
-				currentComponentId: MOCK_COMPONENT_ID_2,
 				currentComponentInstanceId: MOCK_COMPONENT_ID,
 				matchingOverride: componentOverridablePropTypeUtil.create( {
 					override_key: 'outer-key',
@@ -175,36 +174,32 @@ describe( '<OverridePropControl />', () => {
 					},
 				},
 			},
-		] )(
-			'should $should',
-			( { currentComponentId, matchingOverride, expectedOverrideStructure, currentComponentInstanceId } ) => {
-				// Arrange
-				setupComponent( currentComponentId );
-				const overrides = matchingOverride ? [ matchingOverride ] : [];
+		] )( 'should $should', ( { matchingOverride, expectedOverrideStructure, currentComponentInstanceId } ) => {
+			// Arrange
+			const overrides = matchingOverride ? [ matchingOverride ] : [];
 
-				// Act
-				renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides, currentComponentInstanceId );
+			// Act
+			renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides, currentComponentInstanceId );
 
-				const input = screen.getByRole( 'textbox' );
-				fireEvent.change( input, { target: { value: 'New Value' } } );
+			const input = screen.getByRole( 'textbox' );
+			fireEvent.change( input, { target: { value: 'New Value' } } );
 
-				// Assert
-				expect( mockSetInstanceValue ).toHaveBeenCalled();
-				const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
-				const newOverrides = setValueCall.overrides.value;
+			// Assert
+			expect( mockSetInstanceValue ).toHaveBeenCalled();
+			const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
+			const newOverrides = setValueCall.overrides.value;
 
-				const [ createdOverride ] = newOverrides;
-				expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
-				expect( createdOverride.value ).toEqual( expectedOverrideStructure.value );
-			}
-		);
+			const [ createdOverride ] = newOverrides;
+			expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
+			expect( createdOverride.value ).toEqual( expectedOverrideStructure.value );
+		} );
 	} );
 
 	describe( 'inner control element context', () => {
 		it( 'should use originPropFields element context when available', () => {
 			// Arrange
 			const MOCK_NESTED_OVERRIDABLE_PROP: OverridableProp = {
-				overrideKey: 'nested-prop-1',
+				overrideKey: 'prop-2',
 				label: 'Nested Title',
 				elementId: 'nested-instance-1',
 				propKey: 'title',
@@ -213,21 +208,24 @@ describe( '<OverridePropControl />', () => {
 				groupId: 'nested',
 				originValue: { $$type: 'string', value: 'Nested Value' },
 				originPropFields: {
-					propKey: 'content',
-					widgetType: 'e-text',
+					propKey: 'title',
+					widgetType: 'e-heading',
 					elType: 'widget',
-					elementId: 'original-text-element',
+					elementId: 'element-1',
 				},
 			};
 
-			setupComponent( MOCK_COMPONENT_ID_2 );
+			setupInnerComponent( MOCK_COMPONENT_ID_2, 'nested-instance-1', 'prop-2' );
 
 			// Act
 			renderOverridePropControl( store, MOCK_NESTED_OVERRIDABLE_PROP, [], MOCK_COMPONENT_ID );
 
 			// Assert
 			expect( screen.getByText( 'Nested Title' ) ).toBeInTheDocument();
-			expect( getElementType ).toHaveBeenCalledWith( 'e-text' );
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Element 1 Original Title' );
+			expect( getElementType ).toHaveBeenCalledWith( 'e-heading' );
 		} );
 	} );
 
@@ -238,41 +236,79 @@ describe( '<OverridePropControl />', () => {
 		const INNER_ELEMENT_ID = 'inner-element-1';
 		const MIDDLE_ELEMENT_ID = 'middle-element-1';
 
-		const INNER_OVERRIDE_KEY = 'inner-prop-key';
-		const MIDDLE_OVERRIDE_KEY = 'middle-prop-key';
+		const INNER_OVERRIDE_KEY_1 = 'inner-prop-key';
+		const INNER_OVERRIDE_KEY_2 = 'inner-prop-key-2';
+		const MIDDLE_OVERRIDE_KEY_1 = 'middle-prop-key';
+		const MIDDLE_OVERRIDE_KEY_2 = 'middle-prop-key-2';
 		const OUTER_OVERRIDE_KEY = 'outer-prop-key';
 
-		const INNER_ORIGIN_VALUE = { $$type: 'string', value: 'Innermost Origin Value' };
+		const INNER_ORIGIN_VALUE_1 = { $$type: 'string', value: 'Innermost Origin Value' };
+		const INNER_ORIGIN_VALUE_2 = { $$type: 'string', value: 'Link Origin Value' };
 
-		it( 'should show originValue when override is cleared (single level)', () => {
+		const INNER_ELEMENT = createMockContainer( INNER_ELEMENT_ID, [], 'e-heading', {
+			title: stringPropTypeUtil.create( 'Innermost Origin Value' ),
+			link: stringPropTypeUtil.create( 'Link Origin Value' ),
+		} );
+		const INNER_COMPONENT_INSTANCE = createMockContainer( INNER_ELEMENT_ID, [], 'e-component', {
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: { $$type: 'number', value: INNER_COMPONENT_ID },
+					overrides: {
+						$$type: 'overrides',
+						value: [
+							componentOverridablePropTypeUtil.create( {
+								override_key: MIDDLE_OVERRIDE_KEY_1,
+								origin_value: componentInstanceOverridePropTypeUtil.create( {
+									override_key: INNER_OVERRIDE_KEY_1,
+									override_value: null,
+									schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+								} ),
+							} ),
+							componentOverridablePropTypeUtil.create( {
+								override_key: MIDDLE_OVERRIDE_KEY_2,
+								origin_value: componentInstanceOverridePropTypeUtil.create( {
+									override_key: INNER_OVERRIDE_KEY_2,
+									override_value: null,
+									schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+								} ),
+							} ),
+						],
+					},
+				},
+			},
+		} );
+
+		it( 'should show empty value with no placeholder when override exists with null value (single level)', () => {
 			// Arrange
 			const overridableProp: OverridableProp = {
-				overrideKey: INNER_OVERRIDE_KEY,
+				overrideKey: INNER_OVERRIDE_KEY_1,
 				label: 'Title',
 				elementId: INNER_ELEMENT_ID,
 				propKey: 'title',
 				widgetType: 'e-heading',
 				elType: 'widget',
 				groupId: 'content',
-				originValue: INNER_ORIGIN_VALUE,
+				originValue: INNER_ORIGIN_VALUE_1,
 			};
 
 			const overrideWithNullValue = componentInstanceOverridePropTypeUtil.create( {
-				override_key: INNER_OVERRIDE_KEY,
+				override_key: INNER_OVERRIDE_KEY_1,
 				override_value: null,
 				schema_source: { type: 'component', id: INNER_COMPONENT_ID },
 			} );
 
+			setupElementsMocks( { [ INNER_ELEMENT_ID ]: INNER_ELEMENT } );
 			setupNestedComponents( [
 				{
 					componentId: INNER_COMPONENT_ID,
 					elementId: INNER_ELEMENT_ID,
 					props: [
 						{
-							overrideKey: INNER_OVERRIDE_KEY,
+							overrideKey: INNER_OVERRIDE_KEY_1,
 							propKey: 'title',
 							label: 'Title',
-							originValue: INNER_ORIGIN_VALUE,
+							originValue: INNER_ORIGIN_VALUE_1,
 						},
 					],
 				},
@@ -283,13 +319,52 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Innermost Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
 		} );
 
-		it( 'should recursively find origin value through nested overridable structure', () => {
+		it( 'should show originValue as placeholder when no override exists (single level)', () => {
+			// Arrange
+			const overridableProp: OverridableProp = {
+				overrideKey: INNER_OVERRIDE_KEY_1,
+				label: 'Title',
+				elementId: INNER_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: INNER_ORIGIN_VALUE_1,
+			};
+
+			setupElementsMocks( { [ INNER_ELEMENT_ID ]: INNER_ELEMENT } );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+					],
+				},
+			] );
+
+			// Act
+			renderOverridePropControl( store, overridableProp, [], INNER_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Innermost Origin Value' );
+		} );
+
+		it( 'should show empty value with no placeholder when nested override exists with null value', () => {
 			// Arrange
 			const overridablePropWithNullOrigin: OverridableProp = {
-				overrideKey: MIDDLE_OVERRIDE_KEY,
+				overrideKey: MIDDLE_OVERRIDE_KEY_1,
 				label: 'Nested Title',
 				elementId: MIDDLE_ELEMENT_ID,
 				propKey: 'title',
@@ -308,22 +383,26 @@ describe( '<OverridePropControl />', () => {
 			const nestedOverridableWithNullValue = componentOverridablePropTypeUtil.create( {
 				override_key: OUTER_OVERRIDE_KEY,
 				origin_value: componentInstanceOverridePropTypeUtil.create( {
-					override_key: MIDDLE_OVERRIDE_KEY,
+					override_key: MIDDLE_OVERRIDE_KEY_1,
 					override_value: null,
 					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
 				} ),
 			} );
 
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
 			setupNestedComponents( [
 				{
 					componentId: INNER_COMPONENT_ID,
 					elementId: INNER_ELEMENT_ID,
 					props: [
 						{
-							overrideKey: INNER_OVERRIDE_KEY,
+							overrideKey: INNER_OVERRIDE_KEY_1,
 							propKey: 'title',
 							label: 'Title',
-							originValue: INNER_ORIGIN_VALUE,
+							originValue: INNER_ORIGIN_VALUE_1,
 						},
 					],
 				},
@@ -332,7 +411,7 @@ describe( '<OverridePropControl />', () => {
 					elementId: MIDDLE_ELEMENT_ID,
 					props: [
 						{
-							overrideKey: MIDDLE_OVERRIDE_KEY,
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
 							propKey: 'title',
 							label: 'Title',
 							originValue: null,
@@ -357,16 +436,79 @@ describe( '<OverridePropControl />', () => {
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Innermost Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
 		} );
 
-		it( 'should resolve correct origin when multiple props share the same elementId', () => {
+		it( 'should recursively find origin value as placeholder when no override exists', () => {
 			// Arrange
-			const LINK_OVERRIDE_KEY = 'link-prop-key';
-			const LINK_ORIGIN_VALUE = { $$type: 'string', value: 'Link Origin Value' };
+			const overridablePropWithNullOrigin: OverridableProp = {
+				overrideKey: MIDDLE_OVERRIDE_KEY_1,
+				label: 'Nested Title',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
 
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+					],
+				},
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
+
+			// Act
+			renderOverridePropControl( store, overridablePropWithNullOrigin, [], MIDDLE_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Innermost Origin Value' );
+		} );
+
+		it( 'should show empty value with no placeholder when override exists for specific prop among multiple', () => {
+			// Arrange
 			const linkOverridableProp: OverridableProp = {
-				overrideKey: LINK_OVERRIDE_KEY,
+				overrideKey: MIDDLE_OVERRIDE_KEY_2,
 				label: 'Link',
 				elementId: MIDDLE_ELEMENT_ID,
 				propKey: 'link',
@@ -383,9 +525,9 @@ describe( '<OverridePropControl />', () => {
 			};
 
 			const linkOverrideWithNullValue = componentOverridablePropTypeUtil.create( {
-				override_key: LINK_OVERRIDE_KEY,
+				override_key: OUTER_OVERRIDE_KEY,
 				origin_value: componentInstanceOverridePropTypeUtil.create( {
-					override_key: LINK_OVERRIDE_KEY,
+					override_key: MIDDLE_OVERRIDE_KEY_2,
 					override_value: null,
 					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
 				} ),
@@ -397,16 +539,16 @@ describe( '<OverridePropControl />', () => {
 					elementId: INNER_ELEMENT_ID,
 					props: [
 						{
-							overrideKey: INNER_OVERRIDE_KEY,
+							overrideKey: INNER_OVERRIDE_KEY_1,
 							propKey: 'title',
 							label: 'Title',
-							originValue: INNER_ORIGIN_VALUE,
+							originValue: INNER_ORIGIN_VALUE_1,
 						},
 						{
-							overrideKey: LINK_OVERRIDE_KEY,
+							overrideKey: INNER_OVERRIDE_KEY_2,
 							propKey: 'link',
 							label: 'Link',
-							originValue: LINK_ORIGIN_VALUE,
+							originValue: INNER_ORIGIN_VALUE_2,
 						},
 					],
 				},
@@ -415,7 +557,7 @@ describe( '<OverridePropControl />', () => {
 					elementId: MIDDLE_ELEMENT_ID,
 					props: [
 						{
-							overrideKey: INNER_OVERRIDE_KEY,
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
 							propKey: 'title',
 							label: 'Title',
 							originValue: null,
@@ -427,7 +569,7 @@ describe( '<OverridePropControl />', () => {
 							},
 						},
 						{
-							overrideKey: LINK_OVERRIDE_KEY,
+							overrideKey: MIDDLE_OVERRIDE_KEY_2,
 							propKey: 'link',
 							label: 'Link',
 							originValue: null,
@@ -441,13 +583,101 @@ describe( '<OverridePropControl />', () => {
 					],
 				},
 			] );
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
 
 			// Act
 			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ], MIDDLE_COMPONENT_ID );
 
 			// Assert
 			const input = screen.getByRole( 'textbox' );
-			expect( input ).toHaveValue( 'Link Origin Value' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).not.toHaveAttribute( 'placeholder' );
+		} );
+
+		it( 'should resolve correct origin as placeholder when no override exists for specific prop among multiple', () => {
+			// Arrange
+			const linkOverridableProp: OverridableProp = {
+				overrideKey: MIDDLE_OVERRIDE_KEY_2,
+				label: 'Link',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'link',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'link',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
+
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE_1,
+						},
+						{
+							overrideKey: INNER_OVERRIDE_KEY_2,
+							propKey: 'link',
+							label: 'Link',
+							originValue: INNER_ORIGIN_VALUE_2,
+						},
+					],
+				},
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_1,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY_2,
+							propKey: 'link',
+							label: 'Link',
+							originValue: null,
+							originPropFields: {
+								propKey: 'link',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
+			setupElementsMocks( {
+				[ INNER_ELEMENT_ID ]: INNER_ELEMENT,
+				[ MIDDLE_ELEMENT_ID ]: INNER_COMPONENT_INSTANCE,
+			} );
+
+			// Act
+			renderOverridePropControl( store, linkOverridableProp, [], MIDDLE_COMPONENT_ID );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( '' );
+			expect( input ).toHaveAttribute( 'placeholder', 'Link Origin Value' );
 		} );
 	} );
 } );
@@ -515,7 +745,7 @@ function setupNestedComponents( layers: ComponentLayerConfig[] ) {
 	dispatch( slice.actions.load( components ) );
 }
 
-function setupElementsMocks() {
+function setupElementsMocks( elements?: Record< string, V1Element > ) {
 	const widgetDefinitions: Record< string, { props: Array< { propKey: string; label: string } >; title: string } > = {
 		'e-heading': {
 			title: 'Heading',
@@ -530,8 +760,37 @@ function setupElementsMocks() {
 		},
 	};
 
-	jest.mocked( getContainer ).mockImplementation( ( id ) => createMockContainer( id, [] ) );
-	jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => createMockContainer( originId, [] ) );
+	const innerElementIds = [ 'element-1', 'original-text-element' ];
+	jest.mocked( getContainer ).mockImplementation( ( id ) => {
+		if ( innerElementIds.includes( id ) ) {
+			return createMockContainer( id, [] );
+		}
+		return elements?.[ id ] ?? null;
+	} );
+	jest.mocked( getContainerByOriginId ).mockImplementation( ( originId ) => {
+		if ( innerElementIds.includes( originId ) ) {
+			return createMockContainer( originId, [] );
+		}
+		return elements?.[ originId ] ?? null;
+	} );
+	jest.mocked( getElementSettings ).mockImplementation( ( id ) => {
+		switch ( id ) {
+			case 'element-1':
+				return {
+					title: stringPropTypeUtil.create( 'Element 1 Original Title' ),
+					link: linkPropTypeUtil.create( { destination: 'https://example.com' } ),
+				};
+			case 'original-text-element':
+				return {
+					content: stringPropTypeUtil.create( 'Original Text Element Content' ),
+				};
+			default:
+				if ( elements?.[ id ] ) {
+					return elements[ id ].settings.toJSON();
+				}
+				return {};
+		}
+	} );
 
 	jest.mocked( getElementType ).mockImplementation( ( type ) => {
 		const def = widgetDefinitions[ type ];
@@ -580,9 +839,9 @@ function setupElementsMocks() {
 	jest.mocked( getWidgetsCache ).mockReturnValue( widgetsCache );
 }
 
-function setupComponent( currentComponentId: number | null ) {
+function setupInnerComponent( componentId: number, instanceId: string, outerKey: string ) {
 	const componentData = {
-		id: MOCK_COMPONENT_ID,
+		id: componentId,
 		uid: 'component-uid',
 		name: 'Test Component',
 		overridableProps: {
@@ -595,7 +854,7 @@ function setupComponent( currentComponentId: number | null ) {
 					widgetType: 'e-heading',
 					elType: 'widget',
 					groupId: 'content',
-					originValue: { $$type: 'string', value: 'Original' },
+					originValue: { $$type: 'string', value: 'Element 1 Original Title' },
 				},
 			},
 			groups: {
@@ -609,9 +868,29 @@ function setupComponent( currentComponentId: number | null ) {
 
 	dispatch( slice.actions.load( [ componentData ] ) );
 
-	if ( currentComponentId ) {
-		dispatch( slice.actions.setCurrentComponentId( currentComponentId ) );
-	}
+	setupElementsMocks( {
+		[ instanceId ]: createMockContainer( instanceId, [], 'e-component', {
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: { $$type: 'number', value: componentId },
+					overrides: {
+						$$type: 'overrides',
+						value: [
+							componentOverridablePropTypeUtil.create( {
+								override_key: outerKey,
+								origin_value: componentInstanceOverridePropTypeUtil.create( {
+									override_key: 'prop-1',
+									override_value: null,
+									schema_source: { type: 'component', id: componentId },
+								} ),
+							} ),
+						],
+					},
+				},
+			},
+		} ),
+	} );
 }
 
 function renderOverridePropControl(

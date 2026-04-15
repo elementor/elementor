@@ -157,7 +157,7 @@ function getAtomicFormFields( form ) {
 
 		const label = getAtomicFormFieldLabel( input, form );
 		const type = getAtomicFormFieldType( input );
-		const value = input.value;
+		const value = getAtomicFormFieldValue( input, type );
 
 		fields.push( {
 			id,
@@ -195,6 +195,14 @@ function getAtomicFormFieldLabel( field, form ) {
 	return placeholder || '';
 }
 
+function getAtomicFormFieldValue( input, type ) {
+	if ( 'checkbox' !== type ) {
+		return input.value;
+	}
+
+	return input.checked ? input.value || 'on' : '';
+}
+
 function getAtomicFormFieldType( field ) {
 	if ( field.matches( 'textarea' ) ) {
 		return 'textarea';
@@ -216,6 +224,8 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'post_id', payload.postId );
 	formData.append( 'form_id', payload.formId );
 	formData.append( 'form_name', payload.formName );
+	formData.append( 'referer_title', document?.title ?? '' );
+	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => {
 		formData.append( `form_fields[${ index }][id]`, field.id );
 		formData.append( `form_fields[${ index }][type]`, field.type );

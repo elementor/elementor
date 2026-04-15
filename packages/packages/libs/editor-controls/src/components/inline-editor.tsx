@@ -1,14 +1,6 @@
 import * as React from 'react';
-import {
-	type DependencyList,
-	type Dispatch,
-	type PropsWithChildren,
-	type RefObject,
-	type SetStateAction,
-	useEffect,
-	useRef,
-} from 'react';
-import { Box, ClickAwayListener, type SxProps, type Theme } from '@elementor/ui';
+import { type DependencyList, type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
+import { Box, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -24,7 +16,7 @@ import Underline from '@tiptap/extension-underline';
 import { type EditorProps, type EditorView } from '@tiptap/pm/view';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
-import { isEmpty } from '../utils/inline-editing';
+import { htmlToPlainText, isEmpty } from '../utils/inline-editing';
 
 const ITALIC_KEYBOARD_SHORTCUT = 'i';
 const BOLD_KEYBOARD_SHORTCUT = 'b';
@@ -33,6 +25,7 @@ const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
+	placeholder?: string | null;
 	editorProps?: EditorProps;
 	elementClasses?: string;
 	sx?: SxProps< Theme >;
@@ -42,20 +35,14 @@ type InlineEditorProps = {
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
 	wrapperClassName?: string;
 	onSelectionEnd?: ( view: EditorView ) => void;
+	mountElement?: HTMLElement | null;
 };
-
-type WrapperProps = PropsWithChildren< {
-	containerRef: RefObject< HTMLDivElement >;
-	editor: ReturnType< typeof useEditor >;
-	sx: SxProps< Theme >;
-	onBlur?: () => void;
-	className?: string;
-} >;
 
 export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
 	const {
 		value,
 		setValue,
+		placeholder = null,
 		editorProps = {},
 		elementClasses = '',
 		autofocus = false,
@@ -65,9 +52,12 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		onEditorCreate,
 		wrapperClassName,
 		onSelectionEnd,
+		mountElement = null,
 	} = props;
 
 	const containerRef = useRef< HTMLDivElement >( null );
+	const onBlurRef = useRef( onBlur );
+	onBlurRef.current = onBlur;
 	const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 
 	const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
@@ -78,7 +68,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 
 	const onKeyDown = ( _: Editor[ 'view' ], event: KeyboardEvent ) => {
 		if ( event.key === 'Escape' ) {
-			onBlur?.();
+			onBlurRef.current?.();
 		}
 
 		if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
@@ -96,6 +86,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 	} );
 
 	const editor = useEditor( {
+		...( mountElement ? { element: mountElement } : {} ),
 		extensions: [
 			Document.extend( {
 				content: documentContentSettings,
@@ -150,9 +141,12 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			attributes: {
 				...( editorProps.attributes ?? {} ),
 				role: 'textbox',
+				...( placeholder ? { 'data-placeholder': htmlToPlainText( placeholder ) } : {} ),
+				...( value === null || value === '' ? { class: 'is-empty' } : {} ),
 			},
 		},
 		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
+		onBlur: mountElement ? undefined : () => onBlurRef.current?.(),
 		onSelectionUpdate: onSelectionEnd
 			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
 			: undefined,
@@ -170,47 +164,16 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		}
 	}, [ editor, value ] );
 
-	return (
-		<>
-			<Wrapper
-				containerRef={ containerRef }
-				editor={ editor }
-				sx={ sx }
-				onBlur={ onBlur }
-				className={ wrapperClassName }
-			>
-				<EditorContent ref={ ref } editor={ editor } />
-			</Wrapper>
-		</>
-	);
-} );
+	if ( mountElement ) {
+		return null;
+	}
 
-const Wrapper = ( { children, containerRef, editor, sx, onBlur, className }: WrapperProps ) => {
-	const wrappedChildren = (
-		<Box ref={ containerRef } { ...sx } className={ className }>
-			{ children }
+	return (
+		<Box ref={ containerRef } sx={ sx } className={ wrapperClassName }>
+			<EditorContent ref={ ref } editor={ editor } />
 		</Box>
 	);
-
-	return onBlur ? (
-		<ClickAwayListener
-			onClickAway={ ( event: PointerEvent ) => {
-				if (
-					containerRef.current?.contains( event.target as Node ) ||
-					editor.view.dom.contains( event.target as Node )
-				) {
-					return;
-				}
-
-				onBlur?.();
-			} }
-		>
-			{ wrappedChildren }
-		</ClickAwayListener>
-	) : (
-		<>{ wrappedChildren }</>
-	);
-};
+} );
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
