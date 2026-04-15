@@ -1,8 +1,24 @@
+import { type SizePropValue } from '@elementor/editor-props';
 import { act, renderHook } from '@testing-library/react';
 
+import { isExtendedUnit } from '../../utils/is-extended-unit';
 import { useUnitSync } from '../use-unit-sync';
 
+jest.mock( '../../utils/is-extended-unit' );
+
+const mockIsExtendedUnit = jest.mocked( isExtendedUnit );
+
+const sizeValue: SizePropValue[ 'value' ] = {
+	unit: 'px',
+	size: 0,
+};
+
 describe( 'useUnitSync', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockIsExtendedUnit.mockReturnValue( false );
+	} );
+
 	it( 'should initialize state from unit prop', () => {
 		// Arrange.
 		const setUnit = jest.fn();
@@ -10,7 +26,7 @@ describe( 'useUnitSync', () => {
 		// Act.
 		const { result } = renderHook( () =>
 			useUnitSync( {
-				unit: 'px',
+				sizeValue,
 				setUnit,
 				persistWhen: () => true,
 			} )
@@ -27,7 +43,7 @@ describe( 'useUnitSync', () => {
 
 		const { result } = renderHook( () =>
 			useUnitSync( {
-				unit: 'px',
+				sizeValue,
 				setUnit,
 				persistWhen: () => true,
 			} )
@@ -48,7 +64,7 @@ describe( 'useUnitSync', () => {
 
 		const { result } = renderHook( () =>
 			useUnitSync( {
-				unit: 'px',
+				sizeValue,
 				setUnit,
 				persistWhen: () => false,
 			} )
@@ -66,11 +82,12 @@ describe( 'useUnitSync', () => {
 		'should call setUnit when selecting extended unit %s even if persistWhen returns false',
 		( extendedUnit ) => {
 			// Arrange.
+			mockIsExtendedUnit.mockReturnValue( true );
 			const setUnit = jest.fn();
 
 			const { result } = renderHook( () =>
 				useUnitSync( {
-					unit: 'px',
+					sizeValue,
 					setUnit,
 					persistWhen: () => false,
 				} )
@@ -91,19 +108,19 @@ describe( 'useUnitSync', () => {
 		const setUnit = jest.fn();
 
 		const { result, rerender } = renderHook(
-			( { unit }: { unit: string } ) =>
+			( { propSizeValue }: { propSizeValue: SizePropValue[ 'value' ] } ) =>
 				useUnitSync( {
-					unit,
+					sizeValue: propSizeValue,
 					setUnit,
 					persistWhen: () => true,
 				} ),
-			{ initialProps: { unit: 'px' } }
+			{ initialProps: { propSizeValue: { unit: 'px', size: 0 } } }
 		);
 
 		expect( result.current[ 0 ] ).toBe( 'px' );
 
 		// Act.
-		rerender( { unit: 'em' } );
+		rerender( { propSizeValue: { unit: 'em', size: 0 } } );
 
 		// Assert.
 		expect( result.current[ 0 ] ).toBe( 'em' );
@@ -114,13 +131,13 @@ describe( 'useUnitSync', () => {
 		const setUnit = jest.fn();
 
 		const { result, rerender } = renderHook(
-			( { unit }: { unit: string } ) =>
+			( { propSizeValue }: { propSizeValue: SizePropValue[ 'value' ] } ) =>
 				useUnitSync( {
-					unit,
+					sizeValue: propSizeValue,
 					setUnit,
 					persistWhen: () => false,
 				} ),
-			{ initialProps: { unit: 'px' } }
+			{ initialProps: { propSizeValue: { unit: 'px', size: 0 } } }
 		);
 
 		act( () => result.current[ 1 ]( 'rem' ) );
@@ -128,10 +145,40 @@ describe( 'useUnitSync', () => {
 		expect( setUnit ).not.toHaveBeenCalled();
 
 		// Act.
-		rerender( { unit: 'em' } );
+		rerender( { propSizeValue: { unit: 'em', size: 0 } } );
 
 		// Assert.
 		expect( result.current[ 0 ] ).toBe( 'em' );
+	} );
+
+	it( 'should reflect external unit when parent rerenders with same prop after non-persisted % selection', () => {
+		// Arrange.
+		const setUnit = jest.fn();
+
+		const { result, rerender } = renderHook(
+			( { propSizeValue }: { propSizeValue: SizePropValue[ 'value' ] } ) =>
+				useUnitSync( {
+					sizeValue: propSizeValue,
+					setUnit,
+					persistWhen: () => false,
+				} ),
+			{ initialProps: { propSizeValue: { unit: 'rem', size: 0 } } }
+		);
+
+		expect( result.current[ 0 ] ).toBe( 'rem' );
+
+		// Act.
+		act( () => result.current[ 1 ]( '%' ) );
+
+		// Assert.
+		expect( setUnit ).not.toHaveBeenCalled();
+		expect( result.current[ 0 ] ).toBe( '%' );
+
+		// Act.
+		rerender( { propSizeValue: { unit: 'rem', size: 3 } } );
+
+		// Assert.
+		expect( result.current[ 0 ] ).toBe( 'rem' );
 	} );
 
 	it( 'should call persistWhen on each selection without stale closure from previous render', () => {
@@ -140,18 +187,18 @@ describe( 'useUnitSync', () => {
 		const persistWhen = jest.fn().mockReturnValueOnce( false ).mockReturnValue( true );
 
 		const { result, rerender } = renderHook(
-			( { unit }: { unit: string } ) =>
+			( { propSizeValue }: { propSizeValue: SizePropValue[ 'value' ] } ) =>
 				useUnitSync( {
-					unit,
+					sizeValue: propSizeValue,
 					setUnit,
 					persistWhen,
 				} ),
-			{ initialProps: { unit: 'px' } }
+			{ initialProps: { propSizeValue: { unit: 'px', size: 0 } } }
 		);
 
 		// Act.
 		act( () => result.current[ 1 ]( 'rem' ) );
-		rerender( { unit: 'rem' } );
+		rerender( { propSizeValue: { unit: 'rem', size: 0 } } );
 		act( () => result.current[ 1 ]( 'em' ) );
 
 		// Assert.
