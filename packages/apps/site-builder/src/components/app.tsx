@@ -26,7 +26,7 @@ const iframeStyle: React.CSSProperties = {
 	zIndex: 10000,
 };
 
-function getConfig(): SiteBuilderConfig {
+function getConfig(): SiteBuilderConfig | undefined {
 	return window.elementorAppConfig?.[ 'site-builder' ];
 }
 
