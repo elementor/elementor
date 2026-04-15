@@ -3,7 +3,7 @@ import { type PropType } from '@elementor/editor-props';
 import { type SizeUnit } from '../../types';
 
 type Settings = {
-	units?: SizeUnit[];
+	available_units?: SizeUnit[];
 	default_unit?: SizeUnit;
 };
 
