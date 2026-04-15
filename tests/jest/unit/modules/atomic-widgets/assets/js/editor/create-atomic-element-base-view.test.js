@@ -724,7 +724,7 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		mockModel.getSetting.mockReturnValue( undefined );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toBeNull();
@@ -740,12 +740,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://example.com',
+			href: 'https://example.com',
 		} );
 	} );
 
@@ -759,12 +758,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://example.com/?p=123',
+			href: 'https://example.com/?p=123',
 		} );
 	} );
 
@@ -778,12 +776,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'data-action-link',
-			value: DYNAMIC_LINK_VALUE,
+			'data-action-link': DYNAMIC_LINK_VALUE,
 		} );
 	} );
 
@@ -799,12 +796,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://dynamic-url.com',
+			href: 'https://dynamic-url.com',
 		} );
 	} );
 
@@ -820,12 +816,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: originUrl,
+			href: originUrl,
 		} );
 	} );
 
@@ -848,12 +843,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} ) );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: overrideUrl,
+			href: overrideUrl,
 		} );
 	} );
 } );
