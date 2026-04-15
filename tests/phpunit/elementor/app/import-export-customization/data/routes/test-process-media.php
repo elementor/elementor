@@ -49,10 +49,12 @@ class Test_Process_Media extends Elementor_Test_Base {
     public function test_allows_admin_access() {
         $this->init_rest_api();
         $this->act_as_admin();
+        $this->add_mock_http_filter();
 
         $response = $this->send_request( [ 'https://example.com/image.jpg' ] );
 
         $this->assertNotEquals( 403, $response->get_status() );
+        $this->remove_mock_http_filter();
     }
 
     public function test_processes_valid_request() {
@@ -127,6 +129,28 @@ class Test_Process_Media extends Elementor_Test_Base {
         $status = $response->get_status();
 
         $this->assertEquals( 500, $status );
+    }
+
+    private function add_mock_http_filter() {
+        add_filter( 'pre_http_request', [ $this, 'mock_http_filter' ], 10, 3 );
+    }
+
+    private function remove_mock_http_filter() {
+        remove_filter( 'pre_http_request', [ $this, 'mock_http_filter' ] );
+    }
+
+    public function mock_http_filter( $preempt, $args, $url ) {
+        if ( strpos( $url, 'example.com' ) === false ) {
+            return $preempt;
+        }
+
+        return [
+            'response' => [
+                'code' => 200,
+                'message' => 'OK',
+            ],
+            'body' => 'fake-image-content',
+        ];
     }
 
     private function send_request( $media_urls ) {

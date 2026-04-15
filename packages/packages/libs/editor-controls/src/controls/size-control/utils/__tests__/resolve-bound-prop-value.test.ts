@@ -145,5 +145,58 @@ describe( 'resolveBoundPropValue', () => {
 			// Assert.
 			expect( result.placeholder ).toBe( 'Prop wins' );
 		} );
+
+		it( 'should derive placeholder from propPlaceholder when it is a SizeValue', () => {
+			// Arrange.
+			const value = null;
+			const propPlaceholder = { size: 12, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.placeholder ).toBe( '12' );
+		} );
+	} );
+
+	describe( 'propPlaceholder as SizeValue', () => {
+		it( 'should use propPlaceholder as sizeValue with empty size when value is null', () => {
+			// Arrange.
+			const value = null;
+			const propPlaceholder = { size: 16, unit: 'px' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: '', unit: 'px' } );
+		} );
+
+		it( 'should prefer propPlaceholder SizeValue over boundPropPlaceholder for sizeValue', () => {
+			// Arrange.
+			const value = null;
+			const boundPropPlaceholder = { size: 8, unit: 'em' as const };
+			const propPlaceholder = { size: 24, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, boundPropPlaceholder, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: '', unit: 'rem' } );
+			expect( result.placeholder ).toBe( '24' );
+		} );
+
+		it( 'should not use propPlaceholder SizeValue when value is valid', () => {
+			// Arrange.
+			const value = { size: 5, unit: 'px' as const };
+			const propPlaceholder = { size: 99, unit: 'rem' as const };
+
+			// Act.
+			const result = resolveBoundPropValue( value, undefined, propPlaceholder );
+
+			// Assert.
+			expect( result.sizeValue ).toEqual( { size: 5, unit: 'px' } );
+			expect( result.placeholder ).toBe( undefined );
+		} );
 	} );
 } );
