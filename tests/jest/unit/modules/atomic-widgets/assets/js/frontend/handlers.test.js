@@ -12,7 +12,7 @@ jest.mock( '@elementor/alpinejs', () => ( {
 } ), { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
-const SELECTOR = '[data-action-link], :has([data-action-link])';
+const SELECTOR = '[data-action-link], :has(> [data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
 const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
@@ -27,7 +27,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	let runAction;
 
 	const importHandlers = async () => {
-		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/action-link-handlers' );
+		await import( 'elementor/modules/atomic-widgets/assets/js/frontend/form-handlers' );
 
 		const { registerBySelector: mockedRegisterBySelector } = jest.requireMock( '@elementor/frontend-handlers' );
 		const registrations = mockedRegisterBySelector.mock.calls
