@@ -3,19 +3,6 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { deployWebsite } from '../deploy';
 
-type SiteBuilderConfig = {
-	connectAuth?: {
-		accessToken?: string;
-		clientId?: string;
-		homeUrl?: string;
-		siteKey?: string;
-		signature?: string;
-	};
-	elementorAiCurrentContext?: Record< string, unknown >;
-	iframeUrl?: string;
-	isAdmin?: boolean;
-};
-
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
 	top: 0,
@@ -26,11 +13,11 @@ const iframeStyle: React.CSSProperties = {
 	zIndex: 10000,
 };
 
-function getConfig(): SiteBuilderConfig | undefined {
+function getConfig() {
 	return window.elementorAppConfig?.[ 'site-builder' ];
 }
 
-function getElementorAiCurrentContext(): Record< string, unknown > {
+function getElementorAiCurrentContext() {
 	return getConfig()?.elementorAiCurrentContext || {};
 }
 
