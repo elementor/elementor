@@ -1,4 +1,4 @@
-import { type StyleDefinitionID, type StyleDefinitionsMap } from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
 import { type CssClassUsage } from './components/css-class-usage/types';
@@ -19,8 +19,10 @@ export type GlobalClassIndexEntry = {
 
 export type GlobalClassesIndexHttpResponse = HttpResponse< GlobalClassIndexEntry[], Record< string, never > >;
 
+export type StyleDefinitionsNullableMap = Record< StyleDefinitionID, StyleDefinition | null >;
+
 export type GlobalClassesStylesHttpResponse = HttpResponse<
-	StyleDefinitionsMap,
+	StyleDefinitionsNullableMap,
 	{
 		order: StyleDefinitionID[];
 	}

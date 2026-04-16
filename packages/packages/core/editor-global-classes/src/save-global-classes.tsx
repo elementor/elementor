@@ -36,10 +36,12 @@ export async function saveGlobalClasses( { context, onApprove }: Options ) {
 
 	if ( response?.data?.data?.code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		dispatch( slice.actions.updateMultiple( response.data.data.modifiedLabels ) );
+
 		trackGlobalClasses( {
 			event: 'classPublishConflict',
 			numOfConflicts: Object.keys( response.data.data.modifiedLabels ).length,
 		} );
+
 		openDialog( {
 			component: (
 				<DuplicateLabelDialog

@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -1272,6 +1273,44 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertCount( 1, (array) $data['data'] );
 		$this->assertArrayHasKey( 'g-4-123', (array) $data['data'] );
 		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
+	}
+
+	public function test_styles__returns_explicit_null_for_missing_ids() {
+		$this->act_as_admin();
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/styles' );
+		$request->set_param( 'ids', 'g-4-123,g-missing' );
+		$response = rest_do_request( $request );
+
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertNotNull( $data['data']->{'g-4-123'} );
+		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
+		$this->assertNull( $data['data']->{'g-missing'} );
+		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
+	}
+
+	public function test_post__returns_explicit_null_for_missing_classes() {
+		$this->act_as_admin();
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+
+		$post_id = $this->factory()->post->create();
+
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY, 'g-4-123' );
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY, 'g-missing' );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
+		$request->set_param( 'post_id', $post_id );
+		$response = rest_do_request( $request );
+
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertNotNull( $data['data']->{'g-4-123'} );
+		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
+		$this->assertNull( $data['data']->{'g-missing'} );
 	}
 
 	public function test_register_routes__endpoints_exist() {

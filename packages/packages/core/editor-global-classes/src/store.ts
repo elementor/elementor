@@ -210,19 +210,29 @@ export const slice = createSlice( {
 			}
 		},
 
-		mergeExistingClasses( state, { payload: { items } }: PayloadAction< { items: GlobalClasses[ 'items' ] } > ) {
-			Object.entries( items ).forEach( ( [ id, classData ] ) => {
+		mergeExistingClasses(
+			state,
+			{
+				payload: { preview, frontend },
+			}: PayloadAction< { preview: GlobalClasses[ 'items' ]; frontend: GlobalClasses[ 'items' ] } >
+		) {
+			Object.entries( preview ).forEach( ( [ id, previewClassData ] ) => {
+				const frontendClassData = frontend[ id ];
+
+				if ( previewClassData === null || previewClassData === undefined ) {
+					return;
+				}
 				if ( ! ( id in state.data.items ) ) {
-					state.data.items[ id ] = classData;
+					state.data.items[ id ] = previewClassData;
 				}
 				if ( ! ( id in state.initialData.frontend.items ) ) {
-					state.initialData.frontend.items[ id ] = classData;
+					state.initialData.frontend.items[ id ] = frontendClassData;
 				}
 				if ( ! ( id in state.initialData.preview.items ) ) {
-					state.initialData.preview.items[ id ] = classData;
+					state.initialData.preview.items[ id ] = previewClassData;
 				}
 				if ( ! ( id in state.classLabels ) ) {
-					state.classLabels[ id ] = classData.label;
+					state.classLabels[ id ] = previewClassData.label;
 				}
 			} );
 		},
@@ -251,7 +261,7 @@ const getNonEmptyVariants = ( style: StyleDefinition ) => {
 	);
 };
 
-const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {
+export const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {
 	id,
 	type: 'class',
 	label,
@@ -288,13 +298,14 @@ export const selectOrderedClasses = createSelector( selectData, selectClassLabel
 		.filter( ( s ): s is StyleDefinition => s !== null )
 );
 
-export const selectLoadedOrderedClasses = createSelector( selectGlobalClasses, selectOrder, ( items, order ) =>
-	order.map( ( id ) => items[ id ] ).filter( ( s ): s is StyleDefinition => !! s )
-);
-
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
 	state[ SLICE_NAME ].data.items[ id ] ?? null;
 
 export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
 	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
 );
+
+export const selectIsLoadedClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
+	!! state[ SLICE_NAME ].initialData.preview.items[ id ] ||
+	!! state[ SLICE_NAME ].initialData.frontend.items[ id ] ||
+	false;

@@ -1,7 +1,8 @@
-import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
+import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from './api';
+import { styleDefinitionsMapWithoutNull } from './load-global-classes-state';
 import { selectGlobalClasses, slice } from './store';
 
 let pendingLoad: Promise< void > | null = null;
@@ -39,10 +40,12 @@ async function fetchAndMergeClasses(): Promise< void > {
 		return;
 	}
 
-	const response = await apiClient.getStylesByIds( idsToFetch, 'preview' );
-	const items = response.data.data as Record< StyleDefinitionID, StyleDefinition >;
+	const previewResponse = await apiClient.getStylesByIds( idsToFetch, 'preview' );
+	const frontendResponse = await apiClient.getStylesByIds( idsToFetch, 'frontend' );
+	const previewItems = styleDefinitionsMapWithoutNull( previewResponse.data.data );
+	const frontendItems = styleDefinitionsMapWithoutNull( frontendResponse.data.data );
 
-	dispatch( slice.actions.mergeExistingClasses( { items } ) );
+	dispatch( slice.actions.mergeExistingClasses( { preview: previewItems, frontend: frontendItems } ) );
 }
 
 export function loadExistingClassSync( classId: StyleDefinitionID ): void {

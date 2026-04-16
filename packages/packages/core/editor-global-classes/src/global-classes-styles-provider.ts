@@ -9,11 +9,14 @@ import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
 import { GlobalClassLabelAlreadyExistsError, GlobalClassTrackingError } from './errors';
+import { loadExistingClasses } from './load-existing-classes';
 import {
+	placeholderDefinition,
 	selectClass,
+	selectClassLabels,
 	selectData,
-	selectGlobalClasses,
-	selectLoadedOrderedClasses,
+	selectIsLoadedClass,
+	selectOrderedClasses,
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
@@ -36,21 +39,39 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
-		all: () => selectLoadedOrderedClasses( getState() ),
-		get: ( id ) => selectClass( getState(), id ),
+		all: () => selectOrderedClasses( getState() ),
+		get: ( id ) => {
+			const isLoaded = selectIsLoadedClass( getState(), id );
+			const style = selectClass( getState(), id );
+
+			if ( isLoaded ) {
+				return style;
+			}
+
+			// we populate the style with a placeholder until fully loaded
+			// to avoid crashing the editing panel
+			loadExistingClasses( [ id ] );
+
+			return placeholderDefinition( id, style?.label ?? id );
+		},
 		resolveCssName: ( id: string ) => {
-			return selectClass( getState(), id )?.label ?? id;
+			const state = getState();
+			const loaded = selectClass( state, id );
+			if ( loaded ) {
+				return loaded.label;
+			}
+			const fromIndex = selectClassLabels( state )[ id ];
+			return fromIndex ?? id;
 		},
 		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
-			const classes = selectGlobalClasses( getState() );
-
-			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
+			const existingClasses = Object.entries( selectClassLabels( getState() ) );
+			const existingLabels = existingClasses.map( ( [ , classLabel ] ) => classLabel );
 
 			if ( existingLabels.includes( label ) ) {
 				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
 			}
 
-			const existingIds = Object.keys( classes );
+			const existingIds = existingClasses.map( ( [ id ] ) => id );
 			const id = generateId( 'g-', existingIds );
 
 			dispatch(

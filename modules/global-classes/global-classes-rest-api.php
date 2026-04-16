@@ -238,10 +238,15 @@ class Global_Classes_REST_API {
 		$items = $classes->get_items()->all();
 		$order = $classes->get_order()->all();
 
-		$filtered_items = array_intersect_key( $items, array_flip( $document_class_ids ) );
 		$filtered_order = array_values( array_intersect( $order, $document_class_ids ) );
 
-		return Response_Builder::make( (object) $filtered_items )
+		$result = [];
+
+		foreach ( $document_class_ids as $id ) {
+			$result[ $id ] = $items[ $id ] ?? null;
+		}
+
+		return Response_Builder::make( (object) $result )
 			->set_meta( [ 'order' => $filtered_order ] )
 			->build();
 	}
@@ -261,10 +266,15 @@ class Global_Classes_REST_API {
 		$items = $classes->get_items()->all();
 		$order = $classes->get_order()->all();
 
-		$filtered_items = array_intersect_key( $items, array_flip( $requested_ids ) );
 		$filtered_order = array_values( array_intersect( $order, $requested_ids ) );
 
-		return Response_Builder::make( (object) $filtered_items )
+		$result = [];
+
+		foreach ( $requested_ids as $id ) {
+			$result[ $id ] = $items[ $id ] ?? null;
+		}
+
+		return Response_Builder::make( (object) $result )
 			->set_meta( [ 'order' => $filtered_order ] )
 			->build();
 	}
