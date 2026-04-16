@@ -136,6 +136,7 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
+			'apps-oauth',
 			'widget-creation',
 			'editor-one',
 			'elementor-capabilities-mcp',
