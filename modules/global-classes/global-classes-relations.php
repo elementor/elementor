@@ -3,8 +3,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -61,35 +61,44 @@ class Global_Classes_Relations {
 	}
 
 	public function get_styles_by_post( int $post_id ): array {
-		$ids = $this->get_stored_style_ids( $post_id );
+		$stored_ids = $this->get_stored_style_ids( $post_id );
+		$live_ids = array_values( array_unique( $this->extract_class_ids_from_post( $post_id ) ) );
+		$has_elementor_data = $this->document_has_elementor_data( $post_id );
 
-		if ( ! empty( $ids ) ) {
+		$normalize = static function ( array $ids ): string {
+			$ids = array_values( array_unique( $ids ) );
+			sort( $ids );
+
+			return wp_json_encode( $ids );
+		};
+
+		if ( ! $has_elementor_data ) {
+			if ( ! empty( $stored_ids ) ) {
+				$this->mark_usage_indexed( $post_id );
+
+				return $stored_ids;
+			}
+
+			if ( $this->is_usage_indexed( $post_id ) ) {
+				return [];
+			}
+
 			$this->mark_usage_indexed( $post_id );
 
-			return $ids;
-		}
-
-		if ( $this->is_usage_indexed( $post_id ) ) {
 			return [];
 		}
 
-		$new_ids = $this->collect_class_ids_from_post( $post_id );
+		if ( $normalize( $stored_ids ) !== $normalize( $live_ids ) ) {
+			$this->set_styles_for_post( $post_id, $live_ids );
 
-		if ( empty( $new_ids ) ) {
-			$this->clear_post_styles( $post_id );
+			return $live_ids;
+		}
+
+		if ( ! empty( $live_ids ) ) {
 			$this->mark_usage_indexed( $post_id );
-
-			return [];
 		}
 
-		foreach ( $new_ids as $class_id ) {
-			$this->link_post_to_class( $class_id, $post_id );
-		}
-
-		$this->replace_stored_style_ids( $post_id, $new_ids );
-		$this->mark_usage_indexed( $post_id );
-
-		return $new_ids;
+		return $live_ids;
 	}
 
 	public function add_style_to_post( int $post_id, string $style_id ): void {
@@ -203,7 +212,24 @@ class Global_Classes_Relations {
 	private function extract_class_ids_from_post( int $post_id ): array {
 		$used_class_ids = [];
 
-		Atomic_Utils::traverse_post_elements( (string) $post_id, function ( $element_data ) use ( &$used_class_ids ) {
+		$documents = Plugin::$instance->documents;
+		$document = $documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
+
+		if ( ! $document ) {
+			$document = $documents->get( $post_id );
+		}
+
+		if ( ! $document ) {
+			return [];
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		if ( empty( $elements_data ) ) {
+			return [];
+		}
+
+		Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
 			$used_class_ids = array_merge(
 				$used_class_ids,
 				Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
@@ -247,5 +273,22 @@ class Global_Classes_Relations {
 			'elementor/atomic-widgets/styles/clear',
 			[ self::ATOMIC_GLOBAL_STYLES_KEY, $post_id, Global_Classes_Repository::CONTEXT_PREVIEW ]
 		);
+	}
+
+	private function document_has_elementor_data( int $post_id ): bool {
+		$documents = Plugin::$instance->documents;
+		$document = $documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
+
+		if ( ! $document ) {
+			$document = $documents->get( $post_id );
+		}
+
+		if ( ! $document ) {
+			return false;
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		return ! empty( $elements_data );
 	}
 }
