@@ -19,6 +19,10 @@
 					return;
 				}
 
+				if ( 204 === response.status ) {
+					return;
+				}
+
 				return response.json();
 			} )
 			.then( ( data ) => {
