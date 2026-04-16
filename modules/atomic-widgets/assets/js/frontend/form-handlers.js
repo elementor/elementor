@@ -8,9 +8,7 @@ registerBySelector( {
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
 
-function handleAtomicFormSubmit( element ) {
-	const form = element;
-
+function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
 		return;
 	}
@@ -217,4 +215,17 @@ function setFormState( element, state ) {
 
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
+}
+
+function refreshDom( element ) {
+	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
+		return;
+	}
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( element );
+		Alpine.initTree( element );
+	} );
+
+	return () => Alpine.destroyTree( element );
 }
