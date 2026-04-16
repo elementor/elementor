@@ -593,6 +593,52 @@ describe( 'ControlRepeater', () => {
 		} );
 	} );
 
+	it( 'should NOT close the popover when clicking inside a portal child (e.g. Select dropdown)', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+		fireEvent.click( addButton );
+
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+
+		// Simulate React bubbling from a portal: first fire onContainerClick via a click inside
+		// the Box, then immediately fire a document-level click that ClickAwayListener sees.
+		const portal = document.createElement( 'div' );
+		document.body.appendChild( portal );
+
+		fireEvent.click( screen.getByText( 'Test Repeater' ) ); // triggers onContainerClick (inside Box)
+		fireEvent.click( portal ); // triggers ClickAwayListener's document handler
+
+		// Assert — popover stays open (overflow:hidden is still set).
+		expect( document.body ).toHaveStyle( { overflow: 'hidden' } );
+
+		document.body.removeChild( portal );
+	} );
+
 	it.skip( 'should open the added repeater item popover', () => {
 		// Arrange.
 		const itemSettings = {

@@ -23,6 +23,7 @@ import { RepeaterHeader } from './repeater-header';
 import { RepeaterPopover } from './repeater-popover';
 import { RepeaterTag } from './repeater-tag';
 import { SortableItem, SortableProvider } from './sortable';
+import { useClickAwayWithPortals } from '../../hooks/use-click-away-with-portals';
 
 const SIZE = 'tiny';
 
@@ -352,19 +353,18 @@ const RepeaterItem = < T, >( {
 	);
 	const triggerProps = bindTrigger( popoverState );
 
+	const { onContainerClick, handleClickAway } = useClickAwayWithPortals( {
+		isOpen: popoverState.isOpen,
+		onClose: popoverProps.onClose,
+	} );
+
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	return (
-		<ClickAwayListener
-			onClickAway={ () => {
-				if ( popoverState.isOpen ) {
-					popoverProps.onClose();
-				}
-			} }
-		>
-			<Box sx={ { display: 'contents' } }>
+		<ClickAwayListener onClickAway={ handleClickAway }>
+			<Box sx={ { display: 'contents' } } onClick={ onContainerClick }>
 				<RepeaterTag
 					disabled={ disabled }
 					label={ label }

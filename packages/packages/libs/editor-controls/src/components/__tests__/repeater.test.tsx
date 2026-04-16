@@ -505,6 +505,51 @@ describe( 'Repeater', () => {
 		} );
 	} );
 
+	it( 'should NOT close the popover when clicking inside a portal child (e.g. Select dropdown)', async () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'Hello World',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		const values = [ { $$type: 'example', value: 'First item' } ];
+
+		// Act.
+		renderWithTheme(
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
+		);
+
+		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openItemButton );
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+
+		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
+		await act( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+
+		// Simulate React bubbling from a portal: first fire onContainerClick via a click inside
+		// the Box, then immediately fire a document-level click that ClickAwayListener sees.
+		// (jsdom's fireEvent does not simulate React portal event bubbling, so we approximate
+		// the sequence: onContainerClick sets the flag before handleClickAway reads it.)
+		const portal = document.createElement( 'div' );
+		document.body.appendChild( portal );
+
+		fireEvent.click( screen.getByText( 'Content - 0' ) ); // triggers onContainerClick
+		fireEvent.click( portal ); // triggers ClickAwayListener's document handler
+
+		// Assert — popover stays open.
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+
+		document.body.removeChild( portal );
+	} );
+
 	it( 'should hide the remove button when showRemove is false', () => {
 		// Arrange.
 		const itemSettings = {
