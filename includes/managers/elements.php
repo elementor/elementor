@@ -335,11 +335,21 @@ class Elements_Manager {
 			],
 		];
 
-		if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' ) ) {
 			$atomic_form_category = [
 				'title' => esc_html__( 'Atomic Form', 'elementor' ),
-				'hideIfEmpty' => true,
 			];
+
+			if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+				$atomic_form_category['hideIfEmpty'] = true;
+			} elseif ( ! Utils::has_pro() ) {
+				$atomic_form_category['hideIfEmpty'] = false;
+				$atomic_form_category['promotion'] = [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-atomic-form-section/' ),
+				];
+			} else {
+				$atomic_form_category['hideIfEmpty'] = true;
+			}
 
 			$this->categories = array_merge(
 				[ self::CATEGORY_ATOMIC_ELEMENTS => $this->categories[ self::CATEGORY_ATOMIC_ELEMENTS ] ],
