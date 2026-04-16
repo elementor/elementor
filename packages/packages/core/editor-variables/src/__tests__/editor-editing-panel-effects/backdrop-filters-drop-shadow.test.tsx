@@ -71,6 +71,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 	};
 
 	it( 'should render backdrop filters repeater with global color variable', async () => {
+		// Arrange.
 		variablesSpy.mockReturnValue( {
 			[ COLOR_VARIABLE_ID ]: {
 				type: colorVariablePropTypeUtil.key,
@@ -79,6 +80,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			},
 		} );
 
+		// Act.
 		renderBackdropFiltersRepeater(
 			backdropFilterPropTypeUtil.create( [
 				cssFilterFunctionPropUtil.create( {
@@ -93,6 +95,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			] )
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( screen.getByText( 'Drop shadow:' ) ).toBeInTheDocument();
 			expect( screen.getByText( '4px 4px 6px' ) ).toBeInTheDocument();
@@ -102,6 +105,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 	} );
 
 	it( 'should render backdrop drop-shadow repeater label with resolved global size variable on an axis', async () => {
+		// Arrange.
 		variablesSpy.mockReturnValue( {
 			[ COLOR_VARIABLE_ID ]: {
 				type: colorVariablePropTypeUtil.key,
@@ -115,6 +119,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			},
 		} );
 
+		// Act.
 		renderBackdropFiltersRepeater(
 			backdropFilterPropTypeUtil.create( [
 				cssFilterFunctionPropUtil.create( {
@@ -129,6 +134,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			] )
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( screen.getByText( /Drop shadow:\s*15px 4px 6px/ ) ).toBeInTheDocument();
 		} );
@@ -138,6 +144,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 	} );
 
 	it( 'should render backdrop drop-shadow repeater label with resolved global custom size variable on an axis', async () => {
+		// Arrange.
 		const CUSTOM_SIZE_VARIABLE_ID = 'e-gcs-filter-y';
 		const RESOLVED_Y = '1.5rem';
 
@@ -154,6 +161,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			},
 		} );
 
+		// Act.
 		renderBackdropFiltersRepeater(
 			backdropFilterPropTypeUtil.create( [
 				cssFilterFunctionPropUtil.create( {
@@ -168,6 +176,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			] )
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( screen.getByText( /Drop shadow:\s*4px 1\.5rem 6px/ ) ).toBeInTheDocument();
 		} );
@@ -176,6 +185,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 	} );
 
 	it( 'should render backdrop blur filter repeater label with resolved global size variable', async () => {
+		// Arrange.
 		variablesSpy.mockReturnValue( {
 			[ BLUR_SIZE_VARIABLE_ID ]: {
 				type: sizeVariablePropTypeUtil.key,
@@ -184,6 +194,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			},
 		} );
 
+		// Act.
 		renderBackdropFiltersRepeater(
 			backdropFilterPropTypeUtil.create( [
 				cssFilterFunctionPropUtil.create( {
@@ -195,6 +206,7 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 			] )
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( screen.getByRole( 'button', { name: /blur:\s*8px/ } ) ).toBeInTheDocument();
 		} );

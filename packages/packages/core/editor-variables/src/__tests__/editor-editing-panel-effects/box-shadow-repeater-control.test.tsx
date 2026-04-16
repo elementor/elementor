@@ -42,6 +42,7 @@ describe( 'BoxShadowRepeaterControl with editor-variables', () => {
 	};
 
 	it( 'should render box shadow repeater with global color variable', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'array',
 			item_prop_type: createMockPropType( { kind: 'object' } ),

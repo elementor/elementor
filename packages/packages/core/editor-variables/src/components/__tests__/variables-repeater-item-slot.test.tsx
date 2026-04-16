@@ -105,6 +105,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	describe( 'RepeaterLabel', () => {
 		it( 'should render label indicator with variable value', () => {
+			// Arrange.
 			variablesSpy.mockReturnValue( {
 				[ COLOR_VARIABLE_ID ]: {
 					type: colorVariablePropTypeUtil.key,
@@ -113,14 +114,17 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				},
 			} );
 
+			// Act.
 			render( <BackgroundRepeaterLabel value={ mockValue } /> );
 
+			// Assert.
 			expect( screen.getByText( COLOR_VARIABLE_LABEL ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'ColorIndicator', () => {
 		it( 'should render color indicator with the correct variable value', () => {
+			// Arrange.
 			variablesSpy.mockReturnValue( {
 				[ COLOR_VARIABLE_ID ]: {
 					type: colorVariablePropTypeUtil.key,
@@ -129,8 +133,10 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				},
 			} );
 
+			// Act.
 			render( <BackgroundRepeaterColorIndicator value={ mockValue } /> );
 
+			// Assert.
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
 			expect( colorIndicator ).toHaveStyle( { backgroundColor: COLOR_VARIABLE_VALUE } );
 		} );
@@ -138,6 +144,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	describe( 'BoxShadowRepeaterColorIndicator', () => {
 		it( 'should render color indicator with the correct variable value for box shadow items', () => {
+			// Arrange.
 			variablesSpy.mockReturnValue( {
 				[ COLOR_VARIABLE_ID ]: {
 					type: colorVariablePropTypeUtil.key,
@@ -146,8 +153,10 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				},
 			} );
 
+			// Act.
 			render( <BoxShadowRepeaterColorIndicator value={ mockShadowValue } /> );
 
+			// Assert.
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
 			expect( colorIndicator ).toHaveStyle( { backgroundColor: COLOR_VARIABLE_VALUE } );
 		} );
@@ -155,6 +164,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	describe( 'TransitionsSizeVariableLabel', () => {
 		it( 'should render selection key and resolved size variable value when variable exists', () => {
+			// Arrange.
 			const RESOLVED_SIZE_DISPLAY = '300ms';
 			variablesSpy.mockReturnValue( {
 				[ SELECTION_SIZE_VARIABLE_ID ]: {
@@ -164,16 +174,21 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				},
 			} );
 
+			// Act.
 			render( <TransitionsSizeVariableLabel value={ transitionSelectionSizeWithVariable } /> );
 
+			// Assert.
 			expect( screen.getByText( `opacity: ${ RESOLVED_SIZE_DISPLAY }` ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render empty label when prop is not selection-size', () => {
+			// Arrange.
 			const nonSelectionSizeProp = { $$type: 'string' as const, value: 'not-a-selection-size' };
 
+			// Act.
 			render( <TransitionsSizeVariableLabel value={ nonSelectionSizeProp } /> );
 
+			// Assert.
 			expect(
 				screen.getByText( ( _text, element ) => {
 					return element?.tagName.toLowerCase() === 'span' && element.textContent === '';
@@ -184,6 +199,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	describe( 'FilterDropShadowIconIndicator', () => {
 		it( 'should render color indicator from resolved global color variable on drop-shadow', () => {
+			// Arrange.
 			const RESOLVED_HEX = '#aabbcc';
 			variablesSpy.mockReturnValue( {
 				[ COLOR_VARIABLE_ID ]: {
@@ -203,8 +219,10 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				} ),
 			} );
 
+			// Act.
 			render( <FilterDropShadowIconIndicator value={ dropShadowFilterValue } /> );
 
+			// Assert.
 			expect( screen.getByText( RESOLVED_HEX ) ).toBeInTheDocument();
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
 			expect( colorIndicator ).toHaveStyle( { backgroundColor: RESOLVED_HEX } );
@@ -213,6 +231,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	describe( 'FilterDropShadowRepeaterLabel', () => {
 		it( 'should render resolved global size variable values for drop-shadow axes', () => {
+			// Arrange.
 			const SIZE_VAR_ID = 'e-gs-ds-x';
 			variablesSpy.mockReturnValue( {
 				[ SIZE_VAR_ID ]: {
@@ -232,12 +251,15 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				} ),
 			} );
 
+			// Act.
 			render( <FilterDropShadowRepeaterLabel value={ dropShadowFilterValue } /> );
 
+			// Assert.
 			expect( screen.getByText( /Drop shadow:\s*12px 3px 5px/ ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render resolved global custom size variable value for a drop-shadow axis', () => {
+			// Arrange.
 			const CUSTOM_VAR_ID = 'e-gcs-ds-y';
 			variablesSpy.mockReturnValue( {
 				[ CUSTOM_VAR_ID ]: {
@@ -257,14 +279,17 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				} ),
 			} );
 
+			// Act.
 			render( <FilterDropShadowRepeaterLabel value={ dropShadowFilterValue } /> );
 
+			// Assert.
 			expect( screen.getByText( /Drop shadow:\s*1px 2rem 5px/ ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'FilterSingleSizeRepeaterLabel', () => {
 		it( 'should render resolved global size variable for a single-size filter', () => {
+			// Arrange.
 			const BLUR_VAR_ID = 'e-gs-blur';
 			variablesSpy.mockReturnValue( {
 				[ BLUR_VAR_ID ]: {
@@ -281,8 +306,10 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				} ),
 			} );
 
+			// Act.
 			render( <FilterSingleSizeRepeaterLabel value={ blurFilterValue } /> );
 
+			// Assert.
 			expect( screen.getByText( /blur:/ ) ).toBeInTheDocument();
 			expect( screen.getByText( '9px' ) ).toBeInTheDocument();
 			expect( screen.queryByText( '0px' ) ).not.toBeInTheDocument();
