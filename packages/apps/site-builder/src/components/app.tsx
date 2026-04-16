@@ -37,7 +37,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},
-		targetOrigin,
+		targetOrigin
 	);
 }
 
@@ -52,7 +52,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 				type: 'site-planner/deploy-website/result',
 				payload: result,
 			},
-			origin,
+			origin
 		);
 
 		if ( result.status === 'success' && result.homePageId ) {
@@ -67,7 +67,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 					error: err instanceof Error ? err.message : 'Deploy failed',
 				},
 			},
-			origin,
+			origin
 		);
 	}
 }
@@ -109,7 +109,7 @@ export function App() {
 				await handleDeploy( iframeRef.current, event );
 			}
 		},
-		[ allowedOrigin ],
+		[ allowedOrigin ]
 	);
 
 	useEffect( () => {
