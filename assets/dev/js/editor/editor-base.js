@@ -1169,6 +1169,29 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	async refreshWidgets() {
+		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
+
+		this.widgetsCache = {};
+		this.addWidgetsCache( data.widgets );
+
+		elementor.config.document.panel.elements_categories = data.categories;
+
+		if ( elementor.config.locale !== elementor.config.user.locale ) {
+			this.translateControlsDefaults( elementor.config.locale );
+		}
+
+		this.kitManager.renderGlobalsDefaultCSS();
+
+		elementor.hooks.doAction( 'elementor/widgets/refreshed' );
+
+		$e.routes.refreshContainer( 'panel' );
+
+		$e.run( 'preview/reload' );
+
+		return data;
+	}
+
 	translateControlsDefaults( locale ) {
 		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
 			data: { locale },

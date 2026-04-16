@@ -4,9 +4,10 @@ import { Alpine } from '@elementor/alpinejs';
 const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
 const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
 const ACTION_LINK_SELECTOR = '[data-action-link]';
-const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_SELECTOR })`;
+const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(${ ACTION_LINK_SELECTOR })`;
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
 const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
+const ELEMENTOR_DOCUMENT_SELECTOR = '[data-elementor-id]';
 
 registerBySelector( {
 	id: 'atomic-link-action-handler',
@@ -20,21 +21,29 @@ registerBySelector( {
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
 
-function handleLinkActions( element ) {
-	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
-		? element
-		: element.querySelector( ACTION_LINK_SELECTOR );
-	const url = actionLinkElement?.dataset.actionLink;
+function handleLinkActions( registrationElement ) {
+	if ( ! registrationElement ) {
+		return;
+	}
+
+	const actionLinkElement = registrationElement.matches( ACTION_LINK_SELECTOR )
+		? registrationElement
+		: registrationElement.querySelector( ACTION_LINK_SELECTOR );
+
+	if ( ! actionLinkElement ) {
+		return;
+	}
+
+	const url =
+		actionLinkElement.dataset.actionLink ||
+		actionLinkElement.getAttribute( 'href' ) ||
+		'';
 
 	if ( ! url ) {
 		return;
 	}
 
-	const handler = ( event ) => {
-		if ( actionLinkElement && actionLinkElement !== element && ! actionLinkElement.contains( event.target ) ) {
-			return;
-		}
-
+	const onClick = ( event ) => {
 		if ( ! shouldFireLinkActionHandler( url ) ) {
 			return;
 		}
@@ -47,19 +56,23 @@ function handleLinkActions( element ) {
 		elementorFrontend.utils.urlActions.runAction( url, event );
 	};
 
-	element.addEventListener( 'click', handler );
+	actionLinkElement.addEventListener( 'click', onClick );
 
-	return () => element.removeEventListener( 'click', handler );
+	return () => {
+		actionLinkElement.removeEventListener( 'click', onClick );
+	};
 }
 
-function handleAtomicFormSubmit( element ) {
-	const form = element;
-
+function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
 		return;
 	}
 
-	const alpineId = getFormAlpineId( form );
+	const alpineId = getAlpineId( form );
+
+	if ( ! alpineId ) {
+		return;
+	}
 
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
@@ -88,34 +101,36 @@ function handleAtomicFormSubmit( element ) {
 					const response = await submitAtomicForm( payload );
 					const state = response?.success ? 'success' : 'error';
 
-					setFormState( element, state );
+					setFormState( form, state );
 
 					if ( response?.success ) {
 						form.reset();
 
 						form.addEventListener( 'input', () => {
-							setFormState( element, 'default' );
+							setFormState( form, 'default' );
 						}, { once: true } );
 					}
 				} catch ( error ) {
-					setFormState( element, 'error' );
+					setFormState( form, 'error' );
 				} finally {
 					clearAtomicFormSubmittingState( form, submitButtons );
 				}
 			} else {
-				setFormState( element, 'error' );
+				setFormState( form, 'error' );
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
 	} ) );
-
-	return () => {
-		Alpine.destroyTree( form );
-	};
 }
 
-function getFormAlpineId( form ) {
-	return form.getAttribute( 'x-data' );
+function handleAtomicFormSubmit( form ) {
+	registerAtomicFormAlpineData( form );
+
+	return refreshDom( form );
+}
+
+function getAlpineId( element ) {
+	return element.getAttribute( 'x-data' );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
@@ -127,7 +142,7 @@ function clearAtomicFormSubmittingState( form, submitButtons ) {
 }
 
 function buildAtomicFormPayload( form ) {
-	const postId = getPostId();
+	const postId = getPostId( form );
 	const formId = form.dataset.id;
 	const formName = form.dataset.formName || '';
 	const formFields = getAtomicFormFields( form );
@@ -261,8 +276,11 @@ function setFormState( element, state ) {
 	element.classList.add( `form-state-${ state }` );
 }
 
-function getPostId() {
-	return elementorFrontend?.config?.post?.id || null;
+function getPostId( form ) {
+	const innerDocumentId = form?.closest?.( ELEMENTOR_DOCUMENT_SELECTOR )?.dataset?.elementorId;
+	const ownerDocument = elementorFrontend?.config?.post?.id;
+
+	return innerDocumentId || ownerDocument || null;
 }
 
 function shouldFireLinkActionHandler( url ) {
@@ -288,4 +306,17 @@ function shouldFireLinkActionHandler( url ) {
 
 function isEditorContext() {
 	return !! window.elementor || !! window.parent?.elementor;
+}
+
+function refreshDom( element ) {
+	if ( ! Alpine?.nextTick || ! Alpine?.destroyTree || ! Alpine?.initTree ) {
+		return;
+	}
+
+	Alpine.nextTick( () => {
+		Alpine.destroyTree( element );
+		Alpine.initTree( element );
+	} );
+
+	return () => Alpine.destroyTree( element );
 }
