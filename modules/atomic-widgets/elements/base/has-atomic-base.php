@@ -302,7 +302,10 @@ trait Has_Atomic_Base {
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
-		$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+
+		if ( ! isset( $schema['_cssid'] ) ) {
+			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+		}
 
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
