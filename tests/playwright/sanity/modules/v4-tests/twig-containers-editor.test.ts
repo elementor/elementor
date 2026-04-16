@@ -1,15 +1,14 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Twig Containers Editor Rendering @twig-containers', () => {
 	const divBlockType = 'e-div-block';
 	const flexboxType = 'e-flexbox';
 
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_twig_containers' );
+		// Await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		// await wpCli( 'wp elementor experiments activate e_twig_containers' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

@@ -22,6 +22,10 @@ trait Has_Element_Template {
 		return 'elementor/macros';
 	}
 
+	protected function transform_link_for_render( array $parsed ): array {
+		return $parsed;
+	}
+
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 

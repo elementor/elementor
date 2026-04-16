@@ -1,3 +1,4 @@
+{% import 'elementor/macros' as m %}
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	<{{ settings.tag | e('html_tag') }} 
@@ -8,12 +9,12 @@
 	>
 	{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
 
-	{% if settings.link and settings.link.attributes is not empty %}
-		<{{ settings.link.tag | e('html_tag') }} 
-			{{ settings.link.attributes | raw }}
+	{% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
+		<{{ settings.link.tag | default('a') | e('html_tag') }}
+			{{- m.render_link_attributes(settings.link) }}
 			class="{{ base_styles['link-base'] }}">
 			{{ settings.title | striptags(allowed_tags) | raw }}
-		</{{ settings.link.tag | e('html_tag') }}>
+		</{{ settings.link.tag | default('a') | e('html_tag') }}>
 	{% else %}
 		{{ settings.title | striptags(allowed_tags) | raw }}
 	{% endif %}

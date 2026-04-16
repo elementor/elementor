@@ -5,7 +5,7 @@
 {% endif %}
 <{{ tag }} class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
     {{ m.render_data_attributes(id, type, interaction_id) }}
-    {{- m.render_link_attributes(settings, tag) }}
+    {{- m.render_link_attributes(settings.link | default(null)) }}
     {{- m.render_custom_attributes(settings, editor_attributes) }}>
     <!-- elementor-children-placeholder -->
 </{{ tag }}>

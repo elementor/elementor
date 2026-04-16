@@ -12,9 +12,10 @@ data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-
 {%- if editor_attributes is defined and editor_attributes is not empty %} {{ editor_attributes | raw }}{% endif %}
 {%- endmacro -%}
 
-{%- macro render_link_attributes(settings, tag) -%}
-{%- if settings.link is defined and settings.attributes is not empty -%}
-{{ settings.link.attributes | raw }}
+{%- macro render_link_attributes(link) -%}
+{%- if link is defined and link.href is defined and link.href is not empty -%}
+{%- if link.tag | default('a') == 'button' %} data-action-link="{{ link.href | e }}"{% else %} href="{{ link.href | e }}"{% endif -%}
+{%- if link.target is defined and link.target is not empty %} target="{{ link.target | e }}"{% endif -%}
 {%- endif -%}
 {%- endmacro -%}
 
