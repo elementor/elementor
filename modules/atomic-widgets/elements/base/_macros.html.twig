@@ -13,7 +13,7 @@ data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-
 {%- endmacro -%}
 
 {%- macro render_link_attributes(settings, tag) -%}
-{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- if settings.link is defined and settings.attributes is not empty -%}
 {%- if tag == 'button' %} data-action-link="{{ settings.link.href | e }}"{% else %} href="{{ settings.link.href | e }}"{% endif -%}
 {%- if settings.link.target is defined and settings.link.target is not empty %} target="{{ settings.link.target | e }}"{% endif -%}
 {%- endif -%}
