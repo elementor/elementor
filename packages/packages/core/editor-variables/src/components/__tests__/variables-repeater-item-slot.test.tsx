@@ -22,12 +22,7 @@ import {
 
 jest.mock( '../ui/color-indicator', () => ( {
 	ColorIndicator: ( { value }: { value?: string } ) => (
-		<div
-			data-testid="repeater-color-variable-icon"
-			role="presentation"
-			aria-label="Color indicator"
-			style={ { backgroundColor: value } }
-		>
+		<div role="presentation" aria-label="Color indicator" style={ { backgroundColor: value } }>
 			{ value ?? '' }
 		</div>
 	),
@@ -286,9 +281,11 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				} ),
 			} );
 
-			const { container } = render( <FilterSingleSizeRepeaterLabel value={ blurFilterValue } /> );
+			render( <FilterSingleSizeRepeaterLabel value={ blurFilterValue } /> );
 
-			expect( container.textContent?.replace( /\s+/g, ' ' ).trim() ).toMatch( /blur:\s*9px/ );
+			expect( screen.getByText( /blur:/ ) ).toBeInTheDocument();
+			expect( screen.getByText( '9px' ) ).toBeInTheDocument();
+			expect( screen.queryByText( '0px' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

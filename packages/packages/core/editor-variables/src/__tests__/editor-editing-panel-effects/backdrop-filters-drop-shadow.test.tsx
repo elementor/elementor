@@ -17,7 +17,7 @@ import { service } from '../../service';
 
 jest.mock( '../../components/ui/color-indicator', () => ( {
 	ColorIndicator: ( { value }: { value?: string } ) => (
-		<span data-testid="repeater-color-variable-icon" role="presentation" aria-label="Color indicator">
+		<span role="presentation" aria-label="Color indicator">
 			{ value ?? '' }
 		</span>
 	),
@@ -29,7 +29,6 @@ const DROP_SHADOW_SIZE_VARIABLE_ID = 'e-gs-filter-x';
 const BLUR_SIZE_VARIABLE_ID = 'e-gs-filter-blur';
 const RESOLVED_BLUR_SIZE = '8px';
 const RESOLVED_COLOR_HEX = '#abcdef';
-const REPEATER_COLOR_ICON_TEST_ID = 'repeater-color-variable-icon';
 
 const cssFilterFunc = createMockSingleSizeFilterPropType();
 
@@ -66,7 +65,9 @@ describe( 'BackdropFiltersRepeaterControl with editor-variables', () => {
 
 	const expectRepeaterIconShowsResolvedColorVariable = () => {
 		expect( screen.getByText( RESOLVED_COLOR_HEX ) ).toBeInTheDocument();
-		expect( screen.getByTestId( REPEATER_COLOR_ICON_TEST_ID ) ).toHaveTextContent( RESOLVED_COLOR_HEX );
+		expect( screen.getByRole( 'presentation', { name: 'Color indicator' } ) ).toHaveTextContent(
+			RESOLVED_COLOR_HEX
+		);
 	};
 
 	it( 'should render backdrop filters repeater with global color variable', async () => {
