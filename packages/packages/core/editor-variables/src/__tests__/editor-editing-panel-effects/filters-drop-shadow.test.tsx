@@ -15,12 +15,21 @@ import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariable
 import { registerRepeaterInjections } from '../../repeater-injections';
 import { service } from '../../service';
 
+jest.mock( '../../components/ui/color-indicator', () => ( {
+	ColorIndicator: ( { value }: { value?: string } ) => (
+		<span data-testid="repeater-color-variable-icon" role="presentation" aria-label="Color indicator">
+			{ value ?? '' }
+		</span>
+	),
+} ) );
+
 const COLOR_VARIABLE_ID = 'e-gv-main';
 const DROP_SHADOW_RESOLVED_X = '15px';
 const DROP_SHADOW_SIZE_VARIABLE_ID = 'e-gs-filter-x';
 const BLUR_SIZE_VARIABLE_ID = 'e-gs-filter-blur';
 const RESOLVED_BLUR_SIZE = '8px';
 const RESOLVED_COLOR_HEX = '#abcdef';
+const REPEATER_COLOR_ICON_TEST_ID = 'repeater-color-variable-icon';
 
 const cssFilterFunc = createMockSingleSizeFilterPropType();
 
@@ -55,6 +64,11 @@ describe( 'FiltersRepeaterControl with editor-variables', () => {
 		} );
 	};
 
+	const expectRepeaterIconShowsResolvedColorVariable = () => {
+		expect( screen.getByText( RESOLVED_COLOR_HEX ) ).toBeInTheDocument();
+		expect( screen.getByTestId( REPEATER_COLOR_ICON_TEST_ID ) ).toHaveTextContent( RESOLVED_COLOR_HEX );
+	};
+
 	it( 'should render filters repeater with global color variable', async () => {
 		variablesSpy.mockReturnValue( {
 			[ COLOR_VARIABLE_ID ]: {
@@ -82,6 +96,8 @@ describe( 'FiltersRepeaterControl with editor-variables', () => {
 			expect( screen.getByText( 'Drop shadow:' ) ).toBeInTheDocument();
 			expect( screen.getByText( '2px 4px 6px' ) ).toBeInTheDocument();
 		} );
+
+		expectRepeaterIconShowsResolvedColorVariable();
 	} );
 
 	it( 'should render drop-shadow repeater label with resolved global size variable on an axis', async () => {
@@ -116,6 +132,8 @@ describe( 'FiltersRepeaterControl with editor-variables', () => {
 			expect( screen.getByText( /Drop shadow:\s*15px 4px 6px/ ) ).toBeInTheDocument();
 		} );
 		expect( screen.queryByText( /Drop shadow:\s*0px 4px 6px/ ) ).not.toBeInTheDocument();
+
+		expectRepeaterIconShowsResolvedColorVariable();
 	} );
 
 	it( 'should render drop-shadow repeater label with resolved global custom size variable on an axis', async () => {
@@ -152,6 +170,8 @@ describe( 'FiltersRepeaterControl with editor-variables', () => {
 		await waitFor( () => {
 			expect( screen.getByText( /Drop shadow:\s*2px 1\.5rem 6px/ ) ).toBeInTheDocument();
 		} );
+
+		expectRepeaterIconShowsResolvedColorVariable();
 	} );
 
 	it( 'should render blur filter repeater label with resolved global size variable', async () => {

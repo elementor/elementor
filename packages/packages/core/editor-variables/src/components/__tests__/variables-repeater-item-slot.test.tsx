@@ -22,7 +22,14 @@ import {
 
 jest.mock( '../ui/color-indicator', () => ( {
 	ColorIndicator: ( { value }: { value?: string } ) => (
-		<div role="presentation" aria-label="Color indicator" style={ { backgroundColor: value } } />
+		<div
+			data-testid="repeater-color-variable-icon"
+			role="presentation"
+			aria-label="Color indicator"
+			style={ { backgroundColor: value } }
+		>
+			{ value ?? '' }
+		</div>
 	),
 } ) );
 
@@ -203,6 +210,7 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 			render( <FilterDropShadowIconIndicator value={ dropShadowFilterValue } /> );
 
+			expect( screen.getByText( RESOLVED_HEX ) ).toBeInTheDocument();
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
 			expect( colorIndicator ).toHaveStyle( { backgroundColor: RESOLVED_HEX } );
 		} );
