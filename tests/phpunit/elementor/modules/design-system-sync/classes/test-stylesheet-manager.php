@@ -79,7 +79,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		$this->assertIsInt( $result['version'] );
 	}
 
-	public function test_generate__deletes_file_when_no_synced_variables() {
+	public function test_generate__returns_null_when_no_synced_variables() {
 		// Arrange
 		$this->set_kit_variables( [
 			'var-1' => [
@@ -91,9 +91,10 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$this->stylesheet_manager->generate();
+		$result = $this->stylesheet_manager->generate();
 
 		// Assert
+		$this->assertNull( $result );
 		$this->assertFileDoesNotExist( $this->stylesheet_manager->get_path() );
 	}
 
