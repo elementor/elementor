@@ -1,5 +1,6 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { getAlpineId, getPostId, isEditorContext } from './utils';
 
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
 const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
@@ -17,7 +18,7 @@ function handleAtomicFormSubmit( element ) {
 		return;
 	}
 
-	const alpineId = getFormAlpineId( form );
+	const alpineId = getAlpineId( form );
 
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
@@ -72,10 +73,6 @@ function handleAtomicFormSubmit( element ) {
 	};
 }
 
-function getFormAlpineId( form ) {
-	return form.getAttribute( 'x-data' );
-}
-
 function clearAtomicFormSubmittingState( form, submitButtons ) {
 	delete form.dataset.atomicFormSubmitting;
 
@@ -115,7 +112,7 @@ function getAtomicFormFields( form ) {
 
 		const label = getAtomicFormFieldLabel( input, form );
 		const type = getAtomicFormFieldType( input );
-		const value = input.value;
+		const value = getAtomicFormFieldValue( input, type );
 
 		fields.push( {
 			id,
@@ -134,11 +131,6 @@ function getAtomicFormFieldLabel( field, form ) {
 		return ariaLabel;
 	}
 
-	const placeholder = field.getAttribute( 'placeholder' );
-	if ( placeholder ) {
-		return placeholder;
-	}
-
 	const fieldId = field.getAttribute( 'id' );
 	if ( fieldId ) {
 		const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
@@ -149,7 +141,21 @@ function getAtomicFormFieldLabel( field, form ) {
 	}
 
 	const parentLabelText = field.closest( 'label' )?.textContent?.trim();
-	return parentLabelText || '';
+	if ( parentLabelText ) {
+		return parentLabelText;
+	}
+
+	const placeholder = field.getAttribute( 'placeholder' );
+
+	return placeholder || '';
+}
+
+function getAtomicFormFieldValue( input, type ) {
+	if ( 'checkbox' !== type ) {
+		return input.value;
+	}
+
+	return input.checked ? input.value || 'on' : '';
 }
 
 function getAtomicFormFieldType( field ) {
@@ -173,6 +179,8 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'post_id', payload.postId );
 	formData.append( 'form_id', payload.formId );
 	formData.append( 'form_name', payload.formName );
+	formData.append( 'referer_title', document?.title ?? '' );
+	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => {
 		formData.append( `form_fields[${ index }][id]`, field.id );
 		formData.append( `form_fields[${ index }][type]`, field.type );
@@ -204,23 +212,6 @@ function setFormState( element, state ) {
 		return;
 	}
 
-	element.setAttribute( 'data-form-state', state );
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
-
-	const id = extractId( element );
-	const container = id ? window.elementor?.getContainer?.( id ) : null;
-	container?.view?._updateStatusVisibility?.();
-}
-
-function extractId( element ) {
-	return element?.dataset?.id || null;
-}
-
-function getPostId() {
-	return elementorFrontend?.config?.post?.id || null;
-}
-
-function isEditorContext() {
-	return !! window.elementor || !! window.parent?.elementor;
 }

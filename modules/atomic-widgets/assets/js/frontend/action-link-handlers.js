@@ -1,4 +1,5 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
+import { isEditorContext } from './utils';
 
 const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
 const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
@@ -11,11 +12,32 @@ registerBySelector( {
 	callback: ( { element } ) => handleLinkActions( element ),
 } );
 
+function shouldFireLinkActionHandler( url ) {
+	if ( ! isEditorContext() ) {
+		return true;
+	}
+
+	url = decodeURI( url );
+	url = decodeURIComponent( url );
+
+	const actionMatch = url.match( /action=([^&]+)/ );
+	const action = actionMatch?.[ 1 ] ?? null;
+
+	if ( ! action ) {
+		return false;
+	}
+
+	const whitelist = elementorFrontend?.hooks?.applyFilters( WHITELIST_FILTER, LINK_ACTIONS_EDITOR_WHITELIST ) ??
+		LINK_ACTIONS_EDITOR_WHITELIST;
+
+	return !! whitelist.find( ( allowedAction ) => action.includes( allowedAction ) );
+}
+
 function handleLinkActions( element ) {
 	const actionLinkElement = element.matches( ACTION_LINK_SELECTOR )
 		? element
 		: element.querySelector( ACTION_LINK_SELECTOR );
-	const url = actionLinkElement?.dataset?.actionLink;
+	const url = actionLinkElement?.dataset.actionLink;
 
 	if ( ! url ) {
 		return;
@@ -41,29 +63,4 @@ function handleLinkActions( element ) {
 	element.addEventListener( 'click', handler );
 
 	return () => element.removeEventListener( 'click', handler );
-}
-
-function shouldFireLinkActionHandler( url ) {
-	if ( ! isEditorContext() ) {
-		return true;
-	}
-
-	const encodedUrl = decodeURI( url );
-	const decodedUrl = decodeURIComponent( encodedUrl );
-
-	const actionMatch = decodedUrl.match( /action=([^&]+)/ );
-	const action = actionMatch?.[ 1 ] ?? null;
-
-	if ( ! action ) {
-		return false;
-	}
-
-	const whitelist = elementorFrontend?.hooks?.applyFilters( WHITELIST_FILTER, LINK_ACTIONS_EDITOR_WHITELIST ) ??
-		LINK_ACTIONS_EDITOR_WHITELIST;
-
-	return !! whitelist.find( ( allowedAction ) => action.includes( allowedAction ) );
-}
-
-function isEditorContext() {
-	return !! window.elementor || !! window.top?.elementor;
 }
