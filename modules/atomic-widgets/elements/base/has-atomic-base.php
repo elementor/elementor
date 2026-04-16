@@ -5,6 +5,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -241,14 +243,22 @@ trait Has_Atomic_Base {
 	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
-		$initial_attributes = $this->get_initial_attributes();
 
-		$props['attributes'] = Attributes_Prop_Type::generate( array_merge(
-			$initial_attributes['value'] ?? [],
+		$merged_attribute_values = array_merge(
+			$this->get_initial_attributes()['value'] ?? [],
 			$props['attributes']['value'] ?? []
-		) );
+		);
+		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
-		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
+
+		$parsed['link'] = ! empty( $link_attributes ) ? [
+			'tag' => $parsed['link']['tag'],
+			'attributes' => $link_attributes,
+		] : null;
+
+		return $parsed;
 	}
 
 	protected function get_initial_attributes() {
@@ -353,23 +363,65 @@ trait Has_Atomic_Base {
 		return [];
 	}
 
-	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
-		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
-		$target = $link_settings['target'] ?? '_self';
-
-		$is_button = 'button' === $tag;
-		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
-
-		$result = [
-			$href_attribute_key => $href,
-			'target' => $target,
-		];
-
-		if ( $add_key_to_result ) {
-			$result['key'] = $href_attribute_key;
+	protected function get_link_attributes( $link_settings ) {
+		if ( empty( $link_settings['href'] ) ) {
+			return [];
 		}
 
-		return $result;
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$url = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+		$is_action_link = 'button' === $tag;
+		$url_attr_key = $is_action_link ? 'data-action-link' : 'href';
+
+		return [
+			$url_attr_key => $url,
+			'target' => $target,
+		];
+	}
+
+	private function get_link_attributes_string( $link_settings ) {
+		$link_attributes = $this->get_link_attributes( $link_settings );
+
+		if ( empty( $link_attributes ) ) {
+			return '';
+		}
+
+		$parts = [];
+
+		foreach ( $link_attributes as $key => $value ) {
+			if ( 'tag' === $key ) {
+				continue;
+			}
+
+			$parts[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function get_script_depends() {
+		$depends = parent::get_script_depends();
+
+		if ( $this->has_action_link() ) {
+			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
+		}
+
+		if ( Atomic_Form::is_instance_form( $this ) ) {
+			$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+		}
+
+		return $depends;
 	}
 }
