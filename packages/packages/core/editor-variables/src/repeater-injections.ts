@@ -116,8 +116,8 @@ function filterRepeaterInjections() {
 				return false;
 			}
 
-			const args = cssFilterFunctionPropUtil.extract( value )?.args as { size?: PropValue };
-			return hasAssignedSizeVariable( args?.size );
+			const args = cssFilterFunctionPropUtil.extract( value )?.args as { value?: { size?: PropValue } };
+			return hasAssignedSizeVariable( args?.value?.size );
 		},
 	} );
 }

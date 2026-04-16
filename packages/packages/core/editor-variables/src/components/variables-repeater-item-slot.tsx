@@ -62,13 +62,14 @@ export const FilterSingleSizeRepeaterLabel = ( { value }: Props ) => {
 		return null;
 	}
 
-	const args = cssFilterFunction?.args as { size?: PropValue };
-	const rendered = renderedSizeValue( args?.size );
+	const args = cssFilterFunction?.args as { value?: { size?: PropValue } };
+	const func = cssFilterFunction?.func?.value ?? '';
+	const rendered = renderedSizeValue( args?.value?.size );
 
 	return (
 		<>
 			<Box component="span" style={ { textTransform: 'capitalize' } }>
-				{ cssFilterFunction?.func?.value ?? '' }:
+				{ `${ func }: ` }
 			</Box>
 			<Box component="span">{ rendered }</Box>
 		</>
