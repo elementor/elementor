@@ -17,6 +17,10 @@ function handleAtomicFormSubmit( element ) {
 
 	const alpineId = getAlpineId( form );
 
+	if ( ! alpineId ) {
+		return;
+	}
+
 	Alpine.data( alpineId, () => ( {
 		async submit( event ) {
 			if ( isEditorContext() ) {
@@ -44,30 +48,32 @@ function handleAtomicFormSubmit( element ) {
 					const response = await submitAtomicForm( payload );
 					const state = response?.success ? 'success' : 'error';
 
-					setFormState( element, state );
+					setFormState( form, state );
 
 					if ( response?.success ) {
 						form.reset();
 
 						form.addEventListener( 'input', () => {
-							setFormState( element, 'default' );
+							setFormState( form, 'default' );
 						}, { once: true } );
 					}
 				} catch ( error ) {
-					setFormState( element, 'error' );
+					setFormState( form, 'error' );
 				} finally {
 					clearAtomicFormSubmittingState( form, submitButtons );
 				}
 			} else {
-				setFormState( element, 'error' );
+				setFormState( form, 'error' );
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
 	} ) );
+}
 
-	return () => {
-		Alpine.destroyTree( form );
-	};
+function handleAtomicFormSubmit( form ) {
+	registerAtomicFormAlpineData( form );
+
+	return refreshDom( form );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {

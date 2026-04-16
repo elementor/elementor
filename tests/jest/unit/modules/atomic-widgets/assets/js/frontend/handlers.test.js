@@ -6,11 +6,13 @@ jest.mock( '@elementor/alpinejs', () => ( {
 	Alpine: {
 		data: jest.fn(),
 		destroyTree: jest.fn(),
+		initTree: jest.fn(),
+		nextTick: jest.fn( ( callback ) => callback() ),
 	},
 } ), { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
-const SELECTOR = '[data-action-link], :has(> [data-action-link])';
+const SELECTOR = '[data-action-link], :has([data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
 const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
@@ -36,6 +38,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const registration = getRegistration( HANDLER_ID );
 
 		expect( registration ).toBeDefined();
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
 
 		return {
 			registration,
@@ -56,18 +59,16 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		global.elementorFrontend = { utils: { urlActions: { runAction } } };
 	} );
 
-	it( 'registers link action handler by selector', async () => {
+	it( 'registers link and form handlers by selector', async () => {
 		// Arrange
-		const { registration, registerBySelector, getRegistration } = await importHandlers();
-
 		// Act
-		const { id, selector, callback } = registration;
+		const { registration, registerBySelector, getRegistration } = await importHandlers();
 
 		// Assert
 		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
-		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
-		expect( typeof callback ).toBe( 'function' );
-		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
+		expect( { id: registration.id, selector: registration.selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
+		expect( typeof registration.callback ).toBe( 'function' );
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ).selector ).toBe( '[data-element_type="e-form"]' );
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
@@ -191,6 +192,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		};
 
 		it( 'prefers aria-label over everything else', async () => {
+			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -211,10 +213,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				fields.push( ariaLabel );
 			} );
 
+			// Assert
 			expect( fields[ 0 ] ).toBe( 'Aria Label' );
 		} );
 
 		it( 'prefers label[for] over placeholder', async () => {
+			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -231,10 +235,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const fieldId = input.getAttribute( 'id' );
 			const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
 
+			// Assert
 			expect( labelElement.textContent.trim() ).toBe( 'Email' );
 		} );
 
 		it( 'uses placeholder as last resort', async () => {
+			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -248,12 +254,14 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const labelElement = fieldId ? form.querySelector( `label[for="${ fieldId }"]` ) : null;
 			const placeholder = input.getAttribute( 'placeholder' );
 
+			// Assert
 			expect( ariaLabel ).toBeNull();
 			expect( labelElement ).toBeNull();
 			expect( placeholder ).toBe( 'Enter your name' );
 		} );
 
 		it( 'uses parent label when no aria-label, for-label, or placeholder', async () => {
+			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const parentLabel = document.createElement( 'label' );
@@ -266,6 +274,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const fieldId = input.getAttribute( 'id' );
 			const closestLabel = input.closest( 'label' );
 
+			// Assert
 			expect( ariaLabel ).toBeNull();
 			expect( fieldId ).toBeNull();
 			expect( closestLabel.textContent.trim() ).toBe( 'Parent Label' );
@@ -320,6 +329,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 
 		it( 'clears form fields on successful submission', async () => {
+			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -330,12 +340,15 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				json: () => Promise.resolve( { success: true } ),
 			} );
 
+			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
+			// Assert
 			expect( input.value ).toBe( '' );
 		} );
 
 		it( 'does not clear form fields on failed submission', async () => {
+			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -343,12 +356,15 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
 
+			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
+			// Assert
 			expect( input.value ).toBe( 'Test value' );
 		} );
 
 		it( 'dismisses success message when user starts typing', async () => {
+			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -359,17 +375,22 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				json: () => Promise.resolve( { success: true } ),
 			} );
 
+			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
+			// Assert
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
 
+			// Act
 			input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
 
+			// Assert
 			expect( form.classList.contains( 'form-state-default' ) ).toBe( true );
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 
 		it( 'sends referer_title and referrer in FormData (atomic form / admin-ajax contract)', async () => {
+			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 			document.title = 'Submission Contract Page';
@@ -381,8 +402,10 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				json: () => Promise.resolve( { success: true } ),
 			} );
 
+			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
+			// Assert
 			expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 			const fetchOptions = global.fetch.mock.calls[ 0 ][ 1 ];
 			expect( fetchOptions.method ).toBe( 'POST' );
@@ -396,7 +419,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 	} );
 
-	it( 'adds non-whitelisted editor link actions', async () => {
+	it( 'adds non-whitelisted editor link actions via filter', async () => {
 		// Arrange
 		global.elementor = {};
 		global.elementorFrontend = { ...global.elementorFrontend, hooks: { applyFilters: () => [ BLOCKED_ACTION ] } };

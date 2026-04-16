@@ -163,7 +163,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$settings = $this->get_atomic_settings();
 		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
+		if ( ! empty( $settings['link']['tag'] ) ) {
+			return $settings['link']['tag'];
+		}
+
+		return $settings['tag'] ?? $default_html_tag;
 	}
 
 	/**
@@ -184,6 +188,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
 		$attributes = $settings['attributes'] ?? '';
+
+		if ( isset( $settings['link']['attributes'] ) ) {
+			$attributes .= ' ' . ( $settings['link']['attributes'] ?? '' );
+		}
+
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;
