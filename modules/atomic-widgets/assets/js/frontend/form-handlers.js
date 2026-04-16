@@ -1,67 +1,12 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-
-const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
-const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
-const ACTION_LINK_SELECTOR = '[data-action-link]';
-const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(${ ACTION_LINK_SELECTOR })`;
-const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
-const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
-const ELEMENTOR_DOCUMENT_SELECTOR = '[data-elementor-id]';
-
-registerBySelector( {
-	id: 'atomic-link-action-handler',
-	selector: REGISTRATION_SELECTOR,
-	callback: ( { element } ) => handleLinkActions( element ),
-} );
+import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
 	selector: ATOMIC_FORM_SELECTOR,
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
-
-function handleLinkActions( registrationElement ) {
-	if ( ! registrationElement ) {
-		return;
-	}
-
-	const actionLinkElement = registrationElement.matches( ACTION_LINK_SELECTOR )
-		? registrationElement
-		: registrationElement.querySelector( ACTION_LINK_SELECTOR );
-
-	if ( ! actionLinkElement ) {
-		return;
-	}
-
-	const url =
-		actionLinkElement.dataset.actionLink ||
-		actionLinkElement.getAttribute( 'href' ) ||
-		'';
-
-	if ( ! url ) {
-		return;
-	}
-
-	const onClick = ( event ) => {
-		if ( ! shouldFireLinkActionHandler( url ) ) {
-			return;
-		}
-
-		if ( ! window.elementorFrontend?.utils?.urlActions ) {
-			return;
-		}
-
-		event.preventDefault();
-		elementorFrontend.utils.urlActions.runAction( url, event );
-	};
-
-	actionLinkElement.addEventListener( 'click', onClick );
-
-	return () => {
-		actionLinkElement.removeEventListener( 'click', onClick );
-	};
-}
 
 function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
@@ -127,10 +72,6 @@ function handleAtomicFormSubmit( form ) {
 	registerAtomicFormAlpineData( form );
 
 	return refreshDom( form );
-}
-
-function getAlpineId( element ) {
-	return element.getAttribute( 'x-data' );
 }
 
 function clearAtomicFormSubmittingState( form, submitButtons ) {
@@ -274,38 +215,6 @@ function setFormState( element, state ) {
 
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
-}
-
-function getPostId( form ) {
-	const innerDocumentId = form?.closest?.( ELEMENTOR_DOCUMENT_SELECTOR )?.dataset?.elementorId;
-	const ownerDocument = elementorFrontend?.config?.post?.id;
-
-	return innerDocumentId || ownerDocument || null;
-}
-
-function shouldFireLinkActionHandler( url ) {
-	if ( ! isEditorContext() ) {
-		return true;
-	}
-
-	url = decodeURI( url );
-	url = decodeURIComponent( url );
-
-	const actionMatch = url.match( /action=([^&]+)/ );
-	const action = actionMatch?.[ 1 ] ?? null;
-
-	if ( ! action ) {
-		return false;
-	}
-
-	const whitelist = elementorFrontend?.hooks?.applyFilters( WHITELIST_FILTER, LINK_ACTIONS_EDITOR_WHITELIST ) ??
-		LINK_ACTIONS_EDITOR_WHITELIST;
-
-	return !! whitelist.find( ( allowedAction ) => action.includes( allowedAction ) );
-}
-
-function isEditorContext() {
-	return !! window.elementor || !! window.parent?.elementor;
 }
 
 function refreshDom( element ) {
