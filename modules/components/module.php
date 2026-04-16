@@ -3,6 +3,8 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
@@ -30,6 +32,10 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
 		$this->register_component_post_type();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
@@ -40,10 +46,16 @@ class Module extends BaseModule {
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
 
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
+	}
+
+	public function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public static function get_experimental_data() {
@@ -116,6 +128,10 @@ class Module extends BaseModule {
 			return;
 		}
 
+		if ( ! Components_Access_Controller::can_edit() ) {
+			throw new \Exception( esc_html__( 'You do not have permission to edit component source.', 'elementor' ) );
+		}
+
 		/* @var Component_Document $document */
 		$result = $document->update_overridable_props( $data['settings']['overridable_props'] );
 
@@ -128,5 +144,13 @@ class Module extends BaseModule {
 		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
 		$transformers->register( Overridable_Prop_Type::get_key(), new Overridable_Transformer() );
 		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
+	}
+
+	private function after_component_migrate( Document $document, array $data ) {
+		if ( ! $document instanceof Component_Document ) {
+			return;
+		}
+
+		$document->align_overridable_props_with_elements();
 	}
 }

@@ -12,9 +12,9 @@
               "value": ["e-28fdd576-c6296f2"]
             },
             "text": {
-              "$$type": "html-v2",
+              "$$type": "html-v3",
               "value": {
-                "content": "I have a shadow",
+                "content": {"$$type": "string", "value": "I have a shadow"},
                 "children": []
               }
             }

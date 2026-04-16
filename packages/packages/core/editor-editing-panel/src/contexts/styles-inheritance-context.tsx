@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, type PropsWithChildren, useContext } from 'react';
-import { getWidgetsCache, useElementSetting } from '@elementor/editor-elements';
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
@@ -14,7 +14,7 @@ import {
 	type StylesInheritanceSnapshot,
 } from '../styles-inheritance/types';
 import { useClassesProp } from './classes-prop-context';
-import { useElement } from './element-context';
+import { useElement, usePanelElementSetting } from './element-context';
 import { useStyle } from './style-context';
 
 const Context = createContext< StylesInheritanceAPI | null >( null );
@@ -65,13 +65,12 @@ export function useStylesInheritanceChain( path: string[] ): SnapshotPropValue[]
 }
 
 const useAppliedStyles = () => {
-	const { element } = useElement();
 	const currentClassesProp = useClassesProp();
 	const baseStyles = useBaseStyles();
 
 	useStylesRerender();
 
-	const classesProp = useElementSetting< ClassesPropValue >( element.id, currentClassesProp );
+	const classesProp = usePanelElementSetting< ClassesPropValue >( currentClassesProp );
 
 	const appliedStyles = classesPropTypeUtil.extract( classesProp ) ?? [];
 

@@ -4,7 +4,9 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -30,10 +32,32 @@ class Module extends BaseModule {
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
 		$is_flags_enabled = false;
+		$session_recording_events = [];
 
 		if ( $can_send_events ) {
 			$mixpanel_config = self::get_remote_mixpanel_config();
-			$is_flags_enabled = $mixpanel_config[0]['flags'] ?? false;
+			$has_config = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] );
+
+			if ( $has_config ) {
+				$is_flags_enabled = (bool) ( $mixpanel_config[0]['flags'] ?? false );
+
+				$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
+				$is_session_replays_enabled = (bool) ( $session_replays['enabled'] ?? false );
+				$raw_events = $session_replays['events'] ?? null;
+				$events_map = is_array( $raw_events ) ? $raw_events : [];
+
+				if ( $is_session_replays_enabled ) {
+					$session_recording_events = array_values( array_filter(
+						self::get_session_recording_events(),
+						function ( $pair ) use ( $events_map ) {
+							if ( ! isset( $pair['start'] ) ) {
+								return false;
+							}
+							return (bool) ( $events_map[ $pair['start'] ] ?? false );
+						}
+					) );
+				}
+			}
 		}
 
 		$settings = [
@@ -48,6 +72,8 @@ class Module extends BaseModule {
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'flags_enabled' => $is_flags_enabled,
+			'user_id' => self::get_user_id(),
+			'session_recording_events' => $session_recording_events,
 		];
 
 		return $settings;
@@ -88,18 +114,30 @@ class Module extends BaseModule {
 	}
 
 	private static function get_remote_mixpanel_config() {
-		$data = wp_remote_get( static::REMOTE_MIXPANEL_CONFIG_URL );
+		$editor_assets_api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => static::REMOTE_MIXPANEL_CONFIG_URL,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_mixpanel_config',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'mixpanel',
+		] );
 
-		if ( is_wp_error( $data ) ) {
-			return [];
+		return $editor_assets_api->get_assets_data();
+	}
+
+	private static function get_session_recording_events(): array {
+		return [
+			// Each entry defines a recording window: recording starts when 'start' fires
+			// and stops when 'end' fires. 'end' is optional — omit or set to null to record indefinitely.
+			[ 'start' => 'editor_loaded' ],
+		];
+	}
+
+	private static function get_user_id() {
+		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
+
+		if ( ! is_array( $user_common_data ) ) {
+			return null;
 		}
 
-		$data = json_decode( wp_remote_retrieve_body( $data ), true );
-
-		if ( empty( $data['mixpanel'] ) || ! is_array( $data['mixpanel'] ) ) {
-			return [];
-		}
-
-		return $data['mixpanel'];
+		return Common_App::get_connect_user_id_from_access_token( $user_common_data['access_token'] ?? null );
 	}
 }

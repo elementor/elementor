@@ -1,3 +1,5 @@
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+
 export class Back extends $e.modules.CommandBase {
 	document = null;
 	confirmDialog = null;
@@ -5,10 +7,11 @@ export class Back extends $e.modules.CommandBase {
 
 	apply() {
 		const panelHistory = $e.routes.getHistory( 'panel' );
+		const currentRoute = panelHistory[ panelHistory.length - 1 ]?.route;
 
-		// When there's no more previous pages to navigate back to,
-		// prompt the user with a confirmation dialog asking if they would like to exit.
-		if ( 1 === panelHistory.length ) {
+		// When at the root Site Settings page, back should behave like close —
+		// switching back to the initial document and clearing the active-document query param.
+		if ( currentRoute === this.component.getNamespace() + '/menu' ) {
 			this.getCloseConfirmDialog( event ).show();
 			return;
 		}
@@ -31,6 +34,45 @@ export class Back extends $e.modules.CommandBase {
 		return $e.routes.back( 'panel' );
 	}
 
+	markSessionSaved() {
+		const globalComponent = this.component;
+
+		if ( ! globalComponent ) {
+			return;
+		}
+
+		globalComponent.siteSettingsSession.hasSaved = true;
+
+		const currentTab = globalComponent.currentTab;
+		let activeSection = null;
+
+		try {
+			const panelView = elementor.getPanelView();
+			const currentPage = panelView?.getCurrentPageView?.();
+			const contentView = currentPage?.content?.currentView;
+			activeSection = contentView?.activeSection || null;
+		} catch ( e ) {}
+
+		const savedItem = activeSection ? `${ currentTab } - ${ activeSection }` : currentTab;
+
+		if ( savedItem ) {
+			globalComponent.trackSavedItem( savedItem );
+		}
+	}
+
+	trackSiteSettingsSession( targetType, state ) {
+		const sessionData = this.component.getSiteSettingsSessionData?.() || {};
+
+		EditorOneEventManager.sendSiteSettingsSession( {
+			targetType,
+			visitedItems: sessionData.visitedItems || [],
+			savedItems: sessionData.savedItems || [],
+			state,
+		} );
+
+		this.component.resetSiteSettingsSession?.();
+	}
+
 	getCloseConfirmDialog( event ) {
 		if ( ! this.confirmDialog ) {
 			const modalOptions = {
@@ -46,6 +88,7 @@ export class Back extends $e.modules.CommandBase {
 					cancel: __( 'Cancel', 'elementor' ),
 				},
 				onConfirm: () => {
+					this.trackSiteSettingsSession( 'back', 'discard' );
 					$e.run( 'panel/global/close' );
 				},
 			};
@@ -63,7 +106,9 @@ export class Back extends $e.modules.CommandBase {
 	isGlobalRoute() {
 		const panelHistory = $e.routes.getHistory( 'panel' );
 
-		return /global\/\bglobal-colors|global-typography\b/.test( panelHistory[ panelHistory.length - 1 ].route );
+		return /global\/\bglobal-colors|global-typography\b/.test(
+			panelHistory[ panelHistory.length - 1 ].route,
+		);
 	}
 
 	isDocumentChanged() {
@@ -88,7 +133,7 @@ export class Back extends $e.modules.CommandBase {
 			const modalOptions = {
 				id: `elementor-${ document }-save-changes`,
 				headerMessage: __( 'Save Changes', 'elementor' ),
-				message: __( 'Would you like to save the changes you\'ve made?', 'elementor' ),
+				message: __( "Would you like to save the changes you've made?", 'elementor' ),
 				position: {
 					my: 'center center',
 					at: 'center center',
@@ -98,18 +143,24 @@ export class Back extends $e.modules.CommandBase {
 					cancel: __( 'Discard', 'elementor' ),
 				},
 				onConfirm: () => {
+					this.markSessionSaved();
 					$e.run( 'document/save/update' ).then( () => {
+						this.trackSiteSettingsSession( 'save', 'saved' );
 						resolve();
 					} );
 				},
 				onCancel: () => {
 					$e.run( 'document/save/discard', { document } ).then( () => {
+						this.trackSiteSettingsSession( 'back', 'discard' );
 						resolve();
 					} );
 				},
 			};
 
-			this.unsavedChangesDialog[ document ] = elementorCommon.dialogsManager.createWidget( 'confirm', modalOptions );
+			this.unsavedChangesDialog[ document ] = elementorCommon.dialogsManager.createWidget(
+				'confirm',
+				modalOptions,
+			);
 		}
 
 		this.unsavedChangesDialog[ document ].setSettings( 'hide', {

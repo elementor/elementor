@@ -1,3 +1,5 @@
+import { stubInteractionsConfig } from './utils';
+
 function flushPromises() {
 	return Promise.resolve();
 }
@@ -11,19 +13,6 @@ function setReadyStateComplete() {
 	} );
 }
 
-function initBreakpoints() {
-	window.ElementorInteractionsConfig = {
-		breakpoints: {
-			mobile: { value: 768, direction: 'max' },
-			mobile_extra: { value: 880, direction: 'max' },
-			tablet: { value: 1024, direction: 'max' },
-			tablet_extra: { value: 1200, direction: 'max' },
-			laptop: { value: 1366, direction: 'max' },
-			widescreen: { value: 2440, direction: 'min' },
-		},
-	};
-}
-
 function installMotionMocks( { animate, inView, scroll } ) {
 	window.Motion = {
 		animate,
@@ -34,11 +23,12 @@ function installMotionMocks( { animate, inView, scroll } ) {
 
 describe( 'Interactions', () => {
 	beforeAll( () => {
-		initBreakpoints();
+		stubInteractionsConfig();
 	} );
 
 	beforeEach( () => {
 		jest.resetModules();
+
 		document.body.innerHTML = '';
 		setReadyStateComplete();
 	} );
@@ -137,5 +127,65 @@ describe( 'Interactions', () => {
 		await flushPromises();
 
 		expect( animate ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'preserves existing translate transform when interaction animates scale', async () => {
+		const animate = jest.fn( () => Promise.resolve() );
+		const inView = jest.fn();
+		const scroll = jest.fn();
+		installMotionMocks( { animate, inView, scroll } );
+
+		const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( {
+			transform: 'matrix(1, 0, 0, 1, 15, 25)',
+		} );
+
+		const element = document.createElement( 'div' );
+		element.setAttribute( 'data-interaction-id', 'preserve-transform' );
+		document.body.appendChild( element );
+
+		const script = document.createElement( 'script' );
+		script.id = 'elementor-interactions-data';
+		script.type = 'application/json';
+		script.textContent = JSON.stringify( [
+			{
+				elementId: 'preserve-transform',
+				interactions: [
+					{
+						trigger: 'load',
+						breakpoints: { excluded: [] },
+						animation: {
+							effect: 'scale',
+							type: 'in',
+							direction: '',
+							timing_config: { duration: 600, delay: 0 },
+							config: { replay: false, easing: 'easeIn' },
+						},
+					},
+				],
+			},
+		] );
+		document.body.appendChild( script );
+
+		jest.isolateModules( () => {
+			require( 'elementor/modules/interactions/assets/js/interactions.js' );
+		} );
+
+		await flushPromises();
+
+		expect( animate ).toHaveBeenCalledWith(
+			element,
+			expect.objectContaining( {
+				scale: [ 0, 1 ],
+				x: [ 15, 15 ],
+				y: [ 25, 25 ],
+			} ),
+			expect.objectContaining( {
+				duration: 0.6,
+				delay: 0,
+				ease: 'easeIn',
+			} ),
+		);
+
+		getComputedStyleSpy.mockRestore();
 	} );
 } );

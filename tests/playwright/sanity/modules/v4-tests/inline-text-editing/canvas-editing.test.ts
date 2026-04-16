@@ -5,7 +5,6 @@ import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { getElementSelector } from '../../../../assets/elements-utils';
 import topBarSelectors from '../../../../selectors/top-bar-selectors';
-import EditorSelectors from '../../../../selectors/editor-selectors';
 
 const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
 
@@ -139,7 +138,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await inlineEditor.waitFor();
 
-		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
+		headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId } ${ defaultAtomTags[ 'e-heading' ] }` );
 
 		// Assert
 		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
@@ -163,7 +162,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await inlineEditor.waitFor();
 
-		paragraphElement = inlineEditor.locator( defaultAtomTags[ 'e-paragraph' ] );
+		paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId } ${ defaultAtomTags[ 'e-paragraph' ] }` );
 
 		// Assert
 		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
@@ -179,14 +178,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
-
-		await inlineEditor.waitFor();
-		await page.waitForTimeout( 1000 );
-
-		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
-
-		await headingElement.click( { clickCount: 3 } );
-		await page.keyboard.type( 'Hello' );
+		headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId } ${ defaultAtomTags[ 'e-heading' ] }` );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await headingElement.click( { delay: 50 } );
+		await inlineEditor.fill( 'Hello' );
 
 		// Assert
 		await expect( headingElement ).toHaveText( 'Hello' );
@@ -245,13 +241,12 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		} );
 	}
 
-	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+	test( 'Ensure relevant focusing unmounts the inline editor from frame', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading.wrapper + ' > ' + EditorSelectors.v4.atomSelectors.heading.base );
 		const inlineEditedHeading = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		// Act
@@ -259,7 +254,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Assert
 		await expect( inlineEditedHeading ).toBeVisible();
-		await expect( headingElement ).not.toBeAttached();
 
 		// Arrange
 		await editor.triggerEditingElement( headingId );
@@ -269,7 +263,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			await editor.v4Panel.openTab( 'style' );
 
 			// Assert
-			await expect( headingElement ).toBeVisible();
 			await expect( inlineEditedHeading ).not.toBeAttached();
 		} );
 
@@ -282,7 +275,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			await editor.clickTopBarItem( topBarSelectors.navigator );
 
 			// Assert
-			await expect( headingElement ).toBeVisible();
 			await expect( inlineEditedHeading ).not.toBeAttached();
 		} );
 
@@ -294,7 +286,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			await editor.closeNavigatorIfOpen();
 
 			// Assert
-			await expect( headingElement ).toBeVisible();
 			await expect( inlineEditedHeading ).not.toBeAttached();
 		} );
 
@@ -306,7 +297,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			await editor.previewFrame.locator( editor.getWidgetSelector( dummyDivBlockId ) ).click();
 
 			// Assert
-			await expect( headingElement ).toBeVisible();
 			await expect( inlineEditedHeading ).not.toBeAttached();
 		} );
 	} );

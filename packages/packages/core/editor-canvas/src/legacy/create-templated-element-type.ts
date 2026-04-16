@@ -6,10 +6,10 @@ import { createElementViewClassDeclaration } from './create-element-type';
 import {
 	createAfterRender,
 	createBeforeRender,
-	createTwigRenderState,
-	renderChildrenWithOptimization,
-	renderTwigTemplate,
+	rerenderExistingChildren,
+	setupTwigRenderer,
 	type TwigViewInterface,
+	waitForChildrenToComplete,
 } from './twig-rendering-utils';
 import {
 	type ElementType,
@@ -69,10 +69,16 @@ export function createTemplatedElementView( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementView {
 	const BaseView = createElementViewClassDeclaration();
 
-	const renderState = createTwigRenderState( { renderer, element } );
+	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+		type,
+		renderer,
+		element,
+	} );
 
 	return class extends BaseView {
 		_abortController: AbortController | null = null;
+		_lastResolvedSettingsHash: string | null = null;
+		_domUpdateWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
@@ -95,7 +101,7 @@ export function createTemplatedElementView( {
 		}
 
 		invalidateRenderCache() {
-			renderState.cacheState.invalidate();
+			this._lastResolvedSettingsHash = null;
 		}
 
 		render() {
@@ -114,31 +120,73 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			await renderChildrenWithOptimization( {
-				children: this.children,
-				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
-				renderChildren: () => super._renderChildren(),
-			} );
+			if ( this._shouldReuseChildren() ) {
+				rerenderExistingChildren( this );
+			} else {
+				super._renderChildren();
+			}
+
+			await waitForChildrenToComplete( this );
+		}
+
+		_shouldReuseChildren() {
+			return this._domUpdateWasSkipped && this.children?.length > 0;
 		}
 
 		async _renderTemplate() {
-			await renderTwigTemplate( {
-				view: this,
-				signal: this._abortController?.signal,
-				renderState,
-				buildContext: ( resolvedSettings ) => ( {
-					id: this.model.get( 'id' ),
-					type,
-					settings: resolvedSettings,
-					base_styles: element.base_styles_dictionary,
-				} ),
-				attachContent: ( html: string ) => this.$el.html( html ),
-				afterSettingsResolve: ( settings ) => this.afterSettingsResolve( settings ),
-			} );
+			this.triggerMethod( 'before:render:template' );
+
+			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
+				.then( ( _, signal ) => {
+					const settings = this.model.get( 'settings' ).toJSON();
+					return resolveProps( {
+						props: settings,
+						signal,
+						renderContext: this.getResolverRenderContext(),
+					} );
+				} )
+				.then( ( settings ) => {
+					return this.afterSettingsResolve( settings );
+				} )
+				.then( async ( settings ) => {
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this._domUpdateWasSkipped = true;
+						return null;
+					}
+					this._domUpdateWasSkipped = false;
+
+					this._lastResolvedSettingsHash = settingsHash;
+
+					const context = {
+						id: this.model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
+						type,
+						settings,
+						base_styles: baseStylesDictionary,
+					};
+
+					return renderer.render( templateKey, context );
+				} )
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this.$el.html( html );
+				} );
+
+			await process.execute();
+
+			this.bindUIElements();
+
+			this.triggerMethod( 'render:template' );
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			return settings;
+			return this._getLinkAttributes( settings );
 		}
 
 		_beforeRender() {
@@ -158,6 +206,45 @@ export function createTemplatedElementView( {
 		}
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => super._openEditingPanel( options ) );
+		}
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
+		}
+
+		_getLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			const linkAttributes = Object.entries( this._handleActionLinkAttributes( settings ) )
+				.map( ( [ key, value ] ) => `${ key }="${ value }"` )
+				.join( ' ' );
+
+			return {
+				...settings,
+				link: linkAttributes
+					? {
+							tag: ( settings?.link as { tag?: string } )?.tag,
+							attributes: linkAttributes,
+					  }
+					: null,
+			};
+		}
+
+		_handleActionLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			const link = settings.link;
+
+			if ( ! link || typeof link !== 'object' || ! ( 'href' in link ) || ! link.href ) {
+				return {};
+			}
+
+			const isActionLink = 'tag' in link && link.tag === 'button';
+			const urlAttrKey = isActionLink ? 'data-action-link' : 'href';
+
+			return {
+				[ urlAttrKey ]: link.href,
+				target: ( 'target' in link && link.target ) ?? '_self',
+			};
 		}
 	};
 }

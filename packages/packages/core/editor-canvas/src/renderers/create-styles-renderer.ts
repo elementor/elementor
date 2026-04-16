@@ -46,9 +46,28 @@ const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 	class: '.',
 };
 
+const DEFAULT_BREAKPOINT = 'desktop';
+const DEFAULT_STATE = 'normal';
+
+function getStyleUniqueKey( style: RendererStyleDefinition ): string {
+	const breakpoint = style.variants[ 0 ]?.meta?.breakpoint ?? DEFAULT_BREAKPOINT;
+	const state = style.variants[ 0 ]?.meta?.state ?? DEFAULT_STATE;
+	return `${ style.id }-${ breakpoint }-${ state }`;
+}
+
 export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
 	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
-		const stylesCssPromises = styles.map( async ( style ) => {
+		const seenKeys = new Set< string >();
+		const uniqueStyles = styles.filter( ( style ) => {
+			const key = getStyleUniqueKey( style );
+			if ( seenKeys.has( key ) ) {
+				return false;
+			}
+			seenKeys.add( key );
+			return true;
+		} );
+
+		const stylesCssPromises = uniqueStyles.map( async ( style ) => {
 			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
 				const css = await propsToCss( { props: variant.props, resolve, signal } );
 				const customCss = customCssToString( variant.custom_css );

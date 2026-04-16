@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type MouseEvent } from 'react';
+import { type MouseEvent, type RefObject } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -18,6 +18,7 @@ type PromotionPopoverCardProps = {
 	ctaUrl: string;
 	ctaText?: string;
 	onClose: ( e: MouseEvent ) => void;
+	onCtaClick?: () => void;
 };
 
 type PromotionPopoverProps = React.PropsWithChildren<
@@ -25,6 +26,7 @@ type PromotionPopoverProps = React.PropsWithChildren<
 		open: boolean;
 		placement?: InfotipProps[ 'placement' ];
 		slotProps?: InfotipProps[ 'slotProps' ];
+		anchorRef?: RefObject< HTMLElement | null >;
 	}
 >;
 
@@ -33,15 +35,19 @@ export const PromotionPopover = ( {
 	open,
 	placement = 'right',
 	slotProps,
+	anchorRef,
 	...cardProps
 }: PromotionPopoverProps ) => {
+	const anchorEl = anchorRef?.current;
+
 	const defaultSlotProps: InfotipProps[ 'slotProps' ] = {
 		popper: {
+			...( anchorEl && { anchorEl } ),
 			modifiers: [
 				{
 					name: 'offset',
 					options: {
-						offset: [ 0, 10 ],
+						offset: anchorRef ? [ 0, 4 ] : [ 0, 10 ],
 					},
 				},
 			],
@@ -61,7 +67,7 @@ export const PromotionPopover = ( {
 	);
 };
 
-function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPopoverCardProps ) {
+function PopoverAlert( { title, content, ctaUrl, ctaText, onClose, onCtaClick }: PromotionPopoverCardProps ) {
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
@@ -74,6 +80,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				color="promotion"
 				icon={ <CrownFilledIcon fontSize="tiny" /> }
 				onClose={ onClose }
+				onMouseDown={ ( e: MouseEvent ) => e.stopPropagation() }
 				role="dialog"
 				aria-label="promotion-popover-title"
 				action={
@@ -83,6 +90,7 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 						href={ ctaUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						onClick={ onCtaClick }
 					>
 						{ ctaText }
 					</AlertAction>

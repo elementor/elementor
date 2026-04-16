@@ -1,0 +1,20 @@
+{
+	"up": [
+	  {
+		"op": {
+		  "fn": "set",
+		  "path": "$$type",
+		  "value": "url"
+		}
+	  }
+	],
+	"down": [
+	  {
+		"op": {
+		  "fn": "set",
+		  "path": "$$type",
+		  "value": "old-url"
+		}
+	  }
+	]
+  }

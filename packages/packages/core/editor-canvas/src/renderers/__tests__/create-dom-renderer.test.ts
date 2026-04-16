@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/render-result-naming-convention */
 import { createDomRenderer } from '../create-dom-renderer';
 
 describe( 'createDomRenderer', () => {

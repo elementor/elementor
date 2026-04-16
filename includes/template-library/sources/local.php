@@ -744,6 +744,10 @@ class Source_Local extends Source_Base {
 			$data['page_settings'] = $page->get_data( 'settings' );
 		}
 
+		if ( ! empty( $content ) ) {
+			$this->attach_global_styles_to_data( $data, $content, $template_id );
+		}
+
 		return $data;
 	}
 
@@ -920,7 +924,7 @@ class Source_Local extends Source_Base {
 	 * @param string $path - The file path.
 	 * @return \WP_Error|array An array of items on success, 'WP_Error' on failure.
 	 */
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -947,7 +951,7 @@ class Source_Local extends Source_Base {
 					continue;
 				}
 
-				$import_result = $this->import_single_template( $file_path );
+				$import_result = $this->import_single_template( $file_path, $import_mode );
 
 				if ( is_wp_error( $import_result ) ) {
 					// Skip failed files
@@ -961,7 +965,7 @@ class Source_Local extends Source_Base {
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
 			// If the import file is a single JSON file
-			$import_result = $this->import_single_template( $path );
+			$import_result = $this->import_single_template( $path, $import_mode );
 
 			if ( is_wp_error( $import_result ) ) {
 				return $import_result;
@@ -1075,6 +1079,21 @@ class Source_Local extends Source_Base {
 	public function block_template_frontend() {
 		if ( is_singular( self::CPT ) && ! current_user_can( Editor::EDITING_CAPABILITY ) ) {
 			wp_safe_redirect( site_url(), 301 );
+			die;
+		}
+	}
+
+	public function redirect_categories_page_to_saved_templates_page() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$taxonomy = sanitize_key( wp_unslash( $_GET['taxonomy'] ?? '' ) );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = sanitize_key( wp_unslash( $_GET['post_type'] ?? '' ) );
+		$is_categories_page = 'edit-tags.php' === $GLOBALS['pagenow']
+			&& self::TAXONOMY_CATEGORY_SLUG === $taxonomy
+			&& self::CPT === $post_type;
+
+		if ( $is_categories_page ) {
+			wp_safe_redirect( admin_url( 'edit.php?post_type=' . self::CPT . '&tabs_group=library' ) );
 			die;
 		}
 	}
@@ -1511,8 +1530,8 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error|int|array Local template array, or template ID, or
 	 *                             `WP_Error`.
 	 */
-	private function import_single_template( $file_path ) {
-		$data = $this->prepare_import_template_data( $file_path );
+	private function import_single_template( $file_path, $import_mode = 'match_site' ) {
+		$data = $this->prepare_import_template_data( $file_path, $import_mode );
 
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -1569,6 +1588,8 @@ class Source_Local extends Source_Base {
 			'title' => $document->get_main_post()->post_title,
 			'type' => self::get_template_type( $template_id ),
 		];
+
+		$this->attach_global_styles_to_data( $export_data, $content, $template_id );
 
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -1717,6 +1738,8 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
+			add_action( 'admin_init', [ $this, 'redirect_categories_page_to_saved_templates_page' ] );
+
 			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 				$this->register_editor_one_menu( $menu_data_provider );
 			} );
@@ -1983,7 +2006,7 @@ class Source_Local extends Source_Base {
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
 
-		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+		$can_read_template = ! $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 
 		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
 	}

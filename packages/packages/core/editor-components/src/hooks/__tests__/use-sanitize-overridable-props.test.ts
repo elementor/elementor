@@ -63,26 +63,61 @@ describe( 'useSanitizeOverridableProps', () => {
 		dispatch( slice.actions.resetSanitizedComponents() );
 	} );
 
-	describe( 'caching mechanism', () => {
-		it( 'should run filtering logic only once per component', () => {
+	describe( 'filtering', () => {
+		it( 'should filter overridable props when component is not sanitized', () => {
+			// Arrange
+			const mockOverridableProps = createMockOverridableProps();
+			const mockComponent = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
+			dispatch( slice.actions.load( [ mockComponent ] ) );
+			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
+
+			// Act
+			const { result } = renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+
+			// Assert
+			expect( mockFilterValidOverridableProps ).toHaveBeenCalledWith( mockOverridableProps, undefined );
+			expect( result.current ).toBe( mockOverridableProps );
+		} );
+
+		it( 'should pass instanceElementId to filter function', () => {
+			// Arrange
+			const mockOverridableProps = createMockOverridableProps();
+			const mockComponent = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
+			dispatch( slice.actions.load( [ mockComponent ] ) );
+			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
+
+			// Act
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID, 'instance-element-1' ), store );
+
+			// Assert
+			expect( mockFilterValidOverridableProps ).toHaveBeenCalledWith(
+				mockOverridableProps,
+				'instance-element-1'
+			);
+		} );
+
+		it( 'should filter on every render when not sanitized', () => {
+			// Arrange
+			const mockOverridableProps = createMockOverridableProps();
+			const mockComponent = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
+			dispatch( slice.actions.load( [ mockComponent ] ) );
+			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
+
+			// Act
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+
+			// Assert
+			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'should filter independently per component', () => {
 			// Arrange
 			const mockOverridableProps = createMockOverridableProps();
 			const mockComponent1 = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
 			const mockComponent2 = createMockComponent( MOCK_SECOND_COMPONENT_ID, mockOverridableProps );
 			dispatch( slice.actions.load( [ mockComponent1, mockComponent2 ] ) );
 			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
-
-			// Act
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
-
-			// Assert
-			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 1 );
-
-			// Act
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
-
-			// Assert
-			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
 
 			// Act
 			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
@@ -91,32 +126,82 @@ describe( 'useSanitizeOverridableProps', () => {
 			// Assert
 			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
 		} );
+	} );
 
-		it( 'should re-run filtering logic if sanitized components are reset', () => {
+	describe( 'caching via isSanitized', () => {
+		it( 'should skip filtering when component is marked as sanitized', () => {
+			// Arrange
+			const mockOverridableProps = createMockOverridableProps();
+			const mockComponent = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
+			dispatch( slice.actions.load( [ mockComponent ] ) );
+			dispatch(
+				slice.actions.updateComponentSanitizedAttribute( {
+					componentId: MOCK_COMPONENT_ID,
+					attribute: 'overridableProps',
+				} )
+			);
+
+			// Act
+			const { result } = renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+
+			// Assert
+			expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
+			expect( result.current ).toBe( mockOverridableProps );
+		} );
+
+		it( 'should track sanitized state per component', () => {
 			// Arrange
 			const mockOverridableProps = createMockOverridableProps();
 			const mockComponent1 = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
 			const mockComponent2 = createMockComponent( MOCK_SECOND_COMPONENT_ID, mockOverridableProps );
 			dispatch( slice.actions.load( [ mockComponent1, mockComponent2 ] ) );
+			dispatch(
+				slice.actions.updateComponentSanitizedAttribute( {
+					componentId: MOCK_COMPONENT_ID,
+					attribute: 'overridableProps',
+				} )
+			);
 			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 			// Act
 			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+
+			// Assert - component 1 is sanitized, should skip filtering
+			expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
+
+			// Act - component 2 is NOT sanitized, should filter
 			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
 
 			// Assert
-			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 2 );
+			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should re-run filtering after sanitized state is reset', () => {
+			// Arrange
+			const mockOverridableProps = createMockOverridableProps();
+			const mockComponent = createMockComponent( MOCK_COMPONENT_ID, mockOverridableProps );
+			dispatch( slice.actions.load( [ mockComponent ] ) );
+			dispatch(
+				slice.actions.updateComponentSanitizedAttribute( {
+					componentId: MOCK_COMPONENT_ID,
+					attribute: 'overridableProps',
+				} )
+			);
+			mockFilterValidOverridableProps.mockReturnValue( mockOverridableProps );
 
 			// Act
-			dispatch( slice.actions.resetSanitizedComponents() );
-
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store ); // second invocation should be skipped
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store );
-			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_SECOND_COMPONENT_ID ), store ); // second invocation should be skipped
+			const { unmount } = renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
 
 			// Assert
-			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 4 );
+			expect( mockFilterValidOverridableProps ).not.toHaveBeenCalled();
+
+			// Act
+			unmount();
+			dispatch( slice.actions.resetSanitizedComponents() );
+			renderHookWithStore( () => useSanitizeOverridableProps( MOCK_COMPONENT_ID ), store );
+
+			// Assert
+			expect( mockFilterValidOverridableProps ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

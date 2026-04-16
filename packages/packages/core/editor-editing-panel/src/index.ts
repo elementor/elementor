@@ -13,6 +13,7 @@ export { useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
 export { useStyle } from './contexts/style-context';
 export { Control as BaseControl } from './controls-registry/control';
+export { ControlTypeContainer } from './controls-registry/control-type-container';
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
 export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
@@ -30,3 +31,10 @@ export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-una
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
 export { isDynamicPropValue } from './dynamics/utils';
+export {
+	extractDependencyEffect,
+	type DependencyEffect,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	extractOrderedDependencies,
+} from './utils/prop-dependency-utils';

@@ -1,13 +1,21 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Repeater } from '@elementor/editor-controls';
+import { Repeater, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useInteractionsContext } from '../contexts/interactions-context';
 import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
+import {
+	dispatchScrollInteraction,
+	extractScrollOverlayParams,
+	syncGridOverlay,
+} from '../utils/scroll-interaction-event';
+import { trackInteractionCreated } from '../utils/tracking';
+import { DEFAULT_VALUES } from './interaction-details';
 import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -20,8 +28,10 @@ export type InteractionListProps = {
 
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
+	const { elementId } = useInteractionsContext();
 
 	const hasInitializedRef = useRef( false );
+	const newlyCreatedIdsRef = useRef< Set< string > >( new Set() );
 
 	const handleUpdateInteractions = useCallback(
 		( newInteractions: ElementInteractions ) => {
@@ -37,9 +47,11 @@ export function InteractionsList( props: InteractionListProps ) {
 			( ! interactions.items || interactions.items?.length === 0 )
 		) {
 			hasInitializedRef.current = true;
+			const newItem = createDefaultInteractionItem();
+			newlyCreatedIdsRef.current.add( extractString( newItem.value.interaction_id ) );
 			const newState: ElementInteractions = {
 				version: 1,
-				items: [ createDefaultInteractionItem() ],
+				items: [ newItem ],
 			};
 			handleUpdateInteractions( newState );
 		}
@@ -62,11 +74,21 @@ export function InteractionsList( props: InteractionListProps ) {
 	) : undefined;
 
 	const handleRepeaterChange = useCallback(
-		( newItems: ElementInteractions[ 'items' ] ) => {
+		(
+			newItems: ElementInteractions[ 'items' ],
+			_: unknown,
+			meta?: SetRepeaterValuesMeta< InteractionItemPropValue >
+		) => {
 			handleUpdateInteractions( {
 				...interactions,
 				items: newItems,
 			} );
+			if ( meta?.action?.type === 'add' ) {
+				const addedItem = meta.action.payload[ 0 ]?.item;
+				if ( addedItem ) {
+					newlyCreatedIdsRef.current.add( extractString( addedItem.value.interaction_id ) );
+				}
+			}
 		},
 		[ interactions, handleUpdateInteractions ]
 	);
@@ -112,6 +134,21 @@ export function InteractionsList( props: InteractionListProps ) {
 					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
 					Icon: () => null,
 					Content: InteractionsListItem,
+					onPopoverOpen: ( value: InteractionItemPropValue ) => {
+						const { trigger, start, end, relativeTo } = extractScrollOverlayParams(
+							value.value,
+							DEFAULT_VALUES
+						);
+						syncGridOverlay( trigger, start, end, relativeTo );
+					},
+					onPopoverClose: ( value: InteractionItemPropValue ) => {
+						dispatchScrollInteraction( null );
+						const id = extractString( value.value.interaction_id );
+						if ( newlyCreatedIdsRef.current.has( id ) ) {
+							newlyCreatedIdsRef.current.delete( id );
+							trackInteractionCreated( elementId, value );
+						}
+					},
 					actions: ( value: InteractionItemPropValue ) => (
 						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 							<IconButton

@@ -1,3 +1,4 @@
+import { type Root } from 'react-dom/client';
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
@@ -47,6 +48,9 @@ export type LegacyWindow = Window & {
 				},
 			];
 		$previewWrapper: JQueryElement;
+		helpers: {
+			hasPro: () => boolean;
+		};
 	};
 };
 
@@ -74,14 +78,13 @@ export declare class ElementView {
 
 	model: BackboneModel< ElementModel >;
 
-	_abortController: AbortController | null;
-
 	collection: BackboneCollection< ElementModel >;
 
 	children: {
 		length: number;
 		findByIndex: ( index: number ) => ElementView;
 		each: ( callback: ( view: ElementView ) => void ) => void;
+		map: < T >( callback: ( view: ElementView ) => T ) => T[];
 	};
 
 	constructor( ...args: unknown[] );
@@ -201,6 +204,7 @@ type BackboneCollection< Model extends object > = {
 
 export type ElementModel = {
 	id: string;
+	originId?: string;
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
@@ -218,7 +222,17 @@ type ToJSON< T > = {
 
 type ContextMenuGroup = {
 	name: string;
-	actions: unknown[];
+	actions: ContextMenuAction[];
+};
+
+export type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
+export type ContextMenuAction = {
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	shortcut?: string;
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
 };
 
 export type ReplacementSettings = {
@@ -228,4 +242,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };

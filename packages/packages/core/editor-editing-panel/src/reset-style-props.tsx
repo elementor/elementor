@@ -13,6 +13,7 @@ const { registerAction } = controlActionsMenu;
 export function initResetStyleProps() {
 	registerAction( {
 		id: 'reset-style-value',
+		priority: 10,
 		useProps: useResetStyleValueProps,
 	} );
 }

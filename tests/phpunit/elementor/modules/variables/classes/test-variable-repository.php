@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Classes;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -68,7 +69,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Act.
@@ -144,7 +145,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$captured_data = [];
@@ -152,7 +153,7 @@ class Test_Variables_Repository extends TestCase {
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
 			->with(
-				Variables_Repository::VARIABLES_META_KEY,
+				Constants::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
@@ -191,7 +192,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 10,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$captured_data = [];
@@ -199,7 +200,7 @@ class Test_Variables_Repository extends TestCase {
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
 			->with(
-				Variables_Repository::VARIABLES_META_KEY,
+				Constants::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
@@ -241,7 +242,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -290,7 +291,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -322,7 +323,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 8,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -357,7 +358,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 8,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -398,7 +399,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -428,7 +429,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -464,7 +465,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->method( 'update_json_meta' )->willReturn( false );
@@ -491,7 +492,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -523,7 +524,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -559,7 +560,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -586,7 +587,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -610,7 +611,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -643,7 +644,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -672,7 +673,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -709,7 +710,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		// Assert.
@@ -739,7 +740,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit->expects( $this->once() )
@@ -774,7 +775,7 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 			'watermark' => PHP_INT_MAX,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		] );
 
 		$captured_watermark = null;
@@ -782,7 +783,7 @@ class Test_Variables_Repository extends TestCase {
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
 			->with(
-				Variables_Repository::VARIABLES_META_KEY,
+				Constants::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_watermark ) {
 					$captured_watermark = $meta['watermark'];
 
@@ -818,7 +819,7 @@ class Test_Variables_Repository extends TestCase {
             ],
         ],
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $this->kit->expects( $this->once() )
@@ -885,7 +886,7 @@ public function test_process_atomic_batch__throws_batch_operation_failed_with_du
             ],
         ],
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $operations = [
@@ -921,7 +922,7 @@ public function test_process_atomic_batch__throws_batch_operation_failed_with_re
     $this->kit->method( 'get_json_meta' )->willReturn( [
         'data' => [],
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $operations = [
@@ -955,7 +956,7 @@ public function test_process_atomic_batch__ensures_atomicity_on_failure() {
     $this->kit->method( 'get_json_meta' )->willReturn( [
         'data' => $original_data,
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $operations = [
@@ -992,7 +993,7 @@ public function test_process_atomic_batch__throws_fatal_error_when_save_fails() 
     $this->kit->method( 'get_json_meta' )->willReturn( [
         'data' => [],
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $this->kit->method( 'update_json_meta' )->willReturn( false );
@@ -1027,7 +1028,7 @@ public function test_process_atomic_batch__handles_delete_operation() {
             ],
         ],
         'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
+        'version' => Constants::FORMAT_VERSION_V1,
     ] );
 
     $this->kit->expects( $this->once() )

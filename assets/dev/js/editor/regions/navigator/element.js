@@ -2,7 +2,6 @@ import ElementEmpty from './element-empty';
 import RootEmpty from './root-empty';
 
 const NEW_NESTABLE_CLASS = 'elementor-navigator__element-new-nestable';
-const INLINE_CHILD_INDENT_INCREMENT = 10;
 
 export default class extends Marionette.CompositeView {
 	getTemplate() {
@@ -45,10 +44,6 @@ export default class extends Marionette.CompositeView {
 	getEmptyView() {
 		if ( this.isNavigatorContainer() ) {
 			return RootEmpty;
-		}
-
-		if ( this.getInlineChildren() ) {
-			return null;
 		}
 
 		if ( this.hasChildren() ) {
@@ -112,12 +107,17 @@ export default class extends Marionette.CompositeView {
 		return helpers;
 	}
 
+	isProPromotion() {
+		const elType = this.model.get( 'elType' );
+		return !! elementor.widgetsCache?.[ elType ]?.meta?.is_pro_promotion;
+	}
+
 	initialize() {
-		this.collection = this.model.get( 'elements' );
+		this.collection = this.isProPromotion()
+			? new Backbone.Collection()
+			: this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
-
-		this._cachedInlineChildren = undefined;
 
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
@@ -155,43 +155,11 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' ) || !! this.getInlineChildren();
-	}
-
-	getInlineChildren() {
-		if ( undefined !== this._cachedInlineChildren ) {
-			return this._cachedInlineChildren;
+		if ( this.isProPromotion() ) {
+			return false;
 		}
 
-		this._cachedInlineChildren = this._computeInlineChildren();
-
-		return this._cachedInlineChildren;
-	}
-
-	_computeInlineChildren() {
-		if ( 'widget' !== this.model.get( 'elType' ) ) {
-			return null;
-		}
-
-		const settings = this.model.get( 'settings' );
-
-		if ( ! settings ) {
-			return null;
-		}
-
-		const allChildren = [];
-
-		Object.values( settings.attributes ).forEach( ( setting ) => {
-			if ( 'html-v2' === setting?.$$type && Array.isArray( setting?.value?.children ) ) {
-				allChildren.push( ...setting.value.children );
-			}
-		} );
-
-		return allChildren.length > 0 ? allChildren : null;
-	}
-
-	invalidateInlineChildrenCache() {
-		this._cachedInlineChildren = undefined;
+		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
 	}
 
 	toggleList( state, callback ) {
@@ -337,7 +305,7 @@ export default class extends Marionette.CompositeView {
 		}
 
 		this.ui.elements.sortable( {
-			items: '> .elementor-navigator__element:not(.elementor-navigator__inline-child)',
+			items: '> .elementor-navigator__element',
 			placeholder: 'ui-sortable-placeholder',
 			axis: 'y',
 			forcePlaceholderSize: true,
@@ -412,56 +380,7 @@ export default class extends Marionette.CompositeView {
 
 		this.toggleHiddenClass();
 		this.renderIndicators();
-		this.renderInlineChildren();
-	}
-
-	renderInlineChildren() {
-		this.ui.elements.find( '.elementor-navigator__inline-child' ).remove();
-
-		const inlineChildren = this.getInlineChildren();
-
-		if ( ! inlineChildren ) {
-			return;
-		}
-
-		this.appendInlineChildItems( inlineChildren, this.getIndent() );
-	}
-
-	appendInlineChildItems( children, indent ) {
-		indent += INLINE_CHILD_INDENT_INCREMENT;
-		const $container = this.ui.elements;
-
-		children.forEach( ( child ) => {
-			const title = child.content || child.type;
-
-			const $item = jQuery( '<div>', {
-				class: 'elementor-navigator__element elementor-navigator__inline-child',
-				'data-inline-id': child.id,
-			} );
-
-			const $inner = jQuery( '<div>', {
-				class: 'elementor-navigator__item',
-			} ).css( 'padding-inline-start', indent + 'px' );
-
-			$inner.append(
-				jQuery( '<div>', { class: 'elementor-navigator__element__element-type' } )
-					.html( '<i class="eicon-code-bold" aria-hidden="true"></i>' ),
-				jQuery( '<div>', { class: 'elementor-navigator__element__title' } )
-					.append(
-						jQuery( '<span>', {
-							class: 'elementor-navigator__element__title__text',
-							text: '<' + child.type + '> ' + title,
-						} ),
-					),
-			);
-
-			$item.append( $inner );
-			$container.append( $item );
-
-			if ( Array.isArray( child.children ) && child.children.length > 0 ) {
-				this.appendInlineChildItems( child.children, indent );
-			}
-		} );
+		this.syncNavigatorStructureState();
 	}
 
 	onModelChange() {
@@ -493,15 +412,14 @@ export default class extends Marionette.CompositeView {
 				return false;
 			}
 		} );
+	}
 
-		const hasHtmlV2Change = Object.values( settingsModel.changed ).some(
-			( attribute ) => attribute && 'html-v2' === attribute.$$type,
-		);
-
-		if ( hasHtmlV2Change ) {
-			this.invalidateInlineChildrenCache();
-			this.renderInlineChildren();
+	syncNavigatorStructureState() {
+		if ( this.isNavigatorContainer() ) {
+			return;
 		}
+
+		this.$el.toggleClass( 'elementor-navigator__element--has-children', !! this.hasChildren() );
 	}
 
 	onItemPress( event ) {

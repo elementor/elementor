@@ -29,7 +29,6 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
@@ -72,35 +71,38 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		}
 	}
 
-	sections.forEach( ( section ) => {
-		test( `expand ${ section } section and compare screenshot`, async () => {
+	test( `expand sections and compare screenshot`, async () => {
+		for ( const section of sections ) {
 			await editor.addWidget( { widgetType: atomicWidget.name } );
 			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( section );
 
 			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
-		} );
+		}
 	} );
 
 	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
+		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
+
 		await openScrollableStylePanel();
 
 		// Scroll down
 		await editor.page.mouse.wheel( 0, 100 );
 		await editor.page.waitForTimeout( 1000 );
 
-		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
+		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
 
 		// Scroll up
 		await editor.page.mouse.wheel( 0, -100 );
 		await editor.page.waitForTimeout( 1000 );
 
-		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
+		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
 	} );
 
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
+		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
 		const fontFamilyControl = editor.page
 			.locator( 'div.MuiGrid-container' )
 			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
@@ -108,7 +110,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await fontFamilyControl.scrollIntoViewIfNeeded();
 		await editor.page.waitForTimeout( timeouts.action );
 
-		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
+		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
 
 	test( 'should display the last open sections when returning to style tab', async () => {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ComponentProps, useCallback, useEffect, useMemo } from 'react';
-import { htmlV2PropTypeUtil, parseHtmlChildren } from '@elementor/editor-props';
+import { htmlV3PropTypeUtil, parseHtmlChildren, stringPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 
@@ -21,8 +21,8 @@ export const InlineEditingControl = createControl(
 		attributes?: Record< string, string >;
 		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value, setValue } = useBoundProp( htmlV2PropTypeUtil );
-		const content = value?.content ?? '';
+		const { value, setValue, placeholder } = useBoundProp( htmlV3PropTypeUtil );
+		const content = stringPropTypeUtil.extract( value?.content ?? null ) ?? '';
 
 		const debouncedParse = useMemo(
 			() =>
@@ -30,7 +30,7 @@ export const InlineEditingControl = createControl(
 					const parsed = parseHtmlChildren( html );
 
 					setValue( {
-						content: parsed.content || null,
+						content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
 						children: parsed.children,
 					} );
 				}, CHILDREN_PARSE_DEBOUNCE_MS ),
@@ -42,7 +42,7 @@ export const InlineEditingControl = createControl(
 				const html = ( newValue ?? '' ) as string;
 
 				setValue( {
-					content: html || null,
+					content: html ? stringPropTypeUtil.create( html ) : null,
 					children: value?.children ?? [],
 				} );
 
@@ -82,6 +82,13 @@ export const InlineEditingControl = createControl(
 								margin: 0,
 								padding: 0,
 							},
+							'&.is-empty::before': {
+								content: 'attr(data-placeholder)',
+								color: 'text.tertiary',
+								pointerEvents: 'none',
+								position: 'absolute',
+								opacity: 0.6,
+							},
 						},
 						'.strip-styles *': {
 							all: 'unset',
@@ -91,7 +98,11 @@ export const InlineEditingControl = createControl(
 					{ ...attributes }
 					{ ...props }
 				>
-					<InlineEditor value={ content } setValue={ handleChange } />
+					<InlineEditor
+						value={ content }
+						setValue={ handleChange }
+						placeholder={ placeholder?.content?.value ?? null }
+					/>
 				</Box>
 			</ControlActions>
 		);

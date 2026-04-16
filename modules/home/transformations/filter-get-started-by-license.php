@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Home\Transformations;
 
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
 
@@ -47,6 +48,10 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	}
 
 	public function transform( array $home_screen_data ): array {
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $home_screen_data, [ 'get_started' ] ) ) {
+			return $home_screen_data;
+		}
+
 		$new_get_started = [];
 
 		foreach ( $home_screen_data['get_started'] as $index => $item ) {

@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -28,9 +28,11 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A tab trigger element. Contains a single heading or paragraph that serves as the tab label. The index of this e-tab MUST match the index of the corresponding e-tab-content in the e-tabs-content-area.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'llm_support', false );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public static function get_type() {
@@ -157,8 +159,8 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			Atomic_Paragraph::generate()
 				->settings( [
-					'paragraph' => Html_V2_Prop_Type::generate( [
-						'content'  => 'Tab',
+					'paragraph' => Html_V3_Prop_Type::generate( [
+						'content'  => String_Prop_Type::generate( 'Tab' ),
 						'children' => [],
 					] ),
 					'tag' => String_Prop_Type::generate( 'span' ),

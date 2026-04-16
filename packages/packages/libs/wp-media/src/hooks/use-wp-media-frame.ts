@@ -10,7 +10,7 @@ export type OpenOptions = {
 	mode?: 'upload' | 'browse';
 };
 
-export type MediaType = 'image' | 'svg';
+export type MediaType = 'image' | 'svg' | 'video';
 
 type Options = {
 	mediaTypes: MediaType[];
@@ -120,11 +120,24 @@ function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 }
 
 const imageExtensions = [ 'avif', 'bmp', 'gif', 'ico', 'jpe', 'jpeg', 'jpg', 'png', 'webp' ];
+const videoExtensions = [ 'mp4', 'webm', 'ogg', 'mov', 'm4v', 'avi', 'wmv', 'mpg', 'mpeg', '3gp', '3g2' ];
 
 function getMimeTypes( mediaTypes: MediaType[] ) {
 	const mimeTypesPerType: Record< MediaType, string[] > = {
 		image: imageExtensions.map( ( extension ) => `image/${ extension }` ),
 		svg: [ 'image/svg+xml' ],
+		video: [
+			'video/mp4',
+			'video/webm',
+			'video/ogg',
+			'video/quicktime',
+			'video/x-m4v',
+			'video/avi',
+			'video/x-ms-wmv',
+			'video/mpeg',
+			'video/3gpp',
+			'video/3gpp2',
+		],
 	};
 
 	return mediaTypes.reduce( ( prev, currentType ) => {
@@ -136,6 +149,7 @@ function getExtensions( mediaTypes: MediaType[] ) {
 	const extensionsPerType: Record< MediaType, string[] > = {
 		image: imageExtensions,
 		svg: [ 'svg' ],
+		video: videoExtensions,
 	};
 
 	const extensions = mediaTypes.reduce( ( prev, currentType ) => {

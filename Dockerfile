@@ -18,7 +18,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN npm run prepare-environment:ci && npm run composer:no-dev
+RUN npm run install:ci && npm run composer:no-dev
 
 RUN npm run build
 

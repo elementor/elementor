@@ -10,7 +10,11 @@ type LabelGenerator< TPayload extends Payload, TDoReturn > = ( payload: TPayload
 type Actions< TPayload extends Payload, TDoReturn, TUndoReturn > = {
 	do: ( payload: TPayload ) => Awaited< TDoReturn >;
 	undo: ( payload: TPayload, doReturn: Awaited< TDoReturn > ) => Awaited< TUndoReturn >;
-	redo?: ( payload: TPayload, doReturn: Awaited< TDoReturn > ) => Awaited< TDoReturn >;
+	redo?: (
+		payload: TPayload,
+		doReturn: Awaited< TDoReturn >,
+		undoReturn: Awaited< TUndoReturn >
+	) => Awaited< TDoReturn >;
 };
 
 type Options< TPayload extends Payload, TDoReturn > = {
@@ -43,24 +47,25 @@ export function undoable< TPayload extends Payload, TDoReturn, TUndoReturn >(
 		const _payload = payload as TPayload;
 		const _actions = actions as Required< Actions< TPayload, TDoReturn, TUndoReturn > >;
 
-		let result = _actions.do( _payload );
+		let doReturn = _actions.do( _payload );
+		let undoReturn: Awaited< TUndoReturn >;
 
 		_addHistoryItem( {
-			title: normalizeToGenerator( options.title )( _payload, result ),
-			subTitle: normalizeToGenerator( options.subtitle )( _payload, result ),
+			title: normalizeToGenerator( options.title )( _payload, doReturn ),
+			subTitle: normalizeToGenerator( options.subtitle )( _payload, doReturn ),
 			type: '',
 			restore: ( _, isRedo ) => {
 				if ( isRedo ) {
-					result = _actions.redo( _payload, result );
+					doReturn = _actions.redo( _payload, doReturn, undoReturn );
 
 					return;
 				}
 
-				_actions.undo( _payload, result );
+				undoReturn = _actions.undo( _payload, doReturn );
 			},
 		} );
 
-		return result;
+		return doReturn;
 	};
 }
 

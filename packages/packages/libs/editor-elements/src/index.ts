@@ -5,9 +5,9 @@ export type * from './sync/types';
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
-export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
+export { useSelectedElementSettings } from './hooks/use-selected-element-settings';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
@@ -62,6 +62,5 @@ export {
 export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
-export { useElementInteractions } from './hooks/use-element-interactions';
 export { getElementInteractions } from './sync/get-element-interactions';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';

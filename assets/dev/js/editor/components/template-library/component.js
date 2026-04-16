@@ -2,6 +2,8 @@ import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
 import { SAVE_CONTEXTS } from './constants';
+import { showGlobalStylesDialog } from './views/parts/global-styles-dialog';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -110,15 +112,45 @@ export default class Component extends ComponentModalBase {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
+		this.trackLibraryNavigation( tab, currentTab.title );
+
 		this.currentTab = tab;
 
 		this.manager.setScreen( filter );
+	}
+
+	trackLibraryNavigation( tab, tabTitle ) {
+		EditorOneEventManager.sendELibraryNav( tabTitle || tab );
 	}
 
 	activateTab( tab ) {
 		$e.routes.saveState( 'library' );
 
 		super.activateTab( tab );
+
+		// Update ARIA attributes for accessibility
+		const $tabsWrapper = jQuery( this.getTabsWrapperSelector() );
+		const $tabs = $tabsWrapper.find( '[role="tab"]' );
+		const $activeTab = $tabs.filter( `[data-tab="${ tab }"]` );
+
+		const $templatesContainer = this.manager?.layout?.modalContent?.currentView?.$childViewContainer;
+
+		$tabs.attr( {
+			'aria-selected': 'false',
+			tabindex: '-1',
+		} );
+
+		$activeTab.attr( {
+			'aria-selected': 'true',
+			tabindex: '0',
+		} );
+
+		if ( $templatesContainer?.length ) {
+			$templatesContainer.attr( {
+				role: 'tabpanel',
+				'aria-labelledby': `tab-${ tab }`,
+			} );
+		}
 	}
 
 	open() {
@@ -154,13 +186,28 @@ export default class Component extends ComponentModalBase {
 	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
 		this.downloadTemplate( args, ( data, callbackParams ) => {
+			const model = callbackParams.model;
+			const source = model.get( 'source' ) ?? 'local';
+			const templateType = model.get( 'type' );
+			const templateTitle = model.get( 'title' );
+			const templateId = model.get( 'template_id' );
+			const baseTier = elementor.config.library_connect?.base_access_tier;
+			const templateTier = model.get( 'accessTier' );
+
 			$e.run( 'document/elements/import', {
-				model: callbackParams.model,
+				model,
 				data,
 				options: callbackParams.importOptions,
 				onAfter: () => {
 					this.manager.eventManager.sendTemplateInsertedEvent( {
-						library_type: callbackParams.model.get( 'source' ) ?? 'local',
+						library_type: source,
+					} );
+
+					EditorOneEventManager.sendELibraryInsert( {
+						assetId: templateId,
+						assetName: templateTitle,
+						libraryType: templateType || source,
+						proRequired: baseTier !== templateTier,
 					} );
 				},
 			} );
@@ -177,32 +224,48 @@ export default class Component extends ComponentModalBase {
 			withPageSettings = true;
 		}
 
-		if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
-			const insertTemplateHandler = this.getImportSettingsDialog();
-
-			insertTemplateHandler.showImportDialog( model );
-
-			return;
-		}
-
 		this.manager.layout.showLoadingView();
+
+		const shouldFetchPageSettings = null === withPageSettings ? model.get( 'hasPageSettings' ) : withPageSettings;
 
 		this.manager.requestTemplateContent( model.get( 'source' ), model.get( 'template_id' ), {
 			data: {
-				with_page_settings: withPageSettings,
+				with_page_settings: shouldFetchPageSettings,
 			},
-			success: ( data ) => {
-				// Clone the `modalConfig.importOptions` because it deleted during the closing.
+			success: async ( data ) => {
+				this.manager.layout.hideLoadingView();
+
+				let processedData = data;
+
+				if ( this.manager.hasGlobalStyles( data ) ) {
+					try {
+						const globalStylesResult = await this.processGlobalStylesImport( data );
+						processedData = globalStylesResult.data;
+						withPageSettings = globalStylesResult.withPageSettings;
+					} catch ( e ) {
+						return;
+					}
+				}
+
+				if ( ! this.manager.hasGlobalStyles( data ) && null === withPageSettings ) {
+					withPageSettings = false;
+				}
+
 				const importOptions = jQuery.extend( {}, this.manager.modalConfig.importOptions );
 
 				importOptions.withPageSettings = withPageSettings;
 
-				// Hide for next open.
-				this.manager.layout.hideLoadingView();
+				if ( null === withPageSettings && model.get( 'hasPageSettings' ) ) {
+					const insertTemplateHandler = this.getImportSettingsDialog();
+					insertTemplateHandler.showImportDialogWithData( model, processedData, importOptions, callback );
+					return;
+				}
 
 				this.manager.layout.hideModal();
 
-				callback( data, { model, importOptions } );
+				this.showFlatteningWarningIfNeeded( processedData );
+
+				callback( processedData, { model, importOptions } );
 			},
 			error: ( data ) => {
 				this.manager.showErrorDialog( data );
@@ -213,8 +276,55 @@ export default class Component extends ComponentModalBase {
 		} );
 	}
 
+	async processGlobalStylesImport( data ) {
+		const { mode } = await showGlobalStylesDialog();
+
+		this.manager.layout.showLoadingView();
+
+		try {
+			const result = await new Promise( ( resolve, reject ) => {
+				elementorCommon.ajax.addRequest( 'process_global_styles', {
+					data: {
+						content: JSON.stringify( data.content ),
+						import_mode: mode,
+						global_classes: data.global_classes ? JSON.stringify( data.global_classes ) : null,
+						global_variables: data.global_variables ? JSON.stringify( data.global_variables ) : null,
+					},
+					success: resolve,
+					error: reject,
+				} );
+			} );
+
+			const processedData = {
+				...data,
+				content: result.content,
+				flattened_classes_count: result.flattened_classes_count || 0,
+				flattened_variables_count: result.flattened_variables_count || 0,
+			};
+
+			if ( result.updated_global_classes || result.updated_global_variables ) {
+				window.dispatchEvent( new CustomEvent( 'elementor/global-styles/imported', {
+					detail: {
+						global_classes: result.updated_global_classes,
+						global_variables: result.updated_global_variables,
+					},
+				} ) );
+			}
+
+			return {
+				data: processedData,
+				withPageSettings: 'match_site' === mode,
+			};
+		} catch ( ajaxError ) {
+			this.manager.showErrorDialog( ajaxError );
+			throw ajaxError;
+		} finally {
+			this.manager.layout.hideLoadingView();
+		}
+	}
+
 	getImportSettingsDialog() {
-		// Moved from ./behaviors/insert-template.js
+		const self = this;
 		const InsertTemplateHandler = {
 			dialog: null,
 
@@ -245,6 +355,32 @@ export default class Component extends ComponentModalBase {
 							} );
 						},
 					} );
+				};
+
+				dialog.show();
+			},
+
+			showImportDialogWithData( model, data, importOptions, callback ) {
+				const dialog = InsertTemplateHandler.getDialog( model );
+
+				dialog.onConfirm = function() {
+					importOptions.withPageSettings = true;
+					elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+						apply_modal_result: 'apply',
+						library_type: model.get( 'source' ),
+					} );
+					self.manager.layout.hideModal();
+					callback( data, { model, importOptions } );
+				};
+
+				dialog.onCancel = function() {
+					importOptions.withPageSettings = false;
+					elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+						apply_modal_result: `don't apply`,
+						library_type: model.get( 'source' ),
+					} );
+					self.manager.layout.hideModal();
+					callback( data, { model, importOptions } );
 				};
 
 				dialog.show();
@@ -290,5 +426,28 @@ export default class Component extends ComponentModalBase {
 
 			location.hash = '';
 		}
+	}
+
+	showFlatteningWarningIfNeeded( result ) {
+		const flattenedClassesCount = result.flattened_classes_count || 0;
+		const flattenedVariablesCount = result.flattened_variables_count || 0;
+
+		if ( 0 === flattenedClassesCount && 0 === flattenedVariablesCount ) {
+			return;
+		}
+
+		let message;
+
+		if ( flattenedClassesCount > 0 && flattenedVariablesCount > 0 ) {
+			message = __( 'Some styles were added as static values because the style limits were reached.', 'elementor' );
+		} else if ( flattenedClassesCount > 0 ) {
+			message = __( 'Some styles were added as static values because the class limit was reached.', 'elementor' );
+		} else {
+			message = __( 'Some styles were added as static values because the variable limit was reached.', 'elementor' );
+		}
+
+		elementor.notifications.showToast( {
+			message,
+		} );
 	}
 }

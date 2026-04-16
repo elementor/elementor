@@ -13,21 +13,35 @@ export default function createAtomicElementBaseView( type ) {
 
 		_childrenRenderPromises: [],
 
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
+
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
+			}
+
+			return document.createElement( tag );
+		},
+
 		tagName() {
 			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
 		},
 
 		_resolveTag() {
 			const renderContext = this.getResolverRenderContext?.();
+
 			const tagSetting = this.model.getSetting( 'tag' );
 			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
 
-			if ( this._hasLink( renderContext ) ) {
-				return 'a';
-			}
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLinkTag = this._resolvePropValue( linkSetting?.value?.tag, renderContext );
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			const linkTag = resolvedLinkTag?.value ?? resolvedLinkTag;
+			const baseTag = resolvedTag?.value ?? resolvedTag;
+
+			const resultTag = linkTag ?? baseTag;
+
+			return resultTag || this.model.config.default_html_tag || 'div';
 		},
 
 		getChildViewContainer() {
@@ -57,7 +71,29 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
+			const generatedClasses = this.getGeneratedClasses();
+			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() } ${ generatedClasses }`;
+		},
+
+		getGeneratedClasses() {
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const generatedClasses = [];
+
+			Object.keys( propsSchema ).forEach( ( key ) => {
+				const propMeta = propsSchema[ key ]?.meta;
+				if ( propMeta?.generates_class ) {
+					const classPattern = propMeta.generates_class;
+					const settingValue = this.model.getSetting( key );
+					const value = settingValue?.value ?? settingValue;
+
+					if ( value && 'string' === typeof value ) {
+						const className = classPattern.replace( '{value}', value );
+						generatedClasses.push( className );
+					}
+				}
+			} );
+
+			return generatedClasses.join( ' ' );
 		},
 
 		// TODO: Copied from `views/column.js`.
@@ -80,7 +116,7 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+			local[ 'data-interaction-id' ] = this.getInteractionId();
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
@@ -137,6 +173,11 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
+			if ( this.isTagChanged( changed ) ) {
+				this.rerenderEntireView();
+				return;
+			}
+
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
@@ -158,9 +199,13 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
-			if ( changed.classes ) {
-				// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
-				// and would be lost when replacing the class attribute.
+			// Check if classes changed OR if any setting with generates_class metadata changed
+			const propsSchema = this.model.config.atomic_props_schema || {};
+			const hasGeneratesClassChange = Object.keys( changed ).some( ( key ) => propsSchema[ key ]?.meta?.generates_class );
+
+			if ( changed.classes || hasGeneratesClassChange ) {
+			// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
+			// and would be lost when replacing the class attribute.
 				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
 				this.$el.attr( 'class', this.className() );
 				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );
@@ -179,14 +224,14 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			this.$el.addClass( this.getClasses() );
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-			}
 		},
 
 		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+			const hasParent = Boolean( this._parent );
+			const hasTagOrLinkChange = changed?.tag !== undefined || changed?.link !== undefined;
+			const isTagMismatch = this.tagName()?.toLowerCase() !== this.el.tagName.toLowerCase();
+
+			return hasTagOrLinkChange && hasParent && isTagMismatch;
 		},
 
 		rerenderEntireView() {
@@ -210,7 +255,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_shouldSkipFullRender() {
-			return this.isRendered && this.children?.length > 0;
+			return this.isRendered && this._hasConnectedChildren();
+		},
+
+		_hasConnectedChildren() {
+			if ( ! this.children?.length ) {
+				return false;
+			}
+
+			// If the parent's innerHTML was replaced, all children are detached together.
+			const firstChild = this.children.findByIndex( 0 );
+			return firstChild?.$el?.get( 0 )?.isConnected ?? false;
 		},
 
 		_renderWithoutDomRecreation( resolve ) {
@@ -280,11 +335,15 @@ export default function createAtomicElementBaseView( type ) {
 			this.$el.removeAttr( 'href' );
 			this.$el.removeAttr( 'data-action-link' );
 
-			const link = this.getLink();
+			const link = this.getLinkAttributes();
 
-			if ( link ) {
-				this.$el.attr( link.attr, link.value );
+			if ( ! link ) {
+				return;
 			}
+
+			Object.entries( link ).forEach( ( [ key, value ] ) => {
+				this.$el.attr( key, value );
+			} );
 		},
 
 		async _waitForChildrenToComplete() {
@@ -356,7 +415,7 @@ export default function createAtomicElementBaseView( type ) {
 			return !! destination?.value;
 		},
 
-		getLink() {
+		getLinkAttributes() {
 			const renderContext = this.getResolverRenderContext?.();
 			const linkSetting = this.model.getSetting( 'link' );
 			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
@@ -380,9 +439,10 @@ export default function createAtomicElementBaseView( type ) {
 					return null;
 				}
 
+				const attributeKey = 'action' === value?.group ? 'data-action-link' : 'href';
+
 				return {
-					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
-					value: resolvedValue,
+					[ attributeKey ]: resolvedValue,
 				};
 			}
 
@@ -390,8 +450,7 @@ export default function createAtomicElementBaseView( type ) {
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
 			return {
-				attr: 'href',
-				value: hrefPrefix + value,
+				href: hrefPrefix + value,
 			};
 		},
 
@@ -418,12 +477,22 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+				const showPromoBadge = ! isProActive && ! isProOutdated;
+
+				const newBadge = `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`;
+				const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-Instance-create-context-menu/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					shortcut: ( isProActive || isProOutdated ) ? newBadge : proBadge,
+					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -452,6 +521,32 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+			const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+
+			if ( isProOutdated ) {
+				window.elementorV2?.editorNotifications?.notify?.( {
+					type: 'info',
+					id: 'component-create-update',
+					message: __( 'To create new components, update Elementor Pro to the latest version.', 'elementor' ),
+					additionalActionProps: [ {
+						size: 'small',
+						variant: 'contained',
+						color: 'info',
+						href: '/wp-admin/plugins.php',
+						target: '_blank',
+						children: __( 'Update Now', 'elementor' ),
+					} ],
+				} );
+				return;
+			}
+
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+			if ( ! isProActive ) {
+				return;
+			}
+
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
@@ -849,6 +944,13 @@ export default function createAtomicElementBaseView( type ) {
 			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
 
 			return this._resolvePropValue( transformed, renderContext );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} );
 

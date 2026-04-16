@@ -1,5 +1,5 @@
 import { type KeyValuePropValue, type SizePropValue } from '@elementor/editor-props';
-import { isVersionGreaterOrEqual } from '@elementor/utils';
+import { hasProInstalled, isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 export type TransitionProperty = {
@@ -46,11 +46,9 @@ const getIsSiteRtl = () => {
 };
 
 // TODO: Remove this after version 4.01 is released
-const shouldExtendTransitionProperties = (): boolean => {
-	const hasProInstalled = !! window.elementorPro;
-
-	if ( ! hasProInstalled ) {
-		return false;
+const shouldShowAllTransitionProperties = (): boolean => {
+	if ( ! hasProInstalled() ) {
+		return true;
 	}
 
 	const proVersion = window.elementorPro?.config?.version;
@@ -193,7 +191,7 @@ const createTransitionPropertiesList = (): TransitionCategory[] => {
 		},
 	];
 
-	return shouldExtendTransitionProperties() ? baseProperties : [ baseProperties[ 0 ] ];
+	return shouldShowAllTransitionProperties() ? baseProperties : [ baseProperties[ 0 ] ];
 };
 
 export const transitionProperties: TransitionCategory[] = createTransitionPropertiesList();

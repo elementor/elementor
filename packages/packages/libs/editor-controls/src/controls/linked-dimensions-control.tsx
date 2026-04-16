@@ -1,6 +1,13 @@
 import * as React from 'react';
 import { type RefObject, useLayoutEffect, useRef, useState } from 'react';
-import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
+import {
+	dimensionsPropTypeUtil,
+	type DimensionsPropValue,
+	type PropKey,
+	type PropValue,
+	sizePropTypeUtil,
+	type SizePropValue,
+} from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
 import { Grid, Stack, Tooltip } from '@elementor/ui';
@@ -11,7 +18,7 @@ import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { type ExtendedOption } from '../utils/size-control';
-import { SizeControl } from './size-control';
+import { UnstableSizeControl } from './size-control/unstable-size-control';
 
 type Props = {
 	label: string;
@@ -20,7 +27,7 @@ type Props = {
 	min?: number;
 };
 
-export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOptions, min }: Props ) => {
+export const LinkedDimensionsControl = ( { label, isSiteRtl = false, min }: Props ) => {
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
 	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
@@ -51,10 +58,12 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const activeBreakpoint = useActiveBreakpoint();
 
+	const isCurrentlyDimensions = dimensionsPropTypeUtil.isValid( masterValue ?? masterPlaceholder );
+
 	useLayoutEffect( () => {
 		setIsLinked( inferIsLinked );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ activeBreakpoint ] );
+	}, [ activeBreakpoint, isCurrentlyDimensions ] );
 
 	const onLinkToggle = () => {
 		setIsLinked( ( prev ) => ! prev );
@@ -79,12 +88,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 			return;
 		}
 
-		const sizeValue =
-			dimensionsValue?.[ 'block-start' ] ??
-			dimensionsValue?.[ 'inline-end' ] ??
-			dimensionsValue?.[ 'block-end' ] ??
-			dimensionsValue?.[ 'inline-start' ] ??
-			null;
+		const sizeValue = getFirstDefined( dimensionsValue ) ?? null;
 
 		if ( ! sizeValue ) {
 			setMasterValue( null );
@@ -104,15 +108,41 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const disabled = sizeDisabled || dimensionsDisabled;
 
+	const effectiveDimensionsPlaceholder =
+		dimensionsPlaceholder ??
+		( sizePropTypeUtil.extract( masterPlaceholder )
+			? {
+					'block-start': masterPlaceholder,
+					'block-end': masterPlaceholder,
+					'inline-start': masterPlaceholder,
+					'inline-end': masterPlaceholder,
+			  }
+			: null );
+
 	const propProviderProps = {
 		propType,
 		value: dimensionsValue,
-		placeholder: dimensionsPlaceholder,
-		setValue: setDimensionsValue,
+		placeholder: effectiveDimensionsPlaceholder,
+		setValue: ( dimensions: PropValue ) => {
+			const entries = Object.entries( dimensions as DimensionsPropValue );
+			const filtered = entries.filter( ( [ , value ] ) => Boolean( value ) );
+
+			setDimensionsValue( filtered.length === 0 ? null : Object.fromEntries( filtered ) );
+		},
 		isDisabled: () => dimensionsDisabled,
 	};
 
 	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
+
+	const getEffectivePlaceholder = ( bind: string ) => {
+		if ( isLinked ) {
+			const linkedPlaceholder = getFirstDefined( dimensionsPlaceholder );
+
+			return sizePropTypeUtil.extract( linkedPlaceholder );
+		}
+
+		return sizePropTypeUtil.extract( dimensionsPlaceholder?.[ bind as keyof DimensionsPropValue[ 'value' ] ] );
+	};
 
 	return (
 		<PropProvider { ...propProviderProps }>
@@ -147,7 +177,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 									ariaLabel={ props.ariaLabel }
 									startIcon={ icon }
 									isLinked={ isLinked }
-									extendedOptions={ extendedOptions }
+									placeholder={ getEffectivePlaceholder( props.bind ) ?? undefined }
 									anchorRef={ gridRowRefs[ index ] }
 									min={ min }
 								/>
@@ -165,7 +195,7 @@ const Control = ( {
 	ariaLabel,
 	startIcon,
 	isLinked,
-	extendedOptions,
+	placeholder,
 	anchorRef,
 	min,
 }: {
@@ -173,17 +203,17 @@ const Control = ( {
 	ariaLabel: string;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
-	extendedOptions?: ExtendedOption[];
+	placeholder?: SizePropValue[ 'value' ];
 	anchorRef: RefObject< HTMLDivElement >;
 	min?: number;
 } ) => {
 	if ( isLinked ) {
 		return (
-			<SizeControl
+			<UnstableSizeControl
 				ariaLabel={ ariaLabel }
 				startIcon={ startIcon }
-				extendedOptions={ extendedOptions }
 				anchorRef={ anchorRef }
+				placeholder={ placeholder }
 				min={ min }
 			/>
 		);
@@ -191,12 +221,12 @@ const Control = ( {
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl
+			<UnstableSizeControl
 				ariaLabel={ ariaLabel }
 				startIcon={ startIcon }
-				extendedOptions={ extendedOptions }
 				anchorRef={ anchorRef }
 				min={ min }
+				placeholder={ placeholder }
 			/>
 		</PropKeyProvider>
 	);
@@ -207,6 +237,15 @@ const Label = ( { label, bind }: { label: string; bind: PropKey } ) => {
 		<PropKeyProvider bind={ bind }>
 			<ControlLabel>{ label }</ControlLabel>
 		</PropKeyProvider>
+	);
+};
+
+const getFirstDefined = ( dimensions: DimensionsPropValue[ 'value' ] | null | undefined ) => {
+	return (
+		dimensions?.[ 'block-start' ] ??
+		dimensions?.[ 'inline-end' ] ??
+		dimensions?.[ 'block-end' ] ??
+		dimensions?.[ 'inline-start' ]
 	);
 };
 

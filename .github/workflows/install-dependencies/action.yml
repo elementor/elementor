@@ -13,5 +13,5 @@ runs:
 
     - shell: bash
       run: |
-        npm run prepare-environment:ci
+        npm run install:ci
         npm run composer:no-dev

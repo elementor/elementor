@@ -1,4 +1,4 @@
-=== Elementor Website Builder - More Than Just a Page Builder ===
+=== Elementor Website Builder - more than just a page builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.7
@@ -9,17 +9,19 @@ Beta tag: 3.34.0-beta3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
+The Elementor Website Builder has it all: drag and drop page builder, Atomic Editor, pixel perfect design, global and reusable style systems, mobile responsive editing, and more. Get started now!
 
 == Description ==
 
 https://www.youtube.com/watch?v=ROEC0CPRO3w
 
-= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 20M+ WEBSITES WORLDWIDE, NOW WITH AI. =
+= THE #1 NO CODE DRAG & DROP WORDPRESS WEBSITE BUILDER POWERING 22M+ WEBSITES WORLDWIDE, NOW WITH AI. =
 
-Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Editor.
+Elementor, the leading WordPress website creation platform, empowers you to build professional, pixel-perfect websites seamlessly with its no-code, drag-and-drop Atomic Editor.
 
-Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more. 
+Supporting the full website lifecycle, Elementor enables you to confidently build, optimize, and manage your website with extended capabilities such as AI-powered creation, image optimization, transactional email delivery, accessibility tools, performance boosters, and more.
+
+Now in version 4 - the Atomic Editor! Introducing a new generation of performance-first atomic building blocks that allow you to control every atomic part with no limits or locked layouts. Define your global design systems and reusable components once, and they apply everywhere instantly - turning hours or even days of work into single clicks.
 
 Unlock all features with **[Elementor One](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/)**.
 
@@ -35,7 +37,7 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 
 = 🗝️ Key features: =
 
-- **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Use Elementor’s Design System for consistent colors, typography, and design elements, ensuring a cohesive, professional look.
+- **[Design System](https://go.elementor.com/feature-page-global-settings/)**: Use Variables and Classes for consistent colors, typography, and design elements, ensuring a cohesive, professional look that updates everywhere globally.
 - **[Responsive Design](https://go.elementor.com/feature-page-responsive-design/)**: Optimize your design for every device with custom breakpoints, ensuring a seamless desktop, tablet, and mobile experience.
 - **Mask Shapes**: Turning any element, like an image or video, into whatever shape you desire to create standout designs.
 - **CSS Transform**: Use CSS Transform to rotate, scale, and skew elements, adding dynamic styling to your site.
@@ -43,6 +45,7 @@ Need fast and secure cloud hosting for your Elementor site? Try out **[Elementor
 - **[Revision History](https://elementor.com/features/#SaveBackup)**: Elementor’s Revision History feature enables users to track and revert to previous versions of their designs, providing peace of mind and flexibility during the creative process.
 - **[Developer-Friendly](https://go.elementor.com/wp-repo-description-tab-developers-developers-website/)**: Equipped with extensive documentation, API, developer tools, and custom code areas, Elementor offers a conducive environment for developers to extend its capabilities and create custom solutions.
 - **[Floating Buttons](https://elementor.com/features/contact-button/)**: Enhance user interaction with customizable, floating action buttons that stay in view as users scroll.
+- **Components [Pro]**: Reuse the same building blocks across pages and sites, and update them everywhere they appear. Including controlled content editing, allowing collaborators and clients to update only exposed content properties without breaking layout or styling.
 - **[Theme Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-industry-leading-theme-builder/) [Pro]**: Design every part of your site—headers, footers, posts, and archives—for complete control over appearance.
 - **[Popup Builder](https://go.elementor.com/wp-repo-description-tab-pro-features-popup-builder/) [Pro]**: Create eye-catching popups with Elementor’s Popup Builder, equipped with advanced targeting and triggering options to optimize user engagement and conversions.
 - **[Forms](https://go.elementor.com/wp-repo-description-tab-pro-features-professional-form-builder-and-submission-log/) [Pro]**: Design and integrate custom forms, utilizing advanced features and integrations to capture and manage submissions effectively.
@@ -352,41 +355,41 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.35.4 - 2026-02-11 =
+= 4.0.2 - 2026-04-13 =
 
-* Fix: License activation issues in various scenarios
-* Fix: General UI issues in Editor screens in WordPress Admin
-* Fix: Inline editing UI issues on canvas - Editor V4
+* Security Fix: Improved code security enforcement in global style settings
+* Fix: Exposed props are not displayed on first load in instance panel for nested components - Atomic Editor
+* Fix: Interactions apply only to the first matching element instead of all instances on the page - Atomic Editor
 
-= 3.35.3 - 2026-02-05 =
+= 4.0.1 - 2026-04-01 =
 
-* Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))
+* Fix: Interactions on canvas do not work across various elements - Atomic Editor
+* Fix: Inline editing affects button width when clicking inside a Tabs content container - Atomic Editor
+* Fix: Styling changes to atomic elements appear on canvas only after refresh in Firefox browser - Atomic Editor
+* Fix: Importing classes with duplicate names prevents elements from being edited - Atomic Editor
 
-= 3.35.2 - 2026-02-05 =
+= 4.0.0 - 2026-03-30 =
 
-* Fix: Editor menu in WordPress admin displays incorrectly in RTL
-
-= 3.35.1 - 2026-02-04 =
-
-* Fix: Editor Top Bar does not appear in various scenarios ([#34623](https://github.com/elementor/elementor/issues/34623))
-* Fix: Fatal error when the PHP `mbstring` module is missing
-* Fix: General UI issues in Editor screens in WordPress Admin
-
-= 3.35.0 - 2026-02-02 =
-
-* New: Introducing Components - reusable layout building blocks with global sync and per-instance content overrides - Editor V4
-* New: Introducing Inline Editing - edit Atomic Heading and Paragraph text directly on the canvas - Editor V4
-* New: Introducing a contextual formatting toolbar for inline text editing, including links and common text styles - Editor V4
-* Tweak: Version 4 status updated to Beta and production-ready - Editor V4
-* Tweak: Children perspective controls available only for relevant parent elements - Editor V4
-* Tweak: `:hover` styling automatically applies to `:focus-visible` for improved accessibility - Editor V4
-* Tweak: Dynamic tags support added to color picker controls - Editor V4
-* Tweak: Link and Button accessibility improvements in Dynamic Tags - Editor V4
-* Tweak: Nested Accordion optimizations with Grid in Chrome browser
-* Fix: Size link-unlink operations not applying consistently - Editor V4
-* Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
-* Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
-* Fix: Container handles not visible when "Overflow: Hidden" is enabled
+* New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
+* New: Introducing self-hosted Video Atomic Element - Atomic Editor
+* New: Introducing a new onboarding flow for new Editor installations to provide better guidance for getting started
+* Tweak: Updated Atomic Editor status to Stable - Atomic Editor
+* Tweak: Enabled Atomic Editor by default for new websites - Atomic Editor
+* Tweak: Added inline editing support for the Atomic Button element - Atomic Editor
+* Tweak: Improved performance and ordering of Global Classes styles on the frontend - Atomic Editor
+* Tweak: Improved request reliability during temporary network issues - Atomic Editor
+* Tweak: Improved size control structure and behavior - Atomic Editor
+* Tweak: Added support for importing and exporting Classes and Variables through website templates
+* Tweak: Added support for importing and exporting Classes and Variables through templates
+* Tweak: Improved accessibility in Cloud Templates modal
+* Fix: PHP warnings in the editor when WP_DEBUG is enabled after updating to WordPress 6.9.1 ([#34617](https://github.com/elementor/elementor/issues/34617), [#34831](https://github.com/elementor/elementor/issues/34831))
+* Fix: Typography modal fails to apply settings after using the "Back to default" reset option
+* Fix: Data Updater does not run automatically after plugin updates
+* Fix: Revision is not working as expected - Atomic Editor
+* Fix: Styling issues in Repeater Indications popovers – Atomic Editor
+* Fix: Selecting "auto" for size returns an incorrect value - Atomic Editor
+* Fix: Resetting position does not clear related properties - Atomic Editor
+* Fix: Variable name field does not auto-focus on creation in Variables - Atomic Editor
 
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

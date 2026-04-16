@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
-	htmlV2PropTypeUtil,
+	htmlV3PropTypeUtil,
 	parseHtmlChildren,
 	type PropType,
 	type PropValue,
@@ -25,8 +24,8 @@ type TagPropType = PropType< 'tag' > & {
 const HISTORY_DEBOUNCE_WAIT = 800;
 
 export default class InlineEditingReplacement extends ReplacementBase {
-	private inlineEditorRoot: Root | null = null;
 	private handlerAttached = false;
+	private editing = false;
 
 	getReplacementKey() {
 		return 'inline-editing';
@@ -37,7 +36,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	isEditingModeActive() {
-		return !! this.inlineEditorRoot;
+		return this.editing;
 	}
 
 	shouldRenderReplacement() {
@@ -91,8 +90,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	resetInlineEditorRoot() {
 		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
-		this.inlineEditorRoot?.unmount?.();
-		this.inlineEditorRoot = null;
+		this.reactRoot.render( null );
+		this.editing = false;
 	}
 
 	unmountInlineEditor() {
@@ -127,8 +126,9 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	getExtractedContentValue() {
 		const propValue = this.getInlineEditablePropValue();
+		const extracted = htmlV3PropTypeUtil.extract( propValue );
 
-		return htmlV2PropTypeUtil.extract( propValue )?.content ?? '';
+		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
@@ -136,8 +136,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const html = value || '';
 		const parsed = parseHtmlChildren( html );
 
-		const valueToSave = htmlV2PropTypeUtil.create( {
-			content: parsed.content || null,
+		const valueToSave = htmlV3PropTypeUtil.create( {
+			content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
 			children: parsed.children,
 		} );
 
@@ -174,7 +174,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		if ( propType.kind === 'union' ) {
-			const textKeys = [ htmlV2PropTypeUtil.key, stringPropTypeUtil.key ];
+			const textKeys = [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
 
 			for ( const key of textKeys ) {
 				if ( propType.prop_types[ key ] ) {
@@ -238,22 +238,29 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			this.resetInlineEditorRoot();
 		}
 
-		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
+		const contentElement = this.element.children?.[ 0 ] as HTMLElement | undefined;
+
+		if ( ! contentElement ) {
+			return;
+		}
+
+		const elementClasses = contentElement.classList.toString();
 		const propValue = this.getExtractedContentValue();
 		const expectedTag = this.getExpectedTag();
 
-		this.element.innerHTML = '';
+		contentElement.innerHTML = '';
+		this.editing = true;
 
-		this.inlineEditorRoot = createRoot( this.element );
-		this.inlineEditorRoot.render(
+		this.reactRoot.render(
 			<CanvasInlineEditor
 				elementClasses={ elementClasses }
 				initialValue={ propValue }
 				expectedTag={ expectedTag }
 				rootElement={ this.element }
+				contentElement={ contentElement }
 				id={ this.id }
 				setValue={ this.setContentValue.bind( this ) }
-				onBlur={ this.unmountInlineEditor.bind( this ) }
+				requestDestroy={ this.unmountInlineEditor.bind( this ) }
 			/>
 		);
 	}

@@ -5,7 +5,7 @@ import { Grid } from '@elementor/ui';
 
 export const Field = ( { label, children }: { label: string } & PropsWithChildren ) => {
 	return (
-		<Grid item xs={ 12 }>
+		<Grid item xs={ 12 } aria-label={ `${ label } control` }>
 			<PopoverGridContainer>
 				<Grid item xs={ 6 }>
 					<ControlFormLabel>{ label }</ControlFormLabel>

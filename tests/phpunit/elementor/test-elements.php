@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Elements_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Elements extends Elementor_Test_Base {
@@ -105,6 +106,95 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 				}
 			}
 		}
+	}
+
+	public function test_promote_category_after__places_category_after_first_matching_candidate() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$manager->add_category( 'test-promote-position', [ 'title' => 'Test' ] );
+
+		// Act
+		$this->invoke_promote_category_after( $manager, 'test-promote-position', [
+			Elements_Manager::CATEGORY_ATOMIC_ELEMENTS,
+		] );
+
+		// Assert
+		$keys = array_keys( $manager->get_categories() );
+		$atomic_pos = array_search( Elements_Manager::CATEGORY_ATOMIC_ELEMENTS, $keys, true );
+		$target_pos = array_search( 'test-promote-position', $keys, true );
+
+		$this->assertSame( $atomic_pos + 1, $target_pos );
+	}
+
+	public function test_promote_category_after__uses_first_existing_candidate() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$manager->add_category( 'test-promote-fallback', [ 'title' => 'Test' ] );
+
+		// Act
+		$this->invoke_promote_category_after( $manager, 'test-promote-fallback', [
+			'non-existent-category',
+			Elements_Manager::CATEGORY_ATOMIC_ELEMENTS,
+		] );
+
+		// Assert
+		$keys = array_keys( $manager->get_categories() );
+		$atomic_pos = array_search( Elements_Manager::CATEGORY_ATOMIC_ELEMENTS, $keys, true );
+		$target_pos = array_search( 'test-promote-fallback', $keys, true );
+
+		$this->assertSame( $atomic_pos + 1, $target_pos );
+	}
+
+	public function test_promote_category_after__does_nothing_when_category_not_registered() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$categories_before = $manager->get_categories();
+
+		// Act
+		$this->invoke_promote_category_after( $manager, 'non-existent', [
+			Elements_Manager::CATEGORY_ATOMIC_ELEMENTS,
+		] );
+
+		// Assert
+		$this->assertSame( $categories_before, $manager->get_categories() );
+	}
+
+	public function test_promote_category_after__does_nothing_when_no_candidates_match() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$manager->add_category( 'test-promote-no-match', [ 'title' => 'Test' ] );
+		$categories_before = $manager->get_categories();
+
+		// Act
+		$this->invoke_promote_category_after( $manager, 'test-promote-no-match', [
+			'non-existent-a',
+			'non-existent-b',
+		] );
+
+		// Assert
+		$this->assertSame( $categories_before, $manager->get_categories() );
+	}
+
+	public function test_promote_category_after__preserves_category_properties() {
+		// Arrange
+		$manager = $this->elementor()->elements_manager;
+		$properties = [ 'title' => 'My Title', 'icon' => 'eicon-test', 'hideIfEmpty' => false ];
+		$manager->add_category( 'test-promote-props', $properties );
+
+		// Act
+		$this->invoke_promote_category_after( $manager, 'test-promote-props', [
+			Elements_Manager::CATEGORY_ATOMIC_ELEMENTS,
+		] );
+
+		// Assert
+		$categories = $manager->get_categories();
+		$this->assertSame( $properties, $categories['test-promote-props'] );
+	}
+
+	private function invoke_promote_category_after( $manager, string $category_name, array $after_candidates ): void {
+		$method = new \ReflectionMethod( $manager, 'promote_category_after' );
+		$method->setAccessible( true );
+		$method->invoke( $manager, $category_name, $after_candidates );
 	}
 
 	public function test_addChildWithNonExistentElementType() {

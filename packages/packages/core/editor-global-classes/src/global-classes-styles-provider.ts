@@ -22,11 +22,13 @@ import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 const MAX_CLASSES = 100;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
+const PREGENERATED_LINK_PATTERN = /^global-(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
 	priority: 30,
 	limit: MAX_CLASSES,
+	isPregeneratedLink: ( { id } ) => PREGENERATED_LINK_PATTERN.test( id ),
 	labels: {
 		singular: __( 'class', 'elementor' ),
 		plural: __( 'classes', 'elementor' ),
@@ -34,11 +36,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
-		all: () => {
-			const selectAllClasses = selectOrderedClasses( getState() );
-			localStorage.setItem( 'elementor-global-classes', JSON.stringify( selectAllClasses ) );
-			return selectAllClasses;
-		},
+		all: () => selectOrderedClasses( getState() ),
 		get: ( id ) => selectClass( getState(), id ),
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;

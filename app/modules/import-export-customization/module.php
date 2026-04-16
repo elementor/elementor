@@ -9,6 +9,7 @@ use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\System_Info\Reporters\Server;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -659,8 +660,8 @@ class Module extends BaseModule {
 			? Global_Classes_REST_API::MAX_ITEMS
 			: 100;
 
-		$variables_limit = class_exists( Variables_Collection::class )
-			? Variables_Collection::TOTAL_VARIABLES_COUNT
+		$variables_limit = class_exists( Constants::class )
+			? Constants::TOTAL_VARIABLES_COUNT
 			: 100;
 
 		return [

@@ -9,12 +9,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const packages = getLocalRepoPackagesEntries();
 
 const REGEXES = {
-	// @elementor/ui/SvgIcon. Used inside @elementor/icons
-	elementorPathImports: /^@elementor\/(ui|icons)\/(.+)$/,
+	// @elementor/ui/SvgIcon — used inside @elementor/icons.
+	// Excludes `@elementor/ui/styles` which is a self-referencing internal import inside `@elementor/ui` and must be bundled into ui.js.
+	elementorPathImports: /^@elementor\/(ui|icons)\/(?!styles$)(.+)$/,
 
 	// @elementor/editor
-	// We want to bundle `@elementor/design-tokens` inside the UI package since it's an internal thing.
-	elementorPackages: /^@elementor\/(?!design-tokens)(.+)$/,
+	// Excludes `design-tokens` (bundled inside UI) and `ui/styles` (self-referencing internal import inside `@elementor/ui`).
+	elementorPackages: /^@elementor\/(?!design-tokens|ui\/styles)(.+)$/,
 
 	// @wordpress/components
 	wordpressPackages: /^@wordpress\/(.+)$/,
@@ -75,6 +76,9 @@ const common = {
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
 	},
+	performance: {
+		hints: false,
+	},
 }
 
 const devConfig = {
@@ -128,7 +132,7 @@ module.exports = {
 
 function getLocalRepoPackagesEntries() {
 	const repoPath = path.resolve( __dirname, '../packages' );
-	const relevantDirs = [ 'packages/apps', 'packages/core', 'packages/libs' ]
+	const relevantDirs = [ 'packages/core', 'packages/libs', 'apps' ]
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )

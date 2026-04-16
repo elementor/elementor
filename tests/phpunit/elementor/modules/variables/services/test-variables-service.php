@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Services;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -157,7 +158,7 @@ class Test_Variables_Service extends TestCase {
 	public function test_process_batch__throws_variables_limit_reached() {
 		// Arrange
 		$variables = [];
-		for ( $i = 0; $i < 100; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
 				'label' => "Label-{$i}",

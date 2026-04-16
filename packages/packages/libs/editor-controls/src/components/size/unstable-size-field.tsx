@@ -8,32 +8,26 @@ import { UnitSelect } from './unit-select';
 import { UnstableSizeInput } from './unstable-size-input';
 
 type Props< TValue > = {
-	units: Unit[];
 	value: TValue;
-	defaultValue?: Partial< TValue >;
+	units: Unit[];
+	defaultUnit?: Unit;
 	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	disabled?: boolean;
 	InputProps?: TextFieldProps[ 'InputProps' ];
-};
-
-const DEFAULT_VALUE: SizePropValue[ 'value' ] = {
-	unit: 'px',
-	size: 0,
+	startIcon?: React.ReactNode;
 };
 
 export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
 	value,
 	InputProps,
-	defaultValue,
 	onChange,
 	onBlur,
 	units,
+	defaultUnit,
+	startIcon,
 }: Props< T > ) => {
-	const { size, unit, setSize, setUnit } = useSizeValue< T >( value, onChange, {
-		...DEFAULT_VALUE,
-		...defaultValue,
-	} as T );
+	const { size, unit, setSize, setUnit } = useSizeValue< T >( value, onChange, defaultUnit );
 
 	const shouldHighlightUnit = () => {
 		return hasValue( size );
@@ -47,6 +41,7 @@ export const UnstableSizeField = < T extends SizePropValue[ 'value' ] >( {
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {
 				...InputProps,
+				startAdornment: startIcon && <InputAdornment position="start">{ startIcon }</InputAdornment>,
 				endAdornment: (
 					<InputAdornment position="end">
 						<UnitSelect

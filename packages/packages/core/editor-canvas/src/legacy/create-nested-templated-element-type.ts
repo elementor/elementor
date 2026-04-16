@@ -6,9 +6,9 @@ import { canBeTemplated, type TemplatedElementConfig } from './create-templated-
 import {
 	createAfterRender,
 	createBeforeRender,
-	createTwigRenderState,
-	renderChildrenWithOptimization,
-	renderTwigTemplate,
+	rerenderExistingChildren,
+	setupTwigRenderer,
+	waitForChildrenToComplete,
 } from './twig-rendering-utils';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
@@ -61,13 +61,14 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
+function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
 	const id = model.get( 'id' );
+	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
-		'data-interaction-id': id,
+		'data-interaction-id': originId ?? id,
 		'x-ignore': 'true',
 	};
 
@@ -91,7 +92,11 @@ export function createNestedTemplatedElementView( {
 }: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	const renderState = createTwigRenderState( { renderer, element } );
+	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+		type,
+		renderer,
+		element,
+	} );
 
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
@@ -99,6 +104,8 @@ export function createNestedTemplatedElementView( {
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
+		_lastResolvedSettingsHash: null as string | null,
+		_domUpdateWasSkipped: false,
 
 		template: false,
 
@@ -107,7 +114,11 @@ export function createNestedTemplatedElementView( {
 		},
 
 		invalidateRenderCache() {
-			renderState.cacheState.invalidate();
+			this._lastResolvedSettingsHash = null;
+		},
+
+		renderOnChange() {
+			this.render();
 		},
 
 		render() {
@@ -117,6 +128,7 @@ export function createNestedTemplatedElementView( {
 			const process = signalizedProcess( this._abortController.signal )
 				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
+				// Dispatch the render event after the template is ready
 				.then( () => this._onTemplateReady() )
 				.then( () => this._renderChildren() )
 				.then( () => this._afterRender() );
@@ -149,20 +161,62 @@ export function createNestedTemplatedElementView( {
 		async _renderTemplate() {
 			const model = this.model;
 
-			await renderTwigTemplate( {
-				view: this,
-				signal: this._abortController?.signal,
-				renderState,
-				buildContext: ( resolvedSettings ) => ( {
-					id: model.get( 'id' ),
-					type,
-					settings: resolvedSettings,
-					base_styles: element.base_styles_dictionary,
-					editor_attributes: buildEditorAttributes( model ),
-					editor_classes: buildEditorClasses( model ),
-				} ),
-				attachContent: ( html: string ) => this._attachTwigContent( html ),
-			} );
+			this.triggerMethod( 'before:render:template' );
+
+			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
+				.then( ( _, signal ) => {
+					const settings = model.get( 'settings' ).toJSON();
+					return resolveProps( {
+						props: settings,
+						signal,
+						renderContext: this.getResolverRenderContext?.(),
+					} );
+				} )
+				.then( async ( settings ) => {
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this._domUpdateWasSkipped = true;
+						return null;
+					}
+					this._domUpdateWasSkipped = false;
+
+					this._lastResolvedSettingsHash = settingsHash;
+
+					const context = {
+						id: model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
+						type,
+						settings,
+						base_styles: baseStylesDictionary,
+						editor_attributes: buildEditorAttributes( model ),
+						editor_classes: buildEditorClasses( model ),
+					};
+
+					return renderer.render( templateKey, context );
+				} )
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this._attachTwigContent( html );
+				} );
+
+			await process.execute();
+
+			this.bindUIElements();
+
+			this.triggerMethod( 'render:template' );
+		},
+
+		getRenderContext() {
+			return this._parent?.getRenderContext?.();
+		},
+
+		getResolverRenderContext() {
+			return this._parent?.getResolverRenderContext?.();
 		},
 
 		getChildType(): string[] {
@@ -197,13 +251,18 @@ export function createNestedTemplatedElementView( {
 		},
 
 		async _renderChildren() {
-			await renderChildrenWithOptimization( {
-				children: this.children,
-				domUpdateWasSkipped: renderState.cacheState.domUpdateWasSkipped,
-				renderChildren: () => parentRenderChildren.call( this ),
-			} );
+			if ( this._shouldReuseChildren() ) {
+				rerenderExistingChildren( this );
+			} else {
+				parentRenderChildren.call( this );
+			}
 
+			await waitForChildrenToComplete( this );
 			this._removeChildrenPlaceholder();
+		},
+
+		_shouldReuseChildren() {
+			return this._domUpdateWasSkipped && this.children?.length > 0;
 		},
 
 		_removeChildrenPlaceholder() {
@@ -307,6 +366,13 @@ export function createNestedTemplatedElementView( {
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} ) as unknown as typeof ElementView;
 }

@@ -9,6 +9,7 @@ import {
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
@@ -181,6 +182,7 @@ export const TransitionRepeaterControl = createControl(
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
+		const proInstalled = hasProInstalled();
 
 		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
 		const { allDisabled: disabledItems, proDisabled: proDisabledItems } = useMemo(
@@ -191,10 +193,14 @@ export const TransitionRepeaterControl = createControl(
 		const allowedTransitionSet = useMemo( () => {
 			const set = new Set< string >();
 			transitionProperties.forEach( ( category ) => {
-				category.properties.forEach( ( prop ) => set.add( prop.value ) );
+				category.properties.forEach( ( prop ) => {
+					if ( ! prop.isDisabled || proInstalled ) {
+						set.add( prop.value );
+					}
+				} );
 			} );
 			return set;
-		}, [] );
+		}, [ proInstalled ] );
 
 		useEffect( () => {
 			if ( ! value || value.length === 0 ) {

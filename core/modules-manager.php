@@ -136,7 +136,9 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
+			'widget-creation',
 			'editor-one',
+			'elementor-capabilities-mcp',
 		];
 	}
 

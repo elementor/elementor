@@ -36,6 +36,7 @@ trait Has_Template {
 
 			$context = [
 				'id' => $this->get_id(),
+				'interaction_id' => $this->get_interaction_id(),
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),

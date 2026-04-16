@@ -22,20 +22,16 @@ module.exports = {
 			typescript: {},
 			node: {},
 		},
-		'local-rules:no-react-namespace': 'error',
 	},
 	reportUnusedDisableDirectives: true,
 	rules: {
+		'local-rules/no-react-namespace': 'error',
+		'local-rules/no-path-imports': 'error',
+
 		// Don't allow relative import from package to package.
 		'import/no-relative-packages': 'error',
 		'no-restricted-syntax': [
 			'error',
-			{
-				// \u002F - forward slash
-				selector: 'ImportDeclaration[source.value=/^@elementor\\u002F.+\\u002F/]',
-				message:
-					'Path import of Elementor dependencies is not allowed, please use the package root (e.g: use "@elementor/locations" instead of "@elementor/locations/src/index.ts").',
-			},
 			{
 				selector: 'TSEnumDeclaration',
 				message: "Don't use enums. Prefer unions or constants.",
@@ -136,7 +132,6 @@ module.exports = {
 				],
 
 				'testing-library/no-test-id-queries': 'error',
-				'testing-library/render-result-naming-convention': 'off',
 
 				// Add support for `@jest-environment` in JSDocs.
 				'jsdoc/check-tag-names': [

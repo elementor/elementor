@@ -30,9 +30,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 			'originValue' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'Original text',
+					'content' => ['$$type' => 'string', 'value' => 'Original text'],
 					'children' => [],
 				],
 			],
@@ -58,9 +58,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
 			'originValue' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => 'Original text',
+					'content' => ['$$type' => 'string', 'value' => 'Original text'],
 					'children' => [],
 				],
 			],
@@ -92,9 +92,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => '<strong>Original text</strong><script>alert("xss")</script>',
+					'content' => ['$$type' => 'string', 'value' => '<strong>Original text</strong><script>alert("xss")</script>'],
 					'children' => [],
 				],
 			],
@@ -110,7 +110,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value']['content'] );
+		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value']['content']['value'] );
 	}
 
 	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
@@ -124,9 +124,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
 				'originValue' => [
-				'$$type' => 'html-v2',
+				'$$type' => 'html-v3',
 				'value' => [
-					'content' => '<script>alert("xss")</script>Click here',
+					'content' => ['$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here'],
 					'children' => [],
 				],
 			],
@@ -146,9 +146,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		// Assert.
 		$sanitized = $result->unwrap();
 		$this->assertEquals( [
-			'$$type' => 'html-v2',
+			'$$type' => 'html-v3',
 			'value' => [
-				'content' => 'alert("xss")Click here',
+				'content' => ['$$type' => 'string', 'value' => 'alert("xss")Click here'],
 				'children' => [],
 			],
 		], $sanitized['prop-uuid-1']['originValue'] );
@@ -228,9 +228,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 		'originValue' => [
-			'$$type' => 'html-v2',
+			'$$type' => 'html-v3',
 			'value' => [
-				'content' => 'Original text',
+				'content' => ['$$type' => 'string', 'value' => 'Original text'],
 				'children' => [],
 			],
 		],

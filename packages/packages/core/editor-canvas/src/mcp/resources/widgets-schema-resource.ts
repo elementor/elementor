@@ -28,7 +28,13 @@ Prefer using "em" and "rem" values for text-related sizes, padding and spacing. 
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
 When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
-The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
+
+** CRITICAL - VARIABLES **
+When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
+Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
+
+`,
 				},
 			],
 		};
@@ -133,6 +139,20 @@ The css string must follow standard CSS syntax, with properties and values separ
 				llmGuidance.instructions =
 					'These are the default styles applied to the widget. Override only when necessary.';
 				llmGuidance.default_styles = defaultStyles;
+			}
+
+			const allowedChildTypes = widgetData.allowed_child_types;
+
+			const allWidgets = getWidgetsCache() || {};
+			const allowedParents = Object.entries( allWidgets )
+				.filter( ( [ , parentConfig ] ) => parentConfig.allowed_child_types?.includes( widgetType ) )
+				.map( ( [ parentType ] ) => parentType );
+
+			if ( allowedChildTypes?.length || allowedParents.length ) {
+				llmGuidance.nesting = {
+					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
+					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
+				};
 			}
 
 			return {

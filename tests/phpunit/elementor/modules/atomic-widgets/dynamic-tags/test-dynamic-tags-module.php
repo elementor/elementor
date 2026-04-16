@@ -172,12 +172,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
-						'settings' => [
-							'enum' => [
-								'name',
-								'email',
-							],
-						],
+						'settings' => [],
 						'meta' => [],
 						'dependencies' => null,
 						'initial_value' => null,

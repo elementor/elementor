@@ -9,6 +9,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+      - '.vscode/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -40,6 +41,13 @@ jobs:
 
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        env:
-          TITLE: ${{ github.event.pull_request.title }}
-        run: echo "$TITLE" | npx commitlint
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execFileSync } = require('node:child_process');
+            const title = context.payload.pull_request.title;
+            execFileSync('commitlint', [], {
+              input: title,
+              encoding: 'utf8',
+              stdio: ['pipe', 'inherit', 'inherit'],
+            });

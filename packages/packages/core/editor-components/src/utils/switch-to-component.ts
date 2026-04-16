@@ -1,7 +1,6 @@
 import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
 import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
-
-import { expandNavigator } from './expand-navigator';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 export async function switchToComponent(
 	componentId: number,
@@ -26,6 +25,10 @@ export async function switchToComponent(
 		selectElement( topLevelElement.id );
 		expandNavigator();
 	}
+}
+
+export async function expandNavigator() {
+	await runCommand( 'navigator/expand-all' );
 }
 
 function getSelector( element?: HTMLElement | null, componentInstanceId?: string | null ): string | undefined {
