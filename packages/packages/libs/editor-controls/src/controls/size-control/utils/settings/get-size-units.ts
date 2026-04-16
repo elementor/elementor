@@ -15,7 +15,7 @@ const getVariantUnits = ( variant: SizeVariant ): SizeUnit[] => {
 };
 
 const getSettingsUnits = ( propType: PropType ) => {
-	return getPropTypeSettings( propType )?.units;
+	return getPropTypeSettings( propType )?.available_units;
 };
 
 export const getSizeUnits = ( propType: PropType, variant: SizeVariant ): SizeUnit[] => {

@@ -37,13 +37,26 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
+
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
+	public const ACTION_WEBHOOK = 'webhook';
 	public const METADATA_REMOTE_IP = 'remote_ip';
 	public const METADATA_USER_AGENT = 'user_agent';
+
+
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
+	}
+
+	public static function get_default_recipient_email(): string {
+		return sanitize_email( (string) get_option( 'admin_email', '' ) );
+	}
+
+	public static function get_default_sender_email(): string {
+		return sanitize_email( (string) 'email@' . wp_parse_url( home_url(), PHP_URL_HOST ) );
 	}
 
 	public static function get_type() {
@@ -85,6 +98,15 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
+		$webhook_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => self::ACTION_WEBHOOK,
+				'effect' => 'hide',
+			] )
+			->get();
+
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -105,7 +127,14 @@ class Atomic_Form extends Atomic_Element_Base {
 			'email' => Email_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
-				->default( [] ),
+				->default( [
+					'to' => String_Prop_Type::generate( self::get_default_recipient_email() ),
+					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+				] ),
+			'webhook_url' => String_Prop_Type::make()
+				->set_dependencies( $webhook_dependencies )
+				->meta( Overridable_Prop_Type::ignore() )
+				->default( '' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
@@ -153,7 +182,15 @@ class Atomic_Form extends Atomic_Element_Base {
 								'label' => __( 'Email', 'elementor' ),
 								'value' => 'email',
 							],
+							[
+								'label' => __( 'Webhook', 'elementor' ),
+								'value' => self::ACTION_WEBHOOK,
+							],
 						] ),
+					Text_Control::bind_to( 'webhook_url' )
+						->set_label( __( 'Webhook URL', 'elementor' ) )
+						->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
+						->set_meta( [ 'topDivider' => true ] ),
 					Chips_Control::bind_to( 'submissions_metadata' )
 						->set_label( __( 'Include metadata', 'elementor' ) )
 						->set_meta( [ 'topDivider' => true ] )
@@ -343,7 +380,6 @@ class Atomic_Form extends Atomic_Element_Base {
 					] )
 					->build(),
 			] )
-			->is_locked( true )
 			->build();
 	}
 

@@ -368,6 +368,32 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( form.classList.contains( 'form-state-default' ) ).toBe( true );
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
+
+		it( 'sends referer_title and referrer in FormData (atomic form / admin-ajax contract)', async () => {
+			const { form, input } = createFormWithInput();
+			input.value = 'Test value';
+			document.title = 'Submission Contract Page';
+
+			const instance = await setupFormHandler( form );
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( { success: true } ),
+			} );
+
+			await instance.submit( new Event( 'submit', { cancelable: true } ) );
+
+			expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+			const fetchOptions = global.fetch.mock.calls[ 0 ][ 1 ];
+			expect( fetchOptions.method ).toBe( 'POST' );
+			expect( fetchOptions.body ).toBeInstanceOf( FormData );
+
+			const body = fetchOptions.body;
+			expect( body.has( 'referer_title' ) ).toBe( true );
+			expect( body.has( 'referrer' ) ).toBe( true );
+			expect( body.get( 'referer_title' ) ).toBe( 'Submission Contract Page' );
+			expect( body.get( 'referrer' ) ).toBe( window.location.href );
+		} );
 	} );
 
 	it( 'adds non-whitelisted editor link actions', async () => {
