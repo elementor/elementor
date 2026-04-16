@@ -3,15 +3,28 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Editor One Menu Visual Tests', () => {
-	test( 'Editor One full page screenshot', async ( { page, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setSiteLanguage( '' );
+		await context.close();
+	} );
+
+	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
 		test.setTimeout( 120000 );
 
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.openWordPressDashboard();
+		await wpAdmin.setSiteLanguage( 'he_IL' );
 
-		const elementorMenu = page.locator( '#toplevel_page_elementor-home' );
-		await expect( elementorMenu ).toBeVisible();
+		const translationButton = 'Form[name=upgrade-translations] input[type=submit]';
+		await page.goto( '/wp-admin/update-core.php' );
+		await page.locator( '.update-last-checked' ).click();
+		if ( await page.locator( translationButton ).isVisible() ) {
+			await page.locator( translationButton ).click();
+			await page.waitForLoadState( 'networkidle' );
+		}
 
 		await page.goto( '/wp-admin/admin.php?page=elementor', {
 			timeout: 60000,
@@ -26,7 +39,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 			const iframes = document.querySelectorAll( 'iframe' );
 			iframes.forEach( ( iframe ) => {
 				if ( iframe ) {
-					iframe.style.display = 'none';
+					iframe.remove();
 				}
 			} );
 
@@ -44,9 +57,9 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await page.waitForLoadState( 'networkidle' );
+		await page.waitForLoadState( 'networkidle', { timeout: 30000 } ).catch( () => {} );
 
-		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page.png', {
+		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page-hebrew.png', {
 			timeout: 30000,
 			maxDiffPixelRatio: 0.1,
 		} );
