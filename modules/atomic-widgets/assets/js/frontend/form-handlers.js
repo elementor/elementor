@@ -1,9 +1,6 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-import { getAlpineId, getPostId, isEditorContext } from './utils';
-
-const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
-const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
+import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
@@ -82,7 +79,7 @@ function clearAtomicFormSubmittingState( form, submitButtons ) {
 }
 
 function buildAtomicFormPayload( form ) {
-	const postId = getPostId();
+	const postId = getPostId( form );
 	const formId = form.dataset.id;
 	const formName = form.dataset.formName || '';
 	const formFields = getAtomicFormFields( form );

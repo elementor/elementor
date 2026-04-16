@@ -1,10 +1,5 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
-import { isEditorContext } from './utils';
-
-const LINK_ACTIONS_EDITOR_WHITELIST = [ 'off_canvas', 'lightbox' ];
-const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelist';
-const ACTION_LINK_SELECTOR = '[data-action-link]';
-const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_SELECTOR })`;
+import { isEditorContext, LINK_ACTIONS_EDITOR_WHITELIST, WHITELIST_FILTER, ACTION_LINK_SELECTOR, REGISTRATION_SELECTOR } from './utils';
 
 registerBySelector( {
 	id: 'atomic-link-action-handler',
