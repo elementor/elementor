@@ -24,6 +24,10 @@ export const hasVariable = ( key: string ) => {
 };
 
 export const useVariable = ( key: string ) => {
+	return getVariable( key );
+};
+
+export function getVariable( key: string ) {
 	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
@@ -34,7 +38,7 @@ export const useVariable = ( key: string ) => {
 		...variables[ key ],
 		key,
 	};
-};
+}
 
 export const useFilteredVariables = ( searchValue: string, propTypeKey: string ) => {
 	const baseVariables = usePropVariables( propTypeKey );

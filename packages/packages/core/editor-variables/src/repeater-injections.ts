@@ -12,7 +12,9 @@ import {
 	BackgroundRepeaterColorIndicator,
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
-	DropShadowFilterIconIndicator,
+	FilterDropShadowIconIndicator,
+	FilterDropShadowRepeaterLabel,
+	FilterSingleSizeRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
 import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
@@ -30,7 +32,7 @@ export function registerRepeaterInjections() {
 
 function backgroundOverlayRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-background-icon',
+		id: 'background-color-variables-icon',
 		component: BackgroundRepeaterColorIndicator,
 		condition: ( { value }: Args ) => {
 			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
@@ -38,7 +40,7 @@ function backgroundOverlayRepeaterInjections() {
 	} );
 
 	injectIntoRepeaterItemLabel( {
-		id: 'color-variables-label',
+		id: 'background-color-variables-label',
 		component: BackgroundRepeaterLabel,
 		condition: ( { value }: Args ) => {
 			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
@@ -48,7 +50,7 @@ function backgroundOverlayRepeaterInjections() {
 
 function boxShadowRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-box-shadow-icon',
+		id: 'box-shadow-color-variables-icon',
 		component: BoxShadowRepeaterColorIndicator,
 		condition: ( { value }: Args ) => {
 			return hasAssignedColorVariable( shadowPropTypeUtil.extract( value )?.color );
@@ -68,15 +70,54 @@ function transitionsRepeaterInjections() {
 
 function filterRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-filter-icon',
-		component: DropShadowFilterIconIndicator,
+		id: 'filters-color-variables-icon',
+		component: FilterDropShadowIconIndicator,
 		condition: ( { value }: Args ) => {
-			const cssFilterFunc = cssFilterFunctionPropUtil.extract( value );
-			if ( dropShadowFilterPropTypeUtil.isValid( cssFilterFunc?.args ) ) {
-				const color = dropShadowFilterPropTypeUtil.extract( cssFilterFunc.args )?.color;
-				return hasAssignedColorVariable( color );
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
 			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args;
+			if ( dropShadowFilterPropTypeUtil.isValid( args ) ) {
+				return hasAssignedColorVariable( dropShadowFilterPropTypeUtil.extract( args )?.color );
+			}
+
 			return false;
+		},
+	} );
+
+	injectIntoRepeaterItemLabel( {
+		id: 'filters-drop-shadow-size-variables-label',
+		component: FilterDropShadowRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
+			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args;
+			if ( dropShadowFilterPropTypeUtil.isValid( args ) ) {
+				const { xAxis, yAxis, blur } = dropShadowFilterPropTypeUtil.extract( args ) || {};
+				return (
+					hasAssignedSizeVariable( xAxis ) ||
+					hasAssignedSizeVariable( yAxis ) ||
+					hasAssignedSizeVariable( blur )
+				);
+			}
+
+			return false;
+		},
+	} );
+
+	injectIntoRepeaterItemLabel( {
+		id: 'filters-size-variables-label',
+		component: FilterSingleSizeRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
+			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args as { size?: PropValue };
+			return hasAssignedSizeVariable( args?.size );
 		},
 	} );
 }
