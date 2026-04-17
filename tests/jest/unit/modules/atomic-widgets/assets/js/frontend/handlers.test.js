@@ -155,12 +155,15 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const element = document.createElement( 'h2' );
 		const nestedLink = document.createElement( 'a' );
 
+		nestedLink.dataset.actionLink = ANY_CONTEXT_URL;
+		element.appendChild( nestedLink );
+		registration.callback( { element } );
+
 		const linkEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 		const elementEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		nestedLink.dispatchEvent( linkEvent );
-		registration.callback( { element } );
 		element.dispatchEvent( elementEvent );
 
 		// Assert
