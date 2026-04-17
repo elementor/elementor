@@ -56,20 +56,17 @@ const SuggestionChips = ( { onChipSelect, siteBuilderState = DEFAULT_SITE_BUILDE
 
 	const displayChips = getDisplayChips( sessionStep, pageSuggestions, siteTypeSuggestions );
 
-	// if ( 0 === displayChips.length ) {
-	// 	return null;
-	// }
+	if ( 0 === displayChips.length ) {
+		return null;
+	}
 
 	const handleChipClick = ( value ) => {
 		setSelectedChip( value );
 		onChipSelect( value );
 	};
-
-	const testArray = [ 'Home', 'Services page', 'Contact page' ];
-
 	return (
 		<PlannerChipsRow>
-			{ testArray.map( ( suggestion ) => (
+			{ displayChips.map( ( suggestion ) => (
 				<SuggestionChip
 					key={ suggestion }
 					label={ suggestion }

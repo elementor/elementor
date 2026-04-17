@@ -96,7 +96,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 		const prompt = nextInputValue || inputValue;
 
 		if ( prompt ) {
-			url.searchParams.append( 'prompt', prompt );
+			url.searchParams.append( 'site_type', prompt );
 		}
 
 		window.open( url.toString(), '_blank' );

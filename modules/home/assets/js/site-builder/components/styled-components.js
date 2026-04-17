@@ -130,6 +130,8 @@ export const PlannerInputRow = styled( Box )( ( { theme } ) => ( {
 	flexDirection: 'column',
 	gap: theme.spacing( 1 ),
 	alignItems: 'stretch',
+	flexWrap: 'wrap',
+	marginBlockStart: theme.spacing( 1 ),
 	[ theme.breakpoints.up( 'sm' ) ]: {
 		flexDirection: 'row',
 		alignItems: 'center',
