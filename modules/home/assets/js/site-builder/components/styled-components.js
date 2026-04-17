@@ -8,7 +8,7 @@ export const PlannerRoot = styled( Paper )( ( { theme } ) => ( {
 	overflow: 'hidden',
 	borderRadius: theme.spacing( 1 ),
 	border: '1px solid',
-	borderColor: 'divider',
+	borderColor: theme.palette.divider,
 	minHeight: theme.spacing( 26.75 ),
 	gap: theme.spacing( 2 ),
 } ) );
