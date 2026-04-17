@@ -3,8 +3,6 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Includes\EditorAssetsAPI;
-use Elementor\Modules\Home\Rest\Site_Planner_Proxy;
-use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,12 +20,7 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
-		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
-	}
-
-	public function register_rest_routes(): void {
-		( new Site_Planner_Proxy() )->register_routes();
 	}
 
 	public function enqueue_fonts(): void {

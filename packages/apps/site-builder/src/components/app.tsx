@@ -126,7 +126,7 @@ export function App() {
 
 		const root = wpApiSettings?.root || '/wp-json/';
 		const wpJsonRoot = root.endsWith( '/' ) ? root : `${ root }/`;
-		const settingsUrl = `${ wpJsonRoot }elementor/v1/settings/elementor_site_planner_snapshot`;
+		const settingsUrl = `${ wpJsonRoot }elementor/v1/settings/elementor_site_builder_snapshot`;
 
 		fetch( settingsUrl, {
 			method: 'POST',

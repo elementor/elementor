@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\App\Modules\SiteBuilder;
 
+use Elementor\App\Modules\SiteBuilder\Connect\App;
+use Elementor\App\Modules\SiteBuilder\Rest\Rest_Api;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
@@ -24,6 +26,14 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
+
+		add_action( 'elementor/connect/apps/register', function ( $connect_module ) {
+			$connect_module->register_app( 'site-builder', App::get_class_name() );
+		} );
+
+		add_action( 'rest_api_init', function () {
+			( new Rest_Api() )->register_routes();
+		} );
 	}
 
 	private function register_experiment() {
@@ -77,7 +87,7 @@ class Module extends BaseModule {
 		return 'https://planner.elementor.com/chat.html';
 	}
 
-	public function get_planner_config(): ?array {
+	public function get_config(): ?array {
 		if ( ! $this->is_experiment_active() ) {
 			return null;
 		}

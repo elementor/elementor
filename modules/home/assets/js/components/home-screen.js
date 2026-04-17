@@ -6,7 +6,7 @@ import SideBarPromotion from './sidebar-promotion';
 import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 import CreateWithAIBanner from './create-with-ai-banner';
-import SitePlanner from './site-planner/index';
+import SiteBuilder from './site-builder/index';
 import LoadFallbackMessage from './load-fallback-message';
 
 const EditorScreen = ( props ) => {
@@ -24,7 +24,7 @@ const EditorScreen = ( props ) => {
 				{ props.homeScreenData.top_with_licences && <TopSection topData={ props.homeScreenData.top_with_licences } buttonCtaUrl={ props.homeScreenData.button_cta_url } /> }
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2.5 } }>
 					<Stack sx={ { flex: 1, gap: 2.5 } }>
-						{ props.homeScreenData.site_planner && <SitePlanner sitePlannerData={ props.homeScreenData.site_planner } /> }
+						{ props.homeScreenData.site_builder && <SiteBuilder siteBuilderData={ props.homeScreenData.site_builder } /> }
 						{ props.homeScreenData.create_with_ai && <CreateWithAIBanner createWithAIData={ props.homeScreenData.create_with_ai } /> }
 						<GetStarted
 							getStartedData={ props.homeScreenData.get_started }

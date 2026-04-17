@@ -6,7 +6,7 @@ import { useState } from 'react';
 import ArrowRightIcon from '../../icons/arrow-right-icon';
 import AiLoaderIcon from '../../icons/ai-loader-icon';
 import GenerateSiteIcon from '../../icons/generate-site-icon';
-import useSitePlannerState from './hooks/use-site-planner-state';
+import useSiteBuilderState from './hooks/use-site-builder-state';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -36,10 +36,10 @@ const PLANNER_STEPS = {
 	DEPLOYED_TO_HOSTING: 5,
 };
 
-const SitePlanner = ( { sitePlannerData } ) => {
+const SiteBuilder = ( { siteBuilderData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionStep, pageSuggestions: suggestionChips, siteTypeSuggestions } = useSitePlannerState( sitePlannerData );
+	const { sessionStep, pageSuggestions: suggestionChips, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
 	const sessionStepValue = Number( sessionStep );
 	const shouldShowPageNameSuggestions = Number.isFinite( sessionStepValue )
 		&& sessionStepValue >= PLANNER_STEPS.WIREFRAMES
@@ -61,11 +61,11 @@ const SitePlanner = ( { sitePlannerData } ) => {
 	};
 
 	const handleCreateClick = () => {
-		if ( ! sitePlannerData?.siteBuilderUrl ) {
+		if ( ! siteBuilderData?.siteBuilderUrl ) {
 			return;
 		}
 
-		const url = new URL( sitePlannerData.siteBuilderUrl, window.location.origin );
+		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
 		if ( inputValue ) {
 			url.searchParams.append( 'prompt', inputValue );
 		}
@@ -115,24 +115,24 @@ const SitePlanner = ( { sitePlannerData } ) => {
 
 	return (
 		<PlannerRoot elevation={ 0 }>
-			<PlannerBackground bgimage={ sitePlannerData?.bgImage } />
+			<PlannerBackground bgimage={ siteBuilderData?.bgImage } />
 
 			<PlannerGrid />
 
 			<PlannerPreviewContainer>
 				<PlannerPreviewInner>
 					<PlannerPreviewFrame>
-						{ sitePlannerData?.previewImage1 && (
+						{ siteBuilderData?.previewImage1 && (
 							<PlannerPreviewImage1
 								component="img"
-								src={ sitePlannerData.previewImage1 }
+								src={ siteBuilderData.previewImage1 }
 								alt=""
 							/>
 						) }
-						{ sitePlannerData?.previewImage2 && (
+						{ siteBuilderData?.previewImage2 && (
 							<PlannerPreviewImage2
 								component="img"
-								src={ sitePlannerData.previewImage2 }
+								src={ siteBuilderData.previewImage2 }
 								alt=""
 							/>
 						) }
@@ -188,8 +188,8 @@ const SitePlanner = ( { sitePlannerData } ) => {
 	);
 };
 
-SitePlanner.propTypes = {
-	sitePlannerData: PropTypes.object,
+SiteBuilder.propTypes = {
+	siteBuilderData: PropTypes.object,
 };
 
-export default SitePlanner;
+export default SiteBuilder;

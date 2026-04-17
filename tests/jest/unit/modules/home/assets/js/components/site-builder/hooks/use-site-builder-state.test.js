@@ -1,15 +1,15 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import useSitePlannerState from 'elementor/modules/home/assets/js/components/site-planner/hooks/use-site-planner-state';
+import useSiteBuilderState from 'elementor/modules/home/assets/js/components/site-builder/hooks/use-site-builder-state';
 
-const SETTINGS_URL = '/wp-json/elementor/v1/settings/elementor_site_planner_snapshot';
-const HOME_SCREEN_URL = '/wp-json/elementor/v1/site-planner/home-screen';
+const SETTINGS_URL = '/wp-json/elementor/v1/settings/elementor_site_builder_snapshot';
+const HOME_SCREEN_URL = '/wp-json/elementor/v1/site-builder/home-screen';
 
 const createResponse = ( body, ok = true ) => ( {
 	ok,
 	json: jest.fn().mockResolvedValue( body ),
 } );
 
-const getSitePlannerData = () => ( {
+const getSiteBuilderData = () => ( {
 	connectAuth: {
 		siteKey: 'site-key-1',
 		signature: 'signature',
@@ -22,11 +22,11 @@ const getSitePlannerData = () => ( {
 const setInjectedSnapshot = ( snapshot ) => {
 	window.elementorHomeScreenData = {
 		wpRestNonce: 'wp-nonce',
-		sitePlannerSnapshot: snapshot,
+		siteBuilderSnapshot: snapshot,
 	};
 };
 
-describe( 'useSitePlannerState', () => {
+describe( 'useSiteBuilderState', () => {
 	beforeEach( () => {
 		global.fetch = jest.fn();
 		window.wpApiSettings = {
@@ -43,7 +43,7 @@ describe( 'useSitePlannerState', () => {
 	} );
 
 	it( 'returns empty state when connectAuth is missing', async () => {
-		const { result } = renderHook( () => useSitePlannerState( {} ) );
+		const { result } = renderHook( () => useSiteBuilderState( {} ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -64,7 +64,7 @@ describe( 'useSitePlannerState', () => {
 			},
 		} );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -86,7 +86,7 @@ describe( 'useSitePlannerState', () => {
 		} );
 		global.fetch.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -118,7 +118,7 @@ describe( 'useSitePlannerState', () => {
 			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Blog', 'Services' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -154,7 +154,7 @@ describe( 'useSitePlannerState', () => {
 			} ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -184,7 +184,7 @@ describe( 'useSitePlannerState', () => {
 			.mockResolvedValueOnce( createResponse( { sessionId: null, step: null, suggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -206,7 +206,7 @@ describe( 'useSitePlannerState', () => {
 			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Home' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -221,7 +221,7 @@ describe( 'useSitePlannerState', () => {
 	it( 'surfaces an error when /home-screen fails and exposes default siteTypeSuggestions', async () => {
 		global.fetch.mockResolvedValueOnce( { ok: false, json: jest.fn().mockResolvedValue( { message: 'planner-unreachable' } ) } );
 
-		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-const SNAPSHOT_OPTION_KEY = 'elementor_site_planner_snapshot';
+const SNAPSHOT_OPTION_KEY = 'elementor_site_builder_snapshot';
 const SETTINGS_PATH = `elementor/v1/settings/${ SNAPSHOT_OPTION_KEY }`;
-const HOME_SCREEN_PATH = 'elementor/v1/site-planner/home-screen';
+const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
 const WIREFRAMES_STEP = 3;
 
 const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
@@ -17,7 +17,7 @@ const getWpJsonRoot = () => {
 };
 
 const readInjectedSnapshot = () => {
-	const raw = window.elementorHomeScreenData?.sitePlannerSnapshot;
+	const raw = window.elementorHomeScreenData?.siteBuilderSnapshot;
 	return raw && typeof raw === 'object' && ! Array.isArray( raw ) ? raw : {};
 };
 
@@ -25,11 +25,16 @@ const sanitizeSuggestions = ( suggestions ) => ( Array.isArray( suggestions )
 	? suggestions.filter( ( suggestion ) => typeof suggestion === 'string' )
 	: [] );
 
-const sanitizeSiteTypeSuggestions = ( value ) => {
+const sanitizeStoredSiteTypeSuggestions = ( value ) => {
 	const list = Array.isArray( value )
 		? value.filter( ( item ) => typeof item === 'string' && item.trim() )
 		: [];
-	return list.length ? list.slice( 0, 3 ) : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
+	return list.slice( 0, 3 );
+};
+
+const withDefaultSiteTypeSuggestions = ( value ) => {
+	const stored = sanitizeStoredSiteTypeSuggestions( value );
+	return stored.length ? stored : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
 };
 
 const deriveInitialStateForSiteKey = ( siteKey ) => {
@@ -45,7 +50,7 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 	const snapshotEntry = readInjectedSnapshot()[ siteKey ];
 	const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
 	const hasSnapshotSuggestions = Array.isArray( snapshotEntry?.pageSuggestions );
-	const siteTypeSuggestions = sanitizeSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
+	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
 	if ( null !== snapshotStep && hasSnapshotSuggestions ) {
 		return {
@@ -73,8 +78,8 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 	};
 };
 
-const useSitePlannerState = ( sitePlannerData ) => {
-	const connectAuth = sitePlannerData?.connectAuth;
+const useSiteBuilderState = ( siteBuilderData ) => {
+	const connectAuth = siteBuilderData?.connectAuth;
 	const hasConnectAuth = Boolean( connectAuth );
 	const siteKey = connectAuth?.siteKey || '';
 	const initial = deriveInitialStateForSiteKey( siteKey );
@@ -102,7 +107,7 @@ const useSitePlannerState = ( sitePlannerData ) => {
 		if ( null !== snapshotStep && hasSnapshotSuggestions ) {
 			setSessionStep( snapshotStep );
 			setPageSuggestions( snapshotEntry.pageSuggestions );
-			setSiteTypeSuggestions( sanitizeSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ) );
+			setSiteTypeSuggestions( withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ) );
 			setIsLoading( false );
 			setError( null );
 			return;
@@ -206,4 +211,4 @@ const useSitePlannerState = ( sitePlannerData ) => {
 	};
 };
 
-export default useSitePlannerState;
+export default useSiteBuilderState;

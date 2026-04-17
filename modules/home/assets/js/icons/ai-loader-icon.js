@@ -28,7 +28,7 @@ const AiLoaderIcon = () => (
 				sx={ { width: 24, height: 24 } }
 			>
 				<defs>
-					<linearGradient id="sitePlannerLoaderGradient" x1="2.25" y1="12" x2="21.75" y2="12" gradientUnits="userSpaceOnUse">
+					<linearGradient id="siteBuilderLoaderGradient" x1="2.25" y1="12" x2="21.75" y2="12" gradientUnits="userSpaceOnUse">
 						<stop offset="0" stopColor="#696199" />
 						<stop offset="1" stopColor="#C945C9" />
 					</linearGradient>
@@ -36,7 +36,7 @@ const AiLoaderIcon = () => (
 				<path
 					d="M12 2.25 A 9.75 9.75 0 1 1 2.25 12"
 					fill="none"
-					stroke="url(#sitePlannerLoaderGradient)"
+					stroke="url(#siteBuilderLoaderGradient)"
 					strokeWidth="1.5"
 					strokeLinecap="round"
 				/>
