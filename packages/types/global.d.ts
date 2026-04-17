@@ -163,6 +163,10 @@ declare global {
 		'site-builder'?: {
 			iframeUrl?: string;
 			isAdmin?: boolean;
+			elementorAiCurrentContext?: {
+				siteTitle: string;
+				siteAbout: unknown;
+			};
 			connectAuth?: {
 					signature: string;
 					accessToken: string;
