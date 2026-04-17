@@ -6,8 +6,7 @@ import { useState } from 'react';
 import ArrowRightIcon from '../../icons/arrow-right-icon';
 import AiLoaderIcon from '../../icons/ai-loader-icon';
 import GenerateSiteIcon from '../../icons/generate-site-icon';
-import useSessionStatus from './hooks/use-session-status';
-import usePageNameSuggestions from './hooks/use-page-name-suggestions';
+import useSitePlannerState from './hooks/use-site-planner-state';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -40,13 +39,11 @@ const PLANNER_STEPS = {
 const SitePlanner = ( { sitePlannerData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionStep } = useSessionStatus( sitePlannerData );
+	const { sessionStep, pageSuggestions: suggestionChips } = useSitePlannerState( sitePlannerData );
 	const sessionStepValue = Number( sessionStep );
-	const shouldLoadPageNameSuggestions = Number.isFinite( sessionStepValue ) && sessionStepValue >= PLANNER_STEPS.WIREFRAMES;
-	const { pageSuggestions: suggestionChips } = usePageNameSuggestions( sitePlannerData, shouldLoadPageNameSuggestions );
-	const shouldShowPageNameSuggestions = shouldLoadPageNameSuggestions && suggestionChips.length > 0;
-
-	console.log( 'sessionStep123', sessionStep );
+	const shouldShowPageNameSuggestions = Number.isFinite( sessionStepValue )
+		&& sessionStepValue >= PLANNER_STEPS.WIREFRAMES
+		&& suggestionChips.length > 0;
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -165,13 +162,6 @@ const SitePlanner = ( { sitePlannerData } ) => {
 						{ __( 'Create my site', 'elementor' ) }
 					</CreateSiteButton>
 				</PlannerInputRow>
-
-				{
-					console.log( 'shouldShowPageNameSuggestions', shouldShowPageNameSuggestions )
-				}
-				{
-					console.log( 'suggestionChips', suggestionChips )
-				}
 
 				{ shouldShowPageNameSuggestions && (
 					<PlannerChipsRow>

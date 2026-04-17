@@ -104,6 +104,9 @@ class Module extends BaseApp {
 		$site_planner_config = $this->get_site_planner_config();
 		if ( $site_planner_config ) {
 			$config['site_planner'] = $site_planner_config;
+
+			$snapshot = get_option( 'elementor_site_planner_snapshot', [] );
+			$config['sitePlannerSnapshot'] = is_array( $snapshot ) ? $snapshot : [];
 		}
 
 		return $config;

@@ -1,0 +1,175 @@
+import { renderHook, waitFor } from '@testing-library/react';
+import useSitePlannerState from 'elementor/modules/home/assets/js/components/site-planner/hooks/use-site-planner-state';
+
+const SETTINGS_URL = '/wp-json/elementor/v1/settings/elementor_site_planner_snapshot';
+const HOME_SCREEN_URL = '/wp-json/elementor/v1/site-planner/home-screen';
+
+const createResponse = ( body, ok = true ) => ( {
+	ok,
+	json: jest.fn().mockResolvedValue( body ),
+} );
+
+const getSitePlannerData = () => ( {
+	connectAuth: {
+		siteKey: 'site-key-1',
+		signature: 'signature',
+		accessToken: 'access-token',
+		clientId: 'client-id',
+		homeUrl: 'https://example.com',
+	},
+} );
+
+const setInjectedSnapshot = ( snapshot ) => {
+	window.elementorHomeScreenData = {
+		wpRestNonce: 'wp-nonce',
+		sitePlannerSnapshot: snapshot,
+	};
+};
+
+describe( 'useSitePlannerState', () => {
+	beforeEach( () => {
+		global.fetch = jest.fn();
+		window.wpApiSettings = {
+			root: '/wp-json/',
+			nonce: 'wp-nonce',
+		};
+		window.elementorHomeScreenData = {
+			wpRestNonce: 'wp-nonce',
+		};
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'returns empty state when connectAuth is missing', async () => {
+		const { result } = renderHook( () => useSitePlannerState( {} ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( null );
+		expect( result.current.pageSuggestions ).toEqual( [] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+	} );
+
+	it( 'Scenario 3: uses injected snapshot and skips every HTTP call', async () => {
+		setInjectedSnapshot( {
+			'site-key-1': {
+				sessionId: 'session-id',
+				step: 3,
+				pageSuggestions: [ 'Home', 'Portfolio' ],
+			},
+		} );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 3 );
+		expect( result.current.pageSuggestions ).toEqual( [ 'Home', 'Portfolio' ] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+	} );
+
+	it( 'Scenario 2a: step < WIREFRAMES — writes empty suggestions without hitting the planner', async () => {
+		setInjectedSnapshot( {
+			'site-key-1': {
+				sessionId: 'session-id',
+				step: 2,
+			},
+		} );
+		global.fetch.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 2 );
+		expect( result.current.pageSuggestions ).toEqual( [] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( global.fetch ).toHaveBeenCalledWith( SETTINGS_URL, expect.objectContaining( {
+			method: 'POST',
+			body: JSON.stringify( {
+				value: {
+					'site-key-1': {
+						sessionId: 'session-id',
+						step: 2,
+						pageSuggestions: [],
+					},
+				},
+			} ),
+		} ) );
+	} );
+
+	it( 'Scenario 1: no snapshot — fetches /home-screen and writes snapshot', async () => {
+		global.fetch
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Blog', 'Services' ] } ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 3 );
+		expect( result.current.pageSuggestions ).toEqual( [ 'Blog', 'Services' ] );
+		expect( result.current.error ).toBe( null );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 2, SETTINGS_URL, expect.objectContaining( {
+			method: 'POST',
+			body: JSON.stringify( {
+				value: {
+					'site-key-1': {
+						sessionId: 'session-id',
+						step: 3,
+						pageSuggestions: [ 'Blog', 'Services' ],
+					},
+				},
+			} ),
+		} ) );
+	} );
+
+	it( 'Scenario 2b: step >= WIREFRAMES but no suggestions — fetches /home-screen', async () => {
+		setInjectedSnapshot( {
+			'site-key-1': {
+				sessionId: 'session-id',
+				step: 3,
+			},
+		} );
+		global.fetch
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Home' ] } ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 3 );
+		expect( result.current.pageSuggestions ).toEqual( [ 'Home' ] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
+	} );
+
+	it( 'surfaces an error when /home-screen fails', async () => {
+		global.fetch.mockResolvedValueOnce( { ok: false, json: jest.fn().mockResolvedValue( { message: 'planner-unreachable' } ) } );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.pageSuggestions ).toEqual( [] );
+		expect( result.current.error ).toBeInstanceOf( Error );
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
