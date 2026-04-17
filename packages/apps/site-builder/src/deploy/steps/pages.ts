@@ -2,14 +2,6 @@ import apiFetch from '@wordpress/api-fetch';
 
 import type { DeployPage, WpPost } from '../types';
 
-function triggerMediaImport( postId: number ) {
-	apiFetch( {
-		path: `/elementor/v1/documents/${ postId }/media/import`,
-		method: 'POST',
-		data: { id: postId },
-	} ).catch( () => {} );
-}
-
 export async function createPages( pages: DeployPage[] ) {
 	const pageIdMap: Record< string, number > = {};
 
@@ -29,7 +21,6 @@ export async function createPages( pages: DeployPage[] ) {
 		} );
 
 		pageIdMap[ page.id ] = created.id;
-		triggerMediaImport( created.id );
 	}
 
 	return pageIdMap;

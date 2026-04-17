@@ -29,15 +29,19 @@ export default function createAtomicElementBaseView( type ) {
 
 		_resolveTag() {
 			const renderContext = this.getResolverRenderContext?.();
+
 			const tagSetting = this.model.getSetting( 'tag' );
 			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
 
-			if ( this._hasLink( renderContext ) ) {
-				return 'a';
-			}
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLinkTag = this._resolvePropValue( linkSetting?.value?.tag, renderContext );
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			const linkTag = resolvedLinkTag?.value ?? resolvedLinkTag;
+			const baseTag = resolvedTag?.value ?? resolvedTag;
+
+			const resultTag = linkTag ?? baseTag;
+
+			return resultTag || this.model.config.default_html_tag || 'div';
 		},
 
 		getChildViewContainer() {
@@ -331,11 +335,15 @@ export default function createAtomicElementBaseView( type ) {
 			this.$el.removeAttr( 'href' );
 			this.$el.removeAttr( 'data-action-link' );
 
-			const link = this.getLink();
+			const link = this.getLinkAttributes();
 
-			if ( link ) {
-				this.$el.attr( link.attr, link.value );
+			if ( ! link ) {
+				return;
 			}
+
+			Object.entries( link ).forEach( ( [ key, value ] ) => {
+				this.$el.attr( key, value );
+			} );
 		},
 
 		async _waitForChildrenToComplete() {
@@ -407,7 +415,7 @@ export default function createAtomicElementBaseView( type ) {
 			return !! destination?.value;
 		},
 
-		getLink() {
+		getLinkAttributes() {
 			const renderContext = this.getResolverRenderContext?.();
 			const linkSetting = this.model.getSetting( 'link' );
 			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
@@ -431,9 +439,10 @@ export default function createAtomicElementBaseView( type ) {
 					return null;
 				}
 
+				const attributeKey = 'action' === value?.group ? 'data-action-link' : 'href';
+
 				return {
-					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
-					value: resolvedValue,
+					[ attributeKey ]: resolvedValue,
 				};
 			}
 
@@ -441,8 +450,7 @@ export default function createAtomicElementBaseView( type ) {
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
 			return {
-				attr: 'href',
-				value: hrefPrefix + value,
+				href: hrefPrefix + value,
 			};
 		},
 

@@ -48,6 +48,7 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
 		];
 
 		$connect_auth = $this->get_connect_auth();
@@ -57,6 +58,15 @@ class Module extends BaseModule {
 		}
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
+
+	private function get_elementor_ai_current_context(): array {
+		$choices = get_option( 'elementor_onboarding_choices', [] );
+		$site_about = $choices['site_about'] ?? [];
+		return [
+			'siteTitle' => (string) get_bloginfo( 'name' ),
+			'siteAbout' => $site_about,
+		];
 	}
 
 	private function get_iframe_url(): string {

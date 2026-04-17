@@ -17,6 +17,10 @@ function getConfig() {
 	return window.elementorAppConfig?.[ 'site-builder' ];
 }
 
+function getElementorAiCurrentContext() {
+	return getConfig()?.elementorAiCurrentContext || {};
+}
+
 function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
 	const config = getConfig();
 
@@ -26,7 +30,10 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
-				page: { url: window.location.href },
+				page: {
+					url: window.location.href,
+					elementorAiCurrentContext: getElementorAiCurrentContext(),
+				},
 				user: { isAdmin: config?.isAdmin ?? false },
 			},
 		},

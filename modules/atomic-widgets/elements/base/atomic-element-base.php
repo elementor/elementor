@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
@@ -34,10 +33,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
-		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
+
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+
 		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
@@ -163,7 +163,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$settings = $this->get_atomic_settings();
 		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
+		if ( ! empty( $settings['link']['tag'] ) ) {
+			return $settings['link']['tag'];
+		}
+
+		return $settings['tag'] ?? $default_html_tag;
 	}
 
 	/**
@@ -184,6 +188,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
 		$attributes = $settings['attributes'] ?? '';
+
+		if ( isset( $settings['link']['attributes'] ) ) {
+			$attributes .= ' ' . ( $settings['link']['attributes'] ?? '' );
+		}
+
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;

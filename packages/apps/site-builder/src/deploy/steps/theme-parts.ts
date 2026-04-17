@@ -33,14 +33,6 @@ async function getSupportedDocumentTypes(): Promise< string[] > {
 	}
 }
 
-function triggerMediaImport( postId: number ) {
-	apiFetch( {
-		path: `/elementor/v1/documents/${ postId }/media/import`,
-		method: 'POST',
-		data: { id: postId },
-	} ).catch( () => {} );
-}
-
 function getConditionBucket( type: DeployThemePart[ 'type' ] ): string {
 	if ( type === 'header' ) {
 		return 'header';
@@ -80,7 +72,6 @@ export async function createThemeParts( parts: ThemePartEntry[] ) {
 		} );
 
 		templateIds[ key ] = created.id;
-		triggerMediaImport( created.id );
 	}
 
 	const conditions: Record< string, Record< number, string[] > > = {};
