@@ -82,7 +82,6 @@ abstract class Form_Message extends Atomic_Element_Base {
 								'size' => 12,
 								'unit' => 'px',
 							] ),
-							'font-family' => String_Prop_Type::generate( 'Poppins' ),
 						] )
 				),
 		];
