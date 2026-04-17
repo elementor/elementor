@@ -73,6 +73,8 @@ class Site_Planner_Proxy {
 				'client-id'             => $connect_auth['clientId'] ?? '',
 				'home-url'              => $connect_auth['homeUrl'] ?? '',
 				'site-key'              => $connect_auth['siteKey'] ?? '',
+				'x-host-site-title'     => (string) get_bloginfo( 'name' ),
+				'x-host-site-context'   => (string) get_bloginfo( 'description' ),
 			],
 		];
 	}

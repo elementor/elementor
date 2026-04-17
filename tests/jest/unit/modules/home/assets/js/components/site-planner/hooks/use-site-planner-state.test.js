@@ -60,6 +60,7 @@ describe( 'useSitePlannerState', () => {
 				sessionId: 'session-id',
 				step: 3,
 				pageSuggestions: [ 'Home', 'Portfolio' ],
+				siteTypeSuggestions: [ 'Photography website', 'Portfolio website', 'Blog' ],
 			},
 		} );
 
@@ -71,6 +72,7 @@ describe( 'useSitePlannerState', () => {
 
 		expect( result.current.sessionStep ).toBe( 3 );
 		expect( result.current.pageSuggestions ).toEqual( [ 'Home', 'Portfolio' ] );
+		expect( result.current.siteTypeSuggestions ).toEqual( [ 'Photography website', 'Portfolio website', 'Blog' ] );
 		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
 	} );
 
@@ -79,6 +81,7 @@ describe( 'useSitePlannerState', () => {
 			'site-key-1': {
 				sessionId: 'session-id',
 				step: 2,
+				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			},
 		} );
 		global.fetch.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
@@ -91,6 +94,9 @@ describe( 'useSitePlannerState', () => {
 
 		expect( result.current.sessionStep ).toBe( 2 );
 		expect( result.current.pageSuggestions ).toEqual( [] );
+		expect( result.current.siteTypeSuggestions ).toEqual(
+			[ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
+		);
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 		expect( global.fetch ).toHaveBeenCalledWith( SETTINGS_URL, expect.objectContaining( {
 			method: 'POST',
@@ -100,6 +106,7 @@ describe( 'useSitePlannerState', () => {
 						sessionId: 'session-id',
 						step: 2,
 						pageSuggestions: [],
+						siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 					},
 				},
 			} ),
@@ -108,7 +115,7 @@ describe( 'useSitePlannerState', () => {
 
 	it( 'Scenario 1: no snapshot — fetches /home-screen and writes snapshot', async () => {
 		global.fetch
-			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Blog', 'Services' ] } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Blog', 'Services' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
@@ -130,10 +137,62 @@ describe( 'useSitePlannerState', () => {
 						sessionId: 'session-id',
 						step: 3,
 						pageSuggestions: [ 'Blog', 'Services' ],
+						siteTypeSuggestions: [ 'Business website', 'Portfolio website', 'E-commerce store' ],
 					},
 				},
 			} ),
 		} ) );
+	} );
+
+	it( 'Scenario 1 no-session: persists backend siteTypeSuggestions in the snapshot', async () => {
+		global.fetch
+			.mockResolvedValueOnce( createResponse( {
+				sessionId: null,
+				step: null,
+				suggestions: [],
+				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
+			} ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( null );
+		expect( result.current.siteTypeSuggestions ).toEqual(
+			[ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
+		);
+		expect( global.fetch ).toHaveBeenNthCalledWith( 2, SETTINGS_URL, expect.objectContaining( {
+			method: 'POST',
+			body: JSON.stringify( {
+				value: {
+					'site-key-1': {
+						sessionId: null,
+						step: null,
+						pageSuggestions: [],
+						siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
+					},
+				},
+			} ),
+		} ) );
+	} );
+
+	it( 'Scenario 1 no-session with missing siteTypeSuggestions: falls back to defaults', async () => {
+		global.fetch
+			.mockResolvedValueOnce( createResponse( { sessionId: null, step: null, suggestions: [] } ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.siteTypeSuggestions ).toEqual(
+			[ 'Business website', 'Portfolio website', 'E-commerce store' ],
+		);
 	} );
 
 	it( 'Scenario 2b: step >= WIREFRAMES but no suggestions — fetches /home-screen', async () => {
@@ -144,7 +203,7 @@ describe( 'useSitePlannerState', () => {
 			},
 		} );
 		global.fetch
-			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Home' ] } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Home' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
@@ -159,7 +218,7 @@ describe( 'useSitePlannerState', () => {
 		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
-	it( 'surfaces an error when /home-screen fails', async () => {
+	it( 'surfaces an error when /home-screen fails and exposes default siteTypeSuggestions', async () => {
 		global.fetch.mockResolvedValueOnce( { ok: false, json: jest.fn().mockResolvedValue( { message: 'planner-unreachable' } ) } );
 
 		const { result } = renderHook( () => useSitePlannerState( getSitePlannerData() ) );
@@ -169,6 +228,9 @@ describe( 'useSitePlannerState', () => {
 		} );
 
 		expect( result.current.pageSuggestions ).toEqual( [] );
+		expect( result.current.siteTypeSuggestions ).toEqual(
+			[ 'Business website', 'Portfolio website', 'E-commerce store' ],
+		);
 		expect( result.current.error ).toBeInstanceOf( Error );
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 	} );

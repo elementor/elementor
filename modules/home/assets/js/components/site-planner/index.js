@@ -39,11 +39,17 @@ const PLANNER_STEPS = {
 const SitePlanner = ( { sitePlannerData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionStep, pageSuggestions: suggestionChips } = useSitePlannerState( sitePlannerData );
+	const { sessionStep, pageSuggestions: suggestionChips, siteTypeSuggestions } = useSitePlannerState( sitePlannerData );
 	const sessionStepValue = Number( sessionStep );
 	const shouldShowPageNameSuggestions = Number.isFinite( sessionStepValue )
 		&& sessionStepValue >= PLANNER_STEPS.WIREFRAMES
 		&& suggestionChips.length > 0;
+	const shouldShowSiteTypeSuggestions = null === sessionStep
+		&& siteTypeSuggestions.length > 0
+		&& ! shouldShowPageNameSuggestions;
+	const displayChips = shouldShowPageNameSuggestions
+		? suggestionChips
+		: ( shouldShowSiteTypeSuggestions ? siteTypeSuggestions : [] );
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -163,9 +169,9 @@ const SitePlanner = ( { sitePlannerData } ) => {
 					</CreateSiteButton>
 				</PlannerInputRow>
 
-				{ shouldShowPageNameSuggestions && (
+				{ displayChips.length > 0 && (
 					<PlannerChipsRow>
-						{ suggestionChips.map( ( suggestion ) => (
+						{ displayChips.map( ( suggestion ) => (
 							<SuggestionChip
 								key={ suggestion }
 								label={ suggestion }
