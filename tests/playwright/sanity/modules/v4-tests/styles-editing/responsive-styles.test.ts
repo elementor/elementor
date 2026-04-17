@@ -12,6 +12,12 @@ const BREAKPOINT_FONT_SIZES = {
 	mobile: 16,
 } as const;
 
+const BREAKPOINT_FONT_WEIGHTS = {
+	desktop: 400,
+	tablet: 600,
+	mobile: 800,
+} as const;
+
 const BREAKPOINT_BORDER_PANEL_TYPES = {
 	desktop: BorderTypeLabel.SOLID,
 	tablet: BorderTypeLabel.DOUBLE,
@@ -198,7 +204,7 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Breakpoint border types render correctly in editor and frontend for e-image widget', async () => {
+	test( 'Breakpoint styles render correctly in editor and frontend for e-image widget', async () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.addWidget( { widgetType: 'e-image', container: containerId } );
 
@@ -254,6 +260,65 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 
 			await editor.page.setViewportSize( viewportSize.mobile );
 			await expect( publishedElement ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.mobile );
+		} );
+	} );
+
+	test( 'Breakpoint styles render correctly in editor and frontend for e-paragraph widget', async () => {
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
+
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Typography' );
+
+		await test.step( 'Set desktop font weight', async () => {
+			await editor.changeResponsiveView( 'desktop' );
+			await editor.v4Panel.style.setFontWeight( BREAKPOINT_FONT_WEIGHTS.desktop );
+		} );
+
+		await test.step( 'Set tablet font weight', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			await editor.v4Panel.style.setFontWeight( BREAKPOINT_FONT_WEIGHTS.tablet );
+		} );
+
+		await test.step( 'Set mobile font weight', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+			await editor.v4Panel.style.setFontWeight( BREAKPOINT_FONT_WEIGHTS.mobile );
+		} );
+
+		const selector = '.e-paragraph-base';
+
+		await test.step( 'Verify desktop style in editor', async () => {
+			await editor.changeResponsiveView( 'desktop' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.desktop ), { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify tablet style in editor', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.tablet ), { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify mobile style in editor', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.mobile ), { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify styles on frontend with viewport changes', async () => {
+			await editor.publishAndViewPage();
+
+			const publishedElement = editor.page.locator( selector );
+			await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
+
+			await editor.page.setViewportSize( viewportSize.desktop );
+			await expect( publishedElement ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.desktop ) );
+
+			await editor.page.setViewportSize( viewportSize.tablet );
+			await expect( publishedElement ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.tablet ) );
+
+			await editor.page.setViewportSize( viewportSize.mobile );
+			await expect( publishedElement ).toHaveCSS( 'font-weight', String( BREAKPOINT_FONT_WEIGHTS.mobile ) );
 		} );
 	} );
 } );
