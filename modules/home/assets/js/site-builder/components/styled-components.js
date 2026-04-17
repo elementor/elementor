@@ -10,6 +10,7 @@ export const PlannerRoot = styled( Paper )( ( { theme } ) => ( {
 	border: '1px solid',
 	borderColor: 'divider',
 	minHeight: theme.spacing( 26.75 ),
+	gap: theme.spacing( 2 ),
 } ) );
 
 export const PlannerBackground = styled( Box )( ( { bgimage } ) => ( {
@@ -92,8 +93,8 @@ export const PlannerPreviewImage2 = styled( Box )( ( { theme } ) => ( {
 
 export const PlannerLoaderBadge = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
-	top: theme.spacing( -1.5 ),
-	right: theme.spacing( -1.5 ),
+	top: theme.spacing( 1 ),
+	right: theme.spacing( -2.5 ),
 } ) );
 
 export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
@@ -112,12 +113,12 @@ export const PlannerHeading = styled( Typography )( ( { theme } ) => ( {
 	fontFamily: '"Poppins", sans-serif',
 	fontWeight: 400,
 	fontSize: theme.spacing( 3 ),
-	lineHeight: theme.spacing( 6 ),
 	letterSpacing: '0.15px',
-	background: 'linear-gradient(77deg, #212121 25.85%, #696199 46.02%, #C945C9 60.81%, #212121 82.38%)',
+	background: 'linear-gradient(89deg, #212121 25.85%, #696199 46.02%, #C945C9 60.81%, #212121 82.38%)',
 	backgroundClip: 'text',
 	WebkitBackgroundClip: 'text',
 	WebkitTextFillColor: 'transparent',
+	width: 'max-content',
 } ) );
 
 PlannerHeading.defaultProps = {
@@ -133,6 +134,13 @@ export const PlannerInputRow = styled( Box )( ( { theme } ) => ( {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
+} ) );
+
+export const PlannerInputColumn = styled( Box )( ( { theme } ) => ( {
+	display: 'flex',
+	flexDirection: 'column',
+	gap: theme.spacing( 2 ),
+	alignItems: 'flex-start',
 } ) );
 
 export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
@@ -186,11 +194,11 @@ export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	color: theme.palette.common.white,
 	borderRadius: theme.spacing( 1 ),
 	textTransform: 'none',
-	fontWeight: 500,
 	whiteSpace: 'nowrap',
-	'&:hover': {
-		backgroundColor: theme.palette.primary.dark,
-		color: theme.palette.primary.contrastText,
+	width: 'max-content',
+	'&:hover, &:focus': {
+		backgroundColor: '#22252a',
+		color: theme.palette.common.white,
 	},
 } ) );
 

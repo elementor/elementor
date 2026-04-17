@@ -26,7 +26,7 @@ class Module extends BaseApp {
 	public function enqueue_fonts(): void {
 		wp_enqueue_style(
 			'elementor-onboarding-fonts',
-			'https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap',
 			[],
 			ELEMENTOR_VERSION
 		);

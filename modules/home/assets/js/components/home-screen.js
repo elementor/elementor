@@ -22,9 +22,9 @@ const EditorScreen = ( props ) => {
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: 2.5, px: { xs: 1.5, md: 4 } } }>
 				<HeaderSection editWebsiteUrl={ props.homeScreenData.edit_website_url } />
 				{ props.homeScreenData.top_with_licences && <TopSection topData={ props.homeScreenData.top_with_licences } buttonCtaUrl={ props.homeScreenData.button_cta_url } /> }
+				{ props.homeScreenData.site_builder && <SiteBuilder siteBuilderData={ props.homeScreenData.site_builder } /> }					
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2.5 } }>
 					<Stack sx={ { flex: 1, gap: 2.5 } }>
-						{ props.homeScreenData.site_builder && <SiteBuilder siteBuilderData={ props.homeScreenData.site_builder } /> }
 						{ props.homeScreenData.create_with_ai && <CreateWithAIBanner createWithAIData={ props.homeScreenData.create_with_ai } /> }
 						<GetStarted
 							getStartedData={ props.homeScreenData.get_started }

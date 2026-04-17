@@ -7,7 +7,7 @@ import {
 	PlannerPreviewImage1,
 	PlannerPreviewImage2,
 	PlannerPreviewInner,
-} from '../styled-components';
+} from './styled-components';
 
 const PlannerPreview = ( { previewImage1, previewImage2 } ) => {
 	return (

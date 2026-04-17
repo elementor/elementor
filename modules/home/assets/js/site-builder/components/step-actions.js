@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ArrowRightIcon from '../../icons/arrow-right-icon';
 import {
 	PlannerInputRow,
+	PlannerInputColumn,
 	PlannerTextField,
 	CreateSiteButton,
 } from './styled-components';
@@ -67,8 +68,8 @@ StepWithInput.propTypes = {
 };
 
 export const StepWithoutInput = ( { buttonLabel, text, onSubmit } ) => (
-	<PlannerInputRow>
-		<Typography variant="body1" color="text.secondary">
+	<PlannerInputColumn>
+		<Typography variant="body2" color="text.secondary">
 			{ text }
 		</Typography>
 		<CreateSiteButton
@@ -79,7 +80,7 @@ export const StepWithoutInput = ( { buttonLabel, text, onSubmit } ) => (
 		>
 			{ buttonLabel }
 		</CreateSiteButton>
-	</PlannerInputRow>
+	</PlannerInputColumn>
 );
 
 StepWithoutInput.propTypes = {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { PlannerChipsRow, SuggestionChip } from '../styled-components';
+import { PlannerChipsRow, SuggestionChip } from './styled-components';
 const DEFAULT_SITE_BUILDER_STATE = {
 	sessionStep: null,
 	pageSuggestions: [],

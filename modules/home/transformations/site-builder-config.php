@@ -12,6 +12,8 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/';
 
+	const SITE_BUILDER_URL = '/wp-admin/admin.php?page=elementor-app#site-builder';
+
 	public function transform( array $home_screen_data ): array {
 		$site_builder = Plugin::$instance->app->get_component( 'site-builder' );
 
@@ -26,7 +28,7 @@ class Site_Builder_Config extends Transformations_Abstract {
 		}
 
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
-			'siteBuilderUrl' => $site_builder_config['iframeUrl'],
+			'siteBuilderUrl' => self::SITE_BUILDER_URL,
 			'apiOrigin' => $this->get_api_origin_url(),
 			'previewImage1' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-01.jpg',
 			'previewImage2' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-02.jpg',
