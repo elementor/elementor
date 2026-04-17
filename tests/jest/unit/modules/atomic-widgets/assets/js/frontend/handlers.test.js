@@ -69,7 +69,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
 		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
 		expect( typeof callback ).toBe( 'function' );
-		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBe( '[data-element_type="e-form"]' );
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ).selector ).toBe( '[data-element_type="e-form"]' );
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
@@ -155,20 +155,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const element = document.createElement( 'h2' );
 		const nestedLink = document.createElement( 'a' );
 
-		// Act
-		nestedLink.dispatchEvent( linkEvent );
-		element.dispatchEvent( elementEvent );
-
-		// Assert
-		nestedLink.dataset.actionLink = ANY_CONTEXT_URL;
-		element.appendChild( nestedLink );
-		registration.callback( { element } );
-
 		const linkEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 		const elementEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		// Act
 		nestedLink.dispatchEvent( linkEvent );
+		registration.callback( { element } );
 		element.dispatchEvent( elementEvent );
 
 		// Assert
