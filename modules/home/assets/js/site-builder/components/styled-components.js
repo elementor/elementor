@@ -118,7 +118,7 @@ export const PlannerHeading = styled( Typography )( ( { theme } ) => ( {
 	backgroundClip: 'text',
 	WebkitBackgroundClip: 'text',
 	WebkitTextFillColor: 'transparent',
-	width: 'max-content',
+	alignSelf: 'flex-start',
 } ) );
 
 PlannerHeading.defaultProps = {
@@ -164,6 +164,8 @@ export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
 	'& .MuiInputBase-input': {
 		border: 'none',
 		borderRadius: 0,
+		height: '100%',
+		paddingInline: theme.spacing( 2 ),
 	},
 } ) );
 
@@ -191,6 +193,8 @@ export const GenerateSiteButton = styled( Button )( ( { theme } ) => ( {
 
 export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.text.primary,
+	border: '1px solid',
+	borderColor: theme.palette.text.primary,
 	color: theme.palette.common.white,
 	borderRadius: theme.spacing( 1 ),
 	textTransform: 'none',
@@ -198,17 +202,20 @@ export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	width: 'max-content',
 	'&:hover, &:focus': {
 		backgroundColor: '#22252a',
+		borderColor: '#22252a',
 		color: theme.palette.common.white,
 	},
 } ) );
 
 export const SuggestionChip = styled( Chip )( ( { theme, selected } ) => ( {
 	cursor: selected ? 'default' : 'pointer',
-	backgroundColor: selected ? theme.palette.action.hover : theme.palette.common.white,
-	borderColor: theme.palette.divider,
-	color: theme.palette.text.secondary,
+	backgroundColor: selected ? theme.palette.text.secondary : theme.palette.common.white,
+	borderColor: selected ? 'none' : theme.palette.divider,
+	color: selected ? theme.palette.common.white : theme.palette.text.secondary,
 	fontSize: theme.spacing( 1.625 ),
-	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
+	'&&:hover': {
+		backgroundColor: theme.palette.text.secondary,
+		color: theme.palette.common.white,
+		borderColor: 'none',
 	},
 } ) );

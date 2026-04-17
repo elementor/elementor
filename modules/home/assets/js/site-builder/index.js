@@ -42,10 +42,14 @@ const getPlannerStepConfig = () => ( {
 		buttonLabel: __( 'Continue building', 'elementor' ),
 	},
 	[ PLANNER_STEPS.SITEMAP ]: {
-		title: __( 'Your site is ready, let\'s design your site', 'elementor' ),
-		type: STEP_TYPES.WITHOUT_INPUT,
-		text: __( 'Turn your sitemap into a full site design and continue editing in Elementor.', 'elementor' ),
-		buttonLabel: __( 'Generate design', 'elementor' ),
+		title: __( 'From idea to website in minutes', 'elementor' ),
+		type: STEP_TYPES.WITH_INPUT,
+		placeholder: __( 'Describe the type of website.', 'elementor' ),
+		buttonLabel: __( 'Create my site', 'elementor' ),
+		// title: __( 'Your site is ready, let\'s design your site', 'elementor' ),
+		// type: STEP_TYPES.WITHOUT_INPUT,
+		// text: __( 'Turn your sitemap into a full site design and continue editing in Elementor.', 'elementor' ),
+		// buttonLabel: __( 'Generate design', 'elementor' ),
 	},
 	[ PLANNER_STEPS.WIREFRAMES ]: {
 		title: __( 'Your site design is ready to go live', 'elementor' ),
