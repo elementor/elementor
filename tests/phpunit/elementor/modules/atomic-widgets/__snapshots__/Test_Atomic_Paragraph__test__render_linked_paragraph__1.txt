@@ -1,7 +1,6 @@
 						<p class="e-paragraph-base" data-interaction-id="e8e55a1"  >
 							<a
-										href="https://example.com"
-					target="_blank"
+					href="https://example.com" target="_blank"
 					class="e-paragraph-link-base"
 				>
 						Type your paragraph here
