@@ -155,20 +155,6 @@ export const PlannerChipsRow = styled( Box )( ( { theme } ) => ( {
 	flexWrap: 'wrap',
 } ) );
 
-export const SessionStatusCard = styled( Paper )( ( { theme } ) => ( {
-	display: 'flex',
-	flexDirection: 'column',
-	paddingBlock: theme.spacing( 3 ),
-	paddingInline: theme.spacing( 3 ),
-	gap: theme.spacing( 2 ),
-	borderRadius: theme.spacing( 1 ),
-	border: '1px solid',
-	borderColor: theme.palette.divider,
-	[ theme.breakpoints.up( 'md' ) ]: {
-		paddingInline: theme.spacing( 4 ),
-	},
-} ) );
-
 export const GenerateSiteButton = styled( Button )( ( { theme } ) => ( {
 	backgroundColor: theme.palette.text.primary,
 	color: theme.palette.common.white,

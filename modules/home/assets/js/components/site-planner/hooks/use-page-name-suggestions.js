@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 const CACHE_OPTION_KEY = 'elementor_site_planner_page_suggestions_cache';
 const SETTINGS_PATH = `elementor/v1/settings/${ CACHE_OPTION_KEY }`;
-const SITEMAP_SUGGESTIONS_PATH = '/website-planner/sitemap';
+const HOME_SCREEN_PATH = 'elementor/v1/site-planner/home-screen';
 
 const getWpJsonRoot = () => {
 	const root = window.wpApiSettings?.root || '/wp-json/';
@@ -29,21 +29,13 @@ const sanitizeSuggestions = ( suggestions ) => Array.isArray( suggestions )
 
 const hasCachedSuggestions = ( cacheEntry ) => Array.isArray( cacheEntry?.pageSuggestions ) && cacheEntry.pageSuggestions.length > 0;
 
-const isSiteBuilderRoute = () => window.location.pathname.includes( '/wp-admin/admin.php' ) &&
-	new URLSearchParams( window.location.search ).get( 'page' ) === 'elementor-app' &&
-	window.location.hash === '#site-builder';
-
-const usePageNameSuggestions = ( sitePlannerData ) => {
+const usePageNameSuggestions = ( sitePlannerData, shouldLoadSuggestions = true ) => {
 	const [ pageSuggestions, setPageSuggestions ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
 
 	useEffect( () => {
-		const connectAuth = sitePlannerData?.connectAuth;
-		const apiOrigin = sitePlannerData?.apiOrigin;
-		const siteKey = connectAuth?.siteKey || '';
-
-		if ( ! connectAuth || ! apiOrigin ) {
+		if ( ! sitePlannerData?.connectAuth ) {
 			setPageSuggestions( [] );
 			setIsLoading( false );
 			setError( null );
@@ -52,61 +44,34 @@ const usePageNameSuggestions = ( sitePlannerData ) => {
 
 		let isMounted = true;
 		const settingsHeaders = {
-			'X-WP-Nonce': window.wpApiSettings?.nonce || '',
-		};
-
-		const clearSitePlannerCache = async ( settingsUrl ) => {
-			try {
-				await fetch( settingsUrl, {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						...settingsHeaders,
-					},
-					body: JSON.stringify( { value: {} } ),
-				} );
-			} catch {
-			}
-		};
-
-		const fetchSessionId = async () => {
-			const sessionResponse = await fetch( `${ apiOrigin }/website-planner/session/resolve-by-site`, {
-				method: 'GET',
-				headers: {
-					'x-elementor-signature': connectAuth.signature || '',
-					'access-token': connectAuth.accessToken || '',
-					'client-id': connectAuth.clientId || '',
-					'home-url': connectAuth.homeUrl || '',
-					'site-key': siteKey,
-				},
-			} );
-
-			if ( ! sessionResponse.ok ) {
-				const errorJson = await sessionResponse.json();
-				const errorMessage = errorJson?.message || 'Failed to fetch session status';
-				throw new Error( errorMessage );
-			}
-
-			const sessionData = await sessionResponse.json();
-			return sessionData?.sessionId || null;
+			'X-WP-Nonce': window.elementorHomeScreenData?.wpRestNonce || '',
 		};
 
 		const loadSuggestions = async () => {
 			setIsLoading( true );
 			setError( null );
 
+			// if ( ! shouldLoadSuggestions ) {
+			// 	if ( isMounted ) {
+			// 		setPageSuggestions( [] );
+			// 		setError( null );
+			// 		setIsLoading( false );
+			// 	}
+			// 	return;
+			// }
+
+			// console.log( 'shouldLoadSuggestions', shouldLoadSuggestions );
+
 			const settingsUrl = `${ getWpJsonRoot() }${ SETTINGS_PATH }`;
 			let cacheValue = {};
-
-			if ( isSiteBuilderRoute() ) {
-				await clearSitePlannerCache( settingsUrl );
-			}
 
 			try {
 				const settingsResponse = await fetch( settingsUrl, {
 					method: 'GET',
 					headers: settingsHeaders,
 				} );
+
+				console.log( 'settingsResponse', settingsResponse );
 
 				if ( settingsResponse.ok ) {
 					const responseJson = await settingsResponse.json();
@@ -126,35 +91,32 @@ const usePageNameSuggestions = ( sitePlannerData ) => {
 			}
 
 			try {
-				const sessionId = await fetchSessionId();
+				const homeScreenUrl = `${ getWpJsonRoot() }${ HOME_SCREEN_PATH }`;
+				const response = await fetch( homeScreenUrl, {
+					method: 'GET',
+					headers: settingsHeaders,
+				} );
+
+				console.log( 'response', response );
+
+				if ( ! response.ok ) {
+					const errorJson = await response.json();
+					const errorMessage = errorJson?.message || 'Failed to fetch home screen data';
+					throw new Error( errorMessage );
+				}
+
+				const data = await response.json();
+				const sessionId = data?.sessionId || null;
+				const suggestions = sanitizeSuggestions( data?.suggestions );
 
 				if ( ! sessionId ) {
 					if ( isMounted ) {
 						setPageSuggestions( [] );
 						setError( new Error( 'No active site planner session' ) );
+						setIsLoading( false );
 					}
 					return;
 				}
-
-				const suggestionsResponse = await fetch( `${ apiOrigin }${ SITEMAP_SUGGESTIONS_PATH }/${ sessionId }/page-name-suggestions`, {
-					method: 'POST',
-					headers: {
-						'x-elementor-signature': connectAuth.signature || '',
-						'access-token': connectAuth.accessToken || '',
-						'client-id': connectAuth.clientId || '',
-						'home-url': connectAuth.homeUrl || '',
-						'site-key': siteKey,
-					},
-				} );
-
-				if ( ! suggestionsResponse.ok ) {
-					const errorJson = await suggestionsResponse.json();
-					const errorMessage = errorJson?.message || 'Failed to fetch page name suggestions';
-					throw new Error( errorMessage );
-				}
-
-				const suggestionJson = await suggestionsResponse.json();
-				const suggestions = sanitizeSuggestions( suggestionJson?.suggestions );
 
 				const nextCache = {
 					...cacheValue,
@@ -196,12 +158,8 @@ const usePageNameSuggestions = ( sitePlannerData ) => {
 			isMounted = false;
 		};
 	}, [
-		sitePlannerData?.connectAuth?.signature,
-		sitePlannerData?.connectAuth?.accessToken,
-		sitePlannerData?.connectAuth?.clientId,
-		sitePlannerData?.connectAuth?.homeUrl,
 		sitePlannerData?.connectAuth?.siteKey,
-		sitePlannerData?.apiOrigin,
+		shouldLoadSuggestions,
 	] );
 
 	return {

@@ -79,6 +79,19 @@ describe( 'usePageNameSuggestions', () => {
 		expect( result.current.error ).toBe( null );
 	} );
 
+	it( 'should not call APIs when loading is disabled by step gate', async () => {
+		const { result } = renderHook( () =>
+			usePageNameSuggestions( getSitePlannerData(), false ),
+		);
+
+		await waitFor( () => {
+			expect( result.current.pageSuggestions ).toEqual( [] );
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+	} );
+
 	it( 'should fetch suggestions when cache is empty and save result to cache', async () => {
 		global.fetch
 			.mockResolvedValueOnce( createResponse( { data: { value: {} } } ) )

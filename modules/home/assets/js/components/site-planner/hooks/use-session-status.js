@@ -1,29 +1,34 @@
 import { useState, useEffect } from 'react';
 
+const getWpJsonRoot = () => {
+	const root = window.wpApiSettings?.root || '/wp-json/';
+	return root.endsWith( '/' ) ? root : `${ root }/`;
+};
+
 const useSessionStatus = ( sitePlannerData ) => {
 	const [ sessionState, setSessionState ] = useState( 'no-usage' );
 	const [ sessionStep, setSessionStep ] = useState( null );
 	const [ sessionId, setSessionId ] = useState( null );
 
+	const resetSession = () => {
+		setSessionState( 'no-usage' );
+		setSessionId( null );
+		setSessionStep( null );
+	};
+
 	useEffect( () => {
-		if ( ! sitePlannerData?.connectAuth || ! sitePlannerData?.apiOrigin ) {
-			setSessionState( 'no-usage' );
-			setSessionId( null );
-			setSessionStep( null );
+		if ( ! sitePlannerData?.connectAuth ) {
+			resetSession();
 			return;
 		}
 
 		const fetchSessionStatus = async () => {
 			try {
-				const { connectAuth, apiOrigin } = sitePlannerData;
-				const response = await fetch( `${ apiOrigin }/website-planner/session/resolve-by-site`, {
+				const proxyUrl = `${ getWpJsonRoot() }elementor/v1/site-planner/home-screen`;
+				const response = await fetch( proxyUrl, {
 					method: 'GET',
 					headers: {
-						'x-elementor-signature': connectAuth.signature || '',
-						'access-token': connectAuth.accessToken || '',
-						'client-id': connectAuth.clientId || '',
-						'home-url': connectAuth.homeUrl || '',
-						'site-key': connectAuth.siteKey || '',
+						'X-WP-Nonce': window.elementorHomeScreenData?.wpRestNonce || '',
 					},
 				} );
 
@@ -34,18 +39,14 @@ const useSessionStatus = ( sitePlannerData ) => {
 				const data = await response.json();
 
 				if ( ! data?.sessionId ) {
-					setSessionState( 'no-usage' );
-					setSessionId( null );
-					setSessionStep( null );
-				} else {
-					setSessionState( 'has-session' );
-					setSessionStep( data.step );
-					setSessionId( data.sessionId );
+					return resetSession();
 				}
+
+				setSessionState( 'has-session' );
+				setSessionStep( data.step );
+				setSessionId( data.sessionId );
 			} catch {
-				setSessionState( 'no-usage' );
-				setSessionId( null );
-				setSessionStep( null );
+				resetSession();
 			}
 		};
 

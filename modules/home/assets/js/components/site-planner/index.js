@@ -23,7 +23,6 @@ import {
 	PlannerInputRow,
 	PlannerTextField,
 	PlannerChipsRow,
-	SessionStatusCard,
 	GenerateSiteButton,
 	CreateSiteButton,
 	SuggestionChip,
@@ -41,8 +40,13 @@ const PLANNER_STEPS = {
 const SitePlanner = ( { sitePlannerData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionState, sessionStep } = useSessionStatus( sitePlannerData );
-	const { pageSuggestions: suggestionChips } = usePageNameSuggestions( sitePlannerData );
+	const { sessionStep } = useSessionStatus( sitePlannerData );
+	const sessionStepValue = Number( sessionStep );
+	const shouldLoadPageNameSuggestions = Number.isFinite( sessionStepValue ) && sessionStepValue >= PLANNER_STEPS.WIREFRAMES;
+	const { pageSuggestions: suggestionChips } = usePageNameSuggestions( sitePlannerData, shouldLoadPageNameSuggestions );
+	const shouldShowPageNameSuggestions = shouldLoadPageNameSuggestions && suggestionChips.length > 0;
+
+	console.log( 'sessionStep123', sessionStep );
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -106,19 +110,6 @@ const SitePlanner = ( { sitePlannerData } ) => {
 		}
 	};
 
-	if ( 'has-session' === sessionState ) {
-		return (
-			<SessionStatusCard elevation={ 0 }>
-				<Typography variant="h6">
-					{ __( 'Site Planner', 'elementor' ) }
-				</Typography>
-				<Typography variant="body2" color="text.secondary">
-					{ getStepLabel( sessionStep ) }
-				</Typography>
-			</SessionStatusCard>
-		);
-	}
-
 	return (
 		<PlannerRoot elevation={ 0 }>
 			<PlannerBackground bgimage={ sitePlannerData?.bgImage } />
@@ -175,7 +166,14 @@ const SitePlanner = ( { sitePlannerData } ) => {
 					</CreateSiteButton>
 				</PlannerInputRow>
 
-				{ suggestionChips.length > 0 && (
+				{
+					console.log( 'shouldShowPageNameSuggestions', shouldShowPageNameSuggestions )
+				}
+				{
+					console.log( 'suggestionChips', suggestionChips )
+				}
+
+				{ shouldShowPageNameSuggestions && (
 					<PlannerChipsRow>
 						{ suggestionChips.map( ( suggestion ) => (
 							<SuggestionChip

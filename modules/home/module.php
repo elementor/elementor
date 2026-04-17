@@ -3,6 +3,7 @@ namespace Elementor\Modules\Home;
 
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Includes\EditorAssetsAPI;
+use Elementor\Modules\Home\Rest\Site_Planner_Proxy;
 use Elementor\Settings;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -22,7 +23,12 @@ class Module extends BaseApp {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
+	}
+
+	public function register_rest_routes(): void {
+		( new Site_Planner_Proxy() )->register_routes();
 	}
 
 	public function enqueue_fonts(): void {
@@ -92,6 +98,8 @@ class Module extends BaseApp {
 		$api = new API( $editor_assets_api );
 
 		$config = $api->get_home_screen_items();
+
+		$config['wpRestNonce'] = wp_create_nonce( 'wp_rest' );
 
 		$site_planner_config = $this->get_site_planner_config();
 		if ( $site_planner_config ) {

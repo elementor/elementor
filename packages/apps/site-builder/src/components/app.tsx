@@ -110,6 +110,27 @@ export function App() {
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
 
+	useEffect( () => {
+		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } ).wpApiSettings;
+		const nonce = wpApiSettings?.nonce || '';
+		if ( ! nonce ) {
+			return;
+		}
+
+		const root = wpApiSettings?.root || '/wp-json/';
+		const wpJsonRoot = root.endsWith( '/' ) ? root : `${ root }/`;
+		const settingsUrl = `${ wpJsonRoot }elementor/v1/settings/elementor_site_planner_page_suggestions_cache`;
+
+		fetch( settingsUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': nonce,
+			},
+			body: JSON.stringify( { value: {} } ),
+		} ).catch( () => {} );
+	}, [] );
+
 	return (
 		<iframe
 			ref={ iframeRef }
