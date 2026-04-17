@@ -6,7 +6,7 @@ import { useState } from 'react';
 import ArrowRightIcon from '../../icons/arrow-right-icon';
 import AiLoaderIcon from '../../icons/ai-loader-icon';
 import GenerateSiteIcon from '../../icons/generate-site-icon';
-import useSiteBuilderState from './hooks/use-site-builder-state';
+import SuggestionChips from './components/suggestion-chips';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -21,10 +21,8 @@ import {
 	PlannerHeading,
 	PlannerInputRow,
 	PlannerTextField,
-	PlannerChipsRow,
 	GenerateSiteButton,
 	CreateSiteButton,
-	SuggestionChip,
 } from './styled-components';
 
 const PLANNER_STEPS = {
@@ -38,26 +36,9 @@ const PLANNER_STEPS = {
 
 const SiteBuilder = ( { siteBuilderData } ) => {
 	const [ inputValue, setInputValue ] = useState( '' );
-	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionStep, pageSuggestions: suggestionChips, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
-	const sessionStepValue = Number( sessionStep );
-	const shouldShowPageNameSuggestions = Number.isFinite( sessionStepValue )
-		&& sessionStepValue >= PLANNER_STEPS.WIREFRAMES
-		&& suggestionChips.length > 0;
-	const shouldShowSiteTypeSuggestions = null === sessionStep
-		&& siteTypeSuggestions.length > 0
-		&& ! shouldShowPageNameSuggestions;
-	const displayChips = shouldShowPageNameSuggestions
-		? suggestionChips
-		: ( shouldShowSiteTypeSuggestions ? siteTypeSuggestions : [] );
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
-	};
-
-	const handleChipClick = ( value ) => {
-		setInputValue( value );
-		setSelectedChip( value );
 	};
 
 	const handleCreateClick = () => {
@@ -169,20 +150,10 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 					</CreateSiteButton>
 				</PlannerInputRow>
 
-				{ displayChips.length > 0 && (
-					<PlannerChipsRow>
-						{ displayChips.map( ( suggestion ) => (
-							<SuggestionChip
-								key={ suggestion }
-								label={ suggestion }
-								onClick={ () => handleChipClick( suggestion ) }
-								size="small"
-								variant="outlined"
-								selected={ selectedChip === suggestion }
-							/>
-						) ) }
-					</PlannerChipsRow>
-				) }
+				<SuggestionChips
+					siteBuilderData={ siteBuilderData }
+					onChipSelect={ setInputValue }
+				/>
 			</PlannerContent>
 		</PlannerRoot>
 	);
