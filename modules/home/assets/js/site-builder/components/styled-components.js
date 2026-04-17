@@ -100,6 +100,7 @@ export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
 	position: 'relative',
 	zIndex: 1,
 	flex: 1,
+	gap: theme.spacing( 1 ),
 	paddingBlock: theme.spacing( 3 ),
 	paddingInline: theme.spacing( 3 ),
 	[ theme.breakpoints.up( 'md' ) ]: {
@@ -118,6 +119,10 @@ export const PlannerHeading = styled( Typography )( ( { theme } ) => ( {
 	WebkitBackgroundClip: 'text',
 	WebkitTextFillColor: 'transparent',
 } ) );
+
+PlannerHeading.defaultProps = {
+	variant: 'h4',
+};
 
 export const PlannerInputRow = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',

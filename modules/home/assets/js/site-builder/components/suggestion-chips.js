@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import useSiteBuilderState from '../hooks/use-site-builder-state';
 import { PlannerChipsRow, SuggestionChip } from '../styled-components';
+const DEFAULT_SITE_BUILDER_STATE = {
+	sessionStep: null,
+	pageSuggestions: [],
+	siteTypeSuggestions: [],
+};
 
 const PLANNER_STEPS = {
 	INIT: 0,
@@ -46,9 +50,9 @@ const getDisplayChips = ( sessionStep, pageSuggestions, siteTypeSuggestions ) =>
 	return [];
 };
 
-const SuggestionChips = ( { siteBuilderData, onChipSelect } ) => {
+const SuggestionChips = ( { onChipSelect, siteBuilderState = DEFAULT_SITE_BUILDER_STATE } ) => {
 	const [ selectedChip, setSelectedChip ] = useState( null );
-	const { sessionStep, pageSuggestions, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
+	const { sessionStep, pageSuggestions, siteTypeSuggestions } = siteBuilderState;
 
 	const displayChips = getDisplayChips( sessionStep, pageSuggestions, siteTypeSuggestions );
 
@@ -78,7 +82,7 @@ const SuggestionChips = ( { siteBuilderData, onChipSelect } ) => {
 };
 
 SuggestionChips.propTypes = {
-	siteBuilderData: PropTypes.object,
+	siteBuilderState: PropTypes.object,
 	onChipSelect: PropTypes.func.isRequired,
 };
 

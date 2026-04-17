@@ -1,10 +1,7 @@
 import { fireEvent, render } from '@testing-library/react';
-import SuggestionChips from 'elementor/modules/home/assets/js/components/site-builder/suggestion-chips';
-import useSiteBuilderState from 'elementor/modules/home/assets/js/components/site-builder/hooks/use-site-builder-state';
+import SuggestionChips from 'elementor/modules/home/assets/js/site-builder/components/suggestion-chips';
 
-jest.mock( 'elementor/modules/home/assets/js/components/site-builder/hooks/use-site-builder-state', () => jest.fn() );
-
-jest.mock( 'elementor/modules/home/assets/js/components/site-builder/styled-components', () => ( {
+jest.mock( 'elementor/modules/home/assets/js/site-builder/components/styled-components', () => ( {
 	PlannerChipsRow: ( { children } ) => <div data-testid="chips-row">{ children }</div>,
 	SuggestionChip: ( { label, onClick, selected } ) => (
 		<button type="button" data-selected={ selected } onClick={ onClick }>
@@ -16,20 +13,32 @@ jest.mock( 'elementor/modules/home/assets/js/components/site-builder/styled-comp
 const PAGE_SUGGESTIONS = [ 'Home', 'Services', 'Contact' ];
 const SITE_TYPE_SUGGESTIONS = [ 'Business website', 'Portfolio website', 'E-commerce store' ];
 
+let siteBuilderState = {};
+
 const mockState = ( overrides ) => {
-	useSiteBuilderState.mockReturnValue( {
+	siteBuilderState = {
 		sessionStep: null,
 		pageSuggestions: [],
 		siteTypeSuggestions: [],
 		isLoading: false,
 		error: null,
 		...overrides,
-	} );
+	};
+
+	return siteBuilderState;
 };
 
 const renderChips = ( props = {} ) => render(
-	<SuggestionChips siteBuilderData={ {} } onChipSelect={ jest.fn() } { ...props } />,
+	<SuggestionChips onChipSelect={ jest.fn() } siteBuilderState={ siteBuilderState } { ...props } />,
 );
+
+const setDefaultState = () => {
+	mockState();
+};
+
+beforeEach( () => {
+	setDefaultState();
+} );
 
 describe( 'SuggestionChips', () => {
 	afterEach( () => {
