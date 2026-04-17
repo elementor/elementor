@@ -124,9 +124,8 @@ export function App() {
 			return;
 		}
 
-		const root = wpApiSettings?.root || '/wp-json/';
-		const wpJsonRoot = root.endsWith( '/' ) ? root : `${ root }/`;
-		const settingsUrl = `${ wpJsonRoot }elementor/v1/settings/elementor_site_builder_snapshot`;
+		const baseUrl = wpApiSettings?.root || '/wp-json/';
+		const settingsUrl = `${ baseUrl }elementor/v1/settings/elementor_site_builder_snapshot`;
 
 		fetch( settingsUrl, {
 			method: 'POST',

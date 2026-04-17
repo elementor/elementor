@@ -11,31 +11,28 @@ const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
 	'E-commerce store',
 ] );
 
-const getWpJsonRoot = () => {
-	const root = window.wpApiSettings?.root || '/wp-json/';
-	return root.endsWith( '/' ) ? root : `${ root }/`;
-};
-
-const readInjectedSnapshot = () => {
+const readSnapshot = () => {
 	const raw = window.elementorHomeScreenData?.siteBuilderSnapshot;
 	return raw && typeof raw === 'object' && ! Array.isArray( raw ) ? raw : {};
 };
 
-const sanitizeSuggestions = ( suggestions ) => ( Array.isArray( suggestions )
-	? suggestions.filter( ( suggestion ) => typeof suggestion === 'string' )
-	: [] );
-
-const sanitizeStoredSiteTypeSuggestions = ( value ) => {
+const sanitizeSuggestions = ( value, { limit } = {} ) => {
 	const list = Array.isArray( value )
 		? value.filter( ( item ) => typeof item === 'string' && item.trim() )
 		: [];
-	return list.slice( 0, 3 );
+	return limit ? list.slice( 0, limit ) : list;
 };
 
 const withDefaultSiteTypeSuggestions = ( value ) => {
-	const stored = sanitizeStoredSiteTypeSuggestions( value );
+	const stored = sanitizeSuggestions( value, { limit: 3 } );
 	return stored.length ? stored : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
 };
+
+const hasCompleteSnapshot = ( snapshotStep, snapshotEntry ) =>
+	null !== snapshotStep && Array.isArray( snapshotEntry?.pageSuggestions );
+
+const isPreWireframesStep = ( snapshotStep ) =>
+	null !== snapshotStep && snapshotStep < WIREFRAMES_STEP;
 
 const deriveInitialStateForSiteKey = ( siteKey ) => {
 	if ( ! siteKey ) {
@@ -47,12 +44,11 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 		};
 	}
 
-	const snapshotEntry = readInjectedSnapshot()[ siteKey ];
+	const snapshotEntry = readSnapshot()[ siteKey ];
 	const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
-	const hasSnapshotSuggestions = Array.isArray( snapshotEntry?.pageSuggestions );
 	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
-	if ( null !== snapshotStep && hasSnapshotSuggestions ) {
+	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry ) ) {
 		return {
 			sessionStep: snapshotStep,
 			pageSuggestions: snapshotEntry.pageSuggestions,
@@ -61,7 +57,7 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 		};
 	}
 
-	if ( null !== snapshotStep && snapshotStep < WIREFRAMES_STEP ) {
+	if ( isPreWireframesStep( snapshotStep ) ) {
 		return {
 			sessionStep: snapshotStep,
 			pageSuggestions: [],
@@ -90,26 +86,33 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 	const [ error, setError ] = useState( null );
 
 	useEffect( () => {
-		if ( ! hasConnectAuth ) {
-			setSessionStep( null );
-			setPageSuggestions( [] );
-			setSiteTypeSuggestions( [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ] );
+		const applyState = ( next ) => {
+			setSessionStep( next.sessionStep );
+			setPageSuggestions( next.pageSuggestions );
+			setSiteTypeSuggestions( next.siteTypeSuggestions );
 			setIsLoading( false );
 			setError( null );
+		};
+
+		if ( ! hasConnectAuth ) {
+			applyState( {
+				sessionStep: null,
+				pageSuggestions: [],
+				siteTypeSuggestions: [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ],
+			} );
 			return;
 		}
 
-		const snapshotValue = readInjectedSnapshot();
+		const snapshotValue = readSnapshot();
 		const snapshotEntry = snapshotValue[ siteKey ];
 		const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
-		const hasSnapshotSuggestions = Array.isArray( snapshotEntry?.pageSuggestions );
 
-		if ( null !== snapshotStep && hasSnapshotSuggestions ) {
-			setSessionStep( snapshotStep );
-			setPageSuggestions( snapshotEntry.pageSuggestions );
-			setSiteTypeSuggestions( withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ) );
-			setIsLoading( false );
-			setError( null );
+		if ( hasCompleteSnapshot( snapshotStep, snapshotEntry ) ) {
+			applyState( {
+				sessionStep: snapshotStep,
+				pageSuggestions: snapshotEntry.pageSuggestions,
+				siteTypeSuggestions: withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ),
+			} );
 			return;
 		}
 
@@ -117,7 +120,8 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 		const restHeaders = {
 			'X-WP-Nonce': window.elementorHomeScreenData?.wpRestNonce || '',
 		};
-		const settingsUrl = `${ getWpJsonRoot() }${ SETTINGS_PATH }`;
+		const baseUrl = window.wpApiSettings?.root || '/wp-json/';
+		const settingsUrl = `${ baseUrl }${ SETTINGS_PATH }`;
 
 		const writeSnapshot = ( entry ) => fetch( settingsUrl, {
 			method: 'POST',
@@ -133,20 +137,23 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			} ),
 		} ).catch( () => {} );
 
-		if ( null !== snapshotStep && snapshotStep < WIREFRAMES_STEP ) {
-			const preservedSiteTypeSuggestions = sanitizeSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
-			const nextEntry = {
+		const resumePreWireframesSession = () => {
+			const preservedSiteTypeSuggestions = sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } );
+			writeSnapshot( {
 				sessionId: snapshotEntry?.sessionId ?? null,
 				step: snapshotStep,
 				pageSuggestions: [],
 				siteTypeSuggestions: preservedSiteTypeSuggestions,
-			};
-			writeSnapshot( nextEntry );
-			setSessionStep( snapshotStep );
-			setPageSuggestions( [] );
-			setSiteTypeSuggestions( preservedSiteTypeSuggestions );
-			setIsLoading( false );
-			setError( null );
+			} );
+			applyState( {
+				sessionStep: snapshotStep,
+				pageSuggestions: [],
+				siteTypeSuggestions: preservedSiteTypeSuggestions,
+			} );
+		};
+
+		if ( isPreWireframesStep( snapshotStep ) ) {
+			resumePreWireframesSession();
 			return;
 		}
 
@@ -155,7 +162,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			setError( null );
 
 			try {
-				const response = await fetch( `${ getWpJsonRoot() }${ HOME_SCREEN_PATH }`, {
+				const response = await fetch( `${ baseUrl }${ HOME_SCREEN_PATH }`, {
 					method: 'GET',
 					headers: restHeaders,
 				} );
@@ -168,21 +175,21 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 				const data = await response.json();
 				const nextStep = Number.isFinite( data?.step ) ? data.step : null;
 				const nextSuggestions = sanitizeSuggestions( data?.suggestions );
-				const nextSiteTypeSuggestions = sanitizeSiteTypeSuggestions( data?.siteTypeSuggestions );
-				const nextEntry = {
+				const nextSiteTypeSuggestions = sanitizeSuggestions( data?.siteTypeSuggestions, { limit: 3 } );
+
+				writeSnapshot( {
 					sessionId: data?.sessionId ?? null,
 					step: nextStep,
 					pageSuggestions: nextSuggestions,
 					siteTypeSuggestions: nextSiteTypeSuggestions,
-				};
-
-				writeSnapshot( nextEntry );
+				} );
 
 				if ( isMounted ) {
-					setSessionStep( nextStep );
-					setPageSuggestions( nextSuggestions );
-					setSiteTypeSuggestions( nextSiteTypeSuggestions );
-					setIsLoading( false );
+					applyState( {
+						sessionStep: nextStep,
+						pageSuggestions: nextSuggestions,
+						siteTypeSuggestions: nextSiteTypeSuggestions,
+					} );
 				}
 			} catch ( loadError ) {
 				if ( isMounted ) {

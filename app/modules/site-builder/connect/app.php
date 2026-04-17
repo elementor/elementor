@@ -33,8 +33,8 @@ class App extends Library {
 			[
 				'timeout' => 15,
 				'headers' => [
-					'Content-Type'        => 'application/json',
-					'x-host-site-title'   => (string) get_bloginfo( 'name' ),
+					'Content-Type' => 'application/json',
+					'x-host-site-title' => (string) get_bloginfo( 'name' ),
 					'x-host-site-context' => (string) get_bloginfo( 'description' ),
 				],
 			],

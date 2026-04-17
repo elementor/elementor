@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
-	const API_BASE      = 'site-builder';
+	const API_BASE = 'site-builder';
 
 	public function register_routes(): void {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/home-screen', [
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => [ $this, 'get_home_screen' ],
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => [ $this, 'get_home_screen' ],
 			'permission_callback' => fn() => current_user_can( 'manage_options' ),
 		] );
 	}
