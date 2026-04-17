@@ -14,7 +14,7 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-enum SizeSectionLabel {
+export enum SizeSectionLabel {
 	WIDTH = 'Width',
 	HEIGHT = 'Height',
 	MIN_WIDTH = 'Min width',
@@ -23,7 +23,7 @@ enum SizeSectionLabel {
 	MAX_HEIGHT = 'Max height',
 }
 
-enum OffsetLabel {
+export enum OffsetLabel {
 	TOP = 'Top',
 	RIGHT = 'Right',
 	BOTTOM = 'Bottom',
