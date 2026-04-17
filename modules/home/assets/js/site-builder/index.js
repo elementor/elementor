@@ -23,7 +23,7 @@ import {
 	PlannerTextField,
 	GenerateSiteButton,
 	CreateSiteButton,
-} from './styled-components';
+} from './components/styled-components';
 
 const PLANNER_STEPS = {
 	INIT: 0,

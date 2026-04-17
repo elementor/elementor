@@ -6,7 +6,7 @@ import SideBarPromotion from './sidebar-promotion';
 import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
 import CreateWithAIBanner from './create-with-ai-banner';
-import SiteBuilder from './site-builder/index';
+import SiteBuilder from '../site-builder/index';
 import LoadFallbackMessage from './load-fallback-message';
 
 const EditorScreen = ( props ) => {
