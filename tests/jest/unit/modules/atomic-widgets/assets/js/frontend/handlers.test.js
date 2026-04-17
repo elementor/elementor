@@ -59,11 +59,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	it( 'registers link and form handlers by selector', async () => {
-		// Arrange
-		// Act
 		const { registration, registerBySelector, getRegistration } = await importHandlers();
 
-		// Assert
 		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
 		expect( { id: registration.id, selector: registration.selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
 		expect( typeof registration.callback ).toBe( 'function' );
@@ -71,23 +68,19 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
-		// Act
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( cleanup ).toBeUndefined();
 		expect( event.defaultPrevented ).toBe( false );
 	} );
 
 	it( 'runs whitelisted editor link actions and cleans up listeners', async () => {
-		// Arrange
 		global.elementor = {};
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
@@ -97,7 +90,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const cleanup = registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 		cleanup?.();
 
@@ -105,7 +97,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		element.dispatchEvent( secondEvent );
 
-		// Assert
 		expect( event.defaultPrevented ).toBe( true );
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ALLOWED_ACTION_URL, event );
@@ -113,7 +104,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 	} );
 
 	it( 'skips non-whitelisted editor link actions', async () => {
-		// Arrange
 		global.elementor = {};
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
@@ -121,16 +111,13 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		registration.callback( { element } );
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( runAction ).not.toHaveBeenCalled();
 		expect( event.defaultPrevented ).toBe( false );
 	} );
 
 	it( 'runs link actions outside editor context regardless of whitelist', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'button' );
 
@@ -139,17 +126,14 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, event );
 		expect( event.defaultPrevented ).toBe( true );
 	} );
 
 	it( 'runs nested link actions only when clicking inside the nested element', async () => {
-		// Arrange
 		const { registration } = await importHandlers();
 		const element = document.createElement( 'h2' );
 		const nestedLink = document.createElement( 'a' );
@@ -161,11 +145,9 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const linkEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 		const elementEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		nestedLink.dispatchEvent( linkEvent );
 		element.dispatchEvent( elementEvent );
 
-		// Assert
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, linkEvent );
 		expect( linkEvent.defaultPrevented ).toBe( true );
@@ -191,7 +173,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		};
 
 		it( 'prefers aria-label over everything else', async () => {
-			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -212,12 +193,10 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				fields.push( ariaLabel );
 			} );
 
-			// Assert
 			expect( fields[ 0 ] ).toBe( 'Aria Label' );
 		} );
 
 		it( 'prefers label[for] over placeholder', async () => {
-			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -234,12 +213,10 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const fieldId = input.getAttribute( 'id' );
 			const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
 
-			// Assert
 			expect( labelElement.textContent.trim() ).toBe( 'Email' );
 		} );
 
 		it( 'uses placeholder as last resort', async () => {
-			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const input = createInput( {
@@ -253,14 +230,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const labelElement = fieldId ? form.querySelector( `label[for="${ fieldId }"]` ) : null;
 			const placeholder = input.getAttribute( 'placeholder' );
 
-			// Assert
 			expect( ariaLabel ).toBeNull();
 			expect( labelElement ).toBeNull();
 			expect( placeholder ).toBe( 'Enter your name' );
 		} );
 
 		it( 'uses parent label when no aria-label, for-label, or placeholder', async () => {
-			// Arrange
 			await importHandlers();
 			const form = createForm();
 			const parentLabel = document.createElement( 'label' );
@@ -273,7 +248,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			const fieldId = input.getAttribute( 'id' );
 			const closestLabel = input.closest( 'label' );
 
-			// Assert
 			expect( ariaLabel ).toBeNull();
 			expect( fieldId ).toBeNull();
 			expect( closestLabel.textContent.trim() ).toBe( 'Parent Label' );
@@ -328,7 +302,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 
 		it( 'clears form fields on successful submission', async () => {
-			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -339,15 +312,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				json: () => Promise.resolve( { success: true } ),
 			} );
 
-			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
-			// Assert
 			expect( input.value ).toBe( '' );
 		} );
 
 		it( 'does not clear form fields on failed submission', async () => {
-			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -355,15 +325,12 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 			global.fetch = jest.fn().mockResolvedValue( { ok: false } );
 
-			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
-			// Assert
 			expect( input.value ).toBe( 'Test value' );
 		} );
 
 		it( 'dismisses success message when user starts typing', async () => {
-			// Arrange
 			const { form, input } = createFormWithInput();
 			input.value = 'Test value';
 
@@ -374,23 +341,18 @@ describe( 'Atomic Widgets frontend handlers', () => {
 				json: () => Promise.resolve( { success: true } ),
 			} );
 
-			// Act
 			await instance.submit( new Event( 'submit', { cancelable: true } ) );
 
-			// Assert
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( true );
 
-			// Act
 			input.dispatchEvent( new Event( 'input', { bubbles: true } ) );
 
-			// Assert
 			expect( form.classList.contains( 'form-state-default' ) ).toBe( true );
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 	} );
 
 	it( 'adds non-whitelisted editor link actions via filter', async () => {
-		// Arrange
 		global.elementor = {};
 		global.elementorFrontend = { ...global.elementorFrontend, hooks: { applyFilters: () => [ BLOCKED_ACTION ] } };
 		const { registration } = await importHandlers();
@@ -402,10 +364,8 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
 
-		// Act
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( event.defaultPrevented ).toBe( true );
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( BLOCKED_ACTION_URL, event );
