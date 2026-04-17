@@ -126,6 +126,7 @@ describe( 'useSiteBuilderState', () => {
 
 		expect( result.current.sessionStep ).toBe( 3 );
 		expect( result.current.pageSuggestions ).toEqual( [ 'Blog', 'Services' ] );
+		expect( result.current.siteTypeSuggestions ).toEqual( [] );
 		expect( result.current.error ).toBe( null );
 		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
@@ -137,7 +138,7 @@ describe( 'useSiteBuilderState', () => {
 						sessionId: 'session-id',
 						step: 3,
 						pageSuggestions: [ 'Blog', 'Services' ],
-						siteTypeSuggestions: [ 'Business website', 'Portfolio website', 'E-commerce store' ],
+						siteTypeSuggestions: [],
 					},
 				},
 			} ),
@@ -179,7 +180,7 @@ describe( 'useSiteBuilderState', () => {
 		} ) );
 	} );
 
-	it( 'Scenario 1 no-session with missing siteTypeSuggestions: falls back to defaults', async () => {
+	it( 'Scenario 1 no-session with missing siteTypeSuggestions: keeps the sanitized empty list from the backend', async () => {
 		global.fetch
 			.mockResolvedValueOnce( createResponse( { sessionId: null, step: null, suggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
@@ -190,9 +191,7 @@ describe( 'useSiteBuilderState', () => {
 			expect( result.current.isLoading ).toBe( false );
 		} );
 
-		expect( result.current.siteTypeSuggestions ).toEqual(
-			[ 'Business website', 'Portfolio website', 'E-commerce store' ],
-		);
+		expect( result.current.siteTypeSuggestions ).toEqual( [] );
 	} );
 
 	it( 'Scenario 2b: step >= WIREFRAMES but no suggestions — fetches /home-screen', async () => {
