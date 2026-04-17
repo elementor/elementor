@@ -107,27 +107,18 @@ trait Has_Atomic_Document {
 	public function get_container_attributes() {
 		$attributes = parent::get_container_attributes();
 
-		$initial_class = $attributes['class'] ?? '';
-		error_log( '[HasAtomicDocument::get_container_attributes] POST ' . $this->get_main_id() . ' initial class: ' . $initial_class );
-
 		if ( method_exists( $this, 'get_base_styles_dictionary' ) ) {
 			$base_style_ids = array_values( $this->get_base_styles_dictionary() );
-			error_log( '[HasAtomicDocument::get_container_attributes] base_style_ids: ' . wp_json_encode( $base_style_ids ) );
 			if ( ! empty( $base_style_ids ) ) {
 				$attributes['class'] .= ' ' . implode( ' ', array_map( 'esc_attr', $base_style_ids ) );
 			}
-		} else {
-			error_log( '[HasAtomicDocument::get_container_attributes] get_base_styles_dictionary method does NOT exist' );
 		}
 
 		$style_ids = array_keys( $this->load_atomic_styles() );
-		error_log( '[HasAtomicDocument::get_container_attributes] style_ids: ' . wp_json_encode( $style_ids ) );
 
 		if ( ! empty( $style_ids ) ) {
 			$attributes['class'] .= ' ' . implode( ' ', array_map( 'esc_attr', $style_ids ) );
 		}
-
-		error_log( '[HasAtomicDocument::get_container_attributes] FINAL class: ' . $attributes['class'] );
 
 		return $attributes;
 	}
