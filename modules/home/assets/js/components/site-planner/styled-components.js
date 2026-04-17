@@ -15,12 +15,17 @@ export const PlannerRoot = styled( Paper )( ( { theme } ) => ( {
 export const PlannerBackground = styled( Box )( ( { bgimage } ) => ( {
 	position: 'absolute',
 	inset: 0,
-	backgroundImage: bgimage
-		? `url(${ bgimage })`
-		: 'linear-gradient(90deg, rgba(105, 97, 153, 0.08) 0%, rgba(201, 69, 201, 0.12) 100%)',
-	backgroundPosition: '0px -105.625px',
-	backgroundSize: bgimage ? '100% 257.593%' : 'auto',
-	backgroundRepeat: 'no-repeat',
+	background: [
+		'radial-gradient(ellipse at 100% 0%, #e8b4f0 0%, #f0d4f8 20%, #f5eafc 40%, transparent 65%)',
+		'radial-gradient(ellipse at 0% 100%, #d8d8ee 0%, #e8e8f5 25%, transparent 55%)',
+		'linear-gradient(135deg, #f0f0f8 0%, #f8f4fc 50%, #faf0fc 100%)',
+	].join( ', ' ),
+	...( bgimage && {
+		backgroundImage: `url(${ bgimage })`,
+		backgroundPosition: '0px -105.625px',
+		backgroundSize: '100% 257.593%',
+		backgroundRepeat: 'no-repeat',
+	} ),
 	zIndex: 0,
 } ) );
 
