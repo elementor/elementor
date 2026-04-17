@@ -2,12 +2,26 @@ import { BrowserContext, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
+import { BorderTypeLabel } from '../../../../pages/atomic-elements-panel/style-tab';
 import { timeouts } from '../../../../config/timeouts';
+import { viewportSize } from '../../../../enums/viewport-sizes';
 
 const BREAKPOINT_FONT_SIZES = {
 	desktop: 32,
 	tablet: 24,
 	mobile: 16,
+} as const;
+
+const BREAKPOINT_BORDER_PANEL_TYPES = {
+	desktop: BorderTypeLabel.SOLID,
+	tablet: BorderTypeLabel.DOUBLE,
+	mobile: BorderTypeLabel.DOTTED,
+} as const;
+
+const BREAKPOINT_BORDER_CSS_STYLES = {
+	desktop: 'solid',
+	tablet: 'double',
+	mobile: 'dotted',
 } as const;
 
 const STATE_COLORS = {
@@ -181,6 +195,65 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
 			await publishedElement.hover();
 			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+		} );
+	} );
+
+	test( 'Breakpoint border types render correctly in editor and frontend for e-image widget', async () => {
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( { widgetType: 'e-image', container: containerId } );
+
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Border' );
+
+		await test.step( 'Set desktop border type', async () => {
+			await editor.changeResponsiveView( 'desktop' );
+			await editor.v4Panel.style.setBorderType( BREAKPOINT_BORDER_PANEL_TYPES.desktop );
+		} );
+
+		await test.step( 'Set tablet border type', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			await editor.v4Panel.style.setBorderType( BREAKPOINT_BORDER_PANEL_TYPES.tablet );
+		} );
+
+		await test.step( 'Set mobile border type', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+			await editor.v4Panel.style.setBorderType( BREAKPOINT_BORDER_PANEL_TYPES.mobile );
+		} );
+
+		const selector = '.e-image-base';
+
+		await test.step( 'Verify desktop border style in editor', async () => {
+			await editor.changeResponsiveView( 'desktop' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.desktop, { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify tablet border style in editor', async () => {
+			await editor.changeResponsiveView( 'tablet' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.tablet, { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify mobile border style in editor', async () => {
+			await editor.changeResponsiveView( 'mobile' );
+			const element = editor.getPreviewFrame().locator( selector );
+			await expect( element ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.mobile, { timeout: timeouts.expect } );
+		} );
+
+		await test.step( 'Verify border styles on frontend with viewport changes', async () => {
+			await editor.publishAndViewPage();
+
+			const publishedElement = editor.page.locator( selector );
+			await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
+
+			await editor.page.setViewportSize( viewportSize.desktop );
+			await expect( publishedElement ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.desktop );
+
+			await editor.page.setViewportSize( viewportSize.tablet );
+			await expect( publishedElement ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.tablet );
+
+			await editor.page.setViewportSize( viewportSize.mobile );
+			await expect( publishedElement ).toHaveCSS( 'border-style', BREAKPOINT_BORDER_CSS_STYLES.mobile );
 		} );
 	} );
 } );
