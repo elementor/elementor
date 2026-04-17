@@ -3,22 +3,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { TimeFrameIndicator } from '../time-frame-indicator';
 
-const switchToSecondsUnit = () => {
-	const unitButton = screen.getByText( 'ms' );
-	fireEvent.click( unitButton );
-
-	const secondsOption = screen.getByRole( 'menuitem', { name: /^S$/i } );
-	fireEvent.click( secondsOption );
-};
-
-const switchToMillisecondsUnit = () => {
-	const unitButton = screen.getByText( 's' );
-	fireEvent.click( unitButton );
-
-	const msOption = screen.getByRole( 'menuitem', { name: /^MS$/i } );
-	fireEvent.click( msOption );
-};
-
 describe( 'TimeFrameIndicator', () => {
 	const mockOnChange = jest.fn();
 
@@ -114,15 +98,15 @@ describe( 'TimeFrameIndicator', () => {
 		it( 'should reset to default value on blur when input is cleared', () => {
 			// Arrange.
 			mockOnChange.mockClear();
-			render( <TimeFrameIndicator value="0ms" onChange={ mockOnChange } defaultValue="600ms" /> );
-
-			const input = screen.getByRole( 'spinbutton' );
+			render( <TimeFrameIndicator value="0.6s" onChange={ mockOnChange } defaultValue="600ms" /> );
 
 			// Act.
+			const input = screen.getByRole( 'spinbutton' );
+			fireEvent.input( input, { target: { value: '' } } );
 			fireEvent.blur( input );
 
 			// Assert.
-			expect( mockOnChange ).toHaveBeenCalledWith( '600ms' );
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '600ms' );
 		} );
 
 		it( 'should not call onChange on blur when value is non-zero', () => {
@@ -152,53 +136,35 @@ describe( 'TimeFrameIndicator', () => {
 			// Assert.
 			expect( mockOnChange ).toHaveBeenCalledWith( '1.5ms' );
 		} );
-	} );
 
-	describe( 'Unit conversion', () => {
-		it( 'should convert milliseconds to seconds ', () => {
-			// Arrange - start with a different value so inputting 1s triggers a change
+		it( 'should not reset to default on blur when value is zero', () => {
+			// Arrange.
+			mockOnChange.mockClear();
+			render( <TimeFrameIndicator value="500ms" onChange={ mockOnChange } defaultValue="600ms" /> );
+			const input = screen.getByRole( 'spinbutton' );
+
+			// Act.
+			fireEvent.input( input, { target: { value: '0' } } );
+			fireEvent.blur( input );
+
+			// Assert.
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '0ms' );
+		} );
+
+		it( 'should change unit without converting the numeric value', () => {
+			// Arrange.
+			mockOnChange.mockClear();
 			render( <TimeFrameIndicator value="500ms" onChange={ mockOnChange } defaultValue="0ms" /> );
 
-			// Act
-			switchToSecondsUnit();
-
-			// Assert
-			expect( mockOnChange ).toHaveBeenLastCalledWith( '0.5s' );
-		} );
-
-		it( 'should convert seconds input to milliseconds', () => {
-			// Arrange.
-			render( <TimeFrameIndicator value="13s" onChange={ mockOnChange } defaultValue="0ms" /> );
-
 			// Act.
-			switchToMillisecondsUnit();
+			const unitButton = screen.getByText( 'ms' );
+			fireEvent.click( unitButton );
+
+			const secondsOption = screen.getByRole( 'menuitem', { name: /^S$/i } );
+			fireEvent.click( secondsOption );
 
 			// Assert.
-			expect( mockOnChange ).toHaveBeenLastCalledWith( '13000ms' );
-		} );
-
-		it( 'should convert milliseconds to decimal seconds', () => {
-			// Arrange.
-			mockOnChange.mockClear();
-			render( <TimeFrameIndicator value="1500ms" onChange={ mockOnChange } defaultValue="0ms" /> );
-
-			// Act.
-			switchToSecondsUnit();
-
-			// Assert.
-			expect( mockOnChange ).toHaveBeenLastCalledWith( '1.5s' );
-		} );
-
-		it( 'should convert decimal seconds to milliseconds', () => {
-			// Arrange.
-			mockOnChange.mockClear();
-			render( <TimeFrameIndicator value="0.25s" onChange={ mockOnChange } defaultValue="0ms" /> );
-
-			// Act.
-			switchToMillisecondsUnit();
-
-			// Assert.
-			expect( mockOnChange ).toHaveBeenLastCalledWith( '250ms' );
+			expect( mockOnChange ).toHaveBeenLastCalledWith( '500s' );
 		} );
 	} );
 } );
