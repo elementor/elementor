@@ -186,7 +186,7 @@ export function createTemplatedElementView( {
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			return settings;
+			return this._getLinkAttributes( settings );
 		}
 
 		_beforeRender() {
@@ -213,6 +213,38 @@ export function createTemplatedElementView( {
 			const id = this.model.get( 'id' );
 
 			return originId ?? id;
+		}
+
+		_getLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			const linkAttributes = Object.entries( this._handleActionLinkAttributes( settings ) )
+				.map( ( [ key, value ] ) => `${ key }="${ value }"` )
+				.join( ' ' );
+
+			return {
+				...settings,
+				link: linkAttributes
+					? {
+							tag: ( settings?.link as { tag?: string } )?.tag,
+							attributes: linkAttributes,
+					  }
+					: null,
+			};
+		}
+
+		_handleActionLinkAttributes( settings: { [ key: string ]: unknown } ) {
+			const link = settings.link;
+
+			if ( ! link || typeof link !== 'object' || ! ( 'href' in link ) || ! link.href ) {
+				return {};
+			}
+
+			const isActionLink = 'tag' in link && link.tag === 'button';
+			const urlAttrKey = isActionLink ? 'data-action-link' : 'href';
+
+			return {
+				[ urlAttrKey ]: link.href,
+				target: ( 'target' in link && link.target ) ?? '_self',
+			};
 		}
 	};
 }
