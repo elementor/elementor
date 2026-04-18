@@ -45,7 +45,12 @@ class Prop_Schema_Ability extends Abstract_Ability {
 				'properties' => [
 					'type' => [
 						'type'        => 'string',
-						'description' => 'A $$type key (e.g. "background-gradient-overlay", "color-stop", "size", "html-v3"). Omit to list all available keys.',
+						'description' => 'A $$type key (e.g. "background-gradient-overlay", "color-stop", "size", "html-v3"). Omit (and omit `types`) to list all available keys.',
+					],
+					'types' => [
+						'type'        => 'array',
+						'description' => 'Batch mode: an array of $$type keys. Returns a `schemas` map keyed by type. Use this to collapse multiple schema lookups into one round-trip.',
+						'items'       => [ 'type' => 'string' ],
 					],
 				],
 				'additionalProperties' => false,
@@ -56,11 +61,15 @@ class Prop_Schema_Ability extends Abstract_Ability {
 					'type'            => [ 'type' => 'string' ],
 					'schema'          => [
 						'type'        => 'object',
-						'description' => 'Recursively-resolved schema for the requested type. Each nested Prop_Type is serialized via JsonSerializable.',
+						'description' => 'Single-lookup mode: recursively-resolved schema for the requested type. Each nested Prop_Type is serialized via JsonSerializable.',
+					],
+					'schemas'         => [
+						'type'        => 'object',
+						'description' => 'Batch mode: map keyed by requested type. Each entry is either { schema: {...} } for a resolved type or { error: "..." } for an unknown one.',
 					],
 					'available_types' => [
 						'type'        => 'array',
-						'description' => 'All registered prop type keys discovered by walking Style_Schema and every atomic widget props schema. Returned both when `type` is omitted and when an unknown key is requested.',
+						'description' => 'All registered prop type keys discovered by walking Style_Schema and every atomic widget props schema. Returned when `type` is omitted and when an unknown key is requested.',
 						'items'       => [ 'type' => 'string' ],
 					],
 					'error'           => [
@@ -76,7 +85,8 @@ class Prop_Schema_Ability extends Abstract_Ability {
 					'instructions' => implode( "\n", [
 						'Use this BEFORE building any prop value whose shape you do not already know. One round-trip replaces reading 3-5 prop-type PHP files.',
 						'Pass type="<key>" — e.g. "background-gradient-overlay", "color-stop", "gradient-color-stop", "shadow", "dimensions", "html-v3", "link".',
-						'Omit type to list every registered prop key (use this to discover available shapes).',
+						'Pass types=["a","b",...] to fetch multiple schemas in one call. Response is { schemas: { a: {schema: ...}, b: {error: ...} } }.',
+						'Omit both `type` and `types` to list every registered prop key (use this to discover available shapes).',
 						'The schema field is the full recursive serialization. For Object_Prop_Type, schema.shape is keyed by field name and each field is itself a serialized Prop_Type. For Union_Prop_Type, schema.prop_types is keyed by member type key.',
 						'For widget-prop discovery (per-widget settings keys), use elementor/widget-schema. This ability is for the $$type-keyed prop type catalog.',
 					] ),
@@ -92,6 +102,28 @@ class Prop_Schema_Ability extends Abstract_Ability {
 		$registry = $this->build_registry();
 		$keys     = array_keys( $registry );
 		sort( $keys );
+
+		$types = isset( $input['types'] ) && is_array( $input['types'] ) ? array_values( array_filter( $input['types'], 'is_string' ) ) : null;
+
+		if ( null !== $types ) {
+			$schemas = [];
+			foreach ( $types as $requested ) {
+				if ( ! isset( $registry[ $requested ] ) ) {
+					$schemas[ $requested ] = [
+						'error' => "Prop type \"$requested\" is not registered. See available_types for the full list.",
+					];
+					continue;
+				}
+				$schemas[ $requested ] = [
+					'schema' => $this->serialize( $registry[ $requested ] ),
+				];
+			}
+
+			return [
+				'schemas'         => $schemas,
+				'available_types' => $keys,
+			];
+		}
 
 		$type = isset( $input['type'] ) && is_string( $input['type'] ) ? $input['type'] : null;
 

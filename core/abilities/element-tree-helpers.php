@@ -357,6 +357,12 @@ trait Element_Tree_Helpers {
 	/**
 	 * Recursively collect style validation errors from the element tree.
 	 *
+	 * Style_Parser only emits the top-level prop key (e.g. "variants[0].background: invalid_value"),
+	 * which is useless when the actual fault lives 5 levels deep inside a background-image-overlay.
+	 * For each top-level error we walk the prop-type tree in parallel with the supplied value and
+	 * append path-aware reasons (e.g. "variants[0].background.background-overlay[0].image.size:
+	 * value not in enum [thumbnail, ..., full]. Got: \"cover\"").
+	 *
 	 * @param array    $elements Element tree.
 	 * @param object   $parser   Style_Parser instance (reused across recursion).
 	 * @param string[] $errors   Accumulator (modified in-place).
@@ -369,8 +375,18 @@ trait Element_Tree_Helpers {
 				foreach ( $el['styles'] as $style_id => $style ) {
 					$result = $parser->parse( $style );
 					if ( ! $result->is_valid() ) {
-						foreach ( $result->errors() as $error ) {
-							$errors[] = "Element \"$el_id\" style \"$style_id\": $error";
+						foreach ( $result->errors()->all() as $error_entry ) {
+							$error_key    = $error_entry['key'] ?? '';
+							$error_reason = $error_entry['error'] ?? '';
+							$prefix       = "Element \"$el_id\" style \"$style_id\": $error_key: $error_reason";
+							$deep         = $this->expand_style_error( $style, $error_key );
+							if ( empty( $deep ) ) {
+								$errors[] = $prefix;
+								continue;
+							}
+							foreach ( $deep as $detail ) {
+								$errors[] = "$prefix → $detail";
+							}
 						}
 					}
 				}
@@ -380,6 +396,165 @@ trait Element_Tree_Helpers {
 				$this->collect_style_errors( $el['elements'], $parser, $errors );
 			}
 		}
+	}
+
+	/**
+	 * Walk a single style error key like "variants[0].background" against the
+	 * corresponding sub-tree of Style_Schema and the actual style value, and return
+	 * deep path-keyed reasons for whatever is failing inside it.
+	 *
+	 * Returns an empty array when the prop key is unknown, the value is missing,
+	 * or no leaf-level reason can be derived.
+	 *
+	 * @param array  $style     The full style entry (id, type, label, variants).
+	 * @param string $error_key Key from Style_Parser, e.g. "variants[0].background".
+	 * @return string[] Detail lines like "variants[0].background.background-overlay[0].image.size: ...".
+	 */
+	private function expand_style_error( array $style, string $error_key ): array {
+		if ( ! preg_match( '/^variants\[(\d+)\]\.(.+)$/', $error_key, $m ) ) {
+			return [];
+		}
+		$variant_index = (int) $m[1];
+		$prop_name     = $m[2];
+
+		if ( ! isset( $style['variants'][ $variant_index ]['props'][ $prop_name ] ) ) {
+			return [];
+		}
+		$value = $style['variants'][ $variant_index ]['props'][ $prop_name ];
+
+		$schema = \Elementor\Modules\AtomicWidgets\Styles\Style_Schema::get();
+		if ( ! isset( $schema[ $prop_name ] ) || ! ( $schema[ $prop_name ] instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type ) ) {
+			return [];
+		}
+
+		$leaves = [];
+		$this->deep_validate_prop_value( $schema[ $prop_name ], $value, $error_key, $leaves );
+		return $leaves;
+	}
+
+	/**
+	 * Walk a Prop_Type schema in parallel with a value, accumulating leaf-level
+	 * validation reasons keyed by their dotted path.
+	 *
+	 * Handles Object_Prop_Type (recurse into shape fields), Array_Prop_Type (recurse
+	 * into items by numeric index), Union_Prop_Type (pick member by $$type, recurse).
+	 * Plain types fall back to the boolean validate() with a human-readable diagnosis.
+	 *
+	 * Stops recursion at any subtree that validates cleanly — keeps the output focused
+	 * on the actual offenders.
+	 *
+	 * @param object   $prop_type Prop_Type instance.
+	 * @param mixed    $value     The value at this point in the tree.
+	 * @param string   $path      Dotted path to this node (e.g. "variants[0].background.background-overlay[0]").
+	 * @param string[] $leaves    Accumulator (modified in-place).
+	 */
+	private function deep_validate_prop_value( $prop_type, $value, string $path, array &$leaves ): void {
+		if ( method_exists( $prop_type, 'validate' ) && $prop_type->validate( $value ) ) {
+			return;
+		}
+
+		if ( null === $value ) {
+			$leaves[] = "$path: required value is missing or null";
+			return;
+		}
+
+		if ( $prop_type instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type ) {
+			$wrapped_type = is_array( $value ) && isset( $value['$$type'] ) ? $value['$$type'] : null;
+			if ( null !== $wrapped_type ) {
+				$member = $prop_type->get_prop_type( $wrapped_type );
+				if ( null === $member ) {
+					$allowed  = implode( ', ', array_keys( $prop_type->get_prop_types() ) );
+					$leaves[] = "$path: \$\$type \"$wrapped_type\" not in union members [$allowed]";
+					return;
+				}
+				$this->deep_validate_prop_value( $member, $value, $path, $leaves );
+				return;
+			}
+			$member = $prop_type->get_prop_type_from_value( $value );
+			if ( null === $member ) {
+				$allowed  = implode( ', ', array_keys( $prop_type->get_prop_types() ) );
+				$leaves[] = "$path: value did not match any union member [$allowed]";
+				return;
+			}
+			$this->deep_validate_prop_value( $member, $value, $path, $leaves );
+			return;
+		}
+
+		$is_object = $prop_type instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+		$is_array  = $prop_type instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+
+		if ( $is_object || $is_array ) {
+			$expected_key = method_exists( $prop_type, 'get_key' ) ? $prop_type::get_key() : 'object';
+			if ( ! is_array( $value ) || ! array_key_exists( 'value', $value ) ) {
+				$leaves[] = "$path: expected wrapped value {\"\$\$type\":\"$expected_key\",\"value\":...}";
+				return;
+			}
+			if ( isset( $value['$$type'] ) && $value['$$type'] !== $expected_key ) {
+				$leaves[] = "$path: \$\$type is \"{$value['$$type']}\" but schema expects \"$expected_key\"";
+				return;
+			}
+			$inner = $value['value'];
+
+			if ( $is_object ) {
+				if ( ! is_array( $inner ) ) {
+					$leaves[] = "$path: expected an object value for \"$expected_key\"";
+					return;
+				}
+				$any_field_failed = false;
+				foreach ( $prop_type->get_shape() as $field_key => $field_type ) {
+					if ( ! ( $field_type instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type ) ) {
+						continue;
+					}
+					$sub_value = array_key_exists( $field_key, $inner ) ? $inner[ $field_key ] : null;
+					$before    = count( $leaves );
+					$this->deep_validate_prop_value( $field_type, $sub_value, "$path.$field_key", $leaves );
+					if ( count( $leaves ) > $before ) {
+						$any_field_failed = true;
+					}
+				}
+				if ( ! $any_field_failed ) {
+					$leaves[] = "$path: $expected_key rejected the value but every shape field individually validates — likely a cross-field rule in the prop type's validate_value() (e.g. image-src requires exactly one of id|url to be set; pass raw null instead of a wrapped {\$\$type,value:null} for the unused field).";
+				}
+				return;
+			}
+
+			if ( ! is_array( $inner ) ) {
+				$leaves[] = "$path: expected an array value for \"$expected_key\"";
+				return;
+			}
+			$item_type        = $prop_type->get_item_type();
+			$any_item_failed  = false;
+			foreach ( $inner as $i => $item ) {
+				$before = count( $leaves );
+				$this->deep_validate_prop_value( $item_type, $item, $path . "[$i]", $leaves );
+				if ( count( $leaves ) > $before ) {
+					$any_item_failed = true;
+				}
+			}
+			if ( ! $any_item_failed ) {
+				$leaves[] = "$path: array validation failed but no specific item could be pinpointed";
+			}
+			return;
+		}
+
+		$key      = method_exists( $prop_type, 'get_key' ) ? $prop_type::get_key() : 'leaf';
+		$settings = method_exists( $prop_type, 'get_settings' ) ? $prop_type->get_settings() : [];
+		$reason   = "value did not validate against \"$key\"";
+
+		if ( ! empty( $settings['enum'] ) && is_array( $settings['enum'] ) ) {
+			$reason .= '. Allowed enum: [' . implode( ', ', $settings['enum'] ) . ']';
+		}
+
+		$unwrapped = is_array( $value ) && array_key_exists( 'value', $value ) ? $value['value'] : $value;
+		if ( is_scalar( $unwrapped ) ) {
+			$reason .= '. Got: ' . wp_json_encode( $unwrapped );
+		} elseif ( null === $unwrapped ) {
+			$reason .= '. Got: null';
+		} else {
+			$reason .= '. Got: <' . gettype( $unwrapped ) . '>';
+		}
+
+		$leaves[] = "$path: $reason";
 	}
 
 	/**
