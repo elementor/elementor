@@ -44,6 +44,10 @@ class Build_Page_Ability extends Abstract_Ability {
 						'type'        => 'array',
 						'description' => 'Full Elementor elements tree to save. Class labels in settings.classes.value are resolved automatically using freshly upserted class IDs.',
 					],
+					'dry_run'   => [
+						'type'        => 'boolean',
+						'description' => 'When true, runs all normalization and validation but does NOT save. Returns { success: false, dry_run: true, errors: [...] } so prop/style mistakes can be caught without persisting. Default: false.',
+					],
 				],
 				'required'             => [ 'post_id', 'elements' ],
 				'additionalProperties' => false,
@@ -61,6 +65,15 @@ class Build_Page_Ability extends Abstract_Ability {
 						'description' => 'Result from class upsert (only present when classes were provided).',
 					],
 					'success'   => [ 'type' => 'boolean' ],
+					'dry_run'   => [
+						'type'        => 'boolean',
+						'description' => 'Echoes the input dry_run flag. Present only when dry_run was requested.',
+					],
+					'errors'    => [
+						'type'        => 'array',
+						'description' => 'Validation errors. Present (possibly empty) when dry_run=true. On a real save, errors instead throw with a clear message.',
+						'items'       => [ 'type' => 'string' ],
+					],
 				],
 			],
 			'meta' => [
@@ -69,11 +82,12 @@ class Build_Page_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'One-shot page builder — replaces the three-step create-variables + create-classes + save-content sequence with a single call.',
-						'Execution order: upsert variables → upsert classes → resolve labels in elements → save page.',
+						'Execution order: upsert variables → upsert classes → resolve labels in elements → normalize styles → validate → save (or short-circuit when dry_run=true).',
 						'variables and classes are optional. Omit either if not needed.',
+						'DRY-RUN MODE: pass dry_run=true to validate the full payload (vars + classes + elements) without persisting. Returns { success: false, dry_run: true, errors: [...] }. Use this for one-element validation before sending the full page.',
 						'Variable labels in class variant props (e.g. {"$$type":"global-color-variable","value":"ajax-red"}) are resolved to variable IDs before the classes are saved.',
 						'Class labels in elements (e.g. "ajax-hero-outer") are resolved to full IDs automatically using the classes just upserted plus any existing ones.',
-						'PROP FORMAT: ALL typed prop values use $$type (double dollar sign), never $type.',
+						'PROP FORMAT: ALL typed prop values use $$type (double dollar sign), never $type. Use the elementor/prop-schema ability to look up the exact shape of any $$type by key.',
 						'ELEMENT TYPES:',
 						'  e-flexbox → container/row/column. Uses elType:"e-flexbox", has an "elements" children array, NO widgetType. Do NOT call widget-schema for e-flexbox.',
 						'  widget    → leaf element. Uses elType:"widget" + widgetType (e.g. "e-heading"). Has no children elements array.',
@@ -86,16 +100,21 @@ class Build_Page_Ability extends Abstract_Ability {
 						'  {"$$type":"classes","value":["e-gc-9705bfbc-2335-4e75-b761-71e4973977df"]}',
 						'  Each string is a global class UUID, a local style ID from element.styles, or a human-readable label (resolved automatically).',
 						'LOCAL STYLES FORMAT — element.styles is a keyed object (not an array):',
-						'  "styles": { "<style-id>": { "type":"class", "label":"local", "variants": [{ "meta": { "breakpoint":null, "state":null }, "props": {...} }] } }',
+						'  "styles": { "<style-id>": { "id":"<style-id>", "type":"class", "label":"local", "variants": [{ "meta": { "breakpoint":"desktop", "state":null }, "props": {...} }] } }',
+						'  style.id IS REQUIRED and must equal the map key — auto-injected if missing. Style_Parser rejects styles without an id.',
+						'  meta.breakpoint IS REQUIRED and must be a STRING (e.g. "desktop", "tablet", "mobile") — null is INVALID. Auto-coerced to "desktop" if null/missing.',
+						'  meta.state: null = default state. Use "hover", "focus", "active", "focus-visible", "checked" for interactive states. Empty string "" and "normal" are invalid.',
 						'  style-id: any short unique string (e.g. "s1", "e-dh-s-abc"). Must also appear in settings classes.value to have any effect.',
-						'  meta.breakpoint: null = all breakpoints, or a breakpoint key (e.g. "mobile").',
-						'  meta.state: null = default state. Use "hover" or "focus" for interactive states. Empty string "" and "normal" are invalid.',
 						'COMMON CLASS PROP FORMATS (for global class variant props):',
 						'  Solid background: {"$$type":"background","value":{"background-overlay":{"$$type":"background-overlay","value":[{"$$type":"background-color-overlay","value":{"color":{"$$type":"color","value":"#ffffff"}}}]}}}',
-						'  Padding/margin:   {"$$type":"linked-dimensions","value":{"top":{"$$type":"size","value":{"size":80,"unit":"px"}},"right":{...},"bottom":{...},"left":{...}}}',
+						'  Linear gradient: {"$$type":"background","value":{"background-overlay":{"$$type":"background-overlay","value":[{"$$type":"background-gradient-overlay","value":{"type":{"$$type":"string","value":"linear"},"angle":{"$$type":"number","value":135},"stops":{"$$type":"gradient-color-stop","value":[{"$$type":"color-stop","value":{"color":{"$$type":"color","value":"#CC0000"},"offset":{"$$type":"number","value":0}}},{"$$type":"color-stop","value":{"color":{"$$type":"color","value":"#0A0A0A"},"offset":{"$$type":"number","value":100}}}]}}}]}}}',
+						'    — gradient angle is NUMBER (0-360, NOT size). color-stop offset is NUMBER (0-100, NOT size). stops is wrapped {"$$type":"gradient-color-stop","value":[...]}.',
+						'  Padding/margin:   {"$$type":"dimensions","value":{"block-start":{"$$type":"size","value":{"size":80,"unit":"px"}},"inline-end":{...},"block-end":{...},"inline-start":{...}}}',
+						'    — dimensions uses CSS LOGICAL keys (block-start/inline-end/block-end/inline-start), NOT top/right/bottom/left. For uniform values use {"$$type":"size","value":{...}} directly (Union type).',
 						'  Font size:        {"$$type":"size","value":{"size":16,"unit":"px"}}  — NOT a plain string like "16px"',
 						'  Color:            {"$$type":"color","value":"#333333"}',
-						'The ability validates class IDs and $$type usage before saving — errors are returned with clear messages.',
+						'For ANY other prop type shape, call elementor/prop-schema { "type": "<key>" } — eliminates guesswork and round-trips.',
+						'The ability normalizes (id, breakpoint) and validates ($$type usage, class IDs, full Style_Schema) before saving — errors come back with clear messages or, in dry_run mode, in the errors array.',
 					] ),
 					'readonly'    => false,
 					'destructive' => true,
@@ -108,6 +127,7 @@ class Build_Page_Ability extends Abstract_Ability {
 	public function execute( array $input ): array {
 		$post_id  = (int) $input['post_id'];
 		$elements = $input['elements'];
+		$dry_run  = ! empty( $input['dry_run'] );
 		$output   = [ 'post_id' => $post_id ];
 
 		$document = Plugin::$instance->documents->get( $post_id );
@@ -117,8 +137,8 @@ class Build_Page_Ability extends Abstract_Ability {
 			throw new \InvalidArgumentException( "Post $post_id not found or not an Elementor document." );
 		}
 
-		// Step 1: upsert variables.
-		if ( ! empty( $input['variables'] ) ) {
+		// Step 1: upsert variables (skipped in dry-run to keep the call side-effect-free).
+		if ( ! empty( $input['variables'] ) && ! $dry_run ) {
 			$output['variables'] = ( new Set_Variables_Ability() )->execute( [ 'variables' => $input['variables'] ] );
 		}
 
@@ -132,13 +152,19 @@ class Build_Page_Ability extends Abstract_Ability {
 		}
 
 		// Step 2: resolve variable labels inside class variant props, then upsert classes.
-		if ( ! empty( $input['classes'] ) ) {
+		if ( ! empty( $input['classes'] ) && ! $dry_run ) {
 			$classes = $input['classes'];
 			$this->resolve_variable_labels_in_classes( $classes, $var_label_to_id );
 			$output['classes'] = ( new Set_Global_Classes_Ability() )->execute( [ 'classes' => $classes ] );
+		} elseif ( ! empty( $input['classes'] ) && $dry_run ) {
+			// In dry-run we still validate the variable-label resolution so missing labels surface.
+			$dry_classes = $input['classes'];
+			$this->resolve_variable_labels_in_classes( $dry_classes, $var_label_to_id );
 		}
 
 		// Step 3: build label→id index from the now-current repository state.
+		// In dry-run, also fold in any class IDs/labels the input proposes so element-tree label
+		// resolution and class-ID validation don't fail purely because the upsert was skipped.
 		$repo        = new Global_Classes_Repository();
 		$label_to_id = [];
 		$known_ids   = [];
@@ -146,17 +172,44 @@ class Build_Page_Ability extends Abstract_Ability {
 			$known_ids[]                            = $id;
 			$label_to_id[ $item['label'] ?? '' ] = $id;
 		}
+		if ( $dry_run && ! empty( $input['classes'] ) ) {
+			foreach ( $input['classes'] as $proposed ) {
+				if ( ! is_array( $proposed ) ) {
+					continue;
+				}
+				if ( isset( $proposed['id'] ) && is_string( $proposed['id'] ) ) {
+					$known_ids[] = $proposed['id'];
+				}
+				if ( isset( $proposed['label'], $proposed['id'] ) && is_string( $proposed['label'] ) && is_string( $proposed['id'] ) ) {
+					$label_to_id[ $proposed['label'] ] = $proposed['id'];
+				}
+			}
+		}
 
 		// Step 4: resolve class labels in the element tree.
 		$this->resolve_class_labels( $elements, $label_to_id );
 
-		// Step 5: validate (single-dollar $type, truncated IDs, unknown IDs).
-		// Collect local element-scoped style IDs so they pass the unknown-ID check.
+		// Step 5: normalize then validate.
+		// Normalize first so common omissions (style.id, null breakpoint) don't trip validation.
+		$this->normalize_element_styles( $elements );
+
 		$local_ids = [];
 		$this->collect_local_style_ids( $elements, $local_ids );
+
+		if ( $dry_run ) {
+			$errors = [];
+			$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
+			$this->coerce_style_props( $elements );
+			$style_errors      = $this->validate_element_styles( $elements );
+			$output['success'] = false;
+			$output['dry_run'] = true;
+			$output['errors']  = array_values( array_merge( $errors, $style_errors ) );
+			return $output;
+		}
+
 		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
-		// Step 5b: coerce common style prop mistakes (flex, text-align) then validate.
+		// Coerce common style prop mistakes (flex, text-align) then validate.
 		$this->coerce_style_props( $elements );
 
 		$style_errors = $this->validate_element_styles( $elements );

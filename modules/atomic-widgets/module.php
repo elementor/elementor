@@ -121,6 +121,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Sel
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Abilities\Atomic_Widgets_Ability;
+use Elementor\Modules\AtomicWidgets\Abilities\Prop_Schema_Ability;
 use Elementor\Modules\AtomicWidgets\Abilities\V4_Styles_Ability;
 use Elementor\Modules\AtomicWidgets\Abilities\Widget_Schema_Ability;
 
@@ -254,6 +255,7 @@ class Module extends BaseModule {
 			) )->register_hooks();
 			( new V4_Styles_Ability( Plugin::$instance->breakpoints ) )->register_hooks();
 			( new Widget_Schema_Ability( Plugin::$instance->widgets_manager ) )->register_hooks();
+			( new Prop_Schema_Ability( Plugin::$instance->widgets_manager ) )->register_hooks();
 		}
 	}
 

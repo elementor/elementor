@@ -214,6 +214,57 @@ trait Element_Tree_Helpers {
 	}
 
 	/**
+	 * Walk the element tree and fill in two style fields that Style_Parser requires
+	 * but agents routinely omit:
+	 *   - style.id: when missing, set to the styles-map key.
+	 *   - meta.breakpoint: when null/missing, set to "desktop" (the base breakpoint).
+	 *
+	 * Both are required by Style_Parser; without them the save throws a generic
+	 * "missing_or_invalid" error that's hard to act on. Normalizing here keeps the
+	 * happy path one round-trip.
+	 *
+	 * @param array $elements Element tree (modified in-place).
+	 */
+	private function normalize_element_styles( array &$elements ): void {
+		foreach ( $elements as &$el ) {
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				foreach ( $el['styles'] as $style_key => &$style ) {
+					if ( ! is_array( $style ) ) {
+						continue;
+					}
+
+					if ( ! isset( $style['id'] ) || ! is_string( $style['id'] ) || '' === $style['id'] ) {
+						$style['id'] = (string) $style_key;
+					}
+
+					if ( empty( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
+						continue;
+					}
+
+					foreach ( $style['variants'] as &$variant ) {
+						if ( ! isset( $variant['meta'] ) || ! is_array( $variant['meta'] ) ) {
+							$variant['meta'] = [];
+						}
+						if ( ! isset( $variant['meta']['breakpoint'] ) || ! is_string( $variant['meta']['breakpoint'] ) || '' === $variant['meta']['breakpoint'] ) {
+							$variant['meta']['breakpoint'] = 'desktop';
+						}
+						if ( ! array_key_exists( 'state', $variant['meta'] ) ) {
+							$variant['meta']['state'] = null;
+						}
+					}
+					unset( $variant );
+				}
+				unset( $style );
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->normalize_element_styles( $el['elements'] );
+			}
+		}
+		unset( $el );
+	}
+
+	/**
 	 * Walk the element tree and coerce common style prop mistakes to their correct format.
 	 *
 	 * Coercions applied:
