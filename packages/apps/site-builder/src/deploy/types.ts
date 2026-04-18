@@ -26,6 +26,17 @@ export interface DeployMenuItem {
 	pageId: string;
 }
 
+export interface DeployGlobalClasses {
+	items: Record< string, unknown >;
+	order: string[];
+}
+
+export interface DeployGlobalVariables {
+	data: Record< string, unknown >;
+	watermark: number;
+	version: number;
+}
+
 export interface DeployPayload {
 	pages: DeployPage[];
 	header?: DeployThemePart;
@@ -33,6 +44,8 @@ export interface DeployPayload {
 	error404?: DeployThemePart;
 	singlePost?: DeployThemePart;
 	kitSettings: Record< string, unknown >;
+	globalClasses?: DeployGlobalClasses;
+	globalVariables?: DeployGlobalVariables;
 	menus: {
 		header: DeployMenuItem[];
 		footer: DeployMenuItem[];
