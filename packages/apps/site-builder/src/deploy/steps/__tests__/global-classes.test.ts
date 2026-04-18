@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import { deployGlobalClasses } from '../global-classes';
 import { DEPLOY_DESIGN_SYSTEM_PATH } from '../../types';
+import { deployGlobalClasses } from '../global-classes';
 
 jest.mock( '@wordpress/api-fetch' );
 
@@ -33,8 +33,6 @@ describe( '@elementor/site-builder/deploy/global-classes', () => {
 	it( 'should propagate apiFetch errors to the caller', async () => {
 		jest.mocked( apiFetch ).mockRejectedValueOnce( new Error( 'boom' ) );
 
-		await expect(
-			deployGlobalClasses( { items: {}, order: [] } )
-		).rejects.toThrow( 'boom' );
+		await expect( deployGlobalClasses( { items: {}, order: [] } ) ).rejects.toThrow( 'boom' );
 	} );
 } );

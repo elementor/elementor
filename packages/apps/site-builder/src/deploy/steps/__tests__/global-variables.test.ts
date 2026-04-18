@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import { deployGlobalVariables } from '../global-variables';
 import { DEPLOY_DESIGN_SYSTEM_PATH } from '../../types';
+import { deployGlobalVariables } from '../global-variables';
 
 jest.mock( '@wordpress/api-fetch' );
 
@@ -40,8 +40,6 @@ describe( '@elementor/site-builder/deploy/global-variables', () => {
 	it( 'should propagate apiFetch errors to the caller', async () => {
 		jest.mocked( apiFetch ).mockRejectedValueOnce( new Error( 'boom' ) );
 
-		await expect(
-			deployGlobalVariables( { data: {}, watermark: 0, version: 1 } )
-		).rejects.toThrow( 'boom' );
+		await expect( deployGlobalVariables( { data: {}, watermark: 0, version: 1 } ) ).rejects.toThrow( 'boom' );
 	} );
 } );
