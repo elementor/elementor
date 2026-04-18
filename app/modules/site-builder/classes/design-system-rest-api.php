@@ -137,9 +137,13 @@ class Design_System_REST_API {
 		try {
 			return $cb();
 		} catch ( \Exception $e ) {
+			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
+				'meta' => [ 'trace' => $e->getTraceAsString() ],
+			] );
+
 			return Error_Builder::make( 'design_system_deploy_failed' )
 				->set_status( 500 )
-				->set_message( $e->getMessage() )
+				->set_message( esc_html__( 'Something went wrong', 'elementor' ) )
 				->build();
 		}
 	}

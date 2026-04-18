@@ -1,3 +1,5 @@
+export const DEPLOY_DESIGN_SYSTEM_PATH = '/elementor/v1/site-builder/deploy-design-system';
+
 export interface DeployPage {
 	id: string;
 	title: string;

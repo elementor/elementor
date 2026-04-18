@@ -1,10 +1,10 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import type { DeployGlobalClasses } from '../types';
+import { DEPLOY_DESIGN_SYSTEM_PATH, type DeployGlobalClasses } from '../types';
 
 export async function deployGlobalClasses( globalClasses: DeployGlobalClasses ) {
 	await apiFetch( {
-		path: '/elementor/v1/site-builder/deploy-design-system',
+		path: DEPLOY_DESIGN_SYSTEM_PATH,
 		method: 'POST',
 		data: { globalClasses },
 	} );

@@ -17,6 +17,8 @@ if (!defined('ABSPATH')) {
  */
 class Test_Design_System_Rest_Api extends Elementor_Test_Base
 {
+    private const ROUTE = '/' . Design_System_REST_API::API_NAMESPACE . '/' . Design_System_REST_API::API_BASE;
+
     private $kit;
 
     private $mock_global_classes = [
@@ -73,7 +75,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
     {
         $this->act_as_admin();
 
-        $request = new \WP_REST_Request('POST', '/elementor/v1/site-builder/deploy-design-system');
+        $request = new \WP_REST_Request('POST', self::ROUTE);
         $request->set_body_params(['globalClasses' => $this->mock_global_classes]);
 
         $response = rest_do_request($request);
@@ -93,7 +95,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
     {
         $this->act_as_admin();
 
-        $request = new \WP_REST_Request('POST', '/elementor/v1/site-builder/deploy-design-system');
+        $request = new \WP_REST_Request('POST', self::ROUTE);
         $request->set_body_params(['globalVariables' => $this->mock_global_variables]);
 
         $response = rest_do_request($request);
@@ -109,7 +111,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
     {
         $this->act_as_admin();
 
-        $request = new \WP_REST_Request('POST', '/elementor/v1/site-builder/deploy-design-system');
+        $request = new \WP_REST_Request('POST', self::ROUTE);
         $request->set_body_params([
             'globalClasses' => $this->mock_global_classes,
             'globalVariables' => $this->mock_global_variables,
@@ -130,7 +132,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
     {
         $this->act_as_admin();
 
-        $request = new \WP_REST_Request('POST', '/elementor/v1/site-builder/deploy-design-system');
+        $request = new \WP_REST_Request('POST', self::ROUTE);
 
         $response = rest_do_request($request);
 
@@ -141,7 +143,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
     {
         $this->act_as_subscriber();
 
-        $request = new \WP_REST_Request('POST', '/elementor/v1/site-builder/deploy-design-system');
+        $request = new \WP_REST_Request('POST', self::ROUTE);
         $request->set_body_params(['globalClasses' => $this->mock_global_classes]);
 
         $response = rest_do_request($request);
