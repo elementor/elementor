@@ -5,135 +5,127 @@ use Elementor\App\Modules\SiteBuilder\Classes\Design_System_REST_API;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
-if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
 
-class Module extends BaseModule
-{
+class Module extends BaseModule {
 
-    public function get_name()
-    {
-        return 'site-builder';
-    }
 
-    public function __construct()
-    {
-        parent::__construct();
+	public function get_name() {
+		return 'site-builder';
+	}
 
-        $this->register_experiment();
+	public function __construct() {
+		parent::__construct();
 
-        if (!$this->is_experiment_active()) {
-            return;
-        }
+		$this->register_experiment();
 
-        add_action('elementor/init', [$this, 'on_elementor_init'], 12);
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
 
-        (new Design_System_REST_API())->register_hooks();
-    }
+		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
-    private function register_experiment()
-    {
-        Plugin::$instance->experiments->add_feature([
-            'name' => 'site-builder',
-            'title' => esc_html__('Site Builder', 'elementor'),
-            'description' => esc_html__('Enable Site Builder.', 'elementor'),
-            'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
-            'hidden' => true,
-        ]);
-    }
+		( new Design_System_REST_API() )->register_hooks();
+	}
 
-    private function is_experiment_active(): bool
-    {
-        return Plugin::$instance->experiments->is_feature_active('site-builder');
-    }
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature([
+			'name' => 'site-builder',
+			'title' => esc_html__( 'Site Builder', 'elementor' ),
+			'description' => esc_html__( 'Enable Site Builder.', 'elementor' ),
+			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
+			'hidden' => true,
+		]);
+	}
 
-    public function on_elementor_init()
-    {
-        if (!Plugin::instance()->app->is_current()) {
-            return;
-        }
+	private function is_experiment_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( 'site-builder' );
+	}
 
-        $settings = [
-            'iframeUrl' => $this->get_iframe_url(),
-            'isAdmin' => current_user_can('manage_options'),
-            'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
-        ];
+	public function on_elementor_init() {
+		if ( ! Plugin::instance()->app->is_current() ) {
+			return;
+		}
 
-        $connect_auth = $this->get_connect_auth();
+		$settings = [
+			'iframeUrl' => $this->get_iframe_url(),
+			'isAdmin' => current_user_can( 'manage_options' ),
+			'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
+		];
 
-        if ($connect_auth) {
-            $settings['connectAuth'] = $connect_auth;
-        }
+		$connect_auth = $this->get_connect_auth();
 
-        Plugin::$instance->app->set_settings('site-builder', $settings);
-    }
+		if ( $connect_auth ) {
+			$settings['connectAuth'] = $connect_auth;
+		}
 
-    private function get_elementor_ai_current_context(): array
-    {
-        $choices = get_option('elementor_onboarding_choices', []);
-        $site_about = $choices['site_about'] ?? [];
-        return [
-            'siteTitle' => (string) get_bloginfo('name'),
-            'siteAbout' => $site_about,
-        ];
-    }
+		Plugin::$instance->app->set_settings( 'site-builder', $settings );
+	}
 
-    private function get_iframe_url(): string
-    {
-        if (defined('ELEMENTOR_SITE_BUILDER_IFRAME_URL')) {
-            return ELEMENTOR_SITE_BUILDER_IFRAME_URL;
-        }
+	private function get_elementor_ai_current_context(): array {
+		$choices = get_option( 'elementor_onboarding_choices', [] );
+		$site_about = $choices['site_about'] ?? [];
+		return [
+			'siteTitle' => (string) get_bloginfo( 'name' ),
+			'siteAbout' => $site_about,
+		];
+	}
 
-        return 'https://planner.elementor.com/chat.html';
-    }
+	private function get_iframe_url(): string {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_IFRAME_URL' ) ) {
+			return ELEMENTOR_SITE_BUILDER_IFRAME_URL;
+		}
 
-    private function get_connect_auth(): ?array
-    {
-        if (!Plugin::instance()->common) {
-            return null;
-        }
+		return 'https://planner.elementor.com/chat.html';
+	}
 
-        $connect = Plugin::instance()->common->get_component('connect');
+	private function get_connect_auth(): ?array {
+		if ( ! Plugin::instance()->common ) {
+			return null;
+		}
 
-        if (!$connect) {
-            return null;
-        }
+		$connect = Plugin::instance()->common->get_component( 'connect' );
 
-        $app = $connect->get_app('library');
+		if ( ! $connect ) {
+			return null;
+		}
 
-        if (!$app || !$app->is_connected()) {
-            return null;
-        }
+		$app = $connect->get_app( 'library' );
 
-        $access_token = $app->get('access_token');
-        $client_id = $app->get('client_id');
-        $home_url = trailingslashit(home_url());
-        $site_key = $app->get_site_key();
-        $access_token_secret = $app->get('access_token_secret');
+		if ( ! $app || ! $app->is_connected() ) {
+			return null;
+		}
 
-        $connect_data = [
-            'access-token' => $access_token,
-            'app' => 'library',
-            'client-id' => $client_id,
-            'home-url' => $home_url,
-            'site-key' => $site_key,
-        ];
+		$access_token = $app->get( 'access_token' );
+		$client_id = $app->get( 'client_id' );
+		$home_url = trailingslashit( home_url() );
+		$site_key = $app->get_site_key();
+		$access_token_secret = $app->get( 'access_token_secret' );
 
-        ksort($connect_data);
+		$connect_data = [
+			'access-token' => $access_token,
+			'app' => 'library',
+			'client-id' => $client_id,
+			'home-url' => $home_url,
+			'site-key' => $site_key,
+		];
 
-        $signature = hash_hmac(
-            'sha256',
-            wp_json_encode($connect_data, JSON_NUMERIC_CHECK),
-            $access_token_secret
-        );
+		ksort( $connect_data );
 
-        return [
-            'signature' => $signature,
-            'accessToken' => $access_token,
-            'clientId' => $client_id,
-            'homeUrl' => $home_url,
-            'siteKey' => $site_key,
-        ];
-    }
+		$signature = hash_hmac(
+			'sha256',
+			wp_json_encode( $connect_data, JSON_NUMERIC_CHECK ),
+			$access_token_secret
+		);
+
+		return [
+			'signature' => $signature,
+			'accessToken' => $access_token,
+			'clientId' => $client_id,
+			'homeUrl' => $home_url,
+			'siteKey' => $site_key,
+		];
+	}
 }
