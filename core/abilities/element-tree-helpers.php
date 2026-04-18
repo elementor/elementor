@@ -335,6 +335,33 @@ trait Element_Tree_Helpers {
 				$props['text-align']['value'] = $map[ $props['text-align']['value'] ];
 			}
 		}
+
+		// Coerce opacity: the schema is Union<size|global-size-variable>, so raw numbers
+		// and number-wrapped values both fail validation. Canonical form is
+		// {$$type:"size",value:{size:<n>,unit:"custom"}} — "custom" is the only unit that
+		// accepts a unitless ratio (see size-prop-type.php validate_value).
+		if ( array_key_exists( 'opacity', $props ) ) {
+			$raw = null;
+			if ( is_numeric( $props['opacity'] ) ) {
+				$raw = (float) $props['opacity'];
+			} elseif (
+				is_array( $props['opacity'] ) &&
+				( $props['opacity']['$$type'] ?? '' ) === 'number' &&
+				isset( $props['opacity']['value'] ) &&
+				is_numeric( $props['opacity']['value'] )
+			) {
+				$raw = (float) $props['opacity']['value'];
+			}
+			if ( null !== $raw ) {
+				$props['opacity'] = [
+					'$$type' => 'size',
+					'value'  => [
+						'size' => $raw,
+						'unit' => 'custom',
+					],
+				];
+			}
+		}
 	}
 
 	/**

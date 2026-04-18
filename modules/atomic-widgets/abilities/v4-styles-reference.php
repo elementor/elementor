@@ -198,6 +198,13 @@ class V4_Styles_Reference {
 							'unit' => 'px',
 						],
 					],
+					'opacity (0-1 ratio)'            => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 0.85,
+							'unit' => 'custom',
+						],
+					],
 				],
 			],
 
