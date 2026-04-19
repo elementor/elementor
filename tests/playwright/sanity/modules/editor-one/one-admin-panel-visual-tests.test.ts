@@ -35,7 +35,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await page.waitForLoadState( 'networkidle', { timeout: timeouts.heavyAction } );
+		await page.waitForLoadState( 'load', { timeout: timeouts.heavyAction } );
 
 		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page-hebrew.png', {
 			timeout: timeouts.heavyAction,
