@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { timeouts } from '../../../config/timeouts';
 
 test.describe( 'Editor One Menu Visual Tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -12,8 +13,6 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 	} );
 
 	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
-		test.setTimeout( 120000 );
-
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
@@ -27,41 +26,21 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		}
 
 		await page.goto( '/wp-admin/admin.php?page=elementor', {
-			timeout: 60000,
+			timeout: timeouts.singleTest,
 			waitUntil: 'domcontentloaded',
 		} );
 
-		await wpAdmin.dismissEditorOnePointerIfVisible();
-
-		await page.evaluate( () => {
-			document.querySelectorAll( '.notice, .update-nag, .e-notice, #wp-pointer-0' ).forEach( ( el ) => el.remove() );
-
-			const iframes = document.querySelectorAll( 'iframe' );
-			iframes.forEach( ( iframe ) => {
-				if ( iframe ) {
-					iframe.remove();
-				}
-			} );
-
-			const adminBar = document.getElementById( 'wpadminbar' );
-			const adminMenu = document.getElementById( 'adminmenumain' );
-
-			if ( adminBar ) {
-				adminBar.style.display = 'none';
-			}
-			if ( adminMenu ) {
-				adminMenu.style.display = 'none';
-			}
-		} );
+		await wpAdmin.cleanAdminPageForScreenshot();
 
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await page.waitForLoadState( 'networkidle', { timeout: 30000 } ).catch( () => {} );
+		await page.waitForLoadState( 'networkidle', { timeout: timeouts.heavyAction } );
 
 		await expect.soft( page ).toHaveScreenshot( 'editor-one-quickstart-full-page-hebrew.png', {
-			timeout: 30000,
+			timeout: timeouts.heavyAction,
 			maxDiffPixelRatio: 0.1,
+			mask: [ page.locator( '#wpadminbar' ), page.locator( '#adminmenumain' ) ],
 		} );
 	} );
 } );
