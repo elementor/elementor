@@ -1,21 +1,19 @@
-{% if settings.title is not empty %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-	<{{ settings.tag | e('html_tag') }} 
-		data-interaction-id="{{ interaction_id }}" 
-		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
-		{{ id_attribute }} 
-		{{ settings.attributes | raw }}
-	>
-	{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+<{{ settings.tag | e('html_tag') }}
+	data-interaction-id="{{ interaction_id }}"
+	class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}"
+	{{ id_attribute }}
+	{{ settings.attributes | raw }}
+>
+{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
 
-	{% if settings.link and settings.link.attributes is not empty %}
-		<{{ settings.link.tag | e('html_tag') }} 
-			{{ settings.link.attributes | raw }}
-			class="{{ base_styles['link-base'] }}">
-			{{ settings.title | striptags(allowed_tags) | raw }}
-		</{{ settings.link.tag | e('html_tag') }}>
-	{% else %}
+{% if settings.link and settings.link.attributes is not empty %}
+	<{{ settings.link.tag | e('html_tag') }}
+		{{ settings.link.attributes | raw }}
+		class="{{ base_styles['link-base'] }}">
 		{{ settings.title | striptags(allowed_tags) | raw }}
-	{% endif %}
-	</{{ settings.tag | e('html_tag') }}>
+	</{{ settings.link.tag | e('html_tag') }}>
+{% else %}
+	{{ settings.title | striptags(allowed_tags) | raw }}
 {% endif %}
+</{{ settings.tag | e('html_tag') }}>
