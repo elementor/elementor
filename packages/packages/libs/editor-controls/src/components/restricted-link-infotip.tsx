@@ -43,6 +43,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 		<Alert
 			color="secondary"
 			icon={ <InfoCircleFilledIcon /> }
+			size="small"
 			action={
 				<AlertAction
 					sx={ { width: 'fit-content' } }
