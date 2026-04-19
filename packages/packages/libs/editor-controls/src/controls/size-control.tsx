@@ -114,7 +114,7 @@ export const SizeControl = createControl(
 		const popupState = usePopupState( { variant: 'popover' } );
 
 		const memorizedExternalState = useMemo(
-			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
+			() => ( sizeValue ? createStateFromSizeProp( sizeValue, actualDefaultUnit ) : null ),
 			[ sizeValue, actualDefaultUnit ]
 		);
 
@@ -132,6 +132,14 @@ export const SizeControl = createControl(
 
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
 			extractValueFromState( state, true ) || {};
+
+		const handleBlur = () => {
+			if ( ! extractValueFromState( state ) ) {
+				setState( ( prev ) => ( { ...prev, unit: actualDefaultUnit } ) );
+			}
+
+			restoreValue();
+		};
 
 		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
 			if ( newUnit === 'custom' ) {
@@ -190,7 +198,7 @@ export const SizeControl = createControl(
 					startIcon={ startIcon }
 					handleSizeChange={ handleSizeChange }
 					handleUnitChange={ handleUnitChange }
-					onBlur={ restoreValue }
+					onBlur={ handleBlur }
 					onClick={ onInputClick }
 					popupState={ popupState }
 					min={ min }
