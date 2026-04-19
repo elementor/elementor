@@ -1,8 +1,1 @@
-							<img class="e-image-base " 
-					data-interaction-id="e8e55a1" 
-		 
-		 
-									id="123"
-												src="https://example.com/image.jpg"
-						/>
-			
+			<img class="e-image-base " data-interaction-id="e8e55a1" id="123" src="https://example.com/image.jpg"/>		

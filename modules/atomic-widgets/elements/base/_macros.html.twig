@@ -7,9 +7,9 @@ data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-
 {%- endmacro -%}
 
 {%- macro render_custom_attributes(settings, editor_attributes) -%}
-{% if settings._cssid is defined and settings._cssid is not empty %} id="{{ settings._cssid | e }}"{% endif %}
-{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif %}
-{%- if editor_attributes is defined and editor_attributes is not empty %} {{ editor_attributes | raw }}{% endif %}
+{%- if settings._cssid is defined and settings._cssid is not empty %} id="{{ settings._cssid | e }}"{% endif -%}
+{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+{%- if editor_attributes is defined and editor_attributes is not empty %} {{ editor_attributes | raw }}{% endif -%}
 {%- endmacro -%}
 
 {%- macro render_link_attributes(link) -%}
