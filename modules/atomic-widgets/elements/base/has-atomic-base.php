@@ -251,6 +251,11 @@ trait Has_Atomic_Base {
 		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
 		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+
+		return $this->transform_link_for_render( $parsed );
+	}
+
+	protected function transform_link_for_render( array $parsed ): array {
 		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
 
 		$parsed['link'] = ! empty( $link_attributes ) ? [
