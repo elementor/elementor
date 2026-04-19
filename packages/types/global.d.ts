@@ -40,6 +40,7 @@ interface OnboardingConfig {
 		connect: string;
 		signUp: string;
 		comparePlans?: string;
+		createNewPage?: string;
 		upgradeUrl: string;
 	};
 }
