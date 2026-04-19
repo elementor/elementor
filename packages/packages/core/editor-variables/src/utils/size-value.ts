@@ -6,7 +6,7 @@ import { customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../pro
 const DEFAULT_UNIT = 'px';
 const CUSTOM_SIZE_LABEL = 'fx';
 
-export function renderSizeValue( value: PropValue ) {
+export function sizeValue( value: PropValue ) {
 	if ( sizeVariablePropTypeUtil.isValid( value ) || customSizeVariablePropTypeUtil.isValid( value ) ) {
 		const variable = getVariable( value?.value );
 		return variable?.value;

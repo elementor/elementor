@@ -2,7 +2,7 @@ import { sizePropTypeUtil } from '@elementor/editor-props';
 
 import { getVariable } from '../../hooks/use-prop-variables';
 import { customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../../prop-types';
-import { renderSizeValue } from '../render-size-value';
+import { sizeValue } from '../size-value';
 
 jest.mock( '../../hooks/use-prop-variables' );
 
@@ -23,11 +23,11 @@ describe( 'renderSizeValue', () => {
 		const value = sizeVariablePropTypeUtil.create( SIZE_VARIABLE_ID );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
 		expect( getVariable ).toHaveBeenCalledWith( SIZE_VARIABLE_ID );
-		expect( sizeValue ).toBe( RESOLVED_SIZE );
+		expect( result ).toBe( RESOLVED_SIZE );
 	} );
 
 	it( 'should return the registry value for a custom size variable', () => {
@@ -38,11 +38,11 @@ describe( 'renderSizeValue', () => {
 		const value = customSizeVariablePropTypeUtil.create( CUSTOM_SIZE_VARIABLE_ID );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
 		expect( getVariable ).toHaveBeenCalledWith( CUSTOM_SIZE_VARIABLE_ID );
-		expect( sizeValue ).toBe( RESOLVED_CUSTOM_SIZE );
+		expect( result ).toBe( RESOLVED_CUSTOM_SIZE );
 	} );
 
 	it( 'should concatenate numeric size and unit for a plain size prop', () => {
@@ -50,10 +50,10 @@ describe( 'renderSizeValue', () => {
 		const value = sizePropTypeUtil.create( { size: 16, unit: 'px' } );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
-		expect( sizeValue ).toBe( '16px' );
+		expect( result ).toBe( '16px' );
 	} );
 
 	it( 'should use the custom empty label when unit is custom and size is empty', () => {
@@ -61,10 +61,10 @@ describe( 'renderSizeValue', () => {
 		const value = sizePropTypeUtil.create( { size: '', unit: 'custom' } );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
-		expect( sizeValue ).toBe( CUSTOM_SIZE_EMPTY_LABEL );
+		expect( result ).toBe( CUSTOM_SIZE_EMPTY_LABEL );
 	} );
 
 	it( 'should render custom unit text when unit is custom and size is non-empty', () => {
@@ -73,10 +73,10 @@ describe( 'renderSizeValue', () => {
 		const value = sizePropTypeUtil.create( { size: customExpression, unit: 'custom' } );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
-		expect( sizeValue ).toBe( customExpression );
+		expect( result ).toBe( customExpression );
 	} );
 
 	it( 'should render auto when unit is auto and size is empty', () => {
@@ -84,10 +84,10 @@ describe( 'renderSizeValue', () => {
 		const value = sizePropTypeUtil.create( { size: '', unit: 'auto' } );
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
-		expect( sizeValue ).toBe( 'auto' );
+		expect( result ).toBe( 'auto' );
 	} );
 
 	it( 'should return an empty string when the value is not a size or size variable', () => {
@@ -95,9 +95,9 @@ describe( 'renderSizeValue', () => {
 		const value = { $$type: 'color' as const, value: '#000000' };
 
 		// Act
-		const sizeValue = renderSizeValue( value );
+		const result = sizeValue( value );
 
 		// Assert
-		expect( sizeValue ).toBe( '' );
+		expect( result ).toBe( '' );
 	} );
 } );

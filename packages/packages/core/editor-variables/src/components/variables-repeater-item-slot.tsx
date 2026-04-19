@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-props';
 
 import { getVariable } from '../hooks/use-prop-variables';
-import { renderSizeValue } from '../utils/render-size-value';
+import { sizeValue } from '../utils/size-value';
 import { ColorIndicator } from './ui/color-indicator';
 
 type Props = {
@@ -47,7 +47,7 @@ export const BoxShadowRepeaterLabel = ( { value }: Props ) => {
 	const labels: string[] = [];
 
 	for ( const key of [ 'hOffset', 'vOffset', 'blur', 'spread' ] ) {
-		const rendered = renderSizeValue( shadowPropValue[ key as keyof typeof shadowPropValue ] );
+		const rendered = sizeValue( shadowPropValue[ key as keyof typeof shadowPropValue ] );
 		if ( rendered ) {
 			labels.push( rendered );
 		}

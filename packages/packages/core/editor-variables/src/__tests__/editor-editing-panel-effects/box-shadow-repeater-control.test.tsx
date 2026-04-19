@@ -4,7 +4,7 @@ import { BoxShadowRepeaterControl } from '@elementor/editor-controls';
 import { type BoxShadowPropValue } from '@elementor/editor-props';
 import { screen, waitFor } from '@testing-library/react';
 
-import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil, } from '../../prop-types';
+import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../../prop-types';
 import { registerRepeaterInjections } from '../../repeater-injections';
 import { service } from '../../service';
 
