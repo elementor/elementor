@@ -1,31 +1,52 @@
 import * as React from 'react';
+import { type PropValue } from '@elementor/editor-props';
 import { render, screen } from '@testing-library/react';
 
-import * as usePropVariablesModule from '../../hooks/use-prop-variables';
-import { colorVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../../prop-types';
+import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../../prop-types';
+import { service } from '../../service';
 import {
 	BackgroundRepeaterColorIndicator,
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
+	BoxShadowRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from '../variables-repeater-item-slot';
 
 jest.mock( '../ui/color-indicator', () => ( {
 	ColorIndicator: ( { value }: { value?: string } ) => (
-		<div role="presentation" aria-label="Color indicator" style={ { backgroundColor: value } } />
+		<span role="presentation" aria-label="Color indicator">
+			{ value ?? '' }
+		</span>
 	),
 } ) );
 
-jest.mock( '../../hooks/use-prop-variables', () => ( {
-	useVariable: jest.fn(),
-} ) );
+const plainPx = ( size: number ): PropValue =>
+	( {
+		$$type: 'size',
+		value: { unit: 'px', size },
+	} ) as PropValue;
+
+const createShadowForLabel = ( overrides: Partial< Record< 'hOffset' | 'vOffset' | 'blur' | 'spread', PropValue > > ) =>
+	( {
+		$$type: 'shadow' as const,
+		value: {
+			position: null,
+			hOffset: overrides.hOffset ?? plainPx( 0 ),
+			vOffset: overrides.vOffset ?? plainPx( 0 ),
+			blur: overrides.blur ?? plainPx( 0 ),
+			spread: overrides.spread ?? plainPx( 0 ),
+			color: {
+				$$type: 'color' as const,
+				value: 'rgba(0, 0, 0, 1)',
+			},
+		},
+	} ) as PropValue;
 
 describe( 'Variables Repeater Item Slot Components', () => {
 	const mockVariable = {
-		key: 'test-variable-id',
 		label: 'Test Variable',
 		value: '#FF0000',
-		type: 'color',
+		type: colorVariablePropTypeUtil.key,
 	};
 
 	const mockValue = {
@@ -41,22 +62,10 @@ describe( 'Variables Repeater Item Slot Components', () => {
 		$$type: 'shadow' as const,
 		value: {
 			position: null,
-			hOffset: {
-				$$type: 'size' as const,
-				value: { unit: 'px' as const, size: 0 },
-			},
-			vOffset: {
-				$$type: 'size' as const,
-				value: { unit: 'px' as const, size: 0 },
-			},
-			blur: {
-				$$type: 'size' as const,
-				value: { unit: 'px' as const, size: 0 },
-			},
-			spread: {
-				$$type: 'size' as const,
-				value: { unit: 'px' as const, size: 0 },
-			},
+			hOffset: plainPx( 0 ),
+			vOffset: plainPx( 0 ),
+			blur: plainPx( 0 ),
+			spread: plainPx( 0 ),
 			color: {
 				$$type: colorVariablePropTypeUtil.key,
 				value: 'test-variable-id',
@@ -83,8 +92,25 @@ describe( 'Variables Repeater Item Slot Components', () => {
 		},
 	};
 
+	let variablesSpy: jest.SpiedFunction< typeof service.variables >;
+
 	beforeEach( () => {
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
+		variablesSpy = jest.spyOn( service, 'variables' ).mockReturnValue( {
+			'test-variable-id': {
+				type: colorVariablePropTypeUtil.key,
+				label: mockVariable.label,
+				value: mockVariable.value,
+			},
+			[ SELECTION_SIZE_VARIABLE_ID ]: {
+				type: sizeVariablePropTypeUtil.key,
+				label: 'transition-size',
+				value: '300ms',
+			},
+		} );
+	} );
+
+	afterEach( () => {
+		variablesSpy.mockRestore();
 	} );
 
 	describe( 'RepeaterLabel', () => {
@@ -93,7 +119,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 			render( <BackgroundRepeaterLabel value={ mockValue } /> );
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'test-variable-id' );
 			expect( screen.getByText( 'Test Variable' ) ).toBeInTheDocument();
 		} );
 	} );
@@ -104,55 +129,80 @@ describe( 'Variables Repeater Item Slot Components', () => {
 			render( <BackgroundRepeaterColorIndicator value={ mockValue } /> );
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'test-variable-id' );
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
-			expect( colorIndicator ).toHaveStyle( { backgroundColor: mockVariable.value } );
+			expect( colorIndicator ).toHaveTextContent( mockVariable.value );
 		} );
 	} );
 
 	describe( 'BoxShadowRepeaterColorIndicator', () => {
 		it( 'should render color indicator with the correct variable value for box shadow items', () => {
-			// Arrange.
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
-
 			// Act.
 			render( <BoxShadowRepeaterColorIndicator value={ mockShadowValue } /> );
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'test-variable-id' );
 			const colorIndicator = screen.getByRole( 'presentation', { name: 'Color indicator' } );
-			expect( colorIndicator ).toHaveStyle( { backgroundColor: mockVariable.value } );
+			expect( colorIndicator ).toHaveTextContent( mockVariable.value );
 		} );
+	} );
+
+	describe( 'BoxShadowRepeaterLabel', () => {
+		it.each( [
+			[ 'hOffset', 'e-box-h-sz', sizeVariablePropTypeUtil.key, '1px', 'outset: 1px 0px 0px 0px' ],
+			[ 'vOffset', 'e-box-v-sz', sizeVariablePropTypeUtil.key, '2px', 'outset: 0px 2px 0px 0px' ],
+			[ 'blur', 'e-box-b-sz', sizeVariablePropTypeUtil.key, '3px', 'outset: 0px 0px 3px 0px' ],
+			[ 'spread', 'e-box-s-sz', sizeVariablePropTypeUtil.key, '4px', 'outset: 0px 0px 0px 4px' ],
+			[ 'hOffset', 'e-box-h-cs', customSizeVariablePropTypeUtil.key, '10%', 'outset: 10% 0px 0px 0px' ],
+			[ 'vOffset', 'e-box-v-cs', customSizeVariablePropTypeUtil.key, '11%', 'outset: 0px 11% 0px 0px' ],
+			[ 'blur', 'e-box-b-cs', customSizeVariablePropTypeUtil.key, '12%', 'outset: 0px 0px 12% 0px' ],
+			[ 'spread', 'e-box-s-cs', customSizeVariablePropTypeUtil.key, '13%', 'outset: 0px 0px 0px 13%' ],
+		] as const )(
+			'should render resolved %s for %s variable',
+			( propKey, variableId, variableType, resolvedValue, expectedLabel ) => {
+				// Arrange.
+				variablesSpy.mockReturnValue( {
+					[ variableId ]: {
+						type: variableType,
+						label: 'named-size',
+						value: resolvedValue,
+					},
+				} );
+				const shadow = createShadowForLabel( {
+					[ propKey ]: { $$type: variableType, value: variableId },
+				} );
+
+				// Act.
+				render( <BoxShadowRepeaterLabel value={ shadow } /> );
+
+				// Assert.
+				expect( screen.getByText( expectedLabel ) ).toBeInTheDocument();
+			}
+		);
 	} );
 
 	describe( 'TransitionsSizeVariableLabel', () => {
 		it( 'should render selection key and resolved size variable value when variable exists', () => {
-			// Arrange.
-			const RESOLVED_SIZE_DISPLAY = '300ms';
-			( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( { value: RESOLVED_SIZE_DISPLAY } );
-
 			// Act.
 			render( <TransitionsSizeVariableLabel value={ transitionSelectionSizeWithVariable } /> );
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( SELECTION_SIZE_VARIABLE_ID );
-			expect( screen.getByText( `opacity: ${ RESOLVED_SIZE_DISPLAY }` ) ).toBeInTheDocument();
+			expect( screen.getByText( 'opacity: 300ms' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should render empty label and call useVariable with empty string when prop is not selection-size', () => {
+		it( 'should render empty label when prop is not selection-size', () => {
 			// Arrange.
 			const nonSelectionSizeProp = { $$type: 'string' as const, value: 'not-a-selection-size' };
 
 			// Act.
-			render( <TransitionsSizeVariableLabel value={ nonSelectionSizeProp } /> );
+			render(
+				<div role="region" aria-label="Transition size label test region">
+					<TransitionsSizeVariableLabel value={ nonSelectionSizeProp } />
+				</div>
+			);
 
 			// Assert.
-			expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( '' );
 			expect(
-				screen.getByText( ( _text, element ) => {
-					return element?.tagName.toLowerCase() === 'span' && element.textContent === '';
-				} )
-			).toBeInTheDocument();
+				screen.getByRole( 'region', { name: 'Transition size label test region' } )
+			).toHaveTextContent( '' );
 		} );
 	} );
 } );
