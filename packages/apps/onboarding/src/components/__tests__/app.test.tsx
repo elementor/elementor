@@ -50,6 +50,7 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		signUp: string;
 		comparePlans?: string;
 		createNewPage?: string;
 		upgradeUrl: string;
@@ -101,6 +102,7 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		signUp: 'https://test.local/sign-up',
 		comparePlans: 'https://elementor.com/pricing/?utm_source=onboarding&utm_medium=wp-dash',
 		createNewPage: 'https://test.local/wp-admin/edit.php?action=elementor_new_post&post_type=page',
 		upgradeUrl:
