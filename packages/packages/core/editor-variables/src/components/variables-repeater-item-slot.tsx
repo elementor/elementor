@@ -46,8 +46,8 @@ export const BoxShadowRepeaterColorIndicator = ( { value }: Props ) => {
 };
 
 export const FilterDropShadowIconIndicator = ( { value }: Props ) => {
-	const args = cssFilterFunctionPropUtil.extract( value )?.args;
-	const color = dropShadowFilterPropTypeUtil.extract( args )?.color;
+	const { args } = cssFilterFunctionPropUtil.extract( value ) || {};
+	const { color } = dropShadowFilterPropTypeUtil.extract( args ) || {};
 	const colorVariable = getVariable( color?.value || '' );
 
 	return <ColorIndicator component="span" size="inherit" value={ colorVariable?.value } />;
