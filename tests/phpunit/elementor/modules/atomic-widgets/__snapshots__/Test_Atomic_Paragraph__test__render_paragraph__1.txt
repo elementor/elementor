@@ -1,4 +1,2 @@
-			<p class="e-paragraph-base" data-interaction-id="e8e55a1"  >
-				Type your paragraph here
-	</p>
+			<p class="e-paragraph-base" data-interaction-id="e8e55a1">Type your paragraph here</p>
 		
