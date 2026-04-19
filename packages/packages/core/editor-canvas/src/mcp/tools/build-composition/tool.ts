@@ -36,6 +36,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
 		},
 		handler: async ( params ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
 			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
@@ -134,3 +135,26 @@ Remember: Global classes ensure design consistency and reusability. Don't skip a
 		},
 	} );
 };
+
+function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
+	const doc = new DOMParser().parseFromString( xmlStructure, 'application/xml' );
+	if ( doc.querySelector( 'parsererror' ) ) {
+		throw new Error( 'Failed to parse XML string: ' + doc );
+	}
+	const widgetsCache = getWidgetsCache() ?? {};
+	for ( const node of doc.querySelectorAll( '*' ) ) {
+		const type = node.tagName;
+		const widgetData = widgetsCache[ type ];
+		if ( ! widgetData ) {
+			continue;
+		}
+		if ( widgetData.elType !== 'widget' ) {
+			continue;
+		}
+		if ( ! widgetData.atomic_props_schema ) {
+			throw new Error(
+				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
+			);
+		}
+	}
+}

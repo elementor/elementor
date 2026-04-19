@@ -8,9 +8,8 @@ Your job:
 
 1. Read both files above to understand the full plan and agent assignments
 2. Execute agents in waves according to the dependency diagram:
-   - Wave 1: Launch agents A1-A7 in parallel (use Task tool with subagent_type: "generalPurpose")
+   - Wave 1: Launch agents A1-A7 in parallel (use Task tool with subagent_type: "generalPurpose") - COMPLETED
    - Wave 2: After Wave 1 completes, launch B1 and B2 in parallel
-   - Wave 3: After Wave 2 completes, launch C1
 
 **After EACH wave completes:**
 
@@ -29,9 +28,11 @@ Your job:
 - STOP and report the issue
 - Wait for my instructions
 
-**After all waves complete and approved:**
+**After Wave 2 completes and is approved:**
 
 - Run validation: `cd packages && npm run lint && npm run test`
 - Update review file with final validation results
 
-Start by reading the plan and orchestration files, then begin Wave 1.
+Note: Wave 1 is already completed. Canvas MCP wiring was done during Wave 1.
+
+Start by reading the plan and orchestration files, then begin Wave 2.

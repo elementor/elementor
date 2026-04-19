@@ -11,6 +11,9 @@ export const generatePrompt = () => {
 - [elementor://global-variables] - ONLY use variables defined here
 - [${ AVAILABLE_WIDGETS_URI }/v4]
 
+# TOOL SUUPORT
+This tool support v4 elements only
+
 # WORKFLOW
 1. Check/create global classes via "create-global-class" tool
 2. Build composition (THIS TOOL) - minimal inline styles

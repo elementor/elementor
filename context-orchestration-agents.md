@@ -277,46 +277,10 @@ For each tool, add v3 element detection at the start of the handler:
 
 Use getWidgetsCache from @elementor/editor-elements for version detection.
 
-For configure-element and get-element-config: check elementType parameter
-For build-composition: check each widget type in the xmlStructure before processing
-```
-
----
-
-## Wave 3 - Final (After Wave 2)
-
-This agent runs after Wave 2 completes.
-
----
-
-### Agent C1: Wire Up Canvas MCP
-
-**Scope:** `packages/packages/core/editor-canvas/src/mcp/canvas-mcp.ts` (MODIFY)
-
-**Depends on:** Agents A1, A2, A4, A7
-
-**Prompt:**
-```
-Read the plan file at /Users/eavichay/dev/elementor/context-as-resource.md
-
-Wire up new resources in canvas-mcp.ts
-
-Modify file: packages/packages/core/editor-canvas/src/mcp/canvas-mcp.ts
-
-Requirements:
-1. Import new resource initializers:
-   - initSelectedElementResource from './resources/selected-element-resource'
-   - initEditorStateResource from './resources/editor-state-resource'
-   - initAvailableWidgetsResource from './resources/available-widgets-resource'
-   - initGeneralContextResource from './resources/general-context-resource'
-
-2. Call each initializer in initCanvasMcp function:
-   - initSelectedElementResource(reg)
-   - initEditorStateResource(reg)
-   - initAvailableWidgetsResource(reg)
-   - initGeneralContextResource(reg)
-
-Follow the existing pattern used for initDocumentStructureResource, initWidgetsSchemaResource, etc.
+For configure-element: check elementType parameter directly
+For get-element-config: derive element type from the element using
+  element.model.get('widgetType') || element.model.get('elType'), then check
+For build-composition: parse xmlStructure, extract all widget types, and check each before processing
 ```
 
 ---
@@ -327,9 +291,9 @@ Follow the existing pattern used for initDocumentStructureResource, initWidgetsS
 Wave 1 (parallel): A1, A2, A3, A4, A5, A6, A7
          ↓
 Wave 2 (parallel): B1, B2
-         ↓
-Wave 3: C1
 ```
+
+Note: Canvas MCP wiring (previously Wave 3/C1) was completed during Wave 1.
 
 ## Validation
 
