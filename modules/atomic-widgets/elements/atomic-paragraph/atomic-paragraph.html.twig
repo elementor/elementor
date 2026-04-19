@@ -1,16 +1,14 @@
 {% import 'elementor/macros' as m %}
-{% if settings.paragraph is not empty %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-		<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ interaction_id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-			{% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
-				<{{ settings.link.tag | default('a') | e('html_tag') }}
-					{{- m.render_link_attributes(settings.link) }}
-					class="{{ base_styles['link-base'] }}"
-				>
-						{{ settings.paragraph | striptags(allowed_tags) | raw }}
-				</{{ settings.link.tag | default('a') | e('html_tag') }}>
-			{% else %}
-					{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
-			{% endif %}
-		</{{ settings.tag | e('html_tag') }}>
-{% endif %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ interaction_id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+	{% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
+		<{{ settings.link.tag | default('a') | e('html_tag') }}
+			{{- m.render_link_attributes(settings.link) }}
+			class="{{ base_styles['link-base'] }}"
+		>
+				{{ settings.paragraph | striptags(allowed_tags) | raw }}
+		</{{ settings.link.tag | default('a') | e('html_tag') }}>
+	{% else %}
+			{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
+	{% endif %}
+</{{ settings.tag | e('html_tag') }}>

@@ -1,20 +1,18 @@
 {% import 'elementor/macros' as m %}
-{% if settings.text is not empty %}
-    {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' %}
-    {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-    {% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
-        <{{ settings.link.tag | default('a') | e('html_tag') }}
-            {{- m.render_link_attributes(settings.link) }}
-            class="{{ classes }}"
-            data-interaction-id="{{ interaction_id }}"
-            {{ id_attribute }} {{ settings.attributes | raw }}
-        >
-            {{ settings.text | striptags(allowed_tags) | raw }}
-        </{{ settings.link.tag | default('a') | e('html_tag') }}>
-    {% else %}
-        <button class="{{ classes }}" data-interaction-id="{{ interaction_id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-            {{ settings.text  | striptags(allowed_tags) | raw }}
-        </button>
-    {% endif %}
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' %}
+{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+{% if settings.link is defined and settings.link.href is defined and settings.link.href is not empty %}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }}
+		class="{{ classes }}"
+		data-interaction-id="{{ interaction_id }}"
+		{{ id_attribute }} {{ settings.attributes | raw }}
+	>
+		{{ settings.text | striptags(allowed_tags) | raw }}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{% else %}
+	<button class="{{ classes }}" data-interaction-id="{{ interaction_id }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+		{{ settings.text  | striptags(allowed_tags) | raw }}
+	</button>
 {% endif %}
