@@ -14,10 +14,11 @@ import { t } from '../../utils/translations';
 
 interface LoginProps {
 	onConnect?: () => void;
+	onSignUp?: () => void;
 	onContinueAsGuest?: ( event: React.SyntheticEvent ) => void;
 }
 
-export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
+export function Login( { onConnect, onSignUp, onContinueAsGuest }: LoginProps ) {
 	const theme = useTheme();
 
 	return (
@@ -35,7 +36,7 @@ export function Login( { onConnect, onContinueAsGuest }: LoginProps ) {
 
 				<Stack spacing={ 6 }>
 					<Stack spacing={ 2 } alignItems="center">
-						<SecondaryButton onClick={ onConnect } variant="outlined" color="primary" fullWidth>
+						<SecondaryButton onClick={ onSignUp } variant="outlined" color="primary" fullWidth>
 							<Box display="flex" alignItems="center">
 								<SocialIconWrapper elevation={ 24 }>
 									<GoogleIcon />
