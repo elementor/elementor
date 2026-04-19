@@ -1,6 +1,8 @@
 import { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from '@elementor/editor-controls';
 import {
 	backgroundColorOverlayPropTypeUtil,
+	cssFilterFunctionPropUtil,
+	dropShadowFilterPropTypeUtil,
 	type PropValue,
 	selectionSizePropTypeUtil,
 	shadowPropTypeUtil,
@@ -11,6 +13,9 @@ import {
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
 	BoxShadowRepeaterLabel,
+	FilterDropShadowIconIndicator,
+	FilterDropShadowRepeaterLabel,
+	FilterSingleSizeRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
 import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
@@ -23,11 +28,12 @@ export function registerRepeaterInjections() {
 	backgroundOverlayRepeaterInjections();
 	boxShadowRepeaterInjections();
 	transitionsRepeaterInjections();
+	filterRepeaterInjections();
 }
 
-const backgroundOverlayRepeaterInjections = () => {
+function backgroundOverlayRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-background-icon',
+		id: 'background-color-variables-icon',
 		component: BackgroundRepeaterColorIndicator,
 		condition: ( { value }: Args ) => {
 			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
@@ -35,17 +41,17 @@ const backgroundOverlayRepeaterInjections = () => {
 	} );
 
 	injectIntoRepeaterItemLabel( {
-		id: 'color-variables-label',
+		id: 'background-color-variables-label',
 		component: BackgroundRepeaterLabel,
 		condition: ( { value }: Args ) => {
 			return hasAssignedColorVariable( backgroundColorOverlayPropTypeUtil.extract( value )?.color );
 		},
 	} );
-};
+}
 
-const boxShadowRepeaterInjections = () => {
+function boxShadowRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
-		id: 'color-variables-box-shadow-icon',
+		id: 'box-shadow-color-variables-icon',
 		component: BoxShadowRepeaterColorIndicator,
 		condition: ( { value }: Args ) => {
 			const { color } = shadowPropTypeUtil.extract( value ) || {};
@@ -67,9 +73,9 @@ const boxShadowRepeaterInjections = () => {
 			);
 		},
 	} );
-};
+}
 
-const transitionsRepeaterInjections = () => {
+function transitionsRepeaterInjections() {
 	injectIntoRepeaterItemLabel( {
 		id: 'transition-size-variables-label',
 		component: TransitionsSizeVariableLabel,
@@ -77,9 +83,63 @@ const transitionsRepeaterInjections = () => {
 			return hasAssignedSizeVariable( selectionSizePropTypeUtil.extract( value )?.size );
 		},
 	} );
-};
+}
 
-const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
+function filterRepeaterInjections() {
+	injectIntoRepeaterItemIcon( {
+		id: 'filters-color-variables-icon',
+		component: FilterDropShadowIconIndicator,
+		condition: ( { value }: Args ) => {
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
+			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args;
+			if ( dropShadowFilterPropTypeUtil.isValid( args ) ) {
+				return hasAssignedColorVariable( dropShadowFilterPropTypeUtil.extract( args )?.color );
+			}
+
+			return false;
+		},
+	} );
+
+	injectIntoRepeaterItemLabel( {
+		id: 'filters-drop-shadow-size-variables-label',
+		component: FilterDropShadowRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
+			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args;
+			if ( dropShadowFilterPropTypeUtil.isValid( args ) ) {
+				const { xAxis, yAxis, blur } = dropShadowFilterPropTypeUtil.extract( args ) || {};
+				return (
+					hasAssignedSizeVariable( xAxis ) ||
+					hasAssignedSizeVariable( yAxis ) ||
+					hasAssignedSizeVariable( blur )
+				);
+			}
+
+			return false;
+		},
+	} );
+
+	injectIntoRepeaterItemLabel( {
+		id: 'filters-size-variables-label',
+		component: FilterSingleSizeRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			if ( ! cssFilterFunctionPropUtil.isValid( value ) ) {
+				return false;
+			}
+
+			const args = cssFilterFunctionPropUtil.extract( value )?.args as { value?: { size?: PropValue } };
+			return hasAssignedSizeVariable( args?.value?.size );
+		},
+	} );
+}
+
+function hasAssignedSizeVariable( value: PropValue ): boolean {
 	if ( sizeVariablePropTypeUtil.isValid( value ) ) {
 		return true;
 	}
@@ -89,8 +149,8 @@ const hasAssignedSizeVariable = ( value: PropValue ): boolean => {
 	}
 
 	return false;
-};
+}
 
-const hasAssignedColorVariable = ( value: PropValue ): boolean => {
+function hasAssignedColorVariable( value: PropValue ): boolean {
 	return !! colorVariablePropTypeUtil.isValid( value );
-};
+}
