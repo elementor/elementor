@@ -62,12 +62,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 	const COLOR_VARIABLE_LABEL = 'Test Variable';
 	const COLOR_VARIABLE_VALUE = '#FF0000';
 
-	// const mockVariable = {
-	// 	label: 'Test Variable',
-	// 	value: '#FF0000',
-	// 	type: colorVariablePropTypeUtil.key,
-	// };
-
 	const mockValue = {
 		$$type: 'color',
 		value: {
@@ -115,18 +109,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 	beforeEach( () => {
 		variablesSpy = jest.spyOn( service, 'variables' ).mockReturnValue( {} );
-		// variablesSpy = jest.spyOn( service, 'variables' ).mockReturnValue( {
-		// 	'test-variable-id': {
-		// 		type: colorVariablePropTypeUtil.key,
-		// 		label: mockVariable.label,
-		// 		value: mockVariable.value,
-		// 	},
-		// 	[ SELECTION_SIZE_VARIABLE_ID ]: {
-		// 		type: sizeVariablePropTypeUtil.key,
-		// 		label: 'transition-size',
-		// 		value: '300ms',
-		// 	},
-		// } );
 	} );
 
 	afterEach( () => {
