@@ -49,6 +49,7 @@ export const useFilteredVariables = ( searchValue: string, propTypeKey: string )
 
 	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
 	const searchFilteredVariables = filterBySearch( typeFilteredVariables, searchValue );
+
 	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
 		const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
 		const orderB = b.order ?? Number.MAX_SAFE_INTEGER;

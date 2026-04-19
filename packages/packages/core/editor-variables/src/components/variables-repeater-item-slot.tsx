@@ -8,16 +8,14 @@ import {
 	type PropValue,
 	selectionSizePropTypeUtil,
 	type SelectionSizePropValue,
-	sizePropTypeUtil,
+	shadowPropTypeUtil,
 } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariable } from '../hooks/use-prop-variables';
-import { customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from '../prop-types';
+import { sizeValue } from '../utils/size-value';
 import { ColorIndicator } from './ui/color-indicator';
-
-const DEFAULT_UNIT = 'px';
 
 type Props = {
 	value: PropValue;
@@ -64,7 +62,7 @@ export const FilterSingleSizeRepeaterLabel = ( { value }: Props ) => {
 
 	const args = cssFilterFunction?.args as { value?: { size?: PropValue } };
 	const func = cssFilterFunction?.func?.value ?? '';
-	const rendered = renderedSizeValue( args?.value?.size );
+	const rendered = sizeValue( args?.value?.size );
 
 	return (
 		<>
@@ -77,13 +75,13 @@ export const FilterSingleSizeRepeaterLabel = ( { value }: Props ) => {
 };
 
 export const FilterDropShadowRepeaterLabel = ( { value }: Props ) => {
-	const args = cssFilterFunctionPropUtil.extract( value )?.args;
-
+	const { args } = cssFilterFunctionPropUtil.extract( value ) || {};
 	const { xAxis, yAxis, blur } = dropShadowFilterPropTypeUtil.extract( args ) || {};
 
 	const labels = [];
+
 	for ( const val of [ xAxis, yAxis, blur ] ) {
-		const rendered = renderedSizeValue( val );
+		const rendered = sizeValue( val );
 		if ( rendered ) {
 			labels.push( rendered );
 		}
@@ -96,28 +94,26 @@ export const FilterDropShadowRepeaterLabel = ( { value }: Props ) => {
 	);
 };
 
-function renderedSizeValue( value: PropValue ) {
-	if ( sizeVariablePropTypeUtil.isValid( value ) || customSizeVariablePropTypeUtil.isValid( value ) ) {
-		const variable = getVariable( value?.value );
-		return variable?.value;
+export const BoxShadowRepeaterLabel = ( { value }: Props ) => {
+	const { position, hOffset, vOffset, blur, spread } = shadowPropTypeUtil.extract( value ) || {};
+
+	const labels: string[] = [];
+
+	for ( const val of [ hOffset, vOffset, blur, spread ] ) {
+		const rendered = sizeValue( val );
+		if ( rendered ) {
+			labels.push( rendered );
+		}
 	}
 
-	if ( sizePropTypeUtil.isValid( value ) ) {
-		const { size, unit } = value.value;
+	const positionLabel = position?.value || 'outset';
 
-		if ( 'custom' !== unit ) {
-			return `${ size ?? 0 }${ unit ?? DEFAULT_UNIT }`;
-		}
-
-		if ( ! size ) {
-			return __( 'fx', 'elementor' );
-		}
-
-		return size;
-	}
-
-	return '';
-}
+	return (
+		<Box component="span" style={ { textTransform: 'capitalize' } }>
+			{ positionLabel }: { labels.join( ' ' ) }
+		</Box>
+	);
+};
 
 export const TransitionsSizeVariableLabel = ( { value: prop }: Props ) => {
 	let label = '';
