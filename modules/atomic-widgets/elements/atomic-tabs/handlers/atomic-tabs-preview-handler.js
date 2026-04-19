@@ -26,6 +26,15 @@ register( {
 
 		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
 		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
-			.render( () => refreshTree( element ) );
+			.render( ( event ) => {
+				const childElement = event.detail.element;
+				const nearestTabs = childElement.closest( '[data-e-type="e-tabs"]' );
+
+				if ( nearestTabs !== element ) {
+					return;
+				}
+
+				refreshTree( element );
+			} );
 	},
 } );
