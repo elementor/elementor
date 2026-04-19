@@ -38,7 +38,9 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		signUp: string;
 		comparePlans?: string;
+		createNewPage?: string;
 		upgradeUrl: string;
 	};
 }
