@@ -74,7 +74,7 @@ function getEmptyState(): OnboardingState {
 		isConnected: false,
 		isGuest: false,
 		userName: '',
-		urls: { dashboard: '', editor: '', connect: '', comparePlans: '', upgradeUrl: '' },
+		urls: { dashboard: '', editor: '', connect: '', signUp: '', comparePlans: '', upgradeUrl: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
 	};
@@ -118,6 +118,7 @@ function buildStateFromConfig(
 			dashboard: '',
 			editor: '',
 			connect: '',
+			signUp: '',
 			comparePlans: '',
 			upgradeUrl: '',
 		},
