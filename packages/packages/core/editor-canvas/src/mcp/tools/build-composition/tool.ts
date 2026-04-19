@@ -9,6 +9,7 @@ import {
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
@@ -28,6 +29,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
+			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
 		],
 		outputSchema,
 		modelPreferences: {
