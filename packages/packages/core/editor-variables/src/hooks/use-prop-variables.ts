@@ -23,6 +23,7 @@ export const hasVariable = ( key: string ) => {
 	return getVariables()[ key ] !== undefined;
 };
 
+/** @deprecated Use getVariable instead */
 export const useVariable = ( key: string ) => {
 	return getVariable( key );
 };
