@@ -91,7 +91,7 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
         $this->assertEquals($this->mock_global_classes['order'], $stored['order']);
     }
 
-    public function test_deploy__writes_global_variables_preserving_watermark()
+    public function test_deploy__writes_global_variables_via_repository()
     {
         $this->act_as_admin();
 
@@ -104,7 +104,9 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
 
         $collection = (new Variables_Repository($this->kit))->load();
 
-        $this->assertEquals($this->mock_global_variables['watermark'], $collection->watermark());
+        $this->assertCount(1, $collection->all());
+        $this->assertEquals('Primary', $collection->get('e-gv-1')->label());
+        $this->assertEquals($this->mock_global_variables['watermark'] + 1, $collection->watermark());
     }
 
     public function test_deploy__writes_both_when_payload_includes_both()
@@ -122,10 +124,11 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base
         $this->assertEquals(200, $response->get_status());
 
         $classes_meta = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
-        $variables_meta = $this->kit->get_json_meta(Variables_Constants::VARIABLES_META_KEY);
+        $collection = (new Variables_Repository($this->kit))->load();
 
         $this->assertEquals($this->mock_global_classes['order'], $classes_meta['order']);
-        $this->assertEquals($this->mock_global_variables['data'], $variables_meta['data']);
+        $this->assertCount(count($this->mock_global_variables['data']), $collection->all());
+        $this->assertEquals('Primary', $collection->get('e-gv-1')->label());
     }
 
     public function test_deploy__rejects_empty_payload()

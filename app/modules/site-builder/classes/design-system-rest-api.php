@@ -1,10 +1,9 @@
 <?php
 namespace Elementor\App\Modules\SiteBuilder\Classes;
 
+use Elementor\App\Modules\SiteBuilder\Services\Design_System_Service;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,9 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Design_System_REST_API {
 
-
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'site-builder/deploy-design-system';
+
+	private Design_System_Service $service;
+
+	public function __construct( ?Design_System_Service $service = null ) {
+		$this->service = $service ?? new Design_System_Service();
+	}
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
@@ -80,58 +84,14 @@ class Design_System_REST_API {
 		$results = [];
 
 		if ( ! empty( $global_classes ) ) {
-			$this->write_global_classes( $global_classes );
-			$results['globalClasses'] = [
-				'items' => count( $global_classes['items'] ?? [] ),
-				'order' => count( $global_classes['order'] ?? [] ),
-			];
+			$results['globalClasses'] = $this->service->deploy_global_classes( $global_classes );
 		}
 
 		if ( ! empty( $global_variables ) ) {
-			$this->write_global_variables( $global_variables );
-			$results['globalVariables'] = [
-				'data' => count( $global_variables['data'] ?? [] ),
-				'watermark' => (int) ( $global_variables['watermark'] ?? 0 ),
-				'version' => (int) ( $global_variables['version'] ?? 1 ),
-			];
+			$results['globalVariables'] = $this->service->deploy_global_variables( $global_variables );
 		}
 
 		return Response_Builder::make( $results )->build();
-	}
-
-	private function write_global_classes( array $global_classes ): void {
-		$items = isset( $global_classes['items'] ) && is_array( $global_classes['items'] )
-			? $global_classes['items']
-			: [];
-		$order = isset( $global_classes['order'] ) && is_array( $global_classes['order'] )
-			? array_values( $global_classes['order'] )
-			: [];
-
-		Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
-			->put( $items, $order );
-	}
-
-	private function write_global_variables( array $global_variables ): void {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $kit ) {
-			throw new \Exception( 'No active kit found' );
-		}
-
-		$record = [
-			'data' => isset( $global_variables['data'] ) && is_array( $global_variables['data'] )
-				? $global_variables['data']
-				: [],
-			'watermark' => (int) ( $global_variables['watermark'] ?? 0 ),
-			'version' => (int) ( $global_variables['version'] ?? 1 ),
-		];
-
-		$result = $kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, $record );
-
-		if ( false === $result ) {
-			throw new \Exception( 'Failed to update global variables' );
-		}
 	}
 
 	private function route_wrapper( callable $cb ) {

@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\SiteBuilder;
 
 use Elementor\App\Modules\SiteBuilder\Classes\Design_System_REST_API;
+use Elementor\App\Modules\SiteBuilder\Services\Design_System_Service;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
@@ -27,7 +28,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
-		( new Design_System_REST_API() )->register_hooks();
+		( new Design_System_REST_API( new Design_System_Service() ) )->register_hooks();
 	}
 
 	private function register_experiment() {
