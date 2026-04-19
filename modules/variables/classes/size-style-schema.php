@@ -16,7 +16,6 @@ class Size_Style_Schema {
 	private $blacklist = [
 		'filter',
 		'backdrop-filter',
-		'transform',
 	];
 
 	private function ignore( $css_property ): bool {
