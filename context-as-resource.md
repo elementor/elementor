@@ -97,7 +97,7 @@ The current `Context` type contains:
 | `elementor://context/general`           | New    | `editor-canvas`    | Time, timezone, page info               |
 | `elementor://context/available-widgets` | New    | `editor-canvas`    | All widgets with version                |
 | `elementor://document/structure`        | Extend | `editor-canvas`    | Add element `version`, verify listeners |
-| `elementor://global-variables`          | Extend | `editor-variables` | Add v3 globals + version property       |
+| `elementor://global-variables`          | Extend | `editor-variables` | V4 only + version property              |
 | `elementor://widgets/schema/{type}`     | Extend | `editor-canvas`    | V3 fallback: message + defaults         |
 | `elementor://breakpoints`               | Keep   | `editor-canvas`    | No changes                              |
 | `elementor://context/wp-admin`          | -      | Out of scope       | AI plugin                               |
@@ -123,6 +123,8 @@ The current `Context` type contains:
 **Data to expose:**
 
 - `selectedElementId`, `selectedParentId`, `elementType`, `widgetType`, `elementDisplayName`
+- `version` (`'v4'` or `'v3'` based on `atomic_props_schema` or `model.config.atomic`)
+- `properties` (element settings, excluding defaults/empty values)
 
 ### Phase 2: Editor State Resource
 
@@ -140,7 +142,7 @@ The current `Context` type contains:
 
 - `pageTitle`, `pageContent` (text from preview, **500 char limit for now**), `currentlyViewedScreen`
 
-### Phase 3: Extend Variables Resource (V3 + V4 Unified)
+### Phase 3: Variables Resource (V4 Only)
 
 **Modify:** `packages/packages/core/editor-variables/src/mcp/variables-resource.ts`
 
@@ -148,11 +150,10 @@ The current `Context` type contains:
 
 **Changes:**
 
-- Add `version` property to each entry (`'v4'` or `'v3'`)
-- V4: from `service.variables()` (existing)
-- V3: from `$e.data.get('globals/colors')` and `$e.data.get('globals/typography')`
+- Add `version: 'v4'` property to each entry
+- V4 variables from `service.variables()` (existing)
 
-**Additional listener:** `commandEndEvent('document/save/update')` for v3 globals refresh
+**Note:** V3 globals (`$e.data.get('globals/colors')` and `globals/typography`) were excluded per product decision - V4 variables only.
 
 ### Phase 4: Available Widgets Resource
 
@@ -160,9 +161,13 @@ The current `Context` type contains:
 
 **URI:** `elementor://context/available-widgets`
 
-**Data:** Array of **every widget** with `type` and `version` (`'v4'` if has `atomic_props_schema`, otherwise `'v3'`)
+**Data:** Array of LLM-available widgets with `type`, `version`, and optional `description`
+- `version`: `'v4'` if has `atomic_props_schema`, otherwise `'v3'`
+- `description`: from `meta.description` if available
 
-**Source:** `window.elementor.widgetsCache` - all keys
+**Source:** `window.elementor.widgetsCache` filtered by:
+- Exclude widgets with `meta.llm_support === false`
+- Include only widgets with `atomic_props_schema` OR usable V3 `controls`
 
 ### Phase 5: Widget Schema V3 Fallback
 
@@ -181,7 +186,7 @@ The current `Context` type contains:
 
 **Changes:**
 
-- Add `version` property to each element (`'v4'` or `'v3'` based on `atomic_props_schema`)
+- Add `version` property to each element (`'v4'` if `model.config.atomic` or has `atomic_props_schema`, otherwise `'v3'`)
 - Verify all proper listeners are in place (compare with reference implementation)
 
 **Current listeners:**
@@ -211,6 +216,7 @@ The current `Context` type contains:
 - `today` (gmt, user time)
 - `timezone`, `postId`
 - `currentPage` (pageName, pageTitle, pageUrl)
+- `plugins` (optional) - from `window.angieConfig.plugins` if available
 
 **Update mechanism:**
 
@@ -224,7 +230,7 @@ The current `Context` type contains:
 | Reference Code Location                             | New Elementor Location                                     | Notes                                              |
 | --------------------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------- |
 | `context-mcp-server.ts:addEditorListener`           | `selected-element-resource.ts`, `editor-state-resource.ts` | Split into two resources                           |
-| `context-mcp-server.ts:getElementorGlobals`         | `variables-resource.ts`                                    | Extend existing with v3 globals + version property |
+| `context-mcp-server.ts:getElementorGlobals`         | `variables-resource.ts`                                    | V4 variables only + version property               |
 | `context-mcp-server.ts:subscribeToElementSelection` | `selected-element-resource.ts`                             | Use `listenTo` pattern                             |
 | `context-mcp-server.ts:updateGeneralContext`        | `general-context-resource.ts`                              | Time, timezone, page info                          |
 | `context-mcp-server.ts:getPageTitle`                | Shared util                                                | Already exists partially                           |
@@ -251,11 +257,13 @@ These are WordPress-admin-level or AI plugin UI concerns that don't belong in th
 ## Resolved Decisions
 
 - **URI Naming:** Use `context/*` prefix (not `session/*`)
-- **Globals Strategy:** Unified resource - extend existing `global-variables` to include both v3 and v4 with `version` property
+- **Globals Strategy:** V4 variables only with `version: 'v4'` property (V3 globals excluded per product decision)
 - **Widget Versions:** Expose version info (`v3`/`v4`) based on presence of `atomic_props_schema`
+- **Widget Filtering:** Exclude widgets with `meta.llm_support === false` from available-widgets and widget-schema resources
 - **Widget Description:** Provide `meta?.description` if available (v4 has it, v3 is future ticket)
 - **Package Location:** All context resources in `editor-canvas` module (including `editor-state` and `selected-element`)
 - **Page Content Updates:** Resource with `sendResourceUpdated` notification (debounced)
+- **Plugins Data:** Optional - included in general context only when `window.angieConfig.plugins` is available
 
 ---
 
@@ -276,7 +284,7 @@ These are WordPress-admin-level or AI plugin UI concerns that don't belong in th
 - `editor-canvas/src/mcp/tools/configure-element/tool.ts` - v3 element detection, return error
 - `editor-canvas/src/mcp/tools/get-element-config/tool.ts` - v3 element detection, return error
 - `editor-canvas/src/mcp/tools/build-composition/tool.ts` - v3 element detection, return error
-- `editor-variables/src/mcp/variables-resource.ts` - add v3 globals + version property
+- `editor-variables/src/mcp/variables-resource.ts` - add version property (V4 only)
 - `elementor-v3-mcp/src/resources.ts` - remove duplicate page-overview resource
 
 ### Reference (~/dev/tmp-src/elementor-ai)
