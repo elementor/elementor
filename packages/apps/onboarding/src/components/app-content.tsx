@@ -459,7 +459,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<Login onConnect={ handleConnect } onSignUp={ handleSignUp } onContinueAsGuest={ handleContinueAsGuest } />
+				<Login
+					onConnect={ handleConnect }
+					onSignUp={ handleSignUp }
+					onContinueAsGuest={ handleContinueAsGuest }
+				/>
 			</BaseLayout>
 		);
 	}
