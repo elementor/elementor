@@ -5,6 +5,8 @@ use Elementor\App\Modules\SiteBuilder\Services\Design_System_Service;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Plugin;
+use WP_REST_Request;
+use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -22,90 +24,98 @@ class Design_System_REST_API {
 	}
 
 	public function register_hooks() {
-		add_action( 'rest_api_init', fn() => $this->register_routes() );
+		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
-	private function register_routes() {
-		register_rest_route(self::API_NAMESPACE, '/' . self::API_BASE, [
+	public function register_routes() {
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->deploy( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => [
-					'globalClasses' => [
-						'type' => 'object',
-						'required' => false,
-						'properties' => [
-							'items' => [
-								'type' => 'object',
-								'required' => true,
-							],
-							'order' => [
-								'type' => 'array',
-								'required' => true,
-								'items' => [ 'type' => 'string' ],
-							],
-						],
-					],
-					'globalVariables' => [
-						'type' => 'object',
-						'required' => false,
-						'properties' => [
-							'data' => [
-								'type' => 'object',
-								'required' => true,
-							],
-							'watermark' => [
-								'type' => 'integer',
-								'required' => false,
-							],
-							'version' => [
-								'type' => 'integer',
-								'required' => false,
-							],
-						],
-					],
-				],
+				'methods' => WP_REST_Server::CREATABLE,
+				'callback' => [ $this, 'deploy' ],
+				'permission_callback' => [ $this, 'check_permissions' ],
+				'args' => $this->get_endpoint_args(),
 			],
-		]);
+		] );
 	}
 
-	private function deploy( \WP_REST_Request $request ) {
+	public function check_permissions() {
+		return current_user_can( 'manage_options' );
+	}
+
+	public function deploy( WP_REST_Request $request ) {
 		$global_classes = $request->get_param( 'globalClasses' );
 		$global_variables = $request->get_param( 'globalVariables' );
 
 		if ( empty( $global_classes ) && empty( $global_variables ) ) {
 			return Error_Builder::make( 'invalid_payload' )
 				->set_status( 400 )
-				->set_message( 'Either globalClasses or globalVariables must be provided.' )
+				->set_message( esc_html__( 'Either globalClasses or globalVariables must be provided.', 'elementor' ) )
 				->build();
 		}
 
-		$results = [];
+		try {
+			$results = [];
 
-		if ( ! empty( $global_classes ) ) {
-			$results['globalClasses'] = $this->service->deploy_global_classes( $global_classes );
+			if ( ! empty( $global_classes ) ) {
+				$results['globalClasses'] = $this->service->deploy_global_classes( $global_classes );
+			}
+
+			if ( ! empty( $global_variables ) ) {
+				$results['globalVariables'] = $this->service->deploy_global_variables( $global_variables );
+			}
+
+			return Response_Builder::make( $results )->build();
+		} catch ( \Exception $e ) {
+			return $this->handle_unexpected_error( $e );
 		}
-
-		if ( ! empty( $global_variables ) ) {
-			$results['globalVariables'] = $this->service->deploy_global_variables( $global_variables );
-		}
-
-		return Response_Builder::make( $results )->build();
 	}
 
-	private function route_wrapper( callable $cb ) {
-		try {
-			return $cb();
-		} catch ( \Exception $e ) {
-			Plugin::$instance->logger->get_logger()->error($e->getMessage(), [
-				'meta' => [ 'trace' => $e->getTraceAsString() ],
-			]);
+	private function handle_unexpected_error( \Exception $e ) {
+		Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
+			'meta' => [ 'trace' => $e->getTraceAsString() ],
+		] );
 
-			return Error_Builder::make( 'design_system_deploy_failed' )
-				->set_status( 500 )
-				->set_message( esc_html__( 'Something went wrong', 'elementor' ) )
-				->build();
-		}
+		return Error_Builder::make( 'design_system_deploy_failed' )
+			->set_status( 500 )
+			->set_message( esc_html__( 'Something went wrong', 'elementor' ) )
+			->build();
+	}
+
+	private function get_endpoint_args() {
+		return [
+			'globalClasses' => [
+				'type' => 'object',
+				'required' => false,
+				'properties' => [
+					'items' => [
+						'type' => 'object',
+						'required' => true,
+					],
+					'order' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [ 'type' => 'string' ],
+					],
+				],
+			],
+			'globalVariables' => [
+				'type' => 'object',
+				'required' => false,
+				'properties' => [
+					'data' => [
+						'type' => 'object',
+						'required' => true,
+					],
+					'watermark' => [
+						'type' => 'integer',
+						'required' => false,
+					],
+					'version' => [
+						'type' => 'integer',
+						'required' => false,
+					],
+				],
+			],
+		];
 	}
 }
