@@ -200,9 +200,9 @@ describe( 'Variables Repeater Item Slot Components', () => {
 			);
 
 			// Assert.
-			expect(
-				screen.getByRole( 'region', { name: 'Transition size label test region' } )
-			).toHaveTextContent( '' );
+			expect( screen.getByRole( 'region', { name: 'Transition size label test region' } ) ).toHaveTextContent(
+				''
+			);
 		} );
 	} );
 } );
