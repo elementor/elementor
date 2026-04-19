@@ -31,13 +31,9 @@ register( {
 				const nearestTabs = childElement.closest( '[data-e-type="e-tabs"]' );
 
 				if ( nearestTabs !== element ) {
-					// eslint-disable-next-line no-console
-					console.debug( `[ED-23464] refreshTree SKIPPED for ${ element.dataset.id } — child ${ childElement.dataset?.id } belongs to nested tabs ${ nearestTabs?.dataset?.id }` );
 					return;
 				}
 
-				// eslint-disable-next-line no-console
-				console.debug( `[ED-23464] refreshTree CALLED for ${ element.dataset.id } — direct child ${ childElement.dataset?.id }` );
 				refreshTree( element );
 			} );
 	},
