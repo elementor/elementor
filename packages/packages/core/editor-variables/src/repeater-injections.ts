@@ -10,6 +10,7 @@ import {
 	BackgroundRepeaterColorIndicator,
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
+	BoxShadowRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
 import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
@@ -47,7 +48,23 @@ const boxShadowRepeaterInjections = () => {
 		id: 'color-variables-box-shadow-icon',
 		component: BoxShadowRepeaterColorIndicator,
 		condition: ( { value }: Args ) => {
-			return hasAssignedColorVariable( shadowPropTypeUtil.extract( value )?.color );
+			const { color } = shadowPropTypeUtil.extract( value ) || {};
+			return hasAssignedColorVariable( color );
+		},
+	} );
+
+	injectIntoRepeaterItemLabel( {
+		id: 'color-variables-box-shadow-label',
+		component: BoxShadowRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			const { hOffset, vOffset, blur, spread } = shadowPropTypeUtil.extract( value ) || {};
+
+			return (
+				hasAssignedSizeVariable( hOffset ) ||
+				hasAssignedSizeVariable( vOffset ) ||
+				hasAssignedSizeVariable( blur ) ||
+				hasAssignedSizeVariable( spread )
+			);
 		},
 	} );
 };
