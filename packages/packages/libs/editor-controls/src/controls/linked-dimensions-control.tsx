@@ -110,7 +110,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, min }: Prop
 
 	const effectiveDimensionsPlaceholder =
 		dimensionsPlaceholder ??
-		( sizePropTypeUtil.extract( masterPlaceholder )
+		( ! isLinked
 			? {
 					'block-start': masterPlaceholder,
 					'block-end': masterPlaceholder,
@@ -203,7 +203,7 @@ const Control = ( {
 	ariaLabel: string;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
-	placeholder?: SizePropValue[ 'value' ];
+	placeholder?: SizePropValue[ 'value' ] | string;
 	anchorRef: RefObject< HTMLDivElement >;
 	min?: number;
 } ) => {
