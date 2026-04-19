@@ -86,7 +86,10 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		} );
 	}
 
-	onToolRegistered( tool: McpToolDescriptor ): void {
+	onToolRegistered(
+		tool: McpToolDescriptor,
+		extraData?: { resources: string[]; requiredResources: string[] }
+	): void {
 		let jsonSchema: object;
 		try {
 			jsonSchema = zodToJsonSchema( z.object( tool.inputSchema as ZodRawShape ) );
@@ -97,9 +100,20 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		if ( this.registeredToolNames.has( tool.name ) ) {
 			this.ctx.unregisterTool( tool.name );
 		}
+
+		let resourcesDescription = '';
+		if ( extraData ) {
+			if ( extraData.resources?.length > 0 ) {
+				resourcesDescription += `#Resources:\n${ extraData.resources?.join( '\n' ) }\n\n`;
+			}
+			if ( extraData.requiredResources?.length > 0 ) {
+				resourcesDescription += `#Required Resources:\n${ extraData.requiredResources?.join( '\n' ) }\n\n`;
+			}
+			resourcesDescription += `To read resources, use editor-resource-getter tool.\n\n`;
+		}
 		this.ctx.registerTool( {
 			name: tool.name,
-			description: tool.description,
+			description: `${ resourcesDescription }${ tool.description }`,
 			inputSchema: jsonSchema,
 			execute: tool.execute,
 		} );

@@ -27,7 +27,10 @@ export interface IMcpRegistrationAdapter {
 	/**
 	 * Called once per tool when addTool() is invoked.
 	 */
-	onToolRegistered: ( tool: McpToolDescriptor ) => void;
+	onToolRegistered: (
+		tool: McpToolDescriptor,
+		extraData?: { resources: string[]; requiredResources: string[] }
+	) => void;
 
 	/**
 	 * Called once per resource when resource() is invoked.

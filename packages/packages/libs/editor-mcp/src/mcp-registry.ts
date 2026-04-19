@@ -1,6 +1,7 @@
 import { z, type z3 } from '@elementor/schema';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
+import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
@@ -20,7 +21,7 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 const isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 const registrationAdapters: IMcpRegistrationAdapter[] = [];
-const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >[ 0 ][] = [];
+const bufferedTools: Parameters< IMcpRegistrationAdapter[ 'onToolRegistered' ] >[] = [];
 const bufferedResources: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] >[] = [];
 
 let resolveReady!: () => void;
@@ -32,7 +33,7 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 	registrationAdapters.push( adapter );
 	for ( const tool of bufferedTools ) {
 		try {
-			adapter.onToolRegistered( tool );
+			adapter.onToolRegistered( tool[ 0 ], tool[ 1 ] );
 		} catch {
 			// exit quietly
 		}
@@ -107,9 +108,16 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 				capabilities: { resources: { subscribe: true } },
 			}
 		);
+		if ( !! options?.instructions ) {
+			callAdapters( ( adapter ) =>
+				adapter.onResourceRegistered( `${ mcpName }`, { uriTemplate: new UriTemplate( mcpName ) }, () =>
+					Promise.resolve( { contents: [ { text: options.instructions ?? '' } ] } )
+				)
+			);
+		}
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const { addTool } = createToolRegistry( mcpServer );
+	const { addTool } = createToolRegistry( mcpServer, mcpName );
 	return {
 		waitForReady: () => readyPromise,
 		// @ts-expect-error: TS is unable to infer the type here
@@ -186,7 +194,7 @@ type ToolRegistrationOptions<
 	modelPreferences?: AngieModelPreferences;
 };
 
-function createToolRegistry( server: McpServer ) {
+function createToolRegistry( server: McpServer, serverName: string ) {
 	function addTool<
 		T extends undefined | z.ZodRawShape = undefined,
 		O extends undefined | z.ZodRawShape = undefined,
@@ -267,8 +275,12 @@ function createToolRegistry( server: McpServer ) {
 					)
 				),
 		};
-		bufferedTools.push( toolDescriptor );
-		callAdapters( ( adapter ) => adapter.onToolRegistered( toolDescriptor ) );
+		const extraData = {
+			resources: [ `Server resource name: ${ serverName }, Required to fetch!` ],
+			requiredResources: opts.requiredResources?.map( ( resource ) => resource.uri ) ?? [],
+		};
+		bufferedTools.push( [ toolDescriptor, extraData ] );
+		callAdapters( ( adapter ) => adapter.onToolRegistered( toolDescriptor, extraData ) );
 		if ( isMcpRegistrationActivated ) {
 			server.sendToolListChanged();
 		}
