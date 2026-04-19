@@ -33,7 +33,12 @@ describe( 'store', () => {
 			);
 
 			// Act
-			dispatch( slice.actions.mergeExistingClasses( { items: { 'new-class': newClass } } ) );
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { 'new-class': newClass },
+					frontend: { 'new-class': newClass },
+				} )
+			);
 
 			// Assert
 			const data = selectData( getState() );
@@ -75,7 +80,12 @@ describe( 'store', () => {
 			);
 
 			// Act
-			dispatch( slice.actions.mergeExistingClasses( { items: { existing: duplicateClass } } ) );
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { existing: duplicateClass },
+					frontend: { existing: duplicateClass },
+				} )
+			);
 
 			// Assert
 			const data = selectData( getState() );
@@ -96,7 +106,12 @@ describe( 'store', () => {
 			);
 
 			// Act
-			dispatch( slice.actions.mergeExistingClasses( { items: { existing: existingClass } } ) );
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { existing: existingClass },
+					frontend: { existing: existingClass },
+				} )
+			);
 
 			// Assert
 			const data = selectData( getState() );
@@ -125,7 +140,12 @@ describe( 'store', () => {
 			expect( selectIsDirty( getState() ) ).toBe( true );
 
 			// Act
-			dispatch( slice.actions.mergeExistingClasses( { items: { new: newClass } } ) );
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { new: newClass },
+					frontend: { new: newClass },
+				} )
+			);
 
 			// Assert - dirty state should still be true because we added a class
 			expect( selectIsDirty( getState() ) ).toBe( true );

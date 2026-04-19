@@ -47,7 +47,12 @@ describe( 'saveGlobalClasses', () => {
 			} )
 		);
 
-		dispatch( slice.actions.mergeExistingClasses( { items: { 'lazy-class': lazyLoadedClass } } ) );
+		dispatch(
+			slice.actions.mergeExistingClasses( {
+				preview: { 'lazy-class': lazyLoadedClass },
+				frontend: { 'lazy-class': lazyLoadedClass },
+			} )
+		);
 
 		// Act
 		await saveGlobalClasses( { context: 'frontend' } );
@@ -138,7 +143,12 @@ describe( 'saveGlobalClasses', () => {
 			} )
 		);
 
-		dispatch( slice.actions.mergeExistingClasses( { items: { lazy: lazyClass } } ) );
+		dispatch(
+			slice.actions.mergeExistingClasses( {
+				preview: { lazy: lazyClass },
+				frontend: { lazy: lazyClass },
+			} )
+		);
 
 		dispatch( slice.actions.add( createdClass ) );
 
