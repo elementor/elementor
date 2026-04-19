@@ -120,6 +120,85 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
 	} );
 
+	test( 'Nested inner tab render should NOT trigger refreshTree on outer tabs', async () => {
+		// Arrange
+		const outerTabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const outerRoot = getTabsRoot( outerTabsId );
+		const outerTabItems = getMenuTabs( outerRoot );
+		const secondTab = outerTabItems.nth( 1 );
+
+		await secondTab.dispatchEvent( 'click' );
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+
+		const tabContentIds = await getIdsByType( outerRoot, tabContentType );
+		const secondTabContentContainerId = tabContentIds[ 1 ];
+		expect( secondTabContentContainerId ).toBeDefined();
+
+		const outerSelector = editor.getWidgetSelector( outerTabsId );
+
+		// Capture outer element's Alpine data stack reference BEFORE nesting
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.getPreviewFrame().evaluate( ( selector: string ) => {
+			const outer = document.querySelector( selector );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			( window as any ).__testAlpineDataStack = ( outer as any )._x_dataStack;
+		}, outerSelector );
+
+		// Act - Add inner tabs (child render events bubble to outer)
+		await editor.addElement( { elType: tabsType }, secondTabContentContainerId as string );
+
+		// Wait for Alpine.nextTick to complete
+		await editor.page.waitForTimeout( 500 );
+
+		// Assert - Outer element's Alpine data stack should be the SAME reference
+		// If refreshTree was called, destroyTree+initTree would create a new _x_dataStack array
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const wasOuterRefreshed = await editor.getPreviewFrame().evaluate( ( selector: string ) => {
+			const outer = document.querySelector( selector );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return ( outer as any )._x_dataStack !== ( window as any ).__testAlpineDataStack;
+		}, outerSelector );
+
+		expect( wasOuterRefreshed ).toBe( false );
+	} );
+
+	test( 'Direct child tab render should trigger refreshTree on outer tabs', async () => {
+		// Arrange
+		const outerTabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const outerRoot = getTabsRoot( outerTabsId );
+
+		await editor.selectElement( outerTabsId );
+		await editor.waitForPanelToLoad();
+
+		const menuItemsField = await openMenuItemsControl();
+		const outerSelector = editor.getWidgetSelector( outerTabsId );
+
+		// Capture outer element's Alpine data stack reference BEFORE adding a direct tab
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.getPreviewFrame().evaluate( ( selector: string ) => {
+			const outer = document.querySelector( selector );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			( window as any ).__testAlpineDataStack = ( outer as any )._x_dataStack;
+		}, outerSelector );
+
+		// Act - Add a direct child tab via the panel control
+		await menuItemsField.getByRole( 'button', { name: 'Add item' } ).click();
+		await expect.poll( () => getIdsByType( outerRoot, tabType ) ).toHaveLength( 4 );
+
+		// Wait for Alpine.nextTick to complete
+		await editor.page.waitForTimeout( 500 );
+
+		// Assert - Outer element's Alpine data stack SHOULD change (refreshTree was called for direct child)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const wasOuterRefreshed = await editor.getPreviewFrame().evaluate( ( selector: string ) => {
+			const outer = document.querySelector( selector );
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return ( outer as any )._x_dataStack !== ( window as any ).__testAlpineDataStack;
+		}, outerSelector );
+
+		expect( wasOuterRefreshed ).toBe( true );
+	} );
+
 	test( 'Add a tab via tabs control', async () => {
 		// Arrange
 		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
