@@ -6,11 +6,13 @@ jest.mock( '@elementor/alpinejs', () => ( {
 	Alpine: {
 		data: jest.fn(),
 		destroyTree: jest.fn(),
+		initTree: jest.fn(),
+		nextTick: jest.fn( ( callback ) => callback() ),
 	},
 } ), { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
-const SELECTOR = '[data-action-link], :has(> [data-action-link])';
+const SELECTOR = '[data-action-link], :has([data-action-link])';
 const ATOMIC_FORM_HANDLER_ID = 'atomic-form-submit-handler';
 const REGISTRATIONS = [ 'action-link', 'form-prevention' ];
 
@@ -35,6 +37,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		const registration = getRegistration( HANDLER_ID );
 
 		expect( registration ).toBeDefined();
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
 
 		return {
 			registration,
@@ -55,7 +58,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		global.elementorFrontend = { utils: { urlActions: { runAction } } };
 	} );
 
-	it( 'registers link action handler by selector', async () => {
+	it( 'registers link and form handlers by selector', async () => {
 		// Arrange
 		const { registration, registerBySelector, getRegistration } = await importHandlers();
 
@@ -66,7 +69,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		expect( registerBySelector ).toHaveBeenCalledTimes( REGISTRATIONS.length );
 		expect( { id, selector } ).toEqual( { id: HANDLER_ID, selector: SELECTOR } );
 		expect( typeof callback ).toBe( 'function' );
-		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ) ).toBeDefined();
+		expect( getRegistration( ATOMIC_FORM_HANDLER_ID ).selector ).toBe( '[data-element_type="e-form"]' );
 	} );
 
 	it( 'does not attach listeners when action link is missing', async () => {
@@ -80,7 +83,6 @@ describe( 'Atomic Widgets frontend handlers', () => {
 
 		element.dispatchEvent( event );
 
-		// Assert
 		expect( cleanup ).toBeUndefined();
 		expect( event.defaultPrevented ).toBe( false );
 	} );
@@ -369,7 +371,7 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		} );
 	} );
 
-	it( 'adds non-whitelisted editor link actions', async () => {
+	it( 'adds non-whitelisted editor link actions via filter', async () => {
 		// Arrange
 		global.elementor = {};
 		global.elementorFrontend = { ...global.elementorFrontend, hooks: { applyFilters: () => [ BLOCKED_ACTION ] } };
