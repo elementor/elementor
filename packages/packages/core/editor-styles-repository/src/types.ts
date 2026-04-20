@@ -24,6 +24,7 @@ export type UpdatePropsActionPayload = {
 	id: StyleDefinitionID;
 	meta: StyleDefinitionVariant[ 'meta' ];
 	props: Props;
+	mode?: 'merge' | 'replace';
 };
 
 export type UpdateCustomCssActionPayload = {

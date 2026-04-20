@@ -79,6 +79,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
+					mode: args.mode,
 				} )
 			);
 		},

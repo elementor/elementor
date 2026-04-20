@@ -121,7 +121,7 @@ export function useCreateAndApplyClass() {
 				},
 				redo: (
 					{ classLabel }: CreateAndApplyClassPayload,
-					{ createdId }: CreateAndApplyClassUndoData,
+					{ createdId }: CreateAndApplyClassUndoData
 				): CreateAndApplyClassUndoData => {
 					const prevActiveId = activeId;
 
