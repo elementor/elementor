@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
-
 	public function get_name() {
 		return 'site-builder';
 	}
