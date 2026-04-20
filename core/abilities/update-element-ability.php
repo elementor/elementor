@@ -63,6 +63,7 @@ class Update_Element_Ability extends Abstract_Ability {
 						'styles: merged by style ID into existing element styles. Send the full style entry for each ID you want to set.',
 						'Returns success:false (does not throw) if element_id is not found in the tree.',
 						'At least one of settings or styles must be provided.',
+						'AUTO-FIXES: after the patch, runs normalize_element_styles + auto_mirror_style_keys_into_classes on the full tree. Any style IDs you added via the styles patch are mirrored into settings.classes.value automatically — no manual key list required.',
 					] ),
 					'readonly'    => false,
 					'destructive' => false,
@@ -108,13 +109,20 @@ class Update_Element_Ability extends Abstract_Ability {
 			];
 		}
 
-		// Coerce common style prop mistakes (flex, text-align) before validating.
-		$this->coerce_style_props( $elements );
+		// Run the same normalize pipeline as build-page so styles added via the patch
+		// are auto-mirrored into settings.classes.value and breakpoint/label defaults filled.
+		$this->normalize_element_styles( $elements );
+		$this->auto_mirror_style_keys_into_classes( $elements );
 
+		// Collect all errors in one pass.
+		$errors = [];
+		$this->coerce_style_props( $elements );
 		$style_errors = $this->validate_element_styles( $elements );
-		if ( ! empty( $style_errors ) ) {
+		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
+
+		if ( ! empty( $all_errors ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \InvalidArgumentException( 'Style prop validation failed: ' . implode( '; ', $style_errors ) );
+			throw new \InvalidArgumentException( 'update-element validation failed:' . "\n - " . implode( "\n - ", $all_errors ) );
 		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );

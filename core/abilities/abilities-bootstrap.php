@@ -24,6 +24,7 @@ class Abilities_Bootstrap {
 		( new Build_Page_Ability() )->register_hooks();
 		( new Validate_Elements_Ability() )->register_hooks();
 		( new Make_Widget_Ability() )->register_hooks();
+		( new Make_Layout_Ability() )->register_hooks();
 		( new Diff_Tree_Ability() )->register_hooks();
 		( new Create_Post_Ability() )->register_hooks();
 		( new Preview_Render_Ability() )->register_hooks();

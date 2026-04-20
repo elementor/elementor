@@ -137,10 +137,23 @@ class Append_Elements_Ability extends Abstract_Ability {
 		}
 
 		$this->resolve_class_labels( $elements, $label_to_id );
+		$this->normalize_element_styles( $elements );
+		$this->auto_mirror_style_keys_into_classes( $elements );
 
 		$local_ids = [];
 		$this->collect_local_style_ids( $elements, $local_ids );
-		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
+
+		$errors = [];
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
+		$this->coerce_style_props( $elements );
+		$this->validate_widget_settings( $elements, $errors );
+		$style_errors = $this->validate_element_styles( $elements );
+		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
+
+		if ( ! empty( $all_errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \InvalidArgumentException( 'append-elements validation failed:' . "\n - " . implode( "\n - ", $all_errors ) );
+		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );
 

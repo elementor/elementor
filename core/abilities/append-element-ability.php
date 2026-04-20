@@ -60,10 +60,12 @@ class Append_Element_Ability extends Abstract_Ability {
 					'instructions' => implode( "\n", [
 						'Appends one element to a post without fetching the full content first.',
 						'Use this for simple insertions instead of get-post-content + set-post-content.',
-						'For building a complete page from scratch, use set-post-content with the full element tree — it is one write vs N reads + N writes when called in a loop.',
+						'For building a complete page from scratch, use elementor/build-page with the full element tree — it is one write vs N reads + N writes when called in a loop.',
 						'parent_id: ID of the container element to append into. Omit or pass null to append at root level.',
 						'The element id must be unique within the document — generate one (e.g. a short random string).',
 						'Returns success:false (does not throw) if parent_id is provided but not found in the tree.',
+						'AUTO-FIXES: runs the same normalize pipeline as build-page — style.id, style.label, breakpoint defaults, and auto-mirror of element.styles keys into settings.classes.value. Pass styles in element.styles and they will be attached automatically.',
+						'VALIDATION: all structural + widget-prop + style-prop errors are batched and thrown together — same as build-page.',
 					] ),
 					'readonly'    => false,
 					'destructive' => false,
@@ -117,10 +119,23 @@ class Append_Element_Ability extends Abstract_Ability {
 		}
 
 		$this->resolve_class_labels( $elements, $label_to_id );
+		$this->normalize_element_styles( $elements );
+		$this->auto_mirror_style_keys_into_classes( $elements );
 
 		$local_ids = [];
 		$this->collect_local_style_ids( $elements, $local_ids );
-		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
+
+		$errors = [];
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
+		$this->coerce_style_props( $elements );
+		$this->validate_widget_settings( $elements, $errors );
+		$style_errors = $this->validate_element_styles( $elements );
+		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
+
+		if ( ! empty( $all_errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \InvalidArgumentException( 'append-element validation failed:' . "\n - " . implode( "\n - ", $all_errors ) );
+		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );
 
