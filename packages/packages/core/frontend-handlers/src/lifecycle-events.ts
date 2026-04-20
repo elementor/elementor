@@ -73,7 +73,7 @@ export const onElementRender = ( {
 		const settings = element.getAttribute( 'data-e-settings' );
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
-			render: ( callback: () => void ) => {
+			render: ( callback: ( event: Event ) => void ) => {
 				const listener = ( event: Event ) => {
 					const { elementType: childType } = ( event as CustomEvent ).detail;
 
@@ -81,7 +81,7 @@ export const onElementRender = ( {
 						return;
 					}
 
-					callback();
+					callback( event );
 				};
 
 				element.addEventListener( ELEMENT_RENDERED_EVENT_NAME, listener, { signal: controller.signal } );
