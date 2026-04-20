@@ -65,7 +65,7 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			await editor.page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ).getByRole( 'checkbox' ).click();
 			await expect( async () => {
 				await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
-			} ).toPass( { timeout: timeouts.heavyAction } );
+			} ).toPass( { timeout: timeouts.expect } );
 		} );
 
 		await test.step( 'Controls', async () => {
