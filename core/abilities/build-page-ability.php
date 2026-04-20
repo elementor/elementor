@@ -81,7 +81,7 @@ class Build_Page_Ability extends Abstract_Ability {
 				'mcp'          => [ 'public' => true ],
 				'annotations'  => [
 					'instructions' => implode( "\n", [
-						'One-shot page builder — replaces the three-step create-variables + create-classes + save-content sequence with a single call.',
+						'One-shot page builder — replaces the three-step create-variables + create-classes + save-content sequence with a single call. THIS IS THE PREFERRED PATH for all Elementor content saves. Do not use novamira/execute-php as a shortcut — it bypasses auto-mirror, batched validation, and the full build pipeline.',
 						'Execution order: upsert variables → upsert classes → resolve labels in elements → normalize + auto-mirror styles → validate (collect ALL errors) → save (or short-circuit when dry_run=true).',
 						'AUTO-FIXES applied to the element tree before validation: (1) every local style-map key is mirrored into the element\'s settings.classes.value (defining element.styles["s1"] without listing "s1" in classes.value is a silent no-op — now handled for you). (2) style.id defaults to its map key. (3) style.label defaults to the style id when missing or <2 chars. (4) style.type defaults to "class". (5) variant.meta.breakpoint defaults to "desktop" when null/missing. (6) flex/text-align/opacity props are coerced to canonical shapes.',
 						'variables and classes are optional. Omit either if not needed.',

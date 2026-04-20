@@ -108,6 +108,7 @@ class Context_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'CALL THIS FIRST at the start of every Elementor session.',
+						'TOOL CHOICE: Use Elementor abilities (elementor/build-page, elementor/set-post-content, elementor/create-post, elementor/make-widget) for ALL page building. Avoid novamira/execute-php for Elementor work — it has no schema validation, no auto-mirror, no error batching, and styles saved through it bypass the build pipeline entirely.',
 						'RECOMMENDED: pass section="summary" on the first call (~5KB: counts + class_labels + widget_types + breakpoints). Fetch heavier slices on demand: section="classes" (full global_classes payload), "variables", "style_reference". Omit section entirely for the full payload (legacy behavior, can be 100KB+).',
 						'All slices include a top-level `summary` object with counts so you always know if there are classes/variables you need to fetch.',
 						'global_classes.frontend.items: keyed by class ID — use IDs in settings.classes.',
