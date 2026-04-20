@@ -1,9 +1,4 @@
-						<p class="e-paragraph-base" data-interaction-id="e8e55a1"  >
-							<button
-					data-action-link="https://very.dynamic.content.elementor" target="_blank"
-					class="e-paragraph-link-base"
-				>
-						Type your paragraph here
-				</button>
-					</p>
+			<p class="e-paragraph-base" data-interaction-id="e8e55a1"><button data-action-link="https://very.dynamic.content.elementor" target="_blank" class="e-paragraph-link-base">
+		Type your paragraph here
+	</button></p>
 		
