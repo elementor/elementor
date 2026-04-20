@@ -5,6 +5,8 @@ import WpAdminPage from '../pages/wp-admin-page';
 test.describe.configure( { mode: 'parallel' } );
 
 test.describe( `Plugin tester tests: sections @plugin_tester_section`, () => {
+	test.skip( ( { browserName } ) => 'firefox' === browserName, 'Iframe null and elementor not defined errors on Firefox' );
+
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

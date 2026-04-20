@@ -36,6 +36,21 @@ on:
         options:
           - standard
           - nightly
+      browser_chromium:
+        type: boolean
+        description: 'Run on Chromium'
+        required: false
+        default: true
+      browser_firefox:
+        type: boolean
+        description: 'Run on Firefox'
+        required: false
+        default: false
+      browser_webkit:
+        type: boolean
+        description: 'Run on WebKit'
+        required: false
+        default: false
 
 permissions:
   contents: write
@@ -141,9 +156,28 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Resolve browsers to install
+        id: browsers
+        run: |
+          BROWSERS=""
+          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+            BROWSERS="chromium"
+          fi
+          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+            BROWSERS="$BROWSERS firefox"
+          fi
+          if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
+            BROWSERS="$BROWSERS webkit"
+          fi
+          BROWSERS=$(echo "$BROWSERS" | xargs)
+          if [[ -z "$BROWSERS" ]]; then
+            BROWSERS="chromium"
+          fi
+          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+          echo "Installing browsers: $BROWSERS"
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
@@ -152,22 +186,34 @@ jobs:
           matrix.shardIndex != 'plugin_tester_section' &&
           matrix.shardIndex != 'import_export_customization'
           }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: |
           npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright -- --grep="@plugin_tester_container"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright -- --grep="@import_export_customization"
       - name: Run core element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright:elements-regression:core
       - name: Run atomic element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
+        env:
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: npm run test:playwright:elements-regression:atomic
       - uses: actions/upload-artifact@v4
         name: Upload Allure result
@@ -229,12 +275,31 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Resolve browsers to install
+        id: browsers
+        run: |
+          BROWSERS=""
+          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+            BROWSERS="chromium"
+          fi
+          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+            BROWSERS="$BROWSERS firefox"
+          fi
+          if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
+            BROWSERS="$BROWSERS webkit"
+          fi
+          BROWSERS=$(echo "$BROWSERS" | xargs)
+          if [[ -z "$BROWSERS" ]]; then
+            BROWSERS="chromium"
+          fi
+          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
       - name: Run Playwright tests
         env:
           TEST_TAG: ${{ inputs.tag }}
+          BROWSERS: ${{ steps.browsers.outputs.list }}
         run: |
           npm run test:playwright -- --grep="$TEST_TAG"
       - name: GCP Authentication

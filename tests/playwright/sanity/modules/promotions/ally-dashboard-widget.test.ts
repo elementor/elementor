@@ -6,7 +6,8 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 const ALLY_WIDGET_SELECTOR = '#e-dashboard-ally.postbox';
 
 test.describe( 'Ally dashboard widget @promotions', () => {
-	test( 'Accessibility widget is visible on WordPress dashboard when Ally is not installed', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Accessibility widget is visible on WordPress dashboard when Ally is not installed', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Missing Firefox screenshot snapshots for ally dashboard widget' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.login();

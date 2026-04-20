@@ -92,7 +92,8 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Word spacing with different units', async () => {
+	test( 'Word spacing with different units', async ( { browserName } ) => {
+		test.skip( 'firefox' === browserName, 'Unit dropdown menu items not visible on Firefox' );
 		await test.step( 'Test word spacing with EM units', async () => {
 			const widget = WIDGET_CONFIGS.HEADING;
 			await addWidgetWithOpenTypographySection( driver, widget.type );

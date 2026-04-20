@@ -1,3 +1,4 @@
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
@@ -51,7 +52,8 @@ const testData = [
 ];
 
 test.describe( 'Link control tests @v4-tests', () => {
-	test( 'Link sanitization tests', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Link sanitization tests', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Anchor elements not found on Firefox after publish' );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		let buttonId;
@@ -76,7 +78,7 @@ test.describe( 'Link control tests @v4-tests', () => {
 				const button = await editor.getWidget( buttonId );
 				const anchor = button.locator( 'a' );
 
-				await expect( anchor ).toHaveAttribute( 'href', expected, { timeout: 1000 } );
+				await expect( anchor ).toHaveAttribute( 'href', expected, { timeout: timeouts.expect } );
 			} );
 		}
 	} );

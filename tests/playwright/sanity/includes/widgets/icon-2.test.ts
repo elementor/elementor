@@ -5,15 +5,15 @@ import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Icon widget tests', () => {
 	test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
-		const getComputedStyle = async ( element, pseudo: string ) => page.evaluate( ( [ e, p ] ) => getComputedStyle( e, p ), [ element, pseudo ] );
-
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		await editor.addWidget( { widgetType: 'icon' } );
 		let icon = await editor.getPreviewFrame().waitForSelector( 'i.fa-star' );
-		let style = await getComputedStyle( icon, 'before' );
-		expect( style.content.charCodeAt() ).toBe( 34 );
+		const beforeContent = await icon.evaluate( ( el ) =>
+			window.getComputedStyle( el, '::before' ).getPropertyValue( 'content' ),
+		);
+		expect( beforeContent.charCodeAt( 0 ) ).toBe( 34 );
 
 		await page.click( '.elementor-control-media__preview' );
 		await page.click( '.elementor-icons-manager__tab__item__icon.fas.fa-surprise' );
@@ -30,8 +30,7 @@ test.describe( 'Icon widget tests', () => {
 
 		await expect.poll( async () => {
 			icon = await editor.getPreviewFrame().waitForSelector( '.elementor-icon:first-child' );
-			style = await getComputedStyle( icon, '' );
-			return style.fontSize;
+			return icon.evaluate( ( el ) => window.getComputedStyle( el ).fontSize );
 		} ).toBe( `${ width }px` );
 	} );
 

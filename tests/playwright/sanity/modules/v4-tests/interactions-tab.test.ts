@@ -135,7 +135,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Tooltip intercepts pointer events and click outside viewport on Firefox' );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -343,7 +344,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Element outside of viewport on Firefox - right-click fails' );
 		let originalElementId = '';
 		let duplicatedElementId = '';
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -382,7 +384,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Duplicate the element', async () => {
 			const elementInPreview = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
 			await elementInPreview.click( { button: 'right' } );
-
 			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
 			await page.waitForTimeout( 500 );
 

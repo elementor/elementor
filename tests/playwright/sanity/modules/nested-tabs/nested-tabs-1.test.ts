@@ -7,7 +7,8 @@ import { clickTabByPosition, setTabItemColor, selectDropdownContainer, locators,
 import EditorPage from '../../../pages/editor-page';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test( 'General test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'General test', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'page.setViewportSize times out on Firefox' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),

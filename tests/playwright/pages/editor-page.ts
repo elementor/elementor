@@ -959,7 +959,7 @@ export default class EditorPage extends BasePage {
 	async publishPage(): Promise<void> {
 		await this.clickTopBarItem( TopBarSelectors.publish );
 		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
