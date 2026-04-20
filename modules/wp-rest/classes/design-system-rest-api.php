@@ -1,15 +1,14 @@
 <?php
-namespace Elementor\App\Modules\SiteBuilder\Classes;
+
+namespace Elementor\Modules\WpRest\Classes;
 
 use Elementor\App\Modules\SiteBuilder\Services\Design_System_Service;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Plugin;
-use WP_REST_Request;
-use WP_REST_Server;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Design_System_REST_API {
@@ -23,14 +22,10 @@ class Design_System_REST_API {
 		$this->service = $service ?? new Design_System_Service();
 	}
 
-	public function register_hooks() {
-		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-	}
-
-	public function register_routes() {
+	public function register(): void {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => \WP_REST_Server::CREATABLE,
 				'callback' => [ $this, 'deploy' ],
 				'permission_callback' => [ $this, 'check_permissions' ],
 				'args' => $this->get_endpoint_args(),
@@ -42,7 +37,7 @@ class Design_System_REST_API {
 		return current_user_can( 'manage_options' );
 	}
 
-	public function deploy( WP_REST_Request $request ) {
+	public function deploy( \WP_REST_Request $request ) {
 		$global_classes = $request->get_param( 'globalClasses' );
 		$global_variables = $request->get_param( 'globalVariables' );
 
