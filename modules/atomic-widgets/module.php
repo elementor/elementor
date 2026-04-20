@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox_Twig;
+use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -295,6 +296,7 @@ class Module extends BaseModule {
 
 		$elements_manager->register_element_type( $use_twig_containers ? new Div_Block_Twig() : new Div_Block() );
 		$elements_manager->register_element_type( $use_twig_containers ? new Flexbox_Twig() : new Flexbox() );
+		$elements_manager->register_element_type( new Grid_Twig() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
