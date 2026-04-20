@@ -82,7 +82,7 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 		await editor.page.setViewportSize( viewportSize.desktop );
 	} );
 
-	test( 'Breakpoint styles render correctly in editor and frontend', async () => {
+	test( 'Breakpoint styles render correctly in editor and frontend for e-heading widget', async () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 
