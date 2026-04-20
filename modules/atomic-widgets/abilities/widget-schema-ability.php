@@ -6,6 +6,7 @@ use Elementor\Core\Abilities\Abstract_Ability;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,7 +47,7 @@ class Widget_Schema_Ability extends Abstract_Ability {
 					'widget_type'  => [ 'type' => 'string' ],
 					'props_schema' => [
 						'type'        => 'object',
-						'description' => 'Keyed by prop name. Each entry describes the prop type and default value.',
+						'description' => 'Keyed by prop name. Each entry describes the prop type, default/example presence, and — for types with an enum (directly or via Union members) — an `allowed_values` array listing every legal value.',
 					],
 					'defaults' => [
 						'type'        => 'object',
@@ -70,6 +71,7 @@ class Widget_Schema_Ability extends Abstract_Ability {
 						'Returns the props schema for an atomic widget type.',
 						'Use this to discover what settings keys a widget accepts and their default/example values.',
 						'props_schema keys map directly to the element settings object.',
+						'props_schema[key].allowed_values (when present) is the complete list of legal values for enum-backed types (direct enum setting, or any Union member with an enum) — use this instead of trial-and-error saves.',
 						'examples gives a ready-to-paste $$type-wrapped payload per prop — prefer this over defaults.',
 						'defaults returns raw get_default() output; can be an empty envelope (e.g. {"$$type":"image","value":[]}) when the widget sets defaults on shape-fields instead of the top-level prop.',
 						'Use the available_types list or elementor/context widget_types to find registered types.',
@@ -138,11 +140,18 @@ class Widget_Schema_Ability extends Abstract_Ability {
 
 		$schema_summary = [];
 		foreach ( $props_schema as $key => $prop_type ) {
-			$schema_summary[ $key ] = [
+			$summary = [
 				'prop_type'    => ( new \ReflectionClass( $prop_type ) )->getShortName(),
 				'has_default'  => isset( $defaults[ $key ] ),
 				'has_example'  => isset( $examples[ $key ] ),
 			];
+
+			$allowed = $this->extract_allowed_values( $prop_type );
+			if ( null !== $allowed ) {
+				$summary['allowed_values'] = $allowed;
+			}
+
+			$schema_summary[ $key ] = $summary;
 		}
 
 		return [
@@ -152,6 +161,45 @@ class Widget_Schema_Ability extends Abstract_Ability {
 			'examples'        => $examples,
 			'available_types' => $available,
 		];
+	}
+
+	/**
+	 * When the prop type (or any of its Union members) carries an enum setting,
+	 * return the flattened list of allowed values. Used to surface the legal set
+	 * directly in widget-schema output instead of forcing a save-to-discover loop.
+	 *
+	 * Returns null when no enum is present anywhere in the type.
+	 */
+	private function extract_allowed_values( $prop_type ): ?array {
+		$values = [];
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			foreach ( $prop_type->get_prop_types() as $member ) {
+				if ( ! ( $member instanceof Prop_Type ) ) {
+					continue;
+				}
+				$nested = $this->extract_allowed_values( $member );
+				if ( null !== $nested ) {
+					foreach ( $nested as $v ) {
+						$values[] = $v;
+					}
+				}
+			}
+			return empty( $values ) ? null : array_values( array_unique( $values ) );
+		}
+
+		if ( method_exists( $prop_type, 'get_settings' ) ) {
+			$settings = $prop_type->get_settings();
+			if ( is_array( $settings ) && ! empty( $settings['enum'] ) && is_array( $settings['enum'] ) ) {
+				foreach ( $settings['enum'] as $v ) {
+					if ( is_scalar( $v ) ) {
+						$values[] = $v;
+					}
+				}
+			}
+		}
+
+		return empty( $values ) ? null : array_values( array_unique( $values ) );
 	}
 
 	private function build_example( Prop_Type $prop_type ) {

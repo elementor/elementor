@@ -108,24 +108,26 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 		$label_to_id = [];
 		$known_ids   = [];
 		foreach ( $all_classes as $id => $item ) {
-			$known_ids[]                            = $id;
+			$known_ids[]                         = $id;
 			$label_to_id[ $item['label'] ?? '' ] = $id;
 		}
 
 		$this->resolve_class_labels( $elements, $label_to_id );
+		$this->normalize_element_styles( $elements );
+		$this->auto_mirror_style_keys_into_classes( $elements );
 
-		// Collect local element-scoped style IDs so they pass the unknown-ID check.
 		$local_ids = [];
 		$this->collect_local_style_ids( $elements, $local_ids );
-		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
 
-		// Coerce common style prop mistakes (flex, text-align) before validating.
+		$errors = [];
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
 		$this->coerce_style_props( $elements );
-
 		$style_errors = $this->validate_element_styles( $elements );
-		if ( ! empty( $style_errors ) ) {
+		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
+
+		if ( ! empty( $all_errors ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \InvalidArgumentException( 'Style prop validation failed: ' . implode( '; ', $style_errors ) );
+			throw new \InvalidArgumentException( 'set-post-content validation failed:' . "\n - " . implode( "\n - ", $all_errors ) );
 		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );

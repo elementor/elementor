@@ -82,9 +82,11 @@ class Build_Page_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'One-shot page builder — replaces the three-step create-variables + create-classes + save-content sequence with a single call.',
-						'Execution order: upsert variables → upsert classes → resolve labels in elements → normalize styles → validate → save (or short-circuit when dry_run=true).',
+						'Execution order: upsert variables → upsert classes → resolve labels in elements → normalize + auto-mirror styles → validate (collect ALL errors) → save (or short-circuit when dry_run=true).',
+						'AUTO-FIXES applied to the element tree before validation: (1) every local style-map key is mirrored into the element\'s settings.classes.value (defining element.styles["s1"] without listing "s1" in classes.value is a silent no-op — now handled for you). (2) style.id defaults to its map key. (3) style.label defaults to the style id when missing or <2 chars. (4) style.type defaults to "class". (5) variant.meta.breakpoint defaults to "desktop" when null/missing. (6) flex/text-align/opacity props are coerced to canonical shapes.',
 						'variables and classes are optional. Omit either if not needed.',
-						'DRY-RUN MODE: pass dry_run=true to validate the full payload (vars + classes + elements) without persisting. Returns { success: false, dry_run: true, errors: [...] }. Use this for one-element validation before sending the full page.',
+						'DRY-RUN MODE: pass dry_run=true to validate the full payload (vars + classes + elements) without persisting. Returns { success: <bool>, validated: <bool>, dry_run: true, errors: [...] }. success/validated are TRUE when errors[] is empty.',
+						'VALIDATION BATCHING: all structural + style-prop errors are collected in one pass and reported together. On a real save (dry_run=false), the same batch is run and — if any error is present — thrown as a single multi-line exception. Fix every line; you will not see a second round-trip of errors.',
 						'Variable labels in class variant props (e.g. {"$$type":"global-color-variable","value":"ajax-red"}) are resolved to variable IDs before the classes are saved.',
 						'Class labels in elements (e.g. "ajax-hero-outer") are resolved to full IDs automatically using the classes just upserted plus any existing ones.',
 						'PROP FORMAT: ALL typed prop values use $$type (double dollar sign), never $type. Use the elementor/prop-schema ability to look up the exact shape of any $$type by key.',
@@ -194,35 +196,36 @@ class Build_Page_Ability extends Abstract_Ability {
 		$this->resolve_class_labels( $elements, $label_to_id );
 
 		// Step 5: normalize then validate.
-		// Normalize first so common omissions (style.id, null breakpoint) don't trip validation.
+		// Normalize first so common omissions (style.id, label, null breakpoint) don't trip validation,
+		// and mirror every local style key into settings.classes.value so styles actually attach.
 		$this->normalize_element_styles( $elements );
+		$this->auto_mirror_style_keys_into_classes( $elements );
 
 		$local_ids = [];
 		$this->collect_local_style_ids( $elements, $local_ids );
 
+		// Run every validator up-front (both dry-run and save) and collect all errors,
+		// so one round-trip reports structural + style-prop failures together.
+		$errors = [];
+		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
+		$this->coerce_style_props( $elements );
+		$style_errors = $this->validate_element_styles( $elements );
+		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
+
 		if ( $dry_run ) {
-			$errors = [];
-			$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
-			$this->coerce_style_props( $elements );
-			$style_errors      = $this->validate_element_styles( $elements );
-			$output['success'] = false;
-			$output['dry_run'] = true;
-			$output['errors']  = array_values( array_merge( $errors, $style_errors ) );
+			$output['success']   = empty( $all_errors );
+			$output['validated'] = empty( $all_errors );
+			$output['dry_run']   = true;
+			$output['errors']    = $all_errors;
 			return $output;
 		}
 
-		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ) );
-
-		// Coerce common style prop mistakes (flex, text-align) then validate.
-		$this->coerce_style_props( $elements );
-
-		$style_errors = $this->validate_element_styles( $elements );
-		if ( ! empty( $style_errors ) ) {
+		if ( ! empty( $all_errors ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			throw new \InvalidArgumentException( 'Style prop validation failed: ' . implode( '; ', $style_errors ) );
+			throw new \InvalidArgumentException( 'build-page validation failed:' . "\n - " . implode( "\n - ", $all_errors ) );
 		}
 
-		// Step 6: save.
+		// Step 6: save. Validation already ran — skip the redundant pass inside set-post-content.
 		$saved = $document->save( [ 'elements' => $elements ] );
 
 		$output['success'] = (bool) $saved;

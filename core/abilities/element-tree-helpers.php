@@ -237,6 +237,14 @@ trait Element_Tree_Helpers {
 						$style['id'] = (string) $style_key;
 					}
 
+					if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) || strlen( $style['label'] ) < 2 ) {
+						$style['label'] = (string) $style_key;
+					}
+
+					if ( ! isset( $style['type'] ) || ! is_string( $style['type'] ) || '' === $style['type'] ) {
+						$style['type'] = 'class';
+					}
+
 					if ( empty( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
 						continue;
 					}
@@ -262,6 +270,83 @@ trait Element_Tree_Helpers {
 			}
 		}
 		unset( $el );
+	}
+
+	/**
+	 * Walk the element tree and make sure every local style key is also listed in
+	 * the element's settings.classes.value. Defining `element.styles["e-jc-hero"]`
+	 * alone has no effect unless the ID also appears in `settings.classes.value`.
+	 *
+	 * Silent failure was the #1 footgun reported by agents building pages.
+	 *
+	 * @param array $elements Element tree (modified in-place).
+	 */
+	private function auto_mirror_style_keys_into_classes( array &$elements ): void {
+		foreach ( $elements as &$el ) {
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				$style_keys = array_values( array_filter( array_keys( $el['styles'] ), 'is_string' ) );
+				if ( ! empty( $style_keys ) ) {
+					if ( ! isset( $el['settings'] ) || ! is_array( $el['settings'] ) ) {
+						$el['settings'] = [];
+					}
+
+					$classes = $el['settings']['classes'] ?? null;
+					if ( ! is_array( $classes ) || ( $classes['$$type'] ?? '' ) !== 'classes' || ! isset( $classes['value'] ) || ! is_array( $classes['value'] ) ) {
+						$classes = [
+							'$$type' => 'classes',
+							'value'  => [],
+						];
+					}
+
+					foreach ( $style_keys as $style_key ) {
+						if ( ! in_array( $style_key, $classes['value'], true ) ) {
+							$classes['value'][] = $style_key;
+						}
+					}
+
+					$el['settings']['classes'] = $classes;
+				}
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->auto_mirror_style_keys_into_classes( $el['elements'] );
+			}
+		}
+		unset( $el );
+	}
+
+	/**
+	 * Walk the element tree and collect warnings for style keys that are NOT listed
+	 * in the element's settings.classes.value. Used by validate-elements to surface
+	 * the silent failure without mutating caller-supplied input.
+	 *
+	 * @param array    $elements Element tree.
+	 * @param string[] $warnings Accumulator (modified in-place).
+	 */
+	private function detect_orphan_style_keys( array $elements, array &$warnings ): void {
+		foreach ( $elements as $el ) {
+			if ( ! empty( $el['styles'] ) && is_array( $el['styles'] ) ) {
+				$classes_value = [];
+				$classes       = $el['settings']['classes'] ?? null;
+				if ( is_array( $classes ) && ( $classes['$$type'] ?? '' ) === 'classes' && isset( $classes['value'] ) && is_array( $classes['value'] ) ) {
+					$classes_value = array_values( array_filter( $classes['value'], 'is_string' ) );
+				}
+
+				foreach ( array_keys( $el['styles'] ) as $style_key ) {
+					if ( ! is_string( $style_key ) ) {
+						continue;
+					}
+					if ( ! in_array( $style_key, $classes_value, true ) ) {
+						$el_id      = $el['id'] ?? '(unknown)';
+						$warnings[] = "Element \"$el_id\" defines style \"$style_key\" but it is not listed in settings.classes.value — the style will render no CSS. build-page auto-mirrors this by default; if this is intentional, remove the style entry.";
+					}
+				}
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->detect_orphan_style_keys( $el['elements'], $warnings );
+			}
+		}
 	}
 
 	/**
@@ -330,7 +415,10 @@ trait Element_Tree_Helpers {
 			( $props['text-align']['$$type'] ?? '' ) === 'string' &&
 			isset( $props['text-align']['value'] )
 		) {
-			$map = [ 'left' => 'start', 'right' => 'end' ];
+			$map = [
+				'left' => 'start',
+				'right' => 'end',
+			];
 			if ( isset( $map[ $props['text-align']['value'] ] ) ) {
 				$props['text-align']['value'] = $map[ $props['text-align']['value'] ];
 			}
@@ -587,10 +675,10 @@ trait Element_Tree_Helpers {
 	/**
 	 * Recursively walk $elements to find the target element and apply the patch.
 	 *
-	 * @param array       $elements   Elements array (modified in-place via reference).
-	 * @param string      $element_id Target element ID.
-	 * @param array|null  $settings   Settings keys to merge (shallow). Null = no change.
-	 * @param array|null  $styles     Style entries to merge by style ID. Null = no change.
+	 * @param array      $elements   Elements array (modified in-place via reference).
+	 * @param string     $element_id Target element ID.
+	 * @param array|null $settings   Settings keys to merge (shallow). Null = no change.
+	 * @param array|null $styles     Style entries to merge by style ID. Null = no change.
 	 * @return bool True if the element was found and patched.
 	 */
 	private function patch_element( array &$elements, string $element_id, ?array $settings, ?array $styles ): bool {

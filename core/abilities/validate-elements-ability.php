@@ -35,13 +35,18 @@ class Validate_Elements_Ability extends Abstract_Ability {
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'valid'  => [
+					'valid'    => [
 						'type'        => 'boolean',
-						'description' => 'true when no errors were found.',
+						'description' => 'true when no errors were found. Warnings do not affect validity.',
 					],
-					'errors' => [
+					'errors'   => [
 						'type'        => 'array',
-						'description' => 'All validation error messages. Empty when valid:true.',
+						'description' => 'All fatal validation error messages. Empty when valid:true.',
+						'items'       => [ 'type' => 'string' ],
+					],
+					'warnings' => [
+						'type'        => 'array',
+						'description' => 'Non-fatal warnings — e.g. local style keys not mirrored into settings.classes.value (silent no-op, would render no CSS). build-page auto-fixes these.',
 						'items'       => [ 'type' => 'string' ],
 					],
 				],
@@ -79,7 +84,8 @@ class Validate_Elements_Ability extends Abstract_Ability {
 			$label_to_id[ $item['label'] ?? '' ] = $id;
 		}
 
-		$errors = [];
+		$errors   = [];
+		$warnings = [];
 
 		try {
 			$this->resolve_class_labels( $elements, $label_to_id );
@@ -91,9 +97,23 @@ class Validate_Elements_Ability extends Abstract_Ability {
 		$this->collect_local_style_ids( $elements, $local_ids );
 		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
 
+		// Warn (non-fatal) on style keys that are defined but not listed in settings.classes.value —
+		// build-page auto-mirrors these, but set-post-content does not, so surface it here.
+		$this->detect_orphan_style_keys( $elements, $warnings );
+
+		// Deep style-prop validation (runs Style_Parser + path-aware expansion).
+		$normalized = $elements;
+		$this->normalize_element_styles( $normalized );
+		$this->coerce_style_props( $normalized );
+		$style_errors = $this->validate_element_styles( $normalized );
+		foreach ( $style_errors as $style_error ) {
+			$errors[] = $style_error;
+		}
+
 		return [
-			'valid'  => empty( $errors ),
-			'errors' => $errors,
+			'valid'    => empty( $errors ),
+			'errors'   => $errors,
+			'warnings' => $warnings,
 		];
 	}
 }

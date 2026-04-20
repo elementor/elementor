@@ -23,6 +23,11 @@ class Abilities_Bootstrap {
 		( new Create_From_Template_Ability() )->register_hooks();
 		( new Build_Page_Ability() )->register_hooks();
 		( new Validate_Elements_Ability() )->register_hooks();
+		( new Make_Widget_Ability() )->register_hooks();
+		( new Diff_Tree_Ability() )->register_hooks();
+		( new Create_Post_Ability() )->register_hooks();
+		( new Preview_Render_Ability() )->register_hooks();
+		( new Force_Clear_Styles_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->widgets_manager,

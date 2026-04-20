@@ -65,6 +65,11 @@ class Context_Ability extends Abstract_Ability {
 						],
 						'additionalProperties' => false,
 					],
+					'section' => [
+						'type'        => 'string',
+						'description' => 'Fetch only one section of the context to keep the payload small. One of: "summary" (counts + labels + widget_types + breakpoints, ~5KB), "classes" (global_classes + class_labels), "variables", "style_reference", "breakpoints". Omit for the full payload (default, backward-compatible).',
+						'enum'        => [ 'summary', 'classes', 'variables', 'style_reference', 'breakpoints', 'all' ],
+					],
 				],
 				'additionalProperties' => false,
 			],
@@ -103,18 +108,20 @@ class Context_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'CALL THIS FIRST at the start of every Elementor session.',
-						'Returns all context needed for Elementor work in a single round-trip, replacing:',
-						'  elementor/global-classes + elementor/variables + elementor/atomic-widgets + elementor/v4-styles',
+						'RECOMMENDED: pass section="summary" on the first call (~5KB: counts + class_labels + widget_types + breakpoints). Fetch heavier slices on demand: section="classes" (full global_classes payload), "variables", "style_reference". Omit section entirely for the full payload (legacy behavior, can be 100KB+).',
+						'All slices include a top-level `summary` object with counts so you always know if there are classes/variables you need to fetch.',
 						'global_classes.frontend.items: keyed by class ID — use IDs in settings.classes.',
 						'class_labels: flat label→full_id map — shortcut to get class IDs without scanning global_classes.frontend.items.',
 						'variables.data.data: keyed by variable ID — use IDs in $$type variable props.',
 						'variables.watermark: integer — pass as since_watermark.variables on the NEXT call to skip the variables payload if nothing changed.',
 						'widget_types: use with elementor/widget-schema to inspect a specific widget. NOTE: e-flexbox is a container, not a widget — do NOT call widget-schema for it.',
+						'For enum-backed widget props (tag, text-align, border-style, …) widget-schema now returns props_schema[key].allowed_values — use that instead of trial-and-error saves.',
 						'ELEMENT TYPES: e-flexbox → container (elType:"e-flexbox", has "elements" children, NO widgetType). widget → leaf (elType:"widget" + widgetType).',
 						'style_reference.critical_rules: read before writing any style props.',
 						'since_watermark.variables: if provided and matches current watermark, variables returns { changed: false, watermark: N } instead of full data.',
-						'For new pages: prefer elementor/build-page — creates variables, classes, and elements atomically in one call.',
+						'For new pages: prefer elementor/build-page — creates variables, classes, and elements atomically in one call. build-page now auto-mirrors every local style key into settings.classes.value and auto-fills missing style.label from the style id.',
 						'For existing pages: get-post-content → modify → set-post-content.',
+						'For a helper catalog (make-widget, diff-tree, create-post, preview-render, prop-schema), call wp_mcp-adapter-discover-abilities or read get-ability-info by name.',
 					] ),
 					'readonly'    => true,
 					'destructive' => false,
@@ -126,28 +133,78 @@ class Context_Ability extends Abstract_Ability {
 
 	public function execute( array $input ): array {
 		$since_watermark = $input['since_watermark'] ?? null;
+		$section         = $input['section'] ?? null;
 
 		$cache_key = $this->get_cache_key();
 		$cached    = get_transient( $cache_key );
 
-		if ( false !== $cached ) {
-			return $this->apply_since_watermark( $cached, $since_watermark );
+		if ( false === $cached ) {
+			$global_classes = $this->get_global_classes();
+
+			$cached = [
+				'global_classes'  => $global_classes,
+				'class_labels'    => $this->get_class_labels( $global_classes ),
+				'variables'       => $this->get_variables(),
+				'widget_types'    => $this->get_widget_types(),
+				'style_reference' => $this->get_style_reference(),
+				'breakpoints'     => $this->get_breakpoints(),
+			];
+
+			set_transient( $cache_key, $cached, HOUR_IN_SECONDS );
 		}
 
-		$global_classes = $this->get_global_classes();
-
-		$result = [
-			'global_classes'  => $global_classes,
-			'class_labels'    => $this->get_class_labels( $global_classes ),
-			'variables'       => $this->get_variables(),
-			'widget_types'    => $this->get_widget_types(),
-			'style_reference' => $this->get_style_reference(),
-			'breakpoints'     => $this->get_breakpoints(),
-		];
-
-		set_transient( $cache_key, $result, HOUR_IN_SECONDS );
+		$result = $this->slice_section( $cached, $section );
 
 		return $this->apply_since_watermark( $result, $since_watermark );
+	}
+
+	/**
+	 * Return only the requested slice of the cached context. Keeps the payload small
+	 * — the full context is 100KB+ once class + variable counts grow, which blows past
+	 * the MCP token budget on preflight.
+	 */
+	private function slice_section( array $full, ?string $section ): array {
+		if ( null === $section || 'all' === $section ) {
+			return $full;
+		}
+
+		$meta = [
+			'section' => $section,
+			'summary' => [
+				'global_classes_count' => $full['global_classes']['count'] ?? 0,
+				'variables_count'      => $full['variables']['count'] ?? 0,
+				'widget_types_count'   => is_array( $full['widget_types'] ?? null ) ? count( $full['widget_types'] ) : 0,
+				'variables_watermark'  => $full['variables']['watermark'] ?? 0,
+			],
+		];
+
+		switch ( $section ) {
+			case 'summary':
+				return array_merge( $meta, [
+					'class_labels'     => $full['class_labels'] ?? [],
+					'widget_types'     => $full['widget_types'] ?? [],
+					'breakpoints'      => $full['breakpoints'] ?? [],
+				] );
+			case 'classes':
+				return array_merge( $meta, [
+					'global_classes' => $full['global_classes'] ?? [],
+					'class_labels'   => $full['class_labels'] ?? [],
+				] );
+			case 'variables':
+				return array_merge( $meta, [
+					'variables' => $full['variables'] ?? [],
+				] );
+			case 'style_reference':
+				return array_merge( $meta, [
+					'style_reference' => $full['style_reference'] ?? [],
+				] );
+			case 'breakpoints':
+				return array_merge( $meta, [
+					'breakpoints' => $full['breakpoints'] ?? [],
+				] );
+		}
+
+		return $full;
 	}
 
 	private function apply_since_watermark( array $result, ?array $since_watermark ): array {
