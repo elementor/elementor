@@ -5,6 +5,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -249,6 +251,11 @@ trait Has_Atomic_Base {
 		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
 		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+
+		return $this->transform_link_for_render( $parsed );
+	}
+
+	protected function transform_link_for_render( array $parsed ): array {
 		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
 
 		$parsed['link'] = ! empty( $link_attributes ) ? [
@@ -302,7 +309,10 @@ trait Has_Atomic_Base {
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
-		$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+
+		if ( ! isset( $schema['_cssid'] ) ) {
+			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+		}
 
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
@@ -396,5 +406,30 @@ trait Has_Atomic_Base {
 		}
 
 		return implode( ' ', $parts );
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function get_script_depends() {
+		$depends = parent::get_script_depends();
+
+		if ( $this->has_action_link() ) {
+			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
+		}
+
+		if ( Atomic_Form::is_instance_form( $this ) ) {
+			$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+		}
+
+		return $depends;
 	}
 }

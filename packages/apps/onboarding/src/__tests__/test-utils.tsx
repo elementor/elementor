@@ -49,6 +49,7 @@ interface OnboardingConfig {
 		dashboard: string;
 		editor: string;
 		connect: string;
+		signUp: string;
 		comparePlans?: string;
 		upgradeUrl: string;
 	};
@@ -87,6 +88,7 @@ const defaultConfig: OnboardingConfig = {
 		dashboard: 'https://test.local/wp-admin/',
 		editor: 'https://test.local/editor',
 		connect: 'https://test.local/connect',
+		signUp: 'https://test.local/connect?screen_hint=signup',
 		...DEFAULT_TEST_URLS,
 	},
 };

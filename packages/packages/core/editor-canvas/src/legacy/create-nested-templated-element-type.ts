@@ -109,6 +109,12 @@ export function createNestedTemplatedElementView( {
 
 		template: false,
 
+		attributes() {
+			return {
+				'data-model-cid': this.model.cid,
+			};
+		},
+
 		getTemplateType() {
 			return 'twig';
 		},
@@ -240,14 +246,21 @@ export function createNestedTemplatedElementView( {
 
 			this._destroyAlpine();
 
+			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
+			const needsTagSwap = oldEl.tagName !== newEl.tagName;
+			const targetEl = needsTagSwap ? ( oldEl.ownerDocument ?? document ).createElement( newEl.tagName ) : oldEl;
+
 			Array.from( newEl.attributes ).forEach( ( attr ) => {
-				oldEl.setAttribute( attr.name, attr.value );
+				targetEl.setAttribute( attr.name, attr.value );
 			} );
 
-			oldEl.setAttribute( 'draggable', 'true' );
+			targetEl.setAttribute( 'draggable', 'true' );
+			targetEl.innerHTML = overlayHTML + newEl.innerHTML;
 
-			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
-			oldEl.innerHTML = overlayHTML + newEl.innerHTML;
+			if ( needsTagSwap ) {
+				oldEl.replaceWith( targetEl );
+				this.setElement( legacyWindow.jQuery( targetEl as unknown as string ) );
+			}
 		},
 
 		async _renderChildren() {

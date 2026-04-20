@@ -110,7 +110,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, min }: Prop
 
 	const effectiveDimensionsPlaceholder =
 		dimensionsPlaceholder ??
-		( sizePropTypeUtil.extract( masterPlaceholder )
+		( ! isLinked
 			? {
 					'block-start': masterPlaceholder,
 					'block-end': masterPlaceholder,
