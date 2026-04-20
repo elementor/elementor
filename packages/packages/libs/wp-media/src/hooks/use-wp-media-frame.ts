@@ -52,7 +52,16 @@ export default function useWpMediaFrame( options: Options ) {
 	};
 }
 
-function createFrame( { onSelect, onSelectUrl, allowUrlImport, multiple, mediaTypes, selected, title, mode = 'browse' }: Options & OpenOptions ) {
+function createFrame( {
+	onSelect,
+	onSelectUrl,
+	allowUrlImport,
+	multiple,
+	mediaTypes,
+	selected,
+	title,
+	mode = 'browse',
+}: Options & OpenOptions ) {
 	const frame: MediaFrame = media()( {
 		title,
 		multiple,
@@ -104,7 +113,12 @@ function applySelection( frame: MediaFrame, selected: number | null | Array< num
 		.set( selectedAttachments || [] );
 }
 
-function select( frame: MediaFrame, multiple: boolean, onSelect: Options[ 'onSelect' ], onSelectUrl?: Options[ 'onSelectUrl' ] ) {
+function select(
+	frame: MediaFrame,
+	multiple: boolean,
+	onSelect: Options[ 'onSelect' ],
+	onSelectUrl?: Options[ 'onSelectUrl' ]
+) {
 	const state = frame.state();
 
 	if ( state.get( 'id' ) === 'embed' ) {

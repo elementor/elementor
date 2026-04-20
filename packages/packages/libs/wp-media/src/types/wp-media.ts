@@ -31,11 +31,11 @@ export type MediaFrame = {
 		find: ( selector: string ) => { remove: () => void };
 	};
 	state: () => {
-		get( key: 'selection' ): {
+		get: ( ( key: 'selection' ) => {
 			set: ( attachments: BackboneAttachmentModel[] ) => void;
 			toJSON: () => WpAttachmentJSON[];
-		};
-		get( key: 'id' ): string;
+		} ) &
+			( ( key: 'id' ) => string );
 		props?: { get: ( key: string ) => string | undefined };
 	};
 	setState: ( id: string ) => MediaFrame;

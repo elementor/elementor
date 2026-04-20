@@ -74,12 +74,7 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 						>
 							{ __( 'Upload', 'elementor' ) }
 						</Button>
-						<Button
-							size="tiny"
-							variant="text"
-							color="inherit"
-							onClick={ () => open( { mode: 'url' } ) }
-						>
+						<Button size="tiny" variant="text" color="inherit" onClick={ () => open( { mode: 'url' } ) }>
 							{ __( 'Insert from URL', 'elementor' ) }
 						</Button>
 					</Stack>
