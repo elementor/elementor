@@ -3,7 +3,6 @@ import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/edito
 
 const CURRENTLY_VIEWED_SCREEN = 'The user is currently viewing the Elementor editor';
 const PAGE_CONTENT_CHARACTER_LIMIT = 500;
-const PAGE_CONTENT_DEBOUNCE_MS = 1000;
 const PREVIEW_TEXT_NODE_MIN_LENGTH = 2;
 
 export const EDITOR_STATE_URI = 'elementor://context/editor-state';
@@ -26,14 +25,11 @@ type ElementorWindow = Window & {
 export const initEditorStateResource = ( reg: MCPRegistryEntry ) => {
 	const { resource, sendResourceUpdated } = reg;
 
-	let cachedPageContent: string | null = getPageContentFromPreview();
 	let lastSerializedState = '';
-
-	let debounceTimer: number | null = null;
 
 	const buildState = () => ( {
 		currentlyViewedScreen: CURRENTLY_VIEWED_SCREEN,
-		pageContent: cachedPageContent,
+		pageContent: getPageContentFromPreview(),
 		pageTitle: getPageTitle(),
 	} );
 
@@ -46,29 +42,9 @@ export const initEditorStateResource = ( reg: MCPRegistryEntry ) => {
 		sendResourceUpdated( { uri: EDITOR_STATE_URI } );
 	};
 
-	const scheduleDebouncedContentRefresh = () => {
-		if ( debounceTimer !== null ) {
-			clearTimeout( debounceTimer );
-		}
-		debounceTimer = window.setTimeout( () => {
-			debounceTimer = null;
-			const nextContent = getPageContentFromPreview();
-			if ( nextContent === cachedPageContent ) {
-				return;
-			}
-			cachedPageContent = nextContent;
-			notifyIfChanged();
-		}, PAGE_CONTENT_DEBOUNCE_MS );
-	};
-
-	const onEditorStateEvent = () => {
-		notifyIfChanged();
-		scheduleDebouncedContentRefresh();
-	};
-
 	listenTo(
 		[ commandEndEvent( 'editor/documents/switch' ), commandEndEvent( 'editor/documents/attach-preview' ) ],
-		onEditorStateEvent
+		notifyIfChanged
 	);
 
 	lastSerializedState = JSON.stringify( buildState() );
