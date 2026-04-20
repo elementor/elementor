@@ -21,9 +21,6 @@ export const mockMcpRegistry = (): MCPRegistryEntry => {
 		sendResourceUpdated: () => {},
 		addTool: () => {},
 		setMCPDescription: () => {},
-		getActiveChatInfo() {
-			return { sessionId: 'mock-session-id', expiresAt: Date.now() + 3600000 };
-		},
 		mcpServer: mock as McpServer,
 	};
 };
