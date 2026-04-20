@@ -14,7 +14,7 @@ const updateLocalStorageCache = () => {
 
 export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
 	[ canvasMcpEntry, classesMcpEntry ].forEach( ( entry ) => {
-		const { mcpServer, resource, waitForReady } = entry;
+		const { sendResourceUpdated, resource, waitForReady } = entry;
 		resource(
 			'global-classes',
 			GLOBAL_CLASSES_URI,
@@ -29,10 +29,9 @@ export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMc
 		);
 		waitForReady().then( () => {
 			updateLocalStorageCache();
-
 			globalClassesStylesProvider.subscribe( () => {
 				updateLocalStorageCache();
-				mcpServer.sendResourceListChanged();
+				sendResourceUpdated( { uri: GLOBAL_CLASSES_URI } );
 			} );
 		} );
 	} );
