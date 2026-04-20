@@ -56,12 +56,12 @@ class Size_Constants {
 		self::UNIT_CH,
 	];
 
-	private const TIME_UNITS = [
+	public const TIME_UNITS = [
 		self::UNIT_MILLI_SECOND,
 		self::UNIT_SECOND,
 	];
 
-	private const ANGLE_UNITS = [
+	public const ANGLE_UNITS = [
 		self::UNIT_DEG,
 		self::UNIT_RAD,
 		self::UNIT_GRAD,
