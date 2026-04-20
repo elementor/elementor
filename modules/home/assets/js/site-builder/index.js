@@ -96,7 +96,8 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 		const prompt = nextInputValue || inputValue;
 
 		if ( prompt ) {
-			url.searchParams.append( 'site_type', prompt );
+			const paramName = sessionStep >= PLANNER_STEPS.WIREFRAMES ? 'page_title' : 'site_type';
+			url.searchParams.append( paramName, prompt );
 		}
 
 		window.open( url.toString(), '_blank' );
