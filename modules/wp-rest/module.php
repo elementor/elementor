@@ -32,7 +32,7 @@ class Module extends BaseModule {
 			( new Post_Query() )->register( Post_Query::ENDPOINT );
 			( new Term_Query() )->register( Term_Query::ENDPOINT );
 			( new User_Query() )->register( User_Query::ENDPOINT );
-			if ( Plugin::instance()->experiments->is_feature_active( 'site_builder' ) ) {
+			if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
 				( new Design_System_REST_API() )->register();
 			}
 		} );
