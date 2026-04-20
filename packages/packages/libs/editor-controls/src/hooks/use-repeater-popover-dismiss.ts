@@ -29,15 +29,18 @@ export const useRepeaterPopoverDismissOnScreenSignals = ( {
 		}
 
 		const previousBreakpoint = prevActiveBreakpointRef.current;
-		if ( previousBreakpoint !== undefined && previousBreakpoint !== activeBreakpoint ) {
-			onCloseRef.current();
-		}
-		prevActiveBreakpointRef.current = activeBreakpoint;
-
 		const previousSignature = prevBreakpointsSignatureRef.current;
-		if ( previousSignature !== null && previousSignature !== breakpointsSignature ) {
+
+		const breakpointChanged =
+			previousBreakpoint !== undefined && previousBreakpoint !== activeBreakpoint;
+		const breakpointsChanged =
+			previousSignature !== null && previousSignature !== breakpointsSignature;
+
+		if ( breakpointChanged || breakpointsChanged ) {
 			onCloseRef.current();
 		}
+
+		prevActiveBreakpointRef.current = activeBreakpoint;
 		prevBreakpointsSignatureRef.current = breakpointsSignature;
 	}, [ activeBreakpoint, breakpointsSignature, isOpen ] );
 
