@@ -5,6 +5,13 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [
+		{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
+	] ),
+} ) );
+
 describe( 'Repeater', () => {
 	it( 'should render the repeater with no items', () => {
 		// Arrange.
@@ -462,8 +469,7 @@ describe( 'Repeater', () => {
 		expect( toggleButton ).not.toBeInTheDocument();
 	} );
 
-	it( 'should close the popover when clicking outside the repeater item', async () => {
-		// Arrange.
+	it( 'should close the popover when Escape is pressed', async () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
@@ -482,7 +488,6 @@ describe( 'Repeater', () => {
 			},
 		];
 
-		// Act.
 		renderWithTheme(
 			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
 		);
@@ -491,22 +496,18 @@ describe( 'Repeater', () => {
 		fireEvent.click( openItemButton );
 		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 
-		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
 		await act( async () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		} );
 
-		// Act — simulate click outside (e.g. breakpoint switcher in app bar).
-		fireEvent.click( document.body );
+		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
 
-		// Assert — popover closes after the transition completes.
 		await waitFor( () => {
 			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
-	it( 'should NOT close the popover when clicking inside a portal child (e.g. Select dropdown)', async () => {
-		// Arrange.
+	it( 'should not close the popover when clicking outside the repeater item', async () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
@@ -520,7 +521,6 @@ describe( 'Repeater', () => {
 
 		const values = [ { $$type: 'example', value: 'First item' } ];
 
-		// Act.
 		renderWithTheme(
 			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
 		);
@@ -529,25 +529,13 @@ describe( 'Repeater', () => {
 		fireEvent.click( openItemButton );
 		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 
-		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
 		await act( async () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		} );
 
-		// Simulate React bubbling from a portal: first fire onContainerClick via a click inside
-		// the Box, then immediately fire a document-level click that ClickAwayListener sees.
-		// (jsdom's fireEvent does not simulate React portal event bubbling, so we approximate
-		// the sequence: onContainerClick sets the flag before handleClickAway reads it.)
-		const portal = document.createElement( 'div' );
-		document.body.appendChild( portal );
+		fireEvent.click( document.body );
 
-		fireEvent.click( screen.getByText( 'Content - 0' ) ); // triggers onContainerClick
-		fireEvent.click( portal ); // triggers ClickAwayListener's document handler
-
-		// Assert — popover stays open.
 		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
-
-		document.body.removeChild( portal );
 	} );
 
 	it( 'should hide the remove button when showRemove is false', () => {

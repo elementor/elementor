@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
-import { Box, ClickAwayListener, type PopupState, usePopupState } from '@elementor/ui';
-import { useClickAwayWithPortals } from '../../../hooks/use-click-away-with-portals';
+import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { useRepeaterPopoverDismissOnScreenSignals } from '../../../hooks/use-repeater-popover-dismiss';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
@@ -155,10 +155,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		popoverState.close();
 	};
 
-	const { onContainerClick, handleClickAway } = useClickAwayWithPortals( {
-		isOpen,
-		onClose: closePopover,
-	} );
+	useRepeaterPopoverDismissOnScreenSignals( { isOpen, onClose: closePopover } );
 
 	return (
 		<RepeaterContext.Provider
@@ -178,9 +175,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				isItemDisabled: ( index: number ) => isItemDisabled( itemsWithKeys[ index ].item ),
 			} }
 		>
-			<ClickAwayListener onClickAway={ handleClickAway }>
-				<Box sx={ { display: 'contents' } } onClick={ onContainerClick }>{ children }</Box>
-			</ClickAwayListener>
+			{ children }
 		</RepeaterContext.Provider>
 	);
 };

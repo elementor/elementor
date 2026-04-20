@@ -17,6 +17,12 @@ import { type ItemProps, type RepeatablePropValue } from '../types';
 
 jest.mock( '../../../bound-prop-context/use-bound-prop' );
 jest.mock( '../../../bound-prop-context' );
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [
+		{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
+	] ),
+} ) );
 
 const defaultInitialValues = {
 	$$type: 'example',
@@ -546,15 +552,13 @@ describe( 'ControlRepeater', () => {
 		] );
 	} );
 
-	it( 'should close the popover when clicking outside the repeater', async () => {
-		// Arrange.
+	it( 'should close the popover when Escape is pressed', async () => {
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
 			...globalUseBoundPropArgs,
 		} );
 
-		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
 				<RepeaterHeader label={ 'Test Repeater' }>
@@ -569,32 +573,23 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
-		// Open the popover by adding a new item. MUI Modal sets body overflow:hidden
-		// to indicate the popover is open — we use this as the "open" observable
-		// because it fires regardless of whether rowRef has been set yet.
 		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
-
 		fireEvent.click( addButton );
 
-		// Assert the popover modal is open.
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
 
-		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
 		await act( async () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		} );
 
-		// Act — simulate click outside (e.g. breakpoint switcher in app bar).
-		fireEvent.click( document.body );
+		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
 
-		// Assert — the modal closes (overflow:hidden is removed).
 		await waitFor( () => {
 			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
 		} );
 	} );
 
-	it( 'should NOT close the popover when clicking inside a portal child (e.g. Select dropdown)', async () => {
-		// Arrange.
+	it( 'should not close the popover when clicking outside the repeater', async () => {
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -620,23 +615,13 @@ describe( 'ControlRepeater', () => {
 
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
 
-		// Yield to the macrotask queue so ClickAwayListener's setTimeout(0) sets activatedRef.
 		await act( async () => {
 			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		} );
 
-		// Simulate React bubbling from a portal: first fire onContainerClick via a click inside
-		// the Box, then immediately fire a document-level click that ClickAwayListener sees.
-		const portal = document.createElement( 'div' );
-		document.body.appendChild( portal );
+		fireEvent.click( document.body );
 
-		fireEvent.click( screen.getByText( 'Test Repeater' ) ); // triggers onContainerClick (inside Box)
-		fireEvent.click( portal ); // triggers ClickAwayListener's document handler
-
-		// Assert — popover stays open (overflow:hidden is still set).
 		expect( document.body ).toHaveStyle( { overflow: 'hidden' } );
-
-		document.body.removeChild( portal );
 	} );
 
 	it.skip( 'should open the added repeater item popover', () => {
