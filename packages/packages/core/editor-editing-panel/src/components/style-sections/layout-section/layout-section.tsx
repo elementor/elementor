@@ -17,6 +17,7 @@ import { type FlexDirection, FlexDirectionField } from './flex-direction-field';
 import { FlexOrderField } from './flex-order-field';
 import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
+import { GridSizeFields } from './grid-size-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
@@ -29,6 +30,7 @@ export const LayoutSection = () => {
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
+	const isDisplayGrid = 'grid' === ( display?.value ?? ( displayPlaceholder as StringPropValue )?.value );
 	const { element } = useElement();
 	const parent = useParentElement( element.id );
 	const parentStyle = useComputedStyle( parent?.id || null );
@@ -38,6 +40,7 @@ export const LayoutSection = () => {
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
+			{ isDisplayGrid && <GridFields /> }
 			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
 		</SectionContent>
 	);
@@ -60,6 +63,12 @@ const FlexFields = () => {
 		</>
 	);
 };
+
+const GridFields = () => (
+	<>
+		<GridSizeFields />
+	</>
+);
 
 const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
 	<>

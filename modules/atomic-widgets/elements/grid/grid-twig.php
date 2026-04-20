@@ -16,6 +16,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Number_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -48,7 +50,7 @@ class Grid_Twig extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-posts-grid';
+		return 'eicon-container-grid';
 	}
 
 	protected static function define_props_schema(): array {
@@ -135,13 +137,13 @@ class Grid_Twig extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'grid' );
-
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
+						->add_prop( 'display', String_Prop_Type::generate( 'grid' ) )
+						->add_prop( 'grid-template-columns', String_Prop_Type::generate( '2' ) )
+						->add_prop( 'grid-template-rows', String_Prop_Type::generate( '2' ) )
 						->add_prop( 'padding', $this->get_base_padding() )
 				),
 		];
