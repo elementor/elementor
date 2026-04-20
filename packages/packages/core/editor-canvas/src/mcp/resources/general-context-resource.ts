@@ -1,4 +1,5 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 type ExtendedWindow = Window & {
 	angieConfig?: {
@@ -18,8 +19,6 @@ type ExtendedWindow = Window & {
 };
 
 export const GENERAL_CONTEXT_URI = 'elementor://context/general';
-
-const TIME_UPDATE_INTERVAL_MS = 60_000;
 
 export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 	const { resource, sendResourceUpdated } = reg;
@@ -47,23 +46,7 @@ export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 		const pageName = pageTitle || 'Elementor Editor';
 		const plugins = extendedWindow.angieConfig?.plugins;
 
-		const date = new Date();
-		const today = {
-			gmt: date.toLocaleString( undefined, { timeZone: 'UTC' } ),
-			user: date.toLocaleString( undefined, {
-				timeZone: timezone,
-				timeZoneName: 'long',
-				weekday: 'long',
-				day: 'numeric',
-				month: 'long',
-				year: 'numeric',
-				hour: '2-digit',
-				minute: '2-digit',
-			} ),
-		};
-
 		return {
-			today,
 			timezone,
 			postId,
 			currentPage: {
@@ -88,7 +71,7 @@ export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 		'general-context',
 		GENERAL_CONTEXT_URI,
 		{
-			description: 'General context: current date and time, timezone, post id, and current page.',
+			description: 'General context: timezone, post id, and current page.',
 		},
 		async () => {
 			return {
@@ -103,6 +86,14 @@ export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 		}
 	);
 
+	listenTo(
+		[
+			commandEndEvent( 'editor/documents/switch' ),
+			commandEndEvent( 'editor/documents/attach-preview' ),
+			commandEndEvent( 'document/elements/settings' ),
+		],
+		pushUpdateIfChanged
+	);
+
 	pushUpdateIfChanged();
-	setInterval( pushUpdateIfChanged, TIME_UPDATE_INTERVAL_MS );
 };
