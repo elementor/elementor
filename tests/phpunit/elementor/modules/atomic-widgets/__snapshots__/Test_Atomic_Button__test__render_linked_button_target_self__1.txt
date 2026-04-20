@@ -1,9 +1,3 @@
-				<a
-		href="https://example.com" target="_self"
-		class="e-button-base"
-		data-interaction-id="e8e55a1"
-		 
-	>
+			<a href="https://example.com" target="_self" class="e-button-base" data-interaction-id="e8e55a1">
 		Click here
-	</a>
-		
+	</a>		

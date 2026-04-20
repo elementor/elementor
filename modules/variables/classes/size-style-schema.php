@@ -13,10 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Style_Schema {
-	private $blacklist = [
-		'filter',
-		'backdrop-filter',
-	];
+	private $blacklist = [];
 
 	private function ignore( $css_property ): bool {
 		if ( in_array( $css_property, $this->blacklist, true ) ) {
