@@ -300,6 +300,9 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 			open: jest.fn( () => frame.trigger( 'open' ) ),
 			detach: jest.fn(),
 			remove: jest.fn(),
+			setState: jest.fn( function ( this: MockFrame ) {
+				return this;
+			} ),
 
 			content: {
 				mode: ( newMode ) => {
@@ -326,9 +329,9 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 			},
 
 			state: () => ( {
-				get: ( key ) => {
-					if ( key !== 'selection' ) {
-						return null as never;
+				get: ( ( key: 'selection' | 'id' ) => {
+					if ( key === 'id' ) {
+						return '';
 					}
 
 					return {
@@ -341,7 +344,7 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 								return attachment.toJSON() as WpAttachmentJSON;
 							} ),
 					};
-				},
+				} ) as ReturnType< MediaFrame[ 'state' ] >[ 'get' ],
 			} ),
 		};
 
