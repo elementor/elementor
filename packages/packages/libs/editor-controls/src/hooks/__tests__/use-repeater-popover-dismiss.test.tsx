@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
 import { useRepeaterPopoverDismissOnScreenSignals } from '../use-repeater-popover-dismiss';
 
@@ -26,7 +26,7 @@ describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
 		);
 
 		rerender( { isOpen: true } );
-		
+
 		onClose.mockClear();
 
 		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
