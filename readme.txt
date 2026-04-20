@@ -355,6 +355,13 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.3 - 2026-04-20 =
+
+* Fix: UI and functionality issues in Tabs - Atomic Editor
+* Fix: Classes not saving in various scenarios - Atomic Editor
+* Fix: Cannot edit styles of components inside Loop Item templates - Atomic Editor
+* Fix: Loading screen gets stuck when attempting to load non-existing posts - Atomic Editor
+
 = 4.0.2 - 2026-04-13 =
 
 * Security Fix: Improved code security enforcement in global style settings
