@@ -37,7 +37,7 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[

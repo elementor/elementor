@@ -1,14 +1,2 @@
-					
-			<a
-			href="https://example.com" target="_blank"
-			class="e-image-link-base"
-			data-interaction-id="e8e55a1"
-		>
-		<img class="e-image-base " 
-					data-interaction-id="e8e55a1" 
-		 
-		 
-									id="123"
-												src="https://example.com/image.jpg"
-						/>
-			
+			<a href="https://example.com" target="_blank" class="e-image-link-base" data-interaction-id="e8e55a1"
+	><img class="e-image-base " id="123" src="https://example.com/image.jpg"/>	</a>		

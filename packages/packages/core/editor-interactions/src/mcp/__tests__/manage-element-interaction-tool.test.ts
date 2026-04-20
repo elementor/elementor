@@ -29,7 +29,6 @@ function createRegistryAndGetHandler(): ( args: Record< string, unknown > ) => u
 		} ),
 		resource: jest.fn(),
 		setMCPDescription: jest.fn(),
-		getActiveChatInfo: jest.fn(),
 		sendResourceUpdated: jest.fn(),
 		waitForReady: jest.fn(),
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
