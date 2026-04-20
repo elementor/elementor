@@ -122,6 +122,7 @@ class Set_Post_Content_Ability extends Abstract_Ability {
 		$errors = [];
 		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
 		$this->coerce_style_props( $elements );
+		$this->validate_widget_settings( $elements, $errors );
 		$style_errors = $this->validate_element_styles( $elements );
 		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
 

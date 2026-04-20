@@ -673,6 +673,77 @@ trait Element_Tree_Helpers {
 	}
 
 	/**
+	 * Walk the element tree and validate each atomic widget's settings against its
+	 * registered props schema. Surfaces widget-layer prop mistakes (e.g. unknown
+	 * `tag` enum value, malformed `text-wrapping` wrap) in the same batch as the
+	 * style-parser layer, so one dry-run or save round-trip reports every error.
+	 *
+	 * Skips omitted props — Props_Parser uses defaults for missing values, and those
+	 * are widget-side responsibility. Only user-supplied values are validated.
+	 *
+	 * @param array    $elements Element tree.
+	 * @param string[] $errors   Accumulator (modified in-place).
+	 */
+	private function validate_widget_settings( array $elements, array &$errors ): void {
+		$widget_types = \Elementor\Plugin::$instance->widgets_manager->get_widget_types();
+		$this->collect_widget_setting_errors( $elements, $widget_types, $errors );
+	}
+
+	/**
+	 * @param array    $elements     Element tree.
+	 * @param array    $widget_types Map of widget_type → widget instance from widgets_manager.
+	 * @param string[] $errors       Accumulator (modified in-place).
+	 */
+	private function collect_widget_setting_errors( array $elements, array $widget_types, array &$errors ): void {
+		foreach ( $elements as $el ) {
+			$el_id       = $el['id'] ?? '(unknown)';
+			$el_type     = $el['elType'] ?? null;
+			$widget_type = $el['widgetType'] ?? null;
+
+			if ( 'widget' === $el_type && is_string( $widget_type ) && isset( $widget_types[ $widget_type ] ) ) {
+				$widget = $widget_types[ $widget_type ];
+
+				if ( method_exists( $widget, 'get_props_schema' ) ) {
+					$schema   = $widget::get_props_schema();
+					$settings = isset( $el['settings'] ) && is_array( $el['settings'] ) ? $el['settings'] : [];
+
+					foreach ( $schema as $prop_key => $prop_type ) {
+						if ( ! ( $prop_type instanceof \Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type ) ) {
+							continue;
+						}
+						if ( ! array_key_exists( $prop_key, $settings ) ) {
+							continue;
+						}
+						$value = $settings[ $prop_key ];
+						if ( null === $value ) {
+							continue;
+						}
+						if ( $prop_type->validate( $value ) ) {
+							continue;
+						}
+
+						$prefix = "Element \"$el_id\" ($widget_type) settings.$prop_key";
+						$leaves = [];
+						$this->deep_validate_prop_value( $prop_type, $value, "settings.$prop_key", $leaves );
+
+						if ( empty( $leaves ) ) {
+							$errors[] = "$prefix: invalid_value";
+							continue;
+						}
+						foreach ( $leaves as $detail ) {
+							$errors[] = "Element \"$el_id\" ($widget_type): $detail";
+						}
+					}
+				}
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				$this->collect_widget_setting_errors( $el['elements'], $widget_types, $errors );
+			}
+		}
+	}
+
+	/**
 	 * Recursively walk $elements to find the target element and apply the patch.
 	 *
 	 * @param array      $elements   Elements array (modified in-place via reference).

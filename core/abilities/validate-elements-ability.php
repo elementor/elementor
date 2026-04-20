@@ -59,7 +59,7 @@ class Validate_Elements_Ability extends Abstract_Ability {
 						'Validates an elements tree against the current global classes store without saving.',
 						'Returns ALL errors at once — use this as a dry-run before set-post-content or build-page.',
 						'Runs the full validation pipeline: label resolution → local ID collection → structure checks.',
-						'Checks performed: $$type vs $type (single dollar), truncated class IDs, unknown class IDs.',
+						'Checks performed: $$type vs $type (single dollar), truncated class IDs, unknown class IDs, widget-prop schema violations (e.g. unknown `tag` enum values), and deep Style_Parser validation with path-aware reasons.',
 						'Human-readable class labels in classes.value are resolved the same way as in set-post-content.',
 						'valid:true means the tree can be saved without errors. valid:false lists every problem found.',
 					] ),
@@ -105,6 +105,7 @@ class Validate_Elements_Ability extends Abstract_Ability {
 		$normalized = $elements;
 		$this->normalize_element_styles( $normalized );
 		$this->coerce_style_props( $normalized );
+		$this->validate_widget_settings( $normalized, $errors );
 		$style_errors = $this->validate_element_styles( $normalized );
 		foreach ( $style_errors as $style_error ) {
 			$errors[] = $style_error;

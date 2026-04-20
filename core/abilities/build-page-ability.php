@@ -86,7 +86,7 @@ class Build_Page_Ability extends Abstract_Ability {
 						'AUTO-FIXES applied to the element tree before validation: (1) every local style-map key is mirrored into the element\'s settings.classes.value (defining element.styles["s1"] without listing "s1" in classes.value is a silent no-op — now handled for you). (2) style.id defaults to its map key. (3) style.label defaults to the style id when missing or <2 chars. (4) style.type defaults to "class". (5) variant.meta.breakpoint defaults to "desktop" when null/missing. (6) flex/text-align/opacity props are coerced to canonical shapes.',
 						'variables and classes are optional. Omit either if not needed.',
 						'DRY-RUN MODE: pass dry_run=true to validate the full payload (vars + classes + elements) without persisting. Returns { success: <bool>, validated: <bool>, dry_run: true, errors: [...] }. success/validated are TRUE when errors[] is empty.',
-						'VALIDATION BATCHING: all structural + style-prop errors are collected in one pass and reported together. On a real save (dry_run=false), the same batch is run and — if any error is present — thrown as a single multi-line exception. Fix every line; you will not see a second round-trip of errors.',
+						'VALIDATION BATCHING: structural + widget-prop (settings) + style-prop errors are ALL collected in one pass and reported together. Widget-prop errors are prefixed with `Element "<id>" (<widgetType>): settings.<key>` and carry the same deep path-aware messages as style errors. On a real save (dry_run=false), the same batch is run and — if any error is present — thrown as a single multi-line exception. Fix every line; you will not see a second round-trip of errors.',
 						'Variable labels in class variant props (e.g. {"$$type":"global-color-variable","value":"ajax-red"}) are resolved to variable IDs before the classes are saved.',
 						'Class labels in elements (e.g. "ajax-hero-outer") are resolved to full IDs automatically using the classes just upserted plus any existing ones.',
 						'PROP FORMAT: ALL typed prop values use $$type (double dollar sign), never $type. Use the elementor/prop-schema ability to look up the exact shape of any $$type by key.',
@@ -209,6 +209,7 @@ class Build_Page_Ability extends Abstract_Ability {
 		$errors = [];
 		$this->validate_elements( $elements, array_merge( $known_ids, $local_ids ), $errors );
 		$this->coerce_style_props( $elements );
+		$this->validate_widget_settings( $elements, $errors );
 		$style_errors = $this->validate_element_styles( $elements );
 		$all_errors   = array_values( array_merge( $errors, $style_errors ) );
 
