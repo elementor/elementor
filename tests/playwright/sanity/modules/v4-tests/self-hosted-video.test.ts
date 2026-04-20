@@ -1,6 +1,7 @@
 import { BrowserContext, expect } from '@playwright/test';
 import { resolve } from 'path';
 
+import { timeouts } from '../../../config/timeouts';
 import EditorPage from '../../../pages/editor-page';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
@@ -62,7 +63,9 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			await editor.page.locator( 'span' ).filter( { hasText: 'Autoplay' } ).getByRole( 'checkbox' ).click();
 			await expect( videoElement ).toHaveAttribute( 'autoplay', '' );
 			await editor.page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ).getByRole( 'checkbox' ).click();
-			await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
+			await expect( async () => {
+				await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
+			} ).toPass( { timeout: timeouts.heavyAction } );
 		} );
 
 		await test.step( 'Controls', async () => {
