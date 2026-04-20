@@ -54,7 +54,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -86,7 +86,7 @@ describe( 'SizeControl', () => {
 			bind: 'select',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -110,7 +110,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 					default_unit: '%',
 				},
 			} ),
@@ -135,7 +135,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 					default_unit: 'rem',
 				},
 			} ),
@@ -160,7 +160,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -191,7 +191,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -222,7 +222,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -255,7 +255,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units,
+					available_units: units,
 				},
 			} ),
 		};
@@ -289,7 +289,7 @@ describe( 'SizeControl', () => {
 			bind: 'size',
 			propType: createSizePropType( {
 				settings: {
-					units: [ 'px', 'rem', 'auto' ],
+					available_units: [ 'px', 'rem', 'auto' ],
 				},
 			} ),
 		};
@@ -325,7 +325,7 @@ describe( 'SizeControl', () => {
 			kind: 'plain',
 			settings: {
 				required: true,
-				units: [ 'px', 'rem', 'auto' ],
+				available_units: [ 'px', 'rem', 'auto' ],
 			},
 		} );
 
@@ -360,7 +360,7 @@ describe( 'SizeControl', () => {
 			kind: 'plain',
 			settings: {
 				required: true,
-				units: [ 'px', 'rem', 'vh' ],
+				available_units: [ 'px', 'rem', 'vh' ],
 			},
 		} );
 
@@ -392,7 +392,7 @@ describe( 'SizeControl', () => {
 			kind: 'plain',
 			settings: {
 				required: false,
-				units: [ 'px' ],
+				available_units: [ 'px' ],
 			},
 		} );
 
@@ -443,7 +443,7 @@ describe( 'SizeControl', () => {
 			propType: createSizePropType( {
 				settings: {
 					required: false,
-					units: [ 'px', 'auto' ],
+					available_units: [ 'px', 'auto' ],
 				},
 			} ),
 		};
@@ -456,6 +456,43 @@ describe( 'SizeControl', () => {
 
 		// Assert.
 		expect( setValue ).not.toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should set bound value to null when switching from auto to px with', () => {
+		mockIsExtendedUnit.mockImplementation( ( unit ) => unit === 'auto' || unit === 'custom' );
+
+		const setValue = jest.fn();
+		const bind = 'select';
+
+		const props = {
+			setValue,
+			value: mockSizeProp( { size: '', unit: 'auto' } ),
+			bind,
+			propType: createSizePropType( {
+				settings: {
+					required: false,
+					available_units: [ 'px', 'auto' ],
+				},
+			} ),
+		};
+
+		const { rerender } = renderControl( <UnstableSizeControl />, props );
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'auto' } ) );
+		fireEvent.click( screen.getByText( 'PX' ) );
+
+		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValue ).not.toHaveBeenCalledWith( {
+			$$type: 'size',
+			value: { size: '', unit: 'px' },
+		} );
+
+		rerender( <UnstableSizeControl />, {
+			value: { [ bind ]: null },
+		} );
+
+		expect( screen.getByRole( 'button', { name: 'px' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'spinbutton' ) ).toHaveDisplayValue( '' );
 	} );
 
 	it( 'should not call setValue(null) on blur when not required and unit is custom', () => {
@@ -471,7 +508,7 @@ describe( 'SizeControl', () => {
 			propType: createSizePropType( {
 				settings: {
 					required: false,
-					units: [ 'px', 'custom' ],
+					available_units: [ 'px', 'custom' ],
 				},
 			} ),
 		};
@@ -500,7 +537,7 @@ describe( 'SizeControl', () => {
 			bind: 'select',
 			propType: createSizePropType( {
 				settings: {
-					units: [ 'px', 'rem', 'auto' ],
+					available_units: [ 'px', 'rem', 'auto' ],
 				},
 			} ),
 		};
@@ -534,7 +571,7 @@ describe( 'SizeControl', () => {
 			kind: 'plain',
 			settings: {
 				required: true,
-				units: [ 'custom' ],
+				available_units: [ 'custom' ],
 			},
 		} );
 
@@ -575,7 +612,7 @@ describe( 'SizeControl', () => {
 				kind: 'plain',
 				settings: {
 					required: true,
-					units: [ 'custom' ],
+					available_units: [ 'custom' ],
 				},
 			} ),
 		};
@@ -725,7 +762,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units,
+						available_units: units,
 					},
 				} ),
 			};
@@ -757,7 +794,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'px', 'rem', 'em' ],
+						available_units: [ 'px', 'rem', 'em' ],
 					},
 				} ),
 			};
@@ -784,7 +821,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'px', 'auto' ],
+						available_units: [ 'px', 'auto' ],
 					},
 				} ),
 			};
@@ -815,7 +852,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'px', 'auto', 'custom' ],
+						available_units: [ 'px', 'auto', 'custom' ],
 					},
 				} ),
 			};
@@ -850,7 +887,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'px', 'auto', '%', 'rem' ],
+						available_units: [ 'px', 'auto', '%', 'rem' ],
 						default_unit: 'rem',
 					},
 				} ),
@@ -877,7 +914,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'px', 'rem', 'em', 'auto' ],
+						available_units: [ 'px', 'rem', 'em', 'auto' ],
 					},
 				} ),
 			};
@@ -904,7 +941,7 @@ describe( 'SizeControl', () => {
 					bind: 'select',
 					propType: createSizePropType( {
 						settings: {
-							units: [ 'deg', 'turn', 'grad', 'rad' ],
+							available_units: [ 'deg', 'turn', 'grad', 'rad' ],
 						},
 					} ),
 				};
@@ -928,7 +965,7 @@ describe( 'SizeControl', () => {
 					bind: 'select',
 					propType: createSizePropType( {
 						settings: {
-							units: [ 'deg', 'turn', 'grad', 'rad' ],
+							available_units: [ 'deg', 'turn', 'grad', 'rad' ],
 						},
 					} ),
 				};
@@ -953,7 +990,7 @@ describe( 'SizeControl', () => {
 					bind: 'select',
 					propType: createSizePropType( {
 						settings: {
-							units: [ 'deg', 'turn', 'grad', 'rad' ],
+							available_units: [ 'deg', 'turn', 'grad', 'rad' ],
 						},
 					} ),
 				};
@@ -979,7 +1016,7 @@ describe( 'SizeControl', () => {
 					bind: 'select',
 					propType: createSizePropType( {
 						settings: {
-							units: [ 'deg', 'turn', 'grad', 'rad' ],
+							available_units: [ 'deg', 'turn', 'grad', 'rad' ],
 						},
 					} ),
 				};
@@ -1009,7 +1046,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units,
+						available_units: units,
 					},
 				} ),
 				placeholder: {
@@ -1041,7 +1078,7 @@ describe( 'SizeControl', () => {
 				bind: 'select',
 				propType: createSizePropType( {
 					settings: {
-						units,
+						available_units: units,
 					},
 				} ),
 				placeholder: {
@@ -1064,6 +1101,40 @@ describe( 'SizeControl', () => {
 			expect( unitButton ).toHaveTextContent( 'em' );
 		} );
 
+		it( 'should prefer prop placeholder over context placeholder when value is unresolved', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const units = mockLengthUnits();
+
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType: createSizePropType( {
+					settings: {
+						available_units: units,
+					},
+				} ),
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 99,
+						unit: 'em',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <UnstableSizeControl placeholder={ { size: 24, unit: 'rem' as const } } />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', '24' );
+			expect( unitButton ).toHaveTextContent( 'rem' );
+		} );
+
 		it( 'should show value if provided even if placeholder is available', () => {
 			// Arrange.
 			const setValue = jest.fn();
@@ -1078,7 +1149,7 @@ describe( 'SizeControl', () => {
 				disabled: true,
 				propType: createSizePropType( {
 					settings: {
-						units: [ 'vh', '%' ],
+						available_units: [ 'vh', '%' ],
 					},
 				} ),
 				placeholder: {
@@ -1113,7 +1184,7 @@ describe( 'SizeControl', () => {
 				disabled: true,
 				propType: createSizePropType( {
 					settings: {
-						units,
+						available_units: units,
 					},
 				} ),
 			};
@@ -1140,7 +1211,7 @@ describe( 'SizeControl', () => {
 				disabled: true,
 				propType: createSizePropType( {
 					settings: {
-						units,
+						available_units: units,
 					},
 				} ),
 				placeholder: {

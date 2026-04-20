@@ -16,14 +16,20 @@ export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
-	const { mcpServer } = reg;
+	const { resource } = reg;
 
-	mcpServer.resource( 'styles-best-practices', BEST_PRACTICES_URI, async () => {
-		return {
-			contents: [
-				{
-					uri: BEST_PRACTICES_URI,
-					text: `# Styling best practices
+	resource(
+		'styles-best-practices',
+		BEST_PRACTICES_URI,
+		{
+			description: 'Styling best practices',
+		},
+		async () => {
+			return {
+				contents: [
+					{
+						uri: BEST_PRACTICES_URI,
+						text: `# Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
@@ -35,12 +41,13 @@ When using global variables, ensure that the variables are defined in the ${ 'el
 Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 
 `,
-				},
-			],
-		};
-	} );
+					},
+				],
+			};
+		}
+	);
 
-	mcpServer.resource(
+	resource(
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
@@ -77,7 +84,7 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 		}
 	);
 
-	mcpServer.resource(
+	resource(
 		'widget-schema-by-type',
 		new ResourceTemplate( WIDGET_SCHEMA_URI, {
 			list: () => {
@@ -139,6 +146,20 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 				llmGuidance.instructions =
 					'These are the default styles applied to the widget. Override only when necessary.';
 				llmGuidance.default_styles = defaultStyles;
+			}
+
+			const allowedChildTypes = widgetData.allowed_child_types;
+
+			const allWidgets = getWidgetsCache() || {};
+			const allowedParents = Object.entries( allWidgets )
+				.filter( ( [ , parentConfig ] ) => parentConfig.allowed_child_types?.includes( widgetType ) )
+				.map( ( [ parentType ] ) => parentType );
+
+			if ( allowedChildTypes?.length || allowedParents.length ) {
+				llmGuidance.nesting = {
+					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
+					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
+				};
 			}
 
 			return {

@@ -9,12 +9,13 @@ const TerserPlugin = require('terser-webpack-plugin');
 const packages = getLocalRepoPackagesEntries();
 
 const REGEXES = {
-	// @elementor/ui/SvgIcon. Used inside @elementor/icons
-	elementorPathImports: /^@elementor\/(ui|icons)\/(.+)$/,
+	// @elementor/ui/SvgIcon — used inside @elementor/icons.
+	// Excludes `@elementor/ui/styles` which is a self-referencing internal import inside `@elementor/ui` and must be bundled into ui.js.
+	elementorPathImports: /^@elementor\/(ui|icons)\/(?!styles$)(.+)$/,
 
 	// @elementor/editor
-	// We want to bundle `@elementor/design-tokens` inside the UI package since it's an internal thing.
-	elementorPackages: /^@elementor\/(?!design-tokens)(.+)$/,
+	// Excludes `design-tokens` (bundled inside UI) and `ui/styles` (self-referencing internal import inside `@elementor/ui`).
+	elementorPackages: /^@elementor\/(?!design-tokens|ui\/styles)(.+)$/,
 
 	// @wordpress/components
 	wordpressPackages: /^@wordpress\/(.+)$/,

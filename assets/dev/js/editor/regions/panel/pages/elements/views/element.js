@@ -6,7 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() ) {
+		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() ) {
 			className += ' elementor-element--promotion';
 		}
 
@@ -54,6 +54,10 @@ module.exports = Marionette.ItemView.extend( {
 		return !! this.model.get( 'integration' );
 	},
 
+	isAtomicFormPromotion() {
+		return !! this.model.get( 'atomicFormPromotion' );
+	},
+
 	onRender() {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
@@ -79,7 +83,15 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onMouseDown() {
+	onMouseDown( event ) {
+		if ( this.isAtomicFormPromotion() ) {
+			event.stopPropagation();
+			document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:open', {
+				detail: { target: this.el },
+			} ) );
+			return;
+		}
+
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
 			isIntegration = this.isIntegration(),
