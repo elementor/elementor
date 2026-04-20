@@ -37,13 +37,13 @@ class Module extends BaseModule {
 	}
 
 	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+		Plugin::instance()->experiments->add_feature([
 			'name' => 'site-builder',
 			'title' => esc_html__( 'Site Builder', 'elementor' ),
 			'description' => esc_html__( 'Enable Site Builder.', 'elementor' ),
 			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
 			'hidden' => true,
-		] );
+		]);
 	}
 
 	private function is_experiment_active(): bool {
