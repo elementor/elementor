@@ -1,3 +1,5 @@
+import { deployGlobalClasses } from './steps/global-classes';
+import { deployGlobalVariables } from './steps/global-variables';
 import { updateKitSettings } from './steps/kit-settings';
 import { uploadLogo } from './steps/logo';
 import { createMenus } from './steps/menus';
@@ -31,6 +33,22 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		await updateKitSettings( payload.kitSettings );
 	} catch ( e ) {
 		errors.push( `kit_settings: ${ ( e as Error ).message }` );
+	}
+
+	if ( payload.globalVariables ) {
+		try {
+			await deployGlobalVariables( payload.globalVariables );
+		} catch ( e ) {
+			errors.push( `global_variables: ${ ( e as Error ).message }` );
+		}
+	}
+
+	if ( payload.globalClasses ) {
+		try {
+			await deployGlobalClasses( payload.globalClasses );
+		} catch ( e ) {
+			errors.push( `global_classes: ${ ( e as Error ).message }` );
+		}
 	}
 
 	let pageIdMap: Record< string, number > = {};

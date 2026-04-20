@@ -129,9 +129,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const checkProInstallScreen = useCheckProInstallScreen();
 
 	const handleConnectSuccess = useCallback(
-		async ( data: ConnectSuccessData ) => {
+		async ( data: ConnectSuccessData, loginType: 'elementor_login' | 'social_login' ) => {
 			trackConnect( true );
-			trackLoginType( 'elementor_login' );
+			trackLoginType( loginType );
 
 			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
 
@@ -160,7 +160,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
-		onSuccess: handleConnectSuccess,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'elementor_login' ),
+	} );
+
+	const handleSignUp = useElementorConnect( {
+		connectUrl: urls.signUp,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'social_login' ),
 	} );
 
 	function handleContinueAsGuest( event: React.SyntheticEvent ) {
@@ -454,7 +459,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
+				<Login
+					onConnect={ handleConnect }
+					onSignUp={ handleSignUp }
+					onContinueAsGuest={ handleContinueAsGuest }
+				/>
 			</BaseLayout>
 		);
 	}

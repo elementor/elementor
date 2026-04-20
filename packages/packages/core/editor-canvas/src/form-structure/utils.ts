@@ -40,6 +40,7 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-label',
 	'e-form-checkbox',
 	'e-form-submit-button',
+	'e-form-select',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {

@@ -23,7 +23,15 @@ export const hasVariable = ( key: string ) => {
 	return getVariables()[ key ] !== undefined;
 };
 
+/**
+ * @param      key
+ * @deprecated Use getVariable instead
+ */
 export const useVariable = ( key: string ) => {
+	return getVariable( key );
+};
+
+export function getVariable( key: string ) {
 	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
@@ -34,13 +42,14 @@ export const useVariable = ( key: string ) => {
 		...variables[ key ],
 		key,
 	};
-};
+}
 
 export const useFilteredVariables = ( searchValue: string, propTypeKey: string ) => {
 	const baseVariables = usePropVariables( propTypeKey );
 
 	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
 	const searchFilteredVariables = filterBySearch( typeFilteredVariables, searchValue );
+
 	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
 		const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
 		const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
