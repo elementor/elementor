@@ -4,16 +4,12 @@ import { useRepeaterPopoverDismissOnScreenSignals } from '../use-repeater-popove
 
 jest.mock( '@elementor/editor-responsive', () => ( {
 	useActiveBreakpoint: jest.fn( () => 'desktop' ),
-	useBreakpoints: jest.fn( () => [
-		{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
-	] ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] ),
 } ) );
 
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 
-const desktopOnlyBreakpoints = [
-	{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
-] as const;
+const desktopOnlyBreakpoints = [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] as const;
 
 describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
 	beforeEach( () => {
@@ -25,15 +21,12 @@ describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
 		const onClose = jest.fn();
 
 		const { rerender } = renderHook(
-			( { isOpen }: { isOpen: boolean } ) =>
-				useRepeaterPopoverDismissOnScreenSignals( { isOpen, onClose } ),
+			( { isOpen }: { isOpen: boolean } ) => useRepeaterPopoverDismissOnScreenSignals( { isOpen, onClose } ),
 			{ initialProps: { isOpen: false } }
 		);
 
-		act( () => {
-			rerender( { isOpen: true } );
-		} );
-
+		rerender( { isOpen: true } );
+		
 		onClose.mockClear();
 
 		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
@@ -42,9 +35,7 @@ describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
 			{ id: 'tablet', label: 'Tablet', width: 1024, type: undefined },
 		] );
 
-		act( () => {
-			rerender( { isOpen: true } );
-		} );
+		rerender( { isOpen: true } );
 
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );

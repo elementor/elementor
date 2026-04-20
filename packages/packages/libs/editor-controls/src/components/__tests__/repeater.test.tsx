@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { renderWithTheme } from 'test-utils';
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import { renderWithTheme } from 'test-utils';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
 jest.mock( '@elementor/editor-responsive', () => ( {
 	useActiveBreakpoint: jest.fn( () => 'desktop' ),
-	useBreakpoints: jest.fn( () => [
-		{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
-	] ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] ),
 } ) );
 
 describe( 'Repeater', () => {

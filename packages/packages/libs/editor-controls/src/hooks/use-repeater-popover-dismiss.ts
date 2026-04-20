@@ -31,10 +31,8 @@ export const useRepeaterPopoverDismissOnScreenSignals = ( {
 		const previousBreakpoint = prevActiveBreakpointRef.current;
 		const previousSignature = prevBreakpointsSignatureRef.current;
 
-		const breakpointChanged =
-			previousBreakpoint !== undefined && previousBreakpoint !== activeBreakpoint;
-		const breakpointsChanged =
-			previousSignature !== null && previousSignature !== breakpointsSignature;
+		const breakpointChanged = previousBreakpoint !== undefined && previousBreakpoint !== activeBreakpoint;
+		const breakpointsChanged = previousSignature !== null && previousSignature !== breakpointsSignature;
 
 		if ( breakpointChanged || breakpointsChanged ) {
 			onCloseRef.current();

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { createMockPropType, renderWithTheme } from 'test-utils';
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
-import { createMockPropType, renderWithTheme } from 'test-utils';
 
 import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -20,9 +20,7 @@ jest.mock( '../../../bound-prop-context/use-bound-prop' );
 jest.mock( '../../../bound-prop-context' );
 jest.mock( '@elementor/editor-responsive', () => ( {
 	useActiveBreakpoint: jest.fn( () => 'desktop' ),
-	useBreakpoints: jest.fn( () => [
-		{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
-	] ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] ),
 } ) );
 
 const defaultInitialValues = {
