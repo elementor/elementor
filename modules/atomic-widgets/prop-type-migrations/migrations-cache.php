@@ -79,6 +79,12 @@ class Migrations_Cache {
 			return '';
 		}
 
-		return ELEMENTOR_VERSION . ':' . $manifest_hash;
+		$state = ELEMENTOR_VERSION;
+
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+			$state .= ':' . ELEMENTOR_PRO_VERSION;
+		}
+
+		return $state . ':' . $manifest_hash;
 	}
 }
