@@ -38,7 +38,7 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			widgetId = await editor.addWidget( { widgetType, container: containerId } );
 		} );
-		const videoElement = editor.page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
+		const videoElement = editor.page.frameLocator( 'iframe[title="Preview"]' ).locator( 'video' );
 
 		// Act
 		await test.step( 'Upload a video file', async () => {
@@ -68,7 +68,6 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 		} );
 
 		await test.step( 'Controls', async () => {
-			const videoElement = editor.page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
 			await expect( videoElement ).toHaveAttribute( 'preload', 'metadata' );
 			await expect( videoElement ).toHaveAttribute( 'controls', '' );
 			await expect( videoElement ).toHaveAttribute( 'controlslist', 'nodownload' );
