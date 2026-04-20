@@ -221,3 +221,31 @@ export const SuggestionChip = styled( Chip )( ( { theme, selected } ) => ( {
 		borderColor: 'none',
 	},
 } ) );
+
+export const LayoutToggleContainer = styled( Box )( ( { theme } ) => ( {
+	alignItems: 'center',
+	backgroundColor: theme.palette.common.white,
+	borderRadius: theme.spacing( 3 ),
+	display: 'inline-flex',
+	width: 'fit-content',
+} ) );
+
+export const LayoutChip = styled( Chip, {
+	shouldForwardProp: ( prop ) => 'isSelected' !== prop,
+} )( ( { theme, isSelected } ) => ( {
+	backgroundColor: isSelected ? theme.palette.secondary.main : 'transparent',
+	border: 'none',
+	borderRadius: theme.spacing( 12.5 ),
+	color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.primary,
+	height: 'initial',
+	padding: `${ theme.spacing( 0.375 ) } ${ theme.spacing( 1.25 ) }`,
+	'& .MuiChip-label': {
+		fontSize: theme.typography.caption.fontSize,
+		fontWeight: isSelected ? 500 : 400,
+		paddingInlineStart: theme.spacing( 0.5 ),
+		paddingInlineEnd: theme.spacing( 0.5 ),
+	},
+	'&& .MuiChip-icon': {
+		fontSize: theme.spacing( 1.75 ),
+	},
+} ) );

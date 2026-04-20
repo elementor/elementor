@@ -36,27 +36,32 @@ export const getStepAction = ( stepConfig, handlers ) => {
 	);
 };
 
-export const StepWithInput = ( { buttonLabel, inputValue, onInputChange, onKeyDown, onSubmit, placeholder } ) => (
-	<PlannerInputRow>
-		<PlannerTextField
-			placeholder={ placeholder }
-			variant="outlined"
-			size="small"
-			value={ inputValue }
-			onChange={ onInputChange }
-			onKeyDown={ onKeyDown }
-			autoComplete="off"
-		/>
-		<CreateSiteButton
-			variant="contained"
-			size="medium"
-			endIcon={ <ArrowRightIcon /> }
-			onClick={ onSubmit }
-		>
-			{ buttonLabel }
-		</CreateSiteButton>
-	</PlannerInputRow>
-);
+export const StepWithInput = ( { buttonLabel, inputValue, onInputChange, onKeyDown, onSubmit, placeholder } ) => {
+	const canSubmit = Boolean( inputValue.trim() );
+
+	return (
+		<PlannerInputRow>
+			<PlannerTextField
+				placeholder={ placeholder }
+				variant="outlined"
+				size="small"
+				value={ inputValue }
+				onChange={ onInputChange }
+				onKeyDown={ onKeyDown }
+				autoComplete="off"
+			/>
+			<CreateSiteButton
+				variant="contained"
+				size="medium"
+				endIcon={ <ArrowRightIcon /> }
+				onClick={ onSubmit }
+				disabled={ ! canSubmit }
+			>
+				{ buttonLabel }
+			</CreateSiteButton>
+		</PlannerInputRow>
+	);
+};
 
 StepWithInput.propTypes = {
 	buttonLabel: PropTypes.string.isRequired,

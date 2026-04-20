@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import AiLoaderIcon from '../icons/ai-loader-icon';
+import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { STEP_TYPES, getStepAction } from './components/step-actions';
 import useSiteBuilderState from './hooks/use-site-builder-state';
@@ -42,14 +43,14 @@ const getPlannerStepConfig = () => ( {
 		buttonLabel: __( 'Continue building', 'elementor' ),
 	},
 	[ PLANNER_STEPS.SITEMAP ]: {
-		title: __( 'From idea to website in minutes', 'elementor' ),
-		type: STEP_TYPES.WITH_INPUT,
-		placeholder: __( 'Describe the type of website.', 'elementor' ),
-		buttonLabel: __( 'Create my site', 'elementor' ),
-		// title: __( 'Your site is ready, let\'s design your site', 'elementor' ),
-		// type: STEP_TYPES.WITHOUT_INPUT,
-		// text: __( 'Turn your sitemap into a full site design and continue editing in Elementor.', 'elementor' ),
-		// buttonLabel: __( 'Generate design', 'elementor' ),
+		// title: __( 'From idea to website in minutes', 'elementor' ),
+		// type: STEP_TYPES.WITH_INPUT,
+		// placeholder: __( 'Describe the type of website.', 'elementor' ),
+		// buttonLabel: __( 'Create my site', 'elementor' ),
+		title: __( 'Your site is ready, let\'s design your site', 'elementor' ),
+		type: STEP_TYPES.WITHOUT_INPUT,
+		text: __( 'Turn your sitemap into a full site design and continue editing in Elementor.', 'elementor' ),
+		buttonLabel: __( 'Generate design', 'elementor' ),
 	},
 	[ PLANNER_STEPS.WIREFRAMES ]: {
 		title: __( 'Your site design is ready to go live', 'elementor' ),
@@ -82,6 +83,10 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 	const { sessionStep, pageSuggestions, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
 	const stepConfig = getStepConfig( sessionStep );
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ isOnePage, setIsOnePage ] = useState( false );
+
+	const isInitStep = PLANNER_STEPS.INIT === Number( sessionStep );
+	const showLayoutToggle = isInitStep && Boolean( inputValue.trim() );
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -92,12 +97,22 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			return;
 		}
 
-		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
 		const prompt = nextInputValue || inputValue;
+		const requiresInput = STEP_TYPES.WITH_INPUT === stepConfig.type;
+
+		if ( requiresInput && ! prompt.trim() ) {
+			return;
+		}
+
+		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
 
 		if ( prompt ) {
 			const paramName = sessionStep >= PLANNER_STEPS.WIREFRAMES ? 'page_title' : 'site_type';
 			url.searchParams.append( paramName, prompt );
+		}
+
+		if ( isInitStep ) {
+			url.searchParams.append( 'is_one_page', isOnePage ? 'true' : 'false' );
 		}
 
 		window.open( url.toString(), '_blank' );
@@ -152,14 +167,21 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 					},
 				) }
 
-				<SuggestionChips
-					siteBuilderState={ {
-						sessionStep,
-						pageSuggestions,
-						siteTypeSuggestions,
-					} }
-					onChipSelect={ setInputValue }
-				/>
+				{ showLayoutToggle ? (
+					<SiteTypeLayoutToggle
+						isOnePage={ isOnePage }
+						onIsOnePageChange={ setIsOnePage }
+					/>
+				) : (
+					<SuggestionChips
+						siteBuilderState={ {
+							sessionStep,
+							pageSuggestions,
+							siteTypeSuggestions,
+						} }
+						onChipSelect={ setInputValue }
+					/>
+				) }
 			</PlannerContent>
 		</PlannerRoot>
 	);
