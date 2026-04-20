@@ -56,7 +56,9 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		global $wp_rest_server;
 		$wp_rest_server = new \WP_REST_Server();
 
-		( new Design_System_REST_API() )->register();
+		add_action( 'rest_api_init', function () {
+			( new Design_System_REST_API() )->register();
+		} );
 		do_action( 'rest_api_init' );
 
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
