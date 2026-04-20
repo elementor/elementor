@@ -41,16 +41,7 @@ export function undoable< TPayload extends Payload, TDoReturn, TUndoReturn >(
 ): ( payload?: Payload ) => TDoReturn {
 	actions.redo ??= actions.do;
 
-	let batchFirstDoReturn: Awaited< TDoReturn > | undefined;
-
-	const onHistoryItemAdded = ( item: HistoryItem ) => {
-		addHistoryItem( item );
-		batchFirstDoReturn = undefined;
-	};
-
-	const _addHistoryItem = options.debounce
-		? debounce( onHistoryItemAdded, options.debounce.wait )
-		: onHistoryItemAdded;
+	const _addHistoryItem = options.debounce ? debounce( addHistoryItem, options.debounce.wait ) : addHistoryItem;
 
 	return ( payload ) => {
 		const _payload = payload as TPayload;
@@ -58,12 +49,6 @@ export function undoable< TPayload extends Payload, TDoReturn, TUndoReturn >(
 
 		let doReturn = _actions.do( _payload );
 		let undoReturn: Awaited< TUndoReturn >;
-
-		if ( batchFirstDoReturn === undefined ) {
-			batchFirstDoReturn = doReturn;
-		}
-
-		const undoDoReturn = batchFirstDoReturn;
 
 		_addHistoryItem( {
 			title: normalizeToGenerator( options.title )( _payload, doReturn ),
@@ -76,7 +61,7 @@ export function undoable< TPayload extends Payload, TDoReturn, TUndoReturn >(
 					return;
 				}
 
-				undoReturn = _actions.undo( _payload, undoDoReturn );
+				undoReturn = _actions.undo( _payload, doReturn );
 			},
 		} );
 
