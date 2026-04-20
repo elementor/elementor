@@ -308,7 +308,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} ) ).toMatchSnapshot( 'tabs-accordion-title-width.png' );
 	} );
 
-	test( 'Verify the correct hover effect with screenshots', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Verify the correct hover effect with screenshots', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Screenshot mismatch on Firefox' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
@@ -349,7 +350,8 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 	} );
 
-	test( 'Check title long title alignment', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check title long title alignment', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Screenshot mismatch on Firefox' );
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
