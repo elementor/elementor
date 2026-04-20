@@ -174,7 +174,11 @@ function useUndoableActions( {
 		}
 
 		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
-			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
+			const currentProps = getCurrentProps( provider.actions.get( styleId, { elementId } ), meta );
+
+			const propsToRestore = buildUndoProps( prevProps, currentProps );
+
+			provider.actions.updateProps?.( { id: styleId, meta, props: propsToRestore }, { elementId } );
 		}
 	}, [ elementId, breakpoint, state, classesProp ] );
 }
@@ -189,6 +193,18 @@ function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVa
 	const props = variant?.props ?? {};
 
 	return structuredClone( props );
+}
+
+function buildUndoProps( prevProps: Props, currentProps: Props ): Props {
+	const result: Props = { ...prevProps };
+
+	for ( const key of Object.keys( currentProps ) ) {
+		if ( ! ( key in prevProps ) ) {
+			result[ key ] = null;
+		}
+	}
+
+	return result;
 }
 
 type DefaultHistoryTitleArgs = {
