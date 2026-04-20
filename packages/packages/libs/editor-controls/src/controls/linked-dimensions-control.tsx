@@ -203,7 +203,7 @@ const Control = ( {
 	ariaLabel: string;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
-	placeholder?: SizePropValue[ 'value' ] | string;
+	placeholder?: SizePropValue[ 'value' ];
 	anchorRef: RefObject< HTMLDivElement >;
 	min?: number;
 } ) => {
