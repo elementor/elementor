@@ -126,6 +126,7 @@ class Module extends BaseModule {
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
 				'connect' => $this->get_connect_url(),
+				'signUp' => $this->get_connect_url( 'signup' ),
 				'comparePlans' => 'https://go.elementor.com/go-pro-onboarding-editor-features-step-upgrade/',
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'upgradeUrl' => 'https://go.elementor.com/go-pro-onboarding-editor-header-upgrade/',
@@ -158,7 +159,7 @@ class Module extends BaseModule {
 		return $library ? $library->is_connected() : false;
 	}
 
-	private function get_connect_url(): string {
+	private function get_connect_url( string $screen_hint = '' ): string {
 		$library = $this->get_library_app();
 
 		if ( ! $library ) {
@@ -171,6 +172,7 @@ class Module extends BaseModule {
 			'utm_medium' => 'wp-dash',
 			'utm_term' => self::VERSION,
 			'source' => 'generic',
+			'screen_hint' => $screen_hint,
 		] ) ?? '';
 	}
 
