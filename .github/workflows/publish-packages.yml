@@ -136,6 +136,12 @@ jobs:
             fi
           fi
 
+          # Disallow "latest" tag in manual (workflow_dispatch) runs
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.tag }}" == "latest" ]; then
+            echo "Error: 'latest' tag is not allowed for manual workflow_dispatch runs. Use the release workflow to publish as latest."
+            exit 1
+          fi
+
       - name: Determine Tag Strategy
         id: tag-strategy
         run: |
