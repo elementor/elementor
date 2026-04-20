@@ -38,6 +38,7 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			widgetId = await editor.addWidget( { widgetType, container: containerId } );
 		} );
+		const videoElement = editor.page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
 
 		// Act
 		await test.step( 'Upload a video file', async () => {
@@ -51,12 +52,10 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			);
 
 			await editor.page.getByRole( 'button', { name: 'Select', exact: true } ).click();
-			const videoElement = editor.page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
 			await expect( videoElement ).toBeVisible();
 		} );
 
 		await test.step( 'Autoplay', async () => {
-			const videoElement = editor.page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
 			await expect( videoElement ).not.toHaveAttribute( 'autoplay' );
 			await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
 			await expect( editor.page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ) ).toBeHidden();
