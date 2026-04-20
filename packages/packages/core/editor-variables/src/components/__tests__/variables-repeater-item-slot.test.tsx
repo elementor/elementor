@@ -19,6 +19,7 @@ import {
 	FilterDropShadowIconIndicator,
 	FilterDropShadowRepeaterLabel,
 	FilterSingleSizeRepeaterLabel,
+	TransformRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from '../variables-repeater-item-slot';
 
@@ -54,6 +55,16 @@ const createShadowForLabel = ( overrides: Partial< Record< 'hOffset' | 'vOffset'
 				$$type: 'color' as const,
 				value: 'rgba(0, 0, 0, 1)',
 			},
+		},
+	} ) as PropValue;
+
+const createMoveTransformForLabel = ( overrides: Partial< Record< 'x' | 'y' | 'z', PropValue > > ) =>
+	( {
+		$$type: 'transform-move' as const,
+		value: {
+			x: overrides.x ?? plainPx( 0 ),
+			y: overrides.y ?? plainPx( 0 ),
+			z: overrides.z ?? plainPx( 0 ),
 		},
 	} ) as PropValue;
 
@@ -206,6 +217,49 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				expect( screen.getByText( expectedLabel ) ).toBeInTheDocument();
 			}
 		);
+	} );
+
+	describe( 'TransformRepeaterLabel', () => {
+		it.each( [
+			[ 'x', 'e-mv-x-sz', sizeVariablePropTypeUtil.key, '1px', /Move:\s*1px 0px 0px/ ],
+			[ 'y', 'e-mv-y-sz', sizeVariablePropTypeUtil.key, '2px', /Move:\s*0px 2px 0px/ ],
+			[ 'z', 'e-mv-z-sz', sizeVariablePropTypeUtil.key, '3px', /Move:\s*0px 0px 3px/ ],
+			[ 'x', 'e-mv-x-cs', customSizeVariablePropTypeUtil.key, '10%', /Move:\s*10% 0px 0px/ ],
+			[ 'y', 'e-mv-y-cs', customSizeVariablePropTypeUtil.key, '11%', /Move:\s*0px 11% 0px/ ],
+			[ 'z', 'e-mv-z-cs', customSizeVariablePropTypeUtil.key, '12%', /Move:\s*0px 0px 12%/ ],
+		] as const )(
+			'should render move label for %s using %s variable',
+			( axis, variableId, variableType, resolvedValue, expectedPattern ) => {
+				variablesSpy.mockReturnValue( {
+					[ variableId ]: {
+						type: variableType,
+						label: 'named-size',
+						value: resolvedValue,
+					},
+				} );
+				const move = createMoveTransformForLabel( {
+					[ axis ]: { $$type: variableType, value: variableId },
+				} );
+
+				render( <TransformRepeaterLabel value={ move } /> );
+
+				expect( screen.getByText( expectedPattern ) ).toBeInTheDocument();
+			}
+		);
+
+		it( 'should render empty label when the value is not transform-move', () => {
+			const nonMoveProp = { $$type: 'string' as const, value: 'not-move' };
+
+			render(
+				<div role="region" aria-label="Transform move label test region">
+					<TransformRepeaterLabel value={ nonMoveProp } />
+				</div>
+			);
+
+			expect( screen.getByRole( 'region', { name: 'Transform move label test region' } ) ).toHaveTextContent(
+				''
+			);
+		} );
 	} );
 
 	describe( 'TransitionsSizeVariableLabel', () => {
