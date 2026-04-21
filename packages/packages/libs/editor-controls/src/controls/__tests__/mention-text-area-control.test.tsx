@@ -145,10 +145,7 @@ describe( 'MentionTextAreaControl', () => {
 		const setValue = jest.fn();
 		const props = { setValue, value: { $$type: 'string', value: '' }, bind: 'reply-to', propType };
 
-		renderControl(
-			<MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />,
-			props
-		);
+		renderControl( <MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />, props );
 		const textarea = screen.getByRole( 'textbox' );
 
 		// Act.
@@ -166,10 +163,7 @@ describe( 'MentionTextAreaControl', () => {
 		const setValue = jest.fn();
 		const props = { setValue, value: { $$type: 'string', value: '' }, bind: 'reply-to', propType };
 
-		renderControl(
-			<MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />,
-			props
-		);
+		renderControl( <MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />, props );
 		const textarea = screen.getByRole( 'textbox' );
 
 		// Act.

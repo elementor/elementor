@@ -101,10 +101,7 @@ export const MentionTextAreaControl = createControl(
 				for ( const suggestion of allSuggestions ) {
 					const escapedValue = suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 					const prefix = triggerOnlyAtStart ? '^' : '';
-					const mentionPattern = new RegExp(
-						`${ prefix }@${ escapedValue }(?=\\s|$|[^a-zA-Z0-9_-])`,
-						'g'
-					);
+					const mentionPattern = new RegExp( `${ prefix }@${ escapedValue }(?=\\s|$|[^a-zA-Z0-9_-])`, 'g' );
 					result = result.replace( mentionPattern, `[${ suggestion.value }]` );
 				}
 
