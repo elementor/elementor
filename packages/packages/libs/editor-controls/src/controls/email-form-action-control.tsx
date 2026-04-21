@@ -112,7 +112,7 @@ const ReplyToField = () => {
 					<MentionTextAreaControl
 						suggestions={ emailSuggestions }
 						rows={ 1 }
-						triggerOnlyAtStart
+						triggerPosition="start"
 						placeholder={ __( 'You can type @ to insert an email field', 'elementor' ) }
 					/>
 				</Grid>

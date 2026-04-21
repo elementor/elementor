@@ -81,16 +81,25 @@ const MentionWrapper = styled( 'div' )( ( { theme } ) => ( {
 	},
 } ) );
 
+type TriggerPosition = 'start' | 'auto';
+
+function createMentionPattern( value: string, triggerPosition: TriggerPosition ): RegExp {
+	const escaped = value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+	const prefix = 'start' === triggerPosition ? '^' : '';
+
+	return new RegExp( `${ prefix }@${ escaped }(?=\\s|$|[^a-zA-Z0-9_-])`, 'g' );
+}
+
 type Props = {
 	placeholder?: string;
 	ariaLabel?: string;
 	suggestions: Suggestion[];
 	rows?: number;
-	triggerOnlyAtStart?: boolean;
+	triggerPosition?: TriggerPosition;
 };
 
 export const MentionTextAreaControl = createControl(
-	( { placeholder, ariaLabel, suggestions: allSuggestions, rows = 5, triggerOnlyAtStart = false }: Props ) => {
+	( { placeholder, ariaLabel, suggestions: allSuggestions, rows = 5, triggerPosition = 'auto' }: Props ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 		const [ filteredSuggestions, setFilteredSuggestions ] = useState< Suggestion[] >( [] );
 
@@ -99,15 +108,13 @@ export const MentionTextAreaControl = createControl(
 				let result = text;
 
 				for ( const suggestion of allSuggestions ) {
-					const escapedValue = suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
-					const prefix = triggerOnlyAtStart ? '^' : '';
-					const mentionPattern = new RegExp( `${ prefix }@${ escapedValue }(?=\\s|$|[^a-zA-Z0-9_-])`, 'g' );
-					result = result.replace( mentionPattern, `[${ suggestion.value }]` );
+					const pattern = createMentionPattern( suggestion.value, triggerPosition );
+					result = result.replace( pattern, `[${ suggestion.value }]` );
 				}
 
 				return result;
 			},
-			[ allSuggestions, triggerOnlyAtStart ]
+			[ allSuggestions, triggerPosition ]
 		);
 
 		const handleChange = useCallback(
@@ -121,7 +128,7 @@ export const MentionTextAreaControl = createControl(
 
 		const handleSearch = useCallback(
 			( event: { originalEvent: React.SyntheticEvent; trigger: string; query: string } ) => {
-				if ( triggerOnlyAtStart ) {
+				if ( 'start' === triggerPosition ) {
 					const target = event.originalEvent.target as HTMLTextAreaElement;
 					const triggerIndex = target.selectionStart - event.query.length - event.trigger.length;
 
@@ -137,7 +144,7 @@ export const MentionTextAreaControl = createControl(
 				);
 				setFilteredSuggestions( filtered );
 			},
-			[ allSuggestions, triggerOnlyAtStart ]
+			[ allSuggestions, triggerPosition ]
 		);
 
 		return (

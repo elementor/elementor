@@ -140,12 +140,15 @@ describe( 'MentionTextAreaControl', () => {
 		expect( textarea ).toHaveAttribute( 'rows', '1' );
 	} );
 
-	it( 'should transform mention when triggerOnlyAtStart is true and @ is at position 0', () => {
+	it( 'should transform mention when triggerPosition is start and @ is at position 0', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = { setValue, value: { $$type: 'string', value: '' }, bind: 'reply-to', propType };
 
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />, props );
+		renderControl(
+			<MentionTextAreaControl suggestions={ suggestions } triggerPosition="start" rows={ 1 } />,
+			props
+		);
 		const textarea = screen.getByRole( 'textbox' );
 
 		// Act.
@@ -158,12 +161,15 @@ describe( 'MentionTextAreaControl', () => {
 		} );
 	} );
 
-	it( 'should not transform mention when triggerOnlyAtStart is true and @ is not at position 0', () => {
+	it( 'should not transform mention when triggerPosition is start and @ is not at position 0', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = { setValue, value: { $$type: 'string', value: '' }, bind: 'reply-to', propType };
 
-		renderControl( <MentionTextAreaControl suggestions={ suggestions } triggerOnlyAtStart rows={ 1 } />, props );
+		renderControl(
+			<MentionTextAreaControl suggestions={ suggestions } triggerPosition="start" rows={ 1 } />,
+			props
+		);
 		const textarea = screen.getByRole( 'textbox' );
 
 		// Act.
