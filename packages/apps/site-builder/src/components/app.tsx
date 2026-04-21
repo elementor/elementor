@@ -118,7 +118,8 @@ export function App() {
 	}, [ handleMessage ] );
 
 	useEffect( () => {
-		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } ).wpApiSettings;
+		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } )
+			.wpApiSettings;
 		const nonce = wpApiSettings?.nonce || '';
 		if ( ! nonce ) {
 			return;
