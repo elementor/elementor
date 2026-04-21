@@ -211,7 +211,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 				0 => [
 					'hasInput' => true,
 					'title' => 'Title with <b>bold</b> text',
-					'buttonLabel' => 'Label with <script>alert(1)</script>',
+					'buttonLabel' => 'Label with <script>alert(1)</script> end',
 					'placeholder' => '<a href="test">Link</a> here',
 				],
 			],
@@ -224,7 +224,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$result = $transformation->transform( $input_data );
 
 		$this->assertSame( 'Title with bold text', $result['site_builder']['stepConfig'][0]['title'] );
-		$this->assertSame( 'Label with alert(1)', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
+		$this->assertSame( 'Label with  end', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
 		$this->assertSame( 'Link here', $result['site_builder']['stepConfig'][0]['placeholder'] );
 	}
 

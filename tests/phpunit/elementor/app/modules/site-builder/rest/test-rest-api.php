@@ -129,14 +129,23 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 
 		$route = $routes[ self::SNAPSHOT_ROUTE ];
 
-		$this->assertCount( 2, $route );
+		$this->assertGreaterThanOrEqual( 2, count( $route ) );
 
-		$get_route = $route[0];
-		$this->assertTrue( $get_route['methods']['GET'] );
-		$this->assertIsCallable( $get_route['callback'] );
+		$has_get = false;
+		$has_post = false;
 
-		$post_route = $route[1];
-		$this->assertTrue( $post_route['methods']['POST'] || $post_route['methods']['PUT'] || $post_route['methods']['PATCH'] );
-		$this->assertIsCallable( $post_route['callback'] );
+		foreach ( $route as $handler ) {
+			if ( isset( $handler['methods']['GET'] ) ) {
+				$has_get = true;
+				$this->assertIsCallable( $handler['callback'] );
+			}
+			if ( isset( $handler['methods']['POST'] ) || isset( $handler['methods']['PUT'] ) || isset( $handler['methods']['PATCH'] ) ) {
+				$has_post = true;
+				$this->assertIsCallable( $handler['callback'] );
+			}
+		}
+
+		$this->assertTrue( $has_get, 'Snapshot endpoint should have GET method' );
+		$this->assertTrue( $has_post, 'Snapshot endpoint should have POST method' );
 	}
 }

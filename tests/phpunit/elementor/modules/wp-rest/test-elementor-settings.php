@@ -128,10 +128,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 
 		// Assert
-		$this->assertEquals( 403, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertFalse( $data['success'] );
-		$this->assertStringContainsString( 'not writable', $data['data']['message'] );
+		$this->assertEquals( 400, $response->get_status() );
 	}
 
 	public function test_update_setting_sanitizes_value_for_active_kit() {

@@ -73,7 +73,7 @@ class Rest_Api {
 
 		$success = update_option( 'elementor_site_builder_snapshot', $sanitized );
 
-		if ( $success || $sanitized === get_option( 'elementor_site_builder_snapshot' ) ) {
+		if ( $success || get_option( 'elementor_site_builder_snapshot' ) === $sanitized ) {
 			return new WP_REST_Response( [
 				'success' => true,
 				'data' => [ 'message' => 'Snapshot updated successfully.' ],
