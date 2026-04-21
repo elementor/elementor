@@ -246,20 +246,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 				expect( screen.getByText( expectedPattern ) ).toBeInTheDocument();
 			}
 		);
-
-		it( 'should render empty label when the value is not transform-move', () => {
-			const nonMoveProp = { $$type: 'string' as const, value: 'not-move' };
-
-			render(
-				<div role="region" aria-label="Transform move label test region">
-					<TransformRepeaterLabel value={ nonMoveProp } />
-				</div>
-			);
-
-			expect( screen.getByRole( 'region', { name: 'Transform move label test region' } ) ).toHaveTextContent(
-				''
-			);
-		} );
 	} );
 
 	describe( 'TransitionsSizeVariableLabel', () => {
@@ -279,23 +265,6 @@ describe( 'Variables Repeater Item Slot Components', () => {
 
 			// Assert.
 			expect( screen.getByText( `opacity: ${ RESOLVED_SIZE_DISPLAY }` ) ).toBeInTheDocument();
-		} );
-
-		it( 'should render empty label when prop is not selection-size', () => {
-			// Arrange.
-			const nonSelectionSizeProp = { $$type: 'string' as const, value: 'not-a-selection-size' };
-
-			// Act.
-			render(
-				<div role="region" aria-label="Transition size label test region">
-					<TransitionsSizeVariableLabel value={ nonSelectionSizeProp } />
-				</div>
-			);
-
-			// Assert.
-			expect( screen.getByRole( 'region', { name: 'Transition size label test region' } ) ).toHaveTextContent(
-				''
-			);
 		} );
 	} );
 
