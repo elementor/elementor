@@ -188,7 +188,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
 }
 
-function getDescentForPropUpdate( carry: Values | null, key: string ): Values | null {
+function getDescentForPropUpdate( carry: Values | null, key: string ) {
 	const child = carry?.[ key ];
 
 	if ( ( child ?? null ) === null ) {
@@ -212,7 +212,7 @@ function getDescentForPropUpdate( carry: Values | null, key: string ): Values | 
 	return null;
 }
 
-function mergeLeafValue( existing: Value, incoming: Value ): Value {
+function mergeLeafValue( existing: Value, incoming: Value ) {
 	if ( incoming === null ) {
 		return null;
 	}
@@ -222,7 +222,7 @@ function mergeLeafValue( existing: Value, incoming: Value ): Value {
 	}
 
 	if ( existing && isOverridable( existing ) && incoming ) {
-		return rewrapOverridableValue( existing, incoming as TransformablePropValue< string > );
+		return rewrapOverridableValue( existing, incoming );
 	}
 
 	return incoming;
