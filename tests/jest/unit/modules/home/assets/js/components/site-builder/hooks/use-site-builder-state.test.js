@@ -76,6 +76,28 @@ describe( 'useSiteBuilderState', () => {
 		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
 	} );
 
+	it( 'Scenario 3b: uses injected snapshot with step 6 (DEPLOYED_TO_PLUGIN) and skips every HTTP call', async () => {
+		setInjectedSnapshot( {
+			'site-key-1': {
+				sessionId: 'session-id',
+				step: 6,
+				pageSuggestions: [ 'About', 'Services', 'Contact' ],
+				siteTypeSuggestions: [],
+			},
+		} );
+
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 6 );
+		expect( result.current.pageSuggestions ).toEqual( [ 'About', 'Services', 'Contact' ] );
+		expect( result.current.siteTypeSuggestions ).toEqual( [] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+	} );
+
 	it( 'Scenario 2a: step < WIREFRAMES — writes empty suggestions without hitting the planner', async () => {
 		setInjectedSnapshot( {
 			'site-key-1': {

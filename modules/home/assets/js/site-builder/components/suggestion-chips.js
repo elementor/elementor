@@ -1,19 +1,12 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { PlannerChipsRow, SuggestionChip } from './styled-components';
+import { PLANNER_STEPS } from '../constants';
+
 const DEFAULT_SITE_BUILDER_STATE = {
 	sessionStep: null,
 	pageSuggestions: [],
 	siteTypeSuggestions: [],
-};
-
-const PLANNER_STEPS = {
-	INIT: 0,
-	CHAT: 1,
-	SITEMAP: 2,
-	WIREFRAMES: 3,
-	DEPLOYING: 4,
-	DEPLOYED_TO_HOSTING: 5,
 };
 
 const shouldShowPageNameSuggestions = ( sessionStep, pageSuggestions ) => {

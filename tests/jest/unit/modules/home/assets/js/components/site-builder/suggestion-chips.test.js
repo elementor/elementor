@@ -83,6 +83,16 @@ describe( 'SuggestionChips', () => {
 		} );
 	} );
 
+	it( 'shows page-name suggestions when session is at DEPLOYED_TO_PLUGIN (step 6)', () => {
+		mockState( { sessionStep: 6, pageSuggestions: PAGE_SUGGESTIONS } );
+
+		const { getByText } = renderChips();
+
+		PAGE_SUGGESTIONS.forEach( ( label ) => {
+			expect( getByText( label ) ).toBeTruthy();
+		} );
+	} );
+
 	it( 'renders nothing when the session is between INIT and WIREFRAMES', () => {
 		mockState( {
 			sessionStep: 2,

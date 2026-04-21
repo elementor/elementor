@@ -6,6 +6,7 @@ import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { STEP_TYPES, getStepAction } from './components/step-actions';
 import useSiteBuilderState from './hooks/use-site-builder-state';
+import { PLANNER_STEPS } from './constants';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -19,15 +20,6 @@ import {
 	PlannerContent,
 	PlannerHeading,
 } from './components/styled-components';
-
-const PLANNER_STEPS = {
-	INIT: 0,
-	CHAT: 1,
-	SITEMAP: 2,
-	WIREFRAMES: 3,
-	DEPLOYING: 4,
-	DEPLOYED_TO_HOSTING: 5,
-};
 
 const getPlannerStepConfig = () => ( {
 	[ PLANNER_STEPS.INIT ]: {
@@ -65,6 +57,12 @@ const getPlannerStepConfig = () => ( {
 		buttonLabel: __( 'Review & publish', 'elementor' ),
 	},
 	[ PLANNER_STEPS.DEPLOYED_TO_HOSTING ]: {
+		title: __( 'Expand your site with AI', 'elementor' ),
+		type: STEP_TYPES.WITH_INPUT,
+		placeholder: __( 'Page name', 'elementor' ),
+		buttonLabel: __( 'Create page', 'elementor' ),
+	},
+	[ PLANNER_STEPS.DEPLOYED_TO_PLUGIN ]: {
 		title: __( 'Expand your site with AI', 'elementor' ),
 		type: STEP_TYPES.WITH_INPUT,
 		placeholder: __( 'Page name', 'elementor' ),
