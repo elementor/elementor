@@ -46,7 +46,6 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 
 	const snapshotEntry = readSnapshot()[ siteKey ];
 	const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
-	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
 	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry ) ) {
 		return {
@@ -56,6 +55,8 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 			isResolved: true,
 		};
 	}
+
+	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
 	if ( isPreWireframesStep( snapshotStep ) ) {
 		return {
