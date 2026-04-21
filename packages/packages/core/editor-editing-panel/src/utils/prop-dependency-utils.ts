@@ -4,9 +4,12 @@ import {
 	extractValue,
 	isDependency,
 	isDependencyMet,
+	isOverridable,
+	isTransformable,
 	type Props,
 	type PropsSchema,
 	type PropType,
+	rewrapOverridableValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from '@elementor/session';
@@ -173,15 +176,56 @@ function updateValue( path: string[], value: Value, values: Values ) {
 		}
 
 		if ( index === path.length - 1 ) {
-			carry[ key ] = value ?? null;
+			const existing = carry[ key ];
+			carry[ key ] = mergeLeafValue( existing, value );
 
-			return ( carry[ key ]?.value as Values ) ?? carry.value;
+			return getDescentForPropUpdate( carry, key );
 		}
 
-		return ( carry[ key ]?.value as Values ) ?? carry.value;
+		return getDescentForPropUpdate( carry, key );
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+}
+
+function getDescentForPropUpdate( carry: Values | null, key: string ): Values | null {
+	const child = carry?.[ key ];
+
+	if ( child == null ) {
+		return null;
+	}
+
+	if ( isOverridable( child ) ) {
+		const inner = child.value.origin_value;
+
+		if ( ! inner ) {
+			return null;
+		}
+
+		return ( isTransformable( inner ) ? ( inner.value ) : inner ) as Values;
+	}
+
+	if ( isTransformable( child ) ) {
+		return ( child.value as Values ) ?? null;
+	}
+
+	return null;
+}
+
+function mergeLeafValue( existing: Value, incoming: Value ): Value {
+	if ( incoming === null ) {
+		return null;
+	}
+
+	if ( incoming && isOverridable( incoming ) ) {
+		return incoming;
+	}
+
+	if ( existing && isOverridable( existing ) && incoming ) {
+		return rewrapOverridableValue( existing, incoming as TransformablePropValue< string > );
+	}
+
+	return incoming;
 }
 
 function handleUnmetCondition( props: {
@@ -196,7 +240,9 @@ function handleUnmetCondition( props: {
 		( term ): term is Dependency => 'newValue' in term && !! term.newValue
 	) as Dependency | undefined;
 	const newValue = termWithNewValue?.newValue ?? null;
-	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
+	const currentValue =
+		extractValue( dependency.split( '.' ), elementValues, [], { unwrapOverridableLeaf: false } ) ??
+		defaultValue;
 
 	savePreviousValueToStorage( {
 		path: dependency,

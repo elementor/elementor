@@ -946,5 +946,78 @@ describe( 'prop-dependency-utils', () => {
 
 			expect( result ).toEqual( values );
 		} );
+
+		it( 'should unwrap overridable leaf to origin_value for dependency checks', () => {
+			const values = {
+				title: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'k1',
+						origin_value: { $$type: 'string', value: 'hello' },
+					},
+				},
+			};
+
+			const result = extractValue( [ 'title' ], values );
+
+			expect( result ).toEqual( { $$type: 'string', value: 'hello' } );
+		} );
+
+		it( 'should keep full overridable wrapper when unwrapOverridableLeaf is false', () => {
+			const overridable = {
+				$$type: 'overridable' as const,
+				value: {
+					override_key: 'k1',
+					origin_value: { $$type: 'string', value: 'hello' },
+				},
+			};
+			const values = { title: overridable };
+
+			const result = extractValue( [ 'title' ], values, [], { unwrapOverridableLeaf: false } );
+
+			expect( result ).toEqual( overridable );
+		} );
+
+		it( 'should traverse into overridable origin for nested paths', () => {
+			const values = {
+				block: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'b1',
+						origin_value: {
+							$$type: 'object',
+							value: {
+								inner: { $$type: 'boolean', value: true },
+							},
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'block', 'inner' ], values );
+
+			expect( result ).toEqual( { $$type: 'boolean', value: true } );
+		} );
+	} );
+
+	describe( 'isDependencyMet with overridable affecting props', () => {
+		it( 'should compare against origin value when affecting prop is overridable', () => {
+			const values = {
+				mode: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'm',
+						origin_value: { $$type: 'string', value: 'advanced' },
+					},
+				},
+			};
+
+			const dependency: Dependency = {
+				relation: 'and',
+				terms: [ { operator: 'eq', path: [ 'mode' ], value: 'advanced' } ],
+			};
+
+			expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
+		} );
 	} );
 } );

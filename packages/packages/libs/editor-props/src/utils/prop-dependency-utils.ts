@@ -5,6 +5,7 @@ import {
 	type PropValue,
 	type TransformablePropValue,
 } from '../types';
+import { isOverridable } from './is-overridable';
 import { isTransformable } from './is-transformable';
 
 type ParsedTerm = DependencyTerm;
@@ -113,24 +114,47 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
+export type ExtractValueOptions = {
+	unwrapOverridableLeaf?: boolean;
+};
+
 export function extractValue(
 	path: string[],
 	elementValues: PropValue,
-	nestedPath: string[] = []
-): TransformablePropValue< PropKey > | null {
-	const extractedValue = path.reduce( ( acc, key, index ) => {
-		const value = acc?.[ key as keyof typeof acc ] as PropValue | null;
+	nestedPath: string[] = [],
+	options: ExtractValueOptions = {}
+) {
+	const { unwrapOverridableLeaf = true } = options;
 
-		return index !== path.length - 1 && isTransformable( value ) ? value.value ?? null : value;
+	const extractedValue = path.reduce( ( acc, key, index ) => {
+		let value = acc?.[ key as keyof typeof acc ] as PropValue;
+		const isLast = index === path.length - 1;
+
+		if ( ! isLast ) {
+			if ( isOverridable( value ) ) {
+				const inner = value.value.origin_value;
+				value = ( isTransformable( inner ) ? inner.value ?? null : inner )
+			} else if ( isTransformable( value ) ) {
+				value = value.value ?? null;
+			}
+		}
+
+		return value;
 	}, elementValues ) as TransformablePropValue< PropKey >;
 
+	let resolved = extractedValue;
+
+	if ( unwrapOverridableLeaf && resolved && isOverridable( resolved ) ) {
+		resolved = resolved.value.origin_value ?? null;
+	}
+
 	if ( ! nestedPath?.length ) {
-		return extractedValue;
+		return resolved;
 	}
 
 	const nestedValue = nestedPath.reduce(
 		( acc: Record< string, unknown >, key ) => acc?.[ key ] as Record< string, unknown >,
-		extractedValue?.value as Record< string, unknown >
+		resolved?.value as Record< string, unknown >
 	);
 
 	return {
