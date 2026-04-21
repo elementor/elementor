@@ -224,7 +224,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$result = $transformation->transform( $input_data );
 
 		$this->assertSame( 'Title with bold text', $result['site_builder']['stepConfig'][0]['title'] );
-		$this->assertSame( 'Label with  end', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
+		$this->assertSame( 'Label with end', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
 		$this->assertSame( 'Link here', $result['site_builder']['stepConfig'][0]['placeholder'] );
 	}
 
