@@ -27,12 +27,17 @@ class Site_Builder_Config extends Transformations_Abstract {
 			return $home_screen_data;
 		}
 
+		$step_config = isset( $home_screen_data['site_builder'] ) && is_array( $home_screen_data['site_builder'] )
+			? $home_screen_data['site_builder']
+			: [];
+
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
 			'siteBuilderUrl' => self::SITE_BUILDER_URL,
 			'apiOrigin' => $this->get_api_origin_url(),
 			'previewImage1' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-01.jpg',
 			'previewImage2' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-02.jpg',
 			'bgImage' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-bg.jpg',
+			'stepConfig' => $step_config,
 		] );
 
 		$snapshot = $this->wordpress_adapter->get_option( 'elementor_site_builder_snapshot' );

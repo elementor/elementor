@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import AiLoaderIcon from '../icons/ai-loader-icon';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
@@ -21,61 +20,16 @@ import {
 	PlannerHeading,
 } from './components/styled-components';
 
-const getPlannerStepConfig = () => ( {
-	[ PLANNER_STEPS.INIT ]: {
-		hasInput: true,
-		title: __( 'From idea to website in minutes', 'elementor' ),
-		placeholder: __( 'What site do you want to build?', 'elementor' ),
-		buttonLabel: __( 'Create my site', 'elementor' ),
-	},
-	[ PLANNER_STEPS.CHAT ]: {
-		hasInput: false,
-		title: __( 'From idea to website in minutes', 'elementor' ),
-		text: __( 'Review your brief and generate your website', 'elementor' ),
-		buttonLabel: __( 'Create site', 'elementor' ),
-	},
-	[ PLANNER_STEPS.SITEMAP ]: {
-		hasInput: false,
-		title: __( 'Let\’s turn your sitemap into a design', 'elementor' ),
-		text: __( 'Your sitemap is waiting for you to continue.', 'elementor' ),
-		buttonLabel: __( 'Visit sitemap', 'elementor' ),
-	},
-	[ PLANNER_STEPS.WIREFRAMES ]: {
-		hasInput: false,
-		title: __( 'Your site design is waiting', 'elementor' ),
-		text: __( 'Jump back in to review, edit, and add to Elementor.', 'elementor' ),
-		buttonLabel: __( 'Review design', 'elementor' ),
-	},
-	[ PLANNER_STEPS.DEPLOYING ]: {
-		hasInput: false,
-		title: __( 'Your site design is ready to go live', 'elementor' ),
-		text: __( 'Review and publish your site to continue editing in Elementor.', 'elementor' ),
-		buttonLabel: __( 'Review & publish', 'elementor' ),
-	},
-	[ PLANNER_STEPS.DEPLOYED_TO_HOSTING ]: {
-		hasInput: true,
-		title: __( 'Expand your site with Elementor AI', 'elementor' ),
-		placeholder: __( 'Which page do you want to create?', 'elementor' ),
-		buttonLabel: __( 'Create page', 'elementor' ),
-	},
-	[ PLANNER_STEPS.DEPLOYED_TO_PLUGIN ]: {
-		hasInput: true,
-		title: __( 'Expand your site with Elementor AI', 'elementor' ),
-		placeholder: __( 'Which page do you want to create?', 'elementor' ),
-		buttonLabel: __( 'Create page', 'elementor' ),
-	},
-} );
-
-const getStepConfig = ( step ) => {
+const getStepConfig = ( step, stepConfigs ) => {
 	const normalizedStep = Number( step );
-	const config = getPlannerStepConfig();
-	const fallback = config[ PLANNER_STEPS.INIT ];
-	return config[ Number.isFinite( normalizedStep ) ? normalizedStep : PLANNER_STEPS.INIT ] || fallback;
+	const configs = stepConfigs ?? {};
+	const fallback = configs[ PLANNER_STEPS.INIT ] ?? {};
+	return configs[ Number.isFinite( normalizedStep ) ? normalizedStep : PLANNER_STEPS.INIT ] ?? fallback;
 };
 
 const SiteBuilder = ( { siteBuilderData } ) => {
 	const { sessionStep, pageSuggestions, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
-	const stepConfig = getStepConfig( sessionStep );
+	const stepConfig = getStepConfig( sessionStep, siteBuilderData?.stepConfig );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isOnePage, setIsOnePage ] = useState( false );
 
@@ -120,7 +74,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 	};
 
 	return (
-		<PlannerRoot elevation={ 0 }>
+		<PlannerRoot elevation={ 0 } data-testid="e-site-builder">
 			<PlannerBackground bgimage={ siteBuilderData?.bgImage } />
 
 			<PlannerGrid />
