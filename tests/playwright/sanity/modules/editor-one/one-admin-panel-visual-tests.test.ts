@@ -5,6 +5,7 @@ import { timeouts } from '../../../config/timeouts';
 
 test.describe( 'Editor One Menu Visual Tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		test.setTimeout( timeouts.singleTest );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -13,6 +14,7 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 	} );
 
 	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
+		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setSiteLanguage( 'he_IL' );
