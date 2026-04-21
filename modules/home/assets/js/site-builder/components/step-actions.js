@@ -8,13 +8,8 @@ import {
 	CreateSiteButton,
 } from './styled-components';
 
-export const STEP_TYPES = Object.freeze( {
-	WITH_INPUT: 'withInput',
-	WITHOUT_INPUT: 'withoutInput',
-} );
-
 export const getStepAction = ( stepConfig, handlers ) => {
-	if ( STEP_TYPES.WITH_INPUT === stepConfig.type ) {
+	if ( stepConfig.hasInput ) {
 		return (
 			<StepWithInput
 				buttonLabel={ stepConfig.buttonLabel }

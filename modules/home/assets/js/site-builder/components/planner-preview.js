@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import AiLoaderIcon from '../icons/ai-loader-icon';
+import AiLoaderIcon from '../../icons/ai-loader-icon';
 import {
 	PlannerLoaderBadge,
 	PlannerPreviewContainer,

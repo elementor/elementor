@@ -1,14 +1,25 @@
 import { fireEvent, render } from '@testing-library/react';
 import SuggestionChips from 'elementor/modules/home/assets/js/site-builder/components/suggestion-chips';
 
-jest.mock( 'elementor/modules/home/assets/js/site-builder/components/styled-components', () => ( {
-	PlannerChipsRow: ( { children } ) => <div data-testid="chips-row">{ children }</div>,
-	SuggestionChip: ( { label, onClick, selected } ) => (
+jest.mock( 'elementor/modules/home/assets/js/site-builder/components/styled-components', () => {
+	const PropTypes = require( 'prop-types' );
+
+	const PlannerChipsRow = ( { children } ) => <div data-testid="chips-row">{ children }</div>;
+	PlannerChipsRow.propTypes = { children: PropTypes.node };
+
+	const SuggestionChip = ( { label, onClick, selected } ) => (
 		<button type="button" data-selected={ selected } onClick={ onClick }>
 			{ label }
 		</button>
-	),
-} ) );
+	);
+	SuggestionChip.propTypes = {
+		label: PropTypes.string,
+		onClick: PropTypes.func,
+		selected: PropTypes.bool,
+	};
+
+	return { PlannerChipsRow, SuggestionChip };
+} );
 
 const PAGE_SUGGESTIONS = [ 'Home', 'Services', 'Contact' ];
 const SITE_TYPE_SUGGESTIONS = [ 'Business website', 'Portfolio website', 'E-commerce store' ];

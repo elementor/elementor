@@ -4,7 +4,7 @@ import { useState } from 'react';
 import AiLoaderIcon from '../icons/ai-loader-icon';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
-import { STEP_TYPES, getStepAction } from './components/step-actions';
+import { getStepAction } from './components/step-actions';
 import useSiteBuilderState from './hooks/use-site-builder-state';
 import { PLANNER_STEPS } from './constants';
 import {
@@ -23,49 +23,45 @@ import {
 
 const getPlannerStepConfig = () => ( {
 	[ PLANNER_STEPS.INIT ]: {
+		hasInput: true,
 		title: __( 'From idea to website in minutes', 'elementor' ),
-		type: STEP_TYPES.WITH_INPUT,
-		placeholder: __( 'Describe the type of website.', 'elementor' ),
+		placeholder: __( 'What site do you want to build?', 'elementor' ),
 		buttonLabel: __( 'Create my site', 'elementor' ),
 	},
 	[ PLANNER_STEPS.CHAT ]: {
-		title: __( 'Your site brief is ready, let\'s build your site', 'elementor' ),
-		type: STEP_TYPES.WITHOUT_INPUT,
-		text: __( 'Turn your brief into a full site design and continue editing in Elementor.', 'elementor' ),
-		buttonLabel: __( 'Continue building', 'elementor' ),
+		hasInput: false,
+		title: __( 'From idea to website in minutes', 'elementor' ),
+		text: __( 'Review your brief and generate your website', 'elementor' ),
+		buttonLabel: __( 'Create site', 'elementor' ),
 	},
 	[ PLANNER_STEPS.SITEMAP ]: {
-		// title: __( 'From idea to website in minutes', 'elementor' ),
-		// type: STEP_TYPES.WITH_INPUT,
-		// placeholder: __( 'Describe the type of website.', 'elementor' ),
-		// buttonLabel: __( 'Create my site', 'elementor' ),
-		title: __( 'Your site is ready, let\'s design your site', 'elementor' ),
-		type: STEP_TYPES.WITHOUT_INPUT,
-		text: __( 'Turn your sitemap into a full site design and continue editing in Elementor.', 'elementor' ),
-		buttonLabel: __( 'Generate design', 'elementor' ),
+		hasInput: false,
+		title: __( 'Let\’s turn your sitemap into a design', 'elementor' ),
+		text: __( 'Your sitemap is waiting for you to continue.', 'elementor' ),
+		buttonLabel: __( 'Visit sitemap', 'elementor' ),
 	},
 	[ PLANNER_STEPS.WIREFRAMES ]: {
-		title: __( 'Your site design is ready to go live', 'elementor' ),
-		type: STEP_TYPES.WITHOUT_INPUT,
-		text: __( 'Review and publish your site to continue editing in Elementor.', 'elementor' ),
-		buttonLabel: __( 'Review & publish', 'elementor' ),
+		hasInput: false,
+		title: __( 'Your site design is waiting', 'elementor' ),
+		text: __( 'Jump back in to review, edit, and add to Elementor.', 'elementor' ),
+		buttonLabel: __( 'Review design', 'elementor' ),
 	},
 	[ PLANNER_STEPS.DEPLOYING ]: {
+		hasInput: false,
 		title: __( 'Your site design is ready to go live', 'elementor' ),
-		type: STEP_TYPES.WITHOUT_INPUT,
 		text: __( 'Review and publish your site to continue editing in Elementor.', 'elementor' ),
 		buttonLabel: __( 'Review & publish', 'elementor' ),
 	},
 	[ PLANNER_STEPS.DEPLOYED_TO_HOSTING ]: {
-		title: __( 'Expand your site with AI', 'elementor' ),
-		type: STEP_TYPES.WITH_INPUT,
-		placeholder: __( 'Page name', 'elementor' ),
+		hasInput: true,
+		title: __( 'Expand your site with Elementor AI', 'elementor' ),
+		placeholder: __( 'Which page do you want to create?', 'elementor' ),
 		buttonLabel: __( 'Create page', 'elementor' ),
 	},
 	[ PLANNER_STEPS.DEPLOYED_TO_PLUGIN ]: {
-		title: __( 'Expand your site with AI', 'elementor' ),
-		type: STEP_TYPES.WITH_INPUT,
-		placeholder: __( 'Page name', 'elementor' ),
+		hasInput: true,
+		title: __( 'Expand your site with Elementor AI', 'elementor' ),
+		placeholder: __( 'Which page do you want to create?', 'elementor' ),
 		buttonLabel: __( 'Create page', 'elementor' ),
 	},
 } );
@@ -96,7 +92,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 		}
 
 		const prompt = nextInputValue || inputValue;
-		const requiresInput = STEP_TYPES.WITH_INPUT === stepConfig.type;
+		const requiresInput = stepConfig.hasInput;
 
 		if ( requiresInput && ! prompt.trim() ) {
 			return;

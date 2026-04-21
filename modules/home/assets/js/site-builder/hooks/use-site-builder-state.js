@@ -13,12 +13,12 @@ const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
 
 const readSnapshot = () => {
 	const raw = window.elementorHomeScreenData?.siteBuilderSnapshot;
-	return raw && typeof raw === 'object' && ! Array.isArray( raw ) ? raw : {};
+	return raw && 'object' === typeof raw && ! Array.isArray( raw ) ? raw : {};
 };
 
 const sanitizeSuggestions = ( value, { limit } = {} ) => {
 	const list = Array.isArray( value )
-		? value.filter( ( item ) => typeof item === 'string' && item.trim() )
+		? value.filter( ( item ) => 'string' === typeof item && item.trim() )
 		: [];
 	return limit ? list.slice( 0, limit ) : list;
 };
@@ -52,7 +52,7 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 		return {
 			sessionStep: snapshotStep,
 			pageSuggestions: snapshotEntry.pageSuggestions,
-			siteTypeSuggestions,
+			siteTypeSuggestions: sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } ),
 			isResolved: true,
 		};
 	}
@@ -111,7 +111,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			applyState( {
 				sessionStep: snapshotStep,
 				pageSuggestions: snapshotEntry.pageSuggestions,
-				siteTypeSuggestions: withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ),
+				siteTypeSuggestions: sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } ),
 			} );
 			return;
 		}

@@ -66,7 +66,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$result = $transformation->transform( [] );
 
 		$this->assertSame( 'https://planner.test/chat.html', $result['site_builder']['iframeUrl'] );
-		$this->assertSame( 'https://planner.test/chat.html', $result['site_builder']['siteBuilderUrl'] );
+		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
 		$this->assertSame( [ 'siteKey' => 'abc' ], $result['site_builder']['connectAuth'] );
 		$this->assertStringContainsString( 'site-planner-01.jpg', $result['site_builder']['previewImage1'] );
 		$this->assertStringContainsString( 'site-planner-02.jpg', $result['site_builder']['previewImage2'] );
