@@ -87,23 +87,13 @@ class Migrations_Orchestrator {
 	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
 		try {
 			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() ) ) {
-				// TODO: Remove debug log before merging.
-				error_log( "[MIGRATION] SKIPPED - cache hit for entity {$entity_id} ({$data_identifier})" );
 				return;
 			}
-
-			// TODO: Remove debug log before merging.
-			error_log( "[MIGRATION] RUNNING for entity {$entity_id} ({$data_identifier})" );
 
 			$has_changes = $this->walk_and_migrate( $data, [] );
 
 			if ( $has_changes ) {
-				// TODO: Remove debug log before merging.
-				error_log( "[MIGRATION] CHANGES DETECTED - saving entity {$entity_id}" );
 				$save_callback( $data );
-			} else {
-				// TODO: Remove debug log before merging.
-				error_log( "[MIGRATION] NO CHANGES for entity {$entity_id}" );
 			}
 
 			Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() );
