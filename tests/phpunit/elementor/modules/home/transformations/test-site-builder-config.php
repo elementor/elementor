@@ -10,8 +10,15 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 	private const OPTION_KEY = 'elementor_site_builder_snapshot';
 
+	private $original_site_builder_component;
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->original_site_builder_component = Plugin::$instance->app->get_component( 'site-builder' );
+	}
+
 	public function tearDown(): void {
-		Plugin::$instance->app->add_component( 'site-builder', null );
+		Plugin::$instance->app->add_component( 'site-builder', $this->original_site_builder_component );
 		parent::tearDown();
 	}
 
