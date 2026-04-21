@@ -1,5 +1,4 @@
-import { type Page, type Locator, type APIRequestContext } from '@playwright/test';
-import { expect } from '@playwright/test';
+import { type Page, type Locator, type APIRequestContext, expect } from '@playwright/test';
 import { resolve } from 'path';
 import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';

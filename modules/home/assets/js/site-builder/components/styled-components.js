@@ -24,20 +24,20 @@ export const PlannerBackground = styled( Box )( ( { bgimage } ) => ( {
 	...( bgimage && {
 		backgroundImage: `url(${ bgimage })`,
 		backgroundPosition: '0px -105.625px',
-		backgroundSize: '100% 257.593%',
+		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 	} ),
 	zIndex: 0,
 } ) );
 
-export const PlannerGrid = styled( Box )( {
+export const PlannerGrid = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
 	backgroundImage:
 		'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)',
-	backgroundSize: '40px 40px',
+	backgroundSize: `${ theme.spacing( 5 ) } ${ theme.spacing( 5 ) }`,
 	zIndex: 0,
-} );
+} ) );
 
 export const PlannerPreviewContainer = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
@@ -156,10 +156,10 @@ export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
 		boxShadow: '0px 3px 14px 0px rgba(0, 0, 0, 0.06)',
 		overflow: 'hidden',
 		'& fieldset': {
-			borderColor: theme.palette.text.primary,
+			borderColor: theme.palette.divider,
 		},
 		'&.Mui-focused fieldset': {
-			borderColor: theme.palette.text.primary,
+			borderColor: theme.palette.divider,
 			borderWidth: '1px',
 		},
 	},

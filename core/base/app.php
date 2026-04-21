@@ -56,9 +56,7 @@ abstract class App extends Module {
 		$settings = [];
 
 		foreach ( $this->get_components() as $id => $instance ) {
-			if ( $instance ) {
-				$settings[ $id ] = $instance->get_settings();
-			}
+			$settings[ $id ] = $instance->get_settings();
 		}
 
 		return $settings;
