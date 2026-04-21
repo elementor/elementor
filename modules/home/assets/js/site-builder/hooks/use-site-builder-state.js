@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const SNAPSHOT_OPTION_KEY = 'elementor_site_builder_snapshot';
-const SETTINGS_PATH = `elementor/v1/settings/${ SNAPSHOT_OPTION_KEY }`;
+const SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
 const WIREFRAMES_STEP = 3;
 

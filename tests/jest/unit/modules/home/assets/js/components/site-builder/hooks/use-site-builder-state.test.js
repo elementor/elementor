@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import useSiteBuilderState from 'elementor/modules/home/assets/js/site-builder/hooks/use-site-builder-state';
 
-const SETTINGS_URL = '/wp-json/elementor/v1/settings/elementor_site_builder_snapshot';
+const SETTINGS_URL = '/wp-json/elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_URL = '/wp-json/elementor/v1/site-builder/home-screen';
 
 const createResponse = ( body, ok = true ) => ( {

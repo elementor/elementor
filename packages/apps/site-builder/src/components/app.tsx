@@ -134,7 +134,7 @@ export function App() {
 		}
 
 		const baseUrl = wpApiSettings?.root || '/wp-json/';
-		const settingsUrl = `${ baseUrl }elementor/v1/settings/elementor_site_builder_snapshot`;
+		const settingsUrl = `${ baseUrl }elementor/v1/site-builder/snapshot`;
 
 		fetch( settingsUrl, {
 			method: 'POST',

@@ -10,15 +10,15 @@ class Elementor_Settings {
 
 	private function get_writable_options_schema(): array {
 		return apply_filters( 'elementor/rest/settings/writable_options', [
-			'elementor_site_builder_snapshot' => [
-				'type' => 'object',
-				'sanitize' => function ( $val ) {
-					return is_array( $val ) ? $val : [];
-				},
-			],
 			'elementor_active_kit' => [
 				'type' => 'integer',
 				'sanitize' => 'absint',
+			],
+			'elementor_pro_theme_builder_conditions' => [
+				'type' => 'array',
+				'sanitize' => function ( $val ) {
+					return is_array( $val ) ? $val : [];
+				},
 			],
 		] );
 	}

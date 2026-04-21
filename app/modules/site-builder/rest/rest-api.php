@@ -20,6 +20,27 @@ class Rest_Api {
 			'callback' => [ $this, 'get_home_screen' ],
 			'permission_callback' => fn() => current_user_can( 'manage_options' ),
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/snapshot', [
+			[
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => [ $this, 'get_snapshot' ],
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+			],
+			[
+				'methods' => WP_REST_Server::EDITABLE,
+				'callback' => [ $this, 'update_snapshot' ],
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'value' => [
+						'required' => true,
+						'type' => 'object',
+						'validate_callback' => fn( $value ) => is_array( $value ),
+						'sanitize_callback' => fn( $value ) => is_array( $value ) ? $value : [],
+					],
+				],
+			],
+		] );
 	}
 
 	public function get_home_screen() {
@@ -36,6 +57,33 @@ class Rest_Api {
 		}
 
 		return new WP_REST_Response( $data, 200 );
+	}
+
+	public function get_snapshot() {
+		$snapshot = get_option( 'elementor_site_builder_snapshot', [] );
+		return new WP_REST_Response( [
+			'success' => true,
+			'data' => [ 'value' => $snapshot ],
+		], 200 );
+	}
+
+	public function update_snapshot( $request ) {
+		$value = $request->get_param( 'value' );
+		$sanitized = is_array( $value ) ? $value : [];
+
+		$success = update_option( 'elementor_site_builder_snapshot', $sanitized );
+
+		if ( $success || $sanitized === get_option( 'elementor_site_builder_snapshot' ) ) {
+			return new WP_REST_Response( [
+				'success' => true,
+				'data' => [ 'message' => 'Snapshot updated successfully.' ],
+			], 200 );
+		}
+
+		return new WP_REST_Response( [
+			'success' => false,
+			'data' => [ 'message' => 'Failed to update snapshot.' ],
+		], 500 );
 	}
 
 	private function get_connect_app() {

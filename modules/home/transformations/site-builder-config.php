@@ -87,24 +87,24 @@ class Site_Builder_Config extends Transformations_Abstract {
 			}
 
 			if ( isset( $step_data['title'] ) && is_string( $step_data['title'] ) ) {
-				$sanitized_title = wp_kses_post( $step_data['title'] );
+				$sanitized_title = sanitize_text_field( $step_data['title'] );
 				$validated_step['title'] = mb_substr( $sanitized_title, 0, 200 );
 			}
 
 			if ( isset( $step_data['buttonLabel'] ) && is_string( $step_data['buttonLabel'] ) ) {
-				$sanitized_label = wp_kses_post( $step_data['buttonLabel'] );
+				$sanitized_label = sanitize_text_field( $step_data['buttonLabel'] );
 				$validated_step['buttonLabel'] = mb_substr( $sanitized_label, 0, 100 );
 			}
 
 			$has_input = $validated_step['hasInput'] ?? false;
 
 			if ( $has_input && isset( $step_data['placeholder'] ) && is_string( $step_data['placeholder'] ) ) {
-				$sanitized_placeholder = wp_kses_post( $step_data['placeholder'] );
+				$sanitized_placeholder = sanitize_text_field( $step_data['placeholder'] );
 				$validated_step['placeholder'] = mb_substr( $sanitized_placeholder, 0, 200 );
 			}
 
 			if ( ! $has_input && isset( $step_data['text'] ) && is_string( $step_data['text'] ) ) {
-				$sanitized_text = wp_kses_post( $step_data['text'] );
+				$sanitized_text = sanitize_text_field( $step_data['text'] );
 				$validated_step['text'] = mb_substr( $sanitized_text, 0, 300 );
 			}
 

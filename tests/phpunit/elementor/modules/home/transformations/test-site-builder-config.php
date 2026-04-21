@@ -210,9 +210,9 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 			'site_builder' => [
 				0 => [
 					'hasInput' => true,
-					'title' => 'Title with <script>alert("xss")</script> script',
-					'buttonLabel' => '<img src=x onerror=alert(1)>',
-					'placeholder' => '<a href="javascript:void(0)">Click</a>',
+					'title' => 'Title with <b>bold</b> text',
+					'buttonLabel' => 'Label with <script>alert(1)</script>',
+					'placeholder' => '<a href="test">Link</a> here',
 				],
 			],
 		];
@@ -223,9 +223,9 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$result = $transformation->transform( $input_data );
 
-		$this->assertStringNotContainsString( '<script>', $result['site_builder']['stepConfig'][0]['title'] );
-		$this->assertStringNotContainsString( 'onerror', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
-		$this->assertStringNotContainsString( 'javascript:', $result['site_builder']['stepConfig'][0]['placeholder'] );
+		$this->assertSame( 'Title with bold text', $result['site_builder']['stepConfig'][0]['title'] );
+		$this->assertSame( 'Label with alert(1)', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
+		$this->assertSame( 'Link here', $result['site_builder']['stepConfig'][0]['placeholder'] );
 	}
 
 	public function test_transform__ignores_invalid_step_keys() {

@@ -2,7 +2,7 @@ import apiFetch from '@wordpress/api-fetch';
 
 import type { DeployLogo, WpPost } from '../types';
 
-const ALLOWED_LOGO_DOMAINS = [ 'assets.elementor.com', 'cdn.elementor.com' ];
+const ALLOWED_LOGO_DOMAINS = [ 'assets.elementor.com' ];
 
 export async function uploadLogo( logo: DeployLogo ) {
 	try {
