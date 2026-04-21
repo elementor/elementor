@@ -121,6 +121,194 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$this->assertSame( ELEMENTOR_SITE_PLANNER_API_ORIGIN, $result['site_builder']['apiOrigin'] );
 	}
 
+	public function test_transform__validates_and_sanitizes_step_config() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'iframeUrl' => 'https://planner.test/' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$input_data = [
+			'site_builder' => [
+				0 => [
+					'hasInput' => true,
+					'title' => 'Build your website',
+					'placeholder' => 'What site do you want to build?',
+					'buttonLabel' => 'Create',
+				],
+				3 => [
+					'hasInput' => false,
+					'title' => 'Your design is ready',
+					'text' => 'Review and publish your site.',
+					'buttonLabel' => 'Review',
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertSame( 'Build your website', $result['site_builder']['stepConfig'][0]['title'] );
+		$this->assertTrue( $result['site_builder']['stepConfig'][0]['hasInput'] );
+		$this->assertSame( 'What site do you want to build?', $result['site_builder']['stepConfig'][0]['placeholder'] );
+		$this->assertSame( 'Create', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
+
+		$this->assertSame( 'Your design is ready', $result['site_builder']['stepConfig'][3]['title'] );
+		$this->assertFalse( $result['site_builder']['stepConfig'][3]['hasInput'] );
+		$this->assertSame( 'Review and publish your site.', $result['site_builder']['stepConfig'][3]['text'] );
+		$this->assertSame( 'Review', $result['site_builder']['stepConfig'][3]['buttonLabel'] );
+	}
+
+	public function test_transform__strips_unknown_step_config_fields() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'iframeUrl' => 'https://planner.test/' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$input_data = [
+			'site_builder' => [
+				0 => [
+					'hasInput' => true,
+					'title' => 'Valid title',
+					'buttonLabel' => 'Go',
+					'maliciousField' => '<script>alert("xss")</script>',
+					'extraData' => [ 'nested' => 'data' ],
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertArrayNotHasKey( 'maliciousField', $result['site_builder']['stepConfig'][0] );
+		$this->assertArrayNotHasKey( 'extraData', $result['site_builder']['stepConfig'][0] );
+		$this->assertArrayHasKey( 'title', $result['site_builder']['stepConfig'][0] );
+		$this->assertArrayHasKey( 'hasInput', $result['site_builder']['stepConfig'][0] );
+	}
+
+	public function test_transform__sanitizes_html_in_step_config() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'iframeUrl' => 'https://planner.test/' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$input_data = [
+			'site_builder' => [
+				0 => [
+					'hasInput' => true,
+					'title' => 'Title with <script>alert("xss")</script> script',
+					'buttonLabel' => '<img src=x onerror=alert(1)>',
+					'placeholder' => '<a href="javascript:void(0)">Click</a>',
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertStringNotContainsString( '<script>', $result['site_builder']['stepConfig'][0]['title'] );
+		$this->assertStringNotContainsString( 'onerror', $result['site_builder']['stepConfig'][0]['buttonLabel'] );
+		$this->assertStringNotContainsString( 'javascript:', $result['site_builder']['stepConfig'][0]['placeholder'] );
+	}
+
+	public function test_transform__ignores_invalid_step_keys() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'iframeUrl' => 'https://planner.test/' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$input_data = [
+			'site_builder' => [
+				99 => [
+					'hasInput' => true,
+					'title' => 'Invalid step',
+				],
+				'invalid_key' => [
+					'hasInput' => true,
+					'title' => 'String key',
+				],
+				0 => [
+					'hasInput' => true,
+					'title' => 'Valid step',
+					'buttonLabel' => 'Go',
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertArrayNotHasKey( 99, $result['site_builder']['stepConfig'] );
+		$this->assertArrayNotHasKey( 'invalid_key', $result['site_builder']['stepConfig'] );
+		$this->assertArrayHasKey( 0, $result['site_builder']['stepConfig'] );
+		$this->assertSame( 'Valid step', $result['site_builder']['stepConfig'][0]['title'] );
+	}
+
+	public function test_transform__enforces_max_length_on_step_config_strings() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'iframeUrl' => 'https://planner.test/' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$long_title = str_repeat( 'a', 300 );
+		$long_label = str_repeat( 'b', 150 );
+		$long_text = str_repeat( 'c', 400 );
+
+		$input_data = [
+			'site_builder' => [
+				0 => [
+					'hasInput' => true,
+					'title' => $long_title,
+					'buttonLabel' => $long_label,
+					'placeholder' => $long_title,
+				],
+				3 => [
+					'hasInput' => false,
+					'title' => $long_title,
+					'text' => $long_text,
+					'buttonLabel' => $long_label,
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertLessThanOrEqual( 200, mb_strlen( $result['site_builder']['stepConfig'][0]['title'] ) );
+		$this->assertLessThanOrEqual( 100, mb_strlen( $result['site_builder']['stepConfig'][0]['buttonLabel'] ) );
+		$this->assertLessThanOrEqual( 200, mb_strlen( $result['site_builder']['stepConfig'][0]['placeholder'] ) );
+		$this->assertLessThanOrEqual( 300, mb_strlen( $result['site_builder']['stepConfig'][3]['text'] ) );
+	}
+
 	private function mock_wordpress_adapter( $snapshot = [] ): Wordpress_Adapter_Interface {
 		$mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )
 			->disableOriginalConstructor()

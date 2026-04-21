@@ -8,6 +8,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Elementor_Settings {
 
+	private function get_writable_options_schema(): array {
+		return apply_filters( 'elementor/rest/settings/writable_options', [
+			'elementor_site_builder_snapshot' => [
+				'type' => 'object',
+				'sanitize' => function ( $val ) {
+					return is_array( $val ) ? $val : [];
+				},
+			],
+			'elementor_active_kit' => [
+				'type' => 'integer',
+				'sanitize' => 'absint',
+			],
+		] );
+	}
+
+	private function is_option_writable( string $key ): bool {
+		$schema = $this->get_writable_options_schema();
+		return isset( $schema[ $key ] );
+	}
+
+	private function sanitize_option_value( string $key, $value ) {
+		$schema = $this->get_writable_options_schema();
+
+		if ( ! isset( $schema[ $key ] ) ) {
+			return $value;
+		}
+
+		$option_schema = $schema[ $key ];
+
+		if ( isset( $option_schema['sanitize'] ) && is_callable( $option_schema['sanitize'] ) ) {
+			return call_user_func( $option_schema['sanitize'], $value );
+		}
+
+		return $value;
+	}
+
 	public function register(): void {
 		register_rest_route('elementor/v1', '/settings/(?P<key>[\w_-]+)', [
 			[
@@ -58,20 +94,34 @@ class Elementor_Settings {
 				},
 				'validate_callback' => function ( \WP_REST_Request $request ): bool {
 					$params = $request->get_params();
-					return 0 === strpos( $params['key'], 'elementor' ) && isset( $params['value'] );
+					if ( 0 !== strpos( $params['key'], 'elementor' ) || ! isset( $params['value'] ) ) {
+						return false;
+					}
+					return $this->is_option_writable( $params['key'] );
 				},
 				'callback' => function ( \WP_REST_Request $request ): \WP_REST_Response {
 					$key = $request->get_param( 'key' );
 					$new_value = $request->get_param( 'value' );
+
+					if ( ! $this->is_option_writable( $key ) ) {
+						return new \WP_REST_Response([
+							'success' => false,
+							'data' => [
+								'message' => 'This option is not writable via the REST API.',
+							],
+						], 403);
+					}
+
+					$sanitized_value = $this->sanitize_option_value( $key, $new_value );
 					$current_value = get_option( $key );
 
-					if ( $new_value === $current_value ) {
+					if ( $sanitized_value === $current_value ) {
 						return new \WP_REST_Response([
 							'success' => true,
 						], 200);
 					}
 
-					$success = update_option( $key, $new_value );
+					$success = update_option( $key, $sanitized_value );
 					if ( $success ) {
 						return new \WP_REST_Response([
 							'success' => true,

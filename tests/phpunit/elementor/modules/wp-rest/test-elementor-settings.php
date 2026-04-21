@@ -115,4 +115,99 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$data = $response->get_data();
 		$this->assertTrue( $data['success'] );
 	}
+
+	public function test_update_allowlisted_setting_succeeds() {
+		// Arrange
+		$this->act_as_admin();
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_site_builder_snapshot' );
+		$request->set_param( 'value', [ 'test-key' => [ 'step' => 2 ] ] );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertTrue( $data['success'] );
+		$this->assertEquals( [ 'test-key' => [ 'step' => 2 ] ], get_option( 'elementor_site_builder_snapshot' ) );
+	}
+
+	public function test_update_non_allowlisted_setting_fails() {
+		// Arrange
+		$this->act_as_admin();
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_other_setting' );
+		$request->set_param( 'value', 'test_value' );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertFalse( $data['success'] );
+		$this->assertStringContainsString( 'not writable', $data['data']['message'] );
+	}
+
+	public function test_update_setting_sanitizes_value_for_snapshot() {
+		// Arrange
+		$this->act_as_admin();
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_site_builder_snapshot' );
+		$request->set_param( 'value', 'not_an_array' );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [], get_option( 'elementor_site_builder_snapshot' ) );
+	}
+
+	public function test_update_setting_sanitizes_value_for_active_kit() {
+		// Arrange
+		$this->act_as_admin();
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_active_kit' );
+		$request->set_param( 'value', '-123' );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 123, get_option( 'elementor_active_kit' ) );
+	}
+
+	public function test_allowlist_can_be_extended_via_filter() {
+		// Arrange
+		$this->act_as_admin();
+
+		add_filter( 'elementor/rest/settings/writable_options', function ( $options ) {
+			$options['elementor_custom_option'] = [
+				'type' => 'string',
+				'sanitize' => 'sanitize_text_field',
+			];
+			return $options;
+		} );
+
+		do_action( 'rest_api_init' );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_custom_option' );
+		$request->set_param( 'value', 'custom_value' );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertTrue( $data['success'] );
+		$this->assertEquals( 'custom_value', get_option( 'elementor_custom_option' ) );
+	}
 }

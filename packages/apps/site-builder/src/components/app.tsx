@@ -22,6 +22,10 @@ function getElementorAiCurrentContext() {
 }
 
 function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
+	if ( ! targetOrigin ) {
+		return;
+	}
+
 	const config = getConfig();
 
 	iframe.contentWindow?.postMessage(
@@ -87,7 +91,11 @@ export function App() {
 
 	const handleMessage = useCallback(
 		async ( event: MessageEvent ) => {
-			if ( allowedOrigin && event.origin !== allowedOrigin ) {
+			if ( ! allowedOrigin ) {
+				return;
+			}
+
+			if ( event.origin !== allowedOrigin ) {
 				return;
 			}
 
@@ -100,7 +108,7 @@ export function App() {
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin || '*' );
+					sendReferrerInfo( iframe, event, allowedOrigin );
 				}
 				return;
 			}

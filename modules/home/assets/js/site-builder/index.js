@@ -5,7 +5,6 @@ import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { getStepAction } from './components/step-actions';
 import useSiteBuilderState from './hooks/use-site-builder-state';
-import { PLANNER_STEPS } from './constants';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -20,20 +19,22 @@ import {
 	PlannerHeading,
 } from './components/styled-components';
 
-const getStepConfig = ( step, stepConfigs ) => {
+const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
 	const normalizedStep = Number( step );
 	const configs = stepConfigs ?? {};
-	const fallback = configs[ PLANNER_STEPS.INIT ] ?? {};
-	return configs[ Number.isFinite( normalizedStep ) ? normalizedStep : PLANNER_STEPS.INIT ] ?? fallback;
+	const initStep = plannerSteps?.INIT ?? 0;
+	const fallback = configs[ initStep ] ?? {};
+	return configs[ Number.isFinite( normalizedStep ) ? normalizedStep : initStep ] ?? fallback;
 };
 
 const SiteBuilder = ( { siteBuilderData } ) => {
 	const { sessionStep, pageSuggestions, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
-	const stepConfig = getStepConfig( sessionStep, siteBuilderData?.stepConfig );
+	const plannerSteps = siteBuilderData?.plannerSteps ?? {};
+	const stepConfig = getStepConfig( sessionStep, siteBuilderData?.stepConfig, plannerSteps );
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ isOnePage, setIsOnePage ] = useState( false );
 
-	const isInitStep = PLANNER_STEPS.INIT === Number( sessionStep );
+	const isInitStep = ( plannerSteps.INIT ?? 0 ) === Number( sessionStep );
 	const showLayoutToggle = isInitStep && Boolean( inputValue.trim() );
 
 	const handleInputChange = ( event ) => {
@@ -55,7 +56,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
 
 		if ( prompt ) {
-			const paramName = sessionStep >= PLANNER_STEPS.WIREFRAMES ? 'page_title' : 'site_type';
+			const paramName = sessionStep >= ( plannerSteps.WIREFRAMES ?? 3 ) ? 'page_title' : 'site_type';
 			url.searchParams.append( paramName, prompt );
 		}
 
@@ -126,6 +127,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 							sessionStep,
 							pageSuggestions,
 							siteTypeSuggestions,
+							plannerSteps,
 						} }
 						onChipSelect={ setInputValue }
 					/>
