@@ -133,7 +133,7 @@ export function extractValue(
 		if ( ! isLast ) {
 			if ( isOverridable( value ) ) {
 				const inner = value.value.origin_value;
-				value = ( isTransformable( inner ) ? inner.value ?? null : inner )
+				value = isTransformable( inner ) ? inner.value ?? null : inner;
 			} else if ( isTransformable( value ) ) {
 				value = value.value ?? null;
 			}

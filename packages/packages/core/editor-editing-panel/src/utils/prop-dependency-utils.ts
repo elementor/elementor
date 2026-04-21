@@ -191,7 +191,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 function getDescentForPropUpdate( carry: Values | null, key: string ): Values | null {
 	const child = carry?.[ key ];
 
-	if ( child == null ) {
+	if ( ( child ?? null ) === null ) {
 		return null;
 	}
 
@@ -202,7 +202,7 @@ function getDescentForPropUpdate( carry: Values | null, key: string ): Values | 
 			return null;
 		}
 
-		return ( isTransformable( inner ) ? ( inner.value ) : inner ) as Values;
+		return ( isTransformable( inner ) ? inner.value : inner ) as Values;
 	}
 
 	if ( isTransformable( child ) ) {
@@ -241,8 +241,7 @@ function handleUnmetCondition( props: {
 	) as Dependency | undefined;
 	const newValue = termWithNewValue?.newValue ?? null;
 	const currentValue =
-		extractValue( dependency.split( '.' ), elementValues, [], { unwrapOverridableLeaf: false } ) ??
-		defaultValue;
+		extractValue( dependency.split( '.' ), elementValues, [], { unwrapOverridableLeaf: false } ) ?? defaultValue;
 
 	savePreviousValueToStorage( {
 		path: dependency,
