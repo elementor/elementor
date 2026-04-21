@@ -190,6 +190,97 @@ trait Element_Tree_Helpers {
 	}
 
 	/**
+	 * Remove an element by ID from the tree.
+	 *
+	 * @param array  $elements   Element tree (modified in-place).
+	 * @param string $element_id Target element ID.
+	 * @return bool True if the element was found and removed.
+	 */
+	private function delete_element( array &$elements, string $element_id ): bool {
+		foreach ( $elements as $index => $el ) {
+			if ( isset( $el['id'] ) && $el['id'] === $element_id ) {
+				array_splice( $elements, $index, 1 );
+				return true;
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				if ( $this->delete_element( $elements[ $index ]['elements'], $element_id ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Move an element to a new parent at a specific index.
+	 *
+	 * Removes the element from wherever it currently lives, then inserts it as the
+	 * $position-th child of $new_parent_id (or at the root when $new_parent_id is null).
+	 *
+	 * @param array       $elements      Element tree (modified in-place).
+	 * @param string      $element_id    ID of the element to move.
+	 * @param string|null $new_parent_id Target parent ID. Null = insert at root level.
+	 * @param int         $position      0-based index within the target parent's children. -1 = append.
+	 * @return bool True if the element was found, removed, and re-inserted successfully.
+	 */
+	private function move_element( array &$elements, string $element_id, ?string $new_parent_id, int $position = -1 ): bool {
+		$node = $this->find_element( $elements, $element_id );
+
+		if ( null === $node ) {
+			return false;
+		}
+
+		$this->delete_element( $elements, $element_id );
+
+		if ( null === $new_parent_id ) {
+			if ( $position < 0 || $position >= count( $elements ) ) {
+				$elements[] = $node;
+			} else {
+				array_splice( $elements, $position, 0, [ $node ] );
+			}
+			return true;
+		}
+
+		return $this->insert_into_parent( $elements, $new_parent_id, $node, $position );
+	}
+
+	/**
+	 * Insert a node into a specific parent's children array at the given position.
+	 *
+	 * @param array  $elements   Element tree (modified in-place).
+	 * @param string $parent_id  Target parent ID.
+	 * @param array  $node       Element to insert.
+	 * @param int    $position   0-based index. -1 = append.
+	 * @return bool True if the parent was found and the node was inserted.
+	 */
+	private function insert_into_parent( array &$elements, string $parent_id, array $node, int $position = -1 ): bool {
+		foreach ( $elements as &$el ) {
+			if ( isset( $el['id'] ) && $el['id'] === $parent_id ) {
+				$el['elements'] = $el['elements'] ?? [];
+
+				if ( $position < 0 || $position >= count( $el['elements'] ) ) {
+					$el['elements'][] = $node;
+				} else {
+					array_splice( $el['elements'], $position, 0, [ $node ] );
+				}
+
+				return true;
+			}
+
+			if ( ! empty( $el['elements'] ) && is_array( $el['elements'] ) ) {
+				if ( $this->insert_into_parent( $el['elements'], $parent_id, $node, $position ) ) {
+					return true;
+				}
+			}
+		}
+		unset( $el );
+
+		return false;
+	}
+
+	/**
 	 * Recursively search the element tree for an element by its ID.
 	 *
 	 * @param array  $elements   Element tree to search.

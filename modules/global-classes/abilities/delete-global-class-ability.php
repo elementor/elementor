@@ -107,6 +107,9 @@ class Delete_Global_Class_Ability extends Abstract_Ability {
 
 		$repository->put( $items, $order, true );
 
+		// Mirror deletion to preview so the editor panel reflects the removed class.
+		$repository->context( Global_Classes_Repository::CONTEXT_PREVIEW )->put( $items, $order, true, true );
+
 		return [
 			'id'      => $found_id,
 			'label'   => $found_label,

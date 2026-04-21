@@ -20,6 +20,8 @@ class Abilities_Bootstrap {
 		( new Append_Element_Ability() )->register_hooks();
 		( new Append_Elements_Ability() )->register_hooks();
 		( new Update_Element_Ability() )->register_hooks();
+		( new Delete_Element_Ability() )->register_hooks();
+		( new Move_Element_Ability() )->register_hooks();
 		( new Create_From_Template_Ability() )->register_hooks();
 		( new Build_Page_Ability() )->register_hooks();
 		( new Validate_Elements_Ability() )->register_hooks();
@@ -29,6 +31,9 @@ class Abilities_Bootstrap {
 		( new Create_Post_Ability() )->register_hooks();
 		( new Preview_Render_Ability() )->register_hooks();
 		( new Force_Clear_Styles_Ability() )->register_hooks();
+		( new Find_Media_Ability() )->register_hooks();
+		( new Upload_Media_Ability() )->register_hooks();
+		( new Update_Kit_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->widgets_manager,
