@@ -173,30 +173,4 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$this->assertEquals( $conditions, get_option( 'elementor_pro_theme_builder_conditions' ) );
 	}
 
-	public function test_allowlist_can_be_extended_via_filter() {
-		// Arrange
-		$this->act_as_admin();
-
-		add_filter( 'elementor/rest/settings/writable_options', function ( $options ) {
-			$options['elementor_custom_option'] = [
-				'type' => 'string',
-				'sanitize' => 'sanitize_text_field',
-			];
-			return $options;
-		} );
-
-		do_action( 'rest_api_init' );
-
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/settings/elementor_custom_option' );
-		$request->set_param( 'value', 'custom_value' );
-
-		// Act
-		$response = rest_get_server()->dispatch( $request );
-
-		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertTrue( $data['success'] );
-		$this->assertEquals( 'custom_value', get_option( 'elementor_custom_option' ) );
-	}
 }

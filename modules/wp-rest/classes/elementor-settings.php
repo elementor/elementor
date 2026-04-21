@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Elementor_Settings {
 
 	private function get_writable_options_schema(): array {
-		return apply_filters( 'elementor/rest/settings/writable_options', [
+		return [
 			'elementor_active_kit' => [
 				'type' => 'integer',
 				'sanitize' => 'absint',
@@ -20,7 +20,7 @@ class Elementor_Settings {
 					return is_array( $val ) ? $val : [];
 				},
 			],
-		] );
+		];
 	}
 
 	private function is_option_writable( string $key ): bool {
