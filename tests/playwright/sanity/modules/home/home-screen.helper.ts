@@ -10,6 +10,7 @@ export type HomepageSettings = {
 };
 
 export type LicenseType = 'free' | 'pro' | 'one';
+export type SiteBuilderVariant = 'step_with_input' | 'step_without_input';
 
 type JsonObject = Record<string, unknown>;
 
@@ -17,18 +18,25 @@ const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /var\s+elementorHomeScreenData\s*=\s*(?
 const HTML_LESS_THAN_ESCAPE_REGEX = /</g;
 const HTML_LESS_THAN_ESCAPE_REPLACEMENT = '\\u003c';
 
-export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
+export const transformMockDataByLicense = ( licenseType: LicenseType, siteBuilderVariant?: SiteBuilderVariant ) => {
 	const topItem = homeScreenMockData.top_with_licences.find( ( item ) => item.license.includes( licenseType ) )!;
 	const getStartedItem = homeScreenMockData.get_started.find( ( item ) => item.license.includes( licenseType ) )!;
 	const sidebarPromotionItem = homeScreenMockData.sidebar_promotion_variants.find(
 		( item ) => 'true' === item.is_enabled && item.license.includes( licenseType ),
 	);
+	const siteBuilderItem = siteBuilderVariant
+		? homeScreenMockData.site_builder_variants.find( ( item ) => item.id === siteBuilderVariant )
+		: null;
 
 	return {
 		top_with_licences: topItem,
 		get_started: getStartedItem,
 		sidebar_promotion_variants: sidebarPromotionItem || null,
 		external_links: homeScreenMockData.external_links,
+		...( siteBuilderItem ? {
+			site_builder: siteBuilderItem.site_builder,
+			siteBuilderSnapshot: siteBuilderItem.siteBuilderSnapshot,
+		} : {} ),
 	};
 };
 

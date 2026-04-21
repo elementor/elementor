@@ -1,6 +1,6 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, getScreenshotName, type HomepageSettings } from './home-screen.helper';
+import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, getScreenshotName, type HomepageSettings, type SiteBuilderVariant } from './home-screen.helper';
 
 test.describe( 'Editor screen UI tests', () => {
 	const VIEWPORT_SIZE = { width: 1920, height: 4000 };
@@ -63,6 +63,20 @@ test.describe( 'Editor screen UI tests', () => {
 		await expect.soft( homeScreen ).toHaveScreenshot( await getScreenshotName( page, 'home-screen-one.png' ) );
 		await requestContext.dispose();
 	} );
+
+	for ( const variant of [ 'step_with_input', 'step_without_input' ] as SiteBuilderVariant[] ) {
+		test( `site-builder ${ variant } - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
+			const requestContext = await request.newContext( { storageState } );
+			const mockData = transformMockDataByLicense( 'free', variant );
+
+			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+
+			const homeScreen = await navigateToHomeScreen( page );
+			await page.setViewportSize( VIEWPORT_SIZE );
+			await expect.soft( homeScreen.locator( '[data-testid="e-site-builder"]' ) ).toHaveScreenshot( await getScreenshotName( page, `site-builder-${ variant }.png` ) );
+			await requestContext.dispose();
+		} );
+	}
 
 	test( 'Edit site button has valid Elementor link', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=elementor' );
