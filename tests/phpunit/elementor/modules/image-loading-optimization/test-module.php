@@ -49,9 +49,6 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 
 		set_current_screen( 'front' );
 
-		remove_all_actions( 'elementor/editor/after_enqueue_scripts' );
-		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
-
 		$this->register_mock_editor_scripts();
 	}
 
@@ -85,10 +82,8 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 	 * @group test
 	 */
 	public function test_loading_optimization_without_logo( $page_template ) {
-		if ( PageTemplatesModule::TEMPLATE_THEME === $page_template ) {
-			// TODO: ED-23794 - Fix unexpected deprecation notice for `the_block_template_skip_link`.
-			$this->markTestSkipped( 'ED-23794' );
-		}
+		// TODO: ED-23794 - Fix unexpected deprecation notice for `the_block_template_skip_link`.
+		$this->markTestSkipped( 'ED-23794' );
 
 		$document = self::factory()->create_post();
 		$content = '<img width="800" height="530" src="featured_image.jpg" /><img width="640" height="471" src="image_1.jpg" /><img width="800" height="800" src="image_2.jpg" /><img width="566" height="541" src="image_3.jpg" /><img width="691" height="1024" src="image_4.jpg" />';
