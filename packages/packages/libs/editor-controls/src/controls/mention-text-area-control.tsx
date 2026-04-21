@@ -76,16 +76,21 @@ const MentionWrapper = styled( 'div' )( ( { theme } ) => ( {
 			backgroundColor: theme.palette.action.selected,
 		},
 	},
+	'&[data-single-line="true"] textarea': {
+		resize: 'none',
+	},
 } ) );
 
 type Props = {
 	placeholder?: string;
 	ariaLabel?: string;
 	suggestions: Suggestion[];
+	rows?: number;
+	triggerOnlyAtStart?: boolean;
 };
 
 export const MentionTextAreaControl = createControl(
-	( { placeholder, ariaLabel, suggestions: allSuggestions }: Props ) => {
+	( { placeholder, ariaLabel, suggestions: allSuggestions, rows = 5, triggerOnlyAtStart = false }: Props ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 		const [ filteredSuggestions, setFilteredSuggestions ] = useState< Suggestion[] >( [] );
 
@@ -94,8 +99,10 @@ export const MentionTextAreaControl = createControl(
 				let result = text;
 
 				for ( const suggestion of allSuggestions ) {
+					const escapedValue = suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+					const prefix = triggerOnlyAtStart ? '^' : '';
 					const mentionPattern = new RegExp(
-						`@${ suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }(?=\\s|$|[^a-zA-Z0-9_-])`,
+						`${ prefix }@${ escapedValue }(?=\\s|$|[^a-zA-Z0-9_-])`,
 						'g'
 					);
 					result = result.replace( mentionPattern, `[${ suggestion.value }]` );
@@ -103,7 +110,7 @@ export const MentionTextAreaControl = createControl(
 
 				return result;
 			},
-			[ allSuggestions ]
+			[ allSuggestions, triggerOnlyAtStart ]
 		);
 
 		const handleChange = useCallback(
@@ -116,19 +123,29 @@ export const MentionTextAreaControl = createControl(
 		);
 
 		const handleSearch = useCallback(
-			( event: { query: string } ) => {
+			( event: { originalEvent: React.SyntheticEvent; trigger: string; query: string } ) => {
+				if ( triggerOnlyAtStart ) {
+					const target = event.originalEvent.target as HTMLTextAreaElement;
+					const triggerIndex = target.selectionStart - event.query.length - event.trigger.length;
+
+					if ( triggerIndex !== 0 ) {
+						setFilteredSuggestions( [] );
+						return;
+					}
+				}
+
 				const query = event.query.toLowerCase();
 				const filtered = allSuggestions.filter(
 					( item ) => item.label.toLowerCase().includes( query ) || item.value.toLowerCase().includes( query )
 				);
 				setFilteredSuggestions( filtered );
 			},
-			[ allSuggestions ]
+			[ allSuggestions, triggerOnlyAtStart ]
 		);
 
 		return (
 			<ControlActions>
-				<MentionWrapper>
+				<MentionWrapper data-single-line={ rows === 1 ? 'true' : undefined }>
 					<Mention
 						value={ value ?? '' }
 						onChange={ handleChange }
@@ -136,7 +153,7 @@ export const MentionTextAreaControl = createControl(
 						onSearch={ handleSearch }
 						field="value"
 						trigger="@"
-						rows={ 5 }
+						rows={ rows }
 						disabled={ disabled }
 						placeholder={ placeholder }
 						itemTemplate={ SuggestionItem }
