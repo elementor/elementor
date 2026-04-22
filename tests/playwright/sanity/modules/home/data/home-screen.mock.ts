@@ -310,6 +310,15 @@ export default {
 						buttonLabel: 'Visit sitemap',
 					},
 				},
+				plannerSteps: {
+					INIT: 0,
+					CHAT: 1,
+					SITEMAP: 2,
+					WIREFRAMES: 3,
+					DEPLOYING: 4,
+					DEPLOYED_TO_HOSTING: 5,
+					DEPLOYED_TO_PLUGIN: 6,
+				},
 				connectAuth: {
 					siteKey: 'test-site-key',
 					signature: 'test-signature',
