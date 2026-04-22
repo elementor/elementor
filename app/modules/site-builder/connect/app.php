@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class App extends Library {
-	const API_URL = 'https://my.elementor.com/api/v2/ai/';
+	const API_URL = 'https://my.elementor.com/api/v2/builder/';
 
 	public function get_title() {
 		return esc_html__( 'Site Builder', 'elementor' );

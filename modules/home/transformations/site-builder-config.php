@@ -66,7 +66,7 @@ class Site_Builder_Config extends Transformations_Abstract {
 			return ELEMENTOR_SITE_PLANNER_API_ORIGIN;
 		}
 
-		return 'https://my.elementor.com/api/v2/ai';
+		return 'https://my.elementor.com/api/v2/builder';
 	}
 
 	private function validate_and_sanitize_step_config( array $step_config ): array {

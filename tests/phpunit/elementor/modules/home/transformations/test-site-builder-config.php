@@ -101,7 +101,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 	public function test_transform__api_origin_uses_constant_when_defined() {
 		if ( ! defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' ) ) {
-			define( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN', 'https://planner.test/api/v2/ai' );
+			define( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN', 'https://planner.test/api/v2/builder' );
 		}
 
 		$site_builder = new class {
