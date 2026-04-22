@@ -191,7 +191,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: snapshots-shard-${{ matrix.shardIndex }}
-          path: tests/**/*-snapshots/
+          path: tests/
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
@@ -276,7 +276,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: snapshots-targeted
-          path: tests/**/*-snapshots/
+          path: tests/
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
