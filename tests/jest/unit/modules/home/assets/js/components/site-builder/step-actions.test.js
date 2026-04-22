@@ -1,5 +1,5 @@
 import { fireEvent, render } from '@testing-library/react';
-import { StepWithInput, StepWithoutInput, getStepAction } from 'elementor/modules/home/assets/js/site-builder/components/step-actions';
+import { StepWithInput, StepWithoutInput, StepLoader, getStepAction } from 'elementor/modules/home/assets/js/site-builder/components/step-actions';
 
 jest.mock( 'elementor/modules/home/assets/js/site-builder/components/styled-components', () => {
 	const PropTypes = require( 'prop-types' );
@@ -46,7 +46,10 @@ jest.mock( '@elementor/ui', () => {
 	const PropTypes = require( 'prop-types' );
 	const Typography = ( { children } ) => <span>{ children }</span>;
 	Typography.propTypes = { children: PropTypes.node };
-	return { Typography };
+	const Box = ( { children } ) => <div>{ children }</div>;
+	Box.propTypes = { children: PropTypes.node };
+	const CircularProgress = () => <div data-testid="circular-progress" />;
+	return { Typography, Box, CircularProgress };
 } );
 
 const defaultInputProps = {
@@ -126,6 +129,13 @@ describe( 'StepWithoutInput', () => {
 		);
 		fireEvent.click( getByRole( 'button', { name: /visit sitemap/i } ) );
 		expect( onSubmit ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'StepLoader', () => {
+	it( 'renders a circular progress indicator', () => {
+		const { getByTestId } = render( <StepLoader /> );
+		expect( getByTestId( 'circular-progress' ) ).toBeTruthy();
 	} );
 } );
 
