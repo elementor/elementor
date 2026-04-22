@@ -297,7 +297,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: snapshots-*
-          path: .
+          path: tests/
           merge-multiple: true
 
       - name: Commit and push updated snapshots
