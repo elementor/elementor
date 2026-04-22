@@ -9,6 +9,16 @@ const createResponse = ( body, ok = true ) => ( {
 	json: jest.fn().mockResolvedValue( body ),
 } );
 
+const PLANNER_STEPS = {
+	INIT: 0,
+	CHAT: 1,
+	SITEMAP: 2,
+	WIREFRAMES: 3,
+	DEPLOYING: 4,
+	DEPLOYED_TO_HOSTING: 5,
+	DEPLOYED_TO_PLUGIN: 6,
+};
+
 const getSiteBuilderData = () => ( {
 	connectAuth: {
 		siteKey: 'site-key-1',
@@ -17,6 +27,7 @@ const getSiteBuilderData = () => ( {
 		clientId: 'client-id',
 		homeUrl: 'https://example.com',
 	},
+	plannerSteps: PLANNER_STEPS,
 } );
 
 const setInjectedSnapshot = ( snapshot ) => {
@@ -137,7 +148,7 @@ describe( 'useSiteBuilderState', () => {
 
 	it( 'Scenario 1: no snapshot — fetches /home-screen and writes snapshot', async () => {
 		global.fetch
-			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Blog', 'Services' ], siteTypeSuggestions: [] } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, pageNameSuggestions: [ 'Blog', 'Services' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
@@ -172,7 +183,7 @@ describe( 'useSiteBuilderState', () => {
 			.mockResolvedValueOnce( createResponse( {
 				sessionId: null,
 				step: null,
-				suggestions: [],
+				pageNameSuggestions: [],
 				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			} ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
@@ -204,7 +215,7 @@ describe( 'useSiteBuilderState', () => {
 
 	it( 'Scenario 1 no-session with missing siteTypeSuggestions: keeps the sanitized empty list from the backend', async () => {
 		global.fetch
-			.mockResolvedValueOnce( createResponse( { sessionId: null, step: null, suggestions: [] } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: null, step: null, pageNameSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
@@ -224,7 +235,7 @@ describe( 'useSiteBuilderState', () => {
 			},
 		} );
 		global.fetch
-			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, suggestions: [ 'Home' ], siteTypeSuggestions: [] } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, pageNameSuggestions: [ 'Home' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );

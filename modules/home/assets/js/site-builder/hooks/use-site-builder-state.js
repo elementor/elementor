@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 
 const SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
-const WIREFRAMES_STEP = 3;
-
 const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
 	'Business website',
 	'Portfolio website',
@@ -27,13 +25,20 @@ const withDefaultSiteTypeSuggestions = ( value ) => {
 	return stored.length ? stored : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
 };
 
-const hasCompleteSnapshot = ( snapshotStep, snapshotEntry ) =>
-	null !== snapshotStep && Array.isArray( snapshotEntry?.pageSuggestions );
+const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
+	if ( null === snapshotStep || ! Array.isArray( snapshotEntry?.pageSuggestions ) ) {
+		return false;
+	}
+	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_HOSTING && 0 === snapshotEntry.pageSuggestions.length ) {
+		return false;
+	}
+	return true;
+};
 
-const isPreWireframesStep = ( snapshotStep ) =>
-	null !== snapshotStep && snapshotStep < WIREFRAMES_STEP;
+const isPreWireframesStep = ( snapshotStep, plannerSteps ) =>
+	null !== snapshotStep && snapshotStep < plannerSteps.WIREFRAMES;
 
-const deriveInitialStateForSiteKey = ( siteKey ) => {
+const deriveInitialStateForSiteKey = ( siteKey, plannerSteps ) => {
 	if ( ! siteKey ) {
 		return {
 			sessionStep: null,
@@ -46,7 +51,7 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 	const snapshotEntry = readSnapshot()[ siteKey ];
 	const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
 
-	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry ) ) {
+	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
 		return {
 			sessionStep: snapshotStep,
 			pageSuggestions: snapshotEntry.pageSuggestions,
@@ -57,7 +62,7 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 
 	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
-	if ( isPreWireframesStep( snapshotStep ) ) {
+	if ( isPreWireframesStep( snapshotStep, plannerSteps ) ) {
 		return {
 			sessionStep: snapshotStep,
 			pageSuggestions: [],
@@ -76,9 +81,10 @@ const deriveInitialStateForSiteKey = ( siteKey ) => {
 
 const useSiteBuilderState = ( siteBuilderData ) => {
 	const connectAuth = siteBuilderData?.connectAuth;
+	const plannerSteps = siteBuilderData?.plannerSteps;
 	const hasConnectAuth = Boolean( connectAuth );
 	const siteKey = connectAuth?.siteKey || '';
-	const initial = deriveInitialStateForSiteKey( siteKey );
+	const initial = deriveInitialStateForSiteKey( siteKey, plannerSteps );
 	const [ sessionStep, setSessionStep ] = useState( initial.sessionStep );
 	const [ pageSuggestions, setPageSuggestions ] = useState( initial.pageSuggestions );
 	const [ siteTypeSuggestions, setSiteTypeSuggestions ] = useState( initial.siteTypeSuggestions );
@@ -107,7 +113,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 		const snapshotEntry = snapshotValue[ siteKey ];
 		const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
 
-		if ( hasCompleteSnapshot( snapshotStep, snapshotEntry ) ) {
+		if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
 			applyState( {
 				sessionStep: snapshotStep,
 				pageSuggestions: snapshotEntry.pageSuggestions,
@@ -152,7 +158,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			} );
 		};
 
-		if ( isPreWireframesStep( snapshotStep ) ) {
+		if ( isPreWireframesStep( snapshotStep, plannerSteps ) ) {
 			resumePreWireframesSession();
 			return;
 		}
@@ -174,7 +180,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 
 				const data = await response.json();
 				const nextStep = Number.isFinite( data?.step ) ? data.step : null;
-				const nextSuggestions = sanitizeSuggestions( data?.suggestions );
+				const nextSuggestions = sanitizeSuggestions( data?.pageNameSuggestions );
 				const nextSiteTypeSuggestions = sanitizeSuggestions( data?.siteTypeSuggestions, { limit: 3 } );
 
 				writeSnapshot( {

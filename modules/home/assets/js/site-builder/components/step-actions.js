@@ -1,4 +1,4 @@
-import { Typography } from '@elementor/ui';
+import { Typography, CircularProgress, Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import ArrowRightIcon from '../../icons/arrow-right-icon';
 import {
@@ -7,6 +7,12 @@ import {
 	PlannerTextField,
 	CreateSiteButton,
 } from './styled-components';
+
+export const StepLoader = () => (
+	<Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100%">
+		<CircularProgress />
+	</Box>
+);
 
 export const getStepAction = ( stepConfig, handlers ) => {
 	if ( stepConfig.hasInput ) {
