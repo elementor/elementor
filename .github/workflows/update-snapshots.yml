@@ -3,16 +3,15 @@ name: Update Playwright Snapshots
 on:
   workflow_dispatch:
     inputs:
-      browser_chromium:
-        type: boolean
-        description: 'Update Chromium snapshots'
+      browser:
+        type: choice
+        description: 'Browser(s) to update snapshots for'
         required: false
-        default: true
-      browser_firefox:
-        type: boolean
-        description: 'Update Firefox snapshots'
-        required: false
-        default: false
+        default: 'chromium'
+        options:
+          - chromium
+          - firefox
+          - both
       test_grep:
         type: string
         description: 'Update only tests matching this @tag or keyword (runs a single job instead of all shards)'
@@ -106,18 +105,11 @@ jobs:
       - name: Resolve browsers to install
         id: browsers
         run: |
-          BROWSERS=""
-          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
-            BROWSERS="chromium"
-          fi
-          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
-            BROWSERS="$BROWSERS firefox"
-          fi
-          BROWSERS=$(echo "$BROWSERS" | xargs)
-          if [[ -z "$BROWSERS" ]]; then
-            BROWSERS="chromium"
-          fi
-          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+          case "${{ inputs.browser }}" in
+            firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
+            both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
+            *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
+          esac
 
       - name: Install playwright/test
         run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
@@ -254,18 +246,11 @@ jobs:
       - name: Resolve browsers to install
         id: browsers
         run: |
-          BROWSERS=""
-          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
-            BROWSERS="chromium"
-          fi
-          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
-            BROWSERS="$BROWSERS firefox"
-          fi
-          BROWSERS=$(echo "$BROWSERS" | xargs)
-          if [[ -z "$BROWSERS" ]]; then
-            BROWSERS="chromium"
-          fi
-          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+          case "${{ inputs.browser }}" in
+            firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
+            both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
+            *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
+          esac
 
       - name: Install playwright/test
         run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
