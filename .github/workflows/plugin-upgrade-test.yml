@@ -18,6 +18,14 @@ on:
         description: 'Update only tests matching this @tag or keyword (runs a single job instead of all shards)'
         required: false
         default: ''
+      update_mode:
+        type: choice
+        description: 'Snapshot update mode: "changed" updates only failing snapshots, "all" forces regeneration of every matched snapshot'
+        required: false
+        default: 'changed'
+        options:
+          - changed
+          - all
       reset_snapshot_baselines:
         type: boolean
         description: 'Delete baseline PNGs for the browser(s) selected above only (Firefox: *firefox*; Chromium: other *.png in *-snapshots)'
@@ -141,7 +149,7 @@ jobs:
 
         run: |
           npm run test:playwright -- \
-            --update-snapshots \
+            --update-snapshots=${{ inputs.update_mode }} \
             --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
@@ -153,7 +161,7 @@ jobs:
 
         run: |
           npm run test:playwright -- \
-            --update-snapshots \
+            --update-snapshots=${{ inputs.update_mode }} \
             --grep="@plugin_tester_container"
 
       - name: Update plugin tester section snapshots
@@ -164,7 +172,7 @@ jobs:
 
         run: |
           npm run test:playwright -- \
-            --update-snapshots \
+            --update-snapshots=${{ inputs.update_mode }} \
             --grep="@plugin_tester_section"
 
       - name: Update elements regression core snapshots
@@ -175,7 +183,7 @@ jobs:
 
         run: |
           npm run test:playwright:elements-regression:core -- \
-            --update-snapshots
+            --update-snapshots=${{ inputs.update_mode }}
 
       - name: Update elements regression atomic snapshots
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
@@ -185,7 +193,7 @@ jobs:
 
         run: |
           npm run test:playwright:elements-regression:atomic -- \
-            --update-snapshots
+            --update-snapshots=${{ inputs.update_mode }}
 
       - name: Upload updated snapshots
         uses: actions/upload-artifact@v4
@@ -269,7 +277,7 @@ jobs:
 
         run: |
           npm run test:playwright -- \
-            --update-snapshots=all \
+            --update-snapshots=${{ inputs.update_mode }} \
             --grep="${{ inputs.test_grep }}"
 
       - name: Upload updated snapshots
