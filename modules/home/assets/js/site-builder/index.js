@@ -3,7 +3,7 @@ import { useState } from 'react';
 import AiLoaderIcon from '../icons/ai-loader-icon';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
-import { getStepAction } from './components/step-actions';
+import { getStepAction, StepLoader } from './components/step-actions';
 import useSiteBuilderState from './hooks/use-site-builder-state';
 import {
 	PlannerRoot,
@@ -28,7 +28,7 @@ const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
 };
 
 const SiteBuilder = ( { siteBuilderData } ) => {
-	const { sessionStep, pageSuggestions, siteTypeSuggestions } = useSiteBuilderState( siteBuilderData );
+	const { sessionStep, pageSuggestions, siteTypeSuggestions, isLoading } = useSiteBuilderState( siteBuilderData );
 	const plannerSteps = siteBuilderData?.plannerSteps ?? {};
 	const stepConfig = getStepConfig( sessionStep, siteBuilderData?.stepConfig, plannerSteps );
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -105,32 +105,36 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			</PlannerPreviewContainer>
 
 			<PlannerContent>
-				<PlannerHeading>{ stepConfig.title }</PlannerHeading>
-				{ getStepAction(
-					stepConfig,
-					{
-						inputValue,
-						onInputChange: handleInputChange,
-						onKeyDown: handleKeyDown,
-						onSubmit: handleCreateClick,
-					},
-				) }
+				{ isLoading ? <StepLoader /> : (
+					<>
+						<PlannerHeading>{ stepConfig.title }</PlannerHeading>
+						{ getStepAction(
+							stepConfig,
+							{
+								inputValue,
+								onInputChange: handleInputChange,
+								onKeyDown: handleKeyDown,
+								onSubmit: handleCreateClick,
+							},
+						) }
 
-				{ showLayoutToggle ? (
-					<SiteTypeLayoutToggle
-						isOnePage={ isOnePage }
-						onIsOnePageChange={ setIsOnePage }
-					/>
-				) : (
-					<SuggestionChips
-						siteBuilderState={ {
-							sessionStep,
-							pageSuggestions,
-							siteTypeSuggestions,
-							plannerSteps,
-						} }
-						onChipSelect={ setInputValue }
-					/>
+						{ showLayoutToggle ? (
+							<SiteTypeLayoutToggle
+								isOnePage={ isOnePage }
+								onIsOnePageChange={ setIsOnePage }
+							/>
+						) : (
+							<SuggestionChips
+								siteBuilderState={ {
+									sessionStep,
+									pageSuggestions,
+									siteTypeSuggestions,
+									plannerSteps,
+								} }
+								onChipSelect={ setInputValue }
+							/>
+						) }
+					</>
 				) }
 			</PlannerContent>
 		</PlannerRoot>
