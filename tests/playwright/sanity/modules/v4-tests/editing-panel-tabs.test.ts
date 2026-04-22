@@ -103,12 +103,22 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await openScrollableStylePanel();
 
 		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
-		const fontFamilyControl = editor.page
-			.locator( 'div.MuiGrid-container' )
-			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
 
-		await fontFamilyControl.scrollIntoViewIfNeeded();
-		await editor.page.waitForTimeout( timeouts.action );
+		await test.step( 'Open the font family control', async () => {
+			const fontFamilyControl = editor.page
+				.locator( '#font-family-control' ).getByRole( 'button' );
+			await fontFamilyControl.click();
+		} );
+
+		await test.step( 'Scroll the font family popover list to the end', async () => {
+			const scrollContainer = editor.page.locator( '[data-testid="item-list"]' ).locator( 'xpath=parent::*' );
+			await scrollContainer.evaluate( ( el: HTMLElement ) => {
+				el.scrollTop = el.scrollHeight;
+			} );
+
+			const googleFontFamilySubheaderName = editor.page.locator( '.MuiListSubheader-root', { hasText: 'Google (Early Access)' } );
+			await googleFontFamilySubheaderName.waitFor( { state: 'visible', timeout: timeouts.action } );
+		} );
 
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
