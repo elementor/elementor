@@ -17,6 +17,8 @@ import { type FlexDirection, FlexDirectionField } from './flex-direction-field';
 import { FlexOrderField } from './flex-order-field';
 import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
+import { GridAutoFlowField } from './grid-auto-flow-field';
+import { GridJustifyItemsField } from './grid-justify-items-field';
 import { GridSizeFields } from './grid-size-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
@@ -67,6 +69,11 @@ const FlexFields = () => {
 const GridFields = () => (
 	<>
 		<GridSizeFields />
+		<GridAutoFlowField />
+		<PanelDivider />
+		<GapControlField />
+		<GridJustifyItemsField />
+		<AlignItemsField />
 	</>
 );
 
