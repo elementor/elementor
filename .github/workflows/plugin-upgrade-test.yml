@@ -269,7 +269,7 @@ jobs:
 
         run: |
           npm run test:playwright -- \
-            --update-snapshots \
+            --update-snapshots=all \
             --grep="${{ inputs.test_grep }}"
 
       - name: Upload updated snapshots
