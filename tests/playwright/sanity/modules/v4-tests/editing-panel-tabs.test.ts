@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
+import { FONT_FAMILIES } from './typography/typography-constants';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -110,14 +111,14 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			await fontFamilyControl.click();
 		} );
 
-		await test.step( 'Scroll the font family popover list to the end', async () => {
+		await test.step( 'Scroll the font family popover list slightly', async () => {
 			const scrollContainer = editor.page.locator( '[data-testid="item-list"]' ).locator( 'xpath=parent::*' );
-			await scrollContainer.evaluate( ( el: HTMLElement ) => {
-				el.scrollTop = el.scrollHeight;
-			} );
-
-			const googleFontFamilySubheaderName = editor.page.locator( '.MuiListSubheader-root', { hasText: 'Google (Early Access)' } );
-			await googleFontFamilySubheaderName.waitFor( { state: 'visible', timeout: timeouts.action } );
+			const arialFontFamilyLocator = editor.page.locator( '.MuiListItem-root', { hasText: FONT_FAMILIES.system } );
+			await expect( arialFontFamilyLocator ).toBeVisible();
+			await scrollContainer.evaluate(
+				( el: HTMLElement ) => el.scrollBy( 0, 100 ),
+			);
+			await expect( arialFontFamilyLocator ).not.toBeVisible();
 		} );
 
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
