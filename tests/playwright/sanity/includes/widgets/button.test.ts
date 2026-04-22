@@ -18,7 +18,7 @@ test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => 
 	const button = await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
 	// Assert.
-	expect( await button.innerText() ).toBe( 'Click here' );
+	await expect( button ).toHaveText( 'Click here' );
 } );
 
 test( 'Button controls should return to default', async ( { page, apiRequests }, testInfo ) => {

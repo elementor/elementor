@@ -42,24 +42,24 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 		await test.step( 'Choose a video file', async () => {
 			editor.selectElement( widgetId );
 			const videoWidget = await editor.selectElement( widgetId );
-			expect( videoWidget ).toBeVisible();
+			await expect( videoWidget ).toBeVisible();
 			await page.getByRole( 'button', { name: 'Select video' } ).click();
 			await page.getByRole( 'checkbox', { name: 'video', exact: true } ).click();
 			await page.getByRole( 'button', { name: 'Select', exact: true } ).click();
 			await page.waitForTimeout( 500 );
 			const videoElement = page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
-			expect( videoElement ).toBeVisible();
+			await expect( videoElement ).toBeVisible();
 		} );
 
 		await test.step( 'Autoplay', async () => {
 			const videoElement = page.locator( 'iframe[title="Preview"]' ).contentFrame().locator( 'video' );
-			expect( videoElement ).not.toHaveAttribute( 'autoplay' );
-			expect( videoElement ).not.toHaveAttribute( 'playsinline' );
-			await expect( page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ) ).not.toBeVisible();
+			await expect( videoElement ).not.toHaveAttribute( 'autoplay' );
+			await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
+			await expect( page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ) ).toBeHidden();
 			await page.locator( 'span' ).filter( { hasText: 'Autoplay' } ).getByRole( 'checkbox' ).click();
 			await expect( videoElement ).toHaveAttribute( 'autoplay', '' );
 			await page.locator( 'span' ).filter( { hasText: 'Play on mobile' } ).getByRole( 'checkbox' ).click();
-			expect( videoElement ).not.toHaveAttribute( 'playsinline' );
+			await expect( videoElement ).not.toHaveAttribute( 'playsinline' );
 		} );
 
 		await test.step( 'Controls', async () => {
@@ -74,8 +74,8 @@ test.describe( 'Self-Hosted Video Widget @v4-tests', () => {
 			await page.locator( 'span' ).filter( { hasText: 'Allow Download' } ).waitFor();
 			await page.locator( 'span' ).filter( { hasText: 'Allow Download' } ).getByRole( 'checkbox' ).click();
 			await page.waitForTimeout( 300 );
-			expect( videoElement ).toHaveAttribute( 'controls', '' );
-			expect( videoElement ).not.toHaveAttribute( 'controlslist' );
+			await expect( videoElement ).toHaveAttribute( 'controls', '' );
+			await expect( videoElement ).not.toHaveAttribute( 'controlslist' );
 		} );
 	} );
 } );

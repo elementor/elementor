@@ -314,7 +314,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const replayLabel = page.getByText( 'Replay', { exact: true } );
 
 			// Assert - label is not visible
-			await expect( replayLabel ).not.toBeVisible();
+			await expect( replayLabel ).toBeHidden();
 		} );
 
 		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
@@ -339,7 +339,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Assert - Yes button is disabled (promotion), No button is enabled
 			await expect( yesButton ).toBeDisabled();
-			await expect( noButton ).not.toBeDisabled();
+			await expect( noButton ).toBeEnabled();
 		} );
 	} );
 
