@@ -293,7 +293,8 @@ export default {
 						buttonLabel: 'Create my site',
 					},
 				},
-			site_builder_snapshot: {},
+				site_builder_snapshot: {},
+			},
 		},
 		{
 			id: 'step_without_input',
@@ -315,15 +316,15 @@ export default {
 					SITEMAP: 2,
 					WIREFRAMES: 3,
 					DEPLOYING: 4,
-					DEPLOYED_TO_HOSTING: 5,
 					DEPLOYED_TO_PLUGIN: 6,
 				},
-			siteKey: 'test-site-key',
-			site_builder_snapshot: {
-				'test-site-key': {
-					step: 3,
-					pageSuggestions: [ 'About', 'Services', 'Contact' ],
-					siteTypeSuggestions: [],
+				siteKey: 'test-site-key',
+				site_builder_snapshot: {
+					'test-site-key': {
+						step: 3,
+						pageSuggestions: [ 'About', 'Services', 'Contact' ],
+						siteTypeSuggestions: [],
+					},
 				},
 			},
 		},
