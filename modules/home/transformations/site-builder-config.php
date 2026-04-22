@@ -28,12 +28,14 @@ class Site_Builder_Config extends Transformations_Abstract {
 		$site_builder = Plugin::$instance->app->get_component( 'site-builder' );
 
 		if ( ! $site_builder ) {
+			unset( $home_screen_data['site_builder'], $home_screen_data['siteBuilderSnapshot'] );
 			return $home_screen_data;
 		}
 
 		$site_builder_config = $site_builder->get_config();
 
 		if ( ! $site_builder_config ) {
+			unset( $home_screen_data['site_builder'], $home_screen_data['siteBuilderSnapshot'] );
 			return $home_screen_data;
 		}
 
