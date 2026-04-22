@@ -12,7 +12,7 @@ test.describe( 'Editor screen UI tests', () => {
 		const page = await context.newPage();
 		const requestContext = page.context().request;
 		originalHomepageSettings = await saveHomepageSettings( apiRequests, requestContext );
-		await wpCli( 'wp elementor experiments activate site_builder' );
+		await wpCli( 'wp elementor experiments activate site-builder' );
 		await page.close();
 		await context.close();
 	} );
@@ -26,7 +26,7 @@ test.describe( 'Editor screen UI tests', () => {
 			await restoreHomepageSettings( apiRequests, requestContext, originalHomepageSettings );
 		}
 
-		await wpCli( 'wp elementor experiments deactivate site_builder' );
+		await wpCli( 'wp elementor experiments deactivate site-builder' );
 
 		await page.close();
 		await context.close();
