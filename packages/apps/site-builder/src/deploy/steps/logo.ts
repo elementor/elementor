@@ -7,9 +7,7 @@ export async function uploadLogo( logo: DeployLogo ) {
 		throw new Error( 'Invalid logo URL: must be from assets.elementor.com over HTTPS' );
 	}
 
-	const cleanedFilename = logo.filename
-		.replace( /["\r\n]/g, '' )
-		.replace( /[^\w.-]/g, '_' );
+	const cleanedFilename = logo.filename.replace( /["\r\n]/g, '' ).replace( /[^\w.-]/g, '_' );
 
 	if ( ! cleanedFilename ) {
 		throw new Error( 'Invalid logo filename' );
