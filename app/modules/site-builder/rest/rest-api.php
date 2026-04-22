@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'site-builder';
+	const SNAPSHOT_MAX_KEYS = 20;
 
 	public function register_routes(): void {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/home-screen', [
@@ -71,7 +72,14 @@ class Rest_Api {
 		$value = $request->get_param( 'value' );
 		$sanitized = is_array( $value ) ? $value : [];
 
-		$success = update_option( 'elementor_site_builder_snapshot', $sanitized );
+		if ( count( $sanitized ) > self::SNAPSHOT_MAX_KEYS ) {
+			return new WP_REST_Response( [
+				'success' => false,
+				'data' => [ 'message' => 'Snapshot exceeds maximum allowed size.' ],
+			], 400 );
+		}
+
+		$success = update_option( 'elementor_site_builder_snapshot', $sanitized, false );
 
 		if ( $success || get_option( 'elementor_site_builder_snapshot' ) === $sanitized ) {
 			return new WP_REST_Response( [

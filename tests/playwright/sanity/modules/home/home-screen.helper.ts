@@ -35,7 +35,6 @@ export const transformMockDataByLicense = ( licenseType: LicenseType, siteBuilde
 		external_links: homeScreenMockData.external_links,
 		...( siteBuilderItem ? {
 			site_builder: siteBuilderItem.site_builder,
-			siteBuilderSnapshot: siteBuilderItem.siteBuilderSnapshot,
 		} : {} ),
 	};
 };

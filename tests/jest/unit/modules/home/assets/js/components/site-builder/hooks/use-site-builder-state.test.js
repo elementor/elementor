@@ -15,27 +15,14 @@ const PLANNER_STEPS = {
 	SITEMAP: 2,
 	WIREFRAMES: 3,
 	DEPLOYING: 4,
-	DEPLOYED_TO_HOSTING: 5,
 	DEPLOYED_TO_PLUGIN: 6,
 };
 
-const getSiteBuilderData = () => ( {
-	connectAuth: {
-		siteKey: 'site-key-1',
-		signature: 'signature',
-		accessToken: 'access-token',
-		clientId: 'client-id',
-		homeUrl: 'https://example.com',
-	},
+const getSiteBuilderData = ( snapshot = {} ) => ( {
+	siteKey: 'site-key-1',
 	plannerSteps: PLANNER_STEPS,
+	site_builder_snapshot: snapshot,
 } );
-
-const setInjectedSnapshot = ( snapshot ) => {
-	window.elementorHomeScreenData = {
-		wpRestNonce: 'wp-nonce',
-		siteBuilderSnapshot: snapshot,
-	};
-};
 
 describe( 'useSiteBuilderState', () => {
 	beforeEach( () => {
@@ -53,7 +40,7 @@ describe( 'useSiteBuilderState', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'returns empty state when connectAuth is missing', async () => {
+	it( 'returns empty state when siteKey is missing', async () => {
 		const { result } = renderHook( () => useSiteBuilderState( {} ) );
 
 		await waitFor( () => {
@@ -66,16 +53,16 @@ describe( 'useSiteBuilderState', () => {
 	} );
 
 	it( 'Scenario 3: uses injected snapshot and skips every HTTP call', async () => {
-		setInjectedSnapshot( {
+		const snapshot = {
 			'site-key-1': {
 				sessionId: 'session-id',
 				step: 3,
 				pageSuggestions: [ 'Home', 'Portfolio' ],
 				siteTypeSuggestions: [ 'Photography website', 'Portfolio website', 'Blog' ],
 			},
-		} );
+		};
 
-		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -88,16 +75,16 @@ describe( 'useSiteBuilderState', () => {
 	} );
 
 	it( 'Scenario 3b: uses injected snapshot with step 6 (DEPLOYED_TO_PLUGIN) and skips every HTTP call', async () => {
-		setInjectedSnapshot( {
+		const snapshot = {
 			'site-key-1': {
 				sessionId: 'session-id',
 				step: 6,
 				pageSuggestions: [ 'About', 'Services', 'Contact' ],
 				siteTypeSuggestions: [],
 			},
-		} );
+		};
 
-		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -110,16 +97,16 @@ describe( 'useSiteBuilderState', () => {
 	} );
 
 	it( 'Scenario 2a: step < WIREFRAMES — writes empty suggestions without hitting the planner', async () => {
-		setInjectedSnapshot( {
+		const snapshot = {
 			'site-key-1': {
 				sessionId: 'session-id',
 				step: 2,
 				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			},
-		} );
+		};
 		global.fetch.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -228,17 +215,17 @@ describe( 'useSiteBuilderState', () => {
 	} );
 
 	it( 'Scenario 2b: step >= WIREFRAMES but no suggestions — fetches /home-screen', async () => {
-		setInjectedSnapshot( {
+		const snapshot = {
 			'site-key-1': {
 				sessionId: 'session-id',
 				step: 3,
 			},
-		} );
+		};
 		global.fetch
 			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 3, pageNameSuggestions: [ 'Home' ], siteTypeSuggestions: [] } ) )
 			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
-		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData() ) );
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
 		await waitFor( () => {
 			expect( result.current.isLoading ).toBe( false );
@@ -265,5 +252,25 @@ describe( 'useSiteBuilderState', () => {
 		);
 		expect( result.current.error ).toBeInstanceOf( Error );
 		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'Scenario 2a: skips write when pageSuggestions already normalized', async () => {
+		const snapshot = {
+			'site-key-1': {
+				sessionId: 'session-id',
+				step: 2,
+				pageSuggestions: [],
+				siteTypeSuggestions: [ 'Dental Practice' ],
+			},
+		};
+
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 2 );
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
 	} );
 } );

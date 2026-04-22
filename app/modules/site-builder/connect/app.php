@@ -31,16 +31,13 @@ class App extends Library {
 			'GET',
 			'website-planner/session/home-screen',
 			[
-				'timeout' => 15,
 				'headers' => [
-					'Content-Type' => 'application/json',
 					'x-host-site-title' => (string) get_bloginfo( 'name' ),
 					'x-host-site-context' => (string) get_bloginfo( 'description' ),
 				],
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-				'with_error_data' => true,
 			]
 		);
 	}

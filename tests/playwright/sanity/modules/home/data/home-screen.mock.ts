@@ -293,8 +293,7 @@ export default {
 						buttonLabel: 'Create my site',
 					},
 				},
-			},
-			siteBuilderSnapshot: {},
+			site_builder_snapshot: {},
 		},
 		{
 			id: 'step_without_input',
@@ -319,15 +318,8 @@ export default {
 					DEPLOYED_TO_HOSTING: 5,
 					DEPLOYED_TO_PLUGIN: 6,
 				},
-				connectAuth: {
-					siteKey: 'test-site-key',
-					signature: 'test-signature',
-					accessToken: 'test-token',
-					clientId: 'test-client',
-					homeUrl: 'https://example.com',
-				},
-			},
-			siteBuilderSnapshot: {
+			siteKey: 'test-site-key',
+			site_builder_snapshot: {
 				'test-site-key': {
 					step: 3,
 					pageSuggestions: [ 'About', 'Services', 'Contact' ],

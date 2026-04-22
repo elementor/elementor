@@ -8,11 +8,6 @@ const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
 	'E-commerce store',
 ] );
 
-const readSnapshot = () => {
-	const raw = window.elementorHomeScreenData?.siteBuilderSnapshot;
-	return raw && 'object' === typeof raw && ! Array.isArray( raw ) ? raw : {};
-};
-
 const sanitizeSuggestions = ( value, { limit } = {} ) => {
 	const list = Array.isArray( value )
 		? value.filter( ( item ) => 'string' === typeof item && item.trim() )
@@ -29,7 +24,7 @@ const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 	if ( null === snapshotStep || ! Array.isArray( snapshotEntry?.pageSuggestions ) ) {
 		return false;
 	}
-	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_HOSTING && 0 === snapshotEntry.pageSuggestions.length ) {
+	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN && 0 === snapshotEntry.pageSuggestions.length ) {
 		return false;
 	}
 	return true;
@@ -38,7 +33,7 @@ const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 const isPreWireframesStep = ( snapshotStep, plannerSteps ) =>
 	null !== snapshotStep && snapshotStep < plannerSteps.WIREFRAMES;
 
-const deriveInitialStateForSiteKey = ( siteKey, plannerSteps ) => {
+const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 	if ( ! siteKey ) {
 		return {
 			sessionStep: null,
@@ -48,7 +43,7 @@ const deriveInitialStateForSiteKey = ( siteKey, plannerSteps ) => {
 		};
 	}
 
-	const snapshotEntry = readSnapshot()[ siteKey ];
+	const snapshotEntry = snapshot[ siteKey ];
 	const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
 
 	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
@@ -80,11 +75,11 @@ const deriveInitialStateForSiteKey = ( siteKey, plannerSteps ) => {
 };
 
 const useSiteBuilderState = ( siteBuilderData ) => {
-	const connectAuth = siteBuilderData?.connectAuth;
 	const plannerSteps = siteBuilderData?.plannerSteps;
-	const hasConnectAuth = Boolean( connectAuth );
-	const siteKey = connectAuth?.siteKey || '';
-	const initial = deriveInitialStateForSiteKey( siteKey, plannerSteps );
+	const siteKey = siteBuilderData?.siteKey || '';
+	const snapshot = siteBuilderData?.site_builder_snapshot ?? {};
+	const hasConnectAuth = Boolean( siteKey );
+	const initial = deriveInitialStateForSiteKey( siteKey, snapshot, plannerSteps );
 	const [ sessionStep, setSessionStep ] = useState( initial.sessionStep );
 	const [ pageSuggestions, setPageSuggestions ] = useState( initial.pageSuggestions );
 	const [ siteTypeSuggestions, setSiteTypeSuggestions ] = useState( initial.siteTypeSuggestions );
@@ -109,8 +104,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			return;
 		}
 
-		const snapshotValue = readSnapshot();
-		const snapshotEntry = snapshotValue[ siteKey ];
+		const snapshotEntry = snapshot[ siteKey ];
 		const snapshotStep = Number.isFinite( snapshotEntry?.step ) ? snapshotEntry.step : null;
 
 		if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
@@ -137,7 +131,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			},
 			body: JSON.stringify( {
 				value: {
-					...snapshotValue,
+					...snapshot,
 					[ siteKey ]: entry,
 				},
 			} ),

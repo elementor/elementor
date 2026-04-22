@@ -55,10 +55,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__merges_site_builder_config_and_snapshot() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [
-					'iframeUrl' => 'https://planner.test/chat.html',
-					'connectAuth' => [ 'siteKey' => 'abc' ],
-				];
+				return [ 'siteKey' => 'abc' ];
 			}
 		};
 
@@ -72,19 +69,18 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$result = $transformation->transform( [] );
 
-		$this->assertSame( 'https://planner.test/chat.html', $result['site_builder']['iframeUrl'] );
+		$this->assertSame( 'abc', $result['site_builder']['siteKey'] );
 		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
-		$this->assertSame( [ 'siteKey' => 'abc' ], $result['site_builder']['connectAuth'] );
 		$this->assertStringContainsString( 'site-planner-01.jpg', $result['site_builder']['previewImage1'] );
 		$this->assertStringContainsString( 'site-planner-02.jpg', $result['site_builder']['previewImage2'] );
 		$this->assertStringContainsString( 'site-planner-bg.jpg', $result['site_builder']['bgImage'] );
-		$this->assertSame( $snapshot, $result['siteBuilderSnapshot'] );
+		$this->assertSame( $snapshot, $result['site_builder']['site_builder_snapshot'] );
 	}
 
 	public function test_transform__snapshot_defaults_to_empty_array_when_option_missing() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -96,7 +92,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$result = $transformation->transform( [] );
 
-		$this->assertSame( [], $result['siteBuilderSnapshot'] );
+		$this->assertSame( [], $result['site_builder']['site_builder_snapshot'] );
 	}
 
 	public function test_transform__api_origin_uses_constant_when_defined() {
@@ -106,7 +102,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -124,7 +120,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__validates_and_sanitizes_step_config() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -167,7 +163,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__strips_unknown_step_config_fields() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -200,7 +196,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__sanitizes_html_in_step_config() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -231,7 +227,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__ignores_invalid_step_keys() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 
@@ -270,7 +266,7 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 	public function test_transform__enforces_max_length_on_step_config_strings() {
 		$site_builder = new class {
 			public function get_config(): array {
-				return [ 'iframeUrl' => 'https://planner.test/' ];
+				return [ 'siteKey' => 'test-key' ];
 			}
 		};
 

@@ -99,8 +99,7 @@ class Module extends BaseModule {
 		}
 
 		return [
-			'iframeUrl'   => $this->get_iframe_url(),
-			'connectAuth' => $connect_auth,
+			'siteKey' => $connect_auth['siteKey'],
 		];
 	}
 

@@ -2,29 +2,22 @@ import apiFetch from '@wordpress/api-fetch';
 
 import type { DeployLogo, WpPost } from '../types';
 
-const ALLOWED_LOGO_DOMAINS = [ 'assets.elementor.com' ];
-
 export async function uploadLogo( logo: DeployLogo ) {
-	try {
-		const parsedUrl = new URL( logo.url );
-		if ( parsedUrl.protocol !== 'https:' ) {
-			throw new Error( 'Logo URL must use HTTPS' );
-		}
-		if ( ! ALLOWED_LOGO_DOMAINS.includes( parsedUrl.hostname ) ) {
-			throw new Error( 'Logo URL must be from an allowed domain' );
-		}
-	} catch ( e ) {
-		throw new Error( `Invalid logo URL: ${ ( e as Error ).message }` );
+	if ( ! logo.url.startsWith( 'https://assets.elementor.com/' ) ) {
+		throw new Error( 'Invalid logo URL: must be from assets.elementor.com over HTTPS' );
 	}
 
-	const sanitizedFilename = logo.filename
+	const cleanedFilename = logo.filename
 		.replace( /["\r\n]/g, '' )
-		.replace( /[^\w.-]/g, '_' )
-		.slice( 0, 255 );
+		.replace( /[^\w.-]/g, '_' );
 
-	if ( ! sanitizedFilename ) {
+	if ( ! cleanedFilename ) {
 		throw new Error( 'Invalid logo filename' );
 	}
+
+	const ext = cleanedFilename.includes( '.' ) ? '.' + cleanedFilename.split( '.' ).pop() : '';
+	const base = cleanedFilename.slice( 0, 255 - ext.length );
+	const sanitizedFilename = base + ext;
 
 	const imageResponse = await fetch( logo.url );
 

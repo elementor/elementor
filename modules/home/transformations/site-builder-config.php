@@ -20,7 +20,6 @@ class Site_Builder_Config extends Transformations_Abstract {
 		'SITEMAP' => 2,
 		'WIREFRAMES' => 3,
 		'DEPLOYING' => 4,
-		'DEPLOYED_TO_HOSTING' => 5,
 		'DEPLOYED_TO_PLUGIN' => 6,
 	];
 
@@ -28,14 +27,14 @@ class Site_Builder_Config extends Transformations_Abstract {
 		$site_builder = Plugin::$instance->app->get_component( 'site-builder' );
 
 		if ( ! $site_builder ) {
-			unset( $home_screen_data['site_builder'], $home_screen_data['siteBuilderSnapshot'] );
+			unset( $home_screen_data['site_builder'] );
 			return $home_screen_data;
 		}
 
 		$site_builder_config = $site_builder->get_config();
 
 		if ( ! $site_builder_config ) {
-			unset( $home_screen_data['site_builder'], $home_screen_data['siteBuilderSnapshot'] );
+			unset( $home_screen_data['site_builder'] );
 			return $home_screen_data;
 		}
 
@@ -45,6 +44,8 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$validated_step_config = $this->validate_and_sanitize_step_config( $step_config );
 
+		$snapshot = $this->wordpress_adapter->get_option( 'elementor_site_builder_snapshot' );
+
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
 			'siteBuilderUrl' => self::SITE_BUILDER_URL,
 			'apiOrigin' => $this->get_api_origin_url(),
@@ -53,10 +54,8 @@ class Site_Builder_Config extends Transformations_Abstract {
 			'bgImage' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-bg.jpg',
 			'plannerSteps' => self::PLANNER_STEPS,
 			'stepConfig' => $validated_step_config,
+			'site_builder_snapshot' => is_array( $snapshot ) ? $snapshot : [],
 		] );
-
-		$snapshot = $this->wordpress_adapter->get_option( 'elementor_site_builder_snapshot' );
-		$home_screen_data['siteBuilderSnapshot'] = is_array( $snapshot ) ? $snapshot : [];
 
 		return $home_screen_data;
 	}

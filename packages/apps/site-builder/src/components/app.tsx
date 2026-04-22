@@ -22,10 +22,6 @@ function getElementorAiCurrentContext() {
 }
 
 function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
-	if ( ! targetOrigin ) {
-		return;
-	}
-
 	const config = getConfig();
 
 	iframe.contentWindow?.postMessage(

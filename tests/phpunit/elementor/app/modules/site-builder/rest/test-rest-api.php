@@ -52,6 +52,32 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 		$this->assertSame( 503, $response->get_error_data()['status'] );
 	}
 
+	public function test_get_home_screen__with_mocked_connected_app_returns_data_without_real_http() {
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$mock_app = $this->createMock( \Elementor\App\Modules\SiteBuilder\Connect\App::class );
+		$mock_app->method( 'is_connected' )->willReturn( true );
+		$mock_app->method( 'get_home_screen' )->willReturn( [
+			'step' => 3,
+			'sessionId' => 'mock-session',
+			'pageNameSuggestions' => [ 'Home', 'About' ],
+			'siteTypeSuggestions' => [ 'Business website' ],
+		] );
+
+		$rest_api = $this->getMockBuilder( Rest_Api::class )
+			->onlyMethods( [ 'get_connect_app' ] )
+			->getMock();
+		$rest_api->method( 'get_connect_app' )->willReturn( $mock_app );
+
+		$response = $rest_api->get_home_screen();
+
+		$this->assertInstanceOf( WP_REST_Response::class, $response );
+		$this->assertSame( 200, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertSame( 3, $data['step'] );
+		$this->assertSame( 'mock-session', $data['sessionId'] );
+	}
+
 	public function test_get_home_screen__via_rest_do_request_returns_503_when_unavailable() {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
@@ -109,6 +135,23 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 		$response = rest_do_request( $request );
 
 		$this->assertEquals( 400, $response->get_status() );
+	}
+
+	public function test_update_snapshot_rejects_oversized_payload() {
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
+
+		$oversized = [];
+		for ( $i = 0; $i <= Rest_Api::SNAPSHOT_MAX_KEYS; $i++ ) {
+			$oversized[ 'site-key-' . $i ] = [ 'step' => 1 ];
+		}
+
+		$request = new WP_REST_Request( 'POST', self::SNAPSHOT_ROUTE );
+		$request->set_param( 'value', $oversized );
+
+		$response = rest_do_request( $request );
+
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertFalse( $response->get_data()['success'] );
 	}
 
 	public function test_update_snapshot_requires_manage_options() {
