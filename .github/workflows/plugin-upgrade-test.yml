@@ -191,7 +191,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: snapshots-shard-${{ matrix.shardIndex }}
-          path: tests/**/
+          path: tests/**/*-snapshots/
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
@@ -276,7 +276,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: snapshots-targeted
-          path: tests/**/
+          path: tests/**/*-snapshots/
           include-hidden-files: true
           if-no-files-found: ignore
           retention-days: 1
@@ -297,14 +297,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: snapshots-*
-          path: tests/
+          path: .
           merge-multiple: true
 
       - name: Commit and push updated snapshots
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          find tests -type d -name '*-snapshots' -exec git add {} +
+          find tests -type f -path '*/*-snapshots/*.png' -exec git add {} +
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else
