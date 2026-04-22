@@ -76,16 +76,30 @@ const MentionWrapper = styled( 'div' )( ( { theme } ) => ( {
 			backgroundColor: theme.palette.action.selected,
 		},
 	},
+	'&[data-single-line="true"] textarea': {
+		resize: 'none',
+	},
 } ) );
+
+type TriggerPosition = 'start' | 'auto';
+
+function createMentionPattern( value: string, triggerPosition: TriggerPosition ): RegExp {
+	const escaped = value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
+	const prefix = 'start' === triggerPosition ? '^' : '';
+
+	return new RegExp( `${ prefix }@${ escaped }(?=\\s|$|[^a-zA-Z0-9_-])`, 'g' );
+}
 
 type Props = {
 	placeholder?: string;
 	ariaLabel?: string;
 	suggestions: Suggestion[];
+	rows?: number;
+	triggerPosition?: TriggerPosition;
 };
 
 export const MentionTextAreaControl = createControl(
-	( { placeholder, ariaLabel, suggestions: allSuggestions }: Props ) => {
+	( { placeholder, ariaLabel, suggestions: allSuggestions, rows = 5, triggerPosition = 'auto' }: Props ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 		const [ filteredSuggestions, setFilteredSuggestions ] = useState< Suggestion[] >( [] );
 
@@ -94,16 +108,13 @@ export const MentionTextAreaControl = createControl(
 				let result = text;
 
 				for ( const suggestion of allSuggestions ) {
-					const mentionPattern = new RegExp(
-						`@${ suggestion.value.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }(?=\\s|$|[^a-zA-Z0-9_-])`,
-						'g'
-					);
-					result = result.replace( mentionPattern, `[${ suggestion.value }]` );
+					const pattern = createMentionPattern( suggestion.value, triggerPosition );
+					result = result.replace( pattern, `[${ suggestion.value }]` );
 				}
 
 				return result;
 			},
-			[ allSuggestions ]
+			[ allSuggestions, triggerPosition ]
 		);
 
 		const handleChange = useCallback(
@@ -116,19 +127,29 @@ export const MentionTextAreaControl = createControl(
 		);
 
 		const handleSearch = useCallback(
-			( event: { query: string } ) => {
+			( event: { originalEvent: React.SyntheticEvent; trigger: string; query: string } ) => {
+				if ( 'start' === triggerPosition ) {
+					const target = event.originalEvent.target as HTMLTextAreaElement;
+					const triggerIndex = target.selectionStart - event.query.length - event.trigger.length;
+
+					if ( triggerIndex !== 0 ) {
+						setFilteredSuggestions( [] );
+						return;
+					}
+				}
+
 				const query = event.query.toLowerCase();
 				const filtered = allSuggestions.filter(
 					( item ) => item.label.toLowerCase().includes( query ) || item.value.toLowerCase().includes( query )
 				);
 				setFilteredSuggestions( filtered );
 			},
-			[ allSuggestions ]
+			[ allSuggestions, triggerPosition ]
 		);
 
 		return (
 			<ControlActions>
-				<MentionWrapper>
+				<MentionWrapper data-single-line={ rows === 1 ? 'true' : undefined }>
 					<Mention
 						value={ value ?? '' }
 						onChange={ handleChange }
@@ -136,7 +157,7 @@ export const MentionTextAreaControl = createControl(
 						onSearch={ handleSearch }
 						field="value"
 						trigger="@"
-						rows={ 5 }
+						rows={ rows }
 						disabled={ disabled }
 						placeholder={ placeholder }
 						itemTemplate={ SuggestionItem }
