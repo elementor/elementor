@@ -21,7 +21,17 @@ class Module extends BaseModule {
 	/**
 	 * @var array Keep a track of images for which loading optimization strategy were computed.
 	 */
-	private static $image_visited = [];
+	private $image_visited = [];
+
+	/**
+	 * @var int Running count of content media elements processed.
+	 */
+	private $content_media_count = 0;
+
+	/**
+	 * @var bool Whether a high-priority element candidate is still available.
+	 */
+	private $high_priority_element = true;
 
 	/**
 	 * Get Module name.
@@ -132,12 +142,12 @@ class Module extends BaseModule {
 	 * @return string Optimized image.
 	 */
 	public function loading_optimization_image( $image ) {
-		if ( isset( self::$image_visited[ $image ] ) ) {
-			return self::$image_visited[ $image ];
+		if ( isset( $this->image_visited[ $image ] ) ) {
+			return $this->image_visited[ $image ];
 		}
 
 		$optimized_image = $this->add_loading_optimization_attrs( $image );
-		self::$image_visited[ $image ] = $optimized_image;
+		$this->image_visited[ $image ] = $optimized_image;
 
 		return $optimized_image;
 	}
@@ -297,17 +307,27 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Resets all per-request state accumulated during image optimization.
+	 *
+	 * The module is a singleton that persists across the full PHP process, so this
+	 * must be called explicitly when the request context changes (e.g. between tests).
+	 */
+	public function reset_request_state(): void {
+		$this->image_visited         = [];
+		$this->content_media_count   = 0;
+		$this->high_priority_element = true;
+	}
+
+	/**
 	 * Keeps a count of media image.
 	 *
 	 * @param int $amount Amount by which count must be increased.
 	 * @return int current image count.
 	 */
 	private function increase_content_media_count( $amount = 1 ) {
-		static $content_media_count = 0;
+		$this->content_media_count += $amount;
 
-		$content_media_count += $amount;
-
-		return $content_media_count;
+		return $this->content_media_count;
 	}
 
 	/**
@@ -347,16 +367,14 @@ class Module extends BaseModule {
 	/**
 	 * Accesses a flag that indicates if an element is a possible candidate for `fetchpriority='high'`.
 	 *
-	 * @param bool $value Optional. Used to change the static variable. Default null.
-	 * @return bool Returns true if high-priority element was marked already, otherwise false.
+	 * @param bool $value Optional. Used to change the flag. Default null.
+	 * @return bool Returns true if a high-priority element slot is still available, otherwise false.
 	 */
 	private function high_priority_element_flag( $value = null ) {
-		static $high_priority_element = true;
-
 		if ( is_bool( $value ) ) {
-			$high_priority_element = $value;
+			$this->high_priority_element = $value;
 		}
 
-		return $high_priority_element;
+		return $this->high_priority_element;
 	}
 }

@@ -53,6 +53,8 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
 
 		$this->register_mock_editor_scripts();
+
+		Plugin::$instance->modules_manager->get_modules( 'image-loading-optimization' )->reset_request_state();
 	}
 
 	private function register_mock_editor_scripts(): void {
