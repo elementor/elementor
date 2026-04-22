@@ -94,7 +94,7 @@ class Rest_Api {
 		], 500 );
 	}
 
-	private function get_connect_app() {
+	protected function get_connect_app() {
 		if ( ! Plugin::$instance->common ) {
 			return null;
 		}

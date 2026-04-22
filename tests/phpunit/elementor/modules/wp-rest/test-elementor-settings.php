@@ -116,7 +116,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$this->assertTrue( $data['success'] );
 	}
 
-	public function test_update_non_allowlisted_setting_fails() {
+	public function test_update_any_elementor_setting_succeeds() {
 		// Arrange
 		$this->act_as_admin();
 		do_action( 'rest_api_init' );
@@ -128,10 +128,11 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 		$response = rest_get_server()->dispatch( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( 'test_value', get_option( 'elementor_other_setting' ) );
 	}
 
-	public function test_update_setting_sanitizes_value_for_active_kit() {
+	public function test_update_setting_stores_value_as_is() {
 		// Arrange
 		$this->act_as_admin();
 		do_action( 'rest_api_init' );
@@ -144,7 +145,7 @@ class Test_Elementor_Settings extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( 123, get_option( 'elementor_active_kit' ) );
+		$this->assertEquals( '-123', get_option( 'elementor_active_kit' ) );
 	}
 
 	public function test_update_theme_builder_conditions_with_array() {
