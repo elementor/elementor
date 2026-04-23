@@ -79,12 +79,10 @@ class Export_Design_Tokens extends Base_Route {
 
 		$manifest = $this->create_manifest( $file_name, $kit );
 
-		$classes_data = $this->get_classes_data();
-		if ( ! empty( $classes_data ) ) {
+		if ( $this->has_classes() ) {
 			$manifest['classes_count'] = $this->add_classes_json_chunked(
 				$zip,
 				Global_Classes_Import_Export::FILE_NAME,
-				$classes_data,
 				$temp_dir
 			);
 		}
@@ -129,21 +127,14 @@ class Export_Design_Tokens extends Base_Route {
 		];
 	}
 
-	private function get_classes_data(): ?array {
+	private function has_classes(): bool {
 		if ( ! $this->is_classes_feature_active() ) {
-			return null;
+			return false;
 		}
 
-		$global_classes = Global_Classes_Repository::make()->all()->get();
-		$result = Global_Classes_Parser::make()->parse( $global_classes );
+		$first_page = Global_Classes_Repository::make()->paginate( 1, 1 );
 
-		if ( ! $result->is_valid() ) {
-			return null;
-		}
-
-		$classes_data = $result->unwrap();
-
-		return empty( $classes_data['items'] ) ? null : $classes_data;
+		return $first_page['total'] > 0;
 	}
 
 	private function get_variables_data( $kit ): ?array {
@@ -177,16 +168,15 @@ class Export_Design_Tokens extends Base_Route {
 	}
 
 	/**
-	 * Write classes data to a temporary file in chunks to avoid memory issues with large datasets.
-	 * Each class is JSON encoded separately and written to the file incrementally.
+	 * Write classes data to a temporary file using pagination to avoid memory issues with large datasets.
+	 * Classes are fetched in batches and each class is JSON encoded separately.
 	 *
 	 * @param \ZipArchive $zip The ZIP archive to add the file to.
 	 * @param string $path The path within the ZIP for the JSON file.
-	 * @param array $classes_data The classes data with 'items' and 'order' keys.
 	 * @param string $temp_dir Temporary directory for the file.
 	 * @return int Number of classes written.
 	 */
-	private function add_classes_json_chunked( \ZipArchive $zip, string $path, array $classes_data, string $temp_dir ): int {
+	private function add_classes_json_chunked( \ZipArchive $zip, string $path, string $temp_dir ): int {
 		if ( ! Str::ends_with( $path, '.json' ) ) {
 			$path .= '.json';
 		}
@@ -198,23 +188,48 @@ class Export_Design_Tokens extends Base_Route {
 			throw new \Error( 'failed-to-create-temp-file' );
 		}
 
-		$items = $classes_data['items'] ?? [];
-		$order = $classes_data['order'] ?? [];
+		$repository = Global_Classes_Repository::make();
+		$page = 1;
+		$per_page = 100;
 		$count = 0;
+		$all_order = [];
+		$first_item = true;
 
 		fwrite( $handle, '{"items":{' );
 
-		$first = true;
-		foreach ( $items as $id => $class ) {
-			if ( ! $first ) {
-				fwrite( $handle, ',' );
-			}
-			fwrite( $handle, wp_json_encode( $id ) . ':' . wp_json_encode( $class ) );
-			$first = false;
-			$count++;
-		}
+		do {
+			$paginated = $repository->paginate( $page, $per_page );
+			$items = $paginated['items'];
 
-		fwrite( $handle, '},"order":' . wp_json_encode( $order ) . '}' );
+			foreach ( $items as $id => $class ) {
+				$parsed = Global_Classes_Parser::make()->parse( [ 'items' => [ $id => $class ], 'order' => [ $id ] ] );
+
+				if ( ! $parsed->is_valid() ) {
+					continue;
+				}
+
+				$parsed_data = $parsed->unwrap();
+				$parsed_class = $parsed_data['items'][ $id ] ?? null;
+
+				if ( ! $parsed_class ) {
+					continue;
+				}
+
+				if ( ! $first_item ) {
+					fwrite( $handle, ',' );
+				}
+				fwrite( $handle, wp_json_encode( $id ) . ':' . wp_json_encode( $parsed_class ) );
+				$first_item = false;
+				$count++;
+			}
+
+			$all_order = array_merge( $all_order, $paginated['order'] );
+			$page++;
+
+			$has_more = ( $paginated['page'] * $paginated['per_page'] ) < $paginated['total'];
+		} while ( $has_more );
+
+		fwrite( $handle, '},"order":' . wp_json_encode( $all_order ) . '}' );
 		fclose( $handle );
 
 		$zip->addFile( $temp_file, $path );

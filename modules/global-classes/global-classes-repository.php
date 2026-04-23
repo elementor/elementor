@@ -71,6 +71,42 @@ class Global_Classes_Repository {
 		return $this->cache;
 	}
 
+	/**
+	 * Get classes with pagination support.
+	 *
+	 * TODO: This is a temporary mock implementation that slices the full dataset.
+	 * Replace with actual paginated DB queries once the classes are stored in separate records.
+	 *
+	 * @param int $page Page number (1-based).
+	 * @param int $per_page Number of items per page.
+	 * @return array{items: array, order: array, total: int, page: int, per_page: int} Paginated classes data.
+	 */
+	public function paginate( int $page = 1, int $per_page = 3 ): array {
+		$all = $this->all()->get();
+		$items = $all['items'] ?? [];
+		$order = $all['order'] ?? [];
+
+		$total = count( $items );
+		$offset = ( $page - 1 ) * $per_page;
+
+		$paginated_order = array_slice( $order, $offset, $per_page );
+
+		$paginated_items = [];
+		foreach ( $paginated_order as $id ) {
+			if ( isset( $items[ $id ] ) ) {
+				$paginated_items[ $id ] = $items[ $id ];
+			}
+		}
+
+		return [
+			'items' => $paginated_items,
+			'order' => $paginated_order,
+			'total' => $total,
+			'page' => $page,
+			'per_page' => $per_page,
+		];
+	}
+
 	public function put( array $items, array $order ) {
 		$current_value = $this->all()->get();
 
