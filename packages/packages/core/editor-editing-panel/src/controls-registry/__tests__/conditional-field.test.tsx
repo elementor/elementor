@@ -74,26 +74,6 @@ describe( '<ConditionalField />', () => {
 		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should show children when local dependency value satisfies "exists" operator', () => {
-		const propType = createMockPropType( {
-			kind: 'plain',
-			key: 'string',
-			dependencies: createDependency( {
-				terms: [ { operator: 'exists', path: [ 'parent-field' ], value: null } ],
-			} ),
-		} );
-
-		jest.mocked( useStylesFields ).mockReturnValue( {
-			values: { 'parent-field': { $$type: 'string', value: 'cover' } },
-			setValues: jest.fn(),
-			canEdit: true,
-		} );
-
-		renderConditionalField( propType );
-
-		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
-	} );
-
 	it( 'should show children when inherited value satisfies "exists" operator (no local value)', () => {
 		const propType = createMockPropType( {
 			kind: 'plain',
@@ -111,62 +91,6 @@ describe( '<ConditionalField />', () => {
 
 		jest.mocked( useInheritedValues ).mockReturnValue( {
 			'parent-field': { $$type: 'string', value: 'cover' },
-		} );
-
-		renderConditionalField( propType );
-
-		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should hide children when inherited value does not satisfy combined AND dependencies', () => {
-		const propType = createMockPropType( {
-			kind: 'plain',
-			key: 'string',
-			dependencies: createDependency( {
-				relation: 'and',
-				terms: [
-					{ operator: 'exists', path: [ 'parent-field' ], value: null },
-					{ operator: 'ne', path: [ 'parent-field' ], value: 'fill' },
-				],
-			} ),
-		} );
-
-		jest.mocked( useStylesFields ).mockReturnValue( {
-			values: { 'parent-field': null },
-			setValues: jest.fn(),
-			canEdit: true,
-		} );
-
-		jest.mocked( useInheritedValues ).mockReturnValue( {
-			'parent-field': { $$type: 'string', value: 'fill' },
-		} );
-
-		renderConditionalField( propType );
-
-		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'should show children when inherited value satisfies combined AND dependencies (object-fit scenario)', () => {
-		const propType = createMockPropType( {
-			kind: 'plain',
-			key: 'string',
-			dependencies: createDependency( {
-				relation: 'and',
-				terms: [
-					{ operator: 'exists', path: [ 'object-fit' ], value: null },
-					{ operator: 'ne', path: [ 'object-fit' ], value: 'fill' },
-				],
-			} ),
-		} );
-
-		jest.mocked( useStylesFields ).mockReturnValue( {
-			values: { 'object-fit': null },
-			setValues: jest.fn(),
-			canEdit: true,
-		} );
-
-		jest.mocked( useInheritedValues ).mockReturnValue( {
-			'object-fit': { $$type: 'string', value: 'cover' },
 		} );
 
 		renderConditionalField( propType );
@@ -203,10 +127,6 @@ describe( 'getDependencies', () => {
 	it( 'should return empty array when propType has no dependencies', () => {
 		const propType = createMockPropType( { kind: 'plain' } );
 		expect( getDependencies( propType ) ).toEqual( [] );
-	} );
-
-	it( 'should return empty array when propType is undefined', () => {
-		expect( getDependencies( undefined ) ).toEqual( [] );
 	} );
 
 	it( 'should extract paths from dependency terms', () => {

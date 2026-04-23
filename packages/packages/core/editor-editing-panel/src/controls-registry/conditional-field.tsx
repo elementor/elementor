@@ -1,11 +1,12 @@
+import type { FC, ReactNode } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isDependency, isDependencyMet, type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 
 import { useInheritedValues } from '../contexts/styles-inheritance-context';
 import { useStylesFields } from '../hooks/use-styles-fields';
 
-export const ConditionalField: React.FC< {
-	children: React.ReactNode;
+export const ConditionalField: FC< {
+	children: ReactNode;
 } > = ( { children } ) => {
 	const { propType } = useBoundProp();
 
