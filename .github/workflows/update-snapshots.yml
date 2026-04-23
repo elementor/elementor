@@ -27,7 +27,7 @@ on:
           - all
       reset_snapshot_baselines:
         type: boolean
-        description: 'Delete baseline PNGs for the browser(s) selected above only (Firefox: *firefox*; Chromium: other *.png in *-snapshots)'
+        description: 'Delete baseline snapshots for the browser(s) selected above only (Firefox: *firefox*; Chromium: non-firefox files in *-snapshots)'
         required: false
         default: false
 
@@ -79,11 +79,11 @@ jobs:
         run: |
           set -euo pipefail
           if echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
-            find tests -type f -path '*/*-snapshots/*.png' -delete
+            find tests -type f -path '*/*-snapshots/*' -delete
           elif echo "$BROWSERS" | grep -qw firefox; then
-            find tests -type f -path '*/*-snapshots/*firefox*.png' -delete
+            find tests -type f -path '*/*-snapshots/*firefox*' -delete
           elif echo "$BROWSERS" | grep -qw chromium; then
-            find tests -type f -path '*/*-snapshots/*.png' ! -name '*firefox*' -delete
+            find tests -type f -path '*/*-snapshots/*' ! -name '*firefox*' -delete
           fi
 
       - name: Update snapshots
@@ -208,7 +208,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          find tests -type f -path '*/*-snapshots/*.png' -exec git add {} +
+          find tests -type f -path '*/*-snapshots/*' -exec git add {} +
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else
