@@ -21,17 +21,17 @@ const withDefaultSiteTypeSuggestions = ( value ) => {
 };
 
 const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
-	if ( null === snapshotStep || ! Array.isArray( snapshotEntry?.pageSuggestions ) ) {
+	if ( null === snapshotStep ) {
 		return false;
 	}
-	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN && 0 === snapshotEntry.pageSuggestions.length ) {
-		return false;
+	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN ) {
+		return Array.isArray( snapshotEntry?.pageSuggestions ) && snapshotEntry.pageSuggestions.length > 0;
 	}
 	return true;
 };
 
-const isPreWireframesStep = ( snapshotStep, plannerSteps ) =>
-	null !== snapshotStep && snapshotStep < plannerSteps.WIREFRAMES;
+const hasEntryWithoutSession = ( snapshotEntry, snapshotStep ) =>
+	snapshotEntry !== undefined && null === snapshotStep;
 
 const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 	if ( ! siteKey ) {
@@ -49,7 +49,7 @@ const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 	if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
 		return {
 			sessionStep: snapshotStep,
-			pageSuggestions: snapshotEntry.pageSuggestions,
+			pageSuggestions: sanitizeSuggestions( snapshotEntry?.pageSuggestions ),
 			siteTypeSuggestions: sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } ),
 			isResolved: true,
 		};
@@ -57,9 +57,9 @@ const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 
 	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
 
-	if ( isPreWireframesStep( snapshotStep, plannerSteps ) ) {
+	if ( hasEntryWithoutSession( snapshotEntry, snapshotStep ) ) {
 		return {
-			sessionStep: snapshotStep,
+			sessionStep: null,
 			pageSuggestions: [],
 			siteTypeSuggestions,
 			isResolved: true,
@@ -110,8 +110,17 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 		if ( hasCompleteSnapshot( snapshotStep, snapshotEntry, plannerSteps ) ) {
 			applyState( {
 				sessionStep: snapshotStep,
-				pageSuggestions: snapshotEntry.pageSuggestions,
+				pageSuggestions: sanitizeSuggestions( snapshotEntry?.pageSuggestions ),
 				siteTypeSuggestions: sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } ),
+			} );
+			return;
+		}
+
+		if ( hasEntryWithoutSession( snapshotEntry, snapshotStep ) ) {
+			applyState( {
+				sessionStep: null,
+				pageSuggestions: [],
+				siteTypeSuggestions: withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ),
 			} );
 			return;
 		}
@@ -137,26 +146,6 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 				},
 			} ),
 		} ).catch( () => {} );
-
-		const resumePreWireframesSession = () => {
-			const preservedSiteTypeSuggestions = sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } );
-			writeSnapshot( {
-				sessionId: snapshotEntry?.sessionId ?? null,
-				step: snapshotStep,
-				pageSuggestions: [],
-				siteTypeSuggestions: preservedSiteTypeSuggestions,
-			} );
-			applyState( {
-				sessionStep: snapshotStep,
-				pageSuggestions: [],
-				siteTypeSuggestions: preservedSiteTypeSuggestions,
-			} );
-		};
-
-		if ( isPreWireframesStep( snapshotStep, plannerSteps ) ) {
-			resumePreWireframesSession();
-			return;
-		}
 
 		const fetchHomeScreen = async () => {
 			setIsLoading( true );
