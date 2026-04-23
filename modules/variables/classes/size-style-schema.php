@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Size_Style_Schema {
 	private $units_to_skip = [];
 
-	public function __construct( ) {
+	public function __construct() {
 		$this->units_to_skip = [
 			...Size_Constants::angle(),
 			...Size_Constants::time(),
