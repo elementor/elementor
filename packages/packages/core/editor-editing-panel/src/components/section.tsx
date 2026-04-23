@@ -37,6 +37,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 				aria-controls={ contentId }
 				aria-label={ `${ title } section` }
 				onClick={ handleClick }
+				disableRipple
 				sx={ { '&:hover': { backgroundColor: 'transparent' } } }
 			>
 				<Stack direction="row" alignItems="center" justifyItems="start" flexGrow={ 1 } gap={ 0.5 }>

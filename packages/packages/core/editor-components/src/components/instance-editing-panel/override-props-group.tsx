@@ -31,6 +31,7 @@ export function OverridePropsGroup( { group }: Props ) {
 				aria-controls={ contentId }
 				aria-label={ `${ title } section` }
 				onClick={ handleClick }
+				disableRipple
 				p={ 0 }
 				sx={ { '&:hover': { backgroundColor: 'transparent' } } }
 			>
