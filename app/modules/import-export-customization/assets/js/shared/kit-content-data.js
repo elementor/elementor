@@ -4,6 +4,20 @@ import { KitSettingsCustomizationDialog } from './components/kit-settings-custom
 
 const kitContentData = [
 	{
+		type: 'design-system',
+		data: {
+			title: __( 'Design System', 'elementor' ),
+			features: {
+				open: [
+					__( 'Variables', 'elementor' ),
+					__( 'Classes', 'elementor' ),
+				],
+			},
+		},
+		dialog: null,
+		required: false,
+	},
+	{
 		type: 'content',
 		data: {
 			title: __( 'Content', 'elementor' ),
@@ -80,7 +94,7 @@ const kitContentData = [
 			},
 		},
 		dialog: KitPluginsCustomizationDialog,
-		required: true,
+		required: false,
 	},
 ];
 
