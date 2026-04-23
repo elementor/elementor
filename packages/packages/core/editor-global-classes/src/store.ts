@@ -132,6 +132,7 @@ export const slice = createSlice( {
 				meta: StyleDefinitionVariant[ 'meta' ];
 				props: Props;
 				custom_css?: CustomCss | null;
+				mode?: 'merge' | 'replace';
 			} >
 		) {
 			const style = state.data.items[ payload.id ];
@@ -147,10 +148,16 @@ export const slice = createSlice( {
 			customCss = customCss?.raw ? customCss : null;
 
 			if ( variant ) {
-				// mergeProps fails with Proxy objects from store, manually re-create clones
-				const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
 				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
-				variant.props = mergeProps( variantProps, payloadProps );
+				const mode = payload.mode ?? 'merge';
+
+				if ( mode === 'replace' ) {
+					variant.props = payloadProps;
+				} else {
+					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
+					variant.props = mergeProps( variantProps, payloadProps );
+				}
+
 				variant.custom_css = customCss;
 
 				style.variants = getNonEmptyVariants( style );
