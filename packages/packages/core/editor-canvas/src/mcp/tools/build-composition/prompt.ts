@@ -1,5 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
+import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
+
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -7,6 +9,10 @@ export const generatePrompt = () => {
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Check FIRST for reusable classes
 - [elementor://global-variables] - ONLY use variables defined here
+- [${ AVAILABLE_WIDGETS_URI }/v4]
+
+# TOOL SUUPORT
+This tool support v4 elements only
 
 # WORKFLOW
 1. Check/create global classes via "create-global-class" tool
