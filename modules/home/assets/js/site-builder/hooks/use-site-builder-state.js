@@ -125,6 +125,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 
 		const writeSnapshot = ( entry ) => fetch( settingsUrl, {
 			method: 'POST',
+			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
 				...restHeaders,
@@ -164,6 +165,7 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 			try {
 				const response = await fetch( `${ baseUrl }${ HOME_SCREEN_PATH }`, {
 					method: 'GET',
+					credentials: 'include',
 					headers: restHeaders,
 				} );
 

@@ -134,6 +134,7 @@ export function App() {
 
 		fetch( settingsUrl, {
 			method: 'POST',
+			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
 				'X-WP-Nonce': nonce,
