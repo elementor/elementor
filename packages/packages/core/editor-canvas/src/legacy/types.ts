@@ -165,6 +165,10 @@ export declare class ElementView {
 	once: ( event: string, callback: () => void ) => void;
 }
 
+export declare class TemplatedElementView extends ElementView {
+	_doAfterRender( callback: () => void ): void;
+}
+
 type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
