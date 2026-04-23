@@ -23,7 +23,9 @@ runs:
   steps:
     - name: Set PHP_VERSION environment variable
       shell: bash
-      run: echo "PHP_VERSION=${{ inputs.php-version }}" >> $GITHUB_ENV
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+      run: echo "PHP_VERSION=$PHP_VERSION" >> $GITHUB_ENV
 
     - name: Cache Docker images
       uses: ScribeMD/docker-cache@0.5.0
@@ -38,7 +40,9 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      run: npm run install:ci
+      run: |
+        set -euo pipefail
+        npm run install:ci
 
     - name: Download build artifact
       uses: actions/download-artifact@v4
@@ -49,13 +53,17 @@ runs:
     - name: Download hello-elementor theme
       shell: bash
       run: |
+        set -euo pipefail
         curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
         unzip hello-elementor
 
     - name: Update PHP version in config
       shell: bash
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
       run: |
-        jq --arg php_version "${{ inputs.php-version }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+        set -euo pipefail
+        jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
     - name: Install WordPress environment
       shell: bash

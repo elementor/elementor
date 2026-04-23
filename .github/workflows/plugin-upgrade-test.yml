@@ -188,7 +188,7 @@ jobs:
     name: Commit updated snapshots
     runs-on: ubuntu-22.04
     needs: [update-snapshots, update-snapshots-targeted]
-    if: always()
+    if: always() && (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped')
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
