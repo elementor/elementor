@@ -150,7 +150,7 @@ class Set_Global_Class_Ability extends Abstract_Ability {
 				$result = $parser->validate( $variant['props'] );
 				if ( ! $result->is_valid() ) {
 					// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-					throw new \InvalidArgumentException( 'Global class prop validation failed: ' . implode( ', ', $result->errors() ) );
+					throw new \InvalidArgumentException( 'Global class prop validation failed: ' . $result->errors()->to_string() );
 				}
 			}
 		}
