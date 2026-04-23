@@ -28,6 +28,10 @@ on:
       tag:
         description: 'Provide @tag or a keyword'
         required: false
+      repeat_each:
+        description: 'Playwright --repeat-each count (optional; only applied to PlaywrightWithTag job)'
+        required: false
+        type: number
       run_mode:
         type: choice
         description: 'Run mode'
@@ -234,9 +238,14 @@ jobs:
           npx playwright install chromium
       - name: Run Playwright tests
         env:
+          REPEAT_EACH: ${{ inputs.repeat_each }}
           TEST_TAG: ${{ inputs.tag }}
         run: |
-          npm run test:playwright -- --grep="$TEST_TAG"
+          if [ -n "$REPEAT_EACH" ]; then
+            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH"
+          else
+            npm run test:playwright -- --grep="$TEST_TAG"
+          fi
       - name: GCP Authentication
         id: 'auth'
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
