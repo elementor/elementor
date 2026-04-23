@@ -1,4 +1,4 @@
-import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
+import { generateId, type StyleDefinition, type StyleDefinitionID, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -41,7 +41,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;
 		},
-		create: ( label, variants: StyleDefinitionVariant[] = [], id ) => {
+		create: ( label, variants: StyleDefinitionVariant[] = [], id?: StyleDefinitionID ) => {
 			const classes = selectGlobalClasses( getState() );
 
 			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
@@ -50,7 +50,9 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
 			}
 
-			id ??= generateId( 'g-', Object.keys( classes ) );
+			if ( ! id ) {
+				id = generateId( 'g-', Object.keys( classes ) );
+			}
 
 			dispatch(
 				slice.actions.add( {
@@ -79,7 +81,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
-					mode: args.mode,
+					mode: args.mode ?? 'merge',
 				} )
 			);
 		},
@@ -90,6 +92,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					meta: args.meta,
 					custom_css: args.custom_css,
 					props: {},
+					mode: 'merge',
 				} )
 			);
 		},

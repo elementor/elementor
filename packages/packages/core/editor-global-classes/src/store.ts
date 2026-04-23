@@ -132,7 +132,7 @@ export const slice = createSlice( {
 				meta: StyleDefinitionVariant[ 'meta' ];
 				props: Props;
 				custom_css?: CustomCss | null;
-				mode?: 'merge' | 'replace';
+				mode: 'merge' | 'replace';
 			} >
 		) {
 			const style = state.data.items[ payload.id ];
