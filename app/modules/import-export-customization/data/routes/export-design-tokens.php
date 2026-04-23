@@ -81,8 +81,12 @@ class Export_Design_Tokens extends Base_Route {
 
 		$classes_data = $this->get_classes_data();
 		if ( ! empty( $classes_data ) ) {
-			$this->add_json_file( $zip, Global_Classes_Import_Export::FILE_NAME, $classes_data );
-			$manifest['classes_count'] = count( $classes_data['items'] ?? [] );
+			$manifest['classes_count'] = $this->add_classes_json_chunked(
+				$zip,
+				Global_Classes_Import_Export::FILE_NAME,
+				$classes_data,
+				$temp_dir
+			);
 		}
 
 		$variables_data = $this->get_variables_data( $kit );
@@ -211,52 +215,6 @@ class Export_Design_Tokens extends Base_Route {
 		}
 
 		fwrite( $handle, '},"order":' . wp_json_encode( $order ) . '}' );
-		fclose( $handle );
-
-		$zip->addFile( $temp_file, $path );
-
-		return $count;
-	}
-
-	/**
-	 * Write variables data to a temporary file in chunks to avoid memory issues with large datasets.
-	 *
-	 * @param \ZipArchive $zip The ZIP archive to add the file to.
-	 * @param string $path The path within the ZIP for the JSON file.
-	 * @param array $variables_data The variables data with 'data', 'watermark', and 'version' keys.
-	 * @param string $temp_dir Temporary directory for the file.
-	 * @return int Number of variables written.
-	 */
-	private function add_variables_json_chunked( \ZipArchive $zip, string $path, array $variables_data, string $temp_dir ): int {
-		if ( ! Str::ends_with( $path, '.json' ) ) {
-			$path .= '.json';
-		}
-
-		$temp_file = $temp_dir . 'variables_temp.json';
-		$handle = fopen( $temp_file, 'w' );
-
-		if ( ! $handle ) {
-			throw new \Error( 'failed-to-create-temp-file' );
-		}
-
-		$data = $variables_data['data'] ?? [];
-		$watermark = $variables_data['watermark'] ?? 0;
-		$version = $variables_data['version'] ?? 1;
-		$count = 0;
-
-		fwrite( $handle, '{"data":{' );
-
-		$first = true;
-		foreach ( $data as $id => $variable ) {
-			if ( ! $first ) {
-				fwrite( $handle, ',' );
-			}
-			fwrite( $handle, wp_json_encode( $id ) . ':' . wp_json_encode( $variable ) );
-			$first = false;
-			$count++;
-		}
-
-		fwrite( $handle, '},"watermark":' . wp_json_encode( $watermark ) . ',"version":' . wp_json_encode( $version ) . '}' );
 		fclose( $handle );
 
 		$zip->addFile( $temp_file, $path );
