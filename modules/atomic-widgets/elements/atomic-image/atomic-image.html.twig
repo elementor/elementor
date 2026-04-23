@@ -1,6 +1,7 @@
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}	
-	{% if settings.link and settings.link.attributes is not empty %}
+	{% set has_link = settings.link and settings.link.attributes is not empty %}
+	{% if has_link %}
 		<{{ settings.link.tag | e('html_tag') }}
 			{{ settings.link.attributes | raw }}
 			class="{{ base_styles['link-base'] }}"
@@ -20,7 +21,7 @@
 			{% endif %}
 		{% endfor %}
 	/>
-	{% if settings.link.href %}
+	{% if has_link %}
 		</{{ settings.link.tag | e('html_tag') }}>
 	{% endif %}
 {% endif %}
