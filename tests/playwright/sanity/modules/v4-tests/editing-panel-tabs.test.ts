@@ -103,6 +103,11 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
+		await test.step( 'Close the size section', async () => {
+			const sectionButton = editor.page.locator( '.MuiButtonBase-root', { hasText: 'Size' } );
+			await sectionButton.click();
+		} );
+
 		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
 
 		await test.step( 'Open the font family control', async () => {
