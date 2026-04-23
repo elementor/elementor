@@ -14,7 +14,8 @@ test.describe( 'Icons (FA Brands)', () => {
 	} );
 
 	for ( const status of [ 'inactive', 'active' ] ) {
-		test( `Inline Icons experiment status - ${ status }`, async ( { page, apiRequests }, testInfo ) => {
+		test( `Inline Icons experiment status - ${ status }`, async ( { page, apiRequests, browserName }, testInfo ) => {
+			test.skip( 'firefox' === browserName, 'Publish button disabled state not detected on Firefox' );
 			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );

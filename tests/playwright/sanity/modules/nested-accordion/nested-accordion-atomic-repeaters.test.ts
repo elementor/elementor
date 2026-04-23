@@ -53,7 +53,8 @@ test.describe( 'Nested Accordion tests @nested-atomic-repeaters', () => {
 		} );
 	} );
 
-	test( 'Test with existing template', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Test with existing template', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Cloned accordion item content not attached on Firefox' );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 

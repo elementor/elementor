@@ -11,18 +11,14 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	await editor.getPreviewFrame().waitForSelector( '.elementor-tab-title.elementor-active' );
 
 	// Attach-preview inside the tab as a custom selector.
-	await editor.page.evaluate( () => {
-		// `Attach-preview` is a `tab_content` of the widget tabs.
-		$e.internal( 'editor/documents/attach-preview', {
-			selector: '.elementor-tab-content',
-		} );
-	} );
-	await editor.page.evaluate( () => {
-		// `Attach-preview` is a `tab_content` of the widget tabs.
-		$e.internal( 'editor/documents/attach-preview', {
-			selector: '.elementor-tab-content',
-		} );
-	} );
+	await editor.page.evaluate( () => $e.internal( 'editor/documents/attach-preview', {
+		selector: '.elementor-tab-content',
+		shouldNavigateToDefaultRoute: false,
+	} ) );
+	await editor.page.evaluate( () => $e.internal( 'editor/documents/attach-preview', {
+		selector: '.elementor-tab-content',
+		shouldNavigateToDefaultRoute: false,
+	} ) );
 
 	// Assert - Ensure the tabs are duplicated.
 	await expect( editor.getPreviewFrame().locator( '.elementor-tab-content .elementor-tabs-wrapper .elementor-tab-title.elementor-active' ) ).toBeVisible();

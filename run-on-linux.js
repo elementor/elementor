@@ -25,10 +25,19 @@ async function run( tag ) {
 	const image = `mcr.microsoft.com/playwright:v${ playwrightVersion.replace( '^', '' ) }-jammy`;
 	const commandToRun = `/bin/bash -c "npm run test:playwright -- --grep="${ tag }""`;
 
-	spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
-		stdio: 'inherit',
-		stderr: 'inherit',
-		shell: true,
+	await new Promise( ( resolve, reject ) => {
+		const child = spawn( `${ command } ${ options.join( ' ' ) } ${ image } ${ commandToRun }`, {
+			stdio: 'inherit',
+			shell: true,
+		} );
+
+		child.on( 'close', ( code ) => {
+			if ( code !== 0 ) {
+				reject( new Error( `Docker process exited with code ${ code }` ) );
+			} else {
+				resolve();
+			}
+		} );
 	} );
 }
 

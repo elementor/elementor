@@ -3,6 +3,8 @@ import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
 test.describe( 'Lighthouse tests', () => {
+	test.skip( ( { browserName } ) => browserName !== 'chromium', 'Lighthouse requires Chrome DevTools Protocol' );
+
 	test( 'Accordion widget test', async ( { page, apiRequests }, testInfo ) => {
 		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

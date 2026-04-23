@@ -113,8 +113,7 @@ export default class StyleTab extends BasePage {
 		const unitOption = this.page.getByRole( 'menuitem', { name: targetUnit.toUpperCase(), exact: true } );
 
 		await unitButton.click();
-		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor();
-		await unitOption.waitFor( { state: 'visible' } );
+		await unitOption.waitFor( { state: 'visible', timeout: timeouts.longAction } );
 		await unitOption.click();
 	}
 

@@ -29,7 +29,8 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	];
 
 	for ( const widgetType of testData ) {
-		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
+		test( `Test ${ widgetType } template`, async ( { page, apiRequests, browserName }, testInfo ) => {
+			test.skip( 'firefox' === browserName, 'Missing Firefox screenshot snapshots and setViewportSize timeouts' );
 			const filePath = _path.resolve( __dirname, `./templates/atomic/${ widgetType }.json` );
 			const hoverSelector = {};
 

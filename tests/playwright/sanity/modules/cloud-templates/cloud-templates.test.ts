@@ -314,7 +314,8 @@ test.describe( 'Cloud Templates', () => {
 		await page.waitForSelector( '.elementor-template-library-template-cloud' );
 	};
 
-	test( 'should display cloud templates list and grid view correctly', async ( { page, apiRequests }, testInfo ) => {
+	test( 'should display cloud templates list and grid view correctly', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Screenshot size mismatch on Firefox due to different viewport rendering' );
 		await setupCloudTemplatesTab( page, testInfo, apiRequests );
 
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );

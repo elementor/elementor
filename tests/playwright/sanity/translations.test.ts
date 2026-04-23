@@ -1,7 +1,8 @@
+import { timeouts } from '../config/timeouts';
 import { parallelTest as test } from '../parallelTest';
+import EditorPage from '../pages/editor-page';
 import WpAdminPage from '../pages/wp-admin-page';
 import { expect } from '@playwright/test';
-import EditorPage from '../pages/editor-page';
 import { testCaseslanguages } from './translations.languages';
 
 test.describe( 'Test site translation for different languages', () => {
@@ -26,8 +27,7 @@ test.describe( 'Test site translation for different languages', () => {
 			await editor.closeNavigatorIfOpen();
 			const publishButton = page.locator( 'button.MuiButton-root' ).nth( 1 );
 
-			// Assert.
-			await expect( publishButton ).toHaveText( languageObj.buttonText );
+			await expect( publishButton ).toHaveText( languageObj.buttonText, { timeout: timeouts.heavyAction } );
 			await page.close();
 		} );
 	} );

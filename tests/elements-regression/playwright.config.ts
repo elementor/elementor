@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { defineConfig } from '@playwright/test';
+import { type PlaywrightTestConfig, defineConfig, devices } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
 process.env.DEV_SERVER = 'http://localhost:8888';
@@ -9,6 +9,39 @@ process.env.DEBUG_PORT = 1 === Number( process.env.TEST_PARALLEL_INDEX ) ? '9223
 _config( {
 	path: resolve( __dirname, '../../.env' ),
 } );
+
+const browserConfigs: Record<string, PlaywrightTestConfig[ 'projects' ][ number ]> = {
+	chromium: {
+		name: 'chromium',
+		snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
+		use: {
+			...devices[ 'Desktop Chrome' ],
+			viewport: { width: 1920, height: 1080 },
+			launchOptions: {
+				args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+			},
+		},
+	},
+	firefox: {
+		name: 'firefox',
+		use: {
+			...devices[ 'Desktop Firefox' ],
+			viewport: { width: 1920, height: 1080 },
+		},
+	},
+	webkit: {
+		name: 'webkit',
+		use: {
+			...devices[ 'Desktop Safari' ],
+			viewport: { width: 1920, height: 1080 },
+		},
+	},
+};
+
+const requestedBrowsers = ( process.env.BROWSERS || 'chromium' ).split( /\s+/ ).filter( Boolean );
+const projects = requestedBrowsers
+	.map( ( browser ) => browserConfigs[ browser ] )
+	.filter( Boolean );
 
 export default defineConfig( {
 	testDir: './tests/',
@@ -30,10 +63,8 @@ export default defineConfig( {
 		[ 'allure-playwright', { suiteTitle: false } ],
 	]
 		: 'list',
+	projects,
 	use: {
-		launchOptions: {
-			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
-		},
 		headless: !! process.env.CI,
 		ignoreHTTPSErrors: true,
 		actionTimeout: 10_000,
