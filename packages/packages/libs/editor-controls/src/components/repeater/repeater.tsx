@@ -6,7 +6,6 @@ import {
 	bindPopover,
 	bindTrigger,
 	Box,
-	ClickAwayListener,
 	IconButton,
 	Infotip,
 	Tooltip,
@@ -17,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type SetValueMeta } from '../../bound-prop-context';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
+import { usePopoverDismiss } from '../../hooks/use-repeater-popover-dismiss';
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../control-repeater/locations';
 import { SectionContent } from '../section-content';
 import { RepeaterHeader } from './repeater-header';
@@ -352,12 +352,14 @@ const RepeaterItem = < T, >( {
 	);
 	const triggerProps = bindTrigger( popoverState );
 
+	usePopoverDismiss( { isOpen: popoverState.isOpen, onClose: popoverProps.onClose } );
+
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	return (
-		<>
+		<Box sx={ { display: 'contents' } }>
 			<RepeaterTag
 				disabled={ disabled }
 				label={ label }
@@ -399,15 +401,9 @@ const RepeaterItem = < T, >( {
 				}
 			/>
 			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
-				<ClickAwayListener
-					mouseEvent="onMouseDown"
-					touchEvent="onTouchStart"
-					onClickAway={ popoverProps.onClose }
-				>
-					<Box>{ children( { anchorEl: ref } ) }</Box>
-				</ClickAwayListener>
+				<Box>{ children( { anchorEl: ref } ) }</Box>
 			</RepeaterPopover>
-		</>
+		</Box>
 	);
 };
 
