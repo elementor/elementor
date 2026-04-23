@@ -30,15 +30,9 @@ function resolveWithInherited(
 		return null;
 	}
 
-	const resolved = { ...localValues };
-
-	for ( const key of Object.keys( resolved ) ) {
-		if ( resolved[ key ] === null || resolved[ key ] === undefined ) {
-			resolved[ key ] = inheritedValues[ key ] ?? null;
-		}
-	}
-
-	return resolved;
+	return Object.fromEntries(
+		Object.entries( localValues ).map( ( [ key, value ] ) => [ key, value ?? inheritedValues[ key ] ?? null ] )
+	);
 }
 
 export function getDependencies( propType?: PropType ): PropKey[] {
