@@ -4,13 +4,7 @@ import { type Breakpoint, useActiveBreakpoint, useBreakpoints } from '@elementor
 const serializeBreakpoints = ( breakpoints: Breakpoint[] ) =>
 	breakpoints.map( ( b ) => [ b.id, b.width ?? '', b.type ?? '' ].join( ':' ) ).join( '|' );
 
-export const usePopoverDismiss = ( {
-	isOpen,
-	onClose,
-}: {
-	isOpen: boolean;
-	onClose: () => void;
-} ) => {
+export const usePopoverDismiss = ( { isOpen, onClose }: { isOpen: boolean; onClose: () => void } ) => {
 	const onCloseRef = useRef( onClose );
 	onCloseRef.current = onClose;
 
