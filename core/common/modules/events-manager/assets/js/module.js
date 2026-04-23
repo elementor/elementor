@@ -8,6 +8,7 @@ let mixpanelInstance = null;
 
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
+	availableExperiments = [];
 
 	onInit() {
 		this.config = eventsConfig;
@@ -51,7 +52,7 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		const userId = elementorCommon.config.library_connect?.user_id;
+		const userId = elementorCommon.config.editor_events?.user_id;
 
 		mixpanelInstance.register( {
 			appType: 'Editor',
@@ -68,6 +69,8 @@ export default class extends elementorModules.Module {
 		}
 
 		this.trackingEnabled = true;
+
+		this.availableExperiments = Object.keys( elementorCommon.config.experimentalFeatures || {} );
 	}
 
 	dispatchEvent( name, data, options = {} ) {
@@ -80,7 +83,7 @@ export default class extends elementorModules.Module {
 		}
 
 		const eventData = {
-			user_id: elementorCommon.config.library_connect?.user_id || null,
+			user_id: elementorCommon.config.editor_events?.user_id || null,
 			user_roles: elementorCommon.config.library_connect?.user_roles || [],
 			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
 			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
@@ -89,6 +92,7 @@ export default class extends elementorModules.Module {
 			client_id: elementorCommon.config.editor_events?.site_key,
 			app_version: elementorCommon.config.editor_events?.elementor_version,
 			site_language: elementorCommon.config.editor_events?.site_language,
+			experiments: this.availableExperiments,
 			...data,
 		};
 

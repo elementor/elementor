@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
-		<# } else if ( false === obj.editable ) { #>
+		<# } else if ( false === obj.editable && !obj.atomicFormPromotion ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
 		<# if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
