@@ -3,6 +3,7 @@ import {
 	backgroundColorOverlayPropTypeUtil,
 	cssFilterFunctionPropUtil,
 	dropShadowFilterPropTypeUtil,
+	moveTransformPropTypeUtil,
 	type PropValue,
 	selectionSizePropTypeUtil,
 	shadowPropTypeUtil,
@@ -16,6 +17,7 @@ import {
 	FilterDropShadowIconIndicator,
 	FilterDropShadowRepeaterLabel,
 	FilterSingleSizeRepeaterLabel,
+	TransformRepeaterLabel,
 	TransitionsSizeVariableLabel,
 } from './components/variables-repeater-item-slot';
 import { colorVariablePropTypeUtil, customSizeVariablePropTypeUtil, sizeVariablePropTypeUtil } from './prop-types';
@@ -28,6 +30,7 @@ export function registerRepeaterInjections() {
 	backgroundOverlayRepeaterInjections();
 	boxShadowRepeaterInjections();
 	transitionsRepeaterInjections();
+	transformRepeaterInjections();
 	filterRepeaterInjections();
 }
 
@@ -71,6 +74,25 @@ function boxShadowRepeaterInjections() {
 				hasAssignedSizeVariable( blur ) ||
 				hasAssignedSizeVariable( spread )
 			);
+		},
+	} );
+}
+
+function transformRepeaterInjections() {
+	injectIntoRepeaterItemLabel( {
+		id: 'transform-size-variables-label',
+		component: TransformRepeaterLabel,
+		condition: ( { value }: Args ) => {
+			if ( moveTransformPropTypeUtil.isValid( value ) ) {
+				const { x: xAxis, y: yAxis, z: zAxis } = moveTransformPropTypeUtil.extract( value ) || {};
+				return (
+					hasAssignedSizeVariable( xAxis ) ||
+					hasAssignedSizeVariable( yAxis ) ||
+					hasAssignedSizeVariable( zAxis )
+				);
+			}
+
+			return false;
 		},
 	} );
 }

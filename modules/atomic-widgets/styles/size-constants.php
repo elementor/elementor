@@ -209,6 +209,10 @@ class Size_Constants {
 		return self::by_group( 'time' );
 	}
 
+	public static function angle(): array {
+		return self::by_group( 'angle' );
+	}
+
 	public static function layout(): array {
 		return self::get_preset( 'layout' );
 	}
