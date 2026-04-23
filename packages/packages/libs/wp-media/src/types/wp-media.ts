@@ -10,6 +10,7 @@ export type BackboneAttachmentModel = {
 export type CreateMediaFrameOptions = {
 	title?: string;
 	multiple?: boolean;
+	frame?: string;
 	library?: {
 		type?: string[] | string;
 	};
@@ -26,12 +27,18 @@ export type MediaFrame = {
 			param: ( key: string, value: string ) => void;
 		};
 	};
+	$el?: {
+		find: ( selector: string ) => { remove: () => void };
+	};
 	state: () => {
-		get: ( key: 'selection' ) => {
+		get: ( ( key: 'selection' ) => {
 			set: ( attachments: BackboneAttachmentModel[] ) => void;
 			toJSON: () => WpAttachmentJSON[];
-		};
+		} ) &
+			( ( key: 'id' ) => string );
+		props?: { get: ( key: string ) => string | undefined };
 	};
+	setState: ( id: string ) => MediaFrame;
 	on: ( event: string, callback: () => void ) => MediaFrame;
 	open: () => void;
 	detach: () => void;
