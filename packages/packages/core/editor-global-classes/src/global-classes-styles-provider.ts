@@ -81,7 +81,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
-					mode: args.mode ?? 'merge',
+					mode: args.mode,
 				} )
 			);
 		},
@@ -92,7 +92,6 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					meta: args.meta,
 					custom_css: args.custom_css,
 					props: {},
-					mode: 'merge',
 				} )
 			);
 		},

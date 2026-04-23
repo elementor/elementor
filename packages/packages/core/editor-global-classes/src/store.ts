@@ -132,7 +132,7 @@ export const slice = createSlice( {
 				meta: StyleDefinitionVariant[ 'meta' ];
 				props: Props;
 				custom_css?: CustomCss | null;
-				mode: 'merge' | 'replace';
+				mode?: 'merge' | 'replace';
 			} >
 		) {
 			const style = state.data.items[ payload.id ];
@@ -149,8 +149,9 @@ export const slice = createSlice( {
 
 			if ( variant ) {
 				const payloadProps = JSON.parse( JSON.stringify( payload.props ) ) as Props;
+				const mode = payload.mode ?? 'merge';
 
-				if ( payload.mode === 'replace' ) {
+				if ( mode === 'replace' ) {
 					variant.props = payloadProps;
 				} else {
 					const variantProps = JSON.parse( JSON.stringify( variant.props ) ) as Props;
