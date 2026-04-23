@@ -71,9 +71,7 @@ export function useInheritedValues( propKeys: string[] ): Record< string, PropVa
 		return {};
 	}
 
-	return Object.fromEntries(
-		propKeys.map( ( key ) => [ key, snapshot[ key ]?.[ 0 ]?.value ?? null ] )
-	);
+	return Object.fromEntries( propKeys.map( ( key ) => [ key, snapshot[ key ]?.[ 0 ]?.value ?? null ] ) );
 }
 
 const useAppliedStyles = () => {

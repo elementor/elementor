@@ -29,7 +29,7 @@ function renderConditionalField( propType: PropType ) {
 		<PropProvider value={ { child: null } } setValue={ jest.fn() } propType={ topLevelPropType }>
 			<PropKeyProvider bind="child">
 				<ConditionalField>
-					<span data-testid="child-content">visible</span>
+					<span>visible</span>
 				</ConditionalField>
 			</PropKeyProvider>
 		</PropProvider>
@@ -51,7 +51,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.getByTestId( 'child-content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide children when local dependency value does not satisfy "exists" operator', () => {
@@ -71,7 +71,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.queryByTestId( 'child-content' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show children when local dependency value satisfies "exists" operator', () => {
@@ -91,7 +91,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.getByTestId( 'child-content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should show children when inherited value satisfies "exists" operator (no local value)', () => {
@@ -115,7 +115,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.getByTestId( 'child-content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide children when inherited value does not satisfy combined AND dependencies', () => {
@@ -143,7 +143,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.queryByTestId( 'child-content' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show children when inherited value satisfies combined AND dependencies (object-fit scenario)', () => {
@@ -171,7 +171,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.getByTestId( 'child-content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should prefer local value over inherited value', () => {
@@ -195,7 +195,7 @@ describe( '<ConditionalField />', () => {
 
 		renderConditionalField( propType );
 
-		expect( screen.queryByTestId( 'child-content' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 } );
 
