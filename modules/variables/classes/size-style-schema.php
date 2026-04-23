@@ -14,6 +14,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Style_Schema {
+	private $units_to_skip = [];
+
+	public function __construct( ) {
+		$this->units_to_skip = [
+			...Size_Constants::angle(),
+			...Size_Constants::time(),
+		];
+	}
+
+	private function skip_by_units( Size_Prop_Type $size_prop_type ) {
+		$settings = $size_prop_type->get_settings();
+
+		if ( ! array_key_exists( 'available_units', $settings ) ) {
+			return false;
+		}
+
+		$available_units = $settings['available_units'];
+
+		return count( array_intersect( $available_units, $this->units_to_skip ) ) > 0;
+	}
+
 	public function augment( array $schema ): array {
 		foreach ( $schema as $css_property => $prop_type ) {
 			$schema[ $css_property ] = $this->update( $prop_type );
@@ -40,23 +61,6 @@ class Size_Style_Schema {
 		}
 
 		return $prop_type;
-	}
-
-	private $units_to_skip = [
-		...Size_Constants::ANGLE_UNITS,
-		...Size_Constants::TIME_UNITS,
-	];
-
-	private function skip_by_units( Size_Prop_Type $size_prop_type ) {
-		$settings = $size_prop_type->get_settings();
-
-		if ( ! array_key_exists( 'available_units', $settings ) ) {
-			return false;
-		}
-
-		$available_units = $settings['available_units'];
-
-		return count( array_intersect( $available_units, $this->units_to_skip ) ) > 0;
 	}
 
 	private function update_size( Size_Prop_Type $size_prop_type ) {

@@ -56,12 +56,12 @@ class Size_Constants {
 		self::UNIT_CH,
 	];
 
-	public const TIME_UNITS = [
+	private const TIME_UNITS = [
 		self::UNIT_MILLI_SECOND,
 		self::UNIT_SECOND,
 	];
 
-	public const ANGLE_UNITS = [
+	private const ANGLE_UNITS = [
 		self::UNIT_DEG,
 		self::UNIT_RAD,
 		self::UNIT_GRAD,
@@ -207,6 +207,10 @@ class Size_Constants {
 
 	public static function time(): array {
 		return self::by_group( 'time' );
+	}
+
+	public static function angle(): array {
+		return self::by_group( 'angle' );
 	}
 
 	public static function layout(): array {
