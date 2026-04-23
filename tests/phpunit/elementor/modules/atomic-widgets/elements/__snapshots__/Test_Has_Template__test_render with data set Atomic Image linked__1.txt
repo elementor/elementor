@@ -1,5 +1,5 @@
 					
-			<a
+				<a
 			href="https://example.com" target="_blank"
 			class="e-image-link-base"
 			data-interaction-id="e8e55a1"
@@ -11,4 +11,5 @@
 									id="123"
 												src="https://example.com/image.jpg"
 						/>
+			</a>
 			
