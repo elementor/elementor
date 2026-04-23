@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import { useRepeaterPopoverDismissOnScreenSignals } from '../use-repeater-popover-dismiss';
+import { usePopoverDismiss } from '../use-repeater-popover-dismiss';
 
 jest.mock( '@elementor/editor-responsive', () => ( {
 	useActiveBreakpoint: jest.fn( () => 'desktop' ),
@@ -11,7 +11,7 @@ import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsiv
 
 const desktopOnlyBreakpoints = [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] as const;
 
-describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
+describe( 'usePopoverDismiss', () => {
 	beforeEach( () => {
 		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
 		jest.mocked( useBreakpoints ).mockReturnValue( [ ...desktopOnlyBreakpoints ] );
@@ -21,7 +21,7 @@ describe( 'useRepeaterPopoverDismissOnScreenSignals', () => {
 		const onClose = jest.fn();
 
 		const { rerender } = renderHook(
-			( { isOpen }: { isOpen: boolean } ) => useRepeaterPopoverDismissOnScreenSignals( { isOpen, onClose } ),
+			( { isOpen }: { isOpen: boolean } ) => usePopoverDismiss( { isOpen, onClose } ),
 			{ initialProps: { isOpen: false } }
 		);
 

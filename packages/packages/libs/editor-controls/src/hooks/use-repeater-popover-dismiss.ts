@@ -4,7 +4,7 @@ import { type Breakpoint, useActiveBreakpoint, useBreakpoints } from '@elementor
 const serializeBreakpoints = ( breakpoints: Breakpoint[] ) =>
 	breakpoints.map( ( b ) => [ b.id, b.width ?? '', b.type ?? '' ].join( ':' ) ).join( '|' );
 
-export const useRepeaterPopoverDismissOnScreenSignals = ( {
+export const usePopoverDismiss = ( {
 	isOpen,
 	onClose,
 }: {
@@ -47,7 +47,7 @@ export const useRepeaterPopoverDismissOnScreenSignals = ( {
 			return;
 		}
 		const onKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.key === 'Escape' ) {
+			if ( event.key === 'Escape' && ! event.defaultPrevented ) {
 				onCloseRef.current();
 			}
 		};

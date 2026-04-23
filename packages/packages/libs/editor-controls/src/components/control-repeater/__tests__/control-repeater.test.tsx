@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -556,6 +556,7 @@ describe( 'ControlRepeater', () => {
 	} );
 
 	it( 'should close the popover when Escape is pressed', async () => {
+		// Arrange.
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -576,23 +577,22 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Act.
 		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
 		fireEvent.click( addButton );
 
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
 
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
-
 		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
 
+		// Assert.
 		await waitFor( () => {
 			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
 		} );
 	} );
 
 	it( 'should not close the popover when clicking outside the repeater', async () => {
+		// Arrange.
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -613,21 +613,20 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Act.
 		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
 		fireEvent.click( addButton );
 
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
 
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
-
 		fireEvent.click( document.body );
 
+		// Assert.
 		expect( document.body ).toHaveStyle( { overflow: 'hidden' } );
 	} );
 
 	it( 'should close the popover when the active breakpoint changes', async () => {
+		// Arrange.
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -648,14 +647,11 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Act.
 		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
 		fireEvent.click( addButton );
 
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
-
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
 
 		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
 		rerender(
@@ -672,12 +668,14 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
 		} );
 	} );
 
 	it( 'should close the popover when the breakpoints configuration changes', async () => {
+		// Arrange.
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -698,14 +696,11 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Act.
 		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
 		fireEvent.click( addButton );
 
 		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
-
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
 
 		jest.mocked( useBreakpoints ).mockReturnValue( [
 			{ id: 'desktop', label: 'Desktop', width: 1200, type: undefined },
@@ -724,6 +719,7 @@ describe( 'ControlRepeater', () => {
 			</ControlRepeater>
 		);
 
+		// Assert.
 		await waitFor( () => {
 			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
 		} );

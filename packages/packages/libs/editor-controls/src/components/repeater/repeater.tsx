@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type SetValueMeta } from '../../bound-prop-context';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
-import { useRepeaterPopoverDismissOnScreenSignals } from '../../hooks/use-repeater-popover-dismiss';
+import { usePopoverDismiss } from '../../hooks/use-repeater-popover-dismiss';
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../control-repeater/locations';
 import { SectionContent } from '../section-content';
 import { RepeaterHeader } from './repeater-header';
@@ -352,7 +352,7 @@ const RepeaterItem = < T, >( {
 	);
 	const triggerProps = bindTrigger( popoverState );
 
-	useRepeaterPopoverDismissOnScreenSignals( { isOpen: popoverState.isOpen, onClose: popoverProps.onClose } );
+	usePopoverDismiss( { isOpen: popoverState.isOpen, onClose: popoverProps.onClose } );
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );

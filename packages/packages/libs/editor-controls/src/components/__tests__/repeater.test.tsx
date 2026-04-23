@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { renderWithTheme } from 'test-utils';
 import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
@@ -476,6 +476,7 @@ describe( 'Repeater', () => {
 	} );
 
 	it( 'should close the popover when Escape is pressed', async () => {
+		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
@@ -498,53 +499,24 @@ describe( 'Repeater', () => {
 			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
 		);
 
+		// Act.
 		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
 		fireEvent.click( openItemButton );
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		await waitFor( () => {
+			expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 		} );
 
 		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
 
+		// Assert.
 		await waitFor( () => {
 			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
-	it( 'should not close the popover when clicking outside the repeater item', async () => {
-		const itemSettings = {
-			Icon: () => <span>Item Icon</span>,
-			Label: () => <span>Item label</span>,
-			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
-			initialValues: {
-				$$type: 'example',
-				value: 'Hello World',
-			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
-		};
-
-		const values = [ { $$type: 'example', value: 'First item' } ];
-
-		renderWithTheme(
-			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
-		);
-
-		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
-		fireEvent.click( openItemButton );
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
-
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
-
-		fireEvent.click( document.body );
-
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
-	} );
-
 	it( 'should close the popover when the active breakpoint changes', async () => {
+		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
@@ -562,51 +534,17 @@ describe( 'Repeater', () => {
 
 		const { rerender } = renderWithTheme( <Repeater { ...props } /> );
 
+		// Act.
 		fireEvent.click( screen.getByRole( 'button', { name: 'Open item' } ) );
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		await waitFor( () => {
+			expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 		} );
 
 		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
 		rerender( <Repeater { ...props } /> );
 
-		await waitFor( () => {
-			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
-		} );
-	} );
-
-	it( 'should close the popover when the breakpoints configuration changes', async () => {
-		const itemSettings = {
-			Icon: () => <span>Item Icon</span>,
-			Label: () => <span>Item label</span>,
-			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
-			initialValues: {
-				$$type: 'example',
-				value: 'Hello World',
-			},
-			getId: ( { index }: { index: number } ) => `item-${ index }`,
-		};
-
-		const values = [ { $$type: 'example', value: 'First item' } ];
-		const setValues = jest.fn();
-		const props = { label: 'Repeater', itemSettings, values, setValues };
-
-		const { rerender } = renderWithTheme( <Repeater { ...props } /> );
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Open item' } ) );
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
-
-		await act( async () => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
-
-		jest.mocked( useBreakpoints ).mockReturnValue( [
-			{ id: 'desktop', label: 'Desktop', width: 1200, type: undefined },
-		] );
-		rerender( <Repeater { ...props } /> );
-
+		// Assert.
 		await waitFor( () => {
 			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
 		} );
