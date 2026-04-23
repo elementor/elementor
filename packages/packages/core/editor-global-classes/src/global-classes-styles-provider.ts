@@ -1,4 +1,9 @@
-import { generateId, type StyleDefinition, type StyleDefinitionID, type StyleDefinitionVariant } from '@elementor/editor-styles';
+import {
+	generateId,
+	type StyleDefinition,
+	type StyleDefinitionID,
+	type StyleDefinitionVariant,
+} from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
