@@ -19,7 +19,7 @@ on:
         default: ''
       update_mode:
         type: choice
-        description: 'Snapshot update mode: "changed" updates only failing snapshots, "all" forces regeneration of every matched snapshot'
+        description: 'Snapshot update mode: "changed" updates only failing snapshots, "all" forces regeneration of every matched snapshot (only applies to targeted runs)'
         required: false
         default: 'changed'
         options:
@@ -33,7 +33,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
   actions: read
 
 jobs:
@@ -64,68 +63,26 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
-
-      - name: Cache Docker images
-        uses: ScribeMD/docker-cache@0.5.0
+      - name: Setup Playwright environment
+        id: setup
+        uses: ./.github/actions/setup-playwright-env
         with:
-          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
-
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm run install:ci
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-plugin.outputs.artifact_name }}
-          path: ./build
-
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
-
-      - name: Update PHP version in config
-        run: |
-          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-
-      - name: Install WordPress environment
-        run: npm run start-local-server
-
-      - name: Setup test data
-        run: npm run test:setup:playwright
-
-      - name: Resolve browsers to install
-        id: browsers
-        run: |
-          case "${{ inputs.browser }}" in
-            firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
-            both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
-            *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
-          esac
-
-      - name: Install playwright/test
-        run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
+          artifact-name: ${{ needs.build-plugin.outputs.artifact_name }}
+          php-version: ${{ needs.get-php-version.outputs.php_version }}
+          browser: ${{ inputs.browser }}
 
       - name: Remove existing Playwright baseline PNGs
         if: ${{ inputs.reset_snapshot_baselines }}
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           set -euo pipefail
           if echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
-            find tests/playwright -type f -path '*/*-snapshots/*.png' -delete
+            find tests -type f -path '*/*-snapshots/*.png' -delete
           elif echo "$BROWSERS" | grep -qw firefox; then
-            find tests/playwright -type f -path '*/*-snapshots/*firefox*.png' -delete
+            find tests -type f -path '*/*-snapshots/*firefox*.png' -delete
           elif echo "$BROWSERS" | grep -qw chromium; then
-            find tests/playwright -type f -path '*/*-snapshots/*.png' ! -name '*firefox*' -delete
+            find tests -type f -path '*/*-snapshots/*.png' ! -name '*firefox*' -delete
           fi
 
       - name: Update snapshots
@@ -137,11 +94,10 @@ jobs:
           }}
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           npm run test:playwright -- \
-            --update-snapshots=${{ inputs.update_mode }} \
+            --update-snapshots \
             --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
@@ -149,43 +105,39 @@ jobs:
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           npm run test:playwright -- \
-            --update-snapshots=${{ inputs.update_mode }} \
+            --update-snapshots \
             --grep="@plugin_tester_container"
 
       - name: Update plugin tester section snapshots
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           npm run test:playwright -- \
-            --update-snapshots=${{ inputs.update_mode }} \
+            --update-snapshots \
             --grep="@plugin_tester_section"
 
       - name: Update elements regression core snapshots
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           npm run test:playwright:elements-regression:core -- \
-            --update-snapshots=${{ inputs.update_mode }}
+            --update-snapshots
 
       - name: Update elements regression atomic snapshots
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           npm run test:playwright:elements-regression:atomic -- \
-            --update-snapshots=${{ inputs.update_mode }}
+            --update-snapshots
 
       - name: Upload updated snapshots
         uses: actions/upload-artifact@v4
@@ -205,65 +157,23 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
-
-      - name: Cache Docker images
-        uses: ScribeMD/docker-cache@0.5.0
+      - name: Setup Playwright environment
+        id: setup
+        uses: ./.github/actions/setup-playwright-env
         with:
-          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
-
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm run install:ci
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-plugin.outputs.artifact_name }}
-          path: ./build
-
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
-
-      - name: Update PHP version in config
-        run: |
-          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
-
-      - name: Install WordPress environment
-        run: npm run start-local-server
-
-      - name: Setup test data
-        run: npm run test:setup:playwright
-
-      - name: Resolve browsers to install
-        id: browsers
-        run: |
-          case "${{ inputs.browser }}" in
-            firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
-            both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
-            *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
-          esac
-
-      - name: Install playwright/test
-        run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
+          artifact-name: ${{ needs.build-plugin.outputs.artifact_name }}
+          php-version: ${{ needs.get-php-version.outputs.php_version }}
+          browser: ${{ inputs.browser }}
 
       - name: Update snapshots for "${{ inputs.test_grep }}"
         continue-on-error: true
         env:
-          BROWSERS: ${{ steps.browsers.outputs.list }}
-
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+          TEST_GREP: ${{ inputs.test_grep }}
         run: |
           npm run test:playwright -- \
             --update-snapshots=${{ inputs.update_mode }} \
-            --grep="${{ inputs.test_grep }}"
+            --grep="$TEST_GREP"
 
       - name: Upload updated snapshots
         uses: actions/upload-artifact@v4
@@ -283,7 +193,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download all snapshot artifacts
@@ -297,7 +207,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          find tests -type d -name '*-snapshots' -exec git add {} +
+          find tests -type f -path '*/*-snapshots/*.png' -exec git add {} +
           if git diff --cached --quiet; then
             echo "No snapshot changes to commit"
           else
