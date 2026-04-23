@@ -1,10 +1,10 @@
 {
   "up": [
     {
-      "op": { "fn": "move", "src": "value.start", "dest": "value.offsetTop", "clean": false }
+      "op": { "fn": "move", "src": "value.offsetTop", "dest": "value.start", "clean": false }
     },
     {
-      "op": { "fn": "move", "src": "value.end", "dest": "value.offsetBottom", "clean": false }
+      "op": { "fn": "move", "src": "value.offsetBottom", "dest": "value.end", "clean": false }
     },
     {
       "op": { "fn": "set", "path": "$$type", "value": "config-v2" }
@@ -12,10 +12,10 @@
   ],
   "down": [
     {
-      "op": { "fn": "move", "src": "value.offsetTop", "dest": "value.start", "clean": false }
+      "op": { "fn": "move", "src": "value.start", "dest": "value.offsetTop", "clean": false }
     },
     {
-      "op": { "fn": "move", "src": "value.offsetBottom", "dest": "value.end", "clean": false }
+      "op": { "fn": "move", "src": "value.end", "dest": "value.offsetBottom", "clean": false }
     },
     {
       "op": { "fn": "set", "path": "$$type", "value": "config" }
