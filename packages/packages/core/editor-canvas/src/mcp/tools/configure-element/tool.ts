@@ -1,3 +1,4 @@
+import { getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
@@ -24,6 +25,17 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			speedPriority: 0.7,
 		},
 		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
+			const widgetData = getWidgetsCache()?.[ elementType ];
+			if ( ! widgetData ) {
+				throw new Error(
+					`Unknown element type: ${ elementType }. Check the available-widgets resource for valid types.`
+				);
+			}
+			if ( ! widgetData.atomic_props_schema ) {
+				throw new Error(
+					`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ elementType }`
+				);
+			}
 			const toUpdate = Object.entries( propertiesToChange );
 			const { valid, errors } = validateInput.validatePropSchema( elementType, propertiesToChange );
 			const { valid: stylesValid, errors: stylesErrors } = validateInput.validateStyles(
