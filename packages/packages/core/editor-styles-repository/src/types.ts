@@ -24,6 +24,7 @@ export type UpdatePropsActionPayload = {
 	id: StyleDefinitionID;
 	meta: StyleDefinitionVariant[ 'meta' ];
 	props: Props;
+	mode?: 'merge' | 'replace';
 };
 
 export type UpdateCustomCssActionPayload = {
@@ -47,7 +48,11 @@ export type StylesProvider = {
 		all: ( meta?: Meta ) => StyleDefinition[];
 		get: ( id: StyleDefinitionID, meta?: Meta ) => StyleDefinition | null;
 		resolveCssName: ( id: StyleDefinitionID ) => string;
-		create?: ( label: StyleDefinition[ 'label' ], variants?: StyleDefinitionVariant[] ) => StyleDefinitionID;
+		create?: (
+			label: StyleDefinition[ 'label' ],
+			variants?: StyleDefinitionVariant[],
+			id?: StyleDefinitionID
+		) => StyleDefinitionID;
 		delete?: ( id: StyleDefinitionID ) => void;
 		update?: ( data: UpdateActionPayload ) => void;
 		updateProps?: ( args: UpdatePropsActionPayload, meta?: Meta ) => void;
