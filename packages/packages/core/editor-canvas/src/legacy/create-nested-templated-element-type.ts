@@ -101,6 +101,7 @@ export function createNestedTemplatedElementView( {
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
 	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
+	const parentAddElement = AtomicElementBaseView.prototype.addElement;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
@@ -375,6 +376,24 @@ export function createNestedTemplatedElementView( {
 			} else {
 				this.once( 'render', callback );
 			}
+		},
+
+		addElement( data: Record< string, unknown >, options: Record< string, unknown > = {} ) {
+			if ( ! this._currentRenderPromise || this.isRendered ) {
+				return parentAddElement.call( this, data, options );
+			}
+
+			if ( options.edit ) {
+				this.collection.once( 'add', ( model: ElementView[ 'model' ] ) => {
+					model.once( 'render:complete', () => {
+						model.trigger( 'request:edit', {
+							scrollIntoView: options.scrollIntoView,
+						} );
+					} );
+				} );
+			}
+
+			return parentAddElement.call( this, data, { ...options, edit: false } );
 		},
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {

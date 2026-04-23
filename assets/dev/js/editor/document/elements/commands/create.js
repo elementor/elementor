@@ -55,7 +55,13 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				return;
 			}
 
-			const createdContainer = container.view.addElement( model, options ).getContainer();
+			const newView = container.view.addElement( model, options );
+
+			if ( ! newView ) {
+				return;
+			}
+
+			const createdContainer = newView.getContainer();
 
 			result.push( createdContainer );
 
