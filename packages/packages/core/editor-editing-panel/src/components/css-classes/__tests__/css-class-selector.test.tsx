@@ -1477,10 +1477,10 @@ describe( '<CssClassSelector />', () => {
 			// Assert - Class re-created and applied.
 			expect( updateElementSettings ).toHaveBeenNthCalledWith( 3, {
 				id: 'mock-element',
-				props: { 'my-classes': { $$type: 'classes', value: [ 'local', 'new-class-id-2' ] } },
+				props: { 'my-classes': { $$type: 'classes', value: [ 'local', 'new-class-id-1' ] } },
 				withHistory: false,
 			} );
-			expect( setActive ).toHaveBeenCalledWith( 'new-class-id-2' );
+			expect( setActive ).toHaveBeenCalledWith( 'new-class-id-1' );
 		} );
 	} );
 } );
