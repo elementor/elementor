@@ -13,19 +13,11 @@ export type ExtendedWindow = Window & {
 			};
 		};
 
-		ajax?: {
-			addRequest: ( action: string, options?: Record< string, unknown > ) => Promise< unknown >;
-		};
-
 		config: {
 			library_connect: {
 				is_connected: boolean;
 			};
 		};
-	};
-
-	elementorShowInfotip?: {
-		shouldShow: string;
 	};
 
 	elementor: {

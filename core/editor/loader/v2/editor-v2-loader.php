@@ -50,6 +50,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'unlock-v4-promo',
 		'editor-mcp',
 		'elementor-v3-mcp',
+		'elementor-kit-mcp',
 	];
 
 	/**

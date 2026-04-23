@@ -116,7 +116,7 @@ class Site_Settings extends Export_Runner_Base {
 
 		foreach ( $collection->all() as $variable ) {
 			if ( ! $variable->is_deleted() ) {
-				$count++;
+				++$count;
 			}
 		}
 

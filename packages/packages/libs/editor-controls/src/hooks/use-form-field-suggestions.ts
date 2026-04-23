@@ -9,7 +9,11 @@ export type Suggestion = {
 
 const FORM_FIELD_WIDGET_TYPES = [ 'e-form-input', 'e-form-textarea', 'e-form-checkbox' ];
 
-export function useFormFieldSuggestions(): Suggestion[] {
+type Options = {
+	inputType?: string;
+};
+
+export function useFormFieldSuggestions( options?: Options ): Suggestion[] {
 	return useListenTo(
 		[
 			v1ReadyEvent(),
@@ -38,6 +42,15 @@ export function useFormFieldSuggestions(): Suggestion[] {
 
 				if ( ! widgetType || ! FORM_FIELD_WIDGET_TYPES.includes( widgetType ) ) {
 					return;
+				}
+
+				if ( options?.inputType ) {
+					const typeProp = child.settings.get( 'type' );
+					const typeValue = isTransformable( typeProp ) ? typeProp.value : typeProp;
+
+					if ( typeValue !== options.inputType ) {
+						return;
+					}
 				}
 
 				const cssIdProp = child.settings.get( '_cssid' );
