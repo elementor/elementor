@@ -435,7 +435,12 @@ class Make_Section_Ability extends Abstract_Ability {
 				'src'  => [
 					'$$type' => 'image-src',
 					'value'  => [
-						'id'  => $attachment_id,
+						// image-attachment-id is its own Prop_Type — a raw int is rejected
+						// by Image_Src_Prop_Type::validate_value, which expects a wrapped shape.
+						'id'  => [
+							'$$type' => 'image-attachment-id',
+							'value'  => $attachment_id,
+						],
 						'url' => null,
 					],
 				],

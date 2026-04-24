@@ -200,16 +200,19 @@ trait Css_Shorthand_Parser {
 	private function parse_number_unit( string $v ): ?array {
 		$t = trim( $v );
 		if ( '0' === $t ) {
+			// int 0, not float 0.0 — Size_Prop_Type::validate_value uses strict `=== 0`
+			// which rejects 0.0. All other numeric values pass via !empty(size).
 			return [
-				'size' => 0.0,
+				'size' => 0,
 				'unit' => 'px',
 			];
 		}
 		if ( ! preg_match( self::SIZE_UNIT_RE, $t, $m ) ) {
 			return null;
 		}
+		$num = (float) $m[1];
 		return [
-			'size' => (float) $m[1],
+			'size' => 0.0 === $num ? 0 : $num,
 			'unit' => strtolower( $m[2] ),
 		];
 	}
@@ -622,7 +625,7 @@ trait Css_Shorthand_Parser {
 		if ( 1 === $n ) {
 			if ( is_numeric( $parts[0] ) ) {
 				$grow  = (float) $parts[0];
-				$basis = [ 'size' => 0.0, 'unit' => 'px' ];
+				$basis = [ 'size' => 0, 'unit' => 'px' ];
 			} else {
 				$parsed = $this->parse_flex_basis( $parts[0] );
 				if ( null === $parsed ) {
@@ -637,7 +640,7 @@ trait Css_Shorthand_Parser {
 			$grow = (float) $parts[0];
 			if ( is_numeric( $parts[1] ) ) {
 				$shrink = (float) $parts[1];
-				$basis  = [ 'size' => 0.0, 'unit' => 'px' ];
+				$basis  = [ 'size' => 0, 'unit' => 'px' ];
 			} else {
 				$parsed = $this->parse_flex_basis( $parts[1] );
 				if ( null === $parsed ) {
@@ -721,7 +724,7 @@ trait Css_Shorthand_Parser {
 
 			$mk_sz = function ( string $s ): array {
 				$parsed = $this->parse_number_unit( $s );
-				return $this->wrap_size( null !== $parsed ? $parsed : [ 'size' => 0.0, 'unit' => 'px' ] );
+				return $this->wrap_size( null !== $parsed ? $parsed : [ 'size' => 0, 'unit' => 'px' ] );
 			};
 
 			$color_prop = null !== $clr ? $this->resolve_color( $clr ) : [
@@ -915,7 +918,9 @@ trait Css_Shorthand_Parser {
 				continue;
 			}
 
-			// line-height (unitless → number, unit → size)
+			// line-height: Size_Prop_Type only (no number member in the Union).
+			// Unitless ratio → {size:N, unit:"em"} — matches CSS unitless line-height semantics
+			// and the html-css-converter plugin's line-height-converter.
 			if ( 'line-height' === $prop ) {
 				$sz = $this->resolve_size( $value );
 				if ( null !== $sz ) {
@@ -923,7 +928,11 @@ trait Css_Shorthand_Parser {
 					continue;
 				}
 				if ( is_numeric( $value ) ) {
-					$result[ $prop ] = $this->wrap_number( $value );
+					$n               = (float) $value;
+					$result[ $prop ] = $this->wrap_size( [
+						'size' => 0.0 === $n ? 0 : $n,
+						'unit' => 'em',
+					] );
 					continue;
 				}
 				$result[ $prop ] = $this->wrap_string( $value );

@@ -2,6 +2,7 @@
 
 namespace Elementor\Core\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
@@ -79,6 +80,12 @@ class Append_Element_Ability extends Abstract_Ability {
 		$post_id   = (int) $input['post_id'];
 		$element   = $input['element'];
 		$parent_id = $input['parent_id'] ?? null;
+
+		// Auto-generate an id when the caller omits it — matches make-widget / make-page
+		// and keeps `appended_id` non-null so the output schema validates.
+		if ( ! isset( $element['id'] ) || ! is_string( $element['id'] ) || '' === $element['id'] ) {
+			$element['id'] = Utils::generate_id();
+		}
 
 		// Bust the WP object cache so get_elements_data reads from DB, not a stale cache.
 		wp_cache_delete( $post_id, 'post_meta' );

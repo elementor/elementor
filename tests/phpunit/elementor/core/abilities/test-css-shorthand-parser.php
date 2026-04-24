@@ -252,14 +252,14 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 
 	public function test_positioning_top_rewrites_to_inset_block_start(): void {
 		$out = $this->parser->css_to_props( 'top:0' );
-		$this->assertSame( [ 'inset-block-start' => $this->size( 0.0 ) ], $out );
+		$this->assertSame( [ 'inset-block-start' => $this->size( 0 ) ], $out );
 	}
 
 	public function test_positioning_all_physical_sides(): void {
 		$out = $this->parser->css_to_props( 'top:0;right:10px;bottom:20px;left:30px' );
 
 		$this->assertSame( [
-			'inset-block-start'  => $this->size( 0.0 ),
+			'inset-block-start'  => $this->size( 0 ),
 			'inset-inline-end'   => $this->size( 10.0 ),
 			'inset-block-end'    => $this->size( 20.0 ),
 			'inset-inline-start' => $this->size( 30.0 ),
@@ -322,7 +322,7 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 				'value'  => [
 					'flexGrow'   => $this->number( 1 ),
 					'flexShrink' => $this->number( 1 ),
-					'flexBasis'  => $this->size( 0.0 ),
+					'flexBasis'  => $this->size( 0 ),
 				],
 			],
 		], $out );
@@ -374,7 +374,7 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 
 	public function test_line_height_unitless(): void {
 		$out = $this->parser->css_to_props( 'line-height:1.4' );
-		$this->assertSame( [ 'line-height' => $this->number( 1.4 ) ], $out );
+		$this->assertSame( [ 'line-height' => $this->size( 1.4, 'em' ) ], $out );
 	}
 
 	public function test_line_height_with_unit(): void {
@@ -428,10 +428,10 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 					[
 						'$$type' => 'shadow',
 						'value'  => [
-							'hOffset' => $this->size( 0.0 ),
+							'hOffset' => $this->size( 0 ),
 							'vOffset' => $this->size( 4.0 ),
 							'blur'    => $this->size( 12.0 ),
-							'spread'  => $this->size( 0.0 ),
+							'spread'  => $this->size( 0 ),
 							'color'   => $this->color( 'rgba(0,0,0,.1)' ),
 						],
 					],
@@ -450,9 +450,9 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 					[
 						'$$type' => 'shadow',
 						'value'  => [
-							'hOffset'  => $this->size( 0.0 ),
-							'vOffset'  => $this->size( 0.0 ),
-							'blur'     => $this->size( 0.0 ),
+							'hOffset'  => $this->size( 0 ),
+							'vOffset'  => $this->size( 0 ),
+							'blur'     => $this->size( 0 ),
 							'spread'   => $this->size( 1.0 ),
 							'color'    => $this->color( '#000' ),
 							'position' => 'inset',
@@ -461,10 +461,10 @@ class Test_Css_Shorthand_Parser extends Elementor_Test_Base {
 					[
 						'$$type' => 'shadow',
 						'value'  => [
-							'hOffset' => $this->size( 0.0 ),
+							'hOffset' => $this->size( 0 ),
 							'vOffset' => $this->size( 4.0 ),
 							'blur'    => $this->size( 12.0 ),
-							'spread'  => $this->size( 0.0 ),
+							'spread'  => $this->size( 0 ),
 							'color'   => $this->color( 'rgba(0,0,0,.1)' ),
 						],
 					],

@@ -347,15 +347,28 @@ class Make_Page_Ability extends Abstract_Ability {
 
 		if ( 'image' === $widget ) {
 			$attachment_id = isset( $spec['attachment_id'] ) && is_numeric( $spec['attachment_id'] ) ? (int) $spec['attachment_id'] : null;
+			$url           = isset( $spec['url'] ) && is_string( $spec['url'] ) && '' !== $spec['url'] ? $spec['url'] : null;
 			$alt           = isset( $spec['text'] ) && is_string( $spec['text'] ) ? $spec['text'] : '';
+
+			// image-src expects raw null OR a wrapped Prop_Type for each field.
+			// Exactly one of {id, url} must be set (Image_Src_Prop_Type::validate_value).
+			$id_value  = null === $attachment_id ? null : [
+				'$$type' => 'image-attachment-id',
+				'value'  => $attachment_id,
+			];
+			$url_value = null === $url ? null : [
+				'$$type' => 'url',
+				'value'  => $url,
+			];
+
 			$settings['image'] = [
 				'$$type' => 'image',
 				'value'  => [
 					'src'  => [
 						'$$type' => 'image-src',
 						'value'  => [
-							'id'  => $attachment_id,
-							'url' => null,
+							'id'  => $id_value,
+							'url' => $url_value,
 						],
 					],
 					'size' => [
