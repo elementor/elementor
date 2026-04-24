@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Utils;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -145,6 +146,72 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__list_style_props_and_marker_states() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function () {
+			return [
+				'https://example.com/marker.png',
+				20,
+				20,
+			];
+		} );
+
+		$styles = [
+			[
+				'id' => 'test-list',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'list-style-type' => 'square',
+							'list-style-position' => 'inside',
+						],
+						'meta' => [],
+					],
+					[
+						'props' => [
+							'color' => 'red',
+							'list-style-image' => Image_Src_Prop_Type::generate( [
+								'id' => [
+									'$$type' => 'image-attachment-id',
+									'value' => 3,
+								],
+								'url' => null,
+							] ),
+						],
+						'meta' => [
+							'state' => ' > li::marker',
+						],
+					],
+				],
+			],
+			[
+				'id' => 'test-list-item',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'blue',
+						],
+						'meta' => [
+							'state' => '::marker',
+						],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( '.test-list{list-style-type:square;list-style-position:inside;}', $css );
+		$this->assertStringContainsString( '.test-list > li::marker{color:red;list-style-image:url("https://example.com/marker.png");}', $css );
+		$this->assertStringContainsString( '.test-list-item::marker{color:blue;}', $css );
 	}
 
 	public function test_render__style_variant_with_breakpoint() {

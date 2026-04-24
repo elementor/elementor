@@ -271,6 +271,18 @@ describe( 'styles prop resolver', () => {
 			},
 		},
 		{
+			name: 'list style image url',
+			props: {
+				'list-style-image': imageSrcPropTypeUtil.create( {
+					id: null,
+					url: 'https://localhost.test/list-marker.png',
+				} ),
+			},
+			expected: {
+				'list-style-image': 'url("https://localhost.test/list-marker.png")',
+			},
+		},
+		{
 			name: 'background (only color)',
 			props: {
 				background: backgroundPropTypeUtil.create( {

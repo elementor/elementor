@@ -10,6 +10,8 @@ class Style_States {
 	const CHECKED = 'checked';
 
 	const SELECTED = 'e--selected';
+	const LIST_MARKERS = ' > li::marker';
+	const LIST_ITEM_MARKER = '::marker';
 
 	private static function get_pseudo_states(): array {
 		return [
@@ -24,6 +26,13 @@ class Style_States {
 	private static function get_class_states(): array {
 		return [
 			self::SELECTED,
+		];
+	}
+
+	private static function get_custom_states(): array {
+		return [
+			self::LIST_MARKERS,
+			self::LIST_ITEM_MARKER,
 		];
 	}
 
@@ -67,6 +76,7 @@ class Style_States {
 				return ! in_array( $state, self::get_additional_states_map()[ $state ] ?? [], true );
 			} ),
 			...self::get_class_states(),
+			...self::get_custom_states(),
 			null,
 		];
 	}
@@ -101,6 +111,19 @@ class Style_States {
 			'checked' => [
 				'name' => 'checked',
 				'value' => self::CHECKED,
+			],
+		];
+	}
+
+	public static function get_custom_states_map(): array {
+		return [
+			'list-markers' => [
+				'name' => 'List Markers',
+				'value' => self::LIST_MARKERS,
+			],
+			'list-item-marker' => [
+				'name' => 'List Item Marker',
+				'value' => self::LIST_ITEM_MARKER,
 			],
 		];
 	}

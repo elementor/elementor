@@ -10,10 +10,22 @@ describe( 'createDomRenderer', () => {
 			expected: 'Hello StyleShit',
 		},
 		{
-			title: 'allowed html tags',
+			title: 'allowed html tag ul',
 			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
-			context: { tag: 'a' },
-			expected: '<a></a>',
+			context: { tag: 'ul' },
+			expected: '<ul></ul>',
+		},
+		{
+			title: 'allowed html tag ol',
+			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
+			context: { tag: 'ol' },
+			expected: '<ol></ol>',
+		},
+		{
+			title: 'allowed html tag li',
+			template: `<{{ tag | e( 'html_tag' ) }}></{{ tag | e( 'html_tag' ) }}>`,
+			context: { tag: 'li' },
+			expected: '<li></li>',
 		},
 		{
 			title: 'disallowed html tags',

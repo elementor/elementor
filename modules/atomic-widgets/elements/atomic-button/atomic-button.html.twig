@@ -1,5 +1,5 @@
 {% import 'elementor/macros' as m %}
-{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' -%}
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><ul><ol><li><br>' -%}
 {%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
 {%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
 {%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}

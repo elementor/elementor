@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -44,6 +45,7 @@ class Style_Schema {
 			self::get_background_props(),
 			self::get_effects_props(),
 			self::get_layout_props(),
+			self::get_list_props(),
 			self::get_alignment_props(),
 			self::get_special_props(),
 		);
@@ -392,6 +394,21 @@ class Style_Schema {
 				'stretch',
 			] )->description( 'Allows the default alignment (or the one specified by align-items) to be overridden for individual flex items. CSS values: auto, normal, center, start, end, self-start, self-end, flex-start, flex-end, anchor-center, baseline, first baseline, last baseline, stretch' ),
 			'order' => Number_Prop_Type::make()->description( 'Specifies the order of the flex items. Items with lower order values are displayed first.' ),
+		];
+	}
+
+	private static function get_list_props() {
+		return [
+			'list-style-type' => String_Prop_Type::make()
+				->description( 'The list-style-type CSS property.' ),
+			'list-style-position' => String_Prop_Type::make()
+				->enum( [
+					'inside',
+					'outside',
+				] )
+				->description( 'The list-style-position CSS property.' ),
+			'list-style-image' => Image_Src_Prop_Type::make()
+				->description( 'The list-style-image CSS property.' ),
 		];
 	}
 

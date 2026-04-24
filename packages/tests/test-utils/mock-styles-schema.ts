@@ -3,6 +3,29 @@ import { type PropsSchema } from '@elementor/editor-props';
 import { createMockSingleSizeFilterPropType } from './create-mock-filter-schema';
 
 export const mockStylesSchema = {
+	'list-style-image': {
+		kind: 'object',
+		key: 'image-src',
+		default: null,
+		meta: {},
+		settings: {},
+		shape: {
+			id: {
+				kind: 'plain',
+				key: 'image-attachment-id',
+				default: null,
+				meta: {},
+				settings: {},
+			},
+			url: {
+				kind: 'plain',
+				key: 'url',
+				default: null,
+				meta: {},
+				settings: {},
+			},
+		},
+	},
 	'font-size': {
 		kind: 'object',
 		key: 'size',

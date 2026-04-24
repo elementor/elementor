@@ -20,6 +20,7 @@ import { BackgroundSection } from './style-sections/background-section/backgroun
 import { BorderSection } from './style-sections/border-section/border-section';
 import { EffectsSection } from './style-sections/effects-section/effects-section';
 import { LayoutSection } from './style-sections/layout-section/layout-section';
+import { ListSection } from './style-sections/list-section/list-section';
 import { PositionSection } from './style-sections/position-section/position-section';
 import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
@@ -40,6 +41,7 @@ export const stickyHeaderStyles = {
 
 export const StyleTab = () => {
 	const currentClassesProp = useCurrentClassesProp();
+	const { element } = useElement();
 	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp ?? '' );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
@@ -140,6 +142,16 @@ export const StyleTab = () => {
 									'stroke',
 								] }
 							/>
+							{ isListElement( element.type ) && (
+								<StyleTabSection
+									section={ {
+										component: ListSection,
+										name: 'List',
+										title: __( 'List', 'elementor' ),
+									} }
+									fields={ [ 'list-style-type', 'list-style-position', 'list-style-image' ] }
+								/>
+							) }
 							<StyleTabSection
 								section={ {
 									component: BackgroundSection,
@@ -191,6 +203,10 @@ function ClassesHeader( { children }: { children: React.ReactNode } ) {
 			{ children }
 		</Stack>
 	);
+}
+
+function isListElement( elementType: string ) {
+	return [ 'e-list', 'e-list-item' ].includes( elementType );
 }
 
 function useCurrentClassesProp(): string | null {
