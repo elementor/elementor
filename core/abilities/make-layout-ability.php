@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -119,7 +121,7 @@ class Make_Layout_Ability extends Abstract_Ability {
 
 	public function execute( array $input ): array {
 		$direction = isset( $input['direction'] ) && is_string( $input['direction'] ) ? $input['direction'] : 'row';
-		$outer_id  = isset( $input['id'] ) && is_string( $input['id'] ) && '' !== $input['id'] ? $input['id'] : $this->gen_id();
+		$outer_id  = isset( $input['id'] ) && is_string( $input['id'] ) && '' !== $input['id'] ? $input['id'] : Utils::generate_id();
 		$columns   = $input['columns'] ?? [];
 
 		$outer_style_id  = isset( $input['style_id'] ) && is_string( $input['style_id'] ) && '' !== $input['style_id'] ? $input['style_id'] : null;
@@ -151,7 +153,7 @@ class Make_Layout_Ability extends Abstract_Ability {
 				continue;
 			}
 
-			$col_id       = isset( $col_spec['id'] ) && is_string( $col_spec['id'] ) && '' !== $col_spec['id'] ? $col_spec['id'] : $this->gen_id();
+			$col_id       = isset( $col_spec['id'] ) && is_string( $col_spec['id'] ) && '' !== $col_spec['id'] ? $col_spec['id'] : Utils::generate_id();
 			$weight       = isset( $col_spec['weight'] ) && is_numeric( $col_spec['weight'] ) ? (float) $col_spec['weight'] : 1.0;
 			$col_style_id = isset( $col_spec['style_id'] ) && is_string( $col_spec['style_id'] ) && '' !== $col_spec['style_id'] ? $col_spec['style_id'] : null;
 			$col_classes  = isset( $col_spec['classes'] ) && is_array( $col_spec['classes'] ) ? $col_spec['classes'] : [];
@@ -221,7 +223,10 @@ class Make_Layout_Ability extends Abstract_Ability {
 			'label'    => $id,
 			'variants' => [
 				[
-					'meta'  => [ 'breakpoint' => 'desktop', 'state' => null ],
+					'meta'  => [
+						'breakpoint' => 'desktop',
+						'state'      => null,
+					],
 					'props' => $props,
 				],
 			],
@@ -229,18 +234,16 @@ class Make_Layout_Ability extends Abstract_Ability {
 	}
 
 	private function make_string( string $value ): array {
-		return [ '$$type' => 'string', 'value' => $value ];
+		return [
+			'$$type' => 'string',
+			'value'  => $value,
+		];
 	}
 
 	private function make_number( float $value ): array {
-		return [ '$$type' => 'number', 'value' => $value ];
-	}
-
-	private function gen_id(): string {
-		try {
-			return substr( bin2hex( random_bytes( 4 ) ), 0, 8 );
-		} catch ( \Throwable $e ) {
-			return substr( md5( (string) microtime( true ) . wp_rand() ), 0, 8 );
-		}
+		return [
+			'$$type' => 'number',
+			'value'  => $value,
+		];
 	}
 }

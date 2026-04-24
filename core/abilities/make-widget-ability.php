@@ -2,6 +2,8 @@
 
 namespace Elementor\Core\Abilities;
 
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -90,7 +92,7 @@ class Make_Widget_Ability extends Abstract_Ability {
 
 	public function execute( array $input ): array {
 		$type     = (string) $input['type'];
-		$id       = isset( $input['id'] ) && is_string( $input['id'] ) && '' !== $input['id'] ? $input['id'] : $this->generate_id();
+		$id       = isset( $input['id'] ) && is_string( $input['id'] ) && '' !== $input['id'] ? $input['id'] : Utils::generate_id();
 		$text     = $input['text'] ?? null;
 		$style_id = $input['style_id'] ?? null;
 		$classes  = $input['classes'] ?? [];
@@ -168,13 +170,5 @@ class Make_Widget_Ability extends Abstract_Ability {
 				'children' => [],
 			],
 		];
-	}
-
-	private function generate_id(): string {
-		try {
-			return substr( bin2hex( random_bytes( 4 ) ), 0, 8 );
-		} catch ( \Throwable $e ) {
-			return substr( md5( (string) microtime( true ) . wp_rand() ), 0, 8 );
-		}
 	}
 }
