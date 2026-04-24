@@ -1,6 +1,6 @@
 # Port Composition Abilities — PRD + Implementation Plan
 
-Status: phases 0–5 complete; awaiting real-post end-to-end save verification
+Status: shipped — phases 0–6 green, one bugfix applied post-verification, two non-blocking follow-ups logged in §12
 Owner: heinvanvlastuin@gmail.com
 Created: 2026-04-24
 Last updated: 2026-04-24
@@ -303,3 +303,9 @@ Each phase is an independent PR-sized unit. Do not start phase N until phase N�
 - ~~**Variable references in CSS**~~ — **resolved**, see `phase-0-notes.md` §2b. Port nestjs `varRef` as-is: color + size vars supported; font vars fall through to string.
 - ~~**Source of truth for parser**~~ — **resolved**, see `phase-0-notes.md` §1. Lives at `/Users/heinvv/Local Sites/elementor-prod/app/public/wp-content/repos/elementor-nest-mcp/src/`.
 - ~~**ID length**~~ — **resolved**, see `phase-0-notes.md` §2a. 7-hex via `\Elementor\Modules\AtomicWidgets\Utils\Utils::generate_id()` — canonical for the atomic-widgets module, matches nestjs.
+
+## 12. Known follow-ups (post-ship, non-blocking)
+
+1. **`var()` label resolution in element styles.** `css-shorthand-parser` emits `{$$type:"global-color-variable", value:"<label>"}` / `global-size-variable` in label form. `Build_Page_Ability::resolve_variable_labels_in_classes()` already does label→UUID resolution for *class variant props* but not for *element styles*. Labels that don't match a registered variable fail Style_Parser validation on save. **Workaround**: pass UUIDs directly in CSS (no `var(--…)` syntax) or promote the variable into a global class and reference the class. **Fix**: extend the variable-label resolver to also walk `element.styles[].variants[].props` in the same pass that handles class variants.
+
+2. **`<colId>-flex` style ids in `make-section` two-column layout.** Currently emitted as raw `<colId>-flex` (e.g. `col1111-flex`). The `resolve_class_labels` allowlist fix (see §10 phase-5 bugfix) now accepts these because they appear as keys in `element.styles[]`, so **saves succeed**. The residual risk: if a caller passes a purely numeric column id, `<numeric>-flex` would still pass the allowlist but could confuse other validators that split on `-` or check for the canonical `e-` prefix. **Fix**: prefix with `e-` inside `Make_Section_Ability::build_two_column()` — `$flex_id = 'e-' . $col_id . '-flex';`. Small, deterministic, no API impact. Not exercised by the current smoke tests because our test ids are letter-prefixed.
