@@ -272,14 +272,14 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Assert 1.
 		await expect( primaryColor ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Color Picker' ).first() ).toBeVisible();
 
 		// Act 2. click on color again everything should stay the same.
 		await primaryColor.click();
 
 		// Assert 2.
 		await expect( primaryColor ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Color Picker' ).first().isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Color Picker' ).first() ).toBeVisible();
 
 		// Act 3. Click picker after already active.
 		await picker.click();
