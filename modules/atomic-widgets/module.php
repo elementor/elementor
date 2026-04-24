@@ -443,6 +443,8 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-atomic-widgets-editor', 'elementor' );
 	}
 
 	private function render_panel_category_chip() {

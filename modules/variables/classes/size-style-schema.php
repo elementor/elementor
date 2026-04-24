@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,26 +14,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Style_Schema {
-	private $blacklist = [
-		'filter',
-		'backdrop-filter',
-		'transform',
-	];
+	private $units_to_skip = [];
 
-	private function ignore( $css_property ): bool {
-		if ( in_array( $css_property, $this->blacklist, true ) ) {
-			return true;
+	public function __construct() {
+		$this->units_to_skip = [
+			...Size_Constants::angle(),
+			...Size_Constants::time(),
+		];
+	}
+
+	private function skip_by_units( Size_Prop_Type $size_prop_type ) {
+		$settings = $size_prop_type->get_settings();
+
+		if ( ! array_key_exists( 'available_units', $settings ) ) {
+			return false;
 		}
 
-		return false;
+		$available_units = $settings['available_units'];
+
+		return count( array_intersect( $available_units, $this->units_to_skip ) ) > 0;
 	}
 
 	public function augment( array $schema ): array {
 		foreach ( $schema as $css_property => $prop_type ) {
-			if ( $this->ignore( $css_property ) ) {
-				continue;
-			}
-
 			$schema[ $css_property ] = $this->update( $prop_type );
 		}
 
@@ -59,7 +63,11 @@ class Size_Style_Schema {
 		return $prop_type;
 	}
 
-	private function update_size( Size_Prop_Type $size_prop_type ): Union_Prop_Type {
+	private function update_size( Size_Prop_Type $size_prop_type ) {
+		if ( $this->skip_by_units( $size_prop_type ) ) {
+			return $size_prop_type;
+		}
+
 		return Union_Prop_Type::create_from( $size_prop_type )
 			->add_prop_type( Size_Variable_Prop_Type::make() );
 	}

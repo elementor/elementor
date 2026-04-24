@@ -99,7 +99,27 @@ const FromNameField = () => (
 	/>
 );
 
-const ReplyToField = () => <EmailField bind="reply-to" label={ __( 'Reply-to', 'elementor' ) } />;
+const ReplyToField = () => {
+	const emailSuggestions = useFormFieldSuggestions( { inputType: 'email' } );
+
+	return (
+		<PropKeyProvider bind="reply-to">
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ __( 'Reply-to', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl
+						suggestions={ emailSuggestions }
+						rows={ 1 }
+						triggerPosition="start"
+						placeholder={ __( 'You can type @ to insert an email field', 'elementor' ) }
+					/>
+				</Grid>
+			</Grid>
+		</PropKeyProvider>
+	);
+};
 
 const CcField = () => <EmailField bind="cc" label={ __( 'Cc', 'elementor' ) } />;
 
