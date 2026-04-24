@@ -23,6 +23,7 @@ import { Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
+import { SettingsField } from '../../settings-field';
 
 const LIST_ITEM_ELEMENT_TYPE = 'e-list-item';
 
@@ -32,6 +33,14 @@ type ListItem = {
 };
 
 export const ListItemsControl = ( { label }: { label: string } ) => {
+	return (
+		<SettingsField bind="list-type" propDisplayName={ __( 'List Items', 'elementor' ) }>
+			<ListItemsControlContent label={ label } />
+		</SettingsField>
+	);
+};
+
+const ListItemsControlContent = ( { label }: { label: string } ) => {
 	const { element } = useElement();
 	const listItems = useListItems( element.id );
 
@@ -202,7 +211,11 @@ const ItemContent = ( { value }: { value: ListItem } ) => {
 
 const ListItemTitleControl = ( { elementId }: { elementId: string } ) => {
 	const editorSettings = useElementEditorSettings( elementId );
-	const title = editorSettings?.title ?? '';
+	const [ title, setTitle ] = React.useState( editorSettings?.title ?? '' );
+
+	React.useEffect( () => {
+		setTitle( editorSettings?.title ?? '' );
+	}, [ editorSettings?.title ] );
 
 	return (
 		<>
@@ -211,6 +224,7 @@ const ListItemTitleControl = ( { elementId }: { elementId: string } ) => {
 				size="tiny"
 				value={ title }
 				onChange={ ( { target }: React.ChangeEvent< HTMLInputElement > ) => {
+					setTitle( target.value );
 					updateElementEditorSettings( {
 						elementId,
 						settings: { title: target.value },

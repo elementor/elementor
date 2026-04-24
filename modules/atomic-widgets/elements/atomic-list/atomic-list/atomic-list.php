@@ -73,13 +73,17 @@ class Atomic_List extends Atomic_Element_Base {
 						->add_options( [
 							'unordered' => [
 								'title' => __( 'Unordered', 'elementor' ),
-								'atomic-icon' => 'eicon-bullet-list',
+								'atomic-icon' => 'ListIcon',
 							],
 							'ordered' => [
 								'title' => __( 'Ordered', 'elementor' ),
-								'atomic-icon' => 'eicon-number-field',
+								'atomic-icon' => 'Number123Icon',
 							],
 						] )
+						->set_exclusive( true )
+						->set_convert_options( true )
+						->set_size( 'tiny' )
+						->set_full_width( true )
 						->set_label( __( 'List Type', 'elementor' ) ),
 					List_Items_Control::make()
 						->set_label( __( 'List Items', 'elementor' ) )
@@ -142,14 +146,6 @@ class Atomic_List extends Atomic_Element_Base {
 
 	protected function define_allowed_child_types() {
 		return [ Atomic_List_Item::get_element_type() ];
-	}
-
-	protected function build_template_context(): array {
-		$settings = $this->get_atomic_settings();
-
-		return array_merge( $this->build_base_template_context(), [
-			'tag' => 'ordered' === ( $settings['list-type'] ?? 'unordered' ) ? 'ol' : 'ul',
-		] );
 	}
 
 	protected function get_templates(): array {

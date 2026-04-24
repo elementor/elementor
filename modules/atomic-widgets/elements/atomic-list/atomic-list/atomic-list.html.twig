@@ -1,2 +1,3 @@
 {% set classes = ['e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | join(' ') %}
+{% set tag = (settings['list-type'] | default('unordered')) == 'ordered' ? 'ol' : 'ul' %}
 <{{ tag | e('html_tag') }} class="{{ classes }} {{ editor_classes | default('') }}" data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ settings.attributes | raw }} {{ editor_attributes | default('') | raw }}><!-- elementor-children-placeholder --></{{ tag | e('html_tag') }}>
