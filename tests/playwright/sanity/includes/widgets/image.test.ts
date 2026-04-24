@@ -108,8 +108,8 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
 		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
-			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.link ),
+		).toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
 		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
