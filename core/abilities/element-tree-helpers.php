@@ -38,20 +38,32 @@ trait Element_Tree_Helpers {
 
 	/**
 	 * Walk the element tree and replace any class label strings with their full IDs.
-	 * Values that already start with "e-gc-" are treated as IDs and left untouched.
+	 * Strings that already start with "e-" (e-gc-*, e-dh-*, etc.) or that match a local
+	 * style-map key anywhere in the tree are treated as IDs and left untouched.
 	 *
-	 * @param array $elements    Element tree (modified in-place).
-	 * @param array $label_to_id Map of label → class ID.
+	 * Local style IDs emitted by make-page / make-section (e.g. "abc1234-s") do not start
+	 * with "e-" but are valid references, so we pre-collect them once per tree walk and
+	 * thread them through as an allowlist.
+	 *
+	 * @param array      $elements    Element tree (modified in-place).
+	 * @param array      $label_to_id Map of label → class ID.
+	 * @param array|null $local_ids   Local style IDs from the tree. Auto-collected on the
+	 *                                top-level call; threaded through on recursion.
 	 * @throws \InvalidArgumentException When a label cannot be resolved.
 	 */
-	private function resolve_class_labels( array &$elements, array $label_to_id ): void {
+	private function resolve_class_labels( array &$elements, array $label_to_id, ?array $local_ids = null ): void {
+		if ( null === $local_ids ) {
+			$local_ids = [];
+			$this->collect_local_style_ids( $elements, $local_ids );
+		}
+
 		foreach ( $elements as &$element ) {
 			if ( isset( $element['settings'] ) && is_array( $element['settings'] ) ) {
-				$this->resolve_class_labels_in_settings( $element['settings'], $label_to_id );
+				$this->resolve_class_labels_in_settings( $element['settings'], $label_to_id, $local_ids );
 			}
 
 			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$this->resolve_class_labels( $element['elements'], $label_to_id );
+				$this->resolve_class_labels( $element['elements'], $label_to_id, $local_ids );
 			}
 		}
 		unset( $element );
@@ -79,14 +91,20 @@ trait Element_Tree_Helpers {
 	/**
 	 * Recursively walk a settings object, resolving labels inside $$type:"classes" nodes.
 	 *
+	 * @param array &$settings    Settings object (modified in-place).
+	 * @param array $label_to_id  Map of label → class ID.
+	 * @param array $local_ids    Local style IDs that should be treated as valid references
+	 *                            even though they don't start with "e-" (e.g. "abc1234-s"
+	 *                            emitted by make-page / make-section).
 	 * @throws \InvalidArgumentException When a label cannot be resolved.
 	 */
-	private function resolve_class_labels_in_settings( array &$settings, array $label_to_id ): void {
+	private function resolve_class_labels_in_settings( array &$settings, array $label_to_id, array $local_ids = [] ): void {
 		if ( isset( $settings['$$type'] ) && 'classes' === $settings['$$type'] && isset( $settings['value'] ) && is_array( $settings['value'] ) ) {
 			foreach ( $settings['value'] as &$val ) {
 				// Skip any ID that already looks like an Elementor-generated ID (e-gc-*, e-dh-*, etc.)
-				// Only strings that do not start with "e-" are treated as human-readable labels.
-				if ( is_string( $val ) && ! str_starts_with( $val, 'e-' ) ) {
+				// or a local style-map key from elsewhere in the tree.
+				// Only strings that are neither are treated as human-readable labels.
+				if ( is_string( $val ) && ! str_starts_with( $val, 'e-' ) && ! in_array( $val, $local_ids, true ) ) {
 					if ( ! isset( $label_to_id[ $val ] ) ) {
 						// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 						throw new \InvalidArgumentException( "Class label \"$val\" not found — create it first with set-global-classes or check the label spelling." );
@@ -100,7 +118,7 @@ trait Element_Tree_Helpers {
 
 		foreach ( $settings as &$value ) {
 			if ( is_array( $value ) ) {
-				$this->resolve_class_labels_in_settings( $value, $label_to_id );
+				$this->resolve_class_labels_in_settings( $value, $label_to_id, $local_ids );
 			}
 		}
 		unset( $value );
