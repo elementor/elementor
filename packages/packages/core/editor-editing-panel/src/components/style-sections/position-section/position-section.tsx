@@ -1,10 +1,16 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef } from 'react';
-import { type StringPropValue } from '@elementor/editor-props';
+import { useCallback, useEffect, useState } from 'react';
+import {
+	type NumberPropValue,
+	type PropValue,
+	type SizePropValue,
+	type StringPropValue,
+} from '@elementor/editor-props';
 import { useSessionStorage } from '@elementor/session';
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../../contexts/style-context';
+import { StylesField } from '../../../controls-registry/styles-field';
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { useStylesFields } from '../../../hooks/use-styles-fields';
 import { PanelDivider } from '../../panel-divider';
@@ -14,23 +20,12 @@ import { OffsetField } from './offset-field';
 import { PositionField } from './position-field';
 import { ZIndexField } from './z-index-field';
 
-type DimensionValue =
-	| {
-			$$type: 'size';
-			value: number;
-	  }
-	| undefined
-	| null;
-
-type DimensionsValues = {
-	'inset-block-start': DimensionValue;
-	'inset-block-end': DimensionValue;
-	'inset-inline-start': DimensionValue;
-	'inset-inline-end': DimensionValue;
-};
-
-type PositionDependentValues = DimensionsValues & {
-	'z-index': number | undefined | null;
+type DependentValues = {
+	'inset-block-start'?: SizePropValue | null;
+	'inset-block-end'?: SizePropValue | null;
+	'inset-inline-start'?: SizePropValue | null;
+	'inset-inline-end'?: SizePropValue | null;
+	'z-index'?: NumberPropValue | null;
 };
 
 const POSITION_STATIC = 'static' as const;
@@ -38,79 +33,72 @@ const POSITION_STATIC = 'static' as const;
 const POSITION_LABEL = __( 'Position', 'elementor' );
 const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
 
-const POSITION_DEPENDENT_PROP_NAMES = [
+const DEPENDENT_PROP_NAMES: Array< keyof DependentValues > = [
 	'inset-block-start',
 	'inset-block-end',
 	'inset-inline-start',
 	'inset-inline-end',
 	'z-index',
-] as const;
-
-const CLEARED_POSITION_DEPENDENT_VALUES: Record< ( typeof POSITION_DEPENDENT_PROP_NAMES )[ number ], null > = {
-	'inset-block-start': null,
-	'inset-block-end': null,
-	'inset-inline-start': null,
-	'inset-inline-end': null,
-	'z-index': null,
-};
+];
 
 export const PositionSection = () => {
-	const { value: positionValue } = useStylesField< StringPropValue >( 'position', {
-		history: { propDisplayName: POSITION_LABEL },
-	} );
-	const { values: positionDependentValues, setValues: setPositionDependentValues } =
-		useStylesFields< PositionDependentValues >( [ ...POSITION_DEPENDENT_PROP_NAMES ] );
+	const { value: position, setValue: setPosition } = useStylesField< StringPropValue >(
+		'position',
+		withHistoryLabel( POSITION_LABEL )
+	);
+	const { values: dependentValues, setValues: setDependentValues } =
+		useStylesFields< DependentValues >( DEPENDENT_PROP_NAMES );
+	const validDependentValues = toNonNullValues( dependentValues );
 
-	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
+	const [ savedDependentValues, saveToHistory, clearHistory ] = usePersistDimensions();
+	const [ positionPlaceholder, setPositionPlaceholder ] = useState< PropValue >();
 
 	const clearPositionDependentProps = useCallback( () => {
-		const dimensions: DimensionsValues = {
-			'inset-block-start': positionDependentValues?.[ 'inset-block-start' ],
-			'inset-block-end': positionDependentValues?.[ 'inset-block-end' ],
-			'inset-inline-start': positionDependentValues?.[ 'inset-inline-start' ],
-			'inset-inline-end': positionDependentValues?.[ 'inset-inline-end' ],
-		};
-		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
-		const hasValuesToClear =
-			Object.values( dimensions ).some( ( v ) => v !== null ) || positionDependentValues?.[ 'z-index' ] !== null;
-
-		if ( hasValuesToClear ) {
-			updateDimensionsHistory( dimensions );
-			setPositionDependentValues( CLEARED_POSITION_DEPENDENT_VALUES, meta );
+		if ( ! hasDependentValues( dependentValues ) ) {
+			return;
 		}
-	}, [ positionDependentValues, updateDimensionsHistory, setPositionDependentValues ] );
 
-	const clearPositionDependentPropsRef = useRef( clearPositionDependentProps );
-	clearPositionDependentPropsRef.current = clearPositionDependentProps;
+		saveToHistory( extractDimensions( dependentValues ) );
+		setDependentValues( extractDimensions( null ), withHistoryLabel( DIMENSIONS_LABEL ) );
+	}, [ dependentValues, saveToHistory, setDependentValues ] );
 
 	useEffect( () => {
-		if ( positionValue?.value === POSITION_STATIC || positionValue === null ) {
-			clearPositionDependentPropsRef.current();
+		if ( position === null ) {
+			clearPositionDependentProps();
 		}
-	}, [ positionValue ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ position?.value ] );
+
+	useEffect( () => {
+		if ( ! position && positionPlaceholder && validDependentValues ) {
+			setPosition( positionPlaceholder as StringPropValue );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ JSON.stringify( dependentValues ) ] );
 
 	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
-		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
-
 		if ( newPosition === POSITION_STATIC ) {
 			clearPositionDependentProps();
-		} else if ( previousPosition === POSITION_STATIC ) {
-			if ( dimensionsValuesFromHistory ) {
-				setPositionDependentValues(
-					{ ...dimensionsValuesFromHistory, 'z-index': undefined } as PositionDependentValues,
-					meta
-				);
-				clearDimensionsHistory();
-			}
+
+			return;
+		}
+
+		if ( previousPosition === POSITION_STATIC && savedDependentValues ) {
+			setDependentValues( { ...savedDependentValues }, withHistoryLabel( DIMENSIONS_LABEL ) );
+
+			clearHistory();
 		}
 	};
 
-	const isNotStatic = positionValue && positionValue?.value !== POSITION_STATIC;
+	const isPositioned = isNonStaticPosition( position ) || isNonStaticPosition( positionPlaceholder );
 
 	return (
 		<SectionContent>
-			<PositionField onChange={ onPositionChange } />
-			{ isNotStatic ? (
+			<StylesField bind="position" propDisplayName={ POSITION_LABEL }>
+				<PositionField onChange={ onPositionChange } onPlaceholderChange={ setPositionPlaceholder } />
+			</StylesField>
+
+			{ isPositioned ? (
 				<>
 					<DimensionsField />
 					<ZIndexField />
@@ -128,5 +116,52 @@ const usePersistDimensions = () => {
 	const styleVariantPath = `styles/${ styleDefID }/${ meta.breakpoint || 'desktop' }/${ meta.state || 'null' }`;
 	const dimensionsPath = `${ styleVariantPath }/dimensions`;
 
-	return useSessionStorage< DimensionsValues >( dimensionsPath );
+	return useSessionStorage< DependentValues >( dimensionsPath );
+};
+
+const withHistoryLabel = ( name: string ) => {
+	return {
+		history: { propDisplayName: name },
+	};
+};
+
+const toNonNullValues = ( values: DependentValues | null ): Partial< DependentValues > | null => {
+	if ( ! values ) {
+		return null;
+	}
+
+	const nonNullEntries = Object.entries( values ).filter( ( [ , v ] ) => v !== null );
+
+	if ( nonNullEntries.length === 0 ) {
+		return null;
+	}
+
+	return Object.fromEntries( nonNullEntries );
+};
+
+const hasDependentValues = ( values?: DependentValues | null ) => {
+	if ( ! values ) {
+		return false;
+	}
+
+	const dimensions = extractDimensions( values );
+
+	return Object.values( dimensions ).some( ( v ) => v !== null );
+};
+
+const extractDimensions = ( values: DependentValues | null ): DependentValues => {
+	return DEPENDENT_PROP_NAMES.reduce( ( acc, key ) => {
+		return {
+			...acc,
+			[ key ]: values?.[ key ] ?? null,
+		};
+	}, {} );
+};
+
+const isNonStaticPosition = ( value: PropValue ) => {
+	if ( ! value ) {
+		return false;
+	}
+
+	return value && typeof value === 'object' && 'value' in value && value?.value !== POSITION_STATIC;
 };
