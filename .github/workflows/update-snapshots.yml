@@ -1,0 +1,221 @@
+name: Update Playwright Snapshots
+
+on:
+  workflow_dispatch:
+    inputs:
+      browser:
+        type: choice
+        description: 'Browser(s) to update snapshots for'
+        required: false
+        default: 'chromium'
+        options:
+          - chromium
+          - firefox
+          - both
+      test_grep:
+        type: string
+        description: 'Update only tests matching this @tag or keyword (runs a single job instead of all shards)'
+        required: false
+        default: ''
+      update_mode:
+        type: choice
+        description: 'Snapshot update mode: "changed" updates only failing snapshots, "all" forces regeneration of every matched snapshot (only applies to targeted runs)'
+        required: false
+        default: 'changed'
+        options:
+          - changed
+          - all
+      reset_snapshot_baselines:
+        type: boolean
+        description: 'Delete baseline snapshots for the browser(s) selected above only (Firefox: *firefox*; Chromium: non-firefox files in *-snapshots)'
+        required: false
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
+  update-snapshots:
+    name: Update snapshots - shard ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
+    runs-on: ubuntu-22.04
+    needs: [build-plugin, get-php-version]
+    if: ${{ !inputs.test_grep }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+        shardTotal: [17]
+        include:
+          - shardIndex: "plugin_tester_section"
+          - shardIndex: "plugin_tester_container"
+          - shardIndex: "elements-regression-core"
+          - shardIndex: "elements-regression-atomic"
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Playwright environment
+        id: setup
+        uses: ./.github/actions/setup-playwright-env
+        with:
+          artifact-name: ${{ needs.build-plugin.outputs.artifact_name }}
+          php-version: ${{ needs.get-php-version.outputs.php_version }}
+          browser: ${{ inputs.browser }}
+
+      - name: Remove existing Playwright baseline PNGs
+        if: ${{ inputs.reset_snapshot_baselines }}
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          set -euo pipefail
+          if echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
+            find tests -type f -path '*/*-snapshots/*' -delete
+          elif echo "$BROWSERS" | grep -qw firefox; then
+            find tests -type f -path '*/*-snapshots/*firefox*' -delete
+          elif echo "$BROWSERS" | grep -qw chromium; then
+            find tests -type f -path '*/*-snapshots/*' ! -name '*firefox*' -delete
+          fi
+
+      - name: Update snapshots
+        if: ${{
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'elements-regression-core' &&
+          matrix.shardIndex != 'elements-regression-atomic'
+          }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" \
+            --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Update plugin tester container snapshots
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep="@plugin_tester_container"
+
+      - name: Update plugin tester section snapshots
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots \
+            --grep="@plugin_tester_section"
+
+      - name: Update elements regression core snapshots
+        if: ${{ matrix.shardIndex == 'elements-regression-core' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          npm run test:playwright:elements-regression:core -- \
+            --update-snapshots
+
+      - name: Update elements regression atomic snapshots
+        if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+        run: |
+          npm run test:playwright:elements-regression:atomic -- \
+            --update-snapshots
+
+      - name: Upload updated snapshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-shard-${{ matrix.shardIndex }}
+          path: |
+            tests/playwright/
+            tests/elements-regression/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 1
+
+  update-snapshots-targeted:
+    name: Update snapshots for "${{ inputs.test_grep }}" on PHP (${{ needs.get-php-version.outputs.php_version }})
+    runs-on: ubuntu-22.04
+    needs: [build-plugin, get-php-version]
+    if: ${{ inputs.test_grep != '' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Setup Playwright environment
+        id: setup
+        uses: ./.github/actions/setup-playwright-env
+        with:
+          artifact-name: ${{ needs.build-plugin.outputs.artifact_name }}
+          php-version: ${{ needs.get-php-version.outputs.php_version }}
+          browser: ${{ inputs.browser }}
+
+      - name: Update snapshots for "${{ inputs.test_grep }}"
+        continue-on-error: true
+        env:
+          BROWSERS: ${{ steps.setup.outputs.browsers }}
+          TEST_GREP: ${{ inputs.test_grep }}
+        run: |
+          npm run test:playwright -- \
+            --update-snapshots=${{ inputs.update_mode }} \
+            --grep="$TEST_GREP"
+
+      - name: Upload updated snapshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: snapshots-targeted
+          path: |
+            tests/playwright/
+            tests/elements-regression/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 1
+
+  commit-snapshots:
+    name: Commit updated snapshots
+    runs-on: ubuntu-22.04
+    needs: [update-snapshots, update-snapshots-targeted]
+    if: always() && (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped')
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all snapshot artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: snapshots-*
+          path: tests/
+          merge-multiple: true
+
+      - name: Commit and push updated snapshots
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          find tests -type f -path '*/*-snapshots/*' -exec git add {} +
+          if git diff --cached --quiet; then
+            echo "No snapshot changes to commit"
+          else
+            git commit -m "test: update playwright snapshots"
+            git push origin HEAD:${{ github.ref_name }}
+          fi
