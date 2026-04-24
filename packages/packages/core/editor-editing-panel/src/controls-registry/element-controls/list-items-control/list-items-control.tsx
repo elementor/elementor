@@ -180,6 +180,7 @@ function createListItemModel( position: number ): CreateElementParams[ 'model' ]
 				value: 'span',
 			},
 		},
+		elements: [],
 	};
 
 	return {
