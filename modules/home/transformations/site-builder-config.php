@@ -46,11 +46,8 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$snapshot = $this->wordpress_adapter->get_option( 'elementor_site_builder_snapshot' );
 
-		$connect_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'site-builder' );
-
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
 			'siteBuilderUrl' => self::SITE_BUILDER_URL,
-			'apiOrigin' => $connect_app->get_api_url(),
 			'previewImage1' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-01.jpg',
 			'previewImage2' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-02.jpg',
 			'bgImage' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-bg.jpg',

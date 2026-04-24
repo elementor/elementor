@@ -95,28 +95,6 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$this->assertSame( [], $result['site_builder']['site_builder_snapshot'] );
 	}
 
-	public function test_transform__api_origin_uses_constant_when_defined() {
-		if ( ! defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' ) ) {
-			define( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN', 'https://planner.test/api/v2/builder' );
-		}
-
-		$site_builder = new class {
-			public function get_config(): array {
-				return [ 'siteKey' => 'test-key' ];
-			}
-		};
-
-		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
-
-		$transformation = new Site_Builder_Config( [
-			'wordpress_adapter' => $this->mock_wordpress_adapter(),
-		] );
-
-		$result = $transformation->transform( [] );
-
-		$this->assertSame( ELEMENTOR_SITE_PLANNER_API_ORIGIN, $result['site_builder']['apiOrigin'] );
-	}
-
 	public function test_transform__validates_and_sanitizes_step_config() {
 		$site_builder = new class {
 			public function get_config(): array {

@@ -19,10 +19,6 @@ class App extends Library {
 	}
 
 	public function get_api_url() {
-		if ( defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' ) ) {
-			return trailingslashit( ELEMENTOR_SITE_PLANNER_API_ORIGIN );
-		}
-
 		return static::API_URL;
 	}
 
