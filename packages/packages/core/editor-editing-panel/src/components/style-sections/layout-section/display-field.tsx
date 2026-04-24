@@ -1,5 +1,7 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-controls';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-context';
@@ -51,11 +53,16 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 
 export const DisplayField = () => {
 	const placeholder = useDisplayPlaceholderValue();
+	const isGridActive = isExperimentActive( 'e_css_grid' );
+	const items = useMemo(
+		() => ( isGridActive ? displayFieldItems : displayFieldItems.filter( ( item ) => item.value !== 'grid' ) ),
+		[ isGridActive ]
+	);
 
 	return (
 		<StylesField bind="display" propDisplayName={ DISPLAY_LABEL } placeholder={ placeholder }>
 			<StylesFieldLayout label={ DISPLAY_LABEL } direction="column">
-				<ToggleControl options={ displayFieldItems } maxItems={ 4 } fullWidth={ true } />
+				<ToggleControl options={ items } maxItems={ 4 } fullWidth={ true } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

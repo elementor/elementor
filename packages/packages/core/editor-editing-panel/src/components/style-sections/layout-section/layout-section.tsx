@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { useParentElement } from '@elementor/editor-elements';
 import { type StringPropValue } from '@elementor/editor-props';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
@@ -42,7 +43,7 @@ export const LayoutSection = () => {
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
-			{ isDisplayGrid && <GridFields /> }
+			{ isExperimentActive( 'e_css_grid' ) && isDisplayGrid && <GridFields /> }
 			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
 		</SectionContent>
 	);
@@ -72,6 +73,7 @@ const GridFields = () => (
 		<GridAutoFlowField />
 		<PanelDivider />
 		<GapControlField />
+		<PanelDivider />
 		<GridJustifyItemsField />
 		<AlignItemsField />
 	</>
