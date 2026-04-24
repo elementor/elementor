@@ -18,7 +18,7 @@ class App extends Library {
 		return 'site-builder';
 	}
 
-	protected function get_api_url() {
+	public function get_api_url() {
 		if ( defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' ) ) {
 			return trailingslashit( ELEMENTOR_SITE_PLANNER_API_ORIGIN );
 		}

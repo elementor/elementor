@@ -46,9 +46,11 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$snapshot = $this->wordpress_adapter->get_option( 'elementor_site_builder_snapshot' );
 
+		$connect_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'site-builder' );
+
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
 			'siteBuilderUrl' => self::SITE_BUILDER_URL,
-			'apiOrigin' => $this->get_api_origin_url(),
+			'apiOrigin' => $connect_app->get_api_url(),
 			'previewImage1' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-01.jpg',
 			'previewImage2' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-02.jpg',
 			'bgImage' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-bg.jpg',
@@ -58,14 +60,6 @@ class Site_Builder_Config extends Transformations_Abstract {
 		] );
 
 		return $home_screen_data;
-	}
-
-	private function get_api_origin_url(): string {
-		if ( defined( 'ELEMENTOR_SITE_PLANNER_API_ORIGIN' ) ) {
-			return ELEMENTOR_SITE_PLANNER_API_ORIGIN;
-		}
-
-		return 'https://my.elementor.com/api/v2/builder';
 	}
 
 	private function validate_and_sanitize_step_config( array $step_config ): array {
