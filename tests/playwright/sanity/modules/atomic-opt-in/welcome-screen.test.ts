@@ -69,6 +69,6 @@ test.describe( 'V4 activation welcome modal @promotions', () => {
 		await expect( dialog ).toBeVisible();
 		await page.keyboard.press( 'Escape' );
 
-		await expect( dialog ).not.toBeVisible();
+		await expect( dialog ).toBeHidden();
 	} );
 } );
