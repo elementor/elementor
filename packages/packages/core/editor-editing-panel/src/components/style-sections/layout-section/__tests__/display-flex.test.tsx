@@ -123,7 +123,7 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
+		[ 'Block', 'Flex', 'Grid' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

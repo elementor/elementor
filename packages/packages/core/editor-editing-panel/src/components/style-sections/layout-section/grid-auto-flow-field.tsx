@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ControlToggleButtonGroup, type ToggleButtonGroupItem } from '@elementor/editor-controls';
 import { type StringPropValue } from '@elementor/editor-props';
-import { ArrowDownSmallIcon, ArrowRightIcon, GridDotsIcon } from '@elementor/icons';
+import { ArrowDownSmallIcon, ArrowRightIcon, LayoutDashboardIcon } from '@elementor/icons';
 import { Grid, ToggleButton, Tooltip, withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -83,7 +83,7 @@ const GridAutoFlowFieldContent = () => {
 							size="tiny"
 							aria-label={ DENSE_LABEL }
 						>
-							<GridDotsIcon fontSize="tiny" />
+							<LayoutDashboardIcon fontSize="tiny" />
 						</ToggleButton>
 					</Tooltip>
 				</Grid>
