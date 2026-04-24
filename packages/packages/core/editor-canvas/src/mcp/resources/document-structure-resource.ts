@@ -1,40 +1,42 @@
+import {
+	type ExtendedWindow as BaseExtendedWindow,
+	type V1Document,
+	type V1DocumentsManager,
+} from '@elementor/editor-documents';
+import {
+	getWidgetsCache,
+	type V1Element,
+	type V1ElementEditorSettingsProps,
+	type V1ElementModelProps,
+} from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
-type ExtendedWindow = Window & {
-	elementor?: {
-		documents?: {
-			getCurrent?: () => {
-				id: number;
-				config: {
-					type: string;
-					settings?: {
-						post_title?: string;
-					};
-				};
-				container: {
-					children?: ElementorContainer[];
-				};
-			};
-		};
+type UnknownVersionElementInstanceData = V1Element & {
+	model: V1Element[ 'model' ] & {
+		attributes: V1ElementModelProps;
+		config?: { atomic?: boolean };
+		editor_settings?: V1ElementEditorSettingsProps;
+	};
+	children?: V1Element[];
+};
+
+type ContainerWithStructure = V1Document & {
+	config: V1Document[ 'config' ] & {
+		settings?: { post_title?: string };
+	};
+	container: V1Document[ 'container' ] & {
+		children?: UnknownVersionElementInstanceData[];
 	};
 };
 
-type ElementorContainer = {
-	id: string;
-	model: {
-		attributes: {
-			id: string;
-			elType: string;
-			widgetType?: string;
-			title?: string;
-		};
-		editor_settings?: {
-			title?: string;
+interface ExtendedWindow extends BaseExtendedWindow {
+	elementor: Omit< BaseExtendedWindow[ 'elementor' ], 'documents' > & {
+		documents: Omit< V1DocumentsManager, 'getCurrent' > & {
+			getCurrent: () => ContainerWithStructure;
 		};
 	};
-	children?: ElementorContainer[];
-};
+}
 
 export const DOCUMENT_STRUCTURE_URI = 'elementor://document/structure';
 
@@ -62,6 +64,7 @@ export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
 			commandEndEvent( 'document/elements/copy' ),
 			commandEndEvent( 'document/elements/paste' ),
 			commandEndEvent( 'editor/documents/attach-preview' ),
+			commandEndEvent( 'editor/documents/switch' ),
 		],
 		updateDocumentStructure
 	);
@@ -89,7 +92,7 @@ export const initDocumentStructureResource = ( reg: MCPRegistryEntry ) => {
 };
 
 function getDocumentStructure() {
-	const extendedWindow = window as ExtendedWindow;
+	const extendedWindow = window as unknown as ExtendedWindow;
 	const document = extendedWindow.elementor?.documents?.getCurrent?.();
 
 	if ( ! document ) {
@@ -97,9 +100,7 @@ function getDocumentStructure() {
 	}
 
 	const containers = document.container?.children || [];
-	const elements = ( containers as ElementorContainer[] ).map( ( container: ElementorContainer ) =>
-		extractElementData( container )
-	);
+	const elements = containers.map( ( container ) => extractElementData( container ) );
 
 	return {
 		documentId: document.id,
@@ -109,7 +110,20 @@ function getDocumentStructure() {
 	};
 }
 
-function extractElementData( element: ElementorContainer ): Record< string, unknown > | null {
+function resolveElementVersion( element: UnknownVersionElementInstanceData ): 'v3' | 'v4' {
+	if ( element.model?.config?.atomic ) {
+		return 'v4';
+	}
+
+	const widgetType = element.model?.attributes?.widgetType;
+	if ( widgetType && getWidgetsCache()?.[ widgetType ]?.atomic_props_schema ) {
+		return 'v4';
+	}
+
+	return 'v3';
+}
+
+function extractElementData( element: UnknownVersionElementInstanceData ): Record< string, unknown > | null {
 	if ( ! element || ! element.model ) {
 		return null;
 	}
@@ -119,6 +133,7 @@ function extractElementData( element: ElementorContainer ): Record< string, unkn
 		id: model.id,
 		elType: model.elType,
 		widgetType: model.widgetType || undefined,
+		version: resolveElementVersion( element ),
 	};
 
 	const title = model.title || element.model?.editor_settings?.title;
@@ -129,8 +144,8 @@ function extractElementData( element: ElementorContainer ): Record< string, unkn
 
 	if ( element.children && element.children.length > 0 ) {
 		result.children = element.children
-			.map( ( child: ElementorContainer ) => extractElementData( child ) )
-			.filter( ( child: Record< string, unknown > | null ) => child !== null );
+			.map( ( child ) => extractElementData( child as UnknownVersionElementInstanceData ) )
+			.filter( ( child ) => child !== null );
 	}
 
 	return result;
