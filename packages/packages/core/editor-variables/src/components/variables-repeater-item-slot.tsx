@@ -5,6 +5,7 @@ import {
 	cssFilterFunctionPropUtil,
 	dropShadowFilterPropTypeUtil,
 	type KeyValuePropValue,
+	moveTransformPropTypeUtil,
 	type PropValue,
 	selectionSizePropTypeUtil,
 	type SelectionSizePropValue,
@@ -113,6 +114,25 @@ export const BoxShadowRepeaterLabel = ( { value }: Props ) => {
 			{ positionLabel }: { labels.join( ' ' ) }
 		</Box>
 	);
+};
+
+export const TransformRepeaterLabel = ( { value }: Props ) => {
+	const labels: string[] = [];
+
+	if ( moveTransformPropTypeUtil.isValid( value ) ) {
+		labels.push( __( 'Move:', 'elementor' ) );
+
+		const { x, y, z } = moveTransformPropTypeUtil.extract( value ) || {};
+
+		for ( const val of [ x, y, z ] ) {
+			const rendered = sizeValue( val );
+			if ( rendered ) {
+				labels.push( rendered );
+			}
+		}
+	}
+
+	return <Box component="span">{ labels.join( ' ' ) }</Box>;
 };
 
 export const TransitionsSizeVariableLabel = ( { value: prop }: Props ) => {
