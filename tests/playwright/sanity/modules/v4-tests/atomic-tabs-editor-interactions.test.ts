@@ -85,7 +85,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'true' );
 		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'false' );
 		await expect( firstContent ).toBeVisible();
-		await expect( secondContent ).not.toBeVisible();
+		await expect( secondContent ).toBeHidden();
 
 		// Act
 		await secondTab.dispatchEvent( 'click' );
@@ -94,7 +94,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
 		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
 		await expect( secondContent ).toBeVisible();
-		await expect( firstContent ).not.toBeVisible();
+		await expect( firstContent ).toBeHidden();
 	} );
 
 	test( 'Outer tab selection persists when nesting atomic tabs', async () => {
@@ -393,7 +393,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		// Act & Assert - Last tab should not have remove button
 		await listItems.first().hover();
 		const lastRemoveButton = listItems.first().getByRole( 'button', { name: 'Remove' } );
-		await expect( lastRemoveButton ).not.toBeVisible();
+		await expect( lastRemoveButton ).toBeHidden();
 
 		// Verify tab and content still exist
 		await expect( getMenuTabs( tabsRoot ) ).toHaveCount( 1 );
@@ -484,7 +484,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
 
 		// Editor should be empty (tabs element removed)
-		await expect( tabsRoot ).not.toBeVisible();
+		await expect( tabsRoot ).toBeHidden();
 
 		// Act - Redo until last action (redo add tabs, redo delete 1, redo delete 2)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
