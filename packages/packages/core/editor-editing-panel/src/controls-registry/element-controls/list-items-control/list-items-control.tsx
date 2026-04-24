@@ -9,6 +9,7 @@ import {
 	createElements,
 	type CreateElementParams,
 	duplicateElements,
+	generateElementId,
 	getContainer,
 	moveElements,
 	removeElements,
@@ -160,6 +161,7 @@ function addItem( elementId: string, index: number ) {
 function createListItemModel( position: number ): CreateElementParams[ 'model' ] {
 	const paragraph = `Item #${ position }`;
 	const paragraphChild = {
+		id: generateElementId(),
 		elType: 'widget',
 		widgetType: 'e-paragraph',
 		settings: {

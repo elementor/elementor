@@ -1,5 +1,6 @@
 // control types
 export { ImageControl } from './controls/image-control';
+export { ImageMediaControl } from './controls/image-media-control';
 export { TextControl } from './controls/text-control';
 export { TextAreaControl } from './controls/text-area-control';
 export { MentionTextAreaControl } from './controls/mention-text-area-control';
