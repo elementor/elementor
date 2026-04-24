@@ -18,7 +18,7 @@ class App extends Library {
 		return 'site-builder';
 	}
 
-	public function get_api_url() {
+	protected function get_api_url() {
 		return static::API_URL;
 	}
 
