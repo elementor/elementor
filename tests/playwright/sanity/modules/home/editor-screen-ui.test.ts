@@ -1,6 +1,7 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, getScreenshotName, type HomepageSettings } from './home-screen.helper';
+import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, expectScreenshot, type HomepageSettings } from './home-screen.helper';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor screen UI tests', () => {
 	const VIEWPORT_SIZE = { width: 1920, height: 4000 };
@@ -11,6 +12,7 @@ test.describe( 'Editor screen UI tests', () => {
 		const page = await context.newPage();
 		const requestContext = page.context().request;
 		originalHomepageSettings = await saveHomepageSettings( apiRequests, requestContext );
+		await wpCli( 'wp elementor experiments activate site-builder' );
 		await page.close();
 		await context.close();
 	} );
@@ -24,43 +26,45 @@ test.describe( 'Editor screen UI tests', () => {
 			await restoreHomepageSettings( apiRequests, requestContext, originalHomepageSettings );
 		}
 
+		await wpCli( 'wp elementor experiments deactivate site-builder' );
+
 		await page.close();
 		await context.close();
 	} );
 
 	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
-		const mockData = transformMockDataByLicense( 'free' );
+		const mockData = transformMockDataByLicense( 'free', 'step_with_input' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
 		await page.setViewportSize( VIEWPORT_SIZE );
-		await expect.soft( homeScreen ).toHaveScreenshot( await getScreenshotName( page, 'home-screen-free.png' ) );
+		await expectScreenshot( homeScreen, 'home-screen-free.png' );
 		await requestContext.dispose();
 	} );
 
 	test( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
-		const mockData = transformMockDataByLicense( 'pro' );
+		const mockData = transformMockDataByLicense( 'pro', 'step_without_input' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
 		await page.setViewportSize( VIEWPORT_SIZE );
-		await expect.soft( homeScreen ).toHaveScreenshot( await getScreenshotName( page, 'home-screen-pro.png' ) );
+		await expectScreenshot( homeScreen, 'home-screen-pro.png' );
 		await requestContext.dispose();
 	} );
 
 	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
-		const mockData = transformMockDataByLicense( 'one' );
+		const mockData = transformMockDataByLicense( 'one', 'step_with_input' );
 
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 
 		const homeScreen = await navigateToHomeScreen( page );
 		await page.setViewportSize( VIEWPORT_SIZE );
-		await expect.soft( homeScreen ).toHaveScreenshot( await getScreenshotName( page, 'home-screen-one.png' ) );
+		await expectScreenshot( homeScreen, 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );
 
