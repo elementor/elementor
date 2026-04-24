@@ -34,6 +34,10 @@ class Abilities_Bootstrap {
 		( new Find_Media_Ability() )->register_hooks();
 		( new Upload_Media_Ability() )->register_hooks();
 		( new Update_Kit_Ability() )->register_hooks();
+		( new Css_To_Props_Ability() )->register_hooks();
+		( new Make_Style_Ability() )->register_hooks();
+		( new Make_Page_Ability() )->register_hooks();
+		( new Make_Section_Ability() )->register_hooks();
 		( new Context_Ability(
 			Plugin::$instance->kits_manager,
 			Plugin::$instance->widgets_manager,

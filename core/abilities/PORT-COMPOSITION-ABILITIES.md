@@ -1,8 +1,9 @@
 # Port Composition Abilities — PRD + Implementation Plan
 
-Status: draft / not started
+Status: phases 0–5 complete; awaiting real-post end-to-end save verification
 Owner: heinvanvlastuin@gmail.com
 Created: 2026-04-24
+Last updated: 2026-04-24
 
 ---
 
@@ -217,6 +218,19 @@ Trade-off: make-page is coupled to Build_Page_Ability's input shape. Refactors t
 ## 10. Implementation plan — phased
 
 Each phase is an independent PR-sized unit. Do not start phase N until phase N−1 acceptance passes.
+
+**Current status** (2026-04-24):
+
+| Phase | Status | Notes |
+|---|---|---|
+| 0 — source-of-truth + decisions | ✅ done | `phase-0-notes.md` |
+| 0.5 — 8-hex cleanup in Make_Widget/Make_Layout | ✅ done | both now call `Utils::generate_id()` |
+| 1 — `Css_Shorthand_Parser` trait | ✅ done | rewritten to match v4 schema shapes (not nestjs); 31 smoke cases + 34 PHPUnit assertions |
+| 2 — `css-to-props` ability | ✅ done | registered in bootstrap; smoke-tested |
+| 3 — `make-style` ability | ✅ done | registered; 12-case smoke test passes |
+| 4 — `make-page` ability | ✅ done | registered; 22-case smoke test passes for spec validation + tree building. Save path delegates to `Build_Page_Ability`. End-to-end save against a real post still pending (needs WP bootstrap). |
+| 5 — `make-section` ability | ✅ done | registered; 31-case smoke test covers all 4 layouts (hero, two-column with explicit + fallback, card-grid, centered). |
+| 6 — end-to-end on a real post | ⏳ pending | REST call against `POST /wp-json/abilities/v1/abilities/elementor/make-page/execute` with real post ID. Verification list in §8. |
 
 ### Phase 0 — source-of-truth for the parser *(before any code)*
 
