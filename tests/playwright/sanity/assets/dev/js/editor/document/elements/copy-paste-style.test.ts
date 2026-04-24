@@ -26,7 +26,7 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
 	const publishButton = page.locator( EditorSelectors.panels.topBar.wrapper + ' button', { hasText: 'Publish' } );
-	await expect( publishButton ).not.toBeDisabled();
+	await expect( publishButton ).toBeEnabled();
 
 	// Act.
 	await publishButton.click();
