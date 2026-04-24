@@ -49,8 +49,8 @@ test.describe( 'Onboarding @onboarding', () => {
 
 			await expect( page.getByRole( 'link', { name: 'Continue as a guest' } ) ).toBeVisible();
 
-			await expect( page.getByRole( 'button', { name: 'Back' } ) ).not.toBeVisible();
-			await expect( page.getByRole( 'button', { name: 'Continue', exact: true } ) ).not.toBeVisible();
+			await expect( page.getByRole( 'button', { name: 'Back' } ) ).toBeHidden();
+			await expect( page.getByRole( 'button', { name: 'Continue', exact: true } ) ).toBeHidden();
 
 			await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
 		} );
@@ -111,7 +111,7 @@ test.describe( 'Onboarding @onboarding', () => {
 			await onlineStore.click();
 			await expect( onlineStore ).toHaveAttribute( 'aria-pressed', 'true' );
 
-			await expect( continueBtn ).not.toBeDisabled();
+			await expect( continueBtn ).toBeEnabled();
 
 			await doAndWaitForProgress( page, () => continueBtn.click() );
 
@@ -185,7 +185,7 @@ test.describe( 'Onboarding @onboarding', () => {
 			).toBeVisible();
 
 			const continueWithThemeBtn = page.getByRole( 'button', { name: 'Continue with this theme' } );
-			await expect( continueWithThemeBtn ).not.toBeDisabled();
+			await expect( continueWithThemeBtn ).toBeEnabled();
 
 			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).toBeVisible();
 
@@ -208,7 +208,7 @@ test.describe( 'Onboarding @onboarding', () => {
 			await expect( page.getByTestId( 'feature-card-core_placeholder' ) ).toBeVisible();
 
 			const continueWithFreeBtn = page.getByRole( 'button', { name: 'Continue with Free' } );
-			await expect( continueWithFreeBtn ).not.toBeDisabled();
+			await expect( continueWithFreeBtn ).toBeEnabled();
 
 			await expect( page.getByRole( 'button', { name: 'Skip' } ) ).toBeVisible();
 			await expect( page.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
@@ -248,7 +248,7 @@ test.describe( 'Onboarding @onboarding', () => {
 
 		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
 		await page.getByRole( 'button', { name: 'Online store' } ).click();
-		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
 
 		await page.getByRole( 'button', { name: 'Back' } ).click();
 		await expect( page.getByTestId( 'building-for-step' ) ).toBeVisible();
@@ -258,7 +258,7 @@ test.describe( 'Onboarding @onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		const continueBtn = page.getByRole( 'button', { name: 'Continue' } );
-		await expect( continueBtn ).not.toBeDisabled();
+		await expect( continueBtn ).toBeEnabled();
 
 		await doAndWaitForProgress( page, () => continueBtn.click() );
 		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
@@ -270,7 +270,7 @@ test.describe( 'Onboarding @onboarding', () => {
 			page.getByRole( 'button', { name: 'Online store' } ),
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
-		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
 	} );
 
 	test( 'Skip on site_features shows completion screen and redirects to new page', async ( { page } ) => {
@@ -324,7 +324,7 @@ test.describe( 'Onboarding @onboarding', () => {
 			page.getByRole( 'button', { name: 'I have some experience' } ),
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
-		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).not.toBeDisabled();
+		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
 	} );
 
 	test( 'theme_selection step is skipped when Elementor theme is already active', async ( { page, apiRequests }, testInfo ) => {
@@ -350,6 +350,6 @@ test.describe( 'Onboarding @onboarding', () => {
 		);
 
 		await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
-		await expect( page.getByTestId( 'theme-selection-step' ) ).not.toBeVisible();
+		await expect( page.getByTestId( 'theme-selection-step' ) ).toBeHidden();
 	} );
 } );
