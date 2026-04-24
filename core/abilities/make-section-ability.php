@@ -41,7 +41,7 @@ class Make_Section_Ability extends Abstract_Ability {
 					'id'          => [ 'type' => 'string', 'description' => 'Outer e-flexbox ID (7-hex). Auto-generated when omitted.' ],
 					'layout'      => [ 'type' => 'string', 'description' => 'Section pattern. One of: hero, two-column, card-grid, centered.' ],
 					'classes'     => [ 'type' => 'array', 'description' => 'Global class IDs or labels for the outer container.' ],
-					'style'       => [ 'type' => 'string', 'description' => 'CSS for the outer container — auto-generates a local style keyed "{id}-s".' ],
+					'style'       => [ 'type' => 'string', 'description' => 'CSS for the outer container — auto-generates a local style keyed "e-{id}-s".' ],
 
 					'eyebrow'     => [ 'type' => 'string', 'description' => '[hero/centered] Small eyebrow text above the heading.' ],
 					'heading'     => [ 'type' => 'string', 'description' => '[hero/centered/two-column] Main heading text.' ],
@@ -72,7 +72,7 @@ class Make_Section_Ability extends Abstract_Ability {
 						'two-column: outer flex with N columns. Pass columns[] with { id?, classes?, style?, weight?, widgets[] }. When no columns[] supplied, falls back to heading/subtext in the left column and empty right column.',
 						'card-grid: outer flex with card columns (image + heading + body per card). Pass cards[] with { id?, classes?, style?, image_id?, image_alt?, heading?, body? }.',
 						'centered: outer flex with a stacked widget list. Pass widgets[] with { id, type, classes?, style?, content? }; or use heading/subtext/eyebrow shorthands.',
-						'STYLES: every `style` field runs through elementor/css-to-props (shorthand → dimensions, flex shorthand, inset-* rewrite, etc.). The style is attached as a local style keyed "{targetId}-s" and auto-mirrored into classes.value.',
+						'STYLES: every `style` field runs through elementor/css-to-props (shorthand → dimensions, flex shorthand, inset-* rewrite, etc.). The style is attached as a local style keyed "e-{targetId}-s" and auto-mirrored into classes.value.',
 						'HEADING_TAG: default h2. Must be h1–h6.',
 						'COLUMN WEIGHT: when `weight` is set on a column, an auto-generated flex-grow local style is attached and mirrored into classes.value.',
 					] ),
@@ -120,7 +120,7 @@ class Make_Section_Ability extends Abstract_Ability {
 
 		$style = isset( $input['style'] ) && is_string( $input['style'] ) ? trim( $input['style'] ) : '';
 		if ( '' !== $style ) {
-			$this->inject_style( $node, $section_id . '-s', $style );
+			$this->inject_style( $node, 'e-' . $section_id . '-s', $style );
 		}
 
 		return [ 'element' => $node ];
@@ -214,7 +214,7 @@ class Make_Section_Ability extends Abstract_Ability {
 			}
 
 			if ( ! empty( $col['style'] ) && is_string( $col['style'] ) ) {
-				$this->inject_style( $col_el, $col_id . '-s', $col['style'] );
+				$this->inject_style( $col_el, 'e-' . $col_id . '-s', $col['style'] );
 			}
 
 			$cols[] = $col_el;
@@ -247,7 +247,7 @@ class Make_Section_Ability extends Abstract_Ability {
 			$card_el = $this->make_flexbox( $card_id, $card_classes, $children );
 
 			if ( ! empty( $card['style'] ) && is_string( $card['style'] ) ) {
-				$this->inject_style( $card_el, $card_id . '-s', $card['style'] );
+				$this->inject_style( $card_el, 'e-' . $card_id . '-s', $card['style'] );
 			}
 
 			$out[] = $card_el;
@@ -327,7 +327,7 @@ class Make_Section_Ability extends Abstract_Ability {
 		];
 
 		if ( ! empty( $spec['style'] ) && is_string( $spec['style'] ) ) {
-			$this->inject_style( $node, $id . '-s', $spec['style'] );
+			$this->inject_style( $node, 'e-' . $id . '-s', $spec['style'] );
 		}
 
 		return $node;

@@ -219,7 +219,7 @@ class Make_Page_Ability extends Abstract_Ability {
 		$styles   = [];
 
 		if ( '' !== $css ) {
-			$style_id            = $id . '-s';
+			$style_id            = 'e-' . $id . '-s';
 			$styles[ $style_id ] = [
 				'id'       => $style_id,
 				'type'     => 'class',
