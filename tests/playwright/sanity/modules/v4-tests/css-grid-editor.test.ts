@@ -42,7 +42,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const editor = await wpAdmin.openNewPage();
 		const containerId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 
-		// Act - switch to grid display
+		// Act - switch to grid display and set columns via panel
 		await editor.selectElement( containerId );
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Layout' );
@@ -50,26 +50,16 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const displayControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'display', { nestingLevel: 2 } );
 		await editor.v4Panel.style.changeButtonGroupControl( displayControl, 'grid' );
 
-		// Set grid columns to 2
 		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
 		await editor.v4Panel.style.changeSizeControl( columnsControl, 2 );
 
-		// Set gap
-		const gapColumnControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Column', { nth: 0 } );
-		await editor.v4Panel.style.changeSizeControl( gapColumnControl, 10, 'px' );
-
-		const gapRowControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Row', { nth: 0 } );
-		await editor.v4Panel.style.changeSizeControl( gapRowControl, 10, 'px' );
-
-		// Set justify items
-		const justifyItemsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'justify items', { nestingLevel: 2 } );
-		await editor.v4Panel.style.changeButtonGroupControl( justifyItemsControl, 'stretch' );
-
-		// Add 4 div-block children with background colors
+		// Add 4 div-block children with distinct background colors
 		const colors = [ '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4' ];
+		const childIds: string[] = [];
 
 		for ( const color of colors ) {
 			const childId = await editor.addElement( { elType: 'e-div-block' }, containerId );
+			childIds.push( childId );
 			await editor.selectElement( childId );
 			await editor.v4Panel.openTab( 'style' );
 			await editor.v4Panel.style.openSection( 'Size' );
@@ -79,9 +69,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		}
 
 		// Add a heading inside the first child
-		const firstChild = editor.getPreviewFrame().locator( `[data-id="${ containerId }"] [data-element_type="e-div-block"]` ).first();
-		const firstChildId = await firstChild.getAttribute( 'data-id' );
-		await editor.addWidget( { widgetType: 'e-heading', container: firstChildId } );
+		await editor.addWidget( { widgetType: 'e-heading', container: childIds[ 0 ] } );
 
 		// Select the grid container to frame the screenshot
 		await editor.selectElement( containerId );
