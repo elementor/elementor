@@ -1,6 +1,7 @@
 import { registerBySelector } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
+import _ from 'lodash';
 
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
@@ -102,28 +103,76 @@ function buildAtomicFormPayload( form ) {
 
 function getAtomicFormFields( form ) {
 	const fields = [];
-	const inputs = form.querySelectorAll( ATOMIC_FORM_FIELD_SELECTOR );
+	const allInputs = [ ...form.querySelectorAll( ATOMIC_FORM_FIELD_SELECTOR ) ].filter( ( input ) => input.dataset.interactionId );
+	const inputGroups = _.groupBy( allInputs, ( input ) => input.getAttribute( 'name' ) );
 
-	inputs.forEach( ( input ) => {
-		const id = input.dataset.interactionId;
-
-		if ( ! id ) {
+	Object.entries( inputGroups ).forEach( ( [ name, inputs ] ) => {
+		if ( name && inputs.every( ( input ) => 'radio' === input.getAttribute( 'type' ) ) ) {
+			fields.push( getGroupedFields( name, inputs, 'radio', form ) );
 			return;
 		}
 
-		const label = getAtomicFormFieldLabel( input, form );
-		const type = getAtomicFormFieldType( input );
-		const value = getAtomicFormFieldValue( input, type );
+		if ( name && inputs.length > 1 && inputs.every( ( input ) => 'checkbox' === input.getAttribute( 'type' ) ) ) {
+			fields.push( getGroupedFields( name, inputs, 'checkbox', form ) );
+			return;
+		}
 
-		fields.push( {
-			id,
-			type,
-			label,
-			value,
+		inputs.forEach( ( input ) => {
+			const id = input.dataset.interactionId;
+			const label = getAtomicFormFieldLabel( input, form );
+			const type = getAtomicFormFieldType( input );
+			const value = getAtomicFormFieldValue( input, type );
+			const options = getAtomicFieldOptions( input, type, form );
+
+			fields.push( {
+				id,
+				type,
+				label,
+				value,
+				name,
+				options,
+			} );
 		} );
 	} );
 
 	return fields;
+}
+
+function getGroupedFields( name, inputs, type, form ) {
+	const checkedInputs = inputs.filter( ( input ) => input.checked );
+	const value = getAtomicFormFieldValue( checkedInputs, type );
+	const options = getAtomicFieldOptions( inputs, type, form );
+	return {
+		id: name,
+		type,
+		label: name,
+		value,
+		name,
+		options,
+	};
+}
+
+function getAtomicFieldOptions( fieldOrGroup, type, form ) {
+	if ( 'select' === type ) {
+		const optionElements = fieldOrGroup.querySelectorAll( 'option' );
+		return Array.from( optionElements ).map( ( option ) => {
+			return {
+				value: option.value,
+				label: option.textContent,
+			};
+		} );
+	}
+
+	if ( Array.isArray( fieldOrGroup ) && [ 'radio', 'checkbox' ].includes( type ) ) {
+		return fieldOrGroup.map( ( input ) => {
+			return {
+				value: input.value,
+				label: getAtomicFormFieldLabel( input, form ),
+			};
+		} );
+	}
+
+	return null;
 }
 
 function getAtomicFormFieldLabel( field, form ) {
@@ -148,23 +197,28 @@ function getAtomicFormFieldLabel( field, form ) {
 
 	const placeholder = field.getAttribute( 'placeholder' );
 
-	return placeholder || '';
+	return placeholder || fieldId || '';
 }
 
-function getAtomicFormFieldValue( input, type ) {
-	if ( 'checkbox' !== type ) {
-		return input.value;
+function getAtomicFormFieldValue( inputs, type ) {
+	if ( Array.isArray( inputs ) ) {
+		return inputs.map( ( input ) => input.value ).join( ', ' );
 	}
 
-	return input.checked ? input.value || 'on' : '';
+	if ( 'checkbox' === type ) {
+		return inputs.checked ? inputs.value || 'on' : '';
+	}
+
+	return inputs.value;
 }
 
 function getAtomicFormFieldType( field ) {
-	if ( field.matches( 'textarea' ) ) {
-		return 'textarea';
+	const tagName = field.tagName.toLowerCase();
+	if ( 'input' === tagName ) {
+		return field.getAttribute( 'type' ) || 'text';
 	}
 
-	return field.getAttribute( 'type' ) || 'text';
+	return tagName;
 }
 
 async function submitAtomicForm( payload ) {
@@ -186,6 +240,8 @@ async function submitAtomicForm( payload ) {
 		formData.append( `form_fields[${ index }][id]`, field.id );
 		formData.append( `form_fields[${ index }][type]`, field.type );
 		formData.append( `form_fields[${ index }][label]`, field.label );
+		formData.append( `form_fields[${ index }][name]`, field.name );
+		formData.append( `form_fields[${ index }][options]`, JSON.stringify( field.options ) );
 
 		if ( Array.isArray( field.value ) ) {
 			field.value.forEach( ( value, valueIndex ) => {
