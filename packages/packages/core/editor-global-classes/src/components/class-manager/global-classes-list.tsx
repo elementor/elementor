@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
@@ -30,7 +30,7 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
 	const filters = useFilters();
-	const [ draggedItemId, setDraggedItemId ] = React.useState< StyleDefinitionID | null >( null );
+	const [ draggedItemId, setDraggedItemId ] = useState< StyleDefinitionID | null >( null );
 	const draggedItemLabel = cssClasses.find( ( cssClass ) => cssClass.id === draggedItemId )?.label ?? '';
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();

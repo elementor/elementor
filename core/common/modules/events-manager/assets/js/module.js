@@ -1,9 +1,14 @@
 import eventsConfig from './events-config';
-import mixpanel from 'mixpanel-browser';
+import mixpanel, { Mixpanel } from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
+import { configureSessionRecording, handleSessionRecording } from './session-recording';
+
+/** @type {Mixpanel | null} */
+let mixpanelInstance = null;
 
 export default class extends elementorModules.Module {
 	trackingEnabled = false;
+	availableExperiments = [];
 
 	onInit() {
 		this.config = eventsConfig;
@@ -12,22 +17,34 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
+		configureSessionRecording( elementorCommon.config.editor_events?.session_recording_events );
 		this.initializeMixpanel( () => this.enableTracking() );
 	}
 
 	initializeMixpanel( onLoaded ) {
-		mixpanel.init(
-			elementorCommon.config.editor_events?.token,
-			{
-				persistence: 'localStorage',
-				autocapture: false,
-				flags: true,
-				api_hosts: {
-					flags: 'https://api-eu.mixpanel.com',
+		if ( mixpanelInstance && mixpanelInstance.isInitialized ) {
+			onLoaded( mixpanelInstance );
+		} else {
+			mixpanelInstance = mixpanel.init(
+				elementorCommon.config.editor_events?.token,
+				{
+					persistence: 'localStorage',
+					autocapture: false,
+					flags: true,
+					api_hosts: {
+						flags: 'https://api-eu.mixpanel.com',
+					},
+					loaded: onLoaded,
+					record_sessions_percent: 0,
+					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
+					record_min_ms: 5 * 1000, // 5 Seconds
+					record_max_ms: 30 * 1000, // 30 Seconds
+					record_mask_text_selector: '',
 				},
-				loaded: onLoaded,
-			},
-		);
+				'elementor-editor',
+			);
+		}
+		elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
 	}
 
 	enableTracking() {
@@ -35,16 +52,16 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		const userId = elementorCommon.config.library_connect?.user_id;
+		const userId = elementorCommon.config.editor_events?.user_id;
+
+		mixpanelInstance.register( {
+			appType: 'Editor',
+		} );
 
 		if ( userId ) {
-			mixpanel.identify( userId );
+			mixpanelInstance.identify( userId );
 
-			mixpanel.register( {
-				appType: 'Editor',
-			} );
-
-			mixpanel.people.set_once( {
+			mixpanelInstance.people.set_once( {
 				$user_id: userId,
 				$last_login: new Date().toISOString(),
 				$plan_type: elementorCommon.config.library_connect?.plan_type || TIERS.free,
@@ -52,6 +69,8 @@ export default class extends elementorModules.Module {
 		}
 
 		this.trackingEnabled = true;
+
+		this.availableExperiments = Object.keys( elementorCommon.config.experimentalFeatures || {} );
 	}
 
 	dispatchEvent( name, data, options = {} ) {
@@ -64,7 +83,7 @@ export default class extends elementorModules.Module {
 		}
 
 		const eventData = {
-			user_id: elementorCommon.config.library_connect?.user_id || null,
+			user_id: elementorCommon.config.editor_events?.user_id || null,
 			user_roles: elementorCommon.config.library_connect?.user_roles || [],
 			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
 			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
@@ -73,18 +92,24 @@ export default class extends elementorModules.Module {
 			client_id: elementorCommon.config.editor_events?.site_key,
 			app_version: elementorCommon.config.editor_events?.elementor_version,
 			site_language: elementorCommon.config.editor_events?.site_language,
+			experiments: this.availableExperiments,
 			...data,
 		};
 
-		mixpanel.track( name, eventData, options );
+		mixpanelInstance.track( name, eventData, options );
+
+		const recordingDecision = handleSessionRecording( name, mixpanelInstance );
+		if ( recordingDecision ) {
+			mixpanelInstance.track( recordingDecision, eventData );
+		}
 	}
 
 	async featureFlagIsActive( flagName ) {
-		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
+		if ( 'function' !== typeof mixpanelInstance?.flags?.is_enabled ) {
 			return false;
 		}
 
-		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+		const isEnabled = await mixpanelInstance.flags.is_enabled( flagName, false );
 		return true === isEnabled;
 	}
 
@@ -100,7 +125,7 @@ export default class extends elementorModules.Module {
 				return defaultValue;
 			}
 
-			if ( ! mixpanel ) {
+			if ( ! mixpanelInstance ) {
 				return defaultValue;
 			}
 
@@ -108,15 +133,15 @@ export default class extends elementorModules.Module {
 				this.enableTracking();
 			}
 
-			if ( ! mixpanel.flags ) {
+			if ( ! mixpanelInstance.flags ) {
 				return defaultValue;
 			}
 
-			if ( 'function' !== typeof mixpanel.flags.get_variant_value ) {
+			if ( 'function' !== typeof mixpanelInstance.flags.get_variant_value ) {
 				return defaultValue;
 			}
 
-			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
+			const variant = await mixpanelInstance.flags.get_variant_value( experimentName, defaultValue );
 
 			if ( undefined === variant || null === variant ) {
 				return defaultValue;
@@ -133,16 +158,16 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+		mixpanelInstance.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
 	}
 
 	isMixpanelReady() {
-		if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+		if ( 'undefined' === typeof mixpanelInstance || ! mixpanelInstance ) {
 			return false;
 		}
 
 		try {
-			const distinctId = mixpanel.get_distinct_id();
+			const distinctId = mixpanelInstance.get_distinct_id();
 			return distinctId !== undefined && distinctId !== null;
 		} catch ( error ) {
 			return false;
@@ -154,6 +179,6 @@ export default class extends elementorModules.Module {
 	}
 
 	getMixpanelInstance() {
-		return this.isMixpanelReady() ? mixpanel : undefined;
+		return this.isMixpanelReady() ? mixpanelInstance : undefined;
 	}
 }

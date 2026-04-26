@@ -1,0 +1,88 @@
+name: Setup Playwright Environment
+description: Installs dependencies, WordPress environment, and Playwright browsers
+
+inputs:
+  artifact-name:
+    description: 'Name of the build artifact to download'
+    required: true
+  php-version:
+    description: 'PHP version to use'
+    required: true
+  browser:
+    description: 'Browser(s) to install: chromium, firefox, or both'
+    required: false
+    default: 'chromium'
+
+outputs:
+  browsers:
+    description: 'Space-separated list of installed browsers'
+    value: ${{ steps.browsers.outputs.list }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set PHP_VERSION environment variable
+      shell: bash
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+      run: echo "PHP_VERSION=$PHP_VERSION" >> $GITHUB_ENV
+
+    - name: Cache Docker images
+      uses: ScribeMD/docker-cache@0.5.0
+      with:
+        key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
+    - name: Install Node.js 20.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20.x
+        cache: 'npm'
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        set -euo pipefail
+        npm run install:ci
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ./build
+
+    - name: Download hello-elementor theme
+      shell: bash
+      run: |
+        set -euo pipefail
+        curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+        unzip hello-elementor
+
+    - name: Update PHP version in config
+      shell: bash
+      env:
+        PHP_VERSION: ${{ inputs.php-version }}
+      run: |
+        set -euo pipefail
+        jq --arg php_version "$PHP_VERSION" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
+    - name: Install WordPress environment
+      shell: bash
+      run: npm run start-local-server
+
+    - name: Setup test data
+      shell: bash
+      run: npm run test:setup:playwright
+
+    - name: Resolve browsers to install
+      id: browsers
+      shell: bash
+      run: |
+        case "${{ inputs.browser }}" in
+          firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
+          both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
+          *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
+        esac
+
+    - name: Install playwright/test
+      shell: bash
+      run: npx playwright install --with-deps ${{ steps.browsers.outputs.list }}

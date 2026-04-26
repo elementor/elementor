@@ -5,8 +5,9 @@ namespace Elementor\Testing\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -73,7 +74,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
@@ -105,6 +106,24 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		// Act.
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
+	}
+
+	public function test_register_styles_ignores_order_entries_without_matching_items() {
+		// Arrange.
+		$global_classes = new Atomic_Global_Styles();
+		$global_classes->register_hooks();
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$items = $this->mock_global_classes['items'];
+		$order_with_orphans = [ 'g-missing-1', 'g-4-124', 'g-4-123', 'g-missing-2' ];
+
+		$styles_repository = Global_Classes_Repository::make();
+
+		$styles_repository->put( $items, $order_with_orphans );
+
+		$synced_order = $styles_repository->all()->get_order()->all();
+
+		$this->assertSame( [ 'g-4-124', 'g-4-123' ], $synced_order );
 	}
 
 	public function test_transform_classes_names() {

@@ -30,6 +30,7 @@ const createLinkProp = ( destination ) => ( {
 	$$type: 'link',
 	value: {
 		destination,
+		tag: 'a',
 	},
 } );
 
@@ -370,6 +371,46 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 		expect( currentAttributes ).toContain( 'data-element_type' );
 		expect( currentAttributes ).toContain( 'data-model-cid' );
 	} );
+
+	it( 'should call rerenderEntireView and skip base renderOnChange when tag actually changed', () => {
+		// Arrange
+		viewInstance._parent = { removeChildView: jest.fn(), addChild: jest.fn() };
+		mockElement.tagName = 'DIV';
+		viewInstance.tagName = jest.fn( () => 'a' );
+
+		const settings = {
+			changedAttributes: jest.fn( () => ( { link: { value: 'https://example.com' } } ) ),
+		};
+
+		const rerenderSpy = jest.spyOn( viewInstance, 'rerenderEntireView' ).mockImplementation( () => {} );
+
+		// Act
+		viewInstance.renderOnChange( settings );
+
+		// Assert
+		expect( rerenderSpy ).toHaveBeenCalled();
+		expect( BaseElementView.prototype.renderOnChange ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not call rerenderEntireView when resolved tag matches DOM tag (case-insensitive)', () => {
+		// Arrange
+		viewInstance._parent = { removeChildView: jest.fn(), addChild: jest.fn() };
+		mockElement.tagName = 'A';
+		viewInstance.tagName = jest.fn( () => 'a' );
+
+		const settings = {
+			changedAttributes: jest.fn( () => ( { link: { value: 'https://example.com' } } ) ),
+		};
+
+		const rerenderSpy = jest.spyOn( viewInstance, 'rerenderEntireView' ).mockImplementation( () => {} );
+
+		// Act
+		viewInstance.renderOnChange( settings );
+
+		// Assert
+		expect( rerenderSpy ).not.toHaveBeenCalled();
+		expect( BaseElementView.prototype.renderOnChange ).toHaveBeenCalled();
+	} );
 } );
 
 describe( 'createAtomicElementBaseView - tagName with overridable props', () => {
@@ -684,7 +725,7 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		mockModel.getSetting.mockReturnValue( undefined );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toBeNull();
@@ -700,12 +741,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://example.com',
+			href: 'https://example.com',
 		} );
 	} );
 
@@ -719,12 +759,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://example.com/?p=123',
+			href: 'https://example.com/?p=123',
 		} );
 	} );
 
@@ -738,12 +777,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'data-action-link',
-			value: DYNAMIC_LINK_VALUE,
+			'data-action-link': DYNAMIC_LINK_VALUE,
 		} );
 	} );
 
@@ -759,12 +797,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: 'https://dynamic-url.com',
+			href: 'https://dynamic-url.com',
 		} );
 	} );
 
@@ -780,12 +817,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: originUrl,
+			href: originUrl,
 		} );
 	} );
 
@@ -808,12 +844,11 @@ describe( 'createAtomicElementBaseView - getLink with overridable props', () => 
 		} ) );
 
 		// Act
-		const result = viewInstance.getLink();
+		const result = viewInstance.getLinkAttributes();
 
 		// Assert
 		expect( result ).toEqual( {
-			attr: 'href',
-			value: overrideUrl,
+			href: overrideUrl,
 		} );
 	} );
 } );

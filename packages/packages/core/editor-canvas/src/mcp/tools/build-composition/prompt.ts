@@ -1,5 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
+import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
+
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -7,6 +9,10 @@ export const generatePrompt = () => {
 # RESOURCES (Read before use)
 - [elementor://global-classes] - Check FIRST for reusable classes
 - [elementor://global-variables] - ONLY use variables defined here
+- [${ AVAILABLE_WIDGETS_URI }/v4]
+
+# TOOL SUUPORT
+This tool support v4 elements only
 
 # WORKFLOW
 1. Check/create global classes via "create-global-class" tool
@@ -18,6 +24,12 @@ export const generatePrompt = () => {
 - Containers: "e-flexbox", "e-div-block", "e-tabs"
 - Every element needs unique "configuration-id"
 - No attributes, classes, IDs, or text nodes in XML
+
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`allowed_child_types\` lists which element types can be nested inside
+- \`allowed_parents\` lists which element types this element can be placed inside
 
 # CONFIGURATION
 - Map configuration-id → elementConfig (props) + stylesConfig (layout only)

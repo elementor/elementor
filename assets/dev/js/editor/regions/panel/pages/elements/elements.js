@@ -7,6 +7,10 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsWidgetCreationView = require( './views/widget-creation' ),
 	PanelElementsLayoutView;
 
+function elementorIsAngieIframeInDocument() {
+	return !! document.querySelector( 'iframe[src*="angie/"]' );
+}
+
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
 
@@ -102,6 +106,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		jQuery.each( elementor.config.atomicFormPromotionWidgets || [], ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+				atomicFormPromotion: true,
+			} );
+		} );
+
 		if ( elementor.config.integrationWidgets ) {
 			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
 
@@ -122,8 +137,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
-					replacements = widget.replacements,
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+
+				if ( ! originalWidget ) {
+					return;
+				}
+
+				const replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
 				if ( ! this.shouldAddWidget( presetWidget ) ) {
@@ -276,6 +296,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
 
 		if ( ! filterValue ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
+		const isAngiePresent = elementorIsAngieIframeInDocument();
+		const isAdministrator = elementor.config.user.is_administrator;
+
+		if ( ! isAngiePresent && ! isAdministrator ) {
 			this.widgetCreation.empty();
 			return;
 		}

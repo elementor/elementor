@@ -1,3 +1,4 @@
+import { type Root } from 'react-dom/client';
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
@@ -36,7 +37,7 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[
@@ -164,6 +165,10 @@ export declare class ElementView {
 	once: ( event: string, callback: () => void ) => void;
 }
 
+export declare class TemplatedElementView extends ElementView {
+	_doAfterRender( callback: () => void ): void;
+}
+
 type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
@@ -241,4 +246,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };

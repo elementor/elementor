@@ -129,15 +129,17 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const checkProInstallScreen = useCheckProInstallScreen();
 
 	const handleConnectSuccess = useCallback(
-		async ( data: ConnectSuccessData ) => {
+		async ( data: ConnectSuccessData, loginType: 'elementor_login' | 'social_login' ) => {
 			trackConnect( true );
-			trackLoginType( 'elementor_login' );
+			trackLoginType( loginType );
 
 			const shouldEnableTracking = data.tracking_opted_in || canSendEvents();
 
 			if ( data.tracking_opted_in ) {
 				setCanSendEvents( true );
 			}
+
+			updateLibraryConnectConfig( data );
 
 			if ( shouldEnableTracking ) {
 				initializeAndEnableTracking( ( mp ) => {
@@ -149,8 +151,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 				} );
 			}
 
-			updateLibraryConnectConfig( data );
-
 			const result = await checkProInstallScreen();
 			actions.setShouldShowProInstallScreen( result.shouldShowProInstallScreen );
 			actions.setConnected( true );
@@ -160,7 +160,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const handleConnect = useElementorConnect( {
 		connectUrl: urls.connect,
-		onSuccess: handleConnectSuccess,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'elementor_login' ),
+	} );
+
+	const handleSignUp = useElementorConnect( {
+		connectUrl: urls.signUp,
+		onSuccess: ( data ) => handleConnectSuccess( data, 'social_login' ),
 	} );
 
 	function handleContinueAsGuest( event: React.SyntheticEvent ) {
@@ -185,30 +190,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'user_exit',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.setExitType( 'user_exit' );
 					onClose?.();
 				},
 			}
 		);
-	}, [
-		actions,
-		choices,
-		completedSteps,
-		isConnected,
-		isGuest,
-		onClose,
-		stepId,
-		trackErrorReported,
-		trackSummary,
-		updateProgress,
-	] );
+	}, [ actions, choices, completedSteps, isConnected, isGuest, onClose, trackSummary, updateProgress ] );
 
 	function handleBack() {
 		trackBackClicked( stepId );
@@ -239,18 +227,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 			},
 			{
 				onSuccess: redirectToNewPage,
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'complete_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					redirectToNewPage();
 				},
 			}
 		);
-	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage, trackErrorReported ] );
+	}, [ updateProgress, stepId, stepIndex, totalSteps, redirectToNewPage ] );
 
 	const handleSkip = useCallback( () => {
 		trackSkipClicked( stepId );
@@ -273,13 +255,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				},
 				{
 					onSuccess: redirectToNewPage,
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'skip_and_complete',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						redirectToNewPage();
 					},
 				}
@@ -297,13 +273,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				onSuccess: () => {
 					actions.nextStep();
 				},
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'request',
-						targetName: 'skip_step',
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-					} );
+				onError: () => {
 					actions.nextStep();
 				},
 			}
@@ -318,7 +288,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 		stepId,
 		stepIndex,
 		totalSteps,
-		trackErrorReported,
 		trackSkipClicked,
 		trackSummary,
 		updateProgress,
@@ -327,18 +296,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const saveChoicesFireAndForget = useCallback(
 		( choiceData: Record< string, unknown > ) => {
-			updateChoices.mutate( choiceData, {
-				onError: ( error ) => {
-					trackErrorReported( {
-						targetType: 'save',
-						targetName: Object.keys( choiceData )[ 0 ] ?? stepId,
-						stepId,
-						errorBody: error instanceof Error ? error.message : 'Failed to save choices',
-					} );
-				},
-			} );
+			updateChoices.mutate( choiceData );
 		},
-		[ updateChoices, trackErrorReported, stepId ]
+		[ updateChoices ]
 	);
 
 	const handleContinue = useCallback(
@@ -418,13 +378,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
-					onError: ( error ) => {
-						trackErrorReported( {
-							targetType: 'request',
-							targetName: 'complete_step',
-							stepId,
-							errorBody: error instanceof Error ? error.message : 'Failed to update progress',
-						} );
+					onError: () => {
 						actions.completeStep( stepId );
 						actions.nextStep();
 					},
@@ -505,7 +459,11 @@ export function AppContent( { onClose }: AppContentProps ) {
 					</TopBar>
 				}
 			>
-				<Login onConnect={ handleConnect } onContinueAsGuest={ handleContinueAsGuest } />
+				<Login
+					onConnect={ handleConnect }
+					onSignUp={ handleSignUp }
+					onContinueAsGuest={ handleContinueAsGuest }
+				/>
 			</BaseLayout>
 		);
 	}

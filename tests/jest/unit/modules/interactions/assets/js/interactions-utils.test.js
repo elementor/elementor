@@ -1,6 +1,9 @@
 import {
 	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 	parseAnimationName,
+	skipInteraction,
 	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
@@ -9,23 +12,72 @@ import {
 	parseInteractionsData,
 } from 'elementor/modules/interactions/assets/js/interactions-utils';
 
-import { mockInteraction, mockBreakpoints, mockAnimation, mockTiming, mockConfig } from './utils';
+import { initBreakpoints } from 'elementor/modules/interactions/assets/js/interactions-breakpoints.js';
+
+import {
+	mockInteraction,
+	mockBreakpoints,
+	mockAnimation,
+	mockTiming,
+	mockConfig,
+	stubInteractionsConfig,
+} from './utils';
 
 describe( 'interactions-utils', () => {
 	beforeAll( () => {
-		window.ElementorInteractionsConfig = {
-			constants: {
-				defaultReplay: false,
-				defaultRelativeTo: 'viewport',
-				defaultStart: 0,
-				defaultEnd: 100,
-				slideDistance: 100,
-				scaleStart: 0,
-				defaultEasing: 'easeIn',
-				defaultDuration: 600,
-				defaultDelay: 0,
-			},
-		};
+		stubInteractionsConfig();
+
+		Object.defineProperty( window, 'innerWidth', {
+			value: 1024,
+			writable: true,
+			configurable: true,
+		} );
+	} );
+
+	beforeEach( () => {
+		jest.resetModules();
+	} );
+
+	describe( 'skipInteraction', () => {
+		it( 'should skip interaction when trigger is not supported', () => {
+			const result = skipInteraction( { trigger: 'not-supported' } );
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should skip interaction when effect is custom', () => {
+			const result = skipInteraction( { trigger: 'load', effect: 'custom' } );
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should skip interaction when breakpoint is excluded', () => {
+			window.innerWidth = 1600;
+
+			initBreakpoints();
+
+			const result = skipInteraction( {
+				trigger: 'load',
+				effect: 'fade',
+				breakpoints: {
+					excluded: [ 'desktop' ],
+				},
+			} );
+
+			expect( result ).toBe( true );
+		} );
+
+		it( 'should not skip interaction when breakpoint is not excluded', () => {
+			window.innerWidth = 1024;
+
+			initBreakpoints();
+
+			const result = skipInteraction( {
+				trigger: 'load',
+				effect: 'fade',
+				breakpoints: { excluded: [ 'mobile' ] },
+			} );
+
+			expect( result ).toBe( false );
+		} );
 	} );
 
 	describe( 'getKeyframes', () => {
@@ -132,6 +184,138 @@ describe( 'interactions-utils', () => {
 			it( 'should ignore unknown parts in a direction string', () => {
 				const result = getKeyframes( 'slide', 'in', 'top-invalid' );
 				expect( result ).toEqual( { y: [ -100, 0 ] } );
+			} );
+
+			it( 'should not throw and should skip movement when direction is a non-string (e.g. a typed wrapper object)', () => {
+				const nonStringDirection = { $$type: 'string', value: '' };
+				expect( () => getKeyframes( 'fade', 'in', nonStringDirection ) ).not.toThrow();
+				expect( getKeyframes( 'fade', 'in', nonStringDirection ) ).toEqual( { opacity: [ 0, 1 ] } );
+			} );
+		} );
+	} );
+
+	describe( 'computed transform keyframes preservation', () => {
+		it( 'extracts baseline transform values from computed style', () => {
+			const element = document.createElement( 'div' );
+			const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( {
+				transform: 'matrix(1.2, 0, 0, 1.2, 30, 40)',
+			} );
+
+			const baseline = getTransformBaselineFromComputedStyle( element );
+
+			expect( baseline ).toMatchObject( {
+				x: 30,
+				y: 40,
+				scaleX: 1.2,
+				scaleY: 1.2,
+				rotate: 0,
+			} );
+
+			getComputedStyleSpy.mockRestore();
+		} );
+
+		/**
+		 * Browsers normalize transform lists to matrix() (2D affine) or matrix3d() (3D / mixed).
+		 * createMatrixFromTransform supports both via DOMMatrix and manual parsing — see interactions-shared-utils.js.
+		 */
+		describe( 'getTransformBaselineFromComputedStyle — matrix() vs matrix3d()', () => {
+			function mockTransform( transform ) {
+				const element = document.createElement( 'div' );
+				const getComputedStyleSpy = jest.spyOn( window, 'getComputedStyle' ).mockReturnValue( { transform } );
+				const baseline = getTransformBaselineFromComputedStyle( element );
+				getComputedStyleSpy.mockRestore();
+				return baseline;
+			}
+
+			it( 'parses 2D matrix() from scale + translate (browser-style normalization)', () => {
+				// Equivalent to scale3d(1,1,1) translateX(5rem) translateY(20px) → 2D affine.
+				const baseline = mockTransform( 'matrix(1, 0, 0, 1, 80, 20)' );
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() that is equivalent to pure 2D translation (fourth column tx, ty)', () => {
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBe( 80 );
+				expect( baseline.y ).toBe( 20 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 1, 5 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'parses matrix3d() when 3D rotate is present (2D affine slice + translation)', () => {
+				// Same shape as getComputedStyle after rotateX(5deg) + translate — matrix3d, not matrix().
+				// rotate from atan2(m21,m11) stays 0 here; the tilt shows up in scaleY / skew (2D-only decomposition).
+				const baseline = mockTransform(
+					'matrix3d(1, 0, 0, 0, 0, 0.996195, 0.0871557, 0, 0, -0.0871557, 0.996195, 0, 80, 20, 0, 1)',
+				);
+				expect( baseline ).not.toBeNull();
+				expect( baseline.x ).toBeCloseTo( 80, 5 );
+				expect( baseline.y ).toBeCloseTo( 20, 5 );
+				expect( baseline.scaleX ).toBeCloseTo( 1, 5 );
+				expect( baseline.scaleY ).toBeCloseTo( 0.996195, 4 );
+				expect( baseline.rotate ).toBeCloseTo( 0, 5 );
+			} );
+
+			it( 'returns null when computed transform is none', () => {
+				expect( mockTransform( 'none' ) ).toBeNull();
+			} );
+
+			it( 'returns null when transform is empty', () => {
+				expect( mockTransform( '' ) ).toBeNull();
+			} );
+
+			it( 'returns null for a non-matrix transform string', () => {
+				expect( mockTransform( 'translate(10px)' ) ).toBeNull();
+			} );
+		} );
+
+		it( 'preserves transform channels not affected by interaction keyframes', () => {
+			const keyframes = { rotate: [ 0, 45 ] };
+			const baseline = {
+				x: 20,
+				y: 10,
+				scaleX: 1.5,
+				scaleY: 1.5,
+				rotate: 0,
+				skewX: 0,
+			};
+
+			const merged = preserveTransformKeyframes( keyframes, baseline );
+
+			expect( merged ).toEqual( {
+				rotate: [ 0, 45 ],
+				x: [ 20, 20 ],
+				y: [ 10, 10 ],
+				scale: [ 1.5, 1.5 ],
+			} );
+		} );
+
+		it( 'does not override interaction-owned transform channels', () => {
+			const keyframes = { x: [ -100, 0 ], scale: [ 0, 1 ] };
+			const baseline = {
+				x: 20,
+				y: 10,
+				scaleX: 1.5,
+				scaleY: 1.5,
+				rotate: 45,
+				skewX: 0,
+			};
+
+			const merged = preserveTransformKeyframes( keyframes, baseline );
+
+			expect( merged ).toEqual( {
+				x: [ -100, 0 ],
+				y: [ 10, 10 ],
+				scale: [ 0, 1 ],
+				rotate: [ 45, 45 ],
 			} );
 		} );
 	} );
@@ -256,6 +440,25 @@ describe( 'interactions-utils', () => {
 			expect( parsed.breakpoints ).toEqual( {
 				excluded: [ 'widescreen', 'desktop', 'laptop' ],
 			} );
+		} );
+
+		it( 'should return direction as empty string when typed wrapper has empty string value — regression for direction.split TypeError', () => {
+			const interaction = mockInteraction( {
+				trigger: 'load',
+				animation: mockAnimation( {
+					effect: 'fade',
+					type: 'in',
+					direction: '', // Wrapped as { $$type: 'string', value: '' } by mockAnimation
+					timingConfig: mockTiming( { duration: 300, delay: 0 } ),
+					config: mockConfig( { replay: false, easing: 'easeIn' } ),
+				} ),
+				breakpoints: mockBreakpoints( { excluded: [] } ),
+			} );
+
+			// Before the fix, direction would be set to the raw wrapper object { $$type: 'string', value: '' }
+			// because '' is falsy and the || fallback kicked in, causing direction.split to throw.
+			expect( () => extractAnimationConfig( interaction ) ).not.toThrow();
+			expect( extractAnimationConfig( interaction ).direction ).toBe( '' );
 		} );
 
 		it( 'should normalize size in seconds into ms', () => {

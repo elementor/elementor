@@ -2,9 +2,10 @@ import { useMemo } from 'react';
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { type SetSizeValue, type SizeUnit } from '../types';
+import { type SetSizeValue } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
 import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
+import { useUnitSync } from './use-unit-sync';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -15,7 +16,7 @@ type UseSizeValueProps< T, U > = {
 	defaultUnit?: U;
 };
 
-export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
+export const useSizeValue = < T extends SizeValue, U extends SizeValue[ 'unit' ] >( {
 	value,
 	setValue,
 	units,
@@ -38,8 +39,21 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 		fallback: () => createDefaultSizeValue( units, defaultUnit ),
 	} );
 
+	const [ unit, setUnit ] = useUnitSync( {
+		sizeValue,
+		setUnit: ( newUnit ) => {
+			setSizeValue( {
+				unit: newUnit,
+				size: resolveSizeOnUnitChange( sizeValue.size, newUnit ),
+			} as T );
+		},
+		persistWhen: () => {
+			return Boolean( sizeValue.size ) || sizeValue.size !== '' || isExtendedUnit( sizeValue.unit );
+		},
+	} );
+
 	const setSize = ( newSize: string, isInputValid = true ) => {
-		if ( isExtendedUnit( sizeValue.unit ) ) {
+		if ( isExtendedUnit( unit ) ) {
 			return;
 		}
 
@@ -47,21 +61,17 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 		const parsed = Number( trimmed );
 
 		const newState = {
-			...sizeValue,
+			unit,
 			size: trimmed && ! isNaN( parsed ) ? parsed : '',
-		};
+		} as T;
 
 		setSizeValue( newState, undefined, { validation: () => isInputValid } );
 	};
 
-	const setUnit = ( unit: SizeValue[ 'unit' ] ) => {
-		setSizeValue( { unit, size: resolveSizeOnUnitChange( sizeValue.size, unit ) } as T );
-	};
-
 	return {
 		size: sizeValue.size,
-		unit: sizeValue.unit,
 		setSize,
+		unit,
 		setUnit,
 	};
 };

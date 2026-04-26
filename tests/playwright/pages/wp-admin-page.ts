@@ -489,4 +489,14 @@ export default class WpAdminPage extends BasePage {
 		await this.page.locator( '#admin_bar_front' ).check();
 		await this.page.locator( '#submit' ).click();
 	}
+
+	async cleanAdminPageForScreenshot(): Promise<void> {
+		await this.page.addStyleTag( {
+			content: '.notice, .update-nag, .e-notice { display: none !important; }',
+		} );
+
+		await this.page.evaluate( () => {
+			document.querySelectorAll( 'iframe' ).forEach( ( iframe ) => iframe.remove() );
+		} );
+	}
 }

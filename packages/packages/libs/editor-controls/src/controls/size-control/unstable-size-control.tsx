@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { RefObject } from 'react';
+import { type RefObject, useRef } from 'react';
 import { type CreateOptions, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
 import { type SetValueMeta, useBoundProp } from '../../bound-prop-context';
@@ -7,13 +7,14 @@ import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 import { SizeComponent } from './size-component';
 import { type SizeVariant } from './types';
+import { isExtendedUnit } from './utils/is-extended-unit';
 import { resolveBoundPropValue } from './utils/resolve-bound-prop-value';
 import { getDefaultUnit } from './utils/settings/get-default-unit';
 import { getSizeUnits } from './utils/settings/get-size-units';
 import { shouldNullifyValue } from './utils/should-nullify-value';
 
 type Props = {
-	placeholder?: string;
+	placeholder?: string | SizePropValue[ 'value' ];
 	variant?: SizeVariant;
 	anchorRef?: RefObject< HTMLDivElement | null >;
 	startIcon?: React.ReactNode;
@@ -31,9 +32,10 @@ export const UnstableSizeControl = createControl(
 			placeholder: boundPropPlaceholder,
 			restoreValue,
 		} = useBoundProp( sizePropTypeUtil );
+		const lastNonAutoValue = useRef< SizePropValue[ 'value' ] | null >( null );
 
-		const { sizeValue, isUnitHighlighted, placeholder } = resolveBoundPropValue(
-			value,
+		const { sizeValue, placeholder } = resolveBoundPropValue(
+			value ?? lastNonAutoValue.current,
 			boundPropPlaceholder,
 			propPlaceholder
 		);
@@ -54,6 +56,13 @@ export const UnstableSizeControl = createControl(
 		};
 
 		const handleChange = ( newValue: SizePropValue[ 'value' ], options?: CreateOptions, meta?: SetValueMeta ) => {
+			if ( isTransitioningFromExtendedUnit( newValue, value ) ) {
+				lastNonAutoValue.current = newValue;
+
+				setValue( null );
+				return;
+			}
+
 			setValue( newValue, options, {
 				...meta,
 				validation: () => {
@@ -73,7 +82,6 @@ export const UnstableSizeControl = createControl(
 				anchorRef={ anchorRef }
 				placeholder={ placeholder }
 				defaultUnit={ defaultUnit }
-				isUnitActive={ isUnitHighlighted }
 				onBlur={ handleBlur }
 				setValue={ handleChange }
 				SizeFieldWrapper={ ControlActions }
@@ -84,3 +92,10 @@ export const UnstableSizeControl = createControl(
 		);
 	}
 );
+
+const isTransitioningFromExtendedUnit = (
+	nextValue: SizePropValue[ 'value' ],
+	previousValue: SizePropValue[ 'value' ]
+): boolean => {
+	return ! isExtendedUnit( nextValue.unit ) && isExtendedUnit( previousValue?.unit ) && nextValue.size === '';
+};

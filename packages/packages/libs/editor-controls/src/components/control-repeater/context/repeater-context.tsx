@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
 import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { usePopoverDismiss } from '../../../hooks/use-repeater-popover-dismiss';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
@@ -36,8 +37,8 @@ const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue 
 export const EMPTY_OPEN_ITEM = -1;
 
 export const useRepeaterContext = () => {
-	const context = React.useContext( RepeaterContext );
-	const itemContext = React.useContext( ItemContext );
+	const context = useContext( RepeaterContext );
+	const itemContext = useContext( ItemContext );
 
 	if ( ! context ) {
 		throw new Error( 'useRepeaterContext must be used within a RepeaterContextProvider' );
@@ -70,7 +71,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		return items?.map( () => generateUniqueKey() ) ?? [];
 	} );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		const nextLength = items?.length ?? 0;
 
 		setUniqueKeys( ( prev ) => {
@@ -143,6 +144,18 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		const newItems = [ ...items.slice( 0, index ), updatedItem, ...items.slice( index + 1 ) ];
 		setItems( newItems );
 	};
+
+	const closePopover = () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		setOpenItemIndex( EMPTY_OPEN_ITEM );
+		setRowRef( null );
+		popoverState.close();
+	};
+
+	usePopoverDismiss( { isOpen, onClose: closePopover } );
 
 	return (
 		<RepeaterContext.Provider

@@ -2,7 +2,7 @@
 
 import {
 	config as getConfig,
-	skipInteraction,
+	skipInteraction as utilsSkipInteraction,
 	extractInteractionId,
 	getAnimateFunction,
 	getInViewFunction,
@@ -11,7 +11,28 @@ import {
 	unwrapInteractionValue,
 	timingValueToMs,
 	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 } from './interactions-shared-utils.js';
+
+function isSupportedInteraction( animationConfig ) {
+	if ( ! [ 'load', 'scrollIn', 'scrollOut' ].includes( animationConfig.trigger ) ) {
+		return false;
+	}
+
+	if ( 'custom' === animationConfig.effect ) {
+		return false;
+	}
+
+	return true;
+}
+
+function skipInteraction( animationConfig ) {
+	if ( ! isSupportedInteraction( animationConfig ) ) {
+		return true;
+	}
+	return utilsSkipInteraction( animationConfig );
+}
 
 export {
 	getConfig as config,
@@ -24,6 +45,8 @@ export {
 	unwrapInteractionValue,
 	timingValueToMs,
 	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -40,7 +63,7 @@ export function getKeyframes( effect, type, direction ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
 	}
 
-	if ( direction ) {
+	if ( direction && 'string' === typeof direction ) {
 		const distance = config.slideDistance;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
@@ -151,7 +174,8 @@ export function extractAnimationConfig( interaction ) {
 
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
-	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
+	const directionUnwrapped = unwrapInteractionValue( animation.direction );
+	const direction = 'string' === typeof directionUnwrapped ? directionUnwrapped : '';
 	const easing = config.defaultEasing;
 	const replay = false;
 

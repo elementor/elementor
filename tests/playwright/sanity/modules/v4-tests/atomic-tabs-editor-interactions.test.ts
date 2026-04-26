@@ -85,7 +85,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'true' );
 		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'false' );
 		await expect( firstContent ).toBeVisible();
-		await expect( secondContent ).not.toBeVisible();
+		await expect( secondContent ).toBeHidden();
 
 		// Act
 		await secondTab.dispatchEvent( 'click' );
@@ -94,7 +94,30 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
 		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
 		await expect( secondContent ).toBeVisible();
-		await expect( firstContent ).not.toBeVisible();
+		await expect( firstContent ).toBeHidden();
+	} );
+
+	test( 'Outer tab selection persists when nesting atomic tabs', async () => {
+		const outerTabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const outerRoot = getTabsRoot( outerTabsId );
+		const outerTabItems = getMenuTabs( outerRoot );
+		const firstTab = outerTabItems.nth( 0 );
+		const secondTab = outerTabItems.nth( 1 );
+
+		await secondTab.dispatchEvent( 'click' );
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
+
+		const tabContentIds = await getIdsByType( outerRoot, tabContentType );
+		const secondTabContentContainerId = tabContentIds[ 1 ];
+		expect( secondTabContentContainerId ).toBeDefined();
+
+		await editor.addElement( { elType: tabsType }, secondTabContentContainerId as string );
+
+		await expect.poll( async () => outerRoot.locator( `[data-element_type="${ tabsType }"]` ).count() ).toBe( 1 );
+
+		await expect( secondTab ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( firstTab ).toHaveAttribute( 'aria-selected', 'false' );
 	} );
 
 	test( 'Add a tab via tabs control', async () => {
@@ -227,14 +250,15 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		expect( uniqueContentIds.size ).toBe( newContentIds.length );
 	} );
 
-	test( 'Default tab resets to first when removed', async () => {
+	test( 'Update the new selected tab when the current tab is removed', async () => {
 		// Arrange
 		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
 		const tabsRoot = getTabsRoot( tabsId );
 		const tabItems = getMenuTabs( tabsRoot );
+		const SELECTED_TAB_NUMBER = 2;
 
-		await tabItems.nth( 1 ).dispatchEvent( 'click' );
-		await expect( tabItems.nth( 1 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		await tabItems.nth( SELECTED_TAB_NUMBER ).dispatchEvent( 'click' );
+		await expect( tabItems.nth( SELECTED_TAB_NUMBER ) ).toHaveAttribute( 'aria-selected', 'true' );
 
 		await editor.selectElement( tabsId );
 		await editor.waitForPanelToLoad();
@@ -243,9 +267,9 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 
 		// Act
 		const listItems = menuItemsField.locator( 'ul.MuiList-root > li' );
-		await listItems.nth( 1 ).hover();
+		await listItems.nth( SELECTED_TAB_NUMBER ).hover();
 
-		const removeButton = listItems.nth( 1 ).getByRole( 'button', { name: 'Remove' } );
+		const removeButton = listItems.nth( SELECTED_TAB_NUMBER ).getByRole( 'button', { name: 'Remove' } );
 		await expect( removeButton ).toBeVisible();
 		await removeButton.click();
 
@@ -253,7 +277,8 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toHaveLength( 2 );
 
 		const remainingTabs = getMenuTabs( tabsRoot );
-		await expect( remainingTabs.first() ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( remainingTabs.nth( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		await expect( remainingTabs.nth( 1 ) ).toHaveAttribute( 'aria-selected', 'false' );
 	} );
 
 	test( 'All tabs have unique and valid content links', async () => {
@@ -368,7 +393,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		// Act & Assert - Last tab should not have remove button
 		await listItems.first().hover();
 		const lastRemoveButton = listItems.first().getByRole( 'button', { name: 'Remove' } );
-		await expect( lastRemoveButton ).not.toBeVisible();
+		await expect( lastRemoveButton ).toBeHidden();
 
 		// Verify tab and content still exist
 		await expect( getMenuTabs( tabsRoot ) ).toHaveCount( 1 );
@@ -459,7 +484,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
 
 		// Editor should be empty (tabs element removed)
-		await expect( tabsRoot ).not.toBeVisible();
+		await expect( tabsRoot ).toBeHidden();
 
 		// Act - Redo until last action (redo add tabs, redo delete 1, redo delete 2)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
