@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Animation_Config_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'config-v2';
+		return 'config-v3';
 	}
 
 	protected function define_shape(): array {
