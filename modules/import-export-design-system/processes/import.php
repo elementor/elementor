@@ -28,6 +28,7 @@ class Import {
 	private string $file_path;
 	private string $conflict_resolution;
 	private string $extraction_dir;
+	private string $temp_dir;
 
 	public function __construct( string $file_path, string $conflict_resolution ) {
 		$this->file_path = $file_path;
@@ -38,6 +39,10 @@ class Import {
 	 * @return array|\WP_Error
 	 */
 	public function run() {
+		if ( ! function_exists( 'wp_delete_file' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			return new \WP_Error(
 				'zip-archive-module-missing',
@@ -68,10 +73,16 @@ class Import {
 		$this->cleanup();
 
 		return [
-			'classesImported' => $classes_result['imported'],
-			'variablesImported' => $variables_result['imported'],
-			'classesSkipped' => $classes_result['skipped'],
-			'variablesSkipped' => $variables_result['skipped'],
+			'classes' => [
+				'imported' => $classes_result['imported'],
+				'failed' => $classes_result['failed'],
+				'conflicts' => $classes_result['conflicts'],
+			],
+			'variables' => [
+				'imported' => $variables_result['imported'],
+				'failed' => $variables_result['failed'],
+				'conflicts' => $variables_result['conflicts'],
+			],
 		];
 	}
 
@@ -89,7 +100,8 @@ class Import {
 			);
 		}
 
-		$this->extraction_dir = Plugin::$instance->uploads_manager->create_unique_dir();
+		$this->temp_dir = Plugin::$instance->uploads_manager->create_unique_dir();
+		$this->extraction_dir = $this->temp_dir;
 		$zip->extractTo( $this->extraction_dir );
 		$zip->close();
 
@@ -100,16 +112,20 @@ class Import {
 	 * @return true|\WP_Error
 	 */
 	private function validate_structure() {
-		$manifest_path = $this->extraction_dir . Export::FILE_MANIFEST;
-		$classes_path = $this->extraction_dir . Export::FILE_GLOBAL_CLASSES;
-		$variables_path = $this->extraction_dir . Export::FILE_GLOBAL_VARIABLES;
+		$base_path = $this->find_base_path();
 
-		if ( ! file_exists( $manifest_path ) ) {
+		if ( ! $base_path ) {
 			return new \WP_Error(
 				'invalid-design-system-structure',
 				__( 'Invalid design system file: missing manifest.json.', 'elementor' )
 			);
 		}
+
+		$this->extraction_dir = $base_path;
+
+		$manifest_path = $this->extraction_dir . Export::FILE_MANIFEST;
+		$classes_path = $this->extraction_dir . Export::FILE_GLOBAL_CLASSES;
+		$variables_path = $this->extraction_dir . Export::FILE_GLOBAL_VARIABLES;
 
 		$manifest_content = file_get_contents( $manifest_path );
 		$manifest = json_decode( $manifest_content, true );
@@ -153,15 +169,16 @@ class Import {
 
 	private function import_classes(): array {
 		$classes_path = $this->extraction_dir . Export::FILE_GLOBAL_CLASSES;
+		$empty_result = [ 'imported' => 0, 'failed' => [], 'conflicts' => [] ];
 
 		if ( ! file_exists( $classes_path ) ) {
-			return [ 'imported' => 0, 'skipped' => [] ];
+			return $empty_result;
 		}
 
 		$imported_data = json_decode( file_get_contents( $classes_path ), true );
 
 		if ( empty( $imported_data['items'] ) ) {
-			return [ 'imported' => 0, 'skipped' => [] ];
+			return $empty_result;
 		}
 
 		$imported_items = $imported_data['items'] ?? [];
@@ -180,7 +197,8 @@ class Import {
 
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$imported_count = 0;
-		$skipped = [];
+		$failed = [];
+		$conflicts = [];
 		$max_items = Global_Classes_REST_API::MAX_ITEMS;
 
 		foreach ( $imported_order as $imported_id ) {
@@ -193,7 +211,7 @@ class Import {
 
 			$item_result = $style_parser->parse( $item );
 			if ( ! $item_result->is_valid() ) {
-				$skipped[] = [ 'label' => $label, 'reason' => self::SKIP_REASON_MALFORMED ];
+				$failed[] = [ 'label' => $label, 'id' => $imported_id, 'reason' => self::SKIP_REASON_MALFORMED ];
 				continue;
 			}
 
@@ -202,6 +220,7 @@ class Import {
 
 			if ( isset( $existing_labels_map[ $label_lower ] ) ) {
 				if ( self::CONFLICT_SKIP === $this->conflict_resolution ) {
+					$conflicts[] = $label;
 					continue;
 				}
 
@@ -218,7 +237,7 @@ class Import {
 
 			$current_count = count( $existing_items );
 			if ( $current_count >= $max_items ) {
-				$skipped[] = [ 'label' => $label, 'reason' => self::SKIP_REASON_LIMIT_REACHED ];
+				$failed[] = [ 'label' => $label, 'id' => $imported_id, 'reason' => self::SKIP_REASON_LIMIT_REACHED ];
 				continue;
 			}
 
@@ -236,20 +255,21 @@ class Import {
 
 		$repository->put( $existing_items, $existing_order );
 
-		return [ 'imported' => $imported_count, 'skipped' => $skipped ];
+		return [ 'imported' => $imported_count, 'failed' => $failed, 'conflicts' => $conflicts ];
 	}
 
 	private function import_variables( $kit ): array {
 		$variables_path = $this->extraction_dir . Export::FILE_GLOBAL_VARIABLES;
+		$empty_result = [ 'imported' => 0, 'failed' => [], 'conflicts' => [] ];
 
 		if ( ! file_exists( $variables_path ) ) {
-			return [ 'imported' => 0, 'skipped' => [] ];
+			return $empty_result;
 		}
 
 		$imported_data = json_decode( file_get_contents( $variables_path ), true );
 
 		if ( empty( $imported_data['data'] ) ) {
-			return [ 'imported' => 0, 'skipped' => [] ];
+			return $empty_result;
 		}
 
 		$imported_vars = $imported_data['data'];
@@ -262,14 +282,15 @@ class Import {
 		$existing_ids = array_keys( $existing_collection->all() );
 
 		$imported_count = 0;
-		$skipped = [];
+		$failed = [];
+		$conflicts = [];
 		$max_variables = Variables_Constants::TOTAL_VARIABLES_COUNT;
 
 		foreach ( $imported_vars as $var_id => $var_data ) {
 			$label = $var_data['label'] ?? $var_id;
 
 			if ( ! $this->is_valid_variable( $var_data ) ) {
-				$skipped[] = [ 'label' => $label, 'reason' => self::SKIP_REASON_MALFORMED ];
+				$failed[] = [ 'label' => $label, 'id' => $var_id, 'reason' => self::SKIP_REASON_MALFORMED ];
 				continue;
 			}
 
@@ -281,6 +302,7 @@ class Import {
 
 			if ( isset( $existing_labels_map[ $label_lower ] ) ) {
 				if ( self::CONFLICT_SKIP === $this->conflict_resolution ) {
+					$conflicts[] = $label;
 					continue;
 				}
 
@@ -298,7 +320,7 @@ class Import {
 
 			$active_count = $this->count_active_variables( $existing_collection );
 			if ( $active_count >= $max_variables ) {
-				$skipped[] = [ 'label' => $label, 'reason' => self::SKIP_REASON_LIMIT_REACHED ];
+				$failed[] = [ 'label' => $label, 'id' => $var_id, 'reason' => self::SKIP_REASON_LIMIT_REACHED ];
 				continue;
 			}
 
@@ -322,7 +344,7 @@ class Import {
 
 		$repository->save( $existing_collection );
 
-		return [ 'imported' => $imported_count, 'skipped' => $skipped ];
+		return [ 'imported' => $imported_count, 'failed' => $failed, 'conflicts' => $conflicts ];
 	}
 
 	private function dedupe_labels_in_file( array $items, array $order ): array {
@@ -421,12 +443,32 @@ class Import {
 		return $count;
 	}
 
+	private function find_base_path(): ?string {
+		$manifest_file = Export::FILE_MANIFEST;
+
+		if ( file_exists( $this->extraction_dir . $manifest_file ) ) {
+			return $this->extraction_dir;
+		}
+
+		$items = array_diff( scandir( $this->extraction_dir ), [ '.', '..', '__MACOSX' ] );
+
+		foreach ( $items as $item ) {
+			$item_path = $this->extraction_dir . $item . DIRECTORY_SEPARATOR;
+
+			if ( is_dir( $item_path ) && file_exists( $item_path . $manifest_file ) ) {
+				return $item_path;
+			}
+		}
+
+		return null;
+	}
+
 	private function cleanup(): void {
-		if ( empty( $this->extraction_dir ) ) {
+		if ( empty( $this->temp_dir ) ) {
 			return;
 		}
 
-		$this->recursive_delete( $this->extraction_dir );
+		$this->recursive_delete( $this->temp_dir );
 	}
 
 	private function recursive_delete( string $dir ): void {

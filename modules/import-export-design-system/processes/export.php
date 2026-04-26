@@ -23,6 +23,10 @@ class Export {
 	 * @return array|\WP_Error
 	 */
 	public function run() {
+		if ( ! function_exists( 'wp_tempnam' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			return new \WP_Error(
 				'zip-archive-module-missing',
