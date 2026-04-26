@@ -30,11 +30,6 @@
       "fromType": "config",
       "toType": "config-v2",
       "path": "operations/config-to-config-v2.json"
-    },
-    "config-v2-to-config-v3": {
-      "fromType": "config-v2",
-      "toType": "config-v3",
-      "path": "operations/config-v2-to-config-v3.json"
     }
   }
 }
