@@ -251,5 +251,108 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 'svg', $result );
 	}
+
+	public function test_remote_manifest_is_cached_in_transient() {
+		// Arrange
+		$manifest = $this->get_fixture_manifest();
+		$fetch_count = 0;
+
+		add_filter( 'pre_http_request', function () use ( $manifest, &$fetch_count ) {
+			$fetch_count++;
+			return [
+				'headers' => [],
+				'response' => [ 'code' => 200, 'message' => 'OK' ],
+				'body' => wp_json_encode( $manifest ),
+			];
+		} );
+
+		$loader = Migrations_Loader::make( 'https://migrations.example.com/' );
+
+		// Act
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
+
+		// Assert
+		$this->assertNotNull( $result );
+		$this->assertEquals( 1, $fetch_count );
+
+		$cached = get_transient( 'elementor_migrations_manifest' );
+		$this->assertIsArray( $cached );
+		$this->assertEquals( $manifest, $cached['manifest'] );
+	}
+
+	public function test_remote_manifest_served_from_transient_on_subsequent_instance() {
+		// Arrange
+		$manifest = $this->get_fixture_manifest();
+
+		set_transient( 'elementor_migrations_manifest', [
+			'version' => \Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Cache::get_version_fingerprint(),
+			'manifest' => $manifest,
+		], HOUR_IN_SECONDS );
+
+		$fetch_count = 0;
+
+		add_filter( 'pre_http_request', function () use ( &$fetch_count ) {
+			$fetch_count++;
+			return new \WP_Error( 'should_not_be_called', 'Remote should not be called' );
+		} );
+
+		$loader = Migrations_Loader::make( 'https://migrations.example.com/' );
+
+		// Act
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
+
+		// Assert
+		$this->assertNotNull( $result );
+		$this->assertEquals( 0, $fetch_count );
+	}
+
+	public function test_remote_manifest_transient_invalidated_on_version_change() {
+		// Arrange
+		$manifest = $this->get_fixture_manifest();
+
+		set_transient( 'elementor_migrations_manifest', [
+			'version' => 'outdated-version',
+			'manifest' => $manifest,
+		], HOUR_IN_SECONDS );
+
+		$fetch_count = 0;
+
+		add_filter( 'pre_http_request', function () use ( $manifest, &$fetch_count ) {
+			$fetch_count++;
+			return [
+				'headers' => [],
+				'response' => [ 'code' => 200, 'message' => 'OK' ],
+				'body' => wp_json_encode( $manifest ),
+			];
+		} );
+
+		$loader = Migrations_Loader::make( 'https://migrations.example.com/' );
+
+		// Act
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
+
+		// Assert
+		$this->assertNotNull( $result );
+		$this->assertEquals( 1, $fetch_count );
+	}
+
+	public function test_failed_remote_fetch_does_not_cache_empty_manifest() {
+		// Arrange
+		add_filter( 'pre_http_request', function () {
+			return new \WP_Error( 'http_request_failed', 'Connection timed out' );
+		} );
+
+		$loader = Migrations_Loader::make( 'https://migrations.example.com/' );
+
+		// Act
+		$loader->find_migration_path( 'string', 'string_v2' );
+
+		// Assert
+		$this->assertFalse( get_transient( 'elementor_migrations_manifest' ) );
+	}
+
+	private function get_fixture_manifest(): array {
+		return json_decode( file_get_contents( $this->fixtures_path . 'manifest.json' ), true );
+	}
 }
 
