@@ -140,12 +140,12 @@ export class ImportExportHelpers {
 
 	static async verifyNotInContentSection( page: Page, notExpectedText: string ): Promise<void> {
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
-		await expect( contentSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
+		await expect( contentSection.locator( `text=${ notExpectedText }` ) ).toBeHidden();
 	}
 
 	static async verifyNotInSettingsSection( page: Page, notExpectedText: string ): Promise<void> {
 		const settingsSection = page.locator( ImportExportSelectors.summarySettingsSection );
-		await expect( settingsSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
+		await expect( settingsSection.locator( `text=${ notExpectedText }` ) ).toBeHidden();
 	}
 
 	static async verifyLearnMoreLink( page: Page ): Promise<void> {

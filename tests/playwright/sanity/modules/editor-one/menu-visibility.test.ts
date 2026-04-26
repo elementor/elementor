@@ -85,11 +85,11 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).toBeHidden();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
 		try {
@@ -99,8 +99,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		}
 
-		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).toBeHidden();
 
 		await editorContext.close();
 	} );
@@ -130,11 +130,11 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).toBeHidden();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
 		try {
@@ -144,8 +144,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		}
 
-		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).toBeHidden();
 
 		await contributorContext.close();
 	} );
