@@ -127,6 +127,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'global-classes',
 			'variables',
+			'import-export-design-system',
 			'design-system-sync',
 			'wc-product-editor',
 			'checklist',
