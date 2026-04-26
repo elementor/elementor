@@ -14,7 +14,7 @@ export function createPendingElement(
 	data: Partial< V1ElementModelProps >,
 	options: { edit?: boolean; at?: number } = {}
 ): { getContainer: () => V1Element } | undefined {
-	const parentContainer = ( wrapperView as unknown as { getContainer: () => V1Element } ).getContainer();
+	const parentContainer = wrapperView.getContainer();
 	const model: Partial< V1ElementModelProps > = { ...data };
 
 	if ( ! model.id ) {
@@ -31,13 +31,13 @@ export function createPendingElement(
 		return undefined;
 	}
 
-	const childModel = findModelInDocument( model.id );
+	const childId = model.id;
+	const childModel = findModelInDocument( childId );
 
 	if ( ! childModel ) {
 		return undefined;
 	}
 
-	const childId = model.id;
 	const pendingContainer: V1Element = {
 		id: childId,
 		parent: parentContainer,
@@ -52,9 +52,7 @@ export function createPendingElement(
 		selectChildWhenWrapperRenders( wrapperView, childId );
 	}
 
-	return {
-		getContainer: () => pendingContainer,
-	};
+	return { getContainer: () => pendingContainer };
 }
 
 function selectChildWhenWrapperRenders( wrapperView: ElementView, childId: string ): void {
@@ -66,6 +64,6 @@ function selectChildWhenWrapperRenders( wrapperView: ElementView, childId: strin
 			return;
 		}
 
-		( wrapperView.model as unknown as { trigger?: ( event: string ) => void } ).trigger?.( 'request:edit' );
+		wrapperView.model?.trigger?.( 'request:edit' );
 	} );
 }

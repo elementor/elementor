@@ -15,21 +15,29 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.modelToRestore,
 				options,
 			} );
-		} else {
-			const containerToRestore = data.containerToRestore?.lookup?.() ?? data.containerToRestore;
 
-			if ( containerToRestore instanceof elementorModules.editor.Container ) {
-				$e.run( 'document/elements/delete', { container: containerToRestore } );
-				return;
-			}
+			return;
+		}
 
-			// Undo before async render finished: no real Container yet, so remove the model directly from the parent collection.
-			const parentId = data.containerToRestore?.parent?.id;
-			const childId = data.containerToRestore?.id ?? data.modelToRestore?.id;
+		if ( ! data.modelToRestore || ! elementor.helpers.isAtomicWidget( data.modelToRestore ) ) {
+			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
 
-			if ( parentId && childId ) {
-				$e.components.get( 'document' ).utils.removeModelFromParent( parentId, childId );
-			}
+			return;
+		}
+
+		const containerToRestore = data.containerToRestore?.lookup?.() ?? data.containerToRestore;
+
+		if ( containerToRestore instanceof elementorModules.editor.Container ) {
+			$e.run( 'document/elements/delete', { container: containerToRestore } );
+
+			return;
+		}
+
+		const parentId = data.containerToRestore?.parent?.id;
+		const childId = data.containerToRestore?.id ?? data.modelToRestore?.id;
+
+		if ( parentId && childId ) {
+			$e.components.get( 'document' ).utils.removeModelFromParent( parentId, childId );
 		}
 	}
 

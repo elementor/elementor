@@ -163,6 +163,8 @@ export declare class ElementView {
 	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
 
 	once: ( event: string, callback: () => void ) => void;
+
+	getContainer(): V1Element;
 }
 
 export declare class TemplatedElementView extends ElementView {
