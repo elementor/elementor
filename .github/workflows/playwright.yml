@@ -141,9 +141,16 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Detect full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            npx playwright install chromium
+          fi
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
@@ -229,9 +236,16 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Detect full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            npx playwright install chromium
+          fi
       - name: Run Playwright tests
         env:
           TEST_TAG: ${{ inputs.tag }}

@@ -4,6 +4,7 @@ import { config as _config } from 'dotenv';
 import { timeouts as timeoutsConfig } from './config/timeouts';
 
 const isCI = Boolean( process.env.CI );
+const fullBrowserCompat = 'true' === process.env.FULL_BROWSER_COMPAT;
 const localDevServer = 'http://127.0.0.1:9400';
 const localTestServer = 'http://127.0.0.1:9400';
 const ciDevServer = 'http://localhost:8888';
@@ -41,7 +42,7 @@ export default defineConfig( {
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {
-			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+			args: fullBrowserCompat ? [] : [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
 		headless: true,
 		ignoreHTTPSErrors: true,
@@ -56,4 +57,11 @@ export default defineConfig( {
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
+	...( fullBrowserCompat ? {
+		projects: [
+			{ name: 'chromium', use: { browserName: 'chromium' } },
+			{ name: 'firefox', use: { browserName: 'firefox' } },
+			{ name: 'webkit', use: { browserName: 'webkit' } },
+		],
+	} : {} ),
 } );
