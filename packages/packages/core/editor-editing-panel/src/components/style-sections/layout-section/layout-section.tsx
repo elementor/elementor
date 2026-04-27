@@ -40,15 +40,30 @@ export const LayoutSection = () => {
 	const { element } = useElement();
 	const parent = useParentElement( element.id );
 	const parentStyle = useComputedStyle( parent?.id || null );
-	const parentStyleDirection = parentStyle?.flexDirection ?? 'row';
+
+	const getParentStyleDirection = () => {
+		if ( 'flex' === parentStyle?.display ) {
+			return parentStyle?.flexDirection ?? 'row';
+		}
+
+		if ( 'grid' === parentStyle?.display ) {
+			return parentStyle?.gridAutoFlow ?? 'row';
+		}
+
+		return 'row';
+	};
 
 	return (
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
-			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
+			{ 'flex' === parentStyle?.display && (
+				<FlexChildFields parentStyleDirection={ getParentStyleDirection() } />
+			) }
 			{ isGridExperimentActive && isDisplayGrid && <GridFields /> }
-			{ isGridExperimentActive && 'grid' === parentStyle?.display && <GridChildFields /> }
+			{ isGridExperimentActive && 'grid' === parentStyle?.display && (
+				<GridChildFields parentStyleDirection={ getParentStyleDirection() } />
+			) }
 		</SectionContent>
 	);
 };
@@ -93,12 +108,12 @@ const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: stri
 	</>
 );
 
-const GridChildFields = () => (
+const GridChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
 	<>
 		<PanelDivider />
 		<ControlFormLabel>{ __( 'Grid Child', 'elementor' ) }</ControlFormLabel>
 		<GridSpanFields />
-		<AlignSelfGridChild />
+		<AlignSelfGridChild parentStyleDirection={ parentStyleDirection } />
 		<FlexOrderField />
 	</>
 );
