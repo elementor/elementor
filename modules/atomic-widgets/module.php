@@ -132,6 +132,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_TWIG_CONTAINERS = 'e_twig_containers';
+	const EXPERIMENT_CSS_GRID = 'e_css_grid';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -238,6 +239,15 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_CSS_GRID,
+			'title' => esc_html__( 'CSS Grid', 'elementor' ),
+			'description' => esc_html__( 'Enable CSS Grid layout for containers.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
