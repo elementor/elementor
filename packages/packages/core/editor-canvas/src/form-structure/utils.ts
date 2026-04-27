@@ -41,7 +41,6 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-checkbox',
 	'e-form-submit-button',
 	'e-form-select',
-	'e-form-radio-button',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {

@@ -7,13 +7,7 @@ export type Suggestion = {
 	value: string;
 };
 
-const FORM_FIELD_WIDGET_TYPES = [
-	'e-form-input',
-	'e-form-textarea',
-	'e-form-checkbox',
-	'e-form-radio-button',
-	'e-form-select',
-];
+const FORM_FIELD_WIDGET_TYPES = [ 'e-form-input', 'e-form-textarea', 'e-form-checkbox' ];
 
 type Options = {
 	inputType?: string;
