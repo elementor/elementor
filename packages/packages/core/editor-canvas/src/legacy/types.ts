@@ -37,7 +37,7 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[
@@ -163,6 +163,10 @@ export declare class ElementView {
 	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
 
 	once: ( event: string, callback: () => void ) => void;
+}
+
+export declare class TemplatedElementView extends ElementView {
+	_doAfterRender( callback: () => void ): void;
 }
 
 type JQueryElement = {

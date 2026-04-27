@@ -8,7 +8,9 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
+use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -129,6 +131,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
+	const EXPERIMENT_TWIG_CONTAINERS = 'e_twig_containers';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -227,6 +230,15 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_TWIG_CONTAINERS,
+			'title' => esc_html__( 'Twig-based containers', 'elementor' ),
+			'description' => esc_html__( 'Render div-block and flexbox using Twig templates for unified editor/frontend rendering.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
 		$migrations_affecting_features = [];
@@ -279,8 +291,10 @@ class Module extends BaseModule {
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
-		$elements_manager->register_element_type( new Div_Block() );
-		$elements_manager->register_element_type( new Flexbox() );
+		$use_twig_containers = Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_TWIG_CONTAINERS );
+
+		$elements_manager->register_element_type( $use_twig_containers ? new Div_Block_Twig() : new Div_Block() );
+		$elements_manager->register_element_type( $use_twig_containers ? new Flexbox_Twig() : new Flexbox() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
@@ -429,6 +443,8 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-atomic-widgets-editor', 'elementor' );
 	}
 
 	private function render_panel_category_chip() {

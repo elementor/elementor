@@ -4,6 +4,7 @@ import {
 	getControlReplacements,
 	PropKeyProvider,
 	PropProvider,
+	type SetValueMeta,
 	useBoundProp,
 } from '@elementor/editor-controls';
 import {
@@ -18,7 +19,7 @@ import {
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control } from '@elementor/editor-elements';
-import { type AnyTransformable, type PropType, type PropValue } from '@elementor/editor-props';
+import { type AnyTransformable, type CreateOptions, type PropType, type PropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -140,7 +141,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 		schema: { [ overridableProp.overrideKey ]: propType },
 	} );
 
-	const setValue = ( newValue: OverridesSchema ) => {
+	const setValue = ( newValue: OverridesSchema, options?: CreateOptions, meta?: SetValueMeta ) => {
 		let newPropValue = getTempNewValueForDynamicProp(
 			propType,
 			propValue,
@@ -164,10 +165,14 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 			newOverrides = [ ...newOverrides, newOverrideValue ];
 		}
 
-		setInstanceValue( {
-			...instanceValue,
-			overrides: componentInstanceOverridesPropTypeUtil.create( newOverrides ),
-		} );
+		setInstanceValue(
+			{
+				...instanceValue,
+				overrides: componentInstanceOverridesPropTypeUtil.create( newOverrides ),
+			},
+			options,
+			meta
+		);
 
 		const overridableValue = componentOverridablePropTypeUtil.extract( newOverrideValue );
 		if ( overridableValue && wrappingComponentId ) {

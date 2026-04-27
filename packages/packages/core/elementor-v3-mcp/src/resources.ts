@@ -1,6 +1,6 @@
 import { type McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
-import { getPageOverView, loadDocumentSchema, loadDocumentSettings } from './context';
+import { loadDocumentSchema, loadDocumentSettings } from './context';
 import type { ElementorControls } from './types';
 import { encodeToolJson, getElementor } from './utils';
 
@@ -9,9 +9,6 @@ export const RESOURCE_URI_ELEMENT_SETTINGS_TEMPLATE = 'elementor://editor/elemen
 
 export const RESOURCE_NAME_WIDGET_CONFIG = 'elementor-widget-config';
 export const RESOURCE_URI_WIDGET_CONFIG_TEMPLATE = 'elementor://editor/widget-config/{widgetType}';
-
-export const RESOURCE_NAME_PAGE_OVERVIEW = 'elementor-page-overview';
-export const RESOURCE_URI_PAGE_OVERVIEW = 'elementor://editor/page-overview';
 
 export const RESOURCE_NAME_PAGE_SETTINGS = 'elementor-page-settings';
 export const RESOURCE_URI_PAGE_SETTINGS = 'elementor://editor/page-settings';
@@ -56,32 +53,6 @@ async function handleGetWidgetSchema( params: { widgetType: string; action: stri
 }
 
 export function addElementorResources( server: McpServer ): void {
-	server.resource(
-		RESOURCE_NAME_PAGE_OVERVIEW,
-		RESOURCE_URI_PAGE_OVERVIEW,
-		{
-			description:
-				'Complete page structure showing all elements, containers, and their hierarchical relationships on the current Elementor page',
-		},
-		async ( uri ) => {
-			const overview = getPageOverView();
-
-			if ( ! overview || overview.error ) {
-				throw new Error( overview?.error || 'Failed to retrieve page overview' );
-			}
-
-			return {
-				contents: [
-					{
-						uri: uri.toString(),
-						mimeType: 'application/json',
-						text: encodeToolJson( overview ),
-					},
-				],
-			};
-		}
-	);
-
 	server.resource(
 		RESOURCE_NAME_PAGE_SETTINGS,
 		RESOURCE_URI_PAGE_SETTINGS,

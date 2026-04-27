@@ -68,7 +68,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 
 		await test.step( 'Clear validation error when input is fixed', async () => {
 			await nameInput.fill( 'valid-variable-name' );
-			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
+			await expect( page.getByText( 'Give your variable a name.' ) ).toBeHidden();
 		} );
 	} );
 } );
