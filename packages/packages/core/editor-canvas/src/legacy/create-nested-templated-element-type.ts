@@ -1,7 +1,8 @@
-import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
+import { createPendingElement } from './create-pending-element';
 import { canBeTemplated, type TemplatedElementConfig } from './create-templated-element-type';
 import {
 	createAfterRender,
@@ -101,6 +102,7 @@ export function createNestedTemplatedElementView( {
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
 	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
+	const parentAddElement = AtomicElementBaseView.prototype.addElement;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
@@ -379,6 +381,14 @@ export function createNestedTemplatedElementView( {
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
+		},
+
+		addElement( data: Partial< V1ElementModelProps >, options?: { edit?: boolean; at?: number } ) {
+			if ( this.isRendered ) {
+				return parentAddElement.call( this, data, options );
+			}
+
+			return createPendingElement( this, data, options );
 		},
 
 		getInteractionId() {

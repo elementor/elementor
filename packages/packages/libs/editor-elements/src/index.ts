@@ -23,6 +23,7 @@ export {
 } from './sync/duplicate-elements';
 export { generateElementId } from './sync/generate-element-id';
 export { getContainer, selectElement } from './sync/get-container';
+export { addModelToParent, findModelInDocument, removeModelFromParent, resolveContainer } from './sync/resolve-element';
 export { getCurrentDocumentContainer } from './sync/get-current-document-container';
 export { getCurrentDocumentId } from './sync/get-current-document-id';
 export { getElementEditorSettings } from './sync/get-element-editor-settings';
