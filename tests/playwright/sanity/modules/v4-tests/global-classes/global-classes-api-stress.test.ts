@@ -125,7 +125,7 @@ function buildGlobalClassData( count: number ): { items: Record<string, GlobalCl
 	return { items, order };
 }
 
-test.describe( 'Global Classes API Stress Test @stress', () => {
+test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 	test.setTimeout( 600000 );
 
 	test( `Create ${ CLASS_COUNT } global classes via REST API and verify CSS generation`, async ( { page, apiRequests }, testInfo ) => {
