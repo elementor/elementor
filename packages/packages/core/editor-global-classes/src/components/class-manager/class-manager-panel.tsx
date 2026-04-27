@@ -1,18 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	__createPanel as createPanel,
-	Panel,
-	PanelBody,
-	PanelFooter,
-	PanelHeader,
-	PanelHeaderTitle,
-} from '@elementor/editor-panels';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
-import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
 import {
@@ -23,8 +13,6 @@ import {
 	DialogHeader,
 	Divider,
 	ErrorBoundary,
-	IconButton,
-	type IconButtonProps,
 	Stack,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -43,7 +31,6 @@ import { ClassManagerIntroduction } from './class-manager-introduction';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
-import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { StartSyncToV3Modal } from './start-sync-to-v3-modal';
 
 const STOP_SYNC_MESSAGE_KEY = 'stop-sync-class';
@@ -54,45 +41,13 @@ type StopSyncConfirmationDialogProps = {
 	onConfirm: () => void;
 };
 
-const id = 'global-classes-manager';
-
-const reloadDocument = () => {
-	const currentDocument = getCurrentDocument();
-	const documentsManager = getV1DocumentsManager();
-
-	documentsManager.invalidateCache();
-
-	return runCommand( 'editor/documents/switch', {
-		id: currentDocument?.id,
-		shouldScroll: false,
-		shouldNavigateToDefaultRoute: false,
-	} );
+export type ClassManagerPanelViewProps = {
+	/** Invoked when the user closes the class manager (e.g. from the design system shell). */
+	onRequestClose: () => void;
 };
 
-// We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
-// The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
-// will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
-// the panel to be closed.
-export const { panel, usePanelActions } = createPanel( {
-	id,
-	component: ClassManagerPanel,
-	allowedEditModes: [ 'edit', id ],
-	onOpen: () => {
-		changeEditMode( id );
-
-		blockPanelInteractions();
-	},
-	onClose: async () => {
-		changeEditMode( 'edit' );
-		await reloadDocument();
-		unblockPanelInteractions();
-	},
-	isOpenPreviousElement: true,
-} );
-
-export function ClassManagerPanel() {
+export function ClassManagerPanelView( { onRequestClose: closePanel }: ClassManagerPanelViewProps ) {
 	const isDirty = useDirtyState();
-	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
@@ -147,64 +102,48 @@ export function ClassManagerPanel() {
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
-				<Panel>
+				<Box
+					sx={ {
+						display: 'flex',
+						flexDirection: 'column',
+						height: '100%',
+						minHeight: 0,
+						flex: 1,
+					} }
+				>
 					<SearchAndFilterProvider>
-						<PanelHeader>
-							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-								<Stack width="100%" direction="row" gap={ 1 }>
-									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-										<FlippedColorSwatchIcon fontSize="inherit" />
-										{ __( 'Class Manager', 'elementor' ) }
-									</PanelHeaderTitle>
-									<TotalCssClassCounter />
-								</Stack>
-								<CloseButton
-									sx={ { marginLeft: 'auto' } }
-									disabled={ isPublishing }
-									onClose={ () => {
-										if ( isDirty ) {
-											openSaveChangesDialog();
-											return;
-										}
-
-										closePanel();
-									} }
-								/>
+						<Box px={ 2 } pt={ 1 } pb={ 1 }>
+							<Stack
+								direction="row"
+								justifyContent="space-between"
+								gap={ 0.5 }
+								alignItems="center"
+								sx={ { pb: 0.5 } }
+							>
+								<Box sx={ { flexGrow: 1 } }>
+									<ClassManagerSearch />
+								</Box>
+								<TotalCssClassCounter />
+								<CssClassFilter />
 							</Stack>
-						</PanelHeader>
-						<PanelBody
+							<ActiveFilters />
+						</Box>
+						<Divider />
+						<Box
+							px={ 2 }
 							sx={ {
-								display: 'flex',
-								flexDirection: 'column',
-								height: '100%',
+								flexGrow: 1,
+								overflowY: 'auto',
+								minHeight: 0,
 							} }
 						>
-							<Box px={ 2 } pb={ 1 }>
-								<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
-									<Box sx={ { flexGrow: 1 } }>
-										<ClassManagerSearch />
-									</Box>
-									<CssClassFilter />
-								</Stack>
-								<ActiveFilters />
-							</Box>
-							<Divider />
-							<Box
-								px={ 2 }
-								sx={ {
-									flexGrow: 1,
-									overflowY: 'auto',
-								} }
-							>
-								<GlobalClassesList
-									disabled={ isPublishing }
-									onStopSyncRequest={ handleStopSyncRequest }
-									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
-								/>
-							</Box>
-						</PanelBody>
-
-						<PanelFooter>
+							<GlobalClassesList
+								disabled={ isPublishing }
+								onStopSyncRequest={ handleStopSyncRequest }
+								onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
+							/>
+						</Box>
+						<Box px={ 2 } py={ 1.5 }>
 							<Button
 								fullWidth
 								size="small"
@@ -216,9 +155,9 @@ export function ClassManagerPanel() {
 							>
 								{ __( 'Save changes', 'elementor' ) }
 							</Button>
-						</PanelFooter>
+						</Box>
 					</SearchAndFilterProvider>
-				</Panel>
+				</Box>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
 			{ startSyncConfirmation && (
@@ -274,12 +213,6 @@ export function ClassManagerPanel() {
 		</ThemeProvider>
 	);
 }
-
-const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
-	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
-		<XIcon fontSize="small" />
-	</IconButton>
-);
 
 const ErrorBoundaryFallback = () => (
 	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>

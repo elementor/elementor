@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { syncWithDocumentSave } from '@elementor/editor-global-classes';
 
-import { usePanelActions } from './components/class-manager/class-manager-panel';
-import { syncWithDocumentSave } from './sync-with-document-save';
+import { usePanelActions } from '../design-system-panel';
 
-export function SyncWithDocumentSave() {
+export function SyncGlobalClassesWithDocument() {
 	const panelActions = usePanelActions();
 
 	useEffect( () => {

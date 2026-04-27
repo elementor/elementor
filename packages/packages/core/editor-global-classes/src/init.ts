@@ -5,36 +5,25 @@ import {
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { getMCPByDomain } from '@elementor/editor-mcp';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
-import { ClassManagerButton } from './components/class-manager/class-manager-button';
-import { panel } from './components/class-manager/class-manager-panel';
+import { ClassSelectorOpenDesignSystemButton } from './components/class-selector/class-selector-open-design-system-button';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
-import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
 import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
 import { initMcpIntegration } from './mcp-integration';
 import { slice } from './store';
-import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	registerSlice( slice );
-	registerPanel( panel );
-
 	stylesRepository.register( globalClassesStylesProvider );
 
 	injectIntoLogic( {
 		id: 'global-classes-populate-store',
 		component: PopulateStore,
-	} );
-
-	injectIntoLogic( {
-		id: 'global-classes-sync-with-document',
-		component: SyncWithDocumentSave,
 	} );
 
 	injectIntoLogic( {
@@ -47,19 +36,14 @@ export function init() {
 		component: PrefetchCssClassUsage,
 	} );
 
-	injectIntoLogic( {
-		id: 'global-classes-open-panel-from-url',
-		component: OpenPanelFromUrl,
-	} );
-
 	injectIntoCssClassConvert( {
 		id: 'global-classes-convert-from-local-class',
 		component: ConvertLocalClassToGlobalClass,
 	} );
 
 	injectIntoClassSelectorActions( {
-		id: 'global-classes-manager-button',
-		component: ClassManagerButton,
+		id: 'class-selector-open-design-system',
+		component: ClassSelectorOpenDesignSystemButton,
 	} );
 
 	registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {

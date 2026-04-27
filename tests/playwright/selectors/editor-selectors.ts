@@ -287,6 +287,10 @@ const EditorSelectors = {
 			valueInput: 'input[data-setting="value"]',
 		},
 	},
+	globalClasses: {
+		/** Style tab "Classes" row: opens Design system → Classes (same role as variables manager button). */
+		classSelectorManagerButton: '#global-classes-manager-button',
+	},
 };
 
 function getElementSelectorBySlug( slug: string ) {

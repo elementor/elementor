@@ -1,23 +1,14 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import {
-	__createPanel as createPanel,
-	Panel,
-	PanelBody,
-	PanelFooter,
-	PanelHeader,
-	PanelHeaderTitle,
-} from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
 	AlertTitle,
+	Box,
 	Button,
-	CloseButton,
 	Divider,
 	Infotip,
 	Stack,
@@ -37,7 +28,6 @@ import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
-const id = 'variables-manager';
 const STOP_SYNC_MESSAGE_KEY = 'stop-sync-variable';
 
 type StopSyncConfirmationDialogProps = {
@@ -46,21 +36,12 @@ type StopSyncConfirmationDialogProps = {
 	onConfirm: () => void;
 };
 
-export const { panel, usePanelActions } = createPanel( {
-	id,
-	component: VariablesManagerPanel,
-	allowedEditModes: [ 'edit', id ],
-	onOpen: () => {
-		changeEditMode( id );
-	},
-	onClose: async () => {
-		changeEditMode( 'edit' );
-	},
-	isOpenPreviousElement: true,
-} );
+export type VariablesManagerPanelViewProps = {
+	/** Invoked when the user closes the variables manager (e.g. from the design system shell). */
+	onRequestClose: () => void;
+};
 
-export function VariablesManagerPanel() {
-	const { close: closePanel } = usePanelActions();
+export function VariablesManagerPanelView( { onRequestClose: closePanel }: VariablesManagerPanelViewProps ) {
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
@@ -241,54 +222,47 @@ export function VariablesManagerPanel() {
 
 	return (
 		<ThemeProvider>
-			<Panel>
-				<PanelHeader
-					sx={ {
-						height: 'unset',
-					} }
+			<Box
+				sx={ {
+					display: 'flex',
+					flexDirection: 'column',
+					height: '100%',
+					minHeight: 0,
+					flex: 1,
+				} }
+			>
+				<Stack
+					width="100%"
+					direction="row"
+					alignItems="center"
+					gap={ 1 }
+					px={ 2 }
+					py={ 1 }
 				>
-					<Stack width="100%" direction="column" alignItems="center">
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variables Manager', 'elementor' ) }
-								</PanelHeaderTitle>
-							</Stack>
-							<Stack direction="row" gap={ 0.5 } alignItems="center">
-								<VariableManagerCreateMenu
-									onCreate={ handleCreateVariable }
-									variables={ variables }
-									menuState={ createMenuState }
-								/>
-								<CloseButton
-									aria-label="Close"
-									slotProps={ { icon: { fontSize: SIZE } } }
-									onClick={ () => {
-										handleClosePanel();
-									} }
-								/>
-							</Stack>
-						</Stack>
-						<Stack width="100%" direction="row" gap={ 1 }>
-							<SearchField
-								sx={ {
-									display: 'flex',
-									flex: 1,
-								} }
-								placeholder={ __( 'Search', 'elementor' ) }
-								value={ searchValue }
-								onSearch={ handleSearch }
-							/>
-						</Stack>
-						<Divider sx={ { width: '100%' } } />
-					</Stack>
-				</PanelHeader>
-				<PanelBody
+					<SearchField
+						sx={ {
+							display: 'flex',
+							flex: 1,
+							minWidth: 0,
+						} }
+						placeholder={ __( 'Search', 'elementor' ) }
+						value={ searchValue }
+						onSearch={ handleSearch }
+					/>
+					<VariableManagerCreateMenu
+						onCreate={ handleCreateVariable }
+						variables={ variables }
+						menuState={ createMenuState }
+					/>
+				</Stack>
+				<Divider sx={ { width: '100%' } } />
+				<Box
 					sx={ {
 						display: 'flex',
 						flexDirection: 'column',
-						height: '100%',
+						flexGrow: 1,
+						minHeight: 0,
+						overflow: 'hidden',
 					} }
 				>
 					{ hasVariables && (
@@ -321,9 +295,9 @@ export function VariablesManagerPanel() {
 							onAdd={ createMenuState.open }
 						/>
 					) }
-				</PanelBody>
+				</Box>
 
-				<PanelFooter>
+				<Box px={ 2 } py={ 1.5 }>
 					<Infotip
 						placement="right"
 						open={ !! serverError }
@@ -383,8 +357,8 @@ export function VariablesManagerPanel() {
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</Infotip>
-				</PanelFooter>
-			</Panel>
+				</Box>
+			</Box>
 
 			{ deleteConfirmation && (
 				<DeleteConfirmationDialog

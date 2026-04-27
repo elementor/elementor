@@ -28,6 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Hooks {
 	const PACKAGES = [
 		'editor-variables',
+		'editor-design-system',
 	];
 
 	public function register() {
