@@ -19,7 +19,7 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 			return;
 		}
 
-		if ( ! data.modelToRestore || ! elementor.helpers.isAtomicWidget( data.modelToRestore ) ) {
+		if ( ! elementor.helpers.isAtomicWidget( data.modelToRestore ) ) {
 			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
 
 			return;
