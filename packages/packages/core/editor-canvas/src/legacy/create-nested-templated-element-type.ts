@@ -102,11 +102,7 @@ export function createNestedTemplatedElementView( {
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
 	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
-	const parentAddElement = (
-		AtomicElementBaseView.prototype as unknown as {
-			addElement: ( data: Partial< V1ElementModelProps >, options?: object ) => unknown;
-		}
-	 ).addElement;
+	const parentAddElement = AtomicElementBaseView.prototype.addElement;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,

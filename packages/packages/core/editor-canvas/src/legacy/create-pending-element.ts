@@ -40,6 +40,7 @@ export function createPendingElement(
 
 	const pendingContainer: V1Element = {
 		id: childId,
+		settings: { get: () => ( {} ), set: () => ( {} ), toJSON: () => ( {} ) } as V1Element[ 'settings' ],
 		parent: parentContainer,
 		model: childModel as V1Element[ 'model' ],
 		view: undefined,
