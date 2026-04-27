@@ -312,7 +312,7 @@ export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
 	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
 );
 
-export const selectIsLoadedClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
+export const selectIsClassFetched = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
 	!! state[ SLICE_NAME ].initialData.preview.items[ id ] ||
 	!! state[ SLICE_NAME ].initialData.frontend.items[ id ] ||
 	false;

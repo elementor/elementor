@@ -20,7 +20,7 @@ import {
 	selectClass,
 	selectClassLabels,
 	selectData,
-	selectIsLoadedClass,
+	selectIsClassFetched,
 	selectOrderedClasses,
 	slice,
 	type StateWithGlobalClasses,
@@ -46,18 +46,21 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	actions: {
 		all: () => selectOrderedClasses( getState() ),
 		get: ( id ) => {
-			const isLoaded = selectIsLoadedClass( getState(), id );
-			const style = selectClass( getState(), id );
+			const state = getState();
 
-			if ( isLoaded ) {
+			const isFetched = selectIsClassFetched( state, id );
+			const style = selectClass( state, id );
+
+			// the isFetched flag is based on the existence of the style in the initial data
+			// so if the style is created during the same session - it won't be stored as part of the initial data
+			if ( isFetched || style ) {
 				return style;
 			}
 
-			// we populate the style with a placeholder until fully loaded
-			// to avoid crashing the editing panel
 			loadExistingClasses( [ id ] );
 
-			return placeholderDefinition( id, style?.label ?? id );
+			const label = selectClassLabels( state )[ id ] ?? id;
+			return placeholderDefinition( id, label );
 		},
 		resolveCssName: ( id: string ) => {
 			const state = getState();
@@ -137,10 +140,10 @@ const subscribeWithStates = (
 	let previousState = selectData( getState() );
 
 	return subscribeWithSelector(
-		( state: StateWithGlobalClasses ) => state.globalClasses,
+		( state: StateWithGlobalClasses ) => selectData( state ),
 		( currentState ) => {
-			cb( previousState.items, currentState.data.items );
-			previousState = currentState.data;
+			cb( previousState.items, currentState.items );
+			previousState = currentState;
 		}
 	);
 };
