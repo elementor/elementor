@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Import_Export_Utils {
 
-	const CHUNK_SIZE = 100;
-
 	/**
 	 * @param string $file_path
 	 * @param array  $options {
@@ -40,8 +38,10 @@ class Import_Export_Utils {
 		$repository = Global_Classes_Repository::make();
 		$existing = $repository->all()->get();
 		$existing_order = $existing['order'] ?? [];
+		$existing_id_set = array_flip( $existing_order );
 		$existing_label_to_id = self::build_label_to_id_map( $existing['items'] ?? [] );
-		unset( $existing );
+		unset( $existing, $repository );
+		gc_collect_cycles();
 
 		try {
 			$file_order = self::read_order_from_file( $file_path );
@@ -52,30 +52,23 @@ class Import_Export_Utils {
 			);
 		}
 
-		$chunks = array_chunk( $file_order, self::CHUNK_SIZE );
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$file_order_set = array_flip( $file_order );
 
-		foreach ( $chunks as $chunk_index => $chunk ) {
-            error_log( '[GC Import] Before chunk ' . $chunk_index . ' - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
-			try {
-				$batch = self::read_items_batch( $file_path, $chunk, $style_parser );
-			} catch ( \Exception $e ) {
-				return new \WP_Error(
-					'invalid-global-classes-json',
-					__( 'Invalid design system file: global-classes.json is not valid JSON.', 'elementor' )
-				);
-			}
+		try {
+			$items_stream = Items::fromFile( $file_path, [
+				'pointer' => '/items',
+				'decoder' => new ExtJsonDecoder( true ),
+			] );
 
-			$items_to_put = [];
-
-			foreach ( $chunk as $item_id ) {
-				if ( ! isset( $batch[ $item_id ] ) ) {
+			foreach ( $items_stream as $item_id => $item ) {
+				if ( ! isset( $file_order_set[ $item_id ] ) ) {
+					gc_collect_cycles();
 					continue;
 				}
 
-				$item = $batch[ $item_id ];
-
 				$sanitized_item = self::sanitize_item( $item_id, $item, $style_parser );
+				unset( $item );
 
 				if ( isset( $sanitized_item['error'] ) ) {
 					continue;
@@ -91,62 +84,44 @@ class Import_Export_Utils {
 				if ( $has_conflict && 'replace' === $conflict_resolution ) {
 					$existing_id = $existing_label_to_id[ $label_lower ];
 					$sanitized_item['id'] = $existing_id;
-					$items_to_put[ $existing_id ] = $sanitized_item;
+					// $repository->put( [ $existing_id => $sanitized_item ], $existing_order );
+				} else {
+					$new_id = $sanitized_item['id'];
 
-					continue;
+					if ( isset( $existing_id_set[ $new_id ] ) ) {
+						$new_id = self::generate_unique_id( $existing_id_set );
+					}
+
+					$sanitized_item['id'] = $new_id;
+					$existing_order[] = $new_id;
+					$existing_id_set[ $new_id ] = true;
+					$existing_label_to_id[ $label_lower ] = $new_id;
+					// $repository->put( [ $new_id => $sanitized_item ], $existing_order );
 				}
 
-				$imported_item_id = $sanitized_item['id'];
-				$new_id = $imported_item_id;
-				$is_id_exists = in_array( $imported_item_id, $existing_order, true );
-
-				if ( $is_id_exists ) {
-					$new_id = self::generate_unique_id( $existing_order );
-				}
-
-				$sanitized_item['id'] = $new_id;
-				$items_to_put[ $new_id ] = $sanitized_item;
-				$existing_order[] = $new_id;
-				$existing_label_to_id[ $label_lower ] = $new_id;
+				unset( $sanitized_item );
+				gc_collect_cycles();
 			}
-
-			// $repository->put( $items_to_put, $existing_order );
-			unset( $batch, $items_to_put );
-            gc_collect_cycles();
-            error_log( '[GC Import] After chunk ' . $chunk_index . ' - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
+		} catch ( \Exception $e ) {
+			return new \WP_Error(
+				'invalid-global-classes-json',
+				__( 'Invalid design system file: global-classes.json is not valid JSON.', 'elementor' )
+			);
 		}
 
-        error_log( '[GC Import] After all chunks - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
+		error_log( '[GC Import] After loop - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB' );
+		unset( $items_stream, $style_parser, $file_order, $file_order_set );
+		gc_collect_cycles();
+		error_log( '[GC Import] After unset stream - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB' );
+		unset( $existing_order, $existing_id_set, $existing_label_to_id, $repository );
+		gc_collect_cycles();
+		error_log( '[GC Import] After unset all - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
+
 		return [
 			'imported' => [],
 			'failed' => [],
 			'conflicts' => [],
 		];
-	}
-
-	private static function read_items_batch( string $file_path, array $chunk, Style_Parser $style_parser ): array {
-		$chunk_keys = array_flip( $chunk );
-		$batch = [];
-
-		$items_stream = Items::fromFile( $file_path, [
-			'pointer' => '/items',
-			'decoder' => new ExtJsonDecoder( true ),
-		] );
-
-		foreach ( $items_stream as $item_id => $item ) {
-			if ( ! isset( $chunk_keys[ $item_id ] ) ) {
-				gc_collect_cycles();
-				continue;
-			}
-
-			$batch[ $item_id ] = $item;
-
-			if ( count( $batch ) === count( $chunk_keys ) ) {
-				break;
-			}
-		}
-
-		return $batch;
 	}
 
 	private static function read_order_from_file( string $file_path ): array {
@@ -173,8 +148,12 @@ class Import_Export_Utils {
 		return $map;
 	}
 
-	private static function generate_unique_id( array $existing_ids ): string {
-		return Utils::generate_id( 'g-', $existing_ids );
+	private static function generate_unique_id( array $existing_id_set ): string {
+		do {
+			$id = 'g-' . substr( bin2hex( random_bytes( 4 ) ), 0, 7 );
+		} while ( isset( $existing_id_set[ $id ] ) );
+
+		return $id;
 	}
 
 	private static function sanitize_item( string $item_id, array $item, Style_Parser $style_parser ) {
