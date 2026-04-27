@@ -202,11 +202,25 @@ class Global_Classes_Relations {
 	private function on_document_save( Document $document ): void {
 		$post_id = $document->get_main_id();
 
-		$this->invalidate_document_styles_cache( $post_id );
+		// Guard against recursive re-entry for the same document. This handler reads the
+		// document's elements via get_elements_data(), which in edit mode may trigger
+		// Document::convert_to_elementor() -> save([]) -> 'elementor/document/after_save'
+		// again, leading to infinite recursion when the post starts with no Elementor data.
+		static $in_progress = [];
+		if ( isset( $in_progress[ $post_id ] ) ) {
+			return;
+		}
+		$in_progress[ $post_id ] = true;
 
-		$new_ids = $this->collect_class_ids_from_post( $post_id );
+		try {
+			$this->invalidate_document_styles_cache( $post_id );
 
-		$this->set_styles_for_post( $post_id, $new_ids );
+			$new_ids = $this->collect_class_ids_from_post( $post_id );
+
+			$this->set_styles_for_post( $post_id, $new_ids );
+		} finally {
+			unset( $in_progress[ $post_id ] );
+		}
 	}
 
 	private function extract_class_ids_from_post( int $post_id ): array {
