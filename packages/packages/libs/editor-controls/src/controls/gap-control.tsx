@@ -94,7 +94,7 @@ export const GapControl = ( { label }: { label: string } ) => {
 
 	const propProviderProps = {
 		propType,
-		value: directionValue,
+		value: directionValue ?? ( ! isLinked ? { row: masterPlaceholder, column: masterPlaceholder } : null ),
 		setValue: ( directions: PropValue ) => {
 			const entries = Object.entries( directions as LayoutDirectionPropValue );
 			const filtered = entries.filter( ( [ , value ] ) => Boolean( value ) );

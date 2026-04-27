@@ -5,6 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Schema_Resolver;
 use Elementor\Plugin;
 
 class Atomic_Elements_Utils {
@@ -22,7 +23,7 @@ class Atomic_Elements_Utils {
 			return [];
 		}
 
-		$schema = call_user_func( [ get_class( $element_instance ), 'get_props_schema' ] );
+		$schema = Schema_Resolver::get_widget_schema( $element_type );
 		$settings = $element_data['settings'] ?? [];
 		$class_ids = [];
 

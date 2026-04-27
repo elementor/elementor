@@ -27,7 +27,8 @@ class Migrate_To_Posts extends Base_Migration {
 
 		$this->update_document_tracking();
 
-		$this->cleanup_kit_meta();
+		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
+		// $this->cleanup_kit_meta();
 
 		Global_Classes_Repository::reset_storage_mode_cache();
 	}

@@ -16,13 +16,27 @@ type GlobalClassItem = {
 	sync_to_v3?: boolean;
 };
 
-export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, GlobalClassItem>; order: string[] }> {
+export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, Pick<GlobalClassItem, 'id' | 'label'>>; order: string[] }> {
 	try {
-		const data = await apiRequests.customGet( request, 'index.php?rest_route=/elementor/v1/global-classes' );
-		return {
-			items: data.data || {},
-			order: data.meta?.order || [],
-		};
+		const response = await apiRequests.customGet( request, 'index.php?rest_route=/elementor/v1/global-classes' );
+
+		const list: Array<{ id: string; label: string }> = Array.isArray( response?.data )
+			? response.data
+			: [];
+
+		const items: Record<string, Pick<GlobalClassItem, 'id' | 'label'>> = {};
+		const order: string[] = [];
+
+		for ( const entry of list ) {
+			if ( ! entry?.id ) {
+				continue;
+			}
+
+			items[ entry.id ] = { id: entry.id, label: entry.label };
+			order.push( entry.id );
+		}
+
+		return { items, order };
 	} catch {
 		return { items: {}, order: [] };
 	}

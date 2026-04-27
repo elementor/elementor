@@ -7,10 +7,10 @@ import {
 	createTemplatedElementView,
 	type ElementModel,
 	type ElementType,
-	type ElementView,
 	type LegacyWindow,
 	type NamespacedRenderContext,
 	type RenderContext,
+	type TemplatedElementView,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
@@ -151,7 +151,7 @@ export function createComponentType( options: ComponentTypeOptions ): typeof Ele
 	};
 }
 
-function createComponentView( options: ComponentTypeOptions ): typeof ElementView {
+function createComponentView( options: ComponentTypeOptions ): typeof TemplatedElementView {
 	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 
 	return class extends createTemplatedElementView( options ) {

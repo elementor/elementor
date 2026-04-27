@@ -24,7 +24,7 @@ test.describe( 'New Template Modal', () => {
 		await page.click( MODAL_CLOSE_SELECTOR );
 
 		// Assert - Modal is closed
-		await expect( modal ).not.toBeVisible();
+		await expect( modal ).toBeHidden();
 
 		// Act - Click Add New Template button
 		await page.click( ADD_NEW_TEMPLATE_SELECTOR );
@@ -36,6 +36,6 @@ test.describe( 'New Template Modal', () => {
 		await page.keyboard.press( 'Escape' );
 
 		// Assert - Modal is closed
-		await expect( modal ).not.toBeVisible();
+		await expect( modal ).toBeHidden();
 	} );
 } );
