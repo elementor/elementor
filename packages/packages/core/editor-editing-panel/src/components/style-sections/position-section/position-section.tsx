@@ -116,7 +116,7 @@ export const PositionSection = () => {
 				</>
 			) : null }
 
-			<ZIndexField disabled={ ! isNotStatic }/>
+			<ZIndexField disabled={ ! isNotStatic } />
 			<PanelDivider />
 			<OffsetField />
 		</SectionContent>
