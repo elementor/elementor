@@ -13,6 +13,7 @@ import { SectionContent } from '../../section-content';
 import { AlignContentField } from './align-content-field';
 import { AlignItemsField } from './align-items-field';
 import { AlignSelfChild } from './align-self-child-field';
+import { AlignSelfGridChild } from './align-self-grid-child-field';
 import { DisplayField, useDisplayPlaceholderValue } from './display-field';
 import { type FlexDirection, FlexDirectionField } from './flex-direction-field';
 import { FlexOrderField } from './flex-order-field';
@@ -21,6 +22,7 @@ import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
 import { GridJustifyItemsField } from './grid-justify-items-field';
 import { GridSizeFields } from './grid-size-field';
+import { GridSpanFields } from './grid-span-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
@@ -45,6 +47,7 @@ export const LayoutSection = () => {
 			{ isDisplayFlex && <FlexFields /> }
 			{ isExperimentActive( 'e_css_grid' ) && isDisplayGrid && <GridFields /> }
 			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
+			{ isExperimentActive( 'e_css_grid' ) && 'grid' === parentStyle?.display && <GridChildFields /> }
 		</SectionContent>
 	);
 };
@@ -86,6 +89,16 @@ const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: stri
 		<AlignSelfChild parentStyleDirection={ parentStyleDirection as FlexDirection } />
 		<FlexOrderField />
 		<FlexSizeField />
+	</>
+);
+
+const GridChildFields = () => (
+	<>
+		<PanelDivider />
+		<ControlFormLabel>{ __( 'Grid Child', 'elementor' ) }</ControlFormLabel>
+		<GridSpanFields />
+		<AlignSelfGridChild />
+		<FlexOrderField />
 	</>
 );
 

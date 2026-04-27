@@ -329,6 +329,10 @@ class Style_Schema {
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
+			'grid-column' => String_Prop_Type::make()
+				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value.' ),
+			'grid-row' => String_Prop_Type::make()
+				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value.' ),
 		];
 	}
 
