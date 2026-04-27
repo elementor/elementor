@@ -6,7 +6,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.59"
+        "elementor/wp-one-package": "1.0.59",
+        "halaxa/json-machine": "^1.2"
     },
     "repositories": [
         {
@@ -44,7 +45,8 @@
         "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
         "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
         "php-scoper": [
-            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force",
+            "php-scoper add-prefix --output-dir=./vendor_prefixed/json-machine --config=php-scoper/json-machine-inc.php --force"
         ],
         "post-install-cmd": [
             "@php composer run php-scoper",

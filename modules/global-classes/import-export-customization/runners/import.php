@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// this is the relevant file
 class Import extends Import_Runner_Base {
 	public static function get_name(): string {
 		return 'global-classes';

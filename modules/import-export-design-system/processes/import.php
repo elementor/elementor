@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
+use Elementor\Modules\GlobalClasses\Import_Export_Utils;
 use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
@@ -175,87 +176,8 @@ class Import {
 			return $empty_result;
 		}
 
-		$imported_data = json_decode( file_get_contents( $classes_path ), true );
+		return Import_Export_Utils::import_classes( $classes_path, [ 'conflict_resolution' => $this->conflict_resolution ] );
 
-		if ( empty( $imported_data['items'] ) ) {
-			return $empty_result;
-		}
-
-		$imported_items = $imported_data['items'] ?? [];
-		$imported_order = $imported_data['order'] ?? [];
-
-		$imported_items = $this->dedupe_labels_in_file( $imported_items, $imported_order );
-		$imported_order = array_keys( $imported_items );
-
-		$repository = Global_Classes_Repository::make();
-		$existing = $repository->all()->get();
-		$existing_items = $existing['items'] ?? [];
-		$existing_order = $existing['order'] ?? [];
-
-		$existing_labels_map = $this->build_labels_map( $existing_items );
-		$existing_ids = array_keys( $existing_items );
-
-		$style_parser = Style_Parser::make( Style_Schema::get() );
-		$imported_count = 0;
-		$failed = [];
-		$conflicts = [];
-		$max_items = Global_Classes_REST_API::MAX_ITEMS;
-
-		foreach ( $imported_order as $imported_id ) {
-			if ( ! isset( $imported_items[ $imported_id ] ) ) {
-				continue;
-			}
-
-			$item = $imported_items[ $imported_id ];
-			$label = $item['label'] ?? $imported_id;
-
-			$item_result = $style_parser->parse( $item );
-			if ( ! $item_result->is_valid() ) {
-				$failed[] = [ 'label' => $label, 'id' => $imported_id, 'reason' => self::SKIP_REASON_MALFORMED ];
-				continue;
-			}
-
-			$sanitized_item = $item_result->unwrap();
-			$label_lower = strtolower( $label );
-
-			if ( isset( $existing_labels_map[ $label_lower ] ) ) {
-				if ( self::CONFLICT_SKIP === $this->conflict_resolution ) {
-					$conflicts[] = $label;
-					continue;
-				}
-
-				$existing_id = $existing_labels_map[ $label_lower ];
-				$existing_items[ $existing_id ] = array_merge(
-					$existing_items[ $existing_id ],
-					[
-						'variants' => $sanitized_item['variants'],
-					]
-				);
-				$imported_count++;
-				continue;
-			}
-
-			$current_count = count( $existing_items );
-			if ( $current_count >= $max_items ) {
-				$failed[] = [ 'label' => $label, 'id' => $imported_id, 'reason' => self::SKIP_REASON_LIMIT_REACHED ];
-				continue;
-			}
-
-			$new_id = in_array( $imported_id, $existing_ids, true )
-				? Utils::generate_id( 'g-', $existing_ids )
-				: $imported_id;
-			$existing_ids[] = $new_id;
-
-			$sanitized_item['id'] = $new_id;
-			$existing_items[ $new_id ] = $sanitized_item;
-			$existing_order[] = $new_id;
-			$existing_labels_map[ $label_lower ] = $new_id;
-			$imported_count++;
-		}
-
-		$repository->put( $existing_items, $existing_order );
-
-		return [ 'imported' => $imported_count, 'failed' => $failed, 'conflicts' => $conflicts ];
 	}
 
 	private function import_variables( $kit ): array {
