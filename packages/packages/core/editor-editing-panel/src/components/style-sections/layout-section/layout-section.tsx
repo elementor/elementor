@@ -34,6 +34,7 @@ export const LayoutSection = () => {
 		history: { propDisplayName: DISPLAY_LABEL },
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
+	const isGridExperimentActive = isExperimentActive( 'e_css_grid' );
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
 	const isDisplayGrid = 'grid' === ( display?.value ?? ( displayPlaceholder as StringPropValue )?.value );
 	const { element } = useElement();
@@ -45,9 +46,9 @@ export const LayoutSection = () => {
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
-			{ isExperimentActive( 'e_css_grid' ) && isDisplayGrid && <GridFields /> }
 			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
-			{ isExperimentActive( 'e_css_grid' ) && 'grid' === parentStyle?.display && <GridChildFields /> }
+			{ isGridExperimentActive && isDisplayGrid && <GridFields /> }
+			{ isGridExperimentActive && 'grid' === parentStyle?.display && <GridChildFields /> }
 		</SectionContent>
 	);
 };

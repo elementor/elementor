@@ -18,7 +18,9 @@ const cssToSpanValue = ( css: string | null ): number | null => {
 	if ( ! css ) {
 		return null;
 	}
+
 	const match = css.match( SPAN_PATTERN );
+
 	return match ? parseInt( match[ 1 ], 10 ) : null;
 };
 
@@ -26,6 +28,7 @@ const spanValueToCss = ( span: number | null ): string | null => {
 	if ( span === null || span < MIN_SPAN ) {
 		return null;
 	}
+
 	return `span ${ span }`;
 };
 
@@ -46,6 +49,7 @@ const GridSpanFieldContent = ( { cssProp, label }: GridSpanFieldProps ) => {
 
 		if ( raw === '' ) {
 			setValue( null );
+
 			return;
 		}
 
@@ -57,6 +61,7 @@ const GridSpanFieldContent = ( { cssProp, label }: GridSpanFieldProps ) => {
 
 		const clamped = Math.max( num, MIN_SPAN );
 		const css = spanValueToCss( clamped );
+
 		setValue( css ? { $$type: 'string', value: css } : null );
 	};
 

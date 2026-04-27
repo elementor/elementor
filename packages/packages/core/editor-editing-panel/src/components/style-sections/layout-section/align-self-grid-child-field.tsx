@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-controls';
 import {
-	LayoutAlignCenterIcon as CenterIcon,
-	LayoutAlignLeftIcon,
-	LayoutAlignRightIcon,
+	JustifyBottomIcon,
+	JustifyCenterIcon,
+	JustifyTopIcon,
 	LayoutDistributeVerticalIcon as JustifyIcon,
 } from '@elementor/icons';
-import { withDirection } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
@@ -18,39 +17,29 @@ type AlignSelf = 'start' | 'center' | 'end' | 'stretch';
 
 const ALIGN_SELF_LABEL = __( 'Align self', 'elementor' );
 
-const ICON_OFFSET = 90;
-
-const StartIcon = withDirection( LayoutAlignLeftIcon );
-const EndIcon = withDirection( LayoutAlignRightIcon );
-
-const iconProps = {
-	isClockwise: false,
-	offset: ICON_OFFSET,
-};
-
 const options: ToggleButtonGroupItem< AlignSelf >[] = [
 	{
 		value: 'start',
 		label: __( 'Start', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ StartIcon } size={ size } { ...iconProps } />,
+		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyTopIcon } size={ size } />,
 		showTooltip: true,
 	},
 	{
 		value: 'center',
 		label: __( 'Center', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ CenterIcon } size={ size } { ...iconProps } />,
+		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyCenterIcon } size={ size } />,
 		showTooltip: true,
 	},
 	{
 		value: 'end',
 		label: __( 'End', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ EndIcon } size={ size } { ...iconProps } />,
+		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyBottomIcon } size={ size } />,
 		showTooltip: true,
 	},
 	{
 		value: 'stretch',
 		label: __( 'Stretch', 'elementor' ),
-		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyIcon } size={ size } { ...iconProps } />,
+		renderContent: ( { size } ) => <RotatedIcon icon={ JustifyIcon } size={ size } />,
 		showTooltip: true,
 	},
 ];
