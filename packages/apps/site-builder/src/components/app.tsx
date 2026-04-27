@@ -43,6 +43,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 
 async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
 	const origin = event.origin || '*';
+	const isIncremental = event.data?.payload?.mode === 'incremental';
 
 	try {
 		const result = await deployWebsite( event.data.payload );
@@ -55,7 +56,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			origin
 		);
 
-		if ( result.status === 'success' && result.homePageId ) {
+		if ( ! isIncremental && result.status === 'success' && result.homePageId ) {
 			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
 		}
 	} catch ( err ) {
