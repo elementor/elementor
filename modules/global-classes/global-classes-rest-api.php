@@ -17,7 +17,7 @@ class Global_Classes_REST_API {
 	const API_BASE_USAGE = self::API_BASE . '/usage';
 	const API_BASE_POST = self::API_BASE . '/post';
 	const API_BASE_STYLES = self::API_BASE . '/styles';
-	const MAX_ITEMS = 100;
+	const MAX_ITEMS = 1000;
 	const LABEL_PREFIX = 'DUP_';
 	const MAX_LABEL_LENGTH = 50;
 	private $repository = null;
