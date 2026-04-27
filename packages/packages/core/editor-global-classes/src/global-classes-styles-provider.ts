@@ -1,4 +1,4 @@
-import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
+import { generateId, StyleDefinitionID, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -63,7 +63,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 			const fromIndex = selectClassLabels( state )[ id ];
 			return fromIndex ?? id;
 		},
-		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
+		create: ( label, variants: StyleDefinitionVariant[] = [], id?: StyleDefinitionID ) => {
 			const existingClasses = Object.entries( selectClassLabels( getState() ) );
 			const existingLabels = existingClasses.map( ( [ , classLabel ] ) => classLabel );
 
@@ -71,8 +71,11 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
 			}
 
-			const existingIds = existingClasses.map( ( [ id ] ) => id );
-			const id = generateId( 'g-', existingIds );
+			const existingIds = existingClasses.map( ( [ existingId ] ) => existingId );
+
+			if ( ! id ) {
+				id = generateId( 'g-', existingIds );
+			}
 
 			dispatch(
 				slice.actions.add( {
