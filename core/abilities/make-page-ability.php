@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Make_Page_Ability extends Abstract_Ability {
 
 	use Css_Shorthand_Parser;
+	use Base_Styles_Reset;
 
 	private const CONTAINER_SYNONYMS = [
 		'container'   => 'e-flexbox',
@@ -218,7 +219,16 @@ class Make_Page_Ability extends Abstract_Ability {
 		$settings = [];
 		$styles   = [];
 
-		if ( '' !== $css ) {
+		$el_type = null !== $widget && isset( self::CONTAINER_SYNONYMS[ $widget ] )
+			? self::CONTAINER_SYNONYMS[ $widget ]
+			: ( null === $widget && is_array( $children )
+				? 'e-flexbox'
+				: ( self::LEAF_WIDGETS[ $widget ] ?? 'e-paragraph' ) );
+
+		$user_props   = '' !== $css ? $this->css_to_props( $css ) : [];
+		$merged_props = $this->merge_base_style_resets( $user_props, $el_type );
+
+		if ( ! empty( $merged_props ) ) {
 			$style_id            = 'e-' . $id . '-s';
 			$styles[ $style_id ] = [
 				'id'       => $style_id,
@@ -230,7 +240,7 @@ class Make_Page_Ability extends Abstract_Ability {
 							'breakpoint' => 'desktop',
 							'state'      => null,
 						],
-						'props' => $this->css_to_props( $css ),
+						'props' => $merged_props,
 					],
 				],
 			];

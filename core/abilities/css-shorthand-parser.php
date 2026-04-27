@@ -32,6 +32,7 @@ trait Css_Shorthand_Parser {
 	private const VAR_REGEX          = '/^var\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,.*?)?\)$/';
 	private const SIZE_UNIT_RE       = '/^(-?[\d.]+)(px|em|rem|%|vh|vw|vmin|vmax|fr|pt|svh|svw|dvh|dvw|ch|ex|cm|mm|in|pc|lh|rlh|lvw|lvh)$/i';
 	private const CSS_FUNCTION_RE    = '/^(calc|min|max|clamp)\(/i';
+	private const CSS_WIDE_KEYWORDS  = [ 'revert', 'initial', 'unset', 'inherit' ];
 
 	private const POSITIONING_MAP = [
 		'top'    => 'inset-block-start',
@@ -252,7 +253,15 @@ trait Css_Shorthand_Parser {
 			];
 		}
 
-		if ( 'auto' === strtolower( $t ) ) {
+		$lower = strtolower( $t );
+		if ( in_array( $lower, self::CSS_WIDE_KEYWORDS, true ) ) {
+			return $this->wrap_size( [
+				'size' => $lower,
+				'unit' => 'custom',
+			] );
+		}
+
+		if ( 'auto' === $lower ) {
 			return $this->wrap_size( [
 				'size' => 'auto',
 				'unit' => 'custom',
