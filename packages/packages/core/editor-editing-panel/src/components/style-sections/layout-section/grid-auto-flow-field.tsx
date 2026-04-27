@@ -65,13 +65,14 @@ const GridAutoFlowFieldContent = () => {
 
 	return (
 		<StylesFieldLayout label={ AUTO_FLOW_LABEL }>
-			<Grid container gap={ 1 } flexWrap="nowrap" alignItems="center">
-				<Grid item xs>
+			<Grid container gap={ 1 } flexWrap="nowrap" alignItems="center" justifyContent="flex-end">
+				<Grid item sx={ { width: 64, maxWidth: '100%' } }>
 					<ControlToggleButtonGroup
 						items={ directionOptions }
 						value={ direction }
 						onChange={ handleDirectionChange }
 						exclusive={ true }
+						fullWidth={ true }
 					/>
 				</Grid>
 				<Grid item>

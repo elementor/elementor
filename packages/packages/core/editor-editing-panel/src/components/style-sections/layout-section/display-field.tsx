@@ -38,15 +38,15 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		showTooltip: true,
 	},
 	{
-		value: 'none',
-		renderContent: () => __( 'None', 'elementor' ),
-		label: __( 'None', 'elementor' ),
-		showTooltip: true,
-	},
-	{
 		value: 'inline-flex',
 		renderContent: () => __( 'In-flx', 'elementor' ),
 		label: __( 'Inline-flex', 'elementor' ),
+		showTooltip: true,
+	},
+	{
+		value: 'none',
+		renderContent: () => __( 'None', 'elementor' ),
+		label: __( 'None', 'elementor' ),
 		showTooltip: true,
 	},
 ];
