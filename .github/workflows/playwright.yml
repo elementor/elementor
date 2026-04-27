@@ -29,7 +29,7 @@ on:
         description: 'Provide @tag or a keyword'
         required: false
       repeat_each:
-        description: 'Playwright --repeat-each count (optional; only applied to PlaywrightWithTag job)'
+        description: 'Number of repetitions (for tagged tests only)'
         required: false
         type: number
       run_mode:
