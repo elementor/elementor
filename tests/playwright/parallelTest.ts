@@ -39,14 +39,14 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 	// Use the same storage state for all tests in this worker.
 	apiRequests: [ async ( { workerStorageState, workerBaseURL }, use ) => {
-		const context = await request.newContext( { storageState: workerStorageState } );
-		try {
-			const nonce = await fetchNonce( context, workerBaseURL );
-			const apiRequests = new ApiRequests( workerBaseURL, nonce );
-			await use( apiRequests );
-		} catch ( e ) {
-			throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState } `, { cause: e } );
-		}
+		// const context = await request.newContext( { storageState: workerStorageState } );
+		// try {
+		// 	const nonce = await fetchNonce( context, workerBaseURL );
+		// 	const apiRequests = new ApiRequests( workerBaseURL, nonce );
+		// 	await use( apiRequests );
+		// } catch ( e ) {
+		// 	throw new Error( `Failed to fetch Nonce. Base URL: ${ workerBaseURL }, Storage State: ${ workerStorageState } `, { cause: e } );
+		// }
 	}, { scope: 'worker' } ],
 
 } );

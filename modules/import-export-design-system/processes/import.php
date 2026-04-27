@@ -69,6 +69,12 @@ class Import {
 		}
 
 		$classes_result = $this->import_classes();
+
+		if ( is_wp_error( $classes_result ) ) {
+			$this->cleanup();
+			return $classes_result;
+		}
+
 		$variables_result = $this->import_variables( $kit );
 
 		$this->cleanup();
@@ -145,18 +151,9 @@ class Import {
 			);
 		}
 
-		if ( file_exists( $classes_path ) ) {
-			$classes_content = file_get_contents( $classes_path );
-			if ( json_decode( $classes_content, true ) === null && json_last_error() !== JSON_ERROR_NONE ) {
-				return new \WP_Error(
-					'invalid-design-system-structure',
-					__( 'Invalid design system file: global-classes.json is not valid JSON.', 'elementor' )
-				);
-			}
-		}
-
 		if ( file_exists( $variables_path ) ) {
 			$variables_content = file_get_contents( $variables_path );
+
 			if ( json_decode( $variables_content, true ) === null && json_last_error() !== JSON_ERROR_NONE ) {
 				return new \WP_Error(
 					'invalid-design-system-structure',
@@ -168,7 +165,7 @@ class Import {
 		return true;
 	}
 
-	private function import_classes(): array {
+	private function import_classes() {
 		$classes_path = $this->extraction_dir . Export::FILE_GLOBAL_CLASSES;
 		$empty_result = [ 'imported' => 0, 'failed' => [], 'conflicts' => [] ];
 
@@ -177,7 +174,6 @@ class Import {
 		}
 
 		return Import_Export_Utils::import_classes( $classes_path, [ 'conflict_resolution' => $this->conflict_resolution ] );
-
 	}
 
 	private function import_variables( $kit ): array {
@@ -412,4 +408,5 @@ class Import {
 
 		rmdir( $dir );
 	}
+
 }
