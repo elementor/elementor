@@ -28,8 +28,10 @@ type Props = {
  * `@elementor/editor-variables` and `@elementor/editor-global-classes` unchanged — use a **single**
  * content mount so a hidden `TabPanel` does not keep an empty flex child (which caused the large
  * empty gap in the Classes tab next to a sibling with `flex: 1`).
+ * @param root0
+ * @param root0.onRequestClose
  */
-export function DesignSystemPanelContent( { onRequestClose: closePanel }: Props ) {
+export function DesignSystemPanelContent() {
 	const [ currentTab, setCurrentTab ] = useState( () => consumeInitialDesignSystemTab() );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
 
@@ -48,10 +50,7 @@ export function DesignSystemPanelContent( { onRequestClose: closePanel }: Props 
 						minHeight: 0,
 					} }
 				>
-					<Stack
-						direction="column"
-						sx={ { width: '100%', flex: 1, minHeight: 0, overflow: 'hidden' } }
-					>
+					<Stack direction="column" sx={ { width: '100%', flex: 1, minHeight: 0, overflow: 'hidden' } }>
 						<Stack sx={ { ...stickyTabRowStyles, top: 0, flexShrink: 0 } }>
 							<Tabs
 								variant="fullWidth"
@@ -88,8 +87,7 @@ export function DesignSystemPanelContent( { onRequestClose: closePanel }: Props 
 								flexDirection: 'column',
 								overflow: 'hidden',
 							} }
-						>
-						</Box>
+						></Box>
 					</Stack>
 				</PanelBody>
 			</Panel>
