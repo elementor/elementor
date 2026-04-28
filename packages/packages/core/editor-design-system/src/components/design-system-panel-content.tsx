@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { useState } from 'react';
-// import { ClassManagerPanelView, FlippedColorSwatchIcon } from '@elementor/editor-global-classes';
-// import { VariablesManagerPanelView } from '@elementor/editor-variables';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
@@ -40,7 +38,6 @@ export function DesignSystemPanelContent( { onRequestClose: closePanel }: Props 
 			<Panel>
 				<PanelHeader>
 					<PanelHeaderTitle>{ __( 'Design system', 'elementor' ) }</PanelHeaderTitle>
-					<ColorSwatchIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
 				</PanelHeader>
 				<PanelBody
 					sx={ {
@@ -92,12 +89,6 @@ export function DesignSystemPanelContent( { onRequestClose: closePanel }: Props 
 								overflow: 'hidden',
 							} }
 						>
-							{/* { currentTab === 'variables' && (
-								<VariablesManagerPanelView onRequestClose={ closePanel } />
-							) }
-							{ currentTab === 'classes' && (
-								<ClassManagerPanelView onRequestClose={ closePanel } />
-							) } */}
 						</Box>
 					</Stack>
 				</PanelBody>

@@ -11,7 +11,6 @@ import { usePanelActions, usePanelStatus } from './design-system-panel';
  * App bar "Design system" (toolbar): toggles the panel open/closed. First open defaults to the Variables tab.
  */
 export function useOpenDesignSystemToolbar(): ToggleActionProps {
-	console.log( 'useOpenDesignSystemToolbar' );
 	const { isOpen } = usePanelStatus();
 	const { open, close } = usePanelActions();
 
@@ -25,7 +24,7 @@ export function useOpenDesignSystemToolbar(): ToggleActionProps {
 	}, [ isOpen, open, close ] );
 
 	return {
-		title: __( 'Design system', 'elementor' ),
+		title: __( 'Design System', 'elementor' ),
 		icon: DropletHalfFilledIcon,
 		onClick,
 		selected: isOpen,
