@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
-import { Box, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
+import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { consumeInitialDesignSystemTab, type DesignSystemTab } from '../initial-tab';
@@ -19,15 +19,20 @@ const stickyTabRowStyles = {
 	transition: 'top 300ms ease' as const,
 };
 
+export type DesignSystemPanelContentProps = {
+	onRequestClose: () => void | Promise< void >;
+};
+
 /**
  * Shell only: panel chrome + design-system title + tab strip. Tab bodies are delegated to
  * `@elementor/editor-variables` and `@elementor/editor-global-classes` unchanged — use a **single**
  * content mount so a hidden `TabPanel` does not keep an empty flex child (which caused the large
  * empty gap in the Classes tab next to a sibling with `flex: 1`).
- * @param root0
- * @param root0.onRequestClose
+ *
+ * @param props                - Panel props.
+ * @param props.onRequestClose - Invoked when the user closes the panel from the header control.
  */
-export function DesignSystemPanelContent() {
+export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => consumeInitialDesignSystemTab() );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
 
@@ -35,7 +40,10 @@ export function DesignSystemPanelContent() {
 		<ThemeProvider>
 			<Panel>
 				<PanelHeader>
-					<PanelHeaderTitle>{ __( 'Design system', 'elementor' ) }</PanelHeaderTitle>
+					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+						<PanelHeaderTitle sx={ { flex: 1 } }>{ __( 'Design system', 'elementor' ) }</PanelHeaderTitle>
+						<CloseButton sx={ { marginLeft: 'auto' } } onClose={ onRequestClose } />
+					</Stack>
 				</PanelHeader>
 				<PanelBody
 					sx={ {
