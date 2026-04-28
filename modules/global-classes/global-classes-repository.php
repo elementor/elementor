@@ -136,7 +136,7 @@ class Global_Classes_Repository {
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
-			'posts_per_page' => -1,
+			'posts_per_page' => 100,
 			'meta_query' => [
 				[
 					'key' => Global_Class_Post::META_KEY_ID,
@@ -255,6 +255,21 @@ class Global_Classes_Repository {
 					delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_DATA_PREVIEW );
 				}
 			}
+		}
+	}
+
+	public function add_class( string $class_id, string $label, array $data ): void {
+		$t = microtime( true );
+		$post = Global_Class_Post::create( $class_id, $label, $data );
+		$t_create = microtime( true ) - $t;
+
+		if ( $post ) {
+			$t = microtime( true );
+			$index = Global_Classes_Index::make();
+			$index->add_class( $class_id );
+			$t_index = microtime( true ) - $t;
+
+			error_log( '[GC Import][Timing] add_class(' . $class_id . '): post_create=' . round( $t_create * 1000, 2 ) . 'ms, index_add=' . round( $t_index * 1000, 2 ) . 'ms' );
 		}
 	}
 

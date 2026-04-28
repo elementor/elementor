@@ -141,21 +141,34 @@ class Global_Class_Post {
 	}
 
 	public static function create( string $class_id, string $label, array $data, int $order = 0 ): ?self {
+		$t = microtime( true );
 		$post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_title' => $label,
 			'post_status' => 'publish',
 			'menu_order' => $order,
 		] );
+		$t_insert = microtime( true ) - $t;
 
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return null;
 		}
 
+		$t = microtime( true );
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
-		update_post_meta( $post_id, self::META_KEY_DATA, $data );
+		$t_meta_id = microtime( true ) - $t;
 
-		return self::from_post_id( $post_id );
+		$t = microtime( true );
+		update_post_meta( $post_id, self::META_KEY_DATA, $data );
+		$t_meta_data = microtime( true ) - $t;
+
+		$t = microtime( true );
+		$result = self::from_post_id( $post_id );
+		$t_fetch = microtime( true ) - $t;
+
+		error_log( '[GC Import][Timing] Post::create(' . $class_id . '): insert=' . round( $t_insert * 1000, 2 ) . 'ms, meta_id=' . round( $t_meta_id * 1000, 2 ) . 'ms, meta_data=' . round( $t_meta_data * 1000, 2 ) . 'ms, fetch=' . round( $t_fetch * 1000, 2 ) . 'ms' );
+
+		return $result;
 	}
 
 	public function delete(): bool {
