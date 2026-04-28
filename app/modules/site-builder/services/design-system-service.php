@@ -28,7 +28,7 @@ class Design_System_Service {
 			? array_values( $global_classes['order'] )
 			: [];
 
-		Global_Classes_Repository::make( $this->kit )
+		Global_Classes_Repository::make()
 			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->put( $items, $order );
 
