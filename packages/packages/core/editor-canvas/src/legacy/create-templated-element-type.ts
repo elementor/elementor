@@ -13,10 +13,10 @@ import {
 } from './twig-rendering-utils';
 import {
 	type ElementType,
-	type ElementView,
 	type LegacyWindow,
 	type NamespacedRenderContext,
 	type RenderContext,
+	type TemplatedElementView,
 } from './types';
 
 export type CreateTemplatedElementTypeOptions = {
@@ -66,7 +66,7 @@ export function createTemplatedElementView( {
 	type,
 	renderer,
 	element,
-}: CreateTemplatedElementTypeOptions ): typeof ElementView {
+}: CreateTemplatedElementTypeOptions ): typeof TemplatedElementView {
 	const BaseView = createElementViewClassDeclaration();
 
 	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {

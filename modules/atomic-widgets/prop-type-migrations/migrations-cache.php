@@ -70,6 +70,16 @@ class Migrations_Cache {
 		] );
 	}
 
+	public static function get_version_fingerprint(): string {
+		$fingerprint = ELEMENTOR_VERSION;
+
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
+			$fingerprint .= ':' . ELEMENTOR_PRO_VERSION;
+		}
+
+		return $fingerprint;
+	}
+
 	private static function get_cache_meta_key( string $data_identifier ): string {
 		return self::MIGRATIONS_STATE_META_KEY . '_' . substr( md5( $data_identifier ), 0, 4 );
 	}
@@ -79,12 +89,6 @@ class Migrations_Cache {
 			return '';
 		}
 
-		$state = ELEMENTOR_VERSION;
-
-		if ( defined( 'ELEMENTOR_PRO_VERSION' ) ) {
-			$state .= ':' . ELEMENTOR_PRO_VERSION;
-		}
-
-		return $state . ':' . $manifest_hash;
+		return self::get_version_fingerprint() . ':' . $manifest_hash;
 	}
 }
