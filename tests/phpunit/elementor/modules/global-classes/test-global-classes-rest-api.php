@@ -1359,7 +1359,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			}
 		}
 
-		Global_Classes_Order::make()->set_order( $payload['order'] ?? [] );
+		Global_Classes_Order::make( $this->kit )->set_order( $payload['order'] ?? [] );
 	}
 
 	private function get_repository_snapshot( string $context ): array {

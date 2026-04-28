@@ -22,12 +22,17 @@ class Global_Classes_REST_API {
 	const MAX_ITEMS = 1000;
 	const LABEL_PREFIX = 'DUP_';
 	const MAX_LABEL_LENGTH = 50;
-	private $repository = null;
 	private ?Global_Classes_Relations $relations = null;
 	private ?Kit $kit = null;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
+	}
+
+	public function invalidate_cache() {
+		$this->kit = null;
+		$this->repository = null;
+		$this->relations = null;
 	}
 
 	private function get_kit(): ?Kit {
@@ -55,6 +60,9 @@ class Global_Classes_REST_API {
 	}
 
 	private function register_routes() {
+		// cache invalidation at this point is solely for tests, in particular - Test_Global_Classes_Rest_Api
+		$this->invalidate_cache();
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'GET',
