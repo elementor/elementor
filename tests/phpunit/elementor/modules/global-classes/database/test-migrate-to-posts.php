@@ -92,7 +92,7 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->assertSame( 'button-primary', $post1->get_label() );
 		$this->assertSame( 'card-shadow', $post2->get_label() );
 
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$this->assertSame( [ 'g-2', 'g-1' ], $classes_order->get_order() );
 	}
 

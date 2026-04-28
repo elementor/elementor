@@ -52,7 +52,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->created_post_ids[] = $post1->get_post_id();
 		$this->created_post_ids[] = $post2->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-2', 'g-1' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-2', 'g-1' ] );
 
 		// Act
 		$result = Global_Classes_Repository::make()->all();
@@ -71,7 +71,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		] );
 		$this->created_post_ids[] = $post->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-123' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-123' ] );
 
 		// Act
 		$result = Global_Classes_Repository::make()->get( 'g-123' );
@@ -87,7 +87,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$post = Global_Class_Post::create( 'g-1', 'exists', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-1' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
 
 		// Act
 		$result = Global_Classes_Repository::make()->get( 'g-non-existing' );
@@ -101,7 +101,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$post = Global_Class_Post::create( 'g-existing', 'existing', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-existing' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-existing' ] );
 
 		$new_items = [
 			'g-existing' => [ 'id' => 'g-existing', 'label' => 'existing', 'type' => 'class', 'variants' => [] ],
@@ -117,7 +117,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->created_post_ids[] = $new_post->get_post_id();
 		$this->assertSame( 'new-class', $new_post->get_label() );
 
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$this->assertSame( [ 'g-new', 'g-existing' ], $classes_order->get_order() );
 	}
 
@@ -127,7 +127,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$post2 = Global_Class_Post::create( 'g-delete', 'delete', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post1->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-keep', 'g-delete' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-keep', 'g-delete' ] );
 
 		$new_items = [
 			'g-keep' => [ 'id' => 'g-keep', 'label' => 'keep', 'type' => 'class', 'variants' => [] ],
@@ -152,7 +152,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		] );
 		$this->created_post_ids[] = $post->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-update' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-update' ] );
 
 		$updated_items = [
 			'g-update' => [
@@ -184,7 +184,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$post2 = Global_Class_Post::create( 'g-removed', 'gone', $style_def );
 		$this->created_post_ids[] = $post2->get_post_id();
 
-		Global_Classes_Order::make()->set_order( [ 'g-keep', 'g-removed' ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-keep', 'g-removed' ] );
 
 		Global_Classes_Repository::make()->put(
 			[

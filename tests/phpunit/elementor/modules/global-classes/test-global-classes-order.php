@@ -37,13 +37,13 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_get_order__should_return_empty_array_when_no_stored_order() {
-		$order = Global_Classes_Order::make()->get_order();
+		$order = Global_Classes_Order::make( $this->kit )->get_order();
 
 		$this->assertSame( [], $order );
 	}
 
 	public function test_set_order__should_store_order_in_kit_meta() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$ids = [ 'g-1', 'g-2', 'g-3' ];
 
 		$result = $classes_order->set_order( $ids );
@@ -53,7 +53,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_append_class_id__should_append_to_order() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$result = $classes_order->append_class_id( 'g-3' );
@@ -63,7 +63,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_append_class_id__should_not_duplicate() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$result = $classes_order->append_class_id( 'g-1' );
@@ -73,7 +73,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_prepend_class_id__should_add_to_beginning() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$result = $classes_order->prepend_class_id( 'g-0' );
@@ -83,7 +83,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_prepend_class_id__should_not_duplicate() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$result = $classes_order->prepend_class_id( 'g-2' );
@@ -93,7 +93,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_remove_class_id__should_remove_from_order() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2', 'g-3' ] );
 
 		$result = $classes_order->remove_class_id( 'g-2' );
@@ -103,7 +103,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_remove_class_id__should_handle_non_existing() {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$result = $classes_order->remove_class_id( 'g-999' );
@@ -118,7 +118,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 		$this->created_post_ids[] = $post1->get_post_id();
 		$this->created_post_ids[] = $post2->get_post_id();
 
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( [ 'g-1', 'g-2' ] );
 
 		$labels = $classes_order->get_labels();
@@ -130,7 +130,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 	}
 
 	public function test_get_labels__should_return_empty_when_no_order() {
-		$labels = Global_Classes_Order::make()->get_labels();
+		$labels = Global_Classes_Order::make( $this->kit )->get_labels();
 
 		$this->assertSame( [], $labels );
 	}
@@ -143,7 +143,7 @@ class Test_Global_Classes_Order extends Elementor_Test_Base {
 		$this->created_post_ids[] = $post2->get_post_id();
 		$this->created_post_ids[] = $post3->get_post_id();
 
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 
 		$result = $classes_order->rebuild_order_from_post_menu_order();
 
