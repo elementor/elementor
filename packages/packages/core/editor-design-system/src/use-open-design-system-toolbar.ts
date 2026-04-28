@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { ColorSwatchIcon } from '@elementor/icons';
+import { DropletHalfFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { type ActionProps } from '@elementor/editor-app-bar';
+import { type ToggleActionProps } from '@elementor/editor-app-bar';
 
 import { setInitialDesignSystemTab } from './initial-tab';
 import { usePanelActions, usePanelStatus } from './design-system-panel';
@@ -10,7 +10,7 @@ import { usePanelActions, usePanelStatus } from './design-system-panel';
 /**
  * App bar "Design system" (toolbar): toggles the panel open/closed. First open defaults to the Variables tab.
  */
-export function useOpenDesignSystemToolbar(): ActionProps {
+export function useOpenDesignSystemToolbar(): ToggleActionProps {
 	const { isOpen } = usePanelStatus();
 	const { open, close } = usePanelActions();
 
@@ -25,7 +25,8 @@ export function useOpenDesignSystemToolbar(): ActionProps {
 
 	return {
 		title: __( 'Design system', 'elementor' ),
-		icon: ColorSwatchIcon,
+		icon: DropletHalfFilledIcon,
 		onClick,
+		selected: isOpen,
 	};
 }

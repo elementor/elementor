@@ -1,6 +1,6 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
-import { utilitiesMenu } from '@elementor/editor-app-bar';
+import { toolsMenu, utilitiesMenu } from '@elementor/editor-app-bar';
 
 import { OpenDesignSystemFromEvent } from './components/open-design-system-from-event';
 import { OpenDesignSystemFromUrl } from './components/open-design-system-from-url';
@@ -26,9 +26,15 @@ export function init() {
 		component: OpenDesignSystemFromEvent,
 	} );
 
-	utilitiesMenu.registerAction( {
-		id: 'open-design-system',
-		priority: 9,
+	// utilitiesMenu.registerAction( {
+	// 	id: 'open-design-system',
+	// 	priority: 9,
+	// 	useProps: useOpenDesignSystemToolbar,
+	// } );
+
+	toolsMenu.registerToggleAction( {
+		id: 'open-design-system-toolbar',
+		priority: 16,
 		useProps: useOpenDesignSystemToolbar,
 	} );
 }
