@@ -90,7 +90,7 @@ class Migrate_To_Posts extends Base_Migration {
 		return get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
-			'posts_per_page' => 1,
+			'posts_per_page' => -1,
 			'fields' => 'ids',
 		] );
 	}
