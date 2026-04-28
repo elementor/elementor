@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react';
+import { type FC, type ReactNode } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isDependency, isDependencyMet, type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 
@@ -11,7 +11,6 @@ export const ConditionalField: FC< {
 	const { propType } = useBoundProp();
 
 	const depList = getDependencies( propType );
-
 	const { values: depValues } = useStylesFields( depList );
 	const inheritedValues = useInheritedValues( depList );
 
@@ -19,19 +18,42 @@ export const ConditionalField: FC< {
 
 	const isHidden = ! isDependencyMet( propType?.dependencies, resolvedValues ).isMet;
 
+	useUpdateDepWithInherited( isHidden, depList, inheritedValues );
+
 	return isHidden ? null : children;
 };
 
+const useUpdateDepWithInherited = (
+	isHidden: boolean,
+	depList: string[],
+	inheritedValues: Record< string, PropValue >
+) => {
+	const { values: depValues, setValues: setDepValues } = useStylesFields( depList );
+	const { value } = useBoundProp();
+
+	if ( isHidden ) {
+		return;
+	}
+
+	Object.entries( depValues ?? {} ).forEach( ( [ key, depValue ] ) => {
+		if ( ! ( value && ! depValue ) ) {
+			return;
+		}
+
+		setDepValues( { [ key ]: inheritedValues[ key ] }, { history: { propDisplayName: key } } );
+	} );
+};
+
 function resolveWithInherited(
-	localValues: Record< string, PropValue > | null,
+	values: Record< string, PropValue > | null,
 	inheritedValues: Record< string, PropValue >
 ): Record< string, PropValue > | null {
-	if ( ! localValues ) {
+	if ( ! values ) {
 		return null;
 	}
 
 	return Object.fromEntries(
-		Object.entries( localValues ).map( ( [ key, value ] ) => [ key, value ?? inheritedValues[ key ] ?? null ] )
+		Object.entries( values ).map( ( [ key, value ] ) => [ key, value ?? inheritedValues[ key ] ?? null ] )
 	);
 }
 
