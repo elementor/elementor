@@ -2,9 +2,6 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Module;
-use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -52,7 +49,9 @@ class Global_Classes_Parser {
 			return $result;
 		}
 
-		$order_result = $this->parse_order( $order, $items_result->unwrap() );
+		$sanitized_items = $items_result->unwrap();
+
+		$order_result = $this->parse_order( $order, $sanitized_items );
 
 		if ( ! $order_result->is_valid() ) {
 			$result->errors()->merge( $order_result->errors(), 'order' );
@@ -60,9 +59,11 @@ class Global_Classes_Parser {
 			return $result;
 		}
 
+		$sanitized_order = $order_result->unwrap();
+
 		return $result->wrap( [
-			'items' => $items_result->unwrap(),
-			'order' => $order_result->unwrap(),
+			'items' => $sanitized_items,
+			'order' => $sanitized_order,
 		] );
 	}
 
@@ -96,25 +97,24 @@ class Global_Classes_Parser {
 		return $result->wrap( $sanitized_items );
 	}
 
-	public function parse_order( array $order, array $items ): Parse_Result {
+	public function parse_order( array $order, array $final_items ) {
 		$result = Parse_Result::make();
 
-		$items = Collection::make( $items );
+		$expected_ids = array_keys( $final_items );
+		$order_unique = array_values( array_unique( array_filter( $order, 'is_string' ) ) );
 
-		$order = Collection::make( $order )
-			->filter( fn( $item ) => is_string( $item ) )
-			->unique();
+		$missing_ids = array_diff( $expected_ids, $order_unique );
+		$excess_ids = array_diff( $order_unique, $expected_ids );
 
-		$existing_ids = $items->keys();
-
-		$excess_ids = $order->diff( $existing_ids );
-		$missing_ids = $existing_ids->diff( $order );
-
-		$excess_ids->each( fn( $id ) => $result->errors()->add( $id, 'excess' ) );
-		$missing_ids->each( fn( $id ) => $result->errors()->add( $id, 'missing' ) );
+		foreach ( $missing_ids as $id ) {
+			$result->errors()->add( $id, 'missing' );
+		}
+		foreach ( $excess_ids as $id ) {
+			$result->errors()->add( $id, 'excess' );
+		}
 
 		return $result->is_valid()
-			? $result->wrap( $order->values() )
+			? $result->wrap( $order_unique )
 			: $result;
 	}
 

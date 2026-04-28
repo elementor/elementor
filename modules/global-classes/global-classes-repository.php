@@ -20,18 +20,10 @@ class Global_Classes_Repository {
 
 	private string $context = self::CONTEXT_FRONTEND;
 
-	private static ?bool $uses_posts = null;
-
 	private ?Global_Classes $cache = null;
 
-	private ?Kit $kit = null;
-
-	public function __construct( ?Kit $kit = null ) {
-		$this->kit = $kit;
-	}
-
-	public static function make( ?Kit $kit = null ): Global_Classes_Repository {
-		return new self( $kit );
+	public static function make(): Global_Classes_Repository {
+		return new self();
 	}
 
 	public function context( string $context ): self {
@@ -46,23 +38,15 @@ class Global_Classes_Repository {
 			return $this->cache;
 		}
 
-		if ( $this->is_using_posts() ) {
-			$this->cache = $this->all_from_posts();
-		} else {
-			$this->cache = $this->all_from_kit_meta();
-		}
+		$this->cache = $this->all_from_posts();
 
 		return $this->cache;
 	}
 
 	public function get( string $class_id ): ?array {
-		if ( $this->is_using_posts() ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id, $this->context );
+		$post = Global_Class_Post::find_by_class_id( $class_id, $this->context );
 
-			return $post ? $post->to_array() : null;
-		}
-
-		return $this->all()->get_items()->get( $class_id );
+		return $post ? $post->to_array() : null;
 	}
 
 	public function put( array $items, array $order ) {
@@ -89,49 +73,22 @@ class Global_Classes_Repository {
 			) ),
 		];
 
-		if ( $this->is_using_posts() ) {
-			$this->put_to_posts( $items, $order, $current_value );
-		} else {
-			$this->put_to_kit_meta( $items, $order );
-		}
+		$this->put_to_posts( $items, $order, $current_value );
 
 		$this->cache = null;
 
 		do_action( 'elementor/global_classes/update', $this->context, $changes );
 	}
 
-	public function is_using_posts(): bool {
-		if ( null !== self::$uses_posts ) {
-			return self::$uses_posts;
-		}
-
-		$posts = get_posts( [
-			'post_type' => Global_Class_Post_Type::CPT,
-			'posts_per_page' => 1,
-			'fields' => 'ids',
-		] );
-
-		self::$uses_posts = ! empty( $posts );
-
-		return self::$uses_posts;
-	}
-
-	public static function reset_storage_mode_cache(): void {
-		self::$uses_posts = null;
-	}
-
-	public function invalidate_cache(): void {
-		$this->cache = null;
-	}
-
 	private function all_from_posts(): Global_Classes {
-		$index = Global_Classes_Index::make();
-		$order = $index->get_order();
+		$classes_order = Global_Classes_Order::make();
+		$order = $classes_order->get_order();
 
 		if ( empty( $order ) ) {
 			return Global_Classes::make( [], [] );
 		}
 
+		// TODO - handle with pagination
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
@@ -156,32 +113,6 @@ class Global_Classes_Repository {
 		$order = Global_Classes_Parser::sanitize_order( $items, $order );
 
 		return Global_Classes::make( $items, $order );
-	}
-
-	private function all_from_kit_meta(): Global_Classes {
-		$meta_key = $this->get_meta_key();
-		$kit = $this->get_kit();
-		$all = $kit->get_json_meta( $meta_key );
-
-		$is_preview = static::META_KEY_PREVIEW === $meta_key;
-		$is_empty = empty( $all );
-
-		if ( $is_preview && $is_empty ) {
-			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
-		}
-
-		$all['order'] = Global_Classes_Parser::sanitize_order( $all['items'] ?? [], $all['order'] ?? [] );
-
-		Migrations_Orchestrator::make()->migrate(
-			$all,
-			$kit->get_id(),
-			$meta_key,
-			function( $migrated_data ) use ( $kit, $meta_key ) {
-				$kit->update_json_meta( $meta_key, $migrated_data );
-			}
-		);
-
-		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
 
 	private function put_to_posts( array $items, array $order, array $current_value ): void {
@@ -213,7 +144,7 @@ class Global_Classes_Repository {
 			];
 
 			if ( $is_preview ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id );
+				$post = Global_Class_Post::find_by_class_id( $class_id, true );
 
 				if ( $post ) {
 					$post->update_data( $data, true );
@@ -228,7 +159,7 @@ class Global_Classes_Repository {
 
 		foreach ( $to_update as $class_id ) {
 			$item = $items[ $class_id ];
-			$post = Global_Class_Post::find_by_class_id( $class_id );
+			$post = Global_Class_Post::find_by_class_id( $class_id, $is_preview );
 
 			if ( ! $post ) {
 				continue;
@@ -243,8 +174,8 @@ class Global_Classes_Repository {
 			$post->update_label( $item['label'] );
 		}
 
-		$index = Global_Classes_Index::make();
-		$index->set_order( $order );
+		$classes_order = Global_Classes_Order::make();
+		$classes_order->set_order( $order );
 
 		if ( ! $is_preview ) {
 			foreach ( $new_ids as $class_id ) {
@@ -255,36 +186,5 @@ class Global_Classes_Repository {
 				}
 			}
 		}
-	}
-
-	private function put_to_kit_meta( array $items, array $order ): void {
-		$meta_key = $this->get_meta_key();
-
-		$updated_value = [
-			'items' => $items,
-			'order' => $order,
-		];
-
-		$value = $this->get_kit()->update_json_meta( $meta_key, $updated_value );
-
-		$should_delete_preview = static::META_KEY_FRONTEND === $meta_key;
-
-		if ( $should_delete_preview ) {
-			$this->get_kit()->delete_meta( static::META_KEY_PREVIEW );
-		}
-
-		if ( ! $value ) {
-			throw new \Exception( 'Failed to update global classes' );
-		}
-	}
-
-	private function get_meta_key(): string {
-		return static::CONTEXT_FRONTEND === $this->context
-			? static::META_KEY_FRONTEND
-			: static::META_KEY_PREVIEW;
-	}
-
-	private function get_kit(): Kit {
-		return $this->kit ?? Plugin::$instance->kits_manager->get_active_kit();
 	}
 }

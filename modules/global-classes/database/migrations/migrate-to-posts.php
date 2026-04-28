@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 use Elementor\Core\Database\Base_Migration;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
-use Elementor\Modules\GlobalClasses\Global_Classes_Index;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Plugin;
@@ -29,8 +29,6 @@ class Migrate_To_Posts extends Base_Migration {
 
 		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
 		// $this->cleanup_kit_meta();
-
-		Global_Classes_Repository::reset_storage_mode_cache();
 	}
 
 	private function ensure_cpt_registered(): void {
@@ -83,7 +81,7 @@ class Migrate_To_Posts extends Base_Migration {
 		}
 
 		ksort( $created_order );
-		Global_Classes_Index::make()->set_order( array_values( $created_order ) );
+		Global_Classes_Order::make()->set_order( array_values( $created_order ) );
 
 		return true;
 	}
@@ -98,7 +96,7 @@ class Migrate_To_Posts extends Base_Migration {
 	}
 
 	private function update_document_tracking(): void {
-		$valid_class_ids = Global_Classes_Index::make()->get_order();
+		$valid_class_ids = Global_Classes_Order::make()->get_order();
 
 		if ( empty( $valid_class_ids ) ) {
 			return;

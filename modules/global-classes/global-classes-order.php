@@ -5,11 +5,11 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
-class Global_Classes_Index {
-	const META_KEY = '_elementor_global_classes_index';
+class Global_Classes_Order {
+	const META_KEY = '_elementor_global_classes_order';
 
 	private ?array $cache = null;
 
@@ -18,9 +18,9 @@ class Global_Classes_Index {
 	}
 
 	public function get_order(): array {
-		$index = $this->get_index();
+		$payload = $this->read_kit_meta_payload();
 
-		return $index['order'] ?? [];
+		return $payload['order'] ?? [];
 	}
 
 	public function set_order( array $ids ): bool {
@@ -30,17 +30,17 @@ class Global_Classes_Index {
 			return false;
 		}
 
-		$index = [
+		$payload = [
 			'order' => array_values( $ids ),
 		];
 
-		$result = $kit->update_meta( self::META_KEY, $index );
+		$result = $kit->update_meta( self::META_KEY, $payload );
 		$this->cache = null;
 
 		return false !== $result;
 	}
 
-	public function add_class( string $id ): bool {
+	public function append_class_id( string $id ): bool {
 		$order = $this->get_order();
 
 		if ( in_array( $id, $order, true ) ) {
@@ -52,7 +52,7 @@ class Global_Classes_Index {
 		return $this->set_order( $order );
 	}
 
-	public function prepend_class( string $id ): bool {
+	public function prepend_class_id( string $id ): bool {
 		$order = $this->get_order();
 
 		if ( in_array( $id, $order, true ) ) {
@@ -64,8 +64,13 @@ class Global_Classes_Index {
 		return $this->set_order( $order );
 	}
 
-	public function remove_class( string $id ): bool {
+	public function remove_class_id( string $id ): bool {
 		$order = $this->get_order();
+
+		if ( ! in_array( $id, $order, true ) ) {
+			return true;
+		}
+
 		$order = array_filter( $order, fn( $item ) => $item !== $id );
 
 		return $this->set_order( $order );
@@ -104,7 +109,7 @@ class Global_Classes_Index {
 		return $labels;
 	}
 
-	public function build_from_posts(): bool {
+	public function rebuild_order_from_post_menu_order(): bool {
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
@@ -126,7 +131,7 @@ class Global_Classes_Index {
 		return $this->set_order( $order );
 	}
 
-	private function get_index(): array {
+	private function read_kit_meta_payload(): array {
 		if ( null !== $this->cache ) {
 			return $this->cache;
 		}
@@ -137,8 +142,8 @@ class Global_Classes_Index {
 			return [];
 		}
 
-		$index = $kit->get_meta( self::META_KEY );
-		$this->cache = is_array( $index ) ? $index : [];
+		$payload = $kit->get_meta( self::META_KEY );
+		$this->cache = is_array( $payload ) ? $payload : [];
 
 		return $this->cache;
 	}

@@ -289,7 +289,6 @@ class Global_Classes_REST_API {
 		$context = $request->get_param( 'context' );
 		$changes = $request->get_param( 'changes' ) ?? [];
 		$added_ids = $changes['added'] ?? [];
-		$modified_ids = $changes['modified'] ?? [];
 		$deleted_ids = $changes['deleted'] ?? [];
 		$order = $request->get_param( 'order' ) ?? [];
 
@@ -327,12 +326,6 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$order_error = $this->validate_order( $order, $touched_items, $existing_items, $added_ids, $deleted_ids );
-
-		if ( $order_error ) {
-			return $order_error;
-		}
-
 		$duplicated_labels = Global_Classes_Parser::check_for_duplicate_labels(
 			$existing_labels,
 			$touched_items,
@@ -352,7 +345,16 @@ class Global_Classes_REST_API {
 
 		$final_items = $this->merge_items( $existing_items, $touched_items, $deleted_ids );
 
-		$repository->put( $final_items, $order );
+		$order_result = $parser->parse_order( $order, $final_items );
+
+		if ( ! $order_result->is_valid() ) {
+			return Error_Builder::make( 'invalid_order' )
+				->set_status( 400 )
+				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
+				->build();
+		}
+
+		$repository->put( $final_items, $order_result->unwrap() );
 
 		if ( $duplicate_validation_result ) {
 			return Response_Builder::make( [
@@ -362,43 +364,6 @@ class Global_Classes_REST_API {
 		}
 
 		return Response_Builder::make()->no_content()->build();
-	}
-
-	private function validate_order( array $order, array $touched_items, array $existing_items, array $added_ids, array $deleted_ids ) {
-		$expected_ids = array_merge(
-			array_keys( $existing_items ),
-			$added_ids
-		);
-
-		$expected_ids = array_diff( $expected_ids, $deleted_ids );
-		$expected_ids = array_unique( $expected_ids );
-
-		$order_unique = array_unique( $order );
-
-		$missing_in_order = array_diff( $expected_ids, $order_unique );
-		$excess_in_order = array_diff( $order_unique, $expected_ids );
-
-		$touched_ids = array_keys( $touched_items );
-		$excess_in_order = array_diff( $excess_in_order, $touched_ids );
-
-		if ( ! empty( $missing_in_order ) || ! empty( $excess_in_order ) ) {
-			$errors = [];
-
-			foreach ( $missing_in_order as $id ) {
-				$errors[] = "$id: missing";
-			}
-
-			foreach ( $excess_in_order as $id ) {
-				$errors[] = "$id: excess";
-			}
-
-			return Error_Builder::make( 'invalid_order' )
-				->set_status( 400 )
-				->set_message( 'Invalid order: ' . implode( ', ', $errors ) )
-				->build();
-		}
-
-		return null;
 	}
 
 	private function merge_items( array $existing_items, array $touched_items, array $deleted_ids ): array {
