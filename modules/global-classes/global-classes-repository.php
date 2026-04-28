@@ -258,6 +258,32 @@ class Global_Classes_Repository {
 		}
 	}
 
+	/**
+	 * Bulk-add classes using direct DB inserts in a single batch.
+	 * Updates the index once at the end instead of per-class.
+	 *
+	 * @param array $items Array of [ 'class_id' => string, 'label' => string, 'data' => array ].
+	 * @return string[] Class IDs that were successfully created.
+	 */
+	public function bulk_add_classes( array $items ): array {
+		$t = microtime( true );
+		$created_ids = Global_Class_Post::bulk_create( $items );
+		$t_bulk = microtime( true ) - $t;
+
+		if ( ! empty( $created_ids ) ) {
+			$t = microtime( true );
+			$index = Global_Classes_Index::make();
+			$order = $index->get_order();
+			$order = array_merge( $order, $created_ids );
+			$index->set_order( $order );
+			$t_index = microtime( true ) - $t;
+
+			error_log( '[GC Import][Timing] bulk_add_classes: count=' . count( $created_ids ) . ', bulk_create=' . round( $t_bulk * 1000, 2 ) . 'ms, index_update=' . round( $t_index * 1000, 2 ) . 'ms' );
+		}
+
+		return $created_ids;
+	}
+
 	public function add_class( string $class_id, string $label, array $data ): void {
 		$t = microtime( true );
 		$post = Global_Class_Post::create( $class_id, $label, $data );
