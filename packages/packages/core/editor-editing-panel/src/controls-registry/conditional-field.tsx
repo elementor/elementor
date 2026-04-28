@@ -1,59 +1,85 @@
-import { type FC, type ReactNode } from 'react';
+import { type FC, type ReactNode, useEffect, useRef } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isDependency, isDependencyMet, type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 
 import { useInheritedValues } from '../contexts/styles-inheritance-context';
 import { useStylesFields } from '../hooks/use-styles-fields';
 
-export const ConditionalField: FC< {
-	children: ReactNode;
-} > = ( { children } ) => {
-	const { propType } = useBoundProp();
+type DepValues = Record< string, PropValue > | null;
+
+export const ConditionalField: FC< { children: ReactNode } > = ( { children } ) => {
+	const { propType, value, resetValue } = useBoundProp();
 
 	const depList = getDependencies( propType );
-	const { values: depValues } = useStylesFields( depList );
+
+	const { values: depValues, setValues: setDepValues } = useStylesFields( depList );
 	const inheritedValues = useInheritedValues( depList );
 
 	const resolvedValues = resolveWithInherited( depValues, inheritedValues );
-
 	const isHidden = ! isDependencyMet( propType?.dependencies, resolvedValues ).isMet;
 
-	useUpdateDepWithInherited( isHidden, depList, inheritedValues );
+	useSyncDepsWithInherited( { isHidden, depValues, value, inheritedValues, setDepValues, resetValue } );
 
 	return isHidden ? null : children;
 };
 
-const useUpdateDepWithInherited = (
-	isHidden: boolean,
-	depList: string[],
-	inheritedValues: Record< string, PropValue >
-) => {
-	const { values: depValues, setValues: setDepValues } = useStylesFields( depList );
-	const { value } = useBoundProp();
+function useSyncDepsWithInherited( {
+	isHidden,
+	depValues,
+	value,
+	inheritedValues,
+	setDepValues,
+	resetValue,
+}: {
+	isHidden: boolean;
+	depValues: DepValues;
+	value: PropValue;
+	inheritedValues: Record< string, PropValue >;
+	setDepValues: ( props: Record< string, PropValue >, options: { history: { propDisplayName: string } } ) => void;
+	resetValue: () => void;
+} ) {
+	const syncRef = useRef( { hasSynced: false, prevDepValues: depValues } );
 
-	if ( isHidden ) {
-		return;
-	}
+	useEffect( () => {
+		const { hasSynced, prevDepValues } = syncRef.current;
 
-	Object.entries( depValues ?? {} ).forEach( ( [ key, depValue ] ) => {
-		if ( ! ( value && ! depValue ) ) {
+		if ( isHidden || ! value || ! depValues ) {
+			syncRef.current = { hasSynced: false, prevDepValues: depValues };
 			return;
 		}
 
-		setDepValues( { [ key ]: inheritedValues[ key ] }, { history: { propDisplayName: key } } );
-	} );
-};
+		if ( hasSynced ) {
+			const wasCleared = prevDepValues &&
+				Object.keys( prevDepValues ).some( ( key ) => prevDepValues[ key ] && ! depValues[ key ] );
 
-function resolveWithInherited(
-	values: Record< string, PropValue > | null,
-	inheritedValues: Record< string, PropValue >
-): Record< string, PropValue > | null {
-	if ( ! values ) {
+			syncRef.current.prevDepValues = depValues;
+
+			if ( wasCleared ) {
+				resetValue();
+			}
+
+			return;
+		}
+
+		syncRef.current = { hasSynced: true, prevDepValues: depValues };
+
+		Object.entries( depValues ).forEach( ( [ key, depValue ] ) => {
+			const inherited = inheritedValues[ key ];
+
+			if ( ! depValue && inherited ) {
+				setDepValues( { [ key ]: inherited }, { history: { propDisplayName: key } } );
+			}
+		} );
+	} );
+}
+
+function resolveWithInherited( localValues: DepValues, inheritedValues: Record< string, PropValue > ): DepValues {
+	if ( ! localValues ) {
 		return null;
 	}
 
 	return Object.fromEntries(
-		Object.entries( values ).map( ( [ key, value ] ) => [ key, value ?? inheritedValues[ key ] ?? null ] )
+		Object.entries( localValues ).map( ( [ key, val ] ) => [ key, val ?? inheritedValues[ key ] ?? null ] )
 	);
 }
 
