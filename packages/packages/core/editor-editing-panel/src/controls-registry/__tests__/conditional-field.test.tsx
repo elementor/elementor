@@ -272,6 +272,34 @@ describe( 'useSyncDepsWithInherited', () => {
 		// Assert.
 		expect( mockParentSetValue ).toHaveBeenCalled();
 	} );
+
+	it( 'should clear child value when dep is cleared and field becomes hidden (no inherited value)', () => {
+		// Arrange.
+		const propType = createMockPropType( {
+			kind: 'plain',
+			key: 'string',
+			dependencies: EXISTING_DEP,
+		} );
+
+		const mockParentSetValue = jest.fn();
+
+		mockDepField( { 'parent-field': INHERITED_COVER }, mockSetValues );
+		mockInherited( {} );
+
+		// Act.
+		const { rerender } = renderConditionalField( propType, CHILD_VALUE, mockParentSetValue );
+
+		// Assert.
+		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
+
+		// Act.
+		mockDepField( { 'parent-field': null }, mockSetValues );
+		rerenderConditionalField( rerender, propType, CHILD_VALUE, mockParentSetValue );
+
+		// Assert.
+		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
+		expect( mockParentSetValue ).toHaveBeenCalled();
+	} );
 } );
 
 describe( 'getDependencies', () => {

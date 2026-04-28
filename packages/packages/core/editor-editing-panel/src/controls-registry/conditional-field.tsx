@@ -23,6 +23,16 @@ export const ConditionalField: FC< { children: ReactNode } > = ( { children } ) 
 	return isHidden ? null : children;
 };
 
+function wasDepsCleared( prevDepValues: DepValues, depValues: DepValues ): boolean {
+	if ( ! prevDepValues ) {
+		return false;
+	}
+
+	return Object.keys( prevDepValues ).some(
+		( key ) => prevDepValues[ key ] && ( ! depValues || ! depValues[ key ] )
+	);
+}
+
 function useSyncDepsWithInherited( {
 	isHidden,
 	depValues,
@@ -43,22 +53,17 @@ function useSyncDepsWithInherited( {
 	useEffect( () => {
 		const { hasSynced, prevDepValues } = syncRef.current;
 
+		if ( hasSynced && value && wasDepsCleared( prevDepValues, depValues ) ) {
+			resetValue();
+		}
+
 		if ( isHidden || ! value || ! depValues ) {
 			syncRef.current = { hasSynced: false, prevDepValues: depValues };
 			return;
 		}
 
 		if ( hasSynced ) {
-			const wasCleared =
-				prevDepValues &&
-				Object.keys( prevDepValues ).some( ( key ) => prevDepValues[ key ] && ! depValues[ key ] );
-
 			syncRef.current.prevDepValues = depValues;
-
-			if ( wasCleared ) {
-				resetValue();
-			}
-
 			return;
 		}
 
