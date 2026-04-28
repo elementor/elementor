@@ -101,6 +101,7 @@ class Global_Classes_Repository {
 	}
 
 	public function is_using_posts(): bool {
+		return true;
 		if ( null !== self::$uses_posts ) {
 			return self::$uses_posts;
 		}

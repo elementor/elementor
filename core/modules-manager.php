@@ -128,6 +128,7 @@ class Modules_Manager {
 			'global-classes',
 			'variables',
 			'design-system-sync',
+			'import-export-design-system',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
