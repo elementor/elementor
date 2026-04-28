@@ -135,7 +135,7 @@ class Migrate_To_Posts extends Base_Migration {
 	}
 
 	private function get_kit(): ?Kit {
-		if( null !== $this->kit ) {
+		if ( null !== $this->kit ) {
 			return $this->kit;
 		}
 

@@ -69,7 +69,7 @@ class Design_System_Service {
 	}
 
 	private function get_kit(): ?Kit {
-		if( ! $this->kit ) {
+		if ( ! $this->kit ) {
 			$this->kit = Plugin::$instance->kits_manager->get_active_kit();
 		}
 
