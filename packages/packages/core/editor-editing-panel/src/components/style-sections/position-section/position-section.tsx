@@ -1,16 +1,11 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
-import {
-	type NumberPropValue,
-	type PropValue,
-	type SizePropValue,
-	type StringPropValue,
-} from '@elementor/editor-props';
+import { useCallback, useEffect } from 'react';
+import { type NumberPropValue, type SizePropValue, type StringPropValue } from '@elementor/editor-props';
 import { useSessionStorage } from '@elementor/session';
+import { styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../../contexts/style-context';
-import { StylesField } from '../../../controls-registry/styles-field';
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { useStylesFields } from '../../../hooks/use-styles-fields';
 import { PanelDivider } from '../../panel-divider';
@@ -42,16 +37,11 @@ const DEPENDENT_PROP_NAMES: Array< keyof DependentValues > = [
 ];
 
 export const PositionSection = () => {
-	const { value: position, setValue: setPosition } = useStylesField< StringPropValue >(
-		'position',
-		withHistoryLabel( POSITION_LABEL )
-	);
+	const { value: position } = useStylesField< StringPropValue >( 'position', withHistoryLabel( POSITION_LABEL ) );
 	const { values: dependentValues, setValues: setDependentValues } =
 		useStylesFields< DependentValues >( DEPENDENT_PROP_NAMES );
-	const validDependentValues = toNonNullValues( dependentValues );
 
 	const [ savedDependentValues, saveToHistory, clearHistory ] = usePersistDimensions();
-	const [ positionPlaceholder, setPositionPlaceholder ] = useState< PropValue >();
 
 	const clearPositionDependentProps = useCallback( () => {
 		if ( ! hasDependentValues( dependentValues ) ) {
@@ -69,13 +59,6 @@ export const PositionSection = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ position?.value ] );
 
-	useEffect( () => {
-		if ( ! position && positionPlaceholder && validDependentValues ) {
-			setPosition( positionPlaceholder as StringPropValue );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ JSON.stringify( dependentValues ) ] );
-
 	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
 		if ( newPosition === POSITION_STATIC ) {
 			clearPositionDependentProps();
@@ -90,24 +73,14 @@ export const PositionSection = () => {
 		}
 	};
 
-	const isPositioned = isNonStaticPosition( position ) || isNonStaticPosition( positionPlaceholder );
-
 	return (
-		<SectionContent>
-			<StylesField bind="position" propDisplayName={ POSITION_LABEL }>
-				<PositionField onChange={ onPositionChange } onPlaceholderChange={ setPositionPlaceholder } />
-			</StylesField>
-
-			{ isPositioned ? (
-				<>
-					<DimensionsField />
-					<ZIndexField />
-				</>
-			) : null }
-
+		<StyledSectionContent>
+			<PositionField onChange={ onPositionChange } />
+			<DimensionsField />
+			<ZIndexField />
 			<PanelDivider />
 			<OffsetField />
-		</SectionContent>
+		</StyledSectionContent>
 	);
 };
 
@@ -158,10 +131,23 @@ const extractDimensions = ( values: DependentValues | null ): DependentValues =>
 	}, {} );
 };
 
-const isNonStaticPosition = ( value: PropValue ) => {
-	if ( ! value ) {
-		return false;
-	}
-
-	return value && typeof value === 'object' && 'value' in value && value?.value !== POSITION_STATIC;
-};
+const StyledSectionContent = styled( SectionContent, {
+	shouldForwardProp: ( prop ) => prop !== 'gap',
+} )< { gap?: number } >( ( { gap = 2, theme } ) => ( {
+	gap: 0,
+	'& > *': {
+		marginBottom: theme.spacing( gap ),
+	},
+	'& > *:last-child': {
+		marginBottom: 0,
+	},
+	'& > .MuiStack-root': {
+		marginBottom: 0,
+	},
+	'& > .MuiStack-root:has(> *)': {
+		marginBottom: theme.spacing( gap ),
+	},
+	'& > .MuiDivider-root': {
+		marginBottom: theme.spacing( gap ),
+	},
+} ) );

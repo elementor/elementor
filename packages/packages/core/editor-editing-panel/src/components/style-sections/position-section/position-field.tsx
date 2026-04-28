@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useLayoutEffect } from 'react';
-import { SelectControl, useBoundProp } from '@elementor/editor-controls';
-import { type PropValue } from '@elementor/editor-props';
+import { SelectControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
+import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 const POSITION_LABEL = __( 'Position', 'elementor' );
@@ -18,19 +17,14 @@ const positionOptions = [
 
 type Props = {
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
-	onPlaceholderChange: ( placeholder: PropValue ) => void;
 };
 
-export const PositionField = ( { onChange, onPlaceholderChange }: Props ) => {
-	const { placeholder } = useBoundProp();
-
-	useLayoutEffect( () => {
-		onPlaceholderChange( placeholder );
-	}, [ onPlaceholderChange, placeholder ] );
-
+export const PositionField = ( { onChange }: Props ) => {
 	return (
-		<StylesFieldLayout label={ POSITION_LABEL }>
-			<SelectControl options={ positionOptions } onChange={ onChange } />
-		</StylesFieldLayout>
+		<StylesField bind="position" propDisplayName={ POSITION_LABEL }>
+			<StylesFieldLayout label={ POSITION_LABEL }>
+				<SelectControl options={ positionOptions } onChange={ onChange } />
+			</StylesFieldLayout>
+		</StylesField>
 	);
 };
