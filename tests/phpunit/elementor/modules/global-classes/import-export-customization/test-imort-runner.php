@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class ç extends Elementor_Test_Base {
+class Test_Import_Runner extends Elementor_Test_Base {
 
 	public function test_import() {
 		// Act.
@@ -23,8 +23,8 @@ class ç extends Elementor_Test_Base {
 		$sanitized_items = [
 			'g-123' => [
 				'id' => 'g-123',
-				'type' => 'class',
 				'label' => 'Test1',
+				'type' => 'class',
 				'variants' => [
 					[
 						'meta' => [
@@ -52,8 +52,8 @@ class ç extends Elementor_Test_Base {
 			],
 			'g-456' => [
 				'id' => 'g-456',
-				'type' => 'class',
 				'label' => 'Test2',
+				'type' => 'class',
 				"variants" => [],
 			],
 		];

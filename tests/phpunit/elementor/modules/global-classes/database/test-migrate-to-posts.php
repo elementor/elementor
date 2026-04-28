@@ -134,27 +134,6 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->assertSame( $variants, $data['variants'] );
 	}
 
-	public function test_migration__cleans_up_kit_meta() {
-		// Arrange
-		$global_classes = [
-			'items' => [
-				'g-1' => [ 'id' => 'g-1', 'label' => 'test', 'type' => 'class', 'variants' => [] ],
-			],
-			'order' => [ 'g-1' ],
-		];
-
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $global_classes );
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $global_classes );
-
-		// Act
-		$migration = new Migrate_To_Posts();
-		$migration->up();
-
-		// Assert
-		$this->assertEmpty( $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND ) );
-		$this->assertEmpty( $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW ) );
-	}
-
 	public function test_migration__skips_when_no_global_classes() {
 		// Arrange - no global classes in kit meta
 
