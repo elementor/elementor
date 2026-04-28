@@ -28,7 +28,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Hooks {
 	const PACKAGES = [
 		'editor-variables',
-		'editor-design-system',
 	];
 
 	public function register() {
@@ -57,7 +56,13 @@ class Hooks {
 
 	private function register_packages() {
 		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
-			return array_merge( $packages, self::PACKAGES );
+			$packages = array_merge( $packages, self::PACKAGES );
+
+			if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_DESIGN_SYSTEM_PANEL ) ) {
+				$packages[] = 'editor-design-system';
+			}
+
+			return $packages;
 		} );
 
 		return $this;
