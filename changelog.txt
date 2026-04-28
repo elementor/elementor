@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 4.0.4 - 2026-04-28 =
+
+* Tweak: Optimized handling of repeated background requests - Atomic Editor
+* Fix: Link in atomic elements wraps subsequent elements incorrectly – Atomic Editor ([#35559](https://github.com/elementor/elementor/issues/35559))
+* Fix: Interactions disappear when editing elements - Atomic Editor
+
 = 4.0.3 - 2026-04-20 =
 
 * Fix: UI and functionality issues in Tabs - Atomic Editor
