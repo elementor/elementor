@@ -82,7 +82,6 @@ trait Css_Shorthand_Parser {
 	private static function color_props(): array {
 		return [
 			'color',
-			'background-color',
 			'border-color',
 			'outline-color',
 			'text-decoration-color',
@@ -904,16 +903,20 @@ trait Css_Shorthand_Parser {
 				continue;
 			}
 
+			// background-color → background.color (Background_Prop_Type has a direct `color` key)
+			if ( 'background-color' === $prop ) {
+				$color = $this->resolve_color( $value );
+				if ( null !== $color ) {
+					$result['background'] = $this->wrap_background_color( $color );
+				}
+				continue;
+			}
+
 			// background shorthand (color-only recognition; else string)
 			if ( 'background' === $prop ) {
 				$color = $this->resolve_color( $value );
 				if ( null !== $color ) {
-					$result[ $prop ] = [
-						'$$type' => 'background',
-						'value'  => [
-							'color' => $color,
-						],
-					];
+					$result[ $prop ] = $this->wrap_background_color( $color );
 				} else {
 					$result[ $prop ] = $this->wrap_string( $value );
 				}
@@ -970,5 +973,14 @@ trait Css_Shorthand_Parser {
 		}
 
 		return $result;
+	}
+
+	private function wrap_background_color( array $color ): array {
+		return [
+			'$$type' => 'background',
+			'value'  => [
+				'color' => $color,
+			],
+		];
 	}
 }
