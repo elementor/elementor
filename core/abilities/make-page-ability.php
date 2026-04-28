@@ -74,7 +74,7 @@ class Make_Page_Ability extends Abstract_Ability {
 					],
 					'sections'    => [
 						'type'        => 'array',
-						'description' => 'Top-level nodes. Each node is {widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id?}. Containers have children[]; leaves have text / tag / url / attachment_id as applicable.',
+						'description' => 'Top-level nodes. Each node is {widget, css_id?, css?, classes?, children?, text?, tag?, url?, attachment_id?}. Containers have children[]; leaves have text / tag / url / attachment_id as applicable. Use css_id to set the HTML id attribute (#selector / anchor).',
 					],
 					'dry_run'     => [
 						'type'        => 'boolean',
@@ -103,7 +103,7 @@ class Make_Page_Ability extends Abstract_Ability {
 					'instructions' => implode( "\n", [
 						'Friendly spec → full Elementor v4 tree → save, in a single call. Delegates save to elementor/build-page so every normalize / auto-mirror / validate pass runs once on the built tree.',
 						'POST CREATION: omit post_id and pass title (+ optional post_type/post_status/slug) to create a new WordPress post and build it in one call. Returns edit_url and permalink alongside the build result. For standalone post creation without content use wordpress/create-post.',
-						'SPEC SHAPE — each node is { widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }.',
+						'SPEC SHAPE — each node is { widget, css_id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }. css_id sets the HTML id attribute (renders as id="..." in the DOM; targetable as #css_id in CSS and usable as a scroll anchor). Do NOT use the internal `id` field for this — it is a 7-hex widget key, not a CSS selector.',
 						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox (flex, column by default); "div"|"div-block"|"e-div-block" → e-div-block (block). Containers have children[]. Override flex-direction in css when you need row layout (e.g. side-by-side columns).',
 						'LEAF widgets for `widget`: "heading" → e-heading; "paragraph" → e-paragraph; "button" → e-button; "image" → e-image. Leaves have text/tag/url/attachment_id as applicable.',
 						'css: CSS declaration string. Converted via elementor/css-to-props and attached as a local style entry on that node. The auto-generated style id is mirrored into settings.classes.value.',
@@ -220,7 +220,7 @@ class Make_Page_Ability extends Abstract_Ability {
 
 		if ( isset( $node['id'] ) && ( ! is_string( $node['id'] ) || 1 !== preg_match( '/^[0-9a-f]{7}$/', $node['id'] ) ) ) {
 			$id_val   = is_string( $node['id'] ) ? $node['id'] : wp_json_encode( $node['id'] );
-			$errors[] = "$path.id: expected 7-hex string, got `$id_val`.";
+			$errors[] = "$path.id: `id` is the internal widget ID and must be a 7-hex string (got `$id_val`). To set the HTML id attribute for CSS selectors and anchors, use `css_id` instead — e.g. {\"css_id\":\"nav0001\"}.";
 		}
 
 		if ( $is_leaf && 'heading' === strtolower( (string) $widget ) && isset( $node['tag'] ) ) {
@@ -261,8 +261,15 @@ class Make_Page_Ability extends Abstract_Ability {
 		$css      = isset( $spec['css'] ) && is_string( $spec['css'] ) ? trim( $spec['css'] ) : '';
 		$classes  = isset( $spec['classes'] ) && is_array( $spec['classes'] ) ? array_values( array_filter( $spec['classes'], 'is_string' ) ) : [];
 		$children = isset( $spec['children'] ) && is_array( $spec['children'] ) ? $spec['children'] : null;
+		$css_id   = isset( $spec['css_id'] ) && is_string( $spec['css_id'] ) && '' !== $spec['css_id'] ? $spec['css_id'] : null;
 
 		$settings = [];
+		if ( null !== $css_id ) {
+			$settings['_cssid'] = [
+				'$$type' => 'string',
+				'value'  => $css_id,
+			];
+		}
 		$styles   = [];
 
 		$el_type = null !== $widget && isset( self::CONTAINER_SYNONYMS[ $widget ] )
