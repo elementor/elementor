@@ -58,8 +58,9 @@ class Create_Post_Ability extends Abstract_Ability {
 				'mcp'          => [ 'public' => true ],
 				'annotations'  => [
 					'instructions' => implode( "\n", [
+						'ABILITY NAME: elementor/create-post — NOT wordpress/create-post.',
 						'Creates a new post/page and marks it as an Elementor v4 document (sets _elementor_edit_mode=builder and _elementor_version).',
-						'Pair with elementor/build-page: create-post → build-page with the returned post_id.',
+						'To create a post AND build its content in one call, use elementor/make-page with title instead of post_id.',
 						'Default post_type=page, post_status=draft.',
 					] ),
 					'readonly'    => false,

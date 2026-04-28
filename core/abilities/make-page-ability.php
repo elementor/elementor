@@ -52,30 +52,48 @@ class Make_Page_Ability extends Abstract_Ability {
 			'input_schema' => [
 				'type'                 => 'object',
 				'properties'           => [
-					'post_id'  => [
+					'post_id'     => [
 						'type'        => 'integer',
-						'description' => 'WordPress post ID to save into.',
+						'description' => 'WordPress post ID to save into. Omit to create a new post (requires title).',
 					],
-					'sections' => [
+					'title'       => [
+						'type'        => 'string',
+						'description' => 'Post title. Required when post_id is omitted — creates a new Elementor page and builds it in one call.',
+					],
+					'post_type'   => [
+						'type'        => 'string',
+						'description' => 'Post type slug when creating a new post. Default: "page".',
+					],
+					'post_status' => [
+						'type'        => 'string',
+						'description' => 'Post status when creating a new post. Default: "draft". Common: draft | publish | private.',
+					],
+					'slug'        => [
+						'type'        => 'string',
+						'description' => 'Post slug when creating a new post. WordPress sanitizes and de-duplicates automatically.',
+					],
+					'sections'    => [
 						'type'        => 'array',
 						'description' => 'Top-level nodes. Each node is {widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id?}. Containers have children[]; leaves have text / tag / url / attachment_id as applicable.',
 					],
-					'dry_run'  => [
+					'dry_run'     => [
 						'type'        => 'boolean',
 						'description' => 'When true, builds and validates the tree without saving. Returns { success, dry_run:true, elements, errors[] }.',
 					],
 				],
-				'required'             => [ 'post_id', 'sections' ],
+				'required'             => [ 'sections' ],
 				'additionalProperties' => false,
 			],
 			'output_schema' => [
 				'type'       => 'object',
 				'properties' => [
-					'success'  => [ 'type' => 'boolean' ],
-					'post_id'  => [ 'type' => 'integer' ],
-					'dry_run'  => [ 'type' => 'boolean' ],
-					'elements' => [ 'type' => 'array' ],
-					'errors'   => [ 'type' => 'array' ],
+					'success'   => [ 'type' => 'boolean' ],
+					'post_id'   => [ 'type' => 'integer' ],
+					'edit_url'  => [ 'type' => 'string' ],
+					'permalink' => [ 'type' => 'string' ],
+					'dry_run'   => [ 'type' => 'boolean' ],
+					'elements'  => [ 'type' => 'array' ],
+					'errors'    => [ 'type' => 'array' ],
 				],
 			],
 			'meta' => [
@@ -84,6 +102,7 @@ class Make_Page_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'Friendly spec → full Elementor v4 tree → save, in a single call. Delegates save to elementor/build-page so every normalize / auto-mirror / validate pass runs once on the built tree.',
+						'POST CREATION: omit post_id and pass title (+ optional post_type/post_status/slug) to create a new WordPress post and build it in one call. Returns edit_url and permalink alongside the build result. For standalone post creation without content use elementor/create-post (NOT wordpress/create-post).',
 						'SPEC SHAPE — each node is { widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }.',
 						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox; "div"|"div-block"|"e-div-block" → e-div-block. Containers have children[].',
 						'LEAF widgets for `widget`: "heading" → e-heading; "paragraph" → e-paragraph; "button" → e-button; "image" → e-image. Leaves have text/tag/url/attachment_id as applicable.',
@@ -108,9 +127,29 @@ class Make_Page_Ability extends Abstract_Ability {
 	}
 
 	public function execute( array $input ): array {
-		$post_id  = (int) $input['post_id'];
 		$sections = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : [];
 		$dry_run  = ! empty( $input['dry_run'] );
+
+		$created_post = null;
+
+		if ( isset( $input['post_id'] ) ) {
+			$post_id = (int) $input['post_id'];
+		} else {
+			if ( empty( $input['title'] ) || ! is_string( $input['title'] ) ) {
+				throw new \InvalidArgumentException( 'make-page: either post_id or title is required.' );
+			}
+			if ( ! $dry_run ) {
+				$created_post = ( new Create_Post_Ability() )->execute( [
+					'title'       => $input['title'],
+					'post_type'   => $input['post_type'] ?? 'page',
+					'post_status' => $input['post_status'] ?? 'draft',
+					'slug'        => $input['slug'] ?? '',
+				] );
+				$post_id = $created_post['post_id'];
+			} else {
+				$post_id = 0;
+			}
+		}
 
 		$spec_errors = [];
 		foreach ( $sections as $i => $section ) {
@@ -135,11 +174,18 @@ class Make_Page_Ability extends Abstract_Ability {
 			$elements[] = $this->build_element( $section );
 		}
 
-		return ( new Build_Page_Ability() )->execute( [
+		$result = ( new Build_Page_Ability() )->execute( [
 			'post_id'  => $post_id,
 			'elements' => $elements,
 			'dry_run'  => $dry_run,
 		] );
+
+		if ( null !== $created_post ) {
+			$result['edit_url']  = $created_post['edit_url'];
+			$result['permalink'] = $created_post['permalink'];
+		}
+
+		return $result;
 	}
 
 	private function validate_spec( $node, string $path, array &$errors ): void {
