@@ -95,7 +95,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 
 		$sanitized_order = [ 'g-123', 'g-456' ];
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'files' => [
 				'path' => 'global-classes',
 				'data' => [
@@ -112,6 +112,9 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$items = [
 			'g-123' => [
 				'id' => 'g-123',
+				'label' => 'invalid-export-style',
+				'type' => '__not_a_valid_style_type__',
+				'variants' => [],
 			],
 		];
 
@@ -123,7 +126,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$result = ( new Export_Runner() )->export( [] );
 
 		// Assert.
-		$this->assertSame( [
+		$this->assertEquals( [
 			'manifest' => [],
 			'files' => [],
 		], $result );
