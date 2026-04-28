@@ -14,7 +14,7 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
-enum SizeSectionLabel {
+export enum SizeSectionLabel {
 	WIDTH = 'Width',
 	HEIGHT = 'Height',
 	MIN_WIDTH = 'Min width',
@@ -23,7 +23,7 @@ enum SizeSectionLabel {
 	MAX_HEIGHT = 'Max height',
 }
 
-enum OffsetLabel {
+export enum OffsetLabel {
 	TOP = 'Top',
 	RIGHT = 'Right',
 	BOTTOM = 'Bottom',
@@ -37,7 +37,7 @@ enum FontSizeLabel {
 	FONT_SIZE = 'Font size',
 }
 
-enum BorderTypeLabel {
+export enum BorderTypeLabel {
 	NONE = 'None',
 	SOLID = 'Solid',
 	DASHED = 'Dashed',
@@ -322,8 +322,9 @@ export default class StyleTab extends BasePage {
 
 	async setBorderType( border: BorderTypeLabel ) {
 		const control = await this.getSelectControlByLabel( 'Border', 'Border type' );
+		const borderTypeDataValue = border.toLowerCase();
 
-		await this.changeSelectControl( control, border );
+		await this.changeSelectControl( control, borderTypeDataValue );
 	}
 
 	async addGlobalClass( className: string ): Promise<void> {
