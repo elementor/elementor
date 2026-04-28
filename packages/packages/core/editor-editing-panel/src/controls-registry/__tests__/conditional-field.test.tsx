@@ -82,14 +82,18 @@ describe( '<ConditionalField />', () => {
 	} );
 
 	it( 'should render children when there are no dependencies', () => {
+		// Arrange.
 		const propType = createMockPropType( { kind: 'plain', key: 'string' } );
 
+		// Act.
 		renderConditionalField( propType );
 
+		// Assert.
 		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should hide children when local dependency value does not satisfy "exists" operator', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -98,12 +102,15 @@ describe( '<ConditionalField />', () => {
 
 		mockDepField( { 'parent-field': null } );
 
+		// Act.
 		renderConditionalField( propType );
 
+		// Assert.
 		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show children when inherited value satisfies "exists" operator (no local value)', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -113,12 +120,15 @@ describe( '<ConditionalField />', () => {
 		mockDepField( { 'parent-field': null } );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		renderConditionalField( propType );
 
+		// Assert.
 		expect( screen.getByText( 'visible' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should prefer local value over inherited value', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -130,8 +140,10 @@ describe( '<ConditionalField />', () => {
 		mockDepField( { 'parent-field': { $$type: 'string', value: 'fill' } } );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		renderConditionalField( propType );
 
+		// Assert.
 		expect( screen.queryByText( 'visible' ) ).not.toBeInTheDocument();
 	} );
 } );
@@ -144,6 +156,7 @@ describe( 'useSyncDepsWithInherited', () => {
 	} );
 
 	it( 'should write inherited value to dep field when field has a value and dep is empty', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -153,8 +166,10 @@ describe( 'useSyncDepsWithInherited', () => {
 		mockDepField( { 'parent-field': null }, mockSetValues );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		renderConditionalField( propType, CHILD_VALUE );
 
+		// Assert.
 		expect( mockSetValues ).toHaveBeenCalledWith(
 			{ 'parent-field': INHERITED_COVER },
 			{ history: { propDisplayName: 'parent-field' } }
@@ -162,6 +177,7 @@ describe( 'useSyncDepsWithInherited', () => {
 	} );
 
 	it( 'should not write to dep field when the field itself has no value', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -171,12 +187,15 @@ describe( 'useSyncDepsWithInherited', () => {
 		mockDepField( { 'parent-field': null }, mockSetValues );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		renderConditionalField( propType );
 
+		// Assert.
 		expect( mockSetValues ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not overwrite dep field when it already has a value', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -186,12 +205,15 @@ describe( 'useSyncDepsWithInherited', () => {
 		mockDepField( { 'parent-field': { $$type: 'string', value: 'fill' } }, mockSetValues );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		renderConditionalField( propType, CHILD_VALUE );
 
+		// Assert.
 		expect( mockSetValues ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not re-write dep after it was cleared by the user', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -201,17 +223,22 @@ describe( 'useSyncDepsWithInherited', () => {
 		mockDepField( { 'parent-field': null }, mockSetValues );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		const { rerender } = renderConditionalField( propType, CHILD_VALUE );
 
+		// Assert.
 		expect( mockSetValues ).toHaveBeenCalledTimes( 1 );
 		mockSetValues.mockClear();
 
+		// Act.
 		rerenderConditionalField( rerender, propType, CHILD_VALUE );
 
+		// Assert.
 		expect( mockSetValues ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should clear child value when a previously written dep is cleared', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			key: 'string',
@@ -223,33 +250,44 @@ describe( 'useSyncDepsWithInherited', () => {
 		mockDepField( { 'parent-field': null }, mockSetValues );
 		mockInherited( { 'parent-field': INHERITED_COVER } );
 
+		// Act.
 		const { rerender } = renderConditionalField( propType, CHILD_VALUE, mockParentSetValue );
 
+		// Assert.
 		expect( mockSetValues ).toHaveBeenCalledTimes( 1 );
 		mockSetValues.mockClear();
 		mockParentSetValue.mockClear();
 
-		// Dep now has the written value (simulates provider update).
+		// Act.
 		mockDepField( { 'parent-field': INHERITED_COVER }, mockSetValues );
 		rerenderConditionalField( rerender, propType, CHILD_VALUE, mockParentSetValue );
 
+		// Assert.
 		expect( mockParentSetValue ).not.toHaveBeenCalled();
 
-		// User clears the dep field.
+		// Act.
 		mockDepField( { 'parent-field': null }, mockSetValues );
 		rerenderConditionalField( rerender, propType, CHILD_VALUE, mockParentSetValue );
 
+		// Assert.
 		expect( mockParentSetValue ).toHaveBeenCalled();
 	} );
 } );
 
 describe( 'getDependencies', () => {
 	it( 'should return empty array when propType has no dependencies', () => {
+		// Arrange.
 		const propType = createMockPropType( { kind: 'plain' } );
-		expect( getDependencies( propType ) ).toEqual( [] );
+
+		// Act.
+		const result = getDependencies( propType );
+
+		// Assert.
+		expect( result ).toEqual( [] );
 	} );
 
 	it( 'should extract paths from dependency terms', () => {
+		// Arrange.
 		const propType = createMockPropType( {
 			kind: 'plain',
 			dependencies: createDependency( {
@@ -260,6 +298,10 @@ describe( 'getDependencies', () => {
 			} ),
 		} );
 
-		expect( getDependencies( propType ) ).toEqual( [ 'object-fit', 'object-fit' ] );
+		// Act.
+		const result = getDependencies( propType );
+
+		// Assert.
+		expect( result ).toEqual( [ 'object-fit', 'object-fit' ] );
 	} );
 } );
