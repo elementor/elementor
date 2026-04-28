@@ -19,10 +19,6 @@ const stickyTabRowStyles = {
 	transition: 'top 300ms ease' as const,
 };
 
-type Props = {
-	onRequestClose: () => void;
-};
-
 /**
  * Shell only: panel chrome + design-system title + tab strip. Tab bodies are delegated to
  * `@elementor/editor-variables` and `@elementor/editor-global-classes` unchanged — use a **single**
