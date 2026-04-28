@@ -53,6 +53,7 @@ class Plugin {
 	 * @var Plugin
 	 */
 	public static $instance = null;
+	
 
 	/**
 	 * Database.
