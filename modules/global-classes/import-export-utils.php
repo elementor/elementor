@@ -7,7 +7,7 @@ use ElementorDeps\JsonMachine\JsonDecoder\ExtJsonDecoder;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,8 +24,6 @@ class Import_Export_Utils {
 	 * @return array|\WP_Error
 	 */
 	public static function import_classes( string $file_path, array $options = [ 'conflict_resolution' => 'skip' ] ) {
-        memory_reset_peak_usage();
-        error_log( '[GC Import] Before import_classes - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
 		if ( ! file_exists( $file_path ) ) {
 			return [
 				'imported' => [],
@@ -52,8 +50,20 @@ class Import_Export_Utils {
 			);
 		}
 
-		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$available_slots = Global_Classes_REST_API::MAX_ITEMS - count( $existing_order );
+		$is_replace = 'replace' === $conflict_resolution;
+
+		if ( $available_slots <= 0 && ! $is_replace ) {
+			return [
+				'imported' => [],
+				'failed' => [],
+				'conflicts' => [],
+			];
+		}
+
 		$file_order_set = array_flip( $file_order );
+		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$new_slots_used = 0;
 
 		try {
 			$items_stream = Items::fromFile( $file_path, [
@@ -81,11 +91,15 @@ class Import_Export_Utils {
 					continue;
 				}
 
-				if ( $has_conflict && 'replace' === $conflict_resolution ) {
+				if ( $has_conflict && $is_replace ) {
 					$existing_id = $existing_label_to_id[ $label_lower ];
 					$sanitized_item['id'] = $existing_id;
 					// $repository->put( [ $existing_id => $sanitized_item ], $existing_order );
 				} else {
+					if ( $new_slots_used >= $available_slots ) {
+						continue;
+					}
+
 					$new_id = $sanitized_item['id'];
 
 					if ( isset( $existing_id_set[ $new_id ] ) ) {
@@ -96,6 +110,7 @@ class Import_Export_Utils {
 					$existing_order[] = $new_id;
 					$existing_id_set[ $new_id ] = true;
 					$existing_label_to_id[ $label_lower ] = $new_id;
+					$new_slots_used++;
 					// $repository->put( [ $new_id => $sanitized_item ], $existing_order );
 				}
 
@@ -108,14 +123,6 @@ class Import_Export_Utils {
 				__( 'Invalid design system file: global-classes.json is not valid JSON.', 'elementor' )
 			);
 		}
-
-		error_log( '[GC Import] After loop - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB' );
-		unset( $items_stream, $style_parser, $file_order, $file_order_set );
-		gc_collect_cycles();
-		error_log( '[GC Import] After unset stream - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB' );
-		unset( $existing_order, $existing_id_set, $existing_label_to_id, $repository );
-		gc_collect_cycles();
-		error_log( '[GC Import] After unset all - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
 
 		return [
 			'imported' => [],
