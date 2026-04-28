@@ -72,7 +72,8 @@ class Test_Api extends Elementor_Test_AJAX {
 		$action = 'elementor_reset_library';
 		$_POST['_nonce'] = wp_create_nonce( $action );
 
-		$cleanup = $this->mock_get_info_error();
+		$request_count = 0;
+		$cleanup = $this->mock_get_info_error( $request_count );
 
 		// Act
 		$this->_handleAjaxAndDecode( $action );
@@ -82,6 +83,41 @@ class Test_Api extends Elementor_Test_AJAX {
 		$this->assertArrayHasKey( 'last_error', $cached_data );
 		// gmdate always returns UTC (+00:00)
 		$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00$/', $cached_data['last_error'] );
+		$this->assertEquals( 1, $request_count );
+
+		// Act - subsequent calls should use cached data
+		Api::get_upgrade_notice();
+		Api::get_admin_notice();
+		Api::get_promotion_widgets();
+
+		// Assert - no additional HTTP requests
+		$this->assertEquals( 1, $request_count );
+
+		// Cleanup
+		$cleanup();
+	}
+
+	public function test_ajax_reset_api_data__force_update_bypasses_cached_error() {
+		// Arrange
+		$this->act_as_admin();
+
+		$action = 'elementor_reset_library';
+		$_POST['_nonce'] = wp_create_nonce( $action );
+
+		$request_count = 0;
+		$cleanup = $this->mock_get_info_error( $request_count );
+
+		// Act - first call caches error
+		$this->_handleAjaxAndDecode( $action );
+
+		// Assert
+		$this->assertEquals( 1, $request_count );
+
+		// Act - force update should bypass cache
+		Api::get_canary_deployment_info( true );
+
+		// Assert - new HTTP request was made
+		$this->assertEquals( 2, $request_count );
 
 		// Cleanup
 		$cleanup();
@@ -112,8 +148,10 @@ class Test_Api extends Elementor_Test_AJAX {
 		};
 	}
 
-	private function mock_get_info_error() {
-		$filter = function() {
+	private function mock_get_info_error( &$request_count ) {
+		$filter = function() use ( &$request_count ) {
+			$request_count++;
+
 			return [
 				'headers' => [],
 				'response' => [
