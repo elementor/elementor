@@ -6,6 +6,8 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
@@ -65,16 +67,35 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		( new Global_Class_Post_Type() )->register_post_type();
+
 		$this->mock_atomic_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
 
 		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 		remove_all_actions( 'elementor/atomic-widgets/settings/transformers/classes' );
 	}
 
-	private function create_atomic_global_styles(): Atomic_Global_Styles {
-		$relations = new Global_Classes_Relations();
+	public function tearDown(): void {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		return new Atomic_Global_Styles( $relations );
+		if ( $kit ) {
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Order::META_KEY );
+		}
+
+		$post_ids = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
+
+		parent::tearDown();
 	}
 
 	public function test_register_styles__for_document_with_tracked_classes() {
@@ -184,7 +205,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_register_styles_ignores_order_entries_without_matching_items() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
@@ -207,10 +228,10 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		Global_Classes_Repository::make()->put(
 			[
-				'g-2' => [ 'id' => 'g-2', 'label' => 'pinky' ],
-				'g-3' => [ 'id' => 'g-3', 'label' => 'bluey' ],
+				'g-2' => $this->minimal_global_class_item( 'g-2', 'pinky' ),
+				'g-3' => $this->minimal_global_class_item( 'g-3', 'bluey' ),
 			],
-			[],
+			[ 'g-2', 'g-3' ],
 		);
 
 		// Act.
@@ -231,18 +252,18 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		Global_Classes_Repository::make()->put(
 			[
-				'g-only-frontend' => [ 'id' => 'g-only-frontend', 'label' => 'frontend' ],
-				'g-both' => [ 'id' => 'g-both', 'label' => 'both' ],
+				'g-only-frontend' => $this->minimal_global_class_item( 'g-only-frontend', 'frontend' ),
+				'g-both' => $this->minimal_global_class_item( 'g-both', 'both' ),
 			],
-			[],
+			[ 'g-only-frontend', 'g-both' ],
 		);
 
 		Global_Classes_Repository::make()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->put(
 			[
-				'g-both' => [ 'id' => 'g-both', 'label' => 'both' ],
-				'g-only-preview' => [ 'id' => 'g-only-preview', 'label' => 'preview' ],
+				'g-both' => $this->minimal_global_class_item( 'g-both', 'both' ),
+				'g-only-preview' => $this->minimal_global_class_item( 'g-only-preview', 'preview' ),
 			],
-			[],
+			[ 'g-only-frontend', 'g-both', 'g-only-preview' ],
 		);
 
 		// Act.
@@ -252,7 +273,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assertEquals( [ 'g-only-frontend', 'both', 'preview' ], $result );
+		$this->assertEquals( [ 'frontend', 'both', 'preview' ], $result );
 	}
 
 	public function test_cache_invalidation_on_frontend_update() {
@@ -275,11 +296,9 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		// Act.
 		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
-			'items' => [],
-			'order' => [],
-		], [
-			'items' => [],
-			'order' => [],
+			'added' => [],
+			'deleted' => [],
+			'modified' => [ 'g-invalidate-cache' ],
 		] );
 
 		// Assert.
@@ -312,11 +331,9 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		// Act.
 		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [
-			'items' => [],
-			'order' => [],
-		], [
-			'items' => [],
-			'order' => [],
+			'added' => [],
+			'deleted' => [],
+			'modified' => [ 'g-invalidate-cache' ],
 		] );
 
 		// Assert.
@@ -349,5 +366,20 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid(
 			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
 		) );
+	}
+
+	private function create_atomic_global_styles(): Atomic_Global_Styles {
+		$relations = new Global_Classes_Relations();
+
+		return new Atomic_Global_Styles( $relations );
+	}
+
+	private function minimal_global_class_item( string $id, string $label ): array {
+		return [
+			'id' => $id,
+			'label' => $label,
+			'type' => 'class',
+			'variants' => [],
+		];
 	}
 }
