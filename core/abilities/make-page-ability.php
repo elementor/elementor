@@ -104,7 +104,7 @@ class Make_Page_Ability extends Abstract_Ability {
 						'Friendly spec → full Elementor v4 tree → save, in a single call. Delegates save to elementor/build-page so every normalize / auto-mirror / validate pass runs once on the built tree.',
 						'POST CREATION: omit post_id and pass title (+ optional post_type/post_status/slug) to create a new WordPress post and build it in one call. Returns edit_url and permalink alongside the build result. For standalone post creation without content use wordpress/create-post.',
 						'SPEC SHAPE — each node is { widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }.',
-						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox; "div"|"div-block"|"e-div-block" → e-div-block. Containers have children[].',
+						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox (flex, column by default); "div"|"div-block"|"e-div-block" → e-div-block (block). Containers have children[]. Override flex-direction in css when you need row layout (e.g. side-by-side columns).',
 						'LEAF widgets for `widget`: "heading" → e-heading; "paragraph" → e-paragraph; "button" → e-button; "image" → e-image. Leaves have text/tag/url/attachment_id as applicable.',
 						'css: CSS declaration string. Converted via elementor/css-to-props and attached as a local style entry on that node. The auto-generated style id is mirrored into settings.classes.value.',
 						'classes: array of global class IDs or labels. Resolved by build-page (label → ID).',

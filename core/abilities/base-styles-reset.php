@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Base_Styles_Reset {
 
 	private const BASE_STYLE_RESETS = [
-		'e-flexbox'   => 'padding: 0; flex-direction: row;',
+		'e-flexbox'   => 'padding: 0; flex-direction: column;',
 		'e-div-block' => 'padding: 0; min-width: auto;',
 		'e-heading'   => 'margin: revert;',
 		'e-paragraph' => 'margin: revert;',
