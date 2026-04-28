@@ -29,6 +29,11 @@
       "fromType": "image-src",
       "toType": "svg-src",
       "path": "operations/image-src-to-svg-src.json"
+    },
+    "config-to-config-v2": {
+      "fromType": "config",
+      "toType": "config-v2",
+      "path": "operations/config-to-config-v2.json"
     }
   }
 }
