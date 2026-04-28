@@ -29,8 +29,8 @@ trait Base_Styles_Reset {
 	private const BASE_STYLE_RESETS = [
 		'e-flexbox'   => 'padding: 0; flex-direction: column;',
 		'e-div-block' => 'padding: 0; min-width: auto;',
-		'e-heading'   => 'margin: revert;',
-		'e-paragraph' => 'margin: revert;',
+		'e-heading'   => '',
+		'e-paragraph' => '',
 		'e-button'    => 'background: transparent; padding: 0; border-radius: 0; text-align: start; text-decoration: none;',
 		'e-image'     => '',
 	];

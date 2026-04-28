@@ -33,7 +33,9 @@ class Abilities_Bootstrap {
 		( new Force_Clear_Styles_Ability() )->register_hooks();
 		( new Find_Media_Ability() )->register_hooks();
 		( new Upload_Media_Ability() )->register_hooks();
+		( new Get_Kit_Ability() )->register_hooks();
 		( new Update_Kit_Ability() )->register_hooks();
+		( new Edit_Page_Ability() )->register_hooks();
 		( new Css_To_Props_Ability() )->register_hooks();
 		( new Make_Style_Ability() )->register_hooks();
 		( new Make_Page_Ability() )->register_hooks();

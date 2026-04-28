@@ -26,7 +26,11 @@ class Update_Kit_Ability extends Abstract_Ability {
 				'properties' => [
 					'custom_css' => [
 						'type'        => 'string',
-						'description' => 'Replaces the global custom CSS for the site. Pass an empty string to clear it.',
+						'description' => 'Replaces the global custom CSS for the site. Pass an empty string to clear it. Use custom_css_append to add CSS without overwriting.',
+					],
+					'custom_css_append' => [
+						'type'        => 'string',
+						'description' => 'Appends CSS to the existing global custom CSS. Reads the current value and concatenates — no need to call get-kit first. Applied after custom_css if both are present.',
 					],
 					'system_colors' => [
 						'type'        => 'array',
@@ -80,6 +84,7 @@ class Update_Kit_Ability extends Abstract_Ability {
 					'instructions' => implode( "\n", [
 						'Updates global site-wide settings stored in the active Elementor Kit.',
 						'custom_css: replaces the raw CSS injected on every page (same as the "Custom CSS" tab in Site Settings).',
+						'custom_css_append: appends CSS to the existing global custom CSS without reading first. Use this instead of get-kit + update-kit when you only want to add rules.',
 						'system_colors: replaces the full global color palette used by Global Color pickers. Each item requires _id (slug), title, and color. Common IDs: primary, secondary, text, accent.',
 						'system_typography: replaces all global typography presets. Common IDs: primary, secondary, text, accent.',
 						'IMPORTANT: system_colors and system_typography are full replacements, not merges. Include every entry you want to keep, or omit the key entirely to leave it unchanged.',
@@ -107,6 +112,13 @@ class Update_Kit_Ability extends Abstract_Ability {
 		if ( array_key_exists( 'custom_css', $input ) ) {
 			$existing['custom_css'] = $input['custom_css'];
 			$updated[] = 'custom_css';
+		}
+
+		if ( array_key_exists( 'custom_css_append', $input ) && '' !== $input['custom_css_append'] ) {
+			$existing['custom_css'] = rtrim( $existing['custom_css'] ?? '' ) . "\n" . $input['custom_css_append'];
+			if ( ! in_array( 'custom_css', $updated, true ) ) {
+				$updated[] = 'custom_css';
+			}
 		}
 
 		if ( array_key_exists( 'system_colors', $input ) ) {
