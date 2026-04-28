@@ -102,7 +102,7 @@ class Make_Page_Ability extends Abstract_Ability {
 				'annotations'  => [
 					'instructions' => implode( "\n", [
 						'Friendly spec → full Elementor v4 tree → save, in a single call. Delegates save to elementor/build-page so every normalize / auto-mirror / validate pass runs once on the built tree.',
-						'POST CREATION: omit post_id and pass title (+ optional post_type/post_status/slug) to create a new WordPress post and build it in one call. Returns edit_url and permalink alongside the build result. For standalone post creation without content use elementor/create-post (NOT wordpress/create-post).',
+						'POST CREATION: omit post_id and pass title (+ optional post_type/post_status/slug) to create a new WordPress post and build it in one call. Returns edit_url and permalink alongside the build result. For standalone post creation without content use wordpress/create-post.',
 						'SPEC SHAPE — each node is { widget, id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }.',
 						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox; "div"|"div-block"|"e-div-block" → e-div-block. Containers have children[].',
 						'LEAF widgets for `widget`: "heading" → e-heading; "paragraph" → e-paragraph; "button" → e-button; "image" → e-image. Leaves have text/tag/url/attachment_id as applicable.',
