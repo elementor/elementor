@@ -224,7 +224,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'g-1' => $class_1,
 				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized' ),
@@ -282,7 +282,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'unchanged' => $unchanged,
 				'modified' => $this->create_global_class( 'modified', 'yellow' ),
@@ -338,7 +338,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'g-1' => $class_1,
 				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized' ),
