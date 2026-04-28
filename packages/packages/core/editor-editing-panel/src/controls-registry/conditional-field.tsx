@@ -49,7 +49,8 @@ function useSyncDepsWithInherited( {
 		}
 
 		if ( hasSynced ) {
-			const wasCleared = prevDepValues &&
+			const wasCleared =
+				prevDepValues &&
 				Object.keys( prevDepValues ).some( ( key ) => prevDepValues[ key ] && ! depValues[ key ] );
 
 			syncRef.current.prevDepValues = depValues;
