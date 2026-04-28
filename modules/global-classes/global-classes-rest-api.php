@@ -2,10 +2,12 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
+use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,14 +24,23 @@ class Global_Classes_REST_API {
 	const MAX_LABEL_LENGTH = 50;
 	private $repository = null;
 	private ?Global_Classes_Relations $relations = null;
+	private ?Kit $kit = null;
 
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
+	private function get_kit(): ?Kit {
+		if( ! $this->kit ) {
+			$this->kit = Plugin::$instance->kits_manager->get_active_kit();
+		}
+
+		return $this->kit;
+	}
+
 	private function get_repository() {
 		if ( ! $this->repository ) {
-			$this->repository = new Global_Classes_Repository();
+			$this->repository = new Global_Classes_Repository( $this->get_kit() );
 		}
 
 		return $this->repository;

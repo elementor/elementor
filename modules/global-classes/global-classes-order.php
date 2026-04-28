@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,10 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_Order {
 	const META_KEY = '_elementor_global_classes_order';
 
+	private Kit $kit;
+
 	private ?array $cache = null;
 
-	public static function make(): self {
-		return new self();
+	private function __construct( Kit $kit ) {
+		$this->kit = $kit;
+	}
+
+	public static function make( Kit $kit ): self {
+		return new self( $kit );
 	}
 
 	public function get_order(): array {
@@ -149,6 +156,6 @@ class Global_Classes_Order {
 	}
 
 	private function get_kit() {
-		return Plugin::$instance->kits_manager->get_active_kit();
+		return $this->kit ?? Plugin::$instance->kits_manager->get_active_kit();
 	}
 }

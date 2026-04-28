@@ -2,7 +2,6 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Plugin;
 
@@ -22,8 +21,14 @@ class Global_Classes_Repository {
 
 	private ?Global_Classes $cache = null;
 
-	public static function make(): Global_Classes_Repository {
-		return new self();
+	private ?Kit $kit = null;
+
+	public function __construct( ?Kit $kit = null ) {
+		$this->kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
+	}
+
+	public static function make( ?Kit $kit = null ): Global_Classes_Repository {
+		return new self( $kit );
 	}
 
 	public function context( string $context ): self {
@@ -81,7 +86,7 @@ class Global_Classes_Repository {
 	}
 
 	private function all_from_posts(): Global_Classes {
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$order = $classes_order->get_order();
 
 		if ( empty( $order ) ) {
@@ -174,7 +179,7 @@ class Global_Classes_Repository {
 			$post->update_label( $item['label'] );
 		}
 
-		$classes_order = Global_Classes_Order::make();
+		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( $order );
 
 		if ( ! $is_preview ) {
