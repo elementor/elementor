@@ -72,13 +72,19 @@ class Migrate_To_Posts extends Base_Migration {
 		foreach ( $items as $class_id => $class_data ) {
 			$index = $order_index[ $class_id ] ?? 0;
 
+			$stored = [
+				'type' => $class_data['type'] ?? 'class',
+				'variants' => $class_data['variants'] ?? [],
+			];
+
+			if ( array_key_exists( 'sync_to_v3', $class_data ) ) {
+				$stored['sync_to_v3'] = (bool) $class_data['sync_to_v3'];
+			}
+
 			$post = Global_Class_Post::create(
 				$class_id,
 				$class_data['label'] ?? $class_id,
-				[
-					'type' => $class_data['type'] ?? 'class',
-					'variants' => $class_data['variants'] ?? [],
-				],
+				$stored,
 				$index
 			);
 

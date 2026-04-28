@@ -143,10 +143,7 @@ class Global_Classes_Repository {
 
 		foreach ( $to_create as $class_id ) {
 			$item = $items[ $class_id ];
-			$data = [
-				'type' => $item['type'] ?? 'class',
-				'variants' => $item['variants'] ?? [],
-			];
+			$data = $this->build_class_data_for_storage( $item );
 
 			if ( $is_preview ) {
 				$post = Global_Class_Post::find_by_class_id( $class_id, true );
@@ -170,10 +167,7 @@ class Global_Classes_Repository {
 				continue;
 			}
 
-			$data = [
-				'type' => $item['type'] ?? 'class',
-				'variants' => $item['variants'] ?? [],
-			];
+			$data = $this->build_class_data_for_storage( $item );
 
 			$post->update_data( $data, $is_preview );
 			$post->update_label( $item['label'] );
@@ -191,5 +185,18 @@ class Global_Classes_Repository {
 				}
 			}
 		}
+	}
+
+	private function build_class_data_for_storage( array $item ): array {
+		$data = [
+			'type' => $item['type'] ?? 'class',
+			'variants' => $item['variants'] ?? [],
+		];
+
+		if ( array_key_exists( 'sync_to_v3', $item ) ) {
+			$data['sync_to_v3'] = (bool) $item['sync_to_v3'];
+		}
+
+		return $data;
 	}
 }

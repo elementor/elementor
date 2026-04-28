@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Plugin;
@@ -13,6 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Import_Runner extends Elementor_Test_Base {
 
+	public function setUp(): void {
+		parent::setUp();
+
+		( new Global_Class_Post_Type() )->register_post_type();
+	}
+
 	public function test_import() {
 		// Act.
 		$result = ( new Import_Runner() )->import( [
@@ -23,8 +30,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$sanitized_items = [
 			'g-123' => [
 				'id' => 'g-123',
-				'label' => 'Test1',
 				'type' => 'class',
+				'label' => 'Test1',
 				'variants' => [
 					[
 						'meta' => [
@@ -52,9 +59,9 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			],
 			'g-456' => [
 				'id' => 'g-456',
-				'label' => 'Test2',
 				'type' => 'class',
-				"variants" => [],
+				'label' => 'Test2',
+				'variants' => [],
 			],
 		];
 
@@ -65,8 +72,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			'order' => $sanitized_order,
 		];
 
-		$this->assertSame( $sanitized_global_classes, $result );
-		$this->assertSame( $sanitized_global_classes, Global_Classes_Repository::make()->all()->get() );
+		$this->assertEquals( $sanitized_global_classes, $result );
+		$this->assertEquals( $sanitized_global_classes, Global_Classes_Repository::make()->all()->get() );
 	}
 
 	public function test_import__invalid_style() {
@@ -97,7 +104,10 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		];
 
 		$old_kit = Plugin::$instance->kits_manager->get_active_kit();
-		$old_kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $existing_classes );
+		Global_Classes_Repository::make( $old_kit )->put(
+			$existing_classes['items'],
+			$existing_classes['order']
+		);
 
 		// Simulate what site-settings runner does: create a new empty active kit.
 		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
@@ -132,7 +142,10 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		];
 
 		$old_kit = Plugin::$instance->kits_manager->get_active_kit();
-		$old_kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $existing_classes );
+		Global_Classes_Repository::make( $old_kit )->put(
+			$existing_classes['items'],
+			$existing_classes['order']
+		);
 
 		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
 

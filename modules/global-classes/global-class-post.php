@@ -86,12 +86,18 @@ class Global_Class_Post {
 	public function to_array(): array {
 		$data = $this->get_data();
 
-		return [
+		$result = [
 			'id' => $this->get_class_id(),
 			'label' => $this->get_label(),
 			'type' => $data['type'] ?? 'class',
 			'variants' => $data['variants'] ?? [],
 		];
+
+		if ( array_key_exists( 'sync_to_v3', $data ) ) {
+			$result['sync_to_v3'] = (bool) $data['sync_to_v3'];
+		}
+
+		return $result;
 	}
 
 	private function get_context_data(): array {
