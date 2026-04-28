@@ -76,12 +76,14 @@ function useSyncDepsWithInherited( {
 				setDepValues( { [ key ]: inherited }, { history: { propDisplayName: key } } );
 			}
 		} );
-	} );
+	}, [ isHidden, depValues, value, inheritedValues, setDepValues, resetValue ] );
 }
 
 function resolveWithInherited( localValues: DepValues, inheritedValues: Record< string, PropValue > ): DepValues {
 	if ( ! localValues ) {
-		return null;
+		const hasInherited = Object.keys( inheritedValues ).length > 0;
+
+		return hasInherited ? { ...inheritedValues } : null;
 	}
 
 	return Object.fromEntries(
