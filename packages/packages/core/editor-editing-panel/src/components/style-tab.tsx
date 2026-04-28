@@ -185,9 +185,12 @@ export const StyleTab = () => {
 
 function ClassesHeader( { children }: { children: React.ReactNode } ) {
 	const scrollDirection = useScrollDirection();
+	const { element } = useElement();
+	const isDocument = element.type.includes( '-v4' ) || element.type.startsWith( 'header' ) || element.type.startsWith( 'footer' );
+	const topOffset = isDocument ? 0 : ( scrollDirection === 'up' ? TABS_HEADER_HEIGHT : 0 );
 
 	return (
-		<Stack sx={ { ...stickyHeaderStyles, top: scrollDirection === 'up' ? TABS_HEADER_HEIGHT : 0 } }>
+		<Stack sx={ { ...stickyHeaderStyles, top: topOffset } }>
 			{ children }
 		</Stack>
 	);

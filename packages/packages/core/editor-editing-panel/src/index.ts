@@ -23,6 +23,10 @@ export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles
 export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
+export {
+	useAtomicDocumentPanelActions,
+	useAtomicDocumentPanelStatus,
+} from './panel-atomic-document';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';

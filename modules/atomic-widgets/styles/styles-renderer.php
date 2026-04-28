@@ -20,17 +20,21 @@ class Styles_Renderer {
 
 	private string $selector_prefix;
 
+	private bool $use_compound_selector;
+
 	/**
 	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
 	 * @param string                                                                          $selector_prefix
+	 * @param bool                                                                            $use_compound_selector
 	 */
-	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ) {
+	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX, bool $use_compound_selector = false ) {
 		$this->breakpoints = $breakpoints;
 		$this->selector_prefix = $selector_prefix;
+		$this->use_compound_selector = $use_compound_selector;
 	}
 
-	public static function make( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ): self {
-		return new self( $breakpoints, $selector_prefix );
+	public static function make( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX, bool $use_compound_selector = false ): self {
+		return new self( $breakpoints, $selector_prefix, $use_compound_selector );
 	}
 
 	/**
@@ -102,12 +106,14 @@ class Styles_Renderer {
 			$type = $map[ $style_def['type'] ];
 			$name = $style_def['cssName'] ?? $style_def['id'];
 
-			$selector_parts = array_filter( [
-				$this->selector_prefix,
-				"{$type}{$name}",
-			] );
+		$selector_parts = array_filter( [
+			$this->selector_prefix,
+			"{$type}{$name}",
+		] );
 
-			return implode( ' ', $selector_parts );
+		$separator = $this->use_compound_selector ? '' : ' ';
+
+		return implode( $separator, $selector_parts );
 		}
 
 		return null;

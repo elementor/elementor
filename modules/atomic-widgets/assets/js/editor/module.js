@@ -4,6 +4,7 @@ import createAtomicElementViewBase from './create-atomic-element-base-view';
 import AtomicElementBaseModel from './atomic-element-base-model';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
 import createFlexboxType from './atomic-element-types/create-flexbox-type';
+import { AddBaseClass } from './hooks';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -11,6 +12,11 @@ class Module extends elementorModules.editor.utils.Module {
 
 		this.exposeAtomicElementClasses();
 		this.registerAtomicElements();
+		this.registerHooks();
+	}
+
+	registerHooks() {
+		$e.hooks.registerUIAfter( new AddBaseClass() );
 	}
 
 	exposeAtomicElementClasses() {

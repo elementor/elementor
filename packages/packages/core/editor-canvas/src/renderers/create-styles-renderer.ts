@@ -25,6 +25,7 @@ type CreateStyleRendererArgs = {
 	resolve: PropsResolver;
 	breakpoints: BreakpointsMap;
 	selectorPrefix?: string;
+	useCompoundSelector?: boolean;
 };
 
 export type RendererStyleDefinition = StyleDefinition & {
@@ -55,7 +56,7 @@ function getStyleUniqueKey( style: RendererStyleDefinition ): string {
 	return `${ style.id }-${ breakpoint }-${ state }`;
 }
 
-export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
+export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '', useCompoundSelector = false }: CreateStyleRendererArgs ) {
 	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
 		const seenKeys = new Set< string >();
 		const uniqueStyles = styles.filter( ( style ) => {
@@ -68,17 +69,20 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 		} );
 
 		const stylesCssPromises = uniqueStyles.map( async ( style ) => {
-			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
-				const css = await propsToCss( { props: variant.props, resolve, signal } );
-				const customCss = customCssToString( variant.custom_css );
+		const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
+			const css = await propsToCss( { props: variant.props, resolve, signal } );
+			const customCss = customCssToString( variant.custom_css );
 
-				return createStyleWrapper()
-					.for( style.cssName, style.type )
-					.withPrefix( selectorPrefix )
-					.withState( variant.meta.state )
-					.withMediaQuery( variant.meta.breakpoint ? breakpoints[ variant.meta.breakpoint ] : null )
-					.wrap( css + customCss );
-			} );
+			const isDocumentStyle = style.id.startsWith( 'e-document-' );
+			const shouldUseCompound = useCompoundSelector || isDocumentStyle;
+
+			return createStyleWrapper()
+				.for( style.cssName, style.type )
+				.withPrefix( selectorPrefix, shouldUseCompound )
+				.withState( variant.meta.state )
+				.withMediaQuery( variant.meta.breakpoint ? breakpoints[ variant.meta.breakpoint ] : null )
+				.wrap( css + customCss );
+		} );
 
 			const variantsCss = await Promise.all( variantCssPromises );
 
@@ -106,8 +110,10 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 			return createStyleWrapper( `${ value }${ symbol }${ cssName }`, wrapper );
 		},
 
-		withPrefix: ( prefix: string ) =>
-			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
+	withPrefix: ( prefix: string, useCompound: boolean = false ) => {
+		const separator = useCompound ? '' : ' ';
+		return createStyleWrapper( [ prefix, value ].filter( Boolean ).join( separator ), wrapper );
+	},
 
 		withState: ( state: StyleDefinitionState ) => {
 			const selector = getSelectorWithState( value, state );

@@ -35,7 +35,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	activateSaveButtons( document, status ) {
-		const hasChanges = status || 'draft' === document.container.settings.get( 'post_status' );
+		// Unwrap v4 atomic prop if the status is stored as { $$type, value }.
+		let rawPostStatus = document.container.settings.get( 'post_status' );
+		if ( rawPostStatus && typeof rawPostStatus === 'object' && '$$type' in rawPostStatus ) {
+			rawPostStatus = rawPostStatus.value;
+		}
+		const hasChanges = status || 'draft' === rawPostStatus;
 
 		this.ui.buttonPublish.add( this.ui.menuSaveDraft ).toggleClass( 'elementor-disabled', ! hasChanges );
 		this.ui.buttonSaveOptions.toggleClass( 'elementor-disabled', ! hasChanges );
@@ -100,8 +105,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	setMenuItems( document ) {
-		const postStatus = document.container.settings.get( 'post_status' ),
-			translationMap = {
+		// Unwrap v4 atomic prop if the status is stored as { $$type, value }.
+		let postStatus = document.container.settings.get( 'post_status' );
+		if ( postStatus && typeof postStatus === 'object' && '$$type' in postStatus ) {
+			postStatus = postStatus.value;
+		}
+		const translationMap = {
 				publish: __( 'Publish', 'elementor' ),
 				update: __( 'Update', 'elementor' ),
 				submit: __( 'Submit', 'elementor' ),
