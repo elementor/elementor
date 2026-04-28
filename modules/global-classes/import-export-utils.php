@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 
@@ -12,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import_Export_Utils {
+
+	const BATCH_SIZE = 100;
 
 	/**
 	 * Import classes from a directory containing individual class JSON files and an order.json.
@@ -24,8 +24,6 @@ class Import_Export_Utils {
 	 * @return array|\WP_Error
 	 */
 	public static function import_classes( string $classes_dir, array $options = [ 'conflict_resolution' => 'skip' ] ) {
-		memory_reset_peak_usage();
-        error_log( '[GC Import] Before import_classes - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
 		$order_file = rtrim( $classes_dir, '/' ) . '/order.json';
 
 		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
@@ -39,11 +37,11 @@ class Import_Export_Utils {
 		$conflict_resolution = $options['conflict_resolution'] ?? 'skip';
 		$repository = Global_Classes_Repository::make();
 		$existing = $repository->all()->get();
+		$existing_items = $existing['items'] ?? [];
 		$existing_order = $existing['order'] ?? [];
 		$existing_id_set = array_flip( $existing_order );
-		$existing_label_to_id = self::build_label_to_id_map( $existing['items'] ?? [] );
-		// unset( $existing, $repository );
-		gc_collect_cycles();
+		$existing_label_to_id = self::build_label_to_id_map( $existing_items );
+		unset( $existing );
 
 		$order_data = json_decode( file_get_contents( $order_file ), true );
 
@@ -54,13 +52,9 @@ class Import_Export_Utils {
 			);
 		}
 
-		// $available_slots = Global_Classes_REST_API::MAX_ITEMS - count( $existing_order );
 		$available_slots = 2000 - count( $existing_order );
-		$is_replace = 'replace' === $conflict_resolution;
 		$import_set = self::build_import_set( $order_data, $existing_label_to_id, $conflict_resolution, $available_slots );
 
-		error_log( '[GC Import] Import set: ' . json_encode( $import_set ) );
-		error_log( '[GC Import] Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
 		if ( empty( $import_set ) ) {
 			return [
 				'imported' => [],
@@ -69,11 +63,12 @@ class Import_Export_Utils {
 			];
 		}
 
-		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$classes_dir = rtrim( $classes_dir, '/' );
+		$batch_count = 0;
+		$dirty = false;
+		$batch_items = [];
+		$batch_order = [];
 
-		// $new_items = [];
-		// $new_order = [];
 		foreach ( $import_set as $item_id => $action ) {
 			$class_file = $classes_dir . '/' . $item_id . '.json';
 
@@ -87,44 +82,41 @@ class Import_Export_Utils {
 				continue;
 			}
 
-			$sanitized_item = self::sanitize_item( $item_id, $item, $style_parser );
-			
-			// $sanitized_item = $item;
-			unset( $item );
-
-			if ( isset( $sanitized_item['error'] ) ) {
-				continue;
-			}
-
-			if ( 'replace' === $action ) {
-				$label_lower = strtolower( $sanitized_item['label'] ?? '' );
-				$existing_id = $existing_label_to_id[ $label_lower ];
-				$sanitized_item['id'] = $existing_id;
-				// $repository->put( [ $existing_id => $sanitized_item ], $existing_order );
-				error_log( '[GC Import] Replacing class: ' . $sanitized_item['label'] . ' with ID: ' . $existing_id );
-				error_log( '[GC Import] Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
-			} else {
-				$new_id = $sanitized_item['id'];
+			// if ( 'replace' === $action ) {
+			// 	$label_lower = strtolower( $item['label'] ?? '' );
+			// 	$existing_id = $existing_label_to_id[ $label_lower ];
+			// 	$item['id'] = $existing_id;
+			// 	$existing_items[ $existing_id ] = $item;
+			// } else {
+				$new_id = $item['id'];
 
 				if ( isset( $existing_id_set[ $new_id ] ) ) {
 					$new_id = self::generate_unique_id( $existing_id_set );
+					$item['id'] = $new_id;
 				}
 
-				$sanitized_item['id'] = $new_id;
-				// $new_order[] = $new_id;
-				// $new_items[ $new_id ] = $sanitized_item;
+				$batch_items[ $new_id ] = $item;
+				$batch_order[] = $new_id;
 				$existing_id_set[ $new_id ] = true;
-				// $repository->put( [ $new_id => $sanitized_item ], $existing_order );
-				error_log( '[GC Import] Adding new class: ' . $sanitized_item['label'] . ' with ID: ' . $new_id );
-				error_log( '[GC Import] Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
-			}
+			// }
 
-			// unset( $sanitized_item );
+			$batch_count++;
+			$dirty = true;
+
+			if ( $batch_count >= self::BATCH_SIZE ) {
+				$repository->put( $batch_items, $batch_order );
+				$batch_count = 0;
+				$dirty = false;
+				// unset( $batch_items, $batch_order );
+				$batch_items = [];
+				$batch_order = [];
+			}
 		}
 
-		// $repository->put( $new_items, $new_order );
+		if ( $dirty ) {
+			$repository->put( $batch_items, $batch_order );
+		}
 
-		error_log( '[GC Import] After import_classes - Memory: ' . round( memory_get_usage() / 1024 / 1024, 2 ) . 'MB, Peak: ' . round( memory_get_peak_usage() / 1024 / 1024, 2 ) . 'MB' );
 		return [
 			'imported' => [],
 			'failed' => [],
@@ -193,25 +185,5 @@ class Import_Export_Utils {
 		} while ( isset( $existing_id_set[ $id ] ) );
 
 		return $id;
-	}
-
-	private static function sanitize_item( string $item_id, array $item, Style_Parser $style_parser ) {
-		$item_result = $style_parser->parse( $item );
-
-		if ( ! $item_result->is_valid() ) {
-			return [
-				'error' => $item_result->errors()->all(),
-			];
-		}
-
-		$sanitized_item = $item_result->unwrap();
-
-		if ( $item_id !== $sanitized_item['id'] ) {
-			return [
-				'error' => 'ID mismatch',
-			];
-		}
-
-		return $sanitized_item;
 	}
 }
