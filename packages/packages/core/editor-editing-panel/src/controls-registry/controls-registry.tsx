@@ -8,6 +8,7 @@ import {
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
+	MinMaxDateTimeControl,
 	NumberControl,
 	QueryControl,
 	RepeatableControl,
@@ -30,6 +31,7 @@ import {
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
+	minMaxDateTimePropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
 	queryPropTypeUtil,
@@ -69,6 +71,11 @@ const controlTypes = {
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	'min-max-date-time': {
+		component: MinMaxDateTimeControl,
+		layout: 'custom',
+		propTypeUtil: minMaxDateTimePropTypeUtil,
+	},
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

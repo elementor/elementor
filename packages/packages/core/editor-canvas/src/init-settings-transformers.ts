@@ -5,6 +5,7 @@ import { dateTimeTransformer } from './transformers/settings/date-time-transform
 import { htmlV2Transformer } from './transformers/settings/html-v2-transformer';
 import { htmlV3Transformer } from './transformers/settings/html-v3-transformer';
 import { linkTransformer } from './transformers/settings/link-transformer';
+import { minMaxDateTimeTransformer } from './transformers/settings/min-max-date-time-transformer';
 import { queryTransformer } from './transformers/settings/query-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
 import { imageTransformer } from './transformers/shared/image-transformer';
@@ -25,5 +26,6 @@ export function initSettingsTransformers() {
 		.register( 'date-time', dateTimeTransformer )
 		.register( 'html-v2', htmlV2Transformer )
 		.register( 'html-v3', htmlV3Transformer )
+		.register( 'min-max-date-time', minMaxDateTimeTransformer )
 		.registerFallback( plainTransformer );
 }
