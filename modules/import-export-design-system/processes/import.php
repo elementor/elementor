@@ -144,10 +144,12 @@ class Import {
 			);
 		}
 
-		if ( ! file_exists( $classes_path ) && ! file_exists( $variables_path ) ) {
+		$classes_dir = $this->extraction_dir . 'global-classes';
+
+		if ( ! file_exists( $classes_path ) && ! is_dir( $classes_dir ) && ! file_exists( $variables_path ) ) {
 			return new \WP_Error(
 				'invalid-design-system-structure',
-				__( 'Invalid design system file: must contain at least one of global-classes.json or global-variables.json.', 'elementor' )
+				__( 'Invalid design system file: must contain at least one of global-classes.json, global-classes/ or global-variables.json.', 'elementor' )
 			);
 		}
 
@@ -166,14 +168,14 @@ class Import {
 	}
 
 	private function import_classes() {
-		$classes_path = $this->extraction_dir . Export::FILE_GLOBAL_CLASSES;
+		$classes_dir = $this->extraction_dir . 'global-classes';
 		$empty_result = [ 'imported' => 0, 'failed' => [], 'conflicts' => [] ];
 
-		if ( ! file_exists( $classes_path ) ) {
+		if ( ! is_dir( $classes_dir ) ) {
 			return $empty_result;
 		}
 
-		return Import_Export_Utils::import_classes( $classes_path, [ 'conflict_resolution' => $this->conflict_resolution ] );
+		return Import_Export_Utils::import_classes( $classes_dir, [ 'conflict_resolution' => $this->conflict_resolution ] );
 	}
 
 	private function import_variables( $kit ): array {
