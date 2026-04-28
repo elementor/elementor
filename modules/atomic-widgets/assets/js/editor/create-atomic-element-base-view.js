@@ -96,15 +96,6 @@ export default function createAtomicElementBaseView( type ) {
 			return generatedClasses.join( ' ' );
 		},
 
-		// TODO: Copied from `views/column.js`.
-		ui() {
-			var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-			ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
-
-			return ui;
-		},
-
 		attributes() {
 			const attr = BaseElementView.prototype.attributes.apply( this );
 			const local = {};
@@ -132,34 +123,6 @@ export default function createAtomicElementBaseView( type ) {
 				...initialAttributes,
 				...local,
 			};
-		},
-
-		// TODO: Copied from `views/column.js`.
-		attachElContent() {
-			BaseElementView.prototype.attachElContent.apply( this, arguments );
-
-			const $tooltip = jQuery( '<div>', {
-				class: 'elementor-column-percents-tooltip',
-				'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
-			} );
-
-			this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentSize( size ) {
-			if ( ! size ) {
-				size = this.el.getBoundingClientRect().width;
-			}
-
-			return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentsForDisplay() {
-			const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
-
-			return width.toFixed( 1 ) + '%';
 		},
 
 		renderOnChange( settings ) {
