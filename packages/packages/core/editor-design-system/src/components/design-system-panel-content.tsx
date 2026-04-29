@@ -6,11 +6,12 @@ import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { consumeInitialDesignSystemTab, type DesignSystemTab } from '../initial-tab';
+import {
+	getInitialDesignSystemTab,
+	persistDesignSystemTab,
+	type DesignSystemTab,
+} from '../initial-tab';
 
-type TabValue = DesignSystemTab;
-
-/** Matches the editing panel tab strip (`editing-panel-tabs` / `style-tab` sticky row). */
 const stickyTabRowStyles = {
 	position: 'sticky' as const,
 	zIndex: 1100,
@@ -24,7 +25,7 @@ export type DesignSystemPanelContentProps = {
 };
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
-	const [ currentTab, setCurrentTab ] = useState( () => consumeInitialDesignSystemTab() );
+	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
 
 	return (
@@ -58,9 +59,10 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								size="small"
 								sx={ { mt: 0.5 } }
 								{ ...getTabsProps() }
-								onChange={ ( e: React.SyntheticEvent, newValue: TabValue ) => {
+								onChange={ ( e: React.SyntheticEvent, newValue: DesignSystemTab ) => {
 									getTabsProps().onChange( e, newValue );
 									setCurrentTab( newValue );
+									persistDesignSystemTab( newValue );
 								} }
 							>
 								<Tab
