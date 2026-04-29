@@ -23,15 +23,6 @@ export type DesignSystemPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 };
 
-/**
- * Shell only: panel chrome + design-system title + tab strip. Tab bodies are delegated to
- * `@elementor/editor-variables` and `@elementor/editor-global-classes` unchanged — use a **single**
- * content mount so a hidden `TabPanel` does not keep an empty flex child (which caused the large
- * empty gap in the Classes tab next to a sibling with `flex: 1`).
- *
- * @param props                - Panel props.
- * @param props.onRequestClose - Invoked when the user closes the panel from the header control.
- */
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => consumeInitialDesignSystemTab() );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
@@ -41,8 +32,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			<Panel>
 				<PanelHeader>
 					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-						<PanelHeaderTitle sx={ { flex: 1 } }>{ __( 'Design system', 'elementor' ) }</PanelHeaderTitle>
-						<CloseButton sx={ { marginLeft: 'auto' } } onClose={ onRequestClose } />
+						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
+							{ __( 'Design system', 'elementor' ) }
+						</PanelHeaderTitle>
+						<CloseButton
+							aria-label={ __( 'Close', 'elementor' ) }
+							sx={ { flexShrink: 0, marginLeft: 'auto' } }
+							onClick={ () => void onRequestClose() }
+						/>
 					</Stack>
 				</PanelHeader>
 				<PanelBody
