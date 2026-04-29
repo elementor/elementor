@@ -1,5 +1,6 @@
-import { initManageVariableTool } from '../manage-variable-tool';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { service } from '../../service';
+import { initManageVariableTool } from '../manage-variable-tool';
 
 jest.mock( '../../service' );
 
@@ -31,7 +32,12 @@ describe( 'manage-variable-tool validation', () => {
 	describe( 'create action', () => {
 		it( 'should reject label with spaces', async () => {
 			await expect(
-				toolHandler( { action: 'create', type: 'global-color-variable', label: 'Headline Primary', value: '#000' } )
+				toolHandler( {
+					action: 'create',
+					type: 'global-color-variable',
+					label: 'Headline Primary',
+					value: '#000',
+				} )
 			).rejects.toThrow( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
 
 			expect( service.create ).not.toHaveBeenCalled();
@@ -54,7 +60,12 @@ describe( 'manage-variable-tool validation', () => {
 		} );
 
 		it( 'should allow valid label', async () => {
-			await toolHandler( { action: 'create', type: 'global-color-variable', label: 'headline-primary', value: '#000' } );
+			await toolHandler( {
+				action: 'create',
+				type: 'global-color-variable',
+				label: 'headline-primary',
+				value: '#000',
+			} );
 
 			expect( service.create ).toHaveBeenCalledWith( {
 				type: 'global-color-variable',
@@ -64,7 +75,12 @@ describe( 'manage-variable-tool validation', () => {
 		} );
 
 		it( 'should allow label with underscores', async () => {
-			await toolHandler( { action: 'create', type: 'global-color-variable', label: 'headline_primary', value: '#000' } );
+			await toolHandler( {
+				action: 'create',
+				type: 'global-color-variable',
+				label: 'headline_primary',
+				value: '#000',
+			} );
 
 			expect( service.create ).toHaveBeenCalledWith( {
 				type: 'global-color-variable',
