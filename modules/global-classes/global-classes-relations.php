@@ -345,7 +345,11 @@ class Global_Classes_Relations {
 		if ( Global_Classes_Repository::CONTEXT_FRONTEND === $this->context ) {
 			$document = $documents->get( $post_id );
 
-			return $document ?: null;
+			if ( ! $document ) {
+				return null;
+			}
+
+			return $document ?? null;
 		}
 
 		$document = $documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
@@ -354,6 +358,6 @@ class Global_Classes_Relations {
 			$document = $documents->get( $post_id );
 		}
 
-		return $document ?: null;
+		return $document ?? null;
 	}
 }
