@@ -1150,6 +1150,139 @@ describe( '<CssClassSelector />', () => {
 			// Assert.
 			expect( screen.getByPlaceholderText( 'Type class name' ) ).toBeInTheDocument();
 		} );
+
+		it( 'should show the "Duplicate" button for a global class with create action', () => {
+			// Arrange.
+			const createAction = jest.fn().mockReturnValue( 'duplicated-id' );
+			const duplicatableProvider = createMockStylesProvider(
+				{
+					key: 'provider-1',
+					labels: { plural: 'Provider 1', singular: 'Provider 1 Class' },
+					actions: { create: createAction },
+				},
+				[ provider1MockStyleA, provider1MockStyleB ]
+			);
+			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( duplicatableProvider );
+
+			const appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ];
+			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+
+			// Act.
+			renderComponent( { active: 'provider-1-b', appliedClasses } );
+
+			const classChip = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
+			const menuTrigger = within( classChip ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) );
+			fireEvent.click( menuTrigger );
+
+			const menu = screen.getByRole( 'menu' );
+
+			// Assert.
+			expect( within( menu ).getByText( 'Duplicate' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not show the "Duplicate" button for a local class', () => {
+			// Arrange.
+			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( localProvider );
+
+			// Act.
+			renderComponent( { active: 'local', appliedClasses: [ 'local', 'provider-1-b' ] } );
+
+			const localClass = screen.getByRole( 'group', { name: __( 'Edit Local', 'elementor' ) } );
+			const menuTrigger = within( localClass ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) );
+			fireEvent.click( menuTrigger );
+
+			const menu = screen.getByRole( 'menu' );
+
+			// Assert.
+			expect( within( menu ).queryByText( 'Duplicate' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should duplicate a class, apply it, and track the event', () => {
+			// Arrange.
+			const createAction = jest.fn().mockReturnValue( 'duplicated-id' );
+			const duplicatableProvider = createMockStylesProvider(
+				{
+					key: 'provider-1',
+					labels: { plural: 'Provider 1', singular: 'Provider 1 Class' },
+					actions: {
+						create: createAction,
+						tracking: mockTracking,
+					},
+				},
+				[ provider1MockStyleA, provider1MockStyleB ]
+			);
+			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( duplicatableProvider );
+
+			const appliedClasses = [ 'local', 'provider-1-b', 'provider-1-a' ];
+			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+
+			const setActive = jest.fn();
+
+			// Act.
+			renderComponent( { active: 'provider-1-b', setActive, appliedClasses } );
+
+			const classChip = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
+			const menuTrigger = within( classChip ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) );
+			fireEvent.click( menuTrigger );
+
+			const menu = screen.getByRole( 'menu' );
+			fireEvent.click( within( menu ).getByText( 'Duplicate' ) );
+
+			// Assert.
+			expect( createAction ).toHaveBeenCalledWith( 'copy-of-Provider-1-a', provider1MockStyleA.variants );
+
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'mock-element',
+				props: {
+					'my-classes': {
+						$$type: 'classes',
+						value: [ 'local', 'provider-1-b', 'provider-1-a', 'duplicated-id' ],
+					},
+				},
+				withHistory: false,
+			} );
+
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classCreated',
+				classId: 'duplicated-id',
+				source: 'duplicated',
+				classTitle: 'copy-of-Provider-1-a',
+			} );
+		} );
+
+		it( 'should not show the "Duplicate" button if user does not have the create capability', () => {
+			// Arrange.
+			jest.mocked( useUserStylesCapability ).mockReturnValue( {
+				userCan: () => ( {
+					update: true,
+					updateProps: true,
+					create: false,
+					delete: true,
+				} ),
+			} );
+
+			const duplicatableProvider = createMockStylesProvider(
+				{
+					key: 'provider-1',
+					labels: { plural: 'Provider 1', singular: 'Provider 1 Class' },
+					actions: { create: jest.fn() },
+				},
+				[ provider1MockStyleA, provider1MockStyleB ]
+			);
+			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( duplicatableProvider );
+
+			// Act.
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+
+			const classChip = screen.getByRole( 'group', { name: __( 'Edit Provider-1-a', 'elementor' ) } );
+			const menuTrigger = within( classChip ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) );
+			fireEvent.click( menuTrigger );
+
+			const menu = screen.getByRole( 'menu' );
+
+			// Assert.
+			expect( within( menu ).queryByText( 'Duplicate' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Class history', () => {
@@ -1344,10 +1477,10 @@ describe( '<CssClassSelector />', () => {
 			// Assert - Class re-created and applied.
 			expect( updateElementSettings ).toHaveBeenNthCalledWith( 3, {
 				id: 'mock-element',
-				props: { 'my-classes': { $$type: 'classes', value: [ 'local', 'new-class-id-2' ] } },
+				props: { 'my-classes': { $$type: 'classes', value: [ 'local', 'new-class-id-1' ] } },
 				withHistory: false,
 			} );
-			expect( setActive ).toHaveBeenCalledWith( 'new-class-id-2' );
+			expect( setActive ).toHaveBeenCalledWith( 'new-class-id-1' );
 		} );
 	} );
 } );

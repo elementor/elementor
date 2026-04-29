@@ -188,6 +188,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Change effect type to "Out"
 			const effectTypeButton = popover.getByLabel( 'Out', { exact: true } );
+
+			// Done to avoid tooltip blocking mouse actions
+			const label = effectTypeButton.locator( '../../..' ).locator( 'label' );
+			await label.hover();
+
 			await expect( effectTypeButton ).toBeVisible();
 			await effectTypeButton.click();
 
@@ -309,7 +314,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const replayLabel = page.getByText( 'Replay', { exact: true } );
 
 			// Assert - label is not visible
-			await expect( replayLabel ).not.toBeVisible();
+			await expect( replayLabel ).toBeHidden();
 		} );
 
 		await test.step( 'Verify Replay control is visible with Yes button disabled', async () => {
@@ -334,7 +339,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Assert - Yes button is disabled (promotion), No button is enabled
 			await expect( yesButton ).toBeDisabled();
-			await expect( noButton ).not.toBeDisabled();
+			await expect( noButton ).toBeEnabled();
 		} );
 	} );
 
@@ -433,6 +438,70 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const originalInteractionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
 			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
 			expect( duplicatedInteractionId ).not.toBe( originalInteractionId );
+		} );
+	} );
+
+	test( 'Direction control: multi-select pairing rules', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create an interaction and switch effect to Slide', async () => {
+			await page.getByRole( 'button', { name: 'Create an interaction' } ).click();
+			await page.waitForSelector( '.MuiPopover-root' );
+
+			const popover = page.locator( '.MuiPopover-root' ).first();
+
+			// Direction buttons are now visible with "From …" labels (type defaults to "in").
+			await expect( popover.getByLabel( 'From top', { exact: true } ) ).toBeVisible();
+		} );
+
+		const popover = page.locator( '.MuiPopover-root' ).first();
+
+		await test.step( 'top and left can be selected together (valid diagonal)', async () => {
+			await popover.getByLabel( 'From top', { exact: true } ).click();
+			await popover.getByLabel( 'From left', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From top', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+			await expect( popover.getByLabel( 'From right', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+
+		await test.step( 'top and bottom cannot be selected together (same vertical axis — bottom replaces top)', async () => {
+			// Current state: top-left. Click "bottom" → should replace "top", giving bottom-left.
+			await popover.getByLabel( 'From bottom', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From top', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
+		} );
+
+		await test.step( 'left and right cannot be selected together (same horizontal axis — right replaces left)', async () => {
+			// Current state: bottom-left. Click "right" → should replace "left", giving bottom-right.
+			await popover.getByLabel( 'From right', { exact: true } ).click();
+
+			await expect( popover.getByLabel( 'From right', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'true' );
+			await expect( popover.getByLabel( 'From left', { exact: true } ) )
+				.toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );
 

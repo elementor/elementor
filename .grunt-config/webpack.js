@@ -165,7 +165,8 @@ const frontendEntries = {
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
 	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
-	'atomic-widgets-frontend-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/handlers.js' ),
+	'atomic-widgets-action-link-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/action-link-handlers.js' ),
+	'atomic-widgets-form-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/form-handlers.js' ),
 };
 
 const externals = [
@@ -186,6 +187,7 @@ const externals = [
 		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
 		'@elementor/onboarding': 'elementorV2.onboarding',
+		'@elementor/site-builder': [ 'elementorV2', 'siteBuilder' ],
 		'@elementor/v4-activation-modal': [ 'elementorV2', 'v4-activation-modal' ],
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',

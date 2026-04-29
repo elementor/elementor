@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,8 +22,14 @@ class Global_Classes_Repository {
 
 	private ?Global_Classes $cache = null;
 
-	public static function make(): Global_Classes_Repository {
-		return new self();
+	private ?Kit $kit = null;
+
+	public function __construct( ?Kit $kit = null ) {
+		$this->kit = $kit;
+	}
+
+	public static function make( ?Kit $kit = null ): Global_Classes_Repository {
+		return new self( $kit );
 	}
 
 	public function context( string $context ): self {
@@ -46,6 +54,8 @@ class Global_Classes_Repository {
 		if ( $is_preview && $is_empty ) {
 			$all = $kit->get_json_meta( static::META_KEY_FRONTEND );
 		}
+
+		$all['order'] = Global_Classes_Parser::sanitize_order( $all['items'] ?? [], $all['order'] ?? [] );
 
 		Migrations_Orchestrator::make()->migrate(
 			$all,
@@ -98,7 +108,7 @@ class Global_Classes_Repository {
 			: static::META_KEY_PREVIEW;
 	}
 
-	private function get_kit() {
-		return Plugin::$instance->kits_manager->get_active_kit();
+	private function get_kit(): Kit {
+		return $this->kit ?? Plugin::$instance->kits_manager->get_active_kit();
 	}
 }

@@ -20,7 +20,8 @@ import { getAssetUrl } from '../utils';
 const StyledCard = styled( Card )( ( { theme } ) => ( {
 	width: theme.spacing( 30 ),
 	borderRadius: theme.spacing( 1 ),
-	transition: 'box-shadow 0.2s',
+	boxShadow: 'none',
+	transition: 'border-color 0.2s',
 	border: `1px solid ${ theme.palette.divider }`,
 	paddingBlockEnd: theme.spacing( 3 ),
 	'&:hover': { borderColor: theme.palette.text.primary },

@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,6 +24,8 @@ abstract class Form_Message extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A container for form status messages (success or error). Hidden by default, shown based on form submission state.';
+
 	abstract protected static function get_background_color(): string;
 
 	abstract protected static function get_text_color(): string;
@@ -30,6 +33,7 @@ abstract class Form_Message extends Atomic_Element_Base {
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public function get_icon() {
@@ -44,7 +48,7 @@ abstract class Form_Message extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -81,7 +85,6 @@ abstract class Form_Message extends Atomic_Element_Base {
 								'size' => 12,
 								'unit' => 'px',
 							] ),
-							'font-family' => String_Prop_Type::generate( 'Poppins' ),
 						] )
 				),
 		];

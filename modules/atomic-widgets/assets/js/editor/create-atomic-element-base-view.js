@@ -13,21 +13,35 @@ export default function createAtomicElementBaseView( type ) {
 
 		_childrenRenderPromises: [],
 
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
+
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
+			}
+
+			return document.createElement( tag );
+		},
+
 		tagName() {
 			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
 		},
 
 		_resolveTag() {
 			const renderContext = this.getResolverRenderContext?.();
+
 			const tagSetting = this.model.getSetting( 'tag' );
 			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
 
-			if ( this._hasLink( renderContext ) ) {
-				return 'a';
-			}
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLinkTag = this._resolvePropValue( linkSetting?.value?.tag, renderContext );
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			const linkTag = resolvedLinkTag?.value ?? resolvedLinkTag;
+			const baseTag = resolvedTag?.value ?? resolvedTag;
+
+			const resultTag = linkTag ?? baseTag;
+
+			return resultTag || this.model.config.default_html_tag || 'div';
 		},
 
 		getChildViewContainer() {
@@ -102,7 +116,7 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+			local[ 'data-interaction-id' ] = this.getInteractionId();
 
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
@@ -159,6 +173,11 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
+			if ( this.isTagChanged( changed ) ) {
+				this.rerenderEntireView();
+				return;
+			}
+
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
@@ -205,14 +224,14 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			this.$el.addClass( this.getClasses() );
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-			}
 		},
 
 		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+			const hasParent = Boolean( this._parent );
+			const hasTagOrLinkChange = changed?.tag !== undefined || changed?.link !== undefined;
+			const isTagMismatch = this.tagName()?.toLowerCase() !== this.el.tagName.toLowerCase();
+
+			return hasTagOrLinkChange && hasParent && isTagMismatch;
 		},
 
 		rerenderEntireView() {
@@ -236,7 +255,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_shouldSkipFullRender() {
-			return this.isRendered && this.children?.length > 0;
+			return this.isRendered && this._hasConnectedChildren();
+		},
+
+		_hasConnectedChildren() {
+			if ( ! this.children?.length ) {
+				return false;
+			}
+
+			// If the parent's innerHTML was replaced, all children are detached together.
+			const firstChild = this.children.findByIndex( 0 );
+			return firstChild?.$el?.get( 0 )?.isConnected ?? false;
 		},
 
 		_renderWithoutDomRecreation( resolve ) {
@@ -306,11 +335,15 @@ export default function createAtomicElementBaseView( type ) {
 			this.$el.removeAttr( 'href' );
 			this.$el.removeAttr( 'data-action-link' );
 
-			const link = this.getLink();
+			const link = this.getLinkAttributes();
 
-			if ( link ) {
-				this.$el.attr( link.attr, link.value );
+			if ( ! link ) {
+				return;
 			}
+
+			Object.entries( link ).forEach( ( [ key, value ] ) => {
+				this.$el.attr( key, value );
+			} );
 		},
 
 		async _waitForChildrenToComplete() {
@@ -382,7 +415,7 @@ export default function createAtomicElementBaseView( type ) {
 			return !! destination?.value;
 		},
 
-		getLink() {
+		getLinkAttributes() {
 			const renderContext = this.getResolverRenderContext?.();
 			const linkSetting = this.model.getSetting( 'link' );
 			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
@@ -406,9 +439,10 @@ export default function createAtomicElementBaseView( type ) {
 					return null;
 				}
 
+				const attributeKey = 'action' === value?.group ? 'data-action-link' : 'href';
+
 				return {
-					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
-					value: resolvedValue,
+					[ attributeKey ]: resolvedValue,
 				};
 			}
 
@@ -416,8 +450,7 @@ export default function createAtomicElementBaseView( type ) {
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
 			return {
-				attr: 'href',
-				value: hrefPrefix + value,
+				href: hrefPrefix + value,
 			};
 		},
 
@@ -911,6 +944,13 @@ export default function createAtomicElementBaseView( type ) {
 			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
 
 			return this._resolvePropValue( transformed, renderContext );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} );
 

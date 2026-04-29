@@ -105,6 +105,25 @@ const baseSlice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
+		loadOverridableProps: (
+			state,
+			{ payload }: PayloadAction< Record< ComponentId, OverridableProps | null > >
+		) => {
+			const componentIds = Object.keys( payload );
+
+			componentIds.forEach( ( id ) => {
+				const componentId = Number( id );
+				const overridableProps = payload[ componentId ];
+
+				const component = state.data.find( ( comp ) => comp.id === componentId );
+
+				if ( ! component || ! overridableProps ) {
+					return;
+				}
+
+				component.overridableProps = overridableProps;
+			} );
+		},
 		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
 			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
 

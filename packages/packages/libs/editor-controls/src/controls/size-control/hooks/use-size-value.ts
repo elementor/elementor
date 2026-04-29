@@ -2,48 +2,58 @@ import { useMemo } from 'react';
 import { type SizePropValue } from '@elementor/editor-props';
 
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { type SizeUnit } from '../types';
+import { type SetSizeValue } from '../types';
 import { isExtendedUnit } from '../utils/is-extended-unit';
 import { createDefaultSizeValue, resolveSizeOnUnitChange, resolveSizeValue } from '../utils/resolve-size-value';
+import { useUnitSync } from './use-unit-sync';
 
 type SizeValue = SizePropValue[ 'value' ];
 
 type UseSizeValueProps< T, U > = {
 	value: T | null;
-	onChange: ( value: T ) => void;
+	setValue: SetSizeValue< T >;
 	units: U[];
 	defaultUnit?: U;
 };
 
-export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
+export const useSizeValue = < T extends SizeValue, U extends SizeValue[ 'unit' ] >( {
 	value,
-	onChange,
+	setValue,
 	units,
 	defaultUnit,
 }: UseSizeValueProps< T, U > ) => {
 	const resolvedValue = useMemo(
-		() => resolveSizeValue( value, { units, defaultUnit } ),
+		() => resolveSizeValue( value, { units, defaultUnit } ) as T,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ value?.size, value?.unit, defaultUnit ]
 	);
 
 	const [ sizeValue, setSizeValue ] = useSyncExternalState< T >( {
-		external: resolvedValue as T,
-		setExternal: ( newState ) => {
-			// TODO we need to check behaviour that low level doesn't set to null only the high level components size component
-			// This will fix the issue of if size is empty string '' it gets sends to the model
-			// but on blur the size component set to null.
-			// But we need to test this behaviour
+		external: resolvedValue,
+		setExternal: ( newState, options, meta ) => {
 			if ( newState !== null ) {
-				onChange( newState );
+				setValue( newState, options, meta );
 			}
-		}, // TODO we will need to handle options, meta if context need them
-		persistWhen: ( next ) => hasChanged( next, resolvedValue as T ),
-		fallback: () => createDefaultSizeValue< T >( units, defaultUnit ),
+		},
+		persistWhen: ( next ) => hasChanged( next, resolvedValue ),
+		fallback: () => createDefaultSizeValue( units, defaultUnit ),
 	} );
 
-	const setSize = ( newSize: string ) => {
-		if ( isExtendedUnit( sizeValue.unit ) ) {
+	const [ unit, setUnit ] = useUnitSync( {
+		sizeValue,
+		setUnit: ( newUnit ) => {
+			setSizeValue( {
+				unit: newUnit,
+				size: resolveSizeOnUnitChange( sizeValue.size, newUnit ),
+			} as T );
+		},
+		persistWhen: () => {
+			return Boolean( sizeValue.size ) || sizeValue.size !== '' || isExtendedUnit( sizeValue.unit );
+		},
+	} );
+
+	const setSize = ( newSize: string, isInputValid = true ) => {
+		if ( isExtendedUnit( unit ) ) {
 			return;
 		}
 
@@ -51,21 +61,17 @@ export const useSizeValue = < T extends SizeValue, U extends SizeUnit >( {
 		const parsed = Number( trimmed );
 
 		const newState = {
-			...sizeValue,
+			unit,
 			size: trimmed && ! isNaN( parsed ) ? parsed : '',
-		};
+		} as T;
 
-		setSizeValue( newState );
-	};
-
-	const setUnit = ( unit: SizeValue[ 'unit' ] ) => {
-		setSizeValue( { unit, size: resolveSizeOnUnitChange( sizeValue.size, unit ) } as T );
+		setSizeValue( newState, undefined, { validation: () => isInputValid } );
 	};
 
 	return {
 		size: sizeValue.size,
-		unit: sizeValue.unit,
 		setSize,
+		unit,
 		setUnit,
 	};
 };

@@ -6,6 +6,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
+import { removeProviderPregeneratedLinks, resetRemovedProviders } from '../utils/pregenerated-links-removal';
 import { signalizedProcess } from '../utils/signalized-process';
 import { useOnMount } from './use-on-mount';
 import { useStylePropResolver } from './use-style-prop-resolver';
@@ -36,25 +37,35 @@ export function useStyleItems() {
 	const styleItemsCacheRef = useRef< Map< string, StyleItemsCache > >( new Map() );
 
 	const providerAndSubscribers = useMemo( () => {
-		return stylesRepository.getProviders().map( ( provider ): ProviderAndSubscriber => {
-			const providerKey = provider.getKey();
+		const createEmptyCache = () => {
+			return { orderedIds: [], itemsById: new Map() };
+		};
 
-			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
-				styleItemsCacheRef.current.set( providerKey, { orderedIds: [], itemsById: new Map() } );
+		const getCache = ( provider: StylesProvider ): StyleItemsCache => {
+			const providerKey = safeGetKey( provider );
+
+			if ( ! providerKey ) {
+				return createEmptyCache();
 			}
 
-			const cache = styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
+			if ( ! styleItemsCacheRef.current.has( providerKey ) ) {
+				styleItemsCacheRef.current.set( providerKey, createEmptyCache() );
+			}
 
-			return {
+			return styleItemsCacheRef.current.get( providerKey ) as StyleItemsCache;
+		};
+
+		return stylesRepository.getProviders().map(
+			( provider ): ProviderAndSubscriber => ( {
 				provider,
 				subscriber: createProviderSubscriber( {
 					provider,
 					renderStyles,
 					setStyleItems,
-					cache,
+					getCache: () => getCache( provider ),
 				} ),
-			};
-		} );
+			} )
+		);
 	}, [ renderStyles ] );
 
 	useEffect( () => {
@@ -69,6 +80,8 @@ export function useStyleItems() {
 
 	useOnMount( () => {
 		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+			resetRemovedProviders();
+
 			const promises = providerAndSubscribers.map( async ( { subscriber } ) => subscriber() );
 
 			await Promise.all( promises );
@@ -122,25 +135,39 @@ function createBreakpointSorter( breakpointsOrder: BreakpointId[] ) {
 		breakpointsOrder.indexOf( breakpointB as BreakpointId );
 }
 
+function safeGetKey( provider: StylesProvider ): string | null {
+	try {
+		return provider.getKey();
+	} catch {
+		return null;
+	}
+}
+
 type CreateProviderSubscriberArgs = {
 	provider: StylesProvider;
 	renderStyles: StyleRenderer;
 	setStyleItems: Dispatch< SetStateAction< ProviderAndStyleItemsMap > >;
-	cache: StyleItemsCache;
+	getCache: () => StyleItemsCache;
 };
 
-function createProviderSubscriber( { provider, renderStyles, setStyleItems, cache }: CreateProviderSubscriberArgs ) {
+function createProviderSubscriber( { provider, renderStyles, setStyleItems, getCache }: CreateProviderSubscriberArgs ) {
 	return abortPreviousRuns( ( abortController, previous?: StylesCollection, current?: StylesCollection ) =>
 		signalizedProcess( abortController.signal )
 			.then( ( _, signal ) => {
+				const cache = getCache();
 				const hasDiffInfo = current !== undefined && previous !== undefined;
 				const hasCache = cache.orderedIds.length > 0;
 
-				if ( hasDiffInfo && hasCache ) {
-					return updateItems( previous, current, signal );
+				if ( hasCache && provider.isPregeneratedLink ) {
+					// if styles were rendered already (i.e. hasCache = true), we can safely remove the pregenerated css rules imported via <link /> tags
+					removeProviderPregeneratedLinks( provider.getKey(), provider.isPregeneratedLink );
 				}
 
-				return createItems( signal );
+				if ( hasDiffInfo && hasCache ) {
+					return updateItems( cache, previous, current, signal );
+				}
+
+				return createItems( cache, signal );
 			} )
 			.then( ( items ) => {
 				setStyleItems( ( prev ) => ( {
@@ -151,7 +178,12 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 			.execute()
 	);
 
-	async function updateItems( previous: StylesCollection, current: StylesCollection, signal: AbortSignal ) {
+	async function updateItems(
+		cache: StyleItemsCache,
+		previous: StylesCollection,
+		current: StylesCollection,
+		signal: AbortSignal
+	) {
 		const changedIds = getChangedStyleIds( previous, current );
 
 		cache.orderedIds = provider.actions
@@ -168,8 +200,10 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 					cssName: provider.actions.resolveCssName( style.id ),
 				} ) );
 
-			return renderStyles( { styles: breakToBreakpoints( changedStyles ), signal } ).then( ( rendered ) => {
-				updateCacheItems( cache, rendered );
+			const breakpointSplit = breakToBreakpoints( changedStyles );
+
+			return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
+				updateCacheItems( cache, changedIds, rendered );
 
 				return getOrderedItems( cache );
 			} );
@@ -178,7 +212,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 		return getOrderedItems( cache );
 	}
 
-	async function createItems( signal: AbortSignal ) {
+	async function createItems( cache: StyleItemsCache, signal: AbortSignal ) {
 		const allStyles = provider.actions.all();
 
 		const styles = [ ...allStyles ].reverse().map( ( style ) => {
@@ -191,7 +225,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, cach
 		return renderStyles( { styles: breakToBreakpoints( styles ), signal } ).then( ( rendered ) => {
 			rebuildCache( cache, allStyles, rendered );
 
-			return rendered;
+			return getOrderedItems( cache );
 		} );
 	}
 
@@ -245,19 +279,15 @@ function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
 		.flat();
 }
 
-function updateCacheItems( cache: StyleItemsCache, changedItems: StyleItem[] ): void {
+function updateCacheItems( cache: StyleItemsCache, changedIds: string[], changedItems: StyleItem[] ): void {
+	for ( const id of changedIds ) {
+		cache.itemsById.delete( id );
+	}
+
 	for ( const item of changedItems ) {
-		const existing = cache.itemsById.get( item.id );
-		if ( existing ) {
-			const idx = existing.findIndex( ( e ) => e.breakpoint === item.breakpoint && e.state === item.state );
-			if ( idx >= 0 ) {
-				existing[ idx ] = item;
-			} else {
-				existing.push( item );
-			}
-		} else {
-			cache.itemsById.set( item.id, [ item ] );
-		}
+		const existing = cache.itemsById.get( item.id ) || [];
+		existing.push( item );
+		cache.itemsById.set( item.id, existing );
 	}
 }
 

@@ -1,7 +1,8 @@
-import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { ELEMENT_STYLE_CHANGE_EVENT, type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { signalizedProcess } from '../utils/signalized-process';
+import { createPendingElement } from './create-pending-element';
 import { canBeTemplated, type TemplatedElementConfig } from './create-templated-element-type';
 import {
 	createAfterRender,
@@ -61,13 +62,14 @@ export function createNestedTemplatedElementType( {
 	};
 }
 
-function buildEditorAttributes( model: { get: ( key: 'id' ) => string; cid?: string } ): string {
+function buildEditorAttributes( model: ElementView[ 'model' ] ): string {
 	const id = model.get( 'id' );
+	const originId = model.get( 'originId' );
 	const cid = model.cid ?? '';
 
 	const attrs: Record< string, string > = {
 		'data-model-cid': cid,
-		'data-interaction-id': id,
+		'data-interaction-id': originId ?? id,
 		'x-ignore': 'true',
 	};
 
@@ -100,6 +102,7 @@ export function createNestedTemplatedElementView( {
 	const AtomicElementBaseView = legacyWindow.elementor.modules.elements.views.createAtomicElementBase( type );
 	const parentRenderChildren = AtomicElementBaseView.prototype._renderChildren;
 	const parentOpenEditingPanel = AtomicElementBaseView.prototype._openEditingPanel;
+	const parentAddElement = AtomicElementBaseView.prototype.addElement;
 
 	return AtomicElementBaseView.extend( {
 		_abortController: null as AbortController | null,
@@ -108,12 +111,22 @@ export function createNestedTemplatedElementView( {
 
 		template: false,
 
+		attributes() {
+			return {
+				'data-model-cid': this.model.cid,
+			};
+		},
+
 		getTemplateType() {
 			return 'twig';
 		},
 
 		invalidateRenderCache() {
 			this._lastResolvedSettingsHash = null;
+		},
+
+		renderOnChange() {
+			this.render();
 		},
 
 		render() {
@@ -181,6 +194,7 @@ export function createNestedTemplatedElementView( {
 
 					const context = {
 						id: model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
@@ -234,14 +248,21 @@ export function createNestedTemplatedElementView( {
 
 			this._destroyAlpine();
 
+			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
+			const needsTagSwap = oldEl.tagName !== newEl.tagName;
+			const targetEl = needsTagSwap ? ( oldEl.ownerDocument ?? document ).createElement( newEl.tagName ) : oldEl;
+
 			Array.from( newEl.attributes ).forEach( ( attr ) => {
-				oldEl.setAttribute( attr.name, attr.value );
+				targetEl.setAttribute( attr.name, attr.value );
 			} );
 
-			oldEl.setAttribute( 'draggable', 'true' );
+			targetEl.setAttribute( 'draggable', 'true' );
+			targetEl.innerHTML = overlayHTML + newEl.innerHTML;
 
-			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
-			oldEl.innerHTML = overlayHTML + newEl.innerHTML;
+			if ( needsTagSwap ) {
+				oldEl.replaceWith( targetEl );
+				this.setElement( legacyWindow.jQuery( targetEl as unknown as string ) );
+			}
 		},
 
 		async _renderChildren() {
@@ -360,6 +381,21 @@ export function createNestedTemplatedElementView( {
 
 		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
 			this._doAfterRender( () => parentOpenEditingPanel.call( this, options ) );
+		},
+
+		addElement( data: Partial< V1ElementModelProps >, options?: { edit?: boolean; at?: number } ) {
+			if ( this.isRendered ) {
+				return parentAddElement.call( this, data, options );
+			}
+
+			return createPendingElement( this, data, options );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} ) as unknown as typeof ElementView;
 }

@@ -19,6 +19,10 @@
 					return;
 				}
 
+				if ( 204 === response.status ) {
+					return;
+				}
+
 				return response.json();
 			} )
 			.then( ( data ) => {
@@ -37,7 +41,7 @@
 		globals?.populateGlobalData();
 	}
 
-	function reloadCanvasDesignSyncStyles( { url, version } ) {
+	function reloadCanvasDesignSyncStyles( { url } ) {
 		const previewFrame = document.getElementById( 'elementor-preview-iframe' );
 
 		if ( ! previewFrame?.contentDocument ) {
@@ -53,7 +57,7 @@
 			previewFrame.contentDocument.head.appendChild( link );
 		}
 
-		link.href = url + '?ver=' + version;
+		link.href = url;
 	}
 
 	function onClassesUpdated( event ) {

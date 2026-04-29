@@ -289,6 +289,180 @@ describe( 'useStyleItems', () => {
 		expect( result.current ).toHaveLength( 2 );
 	} );
 
+	it( 'should maintain breakpoint order after style update', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [
+			createMockStyleDefinitionWithVariants( {
+				id: 'style1',
+				variants: [
+					{ meta: { breakpoint: null, state: null }, props: { padding: '10px' }, custom_css: null },
+					{ meta: { breakpoint: 'tablet', state: null }, props: { padding: '8px' }, custom_css: null },
+					{ meta: { breakpoint: 'mobile', state: null }, props: { padding: '5px' }, custom_css: null },
+				],
+			} ),
+		] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		// Act - initial render.
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: 'tablet', state: null },
+				props: { padding: '12px' },
+			} );
+		} );
+
+		// Assert - items should be ordered by breakpoint (desktop, tablet, mobile).
+		const breakpointOrder = result.current.map( ( item ) => item.breakpoint );
+		expect( breakpointOrder ).toEqual( [ 'desktop', 'tablet', 'mobile' ] );
+
+		// Act - update again (should maintain order).
+		await act( async () => {
+			mockProvider.actions.update?.( { id: 'style1', label: 'Updated' } );
+		} );
+
+		// Assert - order should still be maintained.
+		const breakpointOrderAfterUpdate = result.current.map( ( item ) => item.breakpoint );
+		expect( breakpointOrderAfterUpdate ).toEqual( [ 'desktop', 'tablet', 'mobile' ] );
+	} );
+
+	it( 'should recover and render styles when a provider key becomes available after initial failure', async () => {
+		// Arrange.
+		let shouldThrow = true;
+
+		const dynamicKey: () => string = () => {
+			if ( shouldThrow ) {
+				throw new Error( 'Document not ready' );
+			}
+
+			return 'late-provider';
+		};
+
+		const failingThenSucceedingProvider = createMockStylesProvider(
+			{
+				key: dynamicKey,
+				priority: 2,
+			},
+			[ createMockStyleDefinition( { id: 'late-style1' } ), createMockStyleDefinition( { id: 'late-style2' } ) ]
+		);
+
+		const stableProvider = createMockStylesProvider(
+			{
+				key: 'stable-provider',
+				priority: 1,
+			},
+			[
+				createMockStyleDefinition( { id: 'stable-style1' } ),
+				createMockStyleDefinition( { id: 'stable-style2' } ),
+			]
+		);
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [
+			failingThenSucceedingProvider,
+			stableProvider,
+		] );
+
+		let attachPreviewCallback: () => Promise< void >;
+
+		jest.mocked( registerDataHook ).mockImplementation( ( position, command, callback ) => {
+			if ( command === 'editor/documents/attach-preview' && position === 'after' ) {
+				attachPreviewCallback = callback as never;
+			}
+
+			return null as never;
+		} );
+
+		// Act.
+		const { result } = renderHook( () => useStyleItems() );
+
+		// Assert - hook should not crash, should return empty initially.
+		expect( result.current ).toEqual( [] );
+
+		// Act - simulate document becoming ready, then trigger attach-preview.
+		shouldThrow = false;
+
+		await act( async () => {
+			await attachPreviewCallback?.();
+		} );
+
+		// Assert - both providers' styles should render in correct priority order.
+		expect( result.current ).toEqual( [
+			{ id: 'stable-style2', breakpoint: 'desktop' },
+			{ id: 'stable-style1', breakpoint: 'desktop' },
+			{ id: 'late-style2', breakpoint: 'desktop' },
+			{ id: 'late-style1', breakpoint: 'desktop' },
+		] );
+	} );
+
+	it( 'should remove cached items for breakpoints whose variants no longer exist', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const styleWithTwoBreakpoints = createMockStyleDefinitionWithVariants( {
+			id: 'style1',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: { 'font-family': 'Arial' }, custom_css: null },
+				{ meta: { breakpoint: 'tablet', state: null }, props: { 'font-family': 'Roboto' }, custom_css: null },
+			],
+		} );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [ styleWithTwoBreakpoints ] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: null, state: null },
+				props: {},
+			} );
+		} );
+
+		expect( result.current ).toEqual( [
+			{ id: 'style1', breakpoint: 'desktop' },
+			{ id: 'style1', breakpoint: 'tablet' },
+		] );
+
+		// Act - simulate the tablet variant being removed (e.g. user cleared its only prop,
+		// global-classes store calls getNonEmptyVariants which drops empty variants).
+		await act( async () => {
+			mockProvider.actions.update?.( {
+				id: 'style1',
+				variants: [
+					{ meta: { breakpoint: null, state: null }, props: { 'font-family': 'Arial' }, custom_css: null },
+				],
+			} );
+		} );
+
+		// Assert - the tablet item must be evicted from the cache.
+		expect( result.current ).toEqual( [ { id: 'style1', breakpoint: 'desktop' } ] );
+	} );
+
 	it( 'should only re-render changed styles on differential update', async () => {
 		// Arrange.
 		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>

@@ -17,7 +17,7 @@ class Validation {
 
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
-	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
+	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
 	private const VALID_REPEAT_MODES = [ '', 'loop', 'times' ];
 
 	public function sanitize( $document ) {
@@ -239,17 +239,7 @@ class Validation {
 			return false;
 		}
 
-		$config = $data['config'];
-
-		if ( ! isset( $config['$$type'] ) || 'config' !== $config['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $config['value'] ) || ! is_array( $config['value'] ) ) {
-			return false;
-		}
-
-		$config_value = $config['value'];
+		$config_value = $data['config']['value'];
 
 		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
 			return false;

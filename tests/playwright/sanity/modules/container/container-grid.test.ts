@@ -37,7 +37,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert Align Content control to be visible when Rows Grid is set to custom', async () => {
 			const alignContentControl = page.locator( '.elementor-control-grid_align_content' );
-			await expect( alignContentControl ).not.toBeVisible();
+			await expect( alignContentControl ).toBeHidden();
 
 			const gridRowsControl = page.locator( '.elementor-control-grid_rows_grid' );
 			await gridRowsControl.locator( '.e-units-switcher' ).click();
@@ -48,7 +48,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert Justify content control to be visible when Columns Grid is set to custom', async () => {
 			const justifyContentControl = page.locator( '.elementor-control-grid_justify_content' );
-			await expect( justifyContentControl ).not.toBeVisible();
+			await expect( justifyContentControl ).toBeHidden();
 
 			const gridColumnsControl = page.locator( '.elementor-control-grid_columns_grid' );
 			await gridColumnsControl.locator( '.e-units-switcher' ).click();
@@ -152,7 +152,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert correct positioning of the grid preset container when using the Add Container functionality', async () => {
 			// Assert that the first container has data-id = containerId.
-			expect( await frame.locator( '.e-con' ).first().getAttribute( 'data-id' ) ).toEqual( containerId );
+			await expect( frame.locator( '.e-con' ).first() ).toHaveAttribute( 'data-id', containerId );
 
 			await editor.openAddElementSection( containerId );
 			await frame.locator( '.elementor-add-section-inline .elementor-add-section-button' ).click();
@@ -164,7 +164,7 @@ test.describe( 'Container Grid tests @container', () => {
 			expect( newContainerId ).not.toEqual( containerId );
 
 			// The second container should be the existing container.
-			expect( await frame.locator( '.e-con >> nth=1' ).getAttribute( 'data-id' ) ).toEqual( containerId );
+			await expect( frame.locator( '.e-con >> nth=1' ) ).toHaveAttribute( 'data-id', containerId );
 
 			await editor.removeElement( newContainerId );
 		} );
@@ -213,7 +213,7 @@ test.describe( 'Container Grid tests @container', () => {
 				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
 			// Assert
-			await expect( buttonHandle ).not.toBeVisible();
+			await expect( buttonHandle ).toBeHidden();
 			await expect( buttonHandle ).toHaveCount( 0 );
 
 			// Clean up
@@ -291,7 +291,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Assert turn off the grid outline control', async () => {
 			await editor.setSwitcherControlValue( 'grid_outline', false );
-			await expect( gridOutline ).not.toBeVisible();
+			await expect( gridOutline ).toBeHidden();
 		} );
 
 		await test.step( 'Assert outline turn on', async () => {
@@ -490,7 +490,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await frame.locator( '[data-structure="2-2"]' ).click();
 			await frame.locator( '.elementor-editor-element-add' ).click();
 			const backArrow = frame.locator( '.elementor-add-section-back' ).first();
-			await expect( backArrow ).not.toBeVisible();
+			await expect( backArrow ).toBeHidden();
 		} );
 	} );
 
@@ -632,7 +632,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
+			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
 		} );
 
 		await test.step( 'Changing layout to grid', async () => {
@@ -641,7 +641,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
 		await test.step( 'Add a flex container', async () => {
@@ -652,7 +652,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
+			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
 		} );
 
 		await test.step( 'Add a grid container', async () => {
@@ -663,7 +663,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
 		await test.step( 'Select existing grid container', async () => {
@@ -672,7 +672,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Assert
 			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
+			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
 		await page.waitForSelector( '#elementor-panel__editor__help__link' );
@@ -688,7 +688,7 @@ async function testPreset( frame, editor, rows, cols ) {
 	await frame.locator( '.grid-preset-button' ).click();
 	await frame.locator( `[data-structure="${ rows }-${ cols }"]` ).click();
 
-	const container = await frame.locator( '.e-con.e-grid > .e-con-inner' );
+	const container = frame.locator( '.e-con.e-grid > .e-con-inner' );
 
 	// Because the browser will parse repeat(x, xfr) as pixels.
 	// We need to get the initial value in pixels and compare it with the new value in repeat()

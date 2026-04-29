@@ -73,6 +73,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/atomic-widgets/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/atomic-widgets',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/atomic-opt-in/assets/scss',
 				src: '*.scss',
 				dest: 'assets/css/modules/editor-v4-opt-in',

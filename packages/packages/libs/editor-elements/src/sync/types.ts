@@ -4,6 +4,17 @@ import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@
 import { type ControlItem, type PseudoState } from '../types';
 
 export type ExtendedWindow = Window & {
+	$e?: {
+		components?: {
+			get?: ( name: string ) => {
+				utils?: {
+					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
+					addModelToParent?: ( parentId: string, childData: unknown, options?: { at?: number } ) => boolean;
+					removeModelFromParent?: ( parentId: string, childId: string ) => boolean;
+				};
+			};
+		};
+	};
 	elementor?: {
 		selection?: {
 			getElements: () => V1Element[];
@@ -18,12 +29,28 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		helpers?: {
+			isAtomicWidget?: ( model: unknown ) => boolean;
+		};
 	};
 	elementorCommon?: {
 		helpers?: {
 			getUniqueId?: () => string;
 		};
 	};
+};
+
+export type BackboneModel = {
+	get: ( key: string ) => unknown;
+	set: ( key: string, value: unknown ) => void;
+	toJSON: () => Record< string, unknown >;
+};
+
+export type BackboneCollection = {
+	models: BackboneModel[];
+	add: ( model: unknown, options?: Record< string, unknown > ) => void;
+	remove: ( model: BackboneModel, options?: Record< string, unknown > ) => void;
+	findWhere: ( attrs: Record< string, unknown > ) => BackboneModel | undefined;
 };
 
 export type V1Element = {
@@ -132,6 +159,7 @@ export type V1ElementModelProps = {
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
 	isGlobal?: boolean;
+	skipDefaultChildren?: boolean;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
@@ -146,7 +174,7 @@ export type V1ElementEditorSettingsProps = {
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
-export type V1ElementConfig< T = object > = {
+export type V1ElementConfig< T = object, TChild = unknown > = {
 	icon?: string;
 	title: string;
 	widgetType?: string;
@@ -163,6 +191,8 @@ export type V1ElementConfig< T = object > = {
 	atomic_style_states?: ClassState[];
 	atomic_pseudo_states?: PseudoState[];
 	show_in_panel?: boolean;
+	allowed_child_types?: string[];
+	default_children?: Array< Record< string, TChild > >;
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;
 

@@ -27,7 +27,7 @@ export type ToggleButtonGroupItem< TValue > = {
 	showTooltip?: boolean;
 };
 
-const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
+export const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	${ ( { justify } ) => `justify-content: ${ justify };` }
 	button:not( :last-of-type ) {
 		border-start-end-radius: 0;

@@ -1,4 +1,5 @@
-import { type V1Element } from '@elementor/editor-elements';
+import { type Root } from 'react-dom/client';
+import { type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
 export type RenderContext< T = unknown > = Record< string, T >;
@@ -36,7 +37,7 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 			getElementTypeClass: ( type: string ) => typeof ElementType | undefined;
-			_elementTypes: Record< string, ElementType >;
+			elementTypes: Record< string, ElementType >;
 		};
 		$preview: JQueryElement &
 			[
@@ -87,6 +88,8 @@ export declare class ElementView {
 	};
 
 	constructor( ...args: unknown[] );
+
+	addElement( data: Partial< V1ElementModelProps >, options?: object ): unknown;
 
 	onRender( ...args: unknown[] ): void;
 
@@ -162,6 +165,12 @@ export declare class ElementView {
 	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
 
 	once: ( event: string, callback: () => void ) => void;
+
+	getContainer(): V1Element;
+}
+
+export declare class TemplatedElementView extends ElementView {
+	_doAfterRender( callback: () => void ): void;
 }
 
 type JQueryElement = {
@@ -203,6 +212,7 @@ type BackboneCollection< Model extends object > = {
 
 export type ElementModel = {
 	id: string;
+	originId?: string;
 	elType: string;
 	settings: BackboneModel< Props >;
 	editor_settings: Record< string, unknown >;
@@ -240,4 +250,6 @@ export type ReplacementSettings = {
 	id: string;
 	element: HTMLElement;
 	refreshView: () => void;
+	reactRoot: Root;
+	reactContainer: HTMLElement;
 };
