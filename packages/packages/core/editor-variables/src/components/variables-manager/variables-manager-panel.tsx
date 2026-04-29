@@ -69,7 +69,12 @@ export type VariablesManagerPanelEmbeddedProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-/** Variables UI without standalone panel chrome — use inside Design System panel when experiment is active. */
+/**
+ * Variables UI without standalone panel chrome — use inside Design System panel when experiment is active.
+ * @param root0
+ * @param root0.onRequestClose
+ * @param root0.onExposeCloseAttempt
+ */
 export function VariablesManagerPanelEmbedded( {
 	onRequestClose,
 	onExposeCloseAttempt,
@@ -379,11 +384,7 @@ function VariablesManagerPanelRoot( {
 									: undefined
 							}
 							icon={
-								serverError.IconComponent ? (
-									<serverError.IconComponent />
-								) : (
-									<AlertTriangleFilledIcon />
-								)
+								serverError.IconComponent ? <serverError.IconComponent /> : <AlertTriangleFilledIcon />
 							}
 						>
 							<AlertTitle>{ serverError.message }</AlertTitle>

@@ -5,8 +5,8 @@ import {
 	routeOpenEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { setInitialDesignSystemTab, type DesignSystemTab } from '../initial-tab';
 import { usePanelActions } from '../design-system-panel';
+import { type DesignSystemTab, setInitialDesignSystemTab } from '../initial-tab';
 
 const EVENT_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_GLOBAL_CLASSES = 'elementor/open-global-classes-manager';

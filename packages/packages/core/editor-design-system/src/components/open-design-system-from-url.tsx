@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { __privateListenTo as listenTo, routeOpenEvent } from '@elementor/editor-v1-adapters';
 
-import { setInitialDesignSystemTab } from '../initial-tab';
 import { usePanelActions } from '../design-system-panel';
+import { setInitialDesignSystemTab } from '../initial-tab';
 
 const ACTIVE_PANEL_PARAM = 'active-panel';
 const PANEL_ID = 'design-system';
