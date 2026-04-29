@@ -10,7 +10,6 @@ test.describe( 'Atomic widget drop wrapping (ED-23790) @v4-tests', () => {
 
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_twig_containers' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
