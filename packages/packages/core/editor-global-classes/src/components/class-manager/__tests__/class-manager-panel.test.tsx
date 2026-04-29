@@ -125,7 +125,7 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -152,7 +152,7 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {},
 				order: [ 'class-2' ],
-				changes: { added: [], deleted: [ 'class-1' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-1' ], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -181,7 +181,7 @@ describe( 'ClassManagerPanel', () => {
 					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'New label' } ),
 				},
 				order: [ 'class-2', 'class-1' ],
-				changes: { added: [], deleted: [], modified: [ 'class-1' ] },
+				changes: { added: [], deleted: [], modified: [ 'class-1' ], order: false },
 			} );
 		} );
 	} );
@@ -253,7 +253,7 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 
@@ -356,7 +356,7 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {},
 				order: [ 'class-1' ],
-				changes: { added: [], deleted: [ 'class-2' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-2' ], modified: [], order: true },
 			} );
 		} );
 	} );

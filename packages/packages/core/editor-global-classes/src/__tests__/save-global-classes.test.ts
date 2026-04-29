@@ -61,11 +61,11 @@ describe( 'saveGlobalClasses', () => {
 		expect( apiClient.publish ).toHaveBeenCalledWith( {
 			items: {},
 			order,
-			changes: {
+			changes: expect.objectContaining( {
 				added: [],
 				deleted: [],
 				modified: [],
-			},
+			} ),
 		} );
 	} );
 
@@ -91,11 +91,11 @@ describe( 'saveGlobalClasses', () => {
 		expect( apiClient.publish ).toHaveBeenCalledWith( {
 			items: { 'new-class': newClass },
 			order: [ 'new-class', 'initial-class' ],
-			changes: {
+			changes: expect.objectContaining( {
 				added: [ 'new-class' ],
 				deleted: [],
 				modified: [],
-			},
+			} ),
 		} );
 	} );
 
