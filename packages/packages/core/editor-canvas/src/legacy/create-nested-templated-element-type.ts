@@ -256,7 +256,6 @@ export function createNestedTemplatedElementView( {
 				targetEl.setAttribute( attr.name, attr.value );
 			} );
 
-			targetEl.setAttribute( 'draggable', 'true' );
 			targetEl.innerHTML = overlayHTML + newEl.innerHTML;
 
 			if ( needsTagSwap ) {
