@@ -97,12 +97,19 @@ export function getUpdatedValues(
 
 			if ( ! testDependencies.previousValues.isMet ) {
 				const savedValue = retrievePreviousValueFromStorage< Value >( { path: dependency, elementId } );
+				const currentValue = extractValue( path, combinedValues, [], {
+					unwrapOverridableLeaf: false,
+				} ) as Value;
 
 				removePreviousValueFromStorage( { path: dependency, elementId } );
 
+				const restored = isCompatibleSavedValue( savedValue, currentValue )
+					? savedValue
+					: ( propType.default as Value );
+
 				return {
 					...newValues,
-					...updateValue( path, savedValue ?? ( propType.default as Value ), combinedValues ),
+					...updateValue( path, restored, combinedValues ),
 				};
 			}
 
@@ -168,48 +175,72 @@ function evaluatePropType( props: {
 
 function updateValue( path: string[], value: Value, values: Values ) {
 	const topPropKey = path[ 0 ];
-	const newValue: Values = { ...values };
+	const root: Values = { ...values };
 
-	path.reduce( ( carry: Values | null, key, index ) => {
-		if ( ! carry ) {
-			return null;
+	let carry: Values = root;
+
+	for ( let index = 0; index < path.length; index++ ) {
+		const key = path[ index ];
+		const isLeaf = index === path.length - 1;
+
+		if ( isLeaf ) {
+			carry[ key ] = mergeLeafValue( carry[ key ], value );
+			break;
 		}
 
-		if ( index === path.length - 1 ) {
-			const existing = carry[ key ];
-			carry[ key ] = mergeLeafValue( existing, value );
+		const next = cloneDescent( carry[ key ] );
 
-			return getDescentForPropUpdate( carry, key );
+		if ( ! next ) {
+			break;
 		}
 
-		return getDescentForPropUpdate( carry, key );
-	}, newValue );
+		carry[ key ] = next.replacement;
+		carry = next.descended;
+	}
 
-	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+	return { [ topPropKey ]: root[ topPropKey ] ?? null };
 }
 
-function getDescentForPropUpdate( carry: Values | null, key: string ) {
-	const child = carry?.[ key ];
-
-	if ( ( child ?? null ) === null ) {
+function cloneDescent( child: Value ): { replacement: Value; descended: Values } | null {
+	if ( ! child ) {
 		return null;
 	}
 
 	if ( isOverridable( child ) ) {
-		const inner = child.value.origin_value;
+		const origin = child.value.origin_value;
 
-		if ( ! inner ) {
+		if ( ! origin || ! isTransformable( origin ) ) {
 			return null;
 		}
 
-		return ( isTransformable( inner ) ? inner.value : inner ) as Values;
+		const descended: Values = { ...( origin.value as Values ) };
+		const replacement: Value = {
+			...child,
+			value: {
+				...child.value,
+				origin_value: { ...origin, value: descended },
+			},
+		};
+
+		return { replacement, descended };
 	}
 
 	if ( isTransformable( child ) ) {
-		return ( child.value as Values ) ?? null;
+		const descended: Values = { ...( child.value as Values ) };
+		const replacement: Value = { ...child, value: descended };
+
+		return { replacement, descended };
 	}
 
 	return null;
+}
+
+function isCompatibleSavedValue( saved: Value | null, current: Value ): saved is Value {
+	if ( ! saved ) {
+		return false;
+	}
+
+	return isOverridable( saved ) === isOverridable( current );
 }
 
 function mergeLeafValue( existing: Value, incoming: Value ) {
