@@ -1,3 +1,3 @@
 export { init } from './init';
-export { consumeInitialDesignSystemTab, setInitialDesignSystemTab, type DesignSystemTab } from './initial-tab';
+export { getInitialDesignSystemTab, persistDesignSystemTab, type DesignSystemTab } from './initial-tab';
 export { panel, usePanelActions, usePanelStatus } from './design-system-panel';

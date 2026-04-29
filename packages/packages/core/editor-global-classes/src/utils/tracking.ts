@@ -97,14 +97,21 @@ type TrackingEventWithComputed = TrackingEvent & {
 
 export const trackGlobalClasses = async ( payload: TrackingEvent ) => {
 	const { runAction } = payload as TrackingEventWithComputed & { runAction?: () => void };
-	const data = await getSanitizedData( payload );
-	if ( data ) {
-		track( data );
-		if ( data.event === 'classCreated' && 'classId' in data ) {
-			fireClassApplied( data.classId as StyleDefinitionID );
+	try {
+		const data = await getSanitizedData( payload );
+		if ( data ) {
+			try {
+				track( data );
+			} catch {
+				// Analytics must not block delete / other side effects tied to runAction.
+			}
+			if ( data.event === 'classCreated' && 'classId' in data ) {
+				void fireClassApplied( data.classId as StyleDefinitionID );
+			}
 		}
+	} finally {
+		runAction?.();
 	}
-	runAction?.();
 };
 
 const fireClassApplied = async ( classId: StyleDefinitionID ) => {

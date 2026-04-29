@@ -6,7 +6,7 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import { usePanelActions } from '../design-system-panel';
-import { type DesignSystemTab, setInitialDesignSystemTab } from '../initial-tab';
+import { type DesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
 
 const EVENT_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_GLOBAL_CLASSES = 'elementor/open-global-classes-manager';
@@ -35,7 +35,7 @@ export function OpenDesignSystemFromEvent() {
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
-				setInitialDesignSystemTab( tab );
+				setPendingDesignSystemTab( tab );
 				setReadyToOpen( true );
 			}
 		} );

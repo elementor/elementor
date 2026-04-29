@@ -496,7 +496,7 @@ function VariablesManagerPanelRoot( {
 				sx={ {
 					flexShrink: 0,
 					px: 2,
-					py: 1,
+					pb: 1,
 				} }
 			>
 				{ searchFieldEmbedded }

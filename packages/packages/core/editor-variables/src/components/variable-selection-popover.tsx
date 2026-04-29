@@ -32,7 +32,9 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
 		? () => {
 				if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-					window.dispatchEvent( new CustomEvent( 'elementor/open-variables-manager' ) );
+					window.dispatchEvent(
+						new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
+					);
 				} else {
 					openStandaloneVariablesPanel();
 				}

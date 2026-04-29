@@ -5,6 +5,7 @@ import {
 } from '@elementor/editor-documents';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -42,12 +43,15 @@ export const ClassManagerButton = () => {
 			return;
 		}
 
-		openPanel();
+		if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'classes' as const } } )
+			);
+		} else {
+			openPanel();
+		}
+
 		trackGlobalClassesButton();
-		trackGlobalClasses( {
-			event: 'classManagerOpened',
-			source: 'style-panel',
-		} );
 		prefetchClassesUsage();
 	};
 
@@ -80,7 +84,15 @@ export const ClassManagerButton = () => {
 								action: async () => {
 									await saveDocument();
 									closeSaveChangesDialog();
-									openPanel();
+									if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
+										window.dispatchEvent(
+											new CustomEvent( 'elementor/toggle-design-system', {
+												detail: { tab: 'classes' as const },
+											} )
+										);
+									} else {
+										openPanel();
+									}
 									trackGlobalClassesButton();
 									prefetchClassesUsage();
 								},
