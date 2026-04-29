@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
@@ -25,7 +26,17 @@ export type DesignSystemPanelContentProps = {
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => consumeInitialDesignSystemTab() );
+	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
+
+	const handleHeaderClose = () => {
+		if ( currentTab === 'variables' && variablesCloseAttemptRef.current ) {
+			variablesCloseAttemptRef.current();
+			return;
+		}
+
+		void onRequestClose();
+	};
 
 	return (
 		<ThemeProvider>
@@ -38,7 +49,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
 							sx={ { flexShrink: 0, marginLeft: 'auto' } }
-							onClick={ () => void onRequestClose() }
+							onClick={ () => void handleHeaderClose() }
 						/>
 					</Stack>
 				</PanelHeader>
@@ -88,7 +99,16 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								flexDirection: 'column',
 								overflow: 'hidden',
 							} }
-						></Box>
+						>
+							{ currentTab === 'variables' && (
+								<VariablesManagerPanelEmbedded
+									onRequestClose={ onRequestClose }
+									onExposeCloseAttempt={ ( fn ) => {
+										variablesCloseAttemptRef.current = fn;
+									} }
+								/>
+							) }
+						</Box>
 					</Stack>
 				</PanelBody>
 			</Panel>

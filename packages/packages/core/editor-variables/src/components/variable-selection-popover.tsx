@@ -28,10 +28,14 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
-	const { open } = usePanelActions();
+	const { open: openStandaloneVariablesPanel } = usePanelActions();
 	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
 		? () => {
-				open();
+				if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
+					window.dispatchEvent( new CustomEvent( 'elementor/open-variables-manager' ) );
+				} else {
+					openStandaloneVariablesPanel();
+				}
 		  }
 		: undefined;
 

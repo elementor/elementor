@@ -3,6 +3,7 @@ import { registerControlReplacement } from '@elementor/editor-controls';
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { controlActionsMenu } from '@elementor/menus';
 
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
@@ -59,17 +60,19 @@ export function init() {
 		component: GlobalStylesImportListener,
 	} );
 
-	injectIntoLogic( {
-		id: 'variables-open-panel-from-url',
-		component: OpenPanelFromUrl,
-	} );
+	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		injectIntoLogic( {
+			id: 'variables-open-panel-from-url',
+			component: OpenPanelFromUrl,
+		} );
 
-	injectIntoLogic( {
-		id: 'variables-open-panel-from-event',
-		component: OpenPanelFromEvent,
-	} );
+		injectIntoLogic( {
+			id: 'variables-open-panel-from-event',
+			component: OpenPanelFromEvent,
+		} );
 
-	registerPanel( panel );
+		registerPanel( panel );
+	}
 }
 
 function hasVariableAssigned( value: PropValue ) {
