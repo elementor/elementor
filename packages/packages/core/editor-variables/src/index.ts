@@ -1,4 +1,5 @@
 export { init } from './init';
+export { VariablesManagerPanelView, type VariablesManagerPanelViewProps } from './components/variables-manager/variables-manager-panel';
 export { GLOBAL_VARIABLES_URI } from './mcp/variables-resource';
 export { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
 export { registerVariableTypes } from './register-variable-types';

@@ -3,27 +3,9 @@ import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { VariablesManagerPanel } from '../variables-manager-panel';
+import { VariablesManagerPanelView } from '../variables-manager-panel';
 
-jest.mock( '@elementor/editor-panels', () => ( {
-	__createPanel: () => ( {
-		panel: {},
-		usePanelActions: () => ( {
-			close: jest.fn(),
-		} ),
-	} ),
-	Panel: ( { children }: { children: React.ReactNode } ) => <div role="dialog">{ children }</div>,
-	PanelBody: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
-		<div role="region" data-props={ JSON.stringify( { sx } ) }>
-			{ children }
-		</div>
-	),
-	PanelHeader: ( { children }: { children: React.ReactNode } ) => <header>{ children }</header>,
-	PanelHeaderTitle: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
-		<h2 data-props={ JSON.stringify( { sx } ) }>{ children }</h2>
-	),
-	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
-} ) );
+const noopClose = () => void 0;
 
 jest.mock( '../../ui/no-search-results', () => ( {
 	NoSearchResults: ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
@@ -155,7 +137,7 @@ const mockUseVariablesManagerState = require( '../hooks/use-variables-manager-st
 
 const mockHandleSearch = jest.fn();
 
-describe( 'VariablesManagerPanel', () => {
+describe( 'VariablesManagerPanelView', () => {
 	const mockConsoleError = jest.fn();
 	const originalError = window.console.error;
 	const defaultMockState = {
@@ -189,34 +171,9 @@ describe( 'VariablesManagerPanel', () => {
 		window.console.error = originalError;
 	} );
 
-	it( 'should render panel structure correctly', () => {
-		// Arrange & Act
-		render( <VariablesManagerPanel /> );
-
-		// Assert
-		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'region' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { level: 2 } ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render panel title with icon', () => {
-		// Arrange & Act
-		render( <VariablesManagerPanel /> );
-
-		// Assert
-		const title = screen.getByRole( 'heading', { level: 2 } );
-		const props = JSON.parse( title.getAttribute( 'data-props' ) || '{}' );
-		expect( props.sx ).toEqual( {
-			display: 'flex',
-			alignItems: 'center',
-			gap: 0.5,
-		} );
-		expect( title ).toHaveTextContent( 'Variables Manager' );
-	} );
-
 	it( 'should pass variables and menu actions to table', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelView onRequestClose={ noopClose } /> );
 
 		// Assert
 		const table = screen.getByRole( 'grid' );
@@ -240,7 +197,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render save button in footer', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelView onRequestClose={ noopClose } /> );
 
 		// Assert
 		const button = screen.getByRole( 'button', { name: 'Save changes' } );
@@ -254,7 +211,7 @@ describe( 'VariablesManagerPanel', () => {
 		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
 
 		// Act
-		const { unmount } = render( <VariablesManagerPanel /> );
+		const { unmount } = render( <VariablesManagerPanelView onRequestClose={ noopClose } /> );
 
 		// Assert
 		expect( addEventListenerSpy ).toHaveBeenCalledWith( 'beforeunload', expect.any( Function ) );
@@ -268,20 +225,6 @@ describe( 'VariablesManagerPanel', () => {
 		removeEventListenerSpy.mockRestore();
 	} );
 
-	it( 'should apply correct styles to panel body', () => {
-		// Arrange & Act
-		render( <VariablesManagerPanel /> );
-
-		// Assert
-		const body = screen.getByRole( 'region' );
-		const props = JSON.parse( body.getAttribute( 'data-props' ) || '{}' );
-		expect( props.sx ).toEqual( {
-			display: 'flex',
-			flexDirection: 'column',
-			height: '100%',
-		} );
-	} );
-
 	it( 'should close the panel when trying to close with no unsaved changes', () => {
 		// Arrange
 		const close = jest.fn();
@@ -292,51 +235,16 @@ describe( 'VariablesManagerPanel', () => {
 		} );
 
 		// Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelView onRequestClose={ close } /> );
 
-		// Assert
+		// Assert: closing the shell is delegated to design system; internal close is via unsaved flow only
 		expect( close ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should open save changes dialog when there is unsaved changes', async () => {
-		// Arrange
-		const openDialog = jest.fn();
-		jest.mocked( useDialog ).mockReturnValue( {
-			open: openDialog,
-			close: jest.fn(),
-			isOpen: false,
-		} );
-
-		let isDirty = false;
-		const mockHandleOnChange = jest.fn( () => {
-			isDirty = true;
-		} );
-
-		mockUseVariablesManagerState.mockImplementation( () => ( {
-			...defaultMockState,
-			isDirty,
-			handleOnChange: mockHandleOnChange,
-		} ) );
-
-		// Act
-		const { rerender } = render( <VariablesManagerPanel /> );
-
-		await screen.findByRole( 'grid', { name: 'Variables Table' } );
-
-		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
-
-		rerender( <VariablesManagerPanel /> );
-
-		fireEvent.click( screen.getByLabelText( 'Close' ) );
-
-		// Assert
-		expect( openDialog ).toHaveBeenCalled();
 	} );
 
 	describe( 'Search', () => {
 		it( 'should render search component correctly', () => {
 			// Arrange & Act
-			render( <VariablesManagerPanel /> );
+			render( <VariablesManagerPanelView onRequestClose={ noopClose } /> );
 
 			const searchInput = screen.getByPlaceholderText( 'Search' );
 			expect( searchInput ).toBeInTheDocument();
@@ -355,7 +263,7 @@ describe( 'VariablesManagerPanel', () => {
 			} );
 
 			// Act
-			render( <VariablesManagerPanel /> );
+			render( <VariablesManagerPanelView onRequestClose={ noopClose } /> );
 
 			// Assert
 			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();

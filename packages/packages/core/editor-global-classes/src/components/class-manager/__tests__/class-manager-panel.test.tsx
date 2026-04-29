@@ -16,7 +16,7 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
-import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
+import { ClassManagerPanelView } from '../class-manager-panel';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
@@ -34,12 +34,6 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-panels', () => ( {
-	...jest.requireActual( '@elementor/editor-panels' ),
-	__createPanel: jest.fn().mockReturnValue( {
-		usePanelActions: jest.fn( () => ( {} ) ),
-	} ),
-} ) );
 
 jest.mock( '../panel-interactions', () => ( {
 	blockPanelInteractions: jest.fn(),
@@ -49,6 +43,7 @@ jest.mock( '../panel-interactions', () => ( {
 jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'ClassManagerPanel', () => {
+	const onRequestClose = jest.fn();
 	let store: Store< SliceState< typeof slice > >;
 
 	const queryClient = new QueryClient( {
@@ -83,6 +78,7 @@ describe( 'ClassManagerPanel', () => {
 		);
 
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
+		onRequestClose.mockClear();
 	} );
 
 	it( 'should have a disabled "save changes" button when dirty state is false', () => {
@@ -90,7 +86,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanel />
+					<ClassManagerPanelView onRequestClose={ onRequestClose } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -103,7 +99,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -133,7 +129,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -162,7 +158,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -188,112 +184,11 @@ describe( 'ClassManagerPanel', () => {
 		} );
 	} );
 
-	it( 'should show a dialog when trying to close with unsaved changes, and allow to cancel the action', () => {
-		// Arrange.
-		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
-
-		// Act.
-		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
-			</QueryClientProvider>,
-			store
-		);
-
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
-
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
-
-		fireEvent.click( closeButton );
-
-		// Assert.
-		expect( screen.getByText( 'You have unsaved changes' ) ).toBeInTheDocument();
-		expect( close ).not.toHaveBeenCalled();
-
-		// Act.
-		fireEvent.click( screen.getByRole( 'button', { name: 'close' } ) );
-
-		// Assert.
-		expect( close ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should show a dialog when trying to close with unsaved changes, and allow to save and continue', async () => {
-		// Arrange.
-		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
-
-		// Act.
-		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
-			</QueryClientProvider>,
-			store
-		);
-
-		act( () => {
-			__dispatch( slice.actions.setOrder( [ 'class-1', 'class-2' ] ) );
-		} );
-
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
-
-		fireEvent.click( closeButton );
-
-		// Assert.
-		expect( screen.getByText( 'You have unsaved changes' ) ).toBeInTheDocument();
-		expect( close ).not.toHaveBeenCalled();
-
-		// Act.
-		const saveAndContinueButton = screen.getByRole( 'button', { name: 'Save & Continue' } );
-
-		fireEvent.click( saveAndContinueButton );
-
-		// Assert.
-		await waitFor( () => {
-			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
-				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
-			} );
-		} );
-
-		await waitFor( () => {
-			expect( close ).toHaveBeenCalled();
-		} );
-	} );
-
-	it( 'should not show the dialog when trying to close with no unsaved changes', () => {
-		// Arrange.
-		const close = jest.fn();
-		jest.mocked( usePanelActions ).mockReturnValue( { close, open: jest.fn() } );
-
-		// Act.
-		renderWithStore(
-			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
-			</QueryClientProvider>,
-			store
-		);
-
-		const closeButton = screen.getByRole( 'button', { name: 'Close' } );
-
-		fireEvent.click( closeButton );
-
-		// Assert.
-		expect( screen.queryByText( 'You have unsaved changes' ) ).not.toBeInTheDocument();
-		expect( close ).toHaveBeenCalled();
-	} );
-
 	it( 'should show the browser alert when trying to close with unsaved changes', () => {
 		// Act.
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -310,7 +205,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -324,7 +219,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanel />
+					<ClassManagerPanelView onRequestClose={ onRequestClose } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -373,7 +268,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanel />
+					<ClassManagerPanelView onRequestClose={ onRequestClose } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -430,7 +325,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanel />
+					<ClassManagerPanelView onRequestClose={ onRequestClose } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -449,7 +344,7 @@ describe( 'ClassManagerPanel', () => {
 		// Act
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<ClassManagerPanel />
+				<ClassManagerPanelView onRequestClose={ onRequestClose } />
 			</QueryClientProvider>,
 			store
 		);
@@ -475,7 +370,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanel />
+					<ClassManagerPanelView onRequestClose={ onRequestClose } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store

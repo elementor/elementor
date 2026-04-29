@@ -21,6 +21,8 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
 	const EXPERIMENT_MANAGER_NAME = 'e_variables_manager';
+	/** Unified editor toolbar panel (variables + classes). Hidden; default off until release-ready. */
+	const EXPERIMENT_DESIGN_SYSTEM_PANEL = 'e_editor_design_system_panel';
 
 	private Variable_Types_Registry $variable_types_registry;
 
@@ -67,7 +69,16 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-		]);
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_DESIGN_SYSTEM_PANEL,
+			'title' => esc_html__( 'Editor design system panel', 'elementor' ),
+			'description' => esc_html__( 'Unified design system entry in the editor (toolbar + single panel for variables and global classes).', 'elementor' ),
+			'hidden' => true,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+		] );
 	}
 
 	private function is_experiment_active(): bool {

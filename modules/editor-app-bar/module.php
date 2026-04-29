@@ -31,6 +31,8 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
 	}
 
+	
+
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
