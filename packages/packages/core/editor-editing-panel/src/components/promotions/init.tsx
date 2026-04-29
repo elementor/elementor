@@ -5,14 +5,13 @@ import { injectIntoStyleTab } from '../style-tab';
 import { CustomCssSection } from './custom-css';
 
 export const init = () => {
-	//Todo: Remove when v3.37 will released
-	if ( ! window.elementorPro ) {
-		injectIntoStyleTab( {
-			id: 'custom-css',
-			component: CustomCssSection,
-			options: { overwrite: true },
-		} );
+	injectIntoStyleTab( {
+		id: 'custom-css',
+		component: CustomCssSection,
+		options: { overwrite: true },
+	} );
 
+	if ( ! window.elementorPro ) {
 		controlsRegistry.register( 'attributes', AttributesControl, 'two-columns' );
 
 		controlsRegistry.register( 'display-conditions', DisplayConditionsControl, 'two-columns' );
