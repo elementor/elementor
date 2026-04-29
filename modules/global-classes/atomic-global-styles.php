@@ -59,7 +59,7 @@ class Atomic_Global_Styles {
 	}
 
 	private function get_document_global_styles( int $post_id, string $context ): array {
-		$class_ids = $this->relations->get_styles_by_post( $post_id );
+		$class_ids = $this->relations->context( $context )->get_styles_by_post( $post_id );
 
 		if ( empty( $class_ids ) ) {
 			return [];
@@ -128,7 +128,7 @@ class Atomic_Global_Styles {
 		$document_ids = [];
 
 		foreach ( $affected as $class_id ) {
-			foreach ( $this->relations->get_posts_by_style( $class_id ) as $doc_id ) {
+			foreach ( $this->relations->context( $context )->get_posts_by_style( $class_id ) as $doc_id ) {
 				$document_ids[ $doc_id ] = true;
 			}
 		}
@@ -145,7 +145,10 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache_for_class( string $class_id, ?string $context = null ) {
-		$document_ids = $this->relations->get_posts_by_style( $class_id );
+		$document_ids = array_values( array_unique( array_merge(
+			$this->relations->context( Global_Classes_Repository::CONTEXT_FRONTEND )->get_posts_by_style( $class_id ),
+			$this->relations->context( Global_Classes_Repository::CONTEXT_PREVIEW )->get_posts_by_style( $class_id )
+		) ) );
 
 		foreach ( $document_ids as $doc_id ) {
 			$this->invalidate_document_cache( $doc_id, $context );

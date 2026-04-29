@@ -69,28 +69,9 @@ class Global_Classes_Repository {
 
 		$items = [];
 
-		foreach ( array_chunk( $class_ids, self::READ_BATCH_SIZE ) as $chunk ) {
-			$posts = get_posts( [
-				'post_type' => Global_Class_Post_Type::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'meta_query' => [
-					[
-						'key' => Global_Class_Post::META_KEY_ID,
-						'value' => $chunk,
-						'compare' => 'IN',
-					],
-				],
-			] );
-
-			foreach ( $posts as $post ) {
-				$class_post = Global_Class_Post::from_post( $post, $this->context );
-				$class_data = $class_post->to_array();
-				$items[ $class_data['id'] ] = $class_data;
-				clean_post_cache( $post->ID );
-			}
-			unset( $posts );
-			$this->flush_runtime_cache();
+		foreach ( $this->iterate_class_posts_for_ids( $class_ids ) as $class_post ) {
+			$class_data = $class_post->to_array();
+			$items[ $class_data['id'] ] = $class_data;
 		}
 
 		return $items;
@@ -114,66 +95,7 @@ class Global_Classes_Repository {
 			}
 		}
 
-		$this->each_class_id_batch( $to_delete, function ( string $class_id ) use ( $is_preview ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_FRONTEND );
-
-			if ( $post ) {
-				if ( $is_preview ) {
-					$post->update_data( [], true );
-					clean_post_cache( $post->get_post_id() );
-				} else {
-					$post->delete();
-				}
-			}
-		} );
-
-		$this->each_class_id_batch( $to_create, function ( string $class_id ) use ( $touched_items, $is_preview ) {
-			if ( ! isset( $touched_items[ $class_id ] ) ) {
-				return;
-			}
-
-			$item = $touched_items[ $class_id ];
-			$data = $this->build_class_data_for_storage( $item );
-
-			if ( $is_preview ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_PREVIEW );
-
-				if ( $post ) {
-					$post->update_data( $data, true );
-					$post->update_label( $item['label'] );
-					clean_post_cache( $post->get_post_id() );
-				} else {
-					$created = Global_Class_Post::create( $class_id, $item['label'], $data );
-					if ( $created ) {
-						clean_post_cache( $created->get_post_id() );
-					}
-				}
-			} else {
-				$created = Global_Class_Post::create( $class_id, $item['label'], $data );
-				if ( $created ) {
-					clean_post_cache( $created->get_post_id() );
-				}
-			}
-		} );
-
-		$context = $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
-		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $touched_items, $is_preview, $context ) {
-			if ( ! isset( $touched_items[ $class_id ] ) ) {
-				return;
-			}
-
-			$item = $touched_items[ $class_id ];
-			$post = Global_Class_Post::find_by_class_id( $class_id, $context );
-
-			if ( ! $post ) {
-				return;
-			}
-
-			$data = $this->build_class_data_for_storage( $item );
-			$post->update_data( $data, $is_preview );
-			$post->update_label( $item['label'] );
-			clean_post_cache( $post->get_post_id() );
-		} );
+		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
 		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( $order );
@@ -209,27 +131,9 @@ class Global_Classes_Repository {
 		}
 
 		foreach ( array_chunk( $order, $batch_size ) as $chunk ) {
-			$posts = get_posts( [
-				'post_type' => Global_Class_Post_Type::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'meta_query' => [
-					[
-						'key' => Global_Class_Post::META_KEY_ID,
-						'value' => $chunk,
-						'compare' => 'IN',
-					],
-				],
-			] );
-
-			foreach ( $posts as $post ) {
-				$class_post = Global_Class_Post::from_post( $post, $this->context );
-				$class_data = $class_post->to_array();
-				$cb( $class_data );
-				clean_post_cache( $post->ID );
+			foreach ( $this->iterate_class_posts_for_ids( $chunk ) as $class_post ) {
+				$cb( $class_post->to_array() );
 			}
-			unset( $posts );
-			$this->flush_runtime_cache();
 		}
 	}
 
@@ -275,28 +179,9 @@ class Global_Classes_Repository {
 
 		$items = [];
 
-		foreach ( array_chunk( $order, self::READ_BATCH_SIZE ) as $chunk ) {
-			$posts = get_posts( [
-				'post_type' => Global_Class_Post_Type::CPT,
-				'post_status' => 'publish',
-				'posts_per_page' => -1,
-				'meta_query' => [
-					[
-						'key' => Global_Class_Post::META_KEY_ID,
-						'value' => $chunk,
-						'compare' => 'IN',
-					],
-				],
-			] );
-
-			foreach ( $posts as $post ) {
-				$class_post = Global_Class_Post::from_post( $post, $this->context );
-				$class_data = $class_post->to_array();
-				$items[ $class_data['id'] ] = $class_data;
-				clean_post_cache( $post->ID );
-			}
-			unset( $posts );
-			$this->flush_runtime_cache();
+		foreach ( $this->iterate_class_posts_for_ids( $order ) as $class_post ) {
+			$class_data = $class_post->to_array();
+			$items[ $class_data['id'] ] = $class_data;
 		}
 
 		$order = Global_Classes_Parser::sanitize_order( $items, $order );
@@ -312,54 +197,8 @@ class Global_Classes_Repository {
 		$to_delete = array_diff( $current_ids, $new_ids );
 		$to_create = array_diff( $new_ids, $current_ids );
 		$to_update = array_intersect( $new_ids, $current_ids );
-		$context = $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 
-		$this->each_class_id_batch( $to_delete, function ( string $class_id ) use ( $is_preview, $context ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id, $context );
-			if ( $post ) {
-				if ( $is_preview ) {
-					$post->update_data( [], true );
-					clean_post_cache( $post->get_post_id() );
-				} else {
-					$post->delete();
-				}
-			}
-		} );
-
-		$this->each_class_id_batch( $to_create, function ( string $class_id ) use ( $items, $is_preview ) {
-			$item = $items[ $class_id ];
-			$data = $this->build_class_data_for_storage( $item );
-			if ( $is_preview ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_PREVIEW );
-				if ( $post ) {
-					$post->update_data( $data, true );
-					$post->update_label( $item['label'] );
-					clean_post_cache( $post->get_post_id() );
-				} else {
-					$created = Global_Class_Post::create( $class_id, $item['label'], $data );
-					if ( $created ) {
-						clean_post_cache( $created->get_post_id() );
-					}
-				}
-			} else {
-				$created = Global_Class_Post::create( $class_id, $item['label'], $data );
-				if ( $created ) {
-					clean_post_cache( $created->get_post_id() );
-				}
-			}
-		} );
-
-		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items, $is_preview, $context ) {
-			$item = $items[ $class_id ];
-			$post = Global_Class_Post::find_by_class_id( $class_id, $context );
-			if ( ! $post ) {
-				return;
-			}
-			$data = $this->build_class_data_for_storage( $item );
-			$post->update_data( $data, $is_preview );
-			$post->update_label( $item['label'] );
-			clean_post_cache( $post->get_post_id() );
-		} );
+		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $items, $is_preview );
 
 		$classes_order = Global_Classes_Order::make( $this->kit );
 		$classes_order->set_order( $order );
@@ -384,6 +223,100 @@ class Global_Classes_Repository {
 				}
 			} );
 		}
+	}
+
+	private function iterate_class_posts_for_ids( array $class_ids ): \Generator {
+		foreach ( array_chunk( $class_ids, self::READ_BATCH_SIZE ) as $chunk ) {
+			$posts = get_posts( [
+				'post_type' => Global_Class_Post_Type::CPT,
+				'post_status' => 'publish',
+				'posts_per_page' => -1,
+				'meta_query' => [
+					[
+						'key' => Global_Class_Post::META_KEY_ID,
+						'value' => $chunk,
+						'compare' => 'IN',
+					],
+				],
+			] );
+
+			foreach ( $posts as $post ) {
+				yield Global_Class_Post::from_post( $post, $this->context );
+				clean_post_cache( $post->ID );
+			}
+			unset( $posts );
+			$this->flush_runtime_cache();
+		}
+	}
+
+	private function persist_class_batch_mutations(
+		array $to_delete,
+		array $to_create,
+		array $to_update,
+		array $items_by_id,
+		bool $is_preview
+	): void {
+		$context = $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
+
+		$this->each_class_id_batch( $to_delete, function ( string $class_id ) use ( $is_preview ) {
+			$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_FRONTEND );
+
+			if ( $post ) {
+				if ( $is_preview ) {
+					$post->update_data( [], true );
+					clean_post_cache( $post->get_post_id() );
+				} else {
+					$post->delete();
+				}
+			}
+		} );
+
+		$this->each_class_id_batch( $to_create, function ( string $class_id ) use ( $items_by_id, $is_preview ) {
+			if ( ! isset( $items_by_id[ $class_id ] ) ) {
+				return;
+			}
+
+			$item = $items_by_id[ $class_id ];
+			$data = $this->build_class_data_for_storage( $item );
+
+			if ( $is_preview ) {
+				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_PREVIEW );
+
+				if ( $post ) {
+					$post->update_data( $data, true );
+					$post->update_label( $item['label'] );
+					clean_post_cache( $post->get_post_id() );
+				} else {
+					$created = Global_Class_Post::create( $class_id, $item['label'], $data );
+					if ( $created ) {
+						clean_post_cache( $created->get_post_id() );
+					}
+				}
+			} else {
+				$created = Global_Class_Post::create( $class_id, $item['label'], $data );
+				if ( $created ) {
+					clean_post_cache( $created->get_post_id() );
+				}
+			}
+		} );
+
+		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items_by_id, $is_preview, $context ) {
+			if ( ! isset( $items_by_id[ $class_id ] ) ) {
+				return;
+			}
+
+			$item = $items_by_id[ $class_id ];
+			$post = Global_Class_Post::find_by_class_id( $class_id, $context );
+
+			if ( ! $post ) {
+				return;
+			}
+
+			$data = $this->build_class_data_for_storage( $item );
+			$post->update_data( $data, $is_preview );
+			$post->update_label( $item['label'] );
+			clean_post_cache( $post->get_post_id() );
+		} );
 	}
 
 	private function each_class_id_batch( $class_ids, callable $callback, int $batch_size = self::PERSIST_BATCH_SIZE ): void {

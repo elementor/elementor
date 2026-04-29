@@ -1372,8 +1372,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$post_id = $this->factory()->post->create();
 
-		add_post_meta( $post_id, Global_Classes_Relations::META_KEY, 'g-4-123' );
-		add_post_meta( $post_id, Global_Classes_Relations::META_KEY, 'g-missing' );
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY_FRONTEND, 'g-4-123' );
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY_FRONTEND, 'g-missing' );
 
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
 		$request->set_param( 'post_id', $post_id );

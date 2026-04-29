@@ -132,6 +132,7 @@ class Global_Classes_REST_API {
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, [
 			[
+				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_usage() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
@@ -246,7 +247,7 @@ class Global_Classes_REST_API {
 		$context = $request->get_param( 'context' );
 		$post_id = (int) $request->get_param( 'post_id' );
 
-		$document_class_ids = $this->get_classes_relations()->get_styles_by_post( $post_id );
+		$document_class_ids = $this->get_classes_relations()->context( $context )->get_styles_by_post( $post_id );
 
 		if ( empty( $document_class_ids ) ) {
 			return Response_Builder::make( (object) [] )->set_meta( [ 'order' => [] ] )->build();

@@ -38,6 +38,12 @@ type UpdatePayload = GlobalClasses & {
 
 export type ApiContext = 'preview' | 'frontend';
 
+function saveGlobalClasses( context: ApiContext, payload: UpdatePayload ) {
+	return httpService().put( `${ BASE_URL }${ RESOURCE_URL }`, payload, {
+		params: { context },
+	} );
+}
+
 export const apiClient = {
 	usage: () => httpService().get< GlobalClassesUsageResponse >( `${ BASE_URL }${ RESOURCE_USAGE_URL }` ),
 
@@ -56,19 +62,9 @@ export const apiClient = {
 			params: { context, ids: ids.join( ',' ) },
 		} ),
 
-	publish: ( payload: UpdatePayload ) =>
-		httpService().put( 'elementor/v1' + RESOURCE_URL, payload, {
-			params: {
-				context: 'frontend' satisfies ApiContext,
-			},
-		} ),
+	publish: ( payload: UpdatePayload ) => saveGlobalClasses( 'frontend', payload ),
 
-	saveDraft: ( payload: UpdatePayload ) =>
-		httpService().put( 'elementor/v1' + RESOURCE_URL, payload, {
-			params: {
-				context: 'preview' satisfies ApiContext,
-			},
-		} ),
+	saveDraft: ( payload: UpdatePayload ) => saveGlobalClasses( 'preview', payload ),
 };
 
 export const API_ERROR_CODES = {

@@ -71,7 +71,6 @@ class Global_Classes_Parser {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
 		$style_parser = Style_Parser::make( Style_Schema::get() );
-		$existing_labels = [];
 
 		foreach ( $items as $item_id => $item ) {
 			$item_result = $style_parser->parse( $item );
@@ -91,7 +90,6 @@ class Global_Classes_Parser {
 			}
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
-			$existing_labels[] = $sanitized_item['label'];
 		}
 
 		return $result->wrap( $sanitized_items );
@@ -125,7 +123,7 @@ class Global_Classes_Parser {
 		array $new_items_ids
 	) {
 		if ( empty( $new_items_ids ) ) {
-			return false;
+			return [];
 		}
 
 		$new_added_items = array_filter(

@@ -86,12 +86,6 @@ class Global_Classes_Labels {
 		return false !== $result;
 	}
 
-	public function remove_label( string $class_id ): void {
-		$map = $this->get_labels();
-		unset( $map[ $class_id ] );
-		$this->set_labels( $map );
-	}
-
 	private function meta_key(): string {
 		return Global_Classes_Repository::CONTEXT_PREVIEW === $this->context
 			? self::META_KEY_PREVIEW

@@ -47,13 +47,3 @@ async function fetchAndMergeClasses(): Promise< void > {
 
 	dispatch( slice.actions.mergeExistingClasses( { preview: previewItems, frontend: frontendItems } ) );
 }
-
-export function loadExistingClassSync( classId: StyleDefinitionID ): void {
-	const existingClasses = selectGlobalClasses( getState() );
-
-	if ( classId in existingClasses ) {
-		return;
-	}
-
-	loadExistingClasses( [ classId ] );
-}
