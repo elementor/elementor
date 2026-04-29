@@ -68,11 +68,6 @@ trait Page_Spec_Builder {
 			$errors[]   = "$path: unknown widget `$widget`.$hint Valid: " . implode( ', ', array_merge( array_keys( self::CONTAINER_SYNONYMS ), array_keys( self::LEAF_WIDGETS ) ) ) . '.';
 		}
 
-		if ( isset( $node['id'] ) && ( ! is_string( $node['id'] ) || 1 !== preg_match( '/^[0-9a-f]{7}$/', $node['id'] ) ) ) {
-			$id_val   = is_string( $node['id'] ) ? $node['id'] : wp_json_encode( $node['id'] );
-			$errors[] = "$path.id: `id` is the internal widget ID and must be a 7-hex string (got `$id_val`). To set the HTML id attribute for CSS selectors and anchors, use `css_id` instead — e.g. {\"css_id\":\"nav0001\"}.";
-		}
-
 		if ( $is_leaf && 'heading' === strtolower( (string) $widget ) && isset( $node['tag'] ) ) {
 			$tag = strtolower( (string) $node['tag'] );
 			if ( ! in_array( $tag, self::HEADING_TAGS, true ) ) {
@@ -105,7 +100,7 @@ trait Page_Spec_Builder {
 	}
 
 	protected function build_element( array $spec ): array {
-		$id       = isset( $spec['id'] ) && is_string( $spec['id'] ) && '' !== $spec['id'] ? $spec['id'] : Utils::generate_id();
+		$id       = Utils::generate_id();
 		$widget   = isset( $spec['widget'] ) && is_string( $spec['widget'] ) ? strtolower( $spec['widget'] ) : null;
 		$css      = isset( $spec['css'] ) && is_string( $spec['css'] ) ? trim( $spec['css'] ) : '';
 		$classes  = isset( $spec['classes'] ) && is_array( $spec['classes'] ) ? array_values( array_filter( $spec['classes'], 'is_string' ) ) : [];
