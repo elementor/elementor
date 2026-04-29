@@ -6,11 +6,7 @@ import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import {
-	getInitialDesignSystemTab,
-	persistDesignSystemTab,
-	type DesignSystemTab,
-} from '../initial-tab';
+import { type DesignSystemTab, getInitialDesignSystemTab, persistDesignSystemTab } from '../initial-tab';
 
 const stickyTabRowStyles = {
 	position: 'sticky' as const,
