@@ -133,6 +133,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_TWIG_CONTAINERS = 'e_twig_containers';
 	const EXPERIMENT_CSS_GRID = 'e_css_grid';
+	const EXPERIMENT_DESIGN_SYSTEM_PANEL = 'e_editor_design_system_panel';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -144,6 +145,7 @@ class Module extends BaseModule {
 		'editor-styles-repository',
 		'editor-interactions',
 		'editor-templates',
+		'editor-design-system',
 	];
 
 	public function get_name() {
@@ -248,6 +250,15 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_DESIGN_SYSTEM_PANEL,
+			'title' => esc_html__( 'Editor design system panel', 'elementor' ),
+			'description' => esc_html__( 'Unified design system entry in the editor (toolbar + single panel for variables and global classes).', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
 
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
