@@ -381,7 +381,10 @@ class Frontend extends App {
 			$this->get_js_assets_url( 'swiper', 'assets/lib/swiper/v8/' ),
 			[],
 			'8.4.5',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -391,7 +394,10 @@ class Frontend extends App {
 				'jquery',
 			],
 			'4.6.13',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -401,7 +407,10 @@ class Frontend extends App {
 				'jquery',
 			],
 			'4.1.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -411,7 +420,10 @@ class Frontend extends App {
 				'jquery',
 			],
 			'0.2.1',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -421,7 +433,10 @@ class Frontend extends App {
 				'jquery-ui-position',
 			],
 			'4.9.4',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -431,7 +446,10 @@ class Frontend extends App {
 				'jquery',
 			],
 			'1.2.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -441,7 +459,10 @@ class Frontend extends App {
 				'jquery',
 			],
 			ELEMENTOR_VERSION,
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(

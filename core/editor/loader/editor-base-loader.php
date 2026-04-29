@@ -57,7 +57,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/perfect-scrollbar/js/perfect-scrollbar{$min_suffix}.js",
 			[],
 			'1.4.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -73,7 +76,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/nprogress/nprogress{$min_suffix}.js",
 			[],
 			'0.2.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -81,7 +87,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/tipsy/tipsy{$min_suffix}.js",
 			[ 'jquery' ],
 			'1.0.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -89,7 +98,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/e-select2/js/e-select2.full{$min_suffix}.js",
 			[ 'jquery' ],
 			'4.0.6-rc.1',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -97,7 +109,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
 			[ 'jquery' ],
 			'4.6.13',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -105,7 +120,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
 			[],
 			'1.43.2',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -113,7 +131,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
 			[ 'ace' ],
 			'1.43.2',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -121,7 +142,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/jquery-hover-intent/jquery-hover-intent{$min_suffix}.js",
 			[],
 			'1.0.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -129,7 +153,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/nouislider/nouislider{$min_suffix}.js",
 			[],
 			'13.0.0',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(
@@ -137,7 +164,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			"{$assets_url}lib/pickr/pickr.min.js",
 			[],
 			'1.8.2',
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			]
 		);
 
 		wp_register_script(

@@ -137,7 +137,10 @@ class Module extends Base_Module {
 				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			],
 		);
 
 		wp_set_script_translations( 'e-react-promotions', 'elementor' );
@@ -166,7 +169,10 @@ class Module extends Base_Module {
 				'elementor-v2-ui',
 			],
 			ELEMENTOR_VERSION,
-			true
+			[
+				'strategy' => 'defer',
+				'in_footer' => true,
+			],
 		);
 	}
 
