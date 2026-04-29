@@ -118,10 +118,10 @@ class Atomic_Form extends Atomic_Element_Base {
 					String_Prop_Type::generate( self::METADATA_USER_AGENT ),
 				] ),
 		];
-	
+
 		$props = array_merge( $props, self::get_emails_prop_settings() );
 		$props = array_merge( $props, [
-				'webhook_url' => String_Prop_Type::make()
+			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' ),
@@ -171,8 +171,8 @@ class Atomic_Form extends Atomic_Element_Base {
 					],
 				] ) )
 				->set_label( __( 'Actions after submit', 'elementor' ) )
-				->set_meta( [ 'topDivider' => true ] )
-			];
+				->set_meta( [ 'topDivider' => true ] ),
+		];
 
 		$content_controls = array_merge( $content_controls, $email_controls );
 
@@ -408,7 +408,6 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
-
 		return [
 			$key => Emails_Prop_Type::make()
 				->set_dependencies( $email_dependencies )
@@ -436,6 +435,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
 			if ( 0 !== $i ) {
+				// translators: %d is the index of the email action.
 				$email_label = sprintf( __( 'Email %d', 'elementor' ), $i + 1 );
 				$prop_key = self::ACTION_EMAIL . '_' . ( $i + 1 );
 			}
