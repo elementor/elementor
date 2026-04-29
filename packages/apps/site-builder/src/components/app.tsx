@@ -30,6 +30,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
+				exitTo: config?.exitTo,
 				page: {
 					url: window.location.href,
 					elementorAiCurrentContext: getElementorAiCurrentContext(),
@@ -111,6 +112,11 @@ export function App() {
 
 			if ( type === 'site-planner/deploy-website' ) {
 				await handleDeploy( iframeRef.current, event );
+			}
+
+			if ( type === 'element-selector/close' ) {
+				window.top.location.href = getConfig()?.exitTo ?? '';
+				return;
 			}
 		},
 		[ allowedOrigin ]
