@@ -49,6 +49,10 @@ export function createPendingElement(
 		},
 	};
 
+	wrapperView.once( 'render', () => {
+		wrapperView.model?.trigger?.( 'navigator:add', childModel, options );
+	} );
+
 	if ( options.edit !== false ) {
 		selectChildWhenWrapperRenders( wrapperView, childId );
 	}
