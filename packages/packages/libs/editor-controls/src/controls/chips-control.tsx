@@ -14,24 +14,37 @@ export type ChipsOption = {
 
 type ChipsControlProps = {
 	options: ChipsOption[];
+	freeChips?: boolean;
 };
 
 const SIZE = 'tiny';
 
-export const ChipsControl = createControl( ( { options }: ChipsControlProps ) => {
+const toChipsOption = ( val: string, options: ChipsOption[] ): ChipsOption =>
+	options.find( ( opt ) => opt.value === val ) ?? { label: val, value: val };
+
+export const ChipsControl = createControl( ( { options, freeChips }: ChipsControlProps ) => {
 	const { value, setValue, disabled } = useBoundProp( stringArrayPropTypeUtil );
 
 	const selectedValues: string[] = ( value || [] )
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
 		.filter( ( val ): val is string => val !== null );
 
-	const selectedOptions = selectedValues
-		.map( ( val ) => options.find( ( opt ) => opt.value === val ) )
-		.filter( ( opt ): opt is ChipsOption => opt !== undefined );
+	const selectedOptions = selectedValues.map( ( val ) => toChipsOption( val, options ) );
 
-	const handleChange = ( _: SyntheticEvent, newValue: ChipsOption[] ) => {
-		const values = newValue.map( ( option ) => stringPropTypeUtil.create( option.value ) );
-		setValue( values );
+	const handleChange = ( _: SyntheticEvent, newValue: ( ChipsOption | string )[] ) => {
+		const unique = new Set< string >();
+		const deduped: ChipsOption[] = [];
+
+		for ( const item of newValue ) {
+			const chipValue = typeof item === 'string' ? item : item.value;
+
+			if ( ! unique.has( chipValue ) ) {
+				unique.add( chipValue );
+				deduped.push( typeof item === 'string' ? { label: item, value: item } : item );
+			}
+		}
+
+		setValue( deduped.map( ( option ) => stringPropTypeUtil.create( option.value ) ) );
 	};
 
 	return (
@@ -39,18 +52,20 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 			<Autocomplete
 				fullWidth
 				multiple
+				freeSolo={ freeChips }
 				size={ SIZE }
 				disabled={ disabled }
 				value={ selectedOptions }
 				onChange={ handleChange }
 				options={ options }
-				getOptionLabel={ ( option ) => option.label }
+				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
 				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
 				renderTags={ ( values, getTagProps ) =>
 					values.map( ( option, index ) => {
 						const { key, ...chipProps } = getTagProps( { index } );
-						return <Chip key={ key } size="tiny" label={ option.label } { ...chipProps } />;
+						const label = typeof option === 'string' ? option : option.label;
+						return <Chip key={ key } size="tiny" label={ label } { ...chipProps } />;
 					} )
 				}
 			/>

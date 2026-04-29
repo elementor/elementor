@@ -1,0 +1,62 @@
+{
+  "up": [
+    { "op": { "fn": "set", "path": "$$type", "value": "emails" } },
+
+    { "op": { "fn": "move", "src": "value.to", "dest": "__temp_to" } },
+    { "op": { "fn": "set", "path": "value.to", "value": { "$$type": "string-array", "value": [] }, "merge": false } },
+    { "op": { "fn": "move", "src": "__temp_to", "dest": "value.to.value.[]" } },
+
+    {
+      "op": { "fn": "move", "src": "value.cc", "dest": "__temp_cc" },
+      "condition": { "fn": "exists", "path": "value.cc" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.cc", "value": { "$$type": "string-array", "value": [] }, "merge": false },
+      "condition": { "fn": "exists", "path": "__temp_cc" }
+    },
+    {
+      "op": { "fn": "move", "src": "__temp_cc", "dest": "value.cc.value.[]" },
+      "condition": { "fn": "exists", "path": "__temp_cc" }
+    },
+
+    {
+      "op": { "fn": "move", "src": "value.bcc", "dest": "__temp_bcc" },
+      "condition": { "fn": "exists", "path": "value.bcc" }
+    },
+    {
+      "op": { "fn": "set", "path": "value.bcc", "value": { "$$type": "string-array", "value": [] }, "merge": false },
+      "condition": { "fn": "exists", "path": "__temp_bcc" }
+    },
+    {
+      "op": { "fn": "move", "src": "__temp_bcc", "dest": "value.bcc.value.[]" },
+      "condition": { "fn": "exists", "path": "__temp_bcc" }
+    }
+  ],
+  "down": [
+    { "op": { "fn": "set", "path": "$$type", "value": "email" } },
+
+    {
+      "op": { "fn": "move", "src": "value.to.value.[0]", "dest": "__temp_to" },
+      "condition": { "fn": "exists", "path": "value.to.value.[0]" }
+    },
+    { "op": { "fn": "move", "src": "__temp_to", "dest": "value.to" } },
+
+    {
+      "op": { "fn": "move", "src": "value.cc.value.[0]", "dest": "__temp_cc" },
+      "condition": { "fn": "exists", "path": "value.cc.value.[0]" }
+    },
+    {
+      "op": { "fn": "move", "src": "__temp_cc", "dest": "value.cc" },
+      "condition": { "fn": "exists", "path": "__temp_cc" }
+    },
+
+    {
+      "op": { "fn": "move", "src": "value.bcc.value.[0]", "dest": "__temp_bcc" },
+      "condition": { "fn": "exists", "path": "value.bcc.value.[0]" }
+    },
+    {
+      "op": { "fn": "move", "src": "__temp_bcc", "dest": "value.bcc" },
+      "condition": { "fn": "exists", "path": "__temp_bcc" }
+    }
+  ]
+}
