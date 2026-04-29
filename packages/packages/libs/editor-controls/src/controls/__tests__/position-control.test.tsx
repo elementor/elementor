@@ -134,4 +134,21 @@ describe( 'PositionControl', () => {
 			value: 'center center',
 		} );
 	} );
+
+	it( 'should show inherited placeholder value when no local value is set', () => {
+		const props = {
+			setValue: jest.fn(),
+			propType,
+			bind: 'object-position',
+			value: null,
+			placeholder: {
+				$$type: 'string',
+				value: 'center left',
+			},
+		};
+
+		renderControl( <PositionControl />, props );
+
+		expect( screen.getByText( 'Center left' ) ).toBeInTheDocument();
+	} );
 } );

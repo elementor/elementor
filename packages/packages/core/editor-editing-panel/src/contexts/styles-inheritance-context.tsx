@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { createContext, type PropsWithChildren, useContext } from 'react';
+import { createContext, type PropsWithChildren, useContext, useMemo } from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
+import { classesPropTypeUtil, type ClassesPropValue, type PropValue } from '@elementor/editor-props';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -62,6 +62,20 @@ export function useStylesInheritanceChain( path: string[] ): SnapshotPropValue[]
 	}
 
 	return context.getInheritanceChain( snapshot, path, topLevelPropType );
+}
+
+const EMPTY_INHERITED_VALUES: Record< string, PropValue > = {};
+
+export function useInheritedValues( propKeys: string[] ): Record< string, PropValue > {
+	const snapshot = useStylesInheritanceSnapshot();
+
+	return useMemo( () => {
+		if ( ! snapshot || propKeys.length === 0 ) {
+			return EMPTY_INHERITED_VALUES;
+		}
+
+		return Object.fromEntries( propKeys.map( ( key ) => [ key, snapshot[ key ]?.[ 0 ]?.value ?? null ] ) );
+	}, [ snapshot, propKeys ] );
 }
 
 const useAppliedStyles = () => {

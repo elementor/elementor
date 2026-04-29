@@ -12,6 +12,7 @@ jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => {
