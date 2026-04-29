@@ -53,7 +53,7 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
 			items: {},
 			order: [],
-			changes: { added: [], deleted: order, modified: [] },
+			changes: { added: [], deleted: order, modified: [], order: false },
 		} );
 
 		return { success: true, deleted: order.length };
@@ -62,6 +62,8 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 	}
 }
 
+const CREATE_BATCH_SIZE = 100;
+
 export async function createGlobalClasses(
 	apiRequests: ApiRequests,
 	request: APIRequestContext,
@@ -69,11 +71,29 @@ export async function createGlobalClasses(
 	order: string[],
 ): Promise<{ success: boolean; error?: string }> {
 	try {
-		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
-			items,
-			order,
-			changes: { added: order, deleted: [], modified: [] },
-		} );
+		const totalBatches = Math.ceil( order.length / CREATE_BATCH_SIZE );
+
+		for ( let i = 0; i < order.length; i += CREATE_BATCH_SIZE ) {
+			const batchIds = order.slice( i, i + CREATE_BATCH_SIZE );
+			const batchItems: Record<string, GlobalClassItem> = {};
+
+			for ( const id of batchIds ) {
+				batchItems[ id ] = items[ id ];
+			}
+
+			const cumulativeOrder = order.slice( 0, i + batchIds.length );
+			const batchNumber = Math.floor( i / CREATE_BATCH_SIZE ) + 1;
+
+			// eslint-disable-next-line no-console
+			console.log( `[createGlobalClasses] Batch ${ batchNumber }/${ totalBatches } (${ batchIds.length } classes)` );
+
+			await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
+				items: batchItems,
+				order: cumulativeOrder,
+				changes: { added: batchIds, deleted: [], modified: [], order: false },
+			} );
+		}
+
 		return { success: true };
 	} catch ( error ) {
 		return { success: false, error: String( error ) };

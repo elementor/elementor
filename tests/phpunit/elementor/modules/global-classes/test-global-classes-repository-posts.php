@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\GlobalClasses;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
@@ -28,7 +29,7 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 	public function tearDown(): void {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
-		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
 
 		foreach ( $this->created_post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
@@ -210,5 +211,44 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'g-keep', $all->get_items()->all() );
 		$this->assertArrayNotHasKey( 'g-removed', $all->get_items()->all() );
 		$this->assertArrayHasKey( 'g-new', $all->get_items()->all() );
+	}
+
+	public function test_all_labels__is_ordered_by_kit_labels_meta() {
+		$post = Global_Class_Post::create( 'gl-1', 'Label-One', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'gl-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'gl-1' => 'Label-One' ] );
+
+		$this->assertSame( [ 'gl-1' => 'Label-One' ], Global_Classes_Repository::make()->all_labels() );
+	}
+
+	public function test_apply_changes__replaces_set_and_syncs_label_meta() {
+		$p1 = Global_Class_Post::create( 'ac-1', 'A', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $p1->get_post_id();
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'ac-1' ] );
+		Global_Classes_Repository::make()->all_labels();
+
+		Global_Classes_Repository::make()->apply_changes(
+			[
+				'ac-2' => [
+					'id' => 'ac-2',
+					'label' => 'B',
+					'type' => 'class',
+					'variants' => [],
+				],
+			],
+			[
+				'added' => [ 'ac-2' ],
+				'deleted' => [ 'ac-1' ],
+				'modified' => [],
+			],
+			[ 'ac-2' ]
+		);
+
+		$ac2 = Global_Class_Post::find_by_class_id( 'ac-2' );
+		$this->assertNotNull( $ac2 );
+		$this->created_post_ids[] = $ac2->get_post_id();
+		$this->assertNull( Global_Class_Post::find_by_class_id( 'ac-1' ) );
+		$this->assertSame( [ 'ac-2' => 'B' ], Global_Classes_Repository::make()->all_labels() );
 	}
 }

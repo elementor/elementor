@@ -12,7 +12,7 @@ import { createGlobalClasses, deleteAllGlobalClasses, getGlobalClasses } from '.
  * Adds many global classes via REST API (above the legacy 100 cap after post-based storage).
  */
 
-const CLASS_COUNT = 100;
+const CLASS_COUNT = 1000;
 const BASIC_BREAKPOINTS: Device[] = [ 'desktop', 'tablet', 'mobile' ];
 const ALL_BREAKPOINTS: Device[] = [ 'widescreen', 'desktop', 'tablet', 'mobile', 'widescreen', 'laptop', 'tablet_extra', 'mobile_extra' ];
 const STATES = [ 'normal', 'hover', 'focus', 'active' ] as const;
@@ -175,6 +175,7 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		logProgress( 'Opening editor (STRESS_TEST_INCLUDE_EDITOR=1)...' );
 		const editor = await wpAdmin.openNewPage() as EditorPage;
 		await editor.waitForPanelToLoad();
+		await page.waitForSelector( '#elementor-panel', { timeout: 60000 } );
 
 		logProgress( 'Adding div block widget...' );
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );

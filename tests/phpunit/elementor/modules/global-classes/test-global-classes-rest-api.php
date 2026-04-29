@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\GlobalClasses;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -90,6 +91,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
 		$this->delete_all_global_class_posts();
 	}
@@ -345,6 +347,69 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 			'order' => [ 'g-3', 'g-1' ],
 		], $classes );
+	}
+
+	public function test_put__frontend_publish_after_preview_save_does_not_false_positive_duplicate_same_id() {
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+
+		$this->seed_global_classes_posts( [
+			'items' => [
+				'g-1' => $class_1,
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		Global_Classes_Labels::make( $this->kit )->set_labels( [
+			'g-1' => $class_1['label'],
+		] );
+
+		$g_new = $this->create_global_class( 'g-new', 'green', 'NewClassLabel' );
+
+		$preview_request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$preview_request->set_body_params( [
+			'items' => [
+				'g-new' => $g_new,
+			],
+			'order' => [ 'g-new', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-new' ],
+				'deleted' => [],
+				'modified' => [],
+				'order' => true,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_PREVIEW,
+		] );
+
+		$preview_response = rest_do_request( $preview_request );
+
+		$this->assertSame( 204, $preview_response->get_status() );
+		$this->assertNull( $preview_response->get_data() );
+
+		$frontend_request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$frontend_request->set_body_params( [
+			'items' => [
+				'g-new' => $g_new,
+			],
+			'order' => [ 'g-new', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-new' ],
+				'deleted' => [],
+				'modified' => [],
+				'order' => false,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_FRONTEND,
+		] );
+
+		$frontend_response = rest_do_request( $frontend_request );
+
+		$this->assertSame( 204, $frontend_response->get_status() );
+		$this->assertNull( $frontend_response->get_data() );
+
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+
+		$this->assertSame( 'NewClassLabel', $classes['items']['g-new']['label'] );
 	}
 
 	public function test_put__fails_when_unauthorized() {
@@ -1344,7 +1409,10 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	private function seed_global_classes_posts( array $payload, bool $duplicate_to_preview_meta = false ): void {
 		$this->delete_all_global_class_posts();
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+
+		$labels = [];
 
 		foreach ( $payload['items'] ?? [] as $class_id => $item ) {
 			$data = [
@@ -1357,9 +1425,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			if ( $duplicate_to_preview_meta && $post_object ) {
 				$post_object->update_data( $data, true );
 			}
+
+			$labels[ $class_id ] = $item['label'];
 		}
 
 		Global_Classes_Order::make( $this->kit )->set_order( $payload['order'] ?? [] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( $labels );
 	}
 
 	private function get_repository_snapshot( string $context ): array {

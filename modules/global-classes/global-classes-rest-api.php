@@ -22,6 +22,7 @@ class Global_Classes_REST_API {
 	const MAX_ITEMS = 1000;
 	const LABEL_PREFIX = 'DUP_';
 	const MAX_LABEL_LENGTH = 50;
+	private ?Global_Classes_Repository $repository = null;
 	private ?Global_Classes_Relations $relations = null;
 	private ?Kit $kit = null;
 
@@ -182,6 +183,10 @@ class Global_Classes_REST_API {
 								'required' => true,
 								'items' => [ 'type' => 'string' ],
 							],
+							'order' => [
+								'type' => 'boolean',
+								'required' => false,
+							],
 						],
 					],
 					'items' => [
@@ -224,20 +229,14 @@ class Global_Classes_REST_API {
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
-
-		$classes = $this->get_repository()->context( $context )->all();
-		$items = $classes->get_items()->all();
-		$order = $classes->get_order()->all();
-
+		$label_by_id = $this->get_repository()->context( $context )->all_labels();
 		$list = [];
 
-		foreach ( $order as $id ) {
-			if ( isset( $items[ $id ] ) ) {
-				$list[] = [
-					'id' => $id,
-					'label' => $items[ $id ]['label'] ?? $id,
-				];
-			}
+		foreach ( $label_by_id as $id => $label ) {
+			$list[] = [
+				'id' => $id,
+				'label' => $label,
+			];
 		}
 
 		return Response_Builder::make( $list )->build();
@@ -253,11 +252,10 @@ class Global_Classes_REST_API {
 			return Response_Builder::make( (object) [] )->set_meta( [ 'order' => [] ] )->build();
 		}
 
-		$classes = $this->get_repository()->context( $context )->all();
-		$items = $classes->get_items()->all();
-		$order = $classes->get_order()->all();
-
-		$filtered_order = array_values( array_intersect( $order, $document_class_ids ) );
+		$repository = $this->get_repository()->context( $context );
+		$global_order = array_keys( $repository->all_labels() );
+		$filtered_order = array_values( array_intersect( $global_order, $document_class_ids ) );
+		$items = $repository->get_by_ids( $document_class_ids );
 
 		$result = [];
 
@@ -281,11 +279,10 @@ class Global_Classes_REST_API {
 			return Response_Builder::make( (object) [] )->set_meta( [ 'order' => [] ] )->build();
 		}
 
-		$classes = $this->get_repository()->context( $context )->all();
-		$items = $classes->get_items()->all();
-		$order = $classes->get_order()->all();
-
-		$filtered_order = array_values( array_intersect( $order, $requested_ids ) );
+		$repository = $this->get_repository()->context( $context );
+		$global_order = array_keys( $repository->all_labels() );
+		$filtered_order = array_values( array_intersect( $global_order, $requested_ids ) );
+		$items = $repository->get_by_ids( $requested_ids );
 
 		$result = [];
 
@@ -312,9 +309,9 @@ class Global_Classes_REST_API {
 		$order = $request->get_param( 'order' ) ?? [];
 
 		$repository = $this->get_repository()->context( $context );
-		$existing_classes = $repository->all();
-		$existing_items = $existing_classes->get_items()->all();
-		$existing_labels = array_map( fn( $item ) => $item['label'], $existing_items );
+		$all_label_by_id = $repository->all_labels();
+		$existing_label_list = $this->global_classes_existing_label_list( $all_label_by_id, $deleted_ids );
+		$total_count = count( $all_label_by_id ) - count( $deleted_ids ) + count( $added_ids );
 
 		$parser = Global_Classes_Parser::make();
 		$items_result = $parser->parse_items( $request->get_param( 'items' ) ?? [] );
@@ -327,8 +324,6 @@ class Global_Classes_REST_API {
 		}
 
 		$touched_items = $items_result->unwrap();
-
-		$total_count = count( $existing_items ) + count( $added_ids ) - count( $deleted_ids );
 
 		if ( $total_count > self::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
@@ -346,7 +341,8 @@ class Global_Classes_REST_API {
 		}
 
 		$duplicated_labels = Global_Classes_Parser::check_for_duplicate_labels(
-			$existing_labels,
+			$all_label_by_id,
+			$deleted_ids,
 			$touched_items,
 			$added_ids
 		);
@@ -354,7 +350,7 @@ class Global_Classes_REST_API {
 		$duplicate_validation_result = null;
 
 		if ( ! empty( $duplicated_labels ) ) {
-			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_labels );
+			$modified_labels = $this->handle_duplicates( $duplicated_labels, $existing_label_list );
 			$duplicate_validation_result = $modified_labels;
 
 			foreach ( $modified_labels as $item_id => $labels ) {
@@ -362,9 +358,9 @@ class Global_Classes_REST_API {
 			}
 		}
 
-		$final_items = $this->merge_items( $existing_items, $touched_items, $deleted_ids );
+		$final_item_ids = array_keys( $this->merge_touched_with_existing_labels( $all_label_by_id, $touched_items, $deleted_ids ) );
 
-		$order_result = $parser->parse_order( $order, $final_items );
+		$order_result = $parser->parse_order( $order, $final_item_ids );
 
 		if ( ! $order_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_order' )
@@ -373,7 +369,12 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$repository->put( $final_items, $order_result->unwrap() );
+		$repository->apply_changes( $touched_items, [
+			'added' => $added_ids,
+			'deleted' => $changes['deleted'] ?? [],
+			'modified' => $changes['modified'] ?? [],
+			'order' => isset( $changes['order'] ) && $changes['order'], // boolean indicating if the order has changed
+		], $order_result->unwrap() );
 
 		if ( $duplicate_validation_result ) {
 			return Response_Builder::make( [
@@ -385,20 +386,47 @@ class Global_Classes_REST_API {
 		return Response_Builder::make()->no_content()->build();
 	}
 
-	private function merge_items( array $existing_items, array $touched_items, array $deleted_ids ): array {
-		$result = [];
+	private function global_classes_existing_label_list( array $label_by_id, array $deleted_ids ): array {
+		$labels = [];
 
-		foreach ( $existing_items as $id => $item ) {
-			if ( ! in_array( $id, $deleted_ids, true ) ) {
-				$result[ $id ] = $item;
+		foreach ( $label_by_id as $id => $label ) {
+			if ( in_array( $id, $deleted_ids, true ) ) {
+				continue;
+			}
+
+			$labels[] = $label;
+		}
+
+		return $labels;
+	}
+
+	private function merge_touched_with_existing_labels( array $label_by_id, array $touched_items, array $deleted_ids ): array {
+		$final = [];
+
+		foreach ( $label_by_id as $id => $label ) {
+			if ( in_array( $id, $deleted_ids, true ) ) {
+				continue;
+			}
+
+			if ( isset( $touched_items[ $id ] ) ) {
+				$final[ $id ] = $touched_items[ $id ];
+			} else {
+				$final[ $id ] = [
+					'id' => $id,
+					'label' => $label,
+					'type' => 'class',
+					'variants' => [],
+				];
 			}
 		}
 
 		foreach ( $touched_items as $id => $item ) {
-			$result[ $id ] = $item;
+			if ( ! isset( $final[ $id ] ) ) {
+				$final[ $id ] = $item;
+			}
 		}
 
-		return $result;
+		return $final;
 	}
 
 	private function route_wrapper( callable $cb ) {

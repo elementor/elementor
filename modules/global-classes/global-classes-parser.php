@@ -51,7 +51,7 @@ class Global_Classes_Parser {
 
 		$sanitized_items = $items_result->unwrap();
 
-		$order_result = $this->parse_order( $order, $sanitized_items );
+		$order_result = $this->parse_order( $order, array_keys( $sanitized_items ) );
 
 		if ( ! $order_result->is_valid() ) {
 			$result->errors()->merge( $order_result->errors(), 'order' );
@@ -97,10 +97,10 @@ class Global_Classes_Parser {
 		return $result->wrap( $sanitized_items );
 	}
 
-	public function parse_order( array $order, array $final_items ) {
+	public function parse_order( array $order, array $final_item_ids ) {
 		$result = Parse_Result::make();
 
-		$expected_ids = array_keys( $final_items );
+		$expected_ids = array_values( $final_item_ids );
 		$order_unique = array_values( array_unique( array_filter( $order, 'is_string' ) ) );
 
 		$missing_ids = array_diff( $expected_ids, $order_unique );
@@ -118,23 +118,46 @@ class Global_Classes_Parser {
 			: $result;
 	}
 
-	public static function check_for_duplicate_labels( array $existing_labels, array $items, array $new_items_ids ) {
-
+	public static function check_for_duplicate_labels(
+		array $label_by_id,
+		array $deleted_ids,
+		array $items,
+		array $new_items_ids
+	) {
 		if ( empty( $new_items_ids ) ) {
 			return false;
 		}
-		$new_added_items = array_filter( $items, fn( $item ) => in_array( $item['id'], $new_items_ids, true ) );
+
+		$new_added_items = array_filter(
+			$items,
+			fn( $item ) => in_array( $item['id'], $new_items_ids, true )
+		);
 
 		$duplicates = [];
 
-		foreach ( $new_added_items as $item_id => $item ) {
-			if ( in_array( $item['label'], $existing_labels, true ) ) {
-				$duplicates[] = [
-					'item_id' => $item_id,
-					'label' => $item['label'],
-				];
+		foreach ( $new_added_items as $item ) {
+			$item_id = $item['id'];
+			$label = $item['label'];
+
+			foreach ( $label_by_id as $other_id => $other_label ) {
+				if ( in_array( $other_id, $deleted_ids, true ) ) {
+					continue;
+				}
+
+				if ( $other_id === $item_id ) {
+					continue;
+				}
+
+				if ( $other_label === $label ) {
+					$duplicates[] = [
+						'item_id' => $item_id,
+						'label' => $label,
+					];
+					break;
+				}
 			}
 		}
+
 		return $duplicates;
 	}
 

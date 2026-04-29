@@ -66,16 +66,20 @@ class Atomic_Global_Styles {
 		}
 
 		$repository = Global_Classes_Repository::make()->context( $context );
-		$all_classes = $repository->all();
-		$items = $all_classes->get_items();
+		$global_order = $repository->all_labels();
+		$ordered_class_ids = array_values( array_intersect( array_keys( $global_order ), $class_ids ) );
+
+		if ( empty( $ordered_class_ids ) ) {
+			return [];
+		}
+
+		$items = $repository->get_by_ids( $ordered_class_ids );
+		$reversed_order = array_reverse( $ordered_class_ids );
 
 		$styles = [];
 
-		$ordered_class_ids = array_intersect( $all_classes->get_order()->all(), $class_ids );
-		$reversed_order = array_reverse( $ordered_class_ids );
-
 		foreach ( $reversed_order as $class_id ) {
-			$item = $items->get( $class_id );
+			$item = $items[ $class_id ] ?? null;
 
 			if ( ! $item ) {
 				continue;
@@ -105,6 +109,12 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache_for_updated_classes( string $context, array $changes ) {
+		if ( isset( $changes['order'] ) && $changes['order'] ) {
+			$this->invalidate_all_cache( $context );
+
+			return;
+		}
+
 		$affected = array_unique( array_merge(
 			$changes['added'] ?? [],
 			$changes['deleted'] ?? [],
@@ -163,16 +173,13 @@ class Atomic_Global_Styles {
 	private function transform_classes_names( $ids ) {
 		$context = $this->get_context();
 
-		$classes = Global_Classes_Repository::make()
+		$labels = Global_Classes_Repository::make()
 			->context( $context )
-			->all()
-			->get_items();
+			->all_labels();
 
 		return array_map(
-			function( $id ) use ( $classes ) {
-				$class = $classes->get( $id );
-
-				return $class ? $class['label'] : $id;
+			static function( $id ) use ( $labels ) {
+				return $labels[ $id ] ?? $id;
 			},
 			$ids
 		);
