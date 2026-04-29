@@ -127,16 +127,20 @@ export function extractValue(
 	const { unwrapOverridableLeaf = true } = options;
 
 	const extractedValue = path.reduce( ( acc, key, index ) => {
-		let value = acc?.[ key as keyof typeof acc ] as PropValue;
-		const isLast = index === path.length - 1;
+		const value = acc?.[ key as keyof typeof acc ] as PropValue;
 
-		if ( ! isLast ) {
-			if ( isOverridable( value ) ) {
-				const inner = value.value.origin_value;
-				value = isTransformable( inner ) ? inner.value ?? null : inner;
-			} else if ( isTransformable( value ) ) {
-				value = value.value ?? null;
-			}
+		if ( index === path.length - 1 ) {
+			return value;
+		}
+
+		if ( isOverridable( value ) ) {
+			const inner = value.value.origin_value;
+
+			return isTransformable( inner ) ? inner.value ?? null : inner;
+		}
+
+		if ( isTransformable( value ) ) {
+			return value.value ?? null;
 		}
 
 		return value;
