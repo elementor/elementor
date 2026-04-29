@@ -31,7 +31,7 @@ trait Base_Styles_Reset {
 		'e-div-block' => 'padding: 0; min-width: auto;',
 		'e-heading'   => '',
 		'e-paragraph' => '',
-		'e-button'    => 'background: transparent; padding: 0; border-radius: 0; text-align: start; text-decoration: none;',
+		'e-button'    => '',
 		'e-image'     => '',
 	];
 

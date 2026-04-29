@@ -50,11 +50,17 @@ class Edit_Page_Ability extends Abstract_Ability {
 				'properties' => [
 					'success'   => [ 'type' => 'boolean' ],
 					'post_id'   => [ 'type' => 'integer' ],
-					'added'     => [ 'type' => 'integer', 'description' => 'Number of top-level sections appended.' ],
+					'added'     => [
+						'type'        => 'integer',
+						'description' => 'Number of top-level sections appended.',
+					],
 					'edit_url'  => [ 'type' => 'string' ],
 					'permalink' => [ 'type' => 'string' ],
 					'dry_run'   => [ 'type' => 'boolean' ],
-					'elements'  => [ 'type' => 'array', 'description' => 'Built element nodes (present when dry_run is true).' ],
+					'elements'  => [
+						'type'        => 'array',
+						'description' => 'Built element nodes (present when dry_run is true).',
+					],
 					'errors'    => [ 'type' => 'array' ],
 				],
 			],
@@ -67,6 +73,7 @@ class Edit_Page_Ability extends Abstract_Ability {
 						'SPEC SHAPE: identical to make-page — each node is { widget, css_id?, css?, classes?, children?, text?, tag?, url?, attachment_id? }.',
 						'CONTAINER synonyms for `widget`: "container"|"flexbox"|"e-flexbox"|"section" → e-flexbox (flex, column by default); "div"|"div-block"|"e-div-block" → e-div-block (block). Containers have children[]. Override flex-direction in css when you need row layout.',
 						'LEAF widgets for `widget`: "heading" → e-heading; "paragraph" → e-paragraph; "button" → e-button; "image" → e-image.',
+						'BUTTON defaults: renders as <a> (pass tag:"button" for the semantic button element). When no css is provided, Elementor\'s base style applies — blue background (#375EFB), white text, 12px 24px padding, 2px border-radius, inline-block. Pass css to override any of these. url wires the href.',
 						'css: CSS declaration string attached as a local style. classes: global class IDs or labels (resolved automatically).',
 						'DRY_RUN: pass dry_run:true to build + validate the new nodes without saving.',
 						'After appending, call elementor/force-clear-styles if you need the CSS regenerated immediately.',
@@ -129,7 +136,7 @@ class Edit_Page_Ability extends Abstract_Ability {
 			'post_id'   => $post_id,
 			'added'     => count( $elements ),
 			'edit_url'  => admin_url( "post.php?post={$post_id}&action=elementor" ),
-			'permalink' => get_permalink( $post_id ) ?: null,
+			'permalink' => get_permalink( $post_id ) ? get_permalink( $post_id ) : null,
 		];
 	}
 }
