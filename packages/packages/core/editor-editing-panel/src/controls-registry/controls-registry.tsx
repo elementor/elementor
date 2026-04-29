@@ -1,4 +1,5 @@
 import {
+	AttachmentTypeControl,
 	ChipsControl,
 	type ControlComponent,
 	DateTimeControl,
@@ -69,6 +70,7 @@ const controlTypes = {
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

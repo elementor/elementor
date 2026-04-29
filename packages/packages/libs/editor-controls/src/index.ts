@@ -39,6 +39,7 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
+export { AttachmentTypeControl } from './controls/attachment-type-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 
 // components
