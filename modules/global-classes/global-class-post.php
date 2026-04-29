@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -75,12 +76,36 @@ class Global_Class_Post {
 
 	public function get_data(): array {
 		$data = $this->get_context_data();
+		$meta_key = $this->get_data_meta_key();
 
 		if ( empty( $data ) && Global_Classes_Repository::CONTEXT_PREVIEW === $this->context ) {
 			$data = $this->get_frontend_data();
+			$meta_key = self::META_KEY_DATA;
+		}
+
+		if ( ! empty( $data ) ) {
+			$this->migrate_data( $data, $meta_key );
 		}
 
 		return $data;
+	}
+
+	private function migrate_data( array &$data, string $meta_key ): void {
+		if ( ! Migrations_Orchestrator::is_active() ) {
+			return;
+		}
+
+		$post_id = $this->post->ID;
+
+		Migrations_Orchestrator::make()->migrate(
+			$data,
+			$post_id,
+			$meta_key,
+			function ( $migrated ) use ( $post_id, $meta_key ) {
+				update_post_meta( $post_id, $meta_key, $migrated );
+				clean_post_cache( $post_id );
+			}
+		);
 	}
 
 	public function to_array(): array {
@@ -101,13 +126,15 @@ class Global_Class_Post {
 	}
 
 	private function get_context_data(): array {
-		$meta_key = Global_Classes_Repository::CONTEXT_PREVIEW === $this->context
-			? self::META_KEY_DATA_PREVIEW
-			: self::META_KEY_DATA;
-
-		$data = get_post_meta( $this->post->ID, $meta_key, true );
+		$data = get_post_meta( $this->post->ID, $this->get_data_meta_key(), true );
 
 		return is_array( $data ) ? $data : [];
+	}
+
+	private function get_data_meta_key(): string {
+		return Global_Classes_Repository::CONTEXT_PREVIEW === $this->context
+			? self::META_KEY_DATA_PREVIEW
+			: self::META_KEY_DATA;
 	}
 
 	private function get_frontend_data(): array {
