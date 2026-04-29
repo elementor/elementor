@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -81,6 +82,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		if ( $kit ) {
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 			$kit->delete_meta( Global_Classes_Order::META_KEY );
 		}
 

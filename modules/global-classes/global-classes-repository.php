@@ -51,7 +51,9 @@ class Global_Classes_Repository {
 	}
 
 	public function all_labels(): array {
-		return Global_Classes_Labels::make( $this->kit )->get_ordered_labels();
+		return Global_Classes_Labels::make( $this->kit )
+			->context( $this->context )
+			->get_ordered_labels();
 	}
 
 	public function get( string $class_id ): ?array {
@@ -95,7 +97,7 @@ class Global_Classes_Repository {
 	}
 
 	public function apply_changes( array $touched_items, array $changes, array $order ): void {
-		$labels = Global_Classes_Labels::make( $this->kit );
+		$labels = Global_Classes_Labels::make( $this->kit )->context( $this->context );
 		$before = $labels->get_labels();
 		$is_preview = self::CONTEXT_PREVIEW === $this->context;
 		$to_delete = $changes['deleted'] ?? [];
@@ -368,7 +370,9 @@ class Global_Classes_Repository {
 				$label_map[ $id ] = $items[ $id ]['label'];
 			}
 		}
-		Global_Classes_Labels::make( $this->kit )->set_labels( $label_map );
+		Global_Classes_Labels::make( $this->kit )
+			->context( $this->context )
+			->set_labels( $label_map );
 
 		if ( ! $is_preview ) {
 			$existing_ids_to_clear = array_values( array_intersect( $new_ids, $current_ids ) );

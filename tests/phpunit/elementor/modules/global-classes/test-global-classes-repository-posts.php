@@ -29,7 +29,8 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 	public function tearDown(): void {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
-		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 
 		foreach ( $this->created_post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );

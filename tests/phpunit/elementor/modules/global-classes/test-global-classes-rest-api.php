@@ -91,7 +91,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
-		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
 		$this->delete_all_global_class_posts();
 	}
@@ -1409,7 +1410,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	private function seed_global_classes_posts( array $payload, bool $duplicate_to_preview_meta = false ): void {
 		$this->delete_all_global_class_posts();
-		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
 
 		$labels = [];
