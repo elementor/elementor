@@ -1,0 +1,6 @@
+Returns the Elementor v4 atomic widget system context.
+Call before working with styles, prop types, or element registration.
+- style_schema: all supported CSS prop keys and their types
+- prop_types: available prop type file names
+- atomic_elements: registered element type identifiers (e-heading, e-flexbox, etc.)
+- breakpoints: active responsive breakpoint config

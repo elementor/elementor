@@ -721,6 +721,10 @@ class Plugin {
 		$this->admin_menu_manager = new Admin_Menu_Manager();
 		$this->admin_menu_manager->register_actions();
 
+		if ( function_exists( 'wp_register_ability' ) ) {
+			( new Core\Abilities\Abilities_Bootstrap() )->register_hooks();
+		}
+
 		User::init();
 		User_Data::init();
 		Api::init();

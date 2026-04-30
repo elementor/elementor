@@ -74,6 +74,10 @@ class Stylesheet_Manager extends Base_File {
 			$stylesheet->add_raw_css( $css, $device_key );
 		}
 
-		return (string) $stylesheet;
+		$content = (string) $stylesheet;
+
+		// Return a non-empty placeholder so the file is always written to disk.
+		// An absent file causes a 404 because the editor JS always requests this URL.
+		return '' !== $content ? $content : '/* Elementor design system sync */';
 	}
 }

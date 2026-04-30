@@ -126,7 +126,9 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'size' => 0,
 			'unit' => 'px',
 		] );
-		$align_text_value = String_Prop_Type::generate( 'center' );
+		$align_text_value    = String_Prop_Type::generate( 'center' );
+		$color_value         = Color_Prop_Type::generate( 'inherit' );
+		$text_decoration_value = String_Prop_Type::generate( 'none' );
 
 		return [
 			'base' => Style_Definition::make()
@@ -138,6 +140,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'border-radius', $border_radius_value )
 						->add_prop( 'border-width', $border_width_value )
 						->add_prop( 'text-align', $align_text_value )
+						->add_prop( 'color', $color_value )
+						->add_prop( 'text-decoration', $text_decoration_value )
 				),
 		];
 	}

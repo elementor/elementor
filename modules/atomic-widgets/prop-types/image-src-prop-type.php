@@ -31,7 +31,17 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		$only_one_key = count( array_filter( $value ) ) === 1;
+		$effective = array_filter( $value, function ( $field ) {
+			if ( null === $field ) {
+				return false;
+			}
+			if ( is_array( $field ) && array_key_exists( 'value', $field ) && null === $field['value'] ) {
+				return false;
+			}
+			return (bool) $field;
+		} );
+
+		$only_one_key = count( $effective ) === 1;
 
 		return $only_one_key && parent::validate_value( $value );
 	}
