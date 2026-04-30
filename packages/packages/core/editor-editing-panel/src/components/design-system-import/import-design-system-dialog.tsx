@@ -1,25 +1,28 @@
 import * as React from 'react';
-import { notify } from '@elementor/editor-notifications';
-import { FileUploadDropzone, FileUploadRow } from '@elementor/editor-ui';
-import { Button, Dialog, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack } from '@elementor/ui';
+import { closeDialog, FileUploadDropzone, FileUploadRow, openDialog } from '@elementor/editor-ui';
+import { Button, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ConflictOptions } from './components/conflict-options';
 import { useDialogState } from './hooks/use-dialog-state';
 import { useImportRequest } from './hooks/use-import-request';
-import { importDialogState } from './state';
+import { notifyImportFailure, notifyImportInProgress, notifyImportSuccess } from './import-notifications';
+import { importStatus } from './state';
 
-const ALLOWED_FILE_TYPES = [ 'application/zip' ];
+const ALLOWED_FILE_TYPES: `${ string }/${ string }`[] = [ 'application/zip' ];
 const FILE_INPUT_ACCEPT = 'application/zip,.zip';
 
-const IMPORT_STARTED_NOTIFICATION_ID = 'design-system-import-started';
-
 type Props = {
-	open: boolean;
 	onClose: () => void;
 };
 
-export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
+const reopenSelf = () => {
+	openDialog( {
+		component: <ImportDesignSystemDialog onClose={ closeDialog } />,
+	} );
+};
+
+export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 	const { state, setFile, setConflictStrategy, reset } = useDialogState();
 	const importRequest = useImportRequest();
 
@@ -35,23 +38,19 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			return;
 		}
 
-		notify( {
-			id: IMPORT_STARTED_NOTIFICATION_ID,
-			type: 'info',
-			message: (
-				<>{ __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ) }</>
-			),
-		} );
+		notifyImportInProgress();
+		importStatus.markImporting();
 
-		importDialogState.markImporting();
-
-		void importRequest( { file: state.file, conflictStrategy: state.conflictStrategy } );
+		importRequest( { file: state.file, conflictStrategy: state.conflictStrategy } )
+			.then( notifyImportSuccess )
+			.catch( () => notifyImportFailure( reopenSelf ) )
+			.finally( importStatus.markIdle );
 
 		handleClose();
 	};
 
 	return (
-		<Dialog open={ open } onClose={ handleClose } maxWidth="sm" fullWidth>
+		<>
 			<DialogHeader logo={ false }>
 				<DialogTitle>{ __( 'Import Design System', 'elementor' ) }</DialogTitle>
 			</DialogHeader>
@@ -85,6 +84,6 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 					{ __( 'Import', 'elementor' ) }
 				</Button>
 			</DialogActions>
-		</Dialog>
+		</>
 	);
 };

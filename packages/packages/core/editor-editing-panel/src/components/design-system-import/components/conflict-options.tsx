@@ -38,9 +38,7 @@ export const ConflictOptions = ( { value, onChange }: Props ) => {
 			</Typography>
 			<RadioGroup
 				value={ value ?? '' }
-				onChange={ ( _event: React.ChangeEvent< HTMLInputElement >, next: string ) =>
-					onChange( next as ConflictStrategy )
-				}
+				onChange={ ( _: unknown, next: string ) => onChange( next as ConflictStrategy ) }
 			>
 				<Stack spacing={ 1 }>
 					{ options.map( ( option ) => (

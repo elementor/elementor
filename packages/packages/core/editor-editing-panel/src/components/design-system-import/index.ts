@@ -1,2 +1,2 @@
 export { init } from './init';
-export { importDialogState } from './state';
+export { importStatus } from './state';

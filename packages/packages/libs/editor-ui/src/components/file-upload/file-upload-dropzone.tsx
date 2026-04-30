@@ -8,7 +8,7 @@ import { fileUploadBorderSx } from './upload-border-sx';
 
 type Props = {
 	onFileSelected: ( file: File ) => void;
-	allowedFileTypes: string[];
+	allowedFileTypes: `${ string }/${ string }`[];
 	accept: string;
 	regionLabel?: string;
 	primaryLabel?: string;

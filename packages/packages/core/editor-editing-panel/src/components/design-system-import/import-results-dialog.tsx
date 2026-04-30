@@ -1,30 +1,17 @@
 import * as React from 'react';
-import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	Stack,
-	Typography,
-} from '@elementor/ui';
+import { Button, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type ImportResult } from './state';
+import { type ImportResult } from './types';
 
 type Props = {
-	open: boolean;
-	result: ImportResult | null;
+	result: ImportResult;
 	onClose: () => void;
 };
 
-export const ImportResultsDialog = ( { open, result, onClose }: Props ) => {
-	const successful = result?.successfulCount ?? 0;
-	const unsuccessful = result?.unsuccessfulCount ?? 0;
-
+export const ImportResultsDialog = ( { result, onClose }: Props ) => {
 	return (
-		<Dialog open={ open } onClose={ onClose } maxWidth="xs" fullWidth>
+		<>
 			<DialogHeader logo={ false }>
 				<DialogTitle>{ __( 'Import results', 'elementor' ) }</DialogTitle>
 			</DialogHeader>
@@ -33,13 +20,13 @@ export const ImportResultsDialog = ( { open, result, onClose }: Props ) => {
 					<Stack direction="row" justifyContent="space-between">
 						<Typography variant="body2">{ __( 'Successful', 'elementor' ) }</Typography>
 						<Typography variant="body2" color="success.main">
-							{ successful }
+							{ result.successfulCount }
 						</Typography>
 					</Stack>
 					<Stack direction="row" justifyContent="space-between">
 						<Typography variant="body2">{ __( 'Unsuccessful', 'elementor' ) }</Typography>
 						<Typography variant="body2" color="error.main">
-							{ unsuccessful }
+							{ result.unsuccessfulCount }
 						</Typography>
 					</Stack>
 				</Stack>
@@ -49,6 +36,6 @@ export const ImportResultsDialog = ( { open, result, onClose }: Props ) => {
 					{ __( 'Close', 'elementor' ) }
 				</Button>
 			</DialogActions>
-		</Dialog>
+		</>
 	);
 };
