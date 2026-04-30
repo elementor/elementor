@@ -1,3 +1,5 @@
+import { createV4FlexboxFromPreset } from './v4-flexbox-preset';
+
 /**
  * @typedef {import('../container/container')} Container
  */
@@ -14,6 +16,7 @@ export class ContainerHelper {
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 	static CONTAINER_TYPE_GRID = 'grid';
 	static V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
+	static IS_V4_OPT_IN = !! elementorCommon.config.experimentalFeatures.e_opt_in_v4;
 
 	/**
 	 * Create multiple container elements.
@@ -151,6 +154,10 @@ export class ContainerHelper {
 	 * @return {Container} - Container created on.
 	 */
 	static createContainerFromPreset( preset, target = elementor.getPreviewContainer(), options ) {
+		if ( ContainerHelper.IS_V4_OPT_IN ) {
+			return createV4FlexboxFromPreset( preset, target, options );
+		}
+
 		const historyId = $e.internal( 'document/history/start-log', {
 				type: 'add',
 				title: __( 'Container', 'elementor' ),
