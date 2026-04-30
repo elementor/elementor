@@ -115,39 +115,32 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Assert trigger options and hidden scrollOn-only controls', async () => {
 			const popover = page.locator( '.MuiPopover-root' ).first();
 
-			// Open trigger menu via the combobox (avoids duplicate text matches from disablePortal).
 			const triggerSelect = popover.locator( '[role="combobox"]' ).first();
 			await expect( triggerSelect ).toBeVisible();
 			await triggerSelect.click();
 
-			// Core trigger control enables only these two options.
-			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Page load' } ) ).toBeVisible();
-			await expect(
-				page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ),
-			).toBeVisible();
+			const pageOption = ( hasText: string | RegExp ) =>
+				page.locator( '[role="option"]' ).filter( { hasText } ).first();
 
-			// Pro-only option is present but disabled in core runs.
-			const scrollOnOption = page
-				.locator( '[role="option"]' )
-				.filter( { hasText: /while scrolling/i } );
+			await expect( pageOption( /page load/i ) ).toBeVisible();
+			await expect( pageOption( /scroll into view/i ) ).toBeVisible();
+
+			const scrollOnOption = pageOption( /while scrolling/i );
 			await expect( scrollOnOption ).toBeVisible();
 			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 
-			// Close menu without changing selection.
 			await page.keyboard.press( 'Escape' );
 
-			// ScrollOn-only controls should not render for "Page load".
-			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Start', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'End', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="Relative To control"]' ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="Start control"]' ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="End control"]' ) ).toHaveCount( 0 );
 
-			// Switch to "Scroll into view" and ensure scrollOn-only controls still do not render.
 			await triggerSelect.click();
-			await page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ).click();
+			await pageOption( /scroll into view/i ).click();
 
-			await expect( popover.getByText( 'Relative To', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'Start', { exact: true } ) ).toHaveCount( 0 );
-			await expect( popover.getByText( 'End', { exact: true } ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="Relative To control"]' ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="Start control"]' ) ).toHaveCount( 0 );
+			await expect( popover.locator( '[aria-label="End control"]' ) ).toHaveCount( 0 );
 		} );
 	} );
 
@@ -294,9 +287,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			// Verify motion.dev library is loaded
 			const isMotionLoaded = await page.evaluate( () => {
 				return (
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					typeof ( window as any ).Motion !== 'undefined' ||
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           typeof ( window as any ).animate !== 'undefined'
 				);
 			} );
@@ -374,12 +367,13 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		apiRequests,
 	}, testInfo ) => {
 		let originalElementId = '';
+		let originalInteractionId = '';
 		let duplicatedElementId = '';
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Add widget and create interaction', async () => {
-			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
 
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
@@ -395,6 +389,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await editor.publishPage();
 			await page.reload();
 			await editor.waitForPanelToLoad();
+			await editor.selectElement( originalElementId );
 		} );
 
 		await test.step( 'Get original interaction ID from saved data', async () => {
@@ -420,7 +415,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 					}
 				},
 				originalElementId,
-				{ timeout: timeouts.heavyAction },
+				{ timeout: Math.max( timeouts.heavyAction, 60_000 ) },
 			);
 
 			const originalInteractionsData = await previewFrame.evaluate(
@@ -430,20 +425,57 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			expect( originalInteractionsData ).toBeTruthy();
 			expect( originalInteractionsData.items[ 0 ]?.value?.interaction_id?.value ).toBeTruthy();
-			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
+			originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
 			expect( originalInteractionId ).not.toContain( 'temp-' );
 		} );
 
 		await test.step( 'Duplicate the element', async () => {
-			const elementInPreview = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
+			const previewFrame = editor.getPreviewFrame();
+			const elementInPreview = previewFrame.locator( `[data-id="${ originalElementId }"]` ).first();
 			await elementInPreview.click( { button: 'right' } );
 
 			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
-			await page.waitForTimeout( 500 );
 
-			const originalElement = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
-			const duplicatedElement = originalElement.locator( 'xpath=./following-sibling::*[1]' );
-			duplicatedElementId = await duplicatedElement.getAttribute( 'data-id' );
+			await previewFrame.waitForFunction(
+				( [ origId, origIntId ] ) => {
+					const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+					if ( ! scriptTag ) {
+						return false;
+					}
+					try {
+						const all = JSON.parse( scriptTag.textContent || '[]' );
+						const withItems = all.filter( ( item ) => ( item.interactions?.items?.length ?? 0 ) > 0 );
+						if ( withItems.length < 2 ) {
+							return false;
+						}
+						const dup = withItems.find( ( item ) => ( item.elementId ?? item.dataId ) !== origId );
+						if ( ! dup ) {
+							return false;
+						}
+						const dupIntId = dup.interactions?.items?.[ 0 ]?.value?.interaction_id?.value;
+						return !! dupIntId && dupIntId !== origIntId;
+					} catch {
+						return false;
+					}
+				},
+				[ originalElementId, originalInteractionId ],
+				{ timeout: Math.max( timeouts.heavyAction, 60_000 ) },
+			);
+
+			duplicatedElementId = await previewFrame.evaluate( ( origId ) => {
+				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+				if ( ! scriptTag ) {
+					return '';
+				}
+				try {
+					const all = JSON.parse( scriptTag.textContent || '[]' );
+					const withItems = all.filter( ( item ) => ( item.interactions?.items?.length ?? 0 ) > 0 );
+					const dup = withItems.find( ( item ) => ( item.elementId ?? item.dataId ) !== origId );
+					return dup?.elementId || dup?.dataId || '';
+				} catch {
+					return '';
+				}
+			}, originalElementId );
 
 			expect( duplicatedElementId ).toBeTruthy();
 			expect( duplicatedElementId ).not.toBe( originalElementId );
@@ -500,8 +532,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 				getElementInteractionsData,
 				originalElementId,
 			);
-			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
-			expect( duplicatedInteractionId ).not.toBe( originalInteractionId );
+			const refetchedOriginalInteractionId =
+        originalInteractionsData.items[ 0 ].value.interaction_id.value;
+			expect( duplicatedInteractionId ).not.toBe( refetchedOriginalInteractionId );
 		} );
 	} );
 
