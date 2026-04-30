@@ -11,7 +11,9 @@ on:
         options:
           - chromium
           - firefox
+          - webkit
           - both
+          - all
       test_grep:
         type: string
         description: 'Update only tests matching this @tag or keyword (runs a single job instead of all shards)'
@@ -72,18 +74,27 @@ jobs:
           php-version: ${{ needs.get-php-version.outputs.php_version }}
           browser: ${{ inputs.browser }}
 
+      - name: Enable full browser compatibility mode
+        if: ${{ inputs.browser == 'all' }}
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+
       - name: Remove existing Playwright baseline PNGs
         if: ${{ inputs.reset_snapshot_baselines }}
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
           set -euo pipefail
-          if echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
+          browser_count=$(echo "$BROWSERS" | wc -w | tr -d ' ')
+          if [ "$browser_count" -ge 3 ]; then
             find tests -type f -path '*/*-snapshots/*' -delete
+          elif echo "$BROWSERS" | grep -qw chromium && echo "$BROWSERS" | grep -qw firefox; then
+            find tests -type f -path '*/*-snapshots/*' ! -name '*webkit*' -delete
           elif echo "$BROWSERS" | grep -qw firefox; then
             find tests -type f -path '*/*-snapshots/*firefox*' -delete
+          elif echo "$BROWSERS" | grep -qw webkit; then
+            find tests -type f -path '*/*-snapshots/*webkit*' -delete
           elif echo "$BROWSERS" | grep -qw chromium; then
-            find tests -type f -path '*/*-snapshots/*' ! -name '*firefox*' -delete
+            find tests -type f -path '*/*-snapshots/*' ! -name '*firefox*' ! -name '*webkit*' -delete
           fi
 
       - name: Update snapshots
@@ -167,6 +178,10 @@ jobs:
           artifact-name: ${{ needs.build-plugin.outputs.artifact_name }}
           php-version: ${{ needs.get-php-version.outputs.php_version }}
           browser: ${{ inputs.browser }}
+
+      - name: Enable full browser compatibility mode
+        if: ${{ inputs.browser == 'all' }}
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
 
       - name: Update snapshots for "${{ inputs.test_grep }}"
         continue-on-error: true
