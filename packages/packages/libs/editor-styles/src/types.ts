@@ -8,6 +8,8 @@ export type ClassState = {
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
 
+export type StyleDefinitionCustomSelectorState = ' > li::marker' | '::marker';
+
 export type StyleDefinitionPseudoState =
 	| 'hover'
 	| 'focus'
@@ -17,7 +19,10 @@ export type StyleDefinitionPseudoState =
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
-export type StyleDefinitionStateType = StyleDefinitionPseudoState | StyleDefinitionClassState;
+export type StyleDefinitionStateType =
+	| StyleDefinitionPseudoState
+	| StyleDefinitionClassState
+	| StyleDefinitionCustomSelectorState;
 
 export type StyleDefinitionState = null | Exclude< StyleDefinitionStateType, StyleDefinitionAdditionalPseudoState >;
 

@@ -5,7 +5,7 @@
 	{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
 	{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
 >
-{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' -%}
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><ul><ol><li><br>' -%}
 {%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
 	<{{ settings.link.tag | default('a') | e('html_tag') }}
 		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}">

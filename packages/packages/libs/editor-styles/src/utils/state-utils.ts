@@ -1,6 +1,7 @@
 import {
 	type StyleDefinitionAdditionalPseudoState,
 	type StyleDefinitionClassState,
+	type StyleDefinitionCustomSelectorState,
 	type StyleDefinitionPseudoState,
 	type StyleDefinitionState,
 	type StyleDefinitionStateType,
@@ -18,7 +19,9 @@ function getAdditionalStates( state: StyleDefinitionState ): StyleDefinitionAddi
 	return [];
 }
 
-function getStateSelector( state: StyleDefinitionPseudoState | StyleDefinitionClassState ) {
+function getStateSelector(
+	state: StyleDefinitionPseudoState | StyleDefinitionClassState | StyleDefinitionCustomSelectorState
+) {
 	if ( isClassState( state ) ) {
 		return `.${ state }`;
 	}

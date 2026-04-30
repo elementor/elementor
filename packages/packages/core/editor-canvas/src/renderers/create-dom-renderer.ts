@@ -33,11 +33,14 @@ function escapeHtmlTag( value: string ) {
 		'h5',
 		'h6',
 		'header',
+		'li',
 		'main',
 		'nav',
+		'ol',
 		'p',
 		'section',
 		'span',
+		'ul',
 	];
 
 	return allowedTags.includes( value ) ? value : 'div';

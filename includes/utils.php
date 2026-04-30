@@ -42,9 +42,12 @@ class Utils {
 		'header',
 		'main',
 		'nav',
+		'ol',
 		'p',
 		'section',
 		'span',
+		'ul',
+		'li',
 	];
 
 	const EXTENDED_ALLOWED_HTML_TAGS = [
