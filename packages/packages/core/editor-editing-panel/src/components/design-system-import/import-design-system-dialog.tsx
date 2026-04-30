@@ -1,16 +1,6 @@
 import * as React from 'react';
 import { notify } from '@elementor/editor-notifications';
-import {
-	AlertTitle,
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogHeader,
-	DialogTitle,
-	Divider,
-	Stack,
-} from '@elementor/ui';
+import { Button, Dialog, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ConflictOptions } from './components/conflict-options';
@@ -47,10 +37,7 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			id: IMPORT_STARTED_NOTIFICATION_ID,
 			type: 'info',
 			message: (
-				<>
-					<AlertTitle>{ __( 'Importing in Process', 'elementor' ) }</AlertTitle>
-					{ __( 'You will be notify you when we are done importing', 'elementor' ) }
-				</>
+				<>{ __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ) }</>
 			),
 		} );
 
@@ -66,7 +53,6 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			<DialogHeader logo={ false }>
 				<DialogTitle>{ __( 'Import Design System', 'elementor' ) }</DialogTitle>
 			</DialogHeader>
-			<Divider />
 			<DialogContent>
 				<Stack spacing={ 3 }>
 					{ state.file ? (

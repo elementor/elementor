@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { notify } from '@elementor/editor-notifications';
+import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
@@ -15,6 +15,7 @@ jest.mock( '@elementor/http-client', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-notifications', () => ( {
+	dismissNotification: jest.fn(),
 	notify: jest.fn(),
 } ) );
 
@@ -58,20 +59,26 @@ const dropFile = ( file: File ) => {
 	} );
 };
 
-const submitImport = ( fileName = 'tokens.json' ) => {
-	const file = new File( [ '{}' ], fileName, { type: 'application/json' } );
+const submitImport = ( fileName = 'design-system.zip' ) => {
+	const file = new File( [ 'zip' ], fileName, { type: 'application/zip' } );
 	dropFile( file );
 	fireEvent.click( screen.getByLabelText( 'Keep existing values' ) );
 	fireEvent.click( screen.getByRole( 'button', { name: 'Import' } ) );
 	return file;
 };
 
+const resetImportState = () => {
+	act( () => {
+		importDialogState.close();
+		importDialogState.closeResults();
+		importDialogState.markIdle();
+		importDialogState.setResult( null );
+	} );
+};
+
 describe( '<ImportDesignSystemDialog />', () => {
 	beforeEach( () => {
-		act( () => {
-			importDialogState.close();
-			importDialogState.markIdle();
-		} );
+		resetImportState();
 		jest.clearAllMocks();
 	} );
 
@@ -99,11 +106,11 @@ describe( '<ImportDesignSystemDialog />', () => {
 		const importButton = await screen.findByRole( 'button', { name: 'Import' } );
 		expect( importButton ).toBeDisabled();
 
-		const file = new File( [ '{}' ], 'tokens.json', { type: 'application/json' } );
+		const file = new File( [ 'zip' ], 'design-system.zip', { type: 'application/zip' } );
 		dropFile( file );
 
 		expect( importButton ).toBeDisabled();
-		expect( screen.getByText( 'tokens.json' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'design-system.zip' ) ).toBeInTheDocument();
 
 		fireEvent.click( screen.getByLabelText( 'Replace existing values' ) );
 
@@ -137,7 +144,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( options.headers[ 'Content-Type' ] ).toBe( 'multipart/form-data' );
 	} );
 
-	it( 'on success: refreshes globals, reloads the document and notifies success', async () => {
+	it( 'on success: refreshes globals, reloads the document and notifies success with a View action', async () => {
 		setupHttpServiceMock();
 		const { invalidateCache } = setupDocumentsMock();
 
@@ -150,25 +157,38 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		submitImport();
 
-		await waitFor(
+		const successCall = await waitFor(
 			() => {
-				const successCall = ( notify as jest.Mock ).mock.calls.find(
+				const call = ( notify as jest.Mock ).mock.calls.find(
 					( [ payload ] ) => payload.id === 'design-system-import-succeeded'
 				);
-				expect( successCall?.[ 0 ].type ).toBe( 'success' );
+				expect( call?.[ 0 ].type ).toBe( 'success' );
+				return call;
 			},
 			{ timeout: ASYNC_TIMEOUT_MS }
 		);
 
+		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( eventListener ).toHaveBeenCalledTimes( 1 );
 		expect( invalidateCache ).toHaveBeenCalledTimes( 1 );
 		expect( runCommand ).toHaveBeenCalledWith( 'editor/documents/switch', expect.objectContaining( { id: 99 } ) );
 		expect( importDialogState.getSnapshot().isImporting ).toBe( false );
 
+		const successPayload = successCall ? successCall[ 0 ] : undefined;
+		const viewAction = successPayload?.additionalActionProps?.[ 0 ];
+		expect( viewAction ).toEqual( expect.objectContaining( { children: 'View' } ) );
+
+		act( () => {
+			viewAction?.onClick?.();
+		} );
+
+		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-succeeded' );
+		expect( importDialogState.getSnapshot().isResultsOpen ).toBe( true );
+
 		window.removeEventListener( 'elementor/global-styles/imported', eventListener );
 	} );
 
-	it( 'on failure: notifies error and resets the importing flag', async () => {
+	it( 'on failure: notifies error and the Try again action reopens the import dialog', async () => {
 		const post = jest.fn().mockRejectedValue( new Error( 'boom' ) );
 		( httpService as jest.Mock ).mockReturnValue( { post } );
 		setupDocumentsMock();
@@ -179,27 +199,102 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		submitImport();
 
-		await waitFor(
+		const errorCall = await waitFor(
 			() => {
-				const errorCall = ( notify as jest.Mock ).mock.calls.find(
+				const call = ( notify as jest.Mock ).mock.calls.find(
 					( [ payload ] ) => payload.id === 'design-system-import-failed'
 				);
-				expect( errorCall?.[ 0 ].type ).toBe( 'error' );
+				expect( call?.[ 0 ].type ).toBe( 'error' );
+				return call;
 			},
 			{ timeout: ASYNC_TIMEOUT_MS }
 		);
 
+		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( runCommand ).not.toHaveBeenCalled();
 		expect( importDialogState.getSnapshot().isImporting ).toBe( false );
+
+		const errorPayload = errorCall ? errorCall[ 0 ] : undefined;
+		const retryAction = errorPayload?.additionalActionProps?.[ 0 ];
+		expect( retryAction ).toEqual( expect.objectContaining( { children: 'Try again' } ) );
+
+		act( () => {
+			retryAction?.onClick?.();
+		} );
+
+		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-failed' );
+		expect( importDialogState.getSnapshot().isOpen ).toBe( true );
+	} );
+
+	it( 'Try again is a no-op while another import is in progress', () => {
+		act( () => {
+			importDialogState.markImporting();
+		} );
+
+		const retryAction = {
+			onClick: jest.fn(),
+		};
+
+		const errorPayload = {
+			id: 'design-system-import-failed',
+			type: 'error',
+			message: 'failed',
+			additionalActionProps: [
+				{
+					children: 'Try again',
+					onClick: () => {
+						if ( importDialogState.getSnapshot().isImporting ) {
+							return;
+						}
+						importDialogState.open();
+					},
+				},
+			],
+		};
+
+		errorPayload.additionalActionProps[ 0 ].onClick?.();
+
+		expect( importDialogState.getSnapshot().isOpen ).toBe( false );
+		expect( retryAction.onClick ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( '<ImportResultsDialog />', () => {
+	beforeEach( () => {
+		resetImportState();
+		jest.clearAllMocks();
+	} );
+
+	it( 'renders only when isResultsOpen and shows placeholder counts', async () => {
+		renderWithTheme( <DialogHost /> );
+
+		expect( screen.queryByText( 'Import results' ) ).not.toBeInTheDocument();
+
+		act( () => {
+			importDialogState.setResult( { successfulCount: 7, unsuccessfulCount: 2 } );
+			importDialogState.openResults();
+		} );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Import results' ) ).toBeInTheDocument();
+		} );
+
+		expect( screen.getByText( '7' ) ).toBeInTheDocument();
+		expect( screen.getByText( '2' ) ).toBeInTheDocument();
+
+		fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		await waitFor( () => {
+			expect( screen.queryByText( 'Import results' ) ).not.toBeInTheDocument();
+		} );
+
+		expect( importDialogState.getSnapshot().isResultsOpen ).toBe( false );
 	} );
 } );
 
 describe( '<TriggerButton />', () => {
 	beforeEach( () => {
-		act( () => {
-			importDialogState.close();
-			importDialogState.markIdle();
-		} );
+		resetImportState();
 	} );
 
 	it( 'opens the dialog state when clicked while idle', () => {

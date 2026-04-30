@@ -4,8 +4,10 @@ import { UploadIcon } from '@elementor/icons';
 import { Card, Link, Stack, Typography, useUnstableDropZone } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const ALLOWED_FILE_TYPES = [ 'application/json' ] as const;
-const FILE_INPUT_ACCEPT = 'application/json';
+import { uploadBorderSx } from './upload-border-sx';
+
+const ALLOWED_FILE_TYPES = [ 'application/zip' ] as const;
+const FILE_INPUT_ACCEPT = 'application/zip,.zip';
 
 type Props = {
 	onFileSelected: ( file: File ) => void;
@@ -44,6 +46,7 @@ export const UploadDropzone = ( { onFileSelected }: Props ) => {
 			onDragEnter={ dropZoneProps.onDragEnter }
 			onDragLeave={ dropZoneProps.onDragLeave }
 			onDragOver={ dropZoneProps.onDragOver }
+			sx={ uploadBorderSx }
 		>
 			<Stack alignItems="center" spacing={ 1 } padding={ 3 }>
 				<UploadIcon fontSize="medium" />
@@ -56,7 +59,7 @@ export const UploadDropzone = ( { onFileSelected }: Props ) => {
 					<Typography variant="body1">{ __( 'or drag and drop', 'elementor' ) }</Typography>
 				</Stack>
 				<Typography variant="caption" color="text.secondary">
-					{ __( 'json (max. 3MB)', 'elementor' ) }
+					{ __( 'zip (max. 3MB)', 'elementor' ) }
 				</Typography>
 			</Stack>
 			<input

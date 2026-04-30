@@ -3,6 +3,8 @@ import { XIcon } from '@elementor/icons';
 import { Card, IconButton, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { uploadBorderSx } from './upload-border-sx';
+
 const BYTES_PER_KILOBYTE = 1024;
 
 type Props = {
@@ -17,11 +19,20 @@ const formatFileSize = ( sizeInBytes: number ) => {
 
 export const UploadedFileRow = ( { file, onRemove }: Props ) => {
 	return (
-		<Card variant="outlined">
-			<Stack direction="row" alignItems="center" justifyContent="space-between" padding={ 2 } spacing={ 2 }>
-				<Stack direction="column" spacing={ 0.5 }>
-					<Typography variant="subtitle2">{ file.name }</Typography>
-					<Typography variant="caption" color="text.secondary">
+		<Card variant="outlined" sx={ uploadBorderSx }>
+			<Stack
+				direction="row"
+				alignItems="center"
+				justifyContent="space-between"
+				padding={ 2 }
+				spacing={ 2 }
+				minHeight={ 152 }
+			>
+				<Stack direction="column" spacing={ 0.5 } minWidth={ 0 } flex={ 1 }>
+					<Typography variant="subtitle2" noWrap>
+						{ file.name }
+					</Typography>
+					<Typography variant="caption" color="text.secondary" noWrap>
 						{ formatFileSize( file.size ) } · { __( 'Complete', 'elementor' ) }
 					</Typography>
 				</Stack>
