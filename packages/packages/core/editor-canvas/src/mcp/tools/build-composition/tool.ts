@@ -9,6 +9,7 @@ import {
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
@@ -28,12 +29,14 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
+			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
 		],
 		outputSchema,
 		modelPreferences: {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
 		},
 		handler: async ( params ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
 			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
@@ -132,3 +135,26 @@ Remember: Global classes ensure design consistency and reusability. Don't skip a
 		},
 	} );
 };
+
+function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
+	const doc = new DOMParser().parseFromString( xmlStructure, 'application/xml' );
+	if ( doc.querySelector( 'parsererror' ) ) {
+		throw new Error( 'Failed to parse XML string: ' + doc );
+	}
+	const widgetsCache = getWidgetsCache() ?? {};
+	for ( const node of doc.querySelectorAll( '*' ) ) {
+		const type = node.tagName;
+		const widgetData = widgetsCache[ type ];
+		if ( ! widgetData ) {
+			continue;
+		}
+		if ( widgetData.elType !== 'widget' ) {
+			continue;
+		}
+		if ( ! widgetData.atomic_props_schema ) {
+			throw new Error(
+				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
+			);
+		}
+	}
+}

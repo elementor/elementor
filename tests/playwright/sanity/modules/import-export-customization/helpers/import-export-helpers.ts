@@ -109,7 +109,7 @@ export class ImportExportHelpers {
 
 	static async waitForImportComplete( page: Page ): Promise<void> {
 		await page.waitForURL( /.*import-customization\/complete.*/, { timeout: 30000 } );
-		await expect( page.locator( 'text=Your website templates is now live on your site!' ) ).toBeVisible();
+		await expect( page.locator( 'text=Your website template is now live on your site!' ) ).toBeVisible();
 		await expect( page.locator( 'text=You\'ve imported and applied the following to your site:' ) ).toBeVisible();
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
 	}
@@ -140,12 +140,12 @@ export class ImportExportHelpers {
 
 	static async verifyNotInContentSection( page: Page, notExpectedText: string ): Promise<void> {
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
-		await expect( contentSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
+		await expect( contentSection.locator( `text=${ notExpectedText }` ) ).toBeHidden();
 	}
 
 	static async verifyNotInSettingsSection( page: Page, notExpectedText: string ): Promise<void> {
 		const settingsSection = page.locator( ImportExportSelectors.summarySettingsSection );
-		await expect( settingsSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
+		await expect( settingsSection.locator( `text=${ notExpectedText }` ) ).toBeHidden();
 	}
 
 	static async verifyLearnMoreLink( page: Page ): Promise<void> {

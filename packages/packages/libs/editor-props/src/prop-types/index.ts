@@ -14,6 +14,7 @@ export * from './dimensions';
 export * from './number';
 export * from './shadow';
 export * from './size';
+export * from './span';
 export * from './string';
 export * from './string-array';
 export * from './stroke';

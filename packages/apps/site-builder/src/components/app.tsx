@@ -30,6 +30,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
 				connectAuth: config?.connectAuth,
+				exitTo: config?.exitTo,
 				page: {
 					url: window.location.href,
 					elementorAiCurrentContext: getElementorAiCurrentContext(),
@@ -87,7 +88,11 @@ export function App() {
 
 	const handleMessage = useCallback(
 		async ( event: MessageEvent ) => {
-			if ( allowedOrigin && event.origin !== allowedOrigin ) {
+			if ( ! allowedOrigin ) {
+				return;
+			}
+
+			if ( event.origin !== allowedOrigin ) {
 				return;
 			}
 
@@ -100,13 +105,20 @@ export function App() {
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin || '*' );
+					sendReferrerInfo( iframe, event, allowedOrigin );
 				}
 				return;
 			}
 
 			if ( type === 'site-planner/deploy-website' ) {
 				await handleDeploy( iframeRef.current, event );
+			}
+
+			if ( type === 'element-selector/close' ) {
+				const exitTo = getConfig()?.exitTo;
+				if ( window.top && exitTo && typeof exitTo === 'string' ) {
+					window.top.location.href = exitTo;
+				}
 			}
 		},
 		[ allowedOrigin ]
@@ -116,6 +128,28 @@ export function App() {
 		window.addEventListener( 'message', handleMessage );
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
+
+	useEffect( () => {
+		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } )
+			.wpApiSettings;
+		const nonce = wpApiSettings?.nonce || '';
+		if ( ! nonce ) {
+			return;
+		}
+
+		const baseUrl = wpApiSettings?.root || '/wp-json/';
+		const settingsUrl = `${ baseUrl }elementor/v1/site-builder/snapshot`;
+
+		fetch( settingsUrl, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': nonce,
+			},
+			body: JSON.stringify( { value: {} } ),
+		} ).catch( () => {} );
+	}, [] );
 
 	return (
 		<iframe

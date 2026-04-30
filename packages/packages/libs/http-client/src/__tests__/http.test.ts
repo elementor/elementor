@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios, { type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 
-import { httpService } from '../http';
+import { httpService, registerUrlForCache } from '../http';
 
 jest.mock( 'axios', () => ( {
 	...jest.requireActual( 'axios' ),
@@ -25,6 +25,9 @@ type FakeAxiosError = {
 
 const mockAxiosInstance = Object.assign( jest.fn(), {
 	interceptors: {
+		request: {
+			use: jest.fn(),
+		},
 		response: {
 			use: jest.fn(),
 		},
@@ -46,20 +49,25 @@ const makeError = ( status?: number, retryCount?: number, method?: string, timeo
 };
 
 describe( 'httpService', () => {
-	let onSuccess: ( response: unknown ) => unknown;
+	let onRequestIntercept: ( config: InternalAxiosRequestConfig ) => InternalAxiosRequestConfig;
+	let onSuccess: ( response: AxiosResponse ) => AxiosResponse;
 	let onError: ( error: unknown ) => Promise< unknown >;
 
 	// Captured before any afterEach(() => jest.clearAllMocks()) can wipe them
 	let capturedCreateConfig: unknown;
-	let capturedInterceptorRegistrationCount: number;
+	let capturedRequestInterceptorCount: number;
+	let capturedResponseInterceptorCount: number;
 
 	beforeAll( () => {
 		httpService();
 
-		const useMock = mockAxiosInstance.interceptors.response.use as jest.Mock;
+		const requestUseMock = mockAxiosInstance.interceptors.request.use as jest.Mock;
+		const responseUseMock = mockAxiosInstance.interceptors.response.use as jest.Mock;
 		capturedCreateConfig = ( axios.create as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
-		capturedInterceptorRegistrationCount = useMock.mock.calls.length;
-		[ onSuccess, onError ] = useMock.mock.calls[ 0 ];
+		capturedRequestInterceptorCount = requestUseMock.mock.calls.length;
+		capturedResponseInterceptorCount = responseUseMock.mock.calls.length;
+		[ onRequestIntercept ] = requestUseMock.mock.calls[ 0 ];
+		[ onSuccess, onError ] = responseUseMock.mock.calls[ 0 ];
 	} );
 
 	describe( 'initialization', () => {
@@ -71,8 +79,9 @@ describe( 'httpService', () => {
 			} );
 		} );
 
-		it( 'registers the response interceptor exactly once', () => {
-			expect( capturedInterceptorRegistrationCount ).toBe( 1 );
+		it( 'registers request and response interceptors exactly once', () => {
+			expect( capturedRequestInterceptorCount ).toBe( 1 );
+			expect( capturedResponseInterceptorCount ).toBe( 1 );
 		} );
 
 		it( 'returns the same singleton instance on every call', () => {
@@ -82,7 +91,13 @@ describe( 'httpService', () => {
 
 	describe( 'success interceptor', () => {
 		it( 'passes successful responses through unchanged', () => {
-			const response = { status: 200, data: 'ok' };
+			const response = {
+				status: 200,
+				statusText: 'OK',
+				data: 'ok',
+				headers: {},
+				config: {} as InternalAxiosRequestConfig,
+			};
 			expect( onSuccess( response ) ).toBe( response );
 		} );
 	} );
@@ -266,6 +281,206 @@ describe( 'httpService', () => {
 
 			await jest.advanceTimersByTimeAsync( 1 );
 			expect( mockAxiosInstance ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'caching', () => {
+		const createMockConfig = (
+			overrides: Partial< InternalAxiosRequestConfig > = {}
+		): InternalAxiosRequestConfig =>
+			( {
+				baseURL: 'http://test.com',
+				url: '/api/data',
+				method: 'get',
+				headers: {},
+				...overrides,
+			} ) as InternalAxiosRequestConfig;
+
+		const createMockResponse = (
+			config: InternalAxiosRequestConfig,
+			data: unknown = { result: 'ok' }
+		): AxiosResponse => ( {
+			data,
+			status: 200,
+			statusText: 'OK',
+			headers: {},
+			config,
+		} );
+
+		beforeEach( () => {
+			jest.useFakeTimers();
+		} );
+
+		afterEach( () => {
+			jest.useRealTimers();
+		} );
+
+		it( 'does not cache URLs that are not registered', () => {
+			// Arrange
+			const config = createMockConfig( { url: '/api/not-registered' } );
+			const response = createMockResponse( config );
+
+			// Act
+			onSuccess( response );
+			const resultConfig = onRequestIntercept( createMockConfig( { url: '/api/not-registered' } ) );
+
+			// Assert
+			expect( resultConfig.signal ).toBeUndefined();
+		} );
+
+		it( 'caches GET responses for registered URLs', () => {
+			// Arrange
+			registerUrlForCache( '/api/cached-endpoint' );
+			const config = createMockConfig( { url: '/api/cached-endpoint' } );
+			const response = createMockResponse( config, { cached: 'data' } );
+
+			// Act
+			onSuccess( response );
+			const resultConfig = onRequestIntercept(
+				createMockConfig( { url: '/api/cached-endpoint' } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+
+			// Assert
+			expect( resultConfig.signal?.aborted ).toBe( true );
+			expect( resultConfig.__cachedResponse?.data ).toEqual( { cached: 'data' } );
+		} );
+
+		it( 'does not cache POST requests even for registered URLs', () => {
+			// Arrange
+			registerUrlForCache( '/api/post-endpoint' );
+			const config = createMockConfig( { url: '/api/post-endpoint', method: 'post' } );
+			const response = createMockResponse( config );
+
+			// Act
+			onSuccess( response );
+			const resultConfig = onRequestIntercept(
+				createMockConfig( { url: '/api/post-endpoint', method: 'post' } )
+			);
+
+			// Assert
+			expect( resultConfig.signal ).toBeUndefined();
+		} );
+
+		it( 'expires cache after 20 seconds', () => {
+			// Arrange
+			registerUrlForCache( '/api/expiring' );
+			const config = createMockConfig( { url: '/api/expiring' } );
+			const response = createMockResponse( config, { fresh: 'data' } );
+
+			// Act
+			onSuccess( response );
+
+			jest.advanceTimersByTime( 20001 );
+
+			const resultConfig = onRequestIntercept( createMockConfig( { url: '/api/expiring' } ) );
+
+			// Assert
+			expect( resultConfig.signal ).toBeUndefined();
+		} );
+
+		it( 'returns cached response within TTL', () => {
+			// Arrange
+			registerUrlForCache( '/api/within-ttl' );
+			const config = createMockConfig( { url: '/api/within-ttl' } );
+			const response = createMockResponse( config, { still: 'valid' } );
+
+			// Act
+			onSuccess( response );
+
+			jest.advanceTimersByTime( 19000 );
+
+			const resultConfig = onRequestIntercept(
+				createMockConfig( { url: '/api/within-ttl' } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+
+			// Assert
+			expect( resultConfig.signal?.aborted ).toBe( true );
+			expect( resultConfig.__cachedResponse?.data ).toEqual( { still: 'valid' } );
+		} );
+
+		it( 'caches URLs with partial match', () => {
+			// Arrange
+			registerUrlForCache( '/templates' );
+			const config = createMockConfig( { url: '/api/templates/123' } );
+			const response = createMockResponse( config, { template: 'data' } );
+
+			// Act
+			onSuccess( response );
+			const resultConfig = onRequestIntercept(
+				createMockConfig( { url: '/api/templates/123' } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+
+			// Assert
+			expect( resultConfig.__cachedResponse?.data ).toEqual( { template: 'data' } );
+		} );
+
+		it( 'differentiates cache entries by query params', () => {
+			// Arrange
+			registerUrlForCache( '/api/with-params' );
+			const config1 = createMockConfig( {
+				url: '/api/with-params',
+				params: { id: 1 },
+			} );
+			const config2 = createMockConfig( {
+				url: '/api/with-params',
+				params: { id: 2 },
+			} );
+			const response1 = createMockResponse( config1, { id: 1 } );
+			const response2 = createMockResponse( config2, { id: 2 } );
+
+			// Act
+			onSuccess( response1 );
+			onSuccess( response2 );
+
+			const result1 = onRequestIntercept(
+				createMockConfig( { url: '/api/with-params', params: { id: 1 } } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+			const result2 = onRequestIntercept(
+				createMockConfig( { url: '/api/with-params', params: { id: 2 } } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+
+			// Assert
+			expect( result1.__cachedResponse?.data ).toEqual( { id: 1 } );
+			expect( result2.__cachedResponse?.data ).toEqual( { id: 2 } );
+		} );
+
+		it( 'returns cached response from error handler when request was aborted', async () => {
+			// Arrange
+			registerUrlForCache( '/api/error-handler' );
+			const config = createMockConfig( { url: '/api/error-handler' } );
+			const response = createMockResponse( config, { from: 'cache' } );
+			onSuccess( response );
+
+			const abortedConfig = onRequestIntercept( createMockConfig( { url: '/api/error-handler' } ) );
+			const error = { config: abortedConfig };
+
+			// Act
+			const result = await onError( error );
+
+			// Assert
+			expect( ( result as AxiosResponse ).data ).toEqual( { from: 'cache' } );
+		} );
+
+		it( 'uses custom TTL when provided', () => {
+			// Arrange
+			registerUrlForCache( '/api/custom-ttl', 5000 );
+			const config = createMockConfig( { url: '/api/custom-ttl' } );
+			const response = createMockResponse( config, { custom: 'ttl' } );
+
+			// Act
+			onSuccess( response );
+
+			jest.advanceTimersByTime( 4999 );
+			const resultBeforeExpiry = onRequestIntercept(
+				createMockConfig( { url: '/api/custom-ttl' } )
+			) as InternalAxiosRequestConfig & { __cachedResponse?: AxiosResponse };
+
+			jest.advanceTimersByTime( 2 );
+			const resultAfterExpiry = onRequestIntercept( createMockConfig( { url: '/api/custom-ttl' } ) );
+
+			// Assert
+			expect( resultBeforeExpiry.__cachedResponse?.data ).toEqual( { custom: 'ttl' } );
+			expect( resultAfterExpiry.signal ).toBeUndefined();
 		} );
 	} );
 } );

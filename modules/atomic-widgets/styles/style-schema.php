@@ -24,6 +24,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -322,6 +323,17 @@ class Style_Schema {
 				'wrap-reverse',
 			] )->description( 'Specifies whether the flex items should wrap or not. CSS values: wrap, nowrap, wrap-reverse' ),
 			'flex' => Flex_Prop_Type::make(),
+			'grid-template-columns' => String_Prop_Type::make()
+				->description( 'Defines the columns of a grid container. Accepts any valid CSS grid-template-columns value, e.g. repeat(3, 1fr) or 100px 200px auto.' ),
+			'grid-template-rows' => String_Prop_Type::make()
+				->description( 'Defines the rows of a grid container. Accepts any valid CSS grid-template-rows value, e.g. repeat(3, 1fr) or 100px 200px auto.' ),
+			'grid-auto-flow' => String_Prop_Type::make()
+				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
+				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
+			'grid-column' => Span_Prop_Type::make()
+				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value.' ),
+			'grid-row' => Span_Prop_Type::make()
+				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value.' ),
 		];
 	}
 
