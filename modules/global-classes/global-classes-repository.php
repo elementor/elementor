@@ -50,6 +50,10 @@ class Global_Classes_Repository {
 		return $this->cache;
 	}
 
+	public function get_order(): array {
+		return Global_Classes_Order::make( $this->kit )->get_order();
+	}
+
 	public function all_labels(): array {
 		return Global_Classes_Labels::make( $this->kit )
 			->context( $this->context )
@@ -238,10 +242,10 @@ class Global_Classes_Repository {
 			$classes_order = Global_Classes_Order::make( $this->kit );
 			$classes_order->set_order( $order );
 	
-			$label_map = [ $class_id => $label ];
-			Global_Classes_Labels::make( $this->kit )
-				->context( $this->context )
-				->set_labels( $label_map );
+			$classes_labels = Global_Classes_Labels::make( $this->kit );
+			$existing_labels = $classes_labels->get_labels();
+			$existing_labels[ $class_id ] = $label;
+			$classes_labels->set_labels( $existing_labels );
 
 
 			$t_index = microtime( true ) - $t;

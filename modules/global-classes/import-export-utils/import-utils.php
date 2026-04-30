@@ -43,14 +43,15 @@ class Import_Utils {
 		$repository = Global_Classes_Repository::make();
 
 		$t = microtime( true );
-		$existing = $repository->all()->get();
+		// $existing = $repository->all()->get();
 		error_log( '[GC Import][Timing] repository->all(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
-		$existing_items = $existing['items'] ?? [];
-		$existing_order = $existing['order'] ?? [];
+		// $existing_items = $repository->all_labels();
+		$existing_order =  $repository->get_order();
 		$existing_id_set = array_flip( $existing_order );
-		$existing_label_to_id = self::build_label_to_id_map( $existing_items );
-		unset( $existing );
+		$existing_label_to_id = $repository->all_labels();
+		// $existing_label_to_id = self::build_label_to_id_map( $existing_items );
+		// unset( $existing );
 
 		$order_data = json_decode( file_get_contents( $order_file ), true );
 
@@ -61,7 +62,7 @@ class Import_Utils {
 			);
 		}
 
-		$available_slots = 1000 - count( $existing_order );
+		$available_slots = 100 - count( $existing_order );
 
 		$t = microtime( true );
 		$import_set = self::build_import_set( $order_data, $existing_label_to_id, $conflict_resolution, $available_slots );
