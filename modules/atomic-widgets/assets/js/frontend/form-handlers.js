@@ -47,12 +47,6 @@ function registerAtomicFormAlpineData( form ) {
 					const response = await submitAtomicForm( payload );
 					const state = response?.success ? 'success' : 'error';
 
-					clearFieldErrors( form );
-
-					if ( ! response?.success ) {
-						applyFieldErrors( form, response?.data?.field_errors );
-					}
-
 					setFormState( form, state );
 
 					if ( response?.success ) {
@@ -284,39 +278,6 @@ function setFormState( element, state ) {
 
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
-}
-
-function clearFieldErrors( form ) {
-	form.querySelectorAll( '.e-form-field--has-error' ).forEach( ( element ) => {
-		element.classList.remove( 'e-form-field--has-error' );
-		element.removeAttribute( 'aria-invalid' );
-	} );
-
-	form.querySelectorAll( '[data-error-for]' ).forEach( ( element ) => {
-		element.textContent = '';
-	} );
-}
-
-function applyFieldErrors( form, fieldErrors ) {
-	if ( ! fieldErrors || 'object' !== typeof fieldErrors ) {
-		return;
-	}
-
-	Object.entries( fieldErrors ).forEach( ( [ fieldCssid, message ] ) => {
-		// Field_errors keys are cssids (the HTML id / name on atomic form inputs).
-		const escaped = CSS.escape( fieldCssid );
-		const input = form.querySelector( `#${ escaped }, [name="${ escaped }"], [name="${ escaped }[]"]` );
-
-		if ( input ) {
-			input.classList.add( 'e-form-field--has-error' );
-			input.setAttribute( 'aria-invalid', 'true' );
-		}
-
-		const errorElement = form.querySelector( `[data-error-for="${ escaped }"]` );
-		if ( errorElement ) {
-			errorElement.textContent = message;
-		}
-	} );
 }
 
 function refreshDom( element ) {
