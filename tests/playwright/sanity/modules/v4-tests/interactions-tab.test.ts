@@ -46,7 +46,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await page.close();
 	} );
 
-	test( 'Interactions tab is visible when experiment is active', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Interactions tab is visible when experiment is active', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -61,7 +64,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Interactions tab displays empty state correctly', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Interactions tab displays empty state correctly', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const panelSelector = '#elementor-panel-inner';
@@ -75,11 +81,16 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
 
-			await expect.soft( page.locator( panelSelector ) ).toHaveScreenshot( 'interactions-empty-state.png' );
+			await expect
+				.soft( page.locator( panelSelector ) )
+				.toHaveScreenshot( 'interactions-empty-state.png' );
 		} );
 	} );
 
-	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Core trigger menu shows "While scrolling" as disabled and scrollOn-only controls stay hidden', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -111,10 +122,14 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Core trigger control enables only these two options.
 			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Page load' } ) ).toBeVisible();
-			await expect( page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ) ).toBeVisible();
+			await expect(
+				page.locator( '[role="option"]' ).filter( { hasText: 'Scroll into view' } ),
+			).toBeVisible();
 
 			// Pro-only option is present but disabled in core runs.
-			const scrollOnOption = page.locator( '[role="option"]' ).filter( { hasText: 'While Scrolling' } );
+			const scrollOnOption = page
+				.locator( '[role="option"]' )
+				.filter( { hasText: /while scrolling/i } );
 			await expect( scrollOnOption ).toBeVisible();
 			await expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
 
@@ -214,7 +229,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Verify animation plays correctly via play button, publish, and frontend view', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Verify animation plays correctly via play button, publish, and frontend view', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -276,7 +294,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			// Verify motion.dev library is loaded
 			const isMotionLoaded = await page.evaluate( () => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				return typeof ( window as any ).Motion !== 'undefined' || typeof ( window as any ).animate !== 'undefined';
+				return (
+					typeof ( window as any ).Motion !== 'undefined' ||
+          typeof ( window as any ).animate !== 'undefined'
+				);
 			} );
 			expect( isMotionLoaded ).toBe( true );
 
@@ -289,7 +310,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Replay control is visible and disabled in interactions popover', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -344,7 +368,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Duplicate element with interactions generates new temp IDs', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		let originalElementId = '';
 		let duplicatedElementId = '';
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -382,9 +409,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 						const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 						const elementData = allInteractions.find(
 							// eslint-disable-next-line @typescript-eslint/no-explicit-any
-							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
+							( item: any ) =>
+								( item.elementId === elementId || item.dataId === elementId ) &&
+                item.interactions?.items?.length > 0,
 						);
-						return !! ( elementData );
+						return !! elementData;
 					} catch {
 						return false;
 					}
@@ -393,7 +422,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 				{ timeout: timeouts.heavyAction },
 			);
 
-			const originalInteractionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+			const originalInteractionsData = await previewFrame.evaluate(
+				getElementInteractionsData,
+				originalElementId,
+			);
 
 			expect( originalInteractionsData ).toBeTruthy();
 			expect( originalInteractionsData.items[ 0 ]?.value?.interaction_id?.value ).toBeTruthy();
@@ -436,9 +468,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 						const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 						const elementData = allInteractions.find(
 							// eslint-disable-next-line @typescript-eslint/no-explicit-any
-							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
+							( item: any ) =>
+								( item.elementId === elementId || item.dataId === elementId ) &&
+                item.interactions?.items?.length > 0,
 						);
-						return !! ( elementData );
+						return !! elementData;
 					} catch {
 						return false;
 					}
@@ -447,17 +481,24 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 				{ timeout: timeouts.heavyAction },
 			);
 
-			const duplicatedInteractionsData = await previewFrame.evaluate( getElementInteractionsData, duplicatedElementId );
+			const duplicatedInteractionsData = await previewFrame.evaluate(
+				getElementInteractionsData,
+				duplicatedElementId,
+			);
 
 			expect( duplicatedInteractionsData ).toBeTruthy();
 			expect( duplicatedInteractionsData.items ).toHaveLength( 1 );
 
-			const duplicatedInteractionId = duplicatedInteractionsData.items[ 0 ].value.interaction_id?.value;
+			const duplicatedInteractionId =
+        duplicatedInteractionsData.items[ 0 ].value.interaction_id?.value;
 
 			// Should have an interaction ID (either temp or permanent)
 			expect( duplicatedInteractionId ).toBeTruthy();
 
-			const originalInteractionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+			const originalInteractionsData = await previewFrame.evaluate(
+				getElementInteractionsData,
+				originalElementId,
+			);
 			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
 			expect( duplicatedInteractionId ).not.toBe( originalInteractionId );
 		} );
@@ -492,42 +533,65 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await popover.getByLabel( 'From top', { exact: true } ).click();
 			await popover.getByLabel( 'From left', { exact: true } ).click();
 
-			await expect( popover.getByLabel( 'From top', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From left', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'false' );
-			await expect( popover.getByLabel( 'From right', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'false' );
+			await expect( popover.getByLabel( 'From top', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From left', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'false',
+			);
+			await expect( popover.getByLabel( 'From right', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'false',
+			);
 		} );
 
 		await test.step( 'top and bottom cannot be selected together (same vertical axis — bottom replaces top)', async () => {
 			// Current state: top-left. Click "bottom" → should replace "top", giving bottom-left.
 			await popover.getByLabel( 'From bottom', { exact: true } ).click();
 
-			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From left', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From top', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'false' );
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From left', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From top', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'false',
+			);
 		} );
 
 		await test.step( 'left and right cannot be selected together (same horizontal axis — right replaces left)', async () => {
 			// Current state: bottom-left. Click "right" → should replace "left", giving bottom-right.
 			await popover.getByLabel( 'From right', { exact: true } ).click();
 
-			await expect( popover.getByLabel( 'From right', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From bottom', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'true' );
-			await expect( popover.getByLabel( 'From left', { exact: true } ) )
-				.toHaveAttribute( 'aria-pressed', 'false' );
+			await expect( popover.getByLabel( 'From right', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From bottom', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'true',
+			);
+			await expect( popover.getByLabel( 'From left', { exact: true } ) ).toHaveAttribute(
+				'aria-pressed',
+				'false',
+			);
 		} );
 	} );
 
-	test( 'Multiple interactions on same element have unique IDs', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Multiple interactions on same element have unique IDs', async ( {
+		page,
+		apiRequests,
+	}, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		let originalElementId: string;
@@ -557,7 +621,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( interactionTags ).toHaveCount( 2 );
 			const previewFrame = editor.getPreviewFrame();
 
-			const interactionsData = await previewFrame.evaluate( getElementInteractionsData, originalElementId );
+			const interactionsData = await previewFrame.evaluate(
+				getElementInteractionsData,
+				originalElementId,
+			);
 
 			expect( interactionsData.items ).toHaveLength( 2 );
 
@@ -605,4 +672,3 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 } );
-
