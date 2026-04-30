@@ -21,7 +21,6 @@ class Classes_Provider {
 		}
 
 		$classes_data = Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all()
 			->get();
 
@@ -31,16 +30,16 @@ class Classes_Provider {
 	}
 
 	public static function get_synced_classes(): array {
-		$all_classes = self::get_all_classes();
 		$synced_classes = [];
 
-		foreach ( $all_classes as $id => $class ) {
-			if ( empty( $class['sync_to_v3'] ) ) {
-				continue;
-			}
+		Global_Classes_Repository::make()
+			->each_item( static function ( array $class ) use ( &$synced_classes ) {
+				if ( empty( $class['sync_to_v3'] ) ) {
+					return;
+				}
 
-			$synced_classes[ $id ] = $class;
-		}
+				$synced_classes[ $class['id'] ] = $class;
+			} );
 
 		return $synced_classes;
 	}
