@@ -16,7 +16,7 @@ export const notifyImportInProgress = () => {
 	notify( {
 		id: IMPORT_STARTED_NOTIFICATION_ID,
 		type: 'info',
-		message: <>{ __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ) }</>,
+		message: __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ),
 	} );
 };
 

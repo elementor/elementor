@@ -39,13 +39,10 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 
 		notifyImportInProgress();
 
-		importMutation.mutate(
-			{ file: state.file, conflictStrategy: state.conflictStrategy },
-			{
-				onSuccess: notifyImportSuccess,
-				onError: () => notifyImportFailure( reopenSelf ),
-			}
-		);
+		importMutation
+			.mutateAsync( { file: state.file, conflictStrategy: state.conflictStrategy } )
+			.then( notifyImportSuccess )
+			.catch( () => notifyImportFailure( reopenSelf ) );
 
 		handleClose();
 	};
