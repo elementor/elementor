@@ -14,9 +14,9 @@ class Min_Max_Date_Time_Control extends Atomic_Control_Base {
 		return 'min-max-date-time';
 	}
 
-	/** @var 'date'|'time' $variant Specifies the control type: either 'date' or 'time'. */
+	/** @var 'date'|'time' $variant Specifies the control type: either 'date' or 'time'. values other than 'date' or 'time' will be converted to 'date'. */
 	public function set_variant( string $variant ): self {
-		$this->variant = $variant;
+		$this->variant = 'time' === $variant ? 'time' : 'date';
 
 		return $this;
 	}

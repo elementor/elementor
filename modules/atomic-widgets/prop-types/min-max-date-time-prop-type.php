@@ -43,12 +43,8 @@ class Min_Max_Date_Time_Prop_Type extends Object_Prop_Type {
 			return null;
 		}
 
-		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}([T ]\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})?)?$/', $raw ) ) {
-			return null;
-		}
+		$date = date_create_from_format( 'Y-m-d', $raw );
 
-		$timestamp = strtotime( $raw );
-
-		return false === $timestamp ? null : $timestamp;
+		return false === $date ? null : $date->getTimestamp();
 	}
 }
