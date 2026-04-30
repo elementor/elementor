@@ -293,9 +293,10 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Verify motion.dev library is loaded
 			const isMotionLoaded = await page.evaluate( () => {
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				return (
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 					typeof ( window as any ).Motion !== 'undefined' ||
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
           typeof ( window as any ).animate !== 'undefined'
 				);
 			} );
