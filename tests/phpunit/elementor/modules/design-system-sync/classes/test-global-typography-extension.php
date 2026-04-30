@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\DesignSystemSync\Classes;
 
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -17,6 +20,8 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		( new Global_Class_Post_Type() )->register_post_type();
 
 		$this->extension = new Global_Typography_Extension();
 		Classes_Provider::clear_cache();
@@ -34,17 +39,25 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit ) {
-			$kit->delete_meta( '_elementor_global_classes' );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Order::META_KEY );
+		}
+
+		$posts = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $posts as $post_id ) {
+			wp_delete_post( $post_id, true );
 		}
 	}
 
 	public function test_add_v4_classes_to_typography_selector__returns_items_unchanged_when_no_classes() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [],
-		] );
-
 		$items = [
 			'existing-1' => [
 				'id' => 'existing-1',
@@ -62,37 +75,34 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__skips_classes_without_sync_to_v3() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Heading',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Heading',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 24,
-										'unit' => 'px',
-									],
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 24,
+									'unit' => 'px',
 								],
 							],
 						],
 					],
-					'sync_to_v3' => false,
 				],
+				'sync_to_v3' => false,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -105,28 +115,25 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__skips_classes_without_typography_props() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Color Only',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'color' => '#ff0000',
-								'background-color' => '#000000',
-							],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Color Only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'color' => '#ff0000',
+							'background-color' => '#000000',
 						],
 					],
-					'sync_to_v3' => true,
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -139,48 +146,45 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__injects_v4_classes_with_correct_format() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Heading',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Heading',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 24,
+									'unit' => 'px',
 								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 24,
-										'unit' => 'px',
-									],
-								],
-								'font-weight' => [
-									'$$type' => 'string',
-									'value' => 'bold',
-								],
-								'line-height' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 1.5,
-										'unit' => 'em',
-									],
+							],
+							'font-weight' => [
+								'$$type' => 'string',
+								'value' => 'bold',
+							],
+							'line-height' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 1.5,
+									'unit' => 'em',
 								],
 							],
 						],
 					],
-					'sync_to_v3' => true,
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -197,45 +201,42 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__converts_props_to_v3_format() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Body',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Body',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Arial',
 							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Arial',
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 16,
+									'unit' => 'px',
 								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 16,
-										'unit' => 'px',
-									],
-								],
-								'font-weight' => [
-									'$$type' => 'string',
-									'value' => '400',
-								],
-								'font-style' => [
-									'$$type' => 'string',
-									'value' => 'italic',
-								],
+							],
+							'font-weight' => [
+								'$$type' => 'string',
+								'value' => '400',
+							],
+							'font-style' => [
+								'$$type' => 'string',
+								'value' => 'italic',
 							],
 						],
 					],
-					'sync_to_v3' => true,
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -253,30 +254,27 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__prepends_v4_items() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'V4Class',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'V4Class',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
 						],
 					],
-					'sync_to_v3' => true,
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [
 			'v3-item' => [
@@ -297,9 +295,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__skips_empty_props() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
+		$this->create_kit_with_classes( [
 				'class-1' => [
 					'label' => 'EmptyProps',
 					'type' => 'class',
@@ -314,8 +310,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 					],
 					'sync_to_v3' => true,
 				],
-			],
-		] );
+			], [ 'class-1' ] );
 
 		$items = [];
 
@@ -328,30 +323,27 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__skips_empty_label() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => '',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => '',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
 						],
 					],
-					'sync_to_v3' => true,
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -364,67 +356,64 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__includes_responsive_breakpoint_values() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Heading',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 24,
-										'unit' => 'px',
-									],
-								],
-							],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Heading',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
 						],
-						[
-							'meta' => [
-								'breakpoint' => 'tablet',
-								'state' => null,
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
-							'props' => [
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 20,
-										'unit' => 'px',
-									],
-								],
-							],
-						],
-						[
-							'meta' => [
-								'breakpoint' => 'mobile',
-								'state' => null,
-							],
-							'props' => [
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 16,
-										'unit' => 'px',
-									],
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 24,
+									'unit' => 'px',
 								],
 							],
 						],
 					],
-					'sync_to_v3' => true,
+					[
+						'meta' => [
+							'breakpoint' => 'tablet',
+							'state' => null,
+						],
+						'props' => [
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 20,
+									'unit' => 'px',
+								],
+							],
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'mobile',
+							'state' => null,
+						],
+						'props' => [
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 16,
+									'unit' => 'px',
+								],
+							],
+						],
+					],
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -440,56 +429,53 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__only_adds_responsive_suffix_to_responsive_props() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Heading',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 24,
-										'unit' => 'px',
-									],
-								],
-							],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Heading',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
 						],
-						[
-							'meta' => [
-								'breakpoint' => 'tablet',
-								'state' => null,
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Arial',
-								],
-								'font-size' => [
-									'$$type' => 'size',
-									'value' => [
-										'size' => 20,
-										'unit' => 'px',
-									],
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 24,
+									'unit' => 'px',
 								],
 							],
 						],
 					],
-					'sync_to_v3' => true,
+					[
+						'meta' => [
+							'breakpoint' => 'tablet',
+							'state' => null,
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Arial',
+							],
+							'font-size' => [
+								'$$type' => 'size',
+								'value' => [
+									'size' => 20,
+									'unit' => 'px',
+								],
+							],
+						],
+					],
 				],
+				'sync_to_v3' => true,
 			],
-		] );
+		], [ 'class-1' ] );
 
 		$items = [];
 
@@ -504,49 +490,46 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 
 	public function test_add_v4_classes_to_typography_selector__handles_multiple_classes() {
 		// Arrange
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit->update_json_meta( '_elementor_global_classes', [
-			'items' => [
-				'class-1' => [
-					'label' => 'Heading',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Roboto',
-								],
+		$this->create_kit_with_classes( [
+			'class-1' => [
+				'label' => 'Heading',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Roboto',
 							],
 						],
 					],
-					'sync_to_v3' => true,
 				],
-				'class-2' => [
-					'label' => 'Body',
-					'type' => 'class',
-					'variants' => [
-						[
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => 'normal',
-							],
-							'props' => [
-								'font-family' => [
-									'$$type' => 'string',
-									'value' => 'Arial',
-								],
-							],
-						],
-					],
-					'sync_to_v3' => true,
-				],
+				'sync_to_v3' => true,
 			],
-		] );
+			'class-2' => [
+				'label' => 'Body',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'normal',
+						],
+						'props' => [
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Arial',
+							],
+						],
+					],
+				],
+				'sync_to_v3' => true,
+			],
+		], [ 'class-1', 'class-2' ] );
 
 		$items = [];
 
@@ -557,5 +540,11 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 		$this->assertCount( 2, $result );
 		$this->assertArrayHasKey( 'v4-heading', $result );
 		$this->assertArrayHasKey( 'v4-body', $result );
+	}
+
+	private function create_kit_with_classes( array $classes, array $order ) {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		
+		Global_Classes_Repository::make( $kit )->put( $classes, $order );
 	}
 }

@@ -4,15 +4,15 @@ import type EditorPage from '../../../../pages/editor-page';
 import { type Device } from '../../../../types/types';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 
-import { deleteAllGlobalClasses, createGlobalClasses, getGlobalClasses } from './utils';
+import { createGlobalClasses, deleteAllGlobalClasses, getGlobalClasses } from './utils';
 
 /**
  * This is an initial set of stress tests, currently meant to be executed manually+locally (against a valid .env file)
  *
- * This test adds 100 global styles via REST API
+ * Adds many global classes via REST API (above the legacy 100 cap after post-based storage).
  */
 
-const CLASS_COUNT = 100;
+const CLASS_COUNT = 1000;
 const BASIC_BREAKPOINTS: Device[] = [ 'desktop', 'tablet', 'mobile' ];
 const ALL_BREAKPOINTS: Device[] = [ 'widescreen', 'desktop', 'tablet', 'mobile', 'widescreen', 'laptop', 'tablet_extra', 'mobile_extra' ];
 const STATES = [ 'normal', 'hover', 'focus', 'active' ] as const;
@@ -128,7 +128,7 @@ function buildGlobalClassData( count: number ): { items: Record<string, GlobalCl
 test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 	test.setTimeout( 600000 );
 
-	test( 'Create 100 global classes via REST API and verify CSS generation', async ( { page, apiRequests }, testInfo ) => {
+	test( `Create ${ CLASS_COUNT } global classes via REST API and verify CSS generation`, async ( { page, apiRequests }, testInfo ) => {
 		logProgress( 'Starting API-based stress test...' );
 
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -167,10 +167,15 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		logProgress( `Found ${ existingIds.length } classes in storage` );
 
 		expect( existingIds.length ).toBe( CLASS_COUNT );
+		expect( new Set( existingIds ).size ).toBe( CLASS_COUNT );
 
-		logProgress( 'Opening editor...' );
+		let publishTime = 0;
+		let viewTime = 0;
+
+		logProgress( 'Opening editor (STRESS_TEST_INCLUDE_EDITOR=1)...' );
 		const editor = await wpAdmin.openNewPage() as EditorPage;
 		await editor.waitForPanelToLoad();
+		await page.waitForSelector( '#elementor-panel', { timeout: 60000 } );
 
 		logProgress( 'Adding div block widget...' );
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
@@ -179,14 +184,14 @@ test.describe.skip( 'Global Classes API Stress Test @stress', () => {
 		logProgress( 'Publishing page...' );
 		const startPublish = Date.now();
 		await editor.publishPage();
-		const publishTime = Date.now() - startPublish;
+		publishTime = Date.now() - startPublish;
 		logProgress( `Page published in ${ publishTime }ms` );
 
 		logProgress( 'Navigating to frontend...' );
 		const startView = Date.now();
 		await editor.viewPage();
-		await page.waitForLoadState( 'networkidle' );
-		const viewTime = Date.now() - startView;
+		await page.waitForLoadState( 'domcontentloaded' );
+		viewTime = Date.now() - startView;
 		logProgress( `Frontend loaded in ${ viewTime }ms` );
 
 		const stylesheets = await page.evaluate( () => {

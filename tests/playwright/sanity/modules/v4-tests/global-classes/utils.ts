@@ -16,13 +16,27 @@ type GlobalClassItem = {
 	sync_to_v3?: boolean;
 };
 
-export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, GlobalClassItem>; order: string[] }> {
+export async function getGlobalClasses( apiRequests: ApiRequests, request: APIRequestContext ): Promise<{ items: Record<string, Pick<GlobalClassItem, 'id' | 'label'>>; order: string[] }> {
 	try {
-		const data = await apiRequests.customGet( request, 'index.php?rest_route=/elementor/v1/global-classes' );
-		return {
-			items: data.data || {},
-			order: data.meta?.order || [],
-		};
+		const response = await apiRequests.customGet( request, 'index.php?rest_route=/elementor/v1/global-classes' );
+
+		const list: Array<{ id: string; label: string }> = Array.isArray( response?.data )
+			? response.data
+			: [];
+
+		const items: Record<string, Pick<GlobalClassItem, 'id' | 'label'>> = {};
+		const order: string[] = [];
+
+		for ( const entry of list ) {
+			if ( ! entry?.id ) {
+				continue;
+			}
+
+			items[ entry.id ] = { id: entry.id, label: entry.label };
+			order.push( entry.id );
+		}
+
+		return { items, order };
 	} catch {
 		return { items: {}, order: [] };
 	}
@@ -39,7 +53,7 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
 			items: {},
 			order: [],
-			changes: { added: [], deleted: order, modified: [] },
+			changes: { added: [], deleted: order, modified: [], order: false },
 		} );
 
 		return { success: true, deleted: order.length };
@@ -48,6 +62,8 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 	}
 }
 
+const CREATE_BATCH_SIZE = 100;
+
 export async function createGlobalClasses(
 	apiRequests: ApiRequests,
 	request: APIRequestContext,
@@ -55,11 +71,29 @@ export async function createGlobalClasses(
 	order: string[],
 ): Promise<{ success: boolean; error?: string }> {
 	try {
-		await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
-			items,
-			order,
-			changes: { added: order, deleted: [], modified: [] },
-		} );
+		const totalBatches = Math.ceil( order.length / CREATE_BATCH_SIZE );
+
+		for ( let i = 0; i < order.length; i += CREATE_BATCH_SIZE ) {
+			const batchIds = order.slice( i, i + CREATE_BATCH_SIZE );
+			const batchItems: Record<string, GlobalClassItem> = {};
+
+			for ( const id of batchIds ) {
+				batchItems[ id ] = items[ id ];
+			}
+
+			const cumulativeOrder = order.slice( 0, i + batchIds.length );
+			const batchNumber = Math.floor( i / CREATE_BATCH_SIZE ) + 1;
+
+			// eslint-disable-next-line no-console
+			console.log( `[createGlobalClasses] Batch ${ batchNumber }/${ totalBatches } (${ batchIds.length } classes)` );
+
+			await apiRequests.customPut( request, 'index.php?rest_route=/elementor/v1/global-classes', {
+				items: batchItems,
+				order: cumulativeOrder,
+				changes: { added: batchIds, deleted: [], modified: [], order: false },
+			} );
+		}
+
 		return { success: true };
 	} catch ( error ) {
 		return { success: false, error: String( error ) };
