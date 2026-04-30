@@ -17,6 +17,7 @@ import { perspectiveOriginTransformer } from './transformers/styles/perspective-
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
+import { spanTransformer } from './transformers/styles/span-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformFunctionsTransformer } from './transformers/styles/transform-functions-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
@@ -53,6 +54,7 @@ export function initStyleTransformers() {
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
+		.register( 'span', spanTransformer )
 		.register( 'transform-origin', transformOriginTransformer )
 		.register( 'perspective-origin', perspectiveOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )
