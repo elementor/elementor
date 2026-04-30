@@ -13,7 +13,7 @@ class Min_Max_Date_Time_Control extends Atomic_Control_Base {
 	public function get_type(): string {
 		return 'min-max-date-time';
 	}
-	
+
 	/** @var 'date'|'time' $variant Specifies the control type: either 'date' or 'time'. */
 	public function set_variant( string $variant ): self {
 		$this->variant = $variant;

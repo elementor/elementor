@@ -21,11 +21,11 @@ class Min_Max_Date_Time_Transformer extends Transformer_Base {
 		$result = [];
 
 		if ( isset( $value['min'] ) ) {
-			$result['min'] = $value['min'] !== INVALID_DATE ? $value['min'] : '';
+			$result['min'] = INVALID_DATE !== $value['min'] ? $value['min'] : '';
 		}
 
 		if ( isset( $value['max'] ) ) {
-			$result['max'] = $value['max'] !== INVALID_DATE ? $value['max'] : '';
+			$result['max'] = INVALID_DATE !== $value['max'] ? $value['max'] : '';
 		}
 
 		return $result;
