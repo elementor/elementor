@@ -28,6 +28,7 @@ import { WrapField } from './wrap-field';
 
 const DISPLAY_LABEL = __( 'Display', 'elementor' );
 const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
+const DEFAULT_PARENT_FLOW_DIRECTION = 'row';
 
 export const LayoutSection = () => {
 	const { value: display } = useStylesField< StringPropValue >( 'display', {
@@ -43,14 +44,14 @@ export const LayoutSection = () => {
 
 	const getParentStyleDirection = () => {
 		if ( 'flex' === parentStyle?.display ) {
-			return parentStyle?.flexDirection ?? 'row';
+			return parentStyle?.flexDirection ?? DEFAULT_PARENT_FLOW_DIRECTION;
 		}
 
 		if ( 'grid' === parentStyle?.display ) {
-			return parentStyle?.gridAutoFlow ?? 'row';
+			return parentStyle?.gridAutoFlow ?? DEFAULT_PARENT_FLOW_DIRECTION;
 		}
 
-		return 'row';
+		return DEFAULT_PARENT_FLOW_DIRECTION;
 	};
 
 	return (
