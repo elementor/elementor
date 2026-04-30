@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
@@ -128,7 +128,10 @@ function ClassManagerPanelRoot( {
 }: ClassManagerPanelRootProps = {} ) {
 	const isDirty = useDirtyState();
 	const { close: closeStandalonePanel } = usePanelActions();
-	const closePanel = embedded ? onRequestClose ?? ( async () => {} ) : closeStandalonePanel;
+	const closePanel = useMemo(
+		() => ( embedded ? onRequestClose ?? ( async () => {} ) : closeStandalonePanel ),
+		[ embedded, onRequestClose, closeStandalonePanel ]
+	);
 
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
