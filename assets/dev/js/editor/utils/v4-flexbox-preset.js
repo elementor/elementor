@@ -18,8 +18,46 @@ const stringProp = ( value ) => ( {
 } );
 
 const widthPercent = ( size ) => ( {
-	width: sizeProp( Number( size ), '%' ),
+	width: sizeProp( Number( SIZES_MAP[ size ] ?? size ), '%' ),
 } );
+
+const ROW = { 'flex-direction': stringProp( DIRECTION_ROW ) };
+const ROW_WRAP = { ...ROW, 'flex-wrap': stringProp( 'wrap' ) };
+
+const widthChild = ( size ) => ( { parent: widthPercent( size ), children: [] } );
+const bareChild = () => ( { parent: {}, children: [] } );
+
+const rowOfSizes = ( sizes ) => {
+	const sum = sizes.reduce( ( s, n ) => s + parseInt( n ), 0 );
+
+	return {
+		parent: sum > 100 ? ROW_WRAP : ROW,
+		children: sizes.map( widthChild ),
+	};
+};
+
+const PRESET_DEFINITIONS = {
+	c100: { parent: {}, children: [] },
+	r100: { parent: ROW, children: [] },
+	'c100-c50-50': {
+		parent: ROW,
+		children: [
+			widthChild( '50' ),
+			{
+				parent: { ...widthPercent( '50' ), padding: sizeProp( 0, 'px' ) },
+				children: [ bareChild(), bareChild() ],
+			},
+		],
+	},
+};
+
+function getPresetDefinition( preset ) {
+	if ( PRESET_DEFINITIONS[ preset ] ) {
+		return PRESET_DEFINITIONS[ preset ];
+	}
+
+	return rowOfSizes( preset.split( '-' ) );
+}
 
 function createFlexboxElement( target, options ) {
 	return $e.run( 'document/elements/create', {
@@ -70,41 +108,20 @@ function attachLocalStyle( container, cssProps ) {
 	return styleId;
 }
 
-function createFlexbox( cssProps, target, options = {} ) {
-	const flexbox = createFlexboxElement( target, options );
+function buildNode( definition, target, options, isRoot ) {
+	const { parent: parentProps, children } = definition;
+	const reuseTarget = isRoot && false === options.createWrapper;
+	const node = reuseTarget
+		? target
+		: createFlexboxElement( target, isRoot ? options : { edit: false } );
 
-	attachLocalStyle( flexbox, cssProps );
+	attachLocalStyle( node, parentProps );
 
-	return flexbox;
-}
-
-function createFlexboxFromSizes( sizes, target, options = {} ) {
-	const { createWrapper = true } = options;
-	const sizesSum = sizes.reduce( ( sum, size ) => sum + parseInt( size ), 0 );
-	const shouldWrap = sizesSum > 100;
-
-	const parentProps = {
-		'flex-direction': stringProp( DIRECTION_ROW ),
-		gap: sizeProp( 0, 'px' ),
-		...( shouldWrap ? { 'flex-wrap': stringProp( 'wrap' ) } : {} ),
-	};
-
-	let parent;
-
-	if ( createWrapper ) {
-		parent = createFlexbox( parentProps, target, options );
-	} else {
-		attachLocalStyle( target, parentProps );
-		parent = target;
-	}
-
-	sizes.forEach( ( size ) => {
-		const resolved = SIZES_MAP[ size ] || size;
-
-		createFlexbox( widthPercent( resolved ), parent, { edit: false } );
+	children.forEach( ( childDef ) => {
+		buildNode( childDef, node, options, false );
 	} );
 
-	return parent;
+	return node;
 }
 
 export function createV4FlexboxFromPreset( preset, target = elementor.getPreviewContainer(), options = {} ) {
@@ -112,59 +129,13 @@ export function createV4FlexboxFromPreset( preset, target = elementor.getPreview
 		type: 'add',
 		title: __( 'Container', 'elementor' ),
 	} );
-	const { createWrapper = true } = options;
 
 	let result;
 
 	try {
-		switch ( preset ) {
-			case 'c100':
-				result = createFlexbox( {}, target, options );
-				break;
+		const definition = getPresetDefinition( preset );
 
-			case 'r100':
-				result = createFlexbox(
-					{ 'flex-direction': stringProp( DIRECTION_ROW ) },
-					target,
-					options,
-				);
-				break;
-
-			case 'c100-c50-50': {
-				const parentProps = {
-					'flex-direction': stringProp( DIRECTION_ROW ),
-					gap: sizeProp( 0, 'px' ),
-				};
-
-				if ( createWrapper ) {
-					result = createFlexbox( parentProps, target, options );
-				} else {
-					attachLocalStyle( target, parentProps );
-					result = target;
-				}
-
-				createFlexbox( widthPercent( 50 ), result, { edit: false } );
-
-				const rightSide = createFlexbox(
-					{
-						...widthPercent( 50 ),
-						padding: sizeProp( 0, 'px' ),
-						gap: sizeProp( 0, 'px' ),
-					},
-					result,
-					{ edit: false },
-				);
-
-				for ( let i = 0; i < 2; i++ ) {
-					createFlexbox( {}, rightSide, { edit: false } );
-				}
-
-				break;
-			}
-
-			default:
-				result = createFlexboxFromSizes( preset.split( '-' ), target, options );
-		}
+		result = buildNode( definition, target, options, true );
 
 		$e.internal( 'document/history/end-log', { id: historyId } );
 	} catch ( e ) {

@@ -147,7 +147,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( getProps( parent ) ).toEqual( {
 			'flex-direction': ROW,
-			gap: ZERO_PX,
 		} );
 		expect( getProps( c1 ) ).toEqual( { width: sizeProp( 50, '%' ) } );
 		expect( getProps( c2 ) ).toEqual( { width: sizeProp( 50, '%' ) } );
@@ -168,7 +167,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( getProps( parent ) ).toEqual( {
 			'flex-direction': ROW,
-			gap: ZERO_PX,
 			'flex-wrap': WRAP,
 		} );
 		expect( children ).toHaveLength( 4 );
@@ -186,7 +184,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( getProps( parent ) ).toEqual( {
 			'flex-direction': ROW,
-			gap: ZERO_PX,
 		} );
 
 		expect( getProps( leftCol ) ).toEqual( { width: sizeProp( 50, '%' ) } );
@@ -194,7 +191,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 		expect( getProps( rightCol ) ).toEqual( {
 			width: sizeProp( 50, '%' ),
 			padding: ZERO_PX,
-			gap: ZERO_PX,
 		} );
 
 		expect( gc1._styles.styles ).toEqual( {} );
@@ -213,7 +209,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( getProps( target ) ).toEqual( {
 			'flex-direction': ROW,
-			gap: ZERO_PX,
 		} );
 
 		createCalls.forEach( ( call ) => {
