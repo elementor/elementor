@@ -39,9 +39,7 @@ export function ToggleDesignSystemFromEntry() {
 				return;
 			}
 
-			window.dispatchEvent(
-				new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES )
-			);
+			window.dispatchEvent( new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES ) );
 		};
 
 		window.addEventListener( EVENT_TOGGLE, handler as EventListener );

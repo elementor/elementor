@@ -74,13 +74,19 @@ export type ClassManagerPanelEmbeddedProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-/** Class Manager UI without standalone panel chrome — use inside Design System panel when experiment is active. */
-export function ClassManagerPanelEmbedded( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: ClassManagerPanelEmbeddedProps ) {
+/**
+ * Class Manager UI without standalone panel chrome — use inside Design System panel when experiment is active.
+ * @param root0
+ * @param root0.onRequestClose
+ * @param root0.onExposeCloseAttempt
+ */
+export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
 	return (
-		<ClassManagerPanelRoot embedded onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />
+		<ClassManagerPanelRoot
+			embedded
+			onRequestClose={ onRequestClose }
+			onExposeCloseAttempt={ onExposeCloseAttempt }
+		/>
 	);
 }
 
@@ -208,13 +214,7 @@ function ClassManagerPanelRoot( {
 
 	const searchFiltersBlock = embedded ? (
 		<Box px={ 2 } pb={ 1 }>
-			<Stack
-				direction="row"
-				alignItems="center"
-				justifyContent="space-between"
-				gap={ 0.5 }
-				sx={ { pb: 0.5 } }
-			>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 0.5 } sx={ { pb: 0.5 } }>
 				<Box sx={ { flexGrow: 1, minWidth: 0 } }>
 					<ClassManagerSearch />
 				</Box>
@@ -225,13 +225,7 @@ function ClassManagerPanelRoot( {
 		</Box>
 	) : (
 		<Box px={ 2 } pb={ 1 }>
-			<Stack
-				direction="row"
-				justifyContent="space-between"
-				alignItems="center"
-				gap={ 0.5 }
-				sx={ { pb: 0.5 } }
-			>
+			<Stack direction="row" justifyContent="space-between" alignItems="center" gap={ 0.5 } sx={ { pb: 0.5 } }>
 				<Box sx={ { flexGrow: 1 } }>
 					<ClassManagerSearch />
 				</Box>
@@ -397,11 +391,7 @@ function ClassManagerPanelRoot( {
 	return embedded ? core : <ThemeProvider>{ core }</ThemeProvider>;
 }
 
-const ClassPanelCloseButton = ( {
-	onClose,
-	sx,
-	...props
-}: IconButtonProps & { onClose: () => void } ) => (
+const ClassPanelCloseButton = ( { onClose, sx, ...props }: IconButtonProps & { onClose: () => void } ) => (
 	<IconButton
 		size="small"
 		color="secondary"

@@ -1,9 +1,5 @@
 import { useEffect } from 'react';
-import {
-	__privateListenTo as listenTo,
-	isExperimentActive,
-	v1ReadyEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, isExperimentActive, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { usePanelActions } from './components/class-manager/class-manager-panel';
 import { syncWithDocumentSave } from './sync-with-document-save';

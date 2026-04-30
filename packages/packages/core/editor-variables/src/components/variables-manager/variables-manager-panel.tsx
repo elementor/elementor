@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import {
 	__createPanel as createPanel,
@@ -104,7 +104,10 @@ function VariablesManagerPanelRoot( {
 	onExposeCloseAttempt,
 }: VariablesManagerPanelRootProps = {} ) {
 	const { close: closeStandalonePanel } = usePanelActions();
-	const closePanel = embedded ? onRequestClose ?? ( async () => {} ) : closeStandalonePanel;
+	const closePanel = useMemo(
+		() => ( embedded ? onRequestClose ?? ( async () => {} ) : closeStandalonePanel ),
+		[ embedded, onRequestClose, closeStandalonePanel ]
+	);
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
