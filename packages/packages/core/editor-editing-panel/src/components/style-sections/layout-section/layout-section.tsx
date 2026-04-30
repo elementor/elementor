@@ -13,6 +13,7 @@ import { SectionContent } from '../../section-content';
 import { AlignContentField } from './align-content-field';
 import { AlignItemsField } from './align-items-field';
 import { AlignSelfChild } from './align-self-child-field';
+import { AlignSelfGridChild } from './align-self-grid-child-field';
 import { DisplayField, useDisplayPlaceholderValue } from './display-field';
 import { type FlexDirection, FlexDirectionField } from './flex-direction-field';
 import { FlexOrderField } from './flex-order-field';
@@ -21,30 +22,49 @@ import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
 import { GridJustifyItemsField } from './grid-justify-items-field';
 import { GridSizeFields } from './grid-size-field';
+import { GridSpanFields } from './grid-span-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
 const DISPLAY_LABEL = __( 'Display', 'elementor' );
 const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
+const DEFAULT_PARENT_FLOW_DIRECTION = 'row';
 
 export const LayoutSection = () => {
 	const { value: display } = useStylesField< StringPropValue >( 'display', {
 		history: { propDisplayName: DISPLAY_LABEL },
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
+	const isGridExperimentActive = isExperimentActive( 'e_css_grid' );
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
 	const isDisplayGrid = 'grid' === ( display?.value ?? ( displayPlaceholder as StringPropValue )?.value );
 	const { element } = useElement();
 	const parent = useParentElement( element.id );
 	const parentStyle = useComputedStyle( parent?.id || null );
-	const parentStyleDirection = parentStyle?.flexDirection ?? 'row';
+
+	const getParentStyleDirection = () => {
+		if ( 'flex' === parentStyle?.display ) {
+			return parentStyle?.flexDirection ?? DEFAULT_PARENT_FLOW_DIRECTION;
+		}
+
+		if ( 'grid' === parentStyle?.display ) {
+			return parentStyle?.gridAutoFlow ?? DEFAULT_PARENT_FLOW_DIRECTION;
+		}
+
+		return DEFAULT_PARENT_FLOW_DIRECTION;
+	};
 
 	return (
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
-			{ isExperimentActive( 'e_css_grid' ) && isDisplayGrid && <GridFields /> }
-			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
+			{ 'flex' === parentStyle?.display && (
+				<FlexChildFields parentStyleDirection={ getParentStyleDirection() } />
+			) }
+			{ isGridExperimentActive && isDisplayGrid && <GridFields /> }
+			{ isGridExperimentActive && 'grid' === parentStyle?.display && (
+				<GridChildFields parentStyleDirection={ getParentStyleDirection() } />
+			) }
 		</SectionContent>
 	);
 };
@@ -86,6 +106,16 @@ const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: stri
 		<AlignSelfChild parentStyleDirection={ parentStyleDirection as FlexDirection } />
 		<FlexOrderField />
 		<FlexSizeField />
+	</>
+);
+
+const GridChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
+	<>
+		<PanelDivider />
+		<ControlFormLabel>{ __( 'Grid Child', 'elementor' ) }</ControlFormLabel>
+		<GridSpanFields />
+		<AlignSelfGridChild parentStyleDirection={ parentStyleDirection } />
+		<FlexOrderField />
 	</>
 );
 
