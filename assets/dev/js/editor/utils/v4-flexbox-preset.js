@@ -27,7 +27,7 @@ const widthChild = ( size ) => ( { parent: widthPercent( size ), children: [] } 
 const bareChild = () => ( { parent: {}, children: [] } );
 
 const rowOfSizes = ( sizes ) => {
-	const sum = sizes.reduce( ( s, n ) => s + parseInt( n ), 0 );
+	const sum = sizes.reduce( ( s, n ) => s + Number( n ), 0 );
 
 	return {
 		parent: sum > 100 ? ROW_WRAP : ROW,
