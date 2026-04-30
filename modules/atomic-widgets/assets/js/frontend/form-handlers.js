@@ -47,6 +47,12 @@ function registerAtomicFormAlpineData( form ) {
 					const response = await submitAtomicForm( payload );
 					const state = response?.success ? 'success' : 'error';
 
+					clearFieldErrors( form );
+
+					if ( ! response?.success ) {
+						applyFieldErrors( form, response?.data?.field_errors );
+					}
+
 					setFormState( form, state );
 
 					if ( response?.success ) {
@@ -121,7 +127,7 @@ function getAtomicFormFields( form ) {
 			const id = input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
-			const value = getAtomicFormFieldValue( input, type );
+			const value = 'file' === type ? input.files : getAtomicFormFieldValue( input, type );
 			const options = getAtomicFieldOptions( input, type, form );
 
 			fields.push( {
@@ -237,18 +243,25 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => {
-		formData.append( `form_fields[${ index }][id]`, field.id );
-		formData.append( `form_fields[${ index }][type]`, field.type );
-		formData.append( `form_fields[${ index }][label]`, field.label );
-		formData.append( `form_fields[${ index }][name]`, field.name );
-		formData.append( `form_fields[${ index }][options]`, JSON.stringify( field.options ) );
+		// Key by the HTML `name` (= the atom's _cssid) so the backend can match $_FILES entries
+		// to file-upload widgets via their cssid. Falls back to interactionId / numeric index.
+		const fieldKey = field.name || field.id || `index_${ index }`;
+		formData.append( `form_fields[${ fieldKey }][id]`, field.id );
+		formData.append( `form_fields[${ fieldKey }][type]`, field.type );
+		formData.append( `form_fields[${ fieldKey }][label]`, field.label );
+		formData.append( `form_fields[${ fieldKey }][name]`, field.name );
+		formData.append( `form_fields[${ fieldKey }][options]`, JSON.stringify( field.options ) );
 
-		if ( Array.isArray( field.value ) ) {
+		if ( field.value instanceof FileList ) {
+			Array.from( field.value ).forEach( ( file, valueIndex ) => {
+				formData.append( `form_fields[${ fieldKey }][value][${ valueIndex }]`, file );
+			} );
+		} else if ( Array.isArray( field.value ) ) {
 			field.value.forEach( ( value, valueIndex ) => {
-				formData.append( `form_fields[${ index }][value][${ valueIndex }]`, value );
+				formData.append( `form_fields[${ fieldKey }][value][${ valueIndex }]`, value );
 			} );
 		} else {
-			formData.append( `form_fields[${ index }][value]`, field.value );
+			formData.append( `form_fields[${ fieldKey }][value]`, field.value );
 		}
 	} );
 
@@ -271,6 +284,39 @@ function setFormState( element, state ) {
 
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
+}
+
+function clearFieldErrors( form ) {
+	form.querySelectorAll( '.e-form-field--has-error' ).forEach( ( element ) => {
+		element.classList.remove( 'e-form-field--has-error' );
+		element.removeAttribute( 'aria-invalid' );
+	} );
+
+	form.querySelectorAll( '[data-error-for]' ).forEach( ( element ) => {
+		element.textContent = '';
+	} );
+}
+
+function applyFieldErrors( form, fieldErrors ) {
+	if ( ! fieldErrors || 'object' !== typeof fieldErrors ) {
+		return;
+	}
+
+	Object.entries( fieldErrors ).forEach( ( [ fieldCssid, message ] ) => {
+		// Field_errors keys are cssids (the HTML id / name on atomic form inputs).
+		const escaped = CSS.escape( fieldCssid );
+		const input = form.querySelector( `#${ escaped }, [name="${ escaped }"], [name="${ escaped }[]"]` );
+
+		if ( input ) {
+			input.classList.add( 'e-form-field--has-error' );
+			input.setAttribute( 'aria-invalid', 'true' );
+		}
+
+		const errorElement = form.querySelector( `[data-error-for="${ escaped }"]` );
+		if ( errorElement ) {
+			errorElement.textContent = message;
+		}
+	} );
 }
 
 function refreshDom( element ) {
