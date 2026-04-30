@@ -110,16 +110,19 @@ class Test_Process_Media extends Elementor_Test_Base {
     public function test_empty_array() {
         $this->init_rest_api();
         $this->act_as_admin();
+        $this->add_mock_http_filter();
 
         $response = $this->send_request( [] );
 
         $status = $response->get_status();
         $this->assertEquals( 500, $status );
+        $this->remove_mock_http_filter();
     }
 
     public function test_invalid_urls() {
         $this->init_rest_api();
         $this->act_as_admin();
+        $this->add_mock_http_filter();
 
         $response = $this->send_request( [
             'not-a-url',
@@ -129,6 +132,7 @@ class Test_Process_Media extends Elementor_Test_Base {
         $status = $response->get_status();
 
         $this->assertEquals( 500, $status );
+        $this->remove_mock_http_filter();
     }
 
     private function add_mock_http_filter() {
@@ -140,17 +144,21 @@ class Test_Process_Media extends Elementor_Test_Base {
     }
 
     public function mock_http_filter( $preempt, $args, $url ) {
-        if ( strpos( $url, 'example.com' ) === false ) {
-            return $preempt;
+        $mocked_hosts = [ 'example.com', 'cloud-library.prod.builder.elementor.red' ];
+
+        foreach ( $mocked_hosts as $host ) {
+            if ( strpos( $url, $host ) !== false ) {
+                return [
+                    'response' => [
+                        'code' => 200,
+                        'message' => 'OK',
+                    ],
+                    'body' => 'fake-image-content',
+                ];
+            }
         }
 
-        return [
-            'response' => [
-                'code' => 200,
-                'message' => 'OK',
-            ],
-            'body' => 'fake-image-content',
-        ];
+        return $preempt;
     }
 
     private function send_request( $media_urls ) {
