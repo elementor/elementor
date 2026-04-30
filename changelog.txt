@@ -2,7 +2,7 @@
 
 = 4.0.5 - 2026-04-30 =
 
-* Security Fix: Improved code security enforcement in input handlings
+* Security Fix: Improved code security enforcement in input handling
 
 = 4.0.4 - 2026-04-28 =
 
