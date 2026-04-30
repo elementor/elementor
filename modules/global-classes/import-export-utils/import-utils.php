@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses;
+namespace Elementor\Modules\GlobalClasses\ImportExportUtils;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Import_Export_Utils {
+class Import_Utils {
 
 	const BATCH_SIZE = 120;
 

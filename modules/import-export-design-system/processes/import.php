@@ -8,7 +8,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
-use Elementor\Modules\GlobalClasses\Import_Export_Utils;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
 use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
@@ -175,7 +175,7 @@ class Import {
 			return $empty_result;
 		}
 
-		return Import_Export_Utils::import_classes( $classes_dir, [ 'conflict_resolution' => $this->conflict_resolution ] );
+		return Import_Utils::import_classes( $classes_dir, [ 'conflict_resolution' => $this->conflict_resolution ] );
 	}
 
 	private function import_variables( $kit ): array {

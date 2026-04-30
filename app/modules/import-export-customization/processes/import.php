@@ -633,6 +633,7 @@ class Import {
 	 * @throws \Error If import validation fails or processing errors occur.
 	 */
 	private function read_manifest_json() {
+		//here
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );
 
 		if ( ! $manifest ) {

@@ -351,6 +351,7 @@ class Module extends BaseModule {
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
 
+		//here
 		$this->import = new Import( $file, [
 			'referrer' => $referrer,
 			'id' => $kit_id,
