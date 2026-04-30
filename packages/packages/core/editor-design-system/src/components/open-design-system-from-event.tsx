@@ -7,10 +7,10 @@ import {
 
 import { usePanelActions } from '../design-system-panel';
 import { type DesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
+import { DESIGN_SYSTEM_V1_READY_ROUTE } from '../v1-default-panel-route';
 
 const EVENT_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_GLOBAL_CLASSES = 'elementor/open-global-classes-manager';
-const DEFAULT_PANEL_ROUTE = 'panel/elements/categories';
 
 /**
  * Maps window events to the design system panel (initial tab: variables or classes).
@@ -31,7 +31,7 @@ export function OpenDesignSystemFromEvent() {
 	}, [ readyToOpen, open ] );
 
 	useEffect( () => {
-		return listenTo( routeOpenEvent( DEFAULT_PANEL_ROUTE ), () => {
+		return listenTo( routeOpenEvent( DESIGN_SYSTEM_V1_READY_ROUTE ), () => {
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
@@ -45,7 +45,7 @@ export function OpenDesignSystemFromEvent() {
 		const bind = ( eventName: string, tab: DesignSystemTab ) => {
 			const handler = () => {
 				pendingTabRef.current = tab;
-				openRoute( DEFAULT_PANEL_ROUTE );
+				openRoute( DESIGN_SYSTEM_V1_READY_ROUTE );
 			};
 
 			window.addEventListener( eventName, handler );

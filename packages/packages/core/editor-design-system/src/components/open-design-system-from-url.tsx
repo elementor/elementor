@@ -3,12 +3,12 @@ import { __privateListenTo as listenTo, routeOpenEvent } from '@elementor/editor
 
 import { usePanelActions } from '../design-system-panel';
 import { setPendingDesignSystemTab } from '../initial-tab';
+import { DESIGN_SYSTEM_V1_READY_ROUTE } from '../v1-default-panel-route';
 
 const ACTIVE_PANEL_PARAM = 'active-panel';
 const PANEL_ID = 'design-system';
 const LEGACY_GLOBAL_CLASSES_PANEL = 'global-classes-manager';
 const LEGACY_VARIABLES_PANEL = 'variables-manager';
-const DEFAULT_PANEL_ROUTE = 'panel/elements';
 
 /**
  * Opens the design system panel from `?active-panel=design-system` (or legacy class/variable panel ids) once the editor is ready.
@@ -42,7 +42,7 @@ export function OpenDesignSystemFromUrl() {
 			return;
 		}
 
-		const cleanup = listenTo( routeOpenEvent( DEFAULT_PANEL_ROUTE ), () => {
+		const cleanup = listenTo( routeOpenEvent( DESIGN_SYSTEM_V1_READY_ROUTE ), () => {
 			if ( hasOpened.current ) {
 				return;
 			}
