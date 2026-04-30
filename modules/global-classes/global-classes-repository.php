@@ -60,6 +60,21 @@ class Global_Classes_Repository {
 			->get_ordered_labels();
 	}
 
+	public function update_order_and_labels( array $order, array $new_labels ): void {
+		Global_Classes_Order::make( $this->kit )->set_order( $order );
+
+		$labels = Global_Classes_Labels::make( $this->kit )->context( $this->context );
+		$existing_labels = $labels->get_labels();
+
+		foreach ( $new_labels as $id => $label ) {
+			$existing_labels[ $id ] = $label;
+		}
+
+		$labels->set_labels( $existing_labels );
+
+		$this->cache = null;
+	}
+
 	public function get( string $class_id ): ?array {
 		$post = Global_Class_Post::find_by_class_id( $class_id, $this->context );
 

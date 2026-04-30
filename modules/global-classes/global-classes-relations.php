@@ -85,9 +85,19 @@ class Global_Classes_Relations {
 	}
 
 	public function get_styles_by_post( int $post_id ): array {
+		$t_total = microtime( true );
+
+		$t = microtime( true );
 		$stored_ids = $this->get_stored_style_ids( $post_id );
+		error_log( '[GC Debug][get_styles_by_post] get_stored_style_ids(' . $post_id . '): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, count=' . count( $stored_ids ) );
+
+		$t = microtime( true );
 		$live_ids = array_values( array_unique( $this->extract_class_ids_from_post( $post_id ) ) );
+		error_log( '[GC Debug][get_styles_by_post] extract_class_ids(' . $post_id . '): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, count=' . count( $live_ids ) );
+
+		$t = microtime( true );
 		$has_elementor_data = $this->document_has_elementor_data( $post_id );
+		error_log( '[GC Debug][get_styles_by_post] has_elementor_data(' . $post_id . '): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, result=' . ( $has_elementor_data ? 'true' : 'false' ) );
 
 		$normalize = static function ( array $ids ): string {
 			$ids = array_values( array_unique( $ids ) );
@@ -113,8 +123,11 @@ class Global_Classes_Relations {
 		}
 
 		if ( $normalize( $stored_ids ) !== $normalize( $live_ids ) ) {
+			$t = microtime( true );
 			$this->set_styles_for_post( $post_id, $live_ids );
+			error_log( '[GC Debug][get_styles_by_post] set_styles_for_post(' . $post_id . '): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, ids_count=' . count( $live_ids ) );
 
+			error_log( '[GC Debug][get_styles_by_post] TOTAL(' . $post_id . '): ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 			return $live_ids;
 		}
 
@@ -122,6 +135,7 @@ class Global_Classes_Relations {
 			$this->mark_usage_indexed( $post_id );
 		}
 
+		error_log( '[GC Debug][get_styles_by_post] TOTAL(' . $post_id . '): ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 		return $live_ids;
 	}
 

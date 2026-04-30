@@ -43,15 +43,10 @@ class Import_Utils {
 		$repository = Global_Classes_Repository::make();
 
 		$t = microtime( true );
-		// $existing = $repository->all()->get();
-		error_log( '[GC Import][Timing] repository->all(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
-
-		// $existing_items = $repository->all_labels();
-		$existing_order =  $repository->get_order();
+		$existing_order = $repository->get_order();
 		$existing_id_set = array_flip( $existing_order );
-		$existing_label_to_id = $repository->all_labels();
-		// $existing_label_to_id = self::build_label_to_id_map( $existing_items );
-		// unset( $existing );
+		$existing_label_to_id = self::build_label_to_id_map_from_labels( $repository->all_labels() );
+		error_log( '[GC Import][Timing] load existing: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
 		$order_data = json_decode( file_get_contents( $order_file ), true );
 
@@ -62,7 +57,7 @@ class Import_Utils {
 			);
 		}
 
-		$available_slots = 100 - count( $existing_order );
+		$available_slots = 1000 - count( $existing_order );
 
 		$t = microtime( true );
 		$import_set = self::build_import_set( $order_data, $existing_label_to_id, $conflict_resolution, $available_slots );
@@ -81,17 +76,13 @@ class Import_Utils {
 		error_log( '[GC Import][Timing] Style_Parser::make(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
 		$classes_dir = rtrim( $classes_dir, '/' );
-		// $batch_count = 0;
-		// $dirty = false;
-		// $batch_items = [];
-		// $batch_item_ids = [];
-		// $order = $existing_order;
 
 		$time_file_read = 0;
 		$time_sanitize = 0;
-		$time_add_class = 0;
+		$time_create_post = 0;
 		$count = 0;
 		$order = $existing_order;
+		$new_labels = [];
 
 		foreach ( $import_set as $item_id => $action ) {
 			$class_file = $classes_dir . '/' . $item_id . '.json';
@@ -116,29 +107,24 @@ class Import_Utils {
 				continue;
 			}
 
-			// if ( 'replace' === $action ) {
-			// 	$label_lower = strtolower( $item['label'] ?? '' );
-			// 	$existing_id = $existing_label_to_id[ $label_lower ];
-			// 	$item['id'] = $existing_id;
-			// 	$existing_items[ $existing_id ] = $item;
-			// } else {
-				$new_id = $sanitized_item['id'];
+			$new_id = $sanitized_item['id'];
 
-				if ( isset( $existing_id_set[ $new_id ] ) ) {
-					$new_id = self::generate_unique_id( $existing_id_set );
-					$sanitized_item['id'] = $new_id;
-				}
+			if ( isset( $existing_id_set[ $new_id ] ) ) {
+				$new_id = self::generate_unique_id( $existing_id_set );
+				$sanitized_item['id'] = $new_id;
+			}
 
-				$t = microtime( true );
+			$existing_id_set[ $new_id ] = true;
+
+			$t = microtime( true );
+			$created = \Elementor\Modules\GlobalClasses\Global_Class_Post::create( $new_id, $sanitized_item['label'], $sanitized_item );
+			$time_create_post += microtime( true ) - $t;
+
+			if ( $created ) {
+				clean_post_cache( $created->get_post_id() );
 				$order[] = $new_id;
-				$repository->add_class( $new_id, $sanitized_item['label'], $sanitized_item, $order );
-				$time_add_class += microtime( true ) - $t;
-
-				// $batch_items[ $new_id ] = $item;
-				// $batch_item_ids[] = $new_id;
-				// $order[] = $new_id;
-				// $existing_id_set[ $new_id ] = true;
-			// }
+				$new_labels[ $new_id ] = $sanitized_item['label'];
+			}
 
 			$count++;
 
@@ -146,33 +132,29 @@ class Import_Utils {
 				error_log( '[GC Import][Timing] Progress: ' . $count . '/' . count( $import_set )
 					. ' | file_read=' . round( $time_file_read * 1000, 2 ) . 'ms'
 					. ' | sanitize=' . round( $time_sanitize * 1000, 2 ) . 'ms'
-					. ' | add_class=' . round( $time_add_class * 1000, 2 ) . 'ms'
+					. ' | create_post=' . round( $time_create_post * 1000, 2 ) . 'ms'
 				);
 			}
-
-			// $batch_count++;
-			// $dirty = true;
-
-			// if ( $batch_count >= self::BATCH_SIZE ) {
-			// 	error_log( '[GC Import] Putting batch, ids: ' . implode( ', ', $batch_item_ids ) );
-			// 	$repository->put( $batch_items, $order );
-			// 	$batch_count = 0;
-			// 	$dirty = false;
-			// 	// unset( $batch_items, $batch_order );
-			// 	$batch_items = [];
-			// 	$batch_item_ids = [];
-			// }
 		}
 
-		// if ( $dirty ) {
-		// 	$repository->put( $batch_items, $order );
-		// }
+		if ( ! empty( $new_labels ) ) {
+			$t = microtime( true );
+			$repository->update_order_and_labels( $order, $new_labels );
+			error_log( '[GC Import][Timing] update_order_and_labels: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
+
+			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
+				'added' => array_keys( $new_labels ),
+				'deleted' => [],
+				'modified' => [],
+				'order' => true,
+			] );
+		}
 
 		error_log( '[GC Import][Timing] === FINAL TOTALS ===' );
 		error_log( '[GC Import][Timing] Classes processed: ' . $count );
 		error_log( '[GC Import][Timing] file_read total: ' . round( $time_file_read * 1000, 2 ) . 'ms' );
 		error_log( '[GC Import][Timing] sanitize total: ' . round( $time_sanitize * 1000, 2 ) . 'ms' );
-		error_log( '[GC Import][Timing] add_class total: ' . round( $time_add_class * 1000, 2 ) . 'ms' );
+		error_log( '[GC Import][Timing] create_post total: ' . round( $time_create_post * 1000, 2 ) . 'ms' );
 		error_log( '[GC Import][Timing] TOTAL import_classes: ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 
 		return [
@@ -232,6 +214,16 @@ class Import_Utils {
 			if ( isset( $item['label'] ) ) {
 				$map[ strtolower( $item['label'] ) ] = $id;
 			}
+		}
+
+		return $map;
+	}
+
+	private static function build_label_to_id_map_from_labels( array $id_to_label ): array {
+		$map = [];
+
+		foreach ( $id_to_label as $id => $label ) {
+			$map[ strtolower( $label ) ] = $id;
 		}
 
 		return $map;

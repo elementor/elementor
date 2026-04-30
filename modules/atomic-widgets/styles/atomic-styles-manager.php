@@ -68,7 +68,12 @@ class Atomic_Styles_Manager {
 			return;
 		}
 
+		$t_total = microtime( true );
+		error_log( '[GC Debug][enqueue_styles] post_ids=' . implode( ',', $this->post_ids ) );
+
+		$t = microtime( true );
 		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
+		error_log( '[GC Debug][enqueue_styles] register action: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, registered_keys=' . count( $this->registered_styles_by_key ) );
 
 		$get_styles_memo = new Memo();
 
@@ -81,11 +86,19 @@ class Atomic_Styles_Manager {
 			])
 			->all();
 
+		$t = microtime( true );
 		$this->before_render( $styles_by_key );
+		error_log( '[GC Debug][enqueue_styles] before_render: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
+		$t = microtime( true );
 		$this->render( $styles_by_key );
+		error_log( '[GC Debug][enqueue_styles] render: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
+		$t = microtime( true );
 		$this->after_render( $styles_by_key );
+		error_log( '[GC Debug][enqueue_styles] after_render: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
+
+		error_log( '[GC Debug][enqueue_styles] TOTAL: ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 	}
 
 	private function before_render( array $styles_by_key ) {

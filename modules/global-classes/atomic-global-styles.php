@@ -59,21 +59,34 @@ class Atomic_Global_Styles {
 	}
 
 	private function get_document_global_styles( int $post_id, string $context ): array {
+		$t_total = microtime( true );
+
+		$t = microtime( true );
 		$class_ids = $this->relations->context( $context )->get_styles_by_post( $post_id );
+		error_log( '[GC Debug][get_document_global_styles] get_styles_by_post(' . $post_id . ', ' . $context . '): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, count=' . count( $class_ids ) );
 
 		if ( empty( $class_ids ) ) {
+			error_log( '[GC Debug][get_document_global_styles] TOTAL(' . $post_id . '): ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms (empty)' );
 			return [];
 		}
 
 		$repository = Global_Classes_Repository::make()->context( $context );
+
+		$t = microtime( true );
 		$global_order = $repository->all_labels();
+		error_log( '[GC Debug][get_document_global_styles] all_labels(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, count=' . count( $global_order ) );
+
 		$ordered_class_ids = array_values( array_intersect( array_keys( $global_order ), $class_ids ) );
 
 		if ( empty( $ordered_class_ids ) ) {
+			error_log( '[GC Debug][get_document_global_styles] TOTAL(' . $post_id . '): ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms (no ordered ids)' );
 			return [];
 		}
 
+		$t = microtime( true );
 		$items = $repository->get_by_ids( $ordered_class_ids );
+		error_log( '[GC Debug][get_document_global_styles] get_by_ids(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, requested=' . count( $ordered_class_ids ) . ', got=' . count( $items ) );
+
 		$reversed_order = array_reverse( $ordered_class_ids );
 
 		$styles = [];
@@ -89,6 +102,7 @@ class Atomic_Global_Styles {
 			$styles[] = $item;
 		}
 
+		error_log( '[GC Debug][get_document_global_styles] TOTAL(' . $post_id . '): ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms, styles=' . count( $styles ) );
 		return $styles;
 	}
 

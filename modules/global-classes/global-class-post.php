@@ -14,6 +14,9 @@ class Global_Class_Post {
 	const META_KEY_DATA = '_elementor_global_class_data';
 	const META_KEY_DATA_PREVIEW = '_elementor_global_class_data_preview';
 
+	private static int $find_by_class_id_count = 0;
+	private static bool $shutdown_registered = false;
+
 	private WP_Post $post;
 	private string $context;
 
@@ -37,6 +40,14 @@ class Global_Class_Post {
 	}
 
 	public static function find_by_class_id( string $class_id, string $context = Global_Classes_Repository::CONTEXT_FRONTEND ): ?self {
+		self::$find_by_class_id_count++;
+		if ( ! self::$shutdown_registered ) {
+			self::$shutdown_registered = true;
+			register_shutdown_function( function() {
+				error_log( '[GC Debug][find_by_class_id] TOTAL calls in request: ' . self::$find_by_class_id_count );
+			} );
+		}
+		$t = microtime( true );
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
@@ -44,6 +55,10 @@ class Global_Class_Post {
 			'meta_key' => self::META_KEY_ID,
 			'meta_value' => $class_id,
 		] );
+		$elapsed = round( ( microtime( true ) - $t ) * 1000, 2 );
+		if ( $elapsed > 5 || self::$find_by_class_id_count % 50 === 0 ) {
+			error_log( '[GC Debug][find_by_class_id] #' . self::$find_by_class_id_count . ' query for ' . $class_id . ': ' . $elapsed . 'ms' );
+		}
 
 		if ( empty( $posts ) ) {
 			return null;

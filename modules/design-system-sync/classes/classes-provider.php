@@ -31,19 +31,20 @@ class Classes_Provider {
 	}
 
 	public static function get_synced_classes(): array {
-		$synced_classes = [];
+		return [];
+		// $synced_classes = [];
 
-		Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
-			->each_item( static function ( array $class ) use ( &$synced_classes ) {
-				if ( empty( $class['sync_to_v3'] ) ) {
-					return;
-				}
+		// Global_Classes_Repository::make()
+		// 	->context( Global_Classes_Repository::CONTEXT_FRONTEND )
+		// 	->each_item( static function ( array $class ) use ( &$synced_classes ) {
+		// 		if ( empty( $class['sync_to_v3'] ) ) {
+		// 			return;
+		// 		}
 
-				$synced_classes[ $class['id'] ] = $class;
-			} );
+		// 		$synced_classes[ $class['id'] ] = $class;
+		// 	} );
 
-		return $synced_classes;
+		// return $synced_classes;
 	}
 
 	public static function clear_cache() {
@@ -96,6 +97,7 @@ class Classes_Provider {
 	}
 
 	public static function get_typography_classes(): array {
+		return [];
 		$synced_classes = self::get_synced_classes();
 
 		if ( empty( $synced_classes ) ) {
