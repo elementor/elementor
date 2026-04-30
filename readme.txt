@@ -357,7 +357,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 = 4.0.5 - 2026-04-30 =
 
-* Security Fix: Improved code security enforcement in input handling
+* Security Fix: Improved code security enforcement in input handlings
 
 = 4.0.4 - 2026-04-28 =
 
