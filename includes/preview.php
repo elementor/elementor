@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\App;
 use Elementor\Core\Settings\Manager as SettingsManager;
+use Elementor\Modules\DynamicAssetsManager\Module as Dynamic_Assets_Manager_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -249,7 +250,12 @@ class Preview extends App {
 
 		Plugin::$instance->elements_manager->enqueue_elements_styles();
 
-		Plugin::$instance->widgets_manager->enqueue_widgets_styles();
+		if ( Dynamic_Assets_Manager_Module::preview_should_use_selective_widget_assets() ) {
+			Dynamic_Assets_Manager_Module::enqueue_preview_managed_styles( $this->post_id );
+			Dynamic_Assets_Manager_Module::enqueue_unmanaged_widgets_styles();
+		} else {
+			Plugin::$instance->widgets_manager->enqueue_widgets_styles();
+		}
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
@@ -306,7 +312,13 @@ class Preview extends App {
 	private function enqueue_scripts() {
 		Plugin::$instance->frontend->register_scripts();
 
-		Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+		if ( Dynamic_Assets_Manager_Module::preview_should_use_selective_widget_assets() ) {
+			Dynamic_Assets_Manager_Module::enqueue_preview_managed_scripts( $this->post_id );
+			Dynamic_Assets_Manager_Module::enqueue_unmanaged_widgets_scripts();
+		} else {
+			Plugin::$instance->widgets_manager->enqueue_widgets_scripts();
+		}
+
 		Plugin::$instance->elements_manager->enqueue_elements_scripts();
 
 		$suffix = Utils::is_script_debug() ? '' : '.min';

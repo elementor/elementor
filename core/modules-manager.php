@@ -78,6 +78,8 @@ class Modules_Manager {
 	 */
 	public function get_modules_names() {
 		return [
+			'dynamic-assets-manager',
+
 			'admin-bar',
 			'history',
 			'library',
