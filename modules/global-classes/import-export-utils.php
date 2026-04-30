@@ -80,12 +80,16 @@ class Import_Export_Utils {
 		error_log( '[GC Import][Timing] Style_Parser::make(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
 		$classes_dir = rtrim( $classes_dir, '/' );
+		// $batch_count = 0;
+		// $dirty = false;
+		// $batch_items = [];
+		// $batch_item_ids = [];
+		// $order = $existing_order;
 
 		$time_file_read = 0;
 		$time_sanitize = 0;
-		$time_bulk_insert = 0;
+		$time_add_class = 0;
 		$count = 0;
-		$batch = [];
 
 		foreach ( $import_set as $item_id => $action ) {
 			$class_file = $classes_dir . '/' . $item_id . '.json';
@@ -110,52 +114,62 @@ class Import_Export_Utils {
 				continue;
 			}
 
-			$new_id = $sanitized_item['id'];
+			// if ( 'replace' === $action ) {
+			// 	$label_lower = strtolower( $item['label'] ?? '' );
+			// 	$existing_id = $existing_label_to_id[ $label_lower ];
+			// 	$item['id'] = $existing_id;
+			// 	$existing_items[ $existing_id ] = $item;
+			// } else {
+				$new_id = $sanitized_item['id'];
 
-			if ( isset( $existing_id_set[ $new_id ] ) ) {
-				$new_id = self::generate_unique_id( $existing_id_set );
-				$sanitized_item['id'] = $new_id;
-			}
+				if ( isset( $existing_id_set[ $new_id ] ) ) {
+					$new_id = self::generate_unique_id( $existing_id_set );
+					$sanitized_item['id'] = $new_id;
+				}
 
-			$existing_id_set[ $new_id ] = true;
+				$t = microtime( true );
+				$repository->add_class( $new_id, $sanitized_item['label'], $sanitized_item );
+				$time_add_class += microtime( true ) - $t;
 
-			$batch[] = [
-				'class_id' => $new_id,
-				'label' => $sanitized_item['label'],
-				'data' => [
-					'type' => $sanitized_item['type'] ?? 'class',
-					'variants' => $sanitized_item['variants'] ?? [],
-				],
-			];
+				// $batch_items[ $new_id ] = $item;
+				// $batch_item_ids[] = $new_id;
+				// $order[] = $new_id;
+				// $existing_id_set[ $new_id ] = true;
+			// }
 
 			$count++;
 
-			if ( count( $batch ) >= self::BATCH_SIZE ) {
-				$t = microtime( true );
-				$repository->bulk_add_classes( $batch );
-				$time_bulk_insert += microtime( true ) - $t;
-
+			if ( $count % 100 === 0 ) {
 				error_log( '[GC Import][Timing] Progress: ' . $count . '/' . count( $import_set )
 					. ' | file_read=' . round( $time_file_read * 1000, 2 ) . 'ms'
 					. ' | sanitize=' . round( $time_sanitize * 1000, 2 ) . 'ms'
-					. ' | bulk_insert=' . round( $time_bulk_insert * 1000, 2 ) . 'ms'
+					. ' | add_class=' . round( $time_add_class * 1000, 2 ) . 'ms'
 				);
-
-				$batch = [];
 			}
+
+			// $batch_count++;
+			// $dirty = true;
+
+			// if ( $batch_count >= self::BATCH_SIZE ) {
+			// 	error_log( '[GC Import] Putting batch, ids: ' . implode( ', ', $batch_item_ids ) );
+			// 	$repository->put( $batch_items, $order );
+			// 	$batch_count = 0;
+			// 	$dirty = false;
+			// 	// unset( $batch_items, $batch_order );
+			// 	$batch_items = [];
+			// 	$batch_item_ids = [];
+			// }
 		}
 
-		if ( ! empty( $batch ) ) {
-			$t = microtime( true );
-			$repository->bulk_add_classes( $batch );
-			$time_bulk_insert += microtime( true ) - $t;
-		}
+		// if ( $dirty ) {
+		// 	$repository->put( $batch_items, $order );
+		// }
 
 		error_log( '[GC Import][Timing] === FINAL TOTALS ===' );
 		error_log( '[GC Import][Timing] Classes processed: ' . $count );
 		error_log( '[GC Import][Timing] file_read total: ' . round( $time_file_read * 1000, 2 ) . 'ms' );
 		error_log( '[GC Import][Timing] sanitize total: ' . round( $time_sanitize * 1000, 2 ) . 'ms' );
-		error_log( '[GC Import][Timing] bulk_insert total: ' . round( $time_bulk_insert * 1000, 2 ) . 'ms' );
+		error_log( '[GC Import][Timing] add_class total: ' . round( $time_add_class * 1000, 2 ) . 'ms' );
 		error_log( '[GC Import][Timing] TOTAL import_classes: ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 
 		return [
