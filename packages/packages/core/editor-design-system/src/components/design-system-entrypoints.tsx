@@ -11,7 +11,8 @@ import {
 	getActiveDesignSystemTab,
 	setPendingDesignSystemTab,
 } from '../initial-tab';
-import { DESIGN_SYSTEM_V1_READY_ROUTE } from '../v1-default-panel-route';
+
+const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
 
 const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
@@ -79,7 +80,7 @@ export function DesignSystemEntrypoints() {
 	}, [ readyToOpenFromEvent, open ] );
 
 	useEffect( () => {
-		return listenTo( routeOpenEvent( DESIGN_SYSTEM_V1_READY_ROUTE ), () => {
+		return listenTo( routeOpenEvent( V1_ELEMENTS_PANEL_ROUTE ), () => {
 			const tab = pendingTabRef.current;
 			if ( tab ) {
 				pendingTabRef.current = null;
@@ -93,7 +94,7 @@ export function DesignSystemEntrypoints() {
 		const bind = ( eventName: string, tab: DesignSystemTab ) => {
 			const handler = () => {
 				pendingTabRef.current = tab;
-				openRoute( DESIGN_SYSTEM_V1_READY_ROUTE );
+				openRoute( V1_ELEMENTS_PANEL_ROUTE );
 			};
 
 			window.addEventListener( eventName, handler );
@@ -134,7 +135,7 @@ export function DesignSystemEntrypoints() {
 			return;
 		}
 
-		const cleanup = listenTo( routeOpenEvent( DESIGN_SYSTEM_V1_READY_ROUTE ), () => {
+		const cleanup = listenTo( routeOpenEvent( V1_ELEMENTS_PANEL_ROUTE ), () => {
 			if ( hasOpenedFromUrl.current ) {
 				return;
 			}
