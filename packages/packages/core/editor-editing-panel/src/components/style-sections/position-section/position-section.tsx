@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { type NumberPropValue, type SizePropValue, type StringPropValue } from '@elementor/editor-props';
 import { useSessionStorage } from '@elementor/session';
 import { styled } from '@elementor/ui';
@@ -38,44 +38,30 @@ const DEPENDENT_PROP_NAMES: Array< keyof DependentValues > = [
 
 export const PositionSection = () => {
 	const { value: position } = useStylesField< StringPropValue >( 'position', withHistoryLabel( POSITION_LABEL ) );
+	const positionPrevRef = useRef( position );
 	const { values: dependentValues, setValues: setDependentValues } =
 		useStylesFields< DependentValues >( DEPENDENT_PROP_NAMES );
 
 	const [ savedDependentValues, saveToHistory, clearHistory ] = usePersistDimensions();
 
-	const clearPositionDependentProps = useCallback( () => {
-		if ( ! hasDependentValues( dependentValues ) ) {
-			return;
-		}
-
-		saveToHistory( extractDimensions( dependentValues ) );
-		setDependentValues( extractDimensions( null ), withHistoryLabel( DIMENSIONS_LABEL ) );
-	}, [ dependentValues, saveToHistory, setDependentValues ] );
-
 	useEffect( () => {
-		if ( position === null ) {
-			clearPositionDependentProps();
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ position?.value ] );
-
-	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
-		if ( newPosition === POSITION_STATIC ) {
-			clearPositionDependentProps();
-
-			return;
+		if ( position && position?.value === POSITION_STATIC && hasDependentValues( dependentValues ) ) {
+			saveToHistory( extractDimensions( dependentValues ) );
 		}
 
-		if ( previousPosition === POSITION_STATIC && savedDependentValues ) {
+		if ( positionPrevRef.current?.value === POSITION_STATIC ) {
 			setDependentValues( { ...savedDependentValues }, withHistoryLabel( DIMENSIONS_LABEL ) );
 
 			clearHistory();
 		}
-	};
+
+		positionPrevRef.current = position;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ position?.value ] );
 
 	return (
 		<StyledSectionContent>
-			<PositionField onChange={ onPositionChange } />
+			<PositionField />
 			<DimensionsField />
 			<ZIndexField />
 			<PanelDivider />
@@ -96,20 +82,6 @@ const withHistoryLabel = ( name: string ) => {
 	return {
 		history: { propDisplayName: name },
 	};
-};
-
-const toNonNullValues = ( values: DependentValues | null ): Partial< DependentValues > | null => {
-	if ( ! values ) {
-		return null;
-	}
-
-	const nonNullEntries = Object.entries( values ).filter( ( [ , v ] ) => v !== null );
-
-	if ( nonNullEntries.length === 0 ) {
-		return null;
-	}
-
-	return Object.fromEntries( nonNullEntries );
 };
 
 const hasDependentValues = ( values?: DependentValues | null ) => {

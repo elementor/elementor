@@ -91,16 +91,16 @@ class Style_Schema {
 
 	private static function get_position_props() {
 		$non_static_dependency = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
-			->where( [
-				'operator' => 'exists',
-				'path' => [ 'position' ]
-			] )
-		  ->where( [
-				'operator' => 'ne',
-				'path' => [ 'position' ],
-				'value' => 'static'
-		  ] )
-		  ->get();
+		->where( [
+			'operator' => 'exists',
+			'path' => [ 'position' ],
+		] )
+		->where( [
+			'operator' => 'ne',
+			'path' => [ 'position' ],
+			'value' => 'static',
+		] )
+		->get();
 
 		return [
 			'position' => String_Prop_Type::make()->enum( [
