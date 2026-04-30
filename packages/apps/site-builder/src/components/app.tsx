@@ -119,7 +119,6 @@ export function App() {
 				if ( window.top && exitTo && typeof exitTo === 'string' ) {
 					window.top.location.href = exitTo;
 				}
-				return;
 			}
 		},
 		[ allowedOrigin ]
