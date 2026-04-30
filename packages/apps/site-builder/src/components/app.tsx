@@ -115,7 +115,10 @@ export function App() {
 			}
 
 			if ( type === 'element-selector/close' ) {
-				window.top.location.href = getConfig()?.exitTo ?? '';
+				const exitTo = getConfig()?.exitTo;
+				if ( window.top && exitTo && typeof exitTo === 'string' ) {
+					window.top.location.href = exitTo;
+				}
 				return;
 			}
 		},
