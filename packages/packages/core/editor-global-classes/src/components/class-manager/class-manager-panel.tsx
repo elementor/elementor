@@ -217,13 +217,7 @@ function ClassManagerPanelRoot( {
 
 	const searchFiltersBlock = (
 		<Box px={ 2 } pb={ 1 }>
-			<Stack
-				direction="row"
-				alignItems="center"
-				justifyContent="space-between"
-				gap={ 0.5 }
-				sx={ { pb: 0.5 } }
-			>
+			<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 0.5 } sx={ { pb: 0.5 } }>
 				<Box sx={ embedded ? { flexGrow: 1, minWidth: 0 } : { flexGrow: 1 } }>
 					<ClassManagerSearch />
 				</Box>

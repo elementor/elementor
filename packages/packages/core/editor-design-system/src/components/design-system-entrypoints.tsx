@@ -6,11 +6,7 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import { usePanelActions, usePanelStatus } from '../design-system-panel';
-import {
-	type DesignSystemTab,
-	getActiveDesignSystemTab,
-	setPendingDesignSystemTab,
-} from '../initial-tab';
+import { type DesignSystemTab, getActiveDesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
 
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
 
@@ -56,9 +52,7 @@ export function DesignSystemEntrypoints() {
 				return;
 			}
 
-			window.dispatchEvent(
-				new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES )
-			);
+			window.dispatchEvent( new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES ) );
 		};
 
 		window.addEventListener( EVENT_TOGGLE, handler as EventListener );
