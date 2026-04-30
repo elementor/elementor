@@ -128,7 +128,6 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								display: 'flex',
 								flexDirection: 'column',
 								overflow: 'hidden',
-								/* Space below tab strip — unified for Variables & Classes embedded UIs (standalone panels unchanged). */
 								pt: 1,
 							} }
 						>

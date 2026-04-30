@@ -32,7 +32,6 @@ type VariableManagerCreateMenuProps = {
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
 	disabled?: boolean;
 	menuState: PopupState;
-	/** Outlined trigger — used in Design System toolbar row next to search. */
 	outlinedTrigger?: boolean;
 };
 
