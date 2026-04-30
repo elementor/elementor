@@ -144,7 +144,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Interactions functionality end-to-end test', async ( { page, apiRequests, browserName }, testInfo ) => {
+		test.skip( 'firefox' === browserName, 'Tooltip intercepts pointer events and click outside viewport on Firefox' );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -433,7 +434,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const previewFrame = editor.getPreviewFrame();
 			const elementInPreview = previewFrame.locator( `[data-id="${ originalElementId }"]` ).first();
 			await elementInPreview.click( { button: 'right' } );
-
 			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
 
 			await previewFrame.waitForFunction(

@@ -12,7 +12,7 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page, apiR
 	await editor.setDisplayMode( 'dark' );
 	const navigator = editor.page.locator( '#elementor-navigator' );
 	await navigator.locator( '.elementor-navigator__element__list-toggle' ).click();
-
+	await navigator.waitFor( { state: 'visible' } );
 	// Assert
 	expect( await navigator.screenshot( {
 		type: 'jpeg',

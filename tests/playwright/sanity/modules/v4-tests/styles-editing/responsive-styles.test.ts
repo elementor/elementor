@@ -1,4 +1,4 @@
-import { BrowserContext, expect } from '@playwright/test';
+import { BrowserContext, expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
@@ -125,19 +125,22 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 		} );
 
 		await test.step( 'Verify styles on frontend with viewport changes', async () => {
-			await editor.publishAndViewPage();
+			const frontend = await openPublishedPageForAssertions();
+			try {
+				const publishedElement = frontend.locator( selector );
+				await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 
-			const publishedElement = editor.page.locator( selector );
-			await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
+				await frontend.setViewportSize( { width: 1400, height: 900 } );
+				await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.desktop }px` );
 
-			await editor.page.setViewportSize( { width: 1400, height: 900 } );
-			await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.desktop }px` );
+				await frontend.setViewportSize( { width: 800, height: 600 } );
+				await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.tablet }px` );
 
-			await editor.page.setViewportSize( { width: 800, height: 600 } );
-			await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.tablet }px` );
-
-			await editor.page.setViewportSize( { width: 375, height: 667 } );
-			await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.mobile }px` );
+				await frontend.setViewportSize( { width: 375, height: 667 } );
+				await expect( publishedElement ).toHaveCSS( 'font-size', `${ BREAKPOINT_FONT_SIZES.mobile }px` );
+			} finally {
+				await frontend.close();
+			}
 		} );
 	} );
 
@@ -167,15 +170,18 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 		} );
 
 		await test.step( 'Verify styles on frontend', async () => {
-			await editor.publishAndViewPage();
+			const frontend = await openPublishedPageForAssertions();
+			try {
+				const publishedElement = frontend.locator( selector );
+				await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 
-			const publishedElement = editor.page.locator( selector );
-			await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
-
-			await publishedElement.hover();
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
+				await publishedElement.hover();
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
+			} finally {
+				await frontend.close();
+			}
 		} );
 	} );
 
@@ -213,20 +219,23 @@ test.describe( 'Responsive Styles @v4-tests', () => {
 		const selector = '.e-button-base';
 
 		await test.step( 'Verify combined styles on frontend', async () => {
-			await editor.publishAndViewPage();
+			const frontend = await openPublishedPageForAssertions();
+			try {
+				const publishedElement = frontend.locator( selector );
+				await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
 
-			const publishedElement = editor.page.locator( selector );
-			await expect( publishedElement ).toBeVisible( { timeout: timeouts.navigation } );
+				await frontend.setViewportSize( { width: 1400, height: 900 } );
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+				await publishedElement.hover();
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
 
-			await editor.page.setViewportSize( { width: 1400, height: 900 } );
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
-			await publishedElement.hover();
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 255, 0)' );
-
-			await editor.page.setViewportSize( { width: 375, height: 667 } );
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
-			await publishedElement.hover();
-			await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+				await frontend.setViewportSize( { width: 375, height: 667 } );
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(0, 0, 255)' );
+				await publishedElement.hover();
+				await expect( publishedElement ).toHaveCSS( 'background-color', 'rgb(255, 255, 0)' );
+			} finally {
+				await frontend.close();
+			}
 		} );
 	} );
 
