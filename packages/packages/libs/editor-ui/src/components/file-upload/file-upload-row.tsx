@@ -3,13 +3,14 @@ import { XIcon } from '@elementor/icons';
 import { Card, IconButton, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { uploadBorderSx } from './upload-border-sx';
+import { fileUploadBorderSx } from './upload-border-sx';
 
 const BYTES_PER_KILOBYTE = 1024;
 
 type Props = {
 	file: File;
 	onRemove: () => void;
+	statusLabel?: string;
 };
 
 const formatFileSize = ( sizeInBytes: number ) => {
@@ -17,9 +18,9 @@ const formatFileSize = ( sizeInBytes: number ) => {
 	return `${ kilobytes }kb`;
 };
 
-export const UploadedFileRow = ( { file, onRemove }: Props ) => {
+export const FileUploadRow = ( { file, onRemove, statusLabel }: Props ) => {
 	return (
-		<Card variant="outlined" sx={ uploadBorderSx }>
+		<Card variant="outlined" sx={ fileUploadBorderSx }>
 			<Stack
 				direction="row"
 				alignItems="center"
@@ -33,7 +34,7 @@ export const UploadedFileRow = ( { file, onRemove }: Props ) => {
 						{ file.name }
 					</Typography>
 					<Typography variant="caption" color="text.secondary" noWrap>
-						{ formatFileSize( file.size ) } · { __( 'Complete', 'elementor' ) }
+						{ formatFileSize( file.size ) } · { statusLabel ?? __( 'Complete', 'elementor' ) }
 					</Typography>
 				</Stack>
 				<IconButton size="small" onClick={ onRemove } aria-label={ __( 'Remove file', 'elementor' ) }>

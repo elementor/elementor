@@ -1,4 +1,4 @@
-export const uploadBorderSx = {
+export const fileUploadBorderSx = {
 	position: 'relative',
 	border: 0,
 	minHeight: 152,

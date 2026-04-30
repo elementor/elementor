@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { notify } from '@elementor/editor-notifications';
+import { FileUploadDropzone, FileUploadRow } from '@elementor/editor-ui';
 import { Button, Dialog, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ConflictOptions } from './components/conflict-options';
-import { UploadDropzone } from './components/upload-dropzone';
-import { UploadedFileRow } from './components/uploaded-file-row';
 import { useDialogState } from './hooks/use-dialog-state';
 import { useImportRequest } from './hooks/use-import-request';
 import { importDialogState } from './state';
+
+const ALLOWED_FILE_TYPES = [ 'application/zip' ];
+const FILE_INPUT_ACCEPT = 'application/zip,.zip';
 
 const IMPORT_STARTED_NOTIFICATION_ID = 'design-system-import-started';
 
@@ -37,7 +39,11 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			id: IMPORT_STARTED_NOTIFICATION_ID,
 			type: 'info',
 			message: (
-				<>{ __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ) }</>
+				<>
+					<strong>{ __( 'Import in Progress.', 'elementor' ) }</strong>
+					&nbsp;
+					{ __( 'You will be notified when the import is complete.', 'elementor' ) }
+				</>
 			),
 		} );
 
@@ -56,9 +62,15 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			<DialogContent>
 				<Stack spacing={ 3 }>
 					{ state.file ? (
-						<UploadedFileRow file={ state.file } onRemove={ () => setFile( null ) } />
+						<FileUploadRow file={ state.file } onRemove={ () => setFile( null ) } />
 					) : (
-						<UploadDropzone onFileSelected={ setFile } />
+						<FileUploadDropzone
+							onFileSelected={ setFile }
+							allowedFileTypes={ ALLOWED_FILE_TYPES }
+							accept={ FILE_INPUT_ACCEPT }
+							regionLabel={ __( 'Design system file dropzone', 'elementor' ) }
+							helperText={ __( 'zip (max. 3MB)', 'elementor' ) }
+						/>
 					) }
 					<ConflictOptions value={ state.conflictStrategy } onChange={ setConflictStrategy } />
 				</Stack>

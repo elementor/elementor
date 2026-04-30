@@ -4,20 +4,31 @@ import { UploadIcon } from '@elementor/icons';
 import { Card, Link, Stack, Typography, useUnstableDropZone } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { uploadBorderSx } from './upload-border-sx';
-
-const ALLOWED_FILE_TYPES = [ 'application/zip' ] as const;
-const FILE_INPUT_ACCEPT = 'application/zip,.zip';
+import { fileUploadBorderSx } from './upload-border-sx';
 
 type Props = {
 	onFileSelected: ( file: File ) => void;
+	allowedFileTypes: string[];
+	accept: string;
+	regionLabel?: string;
+	primaryLabel?: string;
+	secondaryLabel?: string;
+	helperText?: string;
 };
 
-export const UploadDropzone = ( { onFileSelected }: Props ) => {
+export const FileUploadDropzone = ( {
+	onFileSelected,
+	allowedFileTypes,
+	accept,
+	regionLabel,
+	primaryLabel,
+	secondaryLabel,
+	helperText,
+}: Props ) => {
 	const fileInputRef = useRef< HTMLInputElement >( null );
 
 	const { getDropZoneProps } = useUnstableDropZone( {
-		allowedFileTypes: [ ...ALLOWED_FILE_TYPES ],
+		allowedFileTypes,
 		onChange: ( { valid } ) => {
 			if ( valid[ 0 ] ) {
 				onFileSelected( valid[ 0 ] );
@@ -41,34 +52,30 @@ export const UploadDropzone = ( { onFileSelected }: Props ) => {
 		<Card
 			variant="outlined"
 			role="region"
-			aria-label={ __( 'Design system file dropzone', 'elementor' ) }
+			aria-label={ regionLabel ?? __( 'File dropzone', 'elementor' ) }
 			onDrop={ dropZoneProps.onDrop }
 			onDragEnter={ dropZoneProps.onDragEnter }
 			onDragLeave={ dropZoneProps.onDragLeave }
 			onDragOver={ dropZoneProps.onDragOver }
-			sx={ uploadBorderSx }
+			sx={ fileUploadBorderSx }
 		>
 			<Stack alignItems="center" spacing={ 1 } padding={ 3 }>
 				<UploadIcon fontSize="medium" />
 				<Stack direction="row" spacing={ 0.5 } alignItems="center">
 					<Link component="button" type="button" underline="always" onClick={ handleBrowseClick }>
 						<Typography variant="body1" component="span">
-							{ __( 'Upload file', 'elementor' ) }
+							{ primaryLabel ?? __( 'Upload file', 'elementor' ) }
 						</Typography>
 					</Link>
-					<Typography variant="body1">{ __( 'or drag and drop', 'elementor' ) }</Typography>
+					<Typography variant="body1">{ secondaryLabel ?? __( 'or drag and drop', 'elementor' ) }</Typography>
 				</Stack>
-				<Typography variant="caption" color="text.secondary">
-					{ __( 'zip (max. 3MB)', 'elementor' ) }
-				</Typography>
+				{ helperText ? (
+					<Typography variant="caption" color="text.secondary">
+						{ helperText }
+					</Typography>
+				) : null }
 			</Stack>
-			<input
-				ref={ fileInputRef }
-				type="file"
-				accept={ FILE_INPUT_ACCEPT }
-				hidden
-				onChange={ handleFileInputChange }
-			/>
+			<input ref={ fileInputRef } type="file" accept={ accept } hidden onChange={ handleFileInputChange } />
 		</Card>
 	);
 };
