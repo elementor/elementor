@@ -3,38 +3,40 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Plugin;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Global_Classes_Labels {
+	use Has_Kit_Dependency;
+	use Has_Preview_Context;
 
 	const META_KEY_FRONTEND = '_elementor_global_classes_labels';
 	const META_KEY_PREVIEW = '_elementor_global_classes_labels_preview';
 
 	const META_KEY = self::META_KEY_FRONTEND;
 
-	private Kit $kit;
-
-	private string $context = Global_Classes_Repository::CONTEXT_FRONTEND;
+	protected array $context_keys = [
+		'labels' => [
+			'frontend' => self::META_KEY_FRONTEND,
+			'preview' => self::META_KEY_PREVIEW,
+		],
+	];
 
 	private ?array $cache = null;
 
-	private function __construct( Kit $kit ) {
-		$this->kit = $kit;
+	private function __construct() {
 	}
 
 	public static function make( Kit $kit ): self {
-		return new self( $kit );
+		return ( new self() )->set_kit( $kit );
 	}
 
-	public function context( string $context ): self {
-		$this->context = $context;
+	protected function on_preview_change(): void {
 		$this->cache = null;
-
-		return $this;
 	}
 
 	public function get_labels(): array {
@@ -51,10 +53,8 @@ class Global_Classes_Labels {
 		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
 		$map = $this->get_labels();
 
-		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $this->context ) {
-			$frontend_map = self::make( $this->get_kit() )
-				->context( Global_Classes_Repository::CONTEXT_FRONTEND )
-				->get_labels();
+		if ( $this->is_preview() ) {
+			$frontend_map = self::make( $this->get_kit() )->get_labels();
 			foreach ( $order as $id ) {
 				if ( ! isset( $map[ $id ] ) && isset( $frontend_map[ $id ] ) ) {
 					$map[ $id ] = $frontend_map[ $id ];
@@ -80,16 +80,10 @@ class Global_Classes_Labels {
 			return false;
 		}
 
-		$result = $kit->update_meta( $this->meta_key(), $id_to_label );
+		$result = $kit->update_meta( $this->get_context_key( 'labels' ), $id_to_label );
 		$this->cache = $id_to_label;
 
 		return false !== $result;
-	}
-
-	private function meta_key(): string {
-		return Global_Classes_Repository::CONTEXT_PREVIEW === $this->context
-			? self::META_KEY_PREVIEW
-			: self::META_KEY_FRONTEND;
 	}
 
 	private function read_stored(): array {
@@ -105,17 +99,9 @@ class Global_Classes_Labels {
 			return [];
 		}
 
-		$raw = $kit->get_meta( $this->meta_key() );
+		$raw = $kit->get_meta( $this->get_context_key( 'labels' ) );
 		$this->cache = is_array( $raw ) ? $raw : [];
 
 		return $this->cache;
-	}
-
-	private function get_kit(): ?Kit {
-		if ( ! $this->kit ) {
-			$this->kit = Plugin::$instance->kits_manager->get_active_kit();
-		}
-
-		return $this->kit;
 	}
 }

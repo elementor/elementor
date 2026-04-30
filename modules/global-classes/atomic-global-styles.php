@@ -59,13 +59,19 @@ class Atomic_Global_Styles {
 	}
 
 	private function get_document_global_styles( int $post_id, string $context ): array {
-		$class_ids = $this->relations->context( $context )->get_styles_by_post( $post_id );
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
+		$class_ids = $this->relations->set_preview( $is_preview )->get_styles_by_post( $post_id );
 
 		if ( empty( $class_ids ) ) {
 			return [];
 		}
 
-		$repository = Global_Classes_Repository::make()->context( $context );
+		$repository = Global_Classes_Repository::make();
+
+		if ( $is_preview ) {
+			$repository->set_preview( true );
+		}
+
 		$global_order = $repository->all_labels();
 		$ordered_class_ids = array_values( array_intersect( array_keys( $global_order ), $class_ids ) );
 
@@ -126,9 +132,10 @@ class Atomic_Global_Styles {
 		}
 
 		$document_ids = [];
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 
 		foreach ( $affected as $class_id ) {
-			foreach ( $this->relations->context( $context )->get_posts_by_style( $class_id ) as $doc_id ) {
+			foreach ( $this->relations->set_preview( $is_preview )->get_posts_by_style( $class_id ) as $doc_id ) {
 				$document_ids[ $doc_id ] = true;
 			}
 		}
@@ -146,8 +153,8 @@ class Atomic_Global_Styles {
 
 	private function invalidate_cache_for_class( string $class_id, ?string $context = null ) {
 		$document_ids = array_values( array_unique( array_merge(
-			$this->relations->context( Global_Classes_Repository::CONTEXT_FRONTEND )->get_posts_by_style( $class_id ),
-			$this->relations->context( Global_Classes_Repository::CONTEXT_PREVIEW )->get_posts_by_style( $class_id )
+			( new Global_Classes_Relations() )->get_posts_by_style( $class_id ),
+			( new Global_Classes_Relations() )->set_preview( true )->get_posts_by_style( $class_id )
 		) ) );
 
 		foreach ( $document_ids as $doc_id ) {
@@ -176,9 +183,13 @@ class Atomic_Global_Styles {
 	private function transform_classes_names( $ids ) {
 		$context = $this->get_context();
 
-		$labels = Global_Classes_Repository::make()
-			->context( $context )
-			->all_labels();
+		$repository = Global_Classes_Repository::make();
+
+		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $context ) {
+			$repository->set_preview( true );
+		}
+
+		$labels = $repository->all_labels();
 
 		return array_map(
 			static function( $id ) use ( $labels ) {

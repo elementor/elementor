@@ -2,13 +2,16 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Plugin;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Global_Classes_Repository {
+	use Has_Kit_Dependency;
+	use Has_Preview_Context;
 
 	const META_KEY_FRONTEND = '_elementor_global_classes';
 	const META_KEY_PREVIEW = '_elementor_global_classes_preview';
@@ -19,25 +22,31 @@ class Global_Classes_Repository {
 	const READ_BATCH_SIZE = 100;
 	const PERSIST_BATCH_SIZE = 100;
 
-	private string $context = self::CONTEXT_FRONTEND;
+	protected array $context_keys = [
+		'event' => [
+			'frontend' => self::CONTEXT_FRONTEND,
+			'preview' => self::CONTEXT_PREVIEW,
+		],
+		'meta_key' => [
+			'frontend' => self::META_KEY_FRONTEND,
+			'preview' => self::META_KEY_PREVIEW,
+		],
+	];
 
 	private ?Global_Classes $cache = null;
 
-	private ?Kit $kit = null;
-
 	public function __construct( ?Kit $kit = null ) {
-		$this->kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
+		if ( null !== $kit ) {
+			$this->set_kit( $kit );
+		}
 	}
 
 	public static function make( ?Kit $kit = null ): Global_Classes_Repository {
 		return new self( $kit );
 	}
 
-	public function context( string $context ): self {
-		$this->context = $context;
+	protected function on_preview_change(): void {
 		$this->cache = null;
-
-		return $this;
 	}
 
 	public function all( bool $force = false ): Global_Classes {
@@ -51,13 +60,15 @@ class Global_Classes_Repository {
 	}
 
 	public function all_labels(): array {
-		return Global_Classes_Labels::make( $this->kit )
-			->context( $this->context )
-			->get_ordered_labels();
+		return $this->labels()->get_ordered_labels();
+	}
+
+	private function labels(): Global_Classes_Labels {
+		return Global_Classes_Labels::make( $this->get_kit() )->set_preview( $this->is_preview() );
 	}
 
 	public function get( string $class_id ): ?array {
-		$post = Global_Class_Post::find_by_class_id( $class_id, $this->context );
+		$post = Global_Class_Post::find_by_class_id( $class_id, $this->is_preview() );
 
 		return $post ? $post->to_array() : null;
 	}
@@ -78,9 +89,9 @@ class Global_Classes_Repository {
 	}
 
 	public function apply_changes( array $touched_items, array $changes, array $order ): void {
-		$labels = Global_Classes_Labels::make( $this->kit )->context( $this->context );
+		$labels = $this->labels();
 		$before = $labels->get_labels();
-		$is_preview = self::CONTEXT_PREVIEW === $this->context;
+		$is_preview = $this->is_preview();
 		$to_delete = $changes['deleted'] ?? [];
 		$to_create = $changes['added'] ?? [];
 		$to_update = $changes['modified'] ?? [];
@@ -97,14 +108,14 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->kit );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() );
 		$classes_order->set_order( $order );
 		$labels->set_labels( $final_label_map );
 
 		if ( ! $is_preview ) {
 			$ids_to_clear_preview = array_values( array_diff( $order, $to_create ) );
 			$this->each_class_id_batch( $ids_to_clear_preview, function ( string $class_id ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_FRONTEND );
+				$post = Global_Class_Post::find_by_class_id( $class_id, false );
 				if ( $post ) {
 					delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_DATA_PREVIEW );
 					clean_post_cache( $post->get_post_id() );
@@ -115,7 +126,7 @@ class Global_Classes_Repository {
 		$this->cache = null;
 		$this->flush_runtime_cache();
 
-		do_action( 'elementor/global_classes/update', $this->context, [
+		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), [
 			'added' => $to_create,
 			'deleted' => $to_delete,
 			'modified' => $to_update,
@@ -124,7 +135,7 @@ class Global_Classes_Repository {
 	}
 
 	public function each_item( callable $cb, int $batch_size = self::READ_BATCH_SIZE ): void {
-		$order = Global_Classes_Order::make( $this->kit )->get_order();
+		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
 
 		if ( empty( $order ) ) {
 			return;
@@ -166,11 +177,11 @@ class Global_Classes_Repository {
 
 		$this->cache = null;
 
-		do_action( 'elementor/global_classes/update', $this->context, $changes );
+		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
 	}
 
 	private function all_from_posts(): Global_Classes {
-		$classes_order = Global_Classes_Order::make( $this->kit );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() );
 		$order = $classes_order->get_order();
 
 		if ( empty( $order ) ) {
@@ -190,7 +201,7 @@ class Global_Classes_Repository {
 	}
 
 	private function put_to_posts( array $items, array $order, array $current_value ): void {
-		$is_preview = self::CONTEXT_PREVIEW === $this->context;
+		$is_preview = $this->is_preview();
 		$current_ids = array_keys( $current_value['items'] );
 		$new_ids = array_keys( $items );
 
@@ -200,7 +211,7 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->kit );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() );
 		$classes_order->set_order( $order );
 
 		$label_map = [];
@@ -209,14 +220,12 @@ class Global_Classes_Repository {
 				$label_map[ $id ] = $items[ $id ]['label'];
 			}
 		}
-		Global_Classes_Labels::make( $this->kit )
-			->context( $this->context )
-			->set_labels( $label_map );
+		$this->labels()->set_labels( $label_map );
 
 		if ( ! $is_preview ) {
 			$existing_ids_to_clear = array_values( array_intersect( $new_ids, $current_ids ) );
 			$this->each_class_id_batch( $existing_ids_to_clear, function ( string $class_id ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_FRONTEND );
+				$post = Global_Class_Post::find_by_class_id( $class_id, false );
 				if ( $post ) {
 					delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_DATA_PREVIEW );
 					clean_post_cache( $post->get_post_id() );
@@ -241,7 +250,7 @@ class Global_Classes_Repository {
 			] );
 
 			foreach ( $posts as $post ) {
-				yield Global_Class_Post::from_post( $post, $this->context );
+				yield Global_Class_Post::from_post( $post, $this->is_preview() );
 				clean_post_cache( $post->ID );
 			}
 			unset( $posts );
@@ -256,10 +265,8 @@ class Global_Classes_Repository {
 		array $items_by_id,
 		bool $is_preview
 	): void {
-		$context = $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
-
 		$this->each_class_id_batch( $to_delete, function ( string $class_id ) use ( $is_preview ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_FRONTEND );
+			$post = Global_Class_Post::find_by_class_id( $class_id, false );
 
 			if ( $post ) {
 				if ( $is_preview ) {
@@ -280,7 +287,7 @@ class Global_Classes_Repository {
 			$data = $this->build_class_data_for_storage( $item );
 
 			if ( $is_preview ) {
-				$post = Global_Class_Post::find_by_class_id( $class_id, self::CONTEXT_PREVIEW );
+				$post = Global_Class_Post::find_by_class_id( $class_id, true );
 
 				if ( $post ) {
 					$post->update_data( $data, true );
@@ -300,13 +307,13 @@ class Global_Classes_Repository {
 			}
 		} );
 
-		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items_by_id, $is_preview, $context ) {
+		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items_by_id, $is_preview ) {
 			if ( ! isset( $items_by_id[ $class_id ] ) ) {
 				return;
 			}
 
 			$item = $items_by_id[ $class_id ];
-			$post = Global_Class_Post::find_by_class_id( $class_id, $context );
+			$post = Global_Class_Post::find_by_class_id( $class_id, $is_preview );
 
 			if ( ! $post ) {
 				return;

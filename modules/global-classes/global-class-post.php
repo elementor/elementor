@@ -3,6 +3,7 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,33 +11,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Global_Class_Post {
+	use Has_Preview_Context;
+
 	const META_KEY_ID = '_elementor_global_class_id';
 	const META_KEY_DATA = '_elementor_global_class_data';
 	const META_KEY_DATA_PREVIEW = '_elementor_global_class_data_preview';
 
+	protected array $context_keys = [
+		'data' => [
+			'frontend' => self::META_KEY_DATA,
+			'preview' => self::META_KEY_DATA_PREVIEW,
+		],
+	];
+
 	private WP_Post $post;
-	private string $context;
 
-	private function __construct( WP_Post $post, string $context = Global_Classes_Repository::CONTEXT_FRONTEND ) {
+	private function __construct( WP_Post $post, bool $is_preview = false ) {
 		$this->post = $post;
-		$this->context = $context;
+		$this->is_preview = $is_preview;
 	}
 
-	public static function from_post( WP_Post $post, string $context = Global_Classes_Repository::CONTEXT_FRONTEND ): self {
-		return new self( $post, $context );
+	public static function from_post( WP_Post $post, bool $is_preview = false ): self {
+		return new self( $post, $is_preview );
 	}
 
-	public static function from_post_id( int $post_id, string $context = Global_Classes_Repository::CONTEXT_FRONTEND ): ?self {
+	public static function from_post_id( int $post_id, bool $is_preview = false ): ?self {
 		$post = get_post( $post_id );
 
 		if ( ! $post || Global_Class_Post_Type::CPT !== $post->post_type ) {
 			return null;
 		}
 
-		return new self( $post, $context );
+		return new self( $post, $is_preview );
 	}
 
-	public static function find_by_class_id( string $class_id, string $context = Global_Classes_Repository::CONTEXT_FRONTEND ): ?self {
+	public static function find_by_class_id( string $class_id, bool $is_preview = false ): ?self {
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_status' => 'publish',
@@ -49,7 +58,7 @@ class Global_Class_Post {
 			return null;
 		}
 
-		return new self( $posts[0], $context );
+		return new self( $posts[0], $is_preview );
 	}
 
 	public function get_post_id(): int {
@@ -78,7 +87,7 @@ class Global_Class_Post {
 		$data = $this->get_context_data();
 		$meta_key = $this->get_data_meta_key();
 
-		if ( empty( $data ) && Global_Classes_Repository::CONTEXT_PREVIEW === $this->context ) {
+		if ( empty( $data ) && $this->is_preview() ) {
 			$data = $this->get_frontend_data();
 			$meta_key = self::META_KEY_DATA;
 		}
@@ -132,9 +141,7 @@ class Global_Class_Post {
 	}
 
 	private function get_data_meta_key(): string {
-		return Global_Classes_Repository::CONTEXT_PREVIEW === $this->context
-			? self::META_KEY_DATA_PREVIEW
-			: self::META_KEY_DATA;
+		return $this->get_context_key( 'data' );
 	}
 
 	private function get_frontend_data(): array {
@@ -143,12 +150,12 @@ class Global_Class_Post {
 		return is_array( $data ) ? $data : [];
 	}
 
-	public function update_data( array $data, bool $is_preview = false ): bool {
-		$meta_key = $is_preview ? self::META_KEY_DATA_PREVIEW : self::META_KEY_DATA;
+	public function update_data( array $data, bool $is_preview_update = false ): bool {
+		$meta_key = $is_preview_update ? self::META_KEY_DATA_PREVIEW : self::META_KEY_DATA;
 
 		$result = update_post_meta( $this->post->ID, $meta_key, $data );
 
-		if ( ! $is_preview ) {
+		if ( ! $is_preview_update ) {
 			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
 		}
 

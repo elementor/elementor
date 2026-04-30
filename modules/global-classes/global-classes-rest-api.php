@@ -230,7 +230,8 @@ class Global_Classes_REST_API {
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
-		$label_by_id = $this->get_repository()->context( $context )->all_labels();
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
+		$label_by_id = $this->get_repository()->set_preview( $is_preview )->all_labels();
 		$list = [];
 
 		foreach ( $label_by_id as $id => $label ) {
@@ -245,15 +246,16 @@ class Global_Classes_REST_API {
 
 	private function styles_for_post( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 		$post_id = (int) $request->get_param( 'post_id' );
 
-		$document_class_ids = $this->get_classes_relations()->context( $context )->get_styles_by_post( $post_id );
+		$document_class_ids = $this->get_classes_relations()->set_preview( $is_preview )->get_styles_by_post( $post_id );
 
 		if ( empty( $document_class_ids ) ) {
 			return Response_Builder::make( (object) [] )->set_meta( [ 'order' => [] ] )->build();
 		}
 
-		$repository = $this->get_repository()->context( $context );
+		$repository = $this->get_repository()->set_preview( $is_preview );
 		$global_order = array_keys( $repository->all_labels() );
 		$filtered_order = array_values( array_intersect( $global_order, $document_class_ids ) );
 		$items = $repository->get_by_ids( $document_class_ids );
@@ -271,6 +273,7 @@ class Global_Classes_REST_API {
 
 	private function styles_by_ids( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 		$ids_param = $request->get_param( 'ids' );
 
 		$requested_ids = array_map( 'trim', explode( ',', $ids_param ) );
@@ -280,7 +283,7 @@ class Global_Classes_REST_API {
 			return Response_Builder::make( (object) [] )->set_meta( [ 'order' => [] ] )->build();
 		}
 
-		$repository = $this->get_repository()->context( $context );
+		$repository = $this->get_repository()->set_preview( $is_preview );
 		$global_order = array_keys( $repository->all_labels() );
 		$filtered_order = array_values( array_intersect( $global_order, $requested_ids ) );
 		$items = $repository->get_by_ids( $requested_ids );
@@ -304,12 +307,13 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 		$changes = $request->get_param( 'changes' ) ?? [];
 		$added_ids = $changes['added'] ?? [];
 		$deleted_ids = $changes['deleted'] ?? [];
 		$order = $request->get_param( 'order' ) ?? [];
 
-		$repository = $this->get_repository()->context( $context );
+		$repository = $this->get_repository()->set_preview( $is_preview );
 		$all_label_by_id = $repository->all_labels();
 		$existing_label_list = $this->global_classes_existing_label_list( $all_label_by_id, $deleted_ids );
 		$total_count = count( $all_label_by_id ) - count( $deleted_ids ) + count( $added_ids );

@@ -101,7 +101,6 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 
 		$stored = Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 
@@ -140,7 +139,6 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 
 		$stored_classes = Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all()
 			->get();
 

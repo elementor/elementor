@@ -29,7 +29,6 @@ class Design_System_Service {
 			: [];
 
 		Global_Classes_Repository::make( $this->get_kit() )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->put( $items, $order );
 
 		return [

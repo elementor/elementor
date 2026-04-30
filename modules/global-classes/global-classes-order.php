@@ -3,25 +3,24 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Plugin;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Global_Classes_Order {
-	const META_KEY = '_elementor_global_classes_order';
+	use Has_Kit_Dependency;
 
-	private Kit $kit;
+	const META_KEY = '_elementor_global_classes_order';
 
 	private ?array $cache = null;
 
-	private function __construct( Kit $kit ) {
-		$this->kit = $kit;
+	private function __construct() {
 	}
 
 	public static function make( Kit $kit ): self {
-		return new self( $kit );
+		return ( new self() )->set_kit( $kit );
 	}
 
 	public function get_order(): array {
@@ -74,9 +73,5 @@ class Global_Classes_Order {
 		$this->cache = is_array( $payload ) ? $payload : [];
 
 		return $this->cache;
-	}
-
-	private function get_kit() {
-		return $this->kit ?? Plugin::$instance->kits_manager->get_active_kit();
 	}
 }

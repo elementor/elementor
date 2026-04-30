@@ -170,11 +170,11 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		$post->update_data( $preview_data, true );
 
 		// Assert - frontend context should still return frontend data
-		$frontend_post = Global_Class_Post::from_post_id( $post->get_post_id(), Global_Classes_Repository::CONTEXT_FRONTEND );
+		$frontend_post = Global_Class_Post::from_post_id( $post->get_post_id(), false );
 		$this->assertSame( $frontend_data, $frontend_post->get_data() );
 
 		// Assert - preview context should return preview data
-		$preview_post = Global_Class_Post::from_post_id( $post->get_post_id(), Global_Classes_Repository::CONTEXT_PREVIEW );
+		$preview_post = Global_Class_Post::from_post_id( $post->get_post_id(), true );
 		$this->assertSame( $preview_data, $preview_post->get_data() );
 	}
 

@@ -1436,7 +1436,13 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	}
 
 	private function get_repository_snapshot( string $context ): array {
-		return Global_Classes_Repository::make()->context( $context )->all()->get();
+		$repository = Global_Classes_Repository::make();
+
+		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $context ) {
+			$repository->set_preview( true );
+		}
+
+		return $repository->all()->get();
 	}
 
 	private function create_global_class( string $id, ?string $color = null, ?string $label = null ) {

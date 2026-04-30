@@ -21,7 +21,6 @@ class Classes_Provider {
 		}
 
 		$classes_data = Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all()
 			->get();
 
@@ -34,7 +33,6 @@ class Classes_Provider {
 		$synced_classes = [];
 
 		Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->each_item( static function ( array $class ) use ( &$synced_classes ) {
 				if ( empty( $class['sync_to_v3'] ) ) {
 					return;

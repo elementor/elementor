@@ -261,7 +261,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			[ 'g-only-frontend', 'g-both' ],
 		);
 
-		Global_Classes_Repository::make()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->put(
+		Global_Classes_Repository::make()->set_preview( true )->put(
 			[
 				'g-both' => $this->minimal_global_class_item( 'g-both', 'both' ),
 				'g-only-preview' => $this->minimal_global_class_item( 'g-only-preview', 'preview' ),

@@ -3,6 +3,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Base\Document;
+use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -11,35 +13,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Global_Classes_Relations {
+	use Has_Preview_Context;
+
 	const META_KEY_FRONTEND = '_elementor_used_global_class';
 	const META_KEY_PREVIEW = '_elementor_used_global_class_preview';
-	private string $context = self::META_KEY_FRONTEND;
 
 	const META_KEY_USAGE_INDEXED_FRONTEND = '_elementor_global_class_usage_indexed';
 	const META_KEY_USAGE_INDEXED_PREVIEW = '_elementor_global_class_usage_indexed_preview';
-	private string $usage_indexed_context = self::META_KEY_USAGE_INDEXED_FRONTEND;
 
 	const META_KEY_CLASS_RELATED_POSTS_FRONTEND = '_elementor_global_class_using_documents';
 	const META_KEY_CLASS_RELATED_POSTS_PREVIEW = '_elementor_global_class_using_documents_preview';
-	private string $related_posts_context = self::META_KEY_CLASS_RELATED_POSTS_FRONTEND;
 
-	private const ATOMIC_GLOBAL_STYLES_KEY = 'global';
-
-	public function context( string $context ): self {
-		if ( Global_Classes_Repository::CONTEXT_PREVIEW === $context ) {
-			$this->context = $this::META_KEY_PREVIEW;
-			$this->related_posts_context = $this::META_KEY_CLASS_RELATED_POSTS_PREVIEW;
-			$this->usage_indexed_context = $this::META_KEY_USAGE_INDEXED_PREVIEW;
-
-			return $this;
-		}
-
-		$this->context = $this::META_KEY_FRONTEND;
-		$this->usage_indexed_context = $this::META_KEY_USAGE_INDEXED_FRONTEND;
-		$this->related_posts_context = $this::META_KEY_CLASS_RELATED_POSTS_FRONTEND;
-
-		return $this;
-	}
+	protected array $context_keys = [
+		'used_classes' => [
+			'frontend' => self::META_KEY_FRONTEND,
+			'preview' => self::META_KEY_PREVIEW,
+		],
+		'usage_indexed' => [
+			'frontend' => self::META_KEY_USAGE_INDEXED_FRONTEND,
+			'preview' => self::META_KEY_USAGE_INDEXED_PREVIEW,
+		],
+		'related_posts' => [
+			'frontend' => self::META_KEY_CLASS_RELATED_POSTS_FRONTEND,
+			'preview' => self::META_KEY_CLASS_RELATED_POSTS_PREVIEW,
+		],
+	];
 
 	public function register_hooks(): void {
 		add_action(
@@ -69,7 +67,7 @@ class Global_Classes_Relations {
 			'fields' => 'ids',
 			'meta_query' => [
 				[
-					'key' => $this->context,
+					'key' => $this->get_context_key( 'used_classes' ),
 					'value' => $style_id,
 					'compare' => '=',
 				],
@@ -126,27 +124,22 @@ class Global_Classes_Relations {
 	}
 
 	public function clear_post_styles( int $post_id ): void {
-		$saved = $this->context;
+		$saved_preview = $this->is_preview();
 
 		try {
-			foreach (
-				[
-					Global_Classes_Repository::CONTEXT_FRONTEND,
-					Global_Classes_Repository::CONTEXT_PREVIEW,
-				] as $ctx
-			) {
-				$this->context = $ctx;
+			foreach ( [ false, true ] as $preview_flag ) {
+				$this->set_preview( $preview_flag );
 				$old_ids = $this->get_stored_style_ids( $post_id );
 
-				delete_post_meta( $post_id, $this->context );
-				delete_post_meta( $post_id, $this->usage_indexed_context );
+				delete_post_meta( $post_id, $this->get_context_key( 'used_classes' ) );
+				delete_post_meta( $post_id, $this->get_context_key( 'usage_indexed' ) );
 
 				foreach ( $old_ids as $class_id ) {
 					$this->unlink_post_from_class( $class_id, $post_id );
 				}
 			}
 		} finally {
-			$this->context = $saved;
+			$this->set_preview( $saved_preview );
 		}
 	}
 
@@ -171,14 +164,12 @@ class Global_Classes_Relations {
 
 		if (
 			! empty( $ids )
-			|| Global_Classes_Repository::CONTEXT_PREVIEW !== $this->context
+			|| Global_Classes_Repository::CONTEXT_PREVIEW !== $this->get_context_key( 'used_classes' )
 		) {
 			return $ids;
 		}
 
-		return ( new self() )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
-			->read_reverse_index_for_class( $class_id );
+		return ( new self() )->read_reverse_index_for_class( $class_id );
 	}
 
 	private function read_reverse_index_for_class( string $class_id ): array {
@@ -188,7 +179,7 @@ class Global_Classes_Relations {
 			return [];
 		}
 
-		$ids = get_post_meta( $post->get_post_id(), $this->related_posts_context, true );
+		$ids = get_post_meta( $post->get_post_id(), $this->get_context_key( 'related_posts' ), true );
 
 		if ( ! is_array( $ids ) ) {
 			return [];
@@ -205,7 +196,7 @@ class Global_Classes_Relations {
 		}
 
 		$cpt_id = $post->get_post_id();
-		$ids = get_post_meta( $cpt_id, $this->related_posts_context, true );
+		$ids = get_post_meta( $cpt_id, $this->get_context_key( 'related_posts' ), true );
 		$ids = is_array( $ids ) ? array_map( 'intval', $ids ) : [];
 
 		if ( in_array( $document_post_id, $ids, true ) ) {
@@ -214,7 +205,7 @@ class Global_Classes_Relations {
 
 		$ids[] = $document_post_id;
 
-		update_post_meta( $cpt_id, $this->related_posts_context, $ids );
+		update_post_meta( $cpt_id, $this->get_context_key( 'related_posts' ), $ids );
 	}
 
 	private function unlink_post_from_class( string $class_id, int $document_post_id ): void {
@@ -225,7 +216,7 @@ class Global_Classes_Relations {
 		}
 
 		$cpt_id = $post->get_post_id();
-		$ids = get_post_meta( $cpt_id, $this->related_posts_context, true );
+		$ids = get_post_meta( $cpt_id, $this->get_context_key( 'related_posts' ), true );
 
 		if ( ! is_array( $ids ) ) {
 			return;
@@ -238,7 +229,7 @@ class Global_Classes_Relations {
 			)
 		);
 
-		update_post_meta( $cpt_id, $this->related_posts_context, $ids );
+		update_post_meta( $cpt_id, $this->get_context_key( 'related_posts' ), $ids );
 	}
 
 	private function on_document_save( Document $document ): void {
@@ -250,18 +241,18 @@ class Global_Classes_Relations {
 		}
 		$in_progress[ $post_id ] = true;
 
-		$saved = $this->context;
+		$saved_preview = $this->is_preview();
 
 		try {
 			$this->invalidate_document_styles_cache( $post_id );
 
-			$this->context = Global_Classes_Repository::CONTEXT_FRONTEND;
+			$this->set_preview( false );
 			$this->set_styles_for_post( $post_id, $this->extract_class_ids_from_post( $post_id ) );
 
-			$this->context = Global_Classes_Repository::CONTEXT_PREVIEW;
+			$this->set_preview( true );
 			$this->set_styles_for_post( $post_id, $this->extract_class_ids_from_post( $post_id ) );
 		} finally {
-			$this->context = $saved;
+			$this->set_preview( $saved_preview );
 			unset( $in_progress[ $post_id ] );
 		}
 	}
@@ -292,7 +283,7 @@ class Global_Classes_Relations {
 	}
 
 	private function get_stored_style_ids( int $post_id ): array {
-		$meta_values = get_post_meta( $post_id, $this->context, false );
+		$meta_values = get_post_meta( $post_id, $this->get_context_key( 'used_classes' ), false );
 
 		if ( ! is_array( $meta_values ) ) {
 			return [];
@@ -302,28 +293,28 @@ class Global_Classes_Relations {
 	}
 
 	private function replace_stored_style_ids( int $post_id, array $style_ids ): void {
-		delete_post_meta( $post_id, $this->context );
+		delete_post_meta( $post_id, $this->get_context_key( 'used_classes' ) );
 
 		$unique_ids = array_unique( $style_ids );
 
 		foreach ( $unique_ids as $class_id ) {
-			add_post_meta( $post_id, $this->context, $class_id );
+			add_post_meta( $post_id, $this->get_context_key( 'used_classes' ), $class_id );
 		}
 	}
 
 	private function is_usage_indexed( int $post_id ): bool {
-		return '1' === get_post_meta( $post_id, $this->usage_indexed_context, true );
+		return '1' === get_post_meta( $post_id, $this->get_context_key( 'usage_indexed' ), true );
 	}
 
 	private function mark_usage_indexed( int $post_id ): void {
-		update_post_meta( $post_id, $this->usage_indexed_context, '1' );
+		update_post_meta( $post_id, $this->get_context_key( 'usage_indexed' ), '1' );
 	}
 
 	private function invalidate_document_styles_cache( int $post_id ): void {
-		do_action( 'elementor/atomic-widgets/styles/clear', [ self::ATOMIC_GLOBAL_STYLES_KEY, $post_id ] );
+		do_action( 'elementor/atomic-widgets/styles/clear', [ Atomic_Global_Styles::STYLES_KEY, $post_id ] );
 		do_action(
 			'elementor/atomic-widgets/styles/clear',
-			[ self::ATOMIC_GLOBAL_STYLES_KEY, $post_id, Global_Classes_Repository::CONTEXT_PREVIEW ]
+			[ Atomic_Global_Styles::STYLES_KEY, $post_id, Global_Classes_Repository::CONTEXT_PREVIEW ]
 		);
 	}
 
@@ -342,7 +333,7 @@ class Global_Classes_Relations {
 	private function get_document_for_post( int $post_id ): ?Document {
 		$documents = Plugin::$instance->documents;
 
-		if ( Global_Classes_Repository::CONTEXT_FRONTEND === $this->context ) {
+		if ( ! $this->is_preview() ) {
 			$document = $documents->get( $post_id );
 
 			if ( ! $document ) {

@@ -120,10 +120,10 @@ class Migrate_To_Posts extends Base_Migration {
 		Plugin::$instance->db->iterate_elementor_documents(
 			function ( $document ) use ( $relations, $valid_class_ids ) {
 				$post_id = $document->get_main_id();
-				$used_class_ids = $relations->context( Global_Classes_Repository::CONTEXT_FRONTEND )->collect_class_ids_from_post( $post_id, $valid_class_ids );
+				$used_class_ids = $relations->collect_class_ids_from_post( $post_id, $valid_class_ids );
 
 				if ( ! empty( $used_class_ids ) ) {
-					$relations->context( Global_Classes_Repository::CONTEXT_FRONTEND )->set_styles_for_post( $post_id, $used_class_ids );
+					$relations->set_styles_for_post( $post_id, $used_class_ids );
 				}
 			}
 		);

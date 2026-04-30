@@ -78,7 +78,6 @@ class Test_Design_System_Service extends Elementor_Test_Base {
 		], $result );
 
 		$stored = Global_Classes_Repository::make( $this->kit )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 
@@ -96,7 +95,6 @@ class Test_Design_System_Service extends Elementor_Test_Base {
 		], $result );
 
 		$stored = Global_Classes_Repository::make( $this->kit )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 
