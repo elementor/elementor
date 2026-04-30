@@ -118,8 +118,8 @@ export function App() {
 				const exitTo = getConfig()?.exitTo;
 				if ( window.top && exitTo && typeof exitTo === 'string' ) {
 					window.top.location.href = exitTo;
+					return;
 				}
-				return;
 			}
 		},
 		[ allowedOrigin ]
