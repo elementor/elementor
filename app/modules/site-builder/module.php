@@ -58,6 +58,7 @@ class Module extends BaseModule {
 		$settings = [
 			'iframeUrl' => $this->get_iframe_url(),
 			'isAdmin' => current_user_can( 'manage_options' ),
+			'exitTo' => admin_url( 'admin.php?page=elementor' ),
 			'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
 		];
 
