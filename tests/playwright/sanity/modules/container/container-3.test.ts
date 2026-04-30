@@ -168,7 +168,7 @@ test.describe( 'Container tests #3 @container', () => {
 		// Act.
 		await editor.addNewContainerPreset( 'flex', 'c100-c50-50' );
 
-		// Assert: the right wrapper (second direct child of the outer flexbox) has padding 0.
+		// Assert
 		const outerFlexbox = previewFrame.locator( '[data-element_type="e-flexbox"]' ).first();
 		const rightWrapper = outerFlexbox.locator( '> [data-element_type="e-flexbox"]' ).nth( 1 );
 		await expect.soft( rightWrapper ).toHaveCSS( 'padding', '0px' );
