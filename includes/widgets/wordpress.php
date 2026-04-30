@@ -133,7 +133,7 @@ class Widget_WordPress extends Widget_Base {
 	 * @return array Widget script dependencies.
 	 */
 	public function get_script_depends(): array {
-		return [ 'swiper' ];
+		return [];
 	}
 
 	public function get_help_url() {
