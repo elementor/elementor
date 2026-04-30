@@ -81,7 +81,8 @@ function createFlexbox( cssProps, target, options = {} ) {
 function createFlexboxFromSizes( sizes, target, options = {} ) {
 	const { createWrapper = true } = options;
 	const sizesSum = sizes.reduce( ( sum, size ) => sum + size, 0 );
-	const shouldWrap = sizesSum > 100;
+const numericSizes = sizes.map( ( s ) => Number( s ) );
+const sizesSum = numericSizes.reduce( ( sum, size ) => sum + size, 0 );
 
 	const parentProps = {
 		'flex-direction': stringProp( DIRECTION_ROW ),
