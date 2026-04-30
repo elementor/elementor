@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
+import { getQueryClient } from '@elementor/query';
 import { __ } from '@wordpress/i18n';
 
+import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from './hooks/use-import-request';
 import { ImportResultsDialog } from './import-results-dialog';
-import { importStatus } from './state';
 import { type ImportResult } from './types';
 
 const IMPORT_STARTED_NOTIFICATION_ID = 'design-system-import-started';
@@ -59,7 +60,10 @@ export const notifyImportFailure = ( onRetry: () => void ) => {
 				onClick: () => {
 					dismissNotification( FAILURE_NOTIFICATION_ID );
 
-					if ( importStatus.getSnapshot() ) {
+					const isImporting =
+						getQueryClient().isMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
+
+					if ( isImporting ) {
 						return;
 					}
 

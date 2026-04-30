@@ -7,7 +7,6 @@ import { ConflictOptions } from './components/conflict-options';
 import { useDialogState } from './hooks/use-dialog-state';
 import { useImportRequest } from './hooks/use-import-request';
 import { notifyImportFailure, notifyImportInProgress, notifyImportSuccess } from './import-notifications';
-import { importStatus } from './state';
 
 const ALLOWED_FILE_TYPES: `${ string }/${ string }`[] = [ 'application/zip' ];
 const FILE_INPUT_ACCEPT = 'application/zip,.zip';
@@ -24,7 +23,7 @@ const reopenSelf = () => {
 
 export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 	const { state, setFile, setConflictStrategy, reset } = useDialogState();
-	const importRequest = useImportRequest();
+	const importMutation = useImportRequest();
 
 	const isImportEnabled = Boolean( state.file && state.conflictStrategy );
 
@@ -39,12 +38,14 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 		}
 
 		notifyImportInProgress();
-		importStatus.markImporting();
 
-		importRequest( { file: state.file, conflictStrategy: state.conflictStrategy } )
-			.then( notifyImportSuccess )
-			.catch( () => notifyImportFailure( reopenSelf ) )
-			.finally( importStatus.markIdle );
+		importMutation.mutate(
+			{ file: state.file, conflictStrategy: state.conflictStrategy },
+			{
+				onSuccess: notifyImportSuccess,
+				onError: () => notifyImportFailure( reopenSelf ),
+			}
+		);
 
 		handleClose();
 	};

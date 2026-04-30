@@ -8,7 +8,11 @@ export function GlobalStylesImportListener() {
 		const handleGlobalStylesImported = ( event: CustomEvent ) => {
 			const importedVars = event.detail?.global_variables;
 
-			if ( importedVars?.data && typeof importedVars.data === 'object' ) {
+			if ( ! importedVars ) {
+				return;
+			}
+
+			if ( importedVars.data && typeof importedVars.data === 'object' ) {
 				styleVariablesRepository.update( importedVars.data );
 			}
 

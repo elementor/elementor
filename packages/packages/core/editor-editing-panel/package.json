@@ -58,6 +58,7 @@
     "@elementor/editor-variables": "4.1.0",
     "@elementor/locations": "4.1.0",
     "@elementor/menus": "4.1.0",
+    "@elementor/query": "4.1.0",
     "@elementor/schema": "4.1.0",
     "@elementor/session": "4.1.0",
     "@elementor/ui": "1.37.5",

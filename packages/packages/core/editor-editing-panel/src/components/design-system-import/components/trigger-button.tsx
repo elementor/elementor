@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useSyncExternalStore } from 'react';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
 import { UploadIcon } from '@elementor/icons';
+import { useIsMutating } from '@elementor/query';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
-import { importStatus } from '../state';
 
 export const TriggerButton = () => {
-	const isImporting = useSyncExternalStore( importStatus.subscribe, importStatus.getSnapshot );
+	const isImporting = useIsMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 	const label = isImporting
 		? __( 'Importing design system…', 'elementor' )

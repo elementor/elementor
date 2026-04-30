@@ -4,13 +4,15 @@ import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-doc
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { service as variablesService } from '@elementor/editor-variables';
 import { httpService } from '@elementor/http-client';
+import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { TriggerButton } from '../components/trigger-button';
+import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
 import { ImportResultsDialog } from '../import-results-dialog';
-import { importStatus } from '../state';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
@@ -38,7 +40,29 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	closeDialog: jest.fn(),
 } ) );
 
+jest.mock( '@elementor/editor-variables', () => ( {
+	service: { load: jest.fn().mockResolvedValue( undefined ) },
+} ) );
+
+jest.mock( '@elementor/query', () => {
+	const actual = jest.requireActual( '@elementor/query' );
+	const sharedClient = new actual.QueryClient( {
+		defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+	} );
+
+	return {
+		...actual,
+		getQueryClient: jest.fn( () => sharedClient ),
+		__sharedClient: sharedClient,
+	};
+} );
+
 const ASYNC_TIMEOUT_MS = 5000;
+
+const sharedQueryClient: QueryClient = require( '@elementor/query' ).__sharedClient;
+
+const renderWithQuery = ( ui: React.ReactElement ) =>
+	renderWithTheme( <QueryClientProvider client={ sharedQueryClient }>{ ui }</QueryClientProvider> );
 
 const setupHttpServiceMock = () => {
 	const post = jest.fn().mockResolvedValue( { data: { success: true, global_classes: {} } } );
@@ -69,23 +93,19 @@ const submitImport = ( fileName = 'design-system.zip' ) => {
 	return file;
 };
 
-const resetImportState = () => {
-	act( () => {
-		importStatus.markIdle();
-	} );
-};
+const isImporting = () => sharedQueryClient.isMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 describe( '<ImportDesignSystemDialog />', () => {
 	beforeEach( () => {
-		resetImportState();
 		jest.clearAllMocks();
+		sharedQueryClient.clear();
 	} );
 
 	it( 'disables the import button until a file and conflict strategy are selected', async () => {
 		setupHttpServiceMock();
 		setupDocumentsMock();
 
-		renderWithTheme( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
 		const importButton = await screen.findByRole( 'button', { name: 'Import' } );
 		expect( importButton ).toBeDisabled();
@@ -106,7 +126,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		setupDocumentsMock();
 		const onClose = jest.fn();
 
-		renderWithTheme( <ImportDesignSystemDialog onClose={ onClose } /> );
+		renderWithQuery( <ImportDesignSystemDialog onClose={ onClose } /> );
 
 		const file = submitImport();
 
@@ -133,7 +153,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		const eventListener = jest.fn();
 		window.addEventListener( 'elementor/global-styles/imported', eventListener );
 
-		renderWithTheme( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
 		submitImport();
 
@@ -150,10 +170,11 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( eventListener ).toHaveBeenCalledTimes( 1 );
+		expect( variablesService.load ).toHaveBeenCalledTimes( 1 );
 		expect( invalidateCache ).toHaveBeenCalledTimes( 1 );
 		expect( runCommand ).toHaveBeenCalledWith( 'editor/documents/switch', expect.objectContaining( { id: 99 } ) );
 
-		await waitFor( () => expect( importStatus.getSnapshot() ).toBe( false ) );
+		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
 		const successPayload = successCall ? successCall[ 0 ] : undefined;
 		const viewAction = successPayload?.additionalActionProps?.[ 0 ];
@@ -178,7 +199,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		( httpService as jest.Mock ).mockReturnValue( { post } );
 		setupDocumentsMock();
 
-		renderWithTheme( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
 		submitImport();
 
@@ -196,7 +217,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( runCommand ).not.toHaveBeenCalled();
 
-		await waitFor( () => expect( importStatus.getSnapshot() ).toBe( false ) );
+		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
 		const errorPayload = errorCall ? errorCall[ 0 ] : undefined;
 		const retryAction = errorPayload?.additionalActionProps?.[ 0 ];
@@ -219,7 +240,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		( httpService as jest.Mock ).mockReturnValue( { post } );
 		setupDocumentsMock();
 
-		renderWithTheme( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
 		submitImport();
 
@@ -236,9 +257,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		( openDialog as jest.Mock ).mockClear();
 
-		act( () => {
-			importStatus.markImporting();
-		} );
+		const isMutatingSpy = jest.spyOn( sharedQueryClient, 'isMutating' ).mockReturnValue( 1 );
 
 		const retryAction = errorCall?.[ 0 ].additionalActionProps?.[ 0 ];
 
@@ -247,6 +266,8 @@ describe( '<ImportDesignSystemDialog />', () => {
 		} );
 
 		expect( openDialog ).not.toHaveBeenCalled();
+
+		isMutatingSpy.mockRestore();
 	} );
 } );
 
@@ -270,12 +291,12 @@ describe( '<ImportResultsDialog />', () => {
 
 describe( '<TriggerButton />', () => {
 	beforeEach( () => {
-		resetImportState();
 		jest.clearAllMocks();
+		sharedQueryClient.clear();
 	} );
 
 	it( 'opens the import dialog via openDialog when clicked while idle', () => {
-		renderWithTheme( <TriggerButton /> );
+		renderWithQuery( <TriggerButton /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Import Design System' } ) );
 
@@ -288,14 +309,23 @@ describe( '<TriggerButton />', () => {
 	} );
 
 	it( 'is disabled while an import is in progress', async () => {
-		renderWithTheme( <TriggerButton /> );
+		setupDocumentsMock();
+		const longRunningPost = jest.fn(
+			() => new Promise( () => undefined ) as Promise< { data: Record< string, never > } >
+		);
+		( httpService as jest.Mock ).mockReturnValue( { post: longRunningPost } );
+
+		renderWithQuery(
+			<>
+				<TriggerButton />
+				<ImportDesignSystemDialog onClose={ jest.fn() } />
+			</>
+		);
 
 		const initialButton = screen.getByRole( 'button', { name: 'Import Design System' } );
 		expect( initialButton ).toBeEnabled();
 
-		act( () => {
-			importStatus.markImporting();
-		} );
+		submitImport();
 
 		await waitFor( () => {
 			expect( screen.getByRole( 'button', { name: 'Importing design system…' } ) ).toBeDisabled();
