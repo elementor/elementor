@@ -1476,6 +1476,7 @@ abstract class Element_Base extends Controls_Stack {
 			'elType' => $this->get_type(),
 			'title' => $this->get_title(),
 			'icon' => $this->get_icon(),
+			'accessibility' => $this->get_accessibility(),
 			'reload_preview' => $this->is_reload_preview_required(),
 		];
 
@@ -1591,5 +1592,9 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		parent::__construct( $data );
+	}
+
+	public function get_accessibility(): string {
+		return '';
 	}
 }
