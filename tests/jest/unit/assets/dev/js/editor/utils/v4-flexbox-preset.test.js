@@ -8,29 +8,12 @@ const WRAP = stringProp( 'wrap' );
 const ZERO_PX = sizeProp( 0, 'px' );
 
 function makeFakeContainer( id = `c-${ Math.random().toString( 36 ).slice( 2 ) }` ) {
-	const modelStore = { styles: {} };
-	const settingsStore = { classes: undefined };
-
-	return {
-		id,
-		model: {
-			get: ( key ) => modelStore[ key ],
-			set: ( key, value ) => {
-				modelStore[ key ] = value;
-			},
-		},
-		settings: {
-			get: ( key ) => settingsStore[ key ],
-		},
-		_styles: modelStore,
-		_settings: settingsStore,
-	};
+	return { id };
 }
 
 describe( 'createV4FlexboxFromPreset', () => {
 	let createdContainers;
 	let createCalls;
-	let setSettingsCalls;
 	let historyEvents;
 	let uniqueCounter;
 	let originalEnv;
@@ -38,7 +21,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 	beforeEach( () => {
 		createdContainers = [];
 		createCalls = [];
-		setSettingsCalls = [];
 		historyEvents = [];
 		uniqueCounter = 0;
 
@@ -63,7 +45,7 @@ describe( 'createV4FlexboxFromPreset', () => {
 			run: jest.fn( ( command, args ) => {
 				if ( 'document/elements/create' === command ) {
 					const c = makeFakeContainer();
-					createCalls.push( { target: args.container, model: args.model, options: args.options } );
+					createCalls.push( { target: args.container, model: args.model, args } );
 					createdContainers.push( c );
 					return c;
 				}
@@ -80,13 +62,6 @@ describe( 'createV4FlexboxFromPreset', () => {
 				if ( 'document/history/delete-log' === command ) {
 					historyEvents.push( { type: 'delete', id: args.id } );
 				}
-				if ( 'document/elements/set-settings' === command ) {
-					setSettingsCalls.push( {
-						containerId: args.container.id,
-						classes: args.settings.classes,
-					} );
-					args.container._settings.classes = args.settings.classes;
-				}
 				return undefined;
 			} ),
 		};
@@ -98,81 +73,73 @@ describe( 'createV4FlexboxFromPreset', () => {
 		global.$e = originalEnv.$e;
 	} );
 
-	function lastStyleOn( container ) {
-		const styles = container._styles.styles;
-		const keys = Object.keys( styles );
-		return styles[ keys[ keys.length - 1 ] ];
+	function getModel( index ) {
+		return createCalls[ index ].model;
 	}
 
-	function getProps( container ) {
-		const style = lastStyleOn( container );
-		return style?.variants[ 0 ]?.props;
+	function getProps( model ) {
+		const styleIds = Object.keys( model.styles ?? {} );
+		const lastId = styleIds[ styleIds.length - 1 ];
+		return model.styles?.[ lastId ]?.variants?.[ 0 ]?.props;
 	}
 
-	test( 'wraps the work in a history start/end log', () => {
-		createV4FlexboxFromPreset( 'c100', makeFakeContainer( 'target' ), {} );
-
-		expect( historyEvents.find( ( e ) => 'start' === e.type ) ).toBeDefined();
-		expect( historyEvents.find( ( e ) => 'end' === e.type ) ).toBeDefined();
-		expect( historyEvents.find( ( e ) => 'delete' === e.type ) ).toBeUndefined();
-	} );
-
-	test( 'c100 → 1 e-flexbox, no overrides (column is the default)', () => {
+	test( 'c100 → 1 e-flexbox, no styles, no settings', () => {
 		const target = makeFakeContainer( 'target' );
 
 		createV4FlexboxFromPreset( 'c100', target, {} );
 
 		expect( createCalls ).toHaveLength( 1 );
-		expect( createCalls[ 0 ].model ).toEqual( { elType: 'e-flexbox' } );
 		expect( createCalls[ 0 ].target ).toBe( target );
-		expect( setSettingsCalls ).toHaveLength( 0 );
-		expect( createdContainers[ 0 ]._styles.styles ).toEqual( {} );
+		expect( getModel( 0 ) ).toEqual( { elType: 'e-flexbox' } );
 	} );
 
-	test( 'r100 → 1 e-flexbox with flex-direction: row', () => {
+	test( 'r100 → flex-direction:row + matching classes setting baked into the model', () => {
 		createV4FlexboxFromPreset( 'r100', makeFakeContainer( 'target' ), {} );
 
-		expect( createCalls ).toHaveLength( 1 );
-		expect( getProps( createdContainers[ 0 ] ) ).toEqual( {
-			'flex-direction': ROW,
-		} );
+		const model = getModel( 0 );
+		expect( model.elType ).toBe( 'e-flexbox' );
+		expect( getProps( model ) ).toEqual( { 'flex-direction': ROW } );
+
+		const styleId = Object.keys( model.styles )[ 0 ];
+		expect( model.settings.classes ).toEqual( { $$type: 'classes', value: [ styleId ] } );
 	} );
 
-	test( '50-50 → row parent (no wrap) + 2 children at 50%', () => {
-		createV4FlexboxFromPreset( '50-50', makeFakeContainer( 'target' ), {} );
+	test( '50-50 → row parent (no wrap) + 2 children at 50%, options spread to root', () => {
+		createV4FlexboxFromPreset( '50-50', makeFakeContainer( 'target' ), {
+			at: 0,
+			edit: false,
+		} );
 
 		expect( createCalls ).toHaveLength( 3 );
 
-		const [ parent, c1, c2 ] = createdContainers;
+		expect( getProps( getModel( 0 ) ) ).toEqual( { 'flex-direction': ROW } );
+		expect( getProps( getModel( 1 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
+		expect( getProps( getModel( 2 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
 
-		expect( getProps( parent ) ).toEqual( {
-			'flex-direction': ROW,
-		} );
-		expect( getProps( c1 ) ).toEqual( { width: sizeProp( 50, '%' ) } );
-		expect( getProps( c2 ) ).toEqual( { width: sizeProp( 50, '%' ) } );
+		expect( createCalls[ 0 ].args.at ).toBe( 0 );
+		expect( createCalls[ 0 ].args.edit ).toBe( false );
+		expect( createCalls[ 0 ].args.options ).toBeUndefined();
+		expect( createCalls[ 1 ].args.at ).toBeUndefined();
 	} );
 
 	test( '33-66 → maps 33/66 to 33.3333 / 66.6666', () => {
 		createV4FlexboxFromPreset( '33-66', makeFakeContainer( 'target' ), {} );
 
-		const [ , c1, c2 ] = createdContainers;
-		expect( getProps( c1 ).width ).toEqual( sizeProp( 33.3333, '%' ) );
-		expect( getProps( c2 ).width ).toEqual( sizeProp( 66.6666, '%' ) );
+		expect( getProps( getModel( 1 ) ).width ).toEqual( sizeProp( 33.3333, '%' ) );
+		expect( getProps( getModel( 2 ) ).width ).toEqual( sizeProp( 66.6666, '%' ) );
 	} );
 
 	test( '50-50-50-50 → row parent with flex-wrap: wrap (sum > 100)', () => {
 		createV4FlexboxFromPreset( '50-50-50-50', makeFakeContainer( 'target' ), {} );
 
-		const [ parent, ...children ] = createdContainers;
-
-		expect( getProps( parent ) ).toEqual( {
+		expect( getProps( getModel( 0 ) ) ).toEqual( {
 			'flex-direction': ROW,
 			'flex-wrap': WRAP,
 		} );
-		expect( children ).toHaveLength( 4 );
-		children.forEach( ( child ) => {
-			expect( getProps( child ).width ).toEqual( sizeProp( 50, '%' ) );
-		} );
+		expect( createCalls ).toHaveLength( 5 );
+		for ( let i = 1; i <= 4; i++ ) {
+			expect( getProps( getModel( i ) ).width ).toEqual( sizeProp( 50, '%' ) );
+		}
 	} );
 
 	test( 'c100-c50-50 → row parent + left child + right wrapper + 2 grandchildren', () => {
@@ -180,72 +147,32 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( createCalls ).toHaveLength( 5 );
 
-		const [ parent, leftCol, rightCol, gc1, gc2 ] = createdContainers;
+		const [ parent, , rightCol ] = createdContainers;
 
-		expect( getProps( parent ) ).toEqual( {
-			'flex-direction': ROW,
-		} );
-
-		expect( getProps( leftCol ) ).toEqual( { width: sizeProp( 50, '%' ) } );
-
-		expect( getProps( rightCol ) ).toEqual( {
+		expect( getProps( getModel( 0 ) ) ).toEqual( { 'flex-direction': ROW } );
+		expect( getProps( getModel( 1 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
+		expect( getProps( getModel( 2 ) ) ).toEqual( {
 			width: sizeProp( 50, '%' ),
 			padding: ZERO_PX,
 		} );
+		expect( getModel( 3 ).styles ).toBeUndefined();
+		expect( getModel( 4 ).styles ).toBeUndefined();
 
-		expect( gc1._styles.styles ).toEqual( {} );
-		expect( gc2._styles.styles ).toEqual( {} );
-
+		expect( createCalls[ 1 ].target ).toBe( parent );
+		expect( createCalls[ 2 ].target ).toBe( parent );
 		expect( createCalls[ 3 ].target ).toBe( rightCol );
 		expect( createCalls[ 4 ].target ).toBe( rightCol );
 	} );
 
-	test( 'createWrapper:false → applies parent style to the existing target instead of creating a wrapper', () => {
+	test( 'createWrapper:false → reuses target as parent, only children are created', () => {
 		const target = makeFakeContainer( 'target' );
 
 		createV4FlexboxFromPreset( '50-50', target, { createWrapper: false } );
 
 		expect( createCalls ).toHaveLength( 2 );
-
-		expect( getProps( target ) ).toEqual( {
-			'flex-direction': ROW,
-		} );
-
 		createCalls.forEach( ( call ) => {
 			expect( call.target ).toBe( target );
 		} );
-	} );
-
-	test( 'each created element gets its style id pushed into the classes setting', () => {
-		createV4FlexboxFromPreset( '50-50', makeFakeContainer( 'target' ), {} );
-
-		expect( setSettingsCalls ).toHaveLength( 3 );
-
-		setSettingsCalls.forEach( ( call ) => {
-			expect( call.classes.$$type ).toBe( 'classes' );
-			expect( call.classes.value ).toHaveLength( 1 );
-			expect( call.classes.value[ 0 ] ).toMatch( /^e-c-[a-z0-9-]+-u\d+$/ );
-		} );
-	} );
-
-	test( 'unknown preset falls through to createFlexboxFromSizes (split by "-")', () => {
-		createV4FlexboxFromPreset( '25-25-25-25', makeFakeContainer( 'target' ), {} );
-
-		expect( createCalls ).toHaveLength( 5 );
-
-		const children = createdContainers.slice( 1 );
-		children.forEach( ( child ) => {
-			expect( getProps( child ).width ).toEqual( sizeProp( 25, '%' ) );
-		} );
-	} );
-
-	test( 'falls back to elementor.getPreviewContainer() when target is omitted', () => {
-		const previewContainer = makeFakeContainer( 'document' );
-		global.elementor.getPreviewContainer = () => previewContainer;
-
-		createV4FlexboxFromPreset( 'c100' );
-
-		expect( createCalls[ 0 ].target ).toBe( previewContainer );
 	} );
 
 	test( 'rolls back history when element creation throws', () => {

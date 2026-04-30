@@ -1,5 +1,4 @@
 const V4_ELEMENT_TYPE = 'e-flexbox';
-const STYLE_CHANGE_EVENT = 'elementor/editor-v2/editor-elements/style';
 const DIRECTION_ROW = 'row';
 
 const SIZES_MAP = {
@@ -59,53 +58,43 @@ function getPresetDefinition( preset ) {
 	return rowOfSizes( preset.split( '-' ) );
 }
 
-function createFlexboxElement( target, options ) {
-	return $e.run( 'document/elements/create', {
-		container: target,
-		model: { elType: V4_ELEMENT_TYPE },
-		options,
-	} );
-}
+function buildModel( cssProps ) {
+	const model = { elType: V4_ELEMENT_TYPE };
 
-function attachLocalStyle( container, cssProps ) {
 	if ( ! cssProps || 0 === Object.keys( cssProps ).length ) {
-		return null;
+		return model;
 	}
 
-	const existingStyles = structuredClone( container.model.get( 'styles' ) ?? {} );
-	const styleId = `e-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
+	const styleId = `e-${ elementorCommon.helpers.getUniqueId() }`;
 
-	existingStyles[ styleId ] = {
-		id: styleId,
-		label: 'local',
-		type: 'class',
-		variants: [
-			{
-				meta: { breakpoint: null, state: null },
-				props: cssProps,
-				custom_css: null,
-			},
-		],
+	model.styles = {
+		[ styleId ]: {
+			id: styleId,
+			label: 'local',
+			type: 'class',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: cssProps,
+					custom_css: null,
+				},
+			],
+		},
 	};
 
-	container.model.set( 'styles', existingStyles );
+	model.settings = {
+		classes: { $$type: 'classes', value: [ styleId ] },
+	};
 
-	const existingClasses = container.settings?.get?.( 'classes' );
-	const prevValue = Array.isArray( existingClasses?.value ) ? existingClasses.value : [];
+	return model;
+}
 
-	$e.internal( 'document/elements/set-settings', {
-		container,
-		settings: {
-			classes: {
-				$$type: 'classes',
-				value: [ ...prevValue, styleId ],
-			},
-		},
+function createFlexboxElement( target, model, options ) {
+	return $e.run( 'document/elements/create', {
+		container: target,
+		model,
+		...options,
 	} );
-
-	window.dispatchEvent( new CustomEvent( STYLE_CHANGE_EVENT ) );
-
-	return styleId;
 }
 
 function buildNode( definition, target, options, isRoot ) {
@@ -113,9 +102,7 @@ function buildNode( definition, target, options, isRoot ) {
 	const reuseTarget = isRoot && false === options.createWrapper;
 	const node = reuseTarget
 		? target
-		: createFlexboxElement( target, isRoot ? options : { edit: false } );
-
-	attachLocalStyle( node, parentProps );
+		: createFlexboxElement( target, buildModel( parentProps ), isRoot ? options : { edit: false } );
 
 	children.forEach( ( childDef ) => {
 		buildNode( childDef, node, options, false );
