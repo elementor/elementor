@@ -296,34 +296,27 @@ function VariablesManagerPanelRoot( {
 
 	const hasVariables = Object.keys( variables ).length > 0;
 
-	const searchFieldStandalone = (
-		<SearchField
-			sx={ {
-				display: 'flex',
-				flex: 1,
-			} }
-			placeholder={ __( 'Search', 'elementor' ) }
-			value={ searchValue }
-			onSearch={ handleSearch }
-		/>
-	);
-
-	const searchFieldEmbedded = (
-		<SearchField
-			placeholder={ __( 'Search', 'elementor' ) }
-			value={ searchValue }
-			onSearch={ handleSearch }
-			sx={ {
+	const variablesSearchFieldSx = embedded
+		? {
 				flex: 1,
 				minWidth: 0,
 				px: 0,
 				py: 0,
-				pb: 0,
-				pt: 0,
 				display: 'flex',
 				alignItems: 'center',
 				alignSelf: 'stretch',
-			} }
+		  }
+		: {
+				display: 'flex',
+				flex: 1,
+		  };
+
+	const searchField = (
+		<SearchField
+			placeholder={ __( 'Search', 'elementor' ) }
+			value={ searchValue }
+			onSearch={ handleSearch }
+			sx={ variablesSearchFieldSx }
 		/>
 	);
 
@@ -502,7 +495,7 @@ function VariablesManagerPanelRoot( {
 					pb: 1,
 				} }
 			>
-				{ searchFieldEmbedded }
+				{ searchField }
 				<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center' } }>
 					<VariableManagerCreateMenu
 						outlinedTrigger
@@ -557,7 +550,7 @@ function VariablesManagerPanelRoot( {
 						</Stack>
 					</Stack>
 					<Stack width="100%" direction="row" gap={ 1 }>
-						{ searchFieldStandalone }
+						{ searchField }
 					</Stack>
 					<Divider sx={ { width: '100%' } } />
 				</Stack>

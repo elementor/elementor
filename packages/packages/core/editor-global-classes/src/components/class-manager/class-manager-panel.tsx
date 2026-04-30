@@ -215,24 +215,20 @@ function ClassManagerPanelRoot( {
 
 	usePreventUnload();
 
-	const searchFiltersBlock = embedded ? (
+	const searchFiltersBlock = (
 		<Box px={ 2 } pb={ 1 }>
-			<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 0.5 } sx={ { pb: 0.5 } }>
-				<Box sx={ { flexGrow: 1, minWidth: 0 } }>
+			<Stack
+				direction="row"
+				alignItems="center"
+				justifyContent="space-between"
+				gap={ 0.5 }
+				sx={ { pb: 0.5 } }
+			>
+				<Box sx={ embedded ? { flexGrow: 1, minWidth: 0 } : { flexGrow: 1 } }>
 					<ClassManagerSearch />
 				</Box>
 				<CssClassFilter />
-				<TotalCssClassCounter />
-			</Stack>
-			<ActiveFilters />
-		</Box>
-	) : (
-		<Box px={ 2 } pb={ 1 }>
-			<Stack direction="row" justifyContent="space-between" alignItems="center" gap={ 0.5 } sx={ { pb: 0.5 } }>
-				<Box sx={ { flexGrow: 1 } }>
-					<ClassManagerSearch />
-				</Box>
-				<CssClassFilter />
+				{ embedded && <TotalCssClassCounter /> }
 			</Stack>
 			<ActiveFilters />
 		</Box>
