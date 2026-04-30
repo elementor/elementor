@@ -14,6 +14,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './tests/',
+	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	globalSetup: resolve( __dirname, 'global-setup.ts' ),
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,

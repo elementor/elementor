@@ -25,6 +25,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './sanity',
+	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
 	grepInvert: /elements-regression/,
