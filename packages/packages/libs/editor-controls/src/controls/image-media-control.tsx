@@ -23,8 +23,7 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 
 	const defaultUrl = imageSrcPropTypeUtil.extract( propType.default ?? null )?.url?.value;
 	const currentUrlForModal = url?.value && url.value !== defaultUrl ? url.value : undefined;
-	const altValue = value?.alt;
-	const currentAltForModal = altValue ? stringPropTypeUtil.extract( altValue )?.value : undefined;
+	const currentAltForModal = ( value as { alt?: { value?: string } | null } | null | undefined )?.alt?.value;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes,
@@ -80,7 +79,14 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 						>
 							{ __( 'Upload', 'elementor' ) }
 						</Button>
-						<Button size="tiny" variant="text" color="inherit" onClick={ () => open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } ) }>
+						<Button
+							size="tiny"
+							variant="text"
+							color="inherit"
+							onClick={ () =>
+								open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } )
+							}
+						>
 							{ __( 'Insert from URL', 'elementor' ) }
 						</Button>
 					</Stack>

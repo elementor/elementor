@@ -97,7 +97,12 @@ function cleanupFrame( frame?: MediaFrame ) {
 	frame?.remove();
 }
 
-function applyMode( frame: MediaFrame, mode: OpenOptions[ 'mode' ] = 'browse', currentUrl?: string, currentAlt?: string ) {
+function applyMode(
+	frame: MediaFrame,
+	mode: OpenOptions[ 'mode' ] = 'browse',
+	currentUrl?: string,
+	currentAlt?: string
+) {
 	if ( mode === 'url' ) {
 		frame.setState( 'embed' );
 		if ( currentUrl || currentAlt ) {
