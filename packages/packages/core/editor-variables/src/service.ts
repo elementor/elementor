@@ -30,6 +30,14 @@ export const service = {
 	},
 
 	init: () => {
+		document.addEventListener( 'visibilitychange', () => {
+			if ( 'visible' !== document.visibilityState ) {
+				return;
+			}
+
+			styleVariablesRepository.update( storage.load() );
+		} );
+
 		return service.load();
 	},
 
