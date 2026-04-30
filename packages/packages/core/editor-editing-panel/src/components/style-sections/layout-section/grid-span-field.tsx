@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NumberInput } from '@elementor/editor-controls';
-import { type StringPropValue } from '@elementor/editor-props';
+import { type SpanPropValue } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -11,26 +11,7 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type GridSpanCssProp = 'grid-column' | 'grid-row';
 
-const SPAN_PATTERN = /^span\s+(\d+)$/;
 const MIN_SPAN = 1;
-
-const cssToSpanValue = ( css: string | null ): number | null => {
-	if ( ! css ) {
-		return null;
-	}
-
-	const match = css.match( SPAN_PATTERN );
-
-	return match ? parseInt( match[ 1 ], 10 ) : null;
-};
-
-const spanValueToCss = ( span: number | null ): string | null => {
-	if ( span === null || span < MIN_SPAN ) {
-		return null;
-	}
-
-	return `span ${ span }`;
-};
 
 type GridSpanFieldProps = {
 	cssProp: GridSpanCssProp;
@@ -38,18 +19,17 @@ type GridSpanFieldProps = {
 };
 
 const GridSpanFieldContent = ( { cssProp, label }: GridSpanFieldProps ) => {
-	const { value, setValue, canEdit } = useStylesField< StringPropValue | null >( cssProp, {
+	const { value, setValue, canEdit } = useStylesField< SpanPropValue | null >( cssProp, {
 		history: { propDisplayName: label },
 	} );
 
-	const spanValue = cssToSpanValue( value?.value ?? null );
+	const spanValue = value?.value ?? null;
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		const raw = event.target.value;
 
 		if ( raw === '' ) {
 			setValue( null );
-
 			return;
 		}
 
@@ -60,9 +40,7 @@ const GridSpanFieldContent = ( { cssProp, label }: GridSpanFieldProps ) => {
 		}
 
 		const clamped = Math.max( num, MIN_SPAN );
-		const css = spanValueToCss( clamped );
-
-		setValue( css ? { $$type: 'string', value: css } : null );
+		setValue( { $$type: 'span', value: clamped } );
 	};
 
 	return (

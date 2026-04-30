@@ -6,12 +6,12 @@ import {
 	JustifyTopIcon,
 	LayoutDistributeVerticalIcon as JustifyIcon,
 } from '@elementor/icons';
+import { type ToggleButtonProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
-import { RotatedIcon } from './utils/rotated-icon';
 
 type AlignSelf = 'start' | 'center' | 'end' | 'stretch';
 
@@ -22,57 +22,6 @@ const ALIGN_SELF_CHILD_OFFSET_MAP: Record< string, number > = {
 	column: -90,
 };
 
-const getOptions = ( parentStyleDirection: string ): ToggleButtonGroupItem< AlignSelf >[] => [
-	{
-		value: 'start',
-		label: __( 'Start', 'elementor' ),
-		renderContent: ( { size } ) => (
-			<RotatedIcon
-				icon={ JustifyTopIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-			/>
-		),
-		showTooltip: true,
-	},
-	{
-		value: 'center',
-		label: __( 'Center', 'elementor' ),
-		renderContent: ( { size } ) => (
-			<RotatedIcon
-				icon={ JustifyCenterIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-			/>
-		),
-		showTooltip: true,
-	},
-	{
-		value: 'end',
-		label: __( 'End', 'elementor' ),
-		renderContent: ( { size } ) => (
-			<RotatedIcon
-				icon={ JustifyBottomIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-			/>
-		),
-		showTooltip: true,
-	},
-	{
-		value: 'stretch',
-		label: __( 'Stretch', 'elementor' ),
-		renderContent: ( { size } ) => (
-			<RotatedIcon
-				icon={ JustifyIcon }
-				size={ size }
-				offset={ ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection ] }
-			/>
-		),
-		showTooltip: true,
-	},
-];
-
 export const AlignSelfGridChild = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
 	<StylesField bind="align-self" propDisplayName={ ALIGN_SELF_LABEL }>
 		<UiProviders>
@@ -82,3 +31,44 @@ export const AlignSelfGridChild = ( { parentStyleDirection }: { parentStyleDirec
 		</UiProviders>
 	</StylesField>
 );
+
+const RotatedIcon = ( {
+	icon: Icon,
+	size,
+	offset,
+}: {
+	icon: React.JSX.ElementType;
+	size: ToggleButtonProps[ 'size' ];
+	offset?: number;
+} ) => <Icon fontSize={ size } sx={ { rotate: `${ offset }deg` } } />;
+
+const getOptions = ( parentStyleDirection: string ): ToggleButtonGroupItem< AlignSelf >[] => {
+	const offset = ALIGN_SELF_CHILD_OFFSET_MAP[ parentStyleDirection.replace( 'dense', '' ).trim() ];
+
+	return [
+		{
+			value: 'start',
+			label: __( 'Start', 'elementor' ),
+			renderContent: ( { size } ) => <RotatedIcon icon={ JustifyTopIcon } size={ size } offset={ offset } />,
+			showTooltip: true,
+		},
+		{
+			value: 'center',
+			label: __( 'Center', 'elementor' ),
+			renderContent: ( { size } ) => <RotatedIcon icon={ JustifyCenterIcon } size={ size } offset={ offset } />,
+			showTooltip: true,
+		},
+		{
+			value: 'end',
+			label: __( 'End', 'elementor' ),
+			renderContent: ( { size } ) => <RotatedIcon icon={ JustifyBottomIcon } size={ size } offset={ offset } />,
+			showTooltip: true,
+		},
+		{
+			value: 'stretch',
+			label: __( 'Stretch', 'elementor' ),
+			renderContent: ( { size } ) => <RotatedIcon icon={ JustifyIcon } size={ size } offset={ offset } />,
+			showTooltip: true,
+		},
+	];
+};

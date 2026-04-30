@@ -10,6 +10,7 @@ jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => {
@@ -25,8 +26,8 @@ jest.mock( '@elementor/editor-controls', () => {
 const renderGridSpanFields = () => {
 	renderField( <GridSpanFields />, {
 		propTypes: {
-			'grid-column': createMockPropType( { kind: 'plain', key: 'string' } ),
-			'grid-row': createMockPropType( { kind: 'plain', key: 'string' } ),
+			'grid-column': createMockPropType( { kind: 'plain', key: 'span' } ),
+			'grid-row': createMockPropType( { kind: 'plain', key: 'span' } ),
 		},
 	} );
 };
@@ -64,12 +65,12 @@ describe( '<GridSpanFields />', () => {
 		expect( inputs ).toHaveLength( 2 );
 	} );
 
-	it( 'should display parsed span value from CSS string', () => {
+	it( 'should display span value from prop', () => {
 		// Arrange.
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: {
-				'grid-column': { $$type: 'string', value: 'span 3' },
-				'grid-row': { $$type: 'string', value: 'span 2' },
+				'grid-column': { $$type: 'span', value: 3 },
+				'grid-row': { $$type: 'span', value: 2 },
 			},
 			setValues: jest.fn(),
 			canEdit: true,
@@ -84,7 +85,7 @@ describe( '<GridSpanFields />', () => {
 		expect( inputs[ 1 ] ).toHaveValue( 2 );
 	} );
 
-	it( 'should update grid-column with span CSS value on input', () => {
+	it( 'should update grid-column with span value on input', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		jest.mocked( useStylesFields ).mockReturnValue( {
@@ -102,7 +103,7 @@ describe( '<GridSpanFields />', () => {
 		// Assert.
 		expect( setValues ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				'grid-column': { $$type: 'string', value: 'span 4' },
+				'grid-column': { $$type: 'span', value: 4 },
 			} ),
 			expect.anything()
 		);
@@ -112,7 +113,7 @@ describe( '<GridSpanFields />', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		jest.mocked( useStylesFields ).mockReturnValue( {
-			values: { 'grid-column': { $$type: 'string', value: 'span 3' }, 'grid-row': null },
+			values: { 'grid-column': { $$type: 'span', value: 3 }, 'grid-row': null },
 			setValues,
 			canEdit: true,
 		} );
