@@ -39,11 +39,7 @@ export const ImportDesignSystemDialog = ( { open, onClose }: Props ) => {
 			id: IMPORT_STARTED_NOTIFICATION_ID,
 			type: 'info',
 			message: (
-				<>
-					<strong>{ __( 'Import in Progress.', 'elementor' ) }</strong>
-					&nbsp;
-					{ __( 'You will be notified when the import is complete.', 'elementor' ) }
-				</>
+				<>{ __( 'Import in Progress. You will be notified when the import is complete.', 'elementor' ) }</>
 			),
 		} );
 
