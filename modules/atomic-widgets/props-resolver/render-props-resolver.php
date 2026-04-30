@@ -41,6 +41,14 @@ class Render_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
+			// Check if the prop has dependencies and if they are met
+			$dependencies = $prop_type->get_dependencies();
+			if ( $dependencies && ! \Elementor\Modules\AtomicWidgets\PropDependencies\Dependency_Checker::is_dependency_met( $dependencies, $props ) ) {
+				// Skip this prop if its dependencies are not met
+				$resolved[ $key ] = null;
+				continue;
+			}
+
 			$prop_value = $props[ $key ] ?? null;
 			$actual_value = $this->get_validated_value( $prop_type, $prop_value );
 
