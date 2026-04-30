@@ -1906,6 +1906,94 @@ class Container extends Element_Base {
 		$this->add_hidden_device_controls();
 
 		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_typo',
+			[
+				'label' => esc_html__( 'Typography', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_control(
+			'heading_color',
+			[
+				'label' => esc_html__( 'Heading Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+				'separator' => 'none',
+			]
+		);
+
+		$this->add_control(
+			'color_text',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link',
+			[
+				'label' => esc_html__( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} a' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'color_link_hover',
+			[
+				'label' => esc_html__( 'Link Hover Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} a:hover' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'text_align',
+			[
+				'label' => esc_html__( 'Text Align', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => esc_html__( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_section();
 	}
 
 	/**
