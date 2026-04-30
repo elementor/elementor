@@ -252,4 +252,19 @@ describe( 'createV4FlexboxFromPreset', () => {
 
 		expect( createCalls[ 0 ].target ).toBe( previewContainer );
 	} );
+
+	test( 'rolls back history when element creation throws', () => {
+		global.$e.run = jest.fn( ( command ) => {
+			if ( 'document/elements/create' === command ) {
+				throw new Error( 'create failed' );
+			}
+			return undefined;
+		} );
+
+		expect( () => createV4FlexboxFromPreset( '50-50', makeFakeContainer( 'target' ), {} ) ).not.toThrow();
+
+		expect( historyEvents.find( ( e ) => 'start' === e.type ) ).toBeDefined();
+		expect( historyEvents.find( ( e ) => 'delete' === e.type ) ).toBeDefined();
+		expect( historyEvents.find( ( e ) => 'end' === e.type ) ).toBeUndefined();
+	} );
 } );

@@ -18,7 +18,7 @@ const stringProp = ( value ) => ( {
 } );
 
 const widthPercent = ( size ) => ( {
-	width: sizeProp( size, '%' ),
+	width: sizeProp( Number( size ), '%' ),
 } );
 
 function createFlexboxElement( target, options ) {
@@ -80,9 +80,8 @@ function createFlexbox( cssProps, target, options = {} ) {
 
 function createFlexboxFromSizes( sizes, target, options = {} ) {
 	const { createWrapper = true } = options;
-	const sizesSum = sizes.reduce( ( sum, size ) => sum + size, 0 );
-const numericSizes = sizes.map( ( s ) => Number( s ) );
-const sizesSum = numericSizes.reduce( ( sum, size ) => sum + size, 0 );
+	const sizesSum = sizes.reduce( ( sum, size ) => sum + parseInt( size ), 0 );
+	const shouldWrap = sizesSum > 100;
 
 	const parentProps = {
 		'flex-direction': stringProp( DIRECTION_ROW ),
