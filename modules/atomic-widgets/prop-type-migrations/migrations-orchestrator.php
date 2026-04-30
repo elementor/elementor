@@ -37,6 +37,30 @@ class Migrations_Orchestrator {
 		}
 
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
+		add_action( 'upgrader_process_complete', [ __CLASS__, 'maybe_invalidate_manifest_on_upgrade' ], 10, 2 );
+	}
+
+	public static function maybe_invalidate_manifest_on_upgrade( $upgrader, array $hook_extra ): void {
+		if ( ( $hook_extra['type'] ?? '' ) !== 'plugin' ) {
+			return;
+		}
+
+		$updated_plugins = $hook_extra['plugins'] ?? [];
+
+		if ( ! is_array( $updated_plugins ) || empty( $updated_plugins ) ) {
+			return;
+		}
+
+		$relevant_plugins = [
+			'elementor/elementor.php',
+			'elementor-pro/elementor-pro.php',
+		];
+
+		if ( ! array_intersect( $updated_plugins, $relevant_plugins ) ) {
+			return;
+		}
+
+		Migrations_Loader::destroy();
 	}
 
 	public static function is_active(): bool {
