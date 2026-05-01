@@ -121,7 +121,7 @@ function getAtomicFormFields( form ) {
 			const id = input.dataset.interactionId;
 			const label = getAtomicFormFieldLabel( input, form );
 			const type = getAtomicFormFieldType( input );
-			const value = 'file' === type ? input.files : getAtomicFormFieldValue( input, type );
+			const value = getAtomicFormFieldValue( input, type );
 			const options = getAtomicFieldOptions( input, type, form );
 
 			fields.push( {
@@ -201,6 +201,10 @@ function getAtomicFormFieldLabel( field, form ) {
 }
 
 function getAtomicFormFieldValue( inputs, type ) {
+	if ( 'file' === type ) {
+		return inputs.files.length > 0 ? inputs.files : '';
+	}
+
 	if ( Array.isArray( inputs ) ) {
 		return inputs.map( ( input ) => input.value ).join( ', ' );
 	}
