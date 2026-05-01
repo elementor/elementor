@@ -237,25 +237,22 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
 	payload.formFields.forEach( ( field, index ) => {
-		// Key by the HTML `name` (= the atom's _cssid) so the backend can match $_FILES entries
-		// to file-upload widgets via their cssid. Falls back to interactionId / numeric index.
-		const fieldKey = field.name || field.id || `index_${ index }`;
-		formData.append( `form_fields[${ fieldKey }][id]`, field.id );
-		formData.append( `form_fields[${ fieldKey }][type]`, field.type );
-		formData.append( `form_fields[${ fieldKey }][label]`, field.label );
-		formData.append( `form_fields[${ fieldKey }][name]`, field.name );
-		formData.append( `form_fields[${ fieldKey }][options]`, JSON.stringify( field.options ) );
+		formData.append( `form_fields[${ index }][id]`, field.id );
+		formData.append( `form_fields[${ index }][type]`, field.type );
+		formData.append( `form_fields[${ index }][label]`, field.label );
+		formData.append( `form_fields[${ index }][name]`, field.name );
+		formData.append( `form_fields[${ index }][options]`, JSON.stringify( field.options ) );
 
 		if ( field.value instanceof FileList ) {
 			Array.from( field.value ).forEach( ( file, valueIndex ) => {
-				formData.append( `form_fields[${ fieldKey }][value][${ valueIndex }]`, file );
+				formData.append( `form_fields[${ index }][value][${ valueIndex }]`, file );
 			} );
 		} else if ( Array.isArray( field.value ) ) {
 			field.value.forEach( ( value, valueIndex ) => {
-				formData.append( `form_fields[${ fieldKey }][value][${ valueIndex }]`, value );
+				formData.append( `form_fields[${ index }][value][${ valueIndex }]`, value );
 			} );
 		} else {
-			formData.append( `form_fields[${ fieldKey }][value]`, field.value );
+			formData.append( `form_fields[${ index }][value]`, field.value );
 		}
 	} );
 
