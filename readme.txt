@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.5 - 2026-04-30 =
+
+* Security Fix: Improved code security enforcement in input handling
+
 = 4.0.4 - 2026-04-28 =
 
 * Tweak: Optimized handling of repeated background requests - Atomic Editor

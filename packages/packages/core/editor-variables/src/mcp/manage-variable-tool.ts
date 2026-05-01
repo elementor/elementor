@@ -2,6 +2,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
+import { validateLabel } from '../utils/validations';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
@@ -68,11 +69,19 @@ function getServiceActions( svc: typeof service ) {
 			if ( ! type || ! label || ! value ) {
 				throw new Error( 'Create requires type, label, and value' );
 			}
+			const labelError = validateLabel( label );
+			if ( labelError ) {
+				throw new Error( labelError );
+			}
 			return svc.create( { type, label, value } );
 		},
 		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
 			if ( ! id || ! label || ! value ) {
 				throw new Error( 'Update requires id, label, and value' );
+			}
+			const labelError = validateLabel( label );
+			if ( labelError ) {
+				throw new Error( labelError );
 			}
 			return svc.update( id, { label, value } );
 		},
