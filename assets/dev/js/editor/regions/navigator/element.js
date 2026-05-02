@@ -107,14 +107,31 @@ export default class extends Marionette.CompositeView {
 		return helpers;
 	}
 
+	isProPromotion() {
+		const elType = this.model.get( 'elType' );
+		return !! elementor.widgetsCache?.[ elType ]?.meta?.is_pro_promotion;
+	}
+
 	initialize() {
-		this.collection = this.model.get( 'elements' );
+		this.collection = this.isProPromotion()
+			? new Backbone.Collection()
+			: this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
+		this.listenTo( this.model, 'title_external_change', this.onTitleExternalChange );
+		this.listenTo( this.model, 'navigator:add', this.onNavigatorAdd );
+	}
+
+	onNavigatorAdd( childModel, options ) {
+		this._onCollectionAdd( childModel, this.collection, options || {} );
+	}
+
+	onTitleExternalChange() {
+		this.ui.title.text( this.model.getTitle() );
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
@@ -143,6 +160,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
+		if ( this.isProPromotion() ) {
+			return false;
+		}
+
 		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
 	}
 
@@ -363,8 +384,8 @@ export default class extends Marionette.CompositeView {
 		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
-
 		this.renderIndicators();
+		this.syncNavigatorStructureState();
 	}
 
 	onModelChange() {
@@ -396,6 +417,14 @@ export default class extends Marionette.CompositeView {
 				return false;
 			}
 		} );
+	}
+
+	syncNavigatorStructureState() {
+		if ( this.isNavigatorContainer() ) {
+			return;
+		}
+
+		this.$el.toggleClass( 'elementor-navigator__element--has-children', !! this.hasChildren() );
 	}
 
 	onItemPress( event ) {

@@ -1,9 +1,20 @@
-import { type PropsSchema, type PropValue } from '@elementor/editor-props';
+import { type PropsSchema, type PropValue, type SizePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
-import { type ControlItem } from '../types';
+import { type ControlItem, type PseudoState } from '../types';
 
 export type ExtendedWindow = Window & {
+	$e?: {
+		components?: {
+			get?: ( name: string ) => {
+				utils?: {
+					findModelById?: ( id: string, collection?: unknown ) => BackboneModel | null;
+					addModelToParent?: ( parentId: string, childData: unknown, options?: { at?: number } ) => boolean;
+					removeModelFromParent?: ( parentId: string, childId: string ) => boolean;
+				};
+			};
+		};
+	};
 	elementor?: {
 		selection?: {
 			getElements: () => V1Element[];
@@ -18,12 +29,28 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		helpers?: {
+			isAtomicWidget?: ( model: unknown ) => boolean;
+		};
 	};
 	elementorCommon?: {
 		helpers?: {
 			getUniqueId?: () => string;
 		};
 	};
+};
+
+export type BackboneModel = {
+	get: ( key: string ) => unknown;
+	set: ( key: string, value: unknown ) => void;
+	toJSON: () => Record< string, unknown >;
+};
+
+export type BackboneCollection = {
+	models: BackboneModel[];
+	add: ( model: unknown, options?: Record< string, unknown > ) => void;
+	remove: ( model: BackboneModel, options?: Record< string, unknown > ) => void;
+	findWhere: ( attrs: Record< string, unknown > ) => BackboneModel | undefined;
 };
 
 export type V1Element = {
@@ -42,22 +69,86 @@ export type V1Element = {
 		};
 	};
 	parent?: V1Element;
+	lookup?: () => V1Element;
+};
+
+export type StringPropValue = {
+	$$type: 'string';
+	value: string;
+};
+
+export type NumberPropValue = {
+	$$type: 'number';
+	value: number;
+};
+
+export type BooleanPropValue = {
+	$$type: 'boolean';
+	value: boolean;
+};
+
+export type TimingConfigPropValue = {
+	$$type: 'timing-config';
+	value: {
+		duration: SizePropValue;
+		delay: SizePropValue;
+	};
+};
+
+export type ConfigPropValue = {
+	$$type: 'config';
+	value: {
+		replay: BooleanPropValue;
+		easing: StringPropValue;
+		relativeTo: StringPropValue;
+		repeat: StringPropValue;
+		times: NumberPropValue;
+		start?: SizePropValue;
+		end?: SizePropValue;
+	};
+};
+
+export type AnimationPresetPropValue = {
+	$$type: 'animation-preset-props';
+	value: {
+		effect: StringPropValue;
+		custom_effect?: PropValue;
+		type: StringPropValue;
+		direction: StringPropValue;
+		timing_config: TimingConfigPropValue;
+		config: ConfigPropValue;
+	};
+};
+
+export type ExcludedBreakpointsPropValue = {
+	$$type: 'excluded-breakpoints';
+	value: StringPropValue[];
+};
+
+export type InteractionBreakpointsPropValue = {
+	$$type: 'interaction-breakpoints';
+	value: {
+		excluded: ExcludedBreakpointsPropValue;
+	};
+};
+
+export type InteractionItemPropValue = {
+	$$type: 'interaction-item';
+	value: {
+		interaction_id?: StringPropValue;
+		trigger: StringPropValue;
+		animation: AnimationPresetPropValue;
+		breakpoints?: InteractionBreakpointsPropValue;
+	};
 };
 
 export type ElementInteractions = {
 	version: number;
-	items: InteractionItem[];
-};
-
-export type InteractionItem = {
-	interaction_id?: string;
-	animation: {
-		animation_type: string;
-		animation_id: string;
-	};
+	items: InteractionItemPropValue[];
 };
 
 export type V1ElementModelProps = {
+	title?: string;
 	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
@@ -67,6 +158,8 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	isGlobal?: boolean;
+	skipDefaultChildren?: boolean;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
@@ -81,10 +174,11 @@ export type V1ElementEditorSettingsProps = {
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
-export type V1ElementConfig< T = object > = {
+export type V1ElementConfig< T = object, TChild = unknown > = {
+	icon?: string;
 	title: string;
-	elType?: string;
 	widgetType?: string;
+	elType?: string;
 	controls: object;
 	atomic?: boolean;
 	atomic_controls?: ControlItem[];
@@ -95,10 +189,16 @@ export type V1ElementConfig< T = object > = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
+	atomic_pseudo_states?: PseudoState[];
+	show_in_panel?: boolean;
+	allowed_child_types?: string[];
+	default_children?: Array< Record< string, TChild > >;
+	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;
 
 type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
 	toJSON: ( options?: { remove?: string[] } ) => T;
+	trigger?: ( event: string, ...args: unknown[] ) => void;
 };

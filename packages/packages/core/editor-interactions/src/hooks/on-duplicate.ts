@@ -1,13 +1,23 @@
-import { type ElementID, type ElementInteractions, getContainer, type V1Element } from '@elementor/editor-elements';
+import { type ElementID, getAllDescendants, getContainer, type V1Element } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
+import type { ElementInteractions } from '../types';
+import { createString } from '../utils/prop-value-utils';
+import { generateTempInteractionId } from '../utils/temp-id-utils';
+
 export function initCleanInteractionIdsOnDuplicate() {
-	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
+	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] | false ) => {
+		if ( ! result || ( typeof result === 'boolean' && result === false ) ) {
+			return;
+		}
+
 		const containers = Array.isArray( result ) ? result : [ result ];
 
 		containers.forEach( ( container ) => {
 			cleanInteractionIdsRecursive( container.id );
 		} );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	} );
 }
 
@@ -18,14 +28,9 @@ function cleanInteractionIdsRecursive( elementId: ElementID ) {
 		return;
 	}
 
-	getAllElements( container ).forEach( ( element: V1Element ) => {
+	getAllDescendants( container ).forEach( ( element: V1Element ) => {
 		cleanInteractionIds( element.id as ElementID );
 	} );
-}
-
-function getAllElements( container: V1Element ): V1Element[] {
-	const children = ( container.children ?? [] ).flatMap( ( child ) => getAllElements( child as V1Element ) ) ?? [];
-	return [ container, ...children ];
 }
 
 function cleanInteractionIds( elementId: ElementID ) {
@@ -44,8 +49,8 @@ function cleanInteractionIds( elementId: ElementID ) {
 	const updatedInteractions = structuredClone( interactions ) as ElementInteractions;
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
-		if ( interaction.interaction_id ) {
-			delete interaction.interaction_id;
+		if ( interaction.$$type === 'interaction-item' && interaction.value ) {
+			interaction.value.interaction_id = createString( generateTempInteractionId() );
 		}
 	} );
 

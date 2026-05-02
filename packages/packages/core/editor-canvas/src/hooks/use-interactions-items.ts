@@ -1,12 +1,12 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
-import { type InteractionItem, interactionsRepository } from '@elementor/editor-interactions';
+import { type InteractionItemPropValue, interactionsRepository } from '@elementor/editor-interactions';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import { useOnMount } from './use-on-mount';
 
 type ProviderAndInteractionItems = {
 	provider: ReturnType< typeof interactionsRepository.getProviders >[ 0 ];
-	items: InteractionItem[];
+	items: InteractionItemPropValue[];
 };
 
 type ProviderAndSubscriber = {
@@ -101,7 +101,7 @@ function createProviderSubscriber( { provider, setInteractionItems }: CreateProv
 
 			setInteractionItems( ( prev ) => ( {
 				...prev,
-				[ providerKey ]: { provider, items },
+				[ providerKey ]: { provider, items: items as unknown as InteractionItemPropValue[] },
 			} ) );
 		} catch {}
 	};

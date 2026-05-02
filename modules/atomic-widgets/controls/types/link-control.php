@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Query\Query_Builder_Factory as Query_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {

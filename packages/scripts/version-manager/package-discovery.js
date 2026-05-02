@@ -1,23 +1,39 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const { WORKSPACE_PATTERNS } = require('./constants');
 const { logWarning } = require('./logger');
 
+const GLOB_IGNORE = ['**/node_modules/**'];
+
+function getSearchRoot() {
+  const cwd = process.cwd();
+  const isInPackagesDir = cwd.endsWith('packages');
+  return isInPackagesDir ? cwd : path.join(cwd, 'packages');
+}
+
+function getRootPackagePath() {
+  const root = getSearchRoot();
+  return path.relative(process.cwd(), path.join(root, 'package.json'));
+}
+
+function discoverPackagePaths(pattern) {
+  if (pattern) {
+    const finalPattern = pattern.endsWith('/package.json') ? pattern : `${pattern}/package.json`;
+    return glob.sync(finalPattern, { cwd: process.cwd(), ignore: GLOB_IGNORE });
+  }
+  const root = getSearchRoot();
+  const globPattern = root === process.cwd() ? '**/package.json' : 'packages/**/package.json';
+  const rootPackagePath = getRootPackagePath();
+  const files = glob.sync(globPattern, { cwd: process.cwd(), ignore: GLOB_IGNORE });
+  return files.filter((file) => file !== rootPackagePath);
+}
+
 async function getPackages(pattern) {
-  const isInPackagesDir = process.cwd().endsWith('packages');
-  const basePattern = isInPackagesDir ? 'packages/{core,libs,tools}/*/package.json' : `packages/packages/{${WORKSPACE_PATTERNS.join(',')}}/package.json`;
-  const searchPattern = pattern || basePattern;
-  
-  const finalPattern = searchPattern.endsWith('/package.json') ? searchPattern : `${searchPattern}/package.json`;
-  
-  const packageFiles = glob.sync(finalPattern, { cwd: process.cwd() });
-  
-  const files = packageFiles;
+  const packageFiles = discoverPackagePaths(pattern);
   
   const packages = [];
 
-  for (const packageFile of files) {
+  for (const packageFile of packageFiles) {
     const fullPath = path.join(process.cwd(), packageFile);
     
     if (!fs.existsSync(fullPath)) {

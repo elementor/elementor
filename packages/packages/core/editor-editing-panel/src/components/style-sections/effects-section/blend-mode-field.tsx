@@ -30,14 +30,7 @@ export const BlendModeField = () => {
 	return (
 		<StylesField bind="mix-blend-mode" propDisplayName={ BLEND_MODE_LABEL }>
 			<StylesFieldLayout label={ BLEND_MODE_LABEL }>
-				<SelectControl
-					options={ blendModeOptions }
-					MenuProps={ {
-						sx: {
-							maxHeight: '256px',
-						},
-					} }
-				/>
+				<SelectControl options={ blendModeOptions } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

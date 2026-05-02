@@ -1,127 +1,155 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
 
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
 	buildCompositionsToolPrompt.description( `
-Build entire elementor widget comositions representing complex structures of nested elements.
+# RESOURCES (Read before use)
+- [elementor://global-classes] - Check FIRST for reusable classes
+- [elementor://global-variables] - ONLY use variables defined here
+- [${ AVAILABLE_WIDGETS_URI }/v4]
 
-# When to use this tool
-Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
-Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+# TOOL SUUPORT
+This tool support v4 elements only
 
-# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
-   Required to understand which widgets are available, and what are their configuration schemas.
-   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+# WORKFLOW
+1. Check/create global classes via "create-global-class" tool
+2. Build composition (THIS TOOL) - minimal inline styles
+3. Apply classes via "apply-global-class" tool
 
-# Instructions
-1. Understand the user requirements carefully.
-2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
-   use the "e-button" element, it would be represented as <e-button></e-button> in the XML structure.
-3. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
-   Every widget type has it's own configuration schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
-   PropValues must follow the exact PropType schema provided in the resource.
-4. For every element, provide a "configuration-id" attribute. For example:
-   \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
-   In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
-   In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
-5. Ensure the XML structure is valid and parsable.
-6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
-   Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
-7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
-8. Make sure that non-container elements do NOT have any nested elements.
-9. Unsless the user specifically requires structure only, BE EXPRESSIVE AND VISUALLY CREATIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
-   In the case of doubt, prefer adding more styles to make the composition visually appealing.
+# XML STRUCTURE
+- Use widget tags: \`<e-button configuration-id="btn1"></e-button>\`
+- Containers: "e-flexbox", "e-div-block", "e-tabs"
+- Every element needs unique "configuration-id"
+- No attributes, classes, IDs, or text nodes in XML
 
-# Additional Guidelines
-- Most users expect the structure to be well designed and visually appealing.
-- Use layout properties, ensure "white space" design approach is followed, and make sure the composition is visually balanced.
-- Use appropriate spacing, alignment, and sizing to create a harmonious layout.
-- Consider the visual hierarchy of elements to guide the user's attention effectively.
-- You are encouraged to use colors, typography, and other style properties to enhance the visual appeal, as long as they are part of the configuration schema for the elements used.
-- Always aim for a clean and professional look that aligns with modern design principles.
-- When you are required to create placeholder texts, use texts that have a length that fits the goal. When long texts are required, use longer placeholder texts. When the user specifies exact texts, use the exact texts.
-- Image size does not affect the actual size on the screen, only which quality to use. If you use images, specifically add _styles PropValues to define the image sizes.
-- Attempt to use layout, margin, padding, size properties from the styles schema.
-- If your elements library is limited, encourage use of nesting containers to achieve complex layouts.
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`allowed_child_types\` lists which element types can be nested inside
+- \`allowed_parents\` lists which element types this element can be placed inside
 
-# CONSTRAINTS
-When a tool execution fails, retry up to 10 more times, read the error message carefully, and adjust the XML structure or the configurations accordingly.
-If a "$$type" is missing, update the invalid object, if the XML has parsing errors, fix it, etc. and RETRY.
-VALIDATE the XML structure before delivering it as the final result.
-VALIDATE the JSON structure used in the "configuration" attributes for each element before delivering the final result. The configuration must MATCH the PropValue schemas.
-NO LINKS ALLOWED. Never apply links to elements, even if they appear in the PropType schema.
-elementConfig values must align with the widget's PropType schema, available at the resource [${ WIDGET_SCHEMA_URI }].
-stylesConfig values must align with the common styles PropType schema, available at the resource [${ STYLE_SCHEMA_URI }].
+# CONFIGURATION
+- Map configuration-id → elementConfig (props) + stylesConfig (layout only)
+- All PropValues require \`$$type\` matching schema
+- NO LINKS in configuration
+- Retry on errors up to 10x
 
-# Parameters
-All parameters are MANDATORY.
-- xmlStructure
-- elementConfig
-- stylesConfig
+Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
-If unsure about the configuration of a specific property, read the schema resources carefully.
+# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
+**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
 
+## SIZING: DEFAULT IS NO SIZE (CRITICAL)
+
+**DO NOT specify height or width unless you have a specific visual reason.**
+
+Flexbox and CSS already handle sizing automatically:
+- Containers grow to fit their content
+- Flex children distribute space via flex properties, not width/height
+- Text elements size to their content
+
+WHEN TO SPECIFY SIZE:
+- min-height on ROOT section for viewport-spanning hero (use min-height, NOT height)
+- max-width for contained content areas (e.g., max-width: 60rem)
+- Explicit aspect ratios for media containers
+
+NEVER SPECIFY:
+- height on nested containers (causes overflow)
+- width on flex children (use flex-basis or gap instead)
+- 100vh on anything except root-level sections
+- Any size "just to be safe" - if unsure, OMIT IT
+
+vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
+
+GOOD: \`<e-flexbox>content naturally sizes</e-flexbox>\`
+BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-flexbox>\`
+
+## Layout Variety (Break the Template)
+- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
+- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
+- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
+- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
+- Negative space as design element: Large margins create focus and sophistication
+- Break alignment intentionally: Offset headings, overlapping elements, broken grids
+
+## Visual Depth & Effects
+- Layer elements: Overlapping cards, text over images, floating elements
+- Subtle shadows with color tint (not pure black): \`box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)\`
+- Gradient overlays on images for text readability
+- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
+- Backdrop blur for glassmorphism where appropriate
+- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
+
+## Typography with Character
+- Display fonts for headlines (from user's brand or contextually appropriate)
+- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
+- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
+- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
+- Text decoration: Underlines, highlights, gradient text for emphasis
+
+## Color with Purpose
+- Extract palette from user context (brand colors, industry norms, mood)
+- 60-30-10 rule: dominant, secondary, accent
+- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
+- Color blocking: Large colored sections create visual rhythm
+- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
+
+## Spacing Strategy
+- Section padding: 6rem-10rem vertical, creating breathing room
+- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
+- Use rem/em exclusively for responsive scaling
+- Generous padding on CTAs: min 1rem 2.5rem
+
+# HARD CONSTRAINTS
+- Variables ONLY from [elementor://global-variables] (others throw errors)
+- Avoid SVG widgets unless assets are pre-uploaded
+- Check \`llm_guidance\` in widget schemas
+
+# PARAMETERS
+- **xmlStructure**: Valid XML with configuration-id attributes
+- **elementConfig**: configuration-id → widget PropValues
+- **stylesConfig**: configuration-id → style PropValues (layout only)
+- **customCSS**: configuration-id → CSS rules (no selectors, semicolon-separated)
   ` );
 
 	buildCompositionsToolPrompt.example( `
-A Heading and a button inside a flexbox
+Section with heading + button (NO explicit heights - content sizes naturally):
 {
-  xmlStructure: "<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading1"></e-heading><e-button configuration-id="button1"></e-button></e-flexbox>"
+  xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
   elementConfig: {
-    "flex1": {
-      "tag": {
-        "$$type": "string",
-        "value": "section"
-      },
+    "section1": { "tag": { "$$type": "string", "value": "section" } }
+  },
+  customCSS: {
+    "Section Title": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
   },
   stylesConfig: {
-    "heading1": {
-      "font-size": {
-        "$$type": "size",
-        "value": {
-          "size": { "$$type": "number", "value": 24 },
-          "unit": { "$$type": "string", "value": "px" }
-        }
-      },
-      "color": {
-        "$$type": "color",
-        "value": { "$$type": "string", "value": "#333" }
-      }
+    "Section Title": {
+      "font-size": { "$$type": "size", "value": { "size": { "$$type": "number", "value": 3.5 }, "unit": { "$$type": "string", "value": "rem" } } },
+      "color": { "$$type": "color", "value": { "$$type": "string", "value": "#2d2a26" } }
     }
-  },
+  }
 }
+Note: No height/width specified on any element - flexbox handles layout automatically.
 ` );
 
 	buildCompositionsToolPrompt.parameter(
 		'xmlStructure',
-		`**MANDATORY** A valid XML structure representing the composition to be built, using custom elementor tags, styling and configuration PropValues.`
+		`Valid XML structure with custom elementor tags and configuration-id attributes.`
 	);
 
-	buildCompositionsToolPrompt.parameter(
-		'elementConfig',
-		`**MANDATORY** A record mapping configuration IDs to their corresponding configuration objects, defining the PropValues for each element created.`
-	);
+	buildCompositionsToolPrompt.parameter( 'elementConfig', `Record mapping configuration IDs to widget PropValues.` );
 
 	buildCompositionsToolPrompt.parameter(
 		'stylesConfig',
-		`**MANDATORY** A record mapping style PropTypes to their corresponding style configuration objects, defining the PropValues for styles to be applied to elements.`
+		`Record mapping configuration IDs to style PropValues (layout/positioning only).`
 	);
 
 	buildCompositionsToolPrompt.instruction(
-		`You will be provided the XML structure with element IDs. These IDs represent the actual elementor widgets created on the page/post.
-You should use these IDs as reference for further configuration, styling or changing elements later on.`
-	);
-
-	buildCompositionsToolPrompt.instruction(
-		`You must use styles/variables/classes that are available in the project resources, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
+		`Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.`
 	);
 
 	return buildCompositionsToolPrompt.prompt();

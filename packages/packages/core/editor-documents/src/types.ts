@@ -40,6 +40,7 @@ export type V1DocumentsManager = {
 	getCurrent: () => V1Document;
 	invalidateCache: ( id?: number | string ) => void;
 	request: < TData >( id: number | string ) => Promise< TData >;
+	get: ( id: number | string ) => V1Document;
 };
 
 export type ExtendedWindow = Window & {

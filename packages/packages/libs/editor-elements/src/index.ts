@@ -5,9 +5,9 @@ export type * from './sync/types';
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
-export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
+export { useSelectedElementSettings } from './hooks/use-selected-element-settings';
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
@@ -23,6 +23,7 @@ export {
 } from './sync/duplicate-elements';
 export { generateElementId } from './sync/generate-element-id';
 export { getContainer, selectElement } from './sync/get-container';
+export { addModelToParent, findModelInDocument, removeModelFromParent, resolveContainer } from './sync/resolve-element';
 export { getCurrentDocumentContainer } from './sync/get-current-document-container';
 export { getCurrentDocumentId } from './sync/get-current-document-id';
 export { getElementEditorSettings } from './sync/get-element-editor-settings';
@@ -30,16 +31,17 @@ export { getElementLabel } from './sync/get-element-label';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
+export { getAllDescendants } from './sync/get-all-descendants';
+export {
+	findChildRecursive,
+	getElementChildren as getElementChildrenWithFallback,
+	type ModelResult,
+} from './sync/model-utils';
 export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';
 export { moveElement, type MoveElementParams } from './sync/move-element';
-export {
-	moveElements,
-	type MovedElement,
-	type MovedElementsResult,
-	type MoveElementsParams,
-} from './sync/move-elements';
+export { moveElements } from './sync/move-elements';
 export { removeElements } from './sync/remove-elements';
 export { replaceElement } from './sync/replace-element';
 export { updateElementEditorSettings } from './sync/update-element-editor-settings';
@@ -61,8 +63,5 @@ export {
 export { deleteElementStyle } from './styles/delete-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 
-export { useElementInteractions } from './hooks/use-element-interactions';
 export { getElementInteractions } from './sync/get-element-interactions';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';
-
-export { initMcp as initElementsMcp } from './mcp';

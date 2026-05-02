@@ -3,8 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Utils;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -37,7 +37,7 @@ class Utils {
 
 	public static function traverse_post_elements( string $post_id, callable $callback ): void {
 		$documents = Plugin::$instance->documents;
-		$document = is_preview() ? $documents->get_doc_or_auto_save( $post_id, get_current_user_id() ) : $documents->get( $post_id );
+		$document = Plugin::$instance->preview->is_editor_or_preview() ? $documents->get_doc_or_auto_save( $post_id, get_current_user_id() ) : $documents->get( $post_id );
 
 		if ( ! $document ) {
 			return;

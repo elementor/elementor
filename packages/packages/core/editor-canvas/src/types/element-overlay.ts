@@ -4,6 +4,7 @@ export type ElementOverlayProps = {
 	element: HTMLElement;
 	id: string;
 	isSelected: boolean;
+	isGlobal?: boolean;
 };
 
 export type OverlayFilterArgs = {

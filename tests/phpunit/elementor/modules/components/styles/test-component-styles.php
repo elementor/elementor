@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Components\Styles;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\Components\Styles\Component_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -71,7 +71,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [ 'component_id' => 50 ],
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 50 ] ],
 					],
 				],
 			],
@@ -83,7 +83,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [ 'component_id' => 180 ],
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -95,7 +95,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [ 'component_id' => 180 ],
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -107,7 +107,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [ 'component_id' => 250 ],
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 250 ] ],
 					],
 				],
 			],
@@ -142,7 +142,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 						'value' => [
 							'component_id' => [
 								'$$type' => 'number',
-								'value' => 180,
+								'value' => [ '$$type' => 'number', 'value' => 180 ],
 							],
 						],
 					],
@@ -173,7 +173,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [ 'component_id' => 180 ],
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],

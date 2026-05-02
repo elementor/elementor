@@ -1,4 +1,48 @@
 const eventsConfig = {
+	appTypes: {
+		editor: 'editor',
+		wpAdmin: 'wpadmin',
+	},
+
+	targetTypes: {
+		dropdownItem: 'dropdown_item',
+		button: 'button',
+		tab: 'tab',
+		toggle: 'toggle',
+		searchInput: 'search_input',
+		searchResult: 'search_result',
+		buttons: 'buttons',
+		searchWidget: 'search_widget',
+	},
+
+	interactionResults: {
+		actionSelected: 'action_selected',
+		navigate: 'navigate',
+		create: 'create',
+		sessionEnd: 'session_end',
+		tabChanged: 'tab_changed',
+		assetInserted: 'asset_inserted',
+		assetFavorite: 'asset_favorite',
+		aiGenerate: 'ai_generate',
+		resultsUpdated: 'results_updated',
+		noResults: 'no_results',
+		selected: 'selected',
+		promotionViewed: 'promotion_viewed',
+		upgradeNow: 'upgrade_now',
+	},
+
+	targetNames: {
+		publishDropdown: {
+			saveDraft: 'save_draft',
+			saveAsTemplate: 'save_as_template',
+			viewPage: 'view_page',
+			copyAndShare: 'copy_and_share',
+		},
+		pageList: {
+			addNewPage: 'add_new_page',
+		},
+	},
+
 	triggers: {
 		click: 'Click',
 		rightClick: 'Right Click',
@@ -9,11 +53,15 @@ const eventsConfig = {
 		editorLoaded: 'Editor Loaded',
 		visible: 'Visible',
 		pageLoaded: 'Page Loaded',
+		typing: 'Typing',
+		tabSelect: 'Tab Select',
+		insert: 'Insert',
 	},
 
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
+		sidebar: 'Sidebar',
 		elementorEditor: 'Elementor Editor',
 		templatesLibrary: {
 			library: 'Templates Library',
@@ -29,6 +77,11 @@ const eventsConfig = {
 		admin: 'WP admin',
 		structurePanel: 'Structure Panel',
 		canvas: 'Canvas',
+		leftPanel: 'Left Panel',
+		elementorLibrary: 'Elementor Library',
+		components: {
+			instanceEditingPanel: 'Instance Editing Panel',
+		},
 	},
 
 	secondaryLocations: {
@@ -105,6 +158,13 @@ const eventsConfig = {
 		},
 		componentsTab: 'Components Tab',
 		canvasElement: 'Canvas Element',
+		publishDropdown: 'Publish Dropdown',
+		pageListDropdown: 'Page List Dropdown',
+		emptyBox: 'Empty Box',
+		searchBar: 'Search Bar',
+		finderResults: 'Finder Results',
+		libraryTabs: 'Library Tabs',
+		assetCard: 'Asset Card',
 	},
 
 	elements: {
@@ -157,6 +217,7 @@ const eventsConfig = {
 		},
 		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
 		elementorEditor: {
+			editorLoaded: 'editor_loaded',
 			checklist: {
 				checklistHeaderClose: 'checklist_header_close_icon',
 				checklistFirstPopup: 'checklist popup triggered',
@@ -174,6 +235,7 @@ const eventsConfig = {
 			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
+			variableSyncToV3: 'variable_sync_to_v3',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
@@ -181,6 +243,11 @@ const eventsConfig = {
 			created: 'component_created',
 			instanceAdded: 'component_instance_added',
 			edited: 'component_edited',
+			propertiesPanelOpened: 'component_properties_panel_opened',
+			propertiesGroupCreated: 'component_properties_group_created',
+			propertyExposed: 'component_property_exposed',
+			propertyRemoved: 'component_property_removed',
+			detached: 'component_detached',
 		},
 		global_classes: {
 			classApplied: 'class_applied',
@@ -201,6 +268,29 @@ const eventsConfig = {
 			classStateClicked: 'class_state_clicked',
 			classUsageClicked: 'class_usage_clicked',
 			classDuplicate: 'class_duplicate',
+			classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+			classSyncToV3: 'class_sync_to_v3',
+			classSyncToV3PopupClick: 'class_sync_to_v3_popup_click',
+		},
+		editorOne: {
+			topBarPublishDropdown: 'top_bar_publish_dropdown',
+			topBarPageList: 'top_bar_page_list',
+			siteSettingsSession: 'site_settings_session',
+			eLibraryNav: 'e_library_nav',
+			eLibraryInsert: 'e_library_insert',
+			eLibraryFavorite: 'e_library_favorite',
+			eLibraryGenerateAi: 'e_library_generate_ai',
+			finderSearchInput: 'finder_search_input',
+			finderResultSelect: 'finder_result_select',
+			canvasEmptyBoxAction: 'canvas_empty_box_action',
+			widgetPanelSearch: 'widget_panel_search',
+		},
+		interactions: {
+			created: 'interactions_created',
+		},
+		promotions: {
+			viewPromotion: 'view_promotion',
+			upgradePromotionClick: 'upgrade_promotion_click',
 		},
 	},
 };

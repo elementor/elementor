@@ -1,7 +1,14 @@
+import { useEffect, useState } from 'react';
 import * as React from 'react';
-import { useState } from 'react';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
+import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
+import {
+	PopoverHeader,
+	PopoverMenuList,
+	SearchField,
+	SectionPopoverBody,
+	type VirtualizedItem,
+} from '@elementor/editor-ui';
+import { PromotionAlert } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton, Tooltip } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
@@ -20,15 +27,19 @@ const SIZE = 'tiny';
 const CREATE_LABEL = __( 'Create variable', 'elementor' );
 const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
 
+const getProUpgradeUrl = ( variableType: string ) =>
+	`https://go.elementor.com/renew-license-panel-${ variableType }-variable`;
+
 type Props = {
 	closePopover: () => void;
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	disabled?: boolean;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, emptyState } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -64,14 +75,17 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 	if ( onAdd ) {
 		actions.push(
 			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
-				<IconButton
-					id="add-variable-button"
-					size={ SIZE }
-					onClick={ onAddAndTrack }
-					aria-label={ CREATE_LABEL }
-				>
-					<PlusIcon fontSize={ SIZE } />
-				</IconButton>
+				<span>
+					<IconButton
+						id="add-variable-button"
+						size={ SIZE }
+						onClick={ onAddAndTrack }
+						aria-label={ CREATE_LABEL }
+						disabled={ disabled }
+					>
+						<PlusIcon fontSize={ SIZE } />
+					</IconButton>
+				</span>
 			</Tooltip>
 		);
 	}
@@ -119,14 +133,18 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = sprintf(
-		/* translators: %s: Variable Type. */
-		__( 'Create your first %s variable', 'elementor' ),
-		variableType
-	);
+	useEffect( () => {
+		if ( disabled ) {
+			trackViewPromotion( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		}
+	}, [ disabled ] );
 
 	return (
-		<PopoverBody>
+		<SectionPopoverBody>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
 				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
@@ -145,17 +163,35 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 			<Divider />
 
 			{ hasVariables && hasSearchResults && (
-				<PopoverMenuList
-					items={ items }
-					onSelect={ handleSetVariable }
-					onClose={ () => {} }
-					selectedValue={ variable }
-					data-testid={ `${ variableType }-variables-list` }
-					menuListTemplate={ VariablesStyledMenuList }
-					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-						<MenuItemContent item={ item } />
+				<>
+					<PopoverMenuList
+						items={ items }
+						onSelect={ disabled ? () => {} : handleSetVariable }
+						onClose={ () => {} }
+						selectedValue={ variable }
+						data-testid={ `${ variableType }-variables-list` }
+						menuListTemplate={ ( props ) => <VariablesStyledMenuList { ...props } disabled={ disabled } /> }
+						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+							<MenuItemContent item={ item } disabled={ disabled } />
+						) }
+					/>
+					{ disabled && (
+						<PromotionAlert
+							message={ sprintf(
+								/* translators: %s: Variable Type. */
+								__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+								variableType
+							) }
+							upgradeUrl={ getProUpgradeUrl( variableType ) }
+							onCtaClick={ () =>
+								trackUpgradePromotionClick( {
+									target_name: 'variables_popover',
+									location_l1: 'variables_list',
+								} )
+							}
+						/>
 					) }
-				/>
+				</>
 			) }
 
 			{ ! hasSearchResults && hasVariables && (
@@ -166,9 +202,31 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ ! hasVariables && ! hasNoCompatibleVariables && (
+			{ disabled && ! hasVariables && (
 				<EmptyState
-					title={ noVariableTitle }
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'No %s variables yet', 'elementor' ),
+						variableType
+					) }
+					message={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Upgrade to create %s variables and maintain consistent element sizing.', 'elementor' ),
+						variableType
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+				>
+					{ emptyState }
+				</EmptyState>
+			) }
+
+			{ ! hasVariables && ! hasNoCompatibleVariables && ! disabled && (
+				<EmptyState
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Create your first %s variable', 'elementor' ),
+						variableType
+					) }
 					message={ __(
 						'Variables are saved attributes that you can apply anywhere on your site.',
 						'elementor'
@@ -178,7 +236,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ hasNoCompatibleVariables && (
+			{ hasNoCompatibleVariables && ! disabled && (
 				<EmptyState
 					title={ __( 'No compatible variables', 'elementor' ) }
 					message={ __(
@@ -189,6 +247,6 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					onAdd={ onAdd }
 				/>
 			) }
-		</PopoverBody>
+		</SectionPopoverBody>
 	);
 };

@@ -9,7 +9,12 @@ import { StyleRenderer } from '../style-renderer';
 // Mock dependencies
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseListenTo: jest.fn(),
+	__privateGetCanvasIframeDocument: jest.fn(),
 	commandEndEvent: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-documents', () => ( {
+	getCurrentDocument: jest.fn().mockReturnValue( { id: 1 } ),
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
@@ -18,10 +23,6 @@ jest.mock( '@elementor/ui', () => ( {
 
 jest.mock( '../../hooks/use-style-items', () => ( {
 	useStyleItems: jest.fn(),
-} ) );
-
-jest.mock( '../../sync/get-canvas-iframe-document', () => ( {
-	getCanvasIframeDocument: jest.fn(),
 } ) );
 
 jest.mock( '../../hooks/use-documents-css-links', () => ( {

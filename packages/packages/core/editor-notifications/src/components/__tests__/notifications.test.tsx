@@ -152,7 +152,7 @@ describe( 'Notifications', () => {
 		const snackbarOpts = {
 			id: '1',
 			message: 'Test Notification 1',
-			type: 'info',
+			type: 'default',
 			additionalActionProps: [],
 		};
 
@@ -182,7 +182,7 @@ describe( 'Notifications', () => {
 			1: {
 				id: '1',
 				message: 'Test Notification 1',
-				type: 'info',
+				type: 'default',
 				additionalActionProps: [],
 			},
 		} );

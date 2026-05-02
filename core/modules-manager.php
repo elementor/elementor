@@ -127,6 +127,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'global-classes',
 			'variables',
+			'design-system-sync',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
@@ -134,7 +135,10 @@ class Modules_Manager {
 			'atomic-opt-in',
 			'components',
 			'interactions',
+			'feedback',
+			'widget-creation',
 			'editor-one',
+			'elementor-capabilities-mcp',
 		];
 	}
 

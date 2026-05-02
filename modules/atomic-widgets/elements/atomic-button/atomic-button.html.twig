@@ -1,20 +1,20 @@
-{% if settings.text is not empty %}
-    {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-    {% if settings.link.href %}
-        <a
-            href="{{ settings.link.href | raw }}"
-            target="{{ settings.link.target }}"
-            class="{{ classes }}"
-            data-interaction-id="{{ id }}"
-            data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-            {{ id_attribute }} {{ settings.attributes | raw }}
-        >
-            {{ settings.text }}
-        </a>
-    {% else %}
-        <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-            {{ settings.text }}
-        </button>
-    {% endif %}
-{% endif %}
+{% import 'elementor/macros' as m %}
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' -%}
+{%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
+{%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+		{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
+		{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+	>
+		{{ settings.text | striptags(allowed_tags) | raw }}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- else -%}
+	<button class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+		{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
+		{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+	>
+		{{ settings.text | striptags(allowed_tags) | raw }}
+	</button>
+{%- endif %}

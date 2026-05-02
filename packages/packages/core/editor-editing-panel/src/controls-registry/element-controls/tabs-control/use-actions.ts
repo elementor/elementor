@@ -28,6 +28,11 @@ export const useActions = () => {
 		items: ItemsActionPayload< TabItem >;
 		tabContentAreaId: string;
 	} ) => {
+		const newDefault = calculateDefaultOnDuplicate( {
+			items,
+			defaultActiveTab,
+		} );
+
 		items.forEach( ( { item, index } ) => {
 			const tabId = item.id as string;
 			const tabContentAreaContainer = getContainer( tabContentAreaId );
@@ -40,6 +45,16 @@ export const useActions = () => {
 			duplicateElements( {
 				elementIds: [ tabId, tabContentId ],
 				title: __( 'Duplicate Tab', 'elementor' ),
+				onDuplicateElements: () => {
+					if ( newDefault !== defaultActiveTab ) {
+						setDefaultActiveTab( newDefault, {}, { withHistory: false } );
+					}
+				},
+				onRestoreElements: () => {
+					if ( newDefault !== defaultActiveTab ) {
+						setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
+					}
+				},
 			} );
 		} );
 	};
@@ -58,10 +73,16 @@ export const useActions = () => {
 		movedElementIndex: number;
 	} ) => {
 		const tabContentContainer = getContainer( tabContentAreaId );
-		const tabContentId = tabContentContainer?.children?.[ movedElementIndex ]?.id;
+		const tabContent = tabContentContainer?.children?.[ movedElementIndex ];
+		const movedElement = getContainer( movedElementId );
+		const tabsMenu = getContainer( tabsMenuId );
 
-		if ( ! tabContentId ) {
-			throw new Error( 'Content ID is required' );
+		if ( ! tabContent ) {
+			throw new Error( 'Content element is required' );
+		}
+
+		if ( ! movedElement || ! tabsMenu ) {
+			throw new Error( 'Tab element or menu not found' );
 		}
 
 		const newDefault = calculateDefaultOnMove( {
@@ -74,24 +95,24 @@ export const useActions = () => {
 			title: __( 'Reorder Tabs', 'elementor' ),
 			moves: [
 				{
-					elementId: movedElementId,
-					targetContainerId: tabsMenuId,
+					element: movedElement,
+					targetContainer: tabsMenu,
 					options: { at: toIndex },
 				},
 				{
-					elementId: tabContentId,
-					targetContainerId: tabContentAreaId,
+					element: tabContent,
+					targetContainer: tabContentContainer,
 					options: { at: toIndex },
 				},
 			],
 			onMoveElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault );
+					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
 				}
 			},
 			onRestoreElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab );
+					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
 				}
 			},
 		} );
@@ -124,12 +145,12 @@ export const useActions = () => {
 			} ),
 			onRemoveElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault );
+					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
 				}
 			},
 			onRestoreElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab );
+					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
 				}
 			},
 		} );
@@ -144,6 +165,13 @@ export const useActions = () => {
 		tabsMenuId: string;
 		items: ItemsActionPayload< TabItem >;
 	} ) => {
+		const tabContentArea = getContainer( tabContentAreaId );
+		const tabsMenu = getContainer( tabsMenuId );
+
+		if ( ! tabContentArea || ! tabsMenu ) {
+			throw new Error( 'Tab containers not found' );
+		}
+
 		items.forEach( ( { index } ) => {
 			const position = index + 1;
 
@@ -151,14 +179,14 @@ export const useActions = () => {
 				title: __( 'Tabs', 'elementor' ),
 				elements: [
 					{
-						containerId: tabContentAreaId,
+						container: tabContentArea,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
 							editor_settings: { title: `Tab ${ position } content`, initial_position: position },
 						},
 					},
 					{
-						containerId: tabsMenuId,
+						container: tabsMenu,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
 							editor_settings: { title: `Tab ${ position } trigger`, initial_position: position },
@@ -216,4 +244,18 @@ const calculateDefaultOnRemove = ( {
 
 	const defaultGap = items.reduce( ( acc, { index } ) => ( index < defaultActiveTab ? acc + 1 : acc ), 0 );
 	return defaultActiveTab - defaultGap;
+};
+
+const calculateDefaultOnDuplicate = ( {
+	items,
+	defaultActiveTab,
+}: {
+	items: ItemsActionPayload< TabItem >;
+	defaultActiveTab: number;
+} ) => {
+	const duplicatesBefore = items.reduce( ( acc, { index } ) => {
+		const isDuplicatedBeforeDefault = index < defaultActiveTab;
+		return isDuplicatedBeforeDefault ? acc + 1 : acc;
+	}, 0 );
+	return defaultActiveTab + duplicatesBefore;
 };

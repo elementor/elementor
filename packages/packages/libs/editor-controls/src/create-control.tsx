@@ -15,11 +15,12 @@ export type ControlComponent< TComponent extends AnyComponentType = AnyComponent
 
 export function createControl< T extends AnyComponentType >( Control: T ) {
 	return ( ( props: ComponentProps< T > ) => {
-		const Component = useControlReplacement( Control );
+		const { ControlToRender, OriginalControl, isReplaced } = useControlReplacement( Control );
+		const controlProps = isReplaced ? { ...props, OriginalControl } : props;
 
 		return (
 			<ErrorBoundary fallback={ null }>
-				<Component { ...props } />
+				<ControlToRender { ...controlProps } />
 			</ErrorBoundary>
 		);
 	} ) as ControlComponent< T >;

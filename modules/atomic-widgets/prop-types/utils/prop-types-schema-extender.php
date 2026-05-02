@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -27,6 +28,60 @@ abstract class Prop_Types_Schema_Extender {
 		}
 
 		return $result;
+	}
+
+	public function get_extended_style_schema( array $schema ): array {
+		$result = [];
+
+		foreach ( $schema as $key => $prop_type ) {
+			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				$result[ $key ] = $prop_type;
+
+				continue;
+			}
+
+			if ( ! $this->contains_prop_type_instance( $prop_type, Color_Prop_Type::class ) ) {
+				$result[ $key ] = $prop_type;
+
+				continue;
+			}
+
+			$result[ $key ] = $this->get_extended_prop_type( $prop_type );
+		}
+
+		return $result;
+	}
+
+	private function contains_prop_type_instance( Prop_Type $prop_type, string $prop_type_class ): bool {
+		if ( $prop_type instanceof $prop_type_class ) {
+			return true;
+		}
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			foreach ( $prop_type->get_prop_types() as $inner_prop_type ) {
+				if ( $this->contains_prop_type_instance( $inner_prop_type, $prop_type_class ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			foreach ( $prop_type->get_shape() as $shape_prop_type ) {
+				if ( $shape_prop_type instanceof Prop_Type && $this->contains_prop_type_instance( $shape_prop_type, $prop_type_class ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
+			return $this->contains_prop_type_instance( $prop_type->get_item_type(), $prop_type_class );
+		}
+
+		return false;
 	}
 
 	protected function get_extended_prop_type( Prop_Type $prop_type ): Prop_Type {

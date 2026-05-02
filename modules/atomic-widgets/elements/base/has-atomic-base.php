@@ -1,0 +1,435 @@
+<?php
+
+namespace Elementor\Modules\AtomicWidgets\Elements\Base;
+
+use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Utils;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * @mixin Element_Base
+ */
+trait Has_Atomic_Base {
+	use Has_Base_Styles;
+
+	public function has_widget_inner_wrapper(): bool {
+		return false;
+	}
+
+	abstract public static function get_element_type(): string;
+
+	final public function get_name() {
+		return static::get_element_type();
+	}
+
+	private function get_valid_controls( array $schema, array $controls ): array {
+		$valid_controls = [];
+
+		foreach ( $controls as $control ) {
+			if ( $control instanceof Section ) {
+				$cloned_section = clone $control;
+
+				$cloned_section->set_items(
+					$this->get_valid_controls( $schema, $control->get_items() )
+				);
+
+				$valid_controls[] = $cloned_section;
+				continue;
+			}
+
+			if ( ( $control instanceof Atomic_Control_Base ) ) {
+				$prop_name = $control->get_bind();
+
+				if ( ! $prop_name ) {
+					Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
+					continue;
+				}
+
+				if ( ! array_key_exists( $prop_name, $schema ) ) {
+					Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
+					continue;
+				}
+			}
+
+			$valid_controls[] = $control;
+		}
+
+		return $valid_controls;
+	}
+
+	private static function validate_schema( array $schema ) {
+		$widget_name = static::class;
+
+		foreach ( $schema as $key => $prop ) {
+			if ( ! ( $prop instanceof Prop_Type ) ) {
+				Utils::safe_throw( "Prop `$key` must be an instance of `Prop_Type` in `{$widget_name}`." );
+			}
+		}
+	}
+
+	private function parse_atomic_styles( array $data ): array {
+		$styles = $data['styles'] ?? [];
+		$style_parser = Style_Parser::make( Style_Schema::get() );
+
+		foreach ( $styles as $style_id => $style ) {
+			$result = $style_parser->parse( $style );
+
+			if ( ! $result->is_valid() ) {
+				$widget_id = $data['id'] ?? 'unknown';
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
+			}
+
+			$styles[ $style_id ] = $result->unwrap();
+		}
+
+		return $styles;
+	}
+
+	private function parse_atomic_settings( array $settings ): array {
+		$schema = static::get_props_schema();
+		$props_parser = Props_Parser::make( $schema );
+
+		$result = $props_parser->parse( $settings );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
+		}
+
+		return $result->unwrap();
+	}
+
+	private function parse_atomic_interactions( $interactions ) {
+
+		if ( empty( $interactions ) ) {
+			return [];
+		}
+
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		if ( is_array( $interactions ) ) {
+			return $interactions;
+		}
+
+		return [];
+	}
+
+	private function extract_prop_value( $data, $key, $default = '' ) {
+		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
+			return $default;
+		}
+
+		$value = $data[ $key ];
+
+		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
+			return $value['value'];
+		}
+
+		return null !== $value ? $value : $default;
+	}
+
+	public function get_atomic_controls() {
+		$controls = apply_filters(
+			'elementor/atomic-widgets/controls',
+			$this->define_atomic_controls(),
+			$this
+		);
+
+		$schema = static::get_props_schema();
+
+		// Validate the schema only in the Editor.
+		static::validate_schema( $schema );
+
+		return $this->get_valid_controls( $schema, $controls );
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
+	}
+
+	final public function get_controls( $control_id = null ) {
+		if ( ! empty( $control_id ) ) {
+			return null;
+		}
+
+		return [];
+	}
+
+	final public function get_data_for_save() {
+		$data = parent::get_data_for_save();
+
+		$data['version'] = $this->version;
+		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
+		$data['styles'] = $this->parse_atomic_styles( $data );
+		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+
+		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
+			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
+		} else {
+			$data['interactions'] = [];
+		}
+		return $data;
+	}
+
+	private function transform_interactions_for_save( $interactions ) {
+		$decoded = $this->decode_interactions_data( $interactions );
+
+		if ( empty( $decoded['items'] ) ) {
+			return [];
+		}
+		return $decoded;
+	}
+
+	private function decode_interactions_data( $interactions ) {
+		if ( is_array( $interactions ) ) {
+			return $interactions;
+		}
+
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		return [
+			'items' => [],
+			'version' => 1,
+		];
+	}
+
+	final public function get_raw_data( $with_html_content = false ) {
+		$raw_data = parent::get_raw_data( $with_html_content );
+
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
+		$raw_data['interactions'] = $this->interactions ?? [];
+		$raw_data['editor_settings'] = $this->editor_settings;
+
+		return $raw_data;
+	}
+
+	final public function get_stack( $with_common_controls = true ) {
+		return [
+			'controls' => [],
+			'tabs' => [],
+		];
+	}
+
+	public function get_atomic_settings(): array {
+		$schema = static::get_props_schema();
+		$props = $this->get_settings();
+
+		$merged_attribute_values = array_merge(
+			$this->get_initial_attributes()['value'] ?? [],
+			$props['attributes']['value'] ?? []
+		);
+		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
+
+		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+
+		return $this->transform_link_for_render( $parsed );
+	}
+
+	protected function transform_link_for_render( array $parsed ): array {
+		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
+
+		$parsed['link'] = ! empty( $link_attributes ) ? [
+			'tag' => $parsed['link']['tag'],
+			'attributes' => $link_attributes,
+		] : null;
+
+		return $parsed;
+	}
+
+	protected function get_initial_attributes() {
+		return Attributes_Prop_Type::generate( [
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-e-type' ),
+				'value' => $this->get_type(),
+			] ),
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate( 'data-id' ),
+				'value' => $this->get_id(),
+			] ),
+		] );
+	}
+
+	public function get_atomic_setting( string $key ) {
+		$schema = static::get_props_schema();
+
+		if ( ! isset( $schema[ $key ] ) ) {
+			return null;
+		}
+
+		$props = $this->get_settings();
+		$prop_value = $props[ $key ] ?? null;
+
+		$single_schema = [ $key => $schema[ $key ] ];
+		$single_props = [ $key => $prop_value ];
+
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+
+		return $resolved[ $key ] ?? null;
+	}
+
+	protected function parse_editor_settings( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
+	}
+
+	public static function get_props_schema(): array {
+		$schema = static::define_props_schema();
+
+		if ( ! isset( $schema['_cssid'] ) ) {
+			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+		}
+
+		return apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			$schema
+		);
+	}
+
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
+		}
+	}
+
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
+		}
+	}
+
+	public function print_content() {
+		$defined_context = $this->define_render_context();
+
+		if ( empty( $defined_context ) ) {
+			return parent::print_content();
+		}
+
+		$this->set_render_context( $defined_context );
+
+		parent::print_content();
+
+		$this->clear_render_context( $defined_context );
+	}
+
+	/**
+	 * Define the context for element's Render_Context.
+	 *
+	 * @return array Array of context pairs. Each pair is an associative array with:
+	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
+	 *               - 'context' (required): The context value (can be any type).
+	 *
+	 * @example
+	 * [
+	 *     [
+	 *         'context_key' => 'custom-key',
+	 *         'context' => ['some' => 'data'],
+	 *     ],
+	 *     [
+	 *         'context' => ['instance_id' => $this->get_id()],
+	 *     ],
+	 * ]
+	 */
+	protected function define_render_context(): array {
+		return [];
+	}
+
+	protected function get_link_attributes( $link_settings ) {
+		if ( empty( $link_settings['href'] ) ) {
+			return [];
+		}
+
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$url = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+		$is_action_link = 'button' === $tag;
+		$url_attr_key = $is_action_link ? 'data-action-link' : 'href';
+
+		return [
+			$url_attr_key => $url,
+			'target' => $target,
+		];
+	}
+
+	private function get_link_attributes_string( $link_settings ) {
+		$link_attributes = $this->get_link_attributes( $link_settings );
+
+		if ( empty( $link_attributes ) ) {
+			return '';
+		}
+
+		$parts = [];
+
+		foreach ( $link_attributes as $key => $value ) {
+			if ( 'tag' === $key ) {
+				continue;
+			}
+
+			$parts[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function get_script_depends() {
+		$depends = parent::get_script_depends();
+
+		if ( $this->has_action_link() ) {
+			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
+		}
+
+		if ( Atomic_Form::is_instance_form( $this ) ) {
+			$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+		}
+
+		return $depends;
+	}
+}

@@ -1,16 +1,22 @@
 import * as React from 'react';
-import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { BrushIcon, TextIcon } from '@elementor/icons';
+import { trackUpgradePromotionClick } from '@elementor/editor-controls';
+import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { CtaButton } from '@elementor/editor-ui';
+import { BrushIcon, ExpandDiagonalIcon, RefreshIcon, RefreshOffIcon, TextIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
 
 import { ColorField } from './components/fields/color-field';
 import { FontField } from './components/fields/font-field';
 import { ColorIndicator } from './components/ui/color-indicator';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
+import { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
+import { EmptyTransformer } from './transformers/empty-transformer';
 import { registerVariableType } from './variables-registry/variable-type-registry';
 
 export function registerVariableTypes() {
 	registerVariableType( {
+		key: colorVariablePropTypeUtil.key,
 		valueField: ColorField,
 		icon: BrushIcon,
 		propTypeUtil: colorVariablePropTypeUtil,
@@ -18,14 +24,66 @@ export function registerVariableTypes() {
 		variableType: 'color',
 		startIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
 		defaultValue: '#ffffff',
+		menuActionsFactory: ( { variable, variableId, handlers } ) => {
+			const actions = [];
+
+			if ( variable.sync_to_v3 ) {
+				actions.push( {
+					name: __( 'Stop syncing to Global Colors', 'elementor' ),
+					icon: RefreshOffIcon,
+					color: 'text.primary',
+					onClick: () => handlers.onStopSync( variableId ),
+				} );
+			} else {
+				actions.push( {
+					name: __( 'Sync to Global Colors', 'elementor' ),
+					icon: RefreshIcon,
+					color: 'text.primary',
+					onClick: () => handlers.onStartSync( variableId ),
+				} );
+			}
+
+			return actions;
+		},
 	} );
 
 	registerVariableType( {
+		key: fontVariablePropTypeUtil.key,
 		valueField: FontField,
 		icon: TextIcon,
 		propTypeUtil: fontVariablePropTypeUtil,
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',
 		defaultValue: 'Roboto',
+	} );
+
+	const sizePromotions = {
+		isActive: false,
+		icon: ExpandDiagonalIcon,
+		propTypeUtil: sizeVariablePropTypeUtil,
+		fallbackPropTypeUtil: sizePropTypeUtil,
+		styleTransformer: EmptyTransformer,
+		variableType: 'size',
+		selectionFilter: () => [],
+		emptyState: (
+			<CtaButton
+				size="small"
+				href={ 'https://go.elementor.com/go-pro-panel-size-variable/' }
+				onClick={ () =>
+					trackUpgradePromotionClick( { target_name: 'variables_popover', location_l1: 'variables_list' } )
+				}
+			/>
+		),
+	};
+
+	registerVariableType( {
+		...sizePromotions,
+		key: sizeVariablePropTypeUtil.key,
+		defaultValue: '0px',
+	} );
+
+	registerVariableType( {
+		...sizePromotions,
+		key: 'global-custom-size-variable',
 	} );
 }

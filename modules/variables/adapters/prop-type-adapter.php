@@ -5,25 +5,29 @@ namespace Elementor\Modules\Variables\Adapters;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 
 class Prop_Type_Adapter {
-	public const CUSTOM_SIZE_KEY = 'global-custom-size-variable';
+	public const GLOBAL_CUSTOM_SIZE_VARIABLE_KEY = 'global-custom-size-variable';
 
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
-
-		$collection->set_version( Variables_Collection::FORMAT_VERSION_V2 );
+		$collection->set_version( Constants::FORMAT_VERSION_V2 );
 
 		$record = $collection->serialize();
 
 		$collection->each( function( Variable $variable ) use ( $schema, &$record ) {
 			$type = $variable->type();
 			$value = $variable->value();
+			$id = $variable->id();
+			$variable = $variable->to_array();
+
 			$prop_type = $schema[ $type ] ?? null;
 
 			if ( is_array( $value ) || ! $prop_type ) {
@@ -34,14 +38,16 @@ class Prop_Type_Adapter {
 				$value = self::parse_size_value( $value );
 			}
 
-			if ( self::CUSTOM_SIZE_KEY === $type ) {
+			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $type ) {
 				$value = [
 					'size' => $value,
 					'unit' => 'custom',
 				];
+
+				$variable['type'] = Size_Variable_Prop_Type::get_key();
 			}
 
-			$record['data'][ $variable->id() ] = array_merge( $variable->to_array(), [ 'value' => $prop_type::generate( $value ) ] );
+			$record['data'][ $id ] = array_merge( $variable, [ 'value' => $prop_type::generate( $value ) ] );
 		} );
 
 		return $record;
@@ -57,18 +63,30 @@ class Prop_Type_Adapter {
 
 			$value = $value['value'];
 
-			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
-				$value = $value['size'] . $value['unit'];
+			if ( isset( $value['unit'] ) && 'custom' === $value['unit'] ) {
+				$value = $value['size'];
+
+				$variable->set_type( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY );
 			}
 
-			if ( self::CUSTOM_SIZE_KEY === $variable->type() ) {
-				$value = $value['size'];
+			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
+				if ( ! is_array( $value ) ) {
+					$value = [
+						'size' => '',
+						'unit' => Size_Constants::DEFAULT_UNIT,
+					];
+				}
+
+				$value['size'] = $value['size'] ?? '';
+				$value['unit'] = empty( $value['unit'] ) ? Size_Constants::DEFAULT_UNIT : $value['unit'];
+
+				$value = $value['size'] . $value['unit'];
 			}
 
 			$variable->set_value( $value );
 		} );
 
-		$collection->set_version( Variables_Collection::FORMAT_VERSION_V1 );
+		$collection->set_version( Constants::FORMAT_VERSION_V1 );
 
 		return $collection;
 	}
@@ -78,11 +96,11 @@ class Prop_Type_Adapter {
 			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
 			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
 			Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
-			self::CUSTOM_SIZE_KEY => Size_Prop_Type::class,
+			self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY => Size_Prop_Type::class,
 		];
 	}
 
-	private static function parse_size_value( string $value ) {
+	private static function parse_size_value( ?string $value ) {
 		$value = trim( strtolower( $value ) );
 
 		if ( 'auto' === $value ) {
@@ -96,6 +114,13 @@ class Prop_Type_Adapter {
 			return [
 				'size' => $matches[1] + 0,
 				'unit' => strtolower( $matches[2] ),
+			];
+		}
+
+		if ( empty( $value ) ) {
+			return [
+				'size' => '',
+				'unit' => Size_Constants::DEFAULT_UNIT,
 			];
 		}
 

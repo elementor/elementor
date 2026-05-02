@@ -1,7 +1,10 @@
 import {
+	type Dependency,
 	type DependencyTerm,
 	extractValue,
+	isDependency,
 	isDependencyMet,
+	type Props,
 	type PropsSchema,
 	type PropType,
 	type TransformablePropValue,
@@ -12,55 +15,40 @@ type Value = TransformablePropValue< string > | null;
 
 export type Values = Record< string, Value >;
 
-export function extractOrderedDependencies(
-	bind: string,
-	propsSchema: PropsSchema,
-	elementValues: Values,
-	dependenciesPerTargetMapping: Record< string, string[] >
-): string[] {
-	const prop = getPropType( propsSchema, elementValues, bind.split( '.' ) );
+export type DependencyEffect = {
+	isHidden: boolean;
+	isDisabled: ( propType: PropType ) => boolean;
+};
 
-	if ( ! prop ) {
-		return [];
-	}
+export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elementSettings?: Props ): Values {
+	const elementSettingsWithDefaults = { ...elementSettings };
+	Object.keys( propsSchema ).forEach( ( key ) => {
+		if ( elementSettingsWithDefaults[ key ] === null && propsSchema[ key ].default !== null ) {
+			elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+		}
+	} );
 
-	const dependencies: string[] = [];
-
-	if ( 'object' === prop.kind ) {
-		dependencies.push( ...Object.keys( prop.shape ).map( ( key ) => bind + '.' + key ) );
-	}
-
-	const directDependencies = extractPropOrderedDependencies( bind, dependenciesPerTargetMapping );
-
-	if ( ! dependencies.length ) {
-		return directDependencies;
-	}
-
-	return dependencies.reduce(
-		( carry, dependency ) => [
-			...carry,
-			...extractOrderedDependencies( dependency, propsSchema, elementValues, dependenciesPerTargetMapping ),
-		],
-		directDependencies
-	);
+	return elementSettingsWithDefaults as Values;
 }
 
-function extractPropOrderedDependencies(
-	bind: string,
-	dependenciesPerTargetMapping: Record< string, string[] >
-): string[] {
-	if ( ! dependenciesPerTargetMapping?.[ bind ]?.length ) {
-		return [];
-	}
+export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
+	const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, settings );
+	const propType = propsSchema[ bind ];
+	const depCheck = isDependencyMet( propType?.dependencies, settingsWithDefaults );
 
-	return dependenciesPerTargetMapping[ bind ].reduce< string[] >(
-		( dependencies, dependency ) => [
-			...dependencies,
-			dependency,
-			...extractPropOrderedDependencies( dependency, dependenciesPerTargetMapping ),
-		],
-		[]
-	);
+	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
+	const isHidden = !! failingTerm && ! isDependency( failingTerm ) && failingTerm?.effect === 'hide';
+
+	return {
+		isHidden,
+		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, settingsWithDefaults ).isMet,
+	};
+}
+
+export function extractOrderedDependencies( dependenciesPerTargetMapping: Record< string, string[] > ): string[] {
+	return Object.values( dependenciesPerTargetMapping )
+		.flat()
+		.filter( ( dependent, index, self ) => self.indexOf( dependent ) === index );
 }
 
 export function getUpdatedValues(
@@ -77,8 +65,8 @@ export function getUpdatedValues(
 	return dependencies.reduce(
 		( newValues, dependency ) => {
 			const path = dependency.split( '.' );
-			const propType = getPropType( propsSchema, elementValues, path );
 			const combinedValues = { ...elementValues, ...newValues };
+			const propType = getPropType( propsSchema, combinedValues, path );
 
 			if ( ! propType ) {
 				return newValues;
@@ -197,14 +185,17 @@ function updateValue( path: string[], value: Value, values: Values ) {
 }
 
 function handleUnmetCondition( props: {
-	failingDependencies: DependencyTerm[];
+	failingDependencies: ( DependencyTerm | Dependency )[];
 	dependency: string;
 	elementValues: Values;
 	defaultValue: Value;
 	elementId: string;
 } ) {
 	const { failingDependencies, dependency, elementValues, defaultValue, elementId } = props;
-	const newValue = failingDependencies.find( ( term ) => term.newValue )?.newValue ?? null;
+	const termWithNewValue = failingDependencies.find(
+		( term ): term is Dependency => 'newValue' in term && !! term.newValue
+	) as Dependency | undefined;
+	const newValue = termWithNewValue?.newValue ?? null;
 	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
 
 	savePreviousValueToStorage( {

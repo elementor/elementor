@@ -1,4 +1,5 @@
-import { type V1ElementData } from '@elementor/editor-elements';
+import { type RenderContext } from '@elementor/editor-canvas';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
@@ -14,11 +15,20 @@ export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = BaseComponent & {
 	id: number;
+	isArchived?: boolean;
+};
+
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
 };
 
 export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
+
+export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
 
 export type OverridableProp = {
 	overrideKey: string;
@@ -27,11 +37,12 @@ export type OverridableProp = {
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	defaultValue: PropValue;
+	originValue: PropValue;
 	groupId: string;
+	originPropFields?: OriginPropFields;
 };
 
-export type OverridablePropGroup = {
+export type OverridablePropsGroup = {
 	id: string;
 	label: string;
 	props: string[];
@@ -40,7 +51,7 @@ export type OverridablePropGroup = {
 export type OverridableProps = {
 	props: Record< string, OverridableProp >;
 	groups: {
-		items: Record< string, OverridablePropGroup >;
+		items: Record< string, OverridablePropsGroup >;
 		order: string[];
 	};
 };
@@ -54,41 +65,41 @@ type BaseComponent = {
 export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
 			config: {
-				locations: Record< string, string >;
+				locations: Record< string, string | Record< string, string > >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
 		};
+		storage: ElementorStorage;
 	};
-};
-
-export type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
-		};
+	elementor?: {
+		getContainerByKeyValue?: ( args: {
+			key: string;
+			value: string;
+			parent?: V1Element[ 'view' ];
+		} ) => V1Element | null;
 	};
-};
-
-export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
-	TransformablePropValue<
-		'component-instance',
-		{
-			component_id: TComponentId;
-			overrides?: ComponentOverride[];
-		}
-	>;
-
-type ComponentOverride = {
-	override_key: string;
-	value: TransformablePropValue< string >;
 };
 
 export type ComponentOverridable = {
 	override_key: string;
 	origin_value: TransformablePropValue< string >;
+};
+
+export type ComponentRenderContext = RenderContext< {
+	overrides?: Record< string, unknown >;
+} >;
+
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
 };

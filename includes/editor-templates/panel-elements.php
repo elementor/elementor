@@ -18,15 +18,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-notice-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
+	<div id="elementor-panel-elements-widget-creation-area"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-categories">
 	<div id="elementor-panel-categories"></div>
 	<?php
+	$has_pro = Utils::has_pro();
 	$get_pro_details = apply_filters( 'elementor/editor/panel/get_pro_details', [
 		'link' => 'https://go.elementor.com/pro-widgets/',
 		'message' => __( 'Get more with Elementor Pro', 'elementor' ),
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
+		'show_banner' => ! $has_pro,
 	] );
 	$promotion_data_sticky = [
 		'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
@@ -34,13 +37,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 	];
 	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
-	$has_pro = Utils::has_pro();
 	?>
+	<?php if ( $get_pro_details['show_banner'] ) : ?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/go-pro.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>" />
 		<div class="elementor-nerd-box-message"><?php echo esc_html( $get_pro_details['message'] ); ?></div>
 		<a class="elementor-button go-pro" target="_blank" href="<?php echo esc_url( $get_pro_details['link'] ); ?>"><?php echo esc_html( $get_pro_details['button_text'] ); ?></a>
 	</div>
+	<?php endif; ?>
 	<?php if ( ! $has_pro ) : ?>
 	<div id="elementor-panel-get-pro-elements-sticky">
 		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
@@ -67,7 +71,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</span>
 		<# } #>
 	</button>
-	<div class="elementor-panel-category-items elementor-responsive-panel"></div>
+	<div class="elementor-panel-category-items elementor-responsive-panel">
+		<?php do_action( 'elementor/editor/templates/panel/category/content' ); ?>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-element-search">
@@ -77,13 +83,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
-	<button class="elementor-element">
+	<# const v4Categories = ['v4-elements', 'atomic-form']; #>
+	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
-		<# } else if ( false === obj.editable ) { #>
+		<# } else if ( false === obj.editable && !obj.atomicFormPromotion ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
-		<# if ( obj.categories.includes( 'v4-elements' ) ) { #>
+		<# if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
@@ -94,6 +101,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 	</button>
 </script>
+
+<?php if ( Plugin::$instance->experiments->is_feature_active( Modules\WidgetCreation\Module::EXPERIMENT_NAME ) ) : ?>
+<script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
+	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
+	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
+	<button type="button" class="elementor-panel-elements-widget-creation__cta">
+		<i class="eicon-ai" aria-hidden="true"></i>
+		<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
+	</button>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-search-footer">
+	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( "Couldn't find what you're looking for?", 'elementor' ); ?></div>
+	<div class="elementor-panel-elements-widget-creation__message"><?php echo esc_html__( 'Build a custom widget with Angie by describing what you need.', 'elementor' ); ?></div>
+	<button type="button" class="elementor-panel-elements-widget-creation__cta">
+		<i class="eicon-ai" aria-hidden="true"></i>
+		<?php echo esc_html__( 'Create custom widget', 'elementor' ); ?>
+	</button>
+</script>
+<?php endif; ?>
 
 <script type="text/template" id="tmpl-elementor-panel-global">
 	<div class="elementor-nerd-box">

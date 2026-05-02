@@ -62,7 +62,7 @@ class Test_Size_Prop_Type extends TestCase {
 		// Act.
 		$settings = $prop_type->get_settings();
 
-		$expected = ['px', 'em', 'rem', 'vw', 'vh', '%', 'auto'];
+		$expected = ['px', 'ch', 'em', 'rem', 'vw', 'vh', '%', 'auto', 'custom'];
 
 		// Assert.
 		$this->assertEqualsCanonicalizing( $expected, $settings['available_units'] );

@@ -17,6 +17,7 @@ jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 jest.mock( '../../../../contexts/element-context', () => ( {
@@ -123,8 +124,8 @@ describe( '<FlexSizeField />', () => {
 		fireEvent.click( growButton );
 		expect( styleFields.flex.value?.value ).toEqual( {
 			flexGrow: { $$type: 'number', value: 1 },
-			flexShrink: null,
-			flexBasis: null,
+			flexShrink: { $$type: 'number', value: 0 },
+			flexBasis: { $$type: 'size', value: { unit: 'auto', size: '' } },
 		} );
 		fireEvent.click( growButton );
 		expect( styleFields.flex.value ).toBe( null );
@@ -150,9 +151,9 @@ describe( '<FlexSizeField />', () => {
 		const shrinkButton = screen.getByLabelText( 'Shrink' );
 		fireEvent.click( shrinkButton );
 		expect( styleFields.flex.value?.value ).toEqual( {
-			flexGrow: null,
+			flexGrow: { $$type: 'number', value: 0 },
 			flexShrink: { $$type: 'number', value: 1 },
-			flexBasis: null,
+			flexBasis: { $$type: 'size', value: { unit: 'auto', size: '' } },
 		} );
 		fireEvent.click( shrinkButton );
 		expect( styleFields.flex.value ).toBe( null );

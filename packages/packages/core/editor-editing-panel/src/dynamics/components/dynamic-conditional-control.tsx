@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { isDependencyMet, type PropsSchema, type PropType, type PropValue } from '@elementor/editor-props';
 
-import { type DynamicPropValue } from '../utils';
+import { type DynamicPropValue } from '../types';
 
 type DynamicConditionalControlProps = React.PropsWithChildren< {
 	propType?: PropType;
@@ -15,7 +16,7 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 	propsSchema,
 	dynamicSettings,
 } ) => {
-	const defaults = React.useMemo< Record< string, PropValue | null > >( () => {
+	const defaults = useMemo< Record< string, PropValue | null > >( () => {
 		if ( ! propsSchema ) {
 			return {};
 		}
@@ -27,7 +28,7 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 		}, {} );
 	}, [ propsSchema ] );
 
-	const convertedSettings = React.useMemo( () => {
+	const convertedSettings = useMemo( () => {
 		if ( ! dynamicSettings ) {
 			return {};
 		}
@@ -48,7 +49,7 @@ export const DynamicConditionalControl: React.FC< DynamicConditionalControlProps
 		);
 	}, [ dynamicSettings ] );
 
-	const effectiveSettings = React.useMemo( () => {
+	const effectiveSettings = useMemo( () => {
 		return { ...defaults, ...convertedSettings } as Record< string, PropValue >;
 	}, [ defaults, convertedSettings ] );
 

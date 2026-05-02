@@ -1,13 +1,13 @@
 import { createMockPropType } from 'test-utils';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
+import { enqueueFont } from '@elementor/editor-v1-adapters';
 import { act, renderHook } from '@testing-library/react';
 
 import { initStyleTransformers } from '../../init-style-transformers';
-import { enqueueFont } from '../../sync/enqueue-font';
 import { useStylePropResolver } from '../use-style-prop-resolver';
 
-jest.mock( '../../sync/enqueue-font' );
+jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '@elementor/editor-styles' );
 
 describe( 'useStylePropResolver', () => {

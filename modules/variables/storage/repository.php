@@ -16,10 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
-	// TODO: deleted this class later after this PR
-	const TOTAL_VARIABLES_COUNT = 100;
-	const FORMAT_VERSION_V1 = 1;
-	const VARIABLES_META_KEY = '_elementor_global_variables';
 	private Kit $kit;
 
 	public function __construct( Kit $kit ) {
@@ -40,7 +36,7 @@ class Repository {
 			++$variables_in_use;
 		}
 
-		if ( self::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
+		if ( Constants::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}
@@ -75,7 +71,7 @@ class Repository {
 	}
 
 	public function load(): array {
-		$db_record = $this->kit->get_json_meta( static::VARIABLES_META_KEY );
+		$db_record = $this->kit->get_json_meta( Constants::VARIABLES_META_KEY );
 
 		if ( is_array( $db_record ) && ! empty( $db_record ) ) {
 			return $db_record;
@@ -343,7 +339,7 @@ class Repository {
 		$variable_data = $operation['variable'];
 
 		if ( ! isset( $db_record['data'][ $id ] ) ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );
@@ -459,7 +455,7 @@ class Repository {
 
 		++$db_record['watermark'];
 
-		if ( $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record ) ) {
+		if ( $this->kit->update_json_meta( Constants::VARIABLES_META_KEY, $db_record ) ) {
 			return $db_record['watermark'];
 		}
 
@@ -482,7 +478,7 @@ class Repository {
 		return [
 			'data' => [],
 			'watermark' => 0,
-			'version' => self::FORMAT_VERSION_V1,
+			'version' => Constants::FORMAT_VERSION_V1,
 		];
 	}
 

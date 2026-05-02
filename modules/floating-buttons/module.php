@@ -3,14 +3,10 @@
 namespace Elementor\Modules\FloatingButtons;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
@@ -18,6 +14,8 @@ use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\FloatingButtons\AdminMenuItems\Editor_One_Floating_Elements_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -60,14 +58,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_contact_menu_args();
-		$function = $menu_args['function'];
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
-		} else {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-		}
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
 	}
 
 	public function __construct() {
@@ -100,6 +92,14 @@ class Module extends BaseModule {
 				$this->flush_permalinks_on_elementor_version_change();
 			}
 		});
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT_FLOATING_BUTTONS ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=e-floating-buttons',
+			];
+			return $elementor_post_types;
+		} );
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
@@ -153,9 +153,9 @@ class Module extends BaseModule {
 			return $is_top_bar_active;
 		}, 10, 2 );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
@@ -238,7 +238,7 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ]++;
+			++$posts_to_update[ $post_id ];
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {

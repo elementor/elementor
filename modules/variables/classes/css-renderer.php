@@ -64,7 +64,11 @@ class CSS_Renderer {
 			return null;
 		}
 
-		return "--{$variable_name}:{$value};";
+		$entry = "--{$variable_name}:{$value};";
+
+		$additional = apply_filters( 'elementor/variables/css_entry_additional', '', $variable, $id );
+
+		return $entry . $additional;
 	}
 
 	private function wrap_with_root( array $css_entries ): string {

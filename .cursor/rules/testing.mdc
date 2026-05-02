@@ -1,8 +1,7 @@
 ---
-description: Testing rules for both main repo and turbo-repo
-globs: ["**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js", "tests/**/*.php"]
+description: Testing rules for both main repo and packages folder (turbo-repo)
+alwaysApply: false
 ---
-
 # Testing Rules
 
 ## Testing Philosophy

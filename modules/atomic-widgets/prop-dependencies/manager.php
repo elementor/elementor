@@ -36,7 +36,8 @@ class Manager {
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
-	 *             newValue?: array
+	 *             newValue?: array,
+	 *             effect?: 'hide'|'disable'
 	 *         }
 	 *     }
 	 */
@@ -72,10 +73,27 @@ class Manager {
 	 *  path: array<string>,
 	 *  value?: mixed,
 	 *  newValue?: array,
+	 *  effect?: 'hide'|'disable'
 	 * }
 	 * @return self
 	 */
-	public function where( array $config ): self {
+	public function where( array $config, $new_value = null ): self {
+		if ( isset( $config['terms'] ) ) {
+			if ( empty( $this->dependencies ) ) {
+				$this->new();
+			}
+
+			$term = [
+				'terms' => $config['terms'],
+				'relation' => $config['relation'] ?? self::RELATION_OR,
+				'newValue' => $new_value ?? null,
+				'effect' => $config['effect'] ?? 'disable',
+			];
+			$this->dependencies['terms'][] = $term;
+
+			return $this;
+		}
+
 		if ( ! isset( $config['operator'] ) || ! isset( $config['path'] ) ) {
 			Utils::safe_throw( 'Term missing mandatory configurations' );
 		}
@@ -87,8 +105,10 @@ class Manager {
 		$term = [
 			'operator' => $config['operator'],
 			'path' => $config['path'],
+			'nestedPath' => $config['nestedPath'] ?? null,
 			'value' => $config['value'] ?? null,
 			'newValue' => $config['newValue'] ?? null,
+			'effect' => $config['effect'] ?? 'disable',
 		];
 
 		if ( empty( $this->dependencies ) ) {

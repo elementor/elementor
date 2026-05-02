@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Variables\Storage\Entities;
 
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 
@@ -21,7 +23,7 @@ class Test_Variable extends TestCase {
 		$data = [
 			'id' => 'id-4563',
 			'type' => 'font',
-			'label' => 'Primary Font',
+			'label' => 'Primary-Font',
 			'value' => 'Roboto',
 			'order' => 290,
 			'updated_at' => '2024-01-01 10:00:00',
@@ -35,7 +37,7 @@ class Test_Variable extends TestCase {
 		// Assert
 		$this->assertEquals( 'id-4563', $variable->id() );
 		$this->assertEquals( 'font', $result['type'] );
-		$this->assertEquals( 'Primary Font', $variable->label() );
+		$this->assertEquals( 'Primary-Font', $variable->label() );
 		$this->assertEquals( 'Roboto', $result['value'] );
 		$this->assertEquals( 290, $result['order'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $result );
@@ -47,7 +49,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::create_new( [
 			'id' => 'id-4563',
 			'type' => 'font',
-			'label' => 'Primary Font',
+			'label' => 'Primary-Font',
 			'value' => 'Roboto',
 		] );
 
@@ -77,7 +79,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'global-color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => 'Orange',
 			'order' => 1
 		] );
@@ -97,7 +99,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 5,
 			'updated_at' => '2024-01-01 10:00:00'
@@ -110,7 +112,7 @@ class Test_Variable extends TestCase {
 		$this->assertIsArray( $result );
 		$this->assertArrayNotHasKey( 'id', $result );
 		$this->assertEquals( 'color', $result['type'] );
-		$this->assertEquals( 'Primary Color', $result['label'] );
+		$this->assertEquals( 'Primary-Color', $result['label'] );
 		$this->assertEquals( '#000000', $result['value'] );
 		$this->assertEquals( 5, $result['order'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $result );
@@ -122,7 +124,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 1,
 		] );
@@ -139,20 +141,20 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 2
 		] );
 
 		// Act
 		$variable->apply_changes( [
-			'label' => 'Updated Label',
+			'label' => 'Updated-Label',
 			'value' => 'Yellow',
 			'order' => 34,
 		] );
 
 		// Assert
-		$this->assertEquals( 'Updated Label', $variable->label() );
+		$this->assertEquals( 'Updated-Label', $variable->label() );
 		$this->assertEquals( 'Yellow', $variable->to_array()['value'] );
 		$this->assertEquals( 34, $variable->to_array()['order'] );
 		$this->assertNotNull( $variable->to_array()['updated_at'] );
@@ -163,7 +165,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 5,
 			'updated_at' => '2024-01-01 10:00:00',
@@ -185,19 +187,19 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 5,
 		] );
 
 		// Act
 		$variable->apply_changes( [
-			'label' => 'Updated Label',
+			'label' => 'Updated-Label',
 			'unknown_field' => 'should be ignored',
 		] );
 
 		// Assert
-		$this->assertEquals( 'Updated Label', $variable->label() );
+		$this->assertEquals( 'Updated-Label', $variable->label() );
 		$this->assertArrayNotHasKey( 'unknown_field', $variable->to_array() );
 	}
 
@@ -207,7 +209,7 @@ class Test_Variable extends TestCase {
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'updated_at' => $updated_at,
 			'order' => 78,
@@ -218,6 +220,65 @@ class Test_Variable extends TestCase {
 
 		// Assert
 		$this->assertEquals( $updated_at, $variable->to_array()['updated_at'] );
+	}
+
+	public function test_apply_changes__switches_type_from_custom_size_to_size() {
+		// Arrange
+		$variable = Variable::from_array( [
+			'id' => 'id-123',
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'label' => 'Custom-Size',
+			'value' => 'calc(100% - 20px)',
+			'order' => 1,
+		] );
+
+		// Act
+		$variable->apply_changes( [
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'value' => '12px',
+		] );
+
+		// Assert
+		$this->assertEquals( 'global-size-variable', $variable->type() );
+		$this->assertEquals( '12px', $variable->value() );
+	}
+
+	public function test_apply_changes__switches_type_from_size_to_custom_size() {
+		// Arrange
+		$variable = Variable::from_array( [
+			'id' => 'id-456',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'label' => 'Size-Variable',
+			'value' => '20px',
+			'order' => 2,
+		] );
+
+		// Act
+		$variable->apply_changes( [
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+		] );
+
+		// Assert
+		$this->assertEquals( 'global-custom-size-variable', $variable->type() );
+	}
+
+	public function test_apply_changes__throws_error_for_trying_to_change_type_for_non_size_types() {
+		// Arrange
+		$variable = Variable::from_array( [
+			'id' => 'id-789',
+			'type' => 'global-color-variable',
+			'label' => 'Color-Variable',
+			'value' => '#FF0000',
+			'order' => 3,
+		] );
+
+		// Assert.
+		$this->expectException( Type_Mismatch::class );
+
+		// Act.
+		$variable->apply_changes( [
+			'type' => 'global-font-variable',
+		] );
 	}
 }
 

@@ -20,10 +20,16 @@ class Test_Library_App extends Elementor_Test_Base {
 			->setMethods( [ 'get', 'is_connected' ] )
 			->getMock();
 
-		$library_mock->expects( $this->once() )
+		$library_mock->expects( $this->exactly( 2 ) )
 			->method( 'get' )
-			->with( 'access_token' )
-			->willReturn( $jwt_token );
+			->withConsecutive(
+				[ 'access_token' ],
+				[ 'user' ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$jwt_token,
+				(object) [ 'email' => 'test@example.com' ]
+			);
 
 		$library_mock->expects( $this->once() )
 			->method('is_connected')
@@ -38,6 +44,41 @@ class Test_Library_App extends Elementor_Test_Base {
 		$this->assertEquals ( $test_user_id, $result[ 'library_connect' ][ 'user_id' ] );
 	}
 
+	public function test_localize_settings__user_email_is_present() {
+		$test_user_id = '123456';
+		$test_user_email = 'test@example.com';
+
+		$jwt_token = $this->createTestJwtToken( $test_user_id );
+
+		$library_mock = $this->getMockBuilder( Library::class )
+			->disableOriginalConstructor()
+			->setMethods( [ 'get', 'is_connected' ] )
+			->getMock();
+
+		$library_mock->expects( $this->exactly( 2 ) )
+			->method( 'get' )
+			->withConsecutive(
+				[ 'access_token' ],
+				[ 'user' ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$jwt_token,
+				(object) [ 'email' => $test_user_email ]
+			);
+
+		$library_mock->expects( $this->once() )
+			->method('is_connected')
+			->willReturn( true );
+
+		Plugin::$instance->editor->set_edit_mode( false );
+
+		$result = $library_mock->localize_settings( [] );
+
+		$this->assertArrayHasKey( 'library_connect', $result );
+		$this->assertTrue( $result[ 'library_connect' ][ 'is_connected' ] );
+		$this->assertEquals ( $test_user_email, $result[ 'library_connect' ][ 'user_email' ] );
+	}
+
 	public function test_localize_settings__user_id_is_null() {
 		$jwt_token = null;
 
@@ -46,10 +87,16 @@ class Test_Library_App extends Elementor_Test_Base {
 			->setMethods( [ 'get', 'is_connected' ] )
 			->getMock();
 
-		$library_mock->expects( $this->once() )
+		$library_mock->expects( $this->exactly( 2 ) )
 			->method( 'get' )
-			->with( 'access_token' )
-			->willReturn( $jwt_token );
+			->withConsecutive(
+				[ 'access_token' ],
+				[ 'user' ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$jwt_token,
+				null
+			);
 
 		$library_mock->expects( $this->once() )
 			->method('is_connected')
@@ -72,10 +119,16 @@ class Test_Library_App extends Elementor_Test_Base {
 			->setMethods( [ 'get', 'is_connected' ] )
 			->getMock();
 
-		$library_mock->expects( $this->once() )
+		$library_mock->expects( $this->exactly( 2 ) )
 			->method( 'get' )
-			->with( 'access_token' )
-			->willReturn( $jwt_token );
+			->withConsecutive(
+				[ 'access_token' ],
+				[ 'user' ]
+			)
+			->willReturnOnConsecutiveCalls(
+				$jwt_token,
+				null
+			);
 
 		$library_mock->expects( $this->once() )
 			->method('is_connected')

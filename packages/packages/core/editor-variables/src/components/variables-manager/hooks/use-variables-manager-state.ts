@@ -4,7 +4,10 @@ import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
+import { generateDuplicateLabel } from '../../../utils/duplicate-label';
 import { filterBySearch } from '../../../utils/filter-by-search';
+import { applySelectionFilters, variablesToList } from '../../../utils/variables-to-list';
+import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -37,9 +40,52 @@ export const useVariablesManagerState = () => {
 		return newId;
 	}, [] );
 
+	const duplicateVariable = useCallback( ( sourceId: string ): string => {
+		const newId = generateTempId();
+
+		setVariables( ( prev ) => {
+			const source = prev[ sourceId ];
+			if ( ! source || source.deleted ) {
+				return prev;
+			}
+
+			const existingLabels = Object.values( prev )
+				.filter( ( v ) => ! v.deleted )
+				.map( ( v ) => v.label );
+
+			return {
+				...prev,
+				[ newId ]: {
+					label: generateDuplicateLabel( source.label, existingLabels ),
+					value: source.value,
+					type: source.type,
+				},
+			};
+		} );
+
+		setIsDirty( true );
+		return newId;
+	}, [] );
+
 	const handleDeleteVariable = useCallback( ( itemId: string ) => {
 		setDeletedVariables( ( prev ) => [ ...prev, itemId ] );
 		setVariables( ( prev ) => ( { ...prev, [ itemId ]: { ...prev[ itemId ], deleted: true } } ) );
+		setIsDirty( true );
+	}, [] );
+
+	const handleStartSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: true },
+		} ) );
+		setIsDirty( true );
+	}, [] );
+
+	const handleStopSync = useCallback( ( itemId: string ) => {
+		setVariables( ( prev ) => ( {
+			...prev,
+			[ itemId ]: { ...prev[ itemId ], sync_to_v3: false },
+		} ) );
 		setIsDirty( true );
 	}, [] );
 
@@ -50,7 +96,7 @@ export const useVariablesManagerState = () => {
 	const handleSave = useCallback( async (): Promise< { success: boolean } > => {
 		const originalVariables = getVariables( false );
 		setIsSaving( true );
-		const result = await service.batchSave( originalVariables, variables );
+		const result = await service.batchSave( originalVariables, variables, deletedVariables );
 
 		if ( result.success ) {
 			await service.load();
@@ -62,14 +108,15 @@ export const useVariablesManagerState = () => {
 		}
 
 		return { success: result.success };
-	}, [ variables ] );
+	}, [ variables, deletedVariables ] );
 
-	const filteredVariables = () => {
-		const list = Object.entries( variables ).map( ( [ id, value ] ) => ( { ...value, id } ) );
-		const filtered = filterBySearch( list, searchValue );
+	const filteredVariables = useCallback( () => {
+		const list = variablesToList( variables ).filter( ( v ) => ! v.deleted );
+		const typeFiltered = applySelectionFilters( list, getVariableTypes() );
+		const searchFiltered = filterBySearch( typeFiltered, searchValue );
 
-		return Object.fromEntries( filtered.map( ( { id, ...rest } ) => [ id, rest ] ) );
-	};
+		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
+	}, [ variables, searchValue ] );
 
 	return {
 		variables: filteredVariables(),
@@ -78,7 +125,10 @@ export const useVariablesManagerState = () => {
 		isSaveDisabled,
 		handleOnChange,
 		createVariable,
+		duplicateVariable,
 		handleDeleteVariable,
+		handleStartSync,
+		handleStopSync,
 		handleSave,
 		isSaving,
 		handleSearch,

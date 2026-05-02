@@ -1,0 +1,56 @@
+{
+    "testCoverageReview": {
+      "enabled": true,
+      "skipPaths": [
+        "*.md",
+        "*.json",
+        "*.yml",
+        "*.yaml",
+        "*.txt",
+        "*.lock",
+        "node_modules/**",
+        ".git/**",
+        "dist/**",
+        "build/**",
+        "coverage/**",
+        "**/*.d.ts"
+      ],
+      "testPatterns": {
+        "javascript": [
+          ".test.js",
+          ".test.ts",
+          ".test.tsx",
+          ".test.jsx",
+          ".spec.js",
+          ".spec.ts",
+          ".spec.tsx",
+          ".spec.jsx"
+        ],
+        "php": [
+          "Test.php",
+          ".test.php"
+        ]
+      },
+      "exemptions": {
+        "configFiles": true,
+        "typeDefinitions": true,
+        "migrationFiles": true,
+        "buildScripts": true
+      },
+      "severity": {
+        "missingTests": "warning",
+        "criticalFileWithoutTests": "error"
+      },
+      "messages": {
+        "title": "🧪 Test Coverage Review",
+        "resolved": "✅ Test Coverage Review - Resolved",
+        "suggestion": "💡 Consider adding tests for better coverage and maintainability."
+      }
+    },
+    "rules": {
+      "enforceAAPattern": true,
+      "requireDescriptiveNames": true,
+      "focusOnCriticalPaths": true,
+      "coLocateTests": true
+    }
+  }

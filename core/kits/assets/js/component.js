@@ -5,6 +5,11 @@ import ComponentBase from 'elementor-editor/component-base';
 
 export default class extends ComponentBase {
 	pages = {};
+	siteSettingsSession = {
+		visitedItems: [],
+		savedItems: [],
+		hasSaved: false,
+	};
 
 	__construct( args ) {
 		super.__construct( args );
@@ -63,11 +68,36 @@ export default class extends ComponentBase {
 	}
 
 	renderTab( tab, args ) {
-		if ( tab !== this.currentTab ) { // Prevent re-rendering the same tab (with just different args).
+		if ( tab !== this.currentTab ) {
 			this.currentTab = tab;
+			this.trackVisitedTab( tab );
 			elementor.getPanelView().setPage( 'kit_settings' ).content.currentView.activateTab( tab );
 		}
 
 		this.activateControl( args.activeControl );
+	}
+
+	trackVisitedTab( tabName ) {
+		if ( tabName && ! this.siteSettingsSession.visitedItems.includes( tabName ) ) {
+			this.siteSettingsSession.visitedItems.push( tabName );
+		}
+	}
+
+	trackSavedItem( itemName ) {
+		if ( itemName && ! this.siteSettingsSession.savedItems.includes( itemName ) ) {
+			this.siteSettingsSession.savedItems.push( itemName );
+		}
+	}
+
+	getSiteSettingsSessionData() {
+		return { ...this.siteSettingsSession };
+	}
+
+	resetSiteSettingsSession() {
+		this.siteSettingsSession = {
+			visitedItems: [],
+			savedItems: [],
+			hasSaved: false,
+		};
 	}
 }

@@ -3,7 +3,7 @@ namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Settings;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,16 +21,6 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		Admin_Pointer::add_hooks();
-
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
-		}, 115 );
-
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
-			}
-		}, 10, 2 );
 
 		add_filter( 'elementor/finder/categories', function( array $categories ) {
 			$categories['site']['items']['apps'] = [

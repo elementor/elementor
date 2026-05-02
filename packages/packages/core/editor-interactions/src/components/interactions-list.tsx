@@ -1,14 +1,22 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { Repeater } from '@elementor/editor-controls';
-import { type ElementInteractions } from '@elementor/editor-elements';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { Repeater, type SetRepeaterValuesMeta } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
+import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
-
+import { useInteractionsContext } from '../contexts/interactions-context';
+import { InteractionItemContextProvider } from '../contexts/interactions-item-context';
+import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
+import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
+import {
+	dispatchScrollInteraction,
+	extractScrollOverlayParams,
+	syncGridOverlay,
+} from '../utils/scroll-interaction-event';
+import { trackInteractionCreated } from '../utils/tracking';
+import { DEFAULT_VALUES } from './interaction-details';
+import { InteractionsListItem } from './interactions-list-item';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -20,43 +28,38 @@ export type InteractionListProps = {
 
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
+	const { elementId } = useInteractionsContext();
 
-	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
+	const hasInitializedRef = useRef( false );
+	const newlyCreatedIdsRef = useRef< Set< string > >( new Set() );
+
+	const handleUpdateInteractions = useCallback(
+		( newInteractions: ElementInteractions ) => {
+			onSelectInteractions( newInteractions );
+		},
+		[ onSelectInteractions ]
+	);
 
 	useEffect( () => {
-		if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
-			onSelectInteractions( interactionsState );
+		if (
+			triggerCreateOnShowEmpty &&
+			! hasInitializedRef.current &&
+			( ! interactions.items || interactions.items?.length === 0 )
+		) {
+			hasInitializedRef.current = true;
+			const newItem = createDefaultInteractionItem();
+			newlyCreatedIdsRef.current.add( extractString( newItem.value.interaction_id ) );
+			const newState: ElementInteractions = {
+				version: 1,
+				items: [ newItem ],
+			};
+			handleUpdateInteractions( newState );
 		}
-	}, [ interactions, interactionsState, onSelectInteractions ] );
+	}, [ triggerCreateOnShowEmpty, interactions.items, handleUpdateInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
-		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
-	}, [ interactionsState.items ] );
-
-	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
-		setInteractionsState( {
-			version: 1,
-			items: [
-				{
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
-					},
-				},
-			],
-		} );
-	}
-
-	const displayLabel = ( interactionForDisplay: string ) => {
-		if ( ! interactionForDisplay ) {
-			return '';
-		}
-
-		const animationOptions = getInteractionsConfig()?.animationOptions;
-		const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
-
-		return option?.label || interactionForDisplay;
-	};
+		return interactions.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
+	}, [ interactions.items?.length ] );
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
 		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
@@ -70,64 +73,95 @@ export function InteractionsList( props: InteractionListProps ) {
 		</Alert>
 	) : undefined;
 
+	const handleRepeaterChange = useCallback(
+		(
+			newItems: ElementInteractions[ 'items' ],
+			_: unknown,
+			meta?: SetRepeaterValuesMeta< InteractionItemPropValue >
+		) => {
+			handleUpdateInteractions( {
+				...interactions,
+				items: newItems,
+			} );
+			if ( meta?.action?.type === 'add' ) {
+				const addedItem = meta.action.payload[ 0 ]?.item;
+				if ( addedItem ) {
+					newlyCreatedIdsRef.current.add( extractString( addedItem.value.interaction_id ) );
+				}
+			}
+		},
+		[ interactions, handleUpdateInteractions ]
+	);
+
+	const handleInteractionChange = useCallback(
+		( index: number, newInteractionValue: InteractionItemValue ) => {
+			const newItems = structuredClone( interactions.items );
+			newItems[ index ] = {
+				$$type: 'interaction-item',
+				value: newInteractionValue,
+			};
+			handleUpdateInteractions( {
+				...interactions,
+				items: newItems,
+			} );
+		},
+		[ interactions, handleUpdateInteractions ]
+	);
+
+	const contextValue = useMemo(
+		() => ( {
+			onInteractionChange: handleInteractionChange,
+			onPlayInteraction,
+		} ),
+		[ handleInteractionChange, onPlayInteraction ]
+	);
+
 	return (
-		<Repeater
-			openOnAdd
-			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
-			label={ __( 'Interactions', 'elementor' ) }
-			values={ interactionsState.items }
-			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
-				setInteractionsState( {
-					...interactionsState,
-					items: newValue,
-				} );
-			} }
-			showDuplicate={ false }
-			showToggle={ false }
-			isSortable={ false }
-			disableAddItemButton={ isMaxNumberOfInteractionsReached }
-			addButtonInfotipContent={ infotipContent }
-			itemSettings={ {
-				initialValues: {
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
+		<InteractionItemContextProvider value={ contextValue }>
+			<Repeater
+				openOnAdd
+				openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
+				label={ __( 'Interactions', 'elementor' ) }
+				values={ interactions.items }
+				setValues={ handleRepeaterChange }
+				showDuplicate={ false }
+				showToggle={ false }
+				isSortable={ false }
+				disableAddItemButton={ isMaxNumberOfInteractionsReached }
+				addButtonInfotipContent={ infotipContent }
+				itemSettings={ {
+					initialValues: createDefaultInteractionItem(),
+					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					Icon: () => null,
+					Content: InteractionsListItem,
+					onPopoverOpen: ( value: InteractionItemPropValue ) => {
+						const { trigger, start, end, relativeTo } = extractScrollOverlayParams(
+							value.value,
+							DEFAULT_VALUES
+						);
+						syncGridOverlay( trigger, start, end, relativeTo );
 					},
-				},
-				Label: ( { value } ) => displayLabel( value.animation.animation_id ),
-				Icon: () => null,
-				Content: ( { index, value } ) => (
-					<InteractionDetails
-						key={ index }
-						interaction={ value.animation.animation_id }
-						onChange={ ( newValue: string ) => {
-							const newInteractions = {
-								...interactionsState,
-								items: structuredClone( interactionsState.items ),
-							};
-							newInteractions.items[ index ] = {
-								...newInteractions.items[ index ],
-								animation: {
-									...newInteractions.items[ index ].animation,
-									animation_id: newValue,
-								},
-							};
-							setInteractionsState( { ...interactionsState, items: newInteractions.items } );
-						} }
-					/>
-				),
-				actions: ( value ) => (
-					<>
-						<IconButton
-							aria-label={ __( 'Play interaction', 'elementor' ) }
-							size="tiny"
-							onClick={ () => onPlayInteraction( value.animation.animation_id ) }
-						>
-							<PlayerPlayIcon fontSize="tiny" />
-						</IconButton>
-					</>
-				),
-			} }
-		/>
+					onPopoverClose: ( value: InteractionItemPropValue ) => {
+						dispatchScrollInteraction( null );
+						const id = extractString( value.value.interaction_id );
+						if ( newlyCreatedIdsRef.current.has( id ) ) {
+							newlyCreatedIdsRef.current.delete( id );
+							trackInteractionCreated( elementId, value );
+						}
+					},
+					actions: ( value: InteractionItemPropValue ) => (
+						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
+							<IconButton
+								aria-label={ __( 'Play interaction', 'elementor' ) }
+								size="tiny"
+								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
+							>
+								<PlayerPlayIcon fontSize="tiny" />
+							</IconButton>
+						</Tooltip>
+					),
+				} }
+			/>
+		</InteractionItemContextProvider>
 	);
 }

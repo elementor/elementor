@@ -3,14 +3,11 @@ import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
-	isExperimentActive,
 	useEditMode,
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
-import { InlineEditorOverlay } from './inline-editor-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
@@ -19,11 +16,6 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
 		shouldRender: () => true,
-	},
-	{
-		component: InlineEditorOverlay,
-		shouldRender: ( { id, isSelected } ) =>
-			isSelected && hasInlineEditableProperty( id ) && isExperimentActive( 'v4-inline-text-editing' ),
 	},
 ];
 
@@ -40,19 +32,29 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( [ id, element ] ) => {
+	return elements.map( ( { id, domElement, isGlobal } ) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element, isSelected } ) && (
-					<Overlay key={ `${ id }-${ index }` } id={ id } element={ element } isSelected={ isSelected } />
+				shouldRender( { id, element: domElement, isSelected } ) && (
+					<Overlay
+						key={ `${ id }-${ index }` }
+						id={ id }
+						element={ domElement }
+						isSelected={ isSelected }
+						isGlobal={ isGlobal }
+					/>
 				)
 		);
 	} );
 }
 
-type IdElementTuple = [ string, HTMLElement ];
+type ElementData = {
+	id: string;
+	domElement: HTMLElement;
+	isGlobal: boolean;
+};
 
 function useElementsDom() {
 	return useListenTo(
@@ -60,8 +62,12 @@ function useElementsDom() {
 		() => {
 			return getElements()
 				.filter( ( el ) => ELEMENTS_DATA_ATTR in ( el.view?.el?.dataset ?? {} ) )
-				.map( ( element ) => [ element.id, element.view?.getDomElement?.()?.get?.( 0 ) ] )
-				.filter( ( item ): item is IdElementTuple => !! item[ 1 ] );
+				.map( ( element ) => ( {
+					id: element.id,
+					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
+					isGlobal: element.model.get( 'isGlobal' ) ?? false,
+				} ) )
+				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
 	);
 }

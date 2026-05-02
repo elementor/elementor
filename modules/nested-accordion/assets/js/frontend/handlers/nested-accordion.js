@@ -183,10 +183,14 @@ export default class NestedAccordion extends Base {
 	}
 
 	openAccordionItem( accordionItem, accordionItemTitle, accordionItemContent ) {
-		const startHeight = `${ accordionItem.offsetHeight }px`,
-			endHeight = `${ accordionItemTitle.offsetHeight + accordionItemContent.offsetHeight }px`;
+		const { offsetHeight: accordionItemHeight } = accordionItem;
+		const { offsetHeight: accordionItemTitleHeight } = accordionItemTitle;
+		const { offsetHeight: accordionItemContentHeight } = accordionItemContent;
+		if ( ! accordionItemHeight || ! accordionItemTitleHeight || ! accordionItemContentHeight ) {
+			return;
+		}
 
-		this.animateItem( accordionItem, startHeight, endHeight, true );
+		this.animateItem( accordionItem, `${ accordionItemHeight }px`, `${ accordionItemTitleHeight + accordionItemContentHeight }px`, true );
 	}
 
 	onAnimationFinish( accordionItem, isOpen ) {

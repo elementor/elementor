@@ -1,0 +1,37 @@
+[
+	{
+		"name": "Flaky tests",
+		"description": "Tests that passed after retry",
+		"matchedStatuses": ["passed"],
+		"flaky": true
+	},
+	{
+		"name": "Infrastructure issues",
+		"description": "Browser or environment failures",
+		"matchedStatuses": ["broken"],
+		"messageRegex": ".*(browser.*crash|Target closed|Protocol error|context.*closed|page.*closed|crashed).*"
+	},
+	{
+		"name": "Setup/Teardown failures",
+		"description": "Test fixture or hook failures",
+		"matchedStatuses": ["broken"],
+		"messageRegex": ".*(beforeAll|afterAll|beforeEach|afterEach|fixture|hook).*"
+	},
+	{
+		"name": "Network errors",
+		"description": "API or network related failures",
+		"matchedStatuses": ["failed", "broken"],
+		"messageRegex": ".*(ECONNREFUSED|ERR_CONNECTION|ERR_NAME|net::|502 Bad Gateway|503 Service|504 Gateway|fetch failed|network error).*"
+	},
+	{
+		"name": "Timeout errors",
+		"description": "Tests that exceeded time limits",
+		"matchedStatuses": ["failed", "broken"],
+		"messageRegex": ".*([Tt]imeout|[Tt]imed out|exceeded.*time).*"
+	},
+	{
+		"name": "Product defects",
+		"description": "Assertion failures - likely product issues",
+		"matchedStatuses": ["failed"]
+	}
+]

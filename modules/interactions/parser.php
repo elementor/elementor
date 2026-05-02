@@ -50,16 +50,35 @@ class Parser {
 		}
 
 		foreach ( $interactions['items'] as &$interaction ) {
-			if ( array_key_exists( 'interaction_id', $interaction ) ) {
-				$this->ids_lookup[] = $interaction['interaction_id'];
+			if ( ! isset( $interaction['$$type'] ) || 'interaction-item' !== $interaction['$$type'] ) {
+				continue;
+			}
+
+			$existing_id = null;
+			if ( isset( $interaction['value']['interaction_id']['value'] ) ) {
+				$existing_id = $interaction['value']['interaction_id']['value'];
+			}
+
+			if ( $existing_id && $this->is_temp_id( $existing_id ) ) {
+				$interaction['value']['interaction_id'] = [
+					'$$type' => 'string',
+					'value' => $this->get_next_interaction_id( $element_id ),
+				];
+			} elseif ( $existing_id ) {
+				$this->ids_lookup[] = $existing_id;
 			} else {
-				$interaction = array_merge( [
-					'interaction_id' => $this->get_next_interaction_id( $element_id ),
-				], $interaction );
+				$interaction['value']['interaction_id'] = [
+					'$$type' => 'string',
+					'value' => $this->get_next_interaction_id( $element_id ),
+				];
 			}
 		}
 
 		return wp_json_encode( $interactions );
+	}
+
+	private function is_temp_id( $id ) {
+		return is_string( $id ) && strpos( $id, 'temp-' ) === 0;
 	}
 
 	private function decode_interactions( $interactions ) {

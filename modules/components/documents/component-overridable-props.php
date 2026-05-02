@@ -19,6 +19,7 @@ class Component_Overridable_Props {
 			$this->props = [];
 			$this->groups = [];
 
+			return;
 		}
 
 		$formatted_props = array_map( function( array $overridable_prop ) {
@@ -31,5 +32,17 @@ class Component_Overridable_Props {
 
 	public static function make( array $overridable_props_meta ): self {
 		return new self( $overridable_props_meta );
+	}
+
+	public function to_associative_array(): array {
+		$props_map = [];
+		foreach ( $this->props as $prop ) {
+			$props_map[ $prop->override_key ] = $prop->to_associative_array();
+		}
+
+		return [
+			'props'  => $props_map,
+			'groups' => $this->groups,
+		];
 	}
 }

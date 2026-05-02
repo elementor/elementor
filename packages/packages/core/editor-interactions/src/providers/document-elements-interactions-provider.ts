@@ -35,6 +35,7 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 
 			return filtered.map( ( element ) => {
 				const interactions = getElementInteractions( element.id );
+
 				return {
 					elementId: element.id,
 					dataId: element.id,

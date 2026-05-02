@@ -96,7 +96,7 @@ export default class extends BaseRegion {
 		this.$el.resizable( this.getResizableOptions() );
 	}
 
-	open( model ) {
+	open( model, options ) {
 		this.$el.show();
 
 		this.setSize();
@@ -107,6 +107,10 @@ export default class extends BaseRegion {
 
 		if ( model ) {
 			model.trigger( 'request:edit' );
+		}
+
+		if ( options?.expandAllElements ) {
+			this.currentView.elements.currentView.recursiveChildInvoke( 'toggleList', true );
 		}
 
 		this.saveStorage( 'visible', true );
@@ -288,7 +292,7 @@ export default class extends BaseRegion {
 		if ( document.config.panel.has_elements ) {
 			this.initLayout();
 
-			if ( false !== this.storage.visible ) {
+			if ( false !== this.storage.visible && ! elementor.config.starter ) {
 				$e.route( 'navigator' );
 			}
 		}
