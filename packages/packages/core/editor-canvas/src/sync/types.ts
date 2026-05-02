@@ -1,7 +1,6 @@
 import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
 
 import { type StorageContent } from '../prevent-link-in-link-commands';
-export type EnqueueFont = ( fontFamily: string, context?: 'preview' | 'editor' ) => void;
 
 export type ElementModelProps = Omit< V1ElementModelProps, 'id' > & {
 	custom: {
@@ -23,9 +22,6 @@ type ElementorChannels = {
 export type CanvasExtendedWindow = Window & {
 	elementor?: {
 		$preview?: [ HTMLIFrameElement ];
-		helpers?: {
-			enqueueFont?: EnqueueFont;
-		};
 		channels?: ElementorChannels;
 		modules?: {
 			elements?: {
@@ -38,6 +34,11 @@ export type CanvasExtendedWindow = Window & {
 	elementorCommon?: {
 		storage?: {
 			get: ( key?: string ) => StorageContent;
+		};
+		config?: {
+			urls?: {
+				assets?: string;
+			};
 		};
 	};
 };

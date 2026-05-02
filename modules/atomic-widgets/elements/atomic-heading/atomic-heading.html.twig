@@ -1,20 +1,17 @@
-{% if settings.title is not empty %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-	<{{ settings.tag | e('html_tag') }} 
-		data-id="{{ id }}" 
-		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
-		{{ id_attribute }} 
-		{{ settings.attributes | raw }}
-		{% if interactions and interactions is not empty %} 
-    data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-{% endif %}
-	>
-	{% if settings.link.href %}
-		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-			{{ settings.title }}
-		</a>
-	{% else %}
-		{{ settings.title }}
-	{% endif %}
-	</{{ settings.tag | e('html_tag') }}>
-{% endif %}
+{% import 'elementor/macros' as m %}
+{%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
+{%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
+<{{ settings.tag | e('html_tag') }} data-interaction-id="{{ interaction_id }}" class="{{ classes }}"
+	{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
+	{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+>
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' -%}
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}">
+		{{ settings.title | striptags(allowed_tags) | raw }}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- else -%}
+	{{ settings.title | striptags(allowed_tags) | raw }}
+{%- endif %}
+</{{ settings.tag | e('html_tag') }}>

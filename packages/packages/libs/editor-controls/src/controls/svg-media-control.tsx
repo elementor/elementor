@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { imageSrcPropTypeUtil } from '@elementor/editor-props';
+import { svgSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack, styled, ThemeProvider } from '@elementor/ui';
 import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -17,7 +17,7 @@ import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 const TILE_SIZE = 8;
 const TILE_WHITE = 'transparent';
 const TILE_BLACK = '#c1c1c1';
-const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
+export const TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${ TILE_BLACK } 25%, ${ TILE_WHITE } 0, ${ TILE_WHITE } 75%, ${ TILE_BLACK } 0, ${ TILE_BLACK })`;
 
 const StyledCard = styled( Card )`
 	background-color: white;
@@ -43,14 +43,14 @@ const MODE_BROWSE: OpenOptions = { mode: 'browse' };
 const MODE_UPLOAD: OpenOptions = { mode: 'upload' };
 
 export const SvgMediaControl = createControl( () => {
-	const { value, setValue } = useBoundProp( imageSrcPropTypeUtil );
-	const { id, url } = value ?? {};
+	const { value, setValue } = useBoundProp( svgSrcPropTypeUtil );
+	const id = value?.id;
+	const url = value?.url;
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
-	const { canUser } = useCurrentUserCapabilities();
-	const canManageOptions = canUser( 'manage_options' );
+	const { isAdmin } = useCurrentUserCapabilities();
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
@@ -62,7 +62,7 @@ export const SvgMediaControl = createControl( () => {
 					$$type: 'image-attachment-id',
 					value: selectedAttachment.id,
 				},
-				url: null,
+				url: urlPropTypeUtil.create( selectedAttachment.url ),
 			} );
 		},
 	} );
@@ -92,11 +92,11 @@ export const SvgMediaControl = createControl( () => {
 				{ __( 'file uploads.', 'elementor' ) }
 			</>
 		),
-		isEnabled: ! canManageOptions,
+		isEnabled: ! isAdmin,
 	};
 
 	return (
-		<Stack gap={ 1 }>
+		<Stack gap={ 1 } aria-label="SVG Control">
 			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
 			<ControlActions>
 				<StyledCard variant="outlined">
@@ -125,19 +125,21 @@ export const SvgMediaControl = createControl( () => {
 								color="inherit"
 								variant="outlined"
 								onClick={ () => handleClick( MODE_BROWSE ) }
+								aria-label="Select SVG"
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
 							<ConditionalControlInfotip { ...infotipProps }>
 								<span>
-									<ThemeProvider colorScheme={ canManageOptions ? 'light' : 'dark' }>
+									<ThemeProvider colorScheme={ isAdmin ? 'light' : 'dark' }>
 										<Button
 											size="tiny"
 											variant="text"
 											color="inherit"
 											startIcon={ <UploadIcon /> }
-											disabled={ canManageOptions ? false : true }
-											onClick={ () => canManageOptions && handleClick( MODE_UPLOAD ) }
+											disabled={ ! isAdmin }
+											onClick={ () => isAdmin && handleClick( MODE_UPLOAD ) }
+											aria-label="Upload SVG"
 										>
 											{ __( 'Upload', 'elementor' ) }
 										</Button>

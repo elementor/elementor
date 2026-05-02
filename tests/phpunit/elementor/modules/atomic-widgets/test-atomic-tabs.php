@@ -1,10 +1,10 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -12,16 +12,16 @@ use Spatie\Snapshots\MatchesSnapshots;
 class Test_Atomic_Tabs extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	const TAB_ID_1 = 'tab-1';
-	const TAB_ID_2 = 'tab-2';
-	const TAB_CONTENT_ID_1 = 'content-1';
-	const TAB_CONTENT_ID_2 = 'content-2';
-	const TABS_CONTAINER_ID = 'tabs-container';
-	const NESTED_TABS_CONTAINER_ID = 'nested-tabs-container';
-	const NESTED_TAB_ID_1 = 'nested-tab-1';
-	const NESTED_TAB_ID_2 = 'nested-tab-2';
-	const NESTED_TAB_CONTENT_ID_1 = 'nested-content-1';
-	const NESTED_TAB_CONTENT_ID_2 = 'nested-content-2';
+	const TAB_ID_1 = 'tab1';
+	const TAB_ID_2 = 'tab2';
+	const TAB_CONTENT_ID_1 = 'content1';
+	const TAB_CONTENT_ID_2 = 'content2';
+	const TABS_CONTAINER_ID = 'tabscontainer';
+	const NESTED_TABS_CONTAINER_ID = 'nestedtabscontainer';
+	const NESTED_TAB_ID_1 = 'nestedtab1';
+	const NESTED_TAB_ID_2 = 'nestedtab2';
+	const NESTED_TAB_CONTENT_ID_1 = 'nestedcontent1';
+	const NESTED_TAB_CONTENT_ID_2 = 'nestedcontent2';
 
 	protected $instance;
 
@@ -57,7 +57,30 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	private function create_tabs_instance( array $settings ): object {
+	public function test__render_atomic_tabs_with_interactions(): void {
+		// Arrange.
+		$this->instance = $this->create_tabs_instance( [], [
+			'version' => 1,
+			'items' => [
+				[
+					'animation' => [
+						'animation_type' => 'full-preset',
+						'animation_id' => 'load-fade-in--300-0',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		ob_start();
+		$this->instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	private function create_tabs_instance( array $settings, array $interactions = [] ): object {
 		$tab_1 = [
 			'id' => self::TAB_ID_1,
 			'elType' => Atomic_Tab::get_element_type(),
@@ -113,6 +136,10 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 			'widgetType' => Atomic_Tabs::get_element_type(),
 			'elements' => [ $tabs_list, $tabs_content ],
 		];
+
+		if ( ! empty( $interactions ) ) {
+			$mock['interactions'] = $interactions;
+		}
 
 		return Plugin::$instance->elements_manager->create_element_instance( $mock );
 	}

@@ -28,3 +28,5 @@ export function createTransformersRegistry() {
 		},
 	};
 }
+
+export const stylesInheritanceTransformersRegistry = createTransformersRegistry();

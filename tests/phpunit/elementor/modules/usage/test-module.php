@@ -586,9 +586,6 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( Settings::UPDATE_TIME_FIELD, $settings_usage );
 	}
 
-	/**
-	 * Test atomic widget usage counter with nested properties and arrays.
-	 */
 	public function test_atomic_widget_usage_counter_with_nested_styles() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
@@ -608,46 +605,45 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'controls', $usage['e-heading'] );
 		$this->assertArrayHasKey( 'General', $usage['e-heading']['controls'] );
 
-		// Assert - Check that style controls are counted.
+		// Assert - Check that style controls are counted under Styles section.
 		$this->assertArrayHasKey( 'Style', $usage['e-heading']['controls'] );
 		$style_controls = $usage['e-heading']['controls']['Style'];
+		$this->assertArrayHasKey( 'Styles', $style_controls );
 
-		// Assert - Check for basic style properties.
-		$this->assertArrayHasKey( 'Background', $style_controls );
-		$this->assertArrayHasKey( 'Typography', $style_controls );
+		// Assert - Check for basic style properties under Styles section.
+		$styles_section = $style_controls['Styles'];
+		$this->assertArrayHasKey( 'background-color', $styles_section );
+		$this->assertArrayHasKey( 'color', $styles_section );
 	}
 
-	/**
-	 * Test atomic widget usage counter counts nested array items.
-	 */
 	public function test_atomic_widget_usage_counter_counts_array_items() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
-				'_elementor_data' => self::get_atomic_widget_payload_with_complex_styles(),
+				'_elementor_data' => self::get_atomic_widget_payload_with_background_overlay(),
 			]
 		] );
 
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
 
-		// Assert - Check that background-overlay array items are counted.
+		// Assert - Check that background-overlay array items are counted under Styles section.
 		$style_controls = $usage['e-heading']['controls']['Style'];
-		$this->assertArrayHasKey( 'Background', $style_controls );
+		$this->assertArrayHasKey( 'Styles', $style_controls );
 
 		// The background overlay has 3 items (2 images + 1 color), all should be counted.
-		$background_controls = $style_controls['Background'];
+		$styles_section = $style_controls['Styles'];
 		$this->assertTrue(
-			! empty( $background_controls['background-background-overlay-background-image-overlay-image-size'] ) ||
-			! empty( $background_controls['background-background-color-overlay-color'] ),
+			! empty( $styles_section['background-background-overlay-background-image-overlay-image-size'] ) ||
+			! empty( $styles_section['background-background-overlay-background-color-overlay-color'] ),
 			'Background overlay items should be counted'
 		);
 	}
 
-	/**
-	 * Test atomic widget usage counter with custom CSS.
-	 */
 	public function test_atomic_widget_usage_counter_with_custom_css() {
+		$restore_custom_css = fn( $filtered_styles, $original_styles ) => $original_styles;
+		add_filter( 'elementor/atomic_widgets/editor_data/element_styles', $restore_custom_css, 10, 2 );
+
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
@@ -658,16 +654,16 @@ class Test_Module extends Elementor_Test_Base {
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
 
-		// Assert - Check that custom CSS is tracked in Style tab.
+		// Cleanup.
+		remove_filter( 'elementor/atomic_widgets/editor_data/element_styles', $restore_custom_css );
+
+		// Assert - Check that custom CSS is tracked in Style tab under Styles section.
 		$this->assertArrayHasKey( 'e-heading', $usage );
 		$style_controls = $usage['e-heading']['controls']['Style'];
-		$this->assertArrayHasKey( 'Custom CSS', $style_controls );
-		$this->assertEquals( 1, $style_controls['Custom CSS']['custom_css'] );
+		$this->assertArrayHasKey( 'Styles', $style_controls );
+		$this->assertEquals( 1, $style_controls['Styles']['custom_css'] );
 	}
 
-	/**
-	 * Test atomic widget usage counter with general settings.
-	 */
 	public function test_atomic_widget_usage_counter_tracks_general_settings() {
 		// Arrange.
 		$document = $this->factory()->documents->publish_and_get( [
@@ -679,21 +675,212 @@ class Test_Module extends Elementor_Test_Base {
 		// Act.
 		$usage = $document->get_meta( Module::META_KEY );
 
-		// Assert - Check that general settings (tag, title) are tracked.
-		$style_controls = $usage['e-heading']['controls']['General'];
-		$this->assertArrayHasKey( 'Settings', $style_controls );
-		$this->assertArrayHasKey( 'tag', $style_controls['Settings'] );
+		// Assert - Check that general settings are tracked.
+		$general_controls = $usage['e-heading']['controls']['General'];
+		$this->assertNotEmpty( $general_controls );
 
-		$this->assertArrayHasKey( 'Content', $style_controls );
-		$this->assertArrayHasKey( 'title', $style_controls['Content'] );
+		// Tag and title should be in some section under General.
+		$found_tag = false;
+		$found_title = false;
+		foreach ( $general_controls as $section => $controls ) {
+			if ( isset( $controls['tag'] ) ) {
+				$found_tag = true;
+			}
+			if ( isset( $controls['title'] ) ) {
+				$found_title = true;
+			}
+		}
+		$this->assertTrue( $found_tag, 'Tag prop should be tracked under General tab' );
+		$this->assertTrue( $found_title, 'Title prop should be tracked under General tab' );
 	}
 
-	/**
-	 * Get atomic widget payload with complex nested styles.
-	 *
-	 * @return array
-	 */
+	public function test_mixed_v3_and_v4_widgets_both_tracked() {
+		// Arrange.
+		$document = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => self::get_mixed_widgets_payload(),
+			]
+		] );
+
+		// Act.
+		$usage = $document->get_meta( Module::META_KEY );
+
+		// Assert - v3 widget tracked with classic structure (lowercase tabs).
+		$this->assertArrayHasKey( 'button', $usage );
+		$this->assertArrayHasKey( 'content', $usage['button']['controls'] );
+
+		// Assert - v4 widget tracked with atomic structure (capitalized tabs).
+		$this->assertArrayHasKey( 'e-heading', $usage );
+		$this->assertArrayHasKey( 'General', $usage['e-heading']['controls'] );
+	}
+
 	private static function get_atomic_widget_payload_with_complex_styles() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'classes' => [
+								'$$type' => 'classes',
+								'value' => [
+									'e-bf895cd-acc0fb9',
+									'g-2095820',
+								],
+							],
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'This is a title 123',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-acc0fb9' => [
+								'id' => 'e-bf895cd-acc0fb9',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#15ec2c',
+											],
+											'background' => [
+												'$$type' => 'background',
+												'value' => [
+													'color' => [
+														'$$type' => 'color',
+														'value' => '#d01414',
+													],
+												],
+											],
+										],
+										'custom_css' => [
+											'raw' => 'YmFja2dyb3VuZC1jb2xvcjogcmVkOw==',
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+			],
+		];
+	}
+
+	private static function get_atomic_widget_payload_with_custom_css() {
+		return [
+			[
+				'id' => '736802e',
+				'elType' => 'container',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h2',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'Title with Custom CSS',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [
+							'e-bf895cd-css' => [
+								'id' => 'e-bf895cd-css',
+								'label' => 'local',
+								'type' => 'class',
+								'variants' => [
+									[
+										'meta' => [
+											'breakpoint' => 'desktop',
+											'state' => null,
+										],
+										'props' => [
+											'color' => [
+												'$$type' => 'color',
+												'value' => '#333333',
+											],
+										],
+										'custom_css' => [
+											'raw' => 'Zm9udC13ZWlnaHQ6IGJvbGQ7IHBhZGRpbmc6IDEwcHg7',
+										],
+									],
+								],
+							],
+						],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+			],
+		];
+	}
+
+	private static function get_mixed_widgets_payload() {
+		return [
+			[
+				'id' => 'd50d8c5',
+				'elType' => 'container',
+				'isInner' => false,
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => '5a1e8e5',
+						'elType' => 'widget',
+						'isInner' => false,
+						'settings' => [ 'text' => 'I\'m not a default' ],
+						'elements' => [],
+						'widgetType' => 'button',
+					],
+					[
+						'id' => 'bf895cd',
+						'elType' => 'widget',
+						'settings' => [
+							'tag' => [
+								'$$type' => 'string',
+								'value' => 'h3',
+							],
+							'title' => [
+								'$$type' => 'string',
+								'value' => 'Atomic Heading',
+							],
+						],
+						'elements' => [],
+						'widgetType' => 'e-heading',
+						'styles' => [],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+			],
+		];
+	}
+
+	private static function get_atomic_widget_payload_with_background_overlay() {
 		return [
 			[
 				'id' => '736802e',
@@ -809,69 +996,6 @@ class Test_Module extends Elementor_Test_Base {
 													],
 												],
 											],
-										],
-										'custom_css' => [
-											'raw' => 'YmFja2dyb3VuZC1jb2xvcjogcmVkOw==',
-										],
-									],
-								],
-							],
-						],
-						'editor_settings' => [],
-						'version' => '0.0',
-					],
-				],
-				'isInner' => false,
-			],
-		];
-	}
-
-	/**
-	 * Get atomic widget payload with custom CSS.
-	 *
-	 * @return array
-	 */
-	private static function get_atomic_widget_payload_with_custom_css() {
-		return [
-			[
-				'id' => '736802e',
-				'elType' => 'container',
-				'settings' => [],
-				'elements' => [
-					[
-						'id' => 'bf895cd',
-						'elType' => 'widget',
-						'settings' => [
-							'tag' => [
-								'$$type' => 'string',
-								'value' => 'h2',
-							],
-							'title' => [
-								'$$type' => 'string',
-								'value' => 'Title with Custom CSS',
-							],
-						],
-						'elements' => [],
-						'widgetType' => 'e-heading',
-						'styles' => [
-							'e-bf895cd-css' => [
-								'id' => 'e-bf895cd-css',
-								'label' => 'local',
-								'type' => 'class',
-								'variants' => [
-									[
-										'meta' => [
-											'breakpoint' => 'desktop',
-											'state' => null,
-										],
-										'props' => [
-											'color' => [
-												'$$type' => 'color',
-												'value' => '#333333',
-											],
-										],
-										'custom_css' => [
-											'raw' => 'Zm9udC13ZWlnaHQ6IGJvbGQ7IHBhZGRpbmc6IDEwcHg7',
 										],
 									],
 								],

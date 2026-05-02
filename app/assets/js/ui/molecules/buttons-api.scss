@@ -8,10 +8,10 @@ $button-hover-constant: 10%;
 $button-active-constant: 20%;
 // sizing
 // -- sm
-$button-sm-font-size: type(text,xs);
+$button-sm-font-size: get-type(text,xs);
 $button-sm-line-height: 14px;
 // --lg
-$button-lg-font-size: type(text,lg);
+$button-lg-font-size: get-type(text,lg);
 $button-lg-line-height: 18px;
 //Semantic Colors
 $button-primary-background-color: theme-colors(accent);

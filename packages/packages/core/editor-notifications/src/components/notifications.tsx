@@ -1,13 +1,17 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
-import { SnackbarProvider } from 'notistack';
+import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
+import { CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
-import { SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
+import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
 
 import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
 import { notifyAction } from '../slice';
 import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { type NotificationData, type Notifications } from '../types';
+
+// 8 seconds
+const AUTO_HIDE_DURATION = 8000;
 
 const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	const filteredProps = getFilteredSnackbarProps( props );
@@ -27,8 +31,48 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 	);
 } );
 
+interface AlertSnackbarProps extends CustomContentProps {
+	color: 'promotion' | 'info';
+	icon: React.ReactElement;
+}
+
+const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { color, icon, ...props }, ref ) => {
+	const panelWidth = getEditingPanelWidth();
+
+	return (
+		<ThemeProvider colorScheme="light" palette="unstable">
+			<Alert
+				ref={ ref }
+				variant="standard"
+				color={ color }
+				icon={ icon }
+				role="alert"
+				action={ props.action }
+				onClose={ () => closeSnackbar( props.id ) }
+				sx={ {
+					ml: panelWidth + 'px',
+					'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
+					'& .MuiAlert-content': { whiteSpace: 'nowrap' },
+				} }
+			>
+				{ props.message }
+			</Alert>
+		</ThemeProvider>
+	);
+} );
+
+const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="promotion" icon={ <CrownFilledIcon /> } { ...props } />
+) );
+
+const InfoSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="info" icon={ <InfoCircleFilledIcon /> } { ...props } />
+) );
+
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
+	promotion: PromotionSnackbar,
+	info: InfoSnackbar,
 };
 
 const Handler = () => {
@@ -43,7 +87,7 @@ const Wrapper = () => {
 	return (
 		<SnackbarProvider
 			maxSnack={ 3 }
-			autoHideDuration={ 8000 }
+			autoHideDuration={ AUTO_HIDE_DURATION }
 			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
 			Components={ muiToEuiMapper }
 		>

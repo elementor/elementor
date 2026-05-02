@@ -4,6 +4,8 @@
  */
 const getBuildFiles = [
 	'**',
+	'!.cursor/**',
+	'!.vscode/**',
 	'!.git/**',
 	'!.github/**',
 	'!.run/**',
@@ -47,11 +49,23 @@ const getBuildFiles = [
 	'!*~',
 	'!commitlint.config.js',
 	'!scripts/**',
+	'!eslint-local-rules.js',
+	'!run-on-linux.js',
+	'!test*/**',
+	'!8888/**',
+	'!8889/**',
+	'!*.log',
+	'!hello-elementor/**',
+	'!.env',
+	'!Dockerfile',
+	'!.dockerignore',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
+	'vendor/elementor/wp-one-package/**',
+	'vendor/elementor/wp-notifications-package/**',
 ];
 
 const copy = {

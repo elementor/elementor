@@ -18,7 +18,7 @@ $root: e-app-collapse;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			font-size: type(size, "14");
+			font-size: get-type(size, "14");
 			position: absolute;
 			inset-block-start: 50%;
 			inset-inline-end: var(--e-app-collapse-toggle-icon-spacing);

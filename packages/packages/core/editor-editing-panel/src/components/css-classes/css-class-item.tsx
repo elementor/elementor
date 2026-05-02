@@ -20,6 +20,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../contexts/style-context';
+import { PENDING_CLASS_RENAME_SESSION_KEY } from './consts';
 import { CssClassProvider } from './css-class-context';
 import { CssClassMenu, useElementStates } from './css-class-menu';
 
@@ -54,7 +55,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const { userCan } = useUserStylesCapability();
 
 	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
-		'last-converted-class-generated-name',
+		PENDING_CLASS_RENAME_SESSION_KEY,
 		'app'
 	);
 
@@ -79,7 +80,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const isShowingState = isActive && meta.state;
 
 	const stateLabel = useMemo( () => {
-		if ( isClassState( meta.state ) ) {
+		if ( meta.state && isClassState( meta.state ) ) {
 			return elementStates.find( ( state ) => state.value === meta.state )?.label;
 		}
 
@@ -91,7 +92,6 @@ export function CssClassItem( props: CssClassItemProps ) {
 			clearConvertedFromLocalId();
 			openEditMode();
 		}
-		// eslint-disable-next-line react-compiler/react-compiler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ id, convertedFromLocalId ] );
 

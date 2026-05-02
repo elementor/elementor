@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import screenfull from './screenfull';
 import {
 	chevronLeft,
@@ -240,7 +241,7 @@ module.exports = elementorModules.ViewModule.extend( {
 			elementorDevTools.deprecation.deprecated( 'elementorFrontend.utils.lightbox.setHTMLContent()', '3.1.4' );
 		}
 
-		this.getModal().setMessage( html );
+		this.getModal().setMessage( DOMPurify.sanitize( html ) );
 	},
 
 	setVideoContent( options ) {
@@ -250,6 +251,13 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		if ( 'hosted' === options.videoType ) {
 			const videoParams = $.extend( { src: options.url, autoplay: '' }, options.videoParams );
+
+			const paramKeys = Object.keys( videoParams );
+			paramKeys.forEach( ( key ) => {
+				if ( key.toLowerCase().startsWith( 'on' ) ) {
+					delete videoParams[ key ];
+				}
+			} );
 
 			$videoElement = $( '<video>', videoParams );
 		} else {
@@ -654,6 +662,17 @@ module.exports = elementorModules.ViewModule.extend( {
 		return $footer;
 	},
 
+	isValidUrl( url ) {
+		if ( ! url ) {
+			return false;
+		}
+
+		const dangerous = [ 'javascript:', 'data:', 'vbscript:', 'file:' ];
+		const urlLower = url.toLowerCase().trim();
+
+		return ! dangerous.some( ( protocol ) => urlLower.startsWith( protocol ) );
+	},
+
 	setSlideshowContent( options ) {
 		const { i18n } = elementorFrontend.config,
 			$ = jQuery,
@@ -669,15 +688,22 @@ module.exports = elementorModules.ViewModule.extend( {
 		let $prevButton, $nextButton;
 
 		options.slides.forEach( ( slide ) => {
+			const isVideo = !! slide.video;
+			const isValidSlideUrl = isVideo ? this.isValidUrl( slide.video ) : this.isValidUrl( slide.image );
+
+			if ( ! isValidSlideUrl ) {
+				return;
+			}
+
 			let slideClass = slideshowClasses.slide + ' ' + classes.item;
 
-			if ( slide.video ) {
+			if ( isVideo ) {
 				slideClass += ' ' + classes.video;
 			}
 
 			const $slide = $( '<div>', { class: slideClass } );
 
-			if ( slide.video ) {
+			if ( isVideo ) {
 				$slide.attr( 'data-elementor-slideshow-video', slide.video );
 
 				const playVideoLoadingElement = this.isFontIconSvgExperiment ? loading.element : '<i>',

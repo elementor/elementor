@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { createContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
 import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { usePopoverDismiss } from '../../../hooks/use-repeater-popover-dismiss';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
@@ -28,6 +29,7 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	removeItem: ( index: number ) => void;
 	rowRef: HTMLElement | null;
 	setRowRef: ( ref: HTMLElement | null | SetterFn< HTMLElement | null > ) => void;
+	isItemDisabled: ( index: number ) => boolean;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue > | null >( null );
@@ -35,8 +37,8 @@ const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue 
 export const EMPTY_OPEN_ITEM = -1;
 
 export const useRepeaterContext = () => {
-	const context = React.useContext( RepeaterContext );
-	const itemContext = React.useContext( ItemContext );
+	const context = useContext( RepeaterContext );
+	const itemContext = useContext( ItemContext );
 
 	if ( ! context ) {
 		throw new Error( 'useRepeaterContext must be used within a RepeaterContextProvider' );
@@ -49,10 +51,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
+	isItemDisabled = () => false,
 }: React.PropsWithChildren< {
 	initial: T;
 	propTypeUtil: PropTypeUtil< string, T[] >;
 	isSortable?: boolean;
+	isItemDisabled?: ( item: Item< T > ) => boolean;
 } > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
@@ -64,8 +68,26 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	} );
 
 	const [ uniqueKeys, setUniqueKeys ] = useState( () => {
-		return items?.map( ( _, index ) => index ) ?? [];
+		return items?.map( () => generateUniqueKey() ) ?? [];
 	} );
+
+	useEffect( () => {
+		const nextLength = items?.length ?? 0;
+
+		setUniqueKeys( ( prev ) => {
+			const prevLength = prev.length;
+
+			if ( prevLength === nextLength ) {
+				return prev;
+			}
+
+			if ( prevLength > nextLength ) {
+				return prev.slice( 0, nextLength );
+			}
+
+			return [ ...prev, ...Array.from( { length: nextLength - prevLength }, generateUniqueKey ) ];
+		} );
+	}, [ items?.length ] );
 
 	const itemsWithKeys = useMemo(
 		() =>
@@ -123,6 +145,18 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setItems( newItems );
 	};
 
+	const closePopover = () => {
+		if ( ! isOpen ) {
+			return;
+		}
+
+		setOpenItemIndex( EMPTY_OPEN_ITEM );
+		setRowRef( null );
+		popoverState.close();
+	};
+
+	usePopoverDismiss( { isOpen, onClose: closePopover } );
+
 	return (
 		<RepeaterContext.Provider
 			value={ {
@@ -138,6 +172,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				removeItem,
 				rowRef,
 				setRowRef,
+				isItemDisabled: ( index: number ) => isItemDisabled( itemsWithKeys[ index ].item ),
 			} }
 		>
 			{ children }

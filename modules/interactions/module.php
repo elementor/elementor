@@ -1,11 +1,14 @@
 <?php
+
 namespace Elementor\Modules\Interactions;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Base\Document;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Interactions\Cache\Interactions_Postmeta;
 use Elementor\Plugin;
-
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,18 +18,35 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'e-interactions';
 	const EXPERIMENT_NAME = 'e_interactions';
 
-	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
-	const EFFECTS = [ 'fade', 'slide', 'scale' ];
-	const TYPES = [ 'in', 'out' ];
-	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
-	const DEFAULT_DURATION = 300;
-	const DEFAULT_DELAY = 0;
-	const SLIDE_DISTANCE = 100;
-	const SCALE_START = 0.5;
-	const EASING = 'linear';
+	const HANDLE_MOTION_JS            = 'motion-js';
+	const HANDLE_SHARED_UTILS         = 'elementor-interactions-shared-utils';
+	const HANDLE_FRONTEND             = 'elementor-interactions';
+	const HANDLE_EDITOR               = 'elementor-editor-interactions';
+	const JS_CONFIG_OBJECT            = 'ElementorInteractionsConfig';
+	const SCRIPT_ID_INTERACTIONS_DATA = 'elementor-interactions-data';
 
 	public function get_name() {
 		return self::MODULE_NAME;
+	}
+
+	private $preset_animations;
+
+	private function get_presets() {
+		if ( ! $this->preset_animations ) {
+			$this->preset_animations = new Presets();
+		}
+
+		return $this->preset_animations;
+	}
+
+	private $frontend_handler;
+
+	private function get_frontend_handler() {
+		if ( ! $this->frontend_handler ) {
+			$this->frontend_handler = new Interactions_Frontend_Handler( fn () => $this->get_config() );
+		}
+
+		return $this->frontend_handler;
 	}
 
 	public static function get_experimental_data() {
@@ -35,14 +55,14 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Interactions', 'elementor' ),
 			'description' => esc_html__( 'Enable element interactions.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}
 
 	public function is_experiment_active() {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
-				&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public function __construct() {
@@ -52,131 +72,124 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->register_hooks();
+	}
+
+	private function register_hooks() {
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
-		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
+
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
-	}
 
-	private function get_label( $key, $value ) {
-		$special_labels = [
-			'trigger' => [
-				'load' => __( 'Page Load', 'elementor' ),
-				'scrollIn' => __( 'Scroll Into View', 'elementor' ),
-				'scrollOut' => __( 'Scroll Out of View', 'elementor' ),
-			],
-		];
+		add_filter( 'elementor/document/save/data', [ $this, 'handle_interactions' ], 10, 2 );
+		add_action( 'elementor/document/after_save', [ $this, 'handle_interactions_cache' ], 10, 2 );
 
-		if ( isset( $special_labels[ $key ][ $value ] ) ) {
-			return $special_labels[ $key ][ $value ];
-		}
+		// Collect interactions from documents before they render (header, footer, post content)
+		add_filter( 'elementor/frontend/builder_content_data', [
+			$this->get_frontend_handler(),
+			'collect_document_interactions',
+		], 10, 2 );
 
-		$label = ucwords( str_replace( '-', ' ', $value ) );
-
-		return esc_html( $label );
-	}
-
-	private function generate_animation_options() {
-		$options = [];
-
-		foreach ( self::TRIGGERS as $trigger ) {
-			foreach ( self::EFFECTS as $effect ) {
-				foreach ( self::TYPES as $type ) {
-					foreach ( self::DIRECTIONS as $direction ) {
-						$value = "{$trigger}-{$effect}-{$type}-{$direction}";
-						$label = sprintf(
-							'%s - %s %s %s',
-							$this->get_label( 'trigger', $trigger ),
-							$this->get_label( 'effect', $effect ),
-							$this->get_label( 'type', $type ),
-							$this->get_label( 'direction', $direction )
-						);
-						$options[] = [
-							'value' => $value,
-							'label' => $label,
-						];
-					}
-
-					$value = "{$trigger}-{$effect}-{$type}-";
-					$label = sprintf(
-						'%s - %s %s',
-						$this->get_label( 'trigger', $trigger ),
-						$this->get_label( 'effect', $effect ),
-						$this->get_label( 'type', $type )
-					);
-					$options[] = [
-						'value' => $value,
-						'label' => $label,
-					];
-				}
-			}
-		}
-
-		return $options;
-	}
-
-	private function get_config() {
-		return [
-			'constants' => [
-				'defaultDuration' => self::DEFAULT_DURATION,
-				'defaultDelay' => self::DEFAULT_DELAY,
-				'slideDistance' => self::SLIDE_DISTANCE,
-				'scaleStart' => self::SCALE_START,
-				'easing' => self::EASING,
-			],
-			'animationOptions' => $this->generate_animation_options(),
-		];
+		// Output centralized interaction data in footer
+		add_action( 'wp_footer', [ $this->get_frontend_handler(), 'print_interactions_data' ], 1 );
 	}
 
 	/**
-	 * Register frontend scripts for interactions.
+	 * Sanitize and validate data before saving the document.
 	 *
-	 * @return void
+	 * @throws \Exception When validation fails.
+	 * @return array
 	 */
+	public function handle_interactions( $data, $document ) {
+		$validation = new Validation();
+		$document_after_sanitization = $validation->sanitize( $data );
+
+		$validation->validate();
+
+		$parser = new Parser( $document->get_main_id() );
+		return $parser->assign_interaction_ids( $document_after_sanitization );
+	}
+
+	public function handle_interactions_cache( Document $document, $data ) {
+		$postmeta = new Interactions_Postmeta();
+		$postmeta->process_content( $document->get_main_id(), $data );
+	}
+
+	public function get_config() {
+		return [
+			'constants' => $this->get_presets()->defaults(),
+			'breakpoints' => $this->get_active_breakpoints(),
+		];
+	}
+
+	private function get_active_breakpoints() {
+		$breakpoints_config = Plugin::$instance->breakpoints->get_breakpoints_config();
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		$breakpoints = [];
+
+		foreach ( array_keys( $active_breakpoints ) as $breakpoint_label ) {
+			$breakpoints[ $breakpoint_label ] = $breakpoints_config[ $breakpoint_label ];
+		}
+
+		return $breakpoints;
+	}
+
 	private function register_frontend_scripts() {
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
-			'motion-js',
-			ELEMENTOR_URL . 'assets/lib/motion.js',
+			self::HANDLE_MOTION_JS,
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
 			'11.13.5',
 			true
 		);
 
 		wp_register_script(
-			'elementor-interactions',
-			ELEMENTOR_URL . 'modules/interactions/assets/js/interactions.js',
-			[ 'motion-js' ],
+			self::HANDLE_SHARED_UTILS,
+			$this->get_js_assets_url( 'interactions-shared-utils' ),
+			[ self::HANDLE_MOTION_JS ],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
+			self::HANDLE_FRONTEND,
+			$this->get_js_assets_url( 'interactions' ),
+			[ self::HANDLE_MOTION_JS, self::HANDLE_SHARED_UTILS ],
+			'1.0.0',
+			true
+		);
+
+		wp_register_script(
+			self::HANDLE_EDITOR,
+			$this->get_js_assets_url( 'editor-interactions' ),
+			[ self::HANDLE_MOTION_JS, self::HANDLE_SHARED_UTILS ],
 			'1.0.0',
 			true
 		);
 	}
 
-	/**
-	 * Enqueue interactions scripts.
-	 *
-	 * @return void
-	 */
-	public function enqueue_interactions(): void {
-		wp_enqueue_script( 'motion-js' );
-		wp_enqueue_script( 'elementor-interactions' );
-
-		wp_localize_script(
-			'elementor-interactions',
-			'ElementorInteractionsConfig',
-			$this->get_config()
-		);
-	}
-
-	/**
-	 * Enqueue editor scripts for interactions.
-	 *
-	 * @return void
-	 */
 	public function enqueue_editor_scripts() {
 		wp_add_inline_script(
 			'elementor-common',
-			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
+			'window.' . self::JS_CONFIG_OBJECT . ' = ' . wp_json_encode( $this->get_config() ) . ';',
 			'before'
+		);
+	}
+
+	public function enqueue_preview_scripts() {
+		wp_enqueue_script( self::HANDLE_SHARED_UTILS );
+		// Ensure motion-js and editor-interactions handler are available in preview iframe
+		wp_enqueue_script( self::HANDLE_MOTION_JS );
+		wp_enqueue_script( self::HANDLE_EDITOR );
+
+		wp_localize_script(
+			self::HANDLE_EDITOR,
+			self::JS_CONFIG_OBJECT,
+			$this->get_config()
 		);
 	}
 }

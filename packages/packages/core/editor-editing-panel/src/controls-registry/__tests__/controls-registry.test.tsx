@@ -2,11 +2,12 @@ import { type ControlComponent, TextControl } from '@elementor/editor-controls';
 import {
 	booleanPropTypeUtil,
 	imagePropTypeUtil,
-	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	sizePropTypeUtil,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	svgSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../../errors';
@@ -16,11 +17,12 @@ describe( 'Controls Registry', () => {
 	describe( 'Registry Integrity', () => {
 		const expectedPropTypeUtils = {
 			image: imagePropTypeUtil,
-			'svg-media': imageSrcPropTypeUtil,
+			'svg-media': svgSrcPropTypeUtil,
 			text: stringPropTypeUtil,
 			textarea: stringPropTypeUtil,
 			size: sizePropTypeUtil,
 			select: stringPropTypeUtil,
+			chips: stringArrayPropTypeUtil,
 			link: linkPropTypeUtil,
 			url: stringPropTypeUtil,
 			switch: booleanPropTypeUtil,

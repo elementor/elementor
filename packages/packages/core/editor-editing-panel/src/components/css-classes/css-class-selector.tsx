@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { type ReactElement, useRef, useState } from 'react';
-import { useElementSetting } from '@elementor/editor-elements';
 import { type ClassesPropValue } from '@elementor/editor-props';
 import {
 	isElementsStylesProvider,
@@ -27,9 +26,10 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
-import { useElement } from '../../contexts/element-context';
+import { useElement, usePanelElementSetting } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { getStylesProviderColorName } from '../../utils/get-styles-provider-color';
+import { trackStyles } from '../../utils/tracking/subscribe';
 import {
 	CreatableAutocomplete,
 	type CreatableAutocompleteProps,
@@ -127,6 +127,13 @@ export function CssClassSelector() {
 								if ( ! value.value ) {
 									throw new Error( `Cannot rename a class without style id` );
 								}
+								trackStyles( value.provider ?? '', 'classRenamed', {
+									classId: value.value,
+									newValue: newLabel,
+									oldValue: value.label,
+									source: 'style-tab',
+								} );
+
 								return updateClassByProvider( value.provider, { label: newLabel, id: value.value } );
 							};
 
@@ -244,17 +251,23 @@ function useCreateAction() {
 	}
 
 	const create = ( classLabel: string ) => {
-		createAction( { classLabel } );
+		const { createdId } = createAction( { classLabel } );
+		trackStyles( provider.getKey() ?? '', 'classCreated', {
+			source: 'created',
+			classTitle: classLabel,
+			classId: createdId,
+		} );
 	};
 
 	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult => {
 		if ( hasReachedLimit( provider ) ) {
 			return {
 				isValid: false,
+				/* translators: %s is the maximum number of classes */
 				errorMessage: __(
-					'You’ve reached the limit of 50 classes. Please remove an existing one to create a new class.',
+					'You’ve reached the limit of %s classes. Please remove an existing one to create a new class.',
 					'elementor'
-				),
+				).replace( '%s', provider.limit.toString() ),
 			};
 		}
 		return validateStyleLabel( newClassLabel, event );
@@ -273,10 +286,9 @@ function hasReachedLimit( provider: StylesProvider ) {
 }
 
 function useAppliedOptions( options: StyleDefOption[] ) {
-	const { element } = useElement();
 	const currentClassesProp = useClassesProp();
 
-	const appliedIds = useElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
+	const appliedIds = usePanelElementSetting< ClassesPropValue >( currentClassesProp )?.value ?? [];
 	const appliedOptions = options.filter( ( option ) => option.value && appliedIds.includes( option.value ) );
 
 	const hasElementsProviderStyleApplied = appliedOptions.some(
@@ -302,10 +314,18 @@ function useHandleSelect() {
 		switch ( reason ) {
 			case 'selectOption':
 				apply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'classApplied', {
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 
 			case 'removeOption':
 				unapply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'classRemoved', {
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 		}
 	};

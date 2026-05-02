@@ -53,7 +53,7 @@ class Import_Runner extends Base_Route {
 
 			return Response::success( $import );
 
-		} catch ( \Error $e ) {
+		} catch ( \Error | \Exception $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
 					'trace' => $e->getTraceAsString(),
@@ -64,7 +64,7 @@ class Import_Runner extends Base_Route {
 				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
 			}
 
-			return Response::error( $e->getMessage(), 'import_runner_error' );
+			return Response::error( 'import-runner-error', $e->getMessage() );
 		}
 	}
 

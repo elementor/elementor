@@ -1,0 +1,261 @@
+---
+description: Development workflow and environment setup rules
+alwaysApply: true
+---
+
+# Development Workflow Rules
+
+## Environment Setup
+
+### Prerequisites
+- Node.js >= 20.19.0
+- npm >= 10.0.0
+- PHP >= 7.4
+- Composer
+- Docker (for testing)
+
+### Initial Setup
+```bash
+# Install all dependencies
+npm run prepare-environment
+
+# For CI environments
+npm run prepare-environment:ci
+```
+
+## Development Commands
+
+### Main Repository
+```bash
+# Start development (builds packages + watches)
+npm run watch
+
+# Build everything
+npm run build
+
+# Build only packages
+npm run build:packages
+
+# Run all tests
+npm run test
+
+# Run specific tests
+npm run test:php          # PHP tests
+npm run test:jest         # JS tests
+npm run test:playwright   # E2E tests
+npm run test:packages     # Turbo-repo tests
+```
+
+### Turbo-Repo (packages/)
+```bash
+cd packages
+
+# Development mode
+npm run dev
+
+# Build all packages
+npm run build
+
+# Run tests
+npm run test
+
+# Lint and type check
+npm run lint
+
+# Check unused dependencies
+npm run check-unused
+
+# Format code
+npm run format
+```
+
+## Workflow Guidelines
+
+### Before Starting Work
+1. **Search First**: Use codebase_search to find existing functionality
+2. **Understand Architecture**: Know if it's main repo or turbo-repo work
+3. **Check Dependencies**: Understand package relationships
+4. **Plan API Design**: Design interfaces before implementation
+
+### During Development
+1. **Follow Patterns**: Use existing patterns and conventions
+2. **Write Tests**: Add tests for critical paths
+3. **Type Safety**: Use TypeScript strictly
+4. **Document APIs**: Document all public interfaces
+
+### After Implementation
+1. **Run Tests**: Ensure all tests pass
+2. **Lint Code**: Fix any linting issues
+3. **Check Dependencies**: Verify no circular dependencies
+4. **Test Integration**: Verify with other packages
+
+## Code Organization
+
+### File Structure
+```
+elementor/
+├── Main Repository
+│   ├── app/                    # Main application
+│   ├── core/                   # Core PHP functionality
+│   ├── includes/               # PHP includes
+│   ├── modules/                # Legacy modules
+│   └── tests/                  # All tests
+│
+└── packages/                   # Turbo-Repo
+    ├── packages/
+    │   ├── core/               # Core applications
+    │   ├── libs/               # Shared libraries
+    │   └── tools/              # Development tools
+    └── tests/                  # Package tests
+```
+
+### Package Development
+1. **Identify Category**: Core, lib, or tool
+2. **Create Structure**: Follow package conventions
+3. **Define APIs**: Create typed interfaces
+4. **Implement Tests**: Add comprehensive coverage
+5. **Update Exports**: Update package index.ts
+
+## Testing Strategy
+
+### Test Types
+- **Unit Tests**: Individual functions/components
+- **Integration Tests**: Package interactions
+- **E2E Tests**: Full user workflows
+- **Performance Tests**: Load and benchmark tests
+
+### Test Commands
+```bash
+# Main repo tests
+npm run test:php              # PHP unit tests
+npm run test:jest             # JS unit tests
+npm run test:playwright       # E2E tests
+
+# Turbo-repo tests
+cd packages && npm test       # All package tests
+cd packages && npm run test:coverage  # With coverage
+```
+
+## Build Process
+
+### Main Repository Build
+1. **Composer**: Install PHP dependencies
+2. **Packages**: Build turbo-repo packages
+3. **Grunt**: Process legacy assets
+4. **Webpack**: Bundle modern JavaScript
+
+### Turbo-Repo Build
+1. **TypeScript**: Compile to JavaScript
+2. **tsup**: Bundle packages
+3. **Turbo**: Manage dependencies and caching
+
+## Debugging
+
+### Main Repository
+- Use browser dev tools
+- WordPress debug mode
+- PHP error logging
+- Playwright debugging
+
+### Turbo-Repo
+- TypeScript compiler errors
+- Jest debugging
+- Package isolation testing
+- Build process debugging
+
+## Common Issues
+
+### Environment Issues
+```bash
+# Reset environment
+npm run hard-reinstall
+
+# Update packages
+npm run update-packages
+
+# Clear caches
+npm cache clean --force
+```
+
+### Build Issues
+```bash
+# Force rebuild
+npm run build --force
+
+# Clear turbo cache
+cd packages && turbo build --force
+```
+
+### Test Issues
+```bash
+# Run specific test
+npx jest path/to/test.spec.ts --verbose
+
+# Debug tests
+npx jest --debug
+
+# Update snapshots
+npx jest --updateSnapshot
+```
+
+## Git Workflow
+
+### Branch Naming
+- `feature/description`
+- `fix/description`
+- `refactor/description`
+- `test/description`
+
+### Commit Messages
+- Use conventional commits
+- Be descriptive and clear
+- Reference issues when applicable
+- Keep commits atomic
+
+### Pull Requests
+- Include description of changes
+- Reference related issues
+- Add tests for new functionality
+- Update documentation if needed
+
+## Performance Considerations
+
+### Bundle Size
+- Monitor bundle size changes
+- Use dynamic imports for large components
+- Optimize images and assets
+- Remove unused dependencies
+
+### Runtime Performance
+- Profile React components
+- Optimize re-renders
+- Use proper memoization
+- Monitor memory usage
+
+## Security Guidelines
+
+### Input Validation
+- Sanitize all user inputs
+- Validate data types and ranges
+- Use proper escaping
+- Check user permissions
+
+### Dependencies
+- Keep dependencies updated
+- Audit for vulnerabilities
+- Use trusted sources
+- Review third-party code
+
+## Documentation
+
+### Code Documentation
+- Document all public APIs
+- Use JSDoc for functions
+- Include usage examples
+- Document breaking changes
+
+### README Files
+- Update package READMEs
+- Include setup instructions
+- Document API usage
+- Provide examples

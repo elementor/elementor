@@ -1,0 +1,176 @@
+---
+description: WordPress and PHP development rules
+globs: ["**/*.php", "core/**/*.php", "includes/**/*.php", "modules/**/*.php"]
+alwaysApply: true
+---
+
+# WordPress & PHP Development Rules
+
+## WordPress Standards
+
+### Code Style
+- Follow WordPress Coding Standards
+- Use WordPress naming conventions
+- Use WordPress functions instead of PHP equivalents
+- Follow WordPress security best practices
+
+### Hooks and Filters
+- Use WordPress hooks system properly
+- Document all custom hooks
+- Use appropriate priority levels
+- Avoid hook conflicts
+
+### Database
+- Use WordPress database functions
+- Sanitize all inputs
+- Escape all outputs
+- Use prepared statements
+
+## Elementor Specific PHP
+
+### Legacy Code Integration
+- Understand the legacy architecture before modifying
+- Maintain backward compatibility
+- Use adapters for new functionality
+- Document breaking changes
+
+### Plugin Architecture
+- Follow WordPress plugin structure
+- Use proper activation/deactivation hooks
+- Handle plugin updates correctly
+- Maintain data integrity
+
+## Security Requirements
+
+### Input Validation
+- Sanitize all user inputs
+- Validate data types and ranges
+- Use nonces for forms
+- Check user capabilities
+
+### Output Escaping
+- Escape all outputs for display
+- Use appropriate escaping functions
+- Sanitize data for database storage
+- Validate file uploads
+
+### Access Control
+- Check user capabilities
+- Verify nonces for actions
+- Validate user permissions
+- Log security events
+
+## Performance Considerations
+
+### Database Queries
+- Minimize database calls
+- Use efficient queries
+- Cache expensive operations
+- Avoid N+1 query problems
+
+### Memory Usage
+- Clean up large objects
+- Use lazy loading when appropriate
+- Monitor memory usage
+- Optimize image handling
+
+## Error Handling
+
+### PHP Errors
+- Use try-catch blocks
+- Log errors appropriately
+- Provide user-friendly messages
+- Don't expose sensitive information
+
+### WordPress Integration
+- Use WordPress error handling
+- Log to WordPress debug log
+- Handle plugin conflicts gracefully
+- Provide fallback functionality
+
+## Testing Requirements
+
+### PHPUnit Tests
+- Write unit tests for all functions
+- Test error conditions
+- Mock external dependencies
+- Use WordPress test framework
+
+### Integration Tests
+- Test with WordPress environment
+- Test plugin interactions
+- Test database operations
+- Test user permissions
+
+## Code Organization
+
+### File Structure
+- Follow WordPress plugin structure
+- Organize by functionality
+- Use proper namespacing
+- Keep files focused
+
+### Class Design
+- Use single responsibility principle
+- Follow WordPress class conventions
+- Use proper inheritance
+- Document all public methods
+
+## Common Patterns
+
+### Settings Management
+```php
+class ElementorSettings {
+    public function get_option($key, $default = '') {
+        return get_option('elementor_' . $key, $default);
+    }
+    
+    public function update_option($key, $value) {
+        return update_option('elementor_' . $key, $value);
+    }
+}
+```
+
+### Hook Registration
+```php
+add_action('init', [$this, 'init']);
+add_filter('the_content', [$this, 'filter_content'], 10, 1);
+add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+```
+
+### Security Checks
+```php
+if (!current_user_can('edit_posts')) {
+    wp_die(__('You do not have sufficient permissions.'));
+}
+
+if (!wp_verify_nonce($_POST['nonce'], 'elementor_action')) {
+    wp_die(__('Security check failed.'));
+}
+```
+
+### Database Operations
+```php
+global $wpdb;
+
+$results = $wpdb->get_results(
+    $wpdb->prepare(
+        "SELECT * FROM {$wpdb->prefix}elementor_data WHERE post_id = %d",
+        $post_id
+    )
+);
+```
+
+## Documentation Requirements
+
+### Function Documentation
+- Document all public functions
+- Include parameter descriptions
+- Document return values
+- Include usage examples
+
+### Class Documentation
+- Document class purpose
+- Document public methods
+- Include inheritance information
+- Document dependencies

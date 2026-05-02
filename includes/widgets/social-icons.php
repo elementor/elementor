@@ -259,7 +259,7 @@ class Widget_Social_Icons extends Widget_Base {
 					],
 					[
 						'social_icon' => [
-							'value' => 'fab fa-twitter',
+							'value' => 'fab fa-x-twitter',
 							'library' => 'fa-brands',
 						],
 					],
@@ -600,7 +600,7 @@ class Widget_Social_Icons extends Widget_Base {
 
 		$fallback_defaults = [
 			'fa fa-facebook',
-			'fa fa-twitter',
+			'fa fa-x-twitter',
 			'fa fa-google-plus',
 		];
 

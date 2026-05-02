@@ -8,6 +8,7 @@ import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 import { PluginActivation } from '../components/plugin-activation';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
+import useReturnToRedirect from '../../shared/hooks/use-return-to-redirect';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -16,7 +17,7 @@ const headerContent = (
 export default function ImportProcess() {
 	const { data, dispatch, isProcessing, runnersState } = useImportContext();
 	const { includes, customization } = data;
-	const { status, error, importKit, duration } = useImportKit( {
+	const { status, error, importKit } = useImportKit( {
 		data,
 		includes,
 		customization,
@@ -25,26 +26,33 @@ export default function ImportProcess() {
 	} );
 
 	const navigate = useNavigate();
-	const title = data.uploadedData?.manifest?.title || '';
-	const id = data.kitUploadParams?.id || '';
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
-				AppsEventTracking.sendKitImportStatus( null, id, title, duration );
+				AppsEventTracking.sendKitImportStatus( null );
+				if ( ! data.noAutomaticRedirect && attemptRedirect() ) {
+					return;
+				}
+
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
 		} else {
-			AppsEventTracking.sendKitImportStatus( error, id, title );
+			AppsEventTracking.sendKitImportStatus( error );
 		}
-	}, [ status, error, navigate, isProcessing, title, id, duration ] );
+	}, [ status, error, navigate, isProcessing, attemptRedirect, data.noAutomaticRedirect ] );
 
 	const handleTryAgain = () => {
 		importKit();
 	};
 	const handleCloseError = () => {
+		if ( attemptRedirect() ) {
+			return;
+		}
+
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
 		navigate( 'import-customization/content' );
 	};
@@ -60,11 +68,11 @@ export default function ImportProcess() {
 							<Stack spacing={ 3 } alignItems="center" >
 								<CircularProgress size={ 30 } />
 								<Typography variant="h5" >
-									{ __( 'Settings up your website templates...', 'elementor' ) }
+									{ __( 'Setting up your website template...', 'elementor' ) }
 								</Typography>
 								<Stack>
 									<Typography variant="subtitle1" >
-										{ __( 'This usually take a few moments.', 'elementor' ) }
+										{ __( 'This usually takes a few moments.', 'elementor' ) }
 									</Typography>
 									<Typography variant="subtitle1" >
 										{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }

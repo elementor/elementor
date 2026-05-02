@@ -1,4 +1,4 @@
-# <a href="https://elemn.to/gh-to-elementor"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a>
+# <a href="https://elemn.to/gh-to-elementor"><img src="/.github/assets/elementor-logo--gh-repo.svg" alt="Elementor Website Builder"></a>
 
 Welcome to the Elementor GitHub repository!
 
@@ -18,7 +18,7 @@ Introducing a WordPress website builder with no limits of design. A website buil
 
 Whether you are a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast, or a developer who wants to expand their capabilities, Elementor's website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a complete open-source approach.
 
-There are many other [features](https://elemn.to/gh-to-features) to help you build better websites. Join the elite web professionals who enjoy [Elementor Pro](https://elemn.to/gh-to-elementor-pro)!
+There are many other [features](https://elemn.to/gh-to-features) to help you build better websites. Join the elite web professionals who enjoy [Elementor One](https://elemn.to/gh-to-elementor-pro)!
 
 ## Elementor Roadmap
 

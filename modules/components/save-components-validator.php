@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Save_Components_Validator {
-	const MAX_COMPONENTS = 50;
-
 	private Collection $components;
 
 	public function __construct( Collection $components ) {
@@ -25,7 +23,7 @@ class Save_Components_Validator {
 	public function validate( Collection $data ) {
 		$errors = Collection::make( [
 			$this->validate_count( $data ),
-			$this->validate_duplicated_names( $data ),
+			$this->validate_duplicated_values( $data ),
 		] )->flatten();
 
 		if ( $errors->is_empty() ) {
@@ -42,37 +40,61 @@ class Save_Components_Validator {
 	}
 
 	private function validate_count( Collection $data ): array {
-		$count = $this->components->count() + $data->count();
+		$non_archived_components = $this->components->filter( fn ( $component ) => ! $component['is_archived'] );
+		$count = $non_archived_components->count() + $data->count();
 
-		if ( $count > self::MAX_COMPONENTS ) {
+		if ( $count > Components_REST_API::MAX_COMPONENTS ) {
 			return [ esc_html__( 'Maximum number of components exceeded.', 'elementor' ) ];
 		}
 
 		return [];
 	}
 
-	private function validate_duplicated_names( Collection $data ): array {
+	private function validate_duplicated_values( Collection $data ): array {
 		return $data
-			->map( function ( $component ) {
+			->map( function ( $component ) use ( $data ) {
+				$errors = [];
+
 				$title = $component['title'];
+				$uid = $component['uid'];
 
-				$is_name_exists = $this->components->some(
-					fn ( $component ) => $component['name'] === $title
-				);
+				$is_title_exists = $this->components->some(
+					fn ( $component ) => ! $component['is_archived'] && $component['title'] === $title
+				) || $data->filter(
+					fn ( $component ) => ! $component['title'] === $title
+				)->count() > 1;
 
-				if ( $is_name_exists ) {
-					return [
+				if ( $is_title_exists ) {
+					$errors[] = [
 						sprintf(
-							// translators: %s Component name.
-							esc_html__( "Component name '%s' is duplicated.", 'elementor' ),
+							// translators: %s Component title.
+							esc_html__( "Component title '%s' is duplicated.", 'elementor' ),
 							$title
 						),
 					];
 				}
 
-				return [];
+				$is_uid_exists = $this->components->some(
+					fn ( $component ) => $component['uid'] === $uid
+				) || $data->filter(
+					fn ( $component ) => $component['uid'] === $uid
+				)->count() > 1;
+
+				if ( $is_uid_exists ) {
+					$errors[] = [
+						sprintf(
+							// translators: %s Component uid.
+							esc_html__( "Component uid '%s' is duplicated.", 'elementor' ),
+							$uid
+						),
+					];
+				}
+
+				return $errors;
 			} )
 			->flatten()
+			->flatten()
+			->unique()
 			->values();
 	}
 }

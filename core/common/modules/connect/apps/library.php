@@ -64,12 +64,15 @@ class Library extends Common_App {
 
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
-		$user_id = $this->get_user_id();
+		$user_id = $this->get_connect_user_id();
+		$user_roles = $this->get_user_roles();
+		$user = $this->get( 'user' );
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
 				'user_id' => $user_id,
+				'user_roles' => $user_roles,
 				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				// TODO: Remove `base_access_level`.
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
@@ -77,6 +80,7 @@ class Library extends Common_App {
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'plan_type' => ConnectModule::ACCESS_TIER_FREE,
+				'user_email' => $user->email ?? null,
 			],
 		] );
 	}
@@ -94,37 +98,9 @@ class Library extends Common_App {
 		$ajax_manager->register_ajax_action( 'library_connect_popup_seen', [ $this, 'library_connect_popup_seen' ] );
 	}
 
-	private function get_user_id() {
-		$token = $this->get( 'access_token' );
-
-		if ( ! is_string( $token ) ) {
-			return null;
-		}
-
-		$parts = explode( '.', $token );
-
-		if ( count( $parts ) !== 3 ) {
-			return null;
-		}
-
-		try {
-			$payload_encoded = $parts[1];
-
-			$payload_encoded = str_pad( $payload_encoded, strlen( $payload_encoded ) + ( 4 - strlen( $payload_encoded ) % 4 ) % 4, '=' );
-
-			$payload_json = base64_decode( strtr( $payload_encoded, '-_', '+/' ), true );
-
-			$payload = json_decode( $payload_json, true );
-
-			if ( ! isset( $payload['sub'] ) ) {
-				return null;
-			}
-
-			return $payload['sub'];
-		} catch ( Exception $e ) {
-			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
-			return null;
-		}
+	private function get_user_roles() {
+		$user = wp_get_current_user();
+		return $user->roles ?? [];
 	}
 
 	/**
@@ -157,7 +133,7 @@ class Library extends Common_App {
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
 			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			'tracking_opted_in' => $this->get( 'data_share_opted_in' ) ?? false,
-			'user_id' => $this->get_user_id(),
+			'user_id' => $this->get_connect_user_id(),
 		];
 	}
 

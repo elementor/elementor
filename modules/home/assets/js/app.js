@@ -1,13 +1,13 @@
 import ReactUtils from 'elementor-utils/react';
 import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
-import HomeScreen from './components/home-screen';
+import EditorScreen from './components/home-screen';
 
 const App = ( props ) => {
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					<HomeScreen
+					<EditorScreen
 						homeScreenData={ props.homeScreenData }
 						adminUrl={ props.adminUrl }
 					/>

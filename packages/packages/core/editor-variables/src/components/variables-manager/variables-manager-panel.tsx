@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -8,9 +9,9 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
+import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -24,7 +25,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackVariablesManagerEvent, trackVariableSyncToV3 } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
+import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -35,6 +38,13 @@ import { SIZE, VariableManagerCreateMenu } from './variables-manager-create-menu
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
+const STOP_SYNC_MESSAGE_KEY = 'stop-sync-variable';
+
+type StopSyncConfirmationDialogProps = {
+	open: boolean;
+	onClose: () => void;
+	onConfirm: () => void;
+};
 
 export const { panel, usePanelActions } = createPanel( {
 	id,
@@ -43,7 +53,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onOpen: () => {
 		changeEditMode( id );
 	},
-	onClose: () => {
+	onClose: async () => {
 		changeEditMode( 'edit' );
 	},
 	isOpenPreviousElement: true,
@@ -52,6 +62,7 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
 	const createMenuState = usePopupState( {
 		variant: 'popover',
@@ -64,7 +75,10 @@ export function VariablesManagerPanel() {
 		isSaveDisabled,
 		handleOnChange,
 		createVariable,
+		duplicateVariable,
 		handleDeleteVariable,
+		handleStartSync: startSyncFromState,
+		handleStopSync: stopSyncFromState,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -76,6 +90,7 @@ export function VariablesManagerPanel() {
 	const { createNavigationCallback, resetNavigation } = useErrorNavigation();
 
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState< { id: string; label: string } | null >( null );
+	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ serverError, setServerError ] = useState< MappedError | null >( null );
 
 	usePreventUnload( isDirty );
@@ -104,7 +119,9 @@ export function VariablesManagerPanel() {
 			setServerError( null );
 			resetNavigation();
 
-			return await handleSave();
+			const result = await handleSave();
+			trackVariablesManagerEvent( { action: 'saveChanges' } );
+			return result;
 		} catch ( error ) {
 			const mappedError = mapServerError( error as ErrorResponse );
 			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
@@ -135,20 +152,92 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const menuActions = [
-		{
-			name: __( 'Delete', 'elementor' ),
-			icon: TrashIcon,
-			color: 'error.main',
-			onClick: ( itemId: string ) => {
-				if ( variables[ itemId ] ) {
-					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
-				}
-			},
+	const commitStopSync = useCallback(
+		( itemId: string ) => {
+			stopSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'unsync' } );
+			}
 		},
-	];
+		[ stopSyncFromState, variables ]
+	);
 
-	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
+	const handleStartSync = useCallback(
+		( itemId: string ) => {
+			startSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
+			}
+		},
+		[ startSyncFromState, variables ]
+	);
+
+	const handleStopSync = useCallback(
+		( itemId: string ) => {
+			if ( ! isStopSyncSuppressed ) {
+				setStopSyncConfirmation( itemId );
+			} else {
+				commitStopSync( itemId );
+			}
+		},
+		[ isStopSyncSuppressed, commitStopSync ]
+	);
+
+	const buildMenuActions = useCallback(
+		( variableId: string ) => {
+			const variable = variables[ variableId ];
+			if ( ! variable ) {
+				return [];
+			}
+
+			const typeActions = getMenuActionsForVariable( variable.type, {
+				variable,
+				variableId,
+				handlers: {
+					onStartSync: handleStartSync,
+					onStopSync: handleStopSync,
+				},
+			} );
+
+			const duplicateAction = {
+				name: __( 'Duplicate', 'elementor' ),
+				icon: CopyIcon,
+				color: 'text.primary',
+				onClick: ( itemId: string ) => {
+					const newId = duplicateVariable( itemId );
+					startAutoEdit( newId );
+
+					const variableTypeOptions = getVariableType( variable.type );
+					trackVariablesManagerEvent( {
+						action: 'duplicate',
+						varType: variableTypeOptions?.variableType,
+					} );
+				},
+			};
+
+			const deleteAction = {
+				name: __( 'Delete', 'elementor' ),
+				icon: TrashIcon,
+				color: 'error.main',
+				onClick: ( itemId: string ) => {
+					const v = variables[ itemId ];
+					if ( v ) {
+						setDeleteConfirmation( { id: itemId, label: v.label } );
+
+						const variableTypeOptions = getVariableType( v.type );
+						trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
+					}
+				},
+			};
+
+			return [ ...typeActions, duplicateAction, deleteAction ];
+		},
+		[ variables, handleStartSync, handleStopSync, duplicateVariable, startAutoEdit ]
+	);
+
+	const hasVariables = Object.keys( variables ).length > 0;
 
 	return (
 		<ThemeProvider>
@@ -204,7 +293,7 @@ export function VariablesManagerPanel() {
 				>
 					{ hasVariables && (
 						<VariablesManagerTable
-							menuActions={ menuActions }
+							menuActions={ buildMenuActions }
 							variables={ variables }
 							onChange={ handleOnChange }
 							autoEditVariableId={ autoEditVariableId }
@@ -306,6 +395,17 @@ export function VariablesManagerPanel() {
 				/>
 			) }
 
+			{ stopSyncConfirmation && (
+				<StopSyncConfirmationDialog
+					open
+					onClose={ () => setStopSyncConfirmation( null ) }
+					onConfirm={ () => {
+						commitStopSync( stopSyncConfirmation );
+						setStopSyncConfirmation( null );
+					} }
+				/>
+			) }
+
 			{ isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
 					<SaveChangesDialog.Title onClose={ closeSaveChangesDialog }>
@@ -357,4 +457,33 @@ const usePreventUnload = ( isDirty: boolean ) => {
 			window.removeEventListener( 'beforeunload', handleBeforeUnload );
 		};
 	}, [ isDirty ] );
+};
+
+const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfirmationDialogProps ) => {
+	const [ , suppressStopSyncMessage ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+
+	return (
+		<ConfirmationDialog open={ open } onClose={ onClose }>
+			<ConfirmationDialog.Title icon={ ColorFilterIcon } iconColor="primary">
+				{ __( 'Stop syncing variable color', 'elementor' ) }
+			</ConfirmationDialog.Title>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
+					{ __(
+						'This will disconnect the variable color from Global Colors. Existing uses on your site will automatically switch to a default color.',
+						'elementor'
+					) }
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions
+				onClose={ onClose }
+				onConfirm={ onConfirm }
+				cancelLabel={ __( 'Cancel', 'elementor' ) }
+				confirmLabel={ __( 'Got it', 'elementor' ) }
+				color="primary"
+				onSuppressMessage={ suppressStopSyncMessage }
+				suppressLabel={ __( "Don't show again", 'elementor' ) }
+			/>
+		</ConfirmationDialog>
+	);
 };

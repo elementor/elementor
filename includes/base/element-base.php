@@ -151,6 +151,8 @@ abstract class Element_Base extends Controls_Stack {
 		}
 	}
 
+	public function register_frontend_handlers() {}
+
 	/**
 	 * Get style dependencies.
 	 *
@@ -768,6 +770,7 @@ abstract class Element_Base extends Controls_Stack {
 			],
 			'data-id' => $id,
 			'data-element_type' => $this->get_type(),
+			'data-e-type' => $this->get_type(),
 		] );
 
 		$class_settings = [];

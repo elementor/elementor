@@ -1,9 +1,10 @@
 import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
-import { timeouts } from './config/timeouts';
+import { timeouts as timeoutsConfig } from './config/timeouts';
 
 const isCI = Boolean( process.env.CI );
+const fullBrowserCompat = 'true' === process.env.FULL_BROWSER_COMPAT;
 const localDevServer = 'http://127.0.0.1:9400';
 const localTestServer = 'http://127.0.0.1:9400';
 const ciDevServer = 'http://localhost:8888';
@@ -13,6 +14,10 @@ process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
 process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
 
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
+const timeouts = isCI ? timeoutsConfig : Object.entries( timeoutsConfig ).reduce( ( acc, [ key, value ] ) => {
+	acc[ key ] = value * 2;
+	return acc;
+}, {} as typeof timeoutsConfig );
 
 _config( {
 	path: resolve( __dirname, '../../.env' ),
@@ -20,6 +25,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './sanity',
+	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
 	grepInvert: /elements-regression/,
@@ -29,15 +35,15 @@ export default defineConfig( {
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 9 : 0,
+	retries: process.env.CI ? 3 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI
-		? [ [ 'github' ], [ 'list' ] ]
+		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {
-			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+			args: fullBrowserCompat ? [] : [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
 		headless: true,
 		ignoreHTTPSErrors: true,
@@ -52,4 +58,11 @@ export default defineConfig( {
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
+	...( fullBrowserCompat ? {
+		projects: [
+			{ name: 'chromium', use: { browserName: 'chromium' } },
+			{ name: 'firefox', use: { browserName: 'firefox' } },
+			{ name: 'webkit', use: { browserName: 'webkit' } },
+		],
+	} : {} ),
 } );

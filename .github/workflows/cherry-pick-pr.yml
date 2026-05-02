@@ -17,41 +17,58 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      USING_PAT: ${{ secrets.GH_PAT != '' }}
+      JIRA_TICKET_PATTERN: '[A-Z]{2,10}-[0-9]+'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
           persist-credentials: true
 
       - name: Check if PR is from fork
         id: check_fork
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
         run: |
-          IS_FORK="${{ github.event.pull_request.head.repo.full_name != github.repository }}"
+          IS_FORK="false"
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            IS_FORK="true"
+          fi
           echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
-          echo "Fork status: $IS_FORK"
         shell: bash
 
       - name: Log trigger and PR information
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
+          ADDED_LABEL: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          TARGET_REPO: ${{ github.repository }}
+          IS_FORK: ${{ steps.check_fork.outputs.is_fork }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
         run: |
-          echo "Trigger: ${{ github.event.action }}"
-          if [ "${{ github.event.action }}" = "labeled" ]; then
-            echo "Added label: ${{ github.event.label.name }}"
+          echo "Trigger: $EVENT_ACTION"
+          if [ "$EVENT_ACTION" = "labeled" ]; then
+            echo "Added label: $ADDED_LABEL"
           fi
-          echo "PR #${{ github.event.pull_request.number }} from: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "Target repository: ${{ github.repository }}"
-          echo "Is fork PR: ${{ steps.check_fork.outputs.is_fork }}"
-          echo "PR merged: ${{ github.event.pull_request.merged }}"
+          echo "PR #${PR_NUMBER} from: $HEAD_REPO"
+          echo "Target repository: $TARGET_REPO"
+          echo "Is fork PR: $IS_FORK"
+          echo "PR merged: $PR_MERGED"
         shell: bash
 
       - name: Get branch labels
         id: get_labels
+        env:
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
         run: |
-          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
+          LABELS=$(jq -r '.[].name' <<< "$LABELS_JSON" | grep '^cp_' | paste -sd ',' || echo "")
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
@@ -65,15 +82,19 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
           LABEL_NAME: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ORIG_URL: ${{ github.event.pull_request.html_url }}
+          FILTERED_LABELS_CSV: ${{ steps.get_labels.outputs.filtered_labels_csv }}
+          EVENT_ACTION: ${{ github.event.action }}
+          SOURCE_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-          ORIG_URL="${{ github.event.pull_request.html_url }}"
+          PR_TITLE=$(echo "$PR_TITLE" | sed 's/[;&|<>`$()]//g')
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS_CSV"
           for lbl in "${BRANCHES[@]}"; do
             TARGET=${lbl#cp_}
 
@@ -103,15 +124,23 @@ jobs:
                 TYPE="Internal:"
               fi
 
-              # Remove the type from PR_TITLE for the description part
-              DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+              # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+              TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+              if [ -n "$TICKET" ]; then
+                TICKET_SUFFIX=" [${TICKET}]"
+              else
+                TICKET_SUFFIX=" [NO-TICKET]"
+              fi
+
+              # Extract title body by stripping the leading "Type: " prefix
+              PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
 
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
                 if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
                   CONFLICT_TRIGGER_INFO=""
-                  if [ "${{ github.event.action }}" = "labeled" ]; then
+                  if [ "$EVENT_ACTION" = "labeled" ]; then
                     CONFLICT_TRIGGER_INFO="
                   **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
                   fi
@@ -119,7 +148,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts ${DESCRIPTION}" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts: ${PR_TITLE_BODY}" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -163,8 +192,16 @@ jobs:
               TYPE="Internal:"
             fi
 
-                        # Remove the type from PR_TITLE for the description part
-            DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+            # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+            TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+            if [ -n "$TICKET" ]; then
+              TICKET_SUFFIX=" [${TICKET}]"
+            else
+              TICKET_SUFFIX=" [NO-TICKET]"
+            fi
+
+            # Extract title body by stripping the leading "Type: " prefix
+            PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
@@ -172,19 +209,37 @@ jobs:
               echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
             else
               TRIGGER_INFO=""
-              if [ "${{ github.event.action }}" = "labeled" ]; then
+              if [ "$EVENT_ACTION" = "labeled" ]; then
                 TRIGGER_INFO="
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
 
-              gh pr create \
+              PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}: ${PR_TITLE_BODY}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
-                **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}"
+                **Source:** ${SOURCE_REPO}
+                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}")
+              
+              NEW_PR=$(echo "$PR_URL" | grep -oE '/pull/[0-9]+' | grep -oE '[0-9]+' || echo "")
+
+              if [ -n "$NEW_PR" ]; then
+                if [ "$USING_PAT" = "true" ]; then
+                  echo "::notice:: PR #${NEW_PR} created with PAT - workflows will trigger automatically"
+                else
+                  echo "Created PR #${NEW_PR} with GITHUB_TOKEN, triggering workflows via empty commit..."
+                  CURRENT_BRANCH=$(git branch --show-current)
+                  if [ "$CURRENT_BRANCH" = "$BRANCH" ]; then
+                    git commit --allow-empty -m "Trigger workflows for PR #${NEW_PR}"
+                    git push origin "$BRANCH"
+                    echo "::notice:: Triggered workflows for PR #${NEW_PR}"
+                  else
+                    echo "::warning:: Not on branch $BRANCH (on $CURRENT_BRANCH), skipping workflow trigger"
+                  fi
+                fi
+              fi
             fi
           done
         shell: bash

@@ -15,7 +15,7 @@ class Background_Color_Overlay_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'color' => Color_Prop_Type::make(),
+			'color' => Color_Prop_Type::make()->initial_value( '#00000033' ),
 		];
 	}
 }

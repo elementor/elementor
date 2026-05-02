@@ -1,44 +1,49 @@
-import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
+import { injectIntoLogic } from '@elementor/editor';
 import {
 	type CreateTemplatedElementTypeOptions,
 	registerElementType,
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { componentIdTransformer } from './component-id-transformer';
+import { componentInstanceTransformer } from './component-instance-transformer';
+import { componentOverridableTransformer } from './component-overridable-transformer';
+import { componentOverrideTransformer } from './component-override-transformer';
 import { Components } from './components/components-tab/components';
-import { CreateComponentForm } from './components/create-component-form/create-component-form';
+import { openDetachConfirmDialog } from './components/detach-instance-confirmation-dialog';
 import { openEditModeDialog } from './components/in-edit-mode';
-import { createComponentType, TYPE } from './create-component-type';
+import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
+import { LoadTemplateComponents } from './components/load-template-components';
+import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { PopulateStore } from './populate-store';
+import { initCircularNestingPrevention } from './prevent-circular-nesting';
+import { loadComponentsAssets } from './store/actions/load-components-assets';
+import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
-import { loadComponentsStyles } from './store/load-components-styles';
-import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
-import { type Element, type ExtendedWindow } from './types';
-import { beforeSave } from './utils/before-save';
-
-const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
+import { beforeSave } from './sync/before-save';
+import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
+import { type ExtendedWindow } from './types';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
+
 	registerSlice( slice );
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
-		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
+
+	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+		createComponentType( {
+			...options,
+			showLockedByModal: openEditModeDialog,
+			showDetachConfirmDialog: openDetachConfirmDialog,
+		} )
 	);
-	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
-		const document = getV1CurrentDocument();
-		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
-			args.mode = 'autosave';
-		}
-		return true;
-	} );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
@@ -46,11 +51,7 @@ export function init() {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: Components,
-	} );
-
-	injectIntoTop( {
-		id: 'create-component-popup',
-		component: CreateComponentForm,
+		position: 1,
 	} );
 
 	injectIntoLogic( {
@@ -58,15 +59,32 @@ export function init() {
 		component: PopulateStore,
 	} );
 
-	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
+	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
 		const { id, config } = getV1CurrentDocument();
 
 		if ( id ) {
 			removeComponentStyles( id );
 		}
 
-		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
+		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
+	injectIntoLogic( {
+		id: 'templates',
+		component: LoadTemplateComponents,
+	} );
+
+	registerEditingPanelReplacement( {
+		id: 'component-instance-edit-panel',
+		condition: ( _, elementType ) => elementType.key === 'e-component',
+		component: InstanceEditingPanel,
+	} );
+
+	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
+	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+
+	initCircularNestingPrevention();
+
+	initLoadComponentDataAfterInstanceAdded();
 }

@@ -28,8 +28,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiments();
-
 		$this->register_app();
 
 		add_action( 'elementor/init', function () {
@@ -82,21 +80,6 @@ class Module extends BaseModule {
 		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
-	}
-
-	private function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Library', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
-			'default' => ExperimentsManager::STATE_ACTIVE,
-			'hidden' => true,
-			'mutable' => false,
-			'new_site' => [
-				'always_active' => true,
-				'minimum_installation_version' => '3.32.0',
-			],
-		] );
 	}
 
 	private function register_app() {

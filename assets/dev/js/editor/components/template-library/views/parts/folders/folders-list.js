@@ -6,4 +6,9 @@ module.exports = Marionette.CollectionView.extend( {
 	className: 'folder-list',
 	childView: FolderItemView,
 	emptyView: EmptyView,
+
+	attributes: {
+		role: 'listbox',
+		'aria-label': 'Folders',
+	},
 } );

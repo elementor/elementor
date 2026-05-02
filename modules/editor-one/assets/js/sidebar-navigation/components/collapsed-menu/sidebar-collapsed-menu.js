@@ -1,0 +1,66 @@
+import { useCallback, useMemo, useState } from '@wordpress/element';
+import { Divider } from '@elementor/ui';
+import PropTypes from 'prop-types';
+import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
+import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
+import { MenuList } from '../shared';
+
+const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
+	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
+
+	const activeStateResolver = useMemo(
+		() => new MenuActiveStateResolver( activeMenuSlug, activeChildSlug ),
+		[ activeMenuSlug, activeChildSlug ],
+	);
+
+	const getChildren = ( item ) => {
+		if ( ! item.group_id ) {
+			return null;
+		}
+
+		const group = level4Groups[ item.group_id ];
+
+		if ( ! group || ! group.items || ! group.items.length ) {
+			return null;
+		}
+
+		return group.items;
+	};
+
+	const handleOpenPopover = useCallback( ( slug ) => {
+		setOpenPopoverSlug( slug );
+	}, [] );
+
+	const handleClosePopover = useCallback( () => {
+		setOpenPopoverSlug( null );
+	}, [] );
+
+	return (
+		<MenuList isCollapsed onMouseLeave={ handleClosePopover }>
+			{ menuItems.map( ( item ) => (
+				<>
+					{ item.has_divider_before && <Divider key={ `divider-${ item.slug }` } sx={ { my: 1 } } /> }
+					<SidebarCollapsedMenuItem
+						key={ item.slug }
+						item={ item }
+						isActive={ activeStateResolver.isMenuActive( item ) }
+						children={ getChildren( item ) }
+						activeChildSlug={ activeChildSlug }
+						isPopoverOpen={ openPopoverSlug === item.slug }
+						onOpenPopover={ handleOpenPopover }
+						onClosePopover={ handleClosePopover }
+					/>
+				</>
+			) ) }
+		</MenuList>
+	);
+};
+
+SidebarCollapsedMenu.propTypes = {
+	menuItems: PropTypes.array.isRequired,
+	level4Groups: PropTypes.object.isRequired,
+	activeMenuSlug: PropTypes.string.isRequired,
+	activeChildSlug: PropTypes.string.isRequired,
+};
+
+export default SidebarCollapsedMenu;

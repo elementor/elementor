@@ -77,10 +77,9 @@
 		height: $app-logo-size;
 		line-height: $app-logo-size;
 		text-align: center;
-		font-size: $app-logo-font-size;
+		font-size: $app-logo-size;
 		border-radius: $app-logo-radius;
-		color: var(--app-logo-color);
-		background-color: var(--app-logo-background-color);
+		color: var(--app-logo-background-color);
 
 		&:not(:last-child) {
 			margin-inline-end: $app-logo-margin-inline-end;

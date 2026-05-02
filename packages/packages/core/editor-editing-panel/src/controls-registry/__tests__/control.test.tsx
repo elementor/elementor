@@ -47,7 +47,7 @@ describe( '<Control />', () => {
 	it( 'should render control component', () => {
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps }>
+			<ElementProvider { ...elementProviderProps } settings={ {} }>
 				<Control type={ 'test-text' as ControlType } props={ {} } />
 			</ElementProvider>
 		);
@@ -59,7 +59,7 @@ describe( '<Control />', () => {
 	it( 'should pass props to control component', () => {
 		// Act.
 		renderWithTheme(
-			<ElementProvider { ...elementProviderProps }>
+			<ElementProvider { ...elementProviderProps } settings={ {} }>
 				<Control
 					type={ 'test-text' as ControlType }
 					props={ {
@@ -74,12 +74,16 @@ describe( '<Control />', () => {
 	} );
 
 	it( 'should throw error if control type is not found', () => {
+		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
+
 		// Act & Assert.
 		expect( () => {
 			// @ts-expect-error Testing unknown control type.
 			renderWithTheme( <Control type="unknown" /> );
 		} ).toThrow();
 
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 } );

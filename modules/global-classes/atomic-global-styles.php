@@ -4,7 +4,6 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
@@ -12,7 +11,7 @@ class Atomic_Global_Styles {
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widgets/styles/register',
-			fn( Atomic_Styles_Manager $styles_manager, array $post_ids ) => $this->register_styles( $styles_manager ),
+			fn( Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
 			2
 		);
@@ -35,19 +34,18 @@ class Atomic_Global_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$get_styles = function () use ( $context ) {
-			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
+			return Global_Classes_Repository::make()->context( $context )->all()->get_ordered_items()->map( function( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
-			})->all();
+			})->reverse()->all(); // we should reverse the order of the items so that the last in the original array should be rendered first (to be overridden by the previous ones)
 		};
 
 		$styles_manager->register(
-			self::STYLES_KEY . '-' . $context,
+			[ self::STYLES_KEY, $context ],
 			$get_styles,
-			[ self::STYLES_KEY, $context ]
 		);
 	}
 
@@ -60,19 +58,17 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache( ?string $context = null ) {
-		$cache_validity = new Cache_Validity();
-
 		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
-			$cache_validity->invalidate( [ self::STYLES_KEY ] );
+			do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 
 			return;
 		}
 
-		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
+		do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY, $context ] );
 	}
 
 	private function transform_classes_names( $ids ) {
-		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$classes = Global_Classes_Repository::make()
 			->context( $context )

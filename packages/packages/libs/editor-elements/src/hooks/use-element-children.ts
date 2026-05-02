@@ -1,17 +1,27 @@
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from '../sync/get-container';
+import { findChildRecursive, getElementChildren, type ModelResult } from '../sync/model-utils';
+import { type V1ElementEditorSettingsProps } from '../sync/types';
 import { type ElementID } from '../types';
 
 export type ElementModel = {
 	id: string;
+	editorSettings: V1ElementEditorSettingsProps;
 };
 
 export type ElementChildren = Record< string, ElementModel[] >;
 
+function toElementModel( { model }: ModelResult ): ElementModel {
+	return {
+		id: model.get( 'id' ) as string,
+		editorSettings: model.get( 'editor_settings' ) ?? {},
+	};
+}
+
 export function useElementChildren< T extends ElementChildren >(
 	elementId: ElementID,
-	childrenTypes: ( keyof T & string )[]
+	childrenTypes: Record< string, string >
 ): T {
 	return useListenTo(
 		[
@@ -23,20 +33,26 @@ export function useElementChildren< T extends ElementChildren >(
 		],
 		() => {
 			const container = getContainer( elementId );
+			const model = container?.model;
 
-			const elementChildren = childrenTypes.reduce( ( acc, type ) => {
-				acc[ type ] = [];
+			if ( ! model ) {
+				return {} as ElementChildren;
+			}
+
+			const elementChildren = Object.entries( childrenTypes ).reduce( ( acc, [ parentType, childType ] ) => {
+				const parent = findChildRecursive( model, ( m ) => m.get( 'elType' ) === parentType );
+
+				if ( ! parent ) {
+					acc[ childType ] = [];
+					return acc;
+				}
+
+				const children = getElementChildren( parent.model, ( m ) => m.get( 'elType' ) === childType );
+
+				acc[ childType ] = children.map( toElementModel );
 
 				return acc;
 			}, {} as ElementChildren );
-
-			container?.children?.forEachRecursive?.( ( { model, id } ) => {
-				const elType = model.get( 'elType' );
-
-				if ( elType && elType in elementChildren ) {
-					elementChildren[ elType ].push( { id } );
-				}
-			} );
 
 			return elementChildren;
 		},

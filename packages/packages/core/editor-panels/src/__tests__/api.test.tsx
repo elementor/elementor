@@ -149,7 +149,7 @@ describe( 'panels api', () => {
 			onOpen: () => {
 				opened = true;
 			},
-			onClose: () => {
+			onClose: async () => {
 				closed = true;
 			},
 		} );
@@ -169,7 +169,7 @@ describe( 'panels api', () => {
 		expect( closed ).toBe( true );
 	} );
 
-	it( 'should share state snapshot between open and close actions', () => {
+	it( 'should share state snapshot between open and close actions', async () => {
 		// Arrange.
 		const onClose = jest.fn();
 		const state = { foo: 'bar' };
@@ -187,9 +187,9 @@ describe( 'panels api', () => {
 			wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 		} ).result.current;
 
-		act( () => {
-			open();
-			close();
+		await act( async () => {
+			await open();
+			await close();
 		} );
 
 		// Assert.
@@ -207,7 +207,7 @@ describe( 'panels api', () => {
 			__deleteStore();
 		} );
 
-		it( 'should store and restore previous element when isOpenPreviousElement is true', () => {
+		it( 'should store and restore previous element when isOpenPreviousElement is true', async () => {
 			// Arrange.
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
@@ -219,16 +219,16 @@ describe( 'panels api', () => {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
 
-			act( () => {
-				open();
+			await act( async () => {
+				await open();
 			} );
 
 			// Assert.
 			expect( mockedGetSelectedElements ).toHaveBeenCalled();
 
 			// Act.
-			act( () => {
-				close();
+			await act( async () => {
+				await close();
 			} );
 
 			// Assert.
@@ -237,7 +237,7 @@ describe( 'panels api', () => {
 			} );
 		} );
 
-		it( 'should not store or restore previous element when isOpenPreviousElement is false', () => {
+		it( 'should not store or restore previous element when isOpenPreviousElement is false', async () => {
 			// Arrange.
 			const mockPanel = createMockPanel( { isOpenPreviousElement: false } );
 
@@ -249,9 +249,9 @@ describe( 'panels api', () => {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
 
-			act( () => {
-				open();
-				close();
+			await act( async () => {
+				await open();
+				await close();
 			} );
 
 			// Assert.
@@ -259,7 +259,7 @@ describe( 'panels api', () => {
 			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', () => {
+		it( 'should not store or restore previous element when isOpenPreviousElement is undefined (default)', async () => {
 			// Arrange.
 			const mockPanel = createMockPanel();
 
@@ -271,9 +271,9 @@ describe( 'panels api', () => {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
 
-			act( () => {
-				open();
-				close();
+			await act( async () => {
+				await open();
+				await close();
 			} );
 
 			// Assert.
@@ -281,7 +281,7 @@ describe( 'panels api', () => {
 			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should handle case when no element is selected during open', () => {
+		it( 'should handle case when no element is selected during open', async () => {
 			// Arrange.
 			mockedGetSelectedElements.mockReturnValue( [] );
 
@@ -295,9 +295,9 @@ describe( 'panels api', () => {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
 
-			act( () => {
-				open();
-				close();
+			await act( async () => {
+				await open();
+				await close();
 			} );
 
 			// Assert.
@@ -305,7 +305,7 @@ describe( 'panels api', () => {
 			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should not restore element when panel is blocked during close', () => {
+		it( 'should not restore element when panel is blocked during close', async () => {
 			// Arrange.
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
@@ -321,11 +321,11 @@ describe( 'panels api', () => {
 			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
-			act( () => {
-				open();
+			await act( async () => {
+				await open();
 			} );
-			act( () => {
-				close();
+			await act( async () => {
+				await close();
 			} );
 
 			// Assert.
@@ -333,7 +333,7 @@ describe( 'panels api', () => {
 			expect( mockedRunCommand ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should clear previous element reference after restoring', () => {
+		it( 'should clear previous element reference after restoring', async () => {
 			// Arrange.
 			const mockPanel = createMockPanel( { isOpenPreviousElement: true } );
 
@@ -344,17 +344,17 @@ describe( 'panels api', () => {
 			const { open, close } = renderHook( () => mockPanel.usePanelActions(), {
 				wrapper: ( { children } ) => <StoreProvider store={ __createStore() }>{ children }</StoreProvider>,
 			} ).result.current;
-			act( () => {
-				open();
-				close();
+			await act( async () => {
+				await open();
+				await close();
 			} );
 
 			mockedGetSelectedElements.mockClear();
 			mockedRunCommand.mockClear();
 
-			act( () => {
-				open();
-				close();
+			await act( async () => {
+				await open();
+				await close();
 			} );
 
 			// Assert.

@@ -1,4 +1,4 @@
-export const lengthUnits = [ 'px', '%', 'em', 'rem', 'vw', 'vh' ] as const;
+export const lengthUnits = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ] as const;
 export const angleUnits = [ 'deg', 'rad', 'grad', 'turn' ] as const;
 export const timeUnits = [ 's', 'ms' ] as const;
 const defaultExtendedOptions = [ 'auto', 'custom' ] as const;

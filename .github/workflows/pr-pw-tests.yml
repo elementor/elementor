@@ -37,7 +37,7 @@ jobs:
       - name: Run wp-playground
         id: wp-playground
         run: |
-            npm run experimental:wp-playground:ci &
+            npm run wp-playground:ci &
             
             # Wait for WordPress to be ready
             while ! curl -s http://127.0.0.1:9400 > /dev/null; do

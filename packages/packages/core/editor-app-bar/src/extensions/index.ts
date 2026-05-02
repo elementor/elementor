@@ -8,6 +8,7 @@ import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
 import { init as initDocumentsSettings } from './documents-settings';
 import { init as initElements } from './elements';
+import { init as initFeedback } from './feedback';
 import { init as initFinder } from './finder';
 import { init as initHelp } from './help';
 import { init as initHistory } from './history';
@@ -30,6 +31,7 @@ export function init() {
 	initKeyboardShortcuts();
 	initResponsive();
 	initSiteSettings();
+	initFeedback();
 	initStructure();
 	initThemeBuilder();
 	initUserPreferences();

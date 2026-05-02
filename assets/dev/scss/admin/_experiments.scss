@@ -5,6 +5,7 @@
 		display: flex;
 		align-items: flex-start;
 		flex-direction: column;
+		position: relative;
 
 		&__indicator {
 			position: absolute;
@@ -45,6 +46,11 @@
 				background: #e66;
 				color: white;
 			}
+
+			&.e-editor-one {
+				background: #EBEBEB;
+				color: #3F444B;
+			}
 		}
 	}
 
@@ -62,7 +68,7 @@
 
 	&__button.button {
 		margin-block: 18px 22px;
-		margin-inline: 0 14px;	
+		margin-inline: 0 14px;
 	}
 
 	&__dependency {

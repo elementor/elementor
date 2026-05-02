@@ -1,5 +1,5 @@
 import { getSelectedElements } from '@elementor/editor-elements';
-import { trackEvent } from '@elementor/mixpanel';
+import { trackEvent } from '@elementor/events';
 
 import { eventBus } from '../../services/event-bus';
 import { type initialTransitionValue } from './data';

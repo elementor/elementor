@@ -8,8 +8,8 @@ $eps-popover-arrow-height: 9px;
 $eps-popover-arrow-position-start: 14px;
 $eps-popover-box-shadow-color: rgba(0, 0, 0, 0.15);
 $eps-popover-box-shadow-size: 0px 1px 20px; // add to globals
-$eps-popover-item-font-size: type(size, "11");
-$eps-popover-item-line-height: type(size, "13"); //todo: refactor
+$eps-popover-item-font-size: get-type(size, "11");
+$eps-popover-item-line-height: get-type(size, "13"); //todo: refactor
 $eps-popover-font-weight: $eps-font-weight-medium;
 $eps-popover-item-spacing-y: spacing(5);
 $eps-popover-item-spacing-x: spacing(16);

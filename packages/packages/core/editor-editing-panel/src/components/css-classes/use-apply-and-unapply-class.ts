@@ -111,7 +111,6 @@ export function useCreateAndApplyClass() {
 
 					const createdId = createAction( classLabel );
 					applyClass( createdId );
-
 					return { prevActiveId, createdId };
 				},
 				undo: ( _: CreateAndApplyClassPayload, { prevActiveId, createdId }: CreateAndApplyClassUndoData ) => {
@@ -119,6 +118,16 @@ export function useCreateAndApplyClass() {
 					deleteAction?.( createdId );
 
 					setActiveId( prevActiveId );
+				},
+				redo: (
+					{ classLabel }: CreateAndApplyClassPayload,
+					{ createdId }: CreateAndApplyClassUndoData
+				): CreateAndApplyClassUndoData => {
+					const prevActiveId = activeId;
+
+					createAction( classLabel, [], createdId );
+					applyClass( createdId );
+					return { prevActiveId, createdId };
 				},
 			},
 			{

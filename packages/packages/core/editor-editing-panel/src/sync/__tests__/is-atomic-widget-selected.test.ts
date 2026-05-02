@@ -1,15 +1,12 @@
 import { createMockElement } from 'test-utils';
 
 import { isAtomicWidgetSelected } from '../is-atomic-widget-selected';
-import { type ExtendedWindow } from '../types';
 
 describe( 'isAtomicWidgetSelected', () => {
 	const getElements = jest.fn();
 
 	beforeEach( () => {
-		const extendedWindow = window as unknown as ExtendedWindow;
-
-		extendedWindow.elementor = {
+		window.elementor = {
 			selection: {
 				getElements,
 			},

@@ -1,4 +1,7 @@
-import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
+import {
+	__privateRunCommand as runCommand,
+	__privateRunCommandSync as runCommandSync,
+} from '@elementor/editor-v1-adapters';
 
 import { type Document, type ExtendedWindow, type V1Document } from '../types';
 
@@ -76,4 +79,35 @@ export function setDocumentModifiedStatus( status: boolean ) {
 
 export function getV1CurrentDocument(): V1Document {
 	return ( window as unknown as ExtendedWindow ).elementor?.documents?.getCurrent();
+}
+
+export function isDocumentDirty( document: Document ) {
+	const isDraft = document.status.value === 'draft';
+
+	// When the document is published, but have draft version.
+	const hasAutosave = document.revisions?.current_id !== document.id;
+
+	return isDraft || hasAutosave;
+}
+
+export function invalidateDocumentData( documentId: number ) {
+	const documentsManager = getV1DocumentsManager();
+
+	documentsManager.invalidateCache( documentId );
+}
+
+export function switchToDocument(
+	documentId: number,
+	options: {
+		selector?: string;
+		mode?: 'autosave' | 'draft';
+		setAsInitial?: boolean;
+		shouldScroll?: boolean;
+		shouldNavigateToDefaultRoute?: boolean;
+	}
+) {
+	return runCommand( 'editor/documents/switch', {
+		id: documentId,
+		...options,
+	} );
 }

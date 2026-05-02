@@ -4,27 +4,24 @@ import BaseTracking from './base-tracking';
 const ELEMENTOR_MENU_SELECTORS = {
 	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
 	TEMPLATES_TOP_LEVEL: 'li#menu-posts-elementor_library',
+	ELEMENTOR_HOME_TOP_LEVEL: 'li#toplevel_page_elementor-home',
 	ADMIN_MENU: '#adminmenu',
 	TOP_LEVEL_LINK: '.wp-menu-name',
 	SUBMENU_CONTAINER: '.wp-submenu',
 	SUBMENU_ITEM: '.wp-submenu li a',
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
+	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
 };
 
 class NavigationTracking extends BaseTracking {
 	static init() {
-		this.attachElementorMenuTracking();
-		this.attachTemplatesMenuTracking();
-	}
-
-	static attachElementorMenuTracking() {
-		const elementorMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.ELEMENTOR_TOP_LEVEL );
-
-		if ( ! elementorMenu ) {
-			return;
+		if ( WpDashboardTracking.isEditorOneActive() ) {
+			this.attachSidebarNavigationTracking();
+			this.attachElementorHomeMenuTracking();
+		} else {
+			this.attachElementorMenuTracking();
+			this.attachTemplatesMenuTracking();
 		}
-
-		this.attachMenuTracking( elementorMenu, 'Elementor' );
 	}
 
 	static attachTemplatesMenuTracking() {
@@ -37,81 +34,110 @@ class NavigationTracking extends BaseTracking {
 		this.attachMenuTracking( templatesMenu, 'Templates' );
 	}
 
-	static attachMenuTracking( menuElement, menuName ) {
-		const topLevelLink = menuElement.querySelector( 'a.menu-top' );
-		const submenuContainer = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.SUBMENU_CONTAINER );
+	static attachElementorHomeMenuTracking() {
+		const elementorHomeMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.ELEMENTOR_HOME_TOP_LEVEL );
 
-		if ( topLevelLink ) {
-			this.addEventListenerTracked(
-				topLevelLink,
-				'click',
-				( event ) => {
-					this.handleTopLevelClick( event );
-				},
-			);
+		if ( ! elementorHomeMenu ) {
+			return;
 		}
 
-		if ( submenuContainer ) {
-			const submenuItems = submenuContainer.querySelectorAll( 'li a' );
+		this.attachMenuTracking( elementorHomeMenu, 'Elementor' );
+	}
 
-			submenuItems.forEach( ( submenuItem ) => {
-				this.addEventListenerTracked(
-					submenuItem,
-					'click',
-					( event ) => {
-						this.handleSubmenuClick( event, menuName );
-					},
-				);
-			} );
+	static attachElementorMenuTracking() {
+		const elementorMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.ELEMENTOR_TOP_LEVEL );
 
-			this.observeSubmenuChanges( submenuContainer, menuName );
+		if ( ! elementorMenu ) {
+			return;
+		}
+
+		this.attachMenuTracking( elementorMenu, 'Elementor' );
+	}
+
+	static attachSidebarNavigationTracking() {
+		const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
+
+		if ( sidebar ) {
+			this.attachSidebarClickListener( sidebar );
 		}
 	}
 
-	static observeSubmenuChanges( submenuContainer, menuName ) {
-		this.addObserver(
-			submenuContainer,
-			{
-				childList: true,
-				subtree: false,
+	static attachSidebarClickListener( sidebar ) {
+		this.addEventListenerTracked(
+			sidebar,
+			'click',
+			( event ) => {
+				this.handleSidebarClick( event );
 			},
-			( mutations ) => {
-				mutations.forEach( ( mutation ) => {
-					if ( 'childList' === mutation.type ) {
-						mutation.addedNodes.forEach( ( node ) => {
-							if ( 1 === node.nodeType && 'LI' === node.tagName ) {
-								const link = node.querySelector( 'a' );
-								if ( link ) {
-									this.addEventListenerTracked(
-										link,
-										'click',
-										( event ) => {
-											this.handleSubmenuClick( event, menuName );
-										},
-									);
-								}
-							}
-						} );
-					}
-				} );
+			{ capture: true },
+		);
+	}
+
+	static attachMenuTracking( menuElement, menuName ) {
+		this.addEventListenerTracked(
+			menuElement,
+			'click',
+			( event ) => {
+				this.handleMenuClick( event, menuName );
 			},
 		);
 	}
 
-	static handleTopLevelClick( event ) {
-		const link = event.currentTarget;
+	static handleMenuClick( event, menuName ) {
+		const link = event.target.closest( 'a' );
+
+		if ( ! link ) {
+			return;
+		}
+
+		const isTopLevel = link.classList.contains( 'menu-top' );
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		WpDashboardTracking.trackNavClicked( itemId, null, area );
+		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
-	static handleSubmenuClick( event, menuName ) {
-		const link = event.currentTarget;
-		const itemId = this.extractItemId( link );
-		const area = this.determineNavArea( link );
+	static handleSidebarClick( event ) {
+		const clickedElement = event.target.closest( 'a, button, [role="button"]' );
 
-		WpDashboardTracking.trackNavClicked( itemId, menuName, area );
+		if ( ! clickedElement ) {
+			return;
+		}
+
+		const itemId = this.extractSidebarItemId( clickedElement );
+
+		WpDashboardTracking.trackNavClicked( itemId, null, NAV_AREAS.SIDEBAR_MENU );
+	}
+
+	static extractSidebarItemId( element ) {
+		const paragraph = element.querySelector( 'p' );
+		if ( paragraph ) {
+			return paragraph.textContent.trim();
+		}
+
+		const textContent = element.textContent.trim();
+		if ( textContent ) {
+			return textContent;
+		}
+
+		return 'unknown';
+	}
+
+	static extractPageFromUrl( href ) {
+		const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
+		const page = urlParams.get( 'page' );
+
+		if ( page ) {
+			return page;
+		}
+
+		const postType = urlParams.get( 'post_type' );
+
+		if ( postType ) {
+			return postType;
+		}
+
+		return 'unknown';
 	}
 
 	static extractItemId( link ) {
@@ -123,22 +149,12 @@ class NavigationTracking extends BaseTracking {
 
 		const href = link.getAttribute( 'href' );
 		if ( href ) {
-			const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
-			const page = urlParams.get( 'page' );
-			const postType = urlParams.get( 'post_type' );
-
-			if ( page ) {
-				return page;
-			}
-
-			if ( postType ) {
-				return postType;
-			}
+			return this.extractPageFromUrl( href );
 		}
 
-		const id = link.getAttribute( 'id' );
-		if ( id ) {
-			return id;
+		const linkId = link.getAttribute( 'id' );
+		if ( linkId ) {
+			return linkId;
 		}
 
 		return 'unknown';

@@ -188,6 +188,22 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteInteractions',
+						title: __( 'Paste interactions', 'elementor' ),
+						isEnabled: () => {
+							const clipboard = elementorCommon.storage.get( 'clipboard' );
+							if ( ! clipboard ) {
+								return false;
+							}
+							const elements = elementor.selection.getElements( this.getContainer() );
+							return elements.length > 0 && elements.every( ( c ) => elementor.helpers.isAtomicWidget( c.model ) );
+						},
+						callback: () => {
+							$e.run( 'document/elements/paste-interactions', {
+								containers: elementor.selection.getElements( this.getContainer() ),
+							} );
+						},
+					}, {
 						name: 'pasteArea',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
@@ -235,7 +251,7 @@ BaseElementView = BaseContainer.extend( {
 						return __( 'Delete', 'elementor' );
 					},
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ), callerName: 'context_menu' } ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
@@ -946,6 +962,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save() {
+		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 		} );
@@ -1062,7 +1080,7 @@ BaseElementView = BaseContainer.extend( {
 		event.stopPropagation();
 		this.handleAnchorClick( event );
 
-		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+		$e.run( 'document/elements/delete', { container: this.getContainer(), callerName: 'remove_button' } );
 	},
 
 	handleAnchorClick( event ) {

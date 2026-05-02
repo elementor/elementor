@@ -5,8 +5,8 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Memo;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Utils\Memo;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ class Atomic_Styles_Manager {
 	private static ?self $instance = null;
 
 	/**
-	 * @var array<string, array{styles: callable, cache_keys: array<string>}>
+	 * @var array<string, array{styles: callable, path: array<string>}>
 	 */
 	private array $registered_styles_by_key = [];
 
@@ -46,15 +46,20 @@ class Atomic_Styles_Manager {
 
 	public function register_hooks() {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
+
 		add_action( 'elementor/post/render', function( $post_id ) {
 			$this->post_ids[] = $post_id;
 		} );
+
+		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $path ) => $this->clear_styles( $path ) );
 	}
 
-	public function register( string $key, callable $get_style_defs, array $cache_keys ) {
+	public function register( array $path, callable $get_style_defs ) {
+		$key = $this->convert_path_to_handle( $path );
+
 		$this->registered_styles_by_key[ $key ] = [
 			'get_styles' => $get_style_defs,
-			'cache_keys' => $cache_keys,
+			'path' => $path,
 		];
 	}
 
@@ -71,7 +76,7 @@ class Atomic_Styles_Manager {
 			->map_with_keys( fn ( $style_params, $style_key ) => [
 				$style_key => [
 					'get_styles' => $get_styles_memo->memoize( $style_key, $style_params['get_styles'] ),
-					'cache_keys' => $style_params['cache_keys'],
+					'path' => $style_params['path'],
 				],
 			])
 			->all();
@@ -87,16 +92,16 @@ class Atomic_Styles_Manager {
 		$this->fonts = [];
 
 		foreach ( $styles_by_key as $style_key => $style_params ) {
-			$cache_keys = $style_params['cache_keys'];
+			$path = $style_params['path'];
 
 			// This cache validity check is of the general style, and used to reset dependencies that can only be evaluated
 			// upon the style rendering flow (i.e. when cache is invalid).
 			// (the corresponding css files cache validity includes also the file's breakpoint in the cache keys array)
-			if ( ! $this->cache_validity->is_valid( $cache_keys ) ) {
+			if ( ! $this->cache_validity->is_valid( $path ) ) {
 				Style_Fonts::make( $style_key )->clear();
 
 				// We should validate it after this iteration
-				$this->cache_validity->validate( $cache_keys, uniqid() );
+				$this->cache_validity->validate( $path, uniqid() );
 			}
 		}
 	}
@@ -107,10 +112,10 @@ class Atomic_Styles_Manager {
 
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
-				$cache_keys = $style_params['cache_keys'];
+				$path = $style_params['path'];
 				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
 
-				$version = $this->cache_validity->get_meta( $cache_keys );
+				$version = $this->cache_validity->get_meta( $path );
 
 				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
@@ -118,16 +123,16 @@ class Atomic_Styles_Manager {
 					continue;
 				}
 
-				$breakpoint_cache_keys = array_merge( $cache_keys, [ $breakpoint_key ] );
+				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
 				$style_file = $this->css_files_manager->get(
-					$style_key . '-' . $breakpoint_key,
+					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_cache_keys )
+					$this->cache_validity->is_valid( $breakpoint_path )
 				);
 
-				$this->cache_validity->validate( $breakpoint_cache_keys );
+				$this->cache_validity->validate( $breakpoint_path );
 
 				if ( ! $style_file ) {
 					continue;
@@ -223,5 +228,35 @@ class Atomic_Styles_Manager {
 		foreach ( $this->fonts as $font ) {
 			Plugin::instance()->frontend->enqueue_font( $font );
 		}
+	}
+
+	private function clear_styles( array $path ) {
+		$node = $this->cache_validity->get_node( $path );
+
+		$this->clear_styles_by_node( $path, $node );
+
+		$this->cache_validity->invalidate( $path );
+	}
+
+	private function clear_styles_by_node( array $path, $node ) {
+		if ( ! $node ) {
+			return;
+		}
+
+		if ( true === $node || $node['state'] ) {
+			$this->css_files_manager->delete( $this->convert_path_to_handle( $path ) );
+		}
+
+		if ( is_bool( $node ) || empty( $node['children'] ) ) {
+			return;
+		}
+
+		foreach ( $node['children'] as $child_key => $child_node ) {
+			$this->clear_styles_by_node( array_merge( $path, [ $child_key ] ), $child_node );
+		}
+	}
+
+	private function convert_path_to_handle( array $path ) {
+		return implode( '-', $path );
 	}
 }

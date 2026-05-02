@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 import { __useOpenDocumentInNewTab as useOpenDocumentInNewTab } from '@elementor/editor-documents';
 import { PopoverMenuList } from '@elementor/editor-ui';
 import { MenuList } from '@elementor/ui';
@@ -19,6 +20,8 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	PopoverMenuList: jest.fn(),
 } ) );
 
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+
 jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTemplate, onSelect } ) => {
 	return (
 		<ul role="listbox">
@@ -33,7 +36,7 @@ jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTem
 } );
 
 describe( 'CssClassUsagePopover', () => {
-	it.only( 'should display correct header with title and total count', () => {
+	it( 'should display correct header with title and total count', () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
@@ -51,7 +54,7 @@ describe( 'CssClassUsagePopover', () => {
 		expect( screen.getByText( '5' ) ).toBeInTheDocument();
 	} );
 
-	it.only( 'should call onClose when close button is clicked', () => {
+	it( 'should call onClose when close button is clicked', () => {
 		// Arrange.
 		const onClose = jest.fn();
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
@@ -72,7 +75,7 @@ describe( 'CssClassUsagePopover', () => {
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it.only( 'should render list items with correct data', async () => {
+	it( 'should render list items with correct data', async () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
@@ -94,7 +97,7 @@ describe( 'CssClassUsagePopover', () => {
 		expect( screen.getByText( '1' ) ).toBeInTheDocument(); // elements count for Page Two
 	} );
 
-	it.only( 'should render empty list when no content is provided', () => {
+	it( 'should render empty list when no content is provided', () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
@@ -111,7 +114,7 @@ describe( 'CssClassUsagePopover', () => {
 		expect( screen.getByRole( 'listbox' ) ).toBeEmptyDOMElement();
 	} );
 
-	it.only( 'should render menu items with correct structure', () => {
+	it( 'should render menu items with correct structure', () => {
 		jest.mocked( MenuList );
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
@@ -132,7 +135,7 @@ describe( 'CssClassUsagePopover', () => {
 		expect( screen.getByText( '2' ) ).toBeInTheDocument();
 	} );
 
-	it.only( 'should open new window', () => {
+	it( 'should open new window', () => {
 		const mockNavigate = jest.fn();
 		jest.mocked( useOpenDocumentInNewTab ).mockReturnValue( mockNavigate );
 
@@ -151,5 +154,9 @@ describe( 'CssClassUsagePopover', () => {
 		// Assert.
 		fireEvent.click( screen.getByRole( 'option' ) );
 		expect( mockNavigate ).toHaveBeenCalledWith( 1 );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classUsageLocate',
+			classId: 'test-class',
+		} );
 	} );
 } );

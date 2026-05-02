@@ -122,6 +122,10 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
+	'editor-one-admin': path.resolve( __dirname, '../modules/editor-one/assets/js/admin.js' ),
+	'interactions-shared-utils': path.resolve( __dirname, '../modules/interactions/assets/js/interactions-shared-utils.js' ),
+	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
+	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/loader/v1/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-loader-v2.js' ),
@@ -141,8 +145,10 @@ const entry = {
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'editor-one-sidebar-navigation': path.resolve( __dirname, '../modules/editor-one/assets/js/sidebar-navigation/app.js' ),
+	'editor-one-top-bar': path.resolve( __dirname, '../modules/editor-one/assets/js/top-bar/app.js' ),
+	'editor-one-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
-	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
 	'pro-free-trial-popup': path.resolve( __dirname, '../modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js'),
 	'editor-v4-opt-in-alphachip': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/panel-chip/panel-chip.js' ),
 	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
@@ -150,13 +156,17 @@ const entry = {
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
+	'design-system-sync': path.resolve( __dirname, '../modules/design-system-sync/assets/js/design-system-sync-handler.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
-	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/atomic-tabs-handler.js' ),
+	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
+	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
+	'atomic-widgets-action-link-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/action-link-handlers.js' ),
+	'atomic-widgets-form-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/form-handlers.js' ),
 };
 
 const externals = [
@@ -174,7 +184,11 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
+		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
+		'@elementor/onboarding': 'elementorV2.onboarding',
+		'@elementor/site-builder': [ 'elementorV2', 'siteBuilder' ],
+		'@elementor/v4-activation-modal': [ 'elementorV2', 'v4-activation-modal' ],
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',

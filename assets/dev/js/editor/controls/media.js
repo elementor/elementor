@@ -197,11 +197,23 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onPromotionAction( event ) {
-		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		let settings = {};
+
+		try {
+			settings = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		} catch ( e ) {
+			// Do nothing.
+		}
+
+		const {
+			action_url: actionURL = null,
+			source = 'io-editor-image-install',
+		} = settings;
+
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
-		this.hidePromotion();
+		this.hidePromotion( null, source );
 	},
 
 	dismissPromotion( eventName ) {
@@ -215,7 +227,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 		}
 	},
 
-	hidePromotion( eventName = null ) {
+	hidePromotion( eventName = null, source = 'io-editor-image-install' ) {
 		const $promotions = this.ui.promotions;
 		$promotions.hide();
 		if ( ! eventName ) {
@@ -224,7 +236,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 			data: {
-				source: 'io-editor-image-install',
+				source,
 			},
 		} );
 

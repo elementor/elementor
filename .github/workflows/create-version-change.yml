@@ -1,0 +1,171 @@
+name: Create Version Change
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: 'The next version to set (e.g., 3.20.0). Leave empty to use default (next minor version)'
+        required: false
+      dry_run:
+        type: boolean
+        description: 'Run in dry-run mode (show what would be done without making changes)'
+        required: false
+        default: false
+      skip_branches:
+        type: boolean
+        description: 'Skip branch creation, only update version files'
+        required: false
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-version-change:
+    runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git user
+        run: |
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME || 'GitHub Actions' }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL || 'github-actions@github.com' }}"
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get current version
+        id: current-version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Calculate version and branch names
+        id: calculate
+        run: |
+          CURRENT_VERSION="${{ steps.current-version.outputs.version }}"
+          INPUT_VERSION="${{ github.event.inputs.version }}"
+          
+          if [ -z "$INPUT_VERSION" ]; then
+            MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+            NEXT_MINOR=$((MINOR + 1))
+            NEXT_VERSION="${MAJOR}.${NEXT_MINOR}.0"
+          else
+            NEXT_VERSION="$INPUT_VERSION"
+            MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+            MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+          fi
+          
+          BRANCH_NAME="${MAJOR}.${MINOR}"
+          DEV_BRANCH="version-${NEXT_VERSION}-to-main"
+          
+          echo "next_version=$NEXT_VERSION" >> $GITHUB_OUTPUT
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "dev_branch=$DEV_BRANCH" >> $GITHUB_OUTPUT
+          echo "Next version: $NEXT_VERSION"
+          echo "Branch name: $BRANCH_NAME"
+          echo "Dev branch: $DEV_BRANCH"
+
+      - name: Build script arguments
+        id: build-args
+        run: |
+          ARGS=""
+          
+          VERSION="${{ steps.calculate.outputs.next_version }}"
+          ARGS="$ARGS $VERSION"
+          
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          
+          if [ "${{ github.event.inputs.skip_branches }}" == "true" ]; then
+            ARGS="$ARGS --skip-branches"
+          fi
+          
+          echo "args=$ARGS" >> $GITHUB_OUTPUT
+          echo "Built arguments: $ARGS"
+
+      - name: Run create-version-change script
+        id: run-script
+        run: |
+          node scripts/create-version-change.js --ci ${{ steps.build-args.outputs.args }}
+
+      - name: Check for changes and commit
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
+          
+          if [ "$CURRENT_BRANCH" != "$DEV_BRANCH" ]; then
+            echo "Not on dev branch $DEV_BRANCH, current branch: $CURRENT_BRANCH"
+            echo "This might mean the branch already exists or script exited early"
+            exit 0
+          fi
+          
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git add -A
+          git commit -m "Internal: Bump version to ${{ steps.calculate.outputs.next_version }}"
+          
+          echo "Changes committed successfully"
+
+      - name: Push branch
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        run: |
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
+          
+          if [ "$CURRENT_BRANCH" != "$DEV_BRANCH" ]; then
+            echo "Not on dev branch, skipping push"
+            exit 0
+          fi
+          
+          git push origin "$DEV_BRANCH"
+          echo "Branch $DEV_BRANCH pushed successfully"
+
+      - name: Create pull request
+        if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'
+        run: |
+          DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
+          NEXT_VERSION="${{ steps.calculate.outputs.next_version }}"
+          
+          if gh pr list --head "$DEV_BRANCH" --base main --state open | grep -q .; then
+            echo "PR already exists for branch $DEV_BRANCH"
+            exit 0
+          fi
+          
+          gh pr create \
+            --base main \
+            --head "$DEV_BRANCH" \
+            --title "chore: bump version to $NEXT_VERSION" \
+            --body "This PR bumps the version to **$NEXT_VERSION**.
+
+          **Changes:**
+          - Updated version in \`elementor.php\`
+          - Updated version in \`package.json\` files
+          - Updated version in packages
+
+          **Created by:** GitHub Actions workflow
+          **Branch:** \`$DEV_BRANCH\`"
+          
+          echo "PR created successfully for $DEV_BRANCH"
+

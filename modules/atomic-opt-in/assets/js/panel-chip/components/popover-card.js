@@ -12,11 +12,11 @@ import {
 import { __ } from '@wordpress/i18n';
 
 const popoverData = {
-	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
-	image_alt: __( 'Elementor V4', 'elementor' ),
-	title: __( 'Elementor V4', 'elementor' ),
+	image: 'https://assets.elementor.com/v4-promotion/v1/images/atomic_elements_section_296.png',
+	image_alt: __( 'Atomic Elements', 'elementor' ),
+	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
-		__( 'You’ve got powerful new tools with Editor V4. But, keep in mind that this is an early release, so don’t use it on live sites yet.', 'elementor' ),
+		__( 'Modern, flexible elements designed for reusable styles and cleaner layouts.', 'elementor' ),
 	],
 	upgrade_text: __( 'Learn more', 'elementor' ),
 	upgrade_url: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
@@ -62,9 +62,9 @@ const PopoverCard = ( { doClose } ) => {
 					<Button
 						variant="contained"
 						size="small"
-						color="accent"
+						color="inherit"
 						onClick={ redirectHandler }
-						sx={ { ml: 'auto' } }
+						sx={ { ml: 'auto', bgcolor: 'text.primary', color: 'background.paper', '&:hover': { bgcolor: 'text.secondary', color: 'background.paper' } } }
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createMockDocument, renderWithStore } from 'test-utils';
+import { createMockDocument, createMockTrackingModule, mockTracking, renderWithStore } from 'test-utils';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
@@ -15,11 +15,14 @@ jest.mock( '@elementor/editor-documents' );
 jest.mock( '../../../context' );
 jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
 
+jest.mock( '../../../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+
 describe( 'CssClassFilter', () => {
 	let store: ReturnType< typeof createStore >;
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
 		registerSlice( slice );
 
@@ -83,6 +86,9 @@ describe( 'CssClassFilter', () => {
 
 		expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerFiltersOpened',
+		} );
 	} );
 
 	it( 'should close popover when clicking close button', async () => {
@@ -95,5 +101,39 @@ describe( 'CssClassFilter', () => {
 		fireEvent.click( clsButton );
 
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should track filter cleared when clicking clear all button in popover', async () => {
+		// Arrange
+		const mockOnClearFilter = jest.fn();
+		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+			search: {} as SearchAndFilterContextType[ 'search' ],
+			filters: {
+				filters: {
+					unused: true,
+					empty: true,
+					onThisPage: false,
+				},
+				setFilters: jest.fn(),
+				onClearFilter: mockOnClearFilter,
+			},
+		} );
+
+		renderComponent();
+
+		const button = screen.getByRole( 'button', { name: /filters/i } );
+		fireEvent.click( button );
+
+		const clearButton = screen.getByRole( 'button', { name: /clear all/i } );
+
+		// Act
+		fireEvent.click( clearButton );
+
+		// Assert
+		expect( mockOnClearFilter ).toHaveBeenCalledWith( 'menu' );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterCleared',
+			trigger: 'menu',
+		} );
 	} );
 } );

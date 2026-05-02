@@ -7,10 +7,13 @@ import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
 import { saveGlobalClasses } from './save-global-classes';
 import { selectIsDirty } from './store';
 
+let pendingSave: Promise< void > | null = null;
+
 export function syncWithDocumentSave( panelActions?: { open: () => void } ) {
 	const unsubscribe = syncDirtyState();
 
 	bindSaveAction( panelActions );
+	bindBeforeSaveTemplateAction();
 
 	return unsubscribe;
 }
@@ -25,21 +28,49 @@ function syncDirtyState() {
 	} );
 }
 
+function triggerSave( panelActions?: { open: () => void }, context: 'preview' | 'frontend' = 'preview' ) {
+	const user = getCurrentUser();
+	const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
+
+	if ( ! canEdit ) {
+		return null;
+	}
+
+	if ( pendingSave ) {
+		return pendingSave;
+	}
+
+	const promise = saveGlobalClasses( {
+		context,
+		onApprove: panelActions?.open,
+	} );
+
+	pendingSave = promise;
+	promise.finally( () => {
+		pendingSave = null;
+	} );
+
+	return promise;
+}
+
 function bindSaveAction( panelActions?: { open: () => void } ) {
-	registerDataHook( 'after', 'document/save/save', ( args ) => {
-		const user = getCurrentUser();
+	registerDataHook( 'dependency', 'document/save/save', ( args ) => {
+		triggerSave( panelActions, args.status === 'publish' ? 'frontend' : 'preview' );
 
-		const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
+		return true;
+	} );
+}
 
-		if ( ! canEdit ) {
-			return;
+function bindBeforeSaveTemplateAction() {
+	window.addEventListener( 'elementor/global-styles/before-save', ( ( event: CustomEvent ) => {
+		if ( ! pendingSave && isDirty() ) {
+			triggerSave();
 		}
 
-		saveGlobalClasses( {
-			context: args.status === 'publish' ? 'frontend' : 'preview',
-			onApprove: panelActions?.open,
-		} );
-	} );
+		if ( pendingSave ) {
+			event.detail.promises.push( pendingSave );
+		}
+	} ) as EventListener );
 }
 
 function isDirty() {

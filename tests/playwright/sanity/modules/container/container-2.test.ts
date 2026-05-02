@@ -139,26 +139,26 @@ test.describe( 'Container tests #2 @container', () => {
 			.locator( '.e-con >> nth=0' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-heading/ );
-		expect.soft( await editor.getPreviewFrame()
-			.locator( '.e-con >> nth=1' )
-			.getAttribute( 'data-id' ) )
-			.toEqual( containerId1 );
+		await expect.soft( editor.getPreviewFrame()
+			.locator( '.e-con >> nth=1' ),
+		)
+			.toHaveAttribute( 'data-id', containerId1 );
 		await expect.soft( editor.getPreviewFrame()
 			.locator( '.e-con >> nth=2' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-spacer/ );
-		expect.soft( await editor.getPreviewFrame()
-			.locator( '.e-con >> nth=3' )
-			.getAttribute( 'data-id' ) )
-			.toEqual( containerId2 );
+		await expect.soft( editor.getPreviewFrame()
+			.locator( '.e-con >> nth=3' ),
+		)
+			.toHaveAttribute( 'data-id', containerId2 );
 		await expect.soft( editor.getPreviewFrame()
 			.locator( '.e-con >> nth=4' )
 			.locator( '.elementor-widget' ) )
 			.toHaveClass( /elementor-widget-heading/ );
-		expect.soft( await editor.getPreviewFrame()
-			.locator( '.e-con >> nth=5' )
-			.getAttribute( 'data-id' ) )
-			.toEqual( containerId3 );
+		await expect.soft( editor.getPreviewFrame()
+			.locator( '.e-con >> nth=5' ),
+		)
+			.toHaveAttribute( 'data-id', containerId3 );
 	} );
 
 	test( 'Test container wizard', async ( { page, apiRequests }, testInfo ) => {

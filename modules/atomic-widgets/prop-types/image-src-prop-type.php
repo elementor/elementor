@@ -16,7 +16,7 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'id' => Image_Attachment_Id_Prop_Type::make(),
+			'id' => Image_Attachment_Id_Prop_Type::make()->description( 'The ID of the image attachment in the WordPress media library, applicable for internal images only' ),
 			'url' => Url_Prop_Type::make(),
 		];
 	}

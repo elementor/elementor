@@ -84,7 +84,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) },
+			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! model.widgetType?.startsWith( 'e-form-' ) },
 		);
 	},
 

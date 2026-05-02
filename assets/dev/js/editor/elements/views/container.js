@@ -270,6 +270,8 @@ const ContainerView = BaseElementView.extend( {
 	 * @return {void}
 	 */
 	saveAsTemplate() {
+		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 		} );

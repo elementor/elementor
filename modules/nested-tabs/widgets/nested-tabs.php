@@ -1076,6 +1076,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 		$this->add_render_attribute( $setting_key, [
 			'id' => $item_settings['tab_id'],
+			'data-tab-title-id' => $item_settings['tab_title_id'],
 			'class' => $css_classes,
 			'aria-selected' => 1 === $item_settings['tab_count'] ? 'true' : 'false',
 			'data-tab-index' => $item_settings['tab_count'],
@@ -1184,15 +1185,16 @@ class NestedTabs extends Widget_Nested_Base {
 			<?php
 			foreach ( $settings['tabs'] as $index => $item ) {
 				$tab_count = $index + 1;
-
+				$tab_title_id = 'e-n-tab-title-' . $widget_number . $tab_count;
 				$tab_id = empty( $item['element_id'] )
-					? 'e-n-tab-title-' . $widget_number . $tab_count
+					? $tab_title_id
 					: $item['element_id'];
 
 				$item_settings = [
 					'index' => $index,
 					'tab_count' => $tab_count,
 					'tab_id' => $tab_id,
+					'tab_title_id' => $tab_title_id,
 					'container_id' => 'e-n-tab-content-' . $widget_number . $tab_count,
 					'widget_number' => $widget_number,
 					'item' => $item,
@@ -1260,9 +1262,10 @@ class NestedTabs extends Widget_Nested_Base {
 		?>
 		<#
 		const tabCount = tabIndex + 1,
+			tabTitleId = 'e-n-tab-title-' + elementUid + tabCount,
 			tabId = item.element_id
 				? item.element_id
-				: 'e-n-tab-title-' + elementUid + ( tabIndex + 1 ),
+				: tabTitleId,
 			tabUid = elementUid + tabCount,
 			tabIcon = elementor.helpers.renderIcon( view, item.tab_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			activeTabIcon = item.tab_icon_active.value
@@ -1272,6 +1275,7 @@ class NestedTabs extends Widget_Nested_Base {
 
 		view.addRenderAttribute( 'tab-title', {
 			'id': tabId,
+			'data-tab-title-id': tabTitleId,
 			'class': [ 'e-n-tab-title',escapedHoverAnimationClass ],
 			'data-tab-index': tabCount,
 			'role': 'tab',

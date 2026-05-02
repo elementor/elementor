@@ -1,49 +1,221 @@
 import {
 	type BackboneModel,
+	type BackboneModelConstructor,
+	type ContextMenuAction,
+	type ContextMenuEventData,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
 	type ElementType,
-	type ElementView,
 	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
+	type TemplatedElementView,
 } from '@elementor/editor-canvas';
-import { type NumberPropValue } from '@elementor/editor-props';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { getCurrentDocument } from '@elementor/editor-documents';
+import { type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
+import { __getState as getState } from '@elementor/store';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
+import { type ComponentsSlice, selectComponentByUid } from './store/store';
+import { type ComponentRenderContext, type ExtendedWindow } from './types';
+import { detachComponentInstance } from './utils/detach-component-instance';
+import { formatComponentElementsId } from './utils/format-component-elements-id';
+import { isProComponentsSupported, isProOutdatedForComponents } from './utils/is-pro-components-supported';
+import { switchToComponent } from './utils/switch-to-component';
+import { trackComponentEvent } from './utils/tracking';
 
-export const TYPE = 'e-component';
+type ContextMenuGroupConfig = {
+	disable: Record< string, string[] >;
+	add: Record< string, { index: number; actions: ContextMenuAction[] } >;
+};
 
-export function createComponentType(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
-): typeof ElementType {
+type ContextMenuGroup = {
+	name: string;
+	actions: ContextMenuAction[];
+};
+
+type ComponentModel = ElementModel & {
+	componentId?: number | string;
+	isGlobal: boolean;
+};
+
+type ComponentModelInstance = BackboneModel< ComponentModel > & {
+	trigger: ( event: string, ...args: unknown[] ) => void;
+	getTitle: () => string;
+	getComponentId: () => number | null;
+	getComponentName: () => string;
+	getComponentUid: () => string | null;
+};
+
+export const COMPONENT_WIDGET_TYPE = 'e-component';
+
+const EDIT_COMPONENT_DB_CLICK_UPGRADE_URL =
+	'https://go.elementor.com/go-pro-components-Instance-edit-canvas-double-click/';
+const EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL =
+	'https://go.elementor.com/go-pro-components-Instance-edit-context-menu/';
+
+const UPDATE_PLUGINS_URL = '/wp-admin/plugins.php';
+
+const COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID = 'component-edit-upgrade';
+const COMPONENT_EDIT_UPDATE_NOTIFICATION_ID = 'component-edit-update';
+
+const COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION = 2000;
+
+function notifyComponentEditUpgrade() {
+	notify( {
+		type: 'promotion',
+		id: COMPONENT_EDIT_UPGRADE_NOTIFICATION_ID,
+		message: __( 'Editing components requires an active Pro subscription.', 'elementor' ),
+		autoHideDuration: COMPONENT_EDIT_UPGRADE_AUTO_HIDE_DURATION,
+		additionalActionProps: [
+			{
+				size: 'small',
+				variant: 'contained',
+				color: 'promotion',
+				href: EDIT_COMPONENT_DB_CLICK_UPGRADE_URL,
+				target: '_blank',
+				children: __( 'Upgrade Now', 'elementor' ),
+			},
+		],
+	} );
+}
+
+function notifyComponentEditUpdate() {
+	notify( {
+		type: 'info',
+		id: COMPONENT_EDIT_UPDATE_NOTIFICATION_ID,
+		message: __( 'To edit components, update Elementor Pro to the latest version.', 'elementor' ),
+		additionalActionProps: [
+			{
+				size: 'small',
+				variant: 'contained',
+				color: 'info',
+				href: UPDATE_PLUGINS_URL,
+				target: '_blank',
+				children: __( 'Update Now', 'elementor' ),
+			},
+		],
+	} );
+}
+
+const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
+	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
+	const addMap = new Map( Object.entries( config.add ?? {} ) );
+
+	return groups.map( ( group ) => {
+		const disabledActions = disableMap.get( group.name ) ?? [];
+		const addConfig = addMap.get( group.name );
+
+		// Update disabled actions
+		const updatedActions = group.actions.map( ( action ) =>
+			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
+		);
+
+		// Insert additional actions if needed
+		if ( addConfig ) {
+			updatedActions.splice( addConfig.index, 0, ...addConfig.actions );
+		}
+
+		return { ...group, actions: updatedActions };
+	} );
+};
+
+type ComponentTypeOptions = CreateTemplatedElementTypeOptions & {
+	showLockedByModal?: ( lockedBy: string ) => void;
+	showDetachConfirmDialog?: ( onConfirm: () => void ) => void;
+};
+
+export function createComponentType( options: ComponentTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+	const view = createComponentView( { ...options } );
+
+	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
-			return createComponentView( options );
+			return view;
+		}
+
+		getModel(): BackboneModelConstructor< ComponentModel > {
+			return createComponentModel();
 		}
 	};
 }
 
-function createComponentView(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
-): typeof ElementView {
+function createComponentView( options: ComponentTypeOptions ): typeof TemplatedElementView {
+	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow;
+		eventsManagerConfig = legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: ComponentRenderContext | undefined;
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId();
+		}
+
+		getRenderContext(): NamespacedRenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const parentContext = this._parent?.getRenderContext?.();
+			const parentComponentContext = parentContext?.[ namespaceKey ];
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentComponentContext?.overrides ?? {};
+
+			return {
+				...parentContext,
+				[ namespaceKey ]: {
+					overrides: {
+						...parentOverrides,
+						...ownOverrides,
+					},
+				},
+			};
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const context = this.getRenderContext();
+
+			return context?.[ namespaceKey ];
+		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			const componentInstance = settings.component_instance as
+				| {
+						overrides?: Record< string, unknown >;
+						elements?: V1ElementData[];
+				  }
+				| undefined;
+
+			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
+				const instanceId = this.model.get( 'id' );
+				const elements = componentInstance.elements ?? [];
+				const formattedElements = formatComponentElementsId( elements, [ instanceId ] );
+
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( formattedElements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -67,61 +239,171 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
+			 )?.value;
+
+			return componentInstance.component_id.value;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value as number;
+			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
 
-			const newGroup = [
-				{
-					name: 'edit component',
-					actions: [
-						{
-							name: 'edit component',
-							icon: 'eicon-edit',
-							title: () => __( 'Edit Component', 'elementor' ),
-							isEnabled: () => true,
-							callback: () => this.switchDocument(),
-						},
-					],
+			const newGroups = updateGroups(
+				filteredGroups as ContextMenuGroup[],
+				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
+			);
+			return newGroups;
+		}
+
+		_getContextMenuConfig() {
+			const isAdministrator = isUserAdministrator();
+			const hasPro = hasProInstalled();
+			const isOutdated = isProOutdatedForComponents();
+			const showPromoBadge = ! hasPro && ! isOutdated;
+
+			const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+			const proBadge = `<a href="${ EDIT_COMPONENT_CONTEXT_MENU_UPGRADE_URL }" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+
+			const editComponentAction: ContextMenuAction = {
+				name: 'edit component',
+				icon: 'eicon-edit',
+				title: () => __( 'Edit Component', 'elementor' ),
+				...( showPromoBadge && { shortcut: proBadge, hasShortcutAction: true } ),
+				isEnabled: () => isProComponentsSupported() || isOutdated,
+				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
+			};
+
+			const detachInstanceAction: ContextMenuAction = {
+				name: 'detach instance',
+				icon: 'eicon-chain-broken',
+				title: () => __( 'Detach from Component', 'elementor' ),
+				isEnabled: () => true,
+				callback: ( _: unknown, eventData: ContextMenuEventData ) => this.detachInstance( eventData ),
+			};
+
+			const actions = isAdministrator ? [ editComponentAction, detachInstanceAction ] : [ detachInstanceAction ];
+
+			const addedGroup = {
+				general: {
+					index: 1,
+					actions,
 				},
-			];
-			return [ ...filteredGroups, ...newGroup ];
+			};
+
+			const disabledGroup = {
+				clipboard: [ 'pasteStyle', 'resetStyle' ],
+			};
+
+			return { add: addedGroup, disable: disabledGroup };
 		}
 
 		async switchDocument() {
+			//todo: handle unpublished
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId()?.value as number
+				this.getComponentId() as number
 			);
 
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId()?.value as number,
-					mode: 'autosave',
-					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
-				} );
-				apiClient.lockComponent( this.getComponentId()?.value as number );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
 			}
+		}
+
+		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			if ( isProOutdatedForComponents() ) {
+				notifyComponentEditUpdate();
+				return;
+			}
+
+			if ( ! isProComponentsSupported() || this.isComponentCurrentlyEdited() ) {
+				return;
+			}
+
+			this.switchDocument();
+
+			const editorSettings = this.model.get( 'editor_settings' );
+
+			trackComponentEvent( {
+				action: 'edited',
+				source: 'user',
+				component_uid: editorSettings?.component_uid,
+				component_name: editorSettings?.title,
+				location,
+				secondary_location: secondaryLocation,
+				trigger,
+			} );
+		}
+
+		detachInstance( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			const componentId = this.getComponentId();
+			const instanceId = this.model.get( 'id' );
+
+			if ( ! componentId || ! instanceId ) {
+				return;
+			}
+
+			const handleConfirm = async () => {
+				try {
+					await detachComponentInstance( {
+						instanceId,
+						componentId,
+						trackingInfo: { location, secondaryLocation, trigger },
+					} );
+				} catch {
+					notify( {
+						type: 'error',
+						message: __( 'Failed to detach component instance.', 'elementor' ),
+						id: 'detach-component-instance-failed',
+					} );
+				}
+			};
+
+			options.showDetachConfirmDialog?.( handleConfirm );
+		}
+
+		handleDblClick( e: MouseEvent ) {
+			e.stopPropagation();
+
+			if ( ! isUserAdministrator() ) {
+				return;
+			}
+
+			if ( isProOutdatedForComponents() ) {
+				notifyComponentEditUpdate();
+				return;
+			}
+
+			if ( ! hasProInstalled() ) {
+				notifyComponentEditUpgrade();
+				return;
+			}
+
+			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+
+			this.editComponent( {
+				trigger: triggers.doubleClick,
+				location: locations.canvas,
+				secondaryLocation: secondaryLocations.canvasElement,
+			} );
 		}
 
 		events() {
 			return {
 				...super.events(),
-				dblclick: this.switchDocument,
+				dblclick: this.handleDblClick,
 			};
 		}
 
 		attributes() {
 			return {
 				...super.attributes(),
-				'data-elementor-id': this.getComponentId().value,
+				'data-elementor-id': this.getComponentId(),
 			};
 		}
 	};
@@ -141,4 +423,76 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
+}
+
+function isUserAdministrator() {
+	const legacyWindow = window as unknown as LegacyWindow;
+
+	return legacyWindow.elementor.config?.user?.is_administrator ?? false;
+}
+
+function createComponentModel(): BackboneModelConstructor< ComponentModel > {
+	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+	const widgetTypeInstance = new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
+	const BaseWidgetModel = widgetTypeInstance.getModel();
+
+	return BaseWidgetModel.extend( {
+		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
+			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+				| ComponentInstanceProp
+				| undefined;
+			if ( componentInstance?.value ) {
+				const componentId = componentInstance.value.component_id?.value;
+				if ( componentId && typeof componentId === 'number' ) {
+					this.set( 'componentId', componentId );
+				}
+			}
+
+			this.set( 'isGlobal', true );
+		},
+
+		getTitle( this: ComponentModelInstance ): string {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						title?: string;
+						component_uid?: string;
+				  }
+				| undefined;
+
+			const instanceTitle = editorSettings?.title;
+			if ( instanceTitle ) {
+				return instanceTitle;
+			}
+
+			const componentUid = editorSettings?.component_uid;
+			if ( componentUid ) {
+				const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
+				if ( component?.name ) {
+					return component.name;
+				}
+			}
+
+			return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
+		},
+
+		getComponentId( this: ComponentModelInstance ): number | null {
+			return ( this.get( 'componentId' ) as number | undefined ) || null;
+		},
+
+		getComponentName( this: ComponentModelInstance ): string {
+			return this.getTitle();
+		},
+
+		getComponentUid( this: ComponentModelInstance ): string | null {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						component_uid?: string;
+				  }
+				| undefined;
+			return editorSettings?.component_uid || null;
+		},
+	} );
 }

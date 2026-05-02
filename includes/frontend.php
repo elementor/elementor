@@ -172,6 +172,10 @@ class Frontend extends App {
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
+
+		if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) ) {
+			add_filter( 'wp_should_output_buffer_template_for_enhancement', '__return_false', 1 );
+		}
 	}
 
 	/**
@@ -451,6 +455,8 @@ class Frontend extends App {
 			true
 		);
 
+		$this->register_frontend_handlers();
+
 		/**
 		 * After frontend register scripts.
 		 *
@@ -586,6 +592,21 @@ class Frontend extends App {
 	}
 
 	/**
+	 * Register frontend handlers.
+	 *
+	 * Registers all the frontend handlers for widgets and elements.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.25.0
+	 * @access public
+	 */
+	public function register_frontend_handlers() {
+		Plugin::$instance->widgets_manager->register_frontend_handlers();
+		Plugin::$instance->elements_manager->register_frontend_handlers();
+	}
+
+	/**
 	 * Enqueue scripts.
 	 *
 	 * Enqueue all the frontend scripts.
@@ -671,6 +692,11 @@ class Frontend extends App {
 
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
+				}
+			} else {
+				$post_id = Plugin::$instance->preview->get_post_id();
+				if ( $post_id ) {
+					do_action( 'elementor/post/render', $post_id );
 				}
 			}
 
@@ -875,6 +901,18 @@ class Frontend extends App {
 	 * @access public
 	 */
 	public function print_fonts_links() {
+		/**
+		 * Register font styles.
+		 *
+		 * Fires before fonts are processed, allowing add-ons to register
+		 * proper stylesheets for their custom font types via the WordPress API.
+		 *
+		 * @since 3.29.0
+		 *
+		 * @param string[] $fonts_to_enqueue List of font families to be enqueued.
+		 */
+		do_action( 'elementor/fonts/register_styles', $this->fonts_to_enqueue );
+
 		$google_fonts = $this->get_list_of_google_fonts_by_type();
 
 		$this->enqueue_google_fonts( $google_fonts );
@@ -1108,6 +1146,19 @@ class Frontend extends App {
 		Plugin::$instance->documents->switch_to_document( $document );
 
 		$data = $document->get_elements_data();
+
+		/**
+		 * Filters document elements data after loading.
+		 *
+		 * Allows modification of elements data when loading (not saving).
+		 * Useful for migrations, transformations, or data enrichment.
+		 *
+		 * @since 4.0.0
+		 *
+		 * @param array                         $data      The elements data array.
+		 * @param \Elementor\Core\Base\Document $document  The document instance.
+		 */
+		$data = apply_filters( 'elementor/document/load/data', $data, $document );
 
 		/**
 		 * Frontend builder content data.
@@ -1410,6 +1461,7 @@ class Frontend extends App {
 			],
 			'nonces' => [
 				'floatingButtonsClickTracking' => wp_create_nonce( Module::CLICK_TRACKING_NONCE ),
+				'atomicFormsSendForm' => wp_create_nonce( 'elementor_pro_atomic_forms_send_form' ),
 			],
 			'swiperClass' => 'swiper',
 		];

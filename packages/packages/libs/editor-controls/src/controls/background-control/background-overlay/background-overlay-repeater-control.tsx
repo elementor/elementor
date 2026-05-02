@@ -11,7 +11,7 @@ import { useWpMediaAttachment } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
-import { ControlRepeater, Header, ItemsContainer, TooltipAddItemAction } from '../../../components/control-repeater';
+import { ControlRepeater, ItemsContainer, TooltipAddItemAction } from '../../../components/control-repeater';
 import { DisableItemAction } from '../../../components/control-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../../../components/control-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../../../components/control-repeater/actions/remove-item-action';
@@ -20,6 +20,7 @@ import { EditItemPopover } from '../../../components/control-repeater/items/edit
 import { Item } from '../../../components/control-repeater/items/item';
 import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/control-repeater/types';
 import { PopoverContent } from '../../../components/popover-content';
+import { RepeaterHeader } from '../../../components/repeater/repeater-header';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -85,9 +86,9 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
 				propTypeUtil={ backgroundOverlayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 			>
-				<Header label={ __( 'Overlay', 'elementor' ) }>
+				<RepeaterHeader label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item
 						Icon={ ItemIcon }

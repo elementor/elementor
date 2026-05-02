@@ -1,7 +1,7 @@
 import { parallelTest as test } from '../../../parallelTest';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
-test.describe( 'Import Export Customization - Import Customization', () => {
+test.describe( 'Import Export Customization - Import Customization @import_export_customization', () => {
 	test( 'should import kit with Theme unchecked in Settings dialog', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 

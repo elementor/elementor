@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 
 import { createMenu, type Menu } from '../index';
 import { type Components } from '../types';
@@ -194,6 +194,9 @@ describe( 'createMenu', () => {
 			},
 		} );
 
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
+
 		menu.registerLink( {
 			id: 'test',
 			props: {
@@ -202,7 +205,36 @@ describe( 'createMenu', () => {
 		} );
 
 		// Assert.
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
+	} );
+
+	it( 'should re-render when items are registered after mount', () => {
+		// Arrange.
+		const menu = createMenu( {
+			components: {
+				Link: ( { text }: { text: string } ) => <a href="https://localhost">{ text }</a>,
+			},
+		} );
+
+		// Act.
+		renderMenu( menu );
+
+		// Assert - initially no items.
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+
+		// Act - register after mount.
+		act( () => {
+			menu.registerLink( {
+				id: 'test',
+				props: {
+					text: 'Dynamic Link',
+				},
+			} );
+		} );
+
+		// Assert - item should now appear.
+		expect( screen.getByRole( 'link' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'link' ) ).toHaveTextContent( 'Dynamic Link' );
 	} );
 } );
 

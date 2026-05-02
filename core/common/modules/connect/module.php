@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Connect;
+use Elementor\Core\Common\Modules\Connect\Apps\Feedback;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -75,6 +76,7 @@ class Module extends BaseModule {
 		$this->registered_apps = [
 			'connect' => Connect::get_class_name(),
 			'library' => Library::get_class_name(),
+			'feedback' => Feedback::get_class_name(),
 		];
 
 		// When using REST API the parent module is construct after the action 'elementor/init'

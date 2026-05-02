@@ -1,0 +1,210 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Check Auto Run",
+      "type": "shell",
+      "command": "if [ \"${CURSOR_AUTO_RUN_TASKS:-true}\" = \"false\" ]; then echo '⚠️  Auto-run tasks are disabled. To enable them, set CURSOR_AUTO_RUN_TASKS=true in your environment.'; exit 1; fi",
+    },
+    {
+      "label": "Start All Dev Servers",
+      "dependsOrder": "parallel",
+      "dependsOn": ["Main Repo Watch", "Playground Server"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Check autrun and Start All Dev Servers",
+      "dependsOrder": "sequence",
+      "dependsOn": ["Check Auto Run", "Start All Dev Servers"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "npm run watch",
+      "problemMatcher": [],
+      "label": "Main Repo Watch",
+      "detail": "Run main Elementor repository in watch mode (builds packages + watches for changes)",
+      "isBackground": true,
+      "presentation": {
+        "group": "dev-servers",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+        "echo": true,
+        "reveal": "always",
+        "focus": false
+      }
+    },
+    {
+      "type": "shell",
+      "command": "npm run wp-playground",
+      "problemMatcher": [],
+      "label": "Playground Server",
+      "detail": "Run Playground server",
+      "isBackground": true,
+      "presentation": {
+        "group": "dev-servers",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+        "echo": true,
+        "reveal": "always",
+        "focus": false
+      }
+    },
+    {
+      "type": "shell",
+      "command": "cd packages && npm run dev",
+      "problemMatcher": [],
+      "label": "Turbo Repo Dev",
+      "detail": "Run turbo-repo in development mode (watch + TypeScript compilation)",
+      "isBackground": true,
+      "presentation": {
+        "group": "dev-servers",
+        "panel": "dedicated",
+        "showReuseMessage": false,
+        "clear": true,
+        "echo": true,
+        "reveal": "always",
+        "focus": false
+      }
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build"],
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build",
+      "detail": "Build all components (main repo + packages)"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "build:packages"],
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build:packages",
+      "detail": "Build only the turbo-repo packages"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test",
+      "detail": "Run all tests (main repo + packages)"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:php"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test:php",
+      "detail": "Run PHP unit tests"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:jest"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test:jest",
+      "detail": "Run JavaScript unit tests"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:playwright"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test:playwright",
+      "detail": "Run E2E tests with Playwright"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "test:packages"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: test:packages",
+      "detail": "Run turbo-repo package tests"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "lint"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: lint",
+      "detail": "Run linting for both main repo and packages"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "format"],
+      "group": "test",
+      "problemMatcher": [],
+      "label": "npm: format",
+      "detail": "Format code with ESLint"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "prepare-environment"],
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: prepare-environment",
+      "detail": "Install all dependencies for both repositories"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "reinstall"],
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: reinstall",
+      "detail": "Clean reinstall of all dependencies"
+    },
+    {
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "hard-reinstall"],
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: hard-reinstall",
+      "detail": "Complete reset of all dependencies and caches"
+    },
+    {
+      "label": "Start Main Repo Only",
+      "type": "shell",
+      "command": "echo Main repository services launched",
+      "dependsOn": [
+        "Main Repo Watch"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Turbo Repo Only",
+      "type": "shell",
+      "command": "echo Turbo-repo services launched",
+      "dependsOn": [
+        "Turbo Repo Dev"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
+    }
+  ]
+}

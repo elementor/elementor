@@ -1,18 +1,20 @@
 import { createMockElement } from 'test-utils';
-import {
-	__privateRunCommand as runCommand,
-	__privateRunCommandSync as runCommandSync,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
-const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
-const currentElement = createMockElement( { model: { id: 'current-element' }, view: { _index: 1 } } );
+const currentElementData = {
+	model: { id: 'current-element' },
+	view: { _index: 1 },
+	elType: 'widget',
+	id: 'current-element',
+};
+const currentElement = createMockElement( currentElementData );
 const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' }, view: { _index: 0 } } );
 const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' }, view: { _index: 2 } } );
 const parentElement = createMockElement( {
@@ -42,7 +44,7 @@ describe( 'replaceElement', () => {
 		};
 
 		// Act.
-		replaceElement( { currentElement, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
@@ -51,7 +53,7 @@ describe( 'replaceElement', () => {
 			options: { at: 1, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: parentElement },
 			options: { useHistory: true },
 		} );
@@ -81,12 +83,12 @@ describe( 'replaceElement', () => {
 		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
 
 		// Act.
-		replaceElement( { currentElement, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
 			container: documentElement,
-			model: { elType: 'container' },
+			model: { elType: 'e-flexbox' },
 			options: { at: 1, useHistory: false, edit: false },
 		} );
 
@@ -96,7 +98,7 @@ describe( 'replaceElement', () => {
 			options: { at: 0, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: documentElement },
 			options: { useHistory: true },
 		} );

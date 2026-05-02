@@ -1,14 +1,17 @@
 import { createTransformer } from '@elementor/editor-canvas';
 
 import { service } from '../service';
+import { type TVariable } from '../storage';
 import { resolveCssVariable } from './utils/resolve-css-variable';
 
-export const variableTransformer = createTransformer( ( id: string ) => {
+export const variableTransformer = createTransformer( ( idOrLabel: string ) => {
 	const variables = service.variables();
 
-	if ( ! variables[ id ] ) {
+	const targetVariable: TVariable | null = variables[ idOrLabel ] || service.findVariableByLabel( idOrLabel );
+	if ( ! targetVariable ) {
 		return null;
 	}
+	const id = service.findIdByLabel( targetVariable.label );
 
-	return resolveCssVariable( id, variables[ id ] );
+	return resolveCssVariable( id, targetVariable );
 } );

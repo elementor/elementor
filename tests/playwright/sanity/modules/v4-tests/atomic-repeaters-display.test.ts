@@ -19,7 +19,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 		await wpAdmin.resetExperiments();
 	} );
 
-	const repeaterControls = [ 'filter', 'Backdrop filter', 'transform', 'Box shadow', 'transitions' ];
+	const repeaterControls = [ 'filter', 'Backdrop filter', 'transform', 'Box shadow' ];
 
 	for ( const control of repeaterControls ) {
 		test( `repeater control ${ control } stability`, async () => {

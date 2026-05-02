@@ -326,7 +326,10 @@ describe( 'EqualUnequalSizeControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: mockPropType,
 			value: {
+				a: null,
 				b: { $$type: 'size', value: { size: 5, unit: 'px' } },
+				c: null,
+				d: null,
 			},
 		} );
 	} );

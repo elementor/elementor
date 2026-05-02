@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Modules\AtomicWidgets\Opt_In;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
@@ -230,6 +230,10 @@ class Style_Parser {
 
 		if ( isset( $style['id'] ) ) {
 			$style['id'] = sanitize_key( $style['id'] );
+		}
+
+		if ( isset( $style['sync_to_v3'] ) ) {
+			$style['sync_to_v3'] = (bool) $style['sync_to_v3'];
 		}
 
 		if ( ! empty( $style['variants'] ) ) {

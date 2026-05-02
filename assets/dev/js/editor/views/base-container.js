@@ -1,3 +1,4 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
 
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
@@ -92,10 +93,14 @@ module.exports = Marionette.CompositeView.extend( {
 		if ( options.edit && elementor.documents.getCurrent().history.getActive() ) {
 			// Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
 			newView.getContainer();
-			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
+			newView._openEditingPanel( options );
 		}
 
 		return newView;
+	},
+
+	_openEditingPanel( options ) {
+		this.model.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 	},
 
 	createElementFromContainer( container, options = {} ) {
@@ -134,27 +139,9 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		let container = this.getContainer();
+
 		if ( options.shouldWrap ) {
-			const containerExperiment = elementorCommon.config.experimentalFeatures.container;
-
-			container = $e.run( 'document/elements/create', {
-				model: {
-					elType: containerExperiment ? 'container' : 'section',
-				},
-				container,
-				columns: Number( ! containerExperiment ),
-				options: {
-					at: options.at,
-					scrollIntoView: options.scrollIntoView,
-					useHistory,
-				},
-			} );
-
-			// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
-			if ( ! containerExperiment ) {
-				container = container.view.children.findByIndex( 0 )
-					.getContainer();
-			}
+			container = this.getWrappingContainer( container, model, options );
 		}
 
 		// Create the element in column.
@@ -169,6 +156,39 @@ module.exports = Marionette.CompositeView.extend( {
 		}
 
 		return widget;
+	},
+
+	getWrappingContainer( container, model, settings ) {
+		const isAtomic = elementor.helpers.isAtomicWidget( model );
+		const options = { at: settings.at, scrollIntoView: settings.scrollIntoView, useHistory: settings?.useHistory ?? true };
+
+		if ( isAtomic ) {
+			return ContainerHelper.createContainerFromModel(
+				{ elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE },
+				container,
+				{ options },
+			);
+		}
+
+		return this.getV3Container( container, options );
+	},
+
+	getV3Container( container, options ) {
+		const isContainerExperimentActive = elementorCommon.config.experimentalFeatures.container;
+
+		container = ContainerHelper.createContainerFromModel(
+			{ elType: isContainerExperimentActive ? 'container' : 'section' },
+			container,
+			{ columns: Number( ! isContainerExperimentActive ), options },
+		);
+
+		// Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+		if ( ! isContainerExperimentActive ) {
+			container = container.view.children.findByIndex( 0 )
+				.getContainer();
+		}
+
+		return container;
 	},
 
 	onDrop( event, options ) {

@@ -1,5 +1,5 @@
 import { type Dependency, type DependencyTerm, type PropValue } from '../../types';
-import { evaluateTerm, isDependencyMet } from '../prop-dependency-utils';
+import { evaluateTerm, extractValue, isDependencyMet } from '../prop-dependency-utils';
 
 type TestCase = DependencyTerm & {
 	description: string;
@@ -808,6 +808,143 @@ describe( 'prop-dependency-utils', () => {
 
 				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
 			} );
+		} );
+	} );
+
+	describe( 'extractValue', () => {
+		it( 'should extract a value from a simple path', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'string',
+				value: 'value',
+			} );
+		} );
+
+		it( 'should extract a value from a nested path through non-transformable objects', () => {
+			const values = {
+				level1: {
+					level2: {
+						key: {
+							$$type: 'number',
+							value: 42,
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'level1', 'level2', 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'number',
+				value: 42,
+			} );
+		} );
+
+		it( 'should extract a value from a nested path through transformable objects', () => {
+			const values = {
+				level1: {
+					$$type: 'object',
+					value: {
+						key: {
+							$$type: 'boolean',
+							value: true,
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'level1', 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'boolean',
+				value: true,
+			} );
+		} );
+
+		it( 'should return null/undefined for non-existent paths', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [ 'nonExistent' ], values );
+
+			expect( result ).toBeUndefined();
+		} );
+
+		it( 'should return undefined when path is broken mid-way', () => {
+			const values = {
+				level1: {
+					$$type: 'string',
+					value: 'leaf',
+				},
+			};
+
+			// Trying to access property of a string value which isn't an object in the structure
+			const result = extractValue( [ 'level1', 'level2' ], values );
+
+			expect( result ).toBeUndefined();
+		} );
+
+		it( 'should handle nestedPath parameter', () => {
+			const values = {
+				key: {
+					$$type: 'object',
+					value: {
+						nested: {
+							deep: 'found',
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values, [ 'nested', 'deep' ] );
+
+			expect( result ).toEqual( {
+				$$type: 'unknown',
+				value: 'found',
+			} );
+		} );
+
+		it( 'should return undefined for invalid nestedPath', () => {
+			const values = {
+				key: {
+					$$type: 'object',
+					value: {
+						nested: 'value',
+					},
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values, [ 'nested', 'invalid' ] );
+
+			expect( result ).toEqual( {
+				$$type: 'unknown',
+				value: undefined,
+			} );
+		} );
+
+		it( 'should handle empty path (return root)', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [], values );
+
+			expect( result ).toEqual( values );
 		} );
 	} );
 } );

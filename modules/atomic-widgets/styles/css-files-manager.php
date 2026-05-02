@@ -48,6 +48,17 @@ class CSS_Files_Manager {
 		);
 	}
 
+	public function delete( string $handle ): void {
+		$filesystem = $this->get_filesystem();
+		$path = $this->get_path( $handle );
+
+		if ( ! $filesystem->exists( $path ) ) {
+			return;
+		}
+
+		$filesystem->delete( $path );
+	}
+
 	private function get_filesystem(): \WP_Filesystem_Base {
 		global $wp_filesystem;
 

@@ -4,7 +4,7 @@ export type ExtendedWindow = Window & {
 	elementor: {
 		config: {
 			atomic?: {
-				styles_schema: Record< string, PropType >;
+				styles_schema: Record< string, PropType< { key?: string } > >;
 			};
 		};
 	};

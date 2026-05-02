@@ -8,8 +8,8 @@ $card-background-color-hover: theme-colors(light);
 $card-border: $eps-border-width $eps-border-style tints(100);
 $card-border-radius: $eps-radius;
 $card-transition: $eps-transition-duration;
-$card-font-size: type(text,xs);
-$card-footer-font-size: type(text,xxs);
+$card-font-size: get-type(text,xs);
+$card-footer-font-size: get-type(text,xxs);
 $card-padding: spacing(10);
 
 $card-header-padding: $card-padding;

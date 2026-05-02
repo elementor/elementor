@@ -3,16 +3,25 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
-use Elementor\Modules\Components\Lock_Component_Manager;
+use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Core\Base\Document;
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
+use Elementor\Modules\Components\Transformers\Override_Transformer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
-	private static $lock_component_manager_instance = null;
 	const EXPERIMENT_NAME = 'e_components';
 	const PACKAGES        = [ 'editor-components' ];
 
@@ -22,13 +31,31 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
-		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
-		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
-		( Lock_Component_Manager::get_instance()->register_hooks() );
+		if ( ! $this->is_experiment_active() ) {
+			return;
+		}
+
+		$this->register_component_post_type();
+
+		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
+		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
+		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
+		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
+
+		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
+
+		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();
 		( new Components_REST_API() )->register_hooks();
+	}
+
+	public function is_experiment_active() {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
+			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	public static function get_experimental_data() {
@@ -37,28 +64,26 @@ class Module extends BaseModule {
 			'title'          => esc_html__( 'Components', 'elementor' ),
 			'description'    => esc_html__( 'Enable components.', 'elementor' ),
 			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'default'        => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 		];
 	}
 
 	public function get_widgets() {
 		return [
-			'Component',
+			'Component_Instance',
 		];
 	}
-
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
 
-	private function register_document_type( $documents_manager ) {
-		$documents_manager->register_document_type(
-			Component_Document::TYPE,
-			Component_Document::get_class_full_name()
-		);
+	private function modify_props_schema( array $schema ) {
+		return Overridable_Schema_Extender::make()->get_extended_schema( $schema );
+	}
 
+	private function register_component_post_type() {
 		register_post_type( Component_Document::TYPE, [
 			'label'    => Component_Document::get_title(),
 			'labels'   => Component_Document::get_labels(),
@@ -67,7 +92,65 @@ class Module extends BaseModule {
 		] );
 	}
 
+	private function register_document_type( $documents_manager ) {
+		$documents_manager->register_document_type(
+			Component_Document::TYPE,
+			Component_Document::get_class_full_name()
+		);
+	}
+
+	private function validate_circular_dependencies( Document $document, array $data ) {
+		if ( ! $document instanceof Component_Document ) {
+			return;
+		}
+
+		if ( ! isset( $data['elements'] ) ) {
+			return;
+		}
+
+		$component_id = $document->get_main_id();
+		$elements = $data['elements'];
+
+		$result = Circular_Dependency_Validator::make()->validate( $component_id, $elements );
+
+		if ( ! $result['success'] ) {
+			throw new \Exception( esc_html__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) );
+		}
+	}
+
+	private function set_component_overridable_props( Document $document, array $data ) {
+		if ( ! isset( $data['settings'] ) ) {
+			return;
+		}
+		if ( ( ! $document instanceof Component_Document ) ||
+			( ! isset( $data['settings']['overridable_props'] ) )
+		) {
+			return;
+		}
+
+		if ( ! Components_Access_Controller::can_edit() ) {
+			throw new \Exception( esc_html__( 'You do not have permission to edit component source.', 'elementor' ) );
+		}
+
+		/* @var Component_Document $document */
+		$result = $document->update_overridable_props( $data['settings']['overridable_props'] );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );
+		}
+	}
+
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
+		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
+		$transformers->register( Overridable_Prop_Type::get_key(), new Overridable_Transformer() );
+		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
+	}
+
+	private function after_component_migrate( Document $document, array $data ) {
+		if ( ! $document instanceof Component_Document ) {
+			return;
+		}
+
+		$document->align_overridable_props_with_elements();
 	}
 }

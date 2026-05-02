@@ -1,0 +1,20 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "type_b"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "type_a"
+      }
+    }
+  ]
+}

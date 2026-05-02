@@ -6,7 +6,7 @@ use Elementor\Core\Editor\Loader\Editor_Base_Loader;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
-use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,7 +20,6 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
-		'mixpanel',
 		'editor-responsive',
 		'editor-ui',
 		'editor-v1-adapters',
@@ -38,14 +37,20 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'utils',
 		'wp-media',
 		'editor-current-user',
+		'editor-elements-panel-notice',
+		'elementor-mcp-common',
 	];
 
 	const EXTENSIONS = [
+		'events',
 		'editor-documents',
 		'editor-notifications',
 		'editor-panels',
 		'editor-elements-panel',
+		'unlock-v4-promo',
 		'editor-mcp',
+		'elementor-v3-mcp',
+		'elementor-kit-mcp',
 	];
 
 	/**

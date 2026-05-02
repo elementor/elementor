@@ -48,6 +48,7 @@ export const IntroductionModal = ( { open, handleClose, title, children }: Intro
 					size={ 'medium' }
 					variant="contained"
 					sx={ { minWidth: '135px' } }
+					aria-label={ __( 'Got it introduction', 'elementor' ) }
 					onClick={ () => handleClose( shouldShowAgain ) }
 				>
 					{ __( 'Got it', 'elementor' ) }

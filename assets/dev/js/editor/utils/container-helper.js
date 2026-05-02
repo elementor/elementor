@@ -13,6 +13,7 @@ export class ContainerHelper {
 	static DIRECTION_COLUMN_REVERSED = 'column-reverse';
 	static DIRECTION_DEFAULT = this.DIRECTION_COLUMN;
 	static CONTAINER_TYPE_GRID = 'grid';
+	static V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
 	/**
 	 * Create multiple container elements.
@@ -250,6 +251,14 @@ export class ContainerHelper {
 	 */
 	static openEditMode( container ) {
 		$e.run( 'document/elements/select', { container } );
+	}
+
+	static createContainerFromModel( model, target, options = {} ) {
+		return $e.run( 'document/elements/create', {
+			model,
+			container: target,
+			...options,
+		} );
 	}
 }
 

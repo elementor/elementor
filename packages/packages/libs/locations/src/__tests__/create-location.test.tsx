@@ -117,6 +117,8 @@ describe( 'createLocation', () => {
 
 	it( 'should error when injecting a component with the same name (without overwrite option)', async () => {
 		// Arrange.
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
 		const { inject, Slot } = createLocation();
 
 		inject( {
@@ -135,7 +137,7 @@ describe( 'createLocation', () => {
 		// Assert.
 		expect( screen.getByText( 'First div' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Second div' ) ).not.toBeInTheDocument();
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
 	} );
 
 	it( 'should overwrite the injected component if has same name', async () => {
@@ -191,6 +193,8 @@ describe( 'createLocation', () => {
 
 	it( 'should catch injected component errors with error boundary', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const { inject, Slot } = createLocation();
 
 		inject( {
@@ -216,7 +220,7 @@ describe( 'createLocation', () => {
 		// Assert.
 		expect( screen.getByText( 'Test 1' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Test 3' ) ).toBeInTheDocument();
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should pass the props from Slot to the injected component', () => {

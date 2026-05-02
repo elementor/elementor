@@ -52,8 +52,8 @@ export const DropShadowItemContent = ( { anchorEl }: { anchorEl?: HTMLElement | 
 								<SizeControl
 									anchorRef={ rowRefs[ item.rowIndex ] }
 									enablePropTypeUnits
+									min={ item.bind === 'blur' ? 0 : -Number.MAX_SAFE_INTEGER }
 									defaultUnit="px"
-									isRepeaterControl
 								/>
 							) }
 						</Grid>

@@ -1,6 +1,6 @@
+import { XIcon } from '@elementor/icons';
 import { Box, Typography, Stack, Button } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { XIcon } from '../../shared/components';
 import { useImportContext } from '../context/import-context';
 
 const HELP_URL = 'https://go.elementor.com/app-import-download-failed';

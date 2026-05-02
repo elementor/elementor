@@ -1,0 +1,160 @@
+import { getCurrentDocument } from '@elementor/editor-documents';
+import {
+	createElement,
+	deleteElement,
+	getContainer,
+	getWidgetsCache,
+	type V1Element,
+} from '@elementor/editor-elements';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+
+import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
+import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
+import { generatePrompt } from './prompt';
+import { inputSchema as schema, outputSchema } from './schema';
+
+export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
+	const { addTool } = reg;
+
+	addTool( {
+		name: 'build-compositions',
+		description: generatePrompt(),
+		schema,
+		requiredResources: [
+			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
+			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
+			{ description: 'Global Classes', uri: 'elementor://global-classes' },
+			{ description: 'Global Variables', uri: 'elementor://global-variables' },
+			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
+			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
+		],
+		outputSchema,
+		modelPreferences: {
+			hints: [ { name: 'claude-sonnet-4-5' } ],
+		},
+		handler: async ( params ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
+			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
+			let generatedXML: string = '';
+			const errors: Error[] = [];
+			const rootContainers: V1Element[] = [];
+			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
+			const currentDocument = getCurrentDocument();
+			const targetContainer = getCompositionTargetContainer( documentContainer, currentDocument?.type.value );
+			try {
+				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
+					createElement,
+					getWidgetsCache,
+				} );
+				compositionBuilder.setElementConfig( elementConfig );
+				compositionBuilder.setStylesConfig( stylesConfig );
+				compositionBuilder.setCustomCSS( customCSS );
+
+				const { invalidStyles, rootContainers: generatedRootContainers } =
+					await compositionBuilder.build( targetContainer );
+
+				rootContainers.push( ...generatedRootContainers );
+				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
+
+				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
+					const customCss = {
+						value: rawCssRules.join( ';\n' ),
+					};
+					doUpdateElementProperty( {
+						elementId,
+						propertyName: '_styles',
+						propertyValue: {
+							_styles: {
+								custom_css: customCss,
+							},
+						},
+						elementType: 'widget',
+					} );
+				} );
+			} catch ( error ) {
+				errors.push( error as Error );
+			}
+
+			if ( errors.length ) {
+				rootContainers.forEach( ( rootContainer ) => {
+					deleteElement( {
+						container: rootContainer,
+						options: { useHistory: false },
+					} );
+				} );
+
+				const errorMessages = errors
+					.map( ( e ) => {
+						if ( typeof e === 'string' ) {
+							return e;
+						}
+						if ( e instanceof Error ) {
+							return e.message || String( e );
+						}
+
+						if ( typeof e === 'object' && e !== null ) {
+							return JSON.stringify( e );
+						}
+						return String( e );
+					} )
+					.filter(
+						( msg ) => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined'
+					);
+
+				if ( errorMessages.length === 0 ) {
+					throw new Error(
+						'Failed to build composition: Unknown error occurred. No error details available.'
+					);
+				}
+
+				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
+					'\n\n'
+				) }`;
+				throw new Error( errorText );
+			}
+			return {
+				xmlStructure: generatedXML,
+				errors: errors?.length
+					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
+					: undefined,
+				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
+
+**CRITICAL NEXT STEPS** (Follow in order):
+1. **Apply Global Classes**: Use "apply-global-class" tool to apply the global classes you created BEFORE building this composition
+   - Check the created element IDs in the returned XML
+   - Apply semantic classes (heading-primary, button-cta, etc.) to appropriate elements
+
+2. **Fine-tune if needed**: Use "configure-element" tool only for element-specific adjustments that don't warrant global classes
+
+Remember: Global classes ensure design consistency and reusability. Don't skip applying them!
+`,
+			};
+		},
+	} );
+};
+
+function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
+	const doc = new DOMParser().parseFromString( xmlStructure, 'application/xml' );
+	if ( doc.querySelector( 'parsererror' ) ) {
+		throw new Error( 'Failed to parse XML string: ' + doc );
+	}
+	const widgetsCache = getWidgetsCache() ?? {};
+	for ( const node of doc.querySelectorAll( '*' ) ) {
+		const type = node.tagName;
+		const widgetData = widgetsCache[ type ];
+		if ( ! widgetData ) {
+			continue;
+		}
+		if ( widgetData.elType !== 'widget' ) {
+			continue;
+		}
+		if ( ! widgetData.atomic_props_schema ) {
+			throw new Error(
+				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
+			);
+		}
+	}
+}

@@ -10,7 +10,8 @@
 					"id": "9c94f16",
 					"settings": {
 						"title_text": "This is the heading",
-						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."
+						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+						"position": "top"
 					},
 					"elements": [],
 					"isInner": false,

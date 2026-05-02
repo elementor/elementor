@@ -3,10 +3,11 @@ namespace Elementor\Modules\Usage;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\DynamicTags\Manager;
-use Elementor\Modules\AtomicWidgets\Usage\Usage_Counter as Atomic_Usage_Counter;
-use Elementor\Modules\AtomicWidgets\Utils as Atomic_Utils;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Usage\Atomic_Element_Usage_Calculator;
 use Elementor\Modules\System_Info\Module as System_Info;
+use Elementor\Modules\Usage\Calculators\Legacy_Element_Usage_Calculator;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Tracker;
@@ -30,11 +31,6 @@ class Module extends BaseModule {
 	 * @var bool
 	 */
 	private $is_document_saving = false;
-
-	/**
-	 * @var Atomic_Usage_Counter
-	 */
-	private $atomic_usage_counter;
 
 	/**
 	 * Get module name.
@@ -338,73 +334,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add Controls
-	 *
-	 * Add's controls to this element_ref, returns changed controls count.
-	 *
-	 * @param array $settings_controls
-	 * @param array $element_controls
-	 * @param array &$element_ref
-	 *
-	 * @return int ($changed_controls_count).
-	 */
-	private function add_controls( $settings_controls, $element_controls, &$element_ref ) {
-		$changed_controls_count = 0;
-
-		// Loop over all element settings.
-		foreach ( $settings_controls as $control => $value ) {
-			if ( empty( $element_controls[ $control ] ) ) {
-				continue;
-			}
-
-			$control_config = $element_controls[ $control ];
-
-			if ( ! isset( $control_config['section'], $control_config['default'] ) ) {
-				continue;
-			}
-
-			$tab = $control_config['tab'];
-			$section = $control_config['section'];
-
-			// If setting value is not the control default.
-			if ( $value !== $control_config['default'] ) {
-				$this->increase_controls_count( $element_ref, $tab, $section, $control, 1 );
-
-				++$changed_controls_count;
-			}
-		}
-
-		return $changed_controls_count;
-	}
-
-	/**
-	 * Add general controls.
-	 *
-	 * Extract general controls to element ref, return clean `$settings_control`.
-	 *
-	 * @param array $settings_controls
-	 * @param array &$element_ref
-	 *
-	 * @return array ($settings_controls).
-	 */
-	private function add_general_controls( $settings_controls, &$element_ref ) {
-		if ( ! empty( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] ) ) {
-			$settings_controls = array_merge( $settings_controls, $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] );
-
-			// Add dynamic count to controls under `general` tab.
-			$this->increase_controls_count(
-				$element_ref,
-				self::GENERAL_TAB,
-				Manager::DYNAMIC_SETTING_KEY,
-				'count',
-				count( $settings_controls[ Manager::DYNAMIC_SETTING_KEY ] )
-			);
-		}
-
-		return $settings_controls;
-	}
-
-	/**
 	 * Add to global.
 	 *
 	 * Add's usage to global (update database).
@@ -512,9 +441,9 @@ class Module extends BaseModule {
 	 */
 	private function get_elements_usage( $elements ) {
 		$usage = [];
-		$this->atomic_usage_counter = new Atomic_Usage_Counter();
+		$registry = $this->get_calculator_registry();
 
-		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage ) {
+		Plugin::$instance->db->iterate_data( $elements, function ( $element ) use ( &$usage, $registry ) {
 			if ( empty( $element['widgetType'] ) ) {
 				$type = $element['elType'];
 				$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
@@ -523,38 +452,29 @@ class Module extends BaseModule {
 				$element_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
 			}
 
-			if ( ! isset( $usage[ $type ] ) ) {
-				$usage[ $type ] = [
-					'count' => 0,
-					'control_percent' => 0,
-					'controls' => [],
-				];
-			}
+			try {
+				$calculator = $registry->get_calculator_for( $element, $element_instance );
 
-			$usage[ $type ]['count']++;
-
-			if ( ! $element_instance ) {
-				return $element;
-			}
-
-			if ( isset( $element['settings'] ) ) {
-				$settings_controls = $element['settings'];
-				$element_ref = &$usage[ $type ];
-
-				// Add dynamic values.
-				$settings_controls = $this->add_general_controls( $settings_controls, $element_ref );
-
-				if ( Atomic_Utils::is_atomic( $element_instance ) ) {
-					$percent = $this->get_atomic_elements_usage( $element, $element_ref );
-				} else {
-					$element_controls = $element_instance->get_controls();
-					$changed_controls_count = $this->add_controls( $settings_controls, $element_controls, $element_ref ) ?? 0;
-					$total_controls_count = count( $element_controls ) ?? 0;
-
-					$percent = $this->get_controls_usage_percent( $total_controls_count, $changed_controls_count );
+				if ( $calculator ) {
+					$usage = $calculator->calculate( $element, $element_instance, $usage );
 				}
+			} catch ( \Throwable $e ) {
+				Logger::warning(
+					'Usage calculation failed: ' . $e->getMessage(),
+					[
+						'element_type' => $type,
+						'element_id' => $element['id'] ?? 'unknown',
+					]
+				);
 
-				$usage[ $type ] ['control_percent'] = $percent;
+				if ( ! isset( $usage[ $type ] ) ) {
+					$usage[ $type ] = [
+						'count' => 0,
+						'control_percent' => 0,
+						'controls' => [],
+					];
+				}
+				$usage[ $type ]['count']++;
 			}
 
 			return $element;
@@ -563,27 +483,24 @@ class Module extends BaseModule {
 		return $usage;
 	}
 
-	private function get_atomic_elements_usage( array $element, array &$element_ref ): int {
-		$result = $this->atomic_usage_counter->count( $element );
-		$changed_controls_count = 0;
-		$total_controls_count = 0;
+	/**
+	 * @return Element_Usage_Calculator_Registry
+	 */
+	private function get_calculator_registry(): Element_Usage_Calculator_Registry {
+		static $registry = null;
 
-		if ( $result->is_valid() ) {
-			$result->each( function( $tab, $section, $control_name ) use ( &$element_ref ) {
-				$this->increase_controls_count( $element_ref, $tab, $section, $control_name, 1 );
-			});
+		if ( null === $registry ) {
+			$calculators = [];
 
-			$changed_controls_count = $result->get_changed_count();
-			$total_controls_count = $result->get_total();
+			if ( Atomic_Widgets_Module::is_active() ) {
+				$calculators[] = new Atomic_Element_Usage_Calculator();
+			}
+
+			$registry = new Element_Usage_Calculator_Registry( $calculators );
+			$registry->set_fallback( new Legacy_Element_Usage_Calculator() );
 		}
 
-		return $this->get_controls_usage_percent( $total_controls_count, $changed_controls_count );
-	}
-
-	private function get_controls_usage_percent( int $total, int $changed ): int {
-		$percent = ! empty( $total ) ? $changed / ( $total / 100 ) : 0;
-
-		return (int) round( $percent );
+		return $registry;
 	}
 
 	/**
@@ -609,7 +526,7 @@ class Module extends BaseModule {
 
 				$this->add_to_global( $document->get_name(), $usage );
 			} catch ( \Exception $exception ) {
-				Plugin::$instance->logger->get_logger()->error( $exception->getMessage(), [
+				Logger::warning( $exception->getMessage(), [
 					'document_id' => $document->get_id(),
 					'document_name' => $document->get_name(),
 				] );

@@ -2,24 +2,51 @@ import BasePage from '../base-page';
 import { type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import StyleTab from './style-tab';
+import { INLINE_EDITING_SELECTORS } from '../../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
+
+type NumberOrString = number | string;
 
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
+	readonly textareaField: string;
 	readonly editor: EditorPage;
 	readonly style: StyleTab;
 
 	constructor( page: Page, testInfo: TestInfo, editor: EditorPage ) {
 		super( page, testInfo );
 		this.inputField = 'input[class*="MuiInputBase"]';
+		this.textareaField = 'textarea[class*="MuiInputBase"]';
 		this.editor = editor;
 		this.style = new StyleTab( page, testInfo );
+	}
+
+	async clickField( nth: number ): Promise<void> {
+		await this.page.locator( this.inputField ).nth( nth ).click();
 	}
 
 	async fillField( nth: number, text: string ): Promise<void> {
 		await this.page.locator( this.inputField ).nth( nth ).fill( text );
 	}
 
-	async setWidgetSize( options: { width?: number, height?: number, minWidth?: number, minHeight?: number, maxWidth?: number, maxHeight?: number, overflow?: string } ): Promise<void> {
+	async fillTextarea( nth: number, text: string ): Promise<void> {
+		await this.page.locator( this.textareaField ).nth( nth ).fill( text );
+	}
+
+	async fillInlineEditing( content: string ) {
+		await this.openTab( 'general' );
+
+		const contentSection = this.page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+		const panelInlineEditor = contentSection.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+
+		if ( ! await panelInlineEditor.isVisible() ) {
+			return;
+		}
+
+		await panelInlineEditor.clear();
+		await panelInlineEditor.fill( content );
+	}
+
+	async setWidgetSize( options: { width?: NumberOrString, height?: NumberOrString, minWidth?: NumberOrString, minHeight?: NumberOrString, maxWidth?: NumberOrString, maxHeight?: NumberOrString, overflow?: string } ): Promise<void> {
 		const sizeControls = {
 			width: 'Width',
 			height: 'Height',
@@ -48,8 +75,9 @@ export default class v4Panel extends BasePage {
 			style: 'style',
 			general: 'settings',
 		};
-		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
-			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
+
+		const sectionButtonSelector = `[id^="tab-"][id$="-${ selectorMap[ sectionName ] }"]`,
+			sectionContentSelector = `[id^="tabpanel-"][id$="-${ selectorMap[ sectionName ] }"]`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionContentElement: HTMLElement = document.querySelector( selector );
 
@@ -62,5 +90,17 @@ export default class v4Panel extends BasePage {
 
 		await this.page.locator( sectionButtonSelector ).click();
 		await this.page.locator( sectionContentSelector ).waitFor();
+	}
+
+	async addAtomicWidget( widgetTitle: string, widgetName: string ) {
+		await this.editor.openElementsPanel();
+		const panelWidgetButton = this.page.locator( `#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("${ widgetTitle }")` );
+		await panelWidgetButton.waitFor( { state: 'visible' } );
+		await panelWidgetButton.click();
+
+		const widgetElement = this.editor.getPreviewFrame().locator( `[data-widget_type="${ widgetName }.default"]` ).first();
+		await widgetElement.waitFor( { state: 'visible' } );
+
+		return widgetElement;
 	}
 }

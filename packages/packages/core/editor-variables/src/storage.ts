@@ -5,6 +5,7 @@ export type TVariable = {
 	order?: number;
 	deleted?: boolean;
 	deleted_at?: string;
+	sync_to_v3?: boolean;
 };
 
 export type TVariablesList = Record< string, TVariable >;
@@ -20,6 +21,10 @@ export class Storage {
 		watermark: number;
 		variables: TVariablesList;
 	};
+
+	notifyChange() {
+		window.dispatchEvent( new Event( 'variables:updated' ) );
+	}
 
 	constructor() {
 		this.state = {
@@ -44,18 +49,21 @@ export class Storage {
 
 		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	add( id: string, variable: TVariable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	update( id: string, variable: TVariable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	watermark( watermark: number ) {

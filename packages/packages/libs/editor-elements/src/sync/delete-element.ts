@@ -1,20 +1,19 @@
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
-import { getContainer } from './get-container';
+import { type V1Element } from './types';
 
 type Options = {
 	useHistory?: boolean;
 	at?: number;
 };
 
-export function deleteElement( { elementId, options = {} }: { elementId: string; options?: Options } ): void {
-	const container = getContainer( elementId );
+type DeleteElementParams = {
+	container: V1Element;
+	options?: Options;
+};
 
-	if ( ! container ) {
-		throw new Error( `Element with ID "${ elementId }" not found` );
-	}
-
-	runCommand( 'document/elements/delete', {
+export function deleteElement( { container, options = {} }: DeleteElementParams ): void {
+	runCommandSync( 'document/elements/delete', {
 		container,
 		options,
 	} );

@@ -56,7 +56,6 @@ export default function ImportKitPartsSelection() {
 
 	return (
 		<KitPartsSelection
-			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 			handleSaveCustomization={ handleSaveCustomization }
 			testId="import-kit-parts-content"

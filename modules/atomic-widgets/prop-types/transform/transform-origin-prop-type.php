@@ -31,4 +31,8 @@ class Transform_Origin_Prop_Type extends Object_Prop_Type {
 			? [ Size_Constants::UNIT_PX, Size_Constants::UNIT_EM, Size_Constants::UNIT_REM ]
 			: [ Size_Constants::UNIT_PX, Size_Constants::UNIT_PERCENT, Size_Constants::UNIT_EM, Size_Constants::UNIT_REM ];
 	}
+
+	protected function get_bind_initial_value() {
+		return null;
+	}
 }

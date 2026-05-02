@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { bindPopover, Box, Popover } from '@elementor/ui';
+import { bindPopover, Box } from '@elementor/ui';
 
 import { PropKeyProvider } from '../../../bound-prop-context';
+import { RepeaterPopover } from '../../repeater/repeater-popover';
 import { EMPTY_OPEN_ITEM, useRepeaterContext } from '../context/repeater-context';
 
 export const EditItemPopover = ( { children }: { children: React.ReactNode } ) => {
@@ -18,20 +19,10 @@ export const EditItemPopover = ( { children }: { children: React.ReactNode } ) =
 	};
 
 	return (
-		<Popover
-			disablePortal
-			slotProps={ {
-				paper: {
-					sx: { mt: 0.5, width: rowRef.offsetWidth },
-				},
-			} }
-			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			{ ...bindPopover( popoverState ) }
-			onClose={ onClose }
-		>
+		<RepeaterPopover width={ rowRef.offsetWidth } { ...bindPopover( popoverState ) } onClose={ onClose }>
 			<PropKeyProvider bind={ String( openItemIndex ) }>
 				<Box>{ children }</Box>
 			</PropKeyProvider>
-		</Popover>
+		</RepeaterPopover>
 	);
 };

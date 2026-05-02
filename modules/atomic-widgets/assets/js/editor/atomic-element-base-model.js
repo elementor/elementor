@@ -1,52 +1,65 @@
 export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
-    /**
-     * Do not allow section, column or container be placed in the Atomic container.
-     *
-     * @param {*} childModel
-     */
-    isValidChild( childModel ) {
-        const elType = childModel.get( 'elType' );
+	/**
+	 * Do not allow section, column or container be placed in the Atomic container.
+	 *
+	 * @param {*} childModel
+	 */
+	isValidChild( childModel ) {
+		const elType = childModel.get( 'elType' );
 
-        return 'section' !== elType && 'column' !== elType;
-    }
+		return 'section' !== elType && 'column' !== elType;
+	}
 
-    initialize( attributes, options ) {
-        const elementType = this.get( 'elType' );
-        this.config = elementor.config.elements[ elementType ];
+	initialize( attributes, options ) {
+		const elementType = this.get( 'elType' );
+		this.config = elementor.config.elements[ elementType ];
 
-        const isNewElementCreate = 0 === this.get( 'elements' ).length &&
-            $e.commands.currentTrace.includes( 'document/elements/create' );
+		if ( this.config?.meta?.permanently_locked ) {
+			this.set( 'isLocked', true );
+		}
 
-        if ( isNewElementCreate ) {
-            this.onElementCreate();
-        }
+		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
+			$e.commands.currentTrace.includes( 'document/elements/create' );
 
-        super.initialize( attributes, options );
-    }
+		if ( isNewElementCreate ) {
+			this.onElementCreate();
+		}
 
-    getDefaultChildren() {
-        const { default_children: defaultChildren } = this.config;
+		super.initialize( attributes, options );
+	}
 
-        return defaultChildren;
-    }
+	getDefaultChildren() {
+		const { default_children: defaultChildren } = this.config;
 
-    onElementCreate() {
-        this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
-    }
+		return this.modifyDefaultChildren( defaultChildren );
+	}
 
-    buildElement( element ) {
-        const id = elementorCommon.helpers.getUniqueId();
+	onElementCreate() {
+		if ( this.get( 'skipDefaultChildren' ) ) {
+			this.unset( 'skipDefaultChildren', { silent: true } );
+			return;
+		}
 
-        const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
+	}
 
-        return {
-            elType: element.elType,
-            widgetType: element.widgetType,
-            id,
-            settings: element.settings || {},
-            elements,
-            isLocked: element.isLocked || false,
-            editor_settings: element.editor_settings || {},
-        };
-    }
+	modifyDefaultChildren( element ) {
+		return element;
+	}
+
+	buildElement( element ) {
+		const id = elementorCommon.helpers.getUniqueId();
+
+		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+
+		return {
+			elType: element.elType,
+			widgetType: element.widgetType,
+			id,
+			settings: element.settings ?? {},
+			elements,
+			isLocked: element.isLocked || false,
+			editor_settings: element.editor_settings || {},
+		};
+	}
 }

@@ -8,13 +8,9 @@ import {
 	renderWithTheme,
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
+import { getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
 import {
-	getElementLabel,
-	getElementSettings,
-	updateElementSettings,
-	useElementSettings,
-} from '@elementor/editor-elements';
-import {
+	type AnyTransformable,
 	type Dependency,
 	type PropsSchema,
 	type PropType,
@@ -30,7 +26,6 @@ import { SettingsField } from '../settings-field';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSettings: jest.fn(),
 	updateElementSettings: jest.fn(),
 	getElementLabel: jest.fn(),
 	getElementSettings: jest.fn(),
@@ -43,6 +38,8 @@ const bind = 'text';
 const otherBind = 'other';
 const arrBind = 'arr';
 const objBind = 'obj';
+const boolBind = 'bool';
+const boolBindWithDefaultTrue = 'boolWithDefaultTrue';
 
 const dependencyTestCases: {
 	desc: string;
@@ -50,6 +47,30 @@ const dependencyTestCases: {
 	values: Record< string, PropValue >;
 	enabled: boolean;
 }[] = [
+	{
+		desc: 'should detect default value and disable if dependency is not met (boolean -> false)',
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ boolBindWithDefaultTrue ], operator: 'eq', value: false } ],
+		},
+		values: {
+			[ bind ]: { $$type: 'string', value: 'foo' },
+			[ boolBindWithDefaultTrue ]: null,
+		},
+		enabled: false,
+	},
+	{
+		desc: 'should detect default value and enable if dependency is met (boolean -> true)',
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ boolBindWithDefaultTrue ], operator: 'eq', value: true } ],
+		},
+		values: {
+			[ bind ]: { $$type: 'string', value: 'foo' },
+			[ boolBindWithDefaultTrue ]: null,
+		},
+		enabled: true,
+	},
 	{
 		desc: 'should disable if ne dependency is met (string)',
 		dependencies: {
@@ -208,17 +229,17 @@ const dependencyTestCases: {
 describe( '<SettingsField />', () => {
 	const historyMock = mockHistoryManager();
 
+	const defaultSettings = {
+		text: {
+			$$type: 'string',
+			value: 'Hello, World!',
+		},
+	};
+
 	beforeEach( () => {
 		historyMock.beforeEach();
 
 		jest.useFakeTimers();
-
-		jest.mocked( useElementSettings ).mockReturnValue( {
-			text: {
-				$$type: 'string',
-				value: 'Hello, World!',
-			},
-		} );
 
 		jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 			return id === '1' ? 'Test Element' : 'Unknown Element';
@@ -241,7 +262,7 @@ describe( '<SettingsField />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider element={ element } elementType={ elementType }>
+			<ElementProvider element={ element } elementType={ elementType } settings={ defaultSettings }>
 				<SettingsField bind={ bind } propDisplayName={ __( 'Test Prop', 'elementor' ) }>
 					<MockControl />
 				</SettingsField>
@@ -254,8 +275,6 @@ describe( '<SettingsField />', () => {
 
 	it( 'should set the default from schema as the initial value', () => {
 		// Arrange.
-		jest.mocked( useElementSettings ).mockReturnValue( {} );
-
 		const element = mockElement( { id: '1', type: 'mockText' } );
 		const elementType = createMockElementType( {
 			propsSchema: {
@@ -268,7 +287,7 @@ describe( '<SettingsField />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider element={ element } elementType={ elementType }>
+			<ElementProvider element={ element } elementType={ elementType } settings={ {} }>
 				<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 					<MockControl />
 				</SettingsField>
@@ -290,7 +309,7 @@ describe( '<SettingsField />', () => {
 
 		// Act.
 		renderWithTheme(
-			<ElementProvider element={ element } elementType={ elementType }>
+			<ElementProvider element={ element } elementType={ elementType } settings={ {} }>
 				<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 					<MockControl />
 				</SettingsField>
@@ -321,11 +340,14 @@ describe( '<SettingsField />', () => {
 			} );
 
 			const initialValue = { $$type: 'string', value: 'Initial Value' };
-			jest.mocked( useElementSettings ).mockReturnValue( { [ bind ]: initialValue } );
 			jest.mocked( getElementSettings ).mockReturnValue( { [ bind ]: initialValue } );
 
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider
+					element={ element }
+					elementType={ elementType }
+					settings={ { [ bind ]: initialValue } }
+				>
 					<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 						<MockControl />
 					</SettingsField>
@@ -381,10 +403,6 @@ describe( '<SettingsField />', () => {
 describe( 'Test <SettingsField /> isDisabled logic propagating correctly', () => {
 	it.each( dependencyTestCases )( '$desc', ( { dependencies, values, enabled } ) => {
 		// Arrange.
-		jest.mocked( useElementSettings ).mockImplementation( ( id, keys ) =>
-			Object.fromEntries( keys.map( ( key ) => [ key, values[ key ] ] ) )
-		);
-		jest.mocked( useElementSettings ).mockReturnValue( values );
 		setup( { dependencies, values } );
 
 		const input = screen.getByRole( 'textbox', { name: bind } );
@@ -395,6 +413,239 @@ describe( 'Test <SettingsField /> isDisabled logic propagating correctly', () =>
 		} else {
 			expect( input ).toBeDisabled();
 		}
+	} );
+} );
+
+describe( 'ConditionalContent with shouldHide effect', () => {
+	const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'should hide email fields when email is not in actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		// Act
+		renderWithTheme(
+			<ElementProvider
+				element={ element }
+				elementType={ elementType }
+				settings={ {
+					'actions-after-submit': {
+						$$type: 'array',
+						value: [ wrap( 'collect-submissions' ) ],
+					},
+				} }
+			>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show email fields when email is in actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		// Act
+		renderWithTheme(
+			<ElementProvider
+				element={ element }
+				elementType={ elementType }
+				settings={ {
+					'actions-after-submit': {
+						$$type: 'array',
+						value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+					},
+				} }
+			>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should hide email fields when dependency is not met', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		// Act
+		renderWithTheme(
+			<ElementProvider
+				element={ element }
+				elementType={ elementType }
+				settings={ {
+					'actions-after-submit': {
+						$$type: 'array',
+						value: [ wrap( 'webhook' ) ],
+					},
+				} }
+			>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should show email fields when adding email chip to actions-after-submit', () => {
+		// Arrange
+		const propsSchema = {
+			'actions-after-submit': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( { kind: 'plain' } ),
+			} ),
+			email: createMockPropType( {
+				kind: 'object',
+				dependencies: {
+					relation: 'or',
+					terms: [
+						{
+							operator: 'contains',
+							path: [ 'actions-after-submit' ],
+							value: 'email',
+							effect: 'hide',
+						},
+					],
+				},
+				shape: {
+					to: createMockPropType( { kind: 'plain' } ),
+					from: createMockPropType( { kind: 'plain' } ),
+					subject: createMockPropType( { kind: 'plain' } ),
+				},
+			} ),
+		};
+
+		const elementType = createMockElementType( { propsSchema } );
+		const element = mockElement();
+
+		const initialSettings = {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ) ],
+			},
+		};
+
+		const { rerender } = renderWithTheme(
+			<ElementProvider element={ element } elementType={ elementType } settings={ initialSettings }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		expect( screen.queryByText( 'Email Control Content' ) ).not.toBeInTheDocument();
+
+		// Act
+		const updatedSettings = {
+			'actions-after-submit': {
+				$$type: 'array',
+				value: [ wrap( 'collect-submissions' ), wrap( 'email' ) ],
+			},
+		};
+
+		rerender(
+			<ElementProvider element={ element } elementType={ elementType } settings={ updatedSettings }>
+				<SettingsField bind="email" propDisplayName={ __( 'Email', 'elementor' ) }>
+					<div>Email Control Content</div>
+				</SettingsField>
+			</ElementProvider>
+		);
+
+		// Assert
+		expect( screen.getByText( 'Email Control Content' ) ).toBeInTheDocument();
 	} );
 } );
 
@@ -437,12 +688,11 @@ describe( 'SettingsField dependency logic', () => {
 				'control-d': { $$type: 'string', value: 'value-d' },
 			};
 
-			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="control-a" propDisplayName={ __( 'Control A', 'elementor' ) }>
 						<MockControl bind="control-a" />
 					</SettingsField>
@@ -495,12 +745,11 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-control': { $$type: 'string', value: 'dependent-value' },
 			};
 
-			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="parent-control" propDisplayName={ __( 'Parent Control', 'elementor' ) }>
 						<MockControl bind="parent-control" />
 					</SettingsField>
@@ -552,12 +801,11 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-control': { $$type: 'string', value: 'dependent-value' },
 			};
 
-			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -603,12 +851,11 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-control': { $$type: 'string', value: 'dependent-value' },
 			};
 
-			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -657,7 +904,7 @@ describe( 'SettingsField dependency logic', () => {
 			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
 			const element = mockElement();
 
-			jest.mocked( useElementSettings ).mockReturnValue( {
+			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
 				'nested-object': {
 					$$type: 'object',
@@ -666,11 +913,11 @@ describe( 'SettingsField dependency logic', () => {
 						sibling: { $$type: 'string', value: 'sibling-value' },
 					},
 				},
-			} );
+			};
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -759,7 +1006,7 @@ describe( 'SettingsField dependency logic', () => {
 			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
 			const element = mockElement();
 
-			jest.mocked( useElementSettings ).mockReturnValue( {
+			const elementSettings = {
 				'source-control': {
 					$$type: 'string',
 					value: 'initial-value-1',
@@ -774,11 +1021,11 @@ describe( 'SettingsField dependency logic', () => {
 						number: { $$type: 'number', value: 1 },
 					},
 				},
-			} );
+			};
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -836,15 +1083,15 @@ describe( 'SettingsField dependency logic', () => {
 			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
 			const element = mockElement();
 
-			jest.mocked( useElementSettings ).mockReturnValue( {
+			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
 				'dependent-1': { $$type: 'string', value: 'value-1' },
 				'dependent-2': { $$type: 'string', value: 'value-2' },
-			} );
+			};
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -899,15 +1146,15 @@ describe( 'SettingsField dependency logic', () => {
 			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
 			const element = mockElement();
 
-			jest.mocked( useElementSettings ).mockReturnValue( {
+			const elementSettings = {
 				'control-a': { $$type: 'string', value: 'initial-a' },
 				'control-b': { $$type: 'string', value: 'initial-b' },
 				'control-c': { $$type: 'string', value: 'initial-c' },
-			} );
+			};
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="control-a" propDisplayName={ __( 'Control A', 'elementor' ) }>
 						<MockControl bind="control-a" />
 					</SettingsField>
@@ -953,12 +1200,11 @@ describe( 'SettingsField dependency logic', () => {
 				'source-control': { $$type: 'string', value: 'initial-value' },
 				'dependent-control': initialDependentValue,
 			};
-			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
 
 			// Act.
 			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
+				<ElementProvider element={ element } elementType={ elementType } settings={ elementSettings }>
 					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
 						<MockControl bind="source-control" />
 					</SettingsField>
@@ -1051,6 +1297,24 @@ function setup( {
 			},
 			...schemaOverrides[ objBind ],
 		},
+		[ boolBind ]: {
+			kind: 'boolean',
+			key: boolBind,
+			settings: {},
+			meta: {},
+			...schemaOverrides[ boolBind ],
+		},
+		[ boolBindWithDefaultTrue ]: {
+			kind: 'boolean',
+			key: boolBindWithDefaultTrue,
+			default: {
+				$$type: 'boolean',
+				value: true,
+			},
+			settings: {},
+			meta: {},
+			...schemaOverrides[ boolBindWithDefaultTrue ],
+		},
 	} as PropsSchema;
 
 	const elementType = createMockElementType( { propsSchema } );
@@ -1065,7 +1329,11 @@ function setup( {
 	};
 
 	return renderControl(
-		<ElementProvider element={ element } elementType={ elementType }>
+		<ElementProvider
+			element={ element }
+			elementType={ elementType }
+			settings={ values as Record< string, AnyTransformable | null > }
+		>
 			<SettingsField bind={ bind } propDisplayName={ __( 'Text', 'elementor' ) }>
 				<MockControl />
 			</SettingsField>

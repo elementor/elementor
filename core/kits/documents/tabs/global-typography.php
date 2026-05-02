@@ -206,6 +206,8 @@ class Global_Typography extends Tab_Base {
 			]
 		);
 
+		do_action( 'elementor/kit/global-typography/register_controls', $this );
+
 		$this->end_controls_section();
 	}
 }

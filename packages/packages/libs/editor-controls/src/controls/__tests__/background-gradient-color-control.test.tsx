@@ -175,4 +175,60 @@ describe( 'BackgroundGradientOverlay', () => {
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( updatedMockValue );
 	} );
+
+	it( 'should handle radial gradient with undefined angle and undefined positions', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const value: BackgroundGradientOverlayPropValue = {
+			$$type: 'background-gradient-overlay',
+			value: {
+				type: {
+					$$type: 'string',
+					value: 'radial',
+				},
+				angle: undefined,
+				stops: {
+					$$type: 'gradient-color-stop',
+					value: [
+						{
+							$$type: 'color-stop',
+							value: {
+								color: {
+									$$type: 'color',
+									value: 'rgb(0,0,0)',
+								},
+								offset: {
+									$$type: 'number',
+									value: 0,
+								},
+							},
+						},
+						{
+							$$type: 'color-stop',
+							value: {
+								color: {
+									$$type: 'color',
+									value: 'rgb(255,255,255)',
+								},
+								offset: {
+									$$type: 'number',
+									value: 100,
+								},
+							},
+						},
+					],
+				},
+			},
+		};
+
+		const props = {
+			setValue,
+			value,
+			bind: 'background-gradient-overlay',
+			propType: gradientPropType,
+		};
+
+		// Act & Assert - should not crash when rendering with undefined angle.
+		expect( () => renderControl( <BackgroundGradientColorControl />, props ) ).not.toThrow();
+	} );
 } );

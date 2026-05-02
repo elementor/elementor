@@ -1,0 +1,205 @@
+[
+    {
+        "id": "heading-upgrade",
+        "settings": {
+            "classes": {
+                "$$type": "classes",
+                "value": []
+            },
+            "title": {
+                "$$type": "html-v3",
+                "value": "This needs upgrade from a-string to html-v2"
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h2"
+            }
+        },
+        "elements": [],
+        "isInner": false,
+        "widgetType": "e-heading",
+        "elType": "widget",
+        "version": "0.0"
+    },
+    {
+        "id": "heading-downgrade",
+        "settings": {
+            "classes": {
+                "$$type": "classes",
+                "value": []
+            },
+            "title": {
+                "$$type": "html-v3",
+                "value": "This needs downgrade from html-v3 to html-v2"
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "h3"
+            }
+        },
+        "elements": [],
+        "isInner": false,
+        "widgetType": "e-heading",
+        "elType": "widget",
+        "version": "0.0"
+    },
+    {
+        "id": "image-nested-ops",
+        "settings": {
+            "classes": {
+                "$$type": "classes",
+                "value": []
+            },
+            "image": {
+                "$$type": "image",
+                "value": {
+                    "src": {
+                        "$$type": "image-src",
+                        "value": {
+                            "id": {
+                                "$$type": "image-attachment-id",
+                                "value": 123
+                            },
+                            "url": {
+                                "$$type": "url",
+                                "value": "https:\/\/example.com\/image.jpg"
+                            }
+                        }
+                    },
+                    "size": "full"
+                }
+            }
+        },
+        "elements": [],
+        "isInner": false,
+        "widgetType": "e-image",
+        "elType": "widget",
+        "version": "0.0"
+    },
+    {
+        "id": "flexbox-with-shadow",
+        "settings": {
+            "classes": {
+                "$$type": "classes",
+                "value": []
+            }
+        },
+        "elements": [],
+        "isInner": false,
+        "elType": "e-flexbox",
+        "styles": {
+            "test-style": {
+                "id": "test-style",
+                "label": "local",
+                "type": "class",
+                "variants": [
+                    {
+                        "meta": {
+                            "breakpoint": "desktop",
+                            "state": null
+                        },
+                        "props": {
+                            "box-shadow": {
+                                "$$type": "box-shadow",
+                                "value": [
+                                    {
+                                        "$$type": "old-shadow",
+                                        "value": {
+                                            "hOffset": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 0
+                                                }
+                                            },
+                                            "vOffset": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 4
+                                                }
+                                            },
+                                            "blur": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 10
+                                                }
+                                            },
+                                            "spread": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 0
+                                                }
+                                            },
+                                            "color": {
+                                                "$$type": "shadow",
+                                                "value": "rgba(0, 0, 0, 0.5)"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "$$type": "old-shadow",
+                                        "value": {
+                                            "hOffset": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 0
+                                                }
+                                            },
+                                            "vOffset": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 8
+                                                }
+                                            },
+                                            "blur": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 20
+                                                }
+                                            },
+                                            "spread": {
+                                                "$$type": "shadow",
+                                                "value": {
+                                                    "unit": "px",
+                                                    "size": 5
+                                                }
+                                            },
+                                            "color": {
+                                                "$$type": "shadow",
+                                                "value": "rgba(0, 0, 0, 0.3)"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "version": "0.0"
+    },
+    {
+        "id": "div-block-settings",
+        "settings": {
+            "classes": {
+                "$$type": "classes",
+                "value": []
+            },
+            "tag": {
+                "$$type": "string",
+                "value": "section"
+            }
+        },
+        "elements": [],
+        "isInner": false,
+        "elType": "e-div-block",
+        "version": "0.0"
+    }
+]

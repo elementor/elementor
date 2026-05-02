@@ -133,7 +133,7 @@ abstract class WP_Async_Request {
 		}
 
 		return [
-			'timeout'   => 0.01,
+			'timeout'   => 5,
 			'blocking'  => false,
 			'body'      => $this->data,
 			'cookies'   => $_COOKIE,
