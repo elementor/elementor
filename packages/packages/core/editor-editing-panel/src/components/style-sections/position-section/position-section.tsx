@@ -113,10 +113,10 @@ export const PositionSection = () => {
 			{ isNotStatic ? (
 				<>
 					<DimensionsField />
-					<ZIndexField />
 				</>
 			) : null }
 
+			<ZIndexField disabled={ ! isNotStatic } />
 			<PanelDivider />
 			<OffsetField />
 		</SectionContent>
