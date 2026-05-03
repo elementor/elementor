@@ -109,4 +109,26 @@ class Test_Atomic_Heading extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( '<a', $rendered_output );
 		$this->assertStringNotContainsString( 'href="', $rendered_output );
 	}
+
+	public function test__render_heading_with_cssid_should_emit_unescaped_id_attribute(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'_cssid' => 'my-custom-id',
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'id="my-custom-id"', $rendered_output );
+		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
+	}
 }
