@@ -21,9 +21,11 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function should_import( array $data ): bool {
+		$is_settings_import = in_array( 'settings', $data['include'] ?? [], true );
+		$is_design_system_import = in_array( 'design-system', $data['include'] ?? [], true );
+
 		return (
-			isset( $data['include'] ) &&
-			in_array( 'settings', $data['include'], true ) &&
+			( $is_settings_import || $is_design_system_import ) &&
 			! empty( $data['extracted_directory_path'] ) &&
 			$this->is_variables_enabled( $data )
 		);
@@ -49,7 +51,8 @@ class Import extends Import_Runner_Base {
 
 		$repository = new Variables_Repository( $kit );
 
-		$override_all = ! empty( $data['customization']['settings']['variablesOverrideAll'] );
+		$override_all = ! empty( $data['customization']['settings']['variablesOverrideAll'] )
+			|| ( ( $data['customization']['design-system']['conflict_resolution'] ?? 'skip' ) === 'override' );
 
 		if ( $override_all ) {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
