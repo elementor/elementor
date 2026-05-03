@@ -1055,6 +1055,22 @@ trait Css_Shorthand_Parser {
 		'isolation',
 	];
 
+	protected function get_v4_gap_hint( string $prop, string $value ): ?string {
+		if ( str_starts_with( $prop, '-' ) ) {
+			return 'Vendor-prefixed props have no v4 typed equivalent — renders as raw CSS via custom_css.';
+		}
+		if ( 'background' === $prop ) {
+			return 'background supports solid colors (hex, rgb, named, transparent) as typed props; gradients and other complex values render as raw CSS via custom_css.';
+		}
+		if ( in_array( $prop, [ 'background-clip', 'background-blend-mode' ], true ) ) {
+			return 'No v4 typed-prop equivalent — renders as raw CSS via custom_css.';
+		}
+		if ( 'border' === $prop ) {
+			return 'border shorthand has no v4 typed equivalent. Use border-width (typed) and border-style (typed string) separately.';
+		}
+		return null;
+	}
+
 	protected function is_v4_gap( string $prop, string $value ): bool {
 		// Vendor-prefixed props are never valid v4 prop keys.
 		if ( str_starts_with( $prop, '-' ) ) {

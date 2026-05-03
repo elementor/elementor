@@ -130,7 +130,10 @@ trait Page_Spec_Builder {
 				? 'e-flexbox'
 				: ( self::LEAF_WIDGETS[ $widget ] ?? 'e-paragraph' ) );
 
-		$css_data     = '' !== $css ? $this->css_to_props_for_element( $css ) : [ 'props' => [], 'gaps' => [] ];
+		$css_data     = '' !== $css ? $this->css_to_props_for_element( $css ) : [
+			'props' => [],
+			'gaps'  => [],
+		];
 		$user_props   = $css_data['props'];
 		$css_gaps     = $css_data['gaps'];
 		$merged_props = $this->merge_base_style_resets( $user_props, $el_type );
@@ -145,8 +148,13 @@ trait Page_Spec_Builder {
 				'props' => $merged_props,
 			];
 			if ( ! empty( $css_gaps ) ) {
-				$variant['custom_css']        = [ 'raw' => base64_encode( implode( "\n", $css_gaps ) ) ];
-				$this->element_css_gaps[]     = [ 'element_id' => $id, 'css_gaps' => $css_gaps ];
+				$raw_css = implode( "\n", array_column( $css_gaps, 'declaration' ) );
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
+				$variant['custom_css']    = [ 'raw' => base64_encode( $raw_css ) ];
+				$this->element_css_gaps[] = [
+					'element_id' => $id,
+					'css_gaps'   => $css_gaps,
+				];
 			}
 			$styles[ $style_id ] = [
 				'id'       => $style_id,
@@ -303,7 +311,7 @@ trait Page_Spec_Builder {
 
 	private function css_to_props_for_element( string $css ): array {
 		$valid_decls = [];
-		$gap_decls   = [];
+		$gap_entries = [];
 
 		foreach ( array_filter( array_map( 'trim', explode( ';', $css ) ) ) as $decl ) {
 			$colon = strpos( $decl, ':' );
@@ -317,7 +325,14 @@ trait Page_Spec_Builder {
 			}
 
 			if ( $this->is_v4_gap( $prop, $value ) ) {
-				$gap_decls[] = "$prop: $value;";
+				$entry = [
+					'declaration' => "$prop: $value;",
+				];
+				$hint  = $this->get_v4_gap_hint( $prop, $value );
+				if ( null !== $hint ) {
+					$entry['hint'] = $hint;
+				}
+				$gap_entries[] = $entry;
 			} else {
 				$valid_decls[] = $decl;
 			}
@@ -325,7 +340,10 @@ trait Page_Spec_Builder {
 
 		$props = ! empty( $valid_decls ) ? $this->css_to_props( implode( '; ', $valid_decls ) ) : [];
 
-		return [ 'props' => $props, 'gaps' => $gap_decls ];
+		return [
+			'props' => $props,
+			'gaps'  => $gap_entries,
+		];
 	}
 
 	private function make_html_v3( string $text ): array {

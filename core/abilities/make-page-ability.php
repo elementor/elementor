@@ -46,9 +46,13 @@ class Make_Page_Ability extends Abstract_Ability {
 						'type'        => 'string',
 						'description' => 'Post status when creating a new post. Default: "draft". Common: draft | publish | private.',
 					],
-					'slug'        => [
+					'slug'          => [
 						'type'        => 'string',
 						'description' => 'Post slug when creating a new post. WordPress sanitizes and de-duplicates automatically.',
+					],
+					'post_template' => [
+						'type'        => 'string',
+						'description' => 'WordPress page template slug. When creating a new post defaults to "elementor_canvas" (hides theme header/footer — the right choice for standalone landing pages). Pass an empty string to use the theme default instead. When post_id is given, only changed if explicitly provided.',
 					],
 					'sections'    => [
 						'type'        => 'array',
@@ -102,7 +106,12 @@ class Make_Page_Ability extends Abstract_Ability {
 						'  - unknown widget name: did-you-mean suggestion via Levenshtein.',
 						'  - heading with non h1-h6 tag: coerced to h2 with a warning in the response.',
 						'`id` is always auto-generated — do not pass it. To set the HTML id attribute use css_id.',
-						'CSS GAPS: CSS declarations that cannot be represented as typed v4 props (e.g. background: linear-gradient(…), background-clip: text, -webkit-text-fill-color: …, border: N px solid …, vendor-prefixed props) are automatically collected into the style variant\'s custom_css field (base64-encoded) instead of failing. The response includes a css_gaps list per element so you know what was moved.',
+						'LINE BREAKS: heading and paragraph text accepts inline HTML — pass <br> inside the text string to insert a forced line break.',
+						'BUTTON ALIGN: e-button defaults to align-self:flex-start so it sizes to content inside a flex-column. Override in css if you need full width (align-self:stretch).',
+						'CENTERING: margin-inline:auto and margin:0 auto are typed props — use them to center a max-width block (e.g. max-width:1100px on the inner container + margin-inline:auto). align-self:center also works when the parent is flex.',
+						'WIDTH/CALC: width:100%, width:50%, and width:calc(50% - 12px) are fully typed (size props, unit:% or unit:custom) — they are NOT css gaps.',
+						'PAGE TEMPLATE: post_template defaults to "elementor_canvas" for new posts (hides theme header/footer). Pass post_template:"" to use the theme default. For existing posts, omit to leave the template unchanged.',
+						'CSS GAPS: CSS declarations that cannot be represented as typed v4 props (gradients, background-clip, vendor-prefixed props, border shorthand, etc.) are automatically collected into the style variant\'s custom_css field and rendered as raw CSS — no validation failure. The response includes a css_gaps list per element with a hint field explaining why each declaration was moved.',
 						'VAR() LABELS: css values like var(--brand) emit label form (global-color-variable / global-size-variable). Label → ID resolution for element styles is not yet wired — if a variable label is not a valid ID, the save will fail validation. Workaround: pass the UUID directly as css color (e.g. use a global class that references the variable).',
 					] ),
 					'readonly'    => false,
@@ -114,14 +123,19 @@ class Make_Page_Ability extends Abstract_Ability {
 	}
 
 	public function execute( array $input ): array {
-		$sections = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : [];
-		$dry_run  = ! empty( $input['dry_run'] );
+		$sections    = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : [];
+		$dry_run     = ! empty( $input['dry_run'] );
+		$is_new_post = ! isset( $input['post_id'] );
+
+		$post_template = array_key_exists( 'post_template', $input )
+			? ( is_string( $input['post_template'] ) && '' !== $input['post_template'] ? $input['post_template'] : null )
+			: ( $is_new_post ? 'elementor_canvas' : null );
 
 		$this->reset_build_state();
 
 		$created_post = null;
 
-		if ( isset( $input['post_id'] ) ) {
+		if ( ! $is_new_post ) {
 			$post_id = (int) $input['post_id'];
 		} else {
 			if ( empty( $input['title'] ) || ! is_string( $input['title'] ) ) {
@@ -138,6 +152,10 @@ class Make_Page_Ability extends Abstract_Ability {
 			} else {
 				$post_id = 0;
 			}
+		}
+
+		if ( null !== $post_template && ! $dry_run && $post_id > 0 ) {
+			update_post_meta( $post_id, '_wp_page_template', sanitize_text_field( $post_template ) );
 		}
 
 		$spec_errors = [];

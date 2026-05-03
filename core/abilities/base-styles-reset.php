@@ -31,7 +31,7 @@ trait Base_Styles_Reset {
 		'e-div-block' => 'padding: 0; min-width: auto;',
 		'e-heading'   => '',
 		'e-paragraph' => '',
-		'e-button'    => '',
+		'e-button'    => 'align-self: flex-start;',
 		'e-image'     => '',
 	];
 
