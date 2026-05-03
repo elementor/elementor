@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
-import { defaultRangeExtractor, type Range, useVirtualizer } from '@tanstack/react-virtual';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
@@ -45,23 +45,9 @@ export const GlobalClassesList = ( {
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
 
-	const draggedItemIndex = useMemo( () => {
-		if ( ! draggedItemId ) {
-			return -1;
-		}
-		return filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId );
-	}, [ draggedItemId, filteredCssClasses ] );
-
-	const rangeExtractor = useCallback(
-		( range: Range ) => {
-			const indices = new Set( defaultRangeExtractor( range ) );
-			if ( draggedItemIndex >= 0 ) {
-				indices.add( draggedItemIndex );
-			}
-			return [ ...indices ].sort( ( a, b ) => a - b );
-		},
-		[ draggedItemIndex ]
-	);
+	const draggedItemIndex = draggedItemId
+		? filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId )
+		: -1;
 
 	const virtualizer = useVirtualizer( {
 		count: filteredCssClasses.length,
@@ -69,7 +55,16 @@ export const GlobalClassesList = ( {
 		estimateSize: () => ROW_HEIGHT,
 		overscan: OVERSCAN,
 		getItemKey: ( index ) => filteredCssClasses[ index ].id,
-		rangeExtractor,
+		// Keep the actively dragged row mounted even when scrolled out of view.
+		// SortableItem unregisters its render on unmount, which would make the
+		// DragOverlay clone disappear mid-drag.
+		rangeExtractor: ( range ) => {
+			const indices = new Set( defaultRangeExtractor( range ) );
+			if ( draggedItemIndex >= 0 ) {
+				indices.add( draggedItemIndex );
+			}
+			return [ ...indices ].sort( ( a, b ) => a - b );
+		},
 	} );
 
 	useEffect( () => {
