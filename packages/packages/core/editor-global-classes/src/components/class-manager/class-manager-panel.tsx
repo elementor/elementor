@@ -56,19 +56,6 @@ type StopSyncConfirmationDialogProps = {
 
 const id = 'global-classes-manager';
 
-const reloadDocument = () => {
-	const currentDocument = getCurrentDocument();
-	const documentsManager = getV1DocumentsManager();
-
-	documentsManager.invalidateCache();
-
-	return runCommand( 'editor/documents/switch', {
-		id: currentDocument?.id,
-		shouldScroll: false,
-		shouldNavigateToDefaultRoute: false,
-	} );
-};
-
 export type ClassManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
@@ -231,7 +218,7 @@ function ClassManagerPanelRoot( {
 
 	const listArea = (
 		<Box
-      ref={ setScrollElement }
+			ref={ setScrollElement }
 			px={ 2 }
 			sx={ {
 				flexGrow: 1,
@@ -241,7 +228,7 @@ function ClassManagerPanelRoot( {
 		>
 			<GlobalClassesList
 				disabled={ isPublishing }
-        scrollElement={ scrollElement }
+				scrollElement={ scrollElement }
 				onStopSyncRequest={ handleStopSyncRequest }
 				onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
 			/>
