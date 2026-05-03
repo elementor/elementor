@@ -175,7 +175,7 @@ class Global_Class_Post {
 		return false !== $result;
 	}
 
-	public static function create( 
+	public static function create(
 		string $class_id,
 		string $label,
 		array $data,
