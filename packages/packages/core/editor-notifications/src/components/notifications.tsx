@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
 import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
-import { CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
+import { AlertCircleFilled, CircleCheckFilledIcon, CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
 
 import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
-import { notifyAction } from '../slice';
+import { clearAction, notifyAction } from '../slice';
 import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
 import { type NotificationData, type Notifications } from '../types';
 
@@ -32,7 +32,7 @@ const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
 } );
 
 interface AlertSnackbarProps extends CustomContentProps {
-	color: 'promotion' | 'info';
+	color: 'promotion' | 'info' | 'success' | 'error';
 	icon: React.ReactElement;
 }
 
@@ -69,10 +69,20 @@ const InfoSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, 
 	<AlertSnackbar ref={ ref } color="info" icon={ <InfoCircleFilledIcon /> } { ...props } />
 ) );
 
+const SuccessSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="success" icon={ <CircleCheckFilledIcon /> } { ...props } />
+) );
+
+const ErrorSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="error" icon={ <AlertCircleFilled /> } { ...props } />
+) );
+
 const muiToEuiMapper = {
 	default: DefaultCustomSnackbar,
 	promotion: PromotionSnackbar,
 	info: InfoSnackbar,
+	success: SuccessSnackbar,
+	error: ErrorSnackbar,
 };
 
 const Handler = () => {
@@ -104,6 +114,13 @@ export function notify( notification: NotificationData ) {
 	const store = getStore();
 
 	store?.dispatch( notifyAction( notification ) );
+}
+
+export function dismissNotification( id: NotificationData[ 'id' ] ) {
+	const store = getStore();
+
+	closeSnackbar( id );
+	store?.dispatch( clearAction( { id } ) );
 }
 
 /*
