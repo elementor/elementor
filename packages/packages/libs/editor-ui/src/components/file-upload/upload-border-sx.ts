@@ -2,6 +2,7 @@ export const fileUploadBorderSx = {
 	position: 'relative',
 	border: 0,
 	minHeight: 152,
+	borderRadius: 0,
 	'&::before': {
 		content: '""',
 		position: 'absolute',
