@@ -2,9 +2,9 @@ import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
 
-import { type ConflictStrategy, type ImportResult } from '../types';
+import { type ConflictStrategy } from '../types';
 
-const PLACEHOLDER_ENDPOINT = '/design-system/import';
+const IMPORT_ENDPOINT = '/design-system/import';
 const GLOBAL_STYLES_IMPORTED_EVENT = 'elementor/global-styles/imported';
 
 export const IMPORT_DESIGN_SYSTEM_MUTATION_KEY = [ 'design-system-import' ] as const;
@@ -17,7 +17,7 @@ type ImportRequestArgs = {
 	conflictStrategy: ConflictStrategy;
 };
 
-const wait = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+const wait = ( ms: number ): Promise< void > => new Promise( ( resolve: () => void ) => setTimeout( resolve, ms ) );
 
 const broadcastGlobalStylesImported = ( detail: unknown ) => {
 	window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT, { detail } ) );
@@ -26,25 +26,20 @@ const broadcastGlobalStylesImported = ( detail: unknown ) => {
 export const useImportRequest = () => {
 	return useMutation( {
 		mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ],
-		mutationFn: async ( { file, conflictStrategy }: ImportRequestArgs ): Promise< ImportResult > => {
+		mutationFn: async ( { file, conflictStrategy }: ImportRequestArgs ): Promise< void > => {
 			const formData = new FormData();
 			formData.append( 'file', file );
 			formData.append( 'conflict_strategy', conflictStrategy );
 
 			await wait( QA_DELAY_MS );
 
-			const response = await httpService().post( PLACEHOLDER_ENDPOINT, formData, {
+			const response = await httpService().post( IMPORT_ENDPOINT, formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 			} );
 
 			broadcastGlobalStylesImported( response?.data );
 
 			await reloadCurrentDocument();
-
-			return {
-				successfulCount: response?.data?.successful_count ?? 0,
-				unsuccessfulCount: response?.data?.unsuccessful_count ?? 0,
-			};
 		},
 	} );
 };

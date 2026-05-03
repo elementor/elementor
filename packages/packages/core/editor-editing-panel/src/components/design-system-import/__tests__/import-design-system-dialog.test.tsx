@@ -10,7 +10,6 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { TriggerButton } from '../components/trigger-button';
 import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
-import { ImportResultsDialog } from '../import-results-dialog';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
@@ -125,7 +124,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( options.headers[ 'Content-Type' ] ).toBe( 'multipart/form-data' );
 	} );
 
-	it( 'on success: refreshes globals, reloads the document and notifies success with a View action', async () => {
+	it( 'on success: refreshes globals, reloads the document and notifies success', async () => {
 		setupHttpServiceMock();
 
 		const eventListener = jest.fn();
@@ -135,13 +134,12 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		submitImport();
 
-		const successCall = await waitFor(
+		await waitFor(
 			() => {
 				const call = ( notify as jest.Mock ).mock.calls.find(
 					( [ payload ] ) => payload.id === 'design-system-import-succeeded'
 				);
 				expect( call?.[ 0 ].type ).toBe( 'success' );
-				return call;
 			},
 			{ timeout: ASYNC_TIMEOUT_MS }
 		);
@@ -151,21 +149,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( reloadCurrentDocument ).toHaveBeenCalledTimes( 1 );
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
-
-		const successPayload = successCall ? successCall[ 0 ] : undefined;
-		const viewAction = successPayload?.additionalActionProps?.[ 0 ];
-		expect( viewAction ).toEqual( expect.objectContaining( { children: 'View' } ) );
-
-		act( () => {
-			viewAction?.onClick?.();
-		} );
-
-		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-succeeded' );
-		expect( openDialog ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				component: expect.objectContaining( { type: ImportResultsDialog } ),
-			} )
-		);
 
 		window.removeEventListener( 'elementor/global-styles/imported', eventListener );
 	} );
@@ -242,24 +225,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( openDialog ).not.toHaveBeenCalled();
 
 		isMutatingSpy.mockRestore();
-	} );
-} );
-
-describe( '<ImportResultsDialog />', () => {
-	it( 'renders the result counts and calls onClose when Close is clicked', () => {
-		const onClose = jest.fn();
-
-		renderWithTheme(
-			<ImportResultsDialog result={ { successfulCount: 7, unsuccessfulCount: 2 } } onClose={ onClose } />
-		);
-
-		expect( screen.getByText( 'Import results' ) ).toBeInTheDocument();
-		expect( screen.getByText( '7' ) ).toBeInTheDocument();
-		expect( screen.getByText( '2' ) ).toBeInTheDocument();
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
-
-		expect( onClose ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
 

@@ -20,5 +20,5 @@ export const useDialogState = () => {
 	const setConflictStrategy = ( conflictStrategy: ConflictStrategy ) =>
 		setState( ( prev ) => ( { ...prev, conflictStrategy } ) );
 
-	return { state, setFile, setConflictStrategy };
+	return { ...state, setFile, setConflictStrategy };
 };

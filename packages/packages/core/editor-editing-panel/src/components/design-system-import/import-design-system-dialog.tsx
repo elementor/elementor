@@ -24,24 +24,25 @@ const reopenSelf = () => {
 };
 
 export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
-	const { state, setFile, setConflictStrategy } = useDialogState();
+	const { file, conflictStrategy, setFile, setConflictStrategy } = useDialogState();
 	const importMutation = useImportRequest();
 
-	const isImportEnabled = Boolean( state.file && state.conflictStrategy );
+	const isImportEnabled = Boolean( file && conflictStrategy );
 
-	const handleImport = () => {
-		if ( ! state.file || ! state.conflictStrategy ) {
+	const handleImport = async () => {
+		if ( ! file || ! conflictStrategy ) {
 			return;
 		}
 
 		notifyImportInProgress();
-
-		importMutation
-			.mutateAsync( { file: state.file, conflictStrategy: state.conflictStrategy } )
-			.then( notifyImportSuccess )
-			.catch( () => notifyImportFailure( reopenSelf ) );
-
 		onClose();
+
+		try {
+			await importMutation.mutateAsync( { file, conflictStrategy } );
+			notifyImportSuccess();
+		} catch {
+			notifyImportFailure( reopenSelf );
+		}
 	};
 
 	return (
@@ -51,8 +52,8 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 			</DialogHeader>
 			<DialogContent>
 				<Stack spacing={ 3 }>
-					{ state.file ? (
-						<FileUploadRow file={ state.file } onRemove={ () => setFile( null ) } />
+					{ file ? (
+						<FileUploadRow file={ file } onRemove={ () => setFile( null ) } />
 					) : (
 						<FileUploadDropzone
 							onFileSelected={ setFile }
@@ -66,7 +67,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 							) }
 						/>
 					) }
-					<ConflictOptions value={ state.conflictStrategy } onChange={ setConflictStrategy } />
+					<ConflictOptions value={ conflictStrategy } onChange={ setConflictStrategy } />
 				</Stack>
 			</DialogContent>
 			<DialogActions>
