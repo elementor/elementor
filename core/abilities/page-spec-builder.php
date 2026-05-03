@@ -317,7 +317,7 @@ trait Page_Spec_Builder {
 			}
 
 			if ( $this->is_v4_gap( $prop, $value ) ) {
-				$gap_decls[] = "$prop: $value";
+				$gap_decls[] = "$prop: $value;";
 			} else {
 				$valid_decls[] = $decl;
 			}
