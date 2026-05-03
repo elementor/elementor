@@ -2,6 +2,11 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\Global_Class_Post;
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -73,6 +78,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		do_action( 'rest_api_init' );
 
+		( new Global_Class_Post_Type() )->register_post_type();
+
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
 	}
 
@@ -84,21 +91,36 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+		$this->delete_all_global_class_posts();
 	}
 
 	public function test_all__returns_all_global_classes() {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->seed_global_classes_posts($this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
-		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
+		$expected_list = [
+			[
+				'id' => 'g-4-123',
+				'label' => 'pinky',
+			],
+			[
+				'id' => 'g-4-124',
+				'label' => 'bluey',
+			],
+		];
+
+		$this->assertEquals( $expected_list, $response->get_data()['data'] );
+		$this->assertEquals( [], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -106,7 +128,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_admin();
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $this->mock_global_classes );
+		$this->seed_global_classes_posts( $this->mock_global_classes );
 
 		// Act.
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
@@ -115,8 +137,19 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
-		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
+		$expected_list = [
+			[
+				'id' => 'g-4-123',
+				'label' => 'pinky',
+			],
+			[
+				'id' => 'g-4-124',
+				'label' => 'bluey',
+			],
+		];
+
+		$this->assertEquals( $expected_list, $response->get_data()['data'] );
+		$this->assertEquals( [], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -129,8 +162,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( (object) [], $response->get_data()['data'] );
-		$this->assertEquals( [], $response->get_data()['meta']['order'] );
+		$this->assertEquals( [], $response->get_data()['data'] );
+		$this->assertEquals( [], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -165,7 +198,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => [ 'g-1', 'g-2' ],
 		];
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+		$this->seed_global_classes_posts($initial );
 
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
@@ -174,7 +207,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$updated = [
 			'items' => [
-				'g-1' => $class_1,
 				'g-3' => $class_3,
 			],
 			'order' => [ 'g-3', 'g-1' ],
@@ -190,12 +222,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'g-1' => $class_1,
 				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized' ),
@@ -223,22 +255,19 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => [ 'unchanged', 'removed', 'modified', 'not-in-payload' ],
 		];
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+		$this->seed_global_classes_posts($initial );
 
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$new = $this->create_global_class( 'new' );
-		$unchanged_removed_in_server = $this->create_global_class( 'unchanged-removed-in-server' );
 
 		$payload = [
 			'items' => [
-				'unchanged' => $unchanged,
 				'modified' => $this->create_global_class( 'modified', 'yellow' ),
 				'new' => $new,
-				'unchanged-removed-in-server' => $unchanged_removed_in_server,
 			],
-			'order' => [ 'unchanged-removed-in-server', 'modified', 'unchanged', 'new' ],
+			'order' => [ 'not-in-payload', 'modified', 'unchanged', 'new' ],
 			'changes' => [
 				'added' => [ 'new' ],
 				'deleted' => [ 'removed' ],
@@ -251,12 +280,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'unchanged' => $unchanged,
 				'modified' => $this->create_global_class( 'modified', 'yellow' ),
@@ -282,7 +311,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => [ 'g-1', 'g-2' ],
 		];
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_PREVIEW, $initial );
+		$this->seed_global_classes_posts( $initial, true );
 
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
@@ -291,7 +320,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$params = [
 			'items' => [
-				'g-1' => $class_1,
 				'g-3' => $class_3,
 			],
 			'order' => [ 'g-3', 'g-1' ],
@@ -308,18 +336,81 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_PREVIEW );
 
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'g-1' => $class_1,
 				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized' ),
 			],
 			'order' => [ 'g-3', 'g-1' ],
 		], $classes );
+	}
+
+	public function test_put__frontend_publish_after_preview_save_does_not_false_positive_duplicate_same_id() {
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+
+		$this->seed_global_classes_posts( [
+			'items' => [
+				'g-1' => $class_1,
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		Global_Classes_Labels::make( $this->kit )->set_labels( [
+			'g-1' => $class_1['label'],
+		] );
+
+		$g_new = $this->create_global_class( 'g-new', 'green', 'NewClassLabel' );
+
+		$preview_request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$preview_request->set_body_params( [
+			'items' => [
+				'g-new' => $g_new,
+			],
+			'order' => [ 'g-new', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-new' ],
+				'deleted' => [],
+				'modified' => [],
+				'order' => true,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_PREVIEW,
+		] );
+
+		$preview_response = rest_do_request( $preview_request );
+
+		$this->assertSame( 204, $preview_response->get_status() );
+		$this->assertNull( $preview_response->get_data() );
+
+		$frontend_request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+		$frontend_request->set_body_params( [
+			'items' => [
+				'g-new' => $g_new,
+			],
+			'order' => [ 'g-new', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-new' ],
+				'deleted' => [],
+				'modified' => [],
+				'order' => false,
+			],
+			'context' => Global_Classes_Repository::CONTEXT_FRONTEND,
+		] );
+
+		$frontend_response = rest_do_request( $frontend_request );
+
+		$this->assertSame( 204, $frontend_response->get_status() );
+		$this->assertNull( $frontend_response->get_data() );
+
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+
+		$this->assertSame( 'NewClassLabel', $classes['items']['g-new']['label'] );
 	}
 
 	public function test_put__fails_when_unauthorized() {
@@ -501,7 +592,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
-		for ( $i = 0; $i < 100; $i++ ) {
+		for ( $i = 0; $i < 1000; $i++ ) {
 			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
 		}
 
@@ -520,14 +611,16 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert - should succeed.
 		$this->assertSame( 204, $response->get_status() );
 
-		// Act - send the 101st item.
-		$items[ "g-101" ] = $this->create_global_class( "g-101" );
+		// Act - send the 101st item (only the new item, not all items).
+		$new_item = $this->create_global_class( "g-100" );
+		$all_order = array_keys( $items );
+		$all_order[] = "g-100";
 
 		$request->set_body_params( [
-			'items' => $items,
-			'order' => array_keys( $items ),
+			'items' => [ 'g-100' => $new_item ],
+			'order' => $all_order,
 			'changes' => [
-				'added' => [ 'g-101' ],
+				'added' => [ 'g-100' ],
 				'deleted' => [],
 				'modified' => [],
 			]
@@ -594,7 +687,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
@@ -652,7 +745,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => [ 'existing' ],
 		];
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+		$this->seed_global_classes_posts($initial );
 
 		// Act - Try to add a new class with the same label (duplicate)
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
@@ -661,7 +754,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'new' => $new_class,
 			],
 			'order' => [ 'existing', 'new' ],
@@ -677,7 +769,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame( 200, $response->get_status() );
@@ -713,7 +805,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Try to add a new class with the same label (duplicate)
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -722,7 +814,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'new' => $new_class,
 			],
 			'order' => ['existing', 'new'],
@@ -738,7 +829,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert.
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame(200, $response->get_status());
@@ -774,7 +865,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Try to add a new class with the same label that already has DUP_ prefix
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -783,7 +874,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'new' => $new_class,
 			],
 			'order' => ['existing', 'new'],
@@ -798,7 +888,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame(200, $response->get_status());
@@ -834,7 +924,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Try to add a new class with the same very long label
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -843,7 +933,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'new' => $new_class,
 			],
 			'order' => ['existing', 'new'],
@@ -858,7 +947,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 400 when labels are too long (validation error)
 		$this->assertSame(400, $response->get_status());
@@ -883,7 +972,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - First modify the existing class label
 		$modified_class = $this->create_global_class('existing', 'blue', 'NewClass');
@@ -907,7 +996,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$new_class = $this->create_global_class('new', 'red', 'MyClass');
 		$second_payload = [
 			'items' => [
-				'existing' => $modified_class,
 				'new' => $new_class,
 			],
 			'order' => ['existing', 'new'],
@@ -923,7 +1011,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 204 when no duplicates are found (no content)
 		$this->assertSame(204, $response->get_status());
@@ -949,7 +1037,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Add multiple classes where some have duplicate labels
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -961,7 +1049,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'duplicate1' => $duplicate_class_1,
 				'duplicate2' => $duplicate_class_2,
 				'unique1' => $unique_class_1,
@@ -979,7 +1066,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame(200, $response->get_status());
@@ -1018,7 +1105,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => ['existing'],
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Add classes where some labels are duplicates and others are unique
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -1029,7 +1116,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$payload = [
 			'items' => [
-				'existing' => $existing_class,
 				'duplicate' => $duplicate_class,
 				'unique1' => $unique_class_1,
 				'unique2' => $unique_class_2,
@@ -1046,7 +1132,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame(200, $response->get_status());
@@ -1089,7 +1175,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			'order' => $order,
 		];
 
-		$this->kit->update_json_meta(Global_Classes_Repository::META_KEY_FRONTEND, $initial);
+		$this->seed_global_classes_posts($initial);
 
 		// Act - Try to add a class with a duplicate label
 		$request = new \WP_REST_Request('PUT', '/elementor/v1/global-classes');
@@ -1097,7 +1183,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$duplicate_class = $this->create_global_class('duplicate', 'red', 'Class0'); // Duplicate of first class
 
 		$payload = [
-			'items' => array_merge($items, ['duplicate' => $duplicate_class]),
+			'items' => ['duplicate' => $duplicate_class],
 			'order' => array_merge($order, ['duplicate']),
 			'changes' => [
 				'added' => ['duplicate'],
@@ -1110,7 +1196,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request($request);
 
 		// Assert
-		$classes = $this->kit->get_json_meta(Global_Classes_Repository::META_KEY_FRONTEND);
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
 
 		// Should return 200 with content when duplicates are resolved
 		$this->assertSame(200, $response->get_status());
@@ -1162,15 +1248,26 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_editor();
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->seed_global_classes_posts($this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
-		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
+		$expected_list = [
+			[
+				'id' => 'g-4-123',
+				'label' => 'pinky',
+			],
+			[
+				'id' => 'g-4-124',
+				'label' => 'bluey',
+			],
+		];
+
+		$this->assertEquals( $expected_list, $response->get_data()['data'] );
+		$this->assertEquals( [], $response->get_data()['meta'] );
 		$this->assertEquals( 200, $response->get_status() );
 	}
 
@@ -1178,7 +1275,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		wp_set_current_user( 0 );
 
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+		$this->seed_global_classes_posts($this->mock_global_classes );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
@@ -1188,11 +1285,158 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 401, $response->get_status() );
 	}
 
+	public function test_post__returns_styles_for_document() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts($this->mock_global_classes );
+
+		$post_id = $this->factory()->post->create();
+
+		add_post_meta( $post_id, '_elementor_used_global_class', 'g-4-123' );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
+		$request->set_param( 'post_id', $post_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, (array) $data['data'] );
+		$this->assertArrayHasKey( 'g-4-123', (array) $data['data'] );
+		$this->assertArrayNotHasKey( 'g-4-124', (array) $data['data'] );
+		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
+	}
+
+	public function test_post__returns_empty_when_document_has_no_classes() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts($this->mock_global_classes );
+
+		$post_id = $this->factory()->post->create();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
+		$request->set_param( 'post_id', $post_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['data'] );
+		$this->assertEquals( [], $data['meta']['order'] );
+	}
+
+	public function test_styles__returns_definitions_by_ids() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts($this->mock_global_classes );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/styles' );
+		$request->set_param( 'ids', 'g-4-123' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertCount( 1, (array) $data['data'] );
+		$this->assertArrayHasKey( 'g-4-123', (array) $data['data'] );
+		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
+	}
+
+	public function test_styles__returns_explicit_null_for_missing_ids() {
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts($this->mock_global_classes );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/styles' );
+		$request->set_param( 'ids', 'g-4-123,g-missing' );
+		$response = rest_do_request( $request );
+
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertNotNull( $data['data']->{'g-4-123'} );
+		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
+		$this->assertNull( $data['data']->{'g-missing'} );
+		$this->assertEquals( [ 'g-4-123' ], $data['meta']['order'] );
+	}
+
+	public function test_post__returns_explicit_null_for_missing_classes() {
+		$this->act_as_admin();
+
+		$this->seed_global_classes_posts($this->mock_global_classes );
+
+		$post_id = $this->factory()->post->create();
+
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY_FRONTEND, 'g-4-123' );
+		add_post_meta( $post_id, Global_Classes_Relations::META_KEY_FRONTEND, 'g-missing' );
+
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/post' );
+		$request->set_param( 'post_id', $post_id );
+		$response = rest_do_request( $request );
+
+		$data = $response->get_data();
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertNotNull( $data['data']->{'g-4-123'} );
+		$this->assertTrue( property_exists( $data['data'], 'g-missing' ) );
+		$this->assertNull( $data['data']->{'g-missing'} );
+	}
+
 	public function test_register_routes__endpoints_exist() {
 		global $wp_rest_server;
 		$routes = $wp_rest_server->get_routes();
 		$this->assertArrayHasKey( '/elementor/v1/global-classes', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/global-classes/usage', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/global-classes/post', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/global-classes/styles', $routes );
+	}
+
+	private function delete_all_global_class_posts(): void {
+		$post_ids = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
+	}
+
+	private function seed_global_classes_posts( array $payload, bool $duplicate_to_preview_meta = false ): void {
+		$this->delete_all_global_class_posts();
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+
+		$labels = [];
+
+		foreach ( $payload['items'] ?? [] as $class_id => $item ) {
+			$data = [
+				'type' => $item['type'] ?? 'class',
+				'variants' => $item['variants'] ?? [],
+			];
+
+			$post_object = Global_Class_Post::create( $class_id, $item['label'], $data );
+
+			if ( $duplicate_to_preview_meta && $post_object ) {
+				$post_object->update_data( $data, true );
+			}
+
+			$labels[ $class_id ] = $item['label'];
+		}
+
+		Global_Classes_Order::make( $this->kit )->set_order( $payload['order'] ?? [] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( $labels );
+	}
+
+	private function get_repository_snapshot( string $context ): array {
+		return Global_Classes_Repository::make()->context( $context )->all()->get();
 	}
 
 	private function create_global_class( string $id, ?string $color = null, ?string $label = null ) {

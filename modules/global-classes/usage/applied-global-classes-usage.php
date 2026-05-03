@@ -98,19 +98,16 @@ class Applied_Global_Classes_Usage {
 	private function build_class_usages(): void {
 		$this->class_usages = [];
 
-		$class_ids = Global_Classes_Repository::make()
-												->all()
-												->get_items()
-												->keys()
-												->all();
+		$class_ids = array_keys( Global_Classes_Repository::make()->all_labels() );
+		$class_id_set = array_fill_keys( $class_ids, true );
 
 		Plugin::$instance->db->iterate_elementor_documents(
-			function ( $document ) use ( $class_ids ) {
-				$usage = new Document_Usage( $document );
+			function ( $document ) use ( $class_id_set ) {
+				$usage = new Document_Usage( $document, $class_id_set );
 				$usage->analyze();
 
 				foreach ( $usage->get_usages() as $class_id => $class_usage ) {
-					if ( ! in_array( $class_id, $class_ids, true ) ) {
+					if ( ! isset( $class_id_set[ $class_id ] ) ) {
 						continue;
 					}
 

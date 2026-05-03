@@ -28,7 +28,7 @@ class Design_System_Service {
 			? array_values( $global_classes['order'] )
 			: [];
 
-		Global_Classes_Repository::make( $this->kit )
+		Global_Classes_Repository::make( $this->get_kit() )
 			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->put( $items, $order );
 
@@ -69,7 +69,11 @@ class Design_System_Service {
 	}
 
 	private function get_kit(): ?Kit {
-		return $this->kit ?? Plugin::$instance->kits_manager->get_active_kit();
+		if ( ! $this->kit ) {
+			$this->kit = Plugin::$instance->kits_manager->get_active_kit();
+		}
+
+		return $this->kit;
 	}
 
 	private function repository_for( Kit $kit ): Variables_Repository {

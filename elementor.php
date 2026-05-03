@@ -30,6 +30,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'ELEMENTOR_VERSION', '4.1.0' );
 
+// === TEMP DEBUG: trace frontend hang ===
+if ( ! defined( 'DOING_AJAX' ) && ! defined( 'REST_REQUEST' ) && ! is_admin() ) {
+	$_el_debug_start = microtime( true );
+	error_log( '[EL Debug] Plugin file loaded at ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' );
+	add_action( 'init', function() { error_log( '[EL Debug] init: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 0 );
+	add_action( 'wp', function() { error_log( '[EL Debug] wp: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 0 );
+	add_action( 'wp_head', function() { error_log( '[EL Debug] wp_head start: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 0 );
+	add_action( 'wp_enqueue_scripts', function() { error_log( '[EL Debug] wp_enqueue_scripts (pre-elementor): ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 4 );
+	add_action( 'wp_enqueue_scripts', function() { error_log( '[EL Debug] wp_enqueue_scripts (post-register): ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 6 );
+	add_action( 'wp_enqueue_scripts', function() { error_log( '[EL Debug] wp_enqueue_scripts (pre-enqueue): ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 99 );
+	add_action( 'wp_enqueue_scripts', function() { error_log( '[EL Debug] wp_enqueue_scripts (post-enqueue): ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 101 );
+	add_action( 'wp_head', function() { error_log( '[EL Debug] wp_head end: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, PHP_INT_MAX );
+	add_action( 'wp_footer', function() { error_log( '[EL Debug] wp_footer: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 0 );
+	add_action( 'shutdown', function() { error_log( '[EL Debug] shutdown: ' . round( ( microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'] ) * 1000 ) . 'ms' ); }, 0 );
+}
+// === END TEMP DEBUG ===
+
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
 define( 'ELEMENTOR_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) );
