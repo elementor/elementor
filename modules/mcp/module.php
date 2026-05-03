@@ -30,7 +30,7 @@ class Module extends BaseModule {
 			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
 			'description' => __( 'Enable Elementor MCP WP Abilities API.', 'elementor' ),
 			'hidden' => false,
-			'default' => ExperimentsManager::STATE_ACTIVE,
+			'default' => ExperimentsManager::STATE_INACTIVE,
 		];
 	}
 
