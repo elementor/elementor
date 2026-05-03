@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
@@ -16,15 +17,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrate_To_Posts extends Base_Migration {
-	private ?Kit $kit = null;
+	use Has_Kit_Dependency;
 
 	public function up() {
 		$this->ensure_cpt_registered();
-
-		$kit = $this->get_kit();
-		if ( ! $kit ) {
-			return;
-		}
 
 		$migrated = $this->migrate_global_classes_to_posts();
 
@@ -32,7 +28,7 @@ class Migrate_To_Posts extends Base_Migration {
 			return;
 		}
 
-		$this->update_document_tracking( $kit );
+		$this->update_document_tracking();
 
 		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
 		// $this->cleanup_kit_meta();
@@ -108,7 +104,13 @@ class Migrate_To_Posts extends Base_Migration {
 		] );
 	}
 
-	private function update_document_tracking( Kit $kit ): void {
+	private function update_document_tracking(): void {
+		$kit = $this->get_kit();
+
+		if ( ! $kit ) {
+			return;
+		}
+
 		$valid_class_ids = Global_Classes_Order::make( $kit )->get_order();
 
 		if ( empty( $valid_class_ids ) ) {
@@ -138,15 +140,5 @@ class Migrate_To_Posts extends Base_Migration {
 
 		$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
-	}
-
-	private function get_kit(): ?Kit {
-		if ( null !== $this->kit ) {
-			return $this->kit;
-		}
-
-		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		return $this->kit;
 	}
 }
