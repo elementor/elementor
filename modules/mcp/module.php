@@ -28,7 +28,7 @@ class Module extends BaseModule {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
-			'description' => __( 'Enable Elementor MCP WP Abilities API.', 'elementor' ),
+			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. Version WordPress 7.0 or higher. 2. Need to create an app password for you favorite agent. 3. Add to mcp config the server with http: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <app-password>"}}', 'elementor' ),
 			'hidden' => false,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 		];
