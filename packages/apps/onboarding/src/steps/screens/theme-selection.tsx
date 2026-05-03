@@ -43,7 +43,7 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 
 	useEffect( () => {
 		if ( ! selectedValue && ! isInstalled ) {
-			actions.setUserChoice( 'theme_selection', recommendedTheme );
+			actions.setUserChoice( StepId.THEME_SELECTION, recommendedTheme );
 		}
 	}, [ selectedValue, recommendedTheme, isInstalled, actions ] );
 
