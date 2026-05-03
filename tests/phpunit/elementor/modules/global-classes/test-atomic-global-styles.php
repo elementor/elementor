@@ -301,7 +301,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
 			'added' => [],
 			'deleted' => [],
-			'modified' => [ 'g-invalidate-cache' ],
+			'modified' => [],
+			'order' => true
 		] );
 
 		// Assert.
@@ -336,7 +337,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [
 			'added' => [],
 			'deleted' => [],
-			'modified' => [ 'g-invalidate-cache' ],
+			'modified' => [],
+			'order' => true
 		] );
 
 		// Assert.
