@@ -37,10 +37,16 @@ describe( 'globalClassesStylesProvider', () => {
 			order: [ 'style-1', 'style-2' ],
 		};
 
+		const classLabels = {
+			'style-1': 'Style 1',
+			'style-2': 'Style 2',
+		};
+
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		);
 
@@ -73,10 +79,16 @@ describe( 'globalClassesStylesProvider', () => {
 			order: [ 'style-1', 'style-2' ],
 		};
 
+		const classLabels = {
+			'style-1': 'Style 1',
+			'style-2': 'Style 2',
+		};
+
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		);
 
@@ -103,10 +115,15 @@ describe( 'globalClassesStylesProvider', () => {
 			order: [ existingClass.id ],
 		};
 
+		const classLabels = {
+			[ existingClass.id ]: existingClass.label,
+		};
+
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		);
 
@@ -143,10 +160,15 @@ describe( 'globalClassesStylesProvider', () => {
 			order: [],
 		};
 
+		const classLabels = {
+			'style-1': 'Style 1',
+		};
+
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		);
 

@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -70,18 +71,28 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/atomic-widgets/settings/transformers/classes' );
 	}
 
-	public function test_register_styles() {
+	private function create_atomic_global_styles(): Atomic_Global_Styles {
+		$relations = new Global_Classes_Relations();
+
+		return new Atomic_Global_Styles( $relations );
+	}
+
+	public function test_register_styles__for_document_with_tracked_classes() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
 		$global_classes->register_hooks();
-		$context = Plugin::$instance->preview->is_editor_or_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$post_id = $this->factory()->post->create();
+		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$relations->set_styles_for_post( $post_id, [ 'g-4-123', 'g-4-124' ] );
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
 			$this->mock_global_classes['order']
 		);
 
-		// Assert.
 		$expected = Collection::make( $this->mock_global_classes['order'] )
 			->map( fn( $id ) => $this->mock_global_classes['items'][ $id ] ?? null )
 			->filter( fn( $item ) => null !== $item )
@@ -96,16 +107,79 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				[ Atomic_Global_Styles::STYLES_KEY, $context ],
+				[ Atomic_Global_Styles::STYLES_KEY, $post_id, $context ],
 				$this->callback( function ( $callback ) use ( $expected ) {
-					$styles = $callback( [ 1, 2 ] );
+					$styles = $callback();
 					$this->assertEquals( $expected, $styles );
 					return true;
 				} )
 			);
 
 		// Act.
-		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $post_id ] );
+	}
+
+	public function test_register_styles__returns_only_document_classes() {
+		// Arrange.
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+
+		$post_id = $this->factory()->post->create();
+		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$relations->set_styles_for_post( $post_id, [ 'g-4-123' ] );
+
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order']
+		);
+
+		$this->mock_atomic_styles_manager
+			->expects( $this->once() )
+			->method( 'register' )
+			->with(
+				[ Atomic_Global_Styles::STYLES_KEY, $post_id, $context ],
+				$this->callback( function ( $callback ) {
+					$styles = $callback();
+					$this->assertCount( 1, $styles );
+					$this->assertEquals( 'pinky', $styles[0]['label'] );
+					return true;
+				} )
+			);
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $post_id ] );
+	}
+
+	public function test_register_styles__returns_empty_for_document_without_classes() {
+		// Arrange.
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+
+		$post_id = $this->factory()->post->create();
+		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order']
+		);
+
+		$this->mock_atomic_styles_manager
+			->expects( $this->once() )
+			->method( 'register' )
+			->with(
+				[ Atomic_Global_Styles::STYLES_KEY, $post_id, $context ],
+				$this->callback( function ( $callback ) {
+					$styles = $callback();
+					$this->assertEmpty( $styles );
+					return true;
+				} )
+			);
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $post_id ] );
 	}
 
 	public function test_register_styles_ignores_order_entries_without_matching_items() {
@@ -128,7 +202,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_transform_classes_names() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 
 		Global_Classes_Repository::make()->put(
@@ -148,7 +222,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_transform_classes_names__for_preview_mode() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 
 		global $wp_query;
@@ -183,7 +257,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_cache_invalidation_on_frontend_update() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 		$cache_validity = new Cache_Validity();
 
@@ -220,7 +294,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_cache_invalidation_on_preview_update() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 		$cache_validity = new Cache_Validity();
 
@@ -257,7 +331,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 	public function test_cache_invalidation_on_global_cache_clear() {
 		// Arrange.
-		$global_classes = new Atomic_Global_Styles();
+		$global_classes = $this->create_atomic_global_styles();
 		$global_classes->register_hooks();
 
 		$cache_validity = new Cache_Validity();

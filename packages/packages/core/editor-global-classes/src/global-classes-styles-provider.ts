@@ -1,9 +1,4 @@
-import {
-	generateId,
-	type StyleDefinition,
-	type StyleDefinitionID,
-	type StyleDefinitionVariant,
-} from '@elementor/editor-styles';
+import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -14,10 +9,13 @@ import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
 import { GlobalClassLabelAlreadyExistsError, GlobalClassTrackingError } from './errors';
+import { loadExistingClasses } from './load-existing-classes';
 import {
+	placeholderDefinition,
 	selectClass,
+	selectClassLabels,
 	selectData,
-	selectGlobalClasses,
+	selectIsLoadedClass,
 	selectOrderedClasses,
 	slice,
 	type StateWithGlobalClasses,
@@ -27,7 +25,7 @@ import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 const MAX_CLASSES = 100;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
-const PREGENERATED_LINK_PATTERN = /^global-(preview|frontend)-[a-zA-Z_-]+-css$/;
+const PREGENERATED_LINK_PATTERN = /^global-([0-9]+-)?(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
@@ -42,22 +40,39 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	capabilities: getCapabilities(),
 	actions: {
 		all: () => selectOrderedClasses( getState() ),
-		get: ( id ) => selectClass( getState(), id ),
-		resolveCssName: ( id: string ) => {
-			return selectClass( getState(), id )?.label ?? id;
-		},
-		create: ( label, variants: StyleDefinitionVariant[] = [], id?: StyleDefinitionID ) => {
-			const classes = selectGlobalClasses( getState() );
+		get: ( id ) => {
+			const isLoaded = selectIsLoadedClass( getState(), id );
+			const style = selectClass( getState(), id );
 
-			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
+			if ( isLoaded ) {
+				return style;
+			}
+
+			// we populate the style with a placeholder until fully loaded
+			// to avoid crashing the editing panel
+			loadExistingClasses( [ id ] );
+
+			return placeholderDefinition( id, style?.label ?? id );
+		},
+		resolveCssName: ( id: string ) => {
+			const state = getState();
+			const loaded = selectClass( state, id );
+			if ( loaded ) {
+				return loaded.label;
+			}
+			const fromIndex = selectClassLabels( state )[ id ];
+			return fromIndex ?? id;
+		},
+		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
+			const existingClasses = Object.entries( selectClassLabels( getState() ) );
+			const existingLabels = existingClasses.map( ( [ , classLabel ] ) => classLabel );
 
 			if ( existingLabels.includes( label ) ) {
 				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
 			}
 
-			if ( ! id ) {
-				id = generateId( 'g-', Object.keys( classes ) );
-			}
+			const existingIds = existingClasses.map( ( [ id ] ) => id );
+			const id = generateId( 'g-', existingIds );
 
 			dispatch(
 				slice.actions.add( {

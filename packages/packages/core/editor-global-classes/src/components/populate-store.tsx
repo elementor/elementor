@@ -1,33 +1,17 @@
 import { useEffect } from 'react';
-import { __useDispatch as useDispatch } from '@elementor/store';
+import { getCurrentDocument } from '@elementor/editor-documents';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-import { apiClient } from '../api';
-import { slice } from '../store';
+import { fetchAndDispatchGlobalClasses } from '../load-global-classes-state';
 
 export function PopulateStore() {
-	const dispatch = useDispatch();
-
 	useEffect( () => {
-		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
-			( [ previewRes, frontendRes ] ) => {
-				const { data: previewData } = previewRes;
-				const { data: frontendData } = frontendRes;
+		fetchAndDispatchGlobalClasses( getCurrentDocument()?.id );
 
-				dispatch(
-					slice.actions.load( {
-						preview: {
-							items: previewData.data,
-							order: previewData.meta.order,
-						},
-						frontend: {
-							items: frontendData.data,
-							order: frontendData.meta.order,
-						},
-					} )
-				);
-			}
-		);
-	}, [ dispatch ] );
+		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+			await fetchAndDispatchGlobalClasses( getCurrentDocument()?.id );
+		} );
+	}, [] );
 
 	return null;
 }

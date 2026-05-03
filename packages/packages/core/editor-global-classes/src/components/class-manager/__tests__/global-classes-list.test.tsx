@@ -619,11 +619,14 @@ const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
 		order: classes.map( ( { id } ) => id ),
 	};
 
+	const classLabels = Object.fromEntries( classes.map( ( { id, label } ) => [ id, label ] ) );
+
 	act( () =>
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		)
 	);

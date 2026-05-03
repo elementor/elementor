@@ -252,11 +252,17 @@ class Style_Parser {
 	 * the style object to parse
 	 */
 	public function parse( array $style ): Parse_Result {
+		$t = microtime( true );
 		$validate_result = $this->validate( $style );
+		$t_validate = microtime( true ) - $t;
 
+		$t = microtime( true );
 		$sanitize_result = $this->sanitize( $validate_result->unwrap() );
+		$t_sanitize = microtime( true ) - $t;
 
 		$sanitize_result->errors()->merge( $validate_result->errors() );
+
+		error_log( '[GC Import][Timing] Style_Parser::parse(): validate=' . round( $t_validate * 1000, 2 ) . 'ms, sanitize=' . round( $t_sanitize * 1000, 2 ) . 'ms' );
 
 		return $sanitize_result;
 	}
