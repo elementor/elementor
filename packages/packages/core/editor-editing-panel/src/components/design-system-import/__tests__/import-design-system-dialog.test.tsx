@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
 import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
@@ -128,7 +129,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		setupHttpServiceMock();
 
 		const eventListener = jest.fn();
-		window.addEventListener( 'elementor/global-styles/imported', eventListener );
+		window.addEventListener( GLOBAL_STYLES_IMPORTED_EVENT, eventListener );
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
@@ -150,7 +151,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
-		window.removeEventListener( 'elementor/global-styles/imported', eventListener );
+		window.removeEventListener( GLOBAL_STYLES_IMPORTED_EVENT, eventListener );
 	} );
 
 	it( 'on failure: notifies error and the Try again action reopens the import dialog', async () => {
