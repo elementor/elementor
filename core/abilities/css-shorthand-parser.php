@@ -983,4 +983,141 @@ trait Css_Shorthand_Parser {
 			],
 		];
 	}
+
+	private const VALID_STRING_PROPS = [
+		'display',
+		'position',
+		'flex-direction',
+		'flex-wrap',
+		'flex-flow',
+		'justify-content',
+		'justify-self',
+		'justify-items',
+		'align-items',
+		'align-content',
+		'align-self',
+		'text-align',
+		'text-decoration',
+		'text-decoration-line',
+		'text-decoration-style',
+		'text-transform',
+		'text-overflow',
+		'font-weight',
+		'font-style',
+		'font-variant',
+		'font-family',
+		'font-stretch',
+		'overflow',
+		'overflow-x',
+		'overflow-y',
+		'cursor',
+		'pointer-events',
+		'user-select',
+		'visibility',
+		'resize',
+		'white-space',
+		'word-break',
+		'word-wrap',
+		'overflow-wrap',
+		'background-repeat',
+		'background-position',
+		'background-attachment',
+		'background-origin',
+		'border-style',
+		'outline-style',
+		'object-fit',
+		'object-position',
+		'mix-blend-mode',
+		'float',
+		'clear',
+		'transition',
+		'animation',
+		'transform',
+		'transform-origin',
+		'transform-style',
+		'box-sizing',
+		'list-style',
+		'list-style-type',
+		'list-style-position',
+		'content',
+		'vertical-align',
+		'direction',
+		'writing-mode',
+		'will-change',
+		'aspect-ratio',
+		'grid-template-columns',
+		'grid-template-rows',
+		'grid-template',
+		'grid-column',
+		'grid-row',
+		'grid-area',
+		'column-span',
+		'isolation',
+	];
+
+	protected function is_v4_gap( string $prop, string $value ): bool {
+		// Vendor-prefixed props are never valid v4 prop keys.
+		if ( str_starts_with( $prop, '-' ) ) {
+			return true;
+		}
+
+		// background with a non-color value cannot be typed as $$type:"background".
+		if ( 'background' === $prop ) {
+			return null === $this->resolve_color( $value );
+		}
+
+		return ! $this->is_known_v4_prop( $prop );
+	}
+
+	private function is_known_v4_prop( string $prop ): bool {
+		// margin / padding (shorthand + axes + side variants)
+		if ( 'margin' === $prop || 'padding' === $prop ||
+			str_starts_with( $prop, 'margin-' ) || str_starts_with( $prop, 'padding-' ) ) {
+			return true;
+		}
+
+		// border-radius (shorthand + per-corner)
+		if ( 'border-radius' === $prop || str_ends_with( $prop, '-radius' ) ) {
+			return true;
+		}
+
+		// border-width (shorthand + per-side)
+		if ( 'border-width' === $prop ||
+			( str_starts_with( $prop, 'border-' ) && str_ends_with( $prop, '-width' ) ) ) {
+			return true;
+		}
+
+		// positioning
+		if ( in_array( $prop, self::POSITIONING_KEYS, true ) ) {
+			return true;
+		}
+
+		// flex shorthand
+		if ( 'flex' === $prop ) {
+			return true;
+		}
+
+		// color props
+		if ( in_array( $prop, self::color_props(), true ) ) {
+			return true;
+		}
+
+		// explicitly handled scalar props
+		if ( in_array( $prop, [ 'box-shadow', 'opacity', 'background-color', 'background', 'background-size', 'line-height' ], true ) ) {
+			return true;
+		}
+
+		// number props
+		if ( in_array( $prop, self::number_props(), true ) ) {
+			return true;
+		}
+
+		// size props
+		if ( in_array( $prop, self::size_props(), true ) ) {
+			return true;
+		}
+
+		// string props valid in the v4 schema
+		return in_array( $prop, self::VALID_STRING_PROPS, true );
+	}
 }

@@ -19,6 +19,14 @@ trait Page_Spec_Builder {
 	use Css_Shorthand_Parser;
 	use Base_Styles_Reset;
 
+	private array $element_css_gaps = [];
+	private array $build_warnings   = [];
+
+	protected function reset_build_state(): void {
+		$this->element_css_gaps = [];
+		$this->build_warnings   = [];
+	}
+
 	private const CONTAINER_SYNONYMS = [
 		'container'   => 'e-flexbox',
 		'flexbox'     => 'e-flexbox',
@@ -71,7 +79,7 @@ trait Page_Spec_Builder {
 		if ( $is_leaf && 'heading' === strtolower( (string) $widget ) && isset( $node['tag'] ) ) {
 			$tag = strtolower( (string) $node['tag'] );
 			if ( ! in_array( $tag, self::HEADING_TAGS, true ) ) {
-				$errors[] = "$path.tag: expected one of [" . implode( ', ', self::HEADING_TAGS ) . "], got `{$node['tag']}`.";
+				$this->build_warnings[] = "$path: tag `{$node['tag']}` is not valid for e-heading — defaulted to h2.";
 			}
 		}
 
@@ -122,24 +130,29 @@ trait Page_Spec_Builder {
 				? 'e-flexbox'
 				: ( self::LEAF_WIDGETS[ $widget ] ?? 'e-paragraph' ) );
 
-		$user_props   = '' !== $css ? $this->css_to_props( $css ) : [];
+		$css_data     = '' !== $css ? $this->css_to_props_for_element( $css ) : [ 'props' => [], 'gaps' => [] ];
+		$user_props   = $css_data['props'];
+		$css_gaps     = $css_data['gaps'];
 		$merged_props = $this->merge_base_style_resets( $user_props, $el_type );
 
-		if ( ! empty( $merged_props ) ) {
-			$style_id            = 'e-' . $id . '-s';
+		if ( ! empty( $merged_props ) || ! empty( $css_gaps ) ) {
+			$style_id = 'e-' . $id . '-s';
+			$variant  = [
+				'meta'  => [
+					'breakpoint' => 'desktop',
+					'state'      => null,
+				],
+				'props' => $merged_props,
+			];
+			if ( ! empty( $css_gaps ) ) {
+				$variant['custom_css']        = [ 'raw' => base64_encode( implode( "\n", $css_gaps ) ) ];
+				$this->element_css_gaps[]     = [ 'element_id' => $id, 'css_gaps' => $css_gaps ];
+			}
 			$styles[ $style_id ] = [
 				'id'       => $style_id,
 				'type'     => 'class',
 				'label'    => 'local',
-				'variants' => [
-					[
-						'meta'  => [
-							'breakpoint' => 'desktop',
-							'state'      => null,
-						],
-						'props' => $merged_props,
-					],
-				],
+				'variants' => [ $variant ],
 			];
 			array_unshift( $classes, $style_id );
 		}
@@ -215,10 +228,13 @@ trait Page_Spec_Builder {
 		$tag  = isset( $spec['tag'] ) && is_string( $spec['tag'] ) ? strtolower( $spec['tag'] ) : null;
 
 		if ( 'heading' === $widget ) {
+			if ( null !== $tag && ! in_array( $tag, self::HEADING_TAGS, true ) ) {
+				$tag = 'h2';
+			}
 			$settings['title'] = $this->make_html_v3( $text ?? 'Heading' );
 			$settings['tag']   = [
 				'$$type' => 'string',
-				'value'  => null !== $tag ? $tag : 'h2',
+				'value'  => $tag ?? 'h2',
 			];
 			return;
 		}
@@ -283,6 +299,33 @@ trait Page_Spec_Builder {
 				],
 			];
 		}
+	}
+
+	private function css_to_props_for_element( string $css ): array {
+		$valid_decls = [];
+		$gap_decls   = [];
+
+		foreach ( array_filter( array_map( 'trim', explode( ';', $css ) ) ) as $decl ) {
+			$colon = strpos( $decl, ':' );
+			if ( false === $colon ) {
+				continue;
+			}
+			$prop  = strtolower( trim( substr( $decl, 0, $colon ) ) );
+			$value = trim( substr( $decl, $colon + 1 ) );
+			if ( '' === $prop || '' === $value ) {
+				continue;
+			}
+
+			if ( $this->is_v4_gap( $prop, $value ) ) {
+				$gap_decls[] = "$prop: $value";
+			} else {
+				$valid_decls[] = $decl;
+			}
+		}
+
+		$props = ! empty( $valid_decls ) ? $this->css_to_props( implode( '; ', $valid_decls ) ) : [];
+
+		return [ 'props' => $props, 'gaps' => $gap_decls ];
 	}
 
 	private function make_html_v3( string $text ): array {

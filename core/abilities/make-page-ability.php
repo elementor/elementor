@@ -72,6 +72,14 @@ class Make_Page_Ability extends Abstract_Ability {
 					'dry_run'   => [ 'type' => 'boolean' ],
 					'elements'  => [ 'type' => 'array' ],
 					'errors'    => [ 'type' => 'array' ],
+					'warnings'  => [
+						'type'        => 'array',
+						'description' => 'Non-fatal issues resolved automatically (e.g. invalid heading tag defaulted to h2).',
+					],
+					'css_gaps'  => [
+						'type'        => 'array',
+						'description' => 'CSS declarations that could not be converted to v4 props and were written to custom_css instead. Each entry: { element_id, css_gaps[] }.',
+					],
 				],
 			],
 			'meta' => [
@@ -92,8 +100,9 @@ class Make_Page_Ability extends Abstract_Ability {
 						'  - widget_type: use `widget`, not `widget_type`.',
 						'  - content: use `text`, not `content`, on leaf widgets.',
 						'  - unknown widget name: did-you-mean suggestion via Levenshtein.',
-						'  - heading with non h1-h6 tag: explicit enum error.',
+						'  - heading with non h1-h6 tag: coerced to h2 with a warning in the response.',
 						'`id` is always auto-generated — do not pass it. To set the HTML id attribute use css_id.',
+						'CSS GAPS: CSS declarations that cannot be represented as typed v4 props (e.g. background: linear-gradient(…), background-clip: text, -webkit-text-fill-color: …, border: N px solid …, vendor-prefixed props) are automatically collected into the style variant\'s custom_css field (base64-encoded) instead of failing. The response includes a css_gaps list per element so you know what was moved.',
 						'VAR() LABELS: css values like var(--brand) emit label form (global-color-variable / global-size-variable). Label → ID resolution for element styles is not yet wired — if a variable label is not a valid ID, the save will fail validation. Workaround: pass the UUID directly as css color (e.g. use a global class that references the variable).',
 					] ),
 					'readonly'    => false,
@@ -107,6 +116,8 @@ class Make_Page_Ability extends Abstract_Ability {
 	public function execute( array $input ): array {
 		$sections = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : [];
 		$dry_run  = ! empty( $input['dry_run'] );
+
+		$this->reset_build_state();
 
 		$created_post = null;
 
@@ -136,10 +147,11 @@ class Make_Page_Ability extends Abstract_Ability {
 
 		if ( ! empty( $spec_errors ) && $dry_run ) {
 			return [
-				'success' => false,
-				'post_id' => $post_id,
-				'dry_run' => true,
-				'errors'  => $spec_errors,
+				'success'  => false,
+				'post_id'  => $post_id,
+				'dry_run'  => true,
+				'errors'   => $spec_errors,
+				'warnings' => $this->build_warnings,
 			];
 		}
 		if ( ! empty( $spec_errors ) ) {
@@ -161,6 +173,14 @@ class Make_Page_Ability extends Abstract_Ability {
 		if ( null !== $created_post ) {
 			$result['edit_url']  = $created_post['edit_url'];
 			$result['permalink'] = $created_post['permalink'];
+		}
+
+		if ( ! empty( $this->build_warnings ) ) {
+			$result['warnings'] = $this->build_warnings;
+		}
+
+		if ( ! empty( $this->element_css_gaps ) ) {
+			$result['css_gaps'] = $this->element_css_gaps;
 		}
 
 		return $result;

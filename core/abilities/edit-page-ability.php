@@ -62,6 +62,14 @@ class Edit_Page_Ability extends Abstract_Ability {
 						'description' => 'Built element nodes (present when dry_run is true).',
 					],
 					'errors'    => [ 'type' => 'array' ],
+					'warnings'  => [
+						'type'        => 'array',
+						'description' => 'Non-fatal issues resolved automatically (e.g. invalid heading tag defaulted to h2).',
+					],
+					'css_gaps'  => [
+						'type'        => 'array',
+						'description' => 'CSS declarations moved to custom_css. Each entry: { element_id, css_gaps[] }.',
+					],
 				],
 			],
 			'meta' => [
@@ -91,6 +99,8 @@ class Edit_Page_Ability extends Abstract_Ability {
 		$sections = isset( $input['sections'] ) && is_array( $input['sections'] ) ? $input['sections'] : [];
 		$dry_run  = ! empty( $input['dry_run'] );
 
+		$this->reset_build_state();
+
 		$spec_errors = [];
 		foreach ( $sections as $i => $section ) {
 			$this->validate_spec( $section, "sections[$i]", $spec_errors );
@@ -98,10 +108,11 @@ class Edit_Page_Ability extends Abstract_Ability {
 
 		if ( ! empty( $spec_errors ) && $dry_run ) {
 			return [
-				'success' => false,
-				'post_id' => $post_id,
-				'dry_run' => true,
-				'errors'  => $spec_errors,
+				'success'  => false,
+				'post_id'  => $post_id,
+				'dry_run'  => true,
+				'errors'   => $spec_errors,
+				'warnings' => $this->build_warnings,
 			];
 		}
 		if ( ! empty( $spec_errors ) ) {
@@ -115,13 +126,20 @@ class Edit_Page_Ability extends Abstract_Ability {
 		}
 
 		if ( $dry_run ) {
-			return [
+			$response = [
 				'success'  => true,
 				'post_id'  => $post_id,
 				'dry_run'  => true,
 				'elements' => $elements,
 				'errors'   => [],
 			];
+			if ( ! empty( $this->build_warnings ) ) {
+				$response['warnings'] = $this->build_warnings;
+			}
+			if ( ! empty( $this->element_css_gaps ) ) {
+				$response['css_gaps'] = $this->element_css_gaps;
+			}
+			return $response;
 		}
 
 		$append_input = [
@@ -131,12 +149,22 @@ class Edit_Page_Ability extends Abstract_Ability {
 
 		$result = ( new Append_Elements_Ability() )->execute( $append_input );
 
-		return [
+		$response = [
 			'success'   => $result['success'],
 			'post_id'   => $post_id,
 			'added'     => count( $elements ),
 			'edit_url'  => admin_url( "post.php?post={$post_id}&action=elementor" ),
 			'permalink' => get_permalink( $post_id ) ? get_permalink( $post_id ) : null,
 		];
+
+		if ( ! empty( $this->build_warnings ) ) {
+			$response['warnings'] = $this->build_warnings;
+		}
+
+		if ( ! empty( $this->element_css_gaps ) ) {
+			$response['css_gaps'] = $this->element_css_gaps;
+		}
+
+		return $response;
 	}
 }
