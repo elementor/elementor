@@ -17,11 +17,12 @@ type ImportRequestArgs = {
 	conflictStrategy: ConflictStrategy;
 };
 
-const wait = ( ms: number ): Promise< void > => new Promise( ( resolve: () => void ) => setTimeout( resolve, ms ) );
-
-const broadcastGlobalStylesImported = ( detail: unknown ) => {
-	window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT, { detail } ) );
+export type ImportedGlobalStylesPayload = {
+	global_variables?: { data: Record< string, unknown > };
+	global_classes?: { items: Record< string, unknown >; order: string[] };
 };
+
+const wait = ( ms: number ): Promise< void > => new Promise( ( resolve: () => void ) => setTimeout( resolve, ms ) );
 
 export const useImportRequest = () => {
 	return useMutation( {
@@ -33,11 +34,15 @@ export const useImportRequest = () => {
 
 			await wait( QA_DELAY_MS );
 
-			const response = await httpService().post( IMPORT_ENDPOINT, formData, {
+			const response = await httpService().post< ImportedGlobalStylesPayload >( IMPORT_ENDPOINT, formData, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 			} );
 
-			broadcastGlobalStylesImported( response?.data );
+			window.dispatchEvent(
+				new CustomEvent< ImportedGlobalStylesPayload >( GLOBAL_STYLES_IMPORTED_EVENT, {
+					detail: response?.data,
+				} )
+			);
 
 			await reloadCurrentDocument();
 		},

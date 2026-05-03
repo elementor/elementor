@@ -4,7 +4,12 @@ import { UploadIcon } from '@elementor/icons';
 import { Card, Link, Stack, Typography, useUnstableDropZone } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { fileUploadBorderSx } from './upload-border-sx';
+const cardSx = {
+	minHeight: 152,
+	border: '2px dashed',
+	borderColor: 'divider',
+	borderRadius: 1,
+};
 
 type Props = {
 	onFileSelected: ( file: File ) => void;
@@ -57,7 +62,7 @@ export const FileUploadDropzone = ( {
 			onDragEnter={ dropZoneProps.onDragEnter }
 			onDragLeave={ dropZoneProps.onDragLeave }
 			onDragOver={ dropZoneProps.onDragOver }
-			sx={ fileUploadBorderSx }
+			sx={ cardSx }
 		>
 			<Stack alignItems="center" spacing={ 1 } padding={ 3 }>
 				<UploadIcon fontSize="medium" />

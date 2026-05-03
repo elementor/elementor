@@ -18,7 +18,7 @@ export { PromotionPopover } from './components/promotions/promotion-popover';
 export { PromotionChip } from './components/promotions/promotion-chip';
 export { PromotionAlert } from './components/promotions/promotion-alert';
 export { FloatingActionsBar, useFloatingActionsBar } from './components/floating-bar';
-export { FileUploadDropzone, FileUploadRow, fileUploadBorderSx } from './components/file-upload';
+export { FileUploadDropzone, FileUploadRow } from './components/file-upload';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';

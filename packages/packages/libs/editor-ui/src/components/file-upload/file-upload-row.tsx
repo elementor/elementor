@@ -3,9 +3,14 @@ import { XIcon } from '@elementor/icons';
 import { Card, IconButton, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { fileUploadBorderSx } from './upload-border-sx';
-
 const BYTES_PER_KILOBYTE = 1024;
+
+const cardSx = {
+	minHeight: 152,
+	border: '2px dashed',
+	borderColor: 'divider',
+	borderRadius: 1,
+};
 
 type Props = {
 	file: File;
@@ -20,7 +25,7 @@ const formatFileSize = ( sizeInBytes: number ) => {
 
 export const FileUploadRow = ( { file, onRemove, statusLabel }: Props ) => {
 	return (
-		<Card variant="outlined" sx={ fileUploadBorderSx }>
+		<Card variant="outlined" sx={ cardSx }>
 			<Stack
 				direction="row"
 				alignItems="center"
@@ -38,7 +43,7 @@ export const FileUploadRow = ( { file, onRemove, statusLabel }: Props ) => {
 					</Typography>
 				</Stack>
 				<IconButton size="small" onClick={ onRemove } aria-label={ __( 'Remove file', 'elementor' ) }>
-					<XIcon fontSize="small" />
+					<XIcon fontSize="inherit" />
 				</IconButton>
 			</Stack>
 		</Card>
