@@ -15,7 +15,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_wp_abilities_api';
 
 	public function get_name() {
-		return 'Elementor MCP WP Abilities API';
+		return 'elementor-mcp-server';
 	}
 
 	public static function is_active() {
