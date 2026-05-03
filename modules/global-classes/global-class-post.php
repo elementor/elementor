@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Class_Post {
 	use Has_Preview_Context;
 
+
+	const META_KEY_VERSION = '_elementor_version';
 	const META_KEY_ID = '_elementor_global_class_id';
 	const META_KEY_DATA = '_elementor_global_class_data';
 	const META_KEY_DATA_PREVIEW = '_elementor_global_class_data_preview';
@@ -85,7 +87,7 @@ class Global_Class_Post {
 
 	public function get_data(): array {
 		$data = $this->get_context_data();
-		$meta_key = $this->get_data_meta_key();
+		$meta_key = $this->get_context_key( 'data' );
 
 		if ( empty( $data ) && $this->is_preview() ) {
 			$data = $this->get_frontend_data();
@@ -134,34 +136,6 @@ class Global_Class_Post {
 		return $result;
 	}
 
-	private function get_context_data(): array {
-		$data = get_post_meta( $this->post->ID, $this->get_data_meta_key(), true );
-
-		return is_array( $data ) ? $data : [];
-	}
-
-	private function get_data_meta_key(): string {
-		return $this->get_context_key( 'data' );
-	}
-
-	private function get_frontend_data(): array {
-		$data = get_post_meta( $this->post->ID, self::META_KEY_DATA, true );
-
-		return is_array( $data ) ? $data : [];
-	}
-
-	public function update_data( array $data, bool $is_preview_update = false ): bool {
-		$meta_key = $is_preview_update ? self::META_KEY_DATA_PREVIEW : self::META_KEY_DATA;
-
-		$result = update_post_meta( $this->post->ID, $meta_key, $data );
-
-		if ( ! $is_preview_update ) {
-			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
-		}
-
-		return false !== $result;
-	}
-
 	public function update_label( string $label ): bool {
 		$result = wp_update_post( [
 			'ID' => $this->post->ID,
@@ -171,16 +145,43 @@ class Global_Class_Post {
 		return ! is_wp_error( $result );
 	}
 
-	public function update_order( int $order ): bool {
-		$result = wp_update_post( [
-			'ID' => $this->post->ID,
-			'menu_order' => $order,
-		] );
+	private function get_context_data(): array {
+		$data = get_post_meta( $this->post->ID, $this->get_context_key( 'data' ), true );
 
-		return ! is_wp_error( $result );
+		return is_array( $data ) ? $data : [];
 	}
 
-	public static function create( string $class_id, string $label, array $data, int $order = 0 ): ?self {
+	private function get_frontend_data(): array {
+		$data = get_post_meta( $this->post->ID, self::META_KEY_DATA, true );
+
+		return is_array( $data ) ? $data : [];
+	}
+
+	public function update_data(
+		array $data,
+		bool $is_preview_update = false,
+		string $version = ELEMENTOR_VERSION
+	): bool {
+		$meta_key = $is_preview_update ? self::META_KEY_DATA_PREVIEW : self::META_KEY_DATA;
+
+		$result = update_post_meta( $this->post->ID, $meta_key, $data );
+
+		if ( ! $is_preview_update ) {
+			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
+		}
+
+		update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
+
+		return false !== $result;
+	}
+
+	public static function create( 
+		string $class_id,
+		string $label,
+		array $data,
+		int $order = 0,
+		string $version = ELEMENTOR_VERSION
+	): ?self {
 		$post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_title' => $label,
@@ -194,6 +195,7 @@ class Global_Class_Post {
 
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
 		update_post_meta( $post_id, self::META_KEY_DATA, $data );
+		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
 
 		return self::from_post_id( $post_id );
 	}

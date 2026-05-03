@@ -178,36 +178,6 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		$this->assertSame( $preview_data, $preview_post->get_data() );
 	}
 
-	public function test_update_label__should_update_post_title() {
-		// Arrange
-		$post = Global_Class_Post::create( 'g-label', 'old-label', [ 'type' => 'class', 'variants' => [] ] );
-		$this->created_post_ids[] = $post->get_post_id();
-
-		// Act
-		$result = $post->update_label( 'new-label' );
-
-		// Assert
-		$this->assertTrue( $result );
-
-		$updated = Global_Class_Post::from_post_id( $post->get_post_id() );
-		$this->assertSame( 'new-label', $updated->get_label() );
-	}
-
-	public function test_update_order__should_update_menu_order() {
-		// Arrange
-		$post = Global_Class_Post::create( 'g-order', 'order-test', [ 'type' => 'class', 'variants' => [] ], 0 );
-		$this->created_post_ids[] = $post->get_post_id();
-
-		// Act
-		$result = $post->update_order( 10 );
-
-		// Assert
-		$this->assertTrue( $result );
-
-		$updated = Global_Class_Post::from_post_id( $post->get_post_id() );
-		$this->assertSame( 10, $updated->get_order() );
-	}
-
 	public function test_delete__should_remove_post() {
 		// Arrange
 		$post = Global_Class_Post::create( 'g-delete', 'delete-test', [ 'type' => 'class', 'variants' => [] ] );

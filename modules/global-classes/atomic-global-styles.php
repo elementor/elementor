@@ -31,7 +31,7 @@ class Atomic_Global_Styles {
 
 		add_action(
 			'deleted_post',
-			fn( $post_id ) => $this->on_post_delete( $post_id )
+			fn( $post_id ) => $this->on_kit_delete( $post_id )
 		);
 
 		add_action(
@@ -98,20 +98,12 @@ class Atomic_Global_Styles {
 		return $styles;
 	}
 
-	private function on_post_delete( $post_id ) {
-		if ( Global_Class_Post_Type::CPT === get_post_type( $post_id ) ) {
-			$class_id = get_post_meta( $post_id, Global_Class_Post::META_KEY_ID, true );
-
-			if ( $class_id ) {
-				$this->invalidate_cache_for_class( $class_id );
-			}
-
+	private function on_kit_delete( $post_id ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
 			return;
 		}
 
-		if ( Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
-			$this->invalidate_all_cache();
-		}
+		$this->invalidate_all_cache();
 	}
 
 	private function invalidate_cache_for_updated_classes( string $context, array $changes ) {
@@ -141,24 +133,11 @@ class Atomic_Global_Styles {
 		}
 
 		if ( empty( $document_ids ) ) {
-			$this->invalidate_all_cache( $context );
-
 			return;
 		}
 
 		foreach ( array_keys( $document_ids ) as $post_id ) {
 			$this->invalidate_document_cache( $post_id, $context );
-		}
-	}
-
-	private function invalidate_cache_for_class( string $class_id, ?string $context = null ) {
-		$document_ids = array_values( array_unique( array_merge(
-			( new Global_Classes_Relations() )->get_posts_by_style( $class_id ),
-			( new Global_Classes_Relations() )->set_preview( true )->get_posts_by_style( $class_id )
-		) ) );
-
-		foreach ( $document_ids as $doc_id ) {
-			$this->invalidate_document_cache( $doc_id, $context );
 		}
 	}
 
