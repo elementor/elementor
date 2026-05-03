@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { reloadCurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -11,7 +11,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
+import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -109,7 +109,7 @@ export const { panel, usePanelActions } = createPanel( {
 	},
 	onClose: async () => {
 		changeEditMode( 'edit' );
-		await reloadDocument();
+		await reloadCurrentDocument();
 		unblockPanelInteractions();
 	},
 	isOpenPreviousElement: true,
@@ -137,6 +137,7 @@ function ClassManagerPanelRoot( {
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -230,6 +231,7 @@ function ClassManagerPanelRoot( {
 
 	const listArea = (
 		<Box
+      ref={ setScrollElement }
 			px={ 2 }
 			sx={ {
 				flexGrow: 1,
@@ -239,6 +241,7 @@ function ClassManagerPanelRoot( {
 		>
 			<GlobalClassesList
 				disabled={ isPublishing }
+        scrollElement={ scrollElement }
 				onStopSyncRequest={ handleStopSyncRequest }
 				onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
 			/>
