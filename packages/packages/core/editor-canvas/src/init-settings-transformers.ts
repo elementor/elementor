@@ -1,6 +1,7 @@
 import { settingsTransformersRegistry } from './settings-transformers-registry';
 import { attributesTransformer } from './transformers/settings/attributes-transformer';
 import { createClassesTransformer } from './transformers/settings/classes-transformer';
+import { dateRangeTransformer } from './transformers/settings/date-range-transformer';
 import { dateTimeTransformer } from './transformers/settings/date-time-transformer';
 import { htmlV2Transformer } from './transformers/settings/html-v2-transformer';
 import { htmlV3Transformer } from './transformers/settings/html-v3-transformer';
@@ -25,5 +26,6 @@ export function initSettingsTransformers() {
 		.register( 'date-time', dateTimeTransformer )
 		.register( 'html-v2', htmlV2Transformer )
 		.register( 'html-v3', htmlV3Transformer )
+		.register( 'date-range', dateRangeTransformer )
 		.registerFallback( plainTransformer );
 }
