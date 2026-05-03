@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * @deprecated Use wp/v2/users instead. This endpoint proxies to wp/v2/users internally
- *             and will be removed in a future version.
+ *             and will be removed in 4.6.0 version.
  */
 class User_Query extends Base {
 	const ENDPOINT = 'user';
@@ -80,7 +80,7 @@ class User_Query extends Base {
 
 		_doing_it_wrong(
 			'elementor/v1/user',
-			'Use wp/v2/users instead. This endpoint will be removed in a future version.',
+			'Use wp/v2/users instead. This endpoint will be removed in 4.6.0 version.',
 			'4.0.4'
 		);
 
