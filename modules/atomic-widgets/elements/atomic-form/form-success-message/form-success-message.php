@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Form_Success_Message extends Form_Message {
 
+	public static $widget_description = 'Shown when the form is submitted successfully. Hidden by default, displayed automatically when the form submission result is success.';
+
 	public static function get_type() {
 		return 'e-form-success-message';
 	}
@@ -18,7 +20,7 @@ class Form_Success_Message extends Form_Message {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Form success message', 'elementor' );
+		return esc_html__( 'Success message', 'elementor' );
 	}
 
 	protected static function get_background_color(): string {
@@ -27,5 +29,12 @@ class Form_Success_Message extends Form_Message {
 
 	protected static function get_text_color(): string {
 		return '#2F532E';
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => false,
+		];
 	}
 }

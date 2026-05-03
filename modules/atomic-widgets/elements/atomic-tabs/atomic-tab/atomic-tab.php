@@ -28,9 +28,11 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 	const BASE_STYLE_KEY = 'base';
 
+	public static $widget_description = 'A tab trigger element. Contains a single heading or paragraph that serves as the tab label. The index of this e-tab MUST match the index of the corresponding e-tab-content in the e-tabs-content-area.';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		$this->meta( 'llm_support', false );
+		$this->meta( 'permanently_locked', true );
 	}
 
 	public static function get_type() {

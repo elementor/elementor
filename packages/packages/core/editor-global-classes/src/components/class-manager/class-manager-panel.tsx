@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { reloadCurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -11,7 +11,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
+import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -34,6 +34,7 @@ import { useDirtyState } from '../../hooks/use-dirty-state';
 import { useFilters } from '../../hooks/use-filters';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
+import { trackGlobalClasses } from '../../utils/tracking';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
 import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
@@ -55,19 +56,6 @@ type StopSyncConfirmationDialogProps = {
 
 const id = 'global-classes-manager';
 
-const reloadDocument = () => {
-	const currentDocument = getCurrentDocument();
-	const documentsManager = getV1DocumentsManager();
-
-	documentsManager.invalidateCache();
-
-	return runCommand( 'editor/documents/switch', {
-		id: currentDocument?.id,
-		shouldScroll: false,
-		shouldNavigateToDefaultRoute: false,
-	} );
-};
-
 // We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
 // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
 // will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
@@ -83,7 +71,7 @@ export const { panel, usePanelActions } = createPanel( {
 	},
 	onClose: async () => {
 		changeEditMode( 'edit' );
-		await reloadDocument();
+		await reloadCurrentDocument();
 		unblockPanelInteractions();
 	},
 	isOpenPreviousElement: true,
@@ -96,6 +84,7 @@ export function ClassManagerPanel() {
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -113,6 +102,7 @@ export function ClassManagerPanel() {
 				},
 			} )
 		);
+		trackGlobalClasses( { event: 'classSyncToV3', classId, action: 'unsync' } );
 		setStopSyncConfirmation( null );
 	}, [] );
 
@@ -125,6 +115,7 @@ export function ClassManagerPanel() {
 				},
 			} )
 		);
+		trackGlobalClasses( { event: 'classSyncToV3', classId, action: 'sync' } );
 		setStartSyncConfirmation( null );
 	}, [] );
 
@@ -187,6 +178,7 @@ export function ClassManagerPanel() {
 							</Box>
 							<Divider />
 							<Box
+								ref={ setScrollElement }
 								px={ 2 }
 								sx={ {
 									flexGrow: 1,
@@ -195,6 +187,7 @@ export function ClassManagerPanel() {
 							>
 								<GlobalClassesList
 									disabled={ isPublishing }
+									scrollElement={ scrollElement }
 									onStopSyncRequest={ handleStopSyncRequest }
 									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
 								/>
@@ -221,6 +214,7 @@ export function ClassManagerPanel() {
 			{ startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen
+					classId={ startSyncConfirmation }
 					onExternalClose={ () => setStartSyncConfirmation( null ) }
 					onConfirm={ () => handleStartSync( startSyncConfirmation ) }
 				/>
@@ -338,7 +332,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
-					{ __( "You're about to stop syncing a typography class to version 3.", 'elementor' ) }
+					{ __( "You're about to stop syncing a typography class to Global Fonts.", 'elementor' ) }
 				</ConfirmationDialog.ContentText>
 				<ConfirmationDialog.ContentText sx={ { mt: 1 } }>
 					{ __(

@@ -4,6 +4,7 @@ import { config as _config } from 'dotenv';
 import { timeouts as timeoutsConfig } from './config/timeouts';
 
 const isCI = Boolean( process.env.CI );
+const fullBrowserCompat = 'true' === process.env.FULL_BROWSER_COMPAT;
 const localDevServer = 'http://127.0.0.1:9400';
 const localTestServer = 'http://127.0.0.1:9400';
 const ciDevServer = 'http://localhost:8888';
@@ -24,6 +25,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './sanity',
+	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
 	grepInvert: /elements-regression/,
@@ -33,7 +35,7 @@ export default defineConfig( {
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 9 : 0,
+	retries: process.env.CI ? 3 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI
@@ -41,7 +43,7 @@ export default defineConfig( {
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {
-			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+			args: fullBrowserCompat ? [] : [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
 		headless: true,
 		ignoreHTTPSErrors: true,
@@ -56,4 +58,11 @@ export default defineConfig( {
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
+	...( fullBrowserCompat ? {
+		projects: [
+			{ name: 'chromium', use: { browserName: 'chromium' } },
+			{ name: 'firefox', use: { browserName: 'firefox' } },
+			{ name: 'webkit', use: { browserName: 'webkit' } },
+		],
+	} : {} ),
 } );

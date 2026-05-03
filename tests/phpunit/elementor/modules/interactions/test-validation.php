@@ -68,6 +68,43 @@ class Test_Validation extends TestCase {
 		];
 	}
 
+	private function create_config_prop( array $config ) {
+		$config_value = [];
+
+		if ( array_key_exists( 'replay', $config ) ) {
+			$config_value['replay'] = [
+				'$$type' => 'boolean',
+				'value' => (bool) $config['replay'],
+			];
+		}
+
+		if ( array_key_exists( 'easing', $config ) ) {
+			$config_value['easing'] = [
+				'$$type' => 'string',
+				'value' => $config['easing'],
+			];
+		}
+
+		if ( array_key_exists( 'repeat', $config ) ) {
+			$config_value['repeat'] = [
+				'$$type' => 'string',
+				'value' => $config['repeat'],
+			];
+		}
+
+		if ( array_key_exists( 'times', $config ) ) {
+			$config_value['times'] = [
+				'$$type' => 'number',
+				'value' => $config['times'],
+			];
+		}
+
+		return [
+			'$$type' => 'config',
+			'value' => $config_value,
+		];
+	}
+
 	private function mock_document_data() {
 		return [
 			'elements' => [
@@ -309,5 +346,175 @@ class Test_Validation extends TestCase {
 				],
 			],
 		], $result );
+	}
+
+	public function test_sanitize__will_accept_valid_repeat_times_config() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'times',
+			'times' => 3,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_accept_interaction_with_empty_repeat_mode() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => '',
+			'times' => 1,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_strip_interaction_with_invalid_repeat_mode() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'invalid',
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_accept_all_diagonal_directions() {
+		$diagonal_directions = [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
+
+		foreach ( $diagonal_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertNotEmpty(
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be accepted but was stripped."
+			);
+		}
+	}
+
+	public function test_sanitize__will_strip_interaction_with_invalid_diagonal_direction() {
+		$invalid_directions = [ 'top-top', 'left-right', 'top-bottom', 'left-left', 'invalid', 'top-invalid' ];
+
+		foreach ( $invalid_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertEquals(
+				[],
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be stripped but was accepted."
+			);
+		}
+	}
+
+	public function test_sanitize__will_accept_interaction_with_times_when_repeat_is_loop() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'loop',
+			'times' => 3,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
 	}
 }

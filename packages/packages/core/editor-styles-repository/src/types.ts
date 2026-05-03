@@ -14,10 +14,17 @@ export type UserCapabilities = {
 	updateProps: string;
 };
 
+export type PregeneratedLinkItem = {
+	id: string;
+	href: string;
+	media: string;
+};
+
 export type UpdatePropsActionPayload = {
 	id: StyleDefinitionID;
 	meta: StyleDefinitionVariant[ 'meta' ];
 	props: Props;
+	mode?: 'merge' | 'replace';
 };
 
 export type UpdateCustomCssActionPayload = {
@@ -32,7 +39,7 @@ export type StylesProvider = {
 	getKey: () => string;
 	priority: number;
 	limit: number;
-	subscribe: ( callback: ( current?: StylesCollection, previous?: StylesCollection ) => void ) => () => void;
+	subscribe: ( callback: ( previous?: StylesCollection, current?: StylesCollection ) => void ) => () => void;
 	labels: {
 		singular: string | null;
 		plural: string | null;
@@ -41,7 +48,11 @@ export type StylesProvider = {
 		all: ( meta?: Meta ) => StyleDefinition[];
 		get: ( id: StyleDefinitionID, meta?: Meta ) => StyleDefinition | null;
 		resolveCssName: ( id: StyleDefinitionID ) => string;
-		create?: ( label: StyleDefinition[ 'label' ], variants?: StyleDefinitionVariant[] ) => StyleDefinitionID;
+		create?: (
+			label: StyleDefinition[ 'label' ],
+			variants?: StyleDefinitionVariant[],
+			id?: StyleDefinitionID
+		) => StyleDefinitionID;
 		delete?: ( id: StyleDefinitionID ) => void;
 		update?: ( data: UpdateActionPayload ) => void;
 		updateProps?: ( args: UpdatePropsActionPayload, meta?: Meta ) => void;
@@ -49,4 +60,5 @@ export type StylesProvider = {
 		tracking?: ( data: { event: string; [ key: string ]: unknown } ) => void;
 	};
 	capabilities?: UserCapabilities;
+	isPregeneratedLink?: ( pregeneratedLinkItem: PregeneratedLinkItem ) => boolean;
 };

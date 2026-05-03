@@ -47,7 +47,6 @@ const ControlLayout = ( {
 	controlProps: Record< string, unknown >;
 } ) => {
 	const controlType = control.type as ControlType;
-
 	return (
 		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 			{ control.meta?.topDivider && <Divider /> }

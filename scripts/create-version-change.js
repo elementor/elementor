@@ -51,7 +51,7 @@ function updateVersionInFile(filePath, version, patterns, dryRun) {
   let content = fs.readFileSync(filePath, 'utf8');
   
   patterns.forEach(pattern => {
-    content = content.replace(pattern.regex, pattern.replacement(version));
+    content = content.replace(pattern.regex, (...args) => pattern.replacement(version, ...args));
   });
 
   fs.writeFileSync(filePath, content);
@@ -207,11 +207,11 @@ async function main() {
       updateVersionInFile('elementor.php', versionToUse, [
         {
           regex: /(\* Version: )[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?/,
-          replacement: (version) => `$1${version}`
+          replacement: (version, match, prefix) => `${prefix}${version}`
         },
         {
           regex: /(define\( 'ELEMENTOR_VERSION', ')[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?'( \);)/,
-          replacement: (version) => `$1${version}'$3`
+          replacement: (version, match, prefix, _preRelease, suffix) => `${prefix}${version}'${suffix}`
         }
       ], dryRun);
     } else {

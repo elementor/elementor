@@ -77,9 +77,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'link' => [
-							'href' => 'https://elementor.com',
-							'target' => '_blank',
 							'tag' => 'a',
+							'attributes' => 'href="https://elementor.com" target="_blank"',
 						],
 					],
 				]
@@ -265,12 +264,15 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'image' => [
 							'src' => 'https://example.com/default-image.jpg',
+							'alt' => '',
 						],
 						'just_default_image' => [
 							'src' => 'https://example.com/default-image-2.jpg',
+							'alt' => '',
 						],
 						'only_url_image' => [
 							'src' => 'https://example.com/image.jpg',
+							'alt' => '',
 						],
 						'image_with_attachment' => [
 							'id' => 123,

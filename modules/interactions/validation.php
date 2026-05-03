@@ -17,7 +17,8 @@ class Validation {
 
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale', 'custom' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
-	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
+	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom', 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
+	private const VALID_REPEAT_MODES = [ '', 'loop', 'times' ];
 
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );
@@ -68,7 +69,7 @@ class Validation {
 
 	private function decode_interactions( $interactions ) {
 		if ( is_array( $interactions ) ) {
-			if ( isset( $interactions['items']['$$type'] ) && Adapter::ITEMS_TYPE === $interactions['items']['$$type'] ) {
+			if ( isset( $interactions['items']['$$type'] ) && 'array' === $interactions['items']['$$type'] ) {
 				return isset( $interactions['items']['value'] ) ? $interactions['items']['value'] : [];
 			}
 			return isset( $interactions['items'] ) ? $interactions['items'] : [];
@@ -77,7 +78,7 @@ class Validation {
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-				if ( isset( $decoded['items']['$$type'] ) && Adapter::ITEMS_TYPE === $decoded['items']['$$type'] ) {
+				if ( isset( $decoded['items']['$$type'] ) && 'array' === $decoded['items']['$$type'] ) {
 					return isset( $decoded['items']['value'] ) ? $decoded['items']['value'] : [];
 				}
 				return isset( $decoded['items'] ) ? $decoded['items'] : [];
@@ -238,17 +239,7 @@ class Validation {
 			return false;
 		}
 
-		$config = $data['config'];
-
-		if ( ! isset( $config['$$type'] ) || 'config' !== $config['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $config['value'] ) || ! is_array( $config['value'] ) ) {
-			return false;
-		}
-
-		$config_value = $config['value'];
+		$config_value = $data['config']['value'];
 
 		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
 			return false;
@@ -262,11 +253,19 @@ class Validation {
 			return false;
 		}
 
-		if ( isset( $config_value['offsetTop'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetTop', 0, 100 ) ) {
+		if ( isset( $config_value['repeat'] ) && ! $this->is_valid_string_prop( $config_value, 'repeat', self::VALID_REPEAT_MODES ) ) {
 			return false;
 		}
 
-		if ( isset( $config_value['offsetBottom'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'offsetBottom', 0, 100 ) ) {
+		if ( isset( $config_value['times'] ) && ! $this->is_valid_number_prop_in_range( $config_value, 'times', 1 ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['start'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'start', 0, 100 ) ) {
+			return false;
+		}
+
+		if ( isset( $config_value['end'] ) && ! $this->is_valid_size_prop_in_range( $config_value, 'end', 0, 100 ) ) {
 			return false;
 		}
 

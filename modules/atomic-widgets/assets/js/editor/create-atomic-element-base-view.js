@@ -4,8 +4,6 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 
 export default function createAtomicElementBaseView( type ) {
-	const resolvedTagCache = new WeakMap();
-
 	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
@@ -13,21 +11,14 @@ export default function createAtomicElementBaseView( type ) {
 
 		_childrenRenderPromises: [],
 
-		tagName() {
-			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
-		},
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
 
-		_resolveTag() {
-			const renderContext = this.getResolverRenderContext?.();
-			const tagSetting = this.model.getSetting( 'tag' );
-			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
-			const tagValue = resolvedTag?.value ?? resolvedTag;
-
-			if ( this._hasLink( renderContext ) ) {
-				return 'a';
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
 			}
 
-			return tagValue || this.model.config.default_html_tag || 'div';
+			return document.createElement( tag );
 		},
 
 		getChildViewContainer() {
@@ -56,146 +47,6 @@ export default function createAtomicElementBaseView( type ) {
 			return this._parent?.getResolverRenderContext?.();
 		},
 
-		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
-		},
-
-		// TODO: Copied from `views/column.js`.
-		ui() {
-			var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-			ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
-
-			return ui;
-		},
-
-		attributes() {
-			const attr = BaseElementView.prototype.attributes.apply( this );
-			const local = {};
-			const cssId = this.model.getSetting( '_cssid' );
-			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
-			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
-
-			if ( cssId ) {
-				local.id = cssId.value;
-			}
-
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
-
-			customAttributes.forEach( ( attribute ) => {
-				const key = attribute.value?.key?.value;
-				const value = attribute.value?.value?.value;
-
-				if ( key && value ) {
-					local[ key ] = value;
-				}
-			} );
-
-			return {
-				...attr,
-				...initialAttributes,
-				...local,
-			};
-		},
-
-		// TODO: Copied from `views/column.js`.
-		attachElContent() {
-			BaseElementView.prototype.attachElContent.apply( this, arguments );
-
-			const $tooltip = jQuery( '<div>', {
-				class: 'elementor-column-percents-tooltip',
-				'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
-			} );
-
-			this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentSize( size ) {
-			if ( ! size ) {
-				size = this.el.getBoundingClientRect().width;
-			}
-
-			return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentsForDisplay() {
-			const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
-
-			return width.toFixed( 1 ) + '%';
-		},
-
-		renderOnChange( settings ) {
-			const changed = settings.changedAttributes();
-
-			setTimeout( () => {
-				this.updateHandlesPosition();
-			} );
-
-			if ( ! changed ) {
-				return;
-			}
-
-			BaseElementView.prototype.renderOnChange.apply( this, settings );
-
-			if ( changed.attributes ) {
-				const $elAttrs = this.$el[ 0 ].attributes;
-				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
-					const attrName = $elAttrs[ i ].name;
-					if ( attrName !== 'class' ) {
-						this.$el.removeAttr( attrName );
-					}
-				}
-
-				const newAttrs = this.attributes();
-				Object.entries( newAttrs ).forEach( ( [ key, value ] ) => {
-					if ( key !== 'class' && value !== undefined ) {
-						this.$el.attr( key, value );
-					}
-				} );
-
-				return;
-			}
-
-			if ( changed.classes ) {
-				// Preserve runtime state classes (e.g., e--selected) that are managed by Alpine
-				// and would be lost when replacing the class attribute.
-				const preservedClasses = Array.from( this.$el[ 0 ].classList ).filter( ( cls ) => cls.startsWith( 'e--' ) );
-				this.$el.attr( 'class', this.className() );
-				preservedClasses.forEach( ( cls ) => this.$el[ 0 ].classList.add( cls ) );
-
-				return;
-			}
-
-			if ( changed._cssid ) {
-				if ( changed._cssid.value ) {
-					this.$el.attr( 'id', changed._cssid.value );
-				} else {
-					this.$el.removeAttr( 'id' );
-				}
-
-				return;
-			}
-
-			this.$el.addClass( this.getClasses() );
-
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
-			}
-		},
-
-		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
-		},
-
-		rerenderEntireView() {
-			const parent = this._parent;
-			this._parent.removeChildView( this );
-
-			parent.addChild( this.model, AtomicElementView, this._index );
-		},
-
 		render() {
 			this._currentRenderPromise = new Promise( ( resolve ) => {
 				// Optimize rendering by reusing existing child views instead of recreating them.
@@ -210,7 +61,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_shouldSkipFullRender() {
-			return this.isRendered && this.children?.length > 0;
+			return this.isRendered && this._hasConnectedChildren();
+		},
+
+		_hasConnectedChildren() {
+			if ( ! this.children?.length ) {
+				return false;
+			}
+
+			// If the parent's innerHTML was replaced, all children are detached together.
+			const firstChild = this.children.findByIndex( 0 );
+			return firstChild?.$el?.get( 0 )?.isConnected ?? false;
 		},
 
 		_renderWithoutDomRecreation( resolve ) {
@@ -225,66 +86,19 @@ export default function createAtomicElementBaseView( type ) {
 		_renderWithDomRecreation( resolve ) {
 			BaseElementView.prototype.render.apply( this, arguments );
 			this._waitForChildrenToComplete().then( () => {
-				this._applyResolvedAttributes();
 				resolve();
 			} );
 		},
 
 		_beforeRender() {
 			this._isRendering = true;
-			this._invalidateTagCache();
 			this.triggerMethod( 'before:render', this );
-		},
-
-		_invalidateTagCache() {
-			resolvedTagCache.delete( this.model );
-		},
-
-		_cacheResolvedTag( tag ) {
-			resolvedTagCache.set( this.model, tag );
 		},
 
 		_afterRender() {
 			this._isRendering = false;
 			this.isRendered = true;
 			this.triggerMethod( 'render', this );
-			this._applyResolvedAttributes();
-		},
-
-		_applyResolvedAttributes() {
-			if ( ! this._parent ) {
-				return;
-			}
-
-			if ( this._shouldRecreateForTagChange() ) {
-				return;
-			}
-
-			this._applyLinkAttributes();
-		},
-
-		_shouldRecreateForTagChange() {
-			const resolvedTag = this.tagName();
-			const currentTag = this.el.tagName.toLowerCase();
-
-			if ( resolvedTag === currentTag ) {
-				return false;
-			}
-
-			this._cacheResolvedTag( resolvedTag );
-			this.rerenderEntireView();
-			return true;
-		},
-
-		_applyLinkAttributes() {
-			this.$el.removeAttr( 'href' );
-			this.$el.removeAttr( 'data-action-link' );
-
-			const link = this.getLink();
-
-			if ( link ) {
-				this.$el.attr( link.attr, link.value );
-			}
 		},
 
 		async _waitForChildrenToComplete() {
@@ -343,58 +157,6 @@ export default function createAtomicElementBaseView( type ) {
 			);
 		},
 
-		_hasLink( renderContext ) {
-			const linkSetting = this.model.getSetting( 'link' );
-			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
-
-			if ( 'link' !== resolvedLink?.$$type ) {
-				return false;
-			}
-
-			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
-
-			return !! destination?.value;
-		},
-
-		getLink() {
-			const renderContext = this.getResolverRenderContext?.();
-			const linkSetting = this.model.getSetting( 'link' );
-			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
-
-			if ( 'link' !== resolvedLink?.$$type ) {
-				return null;
-			}
-
-			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
-
-			if ( ! destination?.value ) {
-				return null;
-			}
-
-			const { $$type, value } = destination;
-
-			if ( 'dynamic' === $$type ) {
-				const resolvedValue = this.handleDynamicLink( value );
-
-				if ( ! resolvedValue ) {
-					return null;
-				}
-
-				return {
-					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
-					value: resolvedValue,
-				};
-			}
-
-			const isPostId = 'number' === $$type;
-			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
-
-			return {
-				attr: 'href',
-				value: hrefPrefix + value,
-			};
-		},
-
 		droppableInitialize() {
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		},
@@ -418,12 +180,22 @@ export default function createAtomicElementBaseView( type ) {
 			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
 
 			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+				const showPromoBadge = ! isProActive && ! isProOutdated;
+
+				const newBadge = `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`;
+				const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-Instance-create-context-menu/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+
 				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					shortcut: ( isProActive || isProOutdated ) ? newBadge : proBadge,
+					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -452,6 +224,32 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+			const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+
+			if ( isProOutdated ) {
+				window.elementorV2?.editorNotifications?.notify?.( {
+					type: 'info',
+					id: 'component-create-update',
+					message: __( 'To create new components, update Elementor Pro to the latest version.', 'elementor' ),
+					additionalActionProps: [ {
+						size: 'small',
+						variant: 'contained',
+						color: 'info',
+						href: '/wp-admin/plugins.php',
+						target: '_blank',
+						children: __( 'Update Now', 'elementor' ),
+					} ],
+				} );
+				return;
+			}
+
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+			if ( ! isProActive ) {
+				return;
+			}
+
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
@@ -716,29 +514,6 @@ export default function createAtomicElementBaseView( type ) {
 			this.addSectionView = addSectionView;
 		},
 
-		getClasses() {
-			const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
-
-			if ( ! transformer ) {
-				return [];
-			}
-
-			return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
-		},
-
-		getClassString() {
-			const classes = this.getClasses();
-			const base = this.getBaseClass();
-
-			return [ base, ...classes ].join( ' ' );
-		},
-
-		getBaseClass() {
-			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
-
-			return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
-		},
-
 		isOverflowHidden() {
 			const elementStyles = window.getComputedStyle( this.el );
 			const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
@@ -774,81 +549,11 @@ export default function createAtomicElementBaseView( type ) {
 			return 0 === this.model.collection.indexOf( this.model );
 		},
 
-		getDynamicLinkValue( name, settings ) {
-			const simpleTransform = ( props ) => {
-				const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
-					const value = 'object' === typeof settingValue && 'value' in settingValue ? settingValue.value : settingValue;
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
 
-					return [ settingKey, value ];
-				} );
-
-				return Object.fromEntries( transformed );
-			};
-
-			const getTagValue = () => {
-				const tag = elementor.dynamicTags.createTag( 'v4-dynamic-tag', name, simpleTransform( settings ) );
-
-				if ( ! tag ) {
-					return null;
-				}
-
-				return elementor.dynamicTags.loadTagDataFromCache( tag ) ?? null;
-			};
-
-			const tagValue = getTagValue();
-
-			if ( tagValue !== null ) {
-				return tagValue;
-			}
-
-			return new Promise( ( resolve ) => {
-				elementor.dynamicTags.refreshCacheFromServer( () => {
-					resolve( getTagValue() );
-				} );
-			} );
-		},
-
-		handleDynamicLink( linkValue ) {
-			const result = this.getDynamicLinkValue( linkValue.name, linkValue.settings );
-
-			if ( ! result ) {
-				return null;
-			}
-
-			if ( 'string' === typeof result ) {
-				return result;
-			}
-
-			result.then( ( href ) => {
-				this.el.removeAttribute( 'href' );
-
-				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
-
-				this.el.setAttribute( attribute, href );
-			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
-
-			return null;
-		},
-
-		_resolvePropValue( prop, renderContext ) {
-			if ( ! prop || typeof prop !== 'object' ) {
-				return prop;
-			}
-
-			if ( 'overridable' !== prop.$$type ) {
-				return prop;
-			}
-
-			const registry = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry;
-			const transformer = registry?.get?.( 'overridable' );
-
-			if ( ! transformer ) {
-				return prop.value?.origin_value;
-			}
-
-			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
-
-			return this._resolvePropValue( transformed, renderContext );
+			return originId ?? id;
 		},
 	} );
 

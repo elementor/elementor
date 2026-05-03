@@ -105,11 +105,12 @@ select,
 	color: var(--e-one-palette-text-primary);
 	background-color: var(--e-one-palette-background-default);
 	border-radius: 3px;
-	height: 30px;
+	height: 34px;
 	font-size: 13px;
 	font-family: var(--e-one-typography-fontFamily);
 	font-weight: 400;
 	line-height: 1.2;
+	min-height: 34px;
 	transition: var(--e-a-transition-hover);
 
 	&:hover {

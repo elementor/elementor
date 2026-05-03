@@ -1,15 +1,11 @@
 import { createMockElement } from 'test-utils';
-import {
-	__privateRunCommand as runCommand,
-	__privateRunCommandSync as runCommandSync,
-} from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
-const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
 const currentElementData = {
@@ -48,7 +44,7 @@ describe( 'replaceElement', () => {
 		};
 
 		// Act.
-		replaceElement( { currentElement: currentElementData, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
@@ -57,7 +53,7 @@ describe( 'replaceElement', () => {
 			options: { at: 1, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: parentElement },
 			options: { useHistory: true },
 		} );
@@ -87,7 +83,7 @@ describe( 'replaceElement', () => {
 		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
 
 		// Act.
-		replaceElement( { currentElement: currentElementData, newElement } );
+		replaceElement( { currentElementId: currentElement.id, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
@@ -102,7 +98,7 @@ describe( 'replaceElement', () => {
 			options: { at: 0, useHistory: true, edit: false },
 		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/delete', {
 			container: { ...currentElement, parent: documentElement },
 			options: { useHistory: true },
 		} );

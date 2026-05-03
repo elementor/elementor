@@ -21,7 +21,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
 import { type SnapshotPropValue } from '../types';
 import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infotip';
@@ -125,7 +124,7 @@ export const StylesInheritanceInfotip = ( {
 						},
 					} }
 				>
-					<Stack gap={ 1.5 } sx={ { pl: 3, pr: 1, pb: 2 } } role="list">
+					<Stack gap={ 1.5 } sx={ { pl: 2, pr: 1, pt: 1.5, pb: 1.5 } } role="list">
 						{ items.map( ( item, index ) => {
 							return (
 								<Box
@@ -169,8 +168,6 @@ export const StylesInheritanceInfotip = ( {
 				onClose={ closeInfotip }
 				infotipContent={ infotipContent }
 				isDisabled={ isDisabled }
-				triggerRef={ triggerRef }
-				sectionWidth={ sectionWidth }
 			>
 				<IconButton
 					onClick={ toggleInfotip }
@@ -191,29 +188,18 @@ function TooltipOrInfotip( {
 	onClose,
 	infotipContent,
 	isDisabled,
-	triggerRef,
-	sectionWidth,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
 	onClose: () => void;
 	infotipContent: React.ReactNode;
 	isDisabled?: boolean;
-	triggerRef: React.RefObject< HTMLDivElement >;
-	sectionWidth: number;
 } ) {
-	const direction = useDirection();
-	const isSiteRtl = direction.isSiteRtl;
-
 	if ( isDisabled ) {
 		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
 	if ( showInfotip ) {
-		const triggerRect = triggerRef.current?.getBoundingClientRect();
-		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH );
-		const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
-
 		return (
 			<>
 				<Backdrop
@@ -225,26 +211,11 @@ function TooltipOrInfotip( {
 					} }
 				/>
 				<Infotip
-					placement="top"
+					placement="top-end"
 					content={ infotipContent }
 					open={ showInfotip }
 					onClose={ onClose }
 					disableHoverListener
-					componentsProps={ {
-						tooltip: {
-							sx: { mx: 2 },
-						},
-					} }
-					slotProps={ {
-						popper: {
-							modifiers: [
-								{
-									name: 'offset',
-									options: { offset: [ offsetX, 0 ] },
-								},
-							],
-						},
-					} }
 				>
 					{ children }
 				</Infotip>

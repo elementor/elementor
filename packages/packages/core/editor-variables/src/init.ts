@@ -1,9 +1,12 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerControlReplacement } from '@elementor/editor-controls';
+import { getMCPByDomain } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { controlActionsMenu } from '@elementor/menus';
 
+import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { OpenPanelFromEvent } from './components/open-panel-from-event';
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { panel } from './components/variables-manager/variables-manager-panel';
 import { VariableControl } from './controls/variable-control';
@@ -43,7 +46,7 @@ export function init() {
 	} );
 
 	variablesService.init().then( () => {
-		initMcp();
+		initMcp( getMCPByDomain( 'variables' ), getMCPByDomain( 'canvas' ) );
 	} );
 
 	injectIntoTop( {
@@ -52,8 +55,18 @@ export function init() {
 	} );
 
 	injectIntoLogic( {
+		id: 'variables-import-listener',
+		component: GlobalStylesImportListener,
+	} );
+
+	injectIntoLogic( {
 		id: 'variables-open-panel-from-url',
 		component: OpenPanelFromUrl,
+	} );
+
+	injectIntoLogic( {
+		id: 'variables-open-panel-from-event',
+		component: OpenPanelFromEvent,
 	} );
 
 	registerPanel( panel );

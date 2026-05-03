@@ -208,11 +208,12 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							} }
 							onErrorChange={ ( errorMsg ) => {
 								setLabelFieldError( {
-									value: label,
+									value: '',
 									message: errorMsg,
 								} );
 							} }
 							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
 					{ ValueField && (

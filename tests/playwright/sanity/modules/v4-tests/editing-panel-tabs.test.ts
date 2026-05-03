@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
+import { FONT_FAMILIES } from './typography/typography-constants';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -29,7 +30,6 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
@@ -72,14 +72,14 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		}
 	}
 
-	sections.forEach( ( section ) => {
-		test( `expand ${ section } section and compare screenshot`, async () => {
+	test( `expand sections and compare screenshot`, async () => {
+		for ( const section of sections ) {
 			await editor.addWidget( { widgetType: atomicWidget.name } );
 			await editor.v4Panel.openTab( 'style' );
 			await editor.openV2Section( section );
 
 			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
-		} );
+		}
 	} );
 
 	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
@@ -103,13 +103,28 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
-		const fontFamilyControl = editor.page
-			.locator( 'div.MuiGrid-container' )
-			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
+		await test.step( 'Close the size section', async () => {
+			const sectionButton = editor.page.locator( '.MuiButtonBase-root', { hasText: 'Size' } );
+			await sectionButton.click();
+		} );
 
-		await fontFamilyControl.scrollIntoViewIfNeeded();
-		await editor.page.waitForTimeout( timeouts.action );
+		const panelHeader = editor.page.locator( 'button', { hasText: /^Style$/g } ).locator( '../../../..' );
+
+		await test.step( 'Open the font family control', async () => {
+			const fontFamilyControl = editor.page
+				.locator( '#font-family-control' ).getByRole( 'button' );
+			await fontFamilyControl.click();
+		} );
+
+		await test.step( 'Scroll the font family popover list slightly', async () => {
+			const scrollContainer = editor.page.locator( '[data-testid="item-list"]' ).locator( 'xpath=parent::*' );
+			const arialFontFamilyLocator = editor.page.locator( '.MuiListItem-root', { hasText: FONT_FAMILIES.system } );
+			await expect( arialFontFamilyLocator ).toBeVisible();
+			await scrollContainer.evaluate(
+				( el: HTMLElement ) => el.scrollBy( 0, 100 ),
+			);
+			await expect( arialFontFamilyLocator ).toBeHidden();
+		} );
 
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );

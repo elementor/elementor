@@ -29,17 +29,9 @@ class Dynamic_Tags_Converter {
 		switch ( $control_type ) {
 			case 'text':
 			case 'textarea':
-				$prop_type = String_Prop_Type::make()
-					->default( $control['default'] ?? null );
-				break;
-
 			case 'select':
 				$prop_type = String_Prop_Type::make()
 					->default( $control['default'] ?? null );
-
-				if ( ! isset( $control['collection_id'] ) || empty( $control['collection_id'] ) ) {
-					$prop_type->enum( array_keys( $control['options'] ?? [] ) );
-				}
 				break;
 
 			case 'date_time':

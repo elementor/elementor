@@ -1,16 +1,27 @@
 import * as React from 'react';
-import { createContext, type ReactNode, useContext, useEffect } from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useMemo } from 'react';
 import {
 	type ElementInteractions,
+	getElementInteractions,
+	getElementLabel,
 	playElementInteractions,
 	updateElementInteractions,
-	useElementInteractions,
 } from '@elementor/editor-elements';
+import { undoable } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
+
+import { useElementInteractions } from '../hooks/use-element-interactions';
 
 type InteractionsContextValue = {
+	elementId: string;
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
 	playInteractions: ( interactionId: string ) => void;
+};
+
+type UndoablePayload = {
+	interactions: ElementInteractions | undefined;
+	operationType: 'apply' | 'delete';
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
@@ -30,13 +41,47 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	const interactions: ElementInteractions =
 		( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
 
+	const undoableSetInteractions = useMemo(
+		() =>
+			undoable(
+				{
+					do: ( { interactions: newInteractions }: UndoablePayload ) => {
+						const previous = getElementInteractions( elementId );
+
+						updateElementInteractions( { elementId, interactions: newInteractions } );
+
+						return previous;
+					},
+					undo: ( _: UndoablePayload, previous ) => {
+						updateElementInteractions( {
+							elementId,
+							interactions: previous?.items?.length ? previous : undefined,
+						} );
+					},
+				},
+				{
+					title: getElementLabel( elementId ),
+					subtitle: ( { operationType }: UndoablePayload ) =>
+						operationType === 'apply'
+							? __( 'Interaction Applied', 'elementor' )
+							: __( 'Interaction Deleted', 'elementor' ),
+				}
+			),
+		[ elementId ]
+	);
+
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		const normalizedValue = value && value.items?.length === 0 ? undefined : value;
+		const prevItemCount = interactions.items?.length ?? 0;
+		const newItemCount = normalizedValue?.items?.length ?? 0;
 
-		updateElementInteractions( {
-			elementId,
-			interactions: normalizedValue,
-		} );
+		if ( newItemCount > prevItemCount ) {
+			undoableSetInteractions( { interactions: normalizedValue, operationType: 'apply' } );
+		} else if ( newItemCount < prevItemCount ) {
+			undoableSetInteractions( { interactions: normalizedValue, operationType: 'delete' } );
+		} else {
+			updateElementInteractions( { elementId, interactions: normalizedValue } );
+		}
 	};
 
 	const playInteractions = ( interactionId: string ) => {
@@ -44,6 +89,7 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	};
 
 	const contextValue: InteractionsContextValue = {
+		elementId,
 		interactions,
 		setInteractions,
 		playInteractions,

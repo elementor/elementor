@@ -1,6 +1,7 @@
 import {
 	ChipsControl,
 	type ControlComponent,
+	DateRangeControl,
 	DateTimeControl,
 	EmailFormActionControl,
 	HtmlTagControl,
@@ -19,15 +20,16 @@ import {
 	TextControl,
 	ToggleControl,
 	UrlControl,
+	VideoMediaControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
-	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
@@ -36,6 +38,8 @@ import {
 	sizePropTypeUtil,
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	svgSrcPropTypeUtil,
+	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
@@ -48,7 +52,7 @@ export type ControlRegistry = Record<
 
 const controlTypes = {
 	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
-	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
+	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: svgSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
@@ -64,8 +68,14 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
+	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	'date-range': {
+		component: DateRangeControl,
+		layout: 'custom',
+		propTypeUtil: dateRangePropTypeUtil,
+	},
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

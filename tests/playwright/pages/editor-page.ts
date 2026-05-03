@@ -139,33 +139,11 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		// Wait for document state to be properly set after template import
-		await this.page.waitForFunction( () => {
-			interface ElementorWindow extends Window {
-				elementor?: {
-					documents?: {
-						getCurrent(): {
-							editor: { isChanged: boolean };
-						};
-					};
-					config?: {
-						user?: {
-							capabilities?: string[];
-						};
-					};
-				};
-			}
-			try {
-				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
-			} catch ( error ) {
-				return false;
-			}
-		}, {
-			timeout: 5000,
-			polling: 100,
-		} );
+		await this.page
+			.frameLocator( '#elementor-preview-iframe' )
+			.locator( '.elementor-element' )
+			.first()
+			.waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -558,7 +536,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selectLocator = this.page.locator( `.elementor-control-${ controlId } select` );
+		await selectLocator.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await selectLocator.selectOption( value, { timeout: timeouts.longAction } );
 	}
 
 	/**

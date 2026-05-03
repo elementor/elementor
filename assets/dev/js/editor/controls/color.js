@@ -244,7 +244,7 @@ export default class extends ControlBaseDataView {
 				$globalPreviewItemsContainer.append( this.createGlobalItemMarkup( color ) );
 			} );
 
-			$globalPreviewItemsContainer.append( this.createHeaderItemMarkup( __( 'Version 3 Global Colors', 'elementor' ) ) );
+			$globalPreviewItemsContainer.append( this.createHeaderItemMarkup( __( 'Global Colors', 'elementor' ) ) );
 		}
 
 		v3Colors.forEach( ( color ) => {

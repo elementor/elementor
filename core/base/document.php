@@ -2109,4 +2109,8 @@ abstract class Document extends Controls_Stack {
 
 		return $this->elements_iteration_actions;
 	}
+
+	public function get_elementor_version() {
+		return $this->get_main_meta( '_elementor_version' );
+	}
 }

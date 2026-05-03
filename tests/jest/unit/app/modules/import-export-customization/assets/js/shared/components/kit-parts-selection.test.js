@@ -7,6 +7,21 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/h
 	default: jest.fn(),
 } ) );
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits', () => ( {
+	useClassesVariablesLimits: jest.fn( () => ( {
+		existingClassesCount: 0,
+		existingVariablesCount: 0,
+		classesLimit: 100,
+		variablesLimit: 100,
+		calculateLimitInfo: ( existingCount, importedCount, limit ) => {
+			const totalAfterImport = existingCount + importedCount;
+			const isExceeded = totalAfterImport > limit;
+			const overLimitCount = isExceeded ? totalAfterImport - limit : 0;
+			return { isExceeded, overLimitCount, totalAfterImport };
+		},
+	} ) ),
+} ) );
+
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => [
 	{
 		type: 'templates',

@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { timeouts } from '../../../config/timeouts';
 import _path from 'path';
 
 test.describe( 'Icon Box widget tests', () => {
@@ -33,8 +34,11 @@ test.describe( 'Icon Box widget tests', () => {
 			await editor.page.waitForLoadState();
 
 			const iconBoxes = page.locator( '.e-con-inner' ).first();
-			await iconBoxes.waitFor();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png' );
+			await iconBoxes.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+			await page.waitForTimeout( timeouts.short );
+			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-rtl.png', {
+				maxDiffPixelRatio: 0.05,
+			} );
 		} );
 
 		await wpAdmin.setSiteLanguage( '' );

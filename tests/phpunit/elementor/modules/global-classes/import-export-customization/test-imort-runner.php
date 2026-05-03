@@ -81,4 +81,72 @@ class ç extends Elementor_Test_Base {
 		$this->assertSame( [], $result );
 		$this->assertSame( [], $saved_global_classes );
 	}
+
+	public function test_import__merges_with_previous_kit_classes_after_kit_creation() {
+		// Arrange - save classes on the current (soon-to-be previous) kit.
+		$existing_classes = [
+			'items' => [
+				'g-existing' => [
+					'id' => 'g-existing',
+					'type' => 'class',
+					'label' => 'Existing',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-existing' ],
+		];
+
+		$old_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$old_kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $existing_classes );
+
+		// Simulate what site-settings runner does: create a new empty active kit.
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act - import with imported_data indicating a new kit was created.
+		$result = ( new Import_Runner() )->import(
+			[ 'extracted_directory_path' => __DIR__ . '/mocks/valid' ],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - merged result on the new active kit should contain both existing and imported classes.
+		$saved = Global_Classes_Repository::make()->all( true )->get();
+
+		$this->assertArrayHasKey( 'g-existing', $saved['items'] );
+		$this->assertArrayHasKey( 'g-123', $saved['items'] );
+		$this->assertArrayHasKey( 'g-456', $saved['items'] );
+		$this->assertContains( 'g-existing', $saved['order'] );
+	}
+
+	public function test_import__merges_with_previous_kit_resolves_label_conflict() {
+		// Arrange - save a class with the same label as one being imported.
+		$existing_classes = [
+			'items' => [
+				'g-existing' => [
+					'id' => 'g-existing',
+					'type' => 'class',
+					'label' => 'Test1',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-existing' ],
+		];
+
+		$old_kit = Plugin::$instance->kits_manager->get_active_kit();
+		$old_kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $existing_classes );
+
+		$new_kit_id = Plugin::$instance->kits_manager->create_new_kit( 'Imported Kit' );
+
+		// Act.
+		( new Import_Runner() )->import(
+			[ 'extracted_directory_path' => __DIR__ . '/mocks/valid' ],
+			[ 'site-settings' => [ 'imported_kit_id' => $new_kit_id ] ]
+		);
+
+		// Assert - existing "Test1" preserved, imported "Test1" gets a suffix.
+		$saved = Global_Classes_Repository::make()->all( true )->get();
+		$labels = array_map( fn( $item ) => $item['label'], $saved['items'] );
+
+		$this->assertContains( 'Test1', $labels );
+		$this->assertContains( 'Test1_1', $labels );
+	}
 }

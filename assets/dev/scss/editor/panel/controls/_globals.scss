@@ -95,6 +95,12 @@
 		color: var(--e-a-color-txt-muted);
 	}
 
+	&__group-divider {
+		height: 1px;
+		background-color: var(--e-a-border-color);
+		margin: 10px 20px;
+	}
+
 	&__manage-button {
 		font-weight: 500;
 		cursor: pointer;

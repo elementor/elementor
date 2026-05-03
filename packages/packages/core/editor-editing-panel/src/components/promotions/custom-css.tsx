@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { StyleTabSection } from '../style-tab-section';
 
+const TRACKING_DATA = { target_name: 'custom_css', location_l2: 'style' } as const;
+
 export const CustomCssSection = () => {
 	const triggerRef = useRef< PromotionTriggerRef >( null );
 
@@ -14,7 +16,9 @@ export const CustomCssSection = () => {
 				name: 'Custom CSS',
 				title: __( 'Custom CSS', 'elementor' ),
 				action: {
-					component: <PromotionTrigger ref={ triggerRef } promotionKey="customCss" />,
+					component: (
+						<PromotionTrigger ref={ triggerRef } promotionKey="customCss" trackingData={ TRACKING_DATA } />
+					),
 					onClick: () => triggerRef.current?.toggle(),
 				},
 			} }
