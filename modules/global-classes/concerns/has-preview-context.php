@@ -28,7 +28,7 @@ trait Has_Preview_Context {
 		$map = $this->get_context_keys()[ $key ] ?? null;
 
 		if ( null === $map ) {
-			throw new \InvalidArgumentException( sprintf( 'Unknown context key: %s', $key ) );
+			throw new \InvalidArgumentException( sprintf( 'Unknown context key: %s', esc_html( $key ) ) );
 		}
 
 		return $this->is_preview ? $map['preview'] : $map['frontend'];
