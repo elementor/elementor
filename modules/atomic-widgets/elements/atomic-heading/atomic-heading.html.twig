@@ -1,9 +1,7 @@
 {% import 'elementor/macros' as m %}
-{%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
 {%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
 <{{ settings.tag | e('html_tag') }} data-interaction-id="{{ interaction_id }}" class="{{ classes }}"
-	{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
-	{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+	{{- m.render_custom_attributes(settings) }}
 >
 {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' -%}
 {%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
