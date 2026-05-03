@@ -1,6 +1,7 @@
 import {
 	ChipsControl,
 	type ControlComponent,
+	DateRangeControl,
 	DateTimeControl,
 	EmailFormActionControl,
 	HtmlTagControl,
@@ -24,6 +25,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
 	htmlV3PropTypeUtil,
@@ -69,6 +71,11 @@ const controlTypes = {
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	'date-range': {
+		component: DateRangeControl,
+		layout: 'custom',
+		propTypeUtil: dateRangePropTypeUtil,
+	},
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
