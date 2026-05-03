@@ -118,7 +118,12 @@ abstract class Prop_Types_Schema_Extender {
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$union_prop_type = clone $prop_type;
 		} elseif ( $prop_type instanceof Transformable_Prop_Type ) {
+			// $dependencies = $prop_type->get_dependencies();
+			// $prop_type->set_dependencies( [] );
 			$union_prop_type = Union_Prop_Type::create_from( $prop_type );
+			// $union_prop_type->prop_types[$prop_type::get_key()]->set_dependencies( $dependencies );
+
+			// $deps2 = 
 		}
 
 		foreach ( $prop_types_to_add as $added_prop_type ) {

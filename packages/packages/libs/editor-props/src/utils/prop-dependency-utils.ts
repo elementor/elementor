@@ -113,15 +113,34 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
+function unwrapOverridable( val: PropValue ): PropValue {
+	if (
+		isTransformable( val ) &&
+		val.$$type === 'overridable' &&
+		isTransformable(
+			( val.value as Record< string, unknown > )?.origin_value
+		)
+	) {
+		return ( val.value as Record< string, unknown > )
+			.origin_value as PropValue;
+	}
+
+	return val;
+}
+
 export function extractValue(
 	path: string[],
 	elementValues: PropValue,
 	nestedPath: string[] = []
 ): TransformablePropValue< PropKey > | null {
 	const extractedValue = path.reduce( ( acc, key, index ) => {
-		const value = acc?.[ key as keyof typeof acc ] as PropValue | null;
+		const value = unwrapOverridable(
+			acc?.[ key as keyof typeof acc ] as PropValue | null
+		);
 
-		return index !== path.length - 1 && isTransformable( value ) ? value.value ?? null : value;
+		return index !== path.length - 1 && isTransformable( value )
+			? value.value ?? null
+			: value;
 	}, elementValues ) as TransformablePropValue< PropKey >;
 
 	if ( ! nestedPath?.length ) {
