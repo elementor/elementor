@@ -14,12 +14,41 @@ import {
 	__dispatch as dispatch,
 	__registerSlice as registerSlice,
 } from '@elementor/store';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
+
+jest.mock( '@tanstack/react-virtual', () => {
+	const actual = jest.requireActual( '@tanstack/react-virtual' );
+	return {
+		...actual,
+		useVirtualizer: jest.fn(),
+	};
+} );
+
+const ROW_HEIGHT = 40;
+
+const mockVirtualizerWithAllItems = () => {
+	jest.mocked( useVirtualizer ).mockImplementation( ( options ) => {
+		const indices = Array.from( { length: options.count }, ( _, i ) => i );
+		return {
+			getTotalSize: () => options.count * ROW_HEIGHT,
+			getVirtualItems: () =>
+				indices.map( ( index ) => ( {
+					index,
+					key: options.getItemKey ? options.getItemKey( index ) : index,
+					start: index * ROW_HEIGHT,
+					end: ( index + 1 ) * ROW_HEIGHT,
+					size: ROW_HEIGHT,
+					lane: 0,
+				} ) ),
+		} as unknown as ReturnType< typeof useVirtualizer >;
+	} );
+};
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
@@ -67,11 +96,14 @@ describe( 'GlobalClassesList', () => {
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
 
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: true, errorMessage: null } );
+		jest.mocked( useFilters ).mockReturnValue( null );
 
 		registerSlice( slice );
 
 		store = createStore();
 		jest.mocked( useSearchAndFilters ).mockReturnValue( { ...mockUseSearchAndFiltersProps } );
+
+		mockVirtualizerWithAllItems();
 	} );
 
 	it( 'should render the list of classes with its order', async () => {
@@ -608,6 +640,41 @@ describe( 'GlobalClassesList', () => {
 
 		expect( triggers ).toHaveLength( 0 );
 		expect( mockTracking ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should render only the windowed subset for large lists', () => {
+		const totalCount = 50;
+		const windowSize = 10;
+
+		jest.mocked( useVirtualizer ).mockImplementation( ( options ) => {
+			const indices = Array.from( { length: Math.min( windowSize, options.count ) }, ( _, i ) => i );
+			return {
+				getTotalSize: () => options.count * ROW_HEIGHT,
+				getVirtualItems: () =>
+					indices.map( ( index ) => ( {
+						index,
+						key: options.getItemKey ? options.getItemKey( index ) : index,
+						start: index * ROW_HEIGHT,
+						end: ( index + 1 ) * ROW_HEIGHT,
+						size: ROW_HEIGHT,
+						lane: 0,
+					} ) ),
+			} as unknown as ReturnType< typeof useVirtualizer >;
+		} );
+
+		mockClasses(
+			Array.from( { length: totalCount }, ( _, i ) => ( {
+				id: `class-${ i + 1 }`,
+				label: `ClassLabel${ i + 1 }`,
+			} ) )
+		);
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		expect( screen.getByText( 'ClassLabel1' ) ).toBeInTheDocument();
+		expect( screen.getByText( `ClassLabel${ windowSize }` ) ).toBeInTheDocument();
+		expect( screen.queryByText( `ClassLabel${ windowSize + 1 }` ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( `ClassLabel${ totalCount }` ) ).not.toBeInTheDocument();
 	} );
 } );
 

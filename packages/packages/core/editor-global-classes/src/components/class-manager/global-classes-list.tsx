@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
+import { defaultRangeExtractor, type Range, useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
@@ -17,13 +18,22 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { getNotFoundType, NotFound } from './not-found';
 import { SortableItem, SortableProvider } from './sortable';
 
+const ROW_HEIGHT = 40;
+const OVERSCAN = 6;
+
 type GlobalClassesListProps = {
 	disabled?: boolean;
+	scrollElement?: HTMLElement | null;
 	onStopSyncRequest?: ( id: string ) => void;
 	onStartSyncRequest?: ( id: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncRequest }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( {
+	disabled,
+	scrollElement,
+	onStopSyncRequest,
+	onStartSyncRequest,
+}: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
@@ -34,6 +44,33 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 	const draggedItemLabel = cssClasses.find( ( cssClass ) => cssClass.id === draggedItemId )?.label ?? '';
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
+
+	const draggedItemIndex = useMemo( () => {
+		if ( ! draggedItemId ) {
+			return -1;
+		}
+		return filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId );
+	}, [ draggedItemId, filteredCssClasses ] );
+
+	const rangeExtractor = useCallback(
+		( range: Range ) => {
+			const indices = new Set( defaultRangeExtractor( range ) );
+			if ( draggedItemIndex >= 0 ) {
+				indices.add( draggedItemIndex );
+			}
+			return [ ...indices ].sort( ( a, b ) => a - b );
+		},
+		[ draggedItemIndex ]
+	);
+
+	const virtualizer = useVirtualizer( {
+		count: filteredCssClasses.length,
+		getScrollElement: () => scrollElement ?? null,
+		estimateSize: () => ROW_HEIGHT,
+		overscan: OVERSCAN,
+		getItemKey: ( index ) => filteredCssClasses[ index ].id,
+		rangeExtractor,
+	} );
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -69,19 +106,36 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 
 	return (
 		<DeleteConfirmationProvider>
-			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+			<List
+				sx={ {
+					position: 'relative',
+					display: 'block',
+					height: virtualizer.getTotalSize(),
+					padding: 0,
+				} }
+			>
 				<SortableProvider
 					value={ classesOrder }
 					onChange={ reorderClasses }
+					onDragStart={ ( event ) => setDraggedItemId( event.active.id as StyleDefinitionID ) }
+					onDragEnd={ () => setDraggedItemId( null ) }
+					onDragCancel={ () => setDraggedItemId( null ) }
 					disableDragOverlay={ ! allowSorting }
 				>
-					{ filteredCssClasses?.map( ( cssClass ) => (
-						<SortableItem key={ cssClass.id } id={ cssClass.id }>
-							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => {
-								if ( isDragged && ! draggedItemId ) {
-									setDraggedItemId( cssClass.id );
-								}
-								return (
+					{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
+						const cssClass = filteredCssClasses[ virtualRow.index ];
+						return (
+							<SortableItem
+								key={ virtualRow.key }
+								id={ cssClass.id }
+								style={ {
+									position: 'absolute',
+									top: virtualRow.start,
+									left: 0,
+									width: '100%',
+								} }
+							>
+								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
 									<ClassItem
 										id={ cssClass.id }
 										label={ cssClass.label }
@@ -127,10 +181,10 @@ export const GlobalClassesList = ( { disabled, onStopSyncRequest, onStartSyncReq
 											}
 										} }
 									/>
-								);
-							} }
-						</SortableItem>
-					) ) }
+								) }
+							</SortableItem>
+						);
+					} ) }
 				</SortableProvider>
 			</List>
 		</DeleteConfirmationProvider>
@@ -176,7 +230,7 @@ const useReorder = (
 				classId: draggedItemId,
 				classTitle: draggedItemLabel,
 			} );
-			setDraggedItemId( null ); // Reset after tracking
+			setDraggedItemId( null );
 		}
 	};
 

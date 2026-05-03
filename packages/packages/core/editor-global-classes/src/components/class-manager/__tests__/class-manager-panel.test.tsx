@@ -12,11 +12,40 @@ import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
+
+jest.mock( '@tanstack/react-virtual', () => {
+	const actual = jest.requireActual( '@tanstack/react-virtual' );
+	return {
+		...actual,
+		useVirtualizer: jest.fn(),
+	};
+} );
+
+const PANEL_TEST_ROW_HEIGHT = 40;
+
+const mockVirtualizerWithAllItemsForPanel = () => {
+	jest.mocked( useVirtualizer ).mockImplementation( ( options ) => {
+		const indices = Array.from( { length: options.count }, ( _, i ) => i );
+		return {
+			getTotalSize: () => options.count * PANEL_TEST_ROW_HEIGHT,
+			getVirtualItems: () =>
+				indices.map( ( index ) => ( {
+					index,
+					key: options.getItemKey ? options.getItemKey( index ) : index,
+					start: index * PANEL_TEST_ROW_HEIGHT,
+					end: ( index + 1 ) * PANEL_TEST_ROW_HEIGHT,
+					size: PANEL_TEST_ROW_HEIGHT,
+					lane: 0,
+				} ) ),
+		} as unknown as ReturnType< typeof useVirtualizer >;
+	} );
+};
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
@@ -83,6 +112,8 @@ describe( 'ClassManagerPanel', () => {
 		);
 
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
+
+		mockVirtualizerWithAllItemsForPanel();
 	} );
 
 	it( 'should have a disabled "save changes" button when dirty state is false', () => {
@@ -463,6 +494,26 @@ describe( 'ClassManagerPanel', () => {
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerSearched',
 		} );
+	} );
+
+	it( 'should wire a real scroll element to the virtualized list', async () => {
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanel />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		await waitFor( () => {
+			expect( useVirtualizer ).toHaveBeenCalled();
+		} );
+
+		const lastCall = jest.mocked( useVirtualizer ).mock.calls.at( -1 );
+		const options = lastCall?.[ 0 ];
+
+		expect( options?.getScrollElement?.() ).toBeInstanceOf( HTMLElement );
 	} );
 
 	it( 'should track syncToV3 unsync event when stopping sync via confirmation dialog', async () => {
