@@ -19,7 +19,8 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active() {
-		return class_exists( McpAdapter::class ) && 
+		return class_exists( McpAdapter::class ) &&
+			function_exists( 'wp_register_ability' ) &&
 			Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
