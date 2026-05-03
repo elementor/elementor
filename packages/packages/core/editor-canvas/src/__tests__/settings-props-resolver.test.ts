@@ -103,6 +103,7 @@ describe( 'settings props resolver', () => {
 			expected: {
 				image: {
 					src: 'https://localhost.test/test-image.png',
+					alt: '',
 				},
 			},
 		},
@@ -130,6 +131,7 @@ describe( 'settings props resolver', () => {
 					src: 'large-image-url-123',
 					height: 3,
 					width: 3,
+					alt: undefined,
 				},
 			},
 		},
@@ -157,6 +159,7 @@ describe( 'settings props resolver', () => {
 					src: 'original-image-url-123',
 					height: 0,
 					width: 0,
+					alt: undefined,
 				},
 			},
 		},
