@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { minMaxDateTimePropTypeUtil, type PropKey, stringPropTypeUtil } from '@elementor/editor-props';
+import { dateRangePropTypeUtil, dateStringPropTypeUtil, type PropKey } from '@elementor/editor-props';
 import { FormHelperText, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,29 +8,9 @@ import { ControlFormLabel } from '../components/control-form-label';
 import { createControl } from '../create-control';
 import { DateStringControl } from './date-string-control';
 
-type MinMaxDateTimeVariant = 'date' | 'time';
-
-type MinMaxDateTimeControlProps = {
-	variant?: MinMaxDateTimeVariant;
-};
-
-type RangeLabels = {
-	min: string;
-	max: string;
-};
-
-const getLabels = ( variant: MinMaxDateTimeVariant ): RangeLabels => {
-	if ( variant === 'time' ) {
-		return {
-			min: __( 'Start time', 'elementor' ),
-			max: __( 'End time', 'elementor' ),
-		};
-	}
-
-	return {
-		min: __( 'Min date', 'elementor' ),
-		max: __( 'Max date', 'elementor' ),
-	};
+const RANGE_LABELS = {
+	min: __( 'Min date', 'elementor' ),
+	max: __( 'Max date', 'elementor' ),
 };
 
 const isMaxBeforeMin = ( minIso?: string | null, maxIso?: string | null ): boolean => {
@@ -43,14 +23,13 @@ const isMaxBeforeMin = ( minIso?: string | null, maxIso?: string | null ): boole
 
 const RANGE_ERROR_MESSAGE = __( 'Max date must be on or after Min date', 'elementor' );
 
-export const MinMaxDateTimeControl = createControl( ( { variant = 'date' }: MinMaxDateTimeControlProps ) => {
-	const { value, setValue, ...propContext } = useBoundProp( minMaxDateTimePropTypeUtil );
-	const labels = getLabels( variant );
+export const DateRangeControl = createControl( () => {
+	const { value, setValue, ...propContext } = useBoundProp( dateRangePropTypeUtil );
 
-	const minString = stringPropTypeUtil.extract( value?.min );
-	const maxString = stringPropTypeUtil.extract( value?.max );
+	const minString = dateStringPropTypeUtil.extract( value?.min );
+	const maxString = dateStringPropTypeUtil.extract( value?.max );
 
-	const hasInvalidRange = variant === 'date' && isMaxBeforeMin( minString, maxString );
+	const hasInvalidRange = isMaxBeforeMin( minString, maxString );
 
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
@@ -58,26 +37,24 @@ export const MinMaxDateTimeControl = createControl( ( { variant = 'date' }: MinM
 				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
 					<Grid container gap={ 0.75 } alignItems="center">
 						<Grid item xs={ 12 }>
-							<ControlFormLabel>{ labels.min }</ControlFormLabel>
+							<ControlFormLabel>{ RANGE_LABELS.min }</ControlFormLabel>
 						</Grid>
 						<Grid item xs={ 12 }>
 							<BoundDateStringControl
 								bind={ 'min' }
-								variant={ variant }
-								ariaLabel={ labels.min }
+								ariaLabel={ RANGE_LABELS.min }
 								error={ hasInvalidRange }
 							/>
 						</Grid>
 					</Grid>
 					<Grid container gap={ 0.75 } alignItems="center">
 						<Grid item xs={ 12 }>
-							<ControlFormLabel>{ labels.max }</ControlFormLabel>
+							<ControlFormLabel>{ RANGE_LABELS.max }</ControlFormLabel>
 						</Grid>
 						<Grid item xs={ 12 }>
 							<BoundDateStringControl
 								bind={ 'max' }
-								variant={ variant }
-								ariaLabel={ labels.max }
+								ariaLabel={ RANGE_LABELS.max }
 								error={ hasInvalidRange }
 							/>
 						</Grid>
@@ -91,18 +68,16 @@ export const MinMaxDateTimeControl = createControl( ( { variant = 'date' }: MinM
 
 const BoundDateStringControl = ( {
 	bind,
-	variant,
 	ariaLabel,
 	error,
 }: {
 	bind: PropKey;
-	variant: MinMaxDateTimeVariant;
 	ariaLabel?: string;
 	error?: boolean;
 } ) => {
 	return (
 		<PropKeyProvider bind={ bind }>
-			<DateStringControl variant={ variant } ariaLabel={ ariaLabel } error={ error } />
+			<DateStringControl ariaLabel={ ariaLabel } error={ error } />
 		</PropKeyProvider>
 	);
 };

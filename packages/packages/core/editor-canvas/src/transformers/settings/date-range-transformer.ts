@@ -1,7 +1,7 @@
 import { createTransformer } from '../create-transformer';
 
 const INVALID_DATE = 'Invalid Date';
-export const minMaxDateTimeTransformer = createTransformer< { min?: string; max?: string } >( ( value ) => {
+export const dateRangeTransformer = createTransformer< { min?: string; max?: string } >( ( value ) => {
 	if ( ! value || Object.keys( value ).length === 0 ) {
 		return null;
 	}

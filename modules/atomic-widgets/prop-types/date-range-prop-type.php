@@ -3,21 +3,21 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Min_Max_Date_Time_Prop_Type extends Object_Prop_Type {
+class Date_Range_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'min-max-date-time';
+		return 'date-range';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'min' => String_Prop_Type::make(),
-			'max' => String_Prop_Type::make(),
+			'min' => Date_String_Prop_Type::make(),
+			'max' => Date_String_Prop_Type::make(),
 		];
 	}
 

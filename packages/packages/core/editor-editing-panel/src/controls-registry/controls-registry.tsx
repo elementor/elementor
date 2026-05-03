@@ -1,6 +1,7 @@
 import {
 	ChipsControl,
 	type ControlComponent,
+	DateRangeControl,
 	DateTimeControl,
 	EmailFormActionControl,
 	HtmlTagControl,
@@ -8,7 +9,6 @@ import {
 	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
-	MinMaxDateTimeControl,
 	NumberControl,
 	QueryControl,
 	RepeatableControl,
@@ -25,13 +25,13 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
-	minMaxDateTimePropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
 	queryPropTypeUtil,
@@ -71,10 +71,10 @@ const controlTypes = {
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
 	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
-	'min-max-date-time': {
-		component: MinMaxDateTimeControl,
+	'date-range': {
+		component: DateRangeControl,
 		layout: 'custom',
-		propTypeUtil: minMaxDateTimePropTypeUtil,
+		propTypeUtil: dateRangePropTypeUtil,
 	},
 } as const satisfies ControlRegistry;
 
