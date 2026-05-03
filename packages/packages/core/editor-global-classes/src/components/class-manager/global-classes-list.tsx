@@ -45,10 +45,6 @@ export const GlobalClassesList = ( {
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
 
-	const draggedItemIndex = draggedItemId
-		? filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId )
-		: -1;
-
 	const virtualizer = useVirtualizer( {
 		count: filteredCssClasses.length,
 		getScrollElement: () => scrollElement ?? null,
@@ -60,8 +56,11 @@ export const GlobalClassesList = ( {
 		// DragOverlay clone disappear mid-drag.
 		rangeExtractor: ( range ) => {
 			const indices = new Set( defaultRangeExtractor( range ) );
-			if ( draggedItemIndex >= 0 ) {
-				indices.add( draggedItemIndex );
+			if ( draggedItemId ) {
+				const draggedItemIndex = filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId );
+				if ( draggedItemIndex >= 0 ) {
+					indices.add( draggedItemIndex );
+				}
 			}
 			return [ ...indices ].sort( ( a, b ) => a - b );
 		},
