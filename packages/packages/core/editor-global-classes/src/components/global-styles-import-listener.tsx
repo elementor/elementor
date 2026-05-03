@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __useDispatch as useDispatch } from '@elementor/store';
 
@@ -35,13 +36,10 @@ export function GlobalStylesImportListener() {
 			fetchAndDispatchGlobalClasses( getCurrentDocument()?.id ).catch( () => {} );
 		};
 
-		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
+		window.addEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );
 
 		return () => {
-			window.removeEventListener(
-				'elementor/global-styles/imported',
-				handleGlobalStylesImported as EventListener
-			);
+			window.removeEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );
 		};
 	}, [ dispatch ] );
 
