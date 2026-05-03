@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}	
 	{% set has_link = settings.link and settings.link.attributes is not empty %}
@@ -25,3 +26,23 @@
 		</{{ settings.link.tag | e('html_tag') }}>
 	{% endif %}
 {% endif %}
+=======
+{% import 'elementor/macros' as m %}
+{%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- if has_link -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
+	>
+{%- endif %}
+<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
+	{%- if not has_link %} data-interaction-id="{{ interaction_id }}"{% endif -%}
+	{{- m.render_custom_attributes(settings) }}
+	{%- for attr, value in settings.image -%}
+		{%- if attr == 'src' %} src="{{ value | e('full_url') }}"
+		{%- else %} {{ attr | e('html_attr') }}="{{ value }}"{% endif -%}
+	{%- endfor %}
+/>
+{%- if has_link %}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- endif %}
+>>>>>>> b5f3a22dd5 (Fix: Atomic Twig widgets CSS ID double-escaped[ED-23912] (#35662))

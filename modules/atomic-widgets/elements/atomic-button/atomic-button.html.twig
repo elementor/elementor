@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% if settings.text is not empty %}
     {%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' %}
     {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
@@ -17,3 +18,20 @@
         </button>
     {% endif %}
 {% endif %}
+=======
+{% import 'elementor/macros' as m %}
+{%- set allowed_tags = '<b><strong><sup><sub><s><em><i><u><del><span><br>' -%}
+{%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+		{{- m.render_custom_attributes(settings) }}>
+		{{ settings.text | striptags(allowed_tags) | raw }}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- else -%}
+	<button class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+		{{- m.render_custom_attributes(settings) }}>
+		{{ settings.text | striptags(allowed_tags) | raw }}
+	</button>
+{%- endif %}
+>>>>>>> b5f3a22dd5 (Fix: Atomic Twig widgets CSS ID double-escaped[ED-23912] (#35662))
