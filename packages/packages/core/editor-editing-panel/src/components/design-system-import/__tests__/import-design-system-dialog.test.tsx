@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { service as variablesService } from '@elementor/editor-variables';
 import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
@@ -25,13 +24,7 @@ jest.mock( '@elementor/editor-notifications', () => ( {
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
-	getCurrentDocument: jest.fn(),
-	getV1DocumentsManager: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	__privateRunCommand: jest.fn().mockResolvedValue( undefined ),
+	reloadCurrentDocument: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => ( {
@@ -70,13 +63,6 @@ const setupHttpServiceMock = () => {
 	return { post };
 };
 
-const setupDocumentsMock = () => {
-	const invalidateCache = jest.fn();
-	( getCurrentDocument as jest.Mock ).mockReturnValue( { id: 99 } );
-	( getV1DocumentsManager as jest.Mock ).mockReturnValue( { invalidateCache } );
-	return { invalidateCache };
-};
-
 const dropFile = ( file: File ) => {
 	const dropTarget = screen.getByRole( 'region', { name: 'Design system file dropzone' } );
 	fireEvent.dragEnter( dropTarget );
@@ -103,7 +89,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 	it( 'disables the import button until a file and conflict strategy are selected', async () => {
 		setupHttpServiceMock();
-		setupDocumentsMock();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
@@ -123,7 +108,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 	it( 'fires the in-progress notification, calls onClose and triggers the import request', async () => {
 		const { post } = setupHttpServiceMock();
-		setupDocumentsMock();
 		const onClose = jest.fn();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ onClose } /> );
@@ -148,7 +132,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 	it( 'on success: refreshes globals, reloads the document and notifies success with a View action', async () => {
 		setupHttpServiceMock();
-		const { invalidateCache } = setupDocumentsMock();
 
 		const eventListener = jest.fn();
 		window.addEventListener( 'elementor/global-styles/imported', eventListener );
@@ -171,8 +154,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( eventListener ).toHaveBeenCalledTimes( 1 );
 		expect( variablesService.load ).toHaveBeenCalledTimes( 1 );
-		expect( invalidateCache ).toHaveBeenCalledTimes( 1 );
-		expect( runCommand ).toHaveBeenCalledWith( 'editor/documents/switch', expect.objectContaining( { id: 99 } ) );
+		expect( reloadCurrentDocument ).toHaveBeenCalledTimes( 1 );
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
@@ -197,7 +179,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 	it( 'on failure: notifies error and the Try again action reopens the import dialog', async () => {
 		const post = jest.fn().mockRejectedValue( new Error( 'boom' ) );
 		( httpService as jest.Mock ).mockReturnValue( { post } );
-		setupDocumentsMock();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
@@ -215,7 +196,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		);
 
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
-		expect( runCommand ).not.toHaveBeenCalled();
+		expect( reloadCurrentDocument ).not.toHaveBeenCalled();
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
@@ -238,7 +219,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 	it( 'Try again is a no-op while another import is in progress', async () => {
 		const post = jest.fn().mockRejectedValue( new Error( 'boom' ) );
 		( httpService as jest.Mock ).mockReturnValue( { post } );
-		setupDocumentsMock();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
 
@@ -309,7 +289,6 @@ describe( '<TriggerButton />', () => {
 	} );
 
 	it( 'is disabled while an import is in progress', async () => {
-		setupDocumentsMock();
 		const longRunningPost = jest.fn(
 			() => new Promise( () => undefined ) as Promise< { data: Record< string, never > } >
 		);

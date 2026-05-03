@@ -3,6 +3,7 @@ import {
 	__privateRunCommandSync as runCommandSync,
 } from '@elementor/editor-v1-adapters';
 
+import { getCurrentDocument } from '../store/get-current-document';
 import { type Document, type ExtendedWindow, type V1Document } from '../types';
 
 export function getV1DocumentsManager() {
@@ -94,6 +95,22 @@ export function invalidateDocumentData( documentId: number ) {
 	const documentsManager = getV1DocumentsManager();
 
 	documentsManager.invalidateCache( documentId );
+}
+
+export function reloadCurrentDocument() {
+	const currentDocument = getCurrentDocument();
+
+	if ( ! currentDocument?.id ) {
+		return Promise.resolve();
+	}
+
+	getV1DocumentsManager().invalidateCache();
+
+	return runCommand( 'editor/documents/switch', {
+		id: currentDocument.id,
+		shouldScroll: false,
+		shouldNavigateToDefaultRoute: false,
+	} );
 }
 
 export function switchToDocument(

@@ -1,5 +1,4 @@
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { service as variablesService } from '@elementor/editor-variables';
 import { httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
@@ -20,22 +19,6 @@ type ImportRequestArgs = {
 };
 
 const wait = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
-
-const reloadCurrentDocument = () => {
-	const current = getCurrentDocument();
-
-	if ( ! current?.id ) {
-		return Promise.resolve();
-	}
-
-	getV1DocumentsManager().invalidateCache();
-
-	return runCommand( 'editor/documents/switch', {
-		id: current.id,
-		shouldScroll: false,
-		shouldNavigateToDefaultRoute: false,
-	} );
-};
 
 const broadcastGlobalStylesImported = ( detail: unknown ) => {
 	window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT, { detail } ) );
