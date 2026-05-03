@@ -31,6 +31,7 @@ export const NumberControl = createControl(
 		step = 1,
 		shouldForceInt = false,
 		startIcon,
+		disabled: inputDisabled,
 	}: {
 		placeholder?: string;
 		max?: number;
@@ -38,6 +39,7 @@ export const NumberControl = createControl(
 		step?: number;
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
+		disabled?: boolean;
 	} ) => {
 		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
 
@@ -69,7 +71,7 @@ export const NumberControl = createControl(
 					size="tiny"
 					type="number"
 					fullWidth
-					disabled={ disabled }
+					disabled={ inputDisabled ?? disabled }
 					value={ isEmptyOrNaN( value ) ? '' : value }
 					onInput={ handleChange }
 					onBlur={ restoreValue }
@@ -77,7 +79,7 @@ export const NumberControl = createControl(
 					inputProps={ { step, min } }
 					InputProps={ {
 						startAdornment: startIcon ? (
-							<InputAdornment position="start" disabled={ disabled }>
+							<InputAdornment position="start" disabled={ inputDisabled ?? disabled }>
 								{ startIcon }
 							</InputAdornment>
 						) : undefined,
