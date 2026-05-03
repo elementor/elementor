@@ -84,6 +84,7 @@ export function ClassManagerPanel() {
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
 	const [ startSyncConfirmation, setStartSyncConfirmation ] = useState< string | null >( null );
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
+	const [ scrollElement, setScrollElement ] = useState< HTMLElement | null >( null );
 
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
@@ -177,6 +178,7 @@ export function ClassManagerPanel() {
 							</Box>
 							<Divider />
 							<Box
+								ref={ setScrollElement }
 								px={ 2 }
 								sx={ {
 									flexGrow: 1,
@@ -185,6 +187,7 @@ export function ClassManagerPanel() {
 							>
 								<GlobalClassesList
 									disabled={ isPublishing }
+									scrollElement={ scrollElement }
 									onStopSyncRequest={ handleStopSyncRequest }
 									onStartSyncRequest={ ( classId ) => setStartSyncConfirmation( classId ) }
 								/>

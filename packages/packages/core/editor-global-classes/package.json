@@ -59,6 +59,7 @@
     "@elementor/store": "4.1.0",
     "@elementor/ui": "1.37.5",
     "@elementor/utils": "4.1.0",
+    "@tanstack/react-virtual": "^3.13.24",
     "@wordpress/i18n": "^5.13.0",
     "@elementor/events": "4.1.0"
   },
