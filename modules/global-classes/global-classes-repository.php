@@ -69,6 +69,25 @@ class Global_Classes_Repository {
 		return $this->labels()->get_ordered_labels();
 	}
 
+	public function get_order(): array {
+		return Global_Classes_Order::make( $this->kit )->get_order();
+	}
+
+	public function update_order_and_labels( array $order, array $new_labels ): void {
+		Global_Classes_Order::make( $this->kit )->set_order( $order );
+
+		$labels = $this->labels();
+		$existing_labels = $labels->get_labels();
+
+		foreach ( $new_labels as $id => $label ) {
+			$existing_labels[ $id ] = $label;
+		}
+
+		$labels->set_labels( $existing_labels );
+
+		$this->cache = null;
+	}
+
 	private function labels(): Global_Classes_Labels {
 		return Global_Classes_Labels::make( $this->get_kit() )->set_preview( $this->is_preview() );
 	}
@@ -232,6 +251,31 @@ class Global_Classes_Repository {
 					clean_post_cache( $post->get_post_id() );
 				}
 			} );
+		}
+	}
+
+	public function add_class( string $class_id, string $label, array $data, array $order ): void {
+		$t = microtime( true );
+		$created = Global_Class_Post::create( $class_id, $label, $data );
+		$t_create = microtime( true ) - $t;
+
+		if ( $created ) {
+			clean_post_cache( $created->get_post_id() );
+			$t = microtime( true );
+			
+
+			$classes_order = Global_Classes_Order::make( $this->kit );
+			$classes_order->set_order( $order );
+	
+			$classes_labels = Global_Classes_Labels::make( $this->kit );
+			$existing_labels = $classes_labels->get_labels();
+			$existing_labels[ $class_id ] = $label;
+			$classes_labels->set_labels( $existing_labels );
+
+
+			$t_index = microtime( true ) - $t;
+
+			error_log( '[GC Import][Timing] add_class(' . $class_id . '): post_create=' . round( $t_create * 1000, 2 ) . 'ms, index_add=' . round( $t_index * 1000, 2 ) . 'ms' );
 		}
 	}
 
