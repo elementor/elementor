@@ -1,5 +1,4 @@
 import { reloadCurrentDocument } from '@elementor/editor-documents';
-import { service as variablesService } from '@elementor/editor-variables';
 import { httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
 
@@ -39,8 +38,6 @@ export const useImportRequest = () => {
 			} );
 
 			broadcastGlobalStylesImported( response?.data );
-
-			await variablesService.load();
 
 			await reloadCurrentDocument();
 

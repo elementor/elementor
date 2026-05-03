@@ -3,7 +3,6 @@ import { renderWithTheme } from 'test-utils';
 import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
-import { service as variablesService } from '@elementor/editor-variables';
 import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
@@ -31,10 +30,6 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
 	openDialog: jest.fn(),
 	closeDialog: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/editor-variables', () => ( {
-	service: { load: jest.fn().mockResolvedValue( undefined ) },
 } ) );
 
 jest.mock( '@elementor/query', () => {
@@ -153,7 +148,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( eventListener ).toHaveBeenCalledTimes( 1 );
-		expect( variablesService.load ).toHaveBeenCalledTimes( 1 );
 		expect( reloadCurrentDocument ).toHaveBeenCalledTimes( 1 );
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
