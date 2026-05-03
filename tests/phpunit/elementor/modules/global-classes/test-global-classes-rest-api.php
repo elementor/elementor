@@ -10,8 +10,8 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -592,7 +592,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
-		for ( $i = 0; $i < 1000; $i++ ) {
+		for ( $i = 0; $i < Global_Classes_REST_API::MAX_ITEMS; $i++ ) {
 			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
 		}
 
