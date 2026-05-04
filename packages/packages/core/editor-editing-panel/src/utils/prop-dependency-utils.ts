@@ -4,9 +4,12 @@ import {
 	extractValue,
 	isDependency,
 	isDependencyMet,
+	isOverridable,
+	isTransformable,
 	type Props,
 	type PropsSchema,
 	type PropType,
+	rewrapOverridableValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from '@elementor/session';
@@ -94,12 +97,19 @@ export function getUpdatedValues(
 
 			if ( ! testDependencies.previousValues.isMet ) {
 				const savedValue = retrievePreviousValueFromStorage< Value >( { path: dependency, elementId } );
+				const currentValue = extractValue( path, combinedValues, [], {
+					unwrapOverridableLeaf: false,
+				} ) as Value;
 
 				removePreviousValueFromStorage( { path: dependency, elementId } );
 
+				const restored = isCompatibleSavedValue( savedValue, currentValue )
+					? savedValue
+					: ( propType.default as Value );
+
 				return {
 					...newValues,
-					...updateValue( path, savedValue ?? ( propType.default as Value ), combinedValues ),
+					...updateValue( path, restored, combinedValues ),
 				};
 			}
 
@@ -165,23 +175,88 @@ function evaluatePropType( props: {
 
 function updateValue( path: string[], value: Value, values: Values ) {
 	const topPropKey = path[ 0 ];
-	const newValue: Values = { ...values };
+	const root: Values = { ...values };
 
-	path.reduce( ( carry: Values | null, key, index ) => {
-		if ( ! carry ) {
+	let carry: Values = root;
+
+	for ( let index = 0; index < path.length; index++ ) {
+		const key = path[ index ];
+		const isLeaf = index === path.length - 1;
+
+		if ( isLeaf ) {
+			carry[ key ] = mergeLeafValue( carry[ key ], value );
+			break;
+		}
+
+		const next = cloneDescent( carry[ key ] );
+
+		if ( ! next ) {
+			break;
+		}
+
+		carry[ key ] = next.replacement;
+		carry = next.descended;
+	}
+
+	return { [ topPropKey ]: root[ topPropKey ] ?? null };
+}
+
+function cloneDescent( child: Value ): { replacement: Value; descended: Values } | null {
+	if ( ! child ) {
+		return null;
+	}
+
+	if ( isOverridable( child ) ) {
+		const origin = child.value.origin_value;
+
+		if ( ! origin || ! isTransformable( origin ) ) {
 			return null;
 		}
 
-		if ( index === path.length - 1 ) {
-			carry[ key ] = value ?? null;
+		const descended: Values = { ...( origin.value as Values ) };
+		const replacement: Value = {
+			...child,
+			value: {
+				...child.value,
+				origin_value: { ...origin, value: descended },
+			},
+		};
 
-			return ( carry[ key ]?.value as Values ) ?? carry.value;
-		}
+		return { replacement, descended };
+	}
 
-		return ( carry[ key ]?.value as Values ) ?? carry.value;
-	}, newValue );
+	if ( isTransformable( child ) ) {
+		const descended: Values = { ...( child.value as Values ) };
+		const replacement: Value = { ...child, value: descended };
 
-	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
+		return { replacement, descended };
+	}
+
+	return null;
+}
+
+function isCompatibleSavedValue( saved: Value | null, current: Value ): saved is Value {
+	if ( ! saved ) {
+		return false;
+	}
+
+	return isOverridable( saved ) === isOverridable( current );
+}
+
+function mergeLeafValue( existing: Value, incoming: Value ) {
+	if ( incoming === null ) {
+		return null;
+	}
+
+	if ( incoming && isOverridable( incoming ) ) {
+		return incoming;
+	}
+
+	if ( existing && isOverridable( existing ) && incoming ) {
+		return rewrapOverridableValue( existing, incoming );
+	}
+
+	return incoming;
 }
 
 function handleUnmetCondition( props: {
@@ -196,7 +271,8 @@ function handleUnmetCondition( props: {
 		( term ): term is Dependency => 'newValue' in term && !! term.newValue
 	) as Dependency | undefined;
 	const newValue = termWithNewValue?.newValue ?? null;
-	const currentValue = extractValue( dependency.split( '.' ), elementValues ) ?? defaultValue;
+	const currentValue =
+		extractValue( dependency.split( '.' ), elementValues, [], { unwrapOverridableLeaf: false } ) ?? defaultValue;
 
 	savePreviousValueToStorage( {
 		path: dependency,
