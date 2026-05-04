@@ -105,6 +105,11 @@ For each, create corresponding resource and manually add `_meta['angie:required-
 - Run package tests: `cd packages && npm test`
 - Run linting: `cd packages && npm run lint`
 
+## Agent Guidelines
+
+- **Derive, don't parse**: If a value can be computed from known context, compute it. Don't parse strings to rediscover what you already know.
+- **Pure utils**: Functions in `utils/` must not close over or import module-level state. All dependencies go in as parameters.
+
 ## Constraints to Maintain
 
 - No breaking changes to tool APIs or resource URIs
