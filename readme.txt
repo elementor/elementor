@@ -354,6 +354,9 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+= 4.0.6 - 2026-05-04 =
+
+* Security Fix: Improved code security enforcement in query handling
 
 = 4.0.5 - 2026-04-30 =
 
