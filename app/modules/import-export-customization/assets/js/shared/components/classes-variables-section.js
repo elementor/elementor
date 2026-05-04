@@ -181,8 +181,6 @@ export function ClassesVariablesSection( {
 	disabled = false,
 	notExported = false,
 } ) {
-	classesLimitExceeded = true;
-	variablesLimitExceeded = true;
 	const [ classesOverrideAll, setClassesOverrideAll ] = useState( settings.classesOverrideAll ?? false );
 	const [ variablesOverrideAll, setVariablesOverrideAll ] = useState( settings.variablesOverrideAll ?? false );
 
@@ -244,9 +242,7 @@ export function ClassesVariablesSection( {
 						showOverrideOption={ isImport && ! classesNotExported }
 						notExported={ classesNotExported }
 					/>
-					<div>
-						Override all: { variablesOverrideAll.toString() }
-					</div>
+
 					<SubSettingRow
 						label={ __( 'Variables', 'elementor' ) }
 						checked={ settings.variables ?? false }
@@ -260,8 +256,7 @@ export function ClassesVariablesSection( {
 							setVariablesOverrideAll( checked );
 							onSettingChange( 'variablesOverrideAll', checked );
 						} }
-						showOverrideOption={true}
-						// showOverrideOption={ isImport && ! variablesNotExported }
+						showOverrideOption={ isImport && ! variablesNotExported }
 						notExported={ variablesNotExported }
 					/>
 				</Stack>
