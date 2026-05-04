@@ -49,6 +49,11 @@ class Global_Classes_Repository {
 		$this->cache = null;
 	}
 
+	/**
+	 * This method may be too heavy to use
+	 * Be mindful as this call would cause the server to freeze for as much time as needed until it fetches
+	 * all global classes
+	 */
 	public function all( bool $force = false ): Global_Classes {
 		if ( ! $force && null !== $this->cache ) {
 			return $this->cache;
@@ -149,31 +154,18 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-		$current_value = $this->all()->get();
+		$current_ids = array_keys( $this->all_labels() );
 
-		$updated_value = [
-			'items' => $items,
-			'order' => $order,
-		];
-
-		if ( $current_value === $updated_value ) {
-			return;
-		}
-
-		$current_ids = array_keys( $current_value['items'] );
 		$new_ids = array_keys( $items );
 
 		$changes = [
 			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
 			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
-			'modified' => array_values( array_filter(
-				array_intersect( $new_ids, $current_ids ),
-				fn( $id ) => $items[ $id ] !== $current_value['items'][ $id ]
-			) ),
+			'modified' => array_values( array_intersect( $new_ids, $current_ids ) ),
 			'order' => implode( ';', $current_value['order'] ?? [] ) !== implode( ';', $order ),
 		];
 
-		$this->put_to_posts( $items, $order, $current_value );
+		$this->put_to_posts( $items, $order, $current_ids );
 
 		$this->cache = null;
 
@@ -200,9 +192,8 @@ class Global_Classes_Repository {
 		return Global_Classes::make( $items, $order );
 	}
 
-	private function put_to_posts( array $items, array $order, array $current_value ): void {
+	private function put_to_posts( array $items, array $order, array $current_ids ): void {
 		$is_preview = $this->is_preview();
-		$current_ids = array_keys( $current_value['items'] );
 		$new_ids = array_keys( $items );
 
 		$to_delete = array_diff( $current_ids, $new_ids );

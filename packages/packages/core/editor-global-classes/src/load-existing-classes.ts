@@ -2,7 +2,7 @@ import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from './api';
-import { styleDefinitionsMapWithoutNull } from './load-global-classes-state';
+import { styleDefinitionsMapWithoutNull } from './load-document-classes';
 import { selectGlobalClasses, slice } from './store';
 
 let pendingLoad: Promise< void > | null = null;

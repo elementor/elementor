@@ -1,12 +1,10 @@
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __dispatch as dispatch } from '@elementor/store';
 
-import { apiClient, type GlobalClassIndexEntry, type StyleDefinitionsNullableMap } from './api';
+import { apiClient, type StyleDefinitionsNullableMap } from './api';
 import { slice } from './store';
-
-export function indexEntriesToClassLabels( entries: GlobalClassIndexEntry[] ): Record< StyleDefinitionID, string > {
-	return Object.fromEntries( entries.map( ( e ) => [ e.id, e.label ] ) );
-}
+import { createLabelsForClasses } from './utils/create-labels-for-classes';
 
 export function styleDefinitionsMapWithoutNull(
 	map: StyleDefinitionsNullableMap
@@ -15,33 +13,39 @@ export function styleDefinitionsMapWithoutNull(
 		Object.entries( map ).filter(
 			( entry ): entry is [ StyleDefinitionID, StyleDefinition ] => entry[ 1 ] !== null
 		)
-	) as Record< StyleDefinitionID, StyleDefinition >;
+	);
 }
 
-export async function fetchAndDispatchGlobalClasses( postId?: number ) {
+function resetGlobalClassesState( globalOrder: StyleDefinitionID[], classLabels: Record< StyleDefinitionID, string > ) {
+	dispatch(
+		slice.actions.load( {
+			preview: { items: {}, order: globalOrder },
+			frontend: { items: {}, order: globalOrder },
+			classLabels,
+		} )
+	);
+}
+
+export async function loadDocumentClasses() {
 	const previewIndexRes = await apiClient.all( 'preview' );
 	const previewIndex = previewIndexRes.data.data;
-	const classLabels = indexEntriesToClassLabels( previewIndex );
+	const classLabels = createLabelsForClasses( previewIndex );
 	const globalOrder = previewIndex.map( ( e ) => e.id );
 
+	// This is intended to establish the baseline with current labels and order
+	// without it we won't be able to properly resolve the styles' class names
+	resetGlobalClassesState( globalOrder, classLabels );
+
+	const postId = getCurrentDocument()?.id;
 	if ( ! postId ) {
-		dispatch(
-			slice.actions.load( {
-				preview: { items: {}, order: globalOrder },
-				frontend: { items: {}, order: globalOrder },
-				classLabels,
-			} )
-		);
 		return;
 	}
 
-	const [ frontendIndexRes, previewPostRes, frontendPostRes ] = await Promise.all( [
+	const [ , previewPostRes, frontendPostRes ] = await Promise.all( [
 		apiClient.all( 'frontend' ),
 		apiClient.getStylesForPost( postId, 'preview' ),
 		apiClient.getStylesForPost( postId, 'frontend' ),
 	] );
-
-	void frontendIndexRes;
 
 	const previewItems = styleDefinitionsMapWithoutNull( previewPostRes.data.data );
 	const frontendItems = styleDefinitionsMapWithoutNull( frontendPostRes.data.data );

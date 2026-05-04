@@ -18,6 +18,7 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
+import { createLabelsForClasses } from '../../../utils/create-labels-for-classes';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
 
@@ -659,7 +660,7 @@ const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
 		order: classes.map( ( { id } ) => id ),
 	};
 
-	const classLabels = Object.fromEntries( classes.map( ( { id, label } ) => [ id, label ] ) );
+	const classLabels = createLabelsForClasses( classes );
 
 	act( () =>
 		dispatch(

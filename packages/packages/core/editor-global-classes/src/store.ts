@@ -4,6 +4,7 @@ import {
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
+	type StyleDefinitionsMap,
 	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
 import { type UpdateActionPayload } from '@elementor/editor-styles-repository';
@@ -19,7 +20,7 @@ import { GlobalClassNotFoundError } from './errors';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
-	items: Record< StyleDefinitionID, StyleDefinition >;
+	items: StyleDefinitionsMap;
 	order: StyleDefinitionID[];
 };
 

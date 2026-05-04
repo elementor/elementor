@@ -78,11 +78,12 @@ describe( 'syncWithDocumentSave', () => {
 					[ styleDefinition.id ]: styleDefinition,
 				},
 				order: [ styleDefinition.id ],
-				changes: expect.objectContaining( {
+				changes: {
 					added: [ styleDefinition.id ],
 					deleted: [],
 					modified: [],
-				} ),
+					order: true,
+				},
 			} );
 
 			const isPublish = status === 'publish';
