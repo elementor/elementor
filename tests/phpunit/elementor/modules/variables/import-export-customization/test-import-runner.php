@@ -401,6 +401,136 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertNotNull( $updated_collection->get( 'e-gv-456' ) );
 	}
 
+	public function test_import__skip_drops_imported_on_label_conflict() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'skip',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 2, $updated_collection->all() );
+		$this->assertEquals( '#000000', $updated_collection->get( 'e-gv-existing' )->value() );
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Font', $labels );
+		$this->assertCount( 1, array_keys( $labels, 'Primary Color' ) );
+	}
+
+	public function test_import__replace_overwrites_value_on_label_and_type_match() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'color',
+					'label' => 'Primary Color',
+					'value' => '#000000',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 2, $updated_collection->all() );
+		$this->assertEquals( '#ff5733', $updated_collection->get( 'e-gv-existing' )->value() );
+		$this->assertEquals( 'Primary Color', $updated_collection->get( 'e-gv-existing' )->label() );
+	}
+
+	public function test_import__replace_renames_on_label_match_type_mismatch() {
+		// Arrange
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$repository = new Variables_Repository( $kit );
+
+		$existing_data = [
+			'data' => [
+				'e-gv-existing' => [
+					'type' => 'font',
+					'label' => 'Primary Color',
+					'value' => 'Arial',
+					'order' => 1,
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		];
+
+		$collection = Variables_Collection::hydrate( $existing_data );
+		$repository->save( $collection );
+
+		// Act
+		( new Import_Runner() )->import( [
+			'include' => [ 'design-system' ],
+			'extracted_directory_path' => __DIR__ . '/mocks/valid',
+			'customization' => [
+				'design-system' => [
+					'conflict_resolution' => 'replace',
+				],
+			],
+		], [] );
+
+		// Assert
+		$updated_collection = $repository->load();
+		$this->assertCount( 3, $updated_collection->all() );
+
+		$labels = [];
+		foreach ( $updated_collection->all() as $variable ) {
+			$labels[] = $variable->label();
+		}
+		$this->assertContains( 'Primary Color', $labels );
+		$this->assertContains( 'Primary Color_1', $labels );
+		$this->assertContains( 'Primary Font', $labels );
+	}
+
 	public function test_import__merges_with_previous_kit_resolves_label_conflict() {
 		// Arrange - save a variable with the same label as one being imported.
 		$kit = Plugin::$instance->kits_manager->get_active_kit();

@@ -21,11 +21,10 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function should_import( array $data ): bool {
-		$is_settings_import = in_array( 'settings', $data['include'] ?? [], true );
-		$is_design_system_import = in_array( 'design-system', $data['include'] ?? [], true );
+		$variables_included = null !== $this->get_include_type( $data );
 
 		return (
-			( $is_settings_import || $is_design_system_import ) &&
+			$variables_included &&
 			! empty( $data['extracted_directory_path'] ) &&
 			$this->is_variables_enabled( $data )
 		);
@@ -50,11 +49,9 @@ class Import extends Import_Runner_Base {
 		}
 
 		$repository = new Variables_Repository( $kit );
+		$conflict_resolution = $this->resolve_conflict_resolution( $data );
 
-		$override_all = ! empty( $data['customization']['settings']['variablesOverrideAll'] )
-			|| ( ( $data['customization']['design-system']['conflict_resolution'] ?? 'skip' ) === 'override' );
-
-		if ( $override_all ) {
+		if ( 'override-all' === $conflict_resolution ) {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
 			$this->save_collection( $repository, $imported_collection );
 
@@ -64,10 +61,40 @@ class Import extends Import_Runner_Base {
 		$existing_collection = $this->get_existing_collection( $repository, $imported_data );
 		$imported_collection = Variables_Collection::hydrate( $variables_data );
 
-		$merged_collection = $this->merge_collections( $existing_collection, $imported_collection );
-		$this->save_collection( $repository, $merged_collection );
+		$resolved_collection = $this->resolve_collections( $existing_collection, $imported_collection, $conflict_resolution );
+		$this->save_collection( $repository, $resolved_collection );
 
 		return $variables_data;
+	}
+
+	private function resolve_conflict_resolution( array $data ): string {
+		$include_type = $this->get_include_type( $data );
+
+		switch ( $include_type ) {
+			case 'settings':
+				return ! empty( $data['customization']['settings']['variablesOverrideAll'] )
+					? 'override-all'
+					: 'merge';
+			case 'design-system':
+				return $data['customization']['design-system']['conflict_resolution'] ?? 'skip';
+			default:
+				throw new \Exception( 'Variables should not be imported.' );
+		}
+	}
+
+	private function get_include_type( array $data ): ?string {
+		$is_settings_import = in_array( 'settings', $data['include'] ?? [], true );
+		$is_design_system_import = in_array( 'design-system', $data['include'] ?? [], true );
+
+		if ( $is_settings_import ) {
+			return 'settings';
+		}
+
+		if ( $is_design_system_import ) {
+			return 'design-system';
+		}
+
+		return null;
 	}
 
 	private function get_existing_collection( Variables_Repository $repository, array $imported_data ): Variables_Collection {
@@ -95,16 +122,36 @@ class Import extends Import_Runner_Base {
 		return $previous_repository->load();
 	}
 
-	private function merge_collections(
+	private function resolve_collections(
 		Variables_Collection $existing,
-		Variables_Collection $imported
+		Variables_Collection $imported,
+		string $conflict_resolution
 	): Variables_Collection {
 		$existing_labels = $this->get_existing_labels( $existing );
+		$existing_label_type_map = $this->build_label_type_map( $existing );
 		$existing_ids = array_keys( $existing->all() );
 
 		foreach ( $imported->all() as $variable ) {
 			if ( $variable->is_deleted() ) {
 				continue;
+			}
+
+			$label_lower = strtolower( $variable->label() );
+			$has_label_conflict = in_array( $label_lower, $existing_labels, true );
+
+			if ( $has_label_conflict && 'skip' === $conflict_resolution ) {
+				continue;
+			}
+
+			if ( $has_label_conflict && 'replace' === $conflict_resolution ) {
+				$existing_entry = $existing_label_type_map[ $label_lower ] ?? null;
+				$type_matches = $existing_entry && $existing_entry['type'] === $variable->type();
+
+				if ( $type_matches ) {
+					$existing_var = $existing->get( $existing_entry['id'] );
+					$existing_var->set_value( $variable->value() );
+					continue;
+				}
 			}
 
 			$original_id = $variable->id();
@@ -129,6 +176,21 @@ class Import extends Import_Runner_Base {
 		}
 
 		return $existing;
+	}
+
+	private function build_label_type_map( Variables_Collection $collection ): array {
+		$map = [];
+
+		foreach ( $collection->all() as $variable ) {
+			if ( ! $variable->is_deleted() ) {
+				$map[ strtolower( $variable->label() ) ] = [
+					'id' => $variable->id(),
+					'type' => $variable->type(),
+				];
+			}
+		}
+
+		return $map;
 	}
 
 	private function get_existing_labels( Variables_Collection $collection ): array {
