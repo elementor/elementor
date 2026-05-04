@@ -154,15 +154,17 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-		$current_ids = array_keys( $this->all_labels() );
+		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
 
 		$new_ids = array_keys( $items );
+
+		$current_order_string = implode( ';', $current_ids );
 
 		$changes = [
 			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
 			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
 			'modified' => array_values( array_intersect( $new_ids, $current_ids ) ),
-			'order' => implode( ';', $current_value['order'] ?? [] ) !== implode( ';', $order ),
+			'order' => $current_order_string !== implode( ';', $order ),
 		];
 
 		$this->put_to_posts( $items, $order, $current_ids );

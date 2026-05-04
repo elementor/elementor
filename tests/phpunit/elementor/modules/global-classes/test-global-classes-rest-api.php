@@ -618,7 +618,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	 * 	$new_item = $this->create_global_class( "g-100" );
 	 * 	$all_order = array_keys( $items );
 	 * 	$all_order[] = "g-100";
-	 * 	error_log( print_r( $all_order, true ) );
 	 * 	$request->set_body_params( [
 	 * 		'items' => [ 'g-100' => $new_item ],
 	 * 		'order' => $all_order,
@@ -631,7 +630,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	 * 	] );
 	 *  
 	 * 	$response = rest_do_request( $request );
-	 * 	error_log( print_r( $response->get_data(), true ) );
 	 * 	// Assert - should fail.
 	 * 	$this->assertSame( 400, $response->get_status() );
 	 * 	$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
