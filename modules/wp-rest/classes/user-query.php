@@ -59,21 +59,20 @@ class User_Query extends Base {
 		$result = new \WP_REST_Response( [
 			'success' => true,
 			'data' => [
-				'value' => array_values( $users
-					->map( function ( $user ) use ( $keys_format_map, $roles ) {
-						$user_data = [
-							'ID' => $user['id'],
-							'display_name' => $user['name'],
-						];
+				'value' => array_values( $users->map( function ( $user ) use ( $keys_format_map, $roles ) {
+					$user_data = [
+						'ID' => $user['id'],
+						'display_name' => $user['name'],
+					];
 
-						if ( ! empty( $user['roles'][0] ) ) {
-							$user_role = $user['roles'][0];
-							$role_name = $roles[ $user_role ]['name'] ?? ucfirst( $user_role );
-							$user_data['role'] = $role_name;
-						}
+					if ( ! empty( $user['roles'][0] ) ) {
+						$user_role = $user['roles'][0];
+						$role_name = $roles[ $user_role ]['name'] ?? ucfirst( $user_role );
+						$user_data['role'] = $role_name;
+					}
 
-						return $this->translate_keys( $user_data, $keys_format_map );
-					} )->all() ),
+					return $this->translate_keys( $user_data, $keys_format_map );
+				} )->all() ),
 			],
 		], 200 );
 
