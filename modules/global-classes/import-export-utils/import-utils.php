@@ -45,10 +45,7 @@ class Import_Utils {
 		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
 		if ( ! is_array( $imported_classes_order ) ) {
-			return new \WP_Error(
-				'invalid-global-classes-json',
-				__( 'Invalid file: order.json is not valid JSON.', 'elementor' )
-			);
+			throw new \Exception( 'Invalid file: order.json is not valid JSON.' );
 		}
 
 		if ( empty( $imported_classes_order ) ) {
@@ -93,7 +90,6 @@ class Import_Utils {
 		}
 
 		$label_to_id_map = self::build_label_to_id_map_from_labels( $repository->all_labels() );
-		$classes_count = count( $order_set );
 
 		$result = self::EMPTY_RESULT;
 
@@ -111,7 +107,7 @@ class Import_Utils {
 				continue;
 			}
 
-			if ( 'replace' !== $action && $classes_count >= Global_Classes_REST_API::MAX_ITEMS ) {
+			if ( 'replace' !== $action && count( $order_set ) >= Global_Classes_REST_API::MAX_ITEMS ) {
 				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_LIMIT_REACHED ];
 				continue;
 			}
@@ -166,7 +162,6 @@ class Import_Utils {
 			$order_set[ $new_id ] = true;
 			$added_classes_order[] = $new_id;
 			$added_classes_labels[ $new_id ] = $sanitized_item['label'];
-			$classes_count++;
 
 			$result_entry = [ 'id' => $new_id, 'label' => $sanitized_item['label'] ];
 
@@ -258,7 +253,7 @@ class Import_Utils {
 			case 'merge':
 				return 'rename';
 			default:
-				return 'new';
+				return self::DEFAULT_CONFLICT_RESOLUTION;
 		}
 	}
 

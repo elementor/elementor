@@ -23,7 +23,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_hooks();
+		// $this->register_hooks();
 	}
 
 	private function register_hooks() {
