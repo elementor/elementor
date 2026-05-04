@@ -67,7 +67,7 @@ export const PositionSection = () => {
 		<StyledSectionContent>
 			<PositionField />
 			<DimensionsField />
-			<ZIndexField disabled={ position?.value === POSITION_STATIC } />
+			<ZIndexField disabled={ ! position || position?.value === POSITION_STATIC } />
 			<PanelDivider />
 			<OffsetField />
 		</StyledSectionContent>
