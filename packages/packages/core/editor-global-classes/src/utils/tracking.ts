@@ -98,7 +98,6 @@ type TrackingEventWithComputed = TrackingEvent & {
 export const trackGlobalClasses = async ( payload: TrackingEvent ) => {
 	const { runAction } = payload as TrackingEventWithComputed & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
-	
 	if ( data ) {
 		track( data );
 		if ( data.event === 'classCreated' && 'classId' in data ) {
