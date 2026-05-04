@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,8 +16,9 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'id' => Image_Attachment_Id_Prop_Type::make()->description( 'The ID of the image attachment in the WordPress media library, applicable for internal images only' ),
+			'id'  => Image_Attachment_Id_Prop_Type::make()->description( 'The ID of the image attachment in the WordPress media library, applicable for internal images only' ),
 			'url' => Url_Prop_Type::make(),
+			'alt' => String_Prop_Type::make()->description( 'The alt text of the image' ),
 		];
 	}
 
@@ -31,8 +32,9 @@ class Image_Src_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		$only_one_key = count( array_filter( $value ) ) === 1;
+		$has_id  = ! empty( $value['id'] );
+		$has_url = ! empty( $value['url'] );
 
-		return $only_one_key && parent::validate_value( $value );
+		return ( $has_id xor $has_url ) && parent::validate_value( $value );
 	}
 }

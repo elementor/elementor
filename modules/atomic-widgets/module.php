@@ -72,6 +72,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Range_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
@@ -113,12 +114,15 @@ use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Range_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -329,6 +333,7 @@ class Module extends BaseModule {
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
+		$transformers->register( Date_Range_Prop_Type::get_key(), new Date_Range_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
 	}
@@ -351,6 +356,7 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Span_Prop_Type::get_key(), new Span_Transformer() );
 	}
 
 	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {
