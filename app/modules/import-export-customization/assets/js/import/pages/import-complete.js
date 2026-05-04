@@ -234,7 +234,7 @@ export default function ImportComplete() {
 					/>
 
 					<CompleteHeading
-						title={ __( 'Your website templates is now live on your site!', 'elementor' ) }
+						title={ __( 'Your website template is now live on your site!', 'elementor' ) }
 						subtitle={ __( 'You\'ve imported and applied the following to your site:', 'elementor' ) }
 						testId="import-complete-heading"
 					/>

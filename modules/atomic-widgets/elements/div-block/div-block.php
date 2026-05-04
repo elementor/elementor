@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -21,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
@@ -183,5 +186,11 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/div-block' => __DIR__ . '/div-block.html.twig',
+		];
 	}
 }
