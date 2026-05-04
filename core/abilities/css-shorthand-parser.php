@@ -1066,9 +1066,60 @@ trait Css_Shorthand_Parser {
 			return 'No v4 typed-prop equivalent — renders as raw CSS via custom_css.';
 		}
 		if ( 'border' === $prop ) {
-			return 'border shorthand has no v4 typed equivalent. Use border-width (typed) and border-style (typed string) separately.';
+			return 'border shorthand could not be fully parsed. For typed props use border-width, border-style, and border-color separately.';
 		}
 		return null;
+	}
+
+	protected function parse_border_shorthand( string $value ): ?array {
+		static $border_styles         = [ 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset' ];
+		static $border_width_keywords = [ 'thin', 'medium', 'thick' ];
+
+		$tokens = $this->split_whitespace_paren_aware( trim( $value ) );
+		if ( empty( $tokens ) ) {
+			return null;
+		}
+
+		$width = null;
+		$style = null;
+		$color = null;
+
+		foreach ( $tokens as $token ) {
+			$lower = strtolower( $token );
+
+			if ( null === $style && in_array( $lower, $border_styles, true ) ) {
+				$style = $lower;
+				continue;
+			}
+			if ( null === $width ) {
+				if ( in_array( $lower, $border_width_keywords, true ) ) {
+					$width = $lower;
+					continue;
+				}
+				if ( null !== $this->parse_number_unit( $token ) ) {
+					$width = $token;
+					continue;
+				}
+			}
+			if ( null === $color && null !== $this->resolve_color( $token ) ) {
+				$color = $token;
+				continue;
+			}
+			return null;
+		}
+
+		$decls = [];
+		if ( null !== $width ) {
+			$decls[] = "border-width: $width";
+		}
+		if ( null !== $style ) {
+			$decls[] = "border-style: $style";
+		}
+		if ( null !== $color ) {
+			$decls[] = "border-color: $color";
+		}
+
+		return ! empty( $decls ) ? $decls : null;
 	}
 
 	protected function is_v4_gap( string $prop, string $value ): bool {

@@ -40,6 +40,8 @@ trait Page_Spec_Builder {
 	private const LEAF_WIDGETS = [
 		'heading'   => 'e-heading',
 		'paragraph' => 'e-paragraph',
+		'label'     => 'e-paragraph',
+		'text'      => 'e-paragraph',
 		'button'    => 'e-button',
 		'image'     => 'e-image',
 	];
@@ -130,15 +132,17 @@ trait Page_Spec_Builder {
 				? 'e-flexbox'
 				: ( self::LEAF_WIDGETS[ $widget ] ?? 'e-paragraph' ) );
 
-		$css_data     = '' !== $css ? $this->css_to_props_for_element( $css ) : [
-			'props' => [],
-			'gaps'  => [],
+		$css_data         = '' !== $css ? $this->css_to_props_for_element( $css ) : [
+			'props'            => [],
+			'gaps'             => [],
+			'custom_css_decls' => [],
 		];
-		$user_props   = $css_data['props'];
-		$css_gaps     = $css_data['gaps'];
-		$merged_props = $this->merge_base_style_resets( $user_props, $el_type );
+		$user_props       = $css_data['props'];
+		$css_gaps         = $css_data['gaps'];
+		$custom_css_decls = $css_data['custom_css_decls'];
+		$merged_props     = $this->merge_base_style_resets( $user_props, $el_type );
 
-		if ( ! empty( $merged_props ) || ! empty( $css_gaps ) ) {
+		if ( ! empty( $merged_props ) || ! empty( $custom_css_decls ) ) {
 			$style_id = 'e-' . $id . '-s';
 			$variant  = [
 				'meta'  => [
@@ -147,10 +151,11 @@ trait Page_Spec_Builder {
 				],
 				'props' => $merged_props,
 			];
-			if ( ! empty( $css_gaps ) ) {
-				$raw_css = implode( "\n", array_column( $css_gaps, 'declaration' ) );
+			if ( ! empty( $custom_css_decls ) ) {
 				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-				$variant['custom_css']    = [ 'raw' => base64_encode( $raw_css ) ];
+				$variant['custom_css'] = [ 'raw' => base64_encode( implode( "\n", $custom_css_decls ) ) ];
+			}
+			if ( ! empty( $css_gaps ) ) {
 				$this->element_css_gaps[] = [
 					'element_id' => $id,
 					'css_gaps'   => $css_gaps,
@@ -247,7 +252,7 @@ trait Page_Spec_Builder {
 			return;
 		}
 
-		if ( 'paragraph' === $widget ) {
+		if ( in_array( $widget, [ 'paragraph', 'label', 'text' ], true ) ) {
 			$settings['paragraph'] = $this->make_html_v3( $text ?? 'Paragraph' );
 			return;
 		}
@@ -310,8 +315,9 @@ trait Page_Spec_Builder {
 	}
 
 	private function css_to_props_for_element( string $css ): array {
-		$valid_decls = [];
-		$gap_entries = [];
+		$valid_decls      = [];
+		$gap_entries      = [];
+		$custom_css_decls = [];
 
 		foreach ( array_filter( array_map( 'trim', explode( ';', $css ) ) ) as $decl ) {
 			$colon = strpos( $decl, ':' );
@@ -324,11 +330,39 @@ trait Page_Spec_Builder {
 				continue;
 			}
 
+			if ( 'text-gradient' === $prop ) {
+				$custom_css_decls[] = "background: $value;";
+				$custom_css_decls[] = '-webkit-background-clip: text;';
+				$custom_css_decls[] = '-webkit-text-fill-color: transparent;';
+				$custom_css_decls[] = 'background-clip: text;';
+				$gap_entries[]      = [
+					'declaration' => "text-gradient: $value;",
+					'hint'        => 'Shorthand for gradient-text effect. Expanded to 4 CSS declarations in custom_css: background, -webkit-background-clip, -webkit-text-fill-color, background-clip.',
+				];
+				continue;
+			}
+
+			if ( 'border' === $prop ) {
+				$parsed = $this->parse_border_shorthand( $value );
+				if ( null !== $parsed ) {
+					array_push( $valid_decls, ...$parsed );
+				} else {
+					$custom_css_decls[] = "$prop: $value;";
+					$entry              = [
+						'declaration' => "$prop: $value;",
+						'hint'        => 'border shorthand could not be fully parsed. For typed props use border-width, border-style, and border-color separately.',
+					];
+					$gap_entries[]      = $entry;
+				}
+				continue;
+			}
+
 			if ( $this->is_v4_gap( $prop, $value ) ) {
-				$entry = [
+				$custom_css_decls[] = "$prop: $value;";
+				$entry              = [
 					'declaration' => "$prop: $value;",
 				];
-				$hint  = $this->get_v4_gap_hint( $prop, $value );
+				$hint               = $this->get_v4_gap_hint( $prop, $value );
 				if ( null !== $hint ) {
 					$entry['hint'] = $hint;
 				}
@@ -341,8 +375,9 @@ trait Page_Spec_Builder {
 		$props = ! empty( $valid_decls ) ? $this->css_to_props( implode( '; ', $valid_decls ) ) : [];
 
 		return [
-			'props' => $props,
-			'gaps'  => $gap_entries,
+			'props'            => $props,
+			'gaps'             => $gap_entries,
+			'custom_css_decls' => $custom_css_decls,
 		];
 	}
 
