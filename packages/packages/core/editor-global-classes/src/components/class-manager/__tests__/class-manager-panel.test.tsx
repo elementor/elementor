@@ -18,6 +18,29 @@ import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
+const PANEL_TEST_ROW_HEIGHT = 40;
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count, getItemKey } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		return {
+			getTotalSize: jest.fn().mockReturnValue( count * PANEL_TEST_ROW_HEIGHT ),
+			getVirtualItems: jest.fn().mockReturnValue(
+				indices.map( ( index ) => ( {
+					index,
+					key: getItemKey ? getItemKey( index ) : index,
+					start: index * PANEL_TEST_ROW_HEIGHT,
+					end: ( index + 1 ) * PANEL_TEST_ROW_HEIGHT,
+					size: PANEL_TEST_ROW_HEIGHT,
+					lane: 0,
+				} ) )
+			),
+		};
+	} ),
+} ) );
+
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
 jest.mock( '../start-sync-to-v3-modal' );
