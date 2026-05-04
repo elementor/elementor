@@ -7,6 +7,7 @@ import {
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
@@ -23,7 +24,10 @@ import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	registerSlice( slice );
-	registerPanel( panel );
+
+	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		registerPanel( panel );
+	}
 
 	stylesRepository.register( globalClassesStylesProvider );
 
@@ -47,10 +51,12 @@ export function init() {
 		component: PrefetchCssClassUsage,
 	} );
 
-	injectIntoLogic( {
-		id: 'global-classes-open-panel-from-url',
-		component: OpenPanelFromUrl,
-	} );
+	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		injectIntoLogic( {
+			id: 'global-classes-open-panel-from-url',
+			component: OpenPanelFromUrl,
+		} );
+	}
 
 	injectIntoCssClassConvert( {
 		id: 'global-classes-convert-from-local-class',
