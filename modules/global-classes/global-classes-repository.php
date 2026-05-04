@@ -250,31 +250,6 @@ class Global_Classes_Repository {
 		}
 	}
 
-	public function add_class( string $class_id, string $label, array $data, array $order ): void {
-		$t = microtime( true );
-		$created = Global_Class_Post::create( $class_id, $label, $data );
-		$t_create = microtime( true ) - $t;
-
-		if ( $created ) {
-			clean_post_cache( $created->get_post_id() );
-			$t = microtime( true );
-			
-
-			$classes_order = Global_Classes_Order::make( $this->kit );
-			$classes_order->set_order( $order );
-	
-			$classes_labels = Global_Classes_Labels::make( $this->kit );
-			$existing_labels = $classes_labels->get_labels();
-			$existing_labels[ $class_id ] = $label;
-			$classes_labels->set_labels( $existing_labels );
-
-
-			$t_index = microtime( true ) - $t;
-
-			error_log( '[GC Import][Timing] add_class(' . $class_id . '): post_create=' . round( $t_create * 1000, 2 ) . 'ms, index_add=' . round( $t_index * 1000, 2 ) . 'ms' );
-		}
-	}
-
 	private function iterate_class_posts_for_ids( array $class_ids ): \Generator {
 		foreach ( array_chunk( $class_ids, self::READ_BATCH_SIZE ) as $chunk ) {
 			$posts = get_posts( [

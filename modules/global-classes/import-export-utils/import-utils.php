@@ -16,34 +16,50 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Import_Utils {
 	const DEFAULT_CONFLICT_RESOLUTION = 'skip';
 
+	const ERROR_NOT_ARRAY = 'not_array';
+	const ERROR_MISSING_FIELDS = 'missing_fields';
+	const ERROR_FILE_NOT_FOUND = 'file_not_found';
+	const ERROR_INVALID_JSON = 'invalid_json';
+	const ERROR_INVALID_PROPS = 'invalid_props';
+	const ERROR_ID_MISMATCH = 'id_mismatch';
+	const ERROR_LIMIT_REACHED = 'limit_reached';
+
+	const EMPTY_RESULT = [
+		'created' => [],
+		'renamed' => [],
+		'replaced' => [],
+		'skipped' => [],
+		'failed' => [],
+	];
+
 	public static function import_classes( string $classes_dir, array $options = [] ) {
 		$order_file = rtrim( $classes_dir, '/' ) . '/order.json';
 
 		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
-			return [
-				'imported' => [],
-				'failed' => [],
-				'conflicts' => [],
-			];
+			return self::EMPTY_RESULT;
 		}
 
 		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
 		$repository = Global_Classes_Repository::make();
 
-		$order_data = json_decode( file_get_contents( $order_file ), true );
+		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
-		if ( ! is_array( $order_data ) ) {
+		if ( ! is_array( $imported_classes_order ) ) {
 			return new \WP_Error(
 				'invalid-global-classes-json',
-				__( 'Invalid design system file: order.json is not valid JSON.', 'elementor' )
+				__( 'Invalid file: order.json is not valid JSON.', 'elementor' )
 			);
+		}
+
+		if ( empty( $imported_classes_order ) ) {
+			return self::EMPTY_RESULT;
 		}
 
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			$result = self::do_import( $repository, $classes_dir, $order_data, $conflict_resolution );
+			$result = self::do_import( $repository, $classes_dir, $imported_classes_order, $conflict_resolution );
 			$wpdb->query( 'COMMIT' );
 
 			return $result;
@@ -56,119 +72,178 @@ class Import_Utils {
 	private static function do_import(
 		Global_Classes_Repository $repository,
 		string $classes_dir,
-		array $order_data,
+		array $imported_classes_order,
 		string $conflict_resolution
 	): array {
-		if ( 'override-all' === $conflict_resolution ) {
-			$repository->delete_all();
-		}
+		$added_classes_order = [];
+		$added_classes_labels = [];
+		$modified_classes = [];
+		$deleted_classes = [];
 
-		$existing_order = $repository->get_order();
-		$existing_id_set = array_flip( $existing_order );
-		$existing_label_to_id = self::build_label_to_id_map_from_labels( $repository->all_labels() );
-
+		$previous_order = $repository->get_order();
+		$order_set = array_flip( $previous_order );
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$classes_dir = rtrim( $classes_dir, '/' );
 
-		$classes_count = count( $existing_order );
-		$order = $existing_order;
-		$new_labels = [];
-		$replaced_ids = [];
+		if ( 'override-all' === $conflict_resolution ) {
+			$deleted_classes = $previous_order;
+			$repository->delete_all();
+			$previous_order = [];
+			$order_set = [];
+		}
 
-		foreach ( $order_data as $entry ) {
-			if ( ! is_array( $entry ) || ! isset( $entry['id'], $entry['label'] ) ) {
+		$label_to_id_map = self::build_label_to_id_map_from_labels( $repository->all_labels() );
+		$classes_count = count( $order_set );
+
+		$result = self::EMPTY_RESULT;
+
+		foreach ( $imported_classes_order as $import_entry ) {
+			[ 'is_valid' => $is_valid, 'error' => $validation_error ] = self::validate_class_entry( $import_entry );
+			if ( ! $is_valid ) {
+				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $validation_error ];
 				continue;
 			}
 
-			$item_action = self::resolve_item_action( $entry, $existing_label_to_id, $conflict_resolution );
+			$action = self::resolve_item_action( $import_entry, $label_to_id_map, $conflict_resolution );
 
-			if ( 'skip' === $item_action ) {
+			if ( 'skip' === $action ) {
+				$result['skipped'][] = [ 'import_entry' => $import_entry ];
 				continue;
 			}
 
-			if ( 'new' === $item_action || 'rename' === $item_action ) {
-				if ( $classes_count >= Global_Classes_REST_API::MAX_ITEMS ) {
-					break;
-				}
+			if ( 'replace' !== $action && $classes_count >= Global_Classes_REST_API::MAX_ITEMS ) {
+				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_LIMIT_REACHED ];
+				continue;
 			}
 
-			$class_file = $classes_dir . '/' . $entry['id'] . '.json';
-
+			$class_file = $classes_dir . '/' . $import_entry['id'] . '.json';
 			if ( ! file_exists( $class_file ) ) {
+				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_FILE_NOT_FOUND ];
 				continue;
 			}
 
-			$item = json_decode( file_get_contents( $class_file ), true );
-
-			if ( ! is_array( $item ) ) {
+			$raw_item = json_decode( file_get_contents( $class_file ), true );
+			if ( ! is_array( $raw_item ) ) {
+				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_INVALID_JSON ];
 				continue;
 			}
 
-			$sanitized_item = self::sanitize_item( $entry['id'], $item, $style_parser );
-
-			if ( isset( $sanitized_item['error'] ) ) {
+			[ 'is_valid' => $is_valid, 'error' => $sanitize_error, 'sanitized' => $sanitized_item ] = self::sanitize_item( $import_entry['id'], $raw_item, $style_parser );
+			if ( ! $is_valid ) {
+				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $sanitize_error ];
 				continue;
 			}
 
-			if ( 'replace' === $item_action ) {
-				$existing_id = $existing_label_to_id[ strtolower( $entry['label'] ) ];
+			if ( 'replace' === $action ) {
+				$existing_id = $label_to_id_map[ strtolower( $import_entry['label'] ) ];
 				self::replace_existing_class( $existing_id, $sanitized_item );
-				$replaced_ids[] = $existing_id;
+
+				$modified_classes[] = $existing_id;
+				$result['replaced'][] = [
+					'import_entry' => $import_entry,
+					'result_entry' => [ 'id' => $existing_id, 'label' => $import_entry['label'] ],
+				];
 				continue;
 			}
 
-			if ( 'rename' === $item_action ) {
-				$existing_labels_flat = array_keys( $existing_label_to_id );
-				$new_label = ImportExportUtils::resolve_label_conflict( $entry['label'], $existing_labels_flat );
+			if ( 'rename' === $action ) {
+				$existing_labels = array_keys( $label_to_id_map );
+
+				$new_label = ImportExportUtils::resolve_label_conflict( $import_entry['label'], $existing_labels );
 				$sanitized_item['label'] = $new_label;
-				$existing_label_to_id[ strtolower( $new_label ) ] = $entry['id'];
+
+				$label_to_id_map[ strtolower( $new_label ) ] = $import_entry['id'];
 			}
 
 			$new_id = $sanitized_item['id'];
 
-			if ( isset( $existing_id_set[ $new_id ] ) ) {
-				$new_id = self::generate_unique_id( $existing_id_set );
+			if ( isset( $order_set[ $new_id ] ) ) {
+				$new_id = self::generate_unique_id( $order_set );
 				$sanitized_item['id'] = $new_id;
 			}
 
-			$existing_id_set[ $new_id ] = true;
+			self::create_new_class($sanitized_item);
+			$order_set[ $new_id ] = true;
+			$added_classes_order[] = $new_id;
+			$added_classes_labels[ $new_id ] = $sanitized_item['label'];
+			$classes_count++;
 
-			$created = Global_Class_Post::create( $new_id, $sanitized_item['label'], $sanitized_item );
+			$result_entry = [ 'id' => $new_id, 'label' => $sanitized_item['label'] ];
 
-			if ( $created ) {
-				clean_post_cache( $created->get_post_id() );
-				$order[] = $new_id;
-				$new_labels[ $new_id ] = $sanitized_item['label'];
-				$classes_count++;
+			if ( 'rename' === $action ) {
+				$result['renamed'][] = [
+					'import_entry' => $import_entry,
+					'result_entry' => $result_entry,
+				];
+			} else {
+				$result['created'][] = [ 'import_entry' => $import_entry ];
 			}
 		}
 
-		$has_changes = ! empty( $new_labels ) || ! empty( $replaced_ids );
+		$has_changes = ! empty( $added_classes_order ) || ! empty( $modified_classes ) || ! empty( $deleted_classes );
 
 		if ( $has_changes ) {
-			$repository->update_order_and_labels( $order, $new_labels );
+			$new_order = array_merge( $added_classes_order, $previous_order );
+			$repository->update_order_and_labels( $new_order, $added_classes_labels );
 
 			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
-				'added' => array_keys( $new_labels ),
-				'deleted' => [],
-				'modified' => $replaced_ids,
-				'order' => true,
+				'added' => $added_classes_order,
+				'deleted' => $deleted_classes,
+				'modified' => $modified_classes,
+				'order' => count( $added_classes_order ) > 0 || count( $deleted_classes ) > 0,
 			] );
 		}
 
-		return [
-			'imported' => [],
-			'failed' => [],
-			'conflicts' => [],
-		];
+		return $result;
+	}
+
+	private static function create_new_class( array $sanitized_item ): void {
+		$created = Global_Class_Post::create( $sanitized_item['id'], $sanitized_item['label'], $sanitized_item );
+
+		if ( $created ) {
+			clean_post_cache( $created->get_post_id() );
+		} else {
+			throw new \Exception( 'Failed to create new class: ' . $sanitized_item['id'] . ' with label: ' . $sanitized_item['label'] );
+		}
+	}
+
+	private static function replace_existing_class( string $existing_id, array $sanitized_item ): void {
+		$post = Global_Class_Post::find_by_class_id( $existing_id );
+
+		if ( ! $post ) {
+			throw new \Exception( 'Failed to find existing class: ' . $existing_id );
+		}
+
+		$post->update_data( $sanitized_item );
+		clean_post_cache( $post->get_post_id() );
+	}
+
+	private static function validate_class_entry( $class_entry ): array {
+		if ( ! is_array( $class_entry ) ) {
+			return [ 'is_valid' => false, 'error' => self::ERROR_NOT_ARRAY ];
+		}
+
+		$missing_fields = [];
+
+		foreach ( [ 'id', 'label' ] as $field ) {
+			if ( ! isset( $class_entry[ $field ] ) || ! is_string( $class_entry[ $field ] ) ) {
+				$missing_fields[] = $field;
+			}
+		}
+
+		if ( ! empty( $missing_fields ) ) {
+			return [ 'is_valid' => false, 'error' => self::ERROR_MISSING_FIELDS . ':' . implode( ',', $missing_fields ) ];
+		}
+
+		return [ 'is_valid' => true, 'error' => null ];
 	}
 
 	private static function resolve_item_action(
-		array $entry,
+		array $class_entry,
 		array $existing_label_to_id,
 		string $conflict_resolution
 	): string {
-		$label_lower = strtolower( $entry['label'] );
+		$label_lower = strtolower( $class_entry['label'] );
 		$has_conflict = isset( $existing_label_to_id[ $label_lower ] );
 
 		if ( ! $has_conflict ) {
@@ -183,28 +258,24 @@ class Import_Utils {
 			case 'merge':
 				return 'rename';
 			default:
-				return self::DEFAULT_CONFLICT_RESOLUTION;
+				return 'new';
 		}
 	}
 
-	private static function replace_existing_class( string $existing_id, array $sanitized_item ): void {
-		$post = Global_Class_Post::find_by_class_id( $existing_id );
+	private static function sanitize_item( string $item_id, array $item, Style_Parser $style_parser ): array {
+		$item_result = $style_parser->parse( $item );
 
-		if ( ! $post ) {
-			return;
+		if ( ! $item_result->is_valid() ) {
+			return [ 'is_valid' => false, 'error' => self::ERROR_INVALID_PROPS, 'sanitized' => null ];
 		}
 
-		$data = [
-			'type' => $sanitized_item['type'] ?? 'class',
-			'variants' => $sanitized_item['variants'] ?? [],
-		];
+		$sanitized_item = $item_result->unwrap();
 
-		if ( array_key_exists( 'sync_to_v3', $sanitized_item ) ) {
-			$data['sync_to_v3'] = (bool) $sanitized_item['sync_to_v3'];
+		if ( $item_id !== $sanitized_item['id'] ) {
+			return [ 'is_valid' => false, 'error' => self::ERROR_ID_MISMATCH, 'sanitized' => null ];
 		}
 
-		$post->update_data( $data );
-		clean_post_cache( $post->get_post_id() );
+		return [ 'is_valid' => true, 'error' => null, 'sanitized' => $sanitized_item ];
 	}
 
 	private static function build_label_to_id_map_from_labels( array $id_to_label ): array {
@@ -217,31 +288,11 @@ class Import_Utils {
 		return $map;
 	}
 
-	private static function generate_unique_id( array $existing_id_set ): string {
+	private static function generate_unique_id( array $order_set ): string {
 		do {
 			$id = 'g-' . substr( bin2hex( random_bytes( 4 ) ), 0, 7 );
-		} while ( isset( $existing_id_set[ $id ] ) );
+		} while ( isset( $order_set[ $id ] ) );
 
 		return $id;
-	}
-
-	private static function sanitize_item( string $item_id, array $item, Style_Parser $style_parser ) {
-		$item_result = $style_parser->parse( $item );
-
-		if ( ! $item_result->is_valid() ) {
-			return [
-				'error' => $item_result->errors()->all(),
-			];
-		}
-
-		$sanitized_item = $item_result->unwrap();
-
-		if ( $item_id !== $sanitized_item['id'] ) {
-			return [
-				'error' => 'ID mismatch',
-			];
-		}
-
-		return $sanitized_item;
 	}
 }
