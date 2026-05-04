@@ -61,12 +61,6 @@ export type ClassManagerPanelEmbeddedProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-/**
- * Class Manager UI without standalone panel chrome — use inside Design System panel when experiment is active.
- * @param root0
- * @param root0.onRequestClose
- * @param root0.onExposeCloseAttempt
- */
 export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
 	return (
 		<ClassManagerPanelRoot
@@ -81,10 +75,6 @@ export function ClassManagerPanel() {
 	return <ClassManagerPanelRoot />;
 }
 
-// We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
-// The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
-// will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
-// the panel to be closed.
 export const { panel, usePanelActions } = createPanel( {
 	id,
 	component: ClassManagerPanel,
@@ -306,7 +296,7 @@ function ClassManagerPanelRoot( {
 		</>
 	);
 
-	const panelChrome = embedded ? (
+	const classManagerLayout = embedded ? (
 		<Stack
 			direction="column"
 			sx={ {
@@ -364,7 +354,7 @@ function ClassManagerPanelRoot( {
 	const core = (
 		<>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
-				<SearchAndFilterProvider>{ panelChrome }</SearchAndFilterProvider>
+				<SearchAndFilterProvider>{ classManagerLayout }</SearchAndFilterProvider>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
 			{ dialogs }
