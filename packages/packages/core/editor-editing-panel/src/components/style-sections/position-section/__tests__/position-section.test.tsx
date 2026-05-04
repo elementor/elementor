@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 import * as React from 'react';
 import { createMockPropType, renderField } from 'test-utils';
 import { ControlActionsProvider } from '@elementor/editor-controls';
+import type { PropValue } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
 import { useSessionStorage } from '@elementor/session';
@@ -14,6 +15,17 @@ import { useStylesField } from '../../../../hooks/use-styles-field';
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { PositionSection } from '../position-section';
 import { createPropTypeWithDependency, mockStyleFields, mockStylesFieldValues } from './position-test-utils';
+
+const POSITION_INSET_KEYS = [
+	'inset-block-start',
+	'inset-block-end',
+	'inset-inline-start',
+	'inset-inline-end',
+] as const;
+
+type PositionDependentFieldKey = ( typeof POSITION_INSET_KEYS )[ number ] | 'z-index';
+
+type PositionDependentValues = Record< PositionDependentFieldKey, PropValue | null >;
 
 jest.mock( '@elementor/session' );
 jest.mock( '@elementor/editor-styles', () => ( {
@@ -38,7 +50,7 @@ const renderPositionSection = () => {
 			'inset-block-end': createPropTypeWithDependency( { kind: 'object', key: 'size' } ),
 			'inset-inline-start': createPropTypeWithDependency( { kind: 'object', key: 'size' } ),
 			'inset-inline-end': createPropTypeWithDependency( { kind: 'object', key: 'size' } ),
-			'z-index': createPropTypeWithDependency( { kind: 'plain', key: 'number' } ),
+			'z-index': createMockPropType( { kind: 'plain', key: 'number' } ),
 			'scroll-margin-top': createMockPropType( { kind: 'object', key: 'size' } ),
 		},
 	} );
@@ -78,7 +90,7 @@ describe( '<PositionSection />', () => {
 			expect( screen.queryByText( 'Bottom' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Right' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Left' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Z-index' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Z-index' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should hide position dimension controls if position is not selected value', () => {
@@ -93,7 +105,7 @@ describe( '<PositionSection />', () => {
 			expect( screen.queryByText( 'Bottom' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Right' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Left' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Z-index' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Z-index' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should hide position dimension controls when position value is null and placeholder is static', () => {
@@ -108,7 +120,7 @@ describe( '<PositionSection />', () => {
 			expect( screen.queryByText( 'Bottom' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Right' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Left' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Z-index' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Z-index' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -246,13 +258,13 @@ describe( 'Dimensions values persistence', () => {
 	} );
 
 	it( 'should reset dimension values in the model when changing position to static', () => {
-		// PositionSection does not null out insets here — only session save/restore runs in the section.
-		// Clearing each side / z-index when position becomes static is done in <ConditionalField /> (resetValue → setValue(null)).
+		// Insets are cleared when hidden via <ConditionalField /> (resetValue → setValue(null)).
+		// z-index is cleared in PositionSection when position is static (setDependentValues({ 'z-index': null })).
 		const positionState = {
 			value: { $$type: 'string', value: 'absolute' },
 		};
 
-		const dependentSetValue = {
+		const dependentSetValue: Record< PositionDependentFieldKey, jest.Mock > = {
 			'inset-block-start': jest.fn(),
 			'inset-block-end': jest.fn(),
 			'inset-inline-start': jest.fn(),
@@ -260,7 +272,7 @@ describe( 'Dimensions values persistence', () => {
 			'z-index': jest.fn(),
 		};
 
-		const dependentValue = {
+		const dependentValue: PositionDependentValues = {
 			'inset-block-start': { $$type: 'size', value: { size: 44, unit: 'px' } },
 			'inset-block-end': { $$type: 'size', value: { size: 10, unit: 'px' } },
 			'inset-inline-start': { $$type: 'size', value: { size: 2, unit: 'px' } },
@@ -268,7 +280,9 @@ describe( 'Dimensions values persistence', () => {
 			'z-index': { $$type: 'number', value: 7 },
 		};
 
-		const dependentKeys = Object.keys( dependentValue ) as Array< keyof typeof dependentValue >;
+		const setDependentValuesBatch = jest.fn( ( props: Partial< PositionDependentValues > ) => {
+			Object.assign( dependentValue, props );
+		} );
 
 		jest.mocked( useStylesField ).mockImplementation( ( key: string ) => {
 			if ( key === 'position' ) {
@@ -279,9 +293,9 @@ describe( 'Dimensions values persistence', () => {
 				};
 			}
 
-			const depKey = dependentKeys.find( ( k ) => k === key );
+			const depKey = key as PositionDependentFieldKey;
 
-			if ( depKey ) {
+			if ( depKey in dependentSetValue ) {
 				return {
 					value: dependentValue[ depKey ],
 					setValue: dependentSetValue[ depKey ],
@@ -296,42 +310,43 @@ describe( 'Dimensions values persistence', () => {
 			};
 		} );
 
-		mockStyleFields( {
-			position: 'absolute',
-			'inset-block-start': 44,
-			'inset-block-end': 10,
-			'inset-inline-start': 2,
-			'inset-inline-end': 3,
-			'z-index': 7,
+		jest.mocked( useStylesFields ).mockImplementation( ( propNames: string[] ) => {
+			const values = Object.fromEntries(
+				propNames.map( ( name ) => [ name, dependentValue[ name as PositionDependentFieldKey ] ?? null ] )
+			);
+
+			return {
+				values,
+				setValues: setDependentValuesBatch,
+				canEdit: true,
+			};
 		} );
 
 		const { rerender } = renderPositionSection();
 
 		positionState.value = { $$type: 'string', value: 'static' };
-		mockStyleFields( {
-			position: 'static',
-			'inset-block-start': 44,
-			'inset-block-end': 10,
-			'inset-inline-start': 2,
-			'inset-inline-end': 3,
-			'z-index': 7,
-		} );
+
 		rerender(
 			<ControlActionsProvider items={ [] }>
 				<PositionSection />
 			</ControlActionsProvider>
 		);
 
-		dependentKeys.forEach( ( key ) => {
+		POSITION_INSET_KEYS.forEach( ( key ) => {
 			expect( dependentSetValue[ key ] ).toHaveBeenCalledWith( null );
 		} );
+
+		expect( setDependentValuesBatch ).toHaveBeenCalledWith(
+			{ 'z-index': null },
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
 	} );
 
 	it( 'should clear position-dependent props when position is cleared (ConditionalField path)', () => {
-		// Same as static: hidden dimension fields reset via <ConditionalField /> — not via PositionSection batch setValues.
+		// Hidden dimension fields reset via <ConditionalField />. z-index is also cleared in PositionSection when position is unset (same effect branch as static).
 		const positionState = { value: null };
 
-		const dependentSetValue = {
+		const dependentSetValue: Record< PositionDependentFieldKey, jest.Mock > = {
 			'inset-block-start': jest.fn(),
 			'inset-block-end': jest.fn(),
 			'inset-inline-start': jest.fn(),
@@ -339,7 +354,7 @@ describe( 'Dimensions values persistence', () => {
 			'z-index': jest.fn(),
 		};
 
-		const dependentValue = {
+		const dependentValue: PositionDependentValues = {
 			'inset-block-start': { $$type: 'size', value: { size: 20, unit: 'px' } },
 			'inset-block-end': { $$type: 'size', value: { size: 1, unit: 'px' } },
 			'inset-inline-start': { $$type: 'size', value: { size: 2, unit: 'px' } },
@@ -347,7 +362,7 @@ describe( 'Dimensions values persistence', () => {
 			'z-index': { $$type: 'number', value: 5 },
 		};
 
-		const dependentKeys = Object.keys( dependentSetValue ) as Array< keyof typeof dependentSetValue >;
+		const setDependentValuesBatch = jest.fn();
 
 		jest.mocked( useStylesField ).mockImplementation( ( key: string ) => {
 			if ( key === 'position' ) {
@@ -358,9 +373,9 @@ describe( 'Dimensions values persistence', () => {
 				};
 			}
 
-			const depKey = dependentKeys.find( ( k ) => k === key );
+			const depKey = key as PositionDependentFieldKey;
 
-			if ( depKey ) {
+			if ( depKey in dependentSetValue ) {
 				return {
 					value: dependentValue[ depKey ],
 					setValue: dependentSetValue[ depKey ],
@@ -375,19 +390,28 @@ describe( 'Dimensions values persistence', () => {
 			};
 		} );
 
-		mockStyleFields( {
-			'inset-block-start': 20,
-			'inset-block-end': 1,
-			'inset-inline-start': 2,
-			'inset-inline-end': 3,
-			'z-index': 5,
+		jest.mocked( useStylesFields ).mockImplementation( ( propNames: string[] ) => {
+			const values = Object.fromEntries(
+				propNames.map( ( name ) => [ name, dependentValue[ name as PositionDependentFieldKey ] ?? null ] )
+			);
+
+			return {
+				values,
+				setValues: setDependentValuesBatch,
+				canEdit: true,
+			};
 		} );
 
 		renderPositionSection();
 
-		dependentKeys.forEach( ( key ) => {
+		POSITION_INSET_KEYS.forEach( ( key ) => {
 			expect( dependentSetValue[ key ] ).toHaveBeenCalledWith( null );
 		} );
+
+		expect( setDependentValuesBatch ).toHaveBeenCalledWith(
+			{ 'z-index': null },
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
 	} );
 
 	it( `should populate the model's positioning values from history when switching from static to a different position`, () => {

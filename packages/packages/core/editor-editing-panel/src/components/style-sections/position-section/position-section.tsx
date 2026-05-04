@@ -55,6 +55,10 @@ export const PositionSection = () => {
 			clearHistory();
 		}
 
+		if ( ( ! position || position?.value === POSITION_STATIC ) && dependentValues?.[ 'z-index' ] ) {
+			setDependentValues( { 'z-index': null }, withHistoryLabel( DIMENSIONS_LABEL ) );
+		}
+
 		positionPrevRef.current = position;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ position?.value ] );
