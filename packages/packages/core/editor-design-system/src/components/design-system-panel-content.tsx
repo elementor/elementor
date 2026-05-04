@@ -40,10 +40,11 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	useEffect( () => {
 		const handler = ( event: Event ) => {
 			const tab = ( event as CustomEvent< { tab: DesignSystemTab } > ).detail?.tab;
-			if ( tab === 'variables' || tab === 'classes' ) {
-				setCurrentTab( tab );
-				persistDesignSystemTab( tab );
+			if ( ! tab ) {
+				return;
 			}
+			setCurrentTab( tab );
+			persistDesignSystemTab( tab );
 		};
 
 		window.addEventListener( 'elementor/design-system/set-tab', handler as EventListener );

@@ -37,19 +37,25 @@ export const ClassManagerButton = () => {
 		return null;
 	}
 
+	const toggleClassesManagerPanel = () => {
+		if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/toggle-design-system', {
+					detail: { tab: 'classes' as const },
+				} )
+			);
+		} else {
+			openPanel();
+		}
+	};
+
 	const handleOpenPanel = () => {
 		if ( document?.isDirty ) {
 			openSaveChangesDialog();
 			return;
 		}
 
-		if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'classes' as const } } )
-			);
-		} else {
-			openPanel();
-		}
+		toggleClassesManagerPanel();
 
 		trackGlobalClassesButton();
 		prefetchClassesUsage();
@@ -84,15 +90,7 @@ export const ClassManagerButton = () => {
 								action: async () => {
 									await saveDocument();
 									closeSaveChangesDialog();
-									if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-										window.dispatchEvent(
-											new CustomEvent( 'elementor/toggle-design-system', {
-												detail: { tab: 'classes' as const },
-											} )
-										);
-									} else {
-										openPanel();
-									}
+									toggleClassesManagerPanel();
 									trackGlobalClassesButton();
 									prefetchClassesUsage();
 								},
