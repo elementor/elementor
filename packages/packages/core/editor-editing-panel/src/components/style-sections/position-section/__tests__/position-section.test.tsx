@@ -78,7 +78,7 @@ describe( '<PositionSection />', () => {
 			expect( screen.queryByText( 'Bottom' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Right' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Left' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Z-index' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Z-index' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should hide position dimension controls if position is not selected value', () => {
@@ -93,7 +93,7 @@ describe( '<PositionSection />', () => {
 			expect( screen.queryByText( 'Bottom' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Right' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Left' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Z-index' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Z-index' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should hide position dimension controls when position value is null and placeholder is static', () => {

@@ -23,7 +23,7 @@ type DependentValues = {
 	'z-index'?: NumberPropValue | null;
 };
 
-const POSITION_STATIC = 'static' as const;
+const POSITION_STATIC = 'static';
 
 const POSITION_LABEL = __( 'Position', 'elementor' );
 const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
@@ -63,7 +63,7 @@ export const PositionSection = () => {
 		<StyledSectionContent>
 			<PositionField />
 			<DimensionsField />
-			<ZIndexField />
+			<ZIndexField disabled={ position?.value === POSITION_STATIC } />
 			<PanelDivider />
 			<OffsetField />
 		</StyledSectionContent>
