@@ -17,8 +17,32 @@ function readStoredTab(): DesignSystemTab {
 	return 'variables';
 }
 
+let pendingTabForOpen: DesignSystemTab | null = null;
+
+let activeTabInMemory: DesignSystemTab = readStoredTab();
+
+export function setPendingDesignSystemTab( tab: DesignSystemTab ): void {
+	pendingTabForOpen = tab;
+}
+
 export function getInitialDesignSystemTab(): DesignSystemTab {
-	return readStoredTab();
+	if ( pendingTabForOpen ) {
+		const t = pendingTabForOpen;
+		pendingTabForOpen = null;
+		activeTabInMemory = t;
+		return t;
+	}
+	const t = readStoredTab();
+	activeTabInMemory = t;
+	return t;
+}
+
+export function notifyDesignSystemTabChange( tab: DesignSystemTab ): void {
+	activeTabInMemory = tab;
+}
+
+export function getActiveDesignSystemTab(): DesignSystemTab {
+	return activeTabInMemory;
 }
 
 export function persistDesignSystemTab( tab: DesignSystemTab ): void {
