@@ -165,6 +165,7 @@ declare global {
 		'site-builder'?: {
 			iframeUrl?: string;
 			isAdmin?: boolean;
+			exitTo?: string;
 			elementorAiCurrentContext?: {
 				siteTitle: string;
 				siteAbout: unknown;

@@ -239,17 +239,7 @@ class Validation {
 			return false;
 		}
 
-		$config = $data['config'];
-
-		if ( ! isset( $config['$$type'] ) || 'config' !== $config['$$type'] ) {
-			return false;
-		}
-
-		if ( ! isset( $config['value'] ) || ! is_array( $config['value'] ) ) {
-			return false;
-		}
-
-		$config_value = $config['value'];
+		$config_value = $data['config']['value'];
 
 		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
 			return false;

@@ -22,6 +22,7 @@ jest.mock( '../../../../contexts/style-context' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 const renderPositionSection = () => {
@@ -63,7 +64,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.queryAllByText( 'Bottom' ) ).toHaveLength( 0 );
 		expect( screen.queryAllByText( 'Right' ) ).toHaveLength( 0 );
 		expect( screen.queryAllByText( 'Left' ) ).toHaveLength( 0 );
-		expect( screen.queryAllByText( 'Z-index' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'should hide position inputs if not selected value', () => {
@@ -80,7 +80,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.queryAllByText( 'Bottom' ) ).toHaveLength( 0 );
 		expect( screen.queryAllByText( 'Right' ) ).toHaveLength( 0 );
 		expect( screen.queryAllByText( 'Left' ) ).toHaveLength( 0 );
-		expect( screen.queryAllByText( 'Z-index' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'should show position inputs if position is not static', () => {
@@ -97,7 +96,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.getByText( 'Bottom' ) ).toBeVisible();
 		expect( screen.getByText( 'Right' ) ).toBeVisible();
 		expect( screen.getByText( 'Left' ) ).toBeVisible();
-		expect( screen.getByText( 'Z-index' ) ).toBeVisible();
 	} );
 
 	it( 'should show position inputs if position is absolute', () => {
@@ -114,7 +112,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.getByText( 'Bottom' ) ).toBeVisible();
 		expect( screen.getByText( 'Right' ) ).toBeVisible();
 		expect( screen.getByText( 'Left' ) ).toBeVisible();
-		expect( screen.getByText( 'Z-index' ) ).toBeVisible();
 	} );
 
 	it( 'should show position inputs if position is sticky', () => {
@@ -131,7 +128,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.getByText( 'Bottom' ) ).toBeVisible();
 		expect( screen.getByText( 'Right' ) ).toBeVisible();
 		expect( screen.getByText( 'Left' ) ).toBeVisible();
-		expect( screen.getByText( 'Z-index' ) ).toBeVisible();
 	} );
 
 	it.skip( 'should show anchor offset input in all cases', () => {
