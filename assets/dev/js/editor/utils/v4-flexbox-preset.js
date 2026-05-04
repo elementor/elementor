@@ -1,5 +1,6 @@
 const V4_ELEMENT_TYPE = 'e-flexbox';
 const DIRECTION_ROW = 'row';
+const DIRECTION_COLUMN = 'column';
 
 const SIZES_MAP = {
 	33: '33.3333',
@@ -20,11 +21,18 @@ const widthPercent = ( size ) => ( {
 	width: sizeProp( Number( SIZES_MAP[ size ] ?? size ), '%' ),
 } );
 
+const FULL_WIDTH_MOBILE = { width: sizeProp( 100, '%' ) };
+
 const ROW = { 'flex-direction': stringProp( DIRECTION_ROW ) };
+const COLUMN = { 'flex-direction': stringProp( DIRECTION_COLUMN ) };
 const ROW_WRAP = { ...ROW, 'flex-wrap': stringProp( 'wrap' ) };
 
-const widthChild = ( size ) => ( { parent: widthPercent( size ), children: [] } );
-const bareChild = () => ( { parent: {}, children: [] } );
+const widthChild = ( size ) => ( {
+	parent: { ...COLUMN, ...widthPercent( size ) },
+	parentMobile: FULL_WIDTH_MOBILE,
+	children: [],
+} );
+const bareChild = () => ( { parent: COLUMN, children: [] } );
 
 const rowOfSizes = ( sizes ) => {
 	const sum = sizes.reduce( ( s, n ) => s + Number( n ), 0 );
@@ -36,14 +44,15 @@ const rowOfSizes = ( sizes ) => {
 };
 
 const PRESET_DEFINITIONS = {
-	c100: { parent: {}, children: [] },
+	c100: { parent: COLUMN, children: [] },
 	r100: { parent: ROW, children: [] },
 	'c100-c50-50': {
 		parent: ROW,
 		children: [
 			widthChild( '50' ),
 			{
-				parent: { ...widthPercent( '50' ), padding: sizeProp( 0, 'px' ) },
+				parent: { ...COLUMN, ...widthPercent( '50' ), padding: sizeProp( 0, 'px' ) },
+				parentMobile: FULL_WIDTH_MOBILE,
 				children: [ bareChild(), bareChild() ],
 			},
 		],
@@ -58,27 +67,39 @@ function getPresetDefinition( preset ) {
 	return rowOfSizes( preset.split( '-' ) );
 }
 
-function buildModel( cssProps ) {
+function buildModel( cssProps, mobileProps ) {
 	const model = { elType: V4_ELEMENT_TYPE };
 
-	if ( ! cssProps || 0 === Object.keys( cssProps ).length ) {
+	const hasBase = cssProps && Object.keys( cssProps ).length > 0;
+	const hasMobile = mobileProps && Object.keys( mobileProps ).length > 0;
+
+	if ( ! hasBase && ! hasMobile ) {
 		return model;
 	}
 
 	const styleId = `e-${ elementorCommon.helpers.getUniqueId() }`;
+	const variants = [
+		{
+			meta: { breakpoint: null, state: null },
+			props: cssProps ?? {},
+			custom_css: null,
+		},
+	];
+
+	if ( hasMobile ) {
+		variants.push( {
+			meta: { breakpoint: 'mobile', state: null },
+			props: mobileProps,
+			custom_css: null,
+		} );
+	}
 
 	model.styles = {
 		[ styleId ]: {
 			id: styleId,
 			label: 'local',
 			type: 'class',
-			variants: [
-				{
-					meta: { breakpoint: null, state: null },
-					props: cssProps,
-					custom_css: null,
-				},
-			],
+			variants,
 		},
 	};
 
@@ -98,11 +119,11 @@ function createFlexboxElement( target, model, options ) {
 }
 
 function buildNode( definition, target, options, isRoot ) {
-	const { parent: parentProps, children } = definition;
+	const { parent: parentProps, parentMobile, children } = definition;
 	const reuseTarget = isRoot && false === options.createWrapper;
 	const node = reuseTarget
 		? target
-		: createFlexboxElement( target, buildModel( parentProps ), isRoot ? options : { edit: false } );
+		: createFlexboxElement( target, buildModel( parentProps, parentMobile ), isRoot ? options : { edit: false } );
 
 	children.forEach( ( childDef ) => {
 		buildNode( childDef, node, options, false );

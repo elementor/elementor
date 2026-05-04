@@ -4,6 +4,7 @@ const sizeProp = ( size, unit ) => ( { $$type: 'size', value: { size, unit } } )
 const stringProp = ( value ) => ( { $$type: 'string', value } );
 
 const ROW = stringProp( 'row' );
+const COLUMN = stringProp( 'column' );
 const WRAP = stringProp( 'wrap' );
 const ZERO_PX = sizeProp( 0, 'px' );
 
@@ -83,14 +84,23 @@ describe( 'createV4FlexboxFromPreset', () => {
 		return model.styles?.[ lastId ]?.variants?.[ 0 ]?.props;
 	}
 
-	test( 'c100 → 1 e-flexbox, no styles, no settings', () => {
+	function getVariants( model ) {
+		const styleIds = Object.keys( model.styles ?? {} );
+		const lastId = styleIds[ styleIds.length - 1 ];
+		return model.styles?.[ lastId ]?.variants;
+	}
+
+	test( 'c100 → 1 e-flexbox with flex-direction:column overriding the row base style', () => {
 		const target = makeFakeContainer( 'target' );
 
 		createV4FlexboxFromPreset( 'c100', target, {} );
 
 		expect( createCalls ).toHaveLength( 1 );
 		expect( createCalls[ 0 ].target ).toBe( target );
-		expect( getModel( 0 ) ).toEqual( { elType: 'e-flexbox' } );
+
+		const model = getModel( 0 );
+		expect( model.elType ).toBe( 'e-flexbox' );
+		expect( getProps( model ) ).toEqual( { 'flex-direction': COLUMN } );
 	} );
 
 	test( 'r100 → flex-direction:row + matching classes setting baked into the model', () => {
@@ -113,8 +123,8 @@ describe( 'createV4FlexboxFromPreset', () => {
 		expect( createCalls ).toHaveLength( 3 );
 
 		expect( getProps( getModel( 0 ) ) ).toEqual( { 'flex-direction': ROW } );
-		expect( getProps( getModel( 1 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
-		expect( getProps( getModel( 2 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
+		expect( getProps( getModel( 1 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
+		expect( getProps( getModel( 2 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 
 		expect( createCalls[ 0 ].args.at ).toBe( 0 );
 		expect( createCalls[ 0 ].args.edit ).toBe( false );
@@ -125,8 +135,8 @@ describe( 'createV4FlexboxFromPreset', () => {
 	test( '33-66 → maps 33/66 to 33.3333 / 66.6666', () => {
 		createV4FlexboxFromPreset( '33-66', makeFakeContainer( 'target' ), {} );
 
-		expect( getProps( getModel( 1 ) ).width ).toEqual( sizeProp( 33.3333, '%' ) );
-		expect( getProps( getModel( 2 ) ).width ).toEqual( sizeProp( 66.6666, '%' ) );
+		expect( getProps( getModel( 1 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 33.3333, '%' ) } );
+		expect( getProps( getModel( 2 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 66.6666, '%' ) } );
 	} );
 
 	test( '50-50-50-50 → row parent with flex-wrap: wrap (sum > 100)', () => {
@@ -138,7 +148,7 @@ describe( 'createV4FlexboxFromPreset', () => {
 		} );
 		expect( createCalls ).toHaveLength( 5 );
 		for ( let i = 1; i <= 4; i++ ) {
-			expect( getProps( getModel( i ) ).width ).toEqual( sizeProp( 50, '%' ) );
+			expect( getProps( getModel( i ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 		}
 	} );
 
@@ -150,13 +160,14 @@ describe( 'createV4FlexboxFromPreset', () => {
 		const [ parent, , rightCol ] = createdContainers;
 
 		expect( getProps( getModel( 0 ) ) ).toEqual( { 'flex-direction': ROW } );
-		expect( getProps( getModel( 1 ) ) ).toEqual( { width: sizeProp( 50, '%' ) } );
+		expect( getProps( getModel( 1 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 		expect( getProps( getModel( 2 ) ) ).toEqual( {
+			'flex-direction': COLUMN,
 			width: sizeProp( 50, '%' ),
 			padding: ZERO_PX,
 		} );
-		expect( getModel( 3 ).styles ).toBeUndefined();
-		expect( getModel( 4 ).styles ).toBeUndefined();
+		expect( getProps( getModel( 3 ) ) ).toEqual( { 'flex-direction': COLUMN } );
+		expect( getProps( getModel( 4 ) ) ).toEqual( { 'flex-direction': COLUMN } );
 
 		expect( createCalls[ 1 ].target ).toBe( parent );
 		expect( createCalls[ 2 ].target ).toBe( parent );
@@ -173,6 +184,35 @@ describe( 'createV4FlexboxFromPreset', () => {
 		createCalls.forEach( ( call ) => {
 			expect( call.target ).toBe( target );
 		} );
+	} );
+
+	test( '50-50-50-50 → each child has a mobile variant overriding width to 100%', () => {
+		createV4FlexboxFromPreset( '50-50-50-50', makeFakeContainer( 'target' ), {} );
+
+		expect( getVariants( getModel( 0 ) ) ).toHaveLength( 1 );
+
+		for ( let i = 1; i <= 4; i++ ) {
+			const variants = getVariants( getModel( i ) );
+			expect( variants ).toHaveLength( 2 );
+			expect( variants[ 0 ].meta ).toEqual( { breakpoint: null, state: null } );
+			expect( variants[ 0 ].props ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
+			expect( variants[ 1 ].meta ).toEqual( { breakpoint: 'mobile', state: null } );
+			expect( variants[ 1 ].props ).toEqual( { width: sizeProp( 100, '%' ) } );
+		}
+	} );
+
+	test( 'c100-c50-50 → both 50% columns get a mobile width:100% variant', () => {
+		createV4FlexboxFromPreset( 'c100-c50-50', makeFakeContainer( 'target' ), {} );
+
+		const leftVariants = getVariants( getModel( 1 ) );
+		expect( leftVariants ).toHaveLength( 2 );
+		expect( leftVariants[ 1 ].meta ).toEqual( { breakpoint: 'mobile', state: null } );
+		expect( leftVariants[ 1 ].props ).toEqual( { width: sizeProp( 100, '%' ) } );
+
+		const rightVariants = getVariants( getModel( 2 ) );
+		expect( rightVariants ).toHaveLength( 2 );
+		expect( rightVariants[ 1 ].meta ).toEqual( { breakpoint: 'mobile', state: null } );
+		expect( rightVariants[ 1 ].props ).toEqual( { width: sizeProp( 100, '%' ) } );
 	} );
 
 	test( 'rolls back history when element creation throws', () => {
