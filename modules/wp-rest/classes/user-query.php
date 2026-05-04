@@ -73,8 +73,7 @@ class User_Query extends Base {
 						}
 
 						return $this->translate_keys( $user_data, $keys_format_map );
-					} )
-					->all() ),
+					} )->all() ),
 			],
 		], 200 );
 
