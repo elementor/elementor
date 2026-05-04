@@ -23,7 +23,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		// $this->register_hooks();
+		$this->register_hooks();
 	}
 
 	private function register_hooks() {
@@ -47,29 +47,29 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_editor_scripts() {
-		// wp_enqueue_script(
-		// 	'elementor-design-system-sync-editor',
-		// 	$this->get_js_assets_url( 'design-system-sync' ),
-		// 	[],
-		// 	ELEMENTOR_VERSION,
-		// 	true
-		// );
+		wp_enqueue_script(
+			'elementor-design-system-sync-editor',
+			$this->get_js_assets_url( 'design-system-sync' ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	public function enqueue_editor_styles() {
-		// wp_enqueue_style(
-		// 	'elementor-design-system-sync-editor',
-		// 	$this->get_css_assets_url( 'modules/design-system-sync/design-system-sync' ),
-		// 	[],
-		// 	ELEMENTOR_VERSION
-		// );
+		wp_enqueue_style(
+			'elementor-design-system-sync-editor',
+			$this->get_css_assets_url( 'modules/design-system-sync/design-system-sync' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function clear_classes_cache() {
-		// Classes\Classes_Provider::clear_cache();
+		Classes\Classes_Provider::clear_cache();
 	}
 
 	public function enqueue_sync_stylesheet() {
-		// ( new Stylesheet_Manager() )->enqueue();
+		( new Stylesheet_Manager() )->enqueue();
 	}
 }
