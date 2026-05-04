@@ -115,7 +115,7 @@ For each, create corresponding resource and manually add `_meta['angie:required-
 
 ## Tasks
 
-- [ ] Enhance mcp-registry.ts to auto-inject server-description resources for abstraction layer tools
+- [x] Enhance mcp-registry.ts to auto-inject server-description resources for abstraction layer tools
 - [ ] Extract elementor-capabilities-mcp server instructions to resource
 - [ ] Extract editor-canvas mcpDescription to resource
 - [ ] Extract elementor-kit-mcp SERVER_INSTRUCTIONS to resource

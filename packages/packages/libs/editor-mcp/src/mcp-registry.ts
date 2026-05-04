@@ -1,7 +1,6 @@
 import { z, type z3 } from '@elementor/schema';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
-import { UriTemplate } from '@modelcontextprotocol/sdk/shared/uriTemplate.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
@@ -12,6 +11,8 @@ import {
 	createDefaultModelPreferences,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
+import { registerServerDescriptionResource } from './utils/register-server-description-resource';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -98,26 +99,25 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	}
 	if ( ! mcpRegistry[ namespace ] ) {
 		mcpRegistry[ namespace ] = new McpServer(
-			{
-				name: mcpName,
-				title,
-				version: '1.0.0',
-			},
-			{
-				instructions: options?.instructions,
-				capabilities: { resources: { subscribe: true } },
-			}
+			{ name: mcpName, title, version: '1.0.0' },
+			{ instructions: options?.instructions, capabilities: { resources: { subscribe: true } } }
 		);
-		if ( !! options?.instructions ) {
-			callAdapters( ( adapter ) =>
-				adapter.onResourceRegistered( `${ mcpName }`, { uriTemplate: new UriTemplate( mcpName ) }, () =>
-					Promise.resolve( { contents: [ { text: options.instructions ?? '' } ] } )
-				)
+		if ( options?.instructions ) {
+			registerServerDescriptionResource(
+				mcpRegistry[ namespace ],
+				namespace,
+				title,
+				options.instructions,
+				( ...args ) => {
+					bufferedResources.push( args );
+					callAdapters( ( adapter ) => adapter.onResourceRegistered( ...args ) );
+				}
 			);
 		}
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const { addTool } = createToolRegistry( mcpServer, mcpName );
+	const serverDescriptionUri = options?.instructions ? `elementor://${ namespace }/server-description` : undefined;
+	const { addTool } = createToolRegistry( mcpServer, mcpName, serverDescriptionUri );
 	return {
 		waitForReady: () => readyPromise,
 		// @ts-expect-error: TS is unable to infer the type here
@@ -162,11 +162,6 @@ export interface MCPRegistryEntry {
 	waitForReady: () => Promise< void >;
 }
 
-type ResourceList = {
-	uri: string;
-	description: string;
-}[];
-
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
@@ -194,7 +189,7 @@ type ToolRegistrationOptions<
 	modelPreferences?: AngieModelPreferences;
 };
 
-function createToolRegistry( server: McpServer, serverName: string ) {
+function createToolRegistry( server: McpServer, serverName: string, serverDescriptionUri?: string ) {
 	function addTool<
 		T extends undefined | z.ZodRawShape = undefined,
 		O extends undefined | z.ZodRawShape = undefined,
@@ -245,9 +240,10 @@ function createToolRegistry( server: McpServer, serverName: string ) {
 			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
+		const mergedResources = mergeRequiredResources( opts.requiredResources, serverDescriptionUri );
 		const angieAnnotations = {
 			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
-			[ ANGIE_REQUIRED_RESOURCES ]: opts.requiredResources ?? undefined,
+			[ ANGIE_REQUIRED_RESOURCES ]: mergedResources,
 		};
 		server.registerTool(
 			opts.name,
@@ -277,7 +273,7 @@ function createToolRegistry( server: McpServer, serverName: string ) {
 		};
 		const extraData = {
 			resources: [ `Server resource name: ${ serverName }, Required to fetch!` ],
-			requiredResources: opts.requiredResources?.map( ( resource ) => resource.uri ) ?? [],
+			requiredResources: mergedResources?.map( ( resource ) => resource.uri ) ?? [],
 		};
 		bufferedTools.push( [ toolDescriptor, extraData ] );
 		callAdapters( ( adapter ) => adapter.onToolRegistered( toolDescriptor, extraData ) );
