@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migrations_Loader {
 	private const TRANSIENT_KEY = 'elementor_migrations_manifest';
-	private const TRANSIENT_TTL = 12 * HOUR_IN_SECONDS;
+	private const TRANSIENT_TTL = YEAR_IN_SECONDS;
 
 	private static ?self $instance = null;
 
