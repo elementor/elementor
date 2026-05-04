@@ -76,18 +76,12 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 		history: { propDisplayName: label },
 	} );
 
-	// `StylesField` already computed the inherited value via `buildResolvedPlaceholder`
-	// and exposed it through the PropProvider. We read it here through the standard
-	// `useBoundProp` API, the same way other style fields (e.g. flex-size-field) do.
 	const { placeholder: inheritedPlaceholder } = useBoundProp();
 	const inheritedTrackValue = cssToTrackValue( stringPropTypeUtil.extract( inheritedPlaceholder ?? null ) ?? null );
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 	const localTrackValue = cssToTrackValue( value?.value ?? null );
 
-	// When no local value is set, mirror the inherited unit (so the unit selector reflects
-	// what's actually applied) and surface the size as a placeholder. The actual `value` stays
-	// empty so unit-selector interactions never silently overwrite the local value.
 	const displayValue: GridTrackValue =
 		localTrackValue ??
 		( inheritedTrackValue ? { size: EMPTY_SIZE, unit: inheritedTrackValue.unit } : { size: EMPTY_SIZE, unit: FR } );
@@ -99,10 +93,6 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 		const isUnitOnlyChange =
 			isEmptySize( newValue.size ) && previousTrackValue && newValue.unit !== previousTrackValue.unit;
 
-		// A unit-only change with no real size (e.g. switching FR -> fx before typing in the
-		// custom popup) must not destroy the user's existing local value. The user can still
-		// confirm the intent by typing a value into the popup, which triggers another
-		// handleChange with the new size that we DO persist.
 		if ( isUnitOnlyChange ) {
 			return;
 		}
