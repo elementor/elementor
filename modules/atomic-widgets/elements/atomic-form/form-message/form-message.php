@@ -1,7 +1,8 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Message;
 
-use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -18,11 +19,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-abstract class Form_Message extends Div_Block {
+abstract class Form_Message extends Atomic_Element_Base {
+	use Has_Element_Template;
+
+	const BASE_STYLE_KEY = 'base';
+
+	public static $widget_description = 'A container for form status messages (success or error). Hidden by default, shown based on form submission state.';
 
 	abstract protected static function get_background_color(): string;
 
 	abstract protected static function get_text_color(): string;
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'is_container', true );
+		$this->meta( 'permanently_locked', true );
+	}
 
 	public function get_icon() {
 		return 'eicon-div-block';
@@ -59,7 +71,7 @@ abstract class Form_Message extends Div_Block {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( [
-							'display' => String_Prop_Type::generate( 'block' ),
+							'display' => String_Prop_Type::generate( 'none' ),
 							'background' => Background_Prop_Type::generate( [
 								'color' => Color_Prop_Type::generate( static::get_background_color() ),
 							] ),
@@ -73,9 +85,18 @@ abstract class Form_Message extends Div_Block {
 								'size' => 12,
 								'unit' => 'px',
 							] ),
-							'font-family' => String_Prop_Type::generate( 'Poppins' ),
 						] )
 				),
 		];
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/form-message' => __DIR__ . '/form-message.html.twig',
+		];
+	}
+
+	protected function build_template_context(): array {
+		return $this->build_base_template_context();
 	}
 }

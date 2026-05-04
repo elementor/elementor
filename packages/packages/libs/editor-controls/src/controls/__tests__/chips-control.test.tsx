@@ -148,7 +148,7 @@ describe( 'ChipsControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( [ wrap( 'webhook' ) ] );
 	} );
 
-	it( 'should set null when removing the last chip', () => {
+	it( 'should set empty array when removing the last chip', () => {
 		// Arrange
 		mockUseBoundProp.mockReturnValue( {
 			value: [ wrap( 'email' ) ],
@@ -178,6 +178,6 @@ describe( 'ChipsControl', () => {
 		fireEvent.click( deleteIcon );
 
 		// Assert
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValue ).toHaveBeenCalledWith( [] );
 	} );
 } );

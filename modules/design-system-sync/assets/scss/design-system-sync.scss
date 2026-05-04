@@ -29,7 +29,8 @@
 	margin-inline-end: 5px;
 }
 
-/* V4 Typography List */
+/* Shared edit button styles for V4 list controls */
+.e-v4-color-variable-list__edit-btn,
 .e-v4-typography-list__edit-btn {
 	display: flex;
 	align-items: center;
@@ -38,9 +39,70 @@
 	height: 28px;
 	background: var(--e-a-bg-active);
 	border: none;
-	border-radius: var(--e-a-border-radius);
+	border-radius: 50%;
+	flex-shrink: 0;
+	cursor: pointer;
+	opacity: 0.7;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.e-v4-color-variable-list__edit-btn {
+	background: transparent;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&:hover {
+		opacity: 1;
+	}
+}
+
+.e-v4-typography-list__edit-btn {
 	opacity: 0.5;
 	cursor: default;
-	flex-shrink: 0;
+
+	&:hover {
+		opacity: 0.5;
+	}
+}
+
+/* V4 Color Variable List - Tooltip */
+.e-v4-color-variable-list__edit-btn-wrapper {
+	position: relative;
+	display: inline-flex;
 	margin-inline-end: 2px;
+}
+
+.e-v4-color-variable-list__tooltip {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%);
+	background: var(--e-a-color-txt);
+	color: var(--e-a-bg-default);
+	font-size: 12px;
+	line-height: 1.4;
+	padding: 6px 10px;
+	border-radius: var(--e-a-border-radius);
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 5px solid transparent;
+		border-top-color: var(--e-a-color-txt);
+	}
+}
+
+.e-v4-color-variable-list__edit-btn-wrapper:hover .e-v4-color-variable-list__tooltip {
+	opacity: 1;
 }

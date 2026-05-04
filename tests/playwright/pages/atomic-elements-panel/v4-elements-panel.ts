@@ -4,6 +4,8 @@ import EditorPage from '../editor-page';
 import StyleTab from './style-tab';
 import { INLINE_EDITING_SELECTORS } from '../../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
+type NumberOrString = number | string;
+
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
 	readonly textareaField: string;
@@ -16,6 +18,10 @@ export default class v4Panel extends BasePage {
 		this.textareaField = 'textarea[class*="MuiInputBase"]';
 		this.editor = editor;
 		this.style = new StyleTab( page, testInfo );
+	}
+
+	async clickField( nth: number ): Promise<void> {
+		await this.page.locator( this.inputField ).nth( nth ).click();
 	}
 
 	async fillField( nth: number, text: string ): Promise<void> {
@@ -40,7 +46,7 @@ export default class v4Panel extends BasePage {
 		await panelInlineEditor.fill( content );
 	}
 
-	async setWidgetSize( options: { width?: number, height?: number, minWidth?: number, minHeight?: number, maxWidth?: number, maxHeight?: number, overflow?: string } ): Promise<void> {
+	async setWidgetSize( options: { width?: NumberOrString, height?: NumberOrString, minWidth?: NumberOrString, minHeight?: NumberOrString, maxWidth?: NumberOrString, maxHeight?: NumberOrString, overflow?: string } ): Promise<void> {
 		const sizeControls = {
 			width: 'Width',
 			height: 'Height',

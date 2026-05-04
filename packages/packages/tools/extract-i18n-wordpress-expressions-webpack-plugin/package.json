@@ -1,6 +1,6 @@
 {
   "name": "@elementor/extract-i18n-wordpress-expressions-webpack-plugin",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -45,6 +45,7 @@
     "glob": "^11.0.0"
   },
   "devDependencies": {
+    "@types/node": "*",
     "memfs": "^4.17.0",
     "tsup": "^8.3.5"
   }

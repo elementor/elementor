@@ -1,15 +1,20 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 
 export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
-export const initClassesResource = () => {
-	const canvasMcpEntry = getMCPByDomain( 'canvas' );
-	const classesMcpEntry = getMCPByDomain( 'classes' );
+const STORAGE_KEY = 'elementor-global-classes';
 
+const updateLocalStorageCache = () => {
+	const classes = globalClassesStylesProvider.actions.all();
+
+	localStorage.setItem( STORAGE_KEY, JSON.stringify( classes ) );
+};
+
+export const initClassesResource = ( classesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
 	[ canvasMcpEntry, classesMcpEntry ].forEach( ( entry ) => {
-		const { mcpServer, resource, waitForReady } = entry;
+		const { sendResourceUpdated, resource, waitForReady } = entry;
 		resource(
 			'global-classes',
 			GLOBAL_CLASSES_URI,
@@ -18,13 +23,15 @@ export const initClassesResource = () => {
 			},
 			async () => {
 				return {
-					contents: [ { uri: GLOBAL_CLASSES_URI, text: localStorage[ 'elementor-global-classes' ] ?? '{}' } ],
+					contents: [ { uri: GLOBAL_CLASSES_URI, text: localStorage[ STORAGE_KEY ] ?? '[]' } ],
 				};
 			}
 		);
 		waitForReady().then( () => {
+			updateLocalStorageCache();
 			globalClassesStylesProvider.subscribe( () => {
-				mcpServer.sendResourceListChanged();
+				updateLocalStorageCache();
+				sendResourceUpdated( { uri: GLOBAL_CLASSES_URI } );
 			} );
 		} );
 	} );

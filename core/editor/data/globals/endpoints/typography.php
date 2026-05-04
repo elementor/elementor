@@ -57,7 +57,7 @@ class Typography extends Base {
 			$result[ $id ]['value'] = $item;
 		}
 
-		return $result;
+		return apply_filters( 'elementor/globals/typography/items', $result );
 	}
 
 	protected function convert_db_format( $item ) {

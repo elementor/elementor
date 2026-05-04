@@ -1,19 +1,53 @@
 'use strict';
 
-import { getActiveBreakpoint } from './interactions-breakpoints.js';
+import {
+	config as getConfig,
+	skipInteraction as utilsSkipInteraction,
+	extractInteractionId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+	unwrapInteractionValue,
+	timingValueToMs,
+	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+} from './interactions-shared-utils.js';
 
-export const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 600,
-	defaultDelay: 0,
-	slideDistance: 100,
-	scaleStart: 0,
-	defaultEasing: 'easeIn',
-};
+function isSupportedInteraction( animationConfig ) {
+	if ( ! [ 'load', 'scrollIn', 'scrollOut' ].includes( animationConfig.trigger ) ) {
+		return false;
+	}
 
-export function skipInteraction( interaction ) {
-	const breakpoint = getActiveBreakpoint();
-	return interaction?.breakpoints?.excluded?.includes( breakpoint );
+	if ( 'custom' === animationConfig.effect ) {
+		return false;
+	}
+
+	return true;
 }
+
+function skipInteraction( animationConfig ) {
+	if ( ! isSupportedInteraction( animationConfig ) ) {
+		return true;
+	}
+	return utilsSkipInteraction( animationConfig );
+}
+
+export {
+	getConfig as config,
+	skipInteraction,
+	extractInteractionId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+	unwrapInteractionValue,
+	timingValueToMs,
+	resetElementStyles,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+};
 
 export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
@@ -23,11 +57,13 @@ export function getKeyframes( effect, type, direction ) {
 		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
 	}
 
+	const config = getConfig();
+
 	if ( 'scale' === effect ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
 	}
 
-	if ( direction ) {
+	if ( direction && 'string' === typeof direction ) {
 		const distance = config.slideDistance;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
@@ -36,7 +72,11 @@ export function getKeyframes( effect, type, direction ) {
 			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
 		};
 
-		Object.assign( keyframes, movement[ direction ] );
+		direction.split( '-' ).forEach( ( part ) => {
+			if ( movement[ part ] ) {
+				Object.assign( keyframes, movement[ part ] );
+			}
+		} );
 	}
 
 	return keyframes;
@@ -54,6 +94,8 @@ export function parseAnimationName( name ) {
 		,
 	] = name.split( '-' );
 
+	const config = getConfig();
+
 	return {
 		trigger,
 		effect,
@@ -64,85 +106,6 @@ export function parseAnimationName( name ) {
 		replay: false,
 		easing: config.defaultEasing,
 	};
-}
-
-export function extractInteractionId( interaction ) {
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		return interaction.value.interaction_id?.value || null;
-	}
-	return null;
-}
-
-function motionFunc( name ) {
-	if ( 'function' !== typeof window?.Motion?.[ name ] ) {
-		return undefined;
-	}
-	return window?.Motion?.[ name ];
-}
-
-export function getAnimateFunction() {
-	return motionFunc( 'animate' );
-}
-
-export function getInViewFunction() {
-	return motionFunc( 'inView' );
-}
-
-export function waitForAnimateFunction( callback, maxAttempts = 10 ) {
-	if ( getAnimateFunction() ) {
-		callback();
-		return;
-	}
-
-	if ( maxAttempts > 0 ) {
-		setTimeout( () => waitForAnimateFunction( callback, maxAttempts - 1 ), 100 );
-	}
-}
-
-export function parseInteractionsData( data ) {
-	if ( 'string' === typeof data ) {
-		try {
-			return JSON.parse( data );
-		} catch {
-			return null;
-		}
-	}
-	return data;
-}
-
-function unwrapInteractionValue( propValue, fallback = null ) {
-	// Supports Elementor's typed wrapper shape: { $$type: '...', value: ... }.
-	if ( propValue && 'object' === typeof propValue && '$$type' in propValue ) {
-		return propValue.value;
-	}
-
-	return propValue ?? fallback;
-}
-
-function timingValueToMs( timingValue, fallbackMs ) {
-	if ( null === timingValue || undefined === timingValue ) {
-		return fallbackMs;
-	}
-
-	const unwrapped = unwrapInteractionValue( timingValue );
-
-	if ( 'number' === typeof unwrapped ) {
-		return unwrapped;
-	}
-
-	const sizeObj = unwrapInteractionValue( unwrapped );
-	const size = sizeObj?.size;
-	const unit = sizeObj?.unit || 'ms';
-
-	if ( 'number' !== typeof size ) {
-		return fallbackMs;
-	}
-
-	if ( 's' === unit ) {
-		return size * 1000;
-	}
-
-	return size;
 }
 
 /**
@@ -207,9 +170,12 @@ export function extractAnimationConfig( interaction ) {
 
 	const breakpoints = unwrapInteractionBreakpoints( payload.breakpoints );
 
+	const config = getConfig();
+
 	const effect = unwrapInteractionValue( animation.effect ) || animation.effect || 'fade';
 	const type = unwrapInteractionValue( animation.type ) || animation.type || 'in';
-	const direction = unwrapInteractionValue( animation.direction ) || animation.direction || '';
+	const directionUnwrapped = unwrapInteractionValue( animation.direction );
+	const direction = 'string' === typeof directionUnwrapped ? directionUnwrapped : '';
 	const easing = config.defaultEasing;
 	const replay = false;
 

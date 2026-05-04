@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import {
 	__createPanel as createPanel,
@@ -11,11 +11,12 @@ import {
 } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
 	AlertTitle,
+	Box,
 	Button,
 	CloseButton,
 	Divider,
@@ -25,7 +26,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackVariablesManagerEvent } from '../../utils/tracking';
+import { trackVariablesManagerEvent, trackVariableSyncToV3 } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { getMenuActionsForVariable, getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
@@ -59,8 +60,54 @@ export const { panel, usePanelActions } = createPanel( {
 	isOpenPreviousElement: true,
 } );
 
+export type VariablesManagerPanelEmbeddedProps = {
+	onRequestClose: () => void | Promise< void >;
+	/**
+	 * Registers the variables manager close handler (dirty check + save dialog) so parent panel chrome
+	 * can invoke the same flow as the standalone panel close control.
+	 */
+	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+};
+
+/**
+ * Variables UI without standalone panel chrome — use inside Design System panel when experiment is active.
+ * @param root0
+ * @param root0.onRequestClose
+ * @param root0.onExposeCloseAttempt
+ */
+export function VariablesManagerPanelEmbedded( {
+	onRequestClose,
+	onExposeCloseAttempt,
+}: VariablesManagerPanelEmbeddedProps ) {
+	return (
+		<VariablesManagerPanelRoot
+			embedded
+			onRequestClose={ onRequestClose }
+			onExposeCloseAttempt={ onExposeCloseAttempt }
+		/>
+	);
+}
+
 export function VariablesManagerPanel() {
-	const { close: closePanel } = usePanelActions();
+	return <VariablesManagerPanelRoot />;
+}
+
+type VariablesManagerPanelRootProps = {
+	embedded?: boolean;
+	onRequestClose?: () => void | Promise< void >;
+	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+};
+
+function VariablesManagerPanelRoot( {
+	embedded = false,
+	onRequestClose,
+	onExposeCloseAttempt,
+}: VariablesManagerPanelRootProps = {} ) {
+	const { close: closeStandalonePanel } = usePanelActions();
+	const closePanel = useMemo(
+		() => ( embedded ? onRequestClose ?? ( async () => {} ) : closeStandalonePanel ),
+		[ embedded, onRequestClose, closeStandalonePanel ]
+	);
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
@@ -75,9 +122,10 @@ export function VariablesManagerPanel() {
 		isSaveDisabled,
 		handleOnChange,
 		createVariable,
+		duplicateVariable,
 		handleDeleteVariable,
-		handleStartSync,
-		handleStopSync,
+		handleStartSync: startSyncFromState,
+		handleStopSync: stopSyncFromState,
 		handleSave,
 		isSaving,
 		handleSearch,
@@ -94,14 +142,24 @@ export function VariablesManagerPanel() {
 
 	usePreventUnload( isDirty );
 
-	const handleClosePanel = () => {
+	const handleClosePanel = useCallback( () => {
 		if ( isDirty ) {
 			openSaveChangesDialog();
 			return;
 		}
 
-		closePanel();
-	};
+		void closePanel();
+	}, [ isDirty, openSaveChangesDialog, closePanel ] );
+
+	useEffect( () => {
+		if ( ! embedded || ! onExposeCloseAttempt ) {
+			return;
+		}
+
+		onExposeCloseAttempt( () => handleClosePanel() );
+
+		return () => onExposeCloseAttempt( null );
+	}, [ embedded, onExposeCloseAttempt, handleClosePanel ] );
 
 	const handleCreateVariable = useCallback(
 		( type: string, defaultName: string, defaultValue: string ) => {
@@ -151,23 +209,37 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
-	const handleStopSyncWithConfirmation = useCallback(
+	const commitStopSync = useCallback(
 		( itemId: string ) => {
-			handleStopSync( itemId );
-			setStopSyncConfirmation( null );
+			stopSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'unsync' } );
+			}
 		},
-		[ handleStopSync ]
+		[ stopSyncFromState, variables ]
 	);
 
-	const handleShowStopSyncDialog = useCallback(
+	const handleStartSync = useCallback(
+		( itemId: string ) => {
+			startSyncFromState( itemId );
+			const variable = variables[ itemId ];
+			if ( variable ) {
+				trackVariableSyncToV3( { variableLabel: variable.label, action: 'sync' } );
+			}
+		},
+		[ startSyncFromState, variables ]
+	);
+
+	const handleStopSync = useCallback(
 		( itemId: string ) => {
 			if ( ! isStopSyncSuppressed ) {
 				setStopSyncConfirmation( itemId );
 			} else {
-				handleStopSync( itemId );
+				commitStopSync( itemId );
 			}
 		},
-		[ isStopSyncSuppressed, handleStopSync ]
+		[ isStopSyncSuppressed, commitStopSync ]
 	);
 
 	const buildMenuActions = useCallback(
@@ -182,9 +254,25 @@ export function VariablesManagerPanel() {
 				variableId,
 				handlers: {
 					onStartSync: handleStartSync,
-					onStopSync: handleShowStopSyncDialog,
+					onStopSync: handleStopSync,
 				},
 			} );
+
+			const duplicateAction = {
+				name: __( 'Duplicate', 'elementor' ),
+				icon: CopyIcon,
+				color: 'text.primary',
+				onClick: ( itemId: string ) => {
+					const newId = duplicateVariable( itemId );
+					startAutoEdit( newId );
+
+					const variableTypeOptions = getVariableType( variable.type );
+					trackVariablesManagerEvent( {
+						action: 'duplicate',
+						varType: variableTypeOptions?.variableType,
+					} );
+				},
+			};
 
 			const deleteAction = {
 				name: __( 'Delete', 'elementor' ),
@@ -201,160 +289,134 @@ export function VariablesManagerPanel() {
 				},
 			};
 
-			return [ ...typeActions, deleteAction ];
+			return [ ...typeActions, duplicateAction, deleteAction ];
 		},
-		[ variables, handleStartSync, handleShowStopSyncDialog ]
+		[ variables, handleStartSync, handleStopSync, duplicateVariable, startAutoEdit ]
 	);
 
 	const hasVariables = Object.keys( variables ).length > 0;
 
-	return (
-		<ThemeProvider>
-			<Panel>
-				<PanelHeader
-					sx={ {
-						height: 'unset',
-					} }
-				>
-					<Stack width="100%" direction="column" alignItems="center">
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variables Manager', 'elementor' ) }
-								</PanelHeaderTitle>
-							</Stack>
-							<Stack direction="row" gap={ 0.5 } alignItems="center">
-								<VariableManagerCreateMenu
-									onCreate={ handleCreateVariable }
-									variables={ variables }
-									menuState={ createMenuState }
-								/>
-								<CloseButton
-									aria-label="Close"
-									slotProps={ { icon: { fontSize: SIZE } } }
-									onClick={ () => {
-										handleClosePanel();
-									} }
-								/>
-							</Stack>
-						</Stack>
-						<Stack width="100%" direction="row" gap={ 1 }>
-							<SearchField
-								sx={ {
-									display: 'flex',
-									flex: 1,
-								} }
-								placeholder={ __( 'Search', 'elementor' ) }
-								value={ searchValue }
-								onSearch={ handleSearch }
-							/>
-						</Stack>
-						<Divider sx={ { width: '100%' } } />
-					</Stack>
-				</PanelHeader>
-				<PanelBody
-					sx={ {
-						display: 'flex',
-						flexDirection: 'column',
-						height: '100%',
-					} }
-				>
-					{ hasVariables && (
-						<VariablesManagerTable
-							menuActions={ buildMenuActions }
-							variables={ variables }
-							onChange={ handleOnChange }
-							autoEditVariableId={ autoEditVariableId }
-							onAutoEditComplete={ handleAutoEditComplete }
-							onFieldError={ setIsSaveDisabled }
-						/>
-					) }
+	const variablesSearchFieldSx = embedded
+		? {
+				flex: 1,
+				minWidth: 0,
+				px: 0,
+				py: 0,
+				display: 'flex',
+				alignItems: 'center',
+				alignSelf: 'stretch',
+		  }
+		: {
+				display: 'flex',
+				flex: 1,
+		  };
 
-					{ ! hasVariables && searchValue && (
-						<NoSearchResults
-							searchValue={ searchValue }
-							onClear={ () => handleSearch( '' ) }
-							icon={ <ColorFilterIcon fontSize="large" /> }
-						/>
-					) }
+	const searchField = (
+		<SearchField
+			placeholder={ __( 'Search', 'elementor' ) }
+			value={ searchValue }
+			onSearch={ handleSearch }
+			sx={ variablesSearchFieldSx }
+		/>
+	);
 
-					{ ! hasVariables && ! searchValue && (
-						<EmptyState
-							title={ __( 'Create your first variable', 'elementor' ) }
-							message={ __(
-								'Variables are saved attributes that you can apply anywhere on your site.',
-								'elementor'
-							) }
-							icon={ <ColorFilterIcon fontSize="large" /> }
-							onAdd={ createMenuState.open }
-						/>
-					) }
-				</PanelBody>
+	const bodyInner = (
+		<>
+			{ hasVariables && (
+				<VariablesManagerTable
+					menuActions={ buildMenuActions }
+					variables={ variables }
+					onChange={ handleOnChange }
+					autoEditVariableId={ autoEditVariableId }
+					onAutoEditComplete={ handleAutoEditComplete }
+					onFieldError={ setIsSaveDisabled }
+				/>
+			) }
 
-				<PanelFooter>
-					<Infotip
-						placement="right"
-						open={ !! serverError }
-						content={
-							serverError ? (
-								<Alert
-									severity={ serverError.severity ?? 'error' }
-									action={
-										serverError.action?.label ? (
-											<AlertAction onClick={ serverError.action.callback }>
-												{ serverError.action.label }
-											</AlertAction>
-										) : undefined
-									}
-									onClose={
-										! serverError.action?.label
-											? () => {
-													setServerError( null );
-													setIsSaveDisabled( false );
-											  }
-											: undefined
-									}
-									icon={
-										serverError.IconComponent ? (
-											<serverError.IconComponent />
-										) : (
-											<AlertTriangleFilledIcon />
-										)
-									}
-								>
-									<AlertTitle>{ serverError.message }</AlertTitle>
-									{ serverError.action?.message }
-								</Alert>
-							) : null
-						}
-						arrow={ false }
-						slotProps={ {
-							popper: {
-								modifiers: [
-									{
-										name: 'offset',
-										options: { offset: [ -10, 10 ] },
-									},
-								],
-							},
-						} }
-					>
-						<Button
-							fullWidth
-							size="small"
-							color="global"
-							variant="contained"
-							disabled={ isSaveDisabled || ! isDirty || isSaving }
-							onClick={ handleSaveClick }
-							loading={ isSaving }
+			{ ! hasVariables && searchValue && (
+				<NoSearchResults
+					searchValue={ searchValue }
+					onClear={ () => handleSearch( '' ) }
+					icon={ <ColorFilterIcon fontSize="large" /> }
+				/>
+			) }
+
+			{ ! hasVariables && ! searchValue && (
+				<EmptyState
+					title={ __( 'Create your first variable', 'elementor' ) }
+					message={ __(
+						'Variables are saved attributes that you can apply anywhere on your site.',
+						'elementor'
+					) }
+					icon={ <ColorFilterIcon fontSize="large" /> }
+					onAdd={ createMenuState.open }
+				/>
+			) }
+		</>
+	);
+
+	const saveFooter = (
+		<PanelFooter>
+			<Infotip
+				placement="right"
+				open={ !! serverError }
+				content={
+					serverError ? (
+						<Alert
+							severity={ serverError.severity ?? 'error' }
+							action={
+								serverError.action?.label ? (
+									<AlertAction onClick={ serverError.action.callback }>
+										{ serverError.action.label }
+									</AlertAction>
+								) : undefined
+							}
+							onClose={
+								! serverError.action?.label
+									? () => {
+											setServerError( null );
+											setIsSaveDisabled( false );
+									  }
+									: undefined
+							}
+							icon={
+								serverError.IconComponent ? <serverError.IconComponent /> : <AlertTriangleFilledIcon />
+							}
 						>
-							{ __( 'Save changes', 'elementor' ) }
-						</Button>
-					</Infotip>
-				</PanelFooter>
-			</Panel>
+							<AlertTitle>{ serverError.message }</AlertTitle>
+							{ serverError.action?.message }
+						</Alert>
+					) : null
+				}
+				arrow={ false }
+				slotProps={ {
+					popper: {
+						modifiers: [
+							{
+								name: 'offset',
+								options: { offset: [ -10, 10 ] },
+							},
+						],
+					},
+				} }
+			>
+				<Button
+					fullWidth
+					size="small"
+					color="global"
+					variant="contained"
+					disabled={ isSaveDisabled || ! isDirty || isSaving }
+					onClick={ handleSaveClick }
+					loading={ isSaving }
+				>
+					{ __( 'Save changes', 'elementor' ) }
+				</Button>
+			</Infotip>
+		</PanelFooter>
+	);
 
+	const dialogs = (
+		<>
 			{ deleteConfirmation && (
 				<DeleteConfirmationDialog
 					open
@@ -368,7 +430,10 @@ export function VariablesManagerPanel() {
 				<StopSyncConfirmationDialog
 					open
 					onClose={ () => setStopSyncConfirmation( null ) }
-					onConfirm={ () => handleStopSyncWithConfirmation( stopSyncConfirmation ) }
+					onConfirm={ () => {
+						commitStopSync( stopSyncConfirmation );
+						setStopSyncConfirmation( null );
+					} }
 				/>
 			) }
 
@@ -388,7 +453,7 @@ export function VariablesManagerPanel() {
 								label: __( 'Discard', 'elementor' ),
 								action: () => {
 									closeSaveChangesDialog();
-									closePanel();
+									void closePanel();
 								},
 							},
 							confirm: {
@@ -397,7 +462,7 @@ export function VariablesManagerPanel() {
 									const result = await handleSaveClick();
 									closeSaveChangesDialog();
 									if ( result?.success ) {
-										closePanel();
+										void closePanel();
 									}
 								},
 							},
@@ -405,8 +470,112 @@ export function VariablesManagerPanel() {
 					/>
 				</SaveChangesDialog>
 			) }
-		</ThemeProvider>
+		</>
 	);
+
+	const panelChrome = embedded ? (
+		<Stack
+			direction="column"
+			sx={ {
+				height: '100%',
+				width: '100%',
+				flex: 1,
+				minHeight: 0,
+				overflow: 'hidden',
+			} }
+		>
+			<Stack
+				direction="row"
+				alignItems="center"
+				spacing={ 1 }
+				width="100%"
+				sx={ {
+					flexShrink: 0,
+					px: 2,
+					pb: 1,
+				} }
+			>
+				{ searchField }
+				<Box sx={ { display: 'flex', flexShrink: 0, alignItems: 'center' } }>
+					<VariableManagerCreateMenu
+						outlinedTrigger
+						onCreate={ handleCreateVariable }
+						variables={ variables }
+						menuState={ createMenuState }
+					/>
+				</Box>
+			</Stack>
+			<Divider sx={ { width: '100%' } } />
+			<PanelBody
+				sx={ {
+					display: 'flex',
+					flexDirection: 'column',
+					flex: 1,
+					minHeight: 0,
+					overflow: 'hidden',
+				} }
+			>
+				{ bodyInner }
+			</PanelBody>
+			{ saveFooter }
+		</Stack>
+	) : (
+		<Panel>
+			<PanelHeader
+				sx={ {
+					height: 'unset',
+				} }
+			>
+				<Stack width="100%" direction="column" alignItems="center">
+					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+						<Stack width="100%" direction="row" gap={ 1 }>
+							<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+								<ColorFilterIcon fontSize="inherit" />
+								{ __( 'Variables Manager', 'elementor' ) }
+							</PanelHeaderTitle>
+						</Stack>
+						<Stack direction="row" gap={ 0.5 } alignItems="center">
+							<VariableManagerCreateMenu
+								onCreate={ handleCreateVariable }
+								variables={ variables }
+								menuState={ createMenuState }
+							/>
+							<CloseButton
+								aria-label="Close"
+								slotProps={ { icon: { fontSize: SIZE } } }
+								onClick={ () => {
+									handleClosePanel();
+								} }
+							/>
+						</Stack>
+					</Stack>
+					<Stack width="100%" direction="row" gap={ 1 }>
+						{ searchField }
+					</Stack>
+					<Divider sx={ { width: '100%' } } />
+				</Stack>
+			</PanelHeader>
+			<PanelBody
+				sx={ {
+					display: 'flex',
+					flexDirection: 'column',
+					height: '100%',
+				} }
+			>
+				{ bodyInner }
+			</PanelBody>
+			{ saveFooter }
+		</Panel>
+	);
+
+	const core = (
+		<>
+			{ panelChrome }
+			{ dialogs }
+		</>
+	);
+
+	return embedded ? core : <ThemeProvider>{ core }</ThemeProvider>;
 }
 
 const usePreventUnload = ( isDirty: boolean ) => {
@@ -436,7 +605,7 @@ const StopSyncConfirmationDialog = ( { open, onClose, onConfirm }: StopSyncConfi
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
-						'This will disconnect the variable color from version 3. Existing uses on your site will automatically switch to a default color.',
+						'This will disconnect the variable color from Global Colors. Existing uses on your site will automatically switch to a default color.',
 						'elementor'
 					) }
 				</ConfirmationDialog.ContentText>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 import { renderWithTheme } from 'test-utils';
+import { trackViewPromotion } from '@elementor/editor-controls';
 import { PopoverMenuList } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
@@ -18,6 +19,7 @@ jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
 	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
+	trackViewPromotion: jest.fn(),
 } ) );
 jest.mock( '../ui/no-search-results', () => ( {
 	NoSearchResults: () => <span>No results found</span>,
@@ -365,6 +367,50 @@ describe( 'VariablesSelection', () => {
 
 			const addButton = screen.getByRole( 'button', { name: __( 'Create variable', 'elementor' ) } );
 			expect( addButton ).toBeDisabled();
+		} );
+
+		it( 'should call trackViewPromotion when disabled prop is true', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).toHaveBeenCalledWith( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		} );
+
+		it( 'should not call trackViewPromotion when disabled is false', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

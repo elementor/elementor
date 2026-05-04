@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Loader {
+	private const TRANSIENT_KEY = 'elementor_migrations_manifest';
+	private const TRANSIENT_TTL = 12 * HOUR_IN_SECONDS;
+
 	private static ?self $instance = null;
 
 	private ?array $manifest = null;
@@ -33,6 +36,7 @@ class Migrations_Loader {
 	}
 
 	public static function destroy(): void {
+		delete_transient( self::TRANSIENT_KEY );
 		self::$instance = null;
 	}
 
@@ -265,6 +269,14 @@ class Migrations_Loader {
 
 		$manifest_path = $this->base_path . $this->manifest_file;
 
+		if ( $this->is_url( $manifest_path ) ) {
+			$this->manifest = $this->get_manifest_from_transient();
+
+			if ( null !== $this->manifest ) {
+				return $this->manifest;
+			}
+		}
+
 		$contents = $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
@@ -272,10 +284,7 @@ class Migrations_Loader {
 				'path' => $manifest_path,
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = $this->empty_manifest();
 			return $this->manifest;
 		}
 
@@ -287,21 +296,51 @@ class Migrations_Loader {
 				'error' => json_last_error_msg(),
 			] );
 
-			$this->manifest = [
-				'widgetKeys' => [],
-				'propTypes' => [],
-			];
+			$this->manifest = $this->empty_manifest();
 			return $this->manifest;
 		}
 
 		$this->manifest = $manifest;
 
+		if ( $this->is_url( $manifest_path ) ) {
+			$this->save_manifest_to_transient( $manifest );
+		}
+
 		return $this->manifest;
+	}
+
+	private function get_manifest_from_transient(): ?array {
+		$cached = get_transient( self::TRANSIENT_KEY );
+
+		if ( ! is_array( $cached ) ) {
+			return null;
+		}
+
+		if ( ( $cached['version'] ?? '' ) !== Migrations_Cache::get_version_fingerprint() ) {
+			delete_transient( self::TRANSIENT_KEY );
+			return null;
+		}
+
+		return $cached['manifest'] ?? null;
+	}
+
+	private function save_manifest_to_transient( array $manifest ): void {
+		set_transient( self::TRANSIENT_KEY, [
+			'version' => Migrations_Cache::get_version_fingerprint(),
+			'manifest' => $manifest,
+		], self::TRANSIENT_TTL );
+	}
+
+	private function empty_manifest(): array {
+		return [
+			'widgetKeys' => [],
+			'propTypes' => [],
+		];
 	}
 
 	private function read_source( string $path ) {
 		if ( $this->is_url( $path ) ) {
-			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
+			$response = wp_remote_get( $path, [ 'timeout' => 3 ] );
 
 			if ( is_wp_error( $response ) ) {
 				return false;

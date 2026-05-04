@@ -6,9 +6,10 @@ import { __ } from '@wordpress/i18n';
 type PromotionAlertProps = {
 	message: string;
 	upgradeUrl: string;
+	onCtaClick?: () => void;
 };
 
-export const PromotionAlert = ( { message, upgradeUrl }: PromotionAlertProps ) => (
+export const PromotionAlert = ( { message, upgradeUrl, onCtaClick }: PromotionAlertProps ) => (
 	<Alert
 		variant="standard"
 		color="promotion"
@@ -27,6 +28,7 @@ export const PromotionAlert = ( { message, upgradeUrl }: PromotionAlertProps ) =
 			href={ upgradeUrl }
 			rel="noopener noreferrer"
 			startIcon={ <CrownFilledIcon fontSize="tiny" /> }
+			onClick={ onCtaClick }
 		>
 			{ __( 'Upgrade now', 'elementor' ) }
 		</Button>

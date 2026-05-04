@@ -1169,6 +1169,29 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	async refreshWidgets() {
+		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
+
+		this.widgetsCache = {};
+		this.addWidgetsCache( data.widgets );
+
+		elementor.config.document.panel.elements_categories = data.categories;
+
+		if ( elementor.config.locale !== elementor.config.user.locale ) {
+			this.translateControlsDefaults( elementor.config.locale );
+		}
+
+		this.kitManager.renderGlobalsDefaultCSS();
+
+		elementor.hooks.doAction( 'elementor/widgets/refreshed' );
+
+		$e.routes.refreshContainer( 'panel' );
+
+		$e.run( 'preview/reload' );
+
+		return data;
+	}
+
 	translateControlsDefaults( locale ) {
 		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
 			data: { locale },
@@ -1190,26 +1213,6 @@ export default class EditorBase extends Marionette.Application {
 
 	getConfig() {
 		return ElementorConfig;
-	}
-
-	async checkAndLoadPostOnboardingTracking() {
-		try {
-			const onboardingStartTime = localStorage.getItem( 'elementor_onboarding_start_time' );
-			const siteStarterChoice = localStorage.getItem( 'elementor_onboarding_s4_site_starter_choice' );
-			const editorLoadTracked = localStorage.getItem( 'elementor_onboarding_editor_load_tracked' );
-
-			const hasOnboardingData = onboardingStartTime || siteStarterChoice || editorLoadTracked;
-
-			if ( ! hasOnboardingData ) {
-				return;
-			}
-
-			const { default: PostOnboardingTracking } = await import( './utils/post-onboarding-tracking' );
-			PostOnboardingTracking.checkAndSendEditorLoadedFromOnboarding();
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.warn( 'Failed to load post-onboarding tracking:', error );
-		}
 	}
 
 	onStart() {
@@ -1252,8 +1255,6 @@ export default class EditorBase extends Marionette.Application {
 		this.addDeprecatedConfigProperties();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/loaded', null, 'elementor:loaded' );
-
-		this.checkAndLoadPostOnboardingTracking();
 
 		$e.run( 'editor/documents/open', { id: this.config.initial_document.id } )
 			.then( () => {
@@ -1319,6 +1320,12 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+
+		const eventsManager = elementorCommon.eventsManager;
+
+		if ( eventsManager ) {
+			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
+		}
 	}
 
 	onEditModeSwitched() {

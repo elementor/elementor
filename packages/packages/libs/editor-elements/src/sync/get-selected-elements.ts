@@ -1,4 +1,5 @@
-import { type Element } from '../types';
+import { type Element, type ElementType } from '../types';
+import { getElementType } from './get-element-type';
 import { type ExtendedWindow } from './types';
 
 export function getSelectedElements(): Element[] {
@@ -18,4 +19,27 @@ export function getSelectedElements(): Element[] {
 
 		return acc;
 	}, [] );
+}
+
+type GetSelectedElementTypeResult =
+	| {
+			element: Element;
+			elementType: ElementType;
+	  }
+	| {
+			element: null;
+			elementType: null;
+	  };
+
+export function getSelectedElement(): GetSelectedElementTypeResult {
+	const elements = getSelectedElements();
+
+	const [ element ] = elements;
+	const elementType = getElementType( element?.type );
+
+	if ( elements.length !== 1 || ! elementType || ! element ) {
+		return { element: null, elementType: null };
+	}
+
+	return { element, elementType };
 }

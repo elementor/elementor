@@ -7,14 +7,18 @@ import { type MediaFrame } from '../types/wp-media';
 import wpPluploadSettings from '../wp-plupload-settings';
 
 export type OpenOptions = {
-	mode?: 'upload' | 'browse';
+	mode?: 'upload' | 'browse' | 'url';
+	currentUrl?: string;
+	currentAlt?: string;
 };
 
-export type MediaType = 'image' | 'svg';
+export type MediaType = 'image' | 'svg' | 'video';
 
 type Options = {
 	mediaTypes: MediaType[];
 	title?: string;
+	allowUrlImport?: boolean;
+	onSelectUrl?: ( url: string, alt?: string ) => void;
 } & (
 	| {
 			multiple: true;
@@ -50,21 +54,38 @@ export default function useWpMediaFrame( options: Options ) {
 	};
 }
 
-function createFrame( { onSelect, multiple, mediaTypes, selected, title, mode = 'browse' }: Options & OpenOptions ) {
+function createFrame( {
+	onSelect,
+	onSelectUrl,
+	allowUrlImport,
+	multiple,
+	mediaTypes,
+	selected,
+	title,
+	mode = 'browse',
+	currentUrl,
+	currentAlt,
+}: Options & OpenOptions ) {
 	const frame: MediaFrame = media()( {
 		title,
 		multiple,
 		library: {
 			type: getMimeTypes( mediaTypes ),
 		},
+		...( allowUrlImport ? { frame: 'post' } : {} ),
 	} )
 		.on( 'open', () => {
 			setTypeCaller( frame );
-			applyMode( frame, mode );
-			applySelection( frame, selected );
+			applyMode( frame, mode, currentUrl, currentAlt );
+			if ( mode !== 'url' ) {
+				applySelection( frame, selected );
+			}
 		} )
-		.on( 'close', () => cleanupFrame( frame ) )
-		.on( 'insert select', () => select( frame, multiple, onSelect ) );
+		.on( 'insert select', () => select( frame, multiple, onSelect, onSelectUrl ) );
+
+	if ( allowUrlImport ) {
+		frame.on( 'ready open', () => restrictFrameMenu( frame ) );
+	}
 
 	handleExtensions( frame, mediaTypes );
 
@@ -76,8 +97,28 @@ function cleanupFrame( frame?: MediaFrame ) {
 	frame?.remove();
 }
 
-function applyMode( frame: MediaFrame, mode: OpenOptions[ 'mode' ] = 'browse' ) {
-	frame.content.mode( mode );
+function applyMode(
+	frame: MediaFrame,
+	mode: OpenOptions[ 'mode' ] = 'browse',
+	currentUrl?: string,
+	currentAlt?: string
+) {
+	if ( mode === 'url' ) {
+		frame.setState( 'embed' );
+		if ( currentUrl || currentAlt ) {
+			// Defer so the toolbar region is initialized before change:url triggers its refresh callback.
+			setTimeout( () => {
+				if ( currentUrl ) {
+					frame.state()?.props?.set( 'url', currentUrl );
+				}
+				if ( currentAlt ) {
+					frame.state()?.props?.set( 'alt', currentAlt );
+				}
+			}, 0 );
+		}
+	} else {
+		frame.content.mode( mode );
+	}
 }
 
 function applySelection( frame: MediaFrame, selected: number | null | Array< number | null > ) {
@@ -91,12 +132,41 @@ function applySelection( frame: MediaFrame, selected: number | null | Array< num
 		.set( selectedAttachments || [] );
 }
 
-function select( frame: MediaFrame, multiple: boolean, onSelect: Options[ 'onSelect' ] ) {
-	const attachments = frame.state().get( 'selection' ).toJSON().map( normalize );
+function select(
+	frame: MediaFrame,
+	multiple: boolean,
+	onSelect: Options[ 'onSelect' ],
+	onSelectUrl?: Options[ 'onSelectUrl' ]
+) {
+	const state = frame.state();
+
+	if ( state.get( 'id' ) === 'embed' ) {
+		if ( onSelectUrl ) {
+			const url = state.props?.get( 'url' );
+			const alt = state.props?.get( 'alt' );
+			if ( url ) {
+				onSelectUrl( url, alt );
+			}
+		}
+		return;
+	}
+
+	const attachments = state.get( 'selection' ).toJSON().map( normalize );
 
 	const onSelectFn = onSelect as ( val: Attachment | Attachment[] ) => void;
 
 	onSelectFn( multiple ? attachments : attachments[ 0 ] );
+}
+
+const FRAME_MENU_ITEMS_TO_REMOVE = [
+	'#menu-item-gallery',
+	'#menu-item-featured-image',
+	'#menu-item-playlist',
+	'#menu-item-video-playlist',
+].join( ',' );
+
+function restrictFrameMenu( frame: MediaFrame ) {
+	frame.$el?.find( FRAME_MENU_ITEMS_TO_REMOVE )?.remove();
 }
 
 function setTypeCaller( frame: MediaFrame ) {
@@ -120,11 +190,24 @@ function handleExtensions( frame: MediaFrame, mediaTypes: MediaType[] ) {
 }
 
 const imageExtensions = [ 'avif', 'bmp', 'gif', 'ico', 'jpe', 'jpeg', 'jpg', 'png', 'webp' ];
+const videoExtensions = [ 'mp4', 'webm', 'ogg', 'mov', 'm4v', 'avi', 'wmv', 'mpg', 'mpeg', '3gp', '3g2' ];
 
 function getMimeTypes( mediaTypes: MediaType[] ) {
 	const mimeTypesPerType: Record< MediaType, string[] > = {
 		image: imageExtensions.map( ( extension ) => `image/${ extension }` ),
 		svg: [ 'image/svg+xml' ],
+		video: [
+			'video/mp4',
+			'video/webm',
+			'video/ogg',
+			'video/quicktime',
+			'video/x-m4v',
+			'video/avi',
+			'video/x-ms-wmv',
+			'video/mpeg',
+			'video/3gpp',
+			'video/3gpp2',
+		],
 	};
 
 	return mediaTypes.reduce( ( prev, currentType ) => {
@@ -136,6 +219,7 @@ function getExtensions( mediaTypes: MediaType[] ) {
 	const extensionsPerType: Record< MediaType, string[] > = {
 		image: imageExtensions,
 		svg: [ 'svg' ],
+		video: videoExtensions,
 	};
 
 	const extensions = mediaTypes.reduce( ( prev, currentType ) => {

@@ -23,7 +23,7 @@ class Module extends BaseModule {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Markdown Rendering', 'elementor' ),
-			'description' => esc_html__( 'Serve page content as Markdown when AI crawlers request it via Accept: text/markdown header.', 'elementor' ),
+			'description' => esc_html__( 'Serve page content as Markdown when AI crawlers request it via the Accept: text/markdown header, or when ?format=markdown is appended to the URL.', 'elementor' ),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];

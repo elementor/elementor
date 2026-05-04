@@ -2,6 +2,7 @@ import type { StyleDefinition } from '@elementor/editor-styles';
 import {
 	createStylesProvider,
 	type CreateStylesProviderOptions,
+	type StylesCollection,
 	type UpdateActionPayload,
 } from '@elementor/editor-styles-repository';
 
@@ -9,15 +10,18 @@ type CreateMockProviderArgs = Omit< Partial< CreateStylesProviderOptions >, 'sub
 	actions?: Partial< CreateStylesProviderOptions[ 'actions' ] >;
 };
 
+type Subscriber = ( previous?: StylesCollection, current?: StylesCollection ) => void;
+
 export function createMockStylesProvider(
 	{ key = 'test-provider', priority = 0, labels, limit, actions }: CreateMockProviderArgs,
 	styleDefinitions: StyleDefinition[] = []
 ) {
 	let styles = structuredClone( styleDefinitions );
+	let previousState: StylesCollection | undefined;
 
-	const subscribers = new Set< () => void >();
+	const subscribers = new Set< Subscriber >();
 
-	const subscribe = ( callback: () => void ) => {
+	const subscribe = ( callback: Subscriber ) => {
 		subscribers.add( callback );
 
 		return () => {
@@ -25,10 +29,17 @@ export function createMockStylesProvider(
 		};
 	};
 
+	const toCollection = (): StylesCollection =>
+		styles.reduce( ( acc, style ) => ( { ...acc, [ style.id ]: style } ), {} );
+
 	const notify = () => {
+		const currentState = toCollection();
+
 		for ( const subscriber of subscribers ) {
-			subscriber();
+			subscriber( previousState, currentState );
 		}
+
+		previousState = currentState;
 	};
 
 	const deleteStyleDefinition = ( id: string ) => {

@@ -81,6 +81,15 @@ class Source_Cloud extends Source_Base {
 			$data['page_settings'] = $decoded_data['page_settings'];
 		}
 
+		$snapshots = apply_filters(
+			'elementor/template_library/get_data/extract_snapshots',
+			[],
+			$decoded_data,
+			$data
+		);
+
+		static::attach_global_styles_to_data_static( $data, $snapshots );
+
 		// After the upload complete, set the elementor upload state back to false
 		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
 
@@ -102,15 +111,21 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function format_resource_item_for_create( $template_data ) {
+		$content_payload = [
+			'content' => $template_data['content'],
+			'page_settings' => $template_data['page_settings'],
+		];
+
+		if ( is_array( $template_data['content'] ?? null ) ) {
+			$this->attach_global_styles_to_data( $content_payload, $template_data['content'], 0 );
+		}
+
 		return [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
 			'parentId' => ! empty( $template_data['parentId'] ) ? (int) $template_data['parentId'] : null,
-			'content' => wp_json_encode( [
-				'content' => $template_data['content'],
-				'page_settings' => $template_data['page_settings'],
-			] ),
+			'content' => wp_json_encode( $content_payload ),
 			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
 	}
@@ -196,6 +211,16 @@ class Source_Cloud extends Source_Base {
 			'title' => $data['title'],
 			'type' => $data['templateType'],
 		];
+
+		$this->attach_global_styles_to_data(
+			$export_data,
+			$export_data['content'],
+			(int) ( $data['id'] ?? 0 ),
+			[
+				'global_classes' => $data['content']['global_classes'] ?? null,
+				'global_variables' => $data['content']['global_variables'] ?? null,
+			]
+		);
 
 		return [
 			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',
@@ -382,7 +407,7 @@ class Source_Cloud extends Source_Base {
 		return $this->get_app()->get_quota();
 	}
 
-	public function import_template( $name, $path ) {
+	public function import_template( $name, $path, $import_mode = 'match_site' ) {
 		if ( empty( $path ) ) {
 			return new \WP_Error( 'file_error', 'Please upload a file to import' );
 		}
@@ -418,7 +443,7 @@ class Source_Cloud extends Source_Base {
 					continue;
 				}
 
-				$prepared = $this->prepare_import_template_data( $file_path );
+				$prepared = $this->prepare_import_template_data( $file_path, $import_mode );
 
 				if ( is_wp_error( $prepared ) ) {
 					// Skip failed templates
@@ -442,7 +467,7 @@ class Source_Cloud extends Source_Base {
 
 			Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
 		} else {
-			$prepared = $this->prepare_import_template_data( $path );
+			$prepared = $this->prepare_import_template_data( $path, $import_mode );
 
 			if ( is_wp_error( $prepared ) ) {
 				return $prepared;

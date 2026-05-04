@@ -60,6 +60,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
@@ -86,6 +87,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -115,6 +117,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
@@ -157,6 +160,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -189,6 +193,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -218,6 +223,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -242,12 +248,11 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
-		// Act.
 		renderWithTheme( <SettingsTab /> );
 
-		// Assert.
 		const control = screen.getByRole( 'textbox' );
 		expect( control ).toHaveAttribute( 'placeholder', 'Enter some text' );
 		const separator = screen.getByRole( 'separator' );

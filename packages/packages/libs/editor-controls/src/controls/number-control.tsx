@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { numberPropTypeUtil } from '@elementor/editor-props';
-import { InputAdornment } from '@elementor/ui';
+import { numberPropTypeUtil, type PropType } from '@elementor/editor-props';
+import { InputAdornment, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { NumberInput } from '../components/number-input';
@@ -10,6 +10,19 @@ import { createControl } from '../create-control';
 const isEmptyOrNaN = ( value?: string | number | null ) =>
 	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
 
+const renderSuffix = ( propType: PropType ) => {
+	if ( propType.meta?.suffix ) {
+		return (
+			<InputAdornment position="end">
+				<Typography variant="caption" color="text.secondary">
+					{ propType.meta.suffix as string }
+				</Typography>
+			</InputAdornment>
+		);
+	}
+	return <></>;
+};
+
 export const NumberControl = createControl(
 	( {
 		placeholder: labelPlaceholder,
@@ -18,6 +31,7 @@ export const NumberControl = createControl(
 		step = 1,
 		shouldForceInt = false,
 		startIcon,
+		disabled: inputDisabled,
 	}: {
 		placeholder?: string;
 		max?: number;
@@ -25,8 +39,9 @@ export const NumberControl = createControl(
 		step?: number;
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
+		disabled?: boolean;
 	} ) => {
-		const { value, setValue, placeholder, disabled, restoreValue } = useBoundProp( numberPropTypeUtil );
+		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
 
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const {
@@ -56,7 +71,7 @@ export const NumberControl = createControl(
 					size="tiny"
 					type="number"
 					fullWidth
-					disabled={ disabled }
+					disabled={ inputDisabled ?? disabled }
 					value={ isEmptyOrNaN( value ) ? '' : value }
 					onInput={ handleChange }
 					onBlur={ restoreValue }
@@ -64,10 +79,11 @@ export const NumberControl = createControl(
 					inputProps={ { step, min } }
 					InputProps={ {
 						startAdornment: startIcon ? (
-							<InputAdornment position="start" disabled={ disabled }>
+							<InputAdornment position="start" disabled={ inputDisabled ?? disabled }>
 								{ startIcon }
 							</InputAdornment>
 						) : undefined,
+						endAdornment: renderSuffix( propType ),
 					} }
 				/>
 			</ControlActions>

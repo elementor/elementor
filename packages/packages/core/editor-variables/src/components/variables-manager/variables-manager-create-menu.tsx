@@ -11,6 +11,12 @@ import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 import { VariablePromotionChip, type VariablePromotionChipRef } from '../ui/variable-promotion-chip';
 
+const TRACKING_DATA = {
+	target_name: 'variables_manager',
+	target_location: 'variables_manager',
+	location_l1: 'create variable menu',
+} as const;
+
 export const SIZE = 'tiny';
 
 type MenuOptionConfig = {
@@ -26,9 +32,15 @@ type VariableManagerCreateMenuProps = {
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
 	disabled?: boolean;
 	menuState: PopupState;
+	outlinedTrigger?: boolean;
 };
 
-export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( {
+	variables,
+	onCreate,
+	menuState,
+	outlinedTrigger = false,
+}: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
@@ -53,6 +65,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: V
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
 				size={ SIZE }
+				variant={ outlinedTrigger ? 'outlined' : undefined }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
 				<PlusIcon fontSize={ SIZE } />
@@ -115,7 +128,7 @@ const MenuOption = ( {
 			return;
 		}
 
-		const defaultName = getDefaultName( variables, config.key, config.variableType );
+		const defaultName = getDefaultName( variables, config.variableType );
 
 		onCreate( config.key, defaultName, config.defaultValue );
 		trackVariablesManagerEvent( { action: 'add', varType: config.variableType } );
@@ -133,24 +146,29 @@ const MenuOption = ( {
 					variableType={ config.variableType }
 					upgradeUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
 					ref={ promotionRef }
+					trackingData={ TRACKING_DATA }
 				/>
 			) }
 		</MenuItem>
 	);
 };
 
-const getDefaultName = ( variables: TVariablesList, type: string, baseName: string ) => {
-	const existingNames = Object.values( variables )
-		.filter( ( variable ) => variable.type === type )
-		.map( ( variable ) => variable.label );
+export const getDefaultName = ( variables: TVariablesList, baseName: string ) => {
+	const pattern = new RegExp( `^${ baseName }-(\\d+)$`, 'i' );
+
+	const takenNumbers = new Set< number >();
+
+	Object.values( variables ).forEach( ( variable ) => {
+		const match = variable.label.match( pattern );
+		if ( match ) {
+			takenNumbers.add( parseInt( match[ 1 ], 10 ) );
+		}
+	} );
 
 	let counter = 1;
-	let name = `${ baseName }-${ counter }`;
-
-	while ( existingNames.includes( name ) ) {
+	while ( takenNumbers.has( counter ) ) {
 		counter++;
-		name = `${ baseName }-${ counter }`;
 	}
 
-	return name;
+	return `${ baseName }-${ counter }`;
 };

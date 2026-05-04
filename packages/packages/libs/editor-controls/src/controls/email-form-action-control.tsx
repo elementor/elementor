@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { emailPropTypeUtil } from '@elementor/editor-props';
-import { CollapsibleContent } from '@elementor/editor-ui';
+import { CollapsibleContent, InfoAlert } from '@elementor/editor-ui';
 import { Box, Divider, Grid, Stack } from '@elementor/ui';
+import { hasProInstalled, isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
+import { useFormFieldSuggestions } from '../hooks/use-form-field-suggestions';
 import { ChipsControl } from './chips-control';
+import { MentionTextAreaControl } from './mention-text-area-control';
 import { SelectControl } from './select-control';
-import { TextAreaControl } from './text-area-control';
 import { TextControl } from './text-control';
 
 const EmailField = ( { bind, label, placeholder }: { bind: string; label: string; placeholder?: string } ) => (
@@ -26,45 +28,66 @@ const EmailField = ( { bind, label, placeholder }: { bind: string; label: string
 	</PropKeyProvider>
 );
 
-const SendToField = () => (
-	<EmailField
-		bind="to"
-		label={ __( 'Send To', 'elementor' ) }
-		placeholder={ __( 'Where should we send new submissions?', 'elementor' ) }
-	/>
+const SendToField = ( { placeholder }: { placeholder?: string } ) => (
+	<EmailField bind="to" label={ __( 'Send to', 'elementor' ) } placeholder={ placeholder } />
 );
 
 const SubjectField = () => (
 	<EmailField
 		bind="subject"
-		label={ __( 'Email Subject', 'elementor' ) }
+		label={ __( 'Email subject', 'elementor' ) }
 		placeholder={ __( 'New form submission', 'elementor' ) }
 	/>
 );
 
-const MessageField = () => (
-	<PropKeyProvider bind="message">
-		<Grid container direction="column" gap={ 0.5 }>
-			<Grid item>
-				<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+const MIN_PRO_VERSION_FOR_MENTIONS = '4.1.0';
+
+const shouldShowMentionsInfo = (): boolean => {
+	if ( ! hasProInstalled() ) {
+		return true;
+	}
+
+	const proVersion = window.elementorPro?.config?.version;
+
+	if ( ! proVersion ) {
+		return false;
+	}
+
+	return isVersionGreaterOrEqual( proVersion, MIN_PRO_VERSION_FOR_MENTIONS );
+};
+
+const MessageField = () => {
+	const suggestions = useFormFieldSuggestions();
+
+	return (
+		<PropKeyProvider bind="message">
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ __( 'Message', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl suggestions={ suggestions } />
+				</Grid>
+				<Grid item>
+					<InfoAlert>
+						{ shouldShowMentionsInfo()
+							? __(
+									'[all-fields] shortcode sends all fields. Type @ to insert specific fields and customize your message.',
+									'elementor'
+							  )
+							: __( '[all-fields] shortcode sends all fields.', 'elementor' ) }
+					</InfoAlert>
+				</Grid>
 			</Grid>
-			<Grid item>
-				<TextAreaControl
-					placeholder={ __(
-						'By default, all form fields are sent via [all-fields] shortcode.',
-						'elementor'
-					) }
-				/>
-			</Grid>
-		</Grid>
-	</PropKeyProvider>
-);
+		</PropKeyProvider>
+	);
+};
 
 const FromEmailField = () => (
 	<EmailField
 		bind="from"
 		label={ __( 'From email', 'elementor' ) }
-		placeholder={ __( 'What email address should appear as the sender?', 'elementor' ) }
+		placeholder={ __( 'What email should appear as the sender?', 'elementor' ) }
 	/>
 );
 
@@ -76,7 +99,27 @@ const FromNameField = () => (
 	/>
 );
 
-const ReplyToField = () => <EmailField bind="reply-to" label={ __( 'Reply-to', 'elementor' ) } />;
+const ReplyToField = () => {
+	const emailSuggestions = useFormFieldSuggestions( { inputType: 'email' } );
+
+	return (
+		<PropKeyProvider bind="reply-to">
+			<Grid container direction="column" gap={ 0.5 }>
+				<Grid item>
+					<ControlFormLabel>{ __( 'Reply-to', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item>
+					<MentionTextAreaControl
+						suggestions={ emailSuggestions }
+						rows={ 1 }
+						triggerPosition="start"
+						placeholder={ __( 'You can type @ to insert an email field', 'elementor' ) }
+					/>
+				</Grid>
+			</Grid>
+		</PropKeyProvider>
+	);
+};
 
 const CcField = () => <EmailField bind="cc" label={ __( 'Cc', 'elementor' ) } />;
 
@@ -85,7 +128,7 @@ const BccField = () => <EmailField bind="bcc" label={ __( 'Bcc', 'elementor' ) }
 const MetaDataField = () => (
 	<PropKeyProvider bind="meta-data">
 		<Stack gap={ 0.5 }>
-			<ControlLabel>{ __( 'Meta data', 'elementor' ) }</ControlLabel>
+			<ControlFormLabel>{ __( 'Metadata', 'elementor' ) }</ControlFormLabel>
 			<ChipsControl
 				options={ [
 					{ label: __( 'Date', 'elementor' ), value: 'date' },
@@ -133,14 +176,14 @@ const AdvancedSettings = () => (
 	</CollapsibleContent>
 );
 
-export const EmailFormActionControl = createControl( () => {
+export const EmailFormActionControl = createControl( ( { toPlaceholder }: { toPlaceholder?: string } ) => {
 	const { value, setValue, ...propContext } = useBoundProp( emailPropTypeUtil );
 
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
 			<Stack gap={ 2 }>
-				<ControlFormLabel>{ __( 'Email settings', 'elementor' ) }</ControlFormLabel>
-				<SendToField />
+				<ControlLabel>{ __( 'Email settings', 'elementor' ) }</ControlLabel>
+				<SendToField placeholder={ toPlaceholder } />
 				<SubjectField />
 				<MessageField />
 				<FromEmailField />

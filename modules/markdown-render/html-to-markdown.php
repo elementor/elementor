@@ -83,6 +83,8 @@ class Html_To_Markdown {
 					return $text;
 				}
 
+				$text = str_replace( [ '[', ']' ], [ '\\[', '\\]' ], $text );
+
 				return '[' . $text . '](' . $url . ')';
 			},
 			$html

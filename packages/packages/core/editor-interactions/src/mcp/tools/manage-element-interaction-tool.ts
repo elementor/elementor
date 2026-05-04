@@ -1,0 +1,202 @@
+import { updateElementInteractions } from '@elementor/editor-elements';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { z } from '@elementor/schema';
+import { isProActive } from '@elementor/utils';
+
+import { interactionsRepository } from '../../interactions-repository';
+import { type ElementInteractions } from '../../types';
+import {
+	createInteractionItem,
+	extractExcludedBreakpoints,
+	extractSize,
+	extractString,
+} from '../../utils/prop-value-utils';
+import { generateTempInteractionId } from '../../utils/temp-id-utils';
+import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
+import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';
+import { baseSchema, proSchema } from './schema';
+
+const EMPTY_INTERACTIONS: ElementInteractions = {
+	version: 1,
+	items: [],
+};
+
+const EFFECTS_WITHOUT_TYPE = [ 'custom' ];
+
+export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
+	const { addTool } = reg;
+	const extendedSchema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
+	const schema = {
+		elementId: z.string().describe( 'The ID of the element to read or modify interactions on' ),
+		action: z
+			.enum( [ 'get', 'add', 'update', 'delete', 'clear' ] )
+			.describe( 'Operation to perform. Use "get" first to inspect existing interactions.' ),
+		interactionId: z
+			.string()
+			.optional()
+			.describe( 'Interaction ID — required for update and delete. Obtain from a prior "get" call.' ),
+		...extendedSchema,
+	};
+
+	addTool( {
+		name: 'manage-element-interaction',
+		description: `Manage the element interaction.`,
+		schema,
+		requiredResources: [
+			{ uri: INTERACTIONS_SCHEMA_URI, description: 'Interactions schema with all available options' },
+		],
+		isDestructive: true,
+		outputSchema: {
+			success: z.boolean().describe( 'Whether the action was successful' ),
+			action: z
+				.enum( [ 'get', 'add', 'update', 'delete', 'clear' ] )
+				.describe( 'Operation to perform. Use "get" first to inspect existing interactions.' ),
+			elementId: z.string().optional().describe( 'The ID of the element to read or modify interactions on' ),
+			interactions: z.array( z.any() ).optional().describe( 'The interactions on the element' ),
+			count: z.number().optional().describe( 'The number of interactions on the element' ),
+		},
+		handler: ( input: {
+			elementId: string;
+			action: 'get' | 'add' | 'update' | 'delete' | 'clear';
+			interactionId?: string;
+			[ key: string ]: unknown;
+		} ) => {
+			const { elementId, action, interactionId, ...animationData } = input;
+			const { effectType, ...restAnimationData } = animationData as {
+				effectType?: string;
+				[ key: string ]: unknown;
+			};
+			const effect = restAnimationData.effect as string | undefined;
+			const resolvedType =
+				effectType ?? ( effect && ! EFFECTS_WITHOUT_TYPE.includes( effect ) ? 'in' : undefined );
+
+			const allInteractions = interactionsRepository.all();
+			const elementData = allInteractions.find( ( data ) => data.elementId === elementId );
+			const currentInteractions: ElementInteractions = elementData?.interactions ?? EMPTY_INTERACTIONS;
+
+			if ( action === 'get' ) {
+				const summary = currentInteractions.items.map( ( item ) => {
+					const { value } = item;
+					const animValue = value.animation.value;
+					const timingValue = animValue.timing_config.value;
+					const configValue = animValue.config.value;
+
+					return {
+						id: extractString( value.interaction_id ),
+						trigger: extractString( value.trigger ),
+						effect: extractString( animValue.effect ),
+						effectType: extractString( animValue.type ),
+						direction: extractString( animValue.direction ),
+						duration: extractSize( timingValue.duration ),
+						delay: extractSize( timingValue.delay ),
+						easing: extractString( configValue.easing ),
+						excludedBreakpoints: extractExcludedBreakpoints( value.breakpoints ),
+					};
+				} );
+
+				return {
+					success: true,
+					elementId,
+					action,
+					interactions: summary,
+					count: summary.length,
+				};
+			}
+
+			let updatedItems = [ ...currentInteractions.items ];
+
+			switch ( action ) {
+				case 'add': {
+					if ( updatedItems.length >= MAX_INTERACTIONS_PER_ELEMENT ) {
+						throw new Error(
+							`Cannot add more than ${ MAX_INTERACTIONS_PER_ELEMENT } interactions per element. Current count: ${ updatedItems.length }. Delete an existing interaction first.`
+						);
+					}
+
+					const newItem = createInteractionItem( {
+						interactionId: generateTempInteractionId(),
+						...restAnimationData,
+						type: resolvedType,
+					} );
+
+					updatedItems = [ ...updatedItems, newItem ];
+					break;
+				}
+
+				case 'update': {
+					if ( ! interactionId ) {
+						throw new Error( 'interactionId is required for the update action.' );
+					}
+
+					const itemIndex = updatedItems.findIndex(
+						( item ) => extractString( item.value.interaction_id ) === interactionId
+					);
+
+					if ( itemIndex === -1 ) {
+						throw new Error(
+							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
+						);
+					}
+
+					const updatedItem = createInteractionItem( {
+						interactionId,
+						...restAnimationData,
+						type: resolvedType,
+					} );
+
+					updatedItems = [
+						...updatedItems.slice( 0, itemIndex ),
+						updatedItem,
+						...updatedItems.slice( itemIndex + 1 ),
+					];
+					break;
+				}
+
+				case 'delete': {
+					if ( ! interactionId ) {
+						throw new Error( 'interactionId is required for the delete action.' );
+					}
+
+					const beforeCount = updatedItems.length;
+					updatedItems = updatedItems.filter(
+						( item ) => extractString( item.value.interaction_id ) !== interactionId
+					);
+
+					if ( updatedItems.length === beforeCount ) {
+						throw new Error(
+							`Interaction with ID "${ interactionId }" not found on element "${ elementId }".`
+						);
+					}
+					break;
+				}
+
+				case 'clear': {
+					updatedItems = [];
+					break;
+				}
+			}
+
+			const updatedInteractions: ElementInteractions = {
+				...currentInteractions,
+				items: updatedItems,
+			};
+
+			try {
+				updateElementInteractions( { elementId, interactions: updatedInteractions } );
+			} catch ( error ) {
+				throw new Error(
+					`Failed to update interactions for element "${ elementId }": ${
+						error instanceof Error ? error.message : 'Unknown error'
+					}`
+				);
+			}
+
+			return {
+				success: true,
+				action,
+				elementId,
+				count: updatedItems.length,
+			};
+		},
+	} );
+};

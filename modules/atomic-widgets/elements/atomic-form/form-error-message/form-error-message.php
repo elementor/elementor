@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Form_Error_Message extends Form_Message {
 
+	public static $widget_description = 'Shown when the form submission fails. Hidden by default, displayed automatically when the form submission result is an error.';
+
 	public static function get_type() {
 		return 'e-form-error-message';
 	}
@@ -18,7 +20,7 @@ class Form_Error_Message extends Form_Message {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Form error message', 'elementor' );
+		return esc_html__( 'Error message', 'elementor' );
 	}
 
 	protected static function get_background_color(): string {
@@ -27,5 +29,12 @@ class Form_Error_Message extends Form_Message {
 
 	protected static function get_text_color(): string {
 		return '#870000';
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => false,
+		];
 	}
 }

@@ -2,7 +2,7 @@ export { BREAKPOINTS_SCHEMA_URI } from './mcp/resources/breakpoints-resource';
 export { STYLE_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 
 export { init } from './init';
-export { isAtomicWidget } from './style-commands/utils';
+export { isAtomicWidget } from './utils/command-utils';
 
 export {
 	createTemplatedElementView,
@@ -21,6 +21,7 @@ export { createPropsResolver, type PropsResolver } from './renderers/create-prop
 export { settingsTransformersRegistry } from './settings-transformers-registry';
 export { styleTransformersRegistry } from './style-transformers-registry';
 export { endDragElementFromPanel, startDragElementFromPanel } from './sync/drag-element-from-panel';
+export { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from './sync/global-styles-imported-event';
 export { DOCUMENT_STRUCTURE_URI } from './mcp/resources/document-structure-resource';
 export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
@@ -31,3 +32,4 @@ export {
 } from './transformers/create-transformers-registry';
 export { type AnyTransformer, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';
+export { doAfterRender } from './utils/after-render';

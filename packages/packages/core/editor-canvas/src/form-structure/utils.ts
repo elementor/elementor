@@ -1,11 +1,13 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 
+type Model = {
+	elType?: string;
+	widgetType?: string;
+};
+
 export type CreateArgs = {
 	container?: V1Element;
-	model?: {
-		elType?: string;
-		widgetType?: string;
-	};
+	model?: Model;
 };
 
 export type MoveArgs = {
@@ -38,6 +40,8 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-label',
 	'e-form-checkbox',
 	'e-form-submit-button',
+	'e-form-select',
+	'e-form-radio-button',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {
@@ -46,6 +50,10 @@ export function getArgsElementType( args: CreateArgs ): string | undefined {
 
 export function getElementType( element?: V1Element ): string | undefined {
 	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );
+}
+
+export function getClipboardElementType( element?: ClipboardElement ): string | undefined {
+	return element?.widgetType || element?.elType;
 }
 
 export function isElementWithinFormSelector( element?: V1Element ): boolean {
@@ -70,7 +78,7 @@ export function hasElementTypes( element: V1Element, types: Set< string > ): boo
 
 export function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType === type ) {
 			return true;
@@ -82,7 +90,7 @@ export function hasClipboardElementType( elements: ClipboardElement[], type: str
 
 export function hasClipboardElementTypes( elements: ClipboardElement[], types: Set< string > ): boolean {
 	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
+		const elementType = getClipboardElementType( element );
 
 		if ( elementType && types.has( elementType ) ) {
 			return true;
@@ -90,4 +98,16 @@ export function hasClipboardElementTypes( elements: ClipboardElement[], types: S
 
 		return element.elements ? hasClipboardElementTypes( element.elements, types ) : false;
 	} );
+}
+
+export function movedContainersIncludeAtomicFormRoot( containers: ( V1Element | undefined )[] ): boolean {
+	return containers.some( ( container ) => getElementType( container ) === FORM_ELEMENT_TYPE );
+}
+
+export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): boolean {
+	if ( ! elements.length ) {
+		return false;
+	}
+
+	return elements.every( ( el ) => getClipboardElementType( el ) === FORM_ELEMENT_TYPE );
 }

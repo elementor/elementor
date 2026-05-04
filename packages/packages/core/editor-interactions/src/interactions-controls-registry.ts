@@ -1,9 +1,15 @@
 import { type ComponentType } from 'react';
 import { type PropValue } from '@elementor/editor-props';
 
-import { type DirectionFieldProps, type FieldProps, type ReplayFieldProps } from './types';
+import {
+	type DirectionFieldProps,
+	type FieldProps,
+	type RepeatFieldProps,
+	type ReplayFieldProps,
+	type TimesFieldProps,
+} from './types';
 
-type InteractionsControlType =
+export type InteractionsControlType =
 	| 'trigger'
 	| 'effect'
 	| 'effectType'
@@ -11,10 +17,12 @@ type InteractionsControlType =
 	| 'duration'
 	| 'delay'
 	| 'replay'
+	| 'repeat'
+	| 'times'
 	| 'easing'
 	| 'relativeTo'
-	| 'offsetTop'
-	| 'offsetBottom'
+	| 'start'
+	| 'end'
 	| 'customEffects';
 
 type InteractionsControlPropsMap = {
@@ -26,10 +34,12 @@ type InteractionsControlPropsMap = {
 	duration: FieldProps;
 	delay: FieldProps;
 	replay: ReplayFieldProps;
+	repeat: RepeatFieldProps;
+	times: TimesFieldProps;
 	easing: FieldProps;
 	relativeTo: FieldProps;
-	offsetTop: FieldProps;
-	offsetBottom: FieldProps;
+	start: FieldProps;
+	end: FieldProps;
 };
 
 type ControlOptions< T extends InteractionsControlType > = {
@@ -40,7 +50,9 @@ type ControlOptions< T extends InteractionsControlType > = {
 
 type StoredControlOptions = {
 	type: InteractionsControlType;
-	component: ComponentType< FieldProps | DirectionFieldProps | ReplayFieldProps >;
+	component: ComponentType<
+		FieldProps | DirectionFieldProps | ReplayFieldProps | RepeatFieldProps | TimesFieldProps
+	>;
 	options?: string[];
 };
 

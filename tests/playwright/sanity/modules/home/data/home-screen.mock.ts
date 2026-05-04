@@ -278,6 +278,57 @@ export default {
 			},
 		},
 	],
+	site_builder_variants: [
+		{
+			id: 'step_with_input',
+			site_builder: {
+				siteBuilderUrl: '/wp-admin/admin.php?page=elementor-app#site-builder',
+				previewImage1: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				previewImage2: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				stepConfig: {
+					0: {
+						hasInput: true,
+						title: 'From idea to website in minutes',
+						placeholder: 'What site do you want to build?',
+						buttonLabel: 'Create my site',
+					},
+				},
+				site_builder_snapshot: {},
+			},
+		},
+		{
+			id: 'step_without_input',
+			site_builder: {
+				siteBuilderUrl: '/wp-admin/admin.php?page=elementor-app#site-builder',
+				previewImage1: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				previewImage2: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				stepConfig: {
+					3: {
+						hasInput: false,
+						title: "Let's turn your sitemap into a design",
+						text: 'Your sitemap is waiting for you to continue.',
+						buttonLabel: 'Visit sitemap',
+					},
+				},
+				plannerSteps: {
+					INIT: 0,
+					CHAT: 1,
+					SITEMAP: 2,
+					WIREFRAMES: 3,
+					DEPLOYING: 4,
+					DEPLOYED_TO_PLUGIN: 6,
+				},
+				siteKey: 'test-site-key',
+				site_builder_snapshot: {
+					'test-site-key': {
+						step: 3,
+						pageSuggestions: [ 'About', 'Services', 'Contact' ],
+						siteTypeSuggestions: [],
+					},
+				},
+			},
+		},
+	],
 	external_links: [
 		{
 			label: 'Help Center',

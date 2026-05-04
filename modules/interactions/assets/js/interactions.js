@@ -1,6 +1,10 @@
+'use strict';
+
 import {
 	config,
 	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
 	skipInteraction,
 	extractAnimationConfig,
 	getAnimateFunction,
@@ -11,9 +15,8 @@ import {
 
 import { initBreakpoints } from './interactions-breakpoints.js';
 
-function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+function scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
-	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
@@ -48,19 +51,27 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
+	const resetKeyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, 'in', animConfig.direction ),
+		baseline,
+	);
 
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.defaultEasing,
+		ease: config().defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
 		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
@@ -103,13 +114,9 @@ function initInteractions() {
 					return;
 				}
 
-				const element = document.querySelector( `[data-interaction-id="${ elementId }"]` );
-
-				if ( ! element ) {
-					return;
-				}
-
-				processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				document.querySelectorAll( `[data-interaction-id="${ elementId }"]` ).forEach( ( element ) => {
+					processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				} );
 			} );
 
 			return;

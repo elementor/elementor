@@ -15,8 +15,29 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.modelToRestore,
 				options,
 			} );
-		} else {
+
+			return;
+		}
+
+		if ( ! elementor.helpers.isAtomicWidget( data.modelToRestore ) ) {
 			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
+
+			return;
+		}
+
+		const containerToRestore = data.containerToRestore?.lookup?.() ?? data.containerToRestore;
+
+		if ( containerToRestore instanceof elementorModules.editor.Container ) {
+			$e.run( 'document/elements/delete', { container: containerToRestore } );
+
+			return;
+		}
+
+		const parentId = data.containerToRestore?.parent?.id;
+		const childId = data.containerToRestore?.id ?? data.modelToRestore?.id;
+
+		if ( parentId && childId ) {
+			$e.components.get( 'document' ).utils.removeModelFromParent( parentId, childId );
 		}
 	}
 
@@ -45,6 +66,15 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 
 		containers.forEach( ( container ) => {
 			container = container.lookup();
+
+			if ( ! container?.view || container.view.isDestroyed ) {
+				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
+			}
+
+			if ( ! container?.view || container.view.isDestroyed ) {
+				$e.components.get( 'document' ).utils.addModelToParent( container.id, model, options );
+				return;
+			}
 
 			const createdContainer = container.view.addElement( model, options ).getContainer();
 

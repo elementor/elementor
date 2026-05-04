@@ -8,6 +8,7 @@ import { createControl } from '../../create-control';
 import { PromotionTrigger, type PromotionTriggerRef } from './promotion-trigger';
 
 const ARIA_LABEL = __( 'Attributes', 'elementor' );
+const TRACKING_DATA = { target_name: 'attributes', location_l2: 'general' } as const;
 
 export const AttributesControl = createControl( () => {
 	const triggerRef = useRef< PromotionTriggerRef >( null );
@@ -21,7 +22,7 @@ export const AttributesControl = createControl( () => {
 				alignItems: 'center',
 			} }
 		>
-			<PromotionTrigger ref={ triggerRef } promotionKey="attributes" />
+			<PromotionTrigger ref={ triggerRef } promotionKey="attributes" trackingData={ TRACKING_DATA } />
 			<Tooltip title={ ARIA_LABEL } placement="top">
 				<PlusIcon
 					aria-label={ ARIA_LABEL }

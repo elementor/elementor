@@ -1,3 +1,31 @@
+const BREAKPOINTS_CONFIG = {
+	mobile: { value: 768, direction: 'max' },
+	mobile_extra: { value: 880, direction: 'max' },
+	tablet: { value: 1024, direction: 'max' },
+	tablet_extra: { value: 1200, direction: 'max' },
+	laptop: { value: 1366, direction: 'max' },
+	widescreen: { value: 2440, direction: 'min' },
+};
+
+const INTERACTIONS_CONSTANTS_DEFAULTS = {
+	defaultDelay: 0,
+	defaultDuration: 600,
+	defaultEasing: 'easeIn',
+	end: 15,
+	repeat: '',
+	relativeTo: 'viewport',
+	scaleStart: 0,
+	slideDistance: 100,
+	start: 85,
+};
+
+export function stubInteractionsConfig() {
+	window.ElementorInteractionsConfig = {
+		constants: INTERACTIONS_CONSTANTS_DEFAULTS,
+		breakpoints: BREAKPOINTS_CONFIG,
+	};
+}
+
 export function mockBreakpoints( { excluded } ) {
 	return {
 		$$type: 'interactions-breakpoints',
@@ -22,15 +50,15 @@ export function mockTiming( { duration, delay } ) {
 	};
 }
 
-export function mockConfig( { replay, easing, relativeTo, offsetTop, offsetBottom } ) {
+export function mockConfig( { replay, easing, relativeTo, start, end } ) {
 	return {
 		$$type: 'config',
 		value: {
 			replay: { $$type: 'boolean', value: replay },
 			easing: { $$type: 'string', value: easing },
 			relativeTo: { $$type: 'string', value: relativeTo },
-			offsetTop: { $$type: 'size', value: { size: offsetTop, unit: '%' } },
-			offsetBottom: { $$type: 'size', value: { size: offsetBottom, unit: '%' } },
+			start: { $$type: 'size', value: { size: start, unit: '%' } },
+			end: { $$type: 'size', value: { size: end, unit: '%' } },
 		},
 	};
 }
