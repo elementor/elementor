@@ -15,6 +15,19 @@ inputs:
 runs:
   using: "composite"
   steps:
+      - shell: bash
+        run: |
+          echo "CHANNEL: ${{ inputs.CHANNEL }}"
+          echo "REF: ${{ inputs.REF }}"
+          echo "POSTFIX: ${{ inputs.POSTFIX }}"
+          echo "GITHUB_ENV: $GITHUB_ENV"
+          echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
+          echo "GITHUB_STEP_SUMMARY: $GITHUB_STEP_SUMMARY"
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo "GITHUB_ACTION: $GITHUB_ACTION"
+          echo "GITHUB_ACTIONS: $GITHUB_ACTIONS"
+          echo "GITHUB_ACTION_PATH: $GITHUB_ACTION_PATH"
+          echo "GITHUB_ACTION_PATH: $GITHUB_ACTION_PATH"
       - name: Get New Package Version
         uses: ./.github/workflows/get-new-package-version
         with:
