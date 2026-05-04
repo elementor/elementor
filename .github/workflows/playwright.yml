@@ -28,6 +28,10 @@ on:
       tag:
         description: 'Provide @tag or a keyword'
         required: false
+      repeat_each:
+        description: 'Number of repetitions (for tagged tests only)'
+        required: false
+        type: number
       run_mode:
         type: choice
         description: 'Run mode'
@@ -141,9 +145,16 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Enable full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            npx playwright install chromium
+          fi
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
@@ -229,14 +240,26 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Enable full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps chromium firefox webkit
+          else
+            npx playwright install chromium
+          fi
       - name: Run Playwright tests
         env:
+          REPEAT_EACH: ${{ inputs.repeat_each }}
           TEST_TAG: ${{ inputs.tag }}
         run: |
-          npm run test:playwright -- --grep="$TEST_TAG"
+          if [ -n "$REPEAT_EACH" ]; then
+            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH"
+          else
+            npm run test:playwright -- --grep="$TEST_TAG"
+          fi
       - name: GCP Authentication
         id: 'auth'
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository

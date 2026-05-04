@@ -300,4 +300,57 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'ID link'       => [ '#element-id' ],
 		];
 	}
+
+	public function test__render_svg_with_cssid_should_emit_unescaped_id_attribute(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [
+				'_cssid' => 'my-custom-id',
+			],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'id="my-custom-id"', $rendered_output );
+		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
+	}
+
+	public function test__render_linked_svg_with_cssid_should_emit_unescaped_id_attribute(): void {
+		// Arrange.
+		$mock = [
+			'id' => 'abcd123',
+			'elType' => 'widget',
+			'settings' => [
+				'_cssid' => 'my-custom-id',
+				'svg' => Svg_Src_Prop_Type::generate( [
+					'id' => Image_Attachment_Id_Prop_Type::generate( 123 ),
+					'url' => null,
+				] ),
+				'link' => [
+					'href' => 'https://elementor.com',
+					'target' => '_blank',
+					'tag' => 'a',
+				],
+			],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+
+		// Act.
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertStringContainsString( 'id="my-custom-id"', $rendered_output );
+		$this->assertStringNotContainsString( 'id=&quot;', $rendered_output );
+	}
 }
