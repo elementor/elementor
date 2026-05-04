@@ -30,18 +30,13 @@ class Classes_Provider {
 	}
 
 	public static function get_synced_classes(): array {
-		$synced_classes = [];
+		$synced_ids = Global_Classes_Sync_Map::make()->get_synced_ids();
 
-		Global_Classes_Repository::make()
-			->each_item( static function ( array $class ) use ( &$synced_classes ) {
-				if ( empty( $class['sync_to_v3'] ) ) {
-					return;
-				}
+		if ( empty( $synced_ids ) ) {
+			return [];
+		}
 
-				$synced_classes[ $class['id'] ] = $class;
-			} );
-
-		return $synced_classes;
+		return Global_Classes_Repository::make()->get_by_ids( $synced_ids );
 	}
 
 	public static function clear_cache() {

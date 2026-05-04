@@ -2,6 +2,7 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 
@@ -118,8 +119,9 @@ class Global_Classes_Repository {
 		$labels->set_labels( $final_label_map );
 
 		if ( ! $is_preview ) {
-			$ids_to_clear_preview = array_values( array_diff( $order, $to_create ) );
-			$this->each_class_id_batch( $ids_to_clear_preview, function ( string $class_id ) {
+			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
+
+			$this->each_class_id_batch( array_values( $to_update ), function ( string $class_id ) {
 				$post = Global_Class_Post::find_by_class_id( $class_id, false );
 				if ( $post ) {
 					delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_DATA_PREVIEW );
@@ -216,8 +218,10 @@ class Global_Classes_Repository {
 		$this->labels()->set_labels( $label_map );
 
 		if ( ! $is_preview ) {
-			$existing_ids_to_clear = array_values( array_intersect( $new_ids, $current_ids ) );
-			$this->each_class_id_batch( $existing_ids_to_clear, function ( string $class_id ) {
+			$touched_items = array_intersect_key( $items, array_flip( array_merge( array_values( $to_create ), array_values( $to_update ) ) ) );
+			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, array_values( $to_delete ) );
+
+			$this->each_class_id_batch( array_values( $to_update ), function ( string $class_id ) {
 				$post = Global_Class_Post::find_by_class_id( $class_id, false );
 				if ( $post ) {
 					delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_DATA_PREVIEW );
@@ -242,11 +246,24 @@ class Global_Classes_Repository {
 				],
 			] );
 
+			$seen_class_ids = [];
+
 			foreach ( $posts as $post ) {
+				$class_id = get_post_meta( $post->ID, Global_Class_Post::META_KEY_ID, true );
+
+				if ( $class_id && isset( $seen_class_ids[ $class_id ] ) ) {
+					clean_post_cache( $post->ID );
+					continue;
+				}
+
+				if ( $class_id ) {
+					$seen_class_ids[ $class_id ] = true;
+				}
+
 				yield Global_Class_Post::from_post( $post, $this->is_preview() );
 				clean_post_cache( $post->ID );
 			}
-			unset( $posts );
+			unset( $posts, $seen_class_ids );
 			$this->flush_runtime_cache();
 		}
 	}
@@ -258,12 +275,13 @@ class Global_Classes_Repository {
 		array $items_by_id,
 		bool $is_preview
 	): void {
-		$this->each_class_id_batch( $to_delete, function ( string $class_id ) use ( $is_preview ) {
+		$this->each_class_id_batch( array_values( $to_delete ), function ( string $class_id ) use ( $is_preview ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
 
 			if ( $post ) {
 				if ( $is_preview ) {
-					$post->update_data( [], true );
+					$post->set_preview( true );
+					$post->update_data( [] );
 					clean_post_cache( $post->get_post_id() );
 				} else {
 					$post->delete();
@@ -283,7 +301,8 @@ class Global_Classes_Repository {
 				$post = Global_Class_Post::find_by_class_id( $class_id, true );
 
 				if ( $post ) {
-					$post->update_data( $data, true );
+					$post->set_preview( true );
+					$post->update_data( $data );
 					$post->update_label( $item['label'] );
 					clean_post_cache( $post->get_post_id() );
 				} else {
@@ -313,7 +332,7 @@ class Global_Classes_Repository {
 			}
 
 			$data = $this->build_class_data_for_storage( $item );
-			$post->update_data( $data, $is_preview );
+			$post->update_data( $data );
 			$post->update_label( $item['label'] );
 			clean_post_cache( $post->get_post_id() );
 		} );

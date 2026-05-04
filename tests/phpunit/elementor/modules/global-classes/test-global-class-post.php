@@ -143,7 +143,8 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		];
 
 		// Act
-		$result = $post->update_data( $new_data, false );
+		$post->set_preview( false );
+		$result = $post->update_data( $new_data );
 
 		// Assert
 		$this->assertTrue( $result );
@@ -167,7 +168,8 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		];
 
 		// Act
-		$post->update_data( $preview_data, true );
+		$post->set_preview( true );
+		$post->update_data( $preview_data );
 
 		// Assert - frontend context should still return frontend data
 		$frontend_post = Global_Class_Post::from_post_id( $post->get_post_id(), false );

@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Class_Post {
 	use Has_Preview_Context;
 
-
 	const META_KEY_VERSION = '_elementor_version';
 	const META_KEY_ID = '_elementor_global_class_id';
 	const META_KEY_DATA = '_elementor_global_class_data';
@@ -28,13 +27,12 @@ class Global_Class_Post {
 
 	private WP_Post $post;
 
-	private function __construct( WP_Post $post, bool $is_preview = false ) {
+	private function __construct( WP_Post $post ) {
 		$this->post = $post;
-		$this->is_preview = $is_preview;
 	}
 
 	public static function from_post( WP_Post $post, bool $is_preview = false ): self {
-		return new self( $post, $is_preview );
+		return ( new self( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function from_post_id( int $post_id, bool $is_preview = false ): ?self {
@@ -44,7 +42,7 @@ class Global_Class_Post {
 			return null;
 		}
 
-		return new self( $post, $is_preview );
+		return ( new self( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function find_by_class_id( string $class_id, bool $is_preview = false ): ?self {
@@ -60,7 +58,7 @@ class Global_Class_Post {
 			return null;
 		}
 
-		return new self( $posts[0], $is_preview );
+		return ( new self( $posts[0] ) )->set_preview( $is_preview );
 	}
 
 	public function get_post_id(): int {
@@ -159,14 +157,13 @@ class Global_Class_Post {
 
 	public function update_data(
 		array $data,
-		bool $is_preview_update = false,
 		string $version = ELEMENTOR_VERSION
 	): bool {
-		$meta_key = $is_preview_update ? self::META_KEY_DATA_PREVIEW : self::META_KEY_DATA;
+		$meta_key = $this->get_context_key( 'data' );
 
 		$result = update_post_meta( $this->post->ID, $meta_key, $data );
 
-		if ( ! $is_preview_update ) {
+		if ( ! $this->is_preview() ) {
 			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
 		}
 

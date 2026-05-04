@@ -1428,7 +1428,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			$post_object = Global_Class_Post::create( $class_id, $item['label'], $data );
 
 			if ( $duplicate_to_preview_meta && $post_object ) {
-				$post_object->update_data( $data, true );
+				$post_object->set_preview( true );
+				$post_object->update_data( $data );
 			}
 
 			$labels[ $class_id ] = $item['label'];

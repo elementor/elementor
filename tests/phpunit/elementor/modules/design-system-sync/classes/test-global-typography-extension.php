@@ -42,6 +42,7 @@ class Test_Global_Typography_Extension extends Elementor_Test_Base {
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 			$kit->delete_meta( Global_Classes_Order::META_KEY );
+			$kit->delete_meta( Global_Classes_Sync_Map::META_KEY );
 		}
 
 		$posts = get_posts( [

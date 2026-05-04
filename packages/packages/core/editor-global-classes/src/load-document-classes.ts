@@ -26,7 +26,7 @@ function resetGlobalClassesState( globalOrder: StyleDefinitionID[], classLabels:
 	);
 }
 
-export async function loadDocumentClasses() {
+export async function loadCurrentDocumentClasses() {
 	const previewIndexRes = await apiClient.all( 'preview' );
 	const previewIndex = previewIndexRes.data.data;
 	const classLabels = createLabelsForClasses( previewIndex );
@@ -55,6 +55,23 @@ export async function loadDocumentClasses() {
 			preview: { items: previewItems, order: globalOrder },
 			frontend: { items: frontendItems, order: globalOrder },
 			classLabels,
+		} )
+	);
+}
+
+export async function addDocumentClasses( documentId: number ) {
+	const [ previewPostRes, frontendPostRes ] = await Promise.all( [
+		apiClient.getStylesForPost( documentId, 'preview' ),
+		apiClient.getStylesForPost( documentId, 'frontend' ),
+	] );
+
+	const previewItems = styleDefinitionsMapWithoutNull( previewPostRes.data.data );
+	const frontendItems = styleDefinitionsMapWithoutNull( frontendPostRes.data.data );
+
+	dispatch(
+		slice.actions.mergeExistingClasses( {
+			preview: previewItems,
+			frontend: frontendItems,
 		} )
 	);
 }

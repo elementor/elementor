@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
@@ -64,6 +65,7 @@ class Migrate_To_Posts extends Base_Migration {
 
 		$order_index = array_flip( $order );
 		$created_order = [];
+		$synced_map = [];
 
 		foreach ( $items as $class_id => $class_data ) {
 			$index = $order_index[ $class_id ] ?? 0;
@@ -86,11 +88,16 @@ class Migrate_To_Posts extends Base_Migration {
 
 			if ( $post ) {
 				$created_order[ $index ] = $class_id;
+
+				if ( ! empty( $stored['sync_to_v3'] ) && $stored['sync_to_v3'] ) {
+					$synced_map[ $class_id ] = true;
+				}
 			}
 		}
 
 		ksort( $created_order );
 		Global_Classes_Order::make( $kit )->set_order( array_values( $created_order ) );
+		Global_Classes_Sync_Map::make( $kit )->set_map( $synced_map );
 
 		return true;
 	}

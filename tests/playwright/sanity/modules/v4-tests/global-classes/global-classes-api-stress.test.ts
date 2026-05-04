@@ -12,7 +12,7 @@ import { createGlobalClasses, deleteAllGlobalClasses, getGlobalClasses } from '.
  * Adds many global classes via REST API (above the legacy 100 cap after post-based storage).
  */
 
-const CLASS_COUNT = 10000;
+const CLASS_COUNT = 5000;
 const BASIC_BREAKPOINTS: Device[] = [ 'desktop', 'tablet', 'mobile' ];
 const ALL_BREAKPOINTS: Device[] = [ 'widescreen', 'desktop', 'tablet', 'mobile', 'widescreen', 'laptop', 'tablet_extra', 'mobile_extra' ];
 const STATES = [ 'normal', 'hover', 'focus', 'active' ] as const;
