@@ -20,15 +20,10 @@ const PANEL_ID = 'design-system';
 const LEGACY_GLOBAL_CLASSES_PANEL = 'global-classes-manager';
 const LEGACY_VARIABLES_PANEL = 'variables-manager';
 
-/**
- * Subscribes to URL query params, window events, and v1 route readiness for opening / toggling
- * the Design System panel. Replaces separate injectIntoLogic roots for URL, event, and toggle flows.
- */
 export function DesignSystemEntrypoints() {
 	const { open, close } = usePanelActions();
 	const { isOpen } = usePanelStatus();
 
-	// --- Toggle from entry (style tab, variables gear): close / switch tab / delegate to open events ---
 	const isOpenRef = useRef( isOpen );
 
 	useEffect( () => {
@@ -62,7 +57,6 @@ export function DesignSystemEntrypoints() {
 		};
 	}, [ close ] );
 
-	// --- Open from window events (pending tab + openRoute + route ready) ---
 	const pendingTabRef = useRef< DesignSystemTab | null >( null );
 	const [ readyToOpenFromEvent, setReadyToOpenFromEvent ] = useState( false );
 
@@ -105,7 +99,6 @@ export function DesignSystemEntrypoints() {
 		};
 	}, [] );
 
-	// --- Open from URL (?active-panel=design-system or legacy ids) ---
 	const hasOpenedFromUrl = useRef( false );
 
 	useEffect( () => {
