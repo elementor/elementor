@@ -53,8 +53,18 @@ class Markdown_Renderer {
 			$lines[] = 'featured_image: "' . esc_url( $thumbnail ) . '"';
 		}
 
-		$lines[] = 'url: "' . get_permalink( $post_id ) . '"';
-		$lines[] = 'date_modified: "' . get_the_modified_date( 'c', $post_id ) . '"';
+		$permalink = get_permalink( $post_id );
+
+		if ( is_string( $permalink ) && '' !== $permalink ) {
+			$lines[] = 'url: "' . esc_url( $permalink ) . '"';
+		}
+
+		$modified_date = get_the_modified_date( 'c', $post_id );
+
+		if ( is_string( $modified_date ) && '' !== $modified_date ) {
+			$lines[] = 'date_modified: "' . $this->escape_yaml_string( $modified_date ) . '"';
+		}
+
 		$lines[] = '---';
 
 		return implode( "\n", $lines );
@@ -91,8 +101,16 @@ class Markdown_Renderer {
 	}
 
 	private function escape_yaml_string( string $value ): string {
+		$value = html_entity_decode( $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 		$value = str_replace( "\xE2\x80\x8B", '', $value );
+		$value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value );
 
-		return str_replace( [ '"', "\n", "\r" ], [ '\\"', ' ', '' ], $value );
+		return strtr( $value, [
+			'\\' => '\\\\',
+			'"'  => '\\"',
+			"\n" => '\\n',
+			"\r" => '\\r',
+			"\t" => '\\t',
+		] );
 	}
 }

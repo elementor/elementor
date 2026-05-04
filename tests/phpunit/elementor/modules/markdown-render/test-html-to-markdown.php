@@ -108,6 +108,29 @@ class Test_Html_To_Markdown extends Elementor_Test_Base {
 		$this->assertStringContainsString( '[Click here](https://example.com)', $result );
 	}
 
+	public function test_link_text_with_brackets_is_escaped() {
+		// Arrange
+		$html = '<a href="https://example.com">Click [here]</a>';
+
+		// Act
+		$result = Html_To_Markdown::convert( $html );
+
+		// Assert
+		$this->assertStringContainsString( '[Click \\[here\\]](https://example.com)', $result );
+		$this->assertStringNotContainsString( '[Click [here]]', $result );
+	}
+
+	public function test_link_text_with_only_closing_bracket_is_escaped() {
+		// Arrange
+		$html = '<a href="https://example.com">foo] bar</a>';
+
+		// Act
+		$result = Html_To_Markdown::convert( $html );
+
+		// Assert
+		$this->assertStringContainsString( '[foo\\] bar](https://example.com)', $result );
+	}
+
 	public function test_images_produce_markdown_images() {
 		// Arrange
 		$html = '<img src="https://example.com/image.jpg" alt="My image" />';
