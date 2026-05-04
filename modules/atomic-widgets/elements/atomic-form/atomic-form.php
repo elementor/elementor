@@ -284,7 +284,6 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . 'message' ),
 		];
 
-		// File-upload lives in elementor-pro; only seed it when Pro 4.1.0+ is installed.
 		if ( defined( 'ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '4.1.0', '>=' ) ) {
 			$children[] = $this->build_label( __( 'Upload', 'elementor' ), $prefix . 'file-upload' );
 			$children[] = $this->build_file_upload( $prefix . 'file-upload' );
