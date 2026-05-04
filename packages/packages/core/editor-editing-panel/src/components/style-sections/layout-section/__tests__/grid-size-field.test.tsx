@@ -141,7 +141,7 @@ describe( '<GridSizeFields />', () => {
 		} );
 	} );
 
-	it( 'should display the inherited columns value when no local value is set', () => {
+	it( 'should expose the inherited size as a placeholder when no local value is set', () => {
 		// Arrange.
 		jest.mocked( useStylesInheritanceChain ).mockImplementation( ( path: string[] ) => {
 			if ( path[ 0 ] === 'grid-template-columns' ) {
@@ -167,8 +167,44 @@ describe( '<GridSizeFields />', () => {
 		renderGridSizeFields();
 
 		// Assert.
+		// The local value remains empty, but the inherited size surfaces as a placeholder
+		// so users can see what's currently applied without overwriting it on unit changes.
 		const inputs = screen.getAllByRole( 'spinbutton' );
-		expect( inputs[ 0 ] ).toHaveValue( 5 );
+		expect( inputs[ 0 ] ).toHaveValue( null );
+		expect( inputs[ 0 ] ).toHaveAttribute( 'placeholder', '5' );
+	} );
+
+	it( 'should preserve the local value when only the unit is changed (FR -> custom)', () => {
+		// Arrange.
+		const setValues = jest.fn();
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'grid-template-columns': { $$type: 'string', value: 'repeat(2, 1fr)' },
+				'grid-template-rows': null,
+			},
+			setValues,
+			canEdit: true,
+		} );
+
+		// Act.
+		renderGridSizeFields();
+		// Open the unit selector for the Columns field.
+		const unitButtons = screen.getAllByRole( 'button', { name: /^fr$/i } );
+		fireEvent.click( unitButtons[ 0 ] );
+		// Pick the custom (fx) unit option.
+		const customMenuItem = screen.getAllByRole( 'menuitem' )[ 1 ];
+		fireEvent.click( customMenuItem );
+
+		// Assert.
+		// Switching unit alone (no size entered yet) must not persist a null/empty over the
+		// existing local value — the user should still see "2 fr" until they actively change
+		// the size in the new unit.
+		const callsForColumns = setValues.mock.calls.filter(
+			( [ payload ] ) => 'grid-template-columns' in ( payload as Record< string, unknown > )
+		);
+		callsForColumns.forEach( ( [ payload ] ) => {
+			expect( ( payload as Record< string, unknown > )[ 'grid-template-columns' ] ).not.toBeNull();
+		} );
 	} );
 
 	it( 'should prefer the local value over the inherited value', () => {

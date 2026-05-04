@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { SizeComponent } from '@elementor/editor-controls';
+import { SizeComponent, useBoundProp } from '@elementor/editor-controls';
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-context';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { useStylesField } from '../../../hooks/use-styles-field';
+import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
 type GridTrackUnit = 'fr' | 'custom';
@@ -49,6 +49,13 @@ const trackValueToCss = ( trackValue: GridTrackValue | null ): string | null => 
 	return String( trackValue.size );
 };
 
+const trackValueToPlaceholder = ( trackValue: GridTrackValue | null ): string | undefined => {
+	if ( ! trackValue || isEmptySize( trackValue.size ) ) {
+		return undefined;
+	}
+	return String( trackValue.size );
+};
+
 type GridTrackCssProp = 'grid-template-rows' | 'grid-template-columns';
 
 type GridTrackFieldProps = {
@@ -57,38 +64,49 @@ type GridTrackFieldProps = {
 };
 
 const GridTrackField = ( { cssProp, label }: GridTrackFieldProps ) => (
-	<StylesField bind={ cssProp } propDisplayName={ label }>
-		<GridTrackFieldContent cssProp={ cssProp } label={ label } />
-	</StylesField>
+	<UiProviders>
+		<StylesField bind={ cssProp } propDisplayName={ label }>
+			<GridTrackFieldContent cssProp={ cssProp } label={ label } />
+		</StylesField>
+	</UiProviders>
 );
-
-const useInheritedTrackCss = ( cssProp: GridTrackCssProp, hasLocalValue: boolean ): string | null => {
-	const chain = useStylesInheritanceChain( [ cssProp ] );
-	const inheritedEntry = chain[ hasLocalValue ? 1 : 0 ];
-
-	if ( ! inheritedEntry ) {
-		return null;
-	}
-
-	const inheritedString = stringPropTypeUtil.extract( inheritedEntry.value );
-	return inheritedString ?? null;
-};
 
 const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	const { value, setValue } = useStylesField< StringPropValue | null >( cssProp, {
 		history: { propDisplayName: label },
 	} );
 
+	// `StylesField` already computed the inherited value via `buildResolvedPlaceholder`
+	// and exposed it through the PropProvider. We read it here through the standard
+	// `useBoundProp` API, the same way other style fields (e.g. flex-size-field) do.
+	const { placeholder: inheritedPlaceholder } = useBoundProp();
+	const inheritedTrackValue = cssToTrackValue( stringPropTypeUtil.extract( inheritedPlaceholder ?? null ) ?? null );
+
 	const anchorRef = useRef< HTMLDivElement >( null );
 	const localTrackValue = cssToTrackValue( value?.value ?? null );
 
-	const inheritedCss = useInheritedTrackCss( cssProp, Boolean( value ) );
-	const inheritedTrackValue = cssToTrackValue( inheritedCss );
+	// When no local value is set, mirror the inherited unit (so the unit selector reflects
+	// what's actually applied) and surface the size as a placeholder. The actual `value` stays
+	// empty so unit-selector interactions never silently overwrite the local value.
+	const displayValue: GridTrackValue =
+		localTrackValue ??
+		( inheritedTrackValue ? { size: EMPTY_SIZE, unit: inheritedTrackValue.unit } : { size: EMPTY_SIZE, unit: FR } );
 
-	// When no local value is set, surface the inherited value so users can see what's applied.
-	const displayValue = localTrackValue ?? inheritedTrackValue ?? { size: EMPTY_SIZE, unit: FR };
+	const placeholder = ! localTrackValue ? trackValueToPlaceholder( inheritedTrackValue ) : undefined;
 
 	const handleChange = ( newValue: GridTrackValue ) => {
+		const previousTrackValue = localTrackValue;
+		const isUnitOnlyChange =
+			isEmptySize( newValue.size ) && previousTrackValue && newValue.unit !== previousTrackValue.unit;
+
+		// A unit-only change with no real size (e.g. switching FR -> fx before typing in the
+		// custom popup) must not destroy the user's existing local value. The user can still
+		// confirm the intent by typing a value into the popup, which triggers another
+		// handleChange with the new size that we DO persist.
+		if ( isUnitOnlyChange ) {
+			return;
+		}
+
 		const css = trackValueToCss( newValue );
 		setValue( css ? { $$type: 'string', value: css } : null );
 	};
@@ -99,6 +117,7 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 				<SizeComponent
 					units={ UNITS as unknown as Parameters< typeof SizeComponent >[ 0 ][ 'units' ] }
 					value={ displayValue as Parameters< typeof SizeComponent >[ 0 ][ 'value' ] }
+					placeholder={ placeholder }
 					defaultUnit={ FR as Parameters< typeof SizeComponent >[ 0 ][ 'defaultUnit' ] }
 					setValue={ handleChange as Parameters< typeof SizeComponent >[ 0 ][ 'setValue' ] }
 					onBlur={ () => {} }
