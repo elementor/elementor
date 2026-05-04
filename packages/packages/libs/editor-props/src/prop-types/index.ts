@@ -4,6 +4,7 @@ export * from './border-width';
 export * from './classes';
 export * from './color';
 export * from './flex';
+export * from './grid';
 export * from './image';
 export * from './image-attachment-id';
 export * from './image-src';

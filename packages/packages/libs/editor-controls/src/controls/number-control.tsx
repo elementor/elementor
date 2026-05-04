@@ -31,6 +31,8 @@ export const NumberControl = createControl(
 		step = 1,
 		shouldForceInt = false,
 		startIcon,
+		/** When true, disables the input in addition to the bound prop’s edit state (e.g. dependent UI lock). */
+		isLocked,
 	}: {
 		placeholder?: string;
 		max?: number;
@@ -38,8 +40,10 @@ export const NumberControl = createControl(
 		step?: number;
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
+		isLocked?: boolean;
 	} ) => {
 		const { value, setValue, placeholder, disabled, restoreValue, propType } = useBoundProp( numberPropTypeUtil );
+		const isDisabled = Boolean( disabled || isLocked );
 
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const {
@@ -69,7 +73,7 @@ export const NumberControl = createControl(
 					size="tiny"
 					type="number"
 					fullWidth
-					disabled={ disabled }
+					disabled={ isDisabled }
 					value={ isEmptyOrNaN( value ) ? '' : value }
 					onInput={ handleChange }
 					onBlur={ restoreValue }
@@ -77,7 +81,7 @@ export const NumberControl = createControl(
 					inputProps={ { step, min } }
 					InputProps={ {
 						startAdornment: startIcon ? (
-							<InputAdornment position="start" disabled={ disabled }>
+							<InputAdornment position="start" disabled={ isDisabled }>
 								{ startIcon }
 							</InputAdornment>
 						) : undefined,

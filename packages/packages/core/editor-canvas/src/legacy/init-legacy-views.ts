@@ -66,29 +66,36 @@ function resolveElementType( type: string, renderer: DomRenderer, element: V1Ele
 	);
 }
 
+function isPlainAtomicEditorType( element: V1ElementConfig ): boolean {
+	return ! canBeTemplated( element ) && ! canBeNestedTemplated( element );
+}
+
 function tryRegisterElement(
 	legacyWindow: LegacyWindow,
 	type: string,
 	element: V1ElementConfig,
 	ResolvedElementType: typeof ElementType
 ) {
-	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element );
-
-	if ( ! shouldBeRegistered ) {
-		return;
-	}
-
 	const elementsManager = legacyWindow.elementor.elementsManager;
 	const isAlreadyRegistered = Boolean( elementsManager.getElementTypeClass( type ) );
+	const resolvedInstance = new ResolvedElementType();
 
 	try {
-		elementsManager.registerElementType( new ResolvedElementType() );
+		elementsManager.registerElementType( resolvedInstance );
 	} catch {
-		const canOverrideExisting = canBeNestedTemplated( element ) && isAlreadyRegistered;
+		// Nested templated widgets could already be registered; non-Twig atomics (e.g. e-grid) may be
+		// pre-registered by core with a generic view — replace so `data-atomic` + `getDomElement` work for overlays.
+		const canOverrideExisting =
+			isAlreadyRegistered &&
+			( canBeNestedTemplated( element ) || isPlainAtomicEditorType( element ) );
 
 		if ( canOverrideExisting ) {
-			elementsManager._elementTypes[ type ] = new ResolvedElementType();
+			elementsManager._elementTypes[ type ] = resolvedInstance;
 		}
+	}
+
+	if ( isPlainAtomicEditorType( element ) ) {
+		elementsManager._elementTypes[ type ] = resolvedInstance;
 	}
 }
 

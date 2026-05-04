@@ -6,8 +6,10 @@ import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/ed
 import { createLocation } from '@elementor/locations';
 import { SessionStorageProvider } from '@elementor/session';
 import { Box, Divider, Stack } from '@elementor/ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { ATOMIC_GRID_CONTROL_EXPERIMENT } from '../experiments';
 import { ClassesPropProvider } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useScrollDirection } from '../contexts/scroll-context';
@@ -43,6 +45,7 @@ export const StyleTab = () => {
 	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp ?? '' );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
+	const isAtomicGridControlExperiment = isExperimentActive( ATOMIC_GRID_CONTROL_EXPERIMENT );
 
 	if ( ! currentClassesProp ) {
 		return null;
@@ -77,6 +80,7 @@ export const StyleTab = () => {
 									'flex-direction',
 									'flex-wrap',
 									'justify-content',
+									...( isAtomicGridControlExperiment ? ( [ 'justify-items', 'grid' ] as const ) : [] ),
 									'align-items',
 									'align-content',
 									'align-self',

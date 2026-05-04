@@ -124,6 +124,25 @@ html.elementor-html {
 		}
 	}
 
+	// Atomic (v4) `e-grid`: editor canvas injects `.e-atomic-grid-outline` (parity with v3 `.e-grid-outline`).
+	.e-con:has(> .e-atomic-grid-outline) {
+		position: relative;
+	}
+
+	.e-atomic-grid-outline {
+		pointer-events: none;
+	}
+
+	.e-atomic-grid-outline-item {
+		border: 1px dashed #{$editor-light};
+		pointer-events: none;
+		width: 100%;
+		height: 100%;
+		min-width: 0;
+		min-height: 0;
+		box-sizing: border-box;
+	}
+
 	.elementor-inner-section {
 
 		&:first-child {
