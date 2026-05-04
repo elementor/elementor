@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\GlobalClasses\ImportExportUtils;
 
+use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
@@ -12,23 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import_Utils {
+	const DEFAULT_CONFLICT_RESOLUTION = 'skip';
 
-	const BATCH_SIZE = 120;
-
-	/**
-	 * Import classes from a directory containing individual class JSON files and an order.json.
-	 *
-	 * @param string $classes_dir Path to directory containing order.json and individual class files.
-	 * @param array  $options {
-	 *     @type string $conflict_resolution 'skip' | 'replace' (default: 'skip')
-	 * }
-	 *
-	 * @return array|\WP_Error
-	 */
-	public static function import_classes( string $classes_dir, array $options = [ 'conflict_resolution' => 'skip' ] ) {
-		$t_total = microtime( true );
-		error_log( '[GC Import] Importing classes from: ' . $classes_dir );
-
+	public static function import_classes( string $classes_dir, array $options = [] ) {
 		$order_file = rtrim( $classes_dir, '/' ) . '/order.json';
 
 		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
@@ -39,14 +27,8 @@ class Import_Utils {
 			];
 		}
 
-		$conflict_resolution = $options['conflict_resolution'] ?? 'skip';
+		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
 		$repository = Global_Classes_Repository::make();
-
-		$t = microtime( true );
-		$existing_order = $repository->get_order();
-		$existing_id_set = array_flip( $existing_order );
-		$existing_label_to_id = self::build_label_to_id_map_from_labels( $repository->all_labels() );
-		error_log( '[GC Import][Timing] load existing: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
 		$order_data = json_decode( file_get_contents( $order_file ), true );
 
@@ -57,54 +39,89 @@ class Import_Utils {
 			);
 		}
 
-		$available_slots = 1000 - count( $existing_order );
+		global $wpdb;
+		$wpdb->query( 'START TRANSACTION' );
 
-		$t = microtime( true );
-		$import_set = self::build_import_set( $order_data, $existing_label_to_id, $conflict_resolution, $available_slots );
-		error_log( '[GC Import][Timing] build_import_set(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms, count=' . count( $import_set ) );
+		try {
+			$result = self::do_import( $repository, $classes_dir, $order_data, $conflict_resolution );
+			$wpdb->query( 'COMMIT' );
 
-		if ( empty( $import_set ) ) {
-			return [
-				'imported' => [],
-				'failed' => [],
-				'conflicts' => [],
-			];
+			return $result;
+		} catch ( \Throwable $e ) {
+			$wpdb->query( 'ROLLBACK' );
+			throw $e;
+		}
+	}
+
+	private static function do_import(
+		Global_Classes_Repository $repository,
+		string $classes_dir,
+		array $order_data,
+		string $conflict_resolution
+	): array {
+		if ( 'override-all' === $conflict_resolution ) {
+			$repository->delete_all();
 		}
 
-		$t = microtime( true );
-		$style_parser = Style_Parser::make( Style_Schema::get() );
-		error_log( '[GC Import][Timing] Style_Parser::make(): ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
+		$existing_order = $repository->get_order();
+		$existing_id_set = array_flip( $existing_order );
+		$existing_label_to_id = self::build_label_to_id_map_from_labels( $repository->all_labels() );
 
+		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$classes_dir = rtrim( $classes_dir, '/' );
 
-		$time_file_read = 0;
-		$time_sanitize = 0;
-		$time_create_post = 0;
-		$count = 0;
+		$classes_count = count( $existing_order );
 		$order = $existing_order;
 		$new_labels = [];
+		$replaced_ids = [];
 
-		foreach ( $import_set as $item_id => $action ) {
-			$class_file = $classes_dir . '/' . $item_id . '.json';
+		foreach ( $order_data as $entry ) {
+			if ( ! is_array( $entry ) || ! isset( $entry['id'], $entry['label'] ) ) {
+				continue;
+			}
+
+			$item_action = self::resolve_item_action( $entry, $existing_label_to_id, $conflict_resolution );
+
+			if ( 'skip' === $item_action ) {
+				continue;
+			}
+
+			if ( 'new' === $item_action || 'rename' === $item_action ) {
+				if ( $classes_count >= Global_Classes_REST_API::MAX_ITEMS ) {
+					break;
+				}
+			}
+
+			$class_file = $classes_dir . '/' . $entry['id'] . '.json';
 
 			if ( ! file_exists( $class_file ) ) {
 				continue;
 			}
 
-			$t = microtime( true );
 			$item = json_decode( file_get_contents( $class_file ), true );
-			$time_file_read += microtime( true ) - $t;
 
 			if ( ! is_array( $item ) ) {
 				continue;
 			}
 
-			$t = microtime( true );
-			$sanitized_item = self::sanitize_item( $item_id, $item, $style_parser );
-			$time_sanitize += microtime( true ) - $t;
+			$sanitized_item = self::sanitize_item( $entry['id'], $item, $style_parser );
 
 			if ( isset( $sanitized_item['error'] ) ) {
 				continue;
+			}
+
+			if ( 'replace' === $item_action ) {
+				$existing_id = $existing_label_to_id[ strtolower( $entry['label'] ) ];
+				self::replace_existing_class( $existing_id, $sanitized_item );
+				$replaced_ids[] = $existing_id;
+				continue;
+			}
+
+			if ( 'rename' === $item_action ) {
+				$existing_labels_flat = array_keys( $existing_label_to_id );
+				$new_label = ImportExportUtils::resolve_label_conflict( $entry['label'], $existing_labels_flat );
+				$sanitized_item['label'] = $new_label;
+				$existing_label_to_id[ strtolower( $new_label ) ] = $entry['id'];
 			}
 
 			$new_id = $sanitized_item['id'];
@@ -116,46 +133,28 @@ class Import_Utils {
 
 			$existing_id_set[ $new_id ] = true;
 
-			$t = microtime( true );
-			$created = \Elementor\Modules\GlobalClasses\Global_Class_Post::create( $new_id, $sanitized_item['label'], $sanitized_item );
-			$time_create_post += microtime( true ) - $t;
+			$created = Global_Class_Post::create( $new_id, $sanitized_item['label'], $sanitized_item );
 
 			if ( $created ) {
 				clean_post_cache( $created->get_post_id() );
 				$order[] = $new_id;
 				$new_labels[ $new_id ] = $sanitized_item['label'];
-			}
-
-			$count++;
-
-			if ( $count % 100 === 0 ) {
-				error_log( '[GC Import][Timing] Progress: ' . $count . '/' . count( $import_set )
-					. ' | file_read=' . round( $time_file_read * 1000, 2 ) . 'ms'
-					. ' | sanitize=' . round( $time_sanitize * 1000, 2 ) . 'ms'
-					. ' | create_post=' . round( $time_create_post * 1000, 2 ) . 'ms'
-				);
+				$classes_count++;
 			}
 		}
 
-		if ( ! empty( $new_labels ) ) {
-			$t = microtime( true );
+		$has_changes = ! empty( $new_labels ) || ! empty( $replaced_ids );
+
+		if ( $has_changes ) {
 			$repository->update_order_and_labels( $order, $new_labels );
-			error_log( '[GC Import][Timing] update_order_and_labels: ' . round( ( microtime( true ) - $t ) * 1000, 2 ) . 'ms' );
 
 			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
 				'added' => array_keys( $new_labels ),
 				'deleted' => [],
-				'modified' => [],
+				'modified' => $replaced_ids,
 				'order' => true,
 			] );
 		}
-
-		error_log( '[GC Import][Timing] === FINAL TOTALS ===' );
-		error_log( '[GC Import][Timing] Classes processed: ' . $count );
-		error_log( '[GC Import][Timing] file_read total: ' . round( $time_file_read * 1000, 2 ) . 'ms' );
-		error_log( '[GC Import][Timing] sanitize total: ' . round( $time_sanitize * 1000, 2 ) . 'ms' );
-		error_log( '[GC Import][Timing] create_post total: ' . round( $time_create_post * 1000, 2 ) . 'ms' );
-		error_log( '[GC Import][Timing] TOTAL import_classes: ' . round( ( microtime( true ) - $t_total ) * 1000, 2 ) . 'ms' );
 
 		return [
 			'imported' => [],
@@ -164,59 +163,48 @@ class Import_Utils {
 		];
 	}
 
-	/**
-	 * Pre-calculate which items to import based on order, labels, conflict resolution and available slots.
-	 *
-	 * @return array<string, string> Map of item_id => action ('new' or 'replace').
-	 */
-	private static function build_import_set(
-		array $order_data,
+	private static function resolve_item_action(
+		array $entry,
 		array $existing_label_to_id,
-		string $conflict_resolution,
-		int $available_slots
-	): array {
-		$import_set = [];
-		$new_slots_used = 0;
-		$is_replace = 'replace' === $conflict_resolution;
+		string $conflict_resolution
+	): string {
+		$label_lower = strtolower( $entry['label'] );
+		$has_conflict = isset( $existing_label_to_id[ $label_lower ] );
 
-		foreach ( $order_data as $entry ) {
-			if ( ! is_array( $entry ) || ! isset( $entry['id'], $entry['label'] ) ) {
-				continue;
-			}
-
-			$label_lower = strtolower( $entry['label'] );
-			$has_conflict = isset( $existing_label_to_id[ $label_lower ] );
-
-			if ( $has_conflict && 'skip' === $conflict_resolution ) {
-				continue;
-			}
-
-			if ( $has_conflict && $is_replace ) {
-				$import_set[ $entry['id'] ] = 'replace';
-				continue;
-			}
-
-			if ( $new_slots_used >= $available_slots ) {
-				break;
-			}
-
-			$import_set[ $entry['id'] ] = 'new';
-			$new_slots_used++;
+		if ( ! $has_conflict ) {
+			return 'new';
 		}
 
-		return $import_set;
+		switch ( $conflict_resolution ) {
+			case 'skip':
+				return 'skip';
+			case 'replace':
+				return 'replace';
+			case 'merge':
+				return 'rename';
+			default:
+				return self::DEFAULT_CONFLICT_RESOLUTION;
+		}
 	}
 
-	private static function build_label_to_id_map( array $items ): array {
-		$map = [];
+	private static function replace_existing_class( string $existing_id, array $sanitized_item ): void {
+		$post = Global_Class_Post::find_by_class_id( $existing_id );
 
-		foreach ( $items as $id => $item ) {
-			if ( isset( $item['label'] ) ) {
-				$map[ strtolower( $item['label'] ) ] = $id;
-			}
+		if ( ! $post ) {
+			return;
 		}
 
-		return $map;
+		$data = [
+			'type' => $sanitized_item['type'] ?? 'class',
+			'variants' => $sanitized_item['variants'] ?? [],
+		];
+
+		if ( array_key_exists( 'sync_to_v3', $sanitized_item ) ) {
+			$data['sync_to_v3'] = (bool) $sanitized_item['sync_to_v3'];
+		}
+
+		$post->update_data( $data );
+		clean_post_cache( $post->get_post_id() );
 	}
 
 	private static function build_label_to_id_map_from_labels( array $id_to_label ): array {
