@@ -78,7 +78,7 @@ const controlTypes = {
 		component: DateRangeControl,
 		layout: 'custom',
 		propTypeUtil: dateRangePropTypeUtil,
-	},	
+	},
 	'time-range': {
 		component: TimeRangeControl,
 		layout: 'custom',

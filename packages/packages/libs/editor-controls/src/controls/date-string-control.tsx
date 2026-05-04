@@ -1,12 +1,12 @@
 import * as React from 'react';
 import type { Dayjs } from 'dayjs';
-import * as dayjs from 'dayjs';
 import { dateStringPropTypeUtil } from '@elementor/editor-props';
 import { DatePicker, LocalizationProvider } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { DATE_FORMAT, INVALID_DATE, parseDateString } from '../utils/date-time';
 
 type DateStringControlProps = {
 	inputDisabled?: boolean;
@@ -14,9 +14,6 @@ type DateStringControlProps = {
 	error?: boolean;
 	coerceInvalidToEmpty?: boolean;
 };
-
-const DATE_FORMAT = 'YYYY-MM-DD';
-const INVALID_DATE = 'Invalid Date';
 
 export const DateStringControl = createControl(
 	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: DateStringControlProps ) => {
@@ -65,17 +62,3 @@ export const DateStringControl = createControl(
 		);
 	}
 );
-
-function parseDateString( raw: string ): Dayjs | null {
-	if ( ! raw ) {
-		return null;
-	}
-
-	const parsed = ( dayjs as unknown as { default: ( s?: string | number | Date ) => Dayjs } ).default( raw );
-
-	return isValidDayjs( parsed ) ? parsed : null;
-}
-
-function isValidDayjs( value: Dayjs | null ): value is Dayjs {
-	return !! value && typeof value.isValid === 'function' && value.isValid();
-}

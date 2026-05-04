@@ -13,7 +13,6 @@ const INVALID_DATE = 'Invalid Date';
 
 class Date_Range_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-
 		if ( empty( $value ) ) {
 			return null;
 		}

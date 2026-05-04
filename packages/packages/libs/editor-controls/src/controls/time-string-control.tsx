@@ -1,12 +1,12 @@
 import * as React from 'react';
 import type { Dayjs } from 'dayjs';
-import * as dayjs from 'dayjs';
 import { timeStringPropTypeUtil } from '@elementor/editor-props';
 import { LocalizationProvider, TimePicker } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { INVALID_DATE, parseTimeString, TIME_FORMAT } from '../utils/date-time';
 
 type TimeStringControlProps = {
 	inputDisabled?: boolean;
@@ -14,9 +14,6 @@ type TimeStringControlProps = {
 	error?: boolean;
 	coerceInvalidToEmpty?: boolean;
 };
-
-const TIME_FORMAT = 'HH:mm';
-const INVALID_DATE = 'Invalid Date';
 
 export const TimeStringControl = createControl(
 	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: TimeStringControlProps ) => {
@@ -65,25 +62,3 @@ export const TimeStringControl = createControl(
 		);
 	}
 );
-
-function parseTimeString( raw: string ): Dayjs | null {
-	if ( ! raw ) {
-		return null;
-	}
-
-	const [ hours, minutes, seconds ] = raw.split( ':' );
-	const h = Number.parseInt( hours ?? '', 10 );
-	const m = Number.parseInt( minutes ?? '', 10 );
-	const s = Number.parseInt( seconds ?? '0', 10 );
-
-	if ( Number.isNaN( h ) || Number.isNaN( m ) ) {
-		return null;
-	}
-
-	const base = ( dayjs as unknown as { default: () => Dayjs } ).default();
-	return base
-		.hour( h )
-		.minute( m )
-		.second( Number.isNaN( s ) ? 0 : s )
-		.millisecond( 0 );
-}

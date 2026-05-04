@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Time_Range_Control extends Atomic_Control_Base {
-
 	public function get_type(): string {
 		return 'time-range';
 	}
