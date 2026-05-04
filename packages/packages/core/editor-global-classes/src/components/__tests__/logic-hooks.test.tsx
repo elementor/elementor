@@ -76,10 +76,14 @@ describe( '<LogicHooks />', () => {
 
 		// Assert
 		await waitFor( () => {
-			expect( subscriber ).toHaveBeenCalledTimes( 1 );
+			expect( subscriber ).toHaveBeenCalledTimes( 2 );
 		} );
 
-		expect( subscriber ).toHaveBeenNthCalledWith( 1, {}, loadedItems );
+		// First call: reset with empty items to establish order and labels baseline
+		expect( subscriber ).toHaveBeenNthCalledWith( 1, {}, {} );
+
+		// Second call: loaded with actual class styles
+		expect( subscriber ).toHaveBeenNthCalledWith( 2, {}, loadedItems );
 
 		expect( globalClassesStylesProvider.actions.all() ).toEqual( [ globalClass2, globalClass1 ] );
 	} );
