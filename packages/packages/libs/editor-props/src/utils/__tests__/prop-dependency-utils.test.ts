@@ -946,5 +946,115 @@ describe( 'prop-dependency-utils', () => {
 
 			expect( result ).toEqual( values );
 		} );
+
+		it( 'should unwrap overridable leaf to origin_value for dependency checks', () => {
+			const values = {
+				title: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'k1',
+						origin_value: { $$type: 'string', value: 'hello' },
+					},
+				},
+			};
+
+			const result = extractValue( [ 'title' ], values );
+
+			expect( result ).toEqual( { $$type: 'string', value: 'hello' } );
+		} );
+
+		it( 'should keep full overridable wrapper when unwrapOverridableLeaf is false', () => {
+			const overridable = {
+				$$type: 'overridable' as const,
+				value: {
+					override_key: 'k1',
+					origin_value: { $$type: 'string', value: 'hello' },
+				},
+			};
+			const values = { title: overridable };
+
+			const result = extractValue( [ 'title' ], values, [], { unwrapOverridableLeaf: false } );
+
+			expect( result ).toEqual( overridable );
+		} );
+
+		it( 'should traverse into overridable origin for nested paths', () => {
+			const values = {
+				block: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'b1',
+						origin_value: {
+							$$type: 'object',
+							value: {
+								inner: { $$type: 'boolean', value: true },
+							},
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'block', 'inner' ], values );
+
+			expect( result ).toEqual( { $$type: 'boolean', value: true } );
+		} );
+	} );
+
+	describe( 'isDependencyMet with overridable affecting props', () => {
+		const overridable = ( origin: { $$type: string; value: unknown } | null ) => ( {
+			$$type: 'overridable',
+			value: { override_key: 'k', origin_value: origin },
+		} );
+
+		const eqMode: Dependency = {
+			relation: 'and',
+			terms: [ { operator: 'eq', path: [ 'mode' ], value: 'advanced' } ],
+		};
+
+		it( 'should compare against origin value when affecting prop is overridable', () => {
+			const values = { mode: overridable( { $$type: 'string', value: 'advanced' } ) };
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( true );
+		} );
+
+		it( 'should be unaffected by dependent prop being overridable (only affecting path is read)', () => {
+			const values = {
+				mode: { $$type: 'string', value: 'advanced' },
+				dependent: overridable( { $$type: 'string', value: 'irrelevant' } ),
+			};
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( true );
+		} );
+
+		it( 'should fail eq check when overridable origin value differs', () => {
+			const values = { mode: overridable( { $$type: 'string', value: 'basic' } ) };
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( false );
+		} );
+
+		it( 'should treat overridable wrapper with null origin as non-existent for `exists`', () => {
+			const values = { mode: overridable( null ) };
+			const dependency: Dependency = {
+				relation: 'and',
+				terms: [ { operator: 'exists', path: [ 'mode' ], value: null } ],
+			};
+
+			expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
+		} );
+
+		it( 'should resolve nested path through overridable affecting prop', () => {
+			const values = {
+				link: overridable( {
+					$$type: 'object',
+					value: { destination: { $$type: 'string', value: 'action' } },
+				} ),
+			};
+			const dependency: Dependency = {
+				relation: 'and',
+				terms: [ { operator: 'eq', path: [ 'link', 'destination' ], value: 'action' } ],
+			};
+
+			expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
+		} );
 	} );
 } );
