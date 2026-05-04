@@ -164,7 +164,7 @@ class Global_Classes_Repository {
 			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
 			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
 			'modified' => array_values( array_intersect( $new_ids, $current_ids ) ),
-			'order' => $current_order_string !== implode( ';', $order ),
+			'order' => implode( ';', $order ) !== $current_order_string,
 		];
 
 		$this->put_to_posts( $items, $order, $current_ids );
