@@ -25,12 +25,51 @@ class Test_Module extends Elementor_Test_Base {
 		// Arrange
 		unset( $_GET['format'] );
 		unset( $_SERVER['HTTP_ACCEPT'] );
-
-		// Act
 		$module = new Module();
 
+		// Act
+		ob_start();
+		$module->maybe_serve_markdown();
+		$output = ob_get_clean();
+
 		// Assert
-		$this->assertTrue( has_action( 'template_redirect', [ $module, 'maybe_serve_markdown' ] ) !== false );
+		$this->assertSame( '', $output );
+	}
+
+	public function test_format_query_param_is_recognized_as_markdown_request() {
+		// Arrange
+		$_GET['format'] = 'markdown';
+		unset( $_SERVER['HTTP_ACCEPT'] );
+		$module = new Module();
+		$method = new \ReflectionMethod( Module::class, 'is_markdown_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $module );
+
+		// Cleanup
+		unset( $_GET['format'] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_accept_header_is_recognized_as_markdown_request() {
+		// Arrange
+		unset( $_GET['format'] );
+		$_SERVER['HTTP_ACCEPT'] = 'text/markdown, text/html;q=0.9';
+		$module = new Module();
+		$method = new \ReflectionMethod( Module::class, 'is_markdown_request' );
+		$method->setAccessible( true );
+
+		// Act
+		$result = $method->invoke( $module );
+
+		// Cleanup
+		unset( $_SERVER['HTTP_ACCEPT'] );
+
+		// Assert
+		$this->assertTrue( $result );
 	}
 
 	public function test_cache_invalidation_hooks_are_registered() {
