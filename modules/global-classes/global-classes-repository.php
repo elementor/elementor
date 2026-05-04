@@ -70,11 +70,11 @@ class Global_Classes_Repository {
 	}
 
 	public function get_order(): array {
-		return Global_Classes_Order::make( $this->kit )->get_order();
+		return Global_Classes_Order::make( $this->get_kit() )->get_order();
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
-		Global_Classes_Order::make( $this->kit )->set_order( $order );
+		Global_Classes_Order::make( $this->get_kit() )->set_order( $order );
 
 		$labels = $this->labels();
 		$existing_labels = $labels->get_labels();
