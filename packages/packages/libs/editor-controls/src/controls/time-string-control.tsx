@@ -1,26 +1,26 @@
 import * as React from 'react';
 import type { Dayjs } from 'dayjs';
 import * as dayjs from 'dayjs';
-import { dateStringPropTypeUtil } from '@elementor/editor-props';
-import { DatePicker, LocalizationProvider } from '@elementor/ui';
+import { timeStringPropTypeUtil } from '@elementor/editor-props';
+import { LocalizationProvider, TimePicker } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
-type DateStringControlProps = {
+type TimeStringControlProps = {
 	inputDisabled?: boolean;
 	ariaLabel?: string;
 	error?: boolean;
 	coerceInvalidToEmpty?: boolean;
 };
 
-const DATE_FORMAT = 'YYYY-MM-DD';
+const TIME_FORMAT = 'HH:mm';
 const INVALID_DATE = 'Invalid Date';
 
-export const DateStringControl = createControl(
-	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: DateStringControlProps ) => {
-		const { value, setValue, disabled } = useBoundProp( dateStringPropTypeUtil );
+export const TimeStringControl = createControl(
+	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: TimeStringControlProps ) => {
+		const { value, setValue, disabled } = useBoundProp( timeStringPropTypeUtil );
 
 		const isDisabled = inputDisabled ?? disabled;
 
@@ -54,9 +54,9 @@ export const DateStringControl = createControl(
 		return (
 			<LocalizationProvider>
 				<ControlActions>
-					<DatePicker
-						value={ parseDateString( value ?? '' ) }
-						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, DATE_FORMAT ) }
+					<TimePicker
+						value={ parseTimeString( value ?? '' ) }
+						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, TIME_FORMAT ) }
 						disabled={ isDisabled }
 						slotProps={ slotProps }
 					/>
@@ -66,16 +66,24 @@ export const DateStringControl = createControl(
 	}
 );
 
-function parseDateString( raw: string ): Dayjs | null {
+function parseTimeString( raw: string ): Dayjs | null {
 	if ( ! raw ) {
 		return null;
 	}
 
-	const parsed = ( dayjs as unknown as { default: ( s?: string | number | Date ) => Dayjs } ).default( raw );
+	const [ hours, minutes, seconds ] = raw.split( ':' );
+	const h = Number.parseInt( hours ?? '', 10 );
+	const m = Number.parseInt( minutes ?? '', 10 );
+	const s = Number.parseInt( seconds ?? '0', 10 );
 
-	return isValidDayjs( parsed ) ? parsed : null;
-}
+	if ( Number.isNaN( h ) || Number.isNaN( m ) ) {
+		return null;
+	}
 
-function isValidDayjs( value: Dayjs | null ): value is Dayjs {
-	return !! value && typeof value.isValid === 'function' && value.isValid();
+	const base = ( dayjs as unknown as { default: () => Dayjs } ).default();
+	return base
+		.hour( h )
+		.minute( m )
+		.second( Number.isNaN( s ) ? 0 : s )
+		.millisecond( 0 );
 }

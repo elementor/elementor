@@ -77,7 +77,7 @@ const BoundDateStringControl = ( {
 } ) => {
 	return (
 		<PropKeyProvider bind={ bind }>
-			<DateStringControl ariaLabel={ ariaLabel } error={ error } />
+			<DateStringControl ariaLabel={ ariaLabel } error={ error } coerceInvalidToEmpty />
 		</PropKeyProvider>
 	);
 };
