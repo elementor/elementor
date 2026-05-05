@@ -1,5 +1,5 @@
 import { isAngieAvailable } from '@elementor/editor-mcp';
-import { ElementorAngieIcon } from '@elementor/icons';
+import { AngieIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 const CREATE_WIDGET_PROMPT = `Create a widget for me.
@@ -10,7 +10,7 @@ How it should work: `;
 export default function useActionProps() {
 	return {
 		title: __( 'Angie', 'elementor' ),
-		icon: ElementorAngieIcon,
+		icon: AngieIcon,
 		onClick: () => {
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/editor/create-widget', {
