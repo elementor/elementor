@@ -30,10 +30,6 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		await context.close();
 	} );
 
-	// -------------------------------------------------------------------------
-	// Opening and closing
-	// -------------------------------------------------------------------------
-
 	test( 'Design System button in toolbar opens the panel', async () => {
 		await test.step( 'Click the Design System toolbar button', async () => {
 			await designSystem.openFromToolbar();
@@ -62,13 +58,8 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// Default tab behavior
-	// -------------------------------------------------------------------------
-
 	test( 'Variables tab is active by default when panel opens from toolbar', async () => {
 		await test.step( 'Open panel from top bar with no prior preference', async () => {
-			// Clear any stored tab preference to simulate a fresh session
 			await page.evaluate( () => {
 				window.localStorage.removeItem( 'elementor_editor_design_system_active_tab' );
 			} );
@@ -84,14 +75,10 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await expect( designSystem.variablesEmptyState ).toBeVisible();
 		} );
 
-		await test.step( 'Classes tab content is not displayed', async () => {
-			await expect( designSystem.classesSaveButton ).toBeHidden();
+		await test.step( 'Classes tab is not selected', async () => {
+			await expect( designSystem.classesTab ).toHaveAttribute( 'aria-selected', 'false' );
 		} );
 	} );
-
-	// -------------------------------------------------------------------------
-	// Tab switching
-	// -------------------------------------------------------------------------
 
 	test( 'Clicking Classes tab shows Class Manager content', async () => {
 		await test.step( 'Open panel (starts on Variables tab)', async () => {
@@ -138,10 +125,6 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// Tab persistence across close and reopen
-	// -------------------------------------------------------------------------
-
 	test( 'Active tab is persisted across close and reopen from toolbar', async () => {
 		await test.step( 'Open panel and switch to Classes tab', async () => {
 			await page.evaluate( () => {
@@ -164,10 +147,6 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			await expect( designSystem.classesSaveButton ).toBeVisible();
 		} );
 	} );
-
-	// -------------------------------------------------------------------------
-	// Opening via the sub-system entry points
-	// -------------------------------------------------------------------------
 
 	test( 'Class Manager button in style panel opens Design System on Classes tab', async () => {
 		let divBlockId: string;
@@ -206,10 +185,6 @@ test.describe( 'Design System Panel @v4-tests', () => {
 		} );
 	} );
 
-	// -------------------------------------------------------------------------
-	// Variables tab — functional content
-	// -------------------------------------------------------------------------
-
 	test( 'Variables tab shows create menu when Add variable button is clicked', async () => {
 		await test.step( 'Open panel on Variables tab', async () => {
 			await page.evaluate( () => {
@@ -228,10 +203,6 @@ test.describe( 'Design System Panel @v4-tests', () => {
 			).toBeVisible();
 		} );
 	} );
-
-	// -------------------------------------------------------------------------
-	// Screenshot — visual snapshot of both tabs
-	// -------------------------------------------------------------------------
 
 	test( 'Design System panel screenshot — Variables tab', async () => {
 		await test.step( 'Open panel on Variables tab', async () => {
