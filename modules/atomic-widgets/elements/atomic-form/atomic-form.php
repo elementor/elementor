@@ -270,7 +270,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		$prefix = 'e-form-';
 
-		return [
+		$children = [
 			$this->build_label( __( 'First name', 'elementor' ), $prefix . 'first-name' ),
 			$this->build_input( __( 'First name', 'elementor' ), 'text', $prefix . 'first-name' ),
 
@@ -282,28 +282,35 @@ class Atomic_Form extends Atomic_Element_Base {
 
 			$this->build_label( __( 'Message', 'elementor' ), $prefix . 'message' ),
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . 'message' ),
-
-			$this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . 'checkbox' ),
-
-			Widget_Builder::make( 'e-form-submit-button' )
-				->settings( [
-					'text' => Html_V3_Prop_Type::generate( [
-						'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
-						'children' => [],
-					] ),
-				] )
-				->build(),
-			$this->build_status_message(
-				__( 'Great! We’ve received your information.', 'elementor' ),
-				'success',
-				__( 'Success message', 'elementor' )
-			),
-			$this->build_status_message(
-				__( 'We couldn’t process your submission. Please retry', 'elementor' ),
-				'error',
-				__( 'Error message', 'elementor' )
-			),
 		];
+
+		if ( defined( 'ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '4.1.0', '>=' ) ) {
+			$children[] = $this->build_label( __( 'Upload', 'elementor' ), $prefix . 'file-upload' );
+			$children[] = $this->build_file_upload( $prefix . 'file-upload' );
+		}
+
+		$children[] = $this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . 'checkbox' );
+
+		$children[] = Widget_Builder::make( 'e-form-submit-button' )
+			->settings( [
+				'text' => Html_V3_Prop_Type::generate( [
+					'content'  => String_Prop_Type::generate( __( 'Submit', 'elementor' ) ),
+					'children' => [],
+				] ),
+			] )
+			->build();
+		$children[] = $this->build_status_message(
+			__( 'Great! We’ve received your information.', 'elementor' ),
+			'success',
+			__( 'Success message', 'elementor' )
+		);
+		$children[] = $this->build_status_message(
+			__( 'We couldn’t process your submission. Please retry', 'elementor' ),
+			'error',
+			__( 'Error message', 'elementor' )
+		);
+
+		return $children;
 	}
 
 	private function build_checkbox_row( string $label_text, string $checkbox_id ): array {
@@ -331,6 +338,14 @@ class Atomic_Form extends Atomic_Element_Base {
 					'children' => [],
 				] ),
 				'input-id' => String_Prop_Type::generate( $input_id ),
+			] )
+			->build();
+	}
+
+	private function build_file_upload( string $cssid ): array {
+		return Widget_Builder::make( 'e-form-file-upload' )
+			->settings( [
+				'_cssid' => String_Prop_Type::generate( $cssid ),
 			] )
 			->build();
 	}
