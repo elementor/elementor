@@ -43,7 +43,7 @@ export const TimeRangeControl = createControl( () => {
 const BoundTimeStringControl = ( { bind, ariaLabel }: { bind: PropKey; ariaLabel?: string } ) => {
 	return (
 		<PropKeyProvider bind={ bind }>
-			<TimeStringControl ariaLabel={ ariaLabel } coerceInvalidToEmpty />
+			<TimeStringControl ariaLabel={ ariaLabel } coerceInvalidToNull />
 		</PropKeyProvider>
 	);
 };

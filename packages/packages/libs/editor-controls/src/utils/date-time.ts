@@ -3,7 +3,6 @@ import * as dayjs from 'dayjs';
 
 export const DATE_FORMAT = 'YYYY-MM-DD';
 export const TIME_FORMAT = 'HH:mm';
-export const INVALID_DATE = 'Invalid Date';
 
 export function isValidDayjs( value: Dayjs | null ): value is Dayjs {
 	return !! value && typeof value.isValid === 'function' && value.isValid();

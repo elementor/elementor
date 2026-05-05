@@ -6,17 +6,17 @@ import { LocalizationProvider, TimePicker } from '@elementor/ui';
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-import { INVALID_DATE, parseTimeString, TIME_FORMAT } from '../utils/date-time';
+import { isValidDayjs, parseTimeString, TIME_FORMAT } from '../utils/date-time';
 
 type TimeStringControlProps = {
 	inputDisabled?: boolean;
 	ariaLabel?: string;
 	error?: boolean;
-	coerceInvalidToEmpty?: boolean;
+	coerceInvalidToNull?: boolean;
 };
 
 export const TimeStringControl = createControl(
-	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: TimeStringControlProps ) => {
+	( { inputDisabled, ariaLabel, error, coerceInvalidToNull = false }: TimeStringControlProps ) => {
 		const { value, setValue, disabled } = useBoundProp( timeStringPropTypeUtil );
 
 		const isDisabled = inputDisabled ?? disabled;
@@ -38,14 +38,12 @@ export const TimeStringControl = createControl(
 				return;
 			}
 
-			const formatted = newValue.format( format );
-
-			if ( coerceInvalidToEmpty && formatted === INVALID_DATE ) {
-				setValue( '' );
+			if ( coerceInvalidToNull && ! isValidDayjs( newValue ) ) {
+				setValue( null );
 				return;
 			}
 
-			setValue( formatted );
+			setValue( newValue.format( format ) );
 		};
 
 		return (

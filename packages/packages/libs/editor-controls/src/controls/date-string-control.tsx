@@ -6,17 +6,17 @@ import { DatePicker, LocalizationProvider } from '@elementor/ui';
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-import { DATE_FORMAT, INVALID_DATE, parseDateString } from '../utils/date-time';
+import { DATE_FORMAT, isValidDayjs, parseDateString } from '../utils/date-time';
 
 type DateStringControlProps = {
 	inputDisabled?: boolean;
 	ariaLabel?: string;
 	error?: boolean;
-	coerceInvalidToEmpty?: boolean;
+	coerceInvalidToNull?: boolean;
 };
 
 export const DateStringControl = createControl(
-	( { inputDisabled, ariaLabel, error, coerceInvalidToEmpty = false }: DateStringControlProps ) => {
+	( { inputDisabled, ariaLabel, error, coerceInvalidToNull = false }: DateStringControlProps ) => {
 		const { value, setValue, disabled } = useBoundProp( dateStringPropTypeUtil );
 
 		const isDisabled = inputDisabled ?? disabled;
@@ -38,14 +38,12 @@ export const DateStringControl = createControl(
 				return;
 			}
 
-			const formatted = newValue.format( format );
-
-			if ( coerceInvalidToEmpty && formatted === INVALID_DATE ) {
-				setValue( '' );
+			if ( coerceInvalidToNull && ! isValidDayjs( newValue ) ) {
+				setValue( null );
 				return;
 			}
 
-			setValue( formatted );
+			setValue( newValue.format( format ) );
 		};
 
 		return (

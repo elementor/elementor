@@ -14,7 +14,7 @@ const RANGE_LABELS = {
 };
 
 const isMaxBeforeMin = ( minIso?: string | null, maxIso?: string | null ): boolean => {
-	if ( ! minIso || ! maxIso || [ minIso, maxIso ].some( ( v ) => v === 'Invalid Date' ) ) {
+	if ( ! minIso || ! maxIso ) {
 		return false;
 	}
 
@@ -77,7 +77,7 @@ const BoundDateStringControl = ( {
 } ) => {
 	return (
 		<PropKeyProvider bind={ bind }>
-			<DateStringControl ariaLabel={ ariaLabel } error={ error } coerceInvalidToEmpty />
+			<DateStringControl ariaLabel={ ariaLabel } error={ error } coerceInvalidToNull />
 		</PropKeyProvider>
 	);
 };
