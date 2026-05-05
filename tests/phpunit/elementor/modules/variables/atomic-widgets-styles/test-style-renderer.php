@@ -14,7 +14,7 @@ use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Style_Renderer extends TestCase {
