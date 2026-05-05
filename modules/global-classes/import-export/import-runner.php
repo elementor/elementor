@@ -50,7 +50,7 @@ class Import_Runner extends Import_Runner_Base {
 
 		$global_classes = $global_classes_result->unwrap();
 
-		Global_Classes_Repository::make()->put(
+		Global_Classes_Repository::make( $kit )->put(
 			$global_classes['items'],
 			$global_classes['order']
 		);

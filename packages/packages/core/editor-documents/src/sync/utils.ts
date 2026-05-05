@@ -41,6 +41,10 @@ export function getV1DocumentPermalink( documentData: V1Document ) {
 	return documentData.config.urls.permalink ?? '';
 }
 
+export function getV1DocumentWpPreview( documentData: V1Document ) {
+	return documentData.config.urls.wp_preview ?? '';
+}
+
 export function normalizeV1Document( documentData: V1Document ): Document {
 	// Draft or autosave.
 	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
@@ -59,6 +63,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		},
 		links: {
 			permalink: getV1DocumentPermalink( documentData ),
+			wpPreview: getV1DocumentWpPreview( documentData ),
 			platformEdit: exitToUrl,
 		},
 		isDirty: documentData.editor.isChanged || isUnpublishedRevision,

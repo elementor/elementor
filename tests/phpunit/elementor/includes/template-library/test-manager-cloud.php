@@ -227,8 +227,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			'items' => [
 				'g-123' => [
 					'id' => 'g-123',
-					'type' => 'class',
 					'label' => 'Used',
+					'type' => 'class',
 					'variants' => [],
 				],
 			],
@@ -304,7 +304,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'title' => 'Updated Template Title',
 				'id' => 1,
 			] )
-			->willReturn( new \WP_Error( 'update_error', 'An error has occured' ) );
+			->willReturn( new \WP_Error( 'update_error', 'An error has occurred' ) );
 
 		// Act & Assert
 		$this->assertWPError( $this->manager->rename_template( [
