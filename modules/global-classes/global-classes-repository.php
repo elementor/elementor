@@ -221,7 +221,7 @@ class Global_Classes_Repository {
 			$touched_ids = array_merge( array_values( $to_create ), array_values( $to_update ) );
 			$touched_items = array_intersect_key(
 				$items,
-				$touched_ids
+				array_flip( $touched_ids )
 			);
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, array_values( $to_delete ) );
 
