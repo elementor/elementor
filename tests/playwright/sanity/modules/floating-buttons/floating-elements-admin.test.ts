@@ -28,7 +28,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 
 		const advancedSettingsCustom = page.locator( '.elementor-tab-control-advanced-tab-floating-buttons' );
 
-		await test.step( 'Check that we are displaying three tabs for the widget, and that we are displaying our custom Advenced Tab.', async () => {
+		await test.step( 'Check that we are displaying three tabs for the widget, and that we are displaying our custom Advanced Tab.', async () => {
 			const panelTitle = page.locator( '#elementor-panel-header-title' );
 			await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
 			const navigationContainer = page.locator( '.elementor-panel-navigation' );

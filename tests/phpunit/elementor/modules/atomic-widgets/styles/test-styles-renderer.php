@@ -833,7 +833,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $css );
 	}
 
-	public function test_render__style_with_background_with_fields_of_similar_valus() {
+	public function test_render__style_with_background_with_fields_of_similar_values() {
 		// Arrange.
 		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
