@@ -61,7 +61,7 @@ class Test_Server extends Elementor_Test_Base {
 					'execute' => false,
 				],
 			],
-			'readable_writeable' => [
+			'readable_writable' => [
 				'permission_code' => 0600,
 				'expected' => [
 					'exists' => true,
@@ -70,7 +70,7 @@ class Test_Server extends Elementor_Test_Base {
 					'execute' => false,
 				],
 			],
-			'readable_writeable_executable' => [
+			'readable_writable_executable' => [
 				'permission_code' => 0700,
 				'expected' => [
 					'exists' => true,

@@ -54,13 +54,13 @@ describe( 'style-tab', () => {
 				<StyleTabSection section={ { component: dummyContent, name: sectionName, title: sectionName } } />
 			);
 
-			const collapsableContent = screen.queryByText( `content-for-${ sectionName }` );
+			const collapsibleContent = screen.queryByText( `content-for-${ sectionName }` );
 
 			// Assert
 			if ( expectedOpen ) {
-				expect( collapsableContent ).toBeInTheDocument();
+				expect( collapsibleContent ).toBeInTheDocument();
 			} else {
-				expect( collapsableContent ).toBeNull();
+				expect( collapsibleContent ).toBeNull();
 			}
 		} );
 	} );
