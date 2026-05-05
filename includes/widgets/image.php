@@ -794,7 +794,7 @@ class Widget_Image extends Widget_Base {
 		$caption = $this->get_visible_caption( $settings );
 
 		if ( ! empty( $caption ) ) {
-			$image_md .= "\n*" . $caption . '*';
+			$image_md .= "\n" . $caption;
 		}
 
 		return $image_md;

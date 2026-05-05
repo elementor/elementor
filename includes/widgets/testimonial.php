@@ -589,7 +589,7 @@ class Widget_Testimonial extends Widget_Base {
 		$attribution = array_filter( [ $name, $job ] );
 
 		if ( ! empty( $attribution ) ) {
-			$md .= "\n>\n> — " . implode( ', ', $attribution );
+			$md .= "\n>\n> -- " . implode( ', ', $attribution );
 		}
 
 		return $md;
