@@ -7,10 +7,11 @@ import {
 	type QueryPropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
-import { Autocomplete, Chip, TextField } from '@elementor/ui';
+import { Autocomplete, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
+import { MultiselectAutocompleteChipTags } from '../components/multiselect-autocomplete-chip-tags';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { useQueryAutocomplete } from '../hooks/use-query-autocomplete';
@@ -83,21 +84,13 @@ export const QueryChipsControl = createControl( ( props: QueryChipsControlProps 
 				getOptionLabel={ ( option ) => option.label }
 				isOptionEqualToValue={ ( option, val ) => option.id === val.id }
 				filterOptions={ ( opts ) => opts }
-				renderTags={ ( values, getTagProps ) =>
-					values.map( ( option, index ) => {
-						const { key, ...chipProps } = getTagProps( { index } );
-
-						return (
-							<Chip
-								key={ key }
-								size={ SIZE }
-								label={ option.label }
-								sx={ { borderRadius: 1 } }
-								{ ...chipProps }
-							/>
-						);
-					} )
-				}
+				renderTags={ ( tagValues, getTagProps ) => (
+					<MultiselectAutocompleteChipTags
+						getLabel={ ( option ) => option.label }
+						getTagProps={ getTagProps }
+						values={ tagValues }
+					/>
+				) }
 				renderInput={ ( params ) => (
 					<TextField { ...params } placeholder={ placeholder ?? __( 'Search', 'elementor' ) } />
 				) }
