@@ -123,6 +123,16 @@ class Global_Classes_Relations {
 		return $live_ids;
 	}
 
+	public function clear_class_relations( string $class_id ): void {
+		$post_ids = $this->get_posts_by_style( $class_id );
+
+		foreach ( $post_ids as $post_id ) {
+			$stored_ids = $this->get_stored_style_ids( $post_id );
+			$updated_ids = array_values( array_filter( $stored_ids, fn( $id ) => $id !== $class_id ) );
+			$this->replace_stored_style_ids( $post_id, $updated_ids );
+		}
+	}
+
 	public function clear_post_styles( int $post_id ): void {
 		$saved_preview = $this->is_preview();
 

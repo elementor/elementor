@@ -252,7 +252,9 @@ class Global_Classes_Repository {
 				$class_id = get_post_meta( $post->ID, Global_Class_Post::META_KEY_ID, true );
 
 				if ( $class_id && isset( $seen_class_ids[ $class_id ] ) ) {
-					clean_post_cache( $post->ID );
+					// if for some reason there's already a post meta to that class - delete any other ones
+					// otherwise we may end up updating a stale post meta
+					wp_delete_post( $post->ID, true );
 					continue;
 				}
 
@@ -275,7 +277,9 @@ class Global_Classes_Repository {
 		array $items_by_id,
 		bool $is_preview
 	): void {
-		$this->each_class_id_batch( array_values( $to_delete ), function ( string $class_id ) use ( $is_preview ) {
+		$relations = new Global_Classes_Relations();
+
+		$this->each_class_id_batch( array_values( $to_delete ), function ( string $class_id ) use ( $is_preview, $relations ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
 
 			if ( $post ) {
@@ -284,6 +288,7 @@ class Global_Classes_Repository {
 					$post->update_data( [] );
 					clean_post_cache( $post->get_post_id() );
 				} else {
+					$relations->clear_class_relations( $class_id );
 					$post->delete();
 				}
 			}
