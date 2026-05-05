@@ -3,14 +3,11 @@
 namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
-use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
-use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,46 +57,35 @@ class Migrate_To_Posts extends Base_Migration {
 			return false;
 		}
 
-		$items = $global_classes['items'] ?? [];
-		$order = $global_classes['order'] ?? array_keys( $items );
+		$raw_items = $global_classes['items'];
+		$order = $global_classes['order'] ?? array_keys( $raw_items );
 
-		$order_index = array_flip( $order );
-		$created_order = [];
-		$synced_map = [];
+		$items = $this->normalize_items( $raw_items );
 
-		foreach ( $items as $class_id => $class_data ) {
-			$index = $order_index[ $class_id ] ?? 0;
+		Global_Classes_Repository::make( $kit )->put( $items, $order );
 
-			$stored = [
+		return true;
+	}
+
+	private function normalize_items( array $raw_items ): array {
+		$items = [];
+
+		foreach ( $raw_items as $class_id => $class_data ) {
+			$item = [
+				'id' => $class_id,
+				'label' => $class_data['label'] ?? $class_id,
 				'type' => $class_data['type'] ?? 'class',
 				'variants' => $class_data['variants'] ?? [],
 			];
 
 			if ( array_key_exists( 'sync_to_v3', $class_data ) ) {
-				$stored['sync_to_v3'] = (bool) $class_data['sync_to_v3'];
+				$item['sync_to_v3'] = (bool) $class_data['sync_to_v3'];
 			}
 
-			$post = Global_Class_Post::create(
-				$class_id,
-				$class_data['label'] ?? $class_id,
-				$stored,
-				$index
-			);
-
-			if ( $post ) {
-				$created_order[ $index ] = $class_id;
-
-				if ( ! empty( $stored['sync_to_v3'] ) && $stored['sync_to_v3'] ) {
-					$synced_map[ $class_id ] = true;
-				}
-			}
+			$items[ $class_id ] = $item;
 		}
 
-		ksort( $created_order );
-		Global_Classes_Order::make( $kit )->set_order( array_values( $created_order ) );
-		Global_Classes_Sync_Map::make( $kit )->set_map( $synced_map );
-
-		return true;
+		return $items;
 	}
 
 	private function get_existing_class_posts(): array {

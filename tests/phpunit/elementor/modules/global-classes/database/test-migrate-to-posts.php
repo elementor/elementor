@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Migrate_To_Posts;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
@@ -31,6 +32,7 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
+		$this->kit->delete_meta( Global_Classes_Labels::META_KEY );
 
 		$posts = get_posts( [
 			'post_type' => Global_Class_Post_Type::CPT,
@@ -132,6 +134,39 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$data = $post->get_data();
 
 		$this->assertSame( $variants, $data['variants'] );
+	}
+
+	public function test_migration__populates_label_map() {
+		// Arrange
+		$global_classes = [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'label' => 'button-primary',
+					'type' => 'class',
+					'variants' => [],
+				],
+				'g-2' => [
+					'id' => 'g-2',
+					'label' => 'card-shadow',
+					'type' => 'class',
+					'variants' => [],
+				],
+			],
+			'order' => [ 'g-2', 'g-1' ],
+		];
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $global_classes );
+
+		// Act
+		$migration = new Migrate_To_Posts();
+		$migration->up();
+
+		// Assert - label map must be populated so the repository can surface classes to the frontend
+		$repository = Global_Classes_Repository::make( $this->kit );
+		$label_by_id = $repository->all_labels();
+
+		$this->assertSame( [ 'g-2' => 'card-shadow', 'g-1' => 'button-primary' ], $label_by_id );
 	}
 
 	public function test_migration__skips_when_no_global_classes() {
