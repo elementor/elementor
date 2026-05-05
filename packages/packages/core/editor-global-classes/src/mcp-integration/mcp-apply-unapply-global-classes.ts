@@ -79,7 +79,7 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 - Make sure you have the correct class ID that you want to unapply.
 
 <note>
-If the user want to unapply a class by it's name and not ID, retreive the id from the list, available at uri elementor://global-classes
+If the user want to unapply a class by it's name and not ID, retrieve the id from the list, available at uri elementor://global-classes
 </note>
 `,
 		handler: async ( params ) => {

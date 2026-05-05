@@ -142,7 +142,7 @@ describe( '<LinkControl />', () => {
 		expect( screen.queryByPlaceholderText( 'test' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should set existing value to null when closing collapsable', () => {
+	it( 'should set existing value to null when closing collapsible', () => {
 		// Arrange.
 		const props = {
 			...baseProps,
@@ -217,7 +217,7 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
-	it( 'should not update value from session when no session value exists on collapsable open', () => {
+	it( 'should not update value from session when no session value exists on collapsible open', () => {
 		// Arrange.
 		jest.mocked( useSessionStorage ).mockReturnValue( [
 			{
@@ -248,7 +248,7 @@ describe( '<LinkControl />', () => {
 		expect( props.setValue ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should restore value from session when opening collapsable and session has value', () => {
+	it( 'should restore value from session when opening collapsible and session has value', () => {
 		// Arrange.
 		const mockSetSessionValue = jest.fn();
 		const storedValue = {
@@ -292,7 +292,7 @@ describe( '<LinkControl />', () => {
 			},
 		} );
 
-		// Check that the session value correct after open collapsable
+		// Check that the session value correct after open collapsible
 		expect( mockSetSessionValue ).toHaveBeenCalledWith( {
 			value: storedValue.value,
 			meta: { isEnabled: true },
