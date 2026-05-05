@@ -193,8 +193,7 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 	};
 
 	for ( const [ key, propType ] of Object.entries( schema ) ) {
-		// Skip internal properties
-		if ( ! isPropKeyConfigurable( key ) ) {
+		if ( ! isPropKeyConfigurable( key, propType ) ) {
 			continue;
 		}
 
@@ -212,12 +211,15 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
 
-export function isPropKeyConfigurable( propKey: string ): boolean {
-	return ! nonConfigurablePropKeys.includes( propKey );
+export function isPropKeyConfigurable( propKey: string, propType?: PropType ): boolean {
+	if ( ! nonConfigurablePropKeys.includes( propKey ) ) {
+		return true;
+	}
+	return !! ( propType?.meta && ! Array.isArray( propType.meta ) && propType.meta.llm_configurable );
 }
 
 export function configurableKeys( schema: PropsSchema ): string[] {
-	return Object.keys( schema ).filter( isPropKeyConfigurable );
+	return Object.keys( schema ).filter( ( key ) => isPropKeyConfigurable( key, schema[ key ] ) );
 }
 
 export function enrichWithIntention(

@@ -184,8 +184,10 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 				] )
 			);
 			Schema.nonConfigurablePropKeys.forEach( ( key ) => {
-				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-				delete asJson[ key ];
+				if ( ! Schema.isPropKeyConfigurable( key, propSchema[ key ] as PropType | undefined ) ) {
+					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+					delete asJson[ key ];
+				}
 			} );
 
 			const description =
