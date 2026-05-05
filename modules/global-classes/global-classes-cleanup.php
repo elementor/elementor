@@ -18,14 +18,14 @@ class Global_Classes_Cleanup {
 	public function register_hooks() {
 		add_action(
 			'elementor/global_classes/update',
-			fn( $context, $new_value, $prev_value ) => $this->on_classes_update( $new_value, $prev_value ),
+			fn( $context, $changes ) => $this->on_classes_update( $changes ),
 			10,
-			3
+			2
 		);
 	}
 
-	private function on_classes_update( $new_value, $prev_value ) {
-		$deleted_classes_ids = $this->get_deleted_classes_ids( $new_value, $prev_value );
+	private function on_classes_update( array $changes ) {
+		$deleted_classes_ids = $changes['deleted'] ?? [];
 		$additional_post_types = apply_filters( 'elementor/global_classes/additional_post_types', [] );
 
 		if ( ! empty( $deleted_classes_ids ) ) {
@@ -35,15 +35,6 @@ class Global_Classes_Cleanup {
 				$additional_post_types
 			);
 		}
-	}
-
-	private function get_deleted_classes_ids( $new_value, $prev_value ) {
-		$prev_ids = array_keys( $prev_value['items'] );
-		$new_ids = array_keys( $new_value['items'] );
-
-		return array_values(
-			array_diff( $prev_ids, $new_ids )
-		);
 	}
 
 	private function unapply_deleted_classes( $document, $elements_data, $deleted_classes_ids ) {
@@ -63,18 +54,18 @@ class Global_Classes_Cleanup {
 	}
 
 	private function unapply_classes_from_element( $props_schema, $element_data, $deleted_classes_ids ) {
-		foreach ( $props_schema as $prop ) {
+		foreach ( $props_schema as $settings_key => $prop ) {
 			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop ) ) {
 				continue;
 			}
 
-			$current_classes = $element_data['settings'][ $prop->get_key() ] ?? null;
+			$current_classes = $element_data['settings'][ $settings_key ] ?? null;
 
 			if ( ! $current_classes ) {
 				continue;
 			}
 
-			$element_data['settings'][ $prop->get_key() ]['value'] = Collection::make( $current_classes['value'] )
+			$element_data['settings'][ $settings_key ]['value'] = Collection::make( $current_classes['value'] )
 				->filter( fn( $class_name ) => ! in_array( $class_name, $deleted_classes_ids, true ) )
 				->values();
 		}

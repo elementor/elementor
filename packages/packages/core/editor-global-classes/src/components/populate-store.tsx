@@ -1,33 +1,19 @@
 import { useEffect } from 'react';
-import { __useDispatch as useDispatch } from '@elementor/store';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-import { apiClient } from '../api';
-import { slice } from '../store';
+import { loadCurrentDocumentClasses } from '../load-document-classes';
 
 export function PopulateStore() {
-	const dispatch = useDispatch();
-
 	useEffect( () => {
-		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
-			( [ previewRes, frontendRes ] ) => {
-				const { data: previewData } = previewRes;
-				const { data: frontendData } = frontendRes;
+		// TODO - we run it early to have the labels mapping prior to the canvas rendering
+		// but in fact we need a way to re-render any dependant twig-templated widgets/elements once we get the initial data
+		// in case the canvas rendering has occurred prior to the resolving of this fetch
+		loadCurrentDocumentClasses();
 
-				dispatch(
-					slice.actions.load( {
-						preview: {
-							items: previewData.data,
-							order: previewData.meta.order,
-						},
-						frontend: {
-							items: frontendData.data,
-							order: frontendData.meta.order,
-						},
-					} )
-				);
-			}
-		);
-	}, [ dispatch ] );
+		registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+			await loadCurrentDocumentClasses();
+		} );
+	}, [] );
 
 	return null;
 }
