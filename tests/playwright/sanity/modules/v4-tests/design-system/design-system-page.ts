@@ -51,7 +51,16 @@ export default class DesignSystemPage {
 
 	async openFromToolbar(): Promise< void > {
 		await this.toolbarButton.click();
+		await this.dismissClassManagerIntroIfVisible();
 		await this.panelHeading.waitFor( { state: 'visible' } );
+	}
+
+	async dismissClassManagerIntroIfVisible(): Promise< void > {
+		const introDialog = this.page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
+
+		if ( await introDialog.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+			await dismissClassManagerIntro( this.page );
+		}
 	}
 
 	async closePanel(): Promise< void > {
