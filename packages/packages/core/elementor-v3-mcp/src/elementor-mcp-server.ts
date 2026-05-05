@@ -2,60 +2,9 @@ import { getAngieSdk } from '@elementor/editor-mcp';
 import { waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { addV3DescriptionResource, V3_DESCRIPTION } from './mcp-description-resource';
 import { addElementorResources } from './resources';
 import { addAiTool, addDynamicTool, addPageTool, addRoutesTool, addStylingTool, addUiTool } from './tools';
-
-const SERVER_INSTRUCTIONS = `## Elementor Page Builder
-
-### Capabilities:
-**Page Management:**
-- Manage page settings, saving and routing pages
-- Control the editor UI, including switching between desktop, tablet, and mobile views
-
-**Global Styles:**
-- Work with global styles, helping manage shared design settings like colors and fonts across the site
-
-**AI-Powered Content Creation:**
-- Generate and edit text and insert it into the page
-- Generate images and place them on the canvas
-
-**Custom Styling & Code:**
-- Apply custom CSS to elements
-- Generate supported code snippets
-
-### Limitations:
-**Element Management (Not Supported):**
-- Cannot create or edit individual Elementor elements such as widgets or containers
-- Cannot build page layouts or create containers
-- Cannot modify widget-level settings
-- Cannot apply motion effects
-- Cannot reorder sections or perform detailed canvas-level edits
-- Cannot create fully designed or polished pages
-- Cannot fully resolve responsiveness issues
-- Support for these editor-level capabilities is planned for Editor V4
-
-**Theme Builder:**
-- Cannot create or manage Theme Builder templates, including headers, footers, single posts, archives, products, loop items, or 404 pages
-- Cannot set display conditions for templates
-- Cannot configure popup triggers and advanced rules
-
-**System Settings:**
-- Cannot change Elementor system-level settings
-- Cannot activate or work with Editor V4
-- Cannot manage form submissions
-- Cannot add custom fonts or icons
-- Cannot manage user roles
-- Cannot roll back Elementor versions
-- Cannot place the site in maintenance mode
-- Cannot export the website
-- Cannot apply full website templates
-
-**Code & Widgets:**
-- Cannot register PHP code or create new custom widgets, though Angie may provide guidance, code snippets, or plugin suggestions where helpful
-
-**Note**: While page names can include terms like "header" or "footer", these won't function as actual theme parts without Theme Builder access.
-
-**Important**: When users ask "What can Angie do?" or similar questions about Angie's general capabilities, use the \`what-can-angie-do\` tool from the knowledge MCP server instead of generating your own response.`;
 
 const VERSION = '2.0.0';
 
@@ -69,7 +18,7 @@ export async function createElementorServer(): Promise< McpServer > {
 			title: 'Elementor',
 		},
 		{
-			instructions: SERVER_INSTRUCTIONS,
+			instructions: `Controls the Elementor editor: page settings, UI, global styles, AI content, and custom CSS.`,
 			capabilities: {
 				resources: {
 					subscribe: true,
@@ -78,6 +27,7 @@ export async function createElementorServer(): Promise< McpServer > {
 		}
 	);
 
+	addV3DescriptionResource( server );
 	addElementorResources( server );
 
 	addPageTool( server );
@@ -89,7 +39,7 @@ export async function createElementorServer(): Promise< McpServer > {
 
 	const sdk = getAngieSdk();
 	await sdk.waitForReady();
-	sdk.registerLocalServer( { server, version: VERSION, description: SERVER_INSTRUCTIONS, name: 'Elementor' } );
+	sdk.registerLocalServer( { server, version: VERSION, description: V3_DESCRIPTION, name: 'Elementor' } );
 
 	return server;
 }
