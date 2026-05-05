@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data;
 
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Export;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Export_Design_Tokens;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import_Runner;
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Manager_Url;
@@ -28,6 +29,7 @@ class Controller {
 
 	private static function register_routes() {
 		( new Export() )->register_route( self::API_NAMESPACE, self::API_BASE );
+		( new Export_Design_Tokens() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Import() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Import_Runner() )->register_route( self::API_NAMESPACE, self::API_BASE );
 		( new Manager_Url() )->register_route( self::API_NAMESPACE, self::API_BASE );
