@@ -16,7 +16,7 @@ export function initDesignSystemExperiment() {
 
 	toolsMenu.registerToggleAction( {
 		id: 'open-design-system-toolbar',
-		priority: 16,
+		priority: 21,
 		useProps: useOpenDesignSystemToolbar,
 	} );
 }
