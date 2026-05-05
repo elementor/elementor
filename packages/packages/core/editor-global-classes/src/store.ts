@@ -4,6 +4,7 @@ import {
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
+	type StyleDefinitionsMap,
 	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
 import { type UpdateActionPayload } from '@elementor/editor-styles-repository';
@@ -19,12 +20,13 @@ import { GlobalClassNotFoundError } from './errors';
 import { SnapshotHistory } from './utils/snapshot-history';
 
 export type GlobalClasses = {
-	items: Record< StyleDefinitionID, StyleDefinition >;
+	items: StyleDefinitionsMap;
 	order: StyleDefinitionID[];
 };
 
 type GlobalClassesState = {
 	data: GlobalClasses;
+	classLabels: Record< StyleDefinitionID, string >;
 	initialData: {
 		frontend: GlobalClasses;
 		preview: GlobalClasses;
@@ -43,6 +45,7 @@ const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
 
 const initialState: GlobalClassesState = {
 	data: { items: {}, order: [] },
+	classLabels: {},
 	initialData: {
 		frontend: { items: {}, order: [] },
 		preview: { items: {}, order: [] },
@@ -62,15 +65,17 @@ export const slice = createSlice( {
 		load(
 			state,
 			{
-				payload: { frontend, preview },
+				payload: { frontend, preview, classLabels },
 			}: PayloadAction< {
 				frontend: GlobalClasses;
 				preview: GlobalClasses;
+				classLabels: Record< StyleDefinitionID, string >;
 			} >
 		) {
 			state.initialData.frontend = frontend;
 			state.initialData.preview = preview;
 			state.data = preview;
+			state.classLabels = classLabels;
 
 			state.isDirty = false;
 		},
@@ -79,6 +84,7 @@ export const slice = createSlice( {
 			localHistory.next( state.data );
 			state.data.items[ payload.id ] = payload;
 			state.data.order.unshift( payload.id );
+			state.classLabels[ payload.id ] = payload.label;
 
 			state.isDirty = true;
 		},
@@ -90,6 +96,8 @@ export const slice = createSlice( {
 			);
 
 			state.data.order = state.data.order.filter( ( id ) => id !== payload );
+			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+			delete state.classLabels[ payload ];
 
 			state.isDirty = true;
 		},
@@ -119,6 +127,7 @@ export const slice = createSlice( {
 			localHistory.next( state.data );
 			Object.entries( payload ).forEach( ( [ id, { modified } ] ) => {
 				state.data.items[ id ].label = modified;
+				state.classLabels[ id ] = modified;
 			} );
 
 			state.isDirty = false;
@@ -208,6 +217,33 @@ export const slice = createSlice( {
 				state.isDirty = true;
 			}
 		},
+
+		mergeExistingClasses(
+			state,
+			{
+				payload: { preview, frontend },
+			}: PayloadAction< { preview: GlobalClasses[ 'items' ]; frontend: GlobalClasses[ 'items' ] } >
+		) {
+			Object.entries( preview ).forEach( ( [ id, previewClassData ] ) => {
+				const frontendClassData = frontend[ id ];
+
+				if ( previewClassData === null || previewClassData === undefined ) {
+					return;
+				}
+				if ( ! ( id in state.data.items ) ) {
+					state.data.items[ id ] = previewClassData;
+				}
+				if ( ! ( id in state.initialData.frontend.items ) ) {
+					state.initialData.frontend.items[ id ] = frontendClassData;
+				}
+				if ( ! ( id in state.initialData.preview.items ) ) {
+					state.initialData.preview.items[ id ] = previewClassData;
+				}
+				if ( ! ( id in state.classLabels ) ) {
+					state.classLabels[ id ] = previewClassData.label;
+				}
+			} );
+		},
 	},
 } );
 
@@ -233,8 +269,17 @@ const getNonEmptyVariants = ( style: StyleDefinition ) => {
 	);
 };
 
+export const placeholderDefinition = ( id: StyleDefinitionID, label: string ): StyleDefinition => ( {
+	id,
+	type: 'class',
+	label,
+	variants: [],
+} );
+
 // Selectors
 export const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;
+
+export const selectClassLabels = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].classLabels;
 
 export const selectFrontendInitialData = ( state: SliceState< typeof slice > ) =>
 	state[ SLICE_NAME ].initialData.frontend;
@@ -248,8 +293,17 @@ export const selectGlobalClasses = createSelector( selectData, ( { items } ) => 
 
 export const selectIsDirty = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].isDirty;
 
-export const selectOrderedClasses = createSelector( selectGlobalClasses, selectOrder, ( items, order ) =>
-	order.map( ( id ) => items[ id ] )
+export const selectOrderedClasses = createSelector( selectData, selectClassLabels, ( { items, order }, classLabels ) =>
+	order
+		.map( ( id ) => {
+			const loaded = items[ id ];
+			if ( loaded ) {
+				return loaded;
+			}
+			const label = classLabels[ id ];
+			return label !== undefined ? placeholderDefinition( id, label ) : null;
+		} )
+		.filter( ( s ): s is StyleDefinition => s !== null )
 );
 
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
@@ -258,3 +312,8 @@ export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinit
 export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
 	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
 );
+
+export const selectIsClassFetched = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
+	!! state[ SLICE_NAME ].initialData.preview.items[ id ] ||
+	!! state[ SLICE_NAME ].initialData.frontend.items[ id ] ||
+	false;

@@ -3,9 +3,12 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Template_Library_Import_Export_Utils;
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Element_Transformer;
 use Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes_Snapshot_Builder;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +16,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		( new Global_Class_Post_Type() )->register_post_type();
+	}
+
+	public function tearDown(): void {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Order::META_KEY );
+		}
+
+		$post_ids = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
+
+		parent::tearDown();
+	}
 
 	private function seed_global_classes( array $items, array $order ): void {
 		Global_Classes_Repository::make()->put( $items, $order );
@@ -75,7 +107,7 @@ class Test_Template_Library_Global_Classes_Utils extends Elementor_Test_Base {
 			],
 		];
 
-		$this->seed_global_classes( $items, [ 'g-2' ] );
+		$this->seed_global_classes( $items, [ 'g-2', 'g-1' ] );
 
 		$snapshot = Template_Library_Global_Classes_Snapshot_Builder::build_snapshot_for_ids( [ 'g-1', 'g-2', 'g-missing', '' ] );
 

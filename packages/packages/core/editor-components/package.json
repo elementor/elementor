@@ -47,6 +47,7 @@
     "@elementor/editor-editing-panel": "4.1.0",
     "@elementor/editor-elements": "4.1.0",
     "@elementor/editor-elements-panel": "4.1.0",
+    "@elementor/editor-global-classes": "4.1.0",
     "@elementor/editor-mcp": "4.1.0",
     "@elementor/editor-templates": "4.1.0",
     "@elementor/editor-panels": "4.1.0",

@@ -24,11 +24,13 @@ class Test_Design_System_Service extends Elementor_Test_Base {
 			'g-1' => [
 				'id' => 'g-1',
 				'label' => 'heading',
+				'type' => 'class',
 				'variants' => [],
 			],
 			'g-2' => [
 				'id' => 'g-2',
 				'label' => 'subheading',
+				'type' => 'class',
 				'variants' => [],
 			],
 		],
@@ -76,7 +78,6 @@ class Test_Design_System_Service extends Elementor_Test_Base {
 		], $result );
 
 		$stored = Global_Classes_Repository::make( $this->kit )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 
@@ -94,7 +95,6 @@ class Test_Design_System_Service extends Elementor_Test_Base {
 		], $result );
 
 		$stored = Global_Classes_Repository::make( $this->kit )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 

@@ -1,4 +1,5 @@
 import {
+	AttachmentTypeControl,
 	ChipsControl,
 	type ControlComponent,
 	DateRangeControl,
@@ -19,6 +20,7 @@ import {
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
+	TimeRangeControl,
 	ToggleControl,
 	UrlControl,
 	VideoMediaControl,
@@ -41,6 +43,7 @@ import {
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 	svgSrcPropTypeUtil,
+	timeRangePropTypeUtil,
 	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
@@ -81,6 +84,12 @@ const controlTypes = {
 		layout: 'custom',
 		propTypeUtil: dateRangePropTypeUtil,
 	},
+	'time-range': {
+		component: TimeRangeControl,
+		layout: 'custom',
+		propTypeUtil: timeRangePropTypeUtil,
+	},
+	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

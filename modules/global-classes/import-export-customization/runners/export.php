@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Export\Export_Runner_Base;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
@@ -54,7 +55,14 @@ class Export extends Export_Runner_Base {
 			];
 		}
 
-		$global_classes = Global_Classes_Repository::make()->all()->get();
+		$global_classes = [
+			'items' => [],
+			'order' => Global_Classes_Order::make( $kit )->get_order(),
+		];
+
+		Global_Classes_Repository::make( $kit )->each_item( static function ( array $class_data ) use ( &$global_classes ) {
+			$global_classes['items'][ $class_data['id'] ] = $class_data;
+		} );
 
 		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
 
