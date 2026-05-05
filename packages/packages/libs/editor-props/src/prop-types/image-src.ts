@@ -14,6 +14,7 @@ export const imageSrcPropTypeUtil = createPropUtils(
 			z.strictObject( {
 				id: z.null(),
 				url: unknownChildrenSchema,
+				alt: unknownChildrenSchema,
 			} )
 		)
 );
