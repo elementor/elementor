@@ -8,6 +8,7 @@ use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Cust
 use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
 use Elementor\Plugin;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Legacy_Import_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -37,16 +38,21 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ): array {
-		$global_classes_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
 		$import_context = Design_System_Import_Context::from_data( $data );
 		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'classesOverrideAll' );
 
-		$kit = $this->get_kit( $imported_data );
+		$kit_for_reading = $this->get_kit_for_reading( $imported_data );
 
-		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ], $kit );
+		if ( $this->is_legacy_import_format( $data ) ) {
+			$global_classes_file = $data['extracted_directory_path'] . '/' . Import_Export_Customization::FILE_NAME . '.json';
+			return Legacy_Import_Utils::import_classes( $global_classes_file, $conflict_resolution, $kit_for_reading );
+		}
+
+		$global_classes_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
+		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ], $kit_for_reading );
 	}
 
-	private function get_kit( array $imported_data ): Kit {
+	private function get_kit_for_reading( array $imported_data ): Kit {
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
@@ -68,5 +74,12 @@ class Import extends Import_Runner_Base {
 		}
 
 		return $previous_kit;
+	}
+
+	function is_legacy_import_format( array $data ): bool {
+		$manifest = $data['manifest'];
+		$elementor_version = $manifest['elementor_version'];
+
+		return version_compare( $elementor_version, '4.1.0', '<' );
 	}
 }
