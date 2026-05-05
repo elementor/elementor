@@ -178,17 +178,13 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 				};
 			}
 			const asJson = Object.fromEntries(
-				Object.entries( propSchema ).map( ( [ key, propType ] ) => [
-					key,
-					Schema.propTypeToJsonSchema( propType ),
-				] )
+				Object.entries( propSchema )
+					.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
+					.map( ( [ key, propType ] ) => [
+						key,
+						Schema.propTypeToJsonSchema( propType ),
+					] )
 			);
-			Schema.nonConfigurablePropKeys.forEach( ( key ) => {
-				if ( ! Schema.isPropKeyConfigurable( key, propSchema[ key ] as PropType | undefined ) ) {
-					// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-					delete asJson[ key ];
-				}
-			} );
 
 			const description =
 				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
