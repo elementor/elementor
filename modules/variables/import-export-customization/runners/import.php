@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\ImportExportCustomization\Runners;
 
+use Elementor\App\Modules\ImportExportCustomization\Design_System_Import_Context;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
@@ -29,10 +30,10 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function should_import( array $data ): bool {
-		$variables_included = null !== $this->get_include_type( $data );
+		$import_context = Design_System_Import_Context::from_data( $data );
 
 		return (
-			$variables_included &&
+			$import_context->is_included() &&
 			! empty( $data['extracted_directory_path'] ) &&
 			$this->is_variables_enabled( $data )
 		);
@@ -57,7 +58,8 @@ class Import extends Import_Runner_Base {
 		}
 
 		$repository = new Variables_Repository( $kit );
-		$conflict_resolution = $this->resolve_conflict_resolution( $data );
+		$import_context = Design_System_Import_Context::from_data( $data );
+		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'variablesOverrideAll' );
 
 		if ( 'override-all' === $conflict_resolution ) {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
@@ -84,41 +86,11 @@ class Import extends Import_Runner_Base {
 			}
 
 			$result['created'][] = [
-				'import_entry' => [ 'id' => $variable->id(), 'label' => $variable->label() ],
+				'import_entry' => $this->format_variable_as_entry( $variable ),
 			];
 		}
 
 		return $result;
-	}
-
-	private function resolve_conflict_resolution( array $data ): string {
-		$include_type = $this->get_include_type( $data );
-
-		switch ( $include_type ) {
-			case 'settings':
-				return ! empty( $data['customization']['settings']['variablesOverrideAll'] )
-					? 'override-all'
-					: 'merge';
-			case 'design-system':
-				return $data['customization']['design-system']['conflict_resolution'] ?? 'skip';
-			default:
-				throw new \Exception( 'Variables should not be imported.' );
-		}
-	}
-
-	private function get_include_type( array $data ): ?string {
-		$is_settings_import = in_array( 'settings', $data['include'] ?? [], true );
-		$is_design_system_import = in_array( 'design-system', $data['include'] ?? [], true );
-
-		if ( $is_settings_import ) {
-			return 'settings';
-		}
-
-		if ( $is_design_system_import ) {
-			return 'design-system';
-		}
-
-		return null;
 	}
 
 	private function get_existing_collection( Variables_Repository $repository, array $imported_data ): Variables_Collection {
@@ -162,7 +134,7 @@ class Import extends Import_Runner_Base {
 				continue;
 			}
 
-			$import_entry = [ 'id' => $variable->id(), 'label' => $variable->label() ];
+			$import_entry = $this->format_variable_as_entry( $variable );
 			$label_lower = strtolower( $variable->label() );
 			$has_label_conflict = in_array( $label_lower, $existing_labels, true );
 
@@ -181,7 +153,7 @@ class Import extends Import_Runner_Base {
 
 					$result['replaced'][] = [
 						'import_entry' => $import_entry,
-						'result_entry' => [ 'id' => $existing_entry['id'], 'label' => $variable->label() ],
+						'result_entry' => $this->format_variable_as_entry( $existing_var ),
 					];
 					continue;
 				}
@@ -208,7 +180,7 @@ class Import extends Import_Runner_Base {
 			$existing->add_variable( $new_variable );
 
 			$was_renamed = strtolower( $new_label ) !== $label_lower;
-			$result_entry = [ 'id' => $new_id, 'label' => $new_label ];
+			$result_entry = $this->format_variable_as_entry( $new_variable );
 
 			if ( $was_renamed ) {
 				$result['renamed'][] = [
@@ -260,5 +232,12 @@ class Import extends Import_Runner_Base {
 		if ( false === $result ) {
 			throw new \RuntimeException( 'Failed to save global variables during import.' );
 		}
+	}
+
+	private function format_variable_as_entry( Variable $variable ): array {
+		return [
+			'id' => $variable->id(),
+			'label' => $variable->label(),
+		];
 	}
 }
