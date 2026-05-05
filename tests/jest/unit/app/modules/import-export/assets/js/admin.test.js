@@ -31,7 +31,7 @@ describe( 'Import Export Admin Test', () => {
 		// Act
 		window.dispatchEvent( new Event( 'load' ) );
 
-		// No Kit referrer dialog shown without refferer in cache
+		// No Kit referrer dialog shown without referrer in cache
 		expect( window.elementorCommon.dialogsManager.createWidget ).not.toHaveBeenCalled();
 	} );
 

@@ -11,7 +11,7 @@ export const generatePrompt = () => {
 - [elementor://global-variables] - ONLY use variables defined here
 - [${ AVAILABLE_WIDGETS_URI }/v4]
 
-# TOOL SUUPORT
+# TOOL SUPPORT
 This tool support v4 elements only
 
 # WORKFLOW
