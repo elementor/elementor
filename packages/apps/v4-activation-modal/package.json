@@ -37,8 +37,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@elementor/icons": "1.68.0",
     "@elementor/ui": "1.36.17",
+=======
+    "@elementor/icons": "~1.75.1",
+    "@elementor/ui": "1.37.5",
+>>>>>>> f7ef605ae4 (New: Add Angie entry in editor app bar tools menu [ED-23899] (#35685))
     "@wordpress/i18n": "^5.13.0",
     "lottie-react": "^2.4.1"
   },
