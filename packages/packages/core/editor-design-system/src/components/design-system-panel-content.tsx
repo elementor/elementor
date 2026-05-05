@@ -8,13 +8,13 @@ import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ImportTriggerButton } from '../import/components/trigger-button';
 import {
 	type DesignSystemTab,
 	getInitialDesignSystemTab,
 	notifyDesignSystemTabChange,
 	persistDesignSystemTab,
 } from '../initial-tab';
+import { DesignSystemHeaderMenu } from './design-system-header-menu';
 
 const stickyTabRowStyles = {
 	position: 'sticky' as const,
@@ -78,7 +78,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
 							{ __( 'Design system', 'elementor' ) }
 						</PanelHeaderTitle>
-						<ImportTriggerButton />
+						<DesignSystemHeaderMenu />
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
 							sx={ { flexShrink: 0 } }

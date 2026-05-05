@@ -8,7 +8,8 @@ import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { ImportTriggerButton } from '../components/trigger-button';
+import { DesignSystemHeaderMenu } from '../../components/design-system-header-menu';
+import { downloadBlob } from '../../export/download';
 import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
 import { trackDesignSystem } from '../tracking';
@@ -299,16 +300,27 @@ describe( '<ImportDesignSystemDialog />', () => {
 	} );
 } );
 
-describe( '<ImportTriggerButton />', () => {
+jest.mock( '../../export/download', () => ( {
+	downloadBlob: jest.fn(),
+} ) );
+
+const openHeaderMenu = () => {
+	fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+};
+
+describe( '<DesignSystemHeaderMenu />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		sharedQueryClient.clear();
 	} );
 
-	it( 'opens the import dialog via openDialog when clicked while idle', () => {
-		renderWithQuery( <ImportTriggerButton /> );
+	it( 'opens the import dialog when the Import menu item is clicked', async () => {
+		setupHttpServiceMock();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Import Design System' } ) );
+		renderWithQuery( <DesignSystemHeaderMenu /> );
+
+		openHeaderMenu();
+		fireEvent.click( await screen.findByRole( 'menuitem', { name: 'Import' } ) );
 
 		expect( openDialog ).toHaveBeenCalledWith(
 			expect.objectContaining( {
@@ -316,6 +328,74 @@ describe( '<ImportTriggerButton />', () => {
 			} )
 		);
 		expect( ( openDialog as jest.Mock ).mock.calls[ 0 ][ 0 ].component.props.onClose ).toBe( closeDialog );
+	} );
+
+	it( 'POSTs the design-system export request and triggers a download on success', async () => {
+		const { post } = setupHttpServiceMock();
+		post.mockImplementation( ( url: string ) => {
+			if ( url.endsWith( '/export' ) ) {
+				return Promise.resolve( { data: { data: { file: btoa( 'zip-bytes' ), manifest: {} }, meta: [] } } );
+			}
+			return Promise.resolve( { data: { data: {}, meta: [] } } );
+		} );
+
+		renderWithQuery( <DesignSystemHeaderMenu /> );
+
+		openHeaderMenu();
+		fireEvent.click( await screen.findByRole( 'menuitem', { name: 'Export' } ) );
+
+		await waitFor(
+			() => expect( downloadBlob ).toHaveBeenCalledWith( expect.any( Blob ), 'design-system-export.zip' ),
+			{ timeout: ASYNC_TIMEOUT_MS }
+		);
+
+		const exportCall = post.mock.calls.find( ( [ url ] ) => url.endsWith( '/export' ) );
+		expect( exportCall?.[ 0 ] ).toBe( 'elementor/v1/import-export-customization/export' );
+		expect( exportCall?.[ 1 ] ).toEqual( {
+			include: [ 'settings' ],
+			kitInfo: { title: 'design-system', description: '', source: 'local' },
+			customization: { settings: { theme: false, classes: true, variables: true } },
+		} );
+
+		const successCall = ( notify as jest.Mock ).mock.calls.find(
+			( [ payload ] ) => payload.id === 'design-system-export-succeeded'
+		);
+		expect( successCall?.[ 0 ].type ).toBe( 'success' );
+	} );
+
+	it( 'on export failure: notifies error and the Try again action retries the export', async () => {
+		const post = jest.fn().mockRejectedValue( new Error( 'boom' ) );
+		( httpService as jest.Mock ).mockReturnValue( { post } );
+
+		renderWithQuery( <DesignSystemHeaderMenu /> );
+
+		openHeaderMenu();
+		fireEvent.click( await screen.findByRole( 'menuitem', { name: 'Export' } ) );
+
+		const errorCall = await waitFor(
+			() => {
+				const call = ( notify as jest.Mock ).mock.calls.find(
+					( [ payload ] ) => payload.id === 'design-system-export-failed'
+				);
+				expect( call?.[ 0 ].type ).toBe( 'error' );
+				return call;
+			},
+			{ timeout: ASYNC_TIMEOUT_MS }
+		);
+
+		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-export-started' );
+		expect( downloadBlob ).not.toHaveBeenCalled();
+
+		const retryAction = errorCall?.[ 0 ].additionalActionProps?.[ 0 ];
+		expect( retryAction ).toEqual( expect.objectContaining( { children: 'Try again' } ) );
+
+		act( () => {
+			retryAction?.onClick?.();
+		} );
+
+		await waitFor( () => expect( post.mock.calls.length ).toBeGreaterThanOrEqual( 2 ), {
+			timeout: ASYNC_TIMEOUT_MS,
+		} );
 	} );
 
 	it( 'is disabled while an import is in progress', async () => {
@@ -326,18 +406,17 @@ describe( '<ImportTriggerButton />', () => {
 
 		renderWithQuery(
 			<>
-				<ImportTriggerButton />
+				<DesignSystemHeaderMenu />
 				<ImportDesignSystemDialog onClose={ jest.fn() } />
 			</>
 		);
 
-		const initialButton = screen.getByRole( 'button', { name: 'Import Design System' } );
-		expect( initialButton ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: 'More actions' } ) ).toBeEnabled();
 
 		submitImport();
 
 		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'Importing design system…' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'More actions' } ) ).toBeDisabled();
 		} );
 	} );
 } );
