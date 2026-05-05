@@ -143,7 +143,6 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			expect( mockClose ).toHaveBeenCalled();
 		} );
-
 	} );
 
 	describe( 'open from variables/classes events (via route handoff)', () => {
