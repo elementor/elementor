@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import_Utils {
+
+	const ORDER_FILE = 'order.json';
 	const DEFAULT_CONFLICT_RESOLUTION = 'skip';
 
 	const ERROR_NOT_ARRAY = 'not_array';
@@ -34,7 +36,7 @@ class Import_Utils {
 	];
 
 	public static function import_classes( string $classes_dir, array $options = [], ?Kit $kit = null ) {
-		$order_file = rtrim( $classes_dir, '/' ) . '/order.json';
+		$order_file = rtrim( $classes_dir, '/' ) . '/' . self::ORDER_FILE;
 
 		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
 			return self::EMPTY_RESULT;
@@ -57,14 +59,21 @@ class Import_Utils {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			$result = self::do_import( $repository, $classes_dir, $imported_classes_order, $conflict_resolution );
+			[ 'result' => $result, 'changes' => $changes ] = self::do_import( $repository, $classes_dir, $imported_classes_order, $conflict_resolution );
 			$wpdb->query( 'COMMIT' );
-
-			return $result;
 		} catch ( \Throwable $e ) {
 			$wpdb->query( 'ROLLBACK' );
 			throw $e;
 		}
+
+		if ( $changes ) {
+			if ( function_exists( 'wp_cache_flush_runtime' ) ) {
+				wp_cache_flush_runtime();
+			}
+			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, $changes );
+		}
+
+		return $result;
 	}
 
 	private static function do_import(
@@ -97,7 +106,10 @@ class Import_Utils {
 		foreach ( $imported_classes_order as $import_entry ) {
 			[ 'is_valid' => $is_valid, 'error' => $validation_error ] = self::validate_class_entry( $import_entry );
 			if ( ! $is_valid ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $validation_error ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => $validation_error,
+				];
 				continue;
 			}
 
@@ -109,25 +121,37 @@ class Import_Utils {
 			}
 
 			if ( 'replace' !== $action && count( $order_set ) >= Global_Classes_REST_API::MAX_ITEMS ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_LIMIT_REACHED ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_LIMIT_REACHED,
+				];
 				continue;
 			}
 
 			$class_file = $classes_dir . '/' . $import_entry['id'] . '.json';
 			if ( ! file_exists( $class_file ) ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_FILE_NOT_FOUND ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_FILE_NOT_FOUND,
+				];
 				continue;
 			}
 
 			$raw_item = json_decode( file_get_contents( $class_file ), true );
 			if ( ! is_array( $raw_item ) ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_INVALID_JSON ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_INVALID_JSON,
+				];
 				continue;
 			}
 
 			[ 'is_valid' => $is_valid, 'error' => $sanitize_error, 'sanitized' => $sanitized_item ] = self::sanitize_item( $import_entry['id'], $raw_item, $style_parser );
 			if ( ! $is_valid ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $sanitize_error ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => $sanitize_error,
+				];
 				continue;
 			}
 
@@ -138,7 +162,10 @@ class Import_Utils {
 				$modified_classes[] = $existing_id;
 				$result['replaced'][] = [
 					'import_entry' => $import_entry,
-					'result_entry' => [ 'id' => $existing_id, 'label' => $import_entry['label'] ],
+					'result_entry' => [
+						'id' => $existing_id,
+						'label' => $import_entry['label'],
+					],
 				];
 				continue;
 			}
@@ -148,8 +175,6 @@ class Import_Utils {
 
 				$new_label = ImportExportUtils::resolve_label_conflict( $import_entry['label'], $existing_labels );
 				$sanitized_item['label'] = $new_label;
-
-				$label_to_id_map[ strtolower( $new_label ) ] = $import_entry['id'];
 			}
 
 			$new_id = $sanitized_item['id'];
@@ -159,12 +184,16 @@ class Import_Utils {
 				$sanitized_item['id'] = $new_id;
 			}
 
-			self::create_new_class($sanitized_item);
+			self::create_new_class( $sanitized_item );
 			$order_set[ $new_id ] = true;
 			$added_classes_order[] = $new_id;
 			$added_classes_labels[ $new_id ] = $sanitized_item['label'];
+			$label_to_id_map[ strtolower( $sanitized_item['label'] ) ] = $new_id;
 
-			$result_entry = [ 'id' => $new_id, 'label' => $sanitized_item['label'] ];
+			$result_entry = [
+				'id' => $new_id,
+				'label' => $sanitized_item['label'],
+			];
 
 			if ( 'rename' === $action ) {
 				$result['renamed'][] = [
@@ -172,25 +201,32 @@ class Import_Utils {
 					'result_entry' => $result_entry,
 				];
 			} else {
-				$result['created'][] = [ 'import_entry' => $import_entry ];
+				$result['created'][] = [
+					'import_entry' => $import_entry,
+					'result_entry' => $result_entry,
+				];
 			}
 		}
 
+		$changes = null;
 		$has_changes = ! empty( $added_classes_order ) || ! empty( $modified_classes ) || ! empty( $deleted_classes );
 
 		if ( $has_changes ) {
 			$new_order = array_merge( $added_classes_order, $previous_order );
 			$repository->update_order_and_labels( $new_order, $added_classes_labels );
 
-			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, [
+			$changes = [
 				'added' => $added_classes_order,
 				'deleted' => $deleted_classes,
 				'modified' => $modified_classes,
 				'order' => count( $added_classes_order ) > 0 || count( $deleted_classes ) > 0,
-			] );
+			];
 		}
 
-		return $result;
+		return [
+			'result' => $result,
+			'changes' => $changes,
+		];
 	}
 
 	private static function create_new_class( array $sanitized_item ): void {
@@ -216,7 +252,10 @@ class Import_Utils {
 
 	private static function validate_class_entry( $class_entry ): array {
 		if ( ! is_array( $class_entry ) ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_NOT_ARRAY ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_NOT_ARRAY,
+			];
 		}
 
 		$missing_fields = [];
@@ -228,10 +267,16 @@ class Import_Utils {
 		}
 
 		if ( ! empty( $missing_fields ) ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_MISSING_FIELDS . ':' . implode( ',', $missing_fields ) ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_MISSING_FIELDS . ':' . implode( ',', $missing_fields ),
+			];
 		}
 
-		return [ 'is_valid' => true, 'error' => null ];
+		return [
+			'is_valid' => true,
+			'error' => null,
+		];
 	}
 
 	private static function resolve_item_action(
@@ -262,16 +307,28 @@ class Import_Utils {
 		$item_result = $style_parser->parse( $item );
 
 		if ( ! $item_result->is_valid() ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_INVALID_PROPS, 'sanitized' => null ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_INVALID_PROPS,
+				'sanitized' => null,
+			];
 		}
 
 		$sanitized_item = $item_result->unwrap();
 
 		if ( $item_id !== $sanitized_item['id'] ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_ID_MISMATCH, 'sanitized' => null ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_ID_MISMATCH,
+				'sanitized' => null,
+			];
 		}
 
-		return [ 'is_valid' => true, 'error' => null, 'sanitized' => $sanitized_item ];
+		return [
+			'is_valid' => true,
+			'error' => null,
+			'sanitized' => $sanitized_item,
+		];
 	}
 
 	private static function build_label_to_id_map_from_labels( array $id_to_label ): array {
