@@ -53,7 +53,8 @@ export function init() {
 
 	initCanvasMcp(
 		getMCPByDomain( 'canvas', {
-			instructions: mcpDescription,
+			instructions: `Creates, configures, and styles V4 elements on the Elementor canvas.`,
+			description: mcpDescription,
 		} )
 	);
 
