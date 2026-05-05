@@ -85,12 +85,18 @@ export const toMCPTitle = ( namespace: string ): string => {
 };
 
 /**
- *
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  * @param options
- * @param options.instructions
+ * @param options.instructions Short hint shown inline with the server (keeps payload small).
+ * @param options.description  Full server description registered as a fetchable resource.
+ *                             When provided, it is registered at elementor://{namespace}/server-description
+ *                             and auto-injected into every tool's requiredResources.
+ *                             Falls back to `instructions` when omitted (backward-compatible).
  */
-export const getMCPByDomain = ( namespace: string, options?: { instructions?: string } ): MCPRegistryEntry => {
+export const getMCPByDomain = (
+	namespace: string,
+	options?: { instructions?: string; description?: string }
+): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
 	const title = toMCPTitle( namespace );
 	// @ts-ignore - QUnit fails this
@@ -102,12 +108,12 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 			{ name: mcpName, title, version: '1.0.0' },
 			{ instructions: options?.instructions, capabilities: { resources: { subscribe: true } } }
 		);
-		if ( options?.instructions ) {
+		if ( options?.description ) {
 			registerServerDescriptionResource(
 				mcpRegistry[ namespace ],
 				namespace,
 				title,
-				options.instructions,
+				options.description,
 				( ...args ) => {
 					bufferedResources.push( args );
 					callAdapters( ( adapter ) => adapter.onResourceRegistered( ...args ) );
@@ -116,7 +122,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		}
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const serverDescriptionUri = options?.instructions ? `elementor://${ namespace }/server-description` : undefined;
+	const serverDescriptionUri = options?.description ? `elementor://${ namespace }/server-description` : undefined;
 	const { addTool } = createToolRegistry( mcpServer, mcpName, serverDescriptionUri );
 	return {
 		waitForReady: () => readyPromise,
