@@ -66,6 +66,7 @@ export default class DesignSystemPage {
 
 	async switchToClassesTab(): Promise< void > {
 		await this.classesTab.click();
+		await dismissClassManagerIntro( this.page );
 		await expect( this.classesTab ).toHaveAttribute( 'aria-selected', 'true' );
 	}
 

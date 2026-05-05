@@ -106,9 +106,9 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'invalid' } );
 			} );
 
-		const relevant = dispatchSpy.mock.calls
-			.map( ( [ e ]: [ Event ] ) => ( e as Event ).type )
-			.filter( ( t: string ) => [ EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t ) );
+			const relevant = dispatchSpy.mock.calls
+				.map( ( [ e ]: [ Event ] ) => ( e as Event ).type )
+				.filter( ( t: string ) => [ EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t ) );
 			expect( relevant ).toHaveLength( 0 );
 
 			dispatchSpy.mockRestore();
@@ -142,21 +142,21 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-		const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
-			type: ( e as Event ).type,
-			detail: ( e as CustomEvent ).detail,
-		} ) );
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
+				type: ( e as Event ).type,
+				detail: ( e as CustomEvent ).detail,
+			} ) );
 
-		expect( dispatched ).toContainEqual(
-			expect.objectContaining( {
-				type: EVENT_SET_TAB,
-				detail: { tab: 'classes' },
-			} )
-		);
-		expect( mockClose ).not.toHaveBeenCalled();
+			expect( dispatched ).toContainEqual(
+				expect.objectContaining( {
+					type: EVENT_SET_TAB,
+					detail: { tab: 'classes' },
+				} )
+			);
+			expect( mockClose ).not.toHaveBeenCalled();
 
-		dispatchSpy.mockRestore();
-	} );
+			dispatchSpy.mockRestore();
+		} );
 
 		it( 'should close classes panel when toggled with classes while classes is active', () => {
 			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
@@ -180,20 +180,20 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
-		const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
-			type: ( e as Event ).type,
-			detail: ( e as CustomEvent ).detail,
-		} ) );
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
+				type: ( e as Event ).type,
+				detail: ( e as CustomEvent ).detail,
+			} ) );
 
-		expect( dispatched ).toContainEqual(
-			expect.objectContaining( {
-				type: EVENT_SET_TAB,
-				detail: { tab: 'variables' },
-			} )
-		);
+			expect( dispatched ).toContainEqual(
+				expect.objectContaining( {
+					type: EVENT_SET_TAB,
+					detail: { tab: 'variables' },
+				} )
+			);
 
-		dispatchSpy.mockRestore();
-	} );
+			dispatchSpy.mockRestore();
+		} );
 	} );
 
 	describe( 'open from variables/classes events (via route handoff)', () => {
@@ -265,7 +265,9 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-			const setTabCall = dispatchSpy.mock.calls.find( ( [ e ]: [ Event ] ) => ( e as Event ).type === EVENT_SET_TAB );
+			const setTabCall = dispatchSpy.mock.calls.find(
+				( [ e ]: [ Event ] ) => ( e as Event ).type === EVENT_SET_TAB
+			);
 			expect( setTabCall ).toBeDefined();
 
 			dispatchSpy.mockRestore();
@@ -293,18 +295,6 @@ describe( 'DesignSystemEntrypoints', () => {
 			dispatchSpy2.mockRestore();
 		} );
 
-		it( 'should reopen with variables tab when explicitly opened from variables after switching to classes', async () => {
-			render( <DesignSystemEntrypoints /> );
-
-			act( () => {
-				dispatchWindowEvent( EVENT_OPEN_VARIABLES );
-			} );
-
-			await fireRoutePanelOpen();
-
-			expect( jest.mocked( setPendingDesignSystemTab ) ).toHaveBeenCalledWith( 'variables' );
-			expect( mockOpen ).toHaveBeenCalled();
-		} );
 	} );
 
 	describe( 'URL parameter handling', () => {

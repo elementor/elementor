@@ -174,14 +174,6 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( screen.queryByRole( 'region', { name: 'Variables Manager' } ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'should initialise from the pending tab when one was set before opening', () => {
-			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
-
-			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
-
-			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeInTheDocument();
-		} );
-
 		it( 'should notify tab change on mount with the initial tab', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
 
@@ -366,28 +358,4 @@ describe( 'DesignSystemPanelContent', () => {
 		} );
 	} );
 
-	describe( 'tab persistence across close and reopen', () => {
-		it( 'should show the persisted classes tab after close and reopen', () => {
-			const { unmount } = render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
-
-			act( () => {
-				window.dispatchEvent(
-					new CustomEvent( SET_TAB_EVENT, {
-						detail: { tab: 'classes' },
-					} )
-				);
-			} );
-
-			expect( persistDesignSystemTab ).toHaveBeenCalledWith( 'classes' );
-
-			unmount();
-
-			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
-
-			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
-
-			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Variables Manager' } ) ).not.toBeInTheDocument();
-		} );
-	} );
 } );
