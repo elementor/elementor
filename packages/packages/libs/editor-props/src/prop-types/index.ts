@@ -34,7 +34,7 @@ export * from './boolean';
 export * from './color-stop';
 export * from './gradient-color-stop';
 export * from './key-value';
-export * from './length-range';
+export * from './number-range';
 export * from './date-time';
 export * from './position';
 export * from './query';

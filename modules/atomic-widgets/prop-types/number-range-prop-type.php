@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Length_Range_Prop_Type extends Object_Prop_Type {
+class Number_Range_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'length-range';
+		return 'number-range';
 	}
 
 	protected function define_shape(): array {

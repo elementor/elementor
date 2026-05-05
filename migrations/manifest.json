@@ -18,10 +18,10 @@
       "toType": "size",
       "path": "operations/number-to-size.json"
     },
-    "number-to-length-range": {
+    "number-to-number-range": {
       "fromType": "number",
-      "toType": "length-range",
-      "path": "operations/number-to-length-range.json"
+      "toType": "number-range",
+      "path": "operations/number-to-number-range.json"
     },
     "html-to-html-v2": {
       "fromType": "html",

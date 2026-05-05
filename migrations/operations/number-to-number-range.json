@@ -29,7 +29,7 @@
       "op": {
         "fn": "set",
         "path": "$$type",
-        "value": "length-range"
+        "value": "number-range"
       },
       "condition": {
         "fn": "equals",
@@ -49,7 +49,7 @@
       "condition": {
         "fn": "equals",
         "path": "$$type",
-        "value": "length-range"
+        "value": "number-range"
       }
     },
     {
@@ -61,7 +61,7 @@
       "condition": {
         "fn": "equals",
         "path": "$$type",
-        "value": "length-range"
+        "value": "number-range"
       }
     }
   ]
