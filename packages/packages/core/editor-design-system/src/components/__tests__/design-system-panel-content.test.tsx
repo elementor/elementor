@@ -103,7 +103,11 @@ describe( 'DesignSystemPanelContent', () => {
 					onExposeCloseAttempt?.( mockVariablesCloseAttempt );
 					return () => onExposeCloseAttempt?.( null );
 				}, [ onExposeCloseAttempt ] );
-				return <div role="region" aria-label="Variables Manager">Variables Manager Content</div>;
+				return (
+					<div role="region" aria-label="Variables Manager">
+						Variables Manager Content
+					</div>
+				);
 			}
 		);
 
@@ -118,7 +122,11 @@ describe( 'DesignSystemPanelContent', () => {
 					onExposeCloseAttempt?.( mockClassesCloseAttempt );
 					return () => onExposeCloseAttempt?.( null );
 				}, [ onExposeCloseAttempt ] );
-				return <div role="region" aria-label="Classes Manager">Class Manager Content</div>;
+				return (
+					<div role="region" aria-label="Classes Manager">
+						Class Manager Content
+					</div>
+				);
 			}
 		);
 	} );
