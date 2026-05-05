@@ -1,6 +1,6 @@
 import { createTransformer } from '../create-transformer';
 
-export const dateRangeTransformer = createTransformer< { min?: string | null; max?: string | null } >( ( value ) => {
+export const timeRangeTransformer = createTransformer< { min?: string | null; max?: string | null } >( ( value ) => {
 	if ( ! value || Object.keys( value ).length === 0 ) {
 		return null;
 	}
