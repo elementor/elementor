@@ -669,7 +669,7 @@ class Widget_Accordion extends Widget_Base {
 
 		foreach ( $settings['tabs'] as $item ) {
 			$title = Utils::html_to_plain_text( $item['tab_title'] ?? '' );
-			$content = Utils::html_to_plain_text( $item['tab_content'] ?? '' );
+			$content = \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $item['tab_content'] ?? '' );
 
 			if ( empty( $title ) && empty( $content ) ) {
 				continue;
