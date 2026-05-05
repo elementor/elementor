@@ -8,9 +8,10 @@ import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { TriggerButton } from '../components/trigger-button';
+import { ImportTriggerButton } from '../components/trigger-button';
 import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
+import { trackDesignSystem } from '../tracking';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
@@ -30,6 +31,11 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
 	openDialog: jest.fn(),
 	closeDialog: jest.fn(),
+} ) );
+
+jest.mock( '../tracking', () => ( {
+	...jest.requireActual( '../tracking' ),
+	trackDesignSystem: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/query', () => {
@@ -52,8 +58,18 @@ const sharedQueryClient: QueryClient = require( '@elementor/query' ).__sharedCli
 const renderWithQuery = ( ui: React.ReactElement ) =>
 	renderWithTheme( <QueryClientProvider client={ sharedQueryClient }>{ ui }</QueryClientProvider> );
 
-const setupHttpServiceMock = () => {
-	const post = jest.fn().mockResolvedValue( { data: { success: true, global_classes: {} } } );
+type HttpPostMock = jest.Mock< Promise< { data: unknown } >, [ url: string, body?: unknown, options?: unknown ] >;
+
+const setupHttpServiceMock = ( runners: string[] = [ 'global-classes', 'global-variables' ] ) => {
+	const post: HttpPostMock = jest.fn( ( url: string ) => {
+		if ( url.endsWith( '/upload' ) ) {
+			return Promise.resolve( { data: { data: { session: 'sess-1' }, meta: [] } } );
+		}
+		if ( url.endsWith( '/import' ) ) {
+			return Promise.resolve( { data: { data: { session: 'sess-1', runners }, meta: [] } } );
+		}
+		return Promise.resolve( { data: { data: {}, meta: [] } } );
+	} );
 	( httpService as jest.Mock ).mockReturnValue( { post } );
 	return { post };
 };
@@ -101,7 +117,7 @@ describe( '<ImportDesignSystemDialog />', () => {
 		await waitFor( () => expect( importButton ).toBeEnabled() );
 	} );
 
-	it( 'fires the in-progress notification, calls onClose and triggers the import request', async () => {
+	it( 'fires the in-progress notification, calls onClose and triggers the upload→import→runner flow', async () => {
 		const { post } = setupHttpServiceMock();
 		const onClose = jest.fn();
 
@@ -116,13 +132,29 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		expect( onClose ).toHaveBeenCalledTimes( 1 );
 
-		await waitFor( () => expect( post ).toHaveBeenCalledTimes( 1 ), { timeout: ASYNC_TIMEOUT_MS } );
-		const [ url, body, options ] = post.mock.calls[ 0 ];
-		expect( url ).toBe( '/design-system/import' );
-		expect( body ).toBeInstanceOf( FormData );
-		expect( ( body as FormData ).get( 'file' ) ).toBe( file );
-		expect( ( body as FormData ).get( 'conflict_strategy' ) ).toBe( 'keep' );
-		expect( options.headers[ 'Content-Type' ] ).toBe( 'multipart/form-data' );
+		await waitFor( () => expect( post.mock.calls.length ).toBeGreaterThanOrEqual( 4 ), {
+			timeout: ASYNC_TIMEOUT_MS,
+		} );
+
+		const [ uploadUrl, uploadBody, uploadOptions ] = post.mock.calls[ 0 ];
+		expect( uploadUrl ).toBe( 'elementor/v1/import-export-customization/upload' );
+		expect( uploadBody ).toBeInstanceOf( FormData );
+		expect( ( uploadBody as FormData ).get( 'e_import_file' ) ).toBe( file );
+		expect( ( uploadOptions as { headers: Record< string, string > } ).headers[ 'Content-Type' ] ).toBe(
+			'multipart/form-data'
+		);
+
+		const [ importUrl, importBody ] = post.mock.calls[ 1 ];
+		expect( importUrl ).toBe( 'elementor/v1/import-export-customization/import' );
+		expect( importBody ).toEqual( {
+			session: 'sess-1',
+			include: [ 'design-system' ],
+			customization: { 'design-system': { conflict_resolution: 'skip' } },
+		} );
+
+		const [ runnerUrl, runnerBody ] = post.mock.calls[ 2 ];
+		expect( runnerUrl ).toBe( 'elementor/v1/import-export-customization/import-runner' );
+		expect( runnerBody ).toEqual( { session: 'sess-1', runner: 'global-classes' } );
 	} );
 
 	it( 'on success: refreshes globals, reloads the document and notifies success', async () => {
@@ -194,6 +226,44 @@ describe( '<ImportDesignSystemDialog />', () => {
 		);
 	} );
 
+	it( 'fires the PRD analytics events along the happy path', async () => {
+		setupHttpServiceMock();
+
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+
+		submitImport();
+
+		const eventNames = () => ( trackDesignSystem as jest.Mock ).mock.calls.map( ( [ payload ] ) => payload.event );
+
+		expect( eventNames() ).toEqual( expect.arrayContaining( [ 'fileSelected', 'conflictChoice', 'confirmed' ] ) );
+
+		await waitFor( () => expect( eventNames() ).toContain( 'imported' ), { timeout: ASYNC_TIMEOUT_MS } );
+	} );
+
+	it( 'fires validationFailed analytics when the upload step fails', async () => {
+		const post = jest.fn( ( url: string ) => {
+			if ( url.endsWith( '/upload' ) ) {
+				return Promise.reject( new Error( 'bad zip' ) );
+			}
+			return Promise.resolve( { data: {} } );
+		} );
+		( httpService as jest.Mock ).mockReturnValue( { post } );
+
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+
+		submitImport();
+
+		await waitFor(
+			() =>
+				expect(
+					( trackDesignSystem as jest.Mock ).mock.calls.some(
+						( [ payload ] ) => payload.event === 'validationFailed'
+					)
+				).toBe( true ),
+			{ timeout: ASYNC_TIMEOUT_MS }
+		);
+	} );
+
 	it( 'Try again is a no-op while another import is in progress', async () => {
 		const post = jest.fn().mockRejectedValue( new Error( 'boom' ) );
 		( httpService as jest.Mock ).mockReturnValue( { post } );
@@ -229,14 +299,14 @@ describe( '<ImportDesignSystemDialog />', () => {
 	} );
 } );
 
-describe( '<TriggerButton />', () => {
+describe( '<ImportTriggerButton />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		sharedQueryClient.clear();
 	} );
 
 	it( 'opens the import dialog via openDialog when clicked while idle', () => {
-		renderWithQuery( <TriggerButton /> );
+		renderWithQuery( <ImportTriggerButton /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Import Design System' } ) );
 
@@ -256,7 +326,7 @@ describe( '<TriggerButton />', () => {
 
 		renderWithQuery(
 			<>
-				<TriggerButton />
+				<ImportTriggerButton />
 				<ImportDesignSystemDialog onClose={ jest.fn() } />
 			</>
 		);

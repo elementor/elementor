@@ -8,6 +8,7 @@ import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { ImportTriggerButton } from '../import/components/trigger-button';
 import {
 	type DesignSystemTab,
 	getInitialDesignSystemTab,
@@ -73,13 +74,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		<ThemeProvider>
 			<Panel>
 				<PanelHeader>
-					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center" spacing={ 0.5 }>
 						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
 							{ __( 'Design system', 'elementor' ) }
 						</PanelHeaderTitle>
+						<ImportTriggerButton />
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
-							sx={ { flexShrink: 0, marginLeft: 'auto' } }
+							sx={ { flexShrink: 0 } }
 							onClick={ () => void handleHeaderClose() }
 						/>
 					</Stack>
