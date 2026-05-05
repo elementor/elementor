@@ -8,9 +8,7 @@ use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
-use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
-use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox_Twig;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -74,6 +72,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Range_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Time_Range_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
@@ -115,12 +115,16 @@ use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Range_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Time_Range_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -131,7 +135,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_TWIG_CONTAINERS = 'e_twig_containers';
 	const EXPERIMENT_CSS_GRID = 'e_css_grid';
 	const EXPERIMENT_DESIGN_SYSTEM_PANEL = 'e_editor_design_system_panel';
 
@@ -233,15 +236,6 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_TWIG_CONTAINERS,
-			'title' => esc_html__( 'Twig-based containers', 'elementor' ),
-			'description' => esc_html__( 'Render div-block and flexbox using Twig templates for unified editor/frontend rendering.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::EXPERIMENT_CSS_GRID,
 			'title' => esc_html__( 'CSS Grid', 'elementor' ),
@@ -312,10 +306,8 @@ class Module extends BaseModule {
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
-		$use_twig_containers = Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_TWIG_CONTAINERS );
-
-		$elements_manager->register_element_type( $use_twig_containers ? new Div_Block_Twig() : new Div_Block() );
-		$elements_manager->register_element_type( $use_twig_containers ? new Flexbox_Twig() : new Flexbox() );
+		$elements_manager->register_element_type( new Div_Block() );
+		$elements_manager->register_element_type( new Flexbox() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
@@ -343,6 +335,8 @@ class Module extends BaseModule {
 		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
 		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
 		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
+		$transformers->register( Date_Range_Prop_Type::get_key(), new Date_Range_Transformer() );
+		$transformers->register( Time_Range_Prop_Type::get_key(), new Time_Range_Transformer() );
 		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
 		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
 	}
@@ -365,6 +359,7 @@ class Module extends BaseModule {
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Span_Prop_Type::get_key(), new Span_Transformer() );
 	}
 
 	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {

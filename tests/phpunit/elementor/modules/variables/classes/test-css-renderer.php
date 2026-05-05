@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_CSS_Renderer extends TestCase {

@@ -44,7 +44,8 @@
     "styles": "grunt styles",
     "styles:watch": "grunt watch_styles",
     "lint": "eslint . && npm run lint -w elementor-packages",
-    "format": "eslint . --fix && npm run format:packages",
+    "format": "npm run format:eslint && npm run format:packages",
+    "format:eslint": "NODE_OPTIONS='--max-old-space-size=8192' eslint . --fix",
     "format:packages": "npm run format -w elementor-packages",
     "setup:testing": "bash scripts/setup-testing.sh",
     "restart:testing": "bash scripts/setup-testing.sh --restart",
@@ -172,7 +173,7 @@
   },
   "dependencies": {
     "@elementor/elementor-one-assets": "0.4.33",
-    "@elementor/icons": "1.74.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/ui": "1.39.1",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",

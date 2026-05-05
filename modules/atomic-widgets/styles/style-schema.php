@@ -24,6 +24,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -90,6 +91,18 @@ class Style_Schema {
 	}
 
 	private static function get_position_props() {
+		$non_static_dependency = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+		->where( [
+			'operator' => 'exists',
+			'path' => [ 'position' ],
+		] )
+		->where( [
+			'operator' => 'ne',
+			'path' => [ 'position' ],
+			'value' => 'static',
+		] )
+		->get();
+
 		return [
 			'position' => String_Prop_Type::make()->enum( [
 				'static',
@@ -98,10 +111,18 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			] )->description( 'The CSS position property specifies the type of positioning method used for an element (static, relative, absolute, fixed, or sticky).' ),
-			'inset-block-start' => Size_Prop_Type::make()->description( 'Size PropType for the inset-block-start CSS property' ),
-			'inset-inline-end' => Size_Prop_Type::make()->description( 'Size PropType for the inset-inline-end CSS property' ),
-			'inset-block-end' => Size_Prop_Type::make()->description( 'Size PropType for the inset-block-end CSS property' ),
-			'inset-inline-start' => Size_Prop_Type::make()->description( 'Size PropType for the inset-inline-start CSS property' ),
+			'inset-block-start' => Size_Prop_Type::make()
+				->description( 'Size PropType for the inset-block-start CSS property' )
+				->set_dependencies( $non_static_dependency ),
+			'inset-inline-end' => Size_Prop_Type::make()
+				->description( 'Size PropType for the inset-inline-end CSS property' )
+				->set_dependencies( $non_static_dependency ),
+			'inset-block-end' => Size_Prop_Type::make()
+				->description( 'Size PropType for the inset-block-end CSS property' )
+				->set_dependencies( $non_static_dependency ),
+			'inset-inline-start' => Size_Prop_Type::make()
+				->description( 'Size PropType for the inset-inline-start CSS property' )
+				->set_dependencies( $non_static_dependency ),
 			'z-index' => Number_Prop_Type::make()
 				->description( 'The z-index CSS property sets the z-order of a positioned element and its descendants or flex items. It specifies the stack order of elements.' ),
 			'scroll-margin-top' => Size_Prop_Type::make()->units( Size_Constants::anchor_offset() ),
@@ -329,6 +350,10 @@ class Style_Schema {
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
+			'grid-column' => Span_Prop_Type::make()
+				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value.' ),
+			'grid-row' => Span_Prop_Type::make()
+				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value.' ),
 		];
 	}
 

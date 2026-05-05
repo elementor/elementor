@@ -201,6 +201,10 @@ function getAtomicFormFieldLabel( field, form ) {
 }
 
 function getAtomicFormFieldValue( inputs, type ) {
+	if ( 'file' === type ) {
+		return inputs.files;
+	}
+
 	if ( Array.isArray( inputs ) ) {
 		return inputs.map( ( input ) => input.value ).join( ', ' );
 	}
@@ -221,6 +225,29 @@ function getAtomicFormFieldType( field ) {
 	return tagName;
 }
 
+function appendFieldValue( formData, key, value ) {
+	const items = value instanceof FileList ? Array.from( value ) : value;
+
+	if ( Array.isArray( items ) ) {
+		items.forEach( ( item, i ) => formData.append( `${ key }[${ i }]`, item ) );
+		return;
+	}
+
+	formData.append( key, items );
+}
+
+function appendFormField( formData, field, index ) {
+	const prefix = `form_fields[${ index }]`;
+
+	formData.append( `${ prefix }[id]`, field.id );
+	formData.append( `${ prefix }[type]`, field.type );
+	formData.append( `${ prefix }[label]`, field.label );
+	formData.append( `${ prefix }[name]`, field.name );
+	formData.append( `${ prefix }[options]`, JSON.stringify( field.options ) );
+
+	appendFieldValue( formData, `${ prefix }[value]`, field.value );
+}
+
 async function submitAtomicForm( payload ) {
 	const ajaxUrl = elementorFrontendConfig?.urls?.ajaxurl;
 
@@ -236,21 +263,7 @@ async function submitAtomicForm( payload ) {
 	formData.append( 'form_name', payload.formName );
 	formData.append( 'referer_title', document?.title ?? '' );
 	formData.append( 'referrer', window?.location?.href ?? '' );
-	payload.formFields.forEach( ( field, index ) => {
-		formData.append( `form_fields[${ index }][id]`, field.id );
-		formData.append( `form_fields[${ index }][type]`, field.type );
-		formData.append( `form_fields[${ index }][label]`, field.label );
-		formData.append( `form_fields[${ index }][name]`, field.name );
-		formData.append( `form_fields[${ index }][options]`, JSON.stringify( field.options ) );
-
-		if ( Array.isArray( field.value ) ) {
-			field.value.forEach( ( value, valueIndex ) => {
-				formData.append( `form_fields[${ index }][value][${ valueIndex }]`, value );
-			} );
-		} else {
-			formData.append( `form_fields[${ index }][value]`, field.value );
-		}
-	} );
+	payload.formFields.forEach( ( field, index ) => appendFormField( formData, field, index ) );
 
 	const response = await fetch( ajaxUrl, {
 		method: 'POST',

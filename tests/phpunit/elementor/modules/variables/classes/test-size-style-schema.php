@@ -14,7 +14,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  * @group Elementor\Modules\Variables\Classes
  * @group Elementor\Modules\Variables\Classes\Size_Style_Schema

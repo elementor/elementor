@@ -1,5 +1,6 @@
 import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { addDocumentClasses } from '@elementor/editor-global-classes';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
@@ -23,7 +24,11 @@ export function loadComponentsStyles( documents: ComponentDocumentsMap ) {
 
 function addStyles( documents: ComponentDocumentsMap ) {
 	const styles = Object.fromEntries(
-		[ ...documents.entries() ].map( ( [ id, document ] ) => [ id, extractStylesFromDocument( document ) ] )
+		[ ...documents.entries() ].map( ( [ id, document ] ) => {
+			addDocumentClasses( id );
+
+			return [ id, extractStylesFromDocument( document ) ];
+		} )
 	);
 
 	dispatch( slice.actions.addStyles( styles ) );
