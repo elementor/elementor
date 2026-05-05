@@ -2,6 +2,9 @@
   "widgetKeys": {
     "e-form-submit-button": [
       { "from": "label", "to": "text" }
+    ],
+    "e-form-textarea": [
+      { "from": "maxlength", "to": "length" }
     ]
   },
   "propTypes": {
@@ -14,6 +17,11 @@
       "fromType": "number",
       "toType": "size",
       "path": "operations/number-to-size.json"
+    },
+    "number-to-number-range": {
+      "fromType": "number",
+      "toType": "number-range",
+      "path": "operations/number-to-number-range.json"
     },
     "html-to-html-v2": {
       "fromType": "html",
