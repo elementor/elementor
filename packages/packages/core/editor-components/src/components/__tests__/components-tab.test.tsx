@@ -36,12 +36,18 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-mcp', () => ( {
-	getAngieSdk: jest.fn().mockImplementation( () => ( {
-		isAngieReady: jest.fn( () => false ),
-		triggerAngie: jest.fn(),
-	} ) ),
-} ) );
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
+		'@elementor/editor-mcp'
+	);
+	return {
+		toolPrompts,
+		getAngieSdk: jest.fn().mockImplementation( () => ( {
+			isAngieReady: jest.fn( () => false ),
+			triggerAngie: jest.fn(),
+		} ) ),
+	};
+} );
 
 jest.mock( '@elementor/editor-current-user' );
 
