@@ -1,4 +1,5 @@
 import {
+	AttachmentTypeControl,
 	ChipsControl,
 	type ControlComponent,
 	DateRangeControl,
@@ -76,6 +77,7 @@ const controlTypes = {
 		layout: 'custom',
 		propTypeUtil: dateRangePropTypeUtil,
 	},
+	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
