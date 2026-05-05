@@ -68,7 +68,7 @@ describe( 'ImportCustomization Page', () => {
 								},
 								{
 									key: 'themeStyleSettings',
-									title: __( 'Theme style settingss', 'elementor' ),
+									title: __( 'Theme style settings', 'elementor' ),
 									order: 2,
 								},
 							],
