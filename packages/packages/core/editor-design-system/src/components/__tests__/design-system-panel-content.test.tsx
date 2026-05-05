@@ -357,5 +357,4 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( onRequestClose ).not.toHaveBeenCalled();
 		} );
 	} );
-
 } );

@@ -294,7 +294,6 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			dispatchSpy2.mockRestore();
 		} );
-
 	} );
 
 	describe( 'URL parameter handling', () => {
