@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Date_Range_Transformer extends Transformer_Base {
+class Time_Range_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( empty( $value ) ) {
 			return null;

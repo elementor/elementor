@@ -58,3 +58,5 @@ export * from './filter-prop-types/filter-functions/color-tone-filter';
 export * from './filter-prop-types/filter-functions/hue-rotate-filter';
 export * from './date-range';
 export * from './date-string';
+export * from './time-range';
+export * from './time-string';
