@@ -186,29 +186,6 @@ function convertPropTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 	return propTypeToJsonSchema( propType );
 }
 
-export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
-	const jsonSchema: JsonSchema7 = {
-		type: 'object',
-		properties: {},
-	};
-
-	for ( const [ key, propType ] of Object.entries( schema ) ) {
-		if ( ! isPropKeyConfigurable( key, propType ) ) {
-			continue;
-		}
-
-		const propSchema = convertPropTypeToJsonSchema( propType );
-		if ( jsonSchema.properties ) {
-			jsonSchema.properties[ key ] = propSchema;
-		}
-
-		// Handle required fields at root level if needed
-		// (typically props are optional unless specified)
-	}
-
-	return jsonSchema;
-}
-
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
 
 export function isPropKeyConfigurable( propKey: string, propType?: PropType ): boolean {
