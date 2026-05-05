@@ -3,8 +3,11 @@
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,6 +23,31 @@ class Test_Import_Utils_Conflict_Resolution extends Elementor_Test_Base {
 
 		( new Global_Class_Post_Type() )->register_post_type();
 		$this->mock_dir = __DIR__ . '/mocks/streaming/global-classes';
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
+			$kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
+			$kit->delete_meta( Global_Classes_Order::META_KEY );
+		}
+
+		$post_ids = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
 	}
 
 	public function test_skip__drops_imported_on_label_conflict() {

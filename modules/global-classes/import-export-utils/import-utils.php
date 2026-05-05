@@ -8,6 +8,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Core\Kits\Documents\Kit;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -32,7 +33,7 @@ class Import_Utils {
 		'failed' => [],
 	];
 
-	public static function import_classes( string $classes_dir, array $options = [] ) {
+	public static function import_classes( string $classes_dir, array $options = [], ?Kit $kit = null ) {
 		$order_file = rtrim( $classes_dir, '/' ) . '/order.json';
 
 		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
@@ -40,7 +41,7 @@ class Import_Utils {
 		}
 
 		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
-		$repository = Global_Classes_Repository::make();
+		$repository = Global_Classes_Repository::make( $kit );
 
 		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
