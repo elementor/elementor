@@ -327,6 +327,26 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->children;
 	}
 
+	public function render_markdown(): string {
+		$children = $this->get_children();
+
+		if ( empty( $children ) ) {
+			return '';
+		}
+
+		$parts = [];
+
+		foreach ( $children as $child ) {
+			$md = $child->render_markdown();
+
+			if ( ! empty( trim( $md ) ) ) {
+				$parts[] = $md;
+			}
+		}
+
+		return implode( "\n\n", $parts );
+	}
+
 	/**
 	 * Get default arguments.
 	 *
