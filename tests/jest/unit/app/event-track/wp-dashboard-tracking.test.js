@@ -41,5 +41,44 @@ describe( 'WpDashboardTracking', () => {
 			expect( dispatchEvent ).toHaveBeenCalledWith( 'my_event', { a: 1 }, { send_immediately: true } );
 		} );
 	} );
+
+	describe( 'isElementorPage', () => {
+		test( 'should return true for valid elementor pages', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				const validUrls = [
+					'https://example.com/wp-admin/post.php?post=8&action=elementor',
+					'https://example.com/wp-admin/admin.php?page=elementor',
+					'https://example.com/wp-admin/admin.php?page=elementor-home',
+					'https://example.com/wp-admin/admin.php?page=e-form-submissions',
+					'https://example.com/wp-admin/post-new.php?post_type=elementor_library',
+					'https://example.com/wp-admin/post-new.php?post_type=e-floating-buttons',
+				];
+
+				validUrls.forEach( ( url ) => {
+					expect( WpDashboardTracking.isElementorPage( url ) ).toBe( true );
+				} );
+			} );
+		} );
+
+		test( 'should return false for invalid elementor pages', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				const invalidUrls = [
+					'https://example.com/wp-admin/post.php?post=8&action=elementor-something',
+					'https://example.com/wp-admin/admin.php?page=elementor-else',
+					'https://example.com/wp-admin/admin.php?page=other',
+					'https://example.com/wp-admin/post.php?post=8&action=edit',
+					'https://example.com/wp-admin/plugins.php',
+				];
+
+				invalidUrls.forEach( ( url ) => {
+					expect( WpDashboardTracking.isElementorPage( url ) ).toBe( false );
+				} );
+			} );
+		} );
+	} );
 } );
 

@@ -193,7 +193,7 @@ export default class WpDashboardTracking {
 			const elementorPages = [ 'elementor', 'elementor-home', 'e-form-submissions' ];
 			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
 
-			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
+			return ( page && elementorPages.includes( page ) ) ||
 				( postType && elementorPostTypes.includes( postType ) ) ||
 				( action && action.includes( 'elementor' ) );
 		} catch ( error ) {
