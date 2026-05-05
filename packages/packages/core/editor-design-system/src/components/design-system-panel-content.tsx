@@ -1,12 +1,19 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ClassManagerPanelEmbedded } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type DesignSystemTab, getInitialDesignSystemTab, persistDesignSystemTab } from '../initial-tab';
+import {
+	type DesignSystemTab,
+	getInitialDesignSystemTab,
+	notifyDesignSystemTabChange,
+	persistDesignSystemTab,
+} from '../initial-tab';
 
 const stickyTabRowStyles = {
 	position: 'sticky' as const,
@@ -22,7 +29,45 @@ export type DesignSystemPanelContentProps = {
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
+	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
+	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
+
+	useEffect( () => {
+		notifyDesignSystemTabChange( currentTab );
+	}, [ currentTab ] );
+
+	useEffect( () => {
+		const handler = ( event: Event ) => {
+			const tab = ( event as CustomEvent< { tab: DesignSystemTab } > ).detail?.tab;
+			if ( ! tab ) {
+				return;
+			}
+			setCurrentTab( tab );
+			persistDesignSystemTab( tab );
+			notifyDesignSystemTabChange( tab );
+		};
+
+		window.addEventListener( 'elementor/design-system/set-tab', handler as EventListener );
+
+		return () => {
+			window.removeEventListener( 'elementor/design-system/set-tab', handler as EventListener );
+		};
+	}, [] );
+
+	const handleHeaderClose = () => {
+		if ( currentTab === 'variables' && variablesCloseAttemptRef.current ) {
+			variablesCloseAttemptRef.current();
+			return;
+		}
+
+		if ( currentTab === 'classes' && classesCloseAttemptRef.current ) {
+			classesCloseAttemptRef.current();
+			return;
+		}
+
+		void onRequestClose();
+	};
 
 	return (
 		<ThemeProvider>
@@ -35,7 +80,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
 							sx={ { flexShrink: 0, marginLeft: 'auto' } }
-							onClick={ () => void onRequestClose() }
+							onClick={ () => void handleHeaderClose() }
 						/>
 					</Stack>
 				</PanelHeader>
@@ -59,6 +104,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 									getTabsProps().onChange( e, newValue );
 									setCurrentTab( newValue );
 									persistDesignSystemTab( newValue );
+									notifyDesignSystemTabChange( newValue );
 								} }
 							>
 								<Tab
@@ -85,8 +131,26 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 								display: 'flex',
 								flexDirection: 'column',
 								overflow: 'hidden',
+								pt: 1,
 							} }
-						></Box>
+						>
+							{ currentTab === 'variables' && (
+								<VariablesManagerPanelEmbedded
+									onRequestClose={ onRequestClose }
+									onExposeCloseAttempt={ ( fn ) => {
+										variablesCloseAttemptRef.current = fn;
+									} }
+								/>
+							) }
+							{ currentTab === 'classes' && (
+								<ClassManagerPanelEmbedded
+									onRequestClose={ onRequestClose }
+									onExposeCloseAttempt={ ( fn ) => {
+										classesCloseAttemptRef.current = fn;
+									} }
+								/>
+							) }
+						</Box>
 					</Stack>
 				</PanelBody>
 			</Panel>

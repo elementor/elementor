@@ -13,7 +13,7 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 				classId: z
 					.string()
 					.describe(
-						'The ID of the class, not visible to the user. To retreive the name of the class, use the "list-global-classes" tool'
+						'The ID of the class, not visible to the user. To retrieve the name of the class, use the "list-global-classes" tool'
 					),
 				usages: z.array(
 					z.object( {

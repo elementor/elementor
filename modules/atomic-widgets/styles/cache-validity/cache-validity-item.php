@@ -118,7 +118,7 @@ class Cache_Validity_Item {
 		}
 
 		if ( count( $parent['children'] ) === 1 ) {
-			// if the invalidated node is the parent's o nly child - normalize the data
+			// if the invalidated node is the parent's only child - normalize the data
 			$data = $this->get_normalized_data( $data, $keys, $last_key );
 
 			$this->update_stored_data( $data );
