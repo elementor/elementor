@@ -45,6 +45,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			}
 			setCurrentTab( tab );
 			persistDesignSystemTab( tab );
+			notifyDesignSystemTabChange( tab );
 		};
 
 		window.addEventListener( 'elementor/design-system/set-tab', handler as EventListener );
@@ -103,6 +104,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 									getTabsProps().onChange( e, newValue );
 									setCurrentTab( newValue );
 									persistDesignSystemTab( newValue );
+									notifyDesignSystemTabChange( newValue );
 								} }
 							>
 								<Tab
