@@ -5,8 +5,10 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { ConflictOptions } from './components/conflict-options';
 import { useDialogState } from './hooks/use-dialog-state';
-import { useImportRequest } from './hooks/use-import-request';
+import { DesignSystemUploadValidationError, useImportRequest } from './hooks/use-import-request';
 import { notifyImportFailure, notifyImportInProgress, notifyImportSuccess } from './import-notifications';
+import { designSystemFileType, trackDesignSystem } from './tracking';
+import { type ConflictStrategy } from './types';
 
 const ALLOWED_FILE_TYPES: `${ string }/${ string }`[] = [ 'application/zip' ];
 const FILE_INPUT_ACCEPT = 'application/zip,.zip';
@@ -18,6 +20,7 @@ type Props = {
 };
 
 const reopenSelf = () => {
+	trackDesignSystem( { event: 'importOpened' } );
 	openDialog( {
 		component: <ImportDesignSystemDialog onClose={ closeDialog } />,
 	} );
@@ -29,18 +32,35 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 
 	const isImportEnabled = Boolean( file && conflictStrategy );
 
+	const handleFileSelected = ( selected: File ) => {
+		setFile( selected );
+		trackDesignSystem( { event: 'fileSelected', file_type: designSystemFileType } );
+	};
+
+	const handleConflictChange = ( choice: ConflictStrategy ) => {
+		setConflictStrategy( choice );
+		trackDesignSystem( { event: 'conflictChoice', choice } );
+	};
+
 	const handleImport = async () => {
 		if ( ! file || ! conflictStrategy ) {
 			return;
 		}
 
+		trackDesignSystem( { event: 'confirmed', conflict_choice: conflictStrategy } );
 		notifyImportInProgress();
 		onClose();
 
 		try {
 			await importMutation.mutateAsync( { file, conflictStrategy } );
+			trackDesignSystem( { event: 'imported' } );
 			notifyImportSuccess();
-		} catch {
+		} catch ( error ) {
+			if ( error instanceof DesignSystemUploadValidationError ) {
+				trackDesignSystem( { event: 'validationFailed', file_type: designSystemFileType } );
+			} else {
+				trackDesignSystem( { event: 'importFailed' } );
+			}
 			notifyImportFailure( reopenSelf );
 		}
 	};
@@ -56,7 +76,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 						<FileUploadRow file={ file } onRemove={ () => setFile( null ) } />
 					) : (
 						<FileUploadDropzone
-							onFileSelected={ setFile }
+							onFileSelected={ handleFileSelected }
 							allowedFileTypes={ ALLOWED_FILE_TYPES }
 							accept={ FILE_INPUT_ACCEPT }
 							regionLabel={ __( 'Design system file dropzone', 'elementor' ) }
@@ -67,7 +87,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 							) }
 						/>
 					) }
-					<ConflictOptions value={ conflictStrategy } onChange={ setConflictStrategy } />
+					<ConflictOptions value={ conflictStrategy } onChange={ handleConflictChange } />
 				</Stack>
 			</DialogContent>
 			<DialogActions>

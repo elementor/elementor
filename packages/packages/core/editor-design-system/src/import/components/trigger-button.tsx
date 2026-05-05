@@ -7,8 +7,9 @@ import { __ } from '@wordpress/i18n';
 
 import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
+import { trackDesignSystem } from '../tracking';
 
-export const TriggerButton = () => {
+export const ImportTriggerButton = () => {
 	const isImporting = useIsMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 	const label = isImporting
@@ -16,6 +17,7 @@ export const TriggerButton = () => {
 		: __( 'Import Design System', 'elementor' );
 
 	const handleClick = () => {
+		trackDesignSystem( { event: 'importOpened' } );
 		openDialog( {
 			component: <ImportDesignSystemDialog onClose={ closeDialog } />,
 		} );
