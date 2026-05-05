@@ -218,7 +218,11 @@ class Global_Classes_Repository {
 		$this->labels()->set_labels( $label_map );
 
 		if ( ! $is_preview ) {
-			$touched_items = array_intersect_key( $items, array_flip( array_merge( array_values( $to_create ), array_values( $to_update ) ) ) );
+			$touched_ids = array_merge( array_values( $to_create ), array_values( $to_update ) );
+			$touched_items = array_intersect_key(
+				$items,
+				$touched_ids
+			);
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, array_values( $to_delete ) );
 
 			$this->each_class_id_batch( array_values( $to_update ), function ( string $class_id ) {

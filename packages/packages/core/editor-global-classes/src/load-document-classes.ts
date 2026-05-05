@@ -41,8 +41,7 @@ export async function loadCurrentDocumentClasses() {
 		return;
 	}
 
-	const [ , previewPostRes, frontendPostRes ] = await Promise.all( [
-		apiClient.all( 'frontend' ),
+	const [ previewPostRes, frontendPostRes ] = await Promise.all( [
 		apiClient.getStylesForPost( postId, 'preview' ),
 		apiClient.getStylesForPost( postId, 'frontend' ),
 	] );

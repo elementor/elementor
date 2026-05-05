@@ -80,6 +80,8 @@ describe( '<LogicHooks />', () => {
 		} );
 
 		// First call: reset with empty items to establish order and labels baseline
+		// TODO - fix the issue with fetching global classes after the first render
+		// causing the marionette rendered canvas to stay outdated (i.e. - global classes classNames rendered wrong)
 		expect( subscriber ).toHaveBeenNthCalledWith( 1, {}, {} );
 
 		// Second call: loaded with actual class styles

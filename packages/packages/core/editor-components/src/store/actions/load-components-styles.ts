@@ -23,10 +23,12 @@ export function loadComponentsStyles( documents: ComponentDocumentsMap ) {
 }
 
 function addStyles( documents: ComponentDocumentsMap ) {
-	[ ...documents.entries() ].forEach( ( [ id ] ) => addDocumentClasses( id ) );
-
 	const styles = Object.fromEntries(
-		[ ...documents.entries() ].map( ( [ id, document ] ) => [ id, extractStylesFromDocument( document ) ] )
+		[ ...documents.entries() ].map( ( [ id, document ] ) => {
+			addDocumentClasses( id );
+
+			return [ id, extractStylesFromDocument( document ) ];
+		} )
 	);
 
 	dispatch( slice.actions.addStyles( styles ) );
