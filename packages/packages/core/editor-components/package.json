@@ -56,7 +56,7 @@
     "@elementor/editor-ui": "4.1.0",
     "@elementor/editor-v1-adapters": "4.1.0",
     "@elementor/http-client": "4.1.0",
-    "@elementor/icons": "^1.68.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/events": "4.1.0",
     "@elementor/query": "4.1.0",
     "@elementor/schema": "4.1.0",
