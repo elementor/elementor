@@ -362,7 +362,7 @@ class Global_Classes_Repository {
 
 		$this->each_class_id_batch( $order, function ( string $class_id ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id );
-			
+
 			if ( $post ) {
 				$post->delete();
 			}

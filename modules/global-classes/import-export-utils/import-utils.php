@@ -97,7 +97,10 @@ class Import_Utils {
 		foreach ( $imported_classes_order as $import_entry ) {
 			[ 'is_valid' => $is_valid, 'error' => $validation_error ] = self::validate_class_entry( $import_entry );
 			if ( ! $is_valid ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $validation_error ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => $validation_error,
+				];
 				continue;
 			}
 
@@ -109,25 +112,37 @@ class Import_Utils {
 			}
 
 			if ( 'replace' !== $action && count( $order_set ) >= Global_Classes_REST_API::MAX_ITEMS ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_LIMIT_REACHED ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_LIMIT_REACHED,
+				];
 				continue;
 			}
 
 			$class_file = $classes_dir . '/' . $import_entry['id'] . '.json';
 			if ( ! file_exists( $class_file ) ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_FILE_NOT_FOUND ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_FILE_NOT_FOUND,
+				];
 				continue;
 			}
 
 			$raw_item = json_decode( file_get_contents( $class_file ), true );
 			if ( ! is_array( $raw_item ) ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => self::ERROR_INVALID_JSON ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => self::ERROR_INVALID_JSON,
+				];
 				continue;
 			}
 
 			[ 'is_valid' => $is_valid, 'error' => $sanitize_error, 'sanitized' => $sanitized_item ] = self::sanitize_item( $import_entry['id'], $raw_item, $style_parser );
 			if ( ! $is_valid ) {
-				$result['failed'][] = [ 'import_entry' => $import_entry, 'error' => $sanitize_error ];
+				$result['failed'][] = [
+					'import_entry' => $import_entry,
+					'error' => $sanitize_error,
+				];
 				continue;
 			}
 
@@ -138,7 +153,10 @@ class Import_Utils {
 				$modified_classes[] = $existing_id;
 				$result['replaced'][] = [
 					'import_entry' => $import_entry,
-					'result_entry' => [ 'id' => $existing_id, 'label' => $import_entry['label'] ],
+					'result_entry' => [
+						'id' => $existing_id,
+						'label' => $import_entry['label'],
+					],
 				];
 				continue;
 			}
@@ -159,12 +177,15 @@ class Import_Utils {
 				$sanitized_item['id'] = $new_id;
 			}
 
-			self::create_new_class($sanitized_item);
+			self::create_new_class( $sanitized_item );
 			$order_set[ $new_id ] = true;
 			$added_classes_order[] = $new_id;
 			$added_classes_labels[ $new_id ] = $sanitized_item['label'];
 
-			$result_entry = [ 'id' => $new_id, 'label' => $sanitized_item['label'] ];
+			$result_entry = [
+				'id' => $new_id,
+				'label' => $sanitized_item['label'],
+			];
 
 			if ( 'rename' === $action ) {
 				$result['renamed'][] = [
@@ -216,7 +237,10 @@ class Import_Utils {
 
 	private static function validate_class_entry( $class_entry ): array {
 		if ( ! is_array( $class_entry ) ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_NOT_ARRAY ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_NOT_ARRAY,
+			];
 		}
 
 		$missing_fields = [];
@@ -228,10 +252,16 @@ class Import_Utils {
 		}
 
 		if ( ! empty( $missing_fields ) ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_MISSING_FIELDS . ':' . implode( ',', $missing_fields ) ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_MISSING_FIELDS . ':' . implode( ',', $missing_fields ),
+			];
 		}
 
-		return [ 'is_valid' => true, 'error' => null ];
+		return [
+			'is_valid' => true,
+			'error' => null,
+		];
 	}
 
 	private static function resolve_item_action(
@@ -262,16 +292,28 @@ class Import_Utils {
 		$item_result = $style_parser->parse( $item );
 
 		if ( ! $item_result->is_valid() ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_INVALID_PROPS, 'sanitized' => null ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_INVALID_PROPS,
+				'sanitized' => null,
+			];
 		}
 
 		$sanitized_item = $item_result->unwrap();
 
 		if ( $item_id !== $sanitized_item['id'] ) {
-			return [ 'is_valid' => false, 'error' => self::ERROR_ID_MISMATCH, 'sanitized' => null ];
+			return [
+				'is_valid' => false,
+				'error' => self::ERROR_ID_MISMATCH,
+				'sanitized' => null,
+			];
 		}
 
-		return [ 'is_valid' => true, 'error' => null, 'sanitized' => $sanitized_item ];
+		return [
+			'is_valid' => true,
+			'error' => null,
+			'sanitized' => $sanitized_item,
+		];
 	}
 
 	private static function build_label_to_id_map_from_labels( array $id_to_label ): array {

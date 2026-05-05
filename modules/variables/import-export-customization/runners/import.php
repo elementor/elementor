@@ -84,7 +84,10 @@ class Import extends Import_Runner_Base {
 			}
 
 			$result['created'][] = [
-				'import_entry' => [ 'id' => $variable->id(), 'label' => $variable->label() ],
+				'import_entry' => [
+					'id' => $variable->id(),
+					'label' => $variable->label(),
+				],
 			];
 		}
 
@@ -162,7 +165,10 @@ class Import extends Import_Runner_Base {
 				continue;
 			}
 
-			$import_entry = [ 'id' => $variable->id(), 'label' => $variable->label() ];
+			$import_entry = [
+				'id' => $variable->id(),
+				'label' => $variable->label(),
+			];
 			$label_lower = strtolower( $variable->label() );
 			$has_label_conflict = in_array( $label_lower, $existing_labels, true );
 
@@ -181,7 +187,10 @@ class Import extends Import_Runner_Base {
 
 					$result['replaced'][] = [
 						'import_entry' => $import_entry,
-						'result_entry' => [ 'id' => $existing_entry['id'], 'label' => $variable->label() ],
+						'result_entry' => [
+							'id' => $existing_entry['id'],
+							'label' => $variable->label(),
+						],
 					];
 					continue;
 				}
@@ -208,7 +217,10 @@ class Import extends Import_Runner_Base {
 			$existing->add_variable( $new_variable );
 
 			$was_renamed = strtolower( $new_label ) !== $label_lower;
-			$result_entry = [ 'id' => $new_id, 'label' => $new_label ];
+			$result_entry = [
+				'id' => $new_id,
+				'label' => $new_label,
+			];
 
 			if ( $was_renamed ) {
 				$result['renamed'][] = [
