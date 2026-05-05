@@ -81,7 +81,7 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
-	const userQuotaPremissions = useQuotaPermissions( props.propTypeKey );
+	const userQuotaPermissions = useQuotaPermissions( props.propTypeKey );
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -127,7 +127,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
-				disabled={ ! userQuotaPremissions.canAdd() }
+				disabled={ ! userQuotaPermissions.canAdd() }
 			/>
 		);
 	}
