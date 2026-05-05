@@ -319,7 +319,7 @@
 		padding: 0;
 		border: none;
 		background: none;
-		color: var(--e-pink-900);
+		color: $e-pink-900;
 		font-size: 14px;
 		font-weight: 500;
 		cursor: pointer;
@@ -336,5 +336,36 @@
 
 	&--search-footer {
 		border-block-start: var(--e-a-border);
+	}
+}
+
+.elementor-panel-category-custom-widgets-empty {
+	grid-column: 1 / -1;
+    width: 100%;
+    padding: 12px 20px;
+	text-align: center;
+
+	&__message {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.6;
+		color: var(--e-a-color-txt-muted);
+	}
+}
+
+.elementor-panel-heading.elementor-panel-category-title .elementor-panel-custom-widgets__cta--heading {
+	margin-inline-start: auto;
+	padding: 4px 10px;
+	border: none;
+	background: none;
+	color: $e-pink-900;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	font-family: var(--e-a-font-family);
+	flex-shrink: 0;
+
+	&:hover {
+		opacity: 0.8;
 	}
 }
