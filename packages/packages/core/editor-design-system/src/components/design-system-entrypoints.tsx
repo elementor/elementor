@@ -25,10 +25,7 @@ export function DesignSystemEntrypoints() {
 	const { isOpen } = usePanelStatus();
 
 	const isOpenRef = useRef( isOpen );
-
-	useEffect( () => {
-		isOpenRef.current = isOpen;
-	}, [ isOpen ] );
+	isOpenRef.current = isOpen;
 
 	useEffect( () => {
 		const handler = ( event: Event ) => {
