@@ -38,8 +38,11 @@ export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { DateRangeControl } from './controls/date-range-control';
+export { TimeStringControl } from './controls/time-string-control';
+export { TimeRangeControl } from './controls/time-range-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
+export { AttachmentTypeControl } from './controls/attachment-type-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
 
 // components

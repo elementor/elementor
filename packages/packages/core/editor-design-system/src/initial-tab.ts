@@ -30,6 +30,7 @@ export function getInitialDesignSystemTab(): DesignSystemTab {
 		const t = pendingTabForOpen;
 		pendingTabForOpen = null;
 		activeTabInMemory = t;
+		persistDesignSystemTab( t );
 		return t;
 	}
 	const t = readStoredTab();
