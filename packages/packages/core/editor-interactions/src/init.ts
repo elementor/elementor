@@ -11,7 +11,11 @@ import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
-import { EDITOR_INTERACTIONS_MCP_INSTRUCTIONS, initMcpInteractions } from './mcp';
+import {
+	EDITOR_INTERACTIONS_MCP_DESCRIPTION,
+	EDITOR_INTERACTIONS_MCP_SHORT_DESCRIPTION,
+	initMcpInteractions,
+} from './mcp';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
 export function init() {
@@ -62,7 +66,12 @@ export function init() {
 			component: Repeat,
 		} );
 
-		initMcpInteractions( getMCPByDomain( 'interactions', { instructions: EDITOR_INTERACTIONS_MCP_INSTRUCTIONS } ) );
+		initMcpInteractions(
+			getMCPByDomain( 'interactions', {
+				description: EDITOR_INTERACTIONS_MCP_DESCRIPTION,
+				instructions: EDITOR_INTERACTIONS_MCP_SHORT_DESCRIPTION,
+			} )
+		);
 	} catch ( error ) {
 		throw error;
 	}
