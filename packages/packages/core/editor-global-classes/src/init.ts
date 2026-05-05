@@ -68,7 +68,16 @@ export function init() {
 	} );
 
 	initMcpIntegration(
-		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
+		getMCPByDomain( 'classes', {
+			instructions: 'MCP server for management of Elementor global classes',
+			description: `Everything related to V4 ( Atomic ) global classes.
+# Global classes
+- Create/update/delete global classes
+- Get list of global classes
+- Get details of a global class
+- Get details of a global class
+`,
+		} ),
 		getMCPByDomain( 'canvas' )
 	);
 }

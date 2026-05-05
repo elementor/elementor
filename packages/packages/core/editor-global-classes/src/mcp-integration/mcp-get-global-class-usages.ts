@@ -3,6 +3,7 @@ import { z } from '@elementor/schema';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type CssClassUsageContent, type EnhancedCssClassUsageContent } from '../components/css-class-usage/types';
+import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry ) {
 	const { addTool } = reg;
@@ -32,19 +33,15 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 			intelligencePriority: 0.6,
 			speedPriority: 0.8,
 		},
-		description: `Retreive the usages of global-classes ACCROSS PAGES designed by Elementor editor.
+		description: `Retrieve usages of global classes across all Elementor pages. Heavy operation — scans every page in the site.
 
-## Prequisites: CRITICAL
-- The list of global classes and their applid values is available at resource uri elementor://global-classes
+## When to use:
+- Before deleting or radically changing a class — to understand cross-page side effects and decide whether to consult the user.
+- To identify unused global classes for cleanup.
 
-## When to use this tool:
-- When a user requests to see where a specific global class is being used accross the site.
-- When you need to manage or clean up unused global classes.
-- Before deleting a global class, to ensure it is not in use in any other pages.
-
-## When NOT to use this tool:
-- For getting the list of global classes, refer to the resource at uri elementor://global-classes
-`,
+## When NOT to use:
+- To list global classes themselves — use the global-classes resource instead (this tool returns usages, not the class list).`,
+		requiredResources: [ { description: 'Global classes list', uri: GLOBAL_CLASSES_URI } ],
 		outputSchema: globalClassesUsageSchema,
 		handler: async () => {
 			const data = await fetchCssClassUsage();
