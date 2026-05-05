@@ -7,6 +7,8 @@ export const EXPORT_DESIGN_SYSTEM_MUTATION_KEY = [ 'design-system-export' ] as c
 
 export const DEFAULT_EXPORT_FILE_NAME = 'design-system-export.zip';
 
+const EXPORT_REQUEST_TIMEOUT_MS = 60_000;
+
 export type ExportResponseData = {
 	manifest?: unknown;
 	file: string;
@@ -49,7 +51,8 @@ export const useExportRequest = () => {
 			try {
 				const { data } = await httpService().post< HttpResponse< ExportResponseData > >(
 					`${ EXPORT_BASE_PATH }/export`,
-					EXPORT_REQUEST_BODY
+					EXPORT_REQUEST_BODY,
+					{ timeout: EXPORT_REQUEST_TIMEOUT_MS }
 				);
 
 				return {
