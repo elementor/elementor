@@ -39,7 +39,7 @@ function dispatchWindowEvent( type: string, detail?: Record< string, unknown > )
 function capturedListenToHandlers( eventKey: string ): Array< () => void > {
 	return jest
 		.mocked( listenTo )
-		.mock.calls.filter( ( [ event ] ) => event === eventKey )
+		.mock.calls.filter( ( [ event ] ) => ( event as unknown as string ) === eventKey )
 		.map( ( [ , handler ] ) => handler as () => void );
 }
 
@@ -63,7 +63,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			close: mockClose,
 		} );
 
-		jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false } );
+		jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
 		jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
 
 		window.history.pushState( {}, '', '/' );
@@ -78,7 +78,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
-			const dispatched = dispatchSpy.mock.calls.map( ( [ e ] ) => ( e as Event ).type );
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
 			expect( dispatched ).toContain( EVENT_OPEN_VARIABLES );
 
 			dispatchSpy.mockRestore();
@@ -92,7 +92,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-			const dispatched = dispatchSpy.mock.calls.map( ( [ e ] ) => ( e as Event ).type );
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
 			expect( dispatched ).toContain( EVENT_OPEN_CLASSES );
 
 			dispatchSpy.mockRestore();
@@ -106,9 +106,9 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'invalid' } );
 			} );
 
-			const relevant = dispatchSpy.mock.calls
-				.map( ( [ e ] ) => ( e as Event ).type )
-				.filter( ( t ) => [ EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t ) );
+		const relevant = dispatchSpy.mock.calls
+			.map( ( [ e ]: [ Event ] ) => ( e as Event ).type )
+			.filter( ( t: string ) => [ EVENT_OPEN_VARIABLES, EVENT_OPEN_CLASSES, EVENT_SET_TAB ].includes( t ) );
 			expect( relevant ).toHaveLength( 0 );
 
 			dispatchSpy.mockRestore();
@@ -117,7 +117,7 @@ describe( 'DesignSystemEntrypoints', () => {
 
 	describe( 'toggle event — panel is open', () => {
 		beforeEach( () => {
-			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true } );
+			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
 		} );
 
 		it( 'should close the panel when toggled with the same tab that is already active', () => {
@@ -142,21 +142,21 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-			const dispatched = dispatchSpy.mock.calls.map( ( [ e ] ) => ( {
-				type: ( e as Event ).type,
-				detail: ( e as CustomEvent ).detail,
-			} ) );
+		const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
+			type: ( e as Event ).type,
+			detail: ( e as CustomEvent ).detail,
+		} ) );
 
-			expect( dispatched ).toContainEqual(
-				expect.objectContaining( {
-					type: EVENT_SET_TAB,
-					detail: { tab: 'classes' },
-				} )
-			);
-			expect( mockClose ).not.toHaveBeenCalled();
+		expect( dispatched ).toContainEqual(
+			expect.objectContaining( {
+				type: EVENT_SET_TAB,
+				detail: { tab: 'classes' },
+			} )
+		);
+		expect( mockClose ).not.toHaveBeenCalled();
 
-			dispatchSpy.mockRestore();
-		} );
+		dispatchSpy.mockRestore();
+	} );
 
 		it( 'should close classes panel when toggled with classes while classes is active', () => {
 			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
@@ -180,20 +180,20 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
-			const dispatched = dispatchSpy.mock.calls.map( ( [ e ] ) => ( {
-				type: ( e as Event ).type,
-				detail: ( e as CustomEvent ).detail,
-			} ) );
+		const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( {
+			type: ( e as Event ).type,
+			detail: ( e as CustomEvent ).detail,
+		} ) );
 
-			expect( dispatched ).toContainEqual(
-				expect.objectContaining( {
-					type: EVENT_SET_TAB,
-					detail: { tab: 'variables' },
-				} )
-			);
+		expect( dispatched ).toContainEqual(
+			expect.objectContaining( {
+				type: EVENT_SET_TAB,
+				detail: { tab: 'variables' },
+			} )
+		);
 
-			dispatchSpy.mockRestore();
-		} );
+		dispatchSpy.mockRestore();
+	} );
 	} );
 
 	describe( 'open from variables/classes events (via route handoff)', () => {
@@ -254,7 +254,7 @@ describe( 'DesignSystemEntrypoints', () => {
 
 	describe( 'tab persistence across close and reopen', () => {
 		it( 'should reopen with the classes tab after user switched to classes then closed', async () => {
-			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true } );
+			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
 			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
 
 			const { unmount } = render( <DesignSystemEntrypoints /> );
@@ -265,7 +265,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-			const setTabCall = dispatchSpy.mock.calls.find( ( [ e ] ) => ( e as Event ).type === EVENT_SET_TAB );
+			const setTabCall = dispatchSpy.mock.calls.find( ( [ e ]: [ Event ] ) => ( e as Event ).type === EVENT_SET_TAB );
 			expect( setTabCall ).toBeDefined();
 
 			dispatchSpy.mockRestore();
@@ -276,7 +276,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				open: mockOpen,
 				close: mockClose,
 			} );
-			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false } );
+			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
 			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'classes' );
 
 			const dispatchSpy2 = jest.spyOn( window, 'dispatchEvent' );
@@ -287,7 +287,7 @@ describe( 'DesignSystemEntrypoints', () => {
 				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
-			const dispatched = dispatchSpy2.mock.calls.map( ( [ e ] ) => ( e as Event ).type );
+			const dispatched = dispatchSpy2.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
 			expect( dispatched ).toContain( EVENT_OPEN_CLASSES );
 
 			dispatchSpy2.mockRestore();

@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import EditorPage from '../../../../pages/editor-page';
+import { dismissClassManagerIntro } from '../global-classes/utils';
 
 export default class DesignSystemPage {
 	private readonly page: Page;
@@ -17,7 +18,7 @@ export default class DesignSystemPage {
 	}
 
 	get panelHeading(): Locator {
-		return this.panel.getByRole( 'heading', { level: 2 } );
+		return this.panel.getByRole( 'heading', { level: 2, name: 'Design system' } );
 	}
 
 	get closeButton(): Locator {
@@ -72,16 +73,8 @@ export default class DesignSystemPage {
 		await editor.selectElement( elementId );
 		await editor.v4Panel.openTab( 'style' );
 		await this.page.getByRole( 'button', { name: 'Class Manager' } ).click();
-
-		const gotItButton = this.page
-			.getByRole( 'dialog' )
-			.filter( { hasText: "Don't show this again" } )
-			.getByRole( 'button', { name: 'Got it introduction' } );
-
-		if ( await gotItButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-			await gotItButton.click();
-		}
-
+		await this.dismissUnsavedChangesDialogIfVisible();
+		await dismissClassManagerIntro( this.page );
 		await this.panelHeading.waitFor( { state: 'visible' } );
 	}
 
