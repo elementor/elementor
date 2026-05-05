@@ -42,11 +42,11 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertArrayHasKey( 'data', $result );
-		$this->assertArrayHasKey( 'e-gv-123', $result['data'] );
-		$this->assertArrayHasKey( 'e-gv-456', $result['data'] );
-		$this->assertEquals( 'Primary Color', $result['data']['e-gv-123']['label'] );
-		$this->assertEquals( 'Primary Font', $result['data']['e-gv-456']['label'] );
+		$this->assertCount( 2, $result['created'] );
+		$this->assertEmpty( $result['renamed'] );
+		$this->assertEmpty( $result['replaced'] );
+		$this->assertEmpty( $result['skipped'] );
+		$this->assertEmpty( $result['failed'] );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$repository = new Variables_Repository( $kit );
@@ -76,7 +76,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertSame( [], $result );
+		$this->assertSame( Import_Runner::EMPTY_RESULT, $result );
 
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$saved = $kit->get_json_meta( self::VARIABLES_META_KEY );
@@ -92,7 +92,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		], [] );
 
 		// Assert.
-		$this->assertSame( [], $result );
+		$this->assertSame( Import_Runner::EMPTY_RESULT, $result );
 	}
 
 	public function test_import__skips_deleted_variables() {

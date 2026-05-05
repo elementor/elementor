@@ -16,6 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import extends Import_Runner_Base {
+	const EMPTY_RESULT = [
+		'created' => [],
+		'renamed' => [],
+		'replaced' => [],
+		'skipped' => [],
+		'failed' => [],
+	];
+
 	public static function get_name(): string {
 		return 'global-variables';
 	}
@@ -45,7 +53,7 @@ class Import extends Import_Runner_Base {
 		$variables_data = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
 
 		if ( ! $kit || ! $variables_data || empty( $variables_data['data'] ) ) {
-			return [];
+			return self::EMPTY_RESULT;
 		}
 
 		$repository = new Variables_Repository( $kit );
@@ -55,16 +63,32 @@ class Import extends Import_Runner_Base {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
 			$this->save_collection( $repository, $imported_collection );
 
-			return $variables_data;
+			return $this->build_override_all_result( $imported_collection );
 		}
 
 		$existing_collection = $this->get_existing_collection( $repository, $imported_data );
 		$imported_collection = Variables_Collection::hydrate( $variables_data );
 
-		$resolved_collection = $this->resolve_collections( $existing_collection, $imported_collection, $conflict_resolution );
-		$this->save_collection( $repository, $resolved_collection );
+		$result = $this->resolve_collections( $existing_collection, $imported_collection, $conflict_resolution );
+		$this->save_collection( $repository, $existing_collection );
 
-		return $variables_data;
+		return $result;
+	}
+
+	private function build_override_all_result( Variables_Collection $imported_collection ): array {
+		$result = self::EMPTY_RESULT;
+
+		foreach ( $imported_collection->all() as $variable ) {
+			if ( $variable->is_deleted() ) {
+				continue;
+			}
+
+			$result['created'][] = [
+				'import_entry' => [ 'id' => $variable->id(), 'label' => $variable->label() ],
+			];
+		}
+
+		return $result;
 	}
 
 	private function resolve_conflict_resolution( array $data ): string {
@@ -126,20 +150,24 @@ class Import extends Import_Runner_Base {
 		Variables_Collection $existing,
 		Variables_Collection $imported,
 		string $conflict_resolution
-	): Variables_Collection {
+	): array {
 		$existing_labels = $this->get_existing_labels( $existing );
 		$existing_label_type_map = $this->build_label_type_map( $existing );
 		$existing_ids = array_keys( $existing->all() );
+
+		$result = self::EMPTY_RESULT;
 
 		foreach ( $imported->all() as $variable ) {
 			if ( $variable->is_deleted() ) {
 				continue;
 			}
 
+			$import_entry = [ 'id' => $variable->id(), 'label' => $variable->label() ];
 			$label_lower = strtolower( $variable->label() );
 			$has_label_conflict = in_array( $label_lower, $existing_labels, true );
 
 			if ( $has_label_conflict && 'skip' === $conflict_resolution ) {
+				$result['skipped'][] = [ 'import_entry' => $import_entry ];
 				continue;
 			}
 
@@ -150,6 +178,11 @@ class Import extends Import_Runner_Base {
 				if ( $type_matches ) {
 					$existing_var = $existing->get( $existing_entry['id'] );
 					$existing_var->set_value( $variable->value() );
+
+					$result['replaced'][] = [
+						'import_entry' => $import_entry,
+						'result_entry' => [ 'id' => $existing_entry['id'], 'label' => $variable->label() ],
+					];
 					continue;
 				}
 			}
@@ -173,9 +206,21 @@ class Import extends Import_Runner_Base {
 			] );
 
 			$existing->add_variable( $new_variable );
+
+			$was_renamed = strtolower( $new_label ) !== $label_lower;
+			$result_entry = [ 'id' => $new_id, 'label' => $new_label ];
+
+			if ( $was_renamed ) {
+				$result['renamed'][] = [
+					'import_entry' => $import_entry,
+					'result_entry' => $result_entry,
+				];
+			} else {
+				$result['created'][] = [ 'import_entry' => $import_entry ];
+			}
 		}
 
-		return $existing;
+		return $result;
 	}
 
 	private function build_label_type_map( Variables_Collection $collection ): array {
