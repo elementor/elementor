@@ -18,7 +18,7 @@ export default function useActionProps() {
 						prompt: CREATE_WIDGET_PROMPT,
 						entry_point: 'top_bar',
 					},
-				} ),
+				} )
 			);
 		},
 		selected: false,
