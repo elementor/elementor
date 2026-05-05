@@ -658,7 +658,6 @@ class Widget_Accordion extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
-
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
 

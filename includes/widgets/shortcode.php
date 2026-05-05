@@ -170,7 +170,9 @@ class Widget_Shortcode extends Widget_Base {
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
 		$shortcode = $settings['shortcode'] ?? '';
-		if ( empty( $shortcode ) ) { return ''; }
+		if ( empty( $shortcode ) ) {
+			return '';
+		}
 		$output = do_shortcode( $shortcode );
 		return Utils::html_to_plain_text( $output );
 	}

@@ -972,7 +972,9 @@ class Widget_Icon_Box extends Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$title = Utils::html_to_plain_text( $settings['title_text'] ?? '' );
 		$description = Utils::html_to_plain_text( $settings['description_text'] ?? '' );
-		if ( empty( $title ) && empty( $description ) ) { return ''; }
+		if ( empty( $title ) && empty( $description ) ) {
+			return '';
+		}
 		$parts = [];
 		if ( ! empty( $title ) ) {
 			if ( ! empty( $settings['link']['url'] ) ) {
@@ -981,7 +983,9 @@ class Widget_Icon_Box extends Widget_Base {
 				$parts[] = '### ' . $title;
 			}
 		}
-		if ( ! empty( $description ) ) { $parts[] = $description; }
+		if ( ! empty( $description ) ) {
+			$parts[] = $description;
+		}
 		return implode( "\n\n", $parts );
 	}
 }
