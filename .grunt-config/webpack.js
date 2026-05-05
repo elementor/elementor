@@ -68,19 +68,6 @@ const moduleRules = getModuleRules( [ '@wordpress/default' ] );
 const frontendRulesPresets = [ [
 	'@babel/preset-env',
 	{
-		targets: {
-			browsers: [
-				'last 3 versions',
-				'Chrome >= 111',
-				'Firefox >= 111',
-				'Edge >= 111',
-				'Safari >= 16.4',
-				'iOS >= 16.4',
-				'Android >= 111',
-				'ChromeAndroid >= 111',
-				'not dead',
-			],
-		},
 		"useBuiltIns": "usage",
 		"corejs": "3.23",
 	}
