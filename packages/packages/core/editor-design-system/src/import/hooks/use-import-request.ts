@@ -41,9 +41,9 @@ export const useImportRequest = () => {
 
 			await runRunners( session, runners );
 
-			window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT ) );
-
 			await reloadCurrentDocument();
+
+			window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT ) );
 		},
 	} );
 };
