@@ -4,6 +4,8 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
+use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -34,12 +36,14 @@ class Import extends Import_Runner_Base {
 
 	public function import( array $data, array $imported_data ): array {
 		$global_classes_dir = $data['extracted_directory_path'] . '/global-classes';
-		$conflict_resolution = $this->resolve_conflict_resolution( $data );
+		$conflict_resolution = $this->get_conflict_resolution( $data );
 
-		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ] );
+		$kit = $this->get_kit( $imported_data );
+
+		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ], $kit );
 	}
 
-	private function resolve_conflict_resolution( array $data ): string {
+	private function get_conflict_resolution( array $data ): string {
 		$include_type = $this->get_include_type( $data );
 
 		switch ( $include_type ) {
@@ -66,5 +70,29 @@ class Import extends Import_Runner_Base {
 		}
 
 		return $include;
+	}
+
+	private function get_kit( array $imported_data ): Kit {
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
+
+		if ( ! $was_new_kit_created ) {
+			return $active_kit;
+		}
+
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+
+		if ( ! $previous_kit_id ) {
+			return $active_kit;
+		}
+
+		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
+
+		if ( ! $previous_kit ) {
+			return $active_kit;
+		}
+
+		return $previous_kit;
 	}
 }

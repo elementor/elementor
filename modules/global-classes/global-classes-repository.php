@@ -362,16 +362,14 @@ class Global_Classes_Repository {
 
 		$this->each_class_id_batch( $order, function ( string $class_id ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id );
+			
 			if ( $post ) {
 				$post->delete();
 			}
 		} );
 
-		Global_Classes_Relations::delete_all_relations();
 		Global_Classes_Order::make( $this->get_kit() )->set_order( [] );
 		$this->labels()->set_labels( [] );
-		$this->cache = null;
-		$this->flush_runtime_cache();
 	}
 
 	private function each_class_id_batch( $class_ids, callable $callback, int $batch_size = self::PERSIST_BATCH_SIZE ): void {

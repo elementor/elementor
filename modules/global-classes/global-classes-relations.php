@@ -302,28 +302,6 @@ class Global_Classes_Relations {
 		}
 	}
 
-	public static function delete_all_relations(): void {
-		global $wpdb;
-
-		$meta_keys = [
-			self::META_KEY_FRONTEND,
-			self::META_KEY_PREVIEW,
-			self::META_KEY_USAGE_INDEXED_FRONTEND,
-			self::META_KEY_USAGE_INDEXED_PREVIEW,
-			self::META_KEY_CLASS_RELATED_POSTS_FRONTEND,
-			self::META_KEY_CLASS_RELATED_POSTS_PREVIEW,
-		];
-
-		$placeholders = implode( ',', array_fill( 0, count( $meta_keys ), '%s' ) );
-
-		$wpdb->query(
-			$wpdb->prepare(
-				"DELETE FROM {$wpdb->postmeta} WHERE meta_key IN ($placeholders)",
-				...$meta_keys
-			)
-		);
-	}
-
 	private function is_usage_indexed( int $post_id ): bool {
 		return '1' === get_post_meta( $post_id, $this->get_context_key( 'usage_indexed' ), true );
 	}
