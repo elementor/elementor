@@ -144,7 +144,9 @@ class Widget_Html extends Widget_Base {
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
 		$html = $settings['html'] ?? '';
-		if ( empty( $html ) ) { return ''; }
+		if ( empty( $html ) ) {
+			return '';
+		}
 		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $html );
 	}
 }

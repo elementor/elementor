@@ -164,7 +164,14 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		}
 
 		$tag = $settings['tag'] ?? 'h2';
-		$level_map = [ 'h1' => 1, 'h2' => 2, 'h3' => 3, 'h4' => 4, 'h5' => 5, 'h6' => 6 ];
+		$level_map = [
+			'h1' => 1,
+			'h2' => 2,
+			'h3' => 3,
+			'h4' => 4,
+			'h5' => 5,
+			'h6' => 6,
+		];
 		$level = $level_map[ $tag ] ?? 2;
 
 		$md = str_repeat( '#', $level ) . ' ' . $title;

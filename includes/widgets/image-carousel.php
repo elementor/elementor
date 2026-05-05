@@ -1146,11 +1146,15 @@ class Widget_Image_Carousel extends Widget_Base {
 
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
-		if ( empty( $settings['carousel'] ) ) { return ''; }
+		if ( empty( $settings['carousel'] ) ) {
+			return '';
+		}
 		$images = [];
 		foreach ( $settings['carousel'] as $item ) {
 			$url = $item['url'] ?? '';
-			if ( empty( $url ) ) { continue; }
+			if ( empty( $url ) ) {
+				continue;
+			}
 			$alt = '';
 			if ( ! empty( $item['id'] ) ) {
 				$alt = get_post_meta( $item['id'], '_wp_attachment_image_alt', true );

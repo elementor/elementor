@@ -329,7 +329,9 @@ class Widget_Google_Maps extends Widget_Base {
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
 		$address = Utils::html_to_plain_text( $settings['address'] ?? '' );
-		if ( empty( $address ) ) { return ''; }
+		if ( empty( $address ) ) {
+			return '';
+		}
 		return '[Map: ' . $address . '](https://maps.google.com/maps?q=' . rawurlencode( $address ) . ')';
 	}
 }

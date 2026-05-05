@@ -718,7 +718,9 @@ class Widget_Counter extends Widget_Base {
 		$suffix = $settings['suffix'] ?? '';
 		$title = Utils::html_to_plain_text( $settings['title'] ?? '' );
 		$value = $prefix . $number . $suffix;
-		if ( empty( $value ) && empty( $title ) ) { return ''; }
+		if ( empty( $value ) && empty( $title ) ) {
+			return '';
+		}
 		$parts = array_filter( [ $value, $title ] );
 		return implode( ' - ', $parts );
 	}

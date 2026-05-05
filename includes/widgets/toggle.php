@@ -742,14 +742,20 @@ class Widget_Toggle extends Widget_Base {
 
 	public function render_markdown(): string {
 		$settings = $this->get_settings_for_display();
-		if ( empty( $settings['tabs'] ) ) { return ''; }
+		if ( empty( $settings['tabs'] ) ) {
+			return '';
+		}
 		$sections = [];
 		foreach ( $settings['tabs'] as $item ) {
 			$title = Utils::html_to_plain_text( $item['tab_title'] ?? '' );
 			$content = Utils::html_to_plain_text( $item['tab_content'] ?? '' );
-			if ( empty( $title ) && empty( $content ) ) { continue; }
+			if ( empty( $title ) && empty( $content ) ) {
+				continue;
+			}
 			$section = '### ' . $title;
-			if ( ! empty( $content ) ) { $section .= "\n\n" . $content; }
+			if ( ! empty( $content ) ) {
+				$section .= "\n\n" . $content;
+			}
 			$sections[] = $section;
 		}
 		return implode( "\n\n", $sections );
