@@ -7,6 +7,8 @@ import { type ConflictStrategy } from '../types';
 
 const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
+const IMPORT_REQUEST_TIMEOUT_MS = 20_000;
+
 const CONFLICT_RESOLUTION_BY_STRATEGY: Record< ConflictStrategy, 'replace' | 'skip' > = {
 	replace: 'replace',
 	keep: 'skip',
@@ -64,7 +66,7 @@ const uploadKit = async ( file: File ): Promise< string > => {
 		const { data } = await httpService().post< HttpResponse< UploadResponseData > >(
 			`${ IMPORT_BASE_PATH }/upload`,
 			formData,
-			{ headers: { 'Content-Type': 'multipart/form-data' } }
+			{ headers: { 'Content-Type': 'multipart/form-data' }, timeout: IMPORT_REQUEST_TIMEOUT_MS }
 		);
 
 		return data.data.session;
@@ -80,17 +82,25 @@ const startImport = async ( session: string, conflictStrategy: ConflictStrategy 
 		},
 	};
 
-	const { data } = await httpService().post< HttpResponse< ImportResponseData > >( `${ IMPORT_BASE_PATH }/import`, {
-		session,
-		include: [ 'design-system' ],
-		customization,
-	} );
+	const { data } = await httpService().post< HttpResponse< ImportResponseData > >(
+		`${ IMPORT_BASE_PATH }/import`,
+		{
+			session,
+			include: [ 'design-system' ],
+			customization,
+		},
+		{ timeout: IMPORT_REQUEST_TIMEOUT_MS }
+	);
 
 	return ( data.data.runners ?? [] ).filter( ( runner ) => SUPPORTED_RUNNERS.includes( runner ) );
 };
 
 const runRunners = async ( session: string, runners: string[] ): Promise< void > => {
 	for ( const runner of runners ) {
-		await httpService().post( `${ IMPORT_BASE_PATH }/import-runner`, { session, runner } );
+		await httpService().post(
+			`${ IMPORT_BASE_PATH }/import-runner`,
+			{ session, runner },
+			{ timeout: IMPORT_REQUEST_TIMEOUT_MS }
+		);
 	}
 };
