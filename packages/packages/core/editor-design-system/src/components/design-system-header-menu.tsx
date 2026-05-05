@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
 import { DotsVerticalIcon, DownloadIcon, UploadIcon } from '@elementor/icons';
 import { useIsMutating } from '@elementor/query';
@@ -25,6 +26,7 @@ import { trackDesignSystem } from '../import/tracking';
 const POPUP_STATE_ID = 'design-system-header-menu';
 
 export const DesignSystemHeaderMenu = () => {
+	const { isAdmin } = useCurrentUserCapabilities();
 	const popupState = usePopupState( { variant: 'popover', popupId: POPUP_STATE_ID } );
 	const exportMutation = useExportRequest();
 
@@ -62,18 +64,20 @@ export const DesignSystemHeaderMenu = () => {
 
 	return (
 		<>
-			<Tooltip title={ triggerLabel } placement="top">
-				<span>
-					<IconButton
-						{ ...triggerProps }
-						size="tiny"
-						aria-label={ triggerLabel }
-						disabled={ isImporting || isExporting }
-					>
-						<DotsVerticalIcon fontSize="tiny" />
-					</IconButton>
-				</span>
-			</Tooltip>
+			{ isAdmin && (
+				<Tooltip title={ triggerLabel } placement="top">
+					<span>
+						<IconButton
+							{ ...triggerProps }
+							size="small"
+							aria-label={ triggerLabel }
+							disabled={ isImporting || isExporting }
+						>
+							<DotsVerticalIcon fontSize="small" />
+						</IconButton>
+					</span>
+				</Tooltip>
+			) }
 
 			<Menu
 				{ ...bindMenu( popupState ) }

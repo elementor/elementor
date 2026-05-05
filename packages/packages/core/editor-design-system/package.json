@@ -42,6 +42,7 @@
 		"@elementor/editor": "4.1.0",
 		"@elementor/editor-app-bar": "4.1.0",
 		"@elementor/editor-canvas": "4.1.0",
+		"@elementor/editor-current-user": "4.1.0",
 		"@elementor/editor-documents": "4.1.0",
 		"@elementor/editor-global-classes": "4.1.0",
 		"@elementor/editor-notifications": "4.1.0",

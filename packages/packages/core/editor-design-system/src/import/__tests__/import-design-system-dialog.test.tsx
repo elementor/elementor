@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
@@ -37,6 +38,10 @@ jest.mock( '@elementor/editor-ui', () => ( {
 jest.mock( '../tracking', () => ( {
 	...jest.requireActual( '../tracking' ),
 	trackDesignSystem: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useCurrentUserCapabilities: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/query', () => {
@@ -312,6 +317,23 @@ describe( '<DesignSystemHeaderMenu />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		sharedQueryClient.clear();
+		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
+			canUser: jest.fn(),
+			capabilities: [ 'manage_options' ],
+			isAdmin: true,
+		} );
+	} );
+
+	it( 'hides the trigger icon for non-admin users', () => {
+		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
+			canUser: jest.fn(),
+			capabilities: [],
+			isAdmin: false,
+		} );
+
+		renderWithQuery( <DesignSystemHeaderMenu /> );
+
+		expect( screen.queryByRole( 'button', { name: 'More actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'opens the import dialog when the Import menu item is clicked', async () => {
