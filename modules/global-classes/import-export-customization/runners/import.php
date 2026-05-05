@@ -58,7 +58,7 @@ class Import extends Import_Runner_Base {
 		}
 
 		$imported_classes = $global_classes_result->unwrap();
-		$repository = Global_Classes_Repository::make();
+		$repository = Global_Classes_Repository::make( $kit );
 
 		$override_all = ! empty( $data['customization']['settings']['classesOverrideAll'] );
 
