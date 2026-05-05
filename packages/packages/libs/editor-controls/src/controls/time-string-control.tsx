@@ -1,23 +1,23 @@
 import * as React from 'react';
 import type { Dayjs } from 'dayjs';
-import { dateStringPropTypeUtil } from '@elementor/editor-props';
-import { DatePicker, LocalizationProvider } from '@elementor/ui';
+import { timeStringPropTypeUtil } from '@elementor/editor-props';
+import { LocalizationProvider, TimePicker } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-import { DATE_FORMAT, isValidDayjs, parseDateString } from '../utils/date-time';
+import { isValidDayjs, parseTimeString, TIME_FORMAT } from '../utils/date-time';
 
-type DateStringControlProps = {
+type TimeStringControlProps = {
 	inputDisabled?: boolean;
 	ariaLabel?: string;
 	error?: boolean;
 	coerceInvalidToNull?: boolean;
 };
 
-export const DateStringControl = createControl(
-	( { inputDisabled, ariaLabel, error, coerceInvalidToNull = false }: DateStringControlProps ) => {
-		const { value, setValue, disabled } = useBoundProp( dateStringPropTypeUtil );
+export const TimeStringControl = createControl(
+	( { inputDisabled, ariaLabel, error, coerceInvalidToNull = false }: TimeStringControlProps ) => {
+		const { value, setValue, disabled } = useBoundProp( timeStringPropTypeUtil );
 
 		const isDisabled = inputDisabled ?? disabled;
 
@@ -49,9 +49,9 @@ export const DateStringControl = createControl(
 		return (
 			<LocalizationProvider>
 				<ControlActions>
-					<DatePicker
-						value={ parseDateString( value ?? '' ) }
-						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, DATE_FORMAT ) }
+					<TimePicker
+						value={ parseTimeString( value ?? '' ) }
+						onChange={ ( newValue: Dayjs | null ) => handleChange( newValue, TIME_FORMAT ) }
 						disabled={ isDisabled }
 						slotProps={ slotProps }
 					/>
