@@ -40,7 +40,6 @@ import { CssClassFilter } from '../search-and-filter/components/filter/css-class
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
 import { SearchAndFilterProvider } from '../search-and-filter/context';
 import { ClassManagerIntroduction } from './class-manager-introduction';
-import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
@@ -406,12 +405,8 @@ const usePreventUnload = () => {
 const usePublish = () => {
 	return useMutation( {
 		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
-		onSuccess: async () => {
+		onSuccess: () => {
 			setDocumentModifiedStatus( false );
-
-			if ( hasDeletedItems() ) {
-				await onDelete();
-			}
 		},
 	} );
 };

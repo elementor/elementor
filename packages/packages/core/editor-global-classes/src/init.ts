@@ -7,11 +7,21 @@ import {
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import {
+	__privateListenTo as listenTo,
+	getCurrentEditMode,
+	isExperimentActive,
+	windowEvent,
+} from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
+import {
+	clearDeletedItems,
+	hasDeletedItems,
+	removeDeletedClassesFromElements,
+} from './components/class-manager/delete-class';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
@@ -77,4 +87,13 @@ export function init() {
 		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
 		getMCPByDomain( 'canvas' )
 	);
+
+	listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
+		if ( getCurrentEditMode() !== 'edit' || ! hasDeletedItems() ) {
+			return;
+		}
+
+		removeDeletedClassesFromElements();
+		clearDeletedItems();
+	} );
 }

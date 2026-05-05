@@ -1,9 +1,11 @@
+import { doUnapplyClass } from '@elementor/editor-editing-panel';
+import { getElements } from '@elementor/editor-elements';
 import { __dispatch as dispatch } from '@elementor/store';
 
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 
-let isDeleted = false;
+const deletedClassIds = new Set< string >();
 
 export const deleteClass = ( id: string ) => {
 	trackGlobalClasses( {
@@ -11,13 +13,22 @@ export const deleteClass = ( id: string ) => {
 		classId: id,
 		runAction: () => {
 			dispatch( slice.actions.delete( id ) );
-			isDeleted = true;
+			deletedClassIds.add( id );
 		},
 	} );
 };
 
-export const onDelete = async () => {
-	isDeleted = false;
+export const removeDeletedClassesFromElements = async () => {
+	const idsToCleanup = [ ...deletedClassIds ];
+	deletedClassIds.clear();
+
+	getElements().forEach( ( element ) => {
+		idsToCleanup.forEach( ( classId ) => doUnapplyClass( element.id, classId ) );
+	} );
 };
 
-export const hasDeletedItems = () => isDeleted;
+export const clearDeletedItems = () => {
+	deletedClassIds.clear();
+};
+
+export const hasDeletedItems = () => deletedClassIds.size > 0;

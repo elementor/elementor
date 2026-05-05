@@ -43,6 +43,7 @@
     "@elementor/editor-current-user": "4.1.0",
     "@elementor/editor-documents": "4.1.0",
     "@elementor/editor-editing-panel": "4.1.0",
+    "@elementor/editor-elements": "4.1.0",
     "@elementor/editor-mcp": "4.1.0",
     "@elementor/editor-panels": "4.1.0",
     "@elementor/editor-props": "4.1.0",
