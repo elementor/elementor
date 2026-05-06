@@ -16,7 +16,7 @@ export type DesignSystemTrackingEvent = {
 	[ K in keyof EventMap ]: { event: K } & EventMap[ K ];
 }[ keyof EventMap ];
 
-const FILE_TYPE_DESIGN_SYSTEM = 'design_system';
+export const FILE_TYPE_DESIGN_SYSTEM = 'design_system';
 
 export const trackDesignSystem = ( payload: DesignSystemTrackingEvent ) => {
 	const { dispatchEvent, config } = getMixpanel();
@@ -34,5 +34,3 @@ export const trackDesignSystem = ( payload: DesignSystemTrackingEvent ) => {
 		// Silently ignore tracking errors so they don't break the user flow.
 	}
 };
-
-export const designSystemFileType = FILE_TYPE_DESIGN_SYSTEM;

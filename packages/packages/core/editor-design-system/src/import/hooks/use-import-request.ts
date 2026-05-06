@@ -9,16 +9,11 @@ const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
 const IMPORT_REQUEST_TIMEOUT_MS = 20_000;
 
-const CONFLICT_RESOLUTION_BY_STRATEGY: Record< ConflictStrategy, 'replace' | 'skip' > = {
-	replace: 'replace',
-	keep: 'skip',
-};
-
 const GLOBAL_CLASSES_RUNNER = 'global-classes';
 const GLOBAL_VARIABLES_RUNNER = 'global-variables';
 const SUPPORTED_RUNNERS = [ GLOBAL_CLASSES_RUNNER, GLOBAL_VARIABLES_RUNNER ];
 
-export const IMPORT_DESIGN_SYSTEM_MUTATION_KEY = [ 'design-system-import' ] as const;
+export const IMPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-import' as const;
 
 type UploadResponseData = {
 	session: string;
@@ -36,7 +31,7 @@ type ImportRequestArgs = {
 
 export const useImportRequest = () => {
 	return useMutation( {
-		mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ],
+		mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ],
 		mutationFn: async ( { file, conflictStrategy }: ImportRequestArgs ): Promise< void > => {
 			const session = await uploadKit( file );
 			const runners = await startImport( session, conflictStrategy );
@@ -78,7 +73,7 @@ const uploadKit = async ( file: File ): Promise< string > => {
 const startImport = async ( session: string, conflictStrategy: ConflictStrategy ): Promise< string[] > => {
 	const customization = {
 		'design-system': {
-			conflict_resolution: CONFLICT_RESOLUTION_BY_STRATEGY[ conflictStrategy ],
+			conflict_resolution: conflictStrategy === 'keep' ? 'skip' : 'replace',
 		},
 	};
 
