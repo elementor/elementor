@@ -2,6 +2,7 @@ import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
 
+import { V3_DESCRIPTION_URI } from '../mcp-description-resource';
 import type { McpToolResult } from '../types';
 import { getElementor } from '../utils';
 
@@ -9,28 +10,10 @@ export function addStylingTool( server: McpServer ): void {
 	server.registerTool(
 		'styling',
 		{
-			description: `This tool provides AI-powered custom CSS styling for Elementor elements. Use this when users want advanced styling that goes beyond Elementor capabilities and can't be targeted using the element settings.
-
-**When to use this tool:**
-- Visual effects: shadows, filters, pseudo-elements, advanced selectors
-- Complex animations with custom keyframes or CSS transitions
-- Styling that requires media queries or complex CSS rules
-- Click-triggered effects or other non-motion triggers
-- Custom hover effects that don't involve motion (color changes, opacity, etc.)
-
-**When NOT to use this tool:**
-- Basic styling achievable through Elementor settings (colors, typography, spacing, borders, simple hover effects) -> use the elementor__elements with "update-settings" action.
-
-**Do NOT use this tool if the user mentions motion effects with supported triggers:**
-- "on hover" with motion (movement, rotation, scaling) → use motion-effects tool
-- "on scroll" with motion effects → use motion-effects tool  
-- "mouse move" / "follow mouse" → use motion-effects tool
-- "entrance" / "fade in" / "slide in" animations → use motion-effects tool
-
-**Actions available:**
-- **custom-css**: Generate and apply AI-powered custom CSS to elements
-
-This tool generates CSS code using AI, provides preview functionality, and handles user approval workflow for applying custom styles.`,
+			description: `Apply custom CSS to legacy/V3 elements.
+- Do NOT use for V4 elements — V4 has its own MCP and tools.
+- Do NOT use for animations or motion — use the interactions tools.
+- Do NOT use for basic styling — V3 elements support basic styling via the V3 settings tool.`,
 			inputSchema: {
 				action: z
 					.enum( [ 'custom-css' ] )
@@ -50,6 +33,14 @@ This tool generates CSS code using AI, provides preview functionality, and handl
 			},
 			annotations: {
 				title: 'Apply Custom Styling',
+			},
+			_meta: {
+				'angie/requiredResources': [
+					{
+						uri: V3_DESCRIPTION_URI,
+						whenToUse: 'Read to understand Elementor capabilities and limitations before using this tool.',
+					},
+				],
 			},
 		},
 		async ( params ) => {
