@@ -6,10 +6,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Shared import context for design-system entities (global classes, global variables).
-// Resolves the import flow ('settings' vs 'design-system') and its conflict resolution strategy.
+/**
+ * Shared import context for design-system entities (global classes, global variables).
+ * Resolves the import flow ('settings' vs 'design-system') and its conflict resolution strategy.
+ */
 class Design_System_Import_Context {
-	// Either 'settings', 'design-system' or null
+	/**
+	 * Either 'settings', 'design-system' or null.
+	 *
+	 * @var string|null
+	 */
 	private ?string $include_key;
 
 	private function __construct( ?string $include_key ) {

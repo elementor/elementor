@@ -237,7 +237,7 @@ class Import_Utils {
 		if ( $created ) {
 			clean_post_cache( $created->get_post_id() );
 		} else {
-			throw new \Exception( 'Failed to create new class: ' . $sanitized_item['id'] . ' with label: ' . $sanitized_item['label'] );
+			throw new \Exception( 'Failed to create new class: ' . esc_html( $sanitized_item['id'] ) . ' with label: ' . esc_html( $sanitized_item['label'] ) );
 		}
 	}
 
@@ -245,7 +245,7 @@ class Import_Utils {
 		$post = Global_Class_Post::find_by_class_id( $existing_id );
 
 		if ( ! $post ) {
-			throw new \Exception( 'Failed to find existing class: ' . $existing_id );
+			throw new \Exception( 'Failed to find existing class: ' . esc_html( $existing_id ) );
 		}
 
 		$post->update_data( $sanitized_item );

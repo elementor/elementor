@@ -76,7 +76,7 @@ class Import extends Import_Runner_Base {
 		return $previous_kit;
 	}
 
-	function is_legacy_import_format( array $data ): bool {
+	private function is_legacy_import_format( array $data ): bool {
 		$manifest = $data['manifest'];
 		$elementor_version = $manifest['elementor_version'];
 

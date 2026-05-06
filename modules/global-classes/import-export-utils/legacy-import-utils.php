@@ -23,7 +23,7 @@ class Legacy_Import_Utils {
 		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
 
 		if ( ! $global_classes_result->is_valid() ) {
-			throw new \Exception( 'Invalid global classes file: ' . $global_classes_result->errors()->to_string() );
+			throw new \Exception( 'Invalid global classes file: ' . esc_html( $global_classes_result->errors()->to_string() ) );
 		}
 
 		$imported_classes = $global_classes_result->unwrap();
@@ -46,9 +46,13 @@ class Legacy_Import_Utils {
 				}
 
 				$item = $imported_classes['items'][ $id ];
+				$entry = [
+					'id' => $id,
+					'label' => $item['label'] ?? $id,
+				];
 				$result['created'][] = [
-					'import_entry' => [ 'id' => $id, 'label' => $item['label'] ?? $id ],
-					'result_entry' => [ 'id' => $id, 'label' => $item['label'] ?? $id ],
+					'import_entry' => $entry,
+					'result_entry' => $entry,
 				];
 			}
 
@@ -90,8 +94,14 @@ class Legacy_Import_Utils {
 			$items_to_add[ $new_id ] = $imported_class;
 			$added_order[] = $new_id;
 
-			$import_entry = [ 'id' => $imported_id, 'label' => $original_label ];
-			$result_entry = [ 'id' => $new_id, 'label' => $new_label ];
+			$import_entry = [
+				'id' => $imported_id,
+				'label' => $original_label,
+			];
+			$result_entry = [
+				'id' => $new_id,
+				'label' => $new_label,
+			];
 
 			$was_renamed = strtolower( $new_label ) !== strtolower( $original_label );
 
