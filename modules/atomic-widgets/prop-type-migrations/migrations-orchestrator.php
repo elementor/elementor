@@ -13,7 +13,6 @@ use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Plugin;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
