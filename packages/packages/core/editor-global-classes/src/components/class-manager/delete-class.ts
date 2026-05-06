@@ -36,20 +36,25 @@ const cleanupOnReturnToEdit = () => {
 	}
 
 	unsubscribeFromEditModeChange = listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
+		const unsubscribe = () => {
+			unsubscribeFromEditModeChange?.();
+			unsubscribeFromEditModeChange = null;
+		};
+
 		if ( deletedClassIds.size === 0 ) {
+			unsubscribe();
+
 			return;
 		}
 
 		const wasModifiedBeforeCleanup = Boolean( getV1CurrentDocument()?.editor?.isChanged );
-
 		removeDeletedClassesFromElements();
 
 		if ( ! wasModifiedBeforeCleanup ) {
 			setDocumentModifiedStatus( false );
 		}
 
-		unsubscribeFromEditModeChange?.();
-		unsubscribeFromEditModeChange = null;
+		unsubscribe();
 	} );
 };
 
