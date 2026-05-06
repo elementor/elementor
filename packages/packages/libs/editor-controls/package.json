@@ -49,7 +49,7 @@
     "@elementor/env": "4.1.0",
     "@elementor/events": "4.1.0",
     "@elementor/http-client": "4.1.0",
-    "@elementor/icons": "^1.68.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/locations": "4.1.0",
     "@elementor/query": "4.1.0",
     "@elementor/session": "4.1.0",
