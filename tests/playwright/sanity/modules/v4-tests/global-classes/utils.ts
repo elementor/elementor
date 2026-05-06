@@ -133,7 +133,7 @@ export async function saveAndCloseClassManager( page: Page ): Promise<void> {
 	}
 
 	await page.getByRole( 'button', { name: 'Close' } ).click();
-	await page.waitForTimeout( 500 );
+	await page.getByRole( 'button', { name: 'Close' } ).waitFor( { state: 'hidden', timeout: 10000 } ).catch( () => {} );
 }
 
 export async function deleteClassFromClassManager( page: Page, className: string ): Promise<void> {

@@ -1,4 +1,5 @@
 import { injectIntoLogic } from '@elementor/editor';
+import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	injectIntoClassSelectorActions,
 	injectIntoCssClassConvert,
@@ -93,7 +94,13 @@ export function init() {
 			return;
 		}
 
+		const wasModifiedBeforeCleanup = Boolean( getV1CurrentDocument()?.editor?.isChanged );
+
 		removeDeletedClassesFromElements();
 		clearDeletedItems();
+
+		if ( ! wasModifiedBeforeCleanup ) {
+			setDocumentModifiedStatus( false );
+		}
 	} );
 }
