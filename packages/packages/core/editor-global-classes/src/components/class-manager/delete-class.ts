@@ -8,7 +8,7 @@ import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 
 const deletedClassIds = new Set< string >();
-let unsubscribeFromEditModeChange: ( () => void ) | null = null;
+let unsubscribeEditModeChange: ( () => void ) | null = null;
 
 export const deleteClass = ( id: string ) => {
 	trackGlobalClasses( {
@@ -17,28 +17,26 @@ export const deleteClass = ( id: string ) => {
 		runAction: () => {
 			dispatch( slice.actions.delete( id ) );
 			deletedClassIds.add( id );
-			cleanupOnReturnToEdit();
+			cleanupFromDocument();
 		},
 	} );
 };
 
-const cleanupOnReturnToEdit = () => {
-	if ( unsubscribeFromEditModeChange ) {
-		// already set an event handler to the return to edit
+const cleanupFromDocument = () => {
+	if ( unsubscribeEditModeChange ) {
 		return;
 	}
 
 	if ( getCurrentEditMode() === 'edit' ) {
 		// future support for class deletion directly from the editing panel
-		// as we know this is called for the first time (as no unsubscribe is set)
 		removeDeletedClassesFromElements();
 		return;
 	}
 
-	unsubscribeFromEditModeChange = listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
+	unsubscribeEditModeChange = listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
 		const unsubscribe = () => {
-			unsubscribeFromEditModeChange?.();
-			unsubscribeFromEditModeChange = null;
+			unsubscribeEditModeChange?.();
+			unsubscribeEditModeChange = null;
 		};
 
 		if ( deletedClassIds.size === 0 ) {
