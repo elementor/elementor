@@ -73,12 +73,51 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertContains( 'g-123', $created_ids );
 		$this->assertContains( 'g-456', $created_ids );
 
-		// Assert - repository has both classes saved.
-		$saved = Global_Classes_Repository::make()->all()->get();
-		$this->assertArrayHasKey( 'g-123', $saved['items'] );
-		$this->assertArrayHasKey( 'g-456', $saved['items'] );
-		$this->assertEquals( 'Test1', $saved['items']['g-123']['label'] );
-		$this->assertEquals( 'Test2', $saved['items']['g-456']['label'] );
+		// Assert - repository contains the fully sanitized classes (variants, props, meta) end-to-end.
+		$sanitized_items = [
+			'g-123' => [
+				'id' => 'g-123',
+				'type' => 'class',
+				'label' => 'Test1',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => null,
+						],
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'color' => [
+										'$$type' => 'color',
+										'value' => '',
+									],
+								],
+							],
+							'display' => [
+								'$$type' => 'string',
+								'value' => 'block',
+							],
+						],
+						'custom_css' => null,
+					],
+				],
+			],
+			'g-456' => [
+				'id' => 'g-456',
+				'type' => 'class',
+				'label' => 'Test2',
+				'variants' => [],
+			],
+		];
+
+		$sanitized_global_classes = [
+			'items' => $sanitized_items,
+			'order' => [ 'g-123', 'g-456' ],
+		];
+
+		$this->assertEquals( $sanitized_global_classes, Global_Classes_Repository::make()->all()->get() );
 	}
 
 	public function test_import__invalid_style() {
