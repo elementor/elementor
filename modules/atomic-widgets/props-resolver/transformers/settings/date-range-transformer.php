@@ -9,15 +9,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+const INVALID_DATE = 'Invalid Date';
+
 class Date_Range_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
+
 		if ( empty( $value ) ) {
 			return null;
 		}
 
-		return [
-			'min' => empty( $value['min'] ) ? null : $value['min'],
-			'max' => empty( $value['max'] ) ? null : $value['max'],
-		];
+		$result = [];
+
+		if ( isset( $value['min'] ) ) {
+			$result['min'] = INVALID_DATE !== $value['min'] ? $value['min'] : '';
+		}
+
+		if ( isset( $value['max'] ) ) {
+			$result['max'] = INVALID_DATE !== $value['max'] ? $value['max'] : '';
+		}
+
+		return $result;
 	}
 }
