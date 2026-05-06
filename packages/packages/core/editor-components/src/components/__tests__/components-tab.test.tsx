@@ -37,9 +37,9 @@ jest.mock( '@elementor/editor-documents', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-mcp', () => {
-	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
-		'@elementor/editor-mcp'
-	);
+	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as {
+		toolPrompts: ( name: string ) => unknown;
+	};
 	return {
 		toolPrompts,
 		getAngieSdk: jest.fn().mockImplementation( () => ( {
