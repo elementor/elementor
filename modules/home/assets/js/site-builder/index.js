@@ -12,8 +12,7 @@ import {
 	PlannerPreviewContainer,
 	PlannerPreviewInner,
 	PlannerPreviewFrame,
-	PlannerPreviewImage1,
-	PlannerPreviewImage2,
+	PlannerPreviewImage,
 	PlannerLoaderBadge,
 	PlannerContent,
 	PlannerHeading,
@@ -38,6 +37,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 
 	const isInitStep = ( plannerSteps.INIT ?? 0 ) === Number( sessionStep );
 	const showLayoutToggle = isInitStep && Boolean( inputValue.trim() );
+	const stepImage = siteBuilderData?.stepImages?.[ sessionStep ];
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -108,17 +108,10 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			<PlannerPreviewContainer>
 				<PlannerPreviewInner>
 					<PlannerPreviewFrame>
-						{ siteBuilderData?.previewImage1 && (
-							<PlannerPreviewImage1
+						{ stepImage && (
+							<PlannerPreviewImage
 								component="img"
-								src={ siteBuilderData.previewImage1 }
-								alt=""
-							/>
-						) }
-						{ siteBuilderData?.previewImage2 && (
-							<PlannerPreviewImage2
-								component="img"
-								src={ siteBuilderData.previewImage2 }
+								src={ stepImage }
 								alt=""
 							/>
 						) }

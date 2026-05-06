@@ -74,21 +74,12 @@ export const PlannerPreviewFrame = styled( Box )( ( { theme } ) => ( {
 	paddingInlineEnd: '0',
 } ) );
 
-export const PlannerPreviewImage1 = styled( Box )( ( { theme } ) => ( {
+export const PlannerPreviewImage = styled( Box )( ( { theme } ) => ( {
 	height: '121px',
 	width: 'auto',
 	objectFit: 'cover',
 	borderRadius: theme.spacing( 1.25 ),
 	flexShrink: 0,
-} ) );
-
-export const PlannerPreviewImage2 = styled( Box )( ( { theme } ) => ( {
-	height: '121px',
-	width: 'auto',
-	objectFit: 'cover',
-	borderRadius: theme.spacing( 1.25 ),
-	flexShrink: 0,
-	marginInlineEnd: '-1px',
 } ) );
 
 export const PlannerLoaderBadge = styled( Box )( ( { theme } ) => ( {

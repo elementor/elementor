@@ -4,27 +4,19 @@ import {
 	PlannerLoaderBadge,
 	PlannerPreviewContainer,
 	PlannerPreviewFrame,
-	PlannerPreviewImage1,
-	PlannerPreviewImage2,
+	PlannerPreviewImage,
 	PlannerPreviewInner,
 } from './styled-components';
 
-const PlannerPreview = ( { previewImage1, previewImage2 } ) => {
+const PlannerPreview = ( { image } ) => {
 	return (
 		<PlannerPreviewContainer>
 			<PlannerPreviewInner>
 				<PlannerPreviewFrame>
-					{ previewImage1 && (
-						<PlannerPreviewImage1
+					{ image && (
+						<PlannerPreviewImage
 							component="img"
-							src={ previewImage1 }
-							alt=""
-						/>
-					) }
-					{ previewImage2 && (
-						<PlannerPreviewImage2
-							component="img"
-							src={ previewImage2 }
+							src={ image }
 							alt=""
 						/>
 					) }
@@ -38,8 +30,7 @@ const PlannerPreview = ( { previewImage1, previewImage2 } ) => {
 };
 
 PlannerPreview.propTypes = {
-	previewImage1: PropTypes.string,
-	previewImage2: PropTypes.string,
+	image: PropTypes.string,
 };
 
 export default PlannerPreview;
