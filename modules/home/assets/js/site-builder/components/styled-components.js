@@ -207,9 +207,6 @@ export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 		borderColor: '#22252a',
 		color: theme.palette.common.white,
 	},
-	'&&.Mui-disabled': {
-		borderColor: theme.palette.action.disabledBackground,
-	},
 } ) );
 
 export const SuggestionChip = styled( Chip )( ( { theme, selected } ) => ( {

@@ -38,8 +38,6 @@ export const getStepAction = ( stepConfig, handlers ) => {
 };
 
 export const StepWithInput = ( { buttonLabel, inputValue, onInputChange, onKeyDown, onSubmit, placeholder } ) => {
-	const canSubmit = Boolean( inputValue.trim() );
-
 	return (
 		<PlannerInputRow>
 			<PlannerTextField
@@ -55,8 +53,7 @@ export const StepWithInput = ( { buttonLabel, inputValue, onInputChange, onKeyDo
 				variant="contained"
 				size="medium"
 				endIcon={ <ArrowRightIcon /> }
-				onClick={ onSubmit }
-				disabled={ ! canSubmit }
+				onClick={ () => inputValue.trim() && onSubmit() }
 			>
 				{ buttonLabel }
 			</CreateSiteButton>
