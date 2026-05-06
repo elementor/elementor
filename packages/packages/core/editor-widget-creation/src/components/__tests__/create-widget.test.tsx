@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { renderWithTheme } from 'test-utils';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CreateWidget } from '../create-widget';
 
@@ -140,9 +140,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Act — click the close (X) button.
 			const closeButton = screen.getByLabelText( 'Close' );
 
-			act( () => {
-				fireEvent.click( closeButton );
-			} );
+			fireEvent.click( closeButton );
 
 			// Assert.
 			expect( mockTrackEvent ).toHaveBeenCalledWith( {
@@ -165,9 +163,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Click Install Angie to trigger the failure.
 			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-			await act( async () => {
-				fireEvent.click( installButton );
-			} );
+			fireEvent.click( installButton );
 
 			// After failure, the install button becomes "Install Manually".
 			await waitFor( () => {
@@ -177,9 +173,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Act — close the modal in error state.
 			const closeButton = screen.getByLabelText( 'Close' );
 
-			act( () => {
-				fireEvent.click( closeButton );
-			} );
+			fireEvent.click( closeButton );
 
 			// Assert.
 			expect( mockTrackEvent ).toHaveBeenCalledWith( {
@@ -202,9 +196,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Click Install Angie.
 			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-			act( () => {
-				fireEvent.click( installButton );
-			} );
+			fireEvent.click( installButton );
 
 			// The button should now show "Installing…".
 			await waitFor( () => {
@@ -214,9 +206,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Attempt to close — should be blocked.
 			const closeButton = screen.getByLabelText( 'Close' );
 
-			act( () => {
-				fireEvent.click( closeButton );
-			} );
+			fireEvent.click( closeButton );
 
 			// Assert — abandoned event should NOT have fired, modal stays open.
 			expect( mockTrackEvent ).not.toHaveBeenCalledWith(
@@ -240,14 +230,14 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Act.
 			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-			await act( async () => {
-				fireEvent.click( installButton );
-			} );
+			fireEvent.click( installButton );
 
 			// Assert.
-			expect( mockTrackEvent ).toHaveBeenCalledWith( {
-				eventName: 'angie_install_completed',
-				trigger_source: 'top_bar_icon',
+			await waitFor( () => {
+				expect( mockTrackEvent ).toHaveBeenCalledWith( {
+					eventName: 'angie_install_completed',
+					trigger_source: 'top_bar_icon',
+				} );
 			} );
 
 			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'My prompt' );
@@ -266,8 +256,11 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Act.
 			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-			await act( async () => {
-				fireEvent.click( installButton );
+			fireEvent.click( installButton );
+
+			// Wait for async install to settle (button changes to "Install Manually" on failure).
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
 			} );
 
 			// Assert.
@@ -290,16 +283,19 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			// Act.
 			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-			await act( async () => {
-				fireEvent.click( installButton );
+			fireEvent.click( installButton );
+
+			// Wait for install to complete, then assert call order.
+			await waitFor( () => {
+				expect( mockTrackEvent ).toHaveBeenCalledWith(
+					expect.objectContaining( { eventName: 'angie_install_completed' } )
+				);
 			} );
 
-			// Assert — verify call order.
 			const calls = mockTrackEvent.mock.calls.map( ( [ arg ] ) => arg.eventName );
 
 			// ai_widget_cta_clicked fires first (on the window event), then install sequence.
 			expect( calls ).toContain( 'angie_install_started' );
-			expect( calls ).toContain( 'angie_install_completed' );
 			expect( calls.indexOf( 'angie_install_started' ) ).toBeLessThan(
 				calls.indexOf( 'angie_install_completed' )
 			);
