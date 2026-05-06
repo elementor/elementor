@@ -1,11 +1,7 @@
 import { getV1CurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { doUnapplyClass } from '@elementor/editor-editing-panel';
 import { getElements } from '@elementor/editor-elements';
-import {
-	__privateListenTo as listenTo,
-	getCurrentEditMode,
-	windowEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, getCurrentEditMode, windowEvent } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch } from '@elementor/store';
 
 import { slice } from '../../store';
@@ -28,11 +24,19 @@ export const deleteClass = ( id: string ) => {
 
 const cleanupOnReturnToEdit = () => {
 	if ( unsubscribeFromEditModeChange ) {
+		// already set an event handler to the return to edit
+		return;
+	}
+
+	if ( getCurrentEditMode() === 'edit' ) {
+		// future support for class deletion directly from the editing panel
+		// as we know this is called for the first time (as no unsubscribe is set)
+		removeDeletedClassesFromElements();
 		return;
 	}
 
 	unsubscribeFromEditModeChange = listenTo( windowEvent( 'elementor/edit-mode/change' ), () => {
-		if ( ! unsubscribeFromEditModeChange || deletedClassIds.size === 0 ) {
+		if ( deletedClassIds.size === 0 ) {
 			return;
 		}
 
@@ -44,7 +48,7 @@ const cleanupOnReturnToEdit = () => {
 			setDocumentModifiedStatus( false );
 		}
 
-		unsubscribeFromEditModeChange();
+		unsubscribeFromEditModeChange?.();
 		unsubscribeFromEditModeChange = null;
 	} );
 };
