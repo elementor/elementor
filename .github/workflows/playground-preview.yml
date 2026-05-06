@@ -1,0 +1,67 @@
+name: Playground PR Preview
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types: [completed]
+
+permissions:
+  contents: write      # upload to ci-artifacts release
+  pull-requests: write # post PR comment
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    # Guard: only for PRs (not pushes to main), only for non-forks, only on successful builds
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get PR number
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prs = context.payload.workflow_run.pull_requests;
+            if (!prs.length) {
+              core.setFailed('No pull request found for this workflow run');
+              return;
+            }
+            core.setOutput('number', prs[0].number);
+
+      - name: Download plugin artifact
+        id: artifact
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id,
+            });
+            const hit = artifacts.find(a => a.name.startsWith('elementor-'));
+            if (!hit) {
+              core.setFailed('No elementor artifact found in triggering workflow run');
+              return;
+            }
+            const dl = await github.rest.actions.downloadArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: hit.id,
+              archive_format: 'zip',
+            });
+            require('fs').writeFileSync('plugin.zip', Buffer.from(dl.data));
+            core.setOutput('artifact-name', hit.name);
+
+      - name: Post Playground Preview comment
+        uses: WordPress/action-wp-playground-pr-preview@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          pr-number: ${{ steps.pr.outputs.number }}
+          plugin-zip-path: plugin.zip
+          blueprint: tests/playwright/blueprints/pr-preview.json
+          comment-header: "## Live Playground Preview"
