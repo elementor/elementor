@@ -85,10 +85,10 @@ const toPlaceholder = ( v: GridTrackValue ): string | undefined => {
 };
 
 const unitOf = ( v: GridTrackValue, fallback: GridTrackUnit = FR ): GridTrackUnit => {
-	if ( v.kind === 'fr' ) {
+	if ( 'fr' === v.kind ) {
 		return FR;
 	}
-	if ( v.kind === 'custom' ) {
+	if ( 'custom' === v.kind  ) {
 		return CUSTOM;
 	}
 	return fallback;
@@ -126,8 +126,6 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	const handleChange = ( raw: { size: number | string; unit: GridTrackUnit } ) => {
 		const next = fromSizeInput( raw );
 
-		// Don't clobber a set value when the user is only flipping the unit selector
-		// on an empty input (they haven't entered a size in the new unit yet).
 		if ( next.kind === 'empty' && local.kind !== 'empty' && raw.unit !== unitOf( local ) ) {
 			return;
 		}
