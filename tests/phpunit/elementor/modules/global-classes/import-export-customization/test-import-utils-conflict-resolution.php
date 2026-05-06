@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
@@ -19,10 +20,26 @@ class Test_Import_Utils_Conflict_Resolution extends Elementor_Test_Base {
 	private string $mock_dir;
 
 	public function setUp(): void {
+		$this->ensure_active_kit_is_valid();
+
 		parent::setUp();
 
 		( new Global_Class_Post_Type() )->register_post_type();
 		$this->mock_dir = __DIR__ . '/mocks/streaming/global-classes';
+	}
+
+	/**
+	 * The previous test class may have left OPTION_ACTIVE pointing to a kit that was wiped
+	 * by WP_UnitTestCase::tear_down_after_class(). create_default_kit() short-circuits when
+	 * the option is set, so we must clear the dangling option before parent::setUp() runs.
+	 */
+	private function ensure_active_kit_is_valid(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
 	}
 
 	public function tearDown(): void {
@@ -48,6 +65,19 @@ class Test_Import_Utils_Conflict_Resolution extends Elementor_Test_Base {
 		foreach ( $post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
+	}
+
+	/**
+	 * WP_UnitTestCase::tearDownAfterClass() wipes all posts but leaves OPTION_ACTIVE pointing
+	 * at the deleted kit, which short-circuits create_default_kit() in the next test class's
+	 * setUp and leaves it without a valid active kit. Reset the options here so the next class
+	 * starts with a fresh default kit.
+	 */
+	public static function tearDownAfterClass(): void {
+		delete_option( Kits_Manager::OPTION_ACTIVE );
+		delete_option( Kits_Manager::OPTION_PREVIOUS );
+
+		parent::tearDownAfterClass();
 	}
 
 	public function test_skip__drops_imported_on_label_conflict() {

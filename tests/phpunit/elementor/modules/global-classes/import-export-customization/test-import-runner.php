@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
@@ -25,14 +26,36 @@ class Test_Import_Runner extends Elementor_Test_Base {
 	];
 
 	public function setUp(): void {
+		$this->ensure_active_kit_is_valid();
+
 		parent::setUp();
 
 		( new Global_Class_Post_Type() )->register_post_type();
+
+		$this->reset_global_classes_state();
+	}
+
+	/**
+	 * The previous test class may have left OPTION_ACTIVE pointing to a kit that was wiped
+	 * by WP_UnitTestCase::tear_down_after_class(). create_default_kit() short-circuits when
+	 * the option is set, so we must clear the dangling option before parent::setUp() runs.
+	 */
+	private function ensure_active_kit_is_valid(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
 
+		$this->reset_global_classes_state();
+	}
+
+	private function reset_global_classes_state(): void {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		if ( $kit ) {
@@ -53,6 +76,20 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		foreach ( $post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
+	}
+
+	/**
+	 * Tests that call create_new_kit() switch OPTION_ACTIVE to a fresh kit. After the class
+	 * finishes, _delete_all_data() wipes that kit's post but the option still points at the
+	 * deleted ID. The next test class's setUp short-circuits create_default_kit() because
+	 * OPTION_ACTIVE is still set, leaving the active kit unresolvable. Reset the options here
+	 * so create_default_kit() will provision a fresh default kit for the next test class.
+	 */
+	public static function tearDownAfterClass(): void {
+		delete_option( Kits_Manager::OPTION_ACTIVE );
+		delete_option( Kits_Manager::OPTION_PREVIOUS );
+
+		parent::tearDownAfterClass();
 	}
 
 	public function test_import() {

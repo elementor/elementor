@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\Variables\ImportExportCustomization;
 
+use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\Variables\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -16,6 +17,8 @@ class Test_Import_Runner extends Elementor_Test_Base {
 	private const VARIABLES_META_KEY = '_elementor_global_variables';
 
 	public function setUp(): void {
+		$this->ensure_active_kit_is_valid();
+
 		parent::setUp();
 
 		$this->clear_variables();
@@ -25,6 +28,33 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->clear_variables();
 
 		parent::tearDown();
+	}
+
+	/**
+	 * The previous test class may have left OPTION_ACTIVE pointing to a kit that was wiped
+	 * by WP_UnitTestCase::tear_down_after_class(). create_default_kit() short-circuits when
+	 * the option is set, so we must clear the dangling option before parent::setUp() runs.
+	 */
+	private function ensure_active_kit_is_valid(): void {
+		$active_kit_id = (int) get_option( Kits_Manager::OPTION_ACTIVE );
+
+		if ( $active_kit_id && ! get_post( $active_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+		}
+	}
+
+	/**
+	 * Tests that call create_new_kit() switch OPTION_ACTIVE to a fresh kit. After the class
+	 * finishes, _delete_all_data() wipes that kit's post but the option still points at the
+	 * deleted ID. Reset the options here so the next test class's create_default_kit() will
+	 * provision a fresh default kit.
+	 */
+	public static function tearDownAfterClass(): void {
+		delete_option( Kits_Manager::OPTION_ACTIVE );
+		delete_option( Kits_Manager::OPTION_PREVIOUS );
+
+		parent::tearDownAfterClass();
 	}
 
 	private function clear_variables(): void {
