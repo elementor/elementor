@@ -150,7 +150,9 @@ class Loader extends Module {
 					continue;
 				}
 
-				if ( ! empty( $asset_data['enabled'] ) || $is_preview_mode ) {
+				$is_animation_style = 'styles' === $assets_type && str_starts_with( $asset_name, 'e-animation-' );
+
+				if ( ! empty( $asset_data['enabled'] ) || ( $is_preview_mode && ! $is_animation_style ) ) {
 					if ( 'scripts' === $assets_type ) {
 						wp_enqueue_script( $asset_name, $asset_data['src'], $asset_data['dependencies'], $asset_data['version'], true );
 					} else {

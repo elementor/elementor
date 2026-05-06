@@ -49,12 +49,12 @@ module.exports = {
 	},
 
 	/**
-	 * @param {string}                   url
-	 * @param {jQuery}                   $document
-	 * @param {{ crossOrigin: boolean }} options
+	 * @param {string} url
+	 * @param {jQuery} $document
+	 * @param {{ crossOrigin: boolean, id: string }} options
 	 */
 	enqueueCSS( url, $document, options = {} ) {
-		const selector = 'link[href="' + url + '"]';
+		const selector = options.id ? `#${ options.id }` : `link[href="${ url }"]`;
 		const link = document.createElement( 'link' );
 
 		link.href = url;
@@ -63,6 +63,10 @@ module.exports = {
 
 		if ( options.crossOrigin ) {
 			link.crossOrigin = 'anonymous';
+		}
+
+		if ( options.id ) {
+			link.id = options.id;
 		}
 
 		if ( ! $document ) {
@@ -74,8 +78,8 @@ module.exports = {
 		}
 	},
 
-	enqueuePreviewStylesheet( url ) {
-		this.enqueueCSS( url, elementor.$previewContents );
+	enqueuePreviewStylesheet( url, options = {} ) {
+		this.enqueueCSS( url, elementor.$previewContents, options );
 	},
 
 	enqueueEditorStylesheet( url ) {
@@ -160,12 +164,11 @@ module.exports = {
 	},
 
 	/**
-	 *
-	 * @param {*}      view       - view to refresh if needed
-	 * @param {*}      icon       - icon control data
-	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
-	 * @param {string} tag        - default i - html tag to render
-	 * @param {*}      returnType - default value - return type
+	 * @param {*} view - view to refresh if needed
+	 * @param {*} icon - icon control data
+	 * @param {*} attributes - default {} - attributes to attach to rendered html tag
+	 * @param {string} tag - default i - html tag to render
+	 * @param {*} returnType - default value - return type
 	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
