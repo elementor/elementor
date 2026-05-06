@@ -53,10 +53,7 @@ class Get_Globals_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$classes_payload = Global_Classes_Repository::make( $kit )
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
-			->all()
-			->get();
+		$classes_payload = Global_Classes_Repository::make( $kit )->all()->get();
 
 		$variables_service = new Variables_Service(
 			new Variables_Repository( $kit ),
