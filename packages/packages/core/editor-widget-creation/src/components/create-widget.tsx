@@ -28,8 +28,10 @@ type CreateWidgetModalProps = {
 
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
-const ANGIE_CTA_CLICKED_EVENT = 'angie_cta_clicked' as const;
+const AI_WIDGET_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
 const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
+const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed' as const;
+const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned' as const;
 
 function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
 	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
@@ -38,6 +40,12 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 		if ( installState === 'installing' ) {
 			return;
 		}
+
+		trackEvent( {
+			eventName: ANGIE_INSTALL_ABANDONED_EVENT,
+			abandon_step: installState === 'error' ? 'install_error' : 'install_modal',
+			trigger_source: entryPoint,
+		} );
 
 		onClose();
 	};
@@ -61,6 +69,11 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 
 			return;
 		}
+
+		trackEvent( {
+			eventName: ANGIE_INSTALL_COMPLETED_EVENT,
+			trigger_source: entryPoint,
+		} );
 
 		redirectToAppAdmin( prompt );
 	};
@@ -161,7 +174,7 @@ export function CreateWidget() {
 			const hasAngieInstalled = isAngieAvailable();
 
 			trackEvent( {
-				eventName: ANGIE_CTA_CLICKED_EVENT,
+				eventName: AI_WIDGET_CTA_CLICKED_EVENT,
 				entry_point: customEvent.detail.entry_point,
 				has_angie_installed: hasAngieInstalled,
 			} );
