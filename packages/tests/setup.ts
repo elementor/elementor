@@ -11,7 +11,12 @@ import { __deleteStore } from '@elementor/store';
 import { TextEncoder, TextDecoder } from 'util';
 
 jest.mock( '@elementor/http-client' );
-jest.mock( '@elementor/editor-mcp', () => ( {} ) );
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
+		'@elementor/editor-mcp'
+	);
+	return { toolPrompts };
+} );
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
 globalThis.TextEncoder = TextEncoder as typeof globalThis.TextEncoder;
 globalThis.TextDecoder = TextDecoder as typeof globalThis.TextDecoder;
