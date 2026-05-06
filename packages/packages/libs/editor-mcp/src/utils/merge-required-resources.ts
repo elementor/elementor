@@ -5,13 +5,13 @@ export type ResourceList = {
 
 export const mergeRequiredResources = (
 	toolResources: ResourceList | undefined,
-	serverDescriptionUri: string | undefined
+	serverDocsUri: string | undefined
 ): ResourceList | undefined => {
-	if ( ! serverDescriptionUri ) {
+	if ( ! serverDocsUri ) {
 		return toolResources;
 	}
-	if ( toolResources?.some( ( r ) => r.uri === serverDescriptionUri ) ) {
+	if ( toolResources?.some( ( r ) => r.uri === serverDocsUri ) ) {
 		return toolResources;
 	}
-	return [ ...( toolResources ?? [] ), { uri: serverDescriptionUri, description: 'Server description' } ];
+	return [ ...( toolResources ?? [] ), { uri: serverDocsUri, description: 'Server docs' } ];
 };

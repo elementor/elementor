@@ -5,22 +5,22 @@ import { createSimpleResourceHandler } from './create-simple-resource-handler';
 
 type OnResourceRegistered = ( ...args: Parameters< IMcpRegistrationAdapter[ 'onResourceRegistered' ] > ) => void;
 
-export const registerServerDescriptionResource = (
+export const registerServerDocsResource = (
 	server: McpServer,
 	namespace: string,
 	title: string,
-	instructions: string,
+	docs: string,
 	onRegistered: OnResourceRegistered
 ): void => {
-	const uri = `elementor://${ namespace }/server-description`;
-	const name = `${ namespace }-server-description`;
-	const handler = createSimpleResourceHandler( instructions );
+	const uri = `elementor://${ namespace }/server-docs`;
+	const name = `${ namespace }-server-docs`;
+	const handler = createSimpleResourceHandler( docs );
 	server.registerResource(
 		name,
 		uri,
 		{
-			title: `${ title } Server Description`,
-			description: 'Server capabilities and instructions',
+			title: `${ title } server docs`,
+			description: 'Full MCP documentation (lazy-loaded)',
 			mimeType: 'text/plain',
 		},
 		handler

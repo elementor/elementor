@@ -59,7 +59,7 @@ export function init() {
 - Build compositions/sections out of V4 atomic elements using context aware designs using the website resources
 - Get and retrieve element configuration values
 `,
-			description: mcpDescription,
+			docs: mcpDescription,
 		} )
 	);
 

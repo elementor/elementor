@@ -68,7 +68,7 @@ export function init() {
 
 		initMcpInteractions(
 			getMCPByDomain( 'interactions', {
-				description: EDITOR_INTERACTIONS_MCP_DESCRIPTION,
+				docs: EDITOR_INTERACTIONS_MCP_DESCRIPTION,
 				instructions: EDITOR_INTERACTIONS_MCP_SHORT_DESCRIPTION,
 			} )
 		);

@@ -12,7 +12,7 @@ import {
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
-import { registerServerDescriptionResource } from './utils/register-server-description-resource';
+import { registerServerDocsResource } from './utils/register-server-docs-resource';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -87,15 +87,14 @@ export const toMCPTitle = ( namespace: string ): string => {
 /**
  * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
  * @param options
- * @param options.instructions Short hint shown inline with the server (keeps payload small).
- * @param options.description  Full server description registered as a fetchable resource.
- *                             When provided, it is registered at elementor://{namespace}/server-description
+ * @param options.instructions Short hint about the MCP and its toolset (MCP SDK `instructions`; keeps payload small).
+ * @param options.docs         Full documentation registered as a lazy-loaded resource.
+ *                             When provided, it is registered at elementor://{namespace}/server-docs
  *                             and auto-injected into every tool's requiredResources.
- *                             Falls back to `instructions` when omitted (backward-compatible).
  */
 export const getMCPByDomain = (
 	namespace: string,
-	options?: { instructions?: string; description?: string }
+	options?: { docs?: string; instructions?: string }
 ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
 	const title = toMCPTitle( namespace );
@@ -108,22 +107,16 @@ export const getMCPByDomain = (
 			{ name: mcpName, title, version: '1.0.0' },
 			{ instructions: options?.instructions, capabilities: { resources: { subscribe: true } } }
 		);
-		if ( options?.description ) {
-			registerServerDescriptionResource(
-				mcpRegistry[ namespace ],
-				namespace,
-				title,
-				options.description,
-				( ...args ) => {
-					bufferedResources.push( args );
-					callAdapters( ( adapter ) => adapter.onResourceRegistered( ...args ) );
-				}
-			);
+		if ( options?.docs ) {
+			registerServerDocsResource( mcpRegistry[ namespace ], namespace, title, options.docs, ( ...args ) => {
+				bufferedResources.push( args );
+				callAdapters( ( adapter ) => adapter.onResourceRegistered( ...args ) );
+			} );
 		}
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const serverDescriptionUri = options?.description ? `elementor://${ namespace }/server-description` : undefined;
-	const { addTool } = createToolRegistry( mcpServer, mcpName, serverDescriptionUri );
+	const serverDocsUri = options?.docs ? `elementor://${ namespace }/server-docs` : undefined;
+	const { addTool } = createToolRegistry( mcpServer, mcpName, serverDocsUri );
 	return {
 		waitForReady: () => readyPromise,
 		// @ts-expect-error: TS is unable to infer the type here
@@ -195,7 +188,7 @@ type ToolRegistrationOptions<
 	modelPreferences?: AngieModelPreferences;
 };
 
-function createToolRegistry( server: McpServer, serverName: string, serverDescriptionUri?: string ) {
+function createToolRegistry( server: McpServer, serverName: string, serverDocsUri?: string ) {
 	function addTool<
 		T extends undefined | z.ZodRawShape = undefined,
 		O extends undefined | z.ZodRawShape = undefined,
@@ -246,7 +239,7 @@ function createToolRegistry( server: McpServer, serverName: string, serverDescri
 			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
-		const mergedResources = mergeRequiredResources( opts.requiredResources, serverDescriptionUri );
+		const mergedResources = mergeRequiredResources( opts.requiredResources, serverDocsUri );
 		const angieAnnotations = {
 			[ ANGIE_MODEL_PREFERENCES ]: opts.modelPreferences ?? createDefaultModelPreferences(),
 			[ ANGIE_REQUIRED_RESOURCES ]: mergedResources,
