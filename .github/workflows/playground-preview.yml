@@ -8,6 +8,7 @@ on:
 permissions:
   contents: write      # upload to ci-artifacts release
   pull-requests: write # post PR comment
+  actions: read
 
 jobs:
   preview:
@@ -54,14 +55,65 @@ jobs:
               artifact_id: hit.id,
               archive_format: 'zip',
             });
-            require('fs').writeFileSync('plugin.zip', Buffer.from(dl.data));
+            require('fs').writeFileSync('build-artifact.zip', Buffer.from(dl.data));
             core.setOutput('artifact-name', hit.name);
+
+      - name: Repack build artifact as plugin zip
+        run: |
+          unzip -oq build-artifact.zip -d build-artifact
+          if [ ! -d build-artifact/elementor ]; then
+            echo "Expected build-artifact/elementor directory was not found"
+            exit 1
+          fi
+          (
+            cd build-artifact
+            zip -rq "$GITHUB_WORKSPACE/plugin.zip" elementor
+          )
+
+      - name: Upload plugin zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: playground-plugin-pr${{ steps.pr.outputs.number }}-${{ github.event.workflow_run.head_sha }}
+          path: plugin.zip
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Expose plugin zip on public URL
+        id: expose
+        uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
+        with:
+          artifact-name: playground-plugin-pr${{ steps.pr.outputs.number }}-${{ github.event.workflow_run.head_sha }}
+          artifact-filename: plugin.zip
+          pr-number: ${{ steps.pr.outputs.number }}
+          commit-sha: ${{ github.event.workflow_run.head_sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare blueprint JSON
+        id: blueprint
+        env:
+          PLUGIN_ZIP_URL: ${{ steps.expose.outputs.artifact-url }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const url = process.env.PLUGIN_ZIP_URL;
+          if (!url) {
+            throw new Error('Missing PLUGIN_ZIP_URL from expose step');
+          }
+          const template = fs.readFileSync('tests/playwright/blueprints/pr-preview.json', 'utf8');
+          const blueprint = template.replace(/\$PLUGIN_ZIP_URL/g, url);
+          JSON.parse(blueprint);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `json<<BLUEPRINT_JSON_EOF\n${blueprint}\nBLUEPRINT_JSON_EOF\n`);
+          NODE
 
       - name: Post Playground Preview comment
         uses: WordPress/action-wp-playground-pr-preview@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           pr-number: ${{ steps.pr.outputs.number }}
-          plugin-zip-path: plugin.zip
-          blueprint: tests/playwright/blueprints/pr-preview.json
-          comment-header: "## Live Playground Preview"
+          blueprint: ${{ steps.blueprint.outputs.json }}
+          mode: append-to-description
+          restore-button-if-removed: true
+          playground-host: https://playground.wordpress.net
+          description-template: |
+            ## Live Playground Preview
+            {{PLAYGROUND_BUTTON}}
