@@ -186,38 +186,17 @@ function convertPropTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 	return propTypeToJsonSchema( propType );
 }
 
-export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
-	const jsonSchema: JsonSchema7 = {
-		type: 'object',
-		properties: {},
-	};
-
-	for ( const [ key, propType ] of Object.entries( schema ) ) {
-		// Skip internal properties
-		if ( ! isPropKeyConfigurable( key ) ) {
-			continue;
-		}
-
-		const propSchema = convertPropTypeToJsonSchema( propType );
-		if ( jsonSchema.properties ) {
-			jsonSchema.properties[ key ] = propSchema;
-		}
-
-		// Handle required fields at root level if needed
-		// (typically props are optional unless specified)
-	}
-
-	return jsonSchema;
-}
-
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
 
-export function isPropKeyConfigurable( propKey: string ): boolean {
-	return ! nonConfigurablePropKeys.includes( propKey );
+export function isPropKeyConfigurable( propKey: string, propType?: PropType ): boolean {
+	if ( ! nonConfigurablePropKeys.includes( propKey ) ) {
+		return true;
+	}
+	return !! ( ! Array.isArray( propType?.meta ) && propType?.meta?.llm_configurable );
 }
 
 export function configurableKeys( schema: PropsSchema ): string[] {
-	return Object.keys( schema ).filter( isPropKeyConfigurable );
+	return Object.keys( schema ).filter( ( key ) => isPropKeyConfigurable( key, schema[ key ] ) );
 }
 
 export function enrichWithIntention(
