@@ -1,6 +1,7 @@
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { V3_DESCRIPTION_URI } from '../mcp-description-resource';
 import { RESOURCE_URI_PAGE_SETTINGS } from '../resources';
 import type { ElementorContainer, McpToolResult, ToolParams } from '../types';
 import { encodeToolJson, get$e, getElementor } from '../utils';
@@ -10,12 +11,7 @@ export function addPageTool( server: McpServer ): void {
 	server.registerTool(
 		'page',
 		{
-			description: `Manage page and document operations including undo/redo, saving, page settings, and page information. Use this tool when you need to: 
-		- Undo or redo changes (history-undo, history-redo, history-undo-all) - Use these when user asks to undo, revert, or redo recent changes
-		- Save page changes (save-draft, save-publish, save-update, save-discard)
-		- Get or update page settings like page title, description, keywords, styling (get-settings, update-settings)
-		- Open or preview pages (open, preview)
-		This tool handles document-level operations and change history.`,
+			description: `Manage page and document operations: history, save, settings, and open/preview.`,
 			inputSchema: {
 				action: z
 					.enum( [
@@ -46,7 +42,11 @@ export function addPageTool( server: McpServer ): void {
 				title: 'Manage Page',
 			},
 			_meta: {
-				'angie:required-resources': [
+				'angie/requiredResources': [
+					{
+						uri: V3_DESCRIPTION_URI,
+						whenToUse: 'Read to understand Elementor capabilities and limitations before using this tool.',
+					},
 					{
 						uri: RESOURCE_URI_PAGE_SETTINGS,
 						whenToUse:
