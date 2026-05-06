@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
 use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
 use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -30,6 +31,8 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
+
+	const EXPERIMENT_EDITOR_LOADING_OPTIMIZATION = 'editor_loading_optimization';
 
 	/**
 	 * Post ID.
@@ -532,6 +535,8 @@ class Editor {
 		$this->notice_bar = new Notice_Bar();
 		$this->promotion = new Promotion();
 
+		$this->register_experiments();
+
 		add_action( 'admin_action_elementor', [ $this, 'init' ] );
 		add_action( 'template_redirect', [ $this, 'redirect_to_new_url' ] );
 
@@ -540,6 +545,17 @@ class Editor {
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
 
 		add_filter( 'replace_editor', [ $this, 'filter_replace_editor' ], 10, 2 );
+	}
+
+	private function register_experiments() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_EDITOR_LOADING_OPTIMIZATION,
+			'title' => esc_html__( 'Editor Loading Optimization', 'elementor' ),
+			'description' => esc_html__( 'Lazy-load heavy control scripts (e.g. ACE Editor) only when the relevant control is opened, reducing initial editor load time.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**

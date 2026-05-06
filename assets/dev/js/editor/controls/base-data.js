@@ -491,6 +491,59 @@ ControlBaseDataView = ControlBaseView.extend( {
 	updateElementModel( value ) {
 		this.setValue( value );
 	},
+
+	loadScriptWithSpinner( editorEl, scriptLoaderFn, onSuccess ) {
+		const self = this;
+
+		this.$spinner = jQuery( '<span>', { class: 'elementor-control-spinner' } )
+			.html( '<i class="eicon-spinner eicon-animation-spin"></i>' );
+
+		editorEl.attr( 'disabled', true );
+		editorEl.after( this.$spinner );
+
+		scriptLoaderFn()
+			.then( () => {
+				self.$spinner.remove();
+				editorEl.removeAttr( 'disabled' );
+				onSuccess();
+			} )
+			.catch( ( error ) => {
+				self.$spinner.remove();
+				editorEl.removeAttr( 'disabled' );
+				if ( window.elementorCommon?.debug ) {
+					// eslint-disable-next-line no-console
+					console.warn( 'Script failed to load:', error );
+				}
+			} );
+	},
+
+	lazyLoadScript( config ) {
+		return this.lazyLoadScripts( config.key, config.getUrls() );
+	},
+
+	lazyLoadScripts( key, urls ) {
+		const cache = ControlBaseDataView.lazyLoadCache;
+
+		if ( cache[ key ] ) {
+			return cache[ key ];
+		}
+
+		const loadScript = ( src ) => new Promise( ( resolve, reject ) => {
+			const script = document.createElement( 'script' );
+			script.src = src;
+			script.dataset.elementorLazy = 'true';
+			script.onload = resolve;
+			script.onerror = reject;
+			document.head.appendChild( script );
+		} );
+
+		cache[ key ] = urls.reduce(
+			( promise, src ) => promise.then( () => loadScript( src ) ),
+			Promise.resolve(),
+		);
+
+		return cache[ key ];
+	},
 }, {
 	// Static methods
 	getStyleValue( placeholder, controlValue, controlData ) {
@@ -505,5 +558,35 @@ ControlBaseDataView = ControlBaseView.extend( {
 		return true;
 	},
 } );
+
+ControlBaseDataView.lazyLoadCache = {};
+
+ControlBaseDataView.registerScriptPreload = function( config ) {
+	window.addEventListener( 'elementor/init', () => {
+		ControlBaseDataView.scheduleScriptPreload( config.key, config.getUrls() );
+	}, { once: true } );
+
+	return function() {
+		if ( config.isLoaded?.() ) {
+			return Promise.resolve();
+		}
+
+		return this.lazyLoadScript( config );
+	};
+};
+
+ControlBaseDataView.scheduleScriptPreload = function( key, urls ) {
+	if ( ! urls[ 0 ] ) {
+		return;
+	}
+
+	const doPreload = () => ControlBaseDataView.prototype.lazyLoadScripts.call( {}, key, urls );
+
+	if ( 'function' === typeof requestIdleCallback ) {
+		requestIdleCallback( doPreload );
+	} else {
+		setTimeout( doPreload, 0 );
+	}
+};
 
 module.exports = ControlBaseDataView;

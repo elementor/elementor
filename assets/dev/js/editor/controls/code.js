@@ -1,6 +1,16 @@
 var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlCodeEditorItemView;
 
+const ACE_SCRIPTS = {
+	key: 'ace',
+	isLoaded: () => 'undefined' !== typeof ace,
+	getUrls() {
+		const { ace: aceSrc, aceLangTools } = window._elementorLazyScripts || {};
+
+		return [ aceSrc, aceLangTools ];
+	},
+};
+
 ControlCodeEditorItemView = ControlBaseDataView.extend( {
 	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
@@ -10,12 +20,14 @@ ControlCodeEditorItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	onReady() {
-		var self = this;
+	loadAce: ControlBaseDataView.registerScriptPreload( ACE_SCRIPTS ),
 
-		if ( 'undefined' === typeof ace ) {
-			return;
-		}
+	onReady() {
+		this.loadScriptWithSpinner( this.ui.editor, this.loadAce.bind( this ), this.initAceEditor.bind( this ) );
+	},
+
+	initAceEditor() {
+		var self = this;
 
 		const langTools = ace.require( 'ace/ext/language_tools' ),
 			uiTheme = elementor.settings.editorPreferences.model.get( 'ui_theme' ),
