@@ -25,12 +25,12 @@
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"
   },
-	"dependencies": {
-		"@elementor/editor-mcp": "4.1.0",
-		"@elementor/elementor-mcp-common": "4.1.0",
-		"@elementor/schema": "4.1.0",
-		"@modelcontextprotocol/sdk": "1.27.1"
-	},
+  "dependencies": {
+    "@elementor/editor-mcp": "4.1.0",
+    "@elementor/elementor-mcp-common": "4.1.0",
+    "@elementor/schema": "4.1.0",
+    "@modelcontextprotocol/sdk": "1.27.1"
+  },
   "files": [
     "README.md",
     "CHANGELOG.md",
