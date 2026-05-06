@@ -1520,6 +1520,7 @@ abstract class Document extends Controls_Stack {
 	 * @return bool|int
 	 */
 	public function update_meta( $key, $value ) {
+    $value = maybe_unserialize( $value );
 		// Use `update_metadata` in order to work also with revisions.
 		return update_metadata( 'post', $this->post->ID, $key, $value );
 	}
