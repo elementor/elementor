@@ -192,7 +192,7 @@ export function isPropKeyConfigurable( propKey: string, propType?: PropType ): b
 	if ( ! nonConfigurablePropKeys.includes( propKey ) ) {
 		return true;
 	}
-	return !! ( propType?.meta && ! Array.isArray( propType.meta ) && propType.meta.llm_configurable );
+	return !! ( ! Array.isArray( propType?.meta ) && propType?.meta?.llm_configurable );
 }
 
 export function configurableKeys( schema: PropsSchema ): string[] {
