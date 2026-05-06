@@ -17,6 +17,23 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await page.close();
 	} );
 
+	test( 'Grid widget can be added and renders in the editor', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		// Act - add a Grid element to the document
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+
+		// Assert - element exists in preview with the e-grid element type and atomic container classes
+		const gridElement = editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` );
+		await expect( gridElement ).toBeVisible();
+		await expect( gridElement ).toHaveAttribute( 'data-element_type', 'e-grid' );
+		await expect( gridElement ).toHaveClass( /e-con/ );
+		await expect( gridElement ).toHaveClass( /e-atomic-element/ );
+		await expect( gridElement ).toHaveCSS( 'display', 'grid' );
+	} );
+
 	test( 'Grid controls are visible in the panel when display is set to grid', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
