@@ -12,41 +12,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Get_Globals_Ability {
+class Get_Globals_Ability extends Abstract_Ability {
 
-	public function register() {
-		wp_register_ability(
-			'elementor/get-globals',
-			[
-				'label' => __( 'Get Elementor Globals', 'elementor' ),
-				'description' => __( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Use when you need kit-level styling context, not a single page tree.', 'elementor' ),
-				'category' => 'elementor',
-				'output_schema' => [
-					'type' => 'object',
-					'properties' => [
-						'global_classes' => [
-							'type' => 'object',
-							'description' => 'Global class definitions and order from the active kit.',
-						],
-						'variables' => [
-							'type' => 'object',
-							'description' => 'Variables list, total count, and watermark from the active kit.',
-						],
+	protected function get_ability_id(): string {
+		return 'elementor/get-globals';
+	}
+
+	protected function get_definition(): array {
+		return [
+			'label' => __( 'Get Elementor Globals', 'elementor' ),
+			'description' => __( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Use when you need kit-level styling context, not a single page tree.', 'elementor' ),
+			'category' => 'elementor',
+			'output_schema' => [
+				'type' => 'object',
+				'properties' => [
+					'global_classes' => [
+						'type' => 'object',
+						'description' => 'Global class definitions and order from the active kit.',
+					],
+					'variables' => [
+						'type' => 'object',
+						'description' => 'Variables list, total count, and watermark from the active kit.',
 					],
 				],
-				'meta' => [
-					'annotations' => [
-						'readonly' => true,
-						'idempotent' => true,
-						'destructive' => false,
-					],
+			],
+			'meta' => [
+				'annotations' => [
+					'readonly' => true,
+					'idempotent' => true,
+					'destructive' => false,
 				],
-				'permission_callback' => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'execute_callback' => [ $this, 'execute' ],
-			]
-		);
+			],
+			'permission_callback' => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'execute_callback' => [ $this, 'execute' ],
+		];
 	}
 
 	public function execute() {

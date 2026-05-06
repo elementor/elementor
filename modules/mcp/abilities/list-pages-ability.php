@@ -6,55 +6,56 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class List_Pages_Ability {
+class List_Pages_Ability extends Abstract_Ability {
 
-	public function register() {
-		wp_register_ability(
-			'elementor/list-pages',
-			[
-				'label' => __( 'List Elementor Pages', 'elementor' ),
-				'description' => __( 'Returns pages and posts built with Elementor on this WordPress site. Each item includes ID, title, status (publish/draft), URL, and post type. Use this first to discover which pages exist before fetching their structure or modifying settings.', 'elementor' ),
-				'category' => 'elementor',
-				'input_schema' => [
+	protected function get_ability_id(): string {
+		return 'elementor/list-pages';
+	}
+
+	protected function get_definition(): array {
+		return [
+			'label' => __( 'List Elementor Pages', 'elementor' ),
+			'description' => __( 'Returns pages and posts built with Elementor on this WordPress site. Each item includes ID, title, status (publish/draft), URL, and post type. Use this first to discover which pages exist before fetching their structure or modifying settings.', 'elementor' ),
+			'category' => 'elementor',
+			'input_schema' => [
+				'type' => 'object',
+				'properties' => [
+					'status' => [
+						'type' => 'string',
+						'enum' => [ 'publish', 'draft', 'any' ],
+						'default' => 'any',
+					],
+					'post_type' => [
+						'type' => 'string',
+						'description' => 'Filter by post type. Omit for all Elementor-supported types.',
+					],
+				],
+			],
+			'output_schema' => [
+				'type' => 'array',
+				'items' => [
 					'type' => 'object',
 					'properties' => [
-						'status' => [
-							'type' => 'string',
-							'enum' => [ 'publish', 'draft', 'any' ],
-							'default' => 'any',
-						],
-						'post_type' => [
-							'type' => 'string',
-							'description' => 'Filter by post type. Omit for all Elementor-supported types.',
-						],
+						'id' => [ 'type' => 'integer' ],
+						'title' => [ 'type' => 'string' ],
+						'status' => [ 'type' => 'string' ],
+						'url' => [ 'type' => 'string' ],
+						'type' => [ 'type' => 'string' ],
 					],
 				],
-				'output_schema' => [
-					'type' => 'array',
-					'items' => [
-						'type' => 'object',
-						'properties' => [
-							'id' => [ 'type' => 'integer' ],
-							'title' => [ 'type' => 'string' ],
-							'status' => [ 'type' => 'string' ],
-							'url' => [ 'type' => 'string' ],
-							'type' => [ 'type' => 'string' ],
-						],
-					],
+			],
+			'meta' => [
+				'annotations' => [
+					'readonly' => true,
+					'idempotent' => true,
+					'destructive' => false,
 				],
-				'meta' => [
-					'annotations' => [
-						'readonly' => true,
-						'idempotent' => true,
-						'destructive' => false,
-					],
-				],
-				'permission_callback' => function () {
-					return current_user_can( 'edit_posts' );
-				},
-				'execute_callback' => [ $this, 'execute' ],
-			]
-		);
+			],
+			'permission_callback' => function () {
+				return current_user_can( 'edit_posts' );
+			},
+			'execute_callback' => [ $this, 'execute' ],
+		];
 	}
 
 	public function execute( $input = [] ) {

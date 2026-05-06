@@ -15,7 +15,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_wp_abilities_api';
 
 	public function get_name() {
-		return 'elementor-mcp-server';
+		return 'mcp';
 	}
 
 	public static function is_active() {
@@ -28,7 +28,7 @@ class Module extends BaseModule {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
-			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. Version WordPress 7.0 or higher. 2. Need to create an app password for you favorite agent. 3. Add to mcp config the server with http: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <app-password>"}}', 'elementor' ),
+			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. WordPress 7.0 or higher. 2. Create an application password for your agent user. 3. Add to your MCP config: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <base64(user:application-password)>"}}', 'elementor' ),
 			'hidden' => false,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 		];
@@ -101,6 +101,8 @@ class Module extends BaseModule {
 		);
 
 		if ( is_wp_error( $result ) ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
 			return;
 		}
 	}
