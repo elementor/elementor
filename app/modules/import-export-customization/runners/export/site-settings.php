@@ -102,10 +102,13 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	public function get_classes_count(): int {
-		$classes_repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();
-		$classes_data = $classes_repository->all()->get();
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		return count( $classes_data['items'] ?? [] );
+		if ( ! $kit ) {
+			return 0;
+		}
+
+		return count( \Elementor\Modules\GlobalClasses\Global_Classes_Order::make( $kit )->get_order() );
 	}
 
 	public function get_variables_count(): int {
