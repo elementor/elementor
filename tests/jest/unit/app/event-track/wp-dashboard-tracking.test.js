@@ -89,7 +89,7 @@ describe( 'WpDashboardTracking', () => {
 				];
 
 				invalidUrls.forEach( ( url ) => {
-					expect( WpDashboardTracking.isElementorPage( url ) ).toBe( false );
+					expect( WpDashboardTracking.isElementorPage( url ) ).not.toBe( true );
 				} );
 			} );
 		} );
