@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { numberPropTypeUtil, queryPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { createMockPropType, renderControl } from 'test-utils';
+import { numberPropTypeUtil, queryPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { fireEvent, screen, within } from '@testing-library/react';
 
 import * as boundPropContext from '../../bound-prop-context';
