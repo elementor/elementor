@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { type QueryPropValue } from '@elementor/editor-props';
+import { numberPropTypeUtil, type QueryPropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { debounce } from '@elementor/utils';
 
@@ -95,13 +95,24 @@ function filterExcludedOptions(
 		| CategorizedOption[];
 }
 
-function generateFirstLoadedOption( queryValue: QueryPropValue[ 'value' ] | null ): FlatOption[] {
-	const id = queryValue?.id?.value;
-	const label = queryValue?.label?.value;
+export function extractFlatOptionFromQueryValue(
+	queryValue: QueryPropValue[ 'value' ] | null | undefined
+): FlatOption | null {
+	const id = numberPropTypeUtil.extract( queryValue?.id );
+	const label = stringPropTypeUtil.extract( queryValue?.label );
 
-	if ( id && label ) {
-		return [ { id: id.toString(), label } ];
+	if ( id === null ) {
+		return null;
 	}
 
-	return [];
+	return {
+		id: String( id ),
+		label: label || String( id ),
+	};
+}
+
+function generateFirstLoadedOption( queryValue: QueryPropValue[ 'value' ] | null ): FlatOption[] {
+	const option = extractFlatOptionFromQueryValue( queryValue );
+
+	return option ? [ option ] : [];
 }

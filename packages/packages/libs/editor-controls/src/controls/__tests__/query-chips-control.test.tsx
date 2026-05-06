@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { numberPropTypeUtil, queryPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { createMockPropType, renderControl } from 'test-utils';
 import { fireEvent, screen, within } from '@testing-library/react';
 
@@ -9,13 +10,11 @@ import { QueryChipsControl } from '../query-chips-control';
 const propType = createMockPropType( { kind: 'array' } );
 const setValue = jest.fn();
 
-const wrapQuery = ( id: number, label: string ) => ( {
-	$$type: 'query' as const,
-	value: {
-		id: { $$type: 'number' as const, value: id },
-		label: { $$type: 'string' as const, value: label },
-	},
-} );
+const wrapQuery = ( id: number, label: string ) =>
+	queryPropTypeUtil.create( {
+		id: numberPropTypeUtil.create( id ),
+		label: stringPropTypeUtil.create( label ),
+	} );
 
 jest.mock( '../../bound-prop-context', () => ( {
 	...jest.requireActual( '../../bound-prop-context' ),
@@ -23,6 +22,7 @@ jest.mock( '../../bound-prop-context', () => ( {
 } ) );
 
 jest.mock( '../../hooks/use-query-autocomplete', () => ( {
+	...jest.requireActual( '../../hooks/use-query-autocomplete' ),
 	useQueryAutocomplete: jest.fn(),
 } ) );
 

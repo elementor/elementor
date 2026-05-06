@@ -11,10 +11,10 @@ import { Autocomplete, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
-import { MultiselectAutocompleteChipTags } from '../components/multiselect-autocomplete-chip-tags';
+import { ChipsList } from '../components/chips-list';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-import { useQueryAutocomplete } from '../hooks/use-query-autocomplete';
+import { extractFlatOptionFromQueryValue, useQueryAutocomplete } from '../hooks/use-query-autocomplete';
 
 type QueryChipsControlProps = {
 	queryOptions: {
@@ -85,7 +85,7 @@ export const QueryChipsControl = createControl( ( props: QueryChipsControlProps 
 				isOptionEqualToValue={ ( option, val ) => option.id === val.id }
 				filterOptions={ ( opts ) => opts }
 				renderTags={ ( tagValues, getTagProps ) => (
-					<MultiselectAutocompleteChipTags
+					<ChipsList
 						getLabel={ ( option ) => option.label }
 						getTagProps={ getTagProps }
 						values={ tagValues }
@@ -105,18 +105,6 @@ function extractChips( value: QueryPropValue[] | null | undefined ): ChipOption[
 	}
 
 	return value
-		.map( ( item ) => {
-			const id = item?.value?.id?.value;
-			const label = item?.value?.label?.value;
-
-			if ( typeof id !== 'number' ) {
-				return null;
-			}
-
-			return {
-				id: String( id ),
-				label: typeof label === 'string' ? label : String( id ),
-			};
-		} )
+		.map( ( item ) => extractFlatOptionFromQueryValue( item?.value ) )
 		.filter( ( chip ): chip is ChipOption => chip !== null );
 }

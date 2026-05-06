@@ -4,7 +4,7 @@ import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-p
 import { Autocomplete, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
-import { MultiselectAutocompleteChipTags } from '../components/multiselect-autocomplete-chip-tags';
+import { ChipsList } from '../components/chips-list';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
@@ -49,7 +49,7 @@ export const ChipsControl = createControl( ( { options }: ChipsControlProps ) =>
 				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
 				renderTags={ ( tagValues, getTagProps ) => (
-					<MultiselectAutocompleteChipTags
+					<ChipsList
 						getLabel={ ( option ) => option.label }
 						getTagProps={ getTagProps }
 						values={ tagValues }
