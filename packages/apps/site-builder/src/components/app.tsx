@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { deployWebsite } from '../deploy';
 
@@ -21,7 +21,18 @@ function getElementorAiCurrentContext() {
 	return getConfig()?.elementorAiCurrentContext || {};
 }
 
-function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
+type SiteBuilderParams = {
+	siteType?: string;
+	pageTitle?: string;
+	isOnePage?: boolean;
+};
+
+function sendReferrerInfo(
+	iframe: HTMLIFrameElement,
+	event: MessageEvent,
+	targetOrigin: string,
+	siteBuilderParams: SiteBuilderParams,
+) {
 	const config = getConfig();
 
 	iframe.contentWindow?.postMessage(
@@ -36,6 +47,7 @@ function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targe
 					elementorAiCurrentContext: getElementorAiCurrentContext(),
 				},
 				user: { isAdmin: config?.isAdmin ?? false },
+				siteBuilderParams,
 			},
 		},
 		targetOrigin
@@ -75,6 +87,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
+	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
 
 	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
 
@@ -85,6 +98,31 @@ export function App() {
 			return '';
 		}
 	}, [ iframeUrl ] );
+
+	useEffect( () => {
+		if ( ! window.opener ) {
+			return;
+		}
+
+		const onInit = ( event: MessageEvent ) => {
+			if ( event.source !== window.opener ) {
+				return;
+			}
+			if ( event.origin !== window.location.origin ) {
+				return;
+			}
+			if ( event.data?.type !== 'site-builder/init' ) {
+				return;
+			}
+			setSiteBuilderParams( event.data.payload ?? {} );
+			window.removeEventListener( 'message', onInit );
+		};
+
+		window.addEventListener( 'message', onInit );
+		window.opener.postMessage( { type: 'site-builder/ready' }, window.location.origin );
+
+		return () => window.removeEventListener( 'message', onInit );
+	}, [] );
 
 	const handleMessage = useCallback(
 		async ( event: MessageEvent ) => {
@@ -105,7 +143,7 @@ export function App() {
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin );
+					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams );
 				}
 				return;
 			}
@@ -121,7 +159,7 @@ export function App() {
 				}
 			}
 		},
-		[ allowedOrigin ]
+		[ allowedOrigin, siteBuilderParams ]
 	);
 
 	useEffect( () => {

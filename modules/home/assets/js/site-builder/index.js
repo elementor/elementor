@@ -19,6 +19,8 @@ import {
 	PlannerHeading,
 } from './components/styled-components';
 
+const SITE_BUILDER_READY_TIMEOUT_MS = 30_000;
+
 const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
 	const normalizedStep = Number( step );
 	const configs = stepConfigs ?? {};
@@ -53,18 +55,41 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			return;
 		}
 
-		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
+		const newWindow = window.open( siteBuilderData.siteBuilderUrl, '_blank' );
+
+		if ( ! newWindow ) {
+			return;
+		}
+
+		const payload = {};
 
 		if ( prompt ) {
-			const paramName = sessionStep >= ( plannerSteps.WIREFRAMES ?? 3 ) ? 'page_title' : 'site_type';
-			url.searchParams.append( paramName, prompt );
+			const paramName = sessionStep >= ( plannerSteps.WIREFRAMES ?? 3 ) ? 'pageTitle' : 'siteType';
+			payload[ paramName ] = prompt;
 		}
 
 		if ( isInitStep ) {
-			url.searchParams.append( 'is_one_page', isOnePage ? 'true' : 'false' );
+			payload.isOnePage = isOnePage;
 		}
 
-		window.open( url.toString(), '_blank' );
+		let timeoutId;
+		const onReady = ( event ) => {
+			if ( event.source !== newWindow ) {
+				return;
+			}
+			if ( event.origin !== window.location.origin ) {
+				return;
+			}
+			if ( event.data?.type !== 'site-builder/ready' ) {
+				return;
+			}
+			clearTimeout( timeoutId );
+			window.removeEventListener( 'message', onReady );
+			newWindow.postMessage( { type: 'site-builder/init', payload }, window.location.origin );
+		};
+
+		window.addEventListener( 'message', onReady );
+		timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
 	};
 
 	const handleKeyDown = ( event ) => {
