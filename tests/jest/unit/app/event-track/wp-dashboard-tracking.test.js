@@ -43,17 +43,15 @@ describe( 'WpDashboardTracking', () => {
 	} );
 
 	describe( 'isElementorPage', () => {
-		test( 'should return true for valid elementor pages', () => {
+		test( 'should return true for any pages that have "elementor" in the URL', () => {
 			jest.isolateModules( () => {
 				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
 
 				const validUrls = [
-					'https://example.com/wp-admin/post.php?post=8&action=elementor',
 					'https://example.com/wp-admin/admin.php?page=elementor',
 					'https://example.com/wp-admin/admin.php?page=elementor-home',
-					'https://example.com/wp-admin/admin.php?page=e-form-submissions',
-					'https://example.com/wp-admin/post-new.php?post_type=elementor_library',
-					'https://example.com/wp-admin/post-new.php?post_type=e-floating-buttons',
+					'https://example.com/wp-admin/admin.php?page=elementor_something',
+					'https://example.com/wp-admin/admin.php?page=elementor-else',
 				];
 
 				validUrls.forEach( ( url ) => {
@@ -62,14 +60,30 @@ describe( 'WpDashboardTracking', () => {
 			} );
 		} );
 
-		test( 'should return false for invalid elementor pages', () => {
+		test( 'should return true for other valid urls', () => {
+			jest.isolateModules( () => {
+				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
+
+				const validUrls = [
+					'https://example.com/wp-admin/post.php?post=8&action=elementor',
+					'https://example.com/wp-admin/admin.php?page=e-form-submissions',
+					'https://example.com/wp-admin/post-new.php?post_type=elementor_library',
+					'https://example.com/wp-admin/post-new.php?post_type=e-floating-buttons',
+					'https://example.com/wp-admin/post-new.php?post_type=popup_templates',
+				];
+
+				validUrls.forEach( ( url ) => {
+					expect( WpDashboardTracking.isElementorPage( url ) ).toBe( true );
+				} );
+			} );
+		} );
+
+		test( 'should return false for invalid pages', () => {
 			jest.isolateModules( () => {
 				const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
 
 				const invalidUrls = [
-					'https://example.com/wp-admin/post.php?post=8&action=elementor-something',
-					'https://example.com/wp-admin/admin.php?page=elementor-else',
-					'https://example.com/wp-admin/admin.php?page=other',
+					'https://example.com/wp-admin/admin.php?page=something',
 					'https://example.com/wp-admin/post.php?post=8&action=edit',
 					'https://example.com/wp-admin/plugins.php',
 				];
@@ -81,4 +95,3 @@ describe( 'WpDashboardTracking', () => {
 		} );
 	} );
 } );
-

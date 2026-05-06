@@ -190,10 +190,11 @@ export default class WpDashboardTracking {
 			const postType = params.get( 'post_type' );
 			const action = params.get( 'action' );
 
-			const elementorPages = [ 'elementor', 'elementor-home', 'e-form-submissions' ];
-			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
+			const anyPageWithElementorString = 'elementor';
+			const elementorPages = [ anyPageWithElementorString, 'e-form-submissions' ];
+			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons', 'popup_templates' ];
 
-			return ( page && elementorPages.includes( page ) ) ||
+			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
 				( postType && elementorPostTypes.includes( postType ) ) ||
 				( action && action.includes( 'elementor' ) );
 		} catch ( error ) {
