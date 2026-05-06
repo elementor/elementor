@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.7 - 2026-05-06 =
+
+* Tweak: Updated endpoint URL to align with migration infrastructure - Atomic Editor
+
 = 4.0.6 - 2026-05-04 =
 
 * Security Fix: Improved code security enforcement in query handling
