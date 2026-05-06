@@ -30,8 +30,8 @@ export const DesignSystemHeaderMenu = () => {
 	const popupState = usePopupState( { variant: 'popover', popupId: POPUP_STATE_ID } );
 	const exportMutation = useExportRequest();
 
-	const isImporting = useIsMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
-	const isExporting = useIsMutating( { mutationKey: [ ...EXPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
+	const isImporting = useIsMutating( { mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
+	const isExporting = useIsMutating( { mutationKey: [ EXPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 	const triggerProps = bindTrigger( popupState );
 

@@ -3,7 +3,7 @@ import { useMutation } from '@elementor/query';
 
 const EXPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
-export const EXPORT_DESIGN_SYSTEM_MUTATION_KEY = [ 'design-system-export' ] as const;
+export const EXPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-export' as const;
 
 export const DEFAULT_EXPORT_FILE_NAME = 'design-system-export.zip';
 
@@ -46,7 +46,7 @@ export class DesignSystemExportError extends Error {
 
 export const useExportRequest = () => {
 	return useMutation( {
-		mutationKey: [ ...EXPORT_DESIGN_SYSTEM_MUTATION_KEY ],
+		mutationKey: [ EXPORT_DESIGN_SYSTEM_MUTATION_KEY ],
 		mutationFn: async (): Promise< ExportRequestResult > => {
 			try {
 				const { data } = await httpService().post< HttpResponse< ExportResponseData > >(

@@ -7,7 +7,7 @@ import { ConflictOptions } from './components/conflict-options';
 import { useDialogState } from './hooks/use-dialog-state';
 import { DesignSystemUploadValidationError, useImportRequest } from './hooks/use-import-request';
 import { notifyImportFailure, notifyImportInProgress, notifyImportSuccess } from './import-notifications';
-import { designSystemFileType, trackDesignSystem } from './tracking';
+import { FILE_TYPE_DESIGN_SYSTEM, trackDesignSystem } from './tracking';
 import { type ConflictStrategy } from './types';
 
 const ALLOWED_FILE_TYPES: `${ string }/${ string }`[] = [ 'application/zip' ];
@@ -34,7 +34,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 
 	const handleFileSelected = ( selected: File ) => {
 		setFile( selected );
-		trackDesignSystem( { event: 'fileSelected', file_type: designSystemFileType } );
+		trackDesignSystem( { event: 'fileSelected', file_type: FILE_TYPE_DESIGN_SYSTEM } );
 	};
 
 	const handleConflictChange = ( choice: ConflictStrategy ) => {
@@ -57,7 +57,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 			notifyImportSuccess();
 		} catch ( error ) {
 			if ( error instanceof DesignSystemUploadValidationError ) {
-				trackDesignSystem( { event: 'validationFailed', file_type: designSystemFileType } );
+				trackDesignSystem( { event: 'validationFailed', file_type: FILE_TYPE_DESIGN_SYSTEM } );
 			} else {
 				trackDesignSystem( { event: 'importFailed' } );
 			}

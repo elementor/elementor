@@ -96,7 +96,7 @@ const submitImport = ( fileName = 'design-system.zip' ) => {
 	return file;
 };
 
-const isImporting = () => sharedQueryClient.isMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
+const isImporting = () => sharedQueryClient.isMutating( { mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 describe( '<ImportDesignSystemDialog />', () => {
 	beforeEach( () => {
