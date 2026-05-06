@@ -11,6 +11,7 @@ import {
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
+	QueryChipsControl,
 	QueryControl,
 	RepeatableControl,
 	SelectControlWrapper,
@@ -27,6 +28,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	createArrayPropUtils,
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
@@ -47,6 +49,8 @@ import {
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
 
+const queryArrayPropTypeUtil = createArrayPropUtils( queryPropTypeUtil.key, queryPropTypeUtil.schema );
+
 export type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,6 +67,7 @@ const controlTypes = {
 	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
+	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
