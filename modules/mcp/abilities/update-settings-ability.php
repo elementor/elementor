@@ -55,7 +55,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 		];
 	}
 
-	public function execute( $input ) {
+	public function execute( $input = [] ) {
 		$post_id = isset( $input['post_id'] ) ? absint( $input['post_id'] ) : 0;
 		$settings = isset( $input['settings'] ) && is_array( $input['settings'] ) ? $input['settings'] : null;
 

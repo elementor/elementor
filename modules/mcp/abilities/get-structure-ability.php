@@ -52,7 +52,7 @@ class Get_Structure_Ability extends Abstract_Ability {
 		];
 	}
 
-	public function execute( $input ) {
+	public function execute( $input = [] ) {
 		$post_id = $this->resolve_post_id( $input );
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
