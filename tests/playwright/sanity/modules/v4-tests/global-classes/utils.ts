@@ -136,6 +136,14 @@ export async function saveAndCloseClassManager( page: Page ): Promise<void> {
 	await page.waitForTimeout( 500 );
 }
 
+export async function deleteClassFromClassManager( page: Page, className: string ): Promise<void> {
+	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+	await classItem.hover();
+	await classItem.locator( '[aria-label="More actions"]' ).click();
+	await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
+	await page.getByRole( 'button', { name: 'Delete' } ).click();
+}
+
 export async function startSyncToV3( page: Page, className: string ): Promise<void> {
 	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
 	await classItem.hover();
