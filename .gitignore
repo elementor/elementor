@@ -49,6 +49,9 @@ coverage/
 !.cursor/rules/
 .claude/
 
+# PHPunit and PHPlint cache files
+*.cache
+
 # playwright
 test-results/
 **/storageState-*.json
