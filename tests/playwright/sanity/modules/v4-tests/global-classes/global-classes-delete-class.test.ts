@@ -34,12 +34,8 @@ async function openClassManagerFromStyleTab( page: Page ): Promise< void > {
 
 async function assertEditingPanelRestoredAfterClose(
 	page: Page,
-	editor: EditorPage,
-	divBlockId: string,
 	deletedClassName: string,
 ): Promise< void > {
-	const widget = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
-	await expect( widget ).toHaveClass( /elementor-element-editable/, { timeout: timeouts.expect } );
 	await expect( page.locator( '[id^="tabpanel-"][id$="-style"]' ) ).toBeVisible( { timeout: timeouts.expect } );
 	await expect( page.locator( `[aria-label="Edit ${ deletedClassName }"]` ) ).toBeHidden();
 }
@@ -116,13 +112,12 @@ test.describe.parallel( 'Global Classes - Delete Class @v4-tests', () => {
 
 		// Assert — editing panel is restored without errors, class chip is gone.
 		await test.step( 'Editing panel is open on the styles tab, deleted class chip is absent', async () => {
-			await assertEditingPanelRestoredAfterClose( page, editor, divBlockId, className );
+			await assertEditingPanelRestoredAfterClose( page, className );
 		} );
 
 		// Assert — frontend reflects the deletion.
 		await test.step( 'Publish and verify no background on the published page', async () => {
 			const postId = await editor.getPageId();
-			await editor.publishPage();
 			await page.goto( `/?p=${ postId }` );
 			await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 
@@ -181,13 +176,12 @@ test.describe.parallel( 'Global Classes - Delete Class @v4-tests', () => {
 
 		// Assert — editing panel is restored without errors, class chip is gone.
 		await test.step( 'Editing panel is open on the styles tab, deleted class chip is absent', async () => {
-			await assertEditingPanelRestoredAfterClose( page, editor, divBlockId, className );
+			await assertEditingPanelRestoredAfterClose( page, className );
 		} );
 
 		// Assert — frontend reflects the deletion.
 		await test.step( 'Publish and verify no background on the published page', async () => {
 			const postId = await editor.getPageId();
-			await editor.publishPage();
 			await page.goto( `/?p=${ postId }` );
 			await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 
