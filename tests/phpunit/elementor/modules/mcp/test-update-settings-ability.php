@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! function_exists( 'wp_register_ability' ) ) {
-	function wp_register_ability( $id, $args ) {}
-}
-
 /**
  * @group Elementor\Modules\Mcp
  */
