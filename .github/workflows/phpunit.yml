@@ -59,7 +59,7 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     with:
       job_name: PHPUnit (Nightly)
-      wordpress_versions: '["latest", "6.8", "nightly"]'
+      wordpress_versions: '["latest", "6.9", "6.8", "nightly"]'
       php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]'
 
   test-result:
