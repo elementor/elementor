@@ -1,6 +1,7 @@
 import { Page, type APIRequestContext } from '@playwright/test';
 import type ApiRequests from '../../../../assets/api-requests';
 import EditorPage from '../../../../pages/editor-page';
+import { timeouts } from '../../../../config/timeouts';
 
 type GlobalClassVariant = {
 	meta: { breakpoint: string | null; state: string | null };
@@ -129,7 +130,7 @@ export async function saveAndCloseClassManager( page: Page ): Promise<void> {
 
 	if ( await saveButton.isEnabled( { timeout: 5000 } ).catch( () => false ) ) {
 		await saveButton.click( { force: true } );
-		// Await saveButton.waitFor( { state: 'disabled', timeout: 10000 } ).catch( () => {} );
+		await saveButton.waitFor( { state: 'hidden', timeout: timeouts.expect } ).catch( () => {} );
 	}
 
 	await page.getByRole( 'button', { name: 'Close' } ).click();
