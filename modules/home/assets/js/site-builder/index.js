@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import AiLoaderIcon from '../icons/ai-loader-icon';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { getStepAction, StepLoader } from './components/step-actions';
@@ -10,10 +9,7 @@ import {
 	PlannerBackground,
 	PlannerGrid,
 	PlannerPreviewContainer,
-	PlannerPreviewInner,
-	PlannerPreviewFrame,
 	PlannerPreviewImage,
-	PlannerLoaderBadge,
 	PlannerContent,
 	PlannerHeading,
 } from './components/styled-components';
@@ -37,7 +33,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 
 	const isInitStep = ( plannerSteps.INIT ?? 0 ) === Number( sessionStep );
 	const showLayoutToggle = isInitStep && Boolean( inputValue.trim() );
-	const stepImage = siteBuilderData?.stepImages?.[ sessionStep ];
+	const stepImage = siteBuilderData?.stepImages?.[ sessionStep ?? plannerSteps.INIT ];
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -106,20 +102,13 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			<PlannerGrid />
 
 			<PlannerPreviewContainer>
-				<PlannerPreviewInner>
-					<PlannerPreviewFrame>
-						{ stepImage && (
-							<PlannerPreviewImage
-								component="img"
-								src={ stepImage }
-								alt=""
-							/>
-						) }
-					</PlannerPreviewFrame>
-					<PlannerLoaderBadge>
-						<AiLoaderIcon />
-					</PlannerLoaderBadge>
-				</PlannerPreviewInner>
+				{ stepImage && (
+					<PlannerPreviewImage
+						component="img"
+						src={ stepImage }
+						alt=""
+					/>
+				) }
 			</PlannerPreviewContainer>
 
 			<PlannerContent>

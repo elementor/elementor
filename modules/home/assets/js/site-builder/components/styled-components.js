@@ -40,11 +40,8 @@ export const PlannerGrid = styled( Box )( ( { theme } ) => ( {
 } ) );
 
 export const PlannerPreviewContainer = styled( Box )( ( { theme } ) => ( {
-	position: 'relative',
-	zIndex: 1,
 	display: 'none',
-	alignItems: 'center',
-	justifyContent: 'center',
+	position: 'relative',
 	flexShrink: 0,
 	width: theme.spacing( 31.5 ),
 	height: '100%',
@@ -54,38 +51,10 @@ export const PlannerPreviewContainer = styled( Box )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const PlannerPreviewInner = styled( Box )( ( { theme } ) => ( {
-	position: 'relative',
-	width: theme.spacing( 31.5 ),
-	height: theme.spacing( 18.5 ),
-} ) );
-
-export const PlannerPreviewFrame = styled( Box )( ( { theme } ) => ( {
-	position: 'absolute',
-	inset: 0,
-	border: '1px dashed',
-	borderColor: '#696199',
-	borderRadius: theme.spacing( 1.75 ),
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'flex-end',
-	gap: '3.7px',
-	padding: '8.5px',
-	paddingInlineEnd: '0',
-} ) );
-
-export const PlannerPreviewImage = styled( Box )( ( { theme } ) => ( {
-	height: '121px',
-	width: 'auto',
-	objectFit: 'cover',
-	borderRadius: theme.spacing( 1.25 ),
-	flexShrink: 0,
-} ) );
-
-export const PlannerLoaderBadge = styled( Box )( ( { theme } ) => ( {
-	position: 'absolute',
-	top: theme.spacing( 1 ),
-	right: theme.spacing( -2.5 ),
+export const PlannerPreviewImage = styled( Box )( () => ( {
+	width: '100%',
+	height: 'auto',
+	display: 'block',
 } ) );
 
 export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
