@@ -4,20 +4,34 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
-import { configureElementToolPrompt } from './prompt';
+import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
 export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+	const { addTool, resource } = reg;
+
+	resource(
+		'configure-element-guide',
+		CONFIGURE_ELEMENT_GUIDE_URI,
+		{
+			title: 'Configure Element Guide',
+			description: 'Detailed guide for using the configure-element tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generatePrompt() } ],
+		} )
+	);
 
 	addTool( {
 		name: 'configure-element',
-		description: configureElementToolPrompt,
+		description: "Configure an existing V4 element's properties and styles. Read the guide resource before use.",
 		schema,
 		outputSchema,
 		requiredResources: [
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
+			{ description: 'Configure element guide', uri: CONFIGURE_ELEMENT_GUIDE_URI },
 		],
 		modelPreferences: {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
