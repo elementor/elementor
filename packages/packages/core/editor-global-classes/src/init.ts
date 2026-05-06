@@ -81,7 +81,6 @@ export function init() {
 - Create/update/delete global classes
 - Get list of global classes
 - Get details of a global class
-- Get details of a global class
 `,
 		} ),
 		getMCPByDomain( 'canvas' )
