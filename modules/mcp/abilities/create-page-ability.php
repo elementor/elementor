@@ -14,12 +14,31 @@ class Create_Page_Ability extends Abstract_Ability {
 		return 'elementor/create-page';
 	}
 
-	protected function get_definition(): array {
-		return [
-			'label' => __( 'Create Elementor Page', 'elementor' ),
-			'description' => __( 'Creates a new draft post or page and marks it as built with Elementor (blank canvas in the editor). Use when the user wants a new layout shell to design in Elementor. Returns the new post ID and edit URL.', 'elementor' ),
-			'category' => 'elementor',
-			'input_schema' => [
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'Create Elementor Page', 'elementor' ),
+			__( 'Creates a new draft post or page and marks it as built with Elementor (blank canvas in the editor). Use when the user wants a new layout shell to design in Elementor. Returns the new post ID and edit URL.', 'elementor' ),
+			'elementor',
+			[
+				'type' => 'object',
+				'properties' => [
+					'id' => [ 'type' => 'integer' ],
+					'edit_url' => [ 'type' => 'string' ],
+					'status' => [ 'type' => 'string' ],
+					'type' => [ 'type' => 'string' ],
+				],
+			],
+			[
+				'annotations' => [
+					'readonly' => false,
+					'idempotent' => false,
+					'destructive' => false,
+				],
+			],
+			function () {
+				return current_user_can( 'edit_posts' );
+			},
+			[
 				'type' => 'object',
 				'properties' => [
 					'title' => [
@@ -32,28 +51,8 @@ class Create_Page_Ability extends Abstract_Ability {
 						'default' => 'page',
 					],
 				],
-			],
-			'output_schema' => [
-				'type' => 'object',
-				'properties' => [
-					'id' => [ 'type' => 'integer' ],
-					'edit_url' => [ 'type' => 'string' ],
-					'status' => [ 'type' => 'string' ],
-					'type' => [ 'type' => 'string' ],
-				],
-			],
-			'meta' => [
-				'annotations' => [
-					'readonly' => false,
-					'idempotent' => false,
-					'destructive' => false,
-				],
-			],
-			'permission_callback' => function () {
-				return current_user_can( 'edit_posts' );
-			},
-			'execute_callback' => [ $this, 'execute' ],
-		];
+			]
+		);
 	}
 
 	public function execute( $input = [] ) {

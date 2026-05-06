@@ -14,12 +14,29 @@ class Update_Settings_Ability extends Abstract_Ability {
 		return 'elementor/update-page-settings';
 	}
 
-	protected function get_definition(): array {
-		return [
-			'label' => __( 'Update Elementor Page Settings', 'elementor' ),
-			'description' => __( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Use list-pages to resolve IDs and get-page-structure when you also need the element tree. Requires permission to edit the target post.', 'elementor' ),
-			'category' => 'elementor',
-			'input_schema' => [
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'Update Elementor Page Settings', 'elementor' ),
+			__( 'Updates Elementor document-level settings for a post (for example page layout, title visibility, or custom page settings). Pass only the keys you want to change. Use list-pages to resolve IDs and get-page-structure when you also need the element tree. Requires permission to edit the target post.', 'elementor' ),
+			'elementor',
+			[
+				'type' => 'object',
+				'properties' => [
+					'success' => [ 'type' => 'boolean' ],
+					'post_id' => [ 'type' => 'integer' ],
+				],
+			],
+			[
+				'annotations' => [
+					'readonly' => false,
+					'idempotent' => false,
+					'destructive' => false,
+				],
+			],
+			function () {
+				return current_user_can( 'edit_posts' );
+			},
+			[
 				'type' => 'object',
 				'required' => [ 'post_id', 'settings' ],
 				'properties' => [
@@ -33,26 +50,8 @@ class Update_Settings_Ability extends Abstract_Ability {
 						'additionalProperties' => true,
 					],
 				],
-			],
-			'output_schema' => [
-				'type' => 'object',
-				'properties' => [
-					'success' => [ 'type' => 'boolean' ],
-					'post_id' => [ 'type' => 'integer' ],
-				],
-			],
-			'meta' => [
-				'annotations' => [
-					'readonly' => false,
-					'idempotent' => false,
-					'destructive' => false,
-				],
-			],
-			'permission_callback' => function () {
-				return current_user_can( 'edit_posts' );
-			},
-			'execute_callback' => [ $this, 'execute' ],
-		];
+			]
+		);
 	}
 
 	public function execute( $input = [] ) {
@@ -77,11 +76,7 @@ class Update_Settings_Ability extends Abstract_Ability {
 			return new \WP_Error( 'rest_cannot_edit', __( 'Sorry, you are not allowed to edit this document.', 'elementor' ), [ 'status' => \WP_Http::FORBIDDEN ] );
 		}
 
-		$saved = $document->save(
-			[
-				'settings' => $settings,
-			]
-		);
+		$saved = $document->save( [ 'settings' => $settings ] );
 
 		if ( ! $saved ) {
 			return new \WP_Error( 'save_failed', __( 'Could not save document settings.', 'elementor' ), [ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ] );

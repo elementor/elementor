@@ -14,22 +14,12 @@ class Get_Structure_Ability extends Abstract_Ability {
 		return 'elementor/get-page-structure';
 	}
 
-	protected function get_definition(): array {
-		return [
-			'label' => __( 'Get Elementor Page Structure', 'elementor' ),
-			'description' => __( 'Returns the Elementor element tree (widgets, containers, and nested content) for a single post or page ID. Use after list-pages when you need the live JSON structure to reason about layout, widget types, or to plan edits. Only works for posts that were saved with Elementor.', 'elementor' ),
-			'category' => 'elementor',
-			'input_schema' => [
-				'type' => 'object',
-				'required' => [ 'post_id' ],
-				'properties' => [
-					'post_id' => [
-						'type' => 'integer',
-						'description' => 'WordPress post ID of the Elementor document.',
-					],
-				],
-			],
-			'output_schema' => [
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'Get Elementor Page Structure', 'elementor' ),
+			__( 'Returns the Elementor element tree (widgets, containers, and nested content) for a single post or page ID. Use after list-pages when you need the live JSON structure to reason about layout, widget types, or to plan edits. Only works for posts that were saved with Elementor.', 'elementor' ),
+			'elementor',
+			[
 				'type' => 'object',
 				'properties' => [
 					'elements' => [
@@ -38,18 +28,27 @@ class Get_Structure_Ability extends Abstract_Ability {
 					],
 				],
 			],
-			'meta' => [
+			[
 				'annotations' => [
 					'readonly' => true,
 					'idempotent' => true,
 					'destructive' => false,
 				],
 			],
-			'permission_callback' => function () {
+			function () {
 				return current_user_can( 'edit_posts' );
 			},
-			'execute_callback' => [ $this, 'execute' ],
-		];
+			[
+				'type' => 'object',
+				'required' => [ 'post_id' ],
+				'properties' => [
+					'post_id' => [
+						'type' => 'integer',
+						'description' => 'WordPress post ID of the Elementor document.',
+					],
+				],
+			]
+		);
 	}
 
 	public function execute( $input = [] ) {

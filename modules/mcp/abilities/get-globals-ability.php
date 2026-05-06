@@ -18,12 +18,12 @@ class Get_Globals_Ability extends Abstract_Ability {
 		return 'elementor/get-globals';
 	}
 
-	protected function get_definition(): array {
-		return [
-			'label' => __( 'Get Elementor Globals', 'elementor' ),
-			'description' => __( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Use when you need kit-level styling context, not a single page tree.', 'elementor' ),
-			'category' => 'elementor',
-			'output_schema' => [
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'Get Elementor Globals', 'elementor' ),
+			__( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Use when you need kit-level styling context, not a single page tree.', 'elementor' ),
+			'elementor',
+			[
 				'type' => 'object',
 				'properties' => [
 					'global_classes' => [
@@ -36,18 +36,18 @@ class Get_Globals_Ability extends Abstract_Ability {
 					],
 				],
 			],
-			'meta' => [
+			[
 				'annotations' => [
 					'readonly' => true,
 					'idempotent' => true,
 					'destructive' => false,
 				],
 			],
-			'permission_callback' => function () {
+			function () {
 				return current_user_can( 'edit_posts' );
-			},
-			'execute_callback' => [ $this, 'execute' ],
-		];
+			}
+			// No input_schema — this ability takes no input.
+		);
 	}
 
 	public function execute( $input = [] ) {

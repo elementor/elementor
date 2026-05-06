@@ -12,26 +12,12 @@ class List_Pages_Ability extends Abstract_Ability {
 		return 'elementor/list-pages';
 	}
 
-	protected function get_definition(): array {
-		return [
-			'label' => __( 'List Elementor Pages', 'elementor' ),
-			'description' => __( 'Returns pages and posts built with Elementor on this WordPress site. Each item includes ID, title, status (publish/draft), URL, and post type. Use this first to discover which pages exist before fetching their structure or modifying settings.', 'elementor' ),
-			'category' => 'elementor',
-			'input_schema' => [
-				'type' => 'object',
-				'properties' => [
-					'status' => [
-						'type' => 'string',
-						'enum' => [ 'publish', 'draft', 'any' ],
-						'default' => 'any',
-					],
-					'post_type' => [
-						'type' => 'string',
-						'description' => 'Filter by post type. Omit for all Elementor-supported types.',
-					],
-				],
-			],
-			'output_schema' => [
+	protected function get_definition(): Ability_Definition {
+		return new Ability_Definition(
+			__( 'List Elementor Pages', 'elementor' ),
+			__( 'Returns pages and posts built with Elementor on this WordPress site. Each item includes ID, title, status (publish/draft), URL, and post type. Use this first to discover which pages exist before fetching their structure or modifying settings.', 'elementor' ),
+			'elementor',
+			[
 				'type' => 'array',
 				'items' => [
 					'type' => 'object',
@@ -44,18 +30,31 @@ class List_Pages_Ability extends Abstract_Ability {
 					],
 				],
 			],
-			'meta' => [
+			[
 				'annotations' => [
 					'readonly' => true,
 					'idempotent' => true,
 					'destructive' => false,
 				],
 			],
-			'permission_callback' => function () {
+			function () {
 				return current_user_can( 'edit_posts' );
 			},
-			'execute_callback' => [ $this, 'execute' ],
-		];
+			[
+				'type' => 'object',
+				'properties' => [
+					'status' => [
+						'type' => 'string',
+						'enum' => [ 'publish', 'draft', 'any' ],
+						'default' => 'any',
+					],
+					'post_type' => [
+						'type' => 'string',
+						'description' => 'Filter by post type. Omit for all Elementor-supported types.',
+					],
+				],
+			]
+		);
 	}
 
 	public function execute( $input = [] ) {
