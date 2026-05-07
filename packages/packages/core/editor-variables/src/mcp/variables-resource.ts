@@ -2,7 +2,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 
 import { service } from '../service';
-import { type TVariable } from '../storage';
+import { STORAGE_UPDATED_EVENT, type TVariable } from '../storage';
 
 export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
@@ -47,7 +47,7 @@ export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canv
 			}
 		);
 
-		window.addEventListener( 'variables:updated', notifyGlobalVariablesUpdated );
+		window.addEventListener( STORAGE_UPDATED_EVENT, notifyGlobalVariablesUpdated );
 
 		listenTo( commandEndEvent( 'document/save/update' ), notifyGlobalVariablesUpdated );
 	} );
