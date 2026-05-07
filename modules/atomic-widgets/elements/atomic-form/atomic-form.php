@@ -119,8 +119,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				] ),
 		];
 
-		$props = array_merge( $props, self::get_emails_prop_settings() );
-		$props = array_merge( $props, [
+		$props = array_merge( $props, self::get_emails_prop_settings(), [
 			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
