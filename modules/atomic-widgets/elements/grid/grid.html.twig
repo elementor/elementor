@@ -1,0 +1,11 @@
+{% import 'elementor/macros' as m %}
+{%- set tag = settings.tag | default('div') -%}
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+    {%- set tag = settings.link.tag | default('a') -%}
+{%- endif -%}
+<{{ tag }} class="{{ m.render_base_classes(id, base_styles, settings) }} {{ editor_classes | default('') }}"
+    {{- ' ' }}{{ m.render_data_attributes(id, type, interaction_id) }}
+    {{- m.render_link_attributes(settings.link | default(null)) }}
+    {{- m.render_custom_attributes(settings, editor_attributes) }}>
+    <!-- elementor-children-placeholder -->
+</{{ tag }}>
