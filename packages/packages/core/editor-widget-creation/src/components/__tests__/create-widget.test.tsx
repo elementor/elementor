@@ -247,6 +247,27 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'My prompt' );
 		} );
 
+		it( 'redirects to app admin even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+
+			fireEvent.click( installButton );
+
+			// Assert — redirect still fires even without a prompt.
+			await waitFor( () => {
+				expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( undefined );
+			} );
+		} );
+
 		it( 'does NOT fire angie_install_completed when install fails', async () => {
 			// Arrange.
 			mockIsAngieAvailable.mockReturnValue( false );
@@ -303,6 +324,56 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			expect( calls.indexOf( 'angie_install_started' ) ).toBeLessThan(
 				calls.indexOf( 'angie_install_completed' )
 			);
+		} );
+	} );
+
+	describe( 'fallback install', () => {
+		it( 'calls redirectToInstallation with the prompt when Install Manually is clicked', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( 'Build me a widget' );
+		} );
+
+		it( 'calls redirectToInstallation even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert — redirect fires even without a prompt.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( undefined );
 		} );
 	} );
 } );
