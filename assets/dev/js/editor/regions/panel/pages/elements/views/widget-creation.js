@@ -5,16 +5,14 @@ const TEMPLATES = {
 	SEARCH_FOOTER: '#tmpl-elementor-panel-elements-widget-creation-search-footer',
 };
 
-const prompt = `Create a widget for me.
+const CREATE_WIDGET_PROMPT = `Create a widget for me.
 Goal: [What should this widget help me accomplish?]
 Placement: [Where will I see it in the editor/UI?]
 How it should work: `;
 
 PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 	getTemplate() {
-		return this.options.emptyResults
-			? TEMPLATES.EMPTY_STATE
-			: TEMPLATES.SEARCH_FOOTER;
+		return this.options.emptyResults ? TEMPLATES.EMPTY_STATE : TEMPLATES.SEARCH_FOOTER;
 	},
 
 	className() {
@@ -44,7 +42,7 @@ PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/editor/create-widget', {
 				detail: {
-					prompt,
+					prompt: CREATE_WIDGET_PROMPT,
 					entry_point: 'search_widget',
 				},
 			} ),
@@ -53,3 +51,4 @@ PanelElementsWidgetCreationView = Marionette.ItemView.extend( {
 } );
 
 module.exports = PanelElementsWidgetCreationView;
+module.exports.CREATE_WIDGET_PROMPT = CREATE_WIDGET_PROMPT;

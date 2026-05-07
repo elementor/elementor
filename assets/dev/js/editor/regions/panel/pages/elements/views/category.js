@@ -1,4 +1,5 @@
-var PanelElementsElementsCollection = require( '../collections/elements' ),
+var CREATE_WIDGET_PROMPT = require( './widget-creation' ).CREATE_WIDGET_PROMPT,
+	PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
 
 PanelElementsCategoryView = Marionette.CompositeView.extend( {
@@ -15,6 +16,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	events: {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
+		'click .elementor-panel-custom-widgets__cta': 'onCustomWidgetsCtaClick',
 	},
 
 	id() {
@@ -30,9 +32,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 		switch ( this.model.get( 'sort' ) ) {
 			case 'a-z':
-				items = items.sort(
-					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1,
-				);
+				items = items.sort( ( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ? 1 : -1 ) );
 				break;
 		}
 
@@ -44,7 +44,9 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	},
 
 	onRender() {
-		let isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
+		let isActive = elementor.channels.panelElements.request(
+			'category:' + this.model.get( 'name' ) + ':active',
+		);
 
 		if ( undefined === isActive ) {
 			isActive = this.model.get( 'defaultActive' );
@@ -68,7 +70,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			elementorCommon.eventsManager.config.names[ this.model.get( 'name' ) ]?.v1,
 			{
 				location: elementorCommon.eventsManager.config.locations.widgetPanel,
-				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ this.model.get( 'name' ) ],
+				secondaryLocation:
+          elementorCommon.eventsManager.config.secondaryLocations[ this.model.get( 'name' ) ],
 				trigger: elementorCommon.eventsManager.config.triggers.accordionClick,
 				element: elementorCommon.eventsManager.config.elements.accordionSection,
 			},
@@ -83,7 +86,10 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			slideFn = isActive ? 'slideUp' : 'slideDown',
 			updateScrollbar = () => elementor.getPanelView().updateScrollbar();
 
-		elementor.channels.panelElements.reply( 'category:' + this.model.get( 'name' ) + ':active', ! isActive );
+		elementor.channels.panelElements.reply(
+			'category:' + this.model.get( 'name' ) + ':active',
+			! isActive,
+		);
 
 		this.$el.toggleClass( activeClass, ! isActive );
 
@@ -97,9 +103,24 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onChipClick( event ) {
 		event.stopPropagation();
 
-		document.dispatchEvent( new CustomEvent( 'alphachip:open', {
-			detail: { target: this.$el },
-		} ) );
+		document.dispatchEvent(
+			new CustomEvent( 'alphachip:open', {
+				detail: { target: this.$el },
+			} ),
+		);
+	},
+
+	onCustomWidgetsCtaClick( event ) {
+		event.stopPropagation();
+
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/editor/create-widget', {
+				detail: {
+					prompt: CREATE_WIDGET_PROMPT,
+					entry_point: 'widgets_panel',
+				},
+			} ),
+		);
 	},
 } );
 
