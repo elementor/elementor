@@ -12,9 +12,7 @@ const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => {
-	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
-		'@elementor/editor-mcp'
-	);
+	const { toolPrompts } = jest.requireActual< typeof import('@elementor/editor-mcp') >( '@elementor/editor-mcp' );
 	return {
 		toolPrompts,
 		isAngieAvailable: () => mockIsAngieAvailable(),
