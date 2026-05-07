@@ -56,7 +56,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const customWidgetsCategory = page.locator( CUSTOM_WIDGETS_CATEGORY );
 				await expect( customWidgetsCategory ).toBeVisible();
 				await expect( customWidgetsCategory.locator( '.elementor-panel-heading-title' ) ).toContainText(
-					'Custom widgets',
+					'Custom Widget',
 				);
 				await expect(
 					customWidgetsCategory.locator( '.elementor-panel-category-custom-widgets-empty__message' ),
