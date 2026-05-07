@@ -300,7 +300,7 @@ class Global_Classes_Repository {
 
 		$this->each_class_id_batch(
 			array_values( $to_delete ),
-			function ( string $class_id ) use ( $is_preview, $relations, $post_ids, $post_ids_map ) {
+			function ( string $class_id ) use ( $is_preview, $relations, $post_ids ) {
 				$post = isset( $post_ids[ $class_id ] )
 					? Global_Class_Post::from_post_id( $post_ids[ $class_id ], false )
 					: null;
@@ -316,7 +316,6 @@ class Global_Classes_Repository {
 				} else {
 					$relations->clear_class_relations( $class_id );
 					$post->delete();
-					$post_ids_map->remove_class_id( $class_id );
 				}
 			}
 		);

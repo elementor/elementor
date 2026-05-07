@@ -201,19 +201,8 @@ class Global_Class_Post {
 	}
 
 	public function delete(): bool {
-		$post_id = (int) $this->post->ID;
-		$result = wp_delete_post( $post_id, true );
+		$result = wp_delete_post( $this->post->ID, true );
 
-		if ( false === $result ) {
-			return false;
-		}
-
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( $kit ) {
-			Global_Classes_Post_IDs::make( $kit )->remove_post_id( $post_id );
-		}
-
-		return true;
+		return false !== $result;
 	}
 }
