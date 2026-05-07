@@ -114,14 +114,17 @@ export const PlannerTextField = styled( TextField )( ( { theme } ) => ( {
 	'& .MuiOutlinedInput-root': {
 		borderRadius: theme.spacing( 1 ),
 		height: theme.spacing( 5 ),
-		boxShadow: '0px 3px 14px 0px rgba(0, 0, 0, 0.06)',
+		boxShadow: `0px 3px 14px 2px ${ theme.palette.divider }`,
 		overflow: 'hidden',
+		border: '1px solid transparent',
+		backgroundImage: `linear-gradient(${ theme.palette.common.white }, ${ theme.palette.common.white }), linear-gradient(89deg, #212121 25.85%, #696199 46.02%, #C945C9 60.81%, #212121 82.38%)`,
+		backgroundOrigin: 'border-box',
+		backgroundClip: 'padding-box, border-box',
 		'& fieldset': {
-			borderColor: theme.palette.divider,
+			border: 'none',
 		},
 		'&.Mui-focused fieldset': {
-			borderColor: theme.palette.divider,
-			borderWidth: '1px',
+			border: 'none',
 		},
 	},
 	'& .MuiInputBase-input': {
@@ -208,5 +211,12 @@ export const LayoutChip = styled( Chip, {
 	},
 	'&& .MuiChip-icon': {
 		fontSize: theme.spacing( 1.75 ),
+	},
+	'&&:hover': {
+		backgroundColor: theme.palette.secondary.dark,
+		color: theme.palette.secondary.contrastText,
+		'& .MuiChip-icon': {
+			color: `${ theme.palette.secondary.contrastText } !important`,
+		},
 	},
 } ) );
