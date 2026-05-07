@@ -31,10 +31,6 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
 			message: z.string().optional().describe( 'Error details if status is error' ),
 		},
-		modelPreferences: {
-			intelligencePriority: 0.75,
-			speedPriority: 0.75,
-		},
 		requiredResources: [
 			{
 				uri: GLOBAL_VARIABLES_URI,
