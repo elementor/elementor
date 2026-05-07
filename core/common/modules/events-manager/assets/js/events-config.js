@@ -237,6 +237,15 @@ const eventsConfig = {
 			delete: 'delete_variable',
 			variableSyncToV3: 'variable_sync_to_v3',
 		},
+		design_system: {
+			importOpened: 'design_system_import_opened',
+			fileSelected: 'design_system_file_selected',
+			validationFailed: 'design_system_validation_failed',
+			conflictChoice: 'design_system_conflict_choice',
+			confirmed: 'design_system_import_confirmed',
+			imported: 'design_system_imported',
+			importFailed: 'design_system_import_failed',
+		},
 		components: {
 			createClicked: 'component_create_clicked',
 			createCancelled: 'component_creation_cancelled',
