@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
+use Elementor\App\Modules\ImportExportCustomization\Design_System_Import_Context;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
-use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\AtomicWidgets\Utils\Utils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
 use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Legacy_Import_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,9 +20,10 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function should_import( array $data ): bool {
+		$import_context = Design_System_Import_Context::from_data( $data );
+
 		return (
-			isset( $data['include'] ) &&
-			in_array( 'settings', $data['include'], true ) &&
+			$import_context->is_included() &&
 			! empty( $data['extracted_directory_path'] ) &&
 			$this->is_classes_enabled( $data )
 		);
@@ -37,125 +38,48 @@ class Import extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ): array {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$import_context = Design_System_Import_Context::from_data( $data );
+		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'classesOverrideAll' );
 
-		$file_name = Import_Export_Customization::FILE_NAME;
-		$global_classes = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
+		$kit_for_reading = $this->get_kit_for_reading( $imported_data );
 
-		if ( ! $kit || ! $global_classes ) {
-			return [];
+		if ( $this->is_legacy_import_format( $data ) ) {
+			$global_classes_file = $data['extracted_directory_path'] . '/' . Import_Export_Customization::FILE_NAME . '.json';
+			return Legacy_Import_Utils::import_classes( $global_classes_file, $conflict_resolution, $kit_for_reading );
 		}
 
-		$global_classes['order'] = Global_Classes_Parser::sanitize_order(
-			$global_classes['items'] ?? [],
-			$global_classes['order'] ?? []
-		);
-
-		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
-
-		if ( ! $global_classes_result->is_valid() ) {
-			return [];
-		}
-
-		$imported_classes = $global_classes_result->unwrap();
-		$repository = Global_Classes_Repository::make( $kit );
-
-		$override_all = ! empty( $data['customization']['settings']['classesOverrideAll'] );
-
-		if ( $override_all ) {
-			$repository->put(
-				$imported_classes['items'],
-				$imported_classes['order']
-			);
-
-			return $imported_classes;
-		}
-
-		$existing_classes = $this->get_existing_classes( $repository, $imported_data );
-		$merged = $this->merge_classes( $existing_classes, $imported_classes );
-
-		$repository->put(
-			$merged['items'],
-			$merged['order']
-		);
-
-		return $imported_classes;
+		$global_classes_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
+		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ], $kit_for_reading );
 	}
 
-	private function get_existing_classes( Global_Classes_Repository $repository, array $imported_data ): array {
-		$existing = $repository->all()->get();
-
-		if ( ! empty( $existing['items'] ) ) {
-			return $existing;
-		}
+	private function get_kit_for_reading( array $imported_data ): Kit {
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
 
 		if ( ! $was_new_kit_created ) {
-			return $existing;
+			return $active_kit;
 		}
 
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
 
 		if ( ! $previous_kit_id ) {
-			return $existing;
+			return $active_kit;
 		}
 
 		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
 
-		return Global_Classes_Repository::make( $previous_kit )->all()->get();
-	}
-
-	private function merge_classes( array $existing, array $imported ): array {
-		$existing_items = $existing['items'] ?? [];
-		$existing_order = $existing['order'] ?? [];
-		$existing_labels = $this->get_existing_labels( $existing_items );
-
-		$imported_items = $imported['items'] ?? [];
-		$imported_order = $imported['order'] ?? [];
-
-		foreach ( $imported_order as $imported_id ) {
-			if ( ! isset( $imported_items[ $imported_id ] ) ) {
-				continue;
-			}
-
-			$imported_class = $imported_items[ $imported_id ];
-
-			$id_exists = array_key_exists( $imported_id, $existing_items );
-			$new_id = $id_exists
-				? $this->generate_unique_id( array_keys( $existing_items ) )
-				: $imported_id;
-
-			$original_label = $imported_class['label'] ?? $imported_id;
-			$new_label = ImportExportUtils::resolve_label_conflict( $original_label, $existing_labels );
-			$existing_labels[] = strtolower( $new_label );
-
-			$imported_class['id'] = $new_id;
-			$imported_class['label'] = $new_label;
-
-			$existing_items[ $new_id ] = $imported_class;
-			$existing_order[] = $new_id;
+		if ( ! $previous_kit ) {
+			return $active_kit;
 		}
 
-		return [
-			'items' => $existing_items,
-			'order' => $existing_order,
-		];
+		return $previous_kit;
 	}
 
-	private function get_existing_labels( array $items ): array {
-		$labels = [];
+	private function is_legacy_import_format( array $data ): bool {
+		$manifest = $data['manifest'];
+		$elementor_version = $manifest['elementor_version'];
 
-		foreach ( $items as $item ) {
-			if ( isset( $item['label'] ) ) {
-				$labels[] = strtolower( $item['label'] );
-			}
-		}
-
-		return $labels;
-	}
-
-	private function generate_unique_id( array $existing_ids ): string {
-		return Utils::generate_id( 'g-', $existing_ids );
+		return version_compare( $elementor_version, '4.1.0', '<' );
 	}
 }

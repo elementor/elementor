@@ -69,9 +69,15 @@ class Import extends Base_Route {
 				'description' => 'Session ID for import operations',
 				'required' => true,
 			],
-			'settings' => [
+			'include' => [
+				'type' => 'array',
+				'description' => 'Content types to import (e.g. templates, content, plugins, settings, design-system)',
+				'required' => false,
+				'default' => [],
+			],
+			'customization' => [
 				'type' => 'object',
-				'description' => 'Import settings',
+				'description' => 'Fine-grained import customization per content type',
 				'required' => false,
 				'default' => [],
 			],

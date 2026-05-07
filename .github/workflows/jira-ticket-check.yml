@@ -1,0 +1,36 @@
+name: Jira Ticket Check
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  jira-ticket-check:
+    name: Jira Ticket
+    runs-on: ubuntu-latest
+    if: startsWith(github.repository, 'elementor/')
+    steps:
+      - name: Check for Jira ticket
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pattern = /[A-Z]{2,10}-\d+/;
+
+            const title = context.payload.pull_request.title || '';
+            const branch = context.payload.pull_request.head.ref || '';
+            const body = context.payload.pull_request.body || '';
+
+            const sources = { title, branch, body };
+            const found = Object.entries(sources).find(([, value]) => pattern.test(value));
+
+            if (found) {
+              const [source, value] = found;
+              const ticket = value.match(pattern)[0];
+              core.info(`Found Jira ticket ${ticket} in PR ${source}`);
+            } else {
+              core.setFailed('No Jira ticket found in PR title, branch name, or body');
+            }

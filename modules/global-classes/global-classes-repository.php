@@ -69,6 +69,25 @@ class Global_Classes_Repository {
 		return $this->labels()->get_ordered_labels();
 	}
 
+	public function get_order(): array {
+		return Global_Classes_Order::make( $this->get_kit() )->get_order();
+	}
+
+	public function update_order_and_labels( array $order, array $new_labels ): void {
+		Global_Classes_Order::make( $this->get_kit() )->set_order( $order );
+
+		$labels = $this->labels();
+		$existing_labels = $labels->get_labels();
+
+		foreach ( $new_labels as $id => $label ) {
+			$existing_labels[ $id ] = $label;
+		}
+
+		$labels->set_labels( $existing_labels );
+
+		$this->cache = null;
+	}
+
 	private function labels(): Global_Classes_Labels {
 		return Global_Classes_Labels::make( $this->get_kit() )->set_preview( $this->is_preview() );
 	}
@@ -345,6 +364,21 @@ class Global_Classes_Repository {
 			$post->update_label( $item['label'] );
 			clean_post_cache( $post->get_post_id() );
 		} );
+	}
+
+	public function delete_all(): void {
+		$order = $this->get_order();
+
+		$this->each_class_id_batch( $order, function ( string $class_id ) {
+			$post = Global_Class_Post::find_by_class_id( $class_id );
+
+			if ( $post ) {
+				$post->delete();
+			}
+		} );
+
+		Global_Classes_Order::make( $this->get_kit() )->set_order( [] );
+		$this->labels()->set_labels( [] );
 	}
 
 	private function each_class_id_batch( $class_ids, callable $callback, int $batch_size = self::PERSIST_BATCH_SIZE ): void {
