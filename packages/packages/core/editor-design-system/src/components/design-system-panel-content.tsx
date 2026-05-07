@@ -14,6 +14,7 @@ import {
 	notifyDesignSystemTabChange,
 	persistDesignSystemTab,
 } from '../initial-tab';
+import { DesignSystemHeaderMenu } from './design-system-header-menu';
 
 const stickyTabRowStyles = {
 	position: 'sticky' as const,
@@ -73,13 +74,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 		<ThemeProvider>
 			<Panel>
 				<PanelHeader>
-					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+					<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center" spacing={ 0.5 }>
 						<PanelHeaderTitle sx={ { flex: 1, minWidth: 0 } }>
 							{ __( 'Design system', 'elementor' ) }
 						</PanelHeaderTitle>
+						<DesignSystemHeaderMenu />
 						<CloseButton
 							aria-label={ __( 'Close', 'elementor' ) }
-							sx={ { flexShrink: 0, marginLeft: 'auto' } }
+							sx={ { flexShrink: 0 } }
 							onClick={ () => void handleHeaderClose() }
 						/>
 					</Stack>
