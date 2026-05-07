@@ -13,17 +13,31 @@ import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-reso
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
-import { generatePrompt } from './prompt';
+import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+	const { addTool, resource } = reg;
+
+	resource(
+		'build-compositions-guide',
+		BUILD_COMPOSITIONS_GUIDE_URI,
+		{
+			title: 'Build Compositions Guide',
+			description: 'Detailed guide for using the build-compositions tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generatePrompt() } ],
+		} )
+	);
 
 	addTool( {
 		name: 'build-compositions',
-		description: generatePrompt(),
+		description: 'Build V4 element compositions on the Elementor canvas. Read the guide resource before use.',
 		schema,
 		requiredResources: [
+			{ description: 'Build compositions guide', uri: BUILD_COMPOSITIONS_GUIDE_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },

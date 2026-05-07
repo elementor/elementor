@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { type SyntheticEvent } from 'react';
 import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { Autocomplete, Chip, TextField } from '@elementor/ui';
+import { Autocomplete, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
+import { ChipsList } from '../components/chips-list';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
@@ -61,13 +62,13 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
 				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
-				renderTags={ ( values, getTagProps ) =>
-					values.map( ( option, index ) => {
-						const { key, ...chipProps } = getTagProps( { index } );
-						const label = typeof option === 'string' ? option : option.label;
-						return <Chip key={ key } size="tiny" label={ label } { ...chipProps } />;
-					} )
-				}
+				renderTags={ ( tagValues, getTagProps ) => (
+					<ChipsList
+						getLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
+						getTagProps={ getTagProps }
+						values={ tagValues }
+					/>
+				) }
 			/>
 		</ControlActions>
 	);

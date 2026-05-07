@@ -1,6 +1,7 @@
 import { Page, type APIRequestContext } from '@playwright/test';
 import type ApiRequests from '../../../../assets/api-requests';
 import EditorPage from '../../../../pages/editor-page';
+import { timeouts } from '../../../../config/timeouts';
 
 type GlobalClassVariant = {
 	meta: { breakpoint: string | null; state: string | null };
@@ -129,11 +130,19 @@ export async function saveAndCloseClassManager( page: Page ): Promise<void> {
 
 	if ( await saveButton.isEnabled( { timeout: 5000 } ).catch( () => false ) ) {
 		await saveButton.click( { force: true } );
-		// Await saveButton.waitFor( { state: 'disabled', timeout: 10000 } ).catch( () => {} );
+		await saveButton.waitFor( { state: 'hidden', timeout: timeouts.expect } ).catch( () => {} );
 	}
 
 	await page.getByRole( 'button', { name: 'Close' } ).click();
 	await page.waitForTimeout( 500 );
+}
+
+export async function deleteClassFromClassManager( page: Page, className: string ): Promise<void> {
+	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+	await classItem.hover();
+	await classItem.locator( '[aria-label="More actions"]' ).click();
+	await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
+	await page.getByRole( 'button', { name: 'Delete' } ).click();
 }
 
 export async function startSyncToV3( page: Page, className: string ): Promise<void> {
