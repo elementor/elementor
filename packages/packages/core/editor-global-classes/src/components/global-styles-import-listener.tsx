@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from '@elementor/editor-canvas';
 import { __useDispatch as useDispatch } from '@elementor/store';
 
+import { loadCurrentDocumentClasses } from '../load-document-classes';
 import { slice } from '../store';
 
 export function GlobalStylesImportListener() {
@@ -20,7 +21,11 @@ export function GlobalStylesImportListener() {
 						frontend: items,
 					} )
 				);
+
+				return;
 			}
+
+			void loadCurrentDocumentClasses();
 		};
 
 		window.addEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );

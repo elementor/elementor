@@ -10,7 +10,7 @@ export default class DesignSystemPage {
 	}
 
 	get toolbarButton(): Locator {
-		return this.page.getByRole( 'button', { name: 'Design System' } );
+		return this.page.getByRole( 'button', { name: 'Design System', exact: true } );
 	}
 
 	get panel(): Locator {
