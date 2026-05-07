@@ -60,7 +60,7 @@ class Module extends BaseModule {
 		$elements_manager->add_category(
 			Elements_Manager::CATEGORY_CUSTOM_WIDGETS,
 			[
-				'title' => esc_html__( 'Custom widgets', 'elementor' ),
+				'title' => esc_html__( 'Custom Widget', 'elementor' ),
 				'icon' => 'eicon-ai',
 				'hideIfEmpty' => false,
 				'active' => true,
@@ -95,7 +95,7 @@ class Module extends BaseModule {
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
 		<div class="elementor-panel-category-custom-widgets-empty">
-			<p class="elementor-panel-category-custom-widgets-empty__message"><?php echo esc_html__( 'Create custom Elementor widgets by describing what you need.', 'elementor' ); ?></p>
+			<p class="elementor-panel-category-custom-widgets-empty__message"><?php echo esc_html__( 'Create custom widgets by describing what you need.', 'elementor' ); ?></p>
 		</div>
 		<# } #>
 		<?php
