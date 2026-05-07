@@ -147,6 +147,19 @@ class Test_Email_To_Emails_Migration extends Elementor_Test_Base {
 		$this->assertSame( 'bcc@example.com', $result['value']['bcc']['value'] );
 	}
 
+	public function test_up__missing_to_does_not_create_string_array() {
+		// Arrange
+		$data = $this->make_email_data( 'admin@example.com' );
+		$data['value']['to'] = null;
+
+		// Act
+		$result = Migration_Interpreter::run( $this->migration, $data, 'up' );
+
+		// Assert
+		$this->assertSame( 'emails', $result['$$type'] );
+		$this->assertNull( $result['value']['to'] );
+	}
+
 	public function test_roundtrip__up_then_down_preserves_to() {
 		// Arrange
 		$original = $this->make_email_data( 'admin@example.com', 'cc@test.com', 'bcc@test.com' );
