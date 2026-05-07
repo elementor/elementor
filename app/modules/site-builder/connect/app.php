@@ -30,6 +30,7 @@ class App extends Library {
 				'headers' => [
 					'x-host-site-title' => (string) get_bloginfo( 'name' ),
 					'x-host-site-context' => (string) get_bloginfo( 'description' ),
+					'site-key' => $this->get_site_key(),
 				],
 			],
 			[

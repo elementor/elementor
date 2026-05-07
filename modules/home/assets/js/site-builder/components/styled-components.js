@@ -64,10 +64,7 @@ export const PlannerContent = styled( Stack )( ( { theme } ) => ( {
 	flex: 1,
 	gap: theme.spacing( 1 ),
 	paddingBlock: theme.spacing( 3 ),
-	paddingInline: theme.spacing( 3 ),
-	[ theme.breakpoints.up( 'md' ) ]: {
-		paddingInline: theme.spacing( 4 ),
-	},
+	paddingInline: theme.spacing( 2 ),
 } ) );
 
 export const PlannerHeading = styled( Typography )( ( { theme } ) => ( {
