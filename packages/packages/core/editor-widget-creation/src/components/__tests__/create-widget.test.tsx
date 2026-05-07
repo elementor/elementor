@@ -1,276 +1,379 @@
 import * as React from 'react';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CreateWidget } from '../create-widget';
 
 const mockIsAngieAvailable = jest.fn();
-const mockSendPromptToAngie = jest.fn();
+const mockTrackEvent = jest.fn();
 const mockInstallAngiePlugin = jest.fn();
 const mockRedirectToAppAdmin = jest.fn();
+const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
 
-jest.mock( '@elementor/editor-mcp', () => ( {
-	isAngieAvailable: () => mockIsAngieAvailable(),
-	sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
-	installAngiePlugin: () => mockInstallAngiePlugin(),
-	redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
-	redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
-} ) );
-
-const mockTrackEvent = jest.fn();
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual( '@elementor/editor-mcp' ) as { toolPrompts: unknown };
+	return {
+		toolPrompts,
+		isAngieAvailable: () => mockIsAngieAvailable(),
+		installAngiePlugin: ( ...args: unknown[] ) => mockInstallAngiePlugin( ...args ),
+		redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
+		redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
+		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
+	};
+} );
 
 jest.mock( '@elementor/events', () => ( {
 	trackEvent: ( ...args: unknown[] ) => mockTrackEvent( ...args ),
 } ) );
 
-jest.mock( '@elementor/editor-ui', () => ( {
-	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
-} ) );
-
-jest.mock( '@elementor/ui', () => ( {
-	Button: ( {
-		children,
-		onClick,
-		disabled,
-		startIcon,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		disabled?: boolean;
-		startIcon?: React.ReactNode;
-	} ) => (
-		<button onClick={ onClick } disabled={ disabled }>
-			{ startIcon }
-			{ children }
-		</button>
-	),
-	CircularProgress: () => null,
-	Dialog: ( { children, open }: { children: React.ReactNode; open: boolean; onClose?: () => void } ) =>
-		open ? <div role="dialog">{ children }</div> : null,
-	DialogContent: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	IconButton: ( {
-		children,
-		onClick,
-		'aria-label': ariaLabel,
-	}: {
-		children: React.ReactNode;
-		onClick?: () => void;
-		'aria-label'?: string;
-	} ) => (
-		<button onClick={ onClick } aria-label={ ariaLabel }>
-			{ children }
-		</button>
-	),
-	Image: () => null,
-	Stack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	Typography: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
-} ) );
-
-jest.mock( '@elementor/icons', () => ( {
-	XIcon: () => null,
-} ) );
-
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 
 function dispatchCreateWidgetEvent( detail: { prompt?: string; entry_point: string } ) {
-	act( () => {
-		window.dispatchEvent( new CustomEvent( CREATE_WIDGET_EVENT, { detail } ) );
-	} );
+	window.dispatchEvent( new CustomEvent( CREATE_WIDGET_EVENT, { detail } ) );
 }
 
-describe( 'CreateWidget', () => {
+describe( 'CreateWidget — analytics instrumentation', () => {
 	beforeEach( () => {
 		mockIsAngieAvailable.mockReset();
-		mockSendPromptToAngie.mockReset();
+		mockTrackEvent.mockReset();
 		mockInstallAngiePlugin.mockReset();
 		mockRedirectToAppAdmin.mockReset();
+		mockSendPromptToAngie.mockReset();
 		mockRedirectToInstallation.mockReset();
-		mockTrackEvent.mockReset();
 	} );
 
-	describe( 'when Angie is already installed', () => {
-		beforeEach( () => {
-			mockIsAngieAvailable.mockReturnValue( true );
-		} );
-
-		it( 'sends the prompt to Angie without showing the modal', () => {
-			render( <CreateWidget /> );
-
-			dispatchCreateWidgetEvent( { prompt: 'Build me a hero section', entry_point: 'top_bar' } );
-
-			expect( mockSendPromptToAngie ).toHaveBeenCalledWith( 'Build me a hero section' );
-			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'tracks the cta event with has_angie_installed: true', () => {
-			render( <CreateWidget /> );
-
-			dispatchCreateWidgetEvent( { prompt: 'Build me something', entry_point: 'top_bar' } );
-
-			expect( mockTrackEvent ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					eventName: 'angie_cta_clicked',
-					has_angie_installed: true,
-					entry_point: 'top_bar',
-				} )
-			);
-		} );
-	} );
-
-	describe( 'when Angie is not installed', () => {
-		beforeEach( () => {
+	describe( 'ai_widget_cta_clicked', () => {
+		it( 'fires ai_widget_cta_clicked with correct entry_point when Angie is NOT installed', () => {
+			// Arrange.
 			mockIsAngieAvailable.mockReturnValue( false );
+			renderWithTheme( <CreateWidget /> );
+
+			// Act.
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Assert.
+			expect( mockTrackEvent ).toHaveBeenCalledWith( {
+				eventName: 'ai_widget_cta_clicked',
+				entry_point: 'top_bar_icon',
+				has_angie_installed: false,
+			} );
 		} );
 
-		it( 'shows the install modal', () => {
-			render( <CreateWidget /> );
+		it( 'fires ai_widget_cta_clicked with has_angie_installed: true when Angie IS installed', () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( true );
+			renderWithTheme( <CreateWidget /> );
 
-			dispatchCreateWidgetEvent( { prompt: 'Build me a hero section', entry_point: 'top_bar' } );
+			// Act.
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
 
-			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Install Angie to build custom widgets' ) ).toBeInTheDocument();
+			// Assert.
+			expect( mockTrackEvent ).toHaveBeenCalledWith( {
+				eventName: 'ai_widget_cta_clicked',
+				entry_point: 'top_bar_icon',
+				has_angie_installed: true,
+			} );
 		} );
 
-		it( 'tracks the cta event with has_angie_installed: false', () => {
-			render( <CreateWidget /> );
+		it( 'fires ai_widget_cta_clicked with a custom entry_point', () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			renderWithTheme( <CreateWidget /> );
 
-			dispatchCreateWidgetEvent( { prompt: 'Build me something', entry_point: 'top_bar' } );
+			// Act.
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'context_menu' } );
+			} );
 
+			// Assert.
 			expect( mockTrackEvent ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					eventName: 'angie_cta_clicked',
-					has_angie_installed: false,
-					entry_point: 'top_bar',
+					eventName: 'ai_widget_cta_clicked',
+					entry_point: 'context_menu',
 				} )
 			);
 		} );
 
-		describe( 'install flow — success', () => {
-			it( 'calls redirectToAppAdmin with prompt after successful install', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+		it( 'does NOT open the install modal and instead calls sendPromptToAngie when Angie is installed', () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( true );
+			renderWithTheme( <CreateWidget /> );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
-
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
-
-				await waitFor( () => {
-					expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'Build me a widget' );
-				} );
+			// Act.
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
 			} );
 
-			it( 'calls redirectToAppAdmin without a prompt when no prompt is provided', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			// Assert — modal should not be rendered.
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( mockSendPromptToAngie ).toHaveBeenCalledWith( 'My prompt' );
+		} );
+	} );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { entry_point: 'top_bar' } );
+	describe( 'install modal', () => {
+		it( 'shows the install modal when Angie is NOT installed', () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			renderWithTheme( <CreateWidget /> );
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
-
-				await waitFor( () => {
-					expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( undefined );
-				} );
+			// Act.
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			it( 'tracks angie_install_started when install begins', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			// Assert.
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+	} );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
+	describe( 'angie_install_abandoned', () => {
+		it( 'fires angie_install_abandoned with abandon_step: install_modal when closing the modal in idle state', () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			renderWithTheme( <CreateWidget /> );
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
 
-				await waitFor( () => {
-					expect( mockTrackEvent ).toHaveBeenCalledWith(
-						expect.objectContaining( {
-							eventName: 'angie_install_started',
-							trigger_source: 'top_bar',
-						} )
-					);
-				} );
+			// Act — click the close (X) button.
+			const closeButton = screen.getByLabelText( 'Close' );
+
+			fireEvent.click( closeButton );
+
+			// Assert.
+			expect( mockTrackEvent ).toHaveBeenCalledWith( {
+				eventName: 'angie_install_abandoned',
+				abandon_step: 'install_modal',
+				trigger_source: 'top_bar_icon',
 			} );
 		} );
 
-		describe( 'install flow — failure', () => {
-			it( 'shows error state and Install Manually button on failure', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+		it( 'fires angie_install_abandoned with abandon_step: install_error when closing after an install failure', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
-
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
-
-				await waitFor( () => {
-					expect( screen.getByText( 'Installation failed' ) ).toBeInTheDocument();
-					expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
-				} );
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			it( 'calls redirectToInstallation with prompt when Install Manually is clicked', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			// Click Install Angie to trigger the failure.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
+			fireEvent.click( installButton );
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
-
-				await waitFor( () => {
-					expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
-				} );
-
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
-
-				expect( mockRedirectToInstallation ).toHaveBeenCalledWith( 'Build me a widget' );
+			// After failure, the install button becomes "Install Manually".
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
 			} );
 
-			it( 'calls redirectToInstallation without a prompt when no prompt is provided', async () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			// Act — close the modal in error state.
+			const closeButton = screen.getByLabelText( 'Close' );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { entry_point: 'top_bar' } );
+			fireEvent.click( closeButton );
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
-
-				await waitFor( () => {
-					expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
-				} );
-
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
-
-				expect( mockRedirectToInstallation ).toHaveBeenCalledWith( undefined );
+			// Assert.
+			expect( mockTrackEvent ).toHaveBeenCalledWith( {
+				eventName: 'angie_install_abandoned',
+				abandon_step: 'install_error',
+				trigger_source: 'top_bar_icon',
 			} );
 		} );
 
-		describe( 'modal close behavior', () => {
-			it( 'closes the modal when close button is clicked while idle', () => {
-				mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+		it( 'does NOT fire angie_install_abandoned while installation is in progress', async () => {
+			// Arrange — make install hang forever so state stays 'installing'.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockReturnValue( new Promise( () => {} ) );
+			renderWithTheme( <CreateWidget /> );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
-
-				expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
-
-				fireEvent.click( screen.getByLabelText( 'Close' ) );
-
-				expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			it( 'cannot close the modal while install is in progress', async () => {
-				mockInstallAngiePlugin.mockReturnValue( new Promise( () => {} ) ); // never resolves
+			// Click Install Angie.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
 
-				render( <CreateWidget /> );
-				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar' } );
+			fireEvent.click( installButton );
 
-				fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+			// The button should now show "Installing…".
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Installing/i } ) ).toBeInTheDocument();
+			} );
 
-				await waitFor( () => {
-					expect( screen.getByRole( 'button', { name: /Installing…/i } ) ).toBeInTheDocument();
+			// Attempt to close — should be blocked.
+			const closeButton = screen.getByLabelText( 'Close' );
+
+			fireEvent.click( closeButton );
+
+			// Assert — abandoned event should NOT have fired, modal stays open.
+			expect( mockTrackEvent ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { eventName: 'angie_install_abandoned' } )
+			);
+			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'angie_install_completed', () => {
+		it( 'fires angie_install_completed and redirects after a successful install', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+
+			fireEvent.click( installButton );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockTrackEvent ).toHaveBeenCalledWith( {
+					eventName: 'angie_install_completed',
+					trigger_source: 'top_bar_icon',
 				} );
-
-				fireEvent.click( screen.getByLabelText( 'Close' ) );
-
-				expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 			} );
+
+			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'My prompt' );
+		} );
+
+		it( 'redirects to app admin even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+
+			fireEvent.click( installButton );
+
+			// Assert — redirect still fires even without a prompt.
+			await waitFor( () => {
+				expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( undefined );
+			} );
+		} );
+
+		it( 'does NOT fire angie_install_completed when install fails', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+
+			fireEvent.click( installButton );
+
+			// Wait for async install to settle (button changes to "Install Manually" on failure).
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Assert.
+			expect( mockTrackEvent ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { eventName: 'angie_install_completed' } )
+			);
+			expect( mockRedirectToAppAdmin ).not.toHaveBeenCalled();
+		} );
+
+		it( 'fires angie_install_started before angie_install_completed in the correct order', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+
+			fireEvent.click( installButton );
+
+			// Wait for install to complete, then assert call order.
+			await waitFor( () => {
+				expect( mockTrackEvent ).toHaveBeenCalledWith(
+					expect.objectContaining( { eventName: 'angie_install_completed' } )
+				);
+			} );
+
+			const calls = mockTrackEvent.mock.calls.map( ( [ arg ] ) => arg.eventName );
+
+			// ai_widget_cta_clicked fires first (on the window event), then install sequence.
+			expect( calls ).toContain( 'angie_install_started' );
+			expect( calls.indexOf( 'angie_install_started' ) ).toBeLessThan(
+				calls.indexOf( 'angie_install_completed' )
+			);
+		} );
+	} );
+
+	describe( 'fallback install', () => {
+		it( 'calls redirectToInstallation with the prompt when Install Manually is clicked', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( 'Build me a widget' );
+		} );
+
+		it( 'calls redirectToInstallation even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert — redirect fires even without a prompt.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( undefined );
 		} );
 	} );
 } );
