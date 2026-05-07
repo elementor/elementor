@@ -16,7 +16,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Email_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Emails_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -39,6 +39,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
 
+	public const EMAIL_ACTION_COUNT = 2;
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
 	public const ACTION_WEBHOOK = 'webhook';
@@ -81,15 +82,6 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$email_dependencies = Dependency_Manager::make()
-			->where( [
-				'operator' => 'contains',
-				'path' => [ 'actions-after-submit' ],
-				'value' => self::ACTION_EMAIL,
-				'effect' => 'hide',
-			] )
-			->get();
-
 		$submissions_metadata_dependencies = Dependency_Manager::make()
 			->where( [
 				'operator' => 'contains',
@@ -108,7 +100,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			] )
 			->get();
 
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'form-name' => String_Prop_Type::make()
@@ -125,91 +117,88 @@ class Atomic_Form extends Atomic_Element_Base {
 					String_Prop_Type::generate( self::METADATA_REMOTE_IP ),
 					String_Prop_Type::generate( self::METADATA_USER_AGENT ),
 				] ),
-			'email' => Email_Prop_Type::make()
-				->set_dependencies( $email_dependencies )
-				->meta( Overridable_Prop_Type::ignore() )
-				->default( [
-					'to' => String_Prop_Type::generate( self::get_default_recipient_email() ),
-					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
-				] ),
+		];
+
+		$props = array_merge( $props, self::get_emails_prop_settings(), [
 			'webhook_url' => String_Prop_Type::make()
 				->set_dependencies( $webhook_dependencies )
 				->meta( Overridable_Prop_Type::ignore() )
 				->default( '' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
-		];
+		] );
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
 		$state_control = Toggle_Control::bind_to( 'form-state' )
+			->add_options( [
+				'default' => [
+					'title' => __( 'Normal', 'elementor' ),
+				],
+				'success' => [
+					'title' => __( 'Success', 'elementor' ),
+				],
+				'error' => [
+					'title' => __( 'Error', 'elementor' ),
+				],
+			] )
+			->set_exclusive( true )
+			->set_convert_options( true )
+			->set_size( 'tiny' )
+			->set_full_width( true )
 			->set_label( __( 'States', 'elementor' ) )
 			->set_meta( [ 'topDivider' => true ] );
 
-		if ( $state_control instanceof Toggle_Control ) {
-			$state_control
-				->add_options( [
-					'default' => [
-						'title' => __( 'Normal', 'elementor' ),
+		$email_control_settings = $this->get_emails_control_settings();
+		$form_action_chips = $email_control_settings['form-action-chips'];
+		$email_controls = $email_control_settings['email-controls'];
+
+		$content_controls = [
+			Text_Control::bind_to( 'form-name' )
+				->set_label( __( 'Form name', 'elementor' ) ),
+			$state_control,
+			Chips_Control::bind_to( 'actions-after-submit' )
+				->set_options( array_merge( $form_action_chips, [
+					[
+						'label' => __( 'Collect submissions', 'elementor' ),
+						'value' => self::ACTION_COLLECT_SUBMISSIONS,
 					],
-					'success' => [
-						'title' => __( 'Success', 'elementor' ),
+					[
+						'label' => __( 'Webhook', 'elementor' ),
+						'value' => self::ACTION_WEBHOOK,
 					],
-					'error' => [
-						'title' => __( 'Error', 'elementor' ),
+				] ) )
+				->set_label( __( 'Actions after submit', 'elementor' ) )
+				->set_meta( [ 'topDivider' => true ] ),
+		];
+
+		$content_controls = array_merge( $content_controls, $email_controls );
+
+		$content_controls = array_merge( $content_controls, [
+			Chips_Control::bind_to( 'submissions_metadata' )
+				->set_options( [
+					[
+						'label' => __( 'User IP', 'elementor' ),
+						'value' => self::METADATA_REMOTE_IP,
+					],
+					[
+						'label' => __( 'User Agent', 'elementor' ),
+						'value' => self::METADATA_USER_AGENT,
 					],
 				] )
-				->set_exclusive( true )
-				->set_convert_options( true )
-				->set_size( 'tiny' )
-				->set_full_width( true );
-		}
+				->set_label( __( 'Include metadata', 'elementor' ) )
+				->set_meta( [ 'topDivider' => true ] ),
+			Text_Control::bind_to( 'webhook_url' )
+				->set_placeholder( __( 'Enter webhook URL', 'elementor' ) )
+				->set_label( __( 'Webhook URL', 'elementor' ) )
+				->set_meta( [ 'topDivider' => true ] ),
+		] );
 
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
-					Text_Control::bind_to( 'form-name' )
-						->set_label( __( 'Form name', 'elementor' ) ),
-					$state_control,
-					Chips_Control::bind_to( 'actions-after-submit' )
-						->set_label( __( 'Actions after submit', 'elementor' ) )
-						->set_meta( [ 'topDivider' => true ] )
-						->set_options( [
-							[
-								'label' => __( 'Email', 'elementor' ),
-								'value' => self::ACTION_EMAIL,
-							],
-							[
-								'label' => __( 'Collect submissions', 'elementor' ),
-								'value' => self::ACTION_COLLECT_SUBMISSIONS,
-							],
-							[
-								'label' => __( 'Webhook', 'elementor' ),
-								'value' => self::ACTION_WEBHOOK,
-							],
-						] ),
-					Email_Form_Action_Control::bind_to( 'email' )
-						->set_meta( [
-							'topDivider' => true,
-						] ),
-					Chips_Control::bind_to( 'submissions_metadata' )
-						->set_label( __( 'Include metadata', 'elementor' ) )
-						->set_meta( [ 'topDivider' => true ] )
-						->set_options( [
-							[
-								'label' => __( 'User IP', 'elementor' ),
-								'value' => self::METADATA_REMOTE_IP,
-							],
-							[
-								'label' => __( 'User Agent', 'elementor' ),
-								'value' => self::METADATA_USER_AGENT,
-							],
-						] ),
-					Text_Control::bind_to( 'webhook_url' )
-						->set_label( __( 'Webhook URL', 'elementor' ) )
-						->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
-						->set_meta( [ 'topDivider' => true ] ),
-				] ),
+				->set_items( $content_controls ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
@@ -415,5 +404,71 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public static function is_instance_form( $instance ): bool {
 		return $instance instanceof Atomic_Form;
+	}
+
+	private static function get_emails_prop_settings() {
+		return array_merge( ...array_map( [ self::class, 'get_indexed_email_prop_settings' ], range( 0, self::EMAIL_ACTION_COUNT - 1 ) ) );
+	}
+
+	private static function get_indexed_email_prop_settings( $index = 0 ) {
+		$key = 0 === $index ? self::ACTION_EMAIL : self::ACTION_EMAIL . '_' . ( $index + 1 );
+
+		$email_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => $key,
+				'effect' => 'hide',
+			] )
+			->get();
+
+		return [
+			$key => Emails_Prop_Type::make()
+				->set_dependencies( $email_dependencies )
+				->meta( Overridable_Prop_Type::ignore() )
+				->initial_value( [
+					'to' => String_Array_Prop_Type::generate( [
+						String_Prop_Type::generate( self::get_default_recipient_email() ),
+					] ),
+					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+				] )
+				->default( [
+					'to' => String_Array_Prop_Type::generate( [
+						String_Prop_Type::generate( self::get_default_recipient_email() ),
+					] ),
+					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+				] ),
+		];
+	}
+
+	private function get_emails_control_settings() {
+		$form_action_chips = [];
+		$email_controls = [];
+		$email_label = __( 'Email', 'elementor' );
+		$prop_key = self::ACTION_EMAIL;
+
+		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
+			if ( 0 !== $i ) {
+				// translators: %d is the index of the email action.
+				$email_label = sprintf( __( 'Email %d', 'elementor' ), $i + 1 );
+				$prop_key = self::ACTION_EMAIL . '_' . ( $i + 1 );
+			}
+
+			$form_action_chips[] = [
+				'label' => $email_label,
+				'value' => $prop_key,
+			];
+			$email_controls[] = Email_Form_Action_Control::bind_to( $prop_key )
+				->allow_free_chips()
+				->set_label( $email_label )
+				->set_meta( [
+					'topDivider' => true,
+				] );
+		}
+
+		return [
+			'form-action-chips' => $form_action_chips,
+			'email-controls' => $email_controls,
+		];
 	}
 }

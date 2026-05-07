@@ -42,6 +42,11 @@
       "fromType": "config",
       "toType": "config-v2",
       "path": "operations/config-to-config-v2.json"
+    },
+    "email-to-emails": {
+      "fromType": "email",
+      "toType": "emails",
+      "path": "operations/email-to-emails.json"
     }
   }
 }
