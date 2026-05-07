@@ -11,13 +11,19 @@ const mockRedirectToAppAdmin = jest.fn();
 const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
 
-jest.mock( '@elementor/editor-mcp', () => ( {
-	isAngieAvailable: () => mockIsAngieAvailable(),
-	installAngiePlugin: ( ...args: unknown[] ) => mockInstallAngiePlugin( ...args ),
-	redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
-	redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
-	sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
-} ) );
+jest.mock( '@elementor/editor-mcp', () => {
+	const { toolPrompts } = jest.requireActual< typeof import( '@elementor/editor-mcp' ) >(
+		'@elementor/editor-mcp'
+	);
+	return {
+		toolPrompts,
+		isAngieAvailable: () => mockIsAngieAvailable(),
+		installAngiePlugin: ( ...args: unknown[] ) => mockInstallAngiePlugin( ...args ),
+		redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
+		redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
+		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
+	};
+} );
 
 jest.mock( '@elementor/events', () => ( {
 	trackEvent: ( ...args: unknown[] ) => mockTrackEvent( ...args ),
