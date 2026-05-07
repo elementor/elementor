@@ -460,6 +460,34 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( '' === $settings['title'] ) {
+			return '';
+		}
+
+		$tag = $settings['header_size'] ?? 'h2';
+		$level_map = [
+			'h1' => 1,
+			'h2' => 2,
+			'h3' => 3,
+			'h4' => 4,
+			'h5' => 5,
+			'h6' => 6,
+		];
+		$level = $level_map[ $tag ] ?? 2;
+		$title = Utils::html_to_plain_text( $settings['title'] );
+
+		$md = str_repeat( '#', $level ) . ' ' . $title;
+
+		if ( ! empty( $settings['link']['url'] ) ) {
+			$md = str_repeat( '#', $level ) . ' [' . $title . '](' . esc_url( $settings['link']['url'] ) . ')';
+		}
+
+		return $md;
+	}
+
 	public function maybe_add_ally_heading_hint() {
 		$notice_id = 'ally_heading_notice';
 		$plugin_slug = 'pojo-accessibility';

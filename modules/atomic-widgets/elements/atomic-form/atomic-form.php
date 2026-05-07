@@ -416,4 +416,8 @@ class Atomic_Form extends Atomic_Element_Base {
 	public static function is_instance_form( $instance ): bool {
 		return $instance instanceof Atomic_Form;
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }
