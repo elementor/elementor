@@ -17,7 +17,7 @@ export const baseSchema = {
 		.optional()
 		.describe( 'Easing function for the animation. Use "easeIn" for free tier.' ),
 	excludedBreakpoints: z
-		.array( z.string() )
+		.array( z.enum( [ 'desktop', 'tablet', 'mobile' ] ) )
 		.optional()
 		.describe(
 			'Breakpoint IDs on which this interaction is disabled (e.g. ["mobile", "tablet"]). Omit to enable on all breakpoints.'
