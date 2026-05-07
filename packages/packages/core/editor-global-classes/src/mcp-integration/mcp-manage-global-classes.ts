@@ -209,10 +209,6 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 			{ uri: STYLE_SCHEMA_URI, description: 'Style schema resources' },
 			{ uri: BREAKPOINTS_SCHEMA_URI, description: 'Breakpoints list' },
 		],
-		modelPreferences: {
-			intelligencePriority: 0.85,
-			speedPriority: 0.6,
-		},
 		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE compositions. Do NOT create classes for one-off styles or layout-specific properties.`,
 		schema,
 		outputSchema,
