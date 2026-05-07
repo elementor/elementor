@@ -8,53 +8,45 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Query_Filter_Repeater_Control extends Atomic_Control_Base {
-	private array $allowed_types = [];
-	private array $type_options = [];
-	private ?string $repeater_label = null;
-	private ?string $placeholder = null;
-	private ?string $add_label = null;
+	private array $allowed_keys = [];
+	private array $key_config = [];
+	private ?string $label = null;
+	private ?string $chips_placeholder = null;
 
 	public function get_type(): string {
 		return 'query-filter-repeater';
 	}
 
-	public function set_allowed_types( array $types ): self {
-		$this->allowed_types = $types;
+	public function set_allowed_keys( array $keys ): self {
+		$this->allowed_keys = $keys;
 
 		return $this;
 	}
 
-	public function set_type_options( array $options ): self {
-		$this->type_options = $options;
+	public function set_key_config( array $config ): self {
+		$this->key_config = $config;
 
 		return $this;
 	}
 
-	public function set_repeater_label( string $label ): self {
-		$this->repeater_label = $label;
+	public function set_label( string $label ): self {
+		$this->label = $label;
 
 		return $this;
 	}
 
-	public function set_placeholder( string $placeholder ): self {
-		$this->placeholder = $placeholder;
-
-		return $this;
-	}
-
-	public function set_add_label( string $label ): self {
-		$this->add_label = $label;
+	public function set_chips_placeholder( string $placeholder ): self {
+		$this->chips_placeholder = $placeholder;
 
 		return $this;
 	}
 
 	public function get_props(): array {
 		return [
-			'allowedTypes'  => $this->allowed_types,
-			'typeOptions'   => (object) $this->type_options,
-			'repeaterLabel' => $this->repeater_label,
-			'placeholder'   => $this->placeholder,
-			'addLabel'      => $this->add_label,
+			'allowedKeys'      => $this->allowed_keys,
+			'keyConfig'        => (object) $this->key_config,
+			'label'            => $this->label,
+			'chipsPlaceholder' => $this->chips_placeholder,
 		];
 	}
 }

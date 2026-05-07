@@ -6,8 +6,8 @@ import { unknownChildrenSchema } from './utils';
 export const queryFilterPropTypeUtil = createPropUtils(
 	'query-filter',
 	z.strictObject( {
-		type: unknownChildrenSchema,
-		value: unknownChildrenSchema,
+		key: unknownChildrenSchema,
+		values: unknownChildrenSchema,
 	} )
 );
 
@@ -17,3 +17,12 @@ export const queryFilterArrayPropTypeUtil = createArrayPropUtils(
 	queryFilterPropTypeUtil.key,
 	queryFilterPropTypeUtil.schema
 );
+
+export type QueryFilterKeyConfig = {
+	label: string;
+	queryEndpoint?: {
+		url: string;
+		params?: Record< string, unknown >;
+	} | null;
+	chipsPlaceholder?: string;
+};
