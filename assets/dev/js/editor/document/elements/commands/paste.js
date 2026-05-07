@@ -85,7 +85,8 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 				switch ( model.elType ) {
 					case 'container':
 					case 'e-flexbox':
-					case 'e-div-block':	{
+					case 'e-div-block':
+					case 'e-grid':	{
 						// Push the cloned container to the 'document'.
 						result.push( this.pasteTo(
 							[ targetContainer ],

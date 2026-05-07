@@ -1,18 +1,18 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
+namespace Elementor\Modules\AtomicWidgets\Elements\Grid;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
-use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Div_Block extends Atomic_Element_Base {
+class Grid extends Atomic_Element_Base {
 	use Has_Element_Template;
 
 	const BASE_STYLE_KEY = 'base';
@@ -32,23 +32,23 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return 'e-div-block';
+		return 'e-grid';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-div-block';
+		return 'e-grid';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div block', 'elementor' );
+		return esc_html__( 'Grid', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic', 'layout' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'grid', 'layout' ];
 	}
 
 	public function get_icon() {
-		return 'eicon-div-block';
+		return 'eicon-library-grid';
 	}
 
 	protected static function define_props_schema(): array {
@@ -77,6 +77,7 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
+				->description( 'The HTML tag for the grid container. Could be div, header, section, article, aside, footer, or a (link).' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -116,10 +117,10 @@ class Div_Block extends Atomic_Element_Base {
 								'label' => 'Footer',
 							],
 						])
+						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 						->set_fallback_labels( [
 							'a' => 'a (link)',
-						] )
-						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
+						] ),
 					Link_Control::bind_to( 'link' )
 						->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 						->set_label( __( 'Link', 'elementor' ) )
@@ -134,7 +135,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$display = String_Prop_Type::generate( 'grid' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -142,7 +143,6 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
 				),
 		];
 	}
@@ -150,13 +150,6 @@ class Div_Block extends Atomic_Element_Base {
 	protected function get_base_padding(): array {
 		return Size_Prop_Type::generate( [
 			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
 			'unit' => 'px',
 		] );
 	}
@@ -190,7 +183,7 @@ class Div_Block extends Atomic_Element_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/div-block' => __DIR__ . '/div-block.html.twig',
+			'elementor/elements/grid' => __DIR__ . '/grid.html.twig',
 		];
 	}
 }
