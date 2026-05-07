@@ -251,7 +251,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Editor design system panel', 'elementor' ),
 			'description' => esc_html__( 'Unified design system entry in the editor (toolbar + single panel for variables and global classes).', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
