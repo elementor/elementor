@@ -40,33 +40,19 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@elementor/editor-ui": "4.0.0",
     "@elementor/http-client": "4.0.0",
     "@elementor/editor": "4.0.0",
     "@elementor/editor-documents": "4.0.0",
     "@elementor/editor-responsive": "4.0.0",
     "@elementor/editor-v1-adapters": "4.0.0",
-    "@elementor/icons": "^1.68.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/locations": "4.0.0",
     "@elementor/menus": "4.0.0",
     "@elementor/events": "4.0.0",
     "@elementor/ui": "1.36.17",
-=======
-    "@elementor/editor-ui": "4.1.0",
-    "@elementor/http-client": "4.1.0",
-    "@elementor/editor": "4.1.0",
-    "@elementor/editor-documents": "4.1.0",
-    "@elementor/editor-mcp": "4.1.0",
-    "@elementor/editor-responsive": "4.1.0",
-    "@elementor/editor-v1-adapters": "4.1.0",
-    "@elementor/icons": "~1.75.1",
-    "@elementor/locations": "4.1.0",
-    "@elementor/menus": "4.1.0",
-    "@elementor/events": "4.1.0",
-    "@elementor/ui": "1.37.5",
->>>>>>> f7ef605ae4 (New: Add Angie entry in editor app bar tools menu [ED-23899] (#35685))
-    "@wordpress/i18n": "^5.13.0"
+    "@wordpress/i18n": "^5.13.0",
+    "@elementor/editor-mcp": "4.0.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

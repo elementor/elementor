@@ -39,7 +39,6 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@elementor/editor": "4.0.0",
     "@elementor/editor-canvas": "4.0.0",
     "@elementor/editor-controls": "4.0.0",
@@ -53,7 +52,7 @@
     "@elementor/editor-styles-repository": "4.0.0",
     "@elementor/editor-ui": "4.0.0",
     "@elementor/editor-v1-adapters": "4.0.0",
-    "@elementor/icons": "^1.68.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/editor-variables": "4.0.0",
     "@elementor/locations": "4.0.0",
     "@elementor/menus": "4.0.0",
@@ -62,33 +61,6 @@
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "4.0.0",
     "@elementor/wp-media": "4.0.0",
-=======
-    "@elementor/editor": "4.1.0",
-    "@elementor/editor-canvas": "4.1.0",
-    "@elementor/editor-controls": "4.1.0",
-    "@elementor/editor-documents": "4.1.0",
-    "@elementor/editor-elements": "4.1.0",
-    "@elementor/editor-interactions": "4.1.0",
-    "@elementor/editor-notifications": "4.1.0",
-    "@elementor/editor-panels": "4.1.0",
-    "@elementor/editor-props": "4.1.0",
-    "@elementor/editor-responsive": "4.1.0",
-    "@elementor/editor-styles": "4.1.0",
-    "@elementor/editor-styles-repository": "4.1.0",
-    "@elementor/editor-ui": "4.1.0",
-    "@elementor/editor-v1-adapters": "4.1.0",
-    "@elementor/http-client": "4.1.0",
-    "@elementor/icons": "~1.75.1",
-    "@elementor/editor-variables": "4.1.0",
-    "@elementor/locations": "4.1.0",
-    "@elementor/menus": "4.1.0",
-    "@elementor/query": "4.1.0",
-    "@elementor/schema": "4.1.0",
-    "@elementor/session": "4.1.0",
-    "@elementor/ui": "1.37.5",
-    "@elementor/utils": "4.1.0",
-    "@elementor/wp-media": "4.1.0",
->>>>>>> f7ef605ae4 (New: Add Angie entry in editor app bar tools menu [ED-23899] (#35685))
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

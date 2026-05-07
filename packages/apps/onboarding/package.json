@@ -37,21 +37,12 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@elementor/events": "4.0.0",
-    "@elementor/icons": "1.68.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/query": "4.0.0",
     "@elementor/store": "4.0.0",
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "4.0.0"
-=======
-    "@elementor/events": "4.1.0",
-    "@elementor/icons": "~1.75.1",
-    "@elementor/query": "4.1.0",
-    "@elementor/store": "4.1.0",
-    "@elementor/ui": "1.37.5",
-    "@elementor/utils": "4.1.0"
->>>>>>> f7ef605ae4 (New: Add Angie entry in editor app bar tools menu [ED-23899] (#35685))
   },
   "peerDependencies": {
     "react": "^18.3.1",
