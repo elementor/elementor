@@ -101,19 +101,19 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 
 			<PlannerGrid />
 
-			<PlannerPreviewContainer>
-				{ stepImage && (
-					<PlannerPreviewImage
-						component="img"
-						src={ stepImage }
-						alt=""
-					/>
-				) }
-			</PlannerPreviewContainer>
+			{ isLoading ? <StepLoader /> : (
+				<>
+					<PlannerPreviewContainer>
+						{ stepImage && (
+							<PlannerPreviewImage
+								component="img"
+								src={ stepImage }
+								alt=""
+							/>
+						) }
+					</PlannerPreviewContainer>
 
-			<PlannerContent>
-				{ isLoading ? <StepLoader /> : (
-					<>
+					<PlannerContent>
 						<PlannerHeading>{ stepConfig.title }</PlannerHeading>
 						{ getStepAction(
 							stepConfig,
@@ -141,9 +141,9 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 								onChipSelect={ setInputValue }
 							/>
 						) }
-					</>
-				) }
-			</PlannerContent>
+					</PlannerContent>
+				</>
+			) }
 		</PlannerRoot>
 	);
 };
