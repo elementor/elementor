@@ -1823,7 +1823,7 @@ abstract class Document extends Controls_Stack {
 
 			$this->do_print_elements( $elements_data );
 
-			$content = ob_get_clean();
+			$content = apply_filters( 'elementor/element/print_elements_content', ob_get_clean() );
 
 			if ( has_blocks( $content ) ) {
 				$content = do_blocks( $content );
@@ -1886,6 +1886,8 @@ abstract class Document extends Controls_Stack {
 
 		if ( ! empty( $cached_data['content'] ) ) {
 			$content = do_shortcode( $cached_data['content'] );
+
+			$content = apply_filters( 'elementor/element/print_elements_after_shortcode', $content );
 
 			if ( has_blocks( $content ) ) {
 				$content = do_blocks( $content );
