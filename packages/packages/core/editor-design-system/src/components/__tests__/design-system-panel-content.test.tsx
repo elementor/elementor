@@ -5,6 +5,10 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
 import { DesignSystemPanelContent } from '../design-system-panel-content';
 
+jest.mock( '../design-system-header-menu', () => ( {
+	DesignSystemHeaderMenu: () => null,
+} ) );
+
 const mockVariablesCloseAttempt = jest.fn();
 const mockClassesCloseAttempt = jest.fn();
 

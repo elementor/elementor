@@ -17,6 +17,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install Angie")';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+	const CUSTOM_WIDGETS_CATEGORY = '#elementor-panel-category-custom-widgets';
 
 	async function searchWidgets( page: Page, searchTerm: string ) {
 		const searchInput = page.locator( WIDGET_SEARCH_INPUT );
@@ -50,6 +51,17 @@ test.describe( 'Widget Creation @widget-creation', () => {
 		test( 'Widget creation CTA and modal functionality', async () => {
 			editor = await wpAdmin.openNewPage();
 			await editor.openElementsPanel();
+
+			await test.step( 'Custom widgets category row shows fallback empty state', async () => {
+				const customWidgetsCategory = page.locator( CUSTOM_WIDGETS_CATEGORY );
+				await expect( customWidgetsCategory ).toBeVisible();
+				await expect( customWidgetsCategory.locator( '.elementor-panel-heading-title' ) ).toContainText(
+					'Custom widgets',
+				);
+				await expect(
+					customWidgetsCategory.locator( '.elementor-panel-category-custom-widgets-empty__message' ),
+				).toBeVisible();
+			} );
 
 			await test.step( 'Search with results shows widget creation footer', async () => {
 				await searchWidgets( page, 'button' );
