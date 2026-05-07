@@ -9,7 +9,7 @@ export const PlannerRoot = styled( Paper )( ( { theme } ) => ( {
 	borderRadius: theme.spacing( 1 ),
 	border: '1px solid',
 	borderColor: theme.palette.divider,
-	minHeight: theme.spacing( 26.75 ),
+	minHeight: theme.spacing( 23.25 ),
 	gap: theme.spacing( 2 ),
 } ) );
 
@@ -215,8 +215,8 @@ export const LayoutChip = styled( Chip, {
 	'&&:hover': {
 		backgroundColor: theme.palette.secondary.dark,
 		color: theme.palette.secondary.contrastText,
-		'& .MuiChip-icon': {
-			color: `${ theme.palette.secondary.contrastText } !important`,
+		'&& .MuiChip-icon': {
+			color: `${ theme.palette.secondary.contrastText }`,
 		},
 	},
 } ) );
