@@ -173,16 +173,17 @@ export const CreateSiteButton = styled( Button )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const SuggestionChip = styled( Chip )( ( { theme, selected } ) => ( {
-	cursor: selected ? 'default' : 'pointer',
-	backgroundColor: selected ? theme.palette.text.secondary : theme.palette.common.white,
-	borderColor: selected ? 'none' : theme.palette.divider,
-	color: selected ? theme.palette.common.white : theme.palette.text.secondary,
+export const SuggestionChip = styled( Chip )( ( { theme } ) => ( {
+	backgroundColor: theme.palette.common.white,
+	borderColor: theme.palette.divider,
+	color: theme.palette.text.secondary,
 	fontSize: theme.spacing( 1.625 ),
-	'&&:hover': {
-		backgroundColor: theme.palette.text.secondary,
-		color: theme.palette.common.white,
-		borderColor: 'none',
+	'&:not(.Mui-disabled):hover': {
+		backgroundColor: '#f3f3f4',
+	},
+	'&.Mui-disabled': {
+		opacity: 1,
+		color: theme.palette.text.disabled,
 	},
 } ) );
 

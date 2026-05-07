@@ -34,6 +34,40 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$this->assertSame( [ 'hello' => 'world' ], $result );
 	}
 
+	public function test_transform__removes_site_builder_when_component_is_missing() {
+		Plugin::$instance->app->add_component( 'site-builder', null );
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( [ 'site_builder' => [ 'existing' => 'data' ] ] );
+
+		$this->assertArrayNotHasKey( 'site_builder', $result );
+	}
+
+	public function test_transform__includes_site_builder_when_site_not_connected() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( [] );
+
+		$this->assertArrayHasKey( 'site_builder', $result );
+		$this->assertArrayNotHasKey( 'siteKey', $result['site_builder'] );
+		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
+		$this->assertArrayHasKey( 'plannerSteps', $result['site_builder'] );
+		$this->assertSame( [], $result['site_builder']['site_builder_snapshot'] );
+	}
+
 	public function test_transform__returns_original_data_when_config_is_null() {
 		$site_builder = new class {
 			public function get_config(): ?array {

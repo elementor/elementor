@@ -60,14 +60,14 @@ const SuggestionChips = ( { onChipSelect, siteBuilderState = DEFAULT_SITE_BUILDE
 	return (
 		<PlannerChipsRow>
 			{ displayChips.map( ( suggestion ) => (
-				<SuggestionChip
-					key={ suggestion }
-					label={ suggestion }
-					onClick={ () => handleChipClick( suggestion ) }
-					size="small"
-					variant="outlined"
-					selected={ selectedChip === suggestion }
-				/>
+			<SuggestionChip
+				key={ suggestion }
+				label={ suggestion }
+				onClick={ () => handleChipClick( suggestion ) }
+				size="small"
+				variant="outlined"
+				disabled={ selectedChip === suggestion }
+			/>
 			) ) }
 		</PlannerChipsRow>
 	);
