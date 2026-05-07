@@ -310,7 +310,7 @@ jest.mock( '../../export/download', () => ( {
 } ) );
 
 const openHeaderMenu = () => {
-	fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Design system actions' } ) );
 };
 
 describe( '<DesignSystemHeaderMenu />', () => {
@@ -333,7 +333,7 @@ describe( '<DesignSystemHeaderMenu />', () => {
 
 		renderWithQuery( <DesignSystemHeaderMenu /> );
 
-		expect( screen.queryByRole( 'button', { name: 'More actions' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Design system actions' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'opens the import dialog when the Import menu item is clicked', async () => {
@@ -433,12 +433,12 @@ describe( '<DesignSystemHeaderMenu />', () => {
 			</>
 		);
 
-		expect( screen.getByRole( 'button', { name: 'More actions' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'button', { name: 'Design system actions' } ) ).toBeEnabled();
 
 		submitImport();
 
 		await waitFor( () => {
-			expect( screen.getByRole( 'button', { name: 'More actions' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Design system actions' } ) ).toBeDisabled();
 		} );
 	} );
 } );

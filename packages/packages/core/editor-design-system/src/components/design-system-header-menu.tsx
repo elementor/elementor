@@ -60,7 +60,7 @@ export const DesignSystemHeaderMenu = () => {
 		void runExport();
 	};
 
-	const triggerLabel = __( 'More actions', 'elementor' );
+	const triggerLabel = __( 'Design system actions', 'elementor' );
 
 	return (
 		<>
