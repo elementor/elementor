@@ -51,3 +51,18 @@ jobs:
               encoding: 'utf8',
               stdio: ['pipe', 'inherit', 'inherit'],
             });
+
+      - name: Check PR title ends with Jira ticket ID
+        if: ${{ github.event.pull_request.title != null }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title;
+            const jiraTicketPattern = /\[ED-\d{1,6}\]$/;
+            if ( ! jiraTicketPattern.test( title ) ) {
+              core.setFailed(
+                `PR title must end with a Jira ticket ID in the format [ED-XXXXX].\n` +
+                `Current title: "${ title }"\n` +
+                `Example: "Fix: My change description [ED-12345]"`
+              );
+            }
