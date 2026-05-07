@@ -120,6 +120,14 @@ class Global_Class_Post {
 	public function to_array(): array {
 		$data = $this->get_data();
 
+		return $this->build_array( $data );
+	}
+
+	public function to_array_raw(): array {
+		return $this->build_array( $this->get_raw_data() );
+	}
+
+	private function build_array( array $data ): array {
 		$result = [
 			'id' => $this->get_class_id(),
 			'label' => $this->get_label(),
@@ -132,6 +140,16 @@ class Global_Class_Post {
 		}
 
 		return $result;
+	}
+
+	public function get_raw_data(): array {
+		$data = $this->get_context_data();
+
+		if ( empty( $data ) && $this->is_preview() ) {
+			$data = $this->get_frontend_data();
+		}
+
+		return $data;
 	}
 
 	public function update_label( string $label ): bool {

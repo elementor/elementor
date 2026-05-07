@@ -174,6 +174,20 @@ class Global_Classes_Repository {
 		}
 	}
 
+	public function each_item_raw( callable $cb, int $batch_size = self::READ_BATCH_SIZE ): void {
+		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
+
+		if ( empty( $order ) ) {
+			return;
+		}
+
+		foreach ( array_chunk( $order, $batch_size ) as $chunk ) {
+			foreach ( $this->iterate_class_posts_for_ids( $chunk ) as $class_post ) {
+				$cb( $class_post->to_array_raw() );
+			}
+		}
+	}
+
 	public function put( array $items, array $order ) {
 		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
 
