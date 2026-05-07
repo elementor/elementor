@@ -51,10 +51,6 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 	};
 
 	const handleInstall = async () => {
-		if ( ! prompt ) {
-			return;
-		}
-
 		setInstallState( 'installing' );
 
 		trackEvent( {
@@ -79,10 +75,6 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 	};
 
 	const handleFallbackInstall = () => {
-		if ( ! prompt ) {
-			return;
-		}
-
 		redirectToInstallation( prompt );
 	};
 
