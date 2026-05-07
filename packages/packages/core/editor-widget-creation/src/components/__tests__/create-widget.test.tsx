@@ -28,28 +28,39 @@ jest.mock( '@elementor/editor-ui', () => ( {
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
-	Button: ( { children, onClick, disabled, startIcon }: {
+	Button: ( {
+		children,
+		onClick,
+		disabled,
+		startIcon,
+	}: {
 		children: React.ReactNode;
 		onClick?: () => void;
 		disabled?: boolean;
 		startIcon?: React.ReactNode;
 	} ) => (
 		<button onClick={ onClick } disabled={ disabled }>
-			{ startIcon }{ children }
+			{ startIcon }
+			{ children }
 		</button>
 	),
 	CircularProgress: () => null,
-	Dialog: ( { children, open }: {
-		children: React.ReactNode;
-		open: boolean;
-		onClose?: () => void;
-	} ) => open ? <div role="dialog">{ children }</div> : null,
+	Dialog: ( { children, open }: { children: React.ReactNode; open: boolean; onClose?: () => void } ) =>
+		open ? <div role="dialog">{ children }</div> : null,
 	DialogContent: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	IconButton: ( { children, onClick, 'aria-label': ariaLabel }: {
+	IconButton: ( {
+		children,
+		onClick,
+		'aria-label': ariaLabel,
+	}: {
 		children: React.ReactNode;
 		onClick?: () => void;
 		'aria-label'?: string;
-	} ) => <button onClick={ onClick } aria-label={ ariaLabel }>{ children }</button>,
+	} ) => (
+		<button onClick={ onClick } aria-label={ ariaLabel }>
+			{ children }
+		</button>
+	),
 	Image: () => null,
 	Stack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	Typography: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
