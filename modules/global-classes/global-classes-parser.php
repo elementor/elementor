@@ -7,8 +7,18 @@ use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 class Global_Classes_Parser {
+	private ?Style_Parser $style_parser = null;
+
 	public static function make() {
 		return new static();
+	}
+
+	private function get_style_parser(): Style_Parser {
+		if ( null === $this->style_parser ) {
+			$this->style_parser = Style_Parser::make( Style_Schema::get() );
+		}
+
+		return $this->style_parser;
 	}
 
 	public function parse( $data ): Parse_Result {
@@ -70,7 +80,7 @@ class Global_Classes_Parser {
 	public function parse_items( array $items ) {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
-		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$style_parser = $this->get_style_parser();
 
 		foreach ( $items as $item_id => $item ) {
 			$item_result = $style_parser->parse( $item );
