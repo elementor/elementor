@@ -12,6 +12,7 @@ const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
 
 jest.mock( '@elementor/editor-mcp', () => {
+	// @eslint-disable-next-line @typescript-eslint/consistent-type-imports
 	const { toolPrompts } = jest.requireActual< typeof import('@elementor/editor-mcp') >( '@elementor/editor-mcp' );
 	return {
 		toolPrompts,
