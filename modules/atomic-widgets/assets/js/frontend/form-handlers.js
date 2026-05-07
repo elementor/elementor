@@ -284,6 +284,7 @@ function setFormState( element, state ) {
 
 	element.classList.remove( 'form-state-default', 'form-state-success', 'form-state-error' );
 	element.classList.add( `form-state-${ state }` );
+	setFocusOnMessageElement( element, state );
 }
 
 function refreshDom( element ) {
@@ -297,4 +298,9 @@ function refreshDom( element ) {
 	} );
 
 	return () => Alpine.destroyTree( element );
+}
+
+function setFocusOnMessageElement( element, type ) {
+	const messageElement = element.querySelector( `[data-e-type="e-form-${ type }-message"]` );
+	messageElement?.focus( { focusVisible: true } );
 }
