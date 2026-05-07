@@ -34,10 +34,6 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 				.describe( 'Instructions what to do next, Important to follow these instructions!' ),
 		},
 		name: 'apply-global-class',
-		modelPreferences: {
-			intelligencePriority: 0.7,
-			speedPriority: 0.8,
-		},
 		description: `Apply a global class to an element for shared design-system styling. Read the full guide at [${ APPLY_GLOBAL_CLASS_GUIDE_URI }].`,
 		requiredResources: [
 			{ description: 'Apply global class tool guide', uri: APPLY_GLOBAL_CLASS_GUIDE_URI },
@@ -63,10 +59,6 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		},
 		outputSchema: {
 			result: z.string().describe( 'Result message indicating the success of the unapply operation' ),
-		},
-		modelPreferences: {
-			intelligencePriority: 0.7,
-			speedPriority: 0.8,
 		},
 		description: `Unapply a global class from an element by class ID. Resolve class names to IDs via [${ GLOBAL_CLASSES_URI }].`,
 		requiredResources: [ { description: 'Global classes list', uri: GLOBAL_CLASSES_URI } ],
