@@ -182,7 +182,7 @@
   },
   "dependencies": {
     "@elementor/elementor-one-assets": "0.4.33",
-    "@elementor/icons": "1.72.0",
+    "@elementor/icons": "~1.75.1",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",
