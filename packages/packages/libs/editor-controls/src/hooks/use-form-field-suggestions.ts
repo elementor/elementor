@@ -13,6 +13,8 @@ const FORM_FIELD_WIDGET_TYPES = [
 	'e-form-checkbox',
 	'e-form-radio-button',
 	'e-form-select',
+	'e-form-date-picker',
+	'e-form-time-picker',
 ];
 
 type Options = {

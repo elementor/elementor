@@ -102,6 +102,10 @@ describe( 'ClassManagerPanel', () => {
 			slice.actions.load( {
 				frontend: data,
 				preview: data,
+				classLabels: {
+					'class-1': 'Class 1',
+					'class-2': 'Class 2',
+				},
 			} )
 		);
 
@@ -142,12 +146,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -172,11 +173,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-2' ],
-				changes: { added: [], deleted: [ 'class-1' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-1' ], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -203,10 +202,9 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {
 					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'New label' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
 				},
 				order: [ 'class-2', 'class-1' ],
-				changes: { added: [], deleted: [], modified: [ 'class-1' ] },
+				changes: { added: [], deleted: [], modified: [ 'class-1' ], order: false },
 			} );
 		} );
 	} );
@@ -276,12 +274,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 
@@ -382,11 +377,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert - Verify that publish was called with deleted class
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-				},
+				items: {},
 				order: [ 'class-1' ],
-				changes: { added: [], deleted: [ 'class-2' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-2' ], modified: [], order: true },
 			} );
 		} );
 	} );

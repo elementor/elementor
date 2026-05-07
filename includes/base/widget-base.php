@@ -697,6 +697,14 @@ abstract class Widget_Base extends Element_Base {
 		$this->render_content();
 	}
 
+	public function render_markdown(): string {
+		ob_start();
+		$this->render_content();
+		$html = ob_get_clean();
+
+		return wp_strip_all_tags( $html );
+	}
+
 	/**
 	 * Before widget rendering.
 	 *

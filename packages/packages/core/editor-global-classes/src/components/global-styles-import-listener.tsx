@@ -1,51 +1,26 @@
 import { useEffect } from 'react';
-import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
+import { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from '@elementor/editor-canvas';
 import { __useDispatch as useDispatch } from '@elementor/store';
 
-import { apiClient } from '../api';
 import { slice } from '../store';
 
 export function GlobalStylesImportListener() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		const handleGlobalStylesImported = ( event: CustomEvent ) => {
-			const importedClasses = event.detail?.global_classes;
+		const handleGlobalStylesImported = ( event: CustomEvent< ImportedGlobalStylesPayload > ) => {
+			const importedClasses = event.detail?.global_classes as ImportedGlobalStylesPayload[ 'global_classes' ];
 
 			if ( importedClasses?.items && importedClasses?.order ) {
+				const { items } = importedClasses;
+
 				dispatch(
-					slice.actions.load( {
-						preview: {
-							items: importedClasses.items,
-							order: importedClasses.order,
-						},
-						frontend: {
-							items: importedClasses.items,
-							order: importedClasses.order,
-						},
+					slice.actions.mergeExistingClasses( {
+						preview: items,
+						frontend: items,
 					} )
 				);
 			}
-
-			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] )
-				.then( ( [ previewRes, frontendRes ] ) => {
-					const { data: previewData } = previewRes;
-					const { data: frontendData } = frontendRes;
-
-					dispatch(
-						slice.actions.load( {
-							preview: {
-								items: previewData.data,
-								order: previewData.meta.order,
-							},
-							frontend: {
-								items: frontendData.data,
-								order: frontendData.meta.order,
-							},
-						} )
-					);
-				} )
-				.catch( () => {} );
 		};
 
 		window.addEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );

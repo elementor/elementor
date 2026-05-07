@@ -973,4 +973,17 @@ class Utils {
 	public static function encode_string( string $decoded_string ): string {
 		return base64_encode( $decoded_string );
 	}
+
+	public static function html_to_plain_text( string $html ): string {
+		if ( empty( $html ) ) {
+			return '';
+		}
+
+		$text = preg_replace( '#<br\s*/?\s*>#i', ' ', $html );
+		$text = preg_replace( '#</?[a-z][^>]*>#i', ' ', $text );
+		$text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
+		$text = str_replace( "\xE2\x80\x8B", '', $text );
+
+		return trim( preg_replace( '/\s+/', ' ', $text ) );
+	}
 }

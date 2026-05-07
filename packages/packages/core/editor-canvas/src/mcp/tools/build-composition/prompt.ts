@@ -2,6 +2,8 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
 
+export const BUILD_COMPOSITIONS_GUIDE_URI = 'elementor://canvas/tools/build-compositions-guide';
+
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -11,7 +13,7 @@ export const generatePrompt = () => {
 - [elementor://global-variables] - ONLY use variables defined here
 - [${ AVAILABLE_WIDGETS_URI }/v4]
 
-# TOOL SUUPORT
+# TOOL SUPPORT
 This tool support v4 elements only
 
 # WORKFLOW

@@ -20,7 +20,7 @@ export const inputSchema = {
 		)
 		.describe( 'An object record containing style property names and their new values to be set on the element' )
 		.default( {} ),
-	elementType: z.string().describe( 'The type of the element to retreive the schema' ),
+	elementType: z.string().describe( 'The type of the element to retrieve the schema' ),
 	elementId: z.string().describe( 'The unique id of the element to configure' ),
 };
 

@@ -53,7 +53,10 @@ function useSyncDepsWithInherited( {
 	useEffect( () => {
 		const { hasSynced, prevDepValues } = syncRef.current;
 
-		if ( hasSynced && value && wasDepsCleared( prevDepValues, depValues ) ) {
+		if (
+			( hasSynced && value && wasDepsCleared( prevDepValues, depValues ) ) ||
+			( isHidden && depValues && value )
+		) {
 			resetValue();
 		}
 

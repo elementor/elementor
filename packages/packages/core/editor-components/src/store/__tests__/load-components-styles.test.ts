@@ -13,6 +13,10 @@ jest.mock( '@elementor/store', () => ( {
 	__dispatch: jest.fn(),
 } ) );
 
+jest.mock( '@elementor/editor-global-classes', () => ( {
+	addDocumentClasses: jest.fn(),
+} ) );
+
 const STYLE_1 = createMockStyleDefinition( {
 	id: 'style-1',
 } );

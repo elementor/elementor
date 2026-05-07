@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
-	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
+	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
 
 	private static ?self $instance = null;
 

@@ -13,7 +13,7 @@ class Global_Classes_Usage {
 	}
 
 	private function add_tracking_data( $params ) {
-		$params['usages']['global_classes']['total_count'] = Global_Classes_Repository::make()->all()->get_items()->count();
+		$params['usages']['global_classes']['total_count'] = count( Global_Classes_Repository::make()->all_labels() );
 
 		if ( 0 === $params['usages']['global_classes']['total_count'] ) {
 			return $params;

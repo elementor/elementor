@@ -4,7 +4,7 @@ import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 type ExtendedWindow = Window & {
-	__createWidgetPrompt: string;
+  __createWidgetPrompt: string;
 };
 
 test.describe( 'Widget Creation @widget-creation', () => {
@@ -62,7 +62,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
-				await expect( cta ).toContainText( 'Create custom widget' );
+				await expect( cta ).toContainText( 'Install Angie' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toHaveText( "Couldn't find what you're looking for?" );
@@ -81,6 +81,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
+				await expect( cta ).toContainText( 'Install Angie' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toContainText( 'No widget found for' );

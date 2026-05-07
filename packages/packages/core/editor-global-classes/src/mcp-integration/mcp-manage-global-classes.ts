@@ -213,15 +213,7 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 			intelligencePriority: 0.85,
 			speedPriority: 0.6,
 		},
-		description: `Manages global classes (create/modify) in Elementor editor. Check [elementor://global-classes] and style schemas first.
-
-CREATE: Requires globalClassName, props. Use semantic naming (heading-primary, button-cta, text-muted). Check existing classes to avoid duplicates. ALWAYS create global classes BEFORE compositions for reusable styles.
-MODIFY: Requires classId, props. Get classId from [elementor://global-classes] resource.
-
-Naming pattern: [element-type]-[purpose/variant]-[modifier]
-DO NOT create global classes for: one-off styles, layout-specific properties.
-
-Use style schema at [elementor://styles/schema/{category}] for valid props. Errors include exact schema mismatch details.`,
+		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE compositions. Do NOT create classes for one-off styles or layout-specific properties.`,
 		schema,
 		outputSchema,
 		handler,

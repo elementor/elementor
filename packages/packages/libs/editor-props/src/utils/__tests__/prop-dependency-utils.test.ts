@@ -624,7 +624,7 @@ describe( 'prop-dependency-utils', () => {
 						value: 'production',
 					},
 					version: {
-						$$type: 'nubmer',
+						$$type: 'number',
 						value: 2.1,
 					},
 					feature_flags: {

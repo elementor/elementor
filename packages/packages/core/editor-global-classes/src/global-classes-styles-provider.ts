@@ -14,20 +14,23 @@ import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
 import { GlobalClassLabelAlreadyExistsError, GlobalClassTrackingError } from './errors';
+import { loadExistingClasses } from './load-existing-classes';
 import {
+	placeholderDefinition,
 	selectClass,
+	selectClassLabels,
 	selectData,
-	selectGlobalClasses,
+	selectIsClassFetched,
 	selectOrderedClasses,
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
 import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 
-const MAX_CLASSES = 100;
+const MAX_CLASSES = 5000;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
-const PREGENERATED_LINK_PATTERN = /^global-(preview|frontend)-[a-zA-Z_-]+-css$/;
+const PREGENERATED_LINK_PATTERN = /^global-([0-9]+-)?(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
@@ -42,21 +45,44 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	capabilities: getCapabilities(),
 	actions: {
 		all: () => selectOrderedClasses( getState() ),
-		get: ( id ) => selectClass( getState(), id ),
+		get: ( id ) => {
+			const state = getState();
+
+			const isFetched = selectIsClassFetched( state, id );
+			const style = selectClass( state, id );
+
+			// the isFetched flag is based on the existence of the style in the initial data
+			// so if the style is created during the same session - it won't be stored as part of the initial data
+			if ( isFetched || style ) {
+				return style;
+			}
+
+			loadExistingClasses( [ id ] );
+
+			const label = selectClassLabels( state )[ id ] ?? id;
+			return placeholderDefinition( id, label );
+		},
 		resolveCssName: ( id: string ) => {
-			return selectClass( getState(), id )?.label ?? id;
+			const state = getState();
+			const loaded = selectClass( state, id );
+			if ( loaded ) {
+				return loaded.label;
+			}
+			const fromIndex = selectClassLabels( state )[ id ];
+			return fromIndex ?? id;
 		},
 		create: ( label, variants: StyleDefinitionVariant[] = [], id?: StyleDefinitionID ) => {
-			const classes = selectGlobalClasses( getState() );
-
-			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
+			const existingClasses = Object.entries( selectClassLabels( getState() ) );
+			const existingLabels = existingClasses.map( ( [ , classLabel ] ) => classLabel );
 
 			if ( existingLabels.includes( label ) ) {
 				throw new GlobalClassLabelAlreadyExistsError( { context: { label } } );
 			}
 
+			const existingIds = existingClasses.map( ( [ existingId ] ) => existingId );
+
 			if ( ! id ) {
-				id = generateId( 'g-', Object.keys( classes ) );
+				id = generateId( 'g-', existingIds );
 			}
 
 			dispatch(
@@ -114,10 +140,10 @@ const subscribeWithStates = (
 	let previousState = selectData( getState() );
 
 	return subscribeWithSelector(
-		( state: StateWithGlobalClasses ) => state.globalClasses,
+		( state: StateWithGlobalClasses ) => selectData( state ),
 		( currentState ) => {
-			cb( previousState.items, currentState.data.items );
-			previousState = currentState.data;
+			cb( previousState.items, currentState.items );
+			previousState = currentState;
 		}
 	);
 };

@@ -30,7 +30,7 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
 }
 
 /*
- * This function expects a PropValue bag for updaing an element.
+ * This function expects a PropValue bag for updating an element.
  * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
  */
 export const doUpdateElementProperty = ( params: OwnParams ) => {

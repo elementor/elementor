@@ -1,4 +1,5 @@
 import {
+	AttachmentTypeControl,
 	ChipsControl,
 	type ControlComponent,
 	DateRangeControl,
@@ -10,6 +11,7 @@ import {
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
+	QueryChipsControl,
 	QueryControl,
 	RepeatableControl,
 	SelectControlWrapper,
@@ -18,6 +20,7 @@ import {
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
+	TimeRangeControl,
 	ToggleControl,
 	UrlControl,
 	VideoMediaControl,
@@ -25,6 +28,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	createArrayPropUtils,
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
 	emailPropTypeUtil,
@@ -39,10 +43,13 @@ import {
 	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 	svgSrcPropTypeUtil,
+	timeRangePropTypeUtil,
 	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
+
+const queryArrayPropTypeUtil = createArrayPropUtils( queryPropTypeUtil.key, queryPropTypeUtil.schema );
 
 export type ControlRegistry = Record<
 	string,
@@ -60,6 +67,7 @@ const controlTypes = {
 	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
+	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
@@ -76,6 +84,12 @@ const controlTypes = {
 		layout: 'custom',
 		propTypeUtil: dateRangePropTypeUtil,
 	},
+	'time-range': {
+		component: TimeRangeControl,
+		layout: 'custom',
+		propTypeUtil: timeRangePropTypeUtil,
+	},
+	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

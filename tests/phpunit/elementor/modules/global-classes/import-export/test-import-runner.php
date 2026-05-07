@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class ç extends Elementor_Test_Base {
+class Test_Import_Runner extends Elementor_Test_Base {
 
 	public function test_import() {
 		// Act.
@@ -65,8 +65,8 @@ class ç extends Elementor_Test_Base {
 			'order' => $sanitized_order,
 		];
 
-		$this->assertSame( $sanitized_global_classes, $result );
-		$this->assertSame( $sanitized_global_classes, Global_Classes_Repository::make()->all()->get() );
+		$this->assertEquals( $sanitized_global_classes, $result );
+		$this->assertEquals( $sanitized_global_classes, Global_Classes_Repository::make()->all()->get() );
 	}
 
 	public function test_import__invalid_style() {

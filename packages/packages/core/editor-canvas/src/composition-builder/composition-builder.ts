@@ -34,7 +34,7 @@ type CtorOptions = {
 export class CompositionBuilder {
 	private elementConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
-	private elementCusomCSS: Record< string, string > = {};
+	private elementCustomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
 	private api: API = {
 		createElement,
@@ -76,7 +76,7 @@ export class CompositionBuilder {
 	}
 
 	setCustomCSS( config: Record< string, string > ) {
-		this.elementCusomCSS = config;
+		this.elementCustomCSS = config;
 	}
 
 	getXML() {
@@ -176,7 +176,7 @@ export class CompositionBuilder {
 		const allConfigIds = new Set( [
 			...Object.keys( this.elementConfig ),
 			...Object.keys( this.elementStylesConfig ),
-			...Object.keys( this.elementCusomCSS ),
+			...Object.keys( this.elementCustomCSS ),
 		] );
 
 		for ( const configId of allConfigIds ) {
@@ -188,7 +188,7 @@ export class CompositionBuilder {
 				if ( this.elementConfig[ configId ] ) {
 					configErrors.push( msg );
 				}
-				if ( this.elementStylesConfig[ configId ] || this.elementCusomCSS[ configId ] ) {
+				if ( this.elementStylesConfig[ configId ] || this.elementCustomCSS[ configId ] ) {
 					styleErrors.push( msg );
 				}
 				continue;
@@ -241,7 +241,7 @@ export class CompositionBuilder {
 				}
 			}
 
-			const customCSS = this.elementCusomCSS[ configId ];
+			const customCSS = this.elementCustomCSS[ configId ];
 			if ( customCSS ) {
 				try {
 					this.api.doUpdateElementProperty( {

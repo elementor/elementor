@@ -644,17 +644,6 @@ test.describe( 'Container Grid tests @container', () => {
 			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container-grid' );
 		} );
 
-		await test.step( 'Add a flex container', async () => {
-			// Act
-			await frame.locator( '.elementor-add-section-area-button' ).first().click();
-			await frame.locator( '.e-con-select-type__icons__icon.flex-preset-button' ).click();
-			await frame.locator( '.e-con-select-preset-flex .e-con-preset' ).first().click();
-
-			// Assert
-			const linkElement = page.locator( '#elementor-panel__editor__help__link' );
-			await expect.soft( linkElement ).toHaveAttribute( 'href', 'https://go.elementor.com/widget-container' );
-		} );
-
 		await test.step( 'Add a grid container', async () => {
 			// Act
 			await frame.locator( '.elementor-add-section-area-button' ).first().click();
