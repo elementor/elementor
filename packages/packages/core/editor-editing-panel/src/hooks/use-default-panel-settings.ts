@@ -24,6 +24,10 @@ const defaultPanelSettingsContext = createContext< Record< string, Defaults | un
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
 	},
+	'e-grid': {
+		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
+		defaultTab: 'style',
+	},
 	'e-divider': {
 		defaultSectionsExpanded: fallbackEditorSettings.defaultSectionsExpanded,
 		defaultTab: 'style',
