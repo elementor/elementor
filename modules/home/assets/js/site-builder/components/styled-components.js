@@ -33,6 +33,7 @@ export const PlannerBackground = styled( Box )( ( { bgimage } ) => ( {
 export const PlannerGrid = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
 	inset: 0,
+	insetInlineStart: '-21px',
 	backgroundImage:
 		'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)',
 	backgroundSize: `${ theme.spacing( 5 ) } ${ theme.spacing( 5 ) }`,
