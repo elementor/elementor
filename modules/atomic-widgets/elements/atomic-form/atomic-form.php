@@ -406,6 +406,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		return $instance instanceof Atomic_Form;
 	}
 
+	public function render_markdown(): string {
+		return '';
+	}
+
 	private static function get_emails_prop_settings() {
 		return array_merge( ...array_map( [ self::class, 'get_indexed_email_prop_settings' ], range( 0, self::EMAIL_ACTION_COUNT - 1 ) ) );
 	}

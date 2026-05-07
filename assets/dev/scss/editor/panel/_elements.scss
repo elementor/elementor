@@ -341,13 +341,12 @@
 
 .elementor-panel-category-custom-widgets-empty {
 	grid-column: 1 / -1;
-    width: 100%;
-    padding: 12px 20px;
-	text-align: center;
+	width: 100%;
+	padding: 0 16px 16px;
 
 	&__message {
 		margin: 0;
-		font-size: 13px;
+		font-size: 12px;
 		line-height: 1.6;
 		color: var(--e-a-color-txt-muted);
 	}
