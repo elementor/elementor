@@ -19,11 +19,6 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 		],
-		modelPreferences: {
-			hints: [ { name: 'claude-sonnet-4-5' } ],
-			intelligencePriority: 0.8,
-			speedPriority: 0.7,
-		},
 		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
 			const widgetData = getWidgetsCache()?.[ elementType ];
 			if ( ! widgetData ) {

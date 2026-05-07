@@ -28,11 +28,15 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 
 	addTool( {
 		name: 'get-global-class-usages',
+<<<<<<< HEAD
 		modelPreferences: {
 			intelligencePriority: 0.6,
 			speedPriority: 0.8,
 		},
 		description: `Retrieve the usages of global-classes ACROSS PAGES designed by Elementor editor.
+=======
+		description: `Retrieve usages of global classes across all Elementor pages. Heavy operation — scans every page in the site.
+>>>>>>> 45161599ad (Fix: Use default model preferences for styling/design tools [ED-00000] (#35743))
 
 ## Prerequisites: CRITICAL
 - The list of global classes and their applid values is available at resource uri elementor://global-classes
