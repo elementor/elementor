@@ -2,6 +2,8 @@ import { getAngieSdk, McpServer, ResourceTemplate } from '@elementor/editor-mcp'
 import { callWpApi, requireConfirmationMessage, waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { z } from '@elementor/schema';
 
+import { addKitDescriptionResource, KIT_DESCRIPTION, KIT_DESCRIPTION_URI } from './mcp-description-resource';
+
 const RESOURCE_NAME_KIT_FONTS = 'elementor-kit-fonts';
 const RESOURCE_URI_KIT_FONTS = 'elementor://kit/fonts';
 const RESOURCE_NAME_KIT_SCHEMA = 'elementor-kit-schema';
@@ -141,30 +143,6 @@ const generalPatchSchema = z
 		'General patch object for any other Elementor kit settings like spacing, buttons, forms, layout settings, etc.'
 	);
 
-const SERVER_INSTRUCTIONS = `## Elementor Kit Settings Management
-
-### Capabilities:
-**Global Design System:**
-- Create, update, name, and delete global colors (both system and custom)
-- Create, update, name, and delete global fonts (both system and custom)
-
-**Site Identity:**
-- Insert site logo
-- Set site favicon
-- Update site name
-- Modify site description
-
-### Limitations:
-**Theme Style Settings:**
-- Cannot set or update Elementor Theme Style settings including typography, buttons, images, form fields, Hello Theme header, or Hello Theme footer that affect the entire website appearance
-
-**Site-Wide Settings:**
-- Cannot set site-wide background (color or image)
-- Cannot configure mobile browser background
-- Cannot modify global layout settings such as content width, container padding, and widget gaps (the default space between widgets)
-
-**Note**: Angie can adjust all of these layout properties at the container or page level - just not site-wide.`;
-
 export async function createElementorKitServer(): Promise< McpServer > {
 	await waitForElementorEditor();
 	const server = new McpServer(
@@ -174,7 +152,7 @@ export async function createElementorKitServer(): Promise< McpServer > {
 			title: 'Elementor Kit',
 		},
 		{
-			instructions: SERVER_INSTRUCTIONS,
+			instructions: 'Manages Elementor global design system: colors, typography, and site identity.',
 			capabilities: {
 				resources: {
 					subscribe: true,
@@ -182,6 +160,8 @@ export async function createElementorKitServer(): Promise< McpServer > {
 			},
 		}
 	);
+
+	addKitDescriptionResource( server );
 
 	const getAvailableTabs = async (): Promise< string[] > => {
 		const kitSchema = await fetchKitSchema();
@@ -331,6 +311,14 @@ The tool will permanently update the site's global design settings and return a 
 				title: 'Update Elementor Kit Settings',
 				destructiveHint: true,
 			},
+			_meta: {
+				'angie/requiredResources': [
+					{
+						uri: KIT_DESCRIPTION_URI,
+						whenToUse: 'Read first for kit capabilities and limitations',
+					},
+				],
+			},
 		},
 		async ( {
 			systemColors,
@@ -388,7 +376,7 @@ The tool will permanently update the site's global design settings and return a 
 	sdk.registerLocalServer( {
 		server,
 		version: VERSION,
-		description: SERVER_INSTRUCTIONS,
+		description: KIT_DESCRIPTION,
 		name: 'elementor-kit-server',
 	} );
 	return server;
