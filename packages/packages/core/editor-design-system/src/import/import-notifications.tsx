@@ -43,7 +43,7 @@ export const notifyImportFailure = ( onRetry: () => void ) => {
 					dismissNotification( FAILURE_NOTIFICATION_ID );
 
 					const isImporting =
-						getQueryClient().isMutating( { mutationKey: [ ...IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
+						getQueryClient().isMutating( { mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 					if ( isImporting ) {
 						return;
