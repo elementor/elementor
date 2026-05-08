@@ -2,11 +2,41 @@ import { useEffect, useState } from 'react';
 
 const SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
+
 const DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze( [
 	'Business website',
 	'Portfolio website',
 	'E-commerce store',
 ] );
+
+const buildRestHeaders = () => ( {
+	'X-WP-Nonce': window.elementorHomeScreenData?.wpRestNonce || '',
+} );
+
+const getRestBaseUrl = () => window.wpApiSettings?.root || '/wp-json/';
+
+export const clearHomeScreenSnapshot = ( siteKey, fullSnapshot ) => {
+	if ( ! siteKey ) {
+		return;
+	}
+
+	const remaining = { ...( fullSnapshot ?? {} ) };
+	delete remaining[ siteKey ];
+
+	if ( fullSnapshot && Object.prototype.hasOwnProperty.call( fullSnapshot, siteKey ) ) {
+		delete fullSnapshot[ siteKey ];
+	}
+
+	fetch( `${ getRestBaseUrl() }${ SETTINGS_PATH }`, {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json',
+			...buildRestHeaders(),
+		},
+		body: JSON.stringify( { value: remaining } ),
+	} ).catch( () => {} );
+};
 
 const sanitizeSuggestions = ( value, { limit } = {} ) => {
 	const list = Array.isArray( value )
@@ -21,11 +51,11 @@ const withDefaultSiteTypeSuggestions = ( value ) => {
 };
 
 const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
-	if ( null === snapshotStep ) {
+	if ( ! snapshotEntry ) {
 		return false;
 	}
-	if ( snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN ) {
-		return Array.isArray( snapshotEntry?.pageSuggestions ) && snapshotEntry.pageSuggestions.length > 0;
+	if ( null !== snapshotStep && snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN ) {
+		return Array.isArray( snapshotEntry.pageSuggestions ) && snapshotEntry.pageSuggestions.length > 0;
 	}
 	return true;
 };
@@ -105,10 +135,8 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 		}
 
 		let isMounted = true;
-		const restHeaders = {
-			'X-WP-Nonce': window.elementorHomeScreenData?.wpRestNonce || '',
-		};
-		const baseUrl = window.wpApiSettings?.root || '/wp-json/';
+		const restHeaders = buildRestHeaders();
+		const baseUrl = getRestBaseUrl();
 		const settingsUrl = `${ baseUrl }${ SETTINGS_PATH }`;
 
 		const writeSnapshot = ( entry ) => fetch( settingsUrl, {

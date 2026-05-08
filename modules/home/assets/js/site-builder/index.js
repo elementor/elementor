@@ -3,7 +3,7 @@ import { useState } from 'react';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { getStepAction, StepLoader } from './components/step-actions';
-import useSiteBuilderState from './hooks/use-site-builder-state';
+import useSiteBuilderState, { clearHomeScreenSnapshot } from './hooks/use-site-builder-state';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -68,7 +68,6 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			payload.isOnePage = isOnePage;
 		}
 
-		const timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
 		const onReady = ( event ) => {
 			if ( event.source !== newWindow ) {
 				return;
@@ -81,8 +80,10 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			}
 			clearTimeout( timeoutId );
 			window.removeEventListener( 'message', onReady );
+			clearHomeScreenSnapshot( siteBuilderData?.siteKey, siteBuilderData?.site_builder_snapshot );
 			newWindow.postMessage( { type: 'site-builder/init', payload }, window.location.origin );
 		};
+		const timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
 
 		window.addEventListener( 'message', onReady );
 	};

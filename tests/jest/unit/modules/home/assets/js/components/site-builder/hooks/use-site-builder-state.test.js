@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import useSiteBuilderState from 'elementor/modules/home/assets/js/site-builder/hooks/use-site-builder-state';
+import useSiteBuilderState, { clearHomeScreenSnapshot } from 'elementor/modules/home/assets/js/site-builder/hooks/use-site-builder-state';
 
 const SETTINGS_URL = '/wp-json/elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_URL = '/wp-json/elementor/v1/site-builder/home-screen';
@@ -225,7 +225,7 @@ describe( 'useSiteBuilderState', () => {
 		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
-	it( 'entry exists with null step — re-fetches to verify current state', async () => {
+	it( 'entry exists with null step — trusts the snapshot and skips the fetch', async () => {
 		const snapshot = {
 			'site-key-1': {
 				sessionId: null,
@@ -234,15 +234,6 @@ describe( 'useSiteBuilderState', () => {
 				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			},
 		};
-
-		global.fetch
-			.mockResolvedValueOnce( createResponse( {
-				sessionId: null,
-				step: null,
-				pageNameSuggestions: [],
-				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
-			} ) )
-			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
@@ -255,38 +246,7 @@ describe( 'useSiteBuilderState', () => {
 		expect( result.current.siteTypeSuggestions ).toEqual(
 			[ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 		);
-		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
-		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
-	} );
-
-	it( 'entry exists with null step — re-fetches and discovers an active session', async () => {
-		const snapshot = {
-			'site-key-1': {
-				sessionId: null,
-				step: null,
-				pageSuggestions: [],
-				siteTypeSuggestions: [],
-			},
-		};
-
-		global.fetch
-			.mockResolvedValueOnce( createResponse( {
-				sessionId: 'session-id',
-				step: 2,
-				pageNameSuggestions: [],
-				siteTypeSuggestions: [],
-			} ) )
-			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
-
-		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
-
-		await waitFor( () => {
-			expect( result.current.isLoading ).toBe( false );
-		} );
-
-		expect( result.current.sessionStep ).toBe( 2 );
-		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
-		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
+		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
 	} );
 
 	it( 'surfaces an error when /home-screen fails and exposes default siteTypeSuggestions', async () => {
@@ -324,5 +284,77 @@ describe( 'useSiteBuilderState', () => {
 
 		expect( result.current.sessionStep ).toBe( 2 );
 		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+	} );
+
+	it( 'clearHomeScreenSnapshot mutates the bootstrap and POSTs the snapshot without the cleared entry', () => {
+		global.fetch.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const snapshot = {
+			'site-key-1': {
+				sessionId: null,
+				step: null,
+				pageSuggestions: [],
+				siteTypeSuggestions: [],
+			},
+			'site-key-2': {
+				sessionId: 'other',
+				step: 2,
+				pageSuggestions: [],
+				siteTypeSuggestions: [],
+			},
+		};
+
+		clearHomeScreenSnapshot( 'site-key-1', snapshot );
+
+		expect( snapshot ).not.toHaveProperty( 'site-key-1' );
+		expect( snapshot ).toHaveProperty( 'site-key-2' );
+		expect( global.fetch ).toHaveBeenCalledTimes( 1 );
+		expect( global.fetch ).toHaveBeenCalledWith( SETTINGS_URL, expect.objectContaining( {
+			method: 'POST',
+			body: JSON.stringify( {
+				value: {
+					'site-key-2': {
+						sessionId: 'other',
+						step: 2,
+						pageSuggestions: [],
+						siteTypeSuggestions: [],
+					},
+				},
+			} ),
+		} ) );
+	} );
+
+	it( 'after clearHomeScreenSnapshot, the next mount re-fetches because the bootstrap entry is gone', async () => {
+		global.fetch
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) )
+			.mockResolvedValueOnce( createResponse( { sessionId: 'session-id', step: 2, pageNameSuggestions: [], siteTypeSuggestions: [] } ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const snapshot = {
+			'site-key-1': {
+				sessionId: null,
+				step: null,
+				pageSuggestions: [],
+				siteTypeSuggestions: [],
+			},
+		};
+
+		clearHomeScreenSnapshot( 'site-key-1', snapshot );
+
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 2, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
+	} );
+
+	it( 'clearHomeScreenSnapshot is a no-op when siteKey is missing', () => {
+		clearHomeScreenSnapshot( '', { 'site-key-1': { step: 1 } } );
+		clearHomeScreenSnapshot( undefined, { 'site-key-1': { step: 1 } } );
+
+		expect( global.fetch ).not.toHaveBeenCalled();
 	} );
 } );
