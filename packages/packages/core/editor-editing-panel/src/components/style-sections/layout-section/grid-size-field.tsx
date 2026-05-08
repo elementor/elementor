@@ -35,7 +35,7 @@ const parseCss = ( css: string | null ): GridTrackValue => {
 };
 
 const fromSizeInput = ( v: { size: number | string; unit: GridTrackUnit } ): GridTrackValue => {
-	if ( v.size === '' || v.size === null || ( typeof v.size === 'number' && isNaN( v.size ) ) ) {
+	if ( v.size === '' || ( typeof v.size === 'number' && isNaN( v.size ) ) ) {
 		return EMPTY;
 	}
 	if ( v.unit === FR ) {
@@ -115,10 +115,10 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	const anchorRef = useRef< HTMLDivElement >( null );
 
 	const local = parseCss( value?.value ?? null );
-	const inherited = parseCss( stringPropTypeUtil.extract( inheritedPlaceholder ?? null ) ?? null );
+	const inherited = parseCss( stringPropTypeUtil.extract( inheritedPlaceholder ) );
 
 	const displayValue = local.kind !== 'empty' ? toSizeInput( local ) : toSizeInput( EMPTY, unitOf( inherited ) );
-	const placeholder = local.kind === 'empty' ? toPlaceholder( inherited ) : undefined;
+	const placeholder = toPlaceholder( inherited );
 
 	const handleChange = ( raw: { size: number | string; unit: GridTrackUnit } ) => {
 		const next = fromSizeInput( raw );
