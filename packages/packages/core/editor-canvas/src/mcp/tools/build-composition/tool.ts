@@ -46,9 +46,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
 		],
 		outputSchema,
-		modelPreferences: {
-			hints: [ { name: 'claude-sonnet-4-5' } ],
-		},
 		handler: async ( params ) => {
 			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
 			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
