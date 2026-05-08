@@ -52,6 +52,7 @@
     "@elementor/icons": "~1.75.1",
     "@elementor/locations": "4.2.0",
     "@elementor/query": "4.2.0",
+    "@elementor/schema": "4.2.0",
     "@elementor/session": "4.2.0",
     "@elementor/ui": "1.37.5",
     "@elementor/utils": "4.2.0",

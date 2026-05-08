@@ -6,7 +6,7 @@ import { Autocomplete, Grid, TextField } from '@elementor/ui';
 import { useBoundProp } from '../../bound-prop-context';
 import { ChipsList } from '../../components/chips-list';
 import { ControlFormLabel } from '../../components/control-form-label';
-import { CHIP_TRIGGER_KEYS, isBrowserEmailValid } from './utils';
+import { CHIP_TRIGGER_KEYS, isValidEmail } from './utils';
 
 type EmailChip = { label: string; value: string };
 
@@ -30,7 +30,7 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 	const tryAddChip = ( raw: string ) => {
 		const address = raw.trim();
 
-		if ( ! address || selectedValues.includes( address ) || ! isBrowserEmailValid( address ) ) {
+		if ( ! address || selectedValues.includes( address ) || ! isValidEmail( address ) ) {
 			return;
 		}
 
@@ -51,7 +51,7 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 
 			const isExisting = selectedValues.includes( address );
 
-			if ( ! isExisting && ! isBrowserEmailValid( address ) ) {
+			if ( ! isExisting && ! isValidEmail( address ) ) {
 				continue;
 			}
 
