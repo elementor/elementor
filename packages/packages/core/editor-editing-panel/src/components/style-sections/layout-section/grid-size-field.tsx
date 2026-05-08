@@ -35,7 +35,7 @@ const parseCss = ( css: string | null ): GridTrackValue => {
 };
 
 const fromSizeInput = ( v: { size: number | string; unit: GridTrackUnit } ): GridTrackValue => {
-	if ( v.size === '' || ( typeof v.size === 'number' && isNaN( v.size ) ) ) {
+	if ( v.size === '' || Number.isNaN( v.size ) ) {
 		return EMPTY;
 	}
 	if ( v.unit === FR ) {
