@@ -53,7 +53,6 @@ export const StepWithInput = ( { buttonLabel, inputValue, onInputChange, onKeyDo
 				variant="contained"
 				size="medium"
 				endIcon={ <ArrowRightIcon /> }
-				disabled={ ! inputValue.trim() }
 				onClick={ () => inputValue.trim() && onSubmit() }
 			>
 				{ buttonLabel }
