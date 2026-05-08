@@ -68,7 +68,11 @@ function getPresetDefinition( preset ) {
 }
 
 function buildModel( cssProps, mobileProps ) {
-	const model = { elType: V4_ELEMENT_TYPE };
+	const model = {
+		id: elementorCommon.helpers.getUniqueId(),
+		elType: V4_ELEMENT_TYPE,
+		elements: [],
+	};
 
 	const hasBase = cssProps && Object.keys( cssProps ).length > 0;
 	const hasMobile = mobileProps && Object.keys( mobileProps ).length > 0;
@@ -80,7 +84,7 @@ function buildModel( cssProps, mobileProps ) {
 	const styleId = `e-${ elementorCommon.helpers.getUniqueId() }`;
 	const variants = [
 		{
-			meta: { breakpoint: null, state: null },
+			meta: { breakpoint: 'desktop', state: null },
 			props: cssProps ?? {},
 			custom_css: null,
 		},
@@ -110,22 +114,98 @@ function buildModel( cssProps, mobileProps ) {
 	return model;
 }
 
+function buildTreeModel( definition ) {
+	const { parent: parentProps, parentMobile, children = [] } = definition;
+	const model = buildModel( parentProps, parentMobile );
+
+	model.elements = children.map( ( childDef ) => buildTreeModel( childDef ) );
+
+	return model;
+}
+
 function createFlexboxElement( target, model, options ) {
-	return $e.run( 'document/elements/create', {
-		container: target,
+	const containerClass = elementorModules?.editor?.Container;
+	const getDocumentUtils = () => $e?.components?.get?.( 'document' )?.utils;
+	const getContainerById = ( id ) => getDocumentUtils()?.findContainerById?.( id ) ?? null;
+	const isContainerInstance = ( candidate ) => {
+		if ( ! containerClass || ! candidate ) {
+			return false;
+		}
+
+		return candidate instanceof containerClass ||
+			candidate.constructor?.name === containerClass.prototype?.[ Symbol.toStringTag ];
+	};
+	const resolveContainer = ( candidate ) => {
+		if ( ! containerClass ) {
+			return candidate;
+		}
+
+		if ( isContainerInstance( candidate ) ) {
+			return candidate;
+		}
+
+		const lookedUp = candidate?.lookup?.();
+		if ( isContainerInstance( lookedUp ) ) {
+			return lookedUp;
+		}
+
+		const byId = candidate?.id ? getContainerById( candidate.id ) : null;
+		if ( isContainerInstance( byId ) ) {
+			return byId;
+		}
+
+		return null;
+	};
+
+	const resolvedTarget = resolveContainer( target );
+
+	if ( ! resolvedTarget && containerClass && target?.id ) {
+		getDocumentUtils()?.addModelToParent?.( target.id, model, options );
+
+		const inserted = getContainerById( model.id );
+		if ( inserted ) {
+			return inserted;
+		}
+
+		return {
+			id: model.id,
+			lookup: () => getContainerById( model.id ),
+		};
+	}
+
+	const created = $e.run( 'document/elements/create', {
+		container: resolvedTarget ?? target,
 		model,
 		...options,
 	} );
+
+	const resolvedCreated = resolveContainer( created );
+
+	if ( resolvedCreated || ! containerClass ) {
+		return resolvedCreated ?? created;
+	}
+
+	return {
+		id: model.id,
+		lookup: () => getContainerById( model.id ),
+	};
 }
 
 function buildNode( definition, target, options, isRoot ) {
 	const { parent: parentProps, parentMobile, children } = definition;
 	const reuseTarget = isRoot && false === options.createWrapper;
 	const node = reuseTarget
-		? target
+		? ( target?.lookup?.() ?? target )
 		: createFlexboxElement( target, buildModel( parentProps, parentMobile ), isRoot ? options : { edit: false } );
 
 	children.forEach( ( childDef ) => {
+		const hasNestedChildren = !! childDef.children?.length;
+
+		if ( hasNestedChildren ) {
+			createFlexboxElement( node, buildTreeModel( childDef ), { edit: false } );
+			return;
+		}
+
 		buildNode( childDef, node, options, false );
 	} );
 
