@@ -225,7 +225,7 @@ describe( 'useSiteBuilderState', () => {
 		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
-	it( 'entry exists with null step — resolves to default state without fetching', async () => {
+	it( 'entry exists with null step — re-fetches to verify current state', async () => {
 		const snapshot = {
 			'site-key-1': {
 				sessionId: null,
@@ -234,6 +234,15 @@ describe( 'useSiteBuilderState', () => {
 				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			},
 		};
+
+		global.fetch
+			.mockResolvedValueOnce( createResponse( {
+				sessionId: null,
+				step: null,
+				pageNameSuggestions: [],
+				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
+			} ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
@@ -246,7 +255,38 @@ describe( 'useSiteBuilderState', () => {
 		expect( result.current.siteTypeSuggestions ).toEqual(
 			[ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 		);
-		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
+	} );
+
+	it( 'entry exists with null step — re-fetches and discovers an active session', async () => {
+		const snapshot = {
+			'site-key-1': {
+				sessionId: null,
+				step: null,
+				pageSuggestions: [],
+				siteTypeSuggestions: [],
+			},
+		};
+
+		global.fetch
+			.mockResolvedValueOnce( createResponse( {
+				sessionId: 'session-id',
+				step: 2,
+				pageNameSuggestions: [],
+				siteTypeSuggestions: [],
+			} ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
+
+		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
+
+		await waitFor( () => {
+			expect( result.current.isLoading ).toBe( false );
+		} );
+
+		expect( result.current.sessionStep ).toBe( 2 );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
 	it( 'surfaces an error when /home-screen fails and exposes default siteTypeSuggestions', async () => {

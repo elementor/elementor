@@ -30,9 +30,6 @@ const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 	return true;
 };
 
-const hasEntryWithoutSession = ( snapshotEntry, snapshotStep ) =>
-	snapshotEntry !== undefined && null === snapshotStep;
-
 const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 	if ( ! siteKey ) {
 		return {
@@ -56,15 +53,6 @@ const deriveInitialStateForSiteKey = ( siteKey, snapshot, plannerSteps ) => {
 	}
 
 	const siteTypeSuggestions = withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions );
-
-	if ( hasEntryWithoutSession( snapshotEntry, snapshotStep ) ) {
-		return {
-			sessionStep: null,
-			pageSuggestions: [],
-			siteTypeSuggestions,
-			isResolved: true,
-		};
-	}
 
 	return {
 		sessionStep: null,
@@ -112,15 +100,6 @@ const useSiteBuilderState = ( siteBuilderData ) => {
 				sessionStep: snapshotStep,
 				pageSuggestions: sanitizeSuggestions( snapshotEntry?.pageSuggestions ),
 				siteTypeSuggestions: sanitizeSuggestions( snapshotEntry?.siteTypeSuggestions, { limit: 3 } ),
-			} );
-			return;
-		}
-
-		if ( hasEntryWithoutSession( snapshotEntry, snapshotStep ) ) {
-			applyState( {
-				sessionStep: null,
-				pageSuggestions: [],
-				siteTypeSuggestions: withDefaultSiteTypeSuggestions( snapshotEntry?.siteTypeSuggestions ),
 			} );
 			return;
 		}
