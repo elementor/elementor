@@ -31,7 +31,7 @@ function sendReferrerInfo(
 	iframe: HTMLIFrameElement,
 	event: MessageEvent,
 	targetOrigin: string,
-	siteBuilderParams: SiteBuilderParams,
+	siteBuilderParams: SiteBuilderParams
 ) {
 	const config = getConfig();
 
