@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
+import { canRedirectToEditorAfterDeploy } from '../deploy/can-redirect-after-deploy';
 import { deployWebsite } from '../deploy';
 
 const iframeStyle: React.CSSProperties = {
@@ -56,7 +57,11 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			origin
 		);
 
-		if ( ! isIncremental && result.status === 'success' && result.homePageId ) {
+		if ( canRedirectToEditorAfterDeploy( {
+			isIncremental,
+			homePageId: result.homePageId,
+			errors: result.errors,
+		} ) ) {
 			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
 		}
 	} catch ( err ) {
