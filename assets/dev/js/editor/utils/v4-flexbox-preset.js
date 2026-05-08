@@ -199,7 +199,7 @@ function buildNode( definition, target, options, isRoot ) {
 		: createFlexboxElement( target, buildModel( parentProps, parentMobile ), isRoot ? options : { edit: false } );
 
 	children.forEach( ( childDef ) => {
-		const hasNestedChildren = ( childDef.children?.length ?? 0 ) > 0;
+		const hasNestedChildren = !! childDef.children?.length;
 
 		if ( hasNestedChildren ) {
 			createFlexboxElement( node, buildTreeModel( childDef ), { edit: false } );
