@@ -106,4 +106,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			'elementor/elements/atomic-svg' => __DIR__ . '/atomic-svg.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		return '';
+	}
 }
