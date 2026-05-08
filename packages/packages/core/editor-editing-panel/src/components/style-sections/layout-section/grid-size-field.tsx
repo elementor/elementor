@@ -12,10 +12,7 @@ import { StylesFieldLayout } from '../../styles-field-layout';
 
 type GridTrackUnit = 'fr' | 'custom';
 
-type GridTrackValue =
-	| { kind: 'empty' }
-	| { kind: 'fr'; count: number }
-	| { kind: 'custom'; raw: string };
+type GridTrackValue = { kind: 'empty' } | { kind: 'fr'; count: number } | { kind: 'custom'; raw: string };
 
 const FR = 'fr' as const;
 const CUSTOM = 'custom' as const;
@@ -85,10 +82,10 @@ const toPlaceholder = ( v: GridTrackValue ): string | undefined => {
 };
 
 const unitOf = ( v: GridTrackValue, fallback: GridTrackUnit = FR ): GridTrackUnit => {
-	if ( 'fr' === v.kind ) {
+	if ( v.kind === 'fr' ) {
 		return FR;
 	}
-	if ( 'custom' === v.kind  ) {
+	if ( v.kind === 'custom' ) {
 		return CUSTOM;
 	}
 	return fallback;
