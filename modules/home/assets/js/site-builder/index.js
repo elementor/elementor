@@ -68,7 +68,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			payload.isOnePage = isOnePage;
 		}
 
-		let timeoutId;
+		const timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
 		const onReady = ( event ) => {
 			if ( event.source !== newWindow ) {
 				return;
@@ -85,7 +85,6 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 		};
 
 		window.addEventListener( 'message', onReady );
-		timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
 	};
 
 	const handleKeyDown = ( event ) => {

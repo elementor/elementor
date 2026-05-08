@@ -33,7 +33,7 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$site_builder_config = $site_builder->get_config();
 
-		if ( ! $site_builder_config ) {
+		if ( ! is_array( $site_builder_config ) ) {
 			unset( $home_screen_data['site_builder'] );
 			return $home_screen_data;
 		}

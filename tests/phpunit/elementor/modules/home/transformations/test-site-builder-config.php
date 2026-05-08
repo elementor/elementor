@@ -105,8 +105,8 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$this->assertSame( 'abc', $result['site_builder']['siteKey'] );
 		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
-		$this->assertStringContainsString( 'site-planner-01.jpg', $result['site_builder']['previewImage1'] );
-		$this->assertStringContainsString( 'site-planner-02.jpg', $result['site_builder']['previewImage2'] );
+		$this->assertArrayHasKey( 0, $result['site_builder']['stepImages'] );
+		$this->assertStringContainsString( 'site-builder-start.png', $result['site_builder']['stepImages'][0] );
 		$this->assertStringContainsString( 'site-planner-bg.jpg', $result['site_builder']['bgImage'] );
 		$this->assertSame( $snapshot, $result['site_builder']['site_builder_snapshot'] );
 	}
