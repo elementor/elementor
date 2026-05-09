@@ -40,7 +40,13 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->init();
+
 		$this->register_hooks();
+	}
+
+	private function init() {
+		$this->assets = new Assets();
 	}
 
 	private function register_hooks() {
