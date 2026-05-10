@@ -83,7 +83,7 @@ class Global_Class_Post {
 		return (int) $this->post->menu_order;
 	}
 
-	public function get_data(): array {
+	public function get_data( bool $should_migrate = true ): array {
 		$data = $this->get_context_data();
 		$meta_key = $this->get_context_key( 'data' );
 
@@ -92,7 +92,7 @@ class Global_Class_Post {
 			$meta_key = self::META_KEY_DATA;
 		}
 
-		if ( ! empty( $data ) ) {
+		if ( ! empty( $data ) && $should_migrate ) {
 			$this->migrate_data( $data, $meta_key );
 		}
 
@@ -117,17 +117,9 @@ class Global_Class_Post {
 		);
 	}
 
-	public function to_array(): array {
-		$data = $this->get_data();
+	public function to_array( bool $should_migrate = true ): array {
+		$data = $this->get_data( $should_migrate );
 
-		return $this->build_array( $data );
-	}
-
-	public function to_array_raw(): array {
-		return $this->build_array( $this->get_raw_data() );
-	}
-
-	private function build_array( array $data ): array {
 		$result = [
 			'id' => $this->get_class_id(),
 			'label' => $this->get_label(),
@@ -140,16 +132,6 @@ class Global_Class_Post {
 		}
 
 		return $result;
-	}
-
-	public function get_raw_data(): array {
-		$data = $this->get_context_data();
-
-		if ( empty( $data ) && $this->is_preview() ) {
-			$data = $this->get_frontend_data();
-		}
-
-		return $data;
 	}
 
 	public function update_label( string $label ): bool {
