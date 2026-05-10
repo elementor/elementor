@@ -87,6 +87,7 @@ class Global_Class_Post {
 		$data = $this->get_context_data();
 		$meta_key = $this->get_context_key( 'data' );
 
+		// Empty preview (draft) - use frontend (published) data
 		if ( empty( $data ) && $this->is_preview() ) {
 			$data = $this->get_frontend_data();
 			$meta_key = self::META_KEY_DATA;
