@@ -7,7 +7,7 @@ import { type ConflictStrategy } from '../types';
 
 const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
-const IMPORT_REQUEST_TIMEOUT_MS = 60_000;
+const IMPORT_REQUEST_TIMEOUT_MS = 120_000;
 
 const GLOBAL_CLASSES_RUNNER = 'global-classes';
 const GLOBAL_VARIABLES_RUNNER = 'global-variables';
