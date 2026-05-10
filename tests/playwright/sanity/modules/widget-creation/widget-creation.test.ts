@@ -14,7 +14,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 	const WIDGET_CREATION_TITLE = '.elementor-panel-elements-widget-creation__title';
 	const WIDGET_CREATION_MESSAGE = '.elementor-panel-elements-widget-creation__message';
 	const CREATE_WIDGET_MODAL = '[role="dialog"].MuiDialog-paper';
-	const INSTALL_ANGIE_BUTTON = 'button:has-text("Try for free")';
+	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install & Activate")';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 	const CUSTOM_WIDGETS_CATEGORY = '#elementor-panel-category-custom-widgets';
