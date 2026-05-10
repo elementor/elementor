@@ -25,7 +25,7 @@ import { PopoverGridContainer } from '../components/popover-grid-container';
 import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import { QueryChipsControl } from './query-chips-control';
-import { SelectControl } from './select-control';
+import { SelectControl, type SelectOption } from './select-control';
 
 type QueryFilterRepeaterControlProps = {
 	allowedKeys: string[];
@@ -43,13 +43,29 @@ export const QueryFilterRepeaterControl = createControl(
 	}: QueryFilterRepeaterControlProps ) => {
 		const { propType, value, setValue } = useBoundProp( queryFilterArrayPropTypeUtil );
 
+		const usedKeys = useMemo( () => getUsedKeys( value ?? [] ), [ value ] );
+		const nextAvailableKey = useMemo(
+			() => allowedKeys.find( ( key ) => ! usedKeys.has( key ) ) ?? null,
+			[ allowedKeys, usedKeys ]
+		);
+
+		const getKeySelectOptions = useMemo(
+			() => ( currentKey: string | null ) =>
+				allowedKeys.map( ( itemKey ) => ( {
+					value: itemKey,
+					label: keyConfig[ itemKey ]?.label ?? itemKey,
+					disabled: itemKey !== currentKey && usedKeys.has( itemKey ),
+				} ) ),
+			[ allowedKeys, keyConfig, usedKeys ]
+		);
+
 		const initialFallback = useMemo( () => createItemForKey( allowedKeys[ 0 ] ?? '' ), [ allowedKeys ] );
 
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
 				<ControlRepeater initial={ initialFallback } propTypeUtil={ queryFilterArrayPropTypeUtil }>
 					<RepeaterHeader label={ label }>
-						<AddFilterItemAction allowedKeys={ allowedKeys } ariaLabel={ label } />
+						<AddFilterItemAction nextAvailableKey={ nextAvailableKey } ariaLabel={ label } />
 					</RepeaterHeader>
 					<ItemsContainer isSortable={ false }>
 						<Item
@@ -62,8 +78,8 @@ export const QueryFilterRepeaterControl = createControl(
 					</ItemsContainer>
 					<EditItemPopover>
 						<ItemContent
-							allowedKeys={ allowedKeys }
 							keyConfig={ keyConfig }
+							getKeySelectOptions={ getKeySelectOptions }
 							chipsPlaceholder={ chipsPlaceholder }
 						/>
 					</EditItemPopover>
@@ -73,15 +89,14 @@ export const QueryFilterRepeaterControl = createControl(
 	}
 );
 
-const AddFilterItemAction = ( { allowedKeys, ariaLabel }: { allowedKeys: string[]; ariaLabel: string } ) => {
-	const { items, addItem } = useRepeaterContext();
-
-	const nextAvailableKey = useMemo( () => {
-		const used = getUsedKeys( items );
-
-		return allowedKeys.find( ( key ) => ! used.has( key ) ) ?? null;
-	}, [ items, allowedKeys ] );
-
+const AddFilterItemAction = ( {
+	nextAvailableKey,
+	ariaLabel,
+}: {
+	nextAvailableKey: string | null;
+	ariaLabel: string;
+} ) => {
+	const { addItem } = useRepeaterContext();
 	const disabled = nextAvailableKey === null;
 
 	const onClick = ( ev: React.MouseEvent ) => {
@@ -141,15 +156,14 @@ function extractChipLabels< T extends QueryArrayPropValue | undefined >( chipsPr
 type FilterItemValue = NonNullable< QueryFilterPropValue[ 'value' ] >;
 
 const ItemContent = ( {
-	allowedKeys,
 	keyConfig,
+	getKeySelectOptions,
 	chipsPlaceholder,
 }: {
-	allowedKeys: string[];
 	keyConfig: Record< string, QueryFilterKeyConfig >;
+	getKeySelectOptions: ( currentKey: string | null ) => SelectOption[];
 	chipsPlaceholder?: string;
 } ) => {
-	const { items, openItemIndex } = useRepeaterContext();
 	const propContext = useBoundProp( queryFilterPropTypeUtil );
 
 	const valuesByKeyRef = useRef< Record< string, FilterItemValue[ 'values' ] | null > >( {} );
@@ -172,24 +186,10 @@ const ItemContent = ( {
 		propContext.setValue( { ...nextValue, values: restoredValues }, options, meta );
 	};
 
-	const usedKeys = useMemo(
-		() => getUsedKeys( items.filter( ( _, index ) => index !== openItemIndex ) ),
-		[ items, openItemIndex ]
-	);
-
-	const keySelectOptions = useMemo(
-		() =>
-			allowedKeys.map( ( itemKey ) => ( {
-				value: itemKey,
-				label: keyConfig[ itemKey ]?.label ?? itemKey,
-				disabled: usedKeys.has( itemKey ),
-			} ) ),
-		[ allowedKeys, keyConfig, usedKeys ]
-	);
-
 	const currentKey = stringPropTypeUtil.extract( propContext.value?.key );
 	const currentKeyConfig = currentKey ? keyConfig[ currentKey ] : undefined;
 	const hasValuesField = !! currentKeyConfig?.queryEndpoint;
+	const keySelectOptions = useMemo( () => getKeySelectOptions( currentKey ), [ getKeySelectOptions, currentKey ] );
 
 	return (
 		<PopoverContent p={ 1.5 }>
@@ -234,9 +234,9 @@ function createItemForKey( key: string ): QueryFilterPropValue {
 	} );
 }
 
-function getUsedKeys< T extends { item: unknown } >( items: T[] ): Set< string > {
+function getUsedKeys( items: QueryFilterPropValue[] ): Set< string > {
 	const keys = items
-		.map( ( { item } ) => stringPropTypeUtil.extract( queryFilterPropTypeUtil.extract( item )?.key ) )
+		.map( ( item ) => stringPropTypeUtil.extract( item?.value?.key ) )
 		.filter( ( key ): key is string => !! key );
 
 	return new Set( keys );

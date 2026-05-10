@@ -17,11 +17,7 @@ class Query_Filter_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'key'    => String_Prop_Type::make()->required(),
-			'values' => Query_Array_Prop_Type::make()->default( [] ),
+			'values' => Query_Array_Prop_Type::make(),
 		];
-	}
-
-	public function get_default() {
-		return null;
 	}
 }
