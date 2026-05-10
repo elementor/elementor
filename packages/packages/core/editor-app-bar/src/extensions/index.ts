@@ -3,6 +3,7 @@
  * The code should be moved to the appropriate packages.
  */
 
+import { init as initAngie } from './angie';
 import { init as initConnect } from './connect';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
@@ -21,6 +22,7 @@ import { init as initUserPreferences } from './user-preferences';
 import { init as initWordpress } from './wordpress';
 
 export function init() {
+	initAngie();
 	initDocumentsPreview();
 	initDocumentsSave();
 	initDocumentsSettings();

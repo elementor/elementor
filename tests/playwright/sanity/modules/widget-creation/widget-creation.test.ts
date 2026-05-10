@@ -4,7 +4,7 @@ import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 type ExtendedWindow = Window & {
-	__createWidgetPrompt: string;
+  __createWidgetPrompt: string;
 };
 
 test.describe( 'Widget Creation @widget-creation', () => {
@@ -17,6 +17,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install Angie")';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+	const CUSTOM_WIDGETS_CATEGORY = '#elementor-panel-category-custom-widgets';
 
 	async function searchWidgets( page: Page, searchTerm: string ) {
 		const searchInput = page.locator( WIDGET_SEARCH_INPUT );
@@ -51,6 +52,17 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			editor = await wpAdmin.openNewPage();
 			await editor.openElementsPanel();
 
+			await test.step( 'Custom widgets category row shows fallback empty state', async () => {
+				const customWidgetsCategory = page.locator( CUSTOM_WIDGETS_CATEGORY );
+				await expect( customWidgetsCategory ).toBeVisible();
+				await expect( customWidgetsCategory.locator( '.elementor-panel-heading-title' ) ).toContainText(
+					'Custom Widget',
+				);
+				await expect(
+					customWidgetsCategory.locator( '.elementor-panel-category-custom-widgets-empty__message' ),
+				).toBeVisible();
+			} );
+
 			await test.step( 'Search with results shows widget creation footer', async () => {
 				await searchWidgets( page, 'button' );
 
@@ -62,7 +74,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
-				await expect( cta ).toContainText( 'Create custom widget' );
+				await expect( cta ).toContainText( 'Install Angie' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toHaveText( "Couldn't find what you're looking for?" );
@@ -81,6 +93,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
+				await expect( cta ).toContainText( 'Install Angie' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toContainText( 'No widget found for' );
