@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { useMixpanel } from '@elementor/events';
 import { Infotip } from '@elementor/ui';
 
-import AngieGuideCard from '../components/angie-guide-card';
 import {
+	AI_WIDGET_CTA_VIEWED_EVENT,
 	ANGIE_BUTTON_ARIA_LABEL,
 	ANGIE_GUIDE_TOGGLE_EVENT,
 	ANGIE_LEARN_MORE_URL,
 	ANGIE_TOP_BAR_DESCRIPTION,
 	ANGIE_TOP_BAR_PROMOTION_IMAGE_URL,
 	CREATE_WIDGET_EVENT,
-	AI_WIDGET_CTA_VIEWED_EVENT,
 } from '../angie-consts';
-import { useMixpanel } from '@elementor/events';
+import AngieGuideCard from '../components/angie-guide-card';
 
 export default function AngieGuideLocation() {
 	const [ anchorEl, setAnchorEl ] = useState< Element | null >( null );
@@ -38,21 +38,22 @@ export default function AngieGuideLocation() {
 			window.removeEventListener( ANGIE_GUIDE_TOGGLE_EVENT, handleToggle );
 		};
 	}, [] );
-	
+
 	const handleClose = () => setAnchorEl( null );
 
 	const handleInstall = async () => {
-		dispatchEvent?.(AI_WIDGET_CTA_VIEWED_EVENT, {
+		dispatchEvent?.( AI_WIDGET_CTA_VIEWED_EVENT, {
 			entry_point: 'top_bar_icon',
 		} );
-		window.dispatchEvent( new CustomEvent( CREATE_WIDGET_EVENT, {
-			detail: {
-				entry_point: 'top_bar_icon',
-			},
-		} ) );
+		window.dispatchEvent(
+			new CustomEvent( CREATE_WIDGET_EVENT, {
+				detail: {
+					entry_point: 'top_bar_icon',
+				},
+			} )
+		);
 		handleClose();
 	};
-
 
 	return (
 		<ThemeProvider>

@@ -11,7 +11,19 @@ import {
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
-import { Button, Checkbox, CircularProgress, Dialog, DialogContent, FormControlLabel, IconButton, Image, Link, Stack, Typography } from '@elementor/ui';
+import {
+	Button,
+	Checkbox,
+	CircularProgress,
+	Dialog,
+	DialogContent,
+	FormControlLabel,
+	IconButton,
+	Image,
+	Link,
+	Stack,
+	Typography,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type ShowModalEventDetail = {
@@ -107,46 +119,57 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 							src={ ANGIE_MODAL_PROMOTION_IMAGE_URL }
 						/>
 						<Stack justifyContent="space-between" p={ 4 }>
-							<Stack gap={ 2.5 } justifyContent="center" sx={{ flex: 1, paddingInlineEnd: 2.5 }}>
-							<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
-								{ installState === 'error'
-									? __( 'Installation failed', 'elementor' )
-									: __( 'Create custom widgets with Angie', 'elementor' ) }
-							</Typography>
-							<Typography variant="body2">
-								{ installState === 'error'
-									? __(
-											"We couldn't install Angie automatically. Click below to install it manually.",
-											'elementor'
-									  )
-									: __(
-											'Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.',
-											'elementor'
-									  ) }
-							</Typography>
-							{ installState !== 'error' && (
-								<FormControlLabel
-									control={
-										<Checkbox
-											size="small"
-											checked={ agreedToTerms }
-											onChange={ ( _e: React.ChangeEvent< HTMLInputElement >, checked: boolean ) => setAgreedToTerms( checked ) }
-										/>
-									}
-									label={
-										<Typography variant="body2" color="text.secondary">
-											{ __( 'I agree to the ', 'elementor' ) }
-											<Link href="https://elementor.com/terms/angie-terms-conditions/" target="_blank" rel="noopener noreferrer">
-												{ __( 'Terms', 'elementor' ) }
-											</Link>
-											{ __( ' & ', 'elementor' ) }
-											<Link href="https://elementor.com/about/privacy/" target="_blank" rel="noopener noreferrer">
-												{ __( 'Privacy Policy.', 'elementor' ) }
-											</Link>
-										</Typography>
-									}
-								/>
-							) }
+							<Stack gap={ 2.5 } justifyContent="center" sx={ { flex: 1, paddingInlineEnd: 2.5 } }>
+								<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
+									{ installState === 'error'
+										? __( 'Installation failed', 'elementor' )
+										: __( 'Create custom widgets with Angie', 'elementor' ) }
+								</Typography>
+								<Typography variant="body2">
+									{ installState === 'error'
+										? __(
+												"We couldn't install Angie automatically. Click below to install it manually.",
+												'elementor'
+										  )
+										: __(
+												'Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.',
+												'elementor'
+										  ) }
+								</Typography>
+								{ installState !== 'error' && (
+									<FormControlLabel
+										control={
+											<Checkbox
+												size="small"
+												checked={ agreedToTerms }
+												onChange={ (
+													_e: React.ChangeEvent< HTMLInputElement >,
+													checked: boolean
+												) => setAgreedToTerms( checked ) }
+											/>
+										}
+										label={
+											<Typography variant="body2" color="text.secondary">
+												{ __( 'I agree to the', 'elementor' ) }
+												<Link
+													href="https://elementor.com/terms/angie-terms-conditions/"
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ __( 'Terms', 'elementor' ) }
+												</Link>
+												{ __( '&', 'elementor' ) }
+												<Link
+													href="https://elementor.com/about/privacy/"
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ __( 'Privacy Policy.', 'elementor' ) }
+												</Link>
+											</Typography>
+										}
+									/>
+								) }
 							</Stack>
 							<Stack direction="row" justifyContent="flex-end">
 								{ installState === 'error' ? (

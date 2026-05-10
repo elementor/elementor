@@ -26,7 +26,9 @@ export default function AngieGuideCard( { imageUrl, description, learnMoreUrl, o
 				</Stack>
 				<Image src={ imageUrl } alt={ __( 'Angie', 'elementor' ) } sx={ { height: 150, width: '100%' } } />
 				<Stack px={ 2 } pt={ 1.5 } pb={ 1 }>
-					<Typography variant="body2" color="secondary">{ description }</Typography>
+					<Typography variant="body2" color="secondary">
+						{ description }
+					</Typography>
 				</Stack>
 				<Stack direction="row" justifyContent="flex-end" gap={ 1 } pt={ 1 } pb={ 1.5 } px={ 2 }>
 					<Button
@@ -40,12 +42,7 @@ export default function AngieGuideCard( { imageUrl, description, learnMoreUrl, o
 					>
 						{ __( 'Learn More', 'elementor' ) }
 					</Button>
-					<Button
-						variant="contained"
-						size="small"
-						color="accent"
-						onClick={ onInstall }
-					>
+					<Button variant="contained" size="small" color="accent" onClick={ onInstall }>
 						{ __( 'Try for free', 'elementor' ) }
 					</Button>
 				</Stack>
