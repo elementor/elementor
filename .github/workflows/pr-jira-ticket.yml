@@ -1,6 +1,5 @@
 name: PR Jira Ticket Check
 
-
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
