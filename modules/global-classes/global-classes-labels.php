@@ -99,7 +99,8 @@ class Global_Classes_Labels {
 			return [];
 		}
 
-		$raw = $kit->get_meta( $this->get_context_key( 'labels' ) );
+		$meta_key = $this->get_context_key( 'labels' );
+		$raw = $kit->get_meta( $meta_key );
 		$this->cache = is_array( $raw ) ? $raw : [];
 
 		return $this->cache;
