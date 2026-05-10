@@ -63,14 +63,14 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 			return null;
 		}
 
-		$current = self::make()->load_current_data();
-		$filtered_items = Template_Library_Import_Export_Utils::filter_items_by_ids( $current['items'], $ids );
+		$repository = Global_Classes_Repository::make()->set_preview( true );
+		$global_order = array_keys( $repository->all_labels() );
+		$filtered_order = array_values( array_intersect( $global_order, $ids ) );
+		$filtered_items = $repository->get_by_ids( $ids );
 
 		if ( empty( $filtered_items ) ) {
 			return null;
 		}
-
-		$filtered_order = Template_Library_Import_Export_Utils::build_filtered_order( $current['order'], $filtered_items );
 
 		return self::parse_snapshot_or_null( [
 			'items' => $filtered_items,
@@ -134,11 +134,17 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	protected function load_current_data(): array {
-		$current = Global_Classes_Repository::make()->set_preview( true )->all()->get();
+		$repository = Global_Classes_Repository::make()->set_preview( true );
+		$labels = $repository->all_labels();
+
+		$items = [];
+		foreach ( $labels as $id => $label ) {
+			$items[ $id ] = [ 'id' => $id, 'label' => $label ];
+		}
 
 		return [
-			'items' => $current['items'] ?? [],
-			'order' => $current['order'] ?? [],
+			'items' => $items,
+			'order' => $repository->get_order(),
 		];
 	}
 
@@ -165,8 +171,18 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 
 	protected function save_data( array $items, array $metadata ): array {
 		$order = $metadata['order'] ?? [];
+		$existing_items = $metadata['items'] ?? [];
+		$existing_ids = array_flip( array_keys( $existing_items ) );
 
-		Global_Classes_Repository::make()->put( $items, $order );
+		$new_items = array_filter(
+			$items,
+			fn( $item, $id ) => ! isset( $existing_ids[ $id ] ),
+			ARRAY_FILTER_USE_BOTH
+		);
+
+		if ( ! empty( $new_items ) ) {
+			Global_Classes_Repository::make()->put( $new_items, $order );
+		}
 
 		return [
 			'global_classes' => [
