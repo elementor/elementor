@@ -23,6 +23,8 @@ const EMPTY_INTERACTIONS: ElementInteractions = {
 
 const EFFECTS_WITHOUT_TYPE = [ 'custom' ];
 
+const BREAKPOINTS_SCHEMA_URI = 'elementor://breakpoints/list';
+
 export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
 	const extendedSchema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
@@ -44,6 +46,7 @@ export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 		schema,
 		requiredResources: [
 			{ uri: INTERACTIONS_SCHEMA_URI, description: 'Interactions schema with all available options' },
+			{ uri: BREAKPOINTS_SCHEMA_URI, description: 'Available breakpoint IDs for excludedBreakpoints' },
 		],
 		isDestructive: true,
 		outputSchema: {
