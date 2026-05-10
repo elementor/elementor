@@ -22,8 +22,15 @@ export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[]
 }
 
 function ensureClassesAreLoaded( classIds: StyleDefinitionID[] ) {
+	const providers = stylesRepository.getProviders();
+
 	classIds.forEach( ( classId ) => {
 		stylesRepository.getProviderByKey( classId )?.actions.get( classId );
+		const owningProvider = providers.find( ( provider ) =>
+			provider.actions.all().some( ( style ) => style.id === classId )
+		);
+
+		owningProvider?.actions.get( classId );
 	} );
 }
 
