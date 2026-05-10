@@ -63,9 +63,9 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 			return null;
 		}
 
-		$repository = Global_Classes_Repository::make()->set_preview( true );
-		$global_order = array_keys( $repository->all_labels() );
-		$filtered_order = array_values( array_intersect( $global_order, $ids ) );
+		$repository = Global_Classes_Repository::make()->set_preview( false );
+		$order = $repository->get_order();
+		$filtered_order = array_values( array_filter( $order, fn( $id ) => in_array( $id, $ids, true ) ) );
 		$filtered_items = $repository->get_by_ids( $ids );
 
 		if ( empty( $filtered_items ) ) {
