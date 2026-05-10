@@ -160,7 +160,7 @@ class Global_Classes_Repository {
 		] );
 	}
 
-	public function each_item( callable $cb, bool $should_migrate = true, int $batch_size = self::READ_BATCH_SIZE ): void {
+	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {
 		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
 
 		if ( empty( $order ) ) {
@@ -169,7 +169,7 @@ class Global_Classes_Repository {
 
 		foreach ( array_chunk( $order, $batch_size ) as $chunk ) {
 			foreach ( $this->iterate_class_posts_for_ids( $chunk ) as $class_post ) {
-				$cb( $class_post->to_array( $should_migrate ) );
+				$cb( $class_post->to_array( $skip_migration ) );
 			}
 		}
 	}

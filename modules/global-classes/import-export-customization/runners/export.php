@@ -58,6 +58,7 @@ class Export extends Export_Runner_Base {
 		$labels_by_id = [];
 		$files = [];
 
+		$skip_migration = true;
 		$repository->each_item(
 			static function ( array $class_data ) use ( &$files, &$labels_by_id ) {
 				if ( empty( $class_data['id'] ) || ! is_string( $class_data['id'] ) ) {
@@ -72,7 +73,7 @@ class Export extends Export_Runner_Base {
 				];
 				$labels_by_id[ $class_id ] = $class_data['label'] ?? $class_id;
 			},
-			false
+			$skip_migration
 		);
 
 		if ( empty( $files ) ) {
