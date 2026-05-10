@@ -6,6 +6,7 @@ import { useIsMutating } from '@elementor/query';
 import {
 	bindMenu,
 	bindTrigger,
+	CircularProgress,
 	IconButton,
 	ListItemIcon,
 	ListItemText,
@@ -67,13 +68,12 @@ export const DesignSystemHeaderMenu = () => {
 			{ isAdmin && (
 				<Tooltip title={ triggerLabel } placement="top">
 					<span>
-						<IconButton
-							{ ...triggerProps }
-							size="small"
-							aria-label={ triggerLabel }
-							disabled={ isImporting || isExporting }
-						>
-							<DotsVerticalIcon fontSize="small" />
+						<IconButton { ...triggerProps } size="small" aria-label={ triggerLabel }>
+							{ isImporting || isExporting ? (
+								<CircularProgress size="1rem" />
+							) : (
+								<DotsVerticalIcon fontSize="small" />
+							) }
 						</IconButton>
 					</span>
 				</Tooltip>
