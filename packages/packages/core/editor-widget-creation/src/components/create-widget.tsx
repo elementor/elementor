@@ -107,12 +107,12 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 						/>
 						<Stack justifyContent="space-between" p={ 4 }>
 							<Stack gap={ 2.5 } justifyContent="center" sx={{ flex: 1, paddingInlineEnd: 2.5 }}>
-							<Typography variant="h4" fontWeight={ 600 }>
+							<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
 								{ installState === 'error'
 									? __( 'Installation failed', 'elementor' )
 									: __( 'Create custom widgets with Angie', 'elementor' ) }
 							</Typography>
-							<Typography variant="body2" color="text.secondary">
+							<Typography variant="body2">
 								{ installState === 'error'
 									? __(
 											"We couldn't install Angie automatically. Click below to install it manually.",
