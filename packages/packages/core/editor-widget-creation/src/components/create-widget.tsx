@@ -5,6 +5,7 @@ import {
 	isAngieAvailable,
 	redirectToAppAdmin,
 	redirectToInstallation,
+	saveAngieConsent,
 	sendPromptToAngie,
 } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
@@ -59,7 +60,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 			trigger_source: entryPoint,
 		} );
 
-		const result = await installAngiePlugin();
+		const [ result ] = await Promise.all( [ installAngiePlugin(), saveAngieConsent() ] );
 
 		if ( ! result.success ) {
 			setInstallState( 'error' );

@@ -7,6 +7,7 @@ import { CreateWidget } from '../create-widget';
 const mockIsAngieAvailable = jest.fn();
 const mockTrackEvent = jest.fn();
 const mockInstallAngiePlugin = jest.fn();
+const mockSaveAngieConsent = jest.fn();
 const mockRedirectToAppAdmin = jest.fn();
 const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
@@ -17,6 +18,7 @@ jest.mock( '@elementor/editor-mcp', () => {
 		toolPrompts,
 		isAngieAvailable: () => mockIsAngieAvailable(),
 		installAngiePlugin: ( ...args: unknown[] ) => mockInstallAngiePlugin( ...args ),
+		saveAngieConsent: ( ...args: unknown[] ) => mockSaveAngieConsent( ...args ),
 		redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
 		redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
 		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
@@ -38,6 +40,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 		mockIsAngieAvailable.mockReset();
 		mockTrackEvent.mockReset();
 		mockInstallAngiePlugin.mockReset();
+		mockSaveAngieConsent.mockReset().mockResolvedValue( undefined );
 		mockRedirectToAppAdmin.mockReset();
 		mockSendPromptToAngie.mockReset();
 		mockRedirectToInstallation.mockReset();
@@ -217,6 +220,46 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				expect.objectContaining( { eventName: 'angie_install_abandoned' } )
 			);
 			expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'consent saving', () => {
+		it( 'saves consent to DB when Install & Activate is clicked', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
+			} );
+		} );
+
+		it( 'saves consent even when plugin installation fails', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
+			} );
 		} );
 	} );
 
