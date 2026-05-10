@@ -54,27 +54,26 @@ class Export extends Export_Runner_Base {
 			return $this->empty_result();
 		}
 
+		$repository = Global_Classes_Repository::make( $kit );
 		$labels_by_id = [];
 		$files = [];
-		$parser = Global_Classes_Parser::make();
 
-		Global_Classes_Repository::make( $kit )->each_item(
-			static function ( array $class_data ) use ( &$files, &$labels_by_id, $parser ) {
-				$sanitized_item = self::sanitize_item( $parser, $class_data );
-
-				if ( null === $sanitized_item ) {
+		$skip_migration = true;
+		$repository->each_item(
+			static function ( array $class_data ) use ( &$files, &$labels_by_id ) {
+				if ( empty( $class_data['id'] ) || ! is_string( $class_data['id'] ) ) {
 					return;
 				}
 
-				$class_id = $sanitized_item['id'];
+				$class_id = $class_data['id'];
 
 				$files[] = [
 					'path' => Import_Export_Customization::FILE_NAME . '/' . $class_id . '.json',
-					'data' => wp_json_encode( $sanitized_item ),
+					'data' => wp_json_encode( $class_data ),
 				];
-
-				$labels_by_id[ $class_id ] = $sanitized_item['label'] ?? $class_id;
-			}
+				$labels_by_id[ $class_id ] = $class_data['label'] ?? $class_id;
+			},
+			$skip_migration
 		);
 
 		if ( empty( $files ) ) {
@@ -103,22 +102,6 @@ class Export extends Export_Runner_Base {
 			],
 			$sanitized_order
 		);
-	}
-
-	private static function sanitize_item( Global_Classes_Parser $parser, array $class_data ): ?array {
-		if ( empty( $class_data['id'] ) || ! is_string( $class_data['id'] ) ) {
-			return null;
-		}
-
-		$items_result = $parser->parse_items( [ $class_data['id'] => $class_data ] );
-
-		if ( ! $items_result->is_valid() ) {
-			return null;
-		}
-
-		$sanitized_items = $items_result->unwrap();
-
-		return $sanitized_items[ $class_data['id'] ] ?? null;
 	}
 
 	private function empty_result(): array {

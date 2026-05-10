@@ -83,16 +83,17 @@ class Global_Class_Post {
 		return (int) $this->post->menu_order;
 	}
 
-	public function get_data(): array {
+	public function get_data( bool $skip_migration = false ): array {
 		$data = $this->get_context_data();
 		$meta_key = $this->get_context_key( 'data' );
 
+		// Empty preview (draft) - use frontend (published) data
 		if ( empty( $data ) && $this->is_preview() ) {
 			$data = $this->get_frontend_data();
 			$meta_key = self::META_KEY_DATA;
 		}
 
-		if ( ! empty( $data ) ) {
+		if ( ! empty( $data ) && ( ! $skip_migration ) ) {
 			$this->migrate_data( $data, $meta_key );
 		}
 
@@ -117,8 +118,8 @@ class Global_Class_Post {
 		);
 	}
 
-	public function to_array(): array {
-		$data = $this->get_data();
+	public function to_array( bool $skip_migration = false ): array {
+		$data = $this->get_data( $skip_migration );
 
 		$result = [
 			'id' => $this->get_class_id(),
