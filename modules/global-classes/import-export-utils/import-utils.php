@@ -9,6 +9,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -43,8 +44,12 @@ class Import_Utils {
 		}
 
 		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
+
 		$repository_for_reading = Global_Classes_Repository::make( $kit_for_reading );
+		$repository_for_reading->set_preview( false );
+
 		$repository_for_writing = Global_Classes_Repository::make();
+		$repository_for_writing->set_preview( false );
 
 		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
@@ -248,7 +253,9 @@ class Import_Utils {
 			throw new \Exception( 'Failed to find existing class: ' . esc_html( $existing_id ) );
 		}
 
+		$post->set_preview( false );
 		$post->update_data( $sanitized_item );
+		Migrations_Orchestrator::clear_entity_migration_cache( $post->get_post_id(), Global_Classes_Repository::META_KEY_FRONTEND );
 		clean_post_cache( $post->get_post_id() );
 	}
 
