@@ -169,16 +169,9 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return count( $items );
 	}
 
-	protected function save_data( array $items, array $metadata ): array {
-		$order = $metadata['order'] ?? [];
-		$existing_items = $metadata['items'] ?? [];
-		$existing_ids = array_flip( array_keys( $existing_items ) );
-
-		$new_items = array_filter(
-			$items,
-			fn( $item, $id ) => ! isset( $existing_ids[ $id ] ),
-			ARRAY_FILTER_USE_BOTH
-		);
+	protected function save_data( array $data, array $metadata ): array {
+		$new_items = $data['new_items'] ?? [];
+		$order = $data['order'] ?? [];
 
 		if ( ! empty( $new_items ) ) {
 			Global_Classes_Repository::make()->put( $new_items, $order );
@@ -186,7 +179,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 
 		return [
 			'global_classes' => [
-				'items' => $items,
+				'items' => $data['updated_items'] ?? [],
 				'order' => $order,
 			],
 		];
