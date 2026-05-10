@@ -41,7 +41,7 @@ type CreateWidgetModalProps = {
 
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 const ANGIE_MODAL_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-modal-promotion.png';
-const ANGIE_CTA_CLICKED_EVENT = 'angie_cta_clicked' as const;
+const ANGIE_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
 const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
 const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed' as const;
 const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned' as const;
@@ -85,11 +85,11 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 			trigger_source: entryPoint,
 		} );
 
-		redirectToAppAdmin( prompt ?? '' );
+		redirectToAppAdmin( prompt );
 	};
 
 	const handleFallbackInstall = () => {
-		redirectToInstallation( prompt ?? '' );
+		redirectToInstallation( prompt );
 	};
 
 	return (

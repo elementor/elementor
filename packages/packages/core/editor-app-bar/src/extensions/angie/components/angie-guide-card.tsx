@@ -36,7 +36,7 @@ export default function AngieGuideCard( { imageUrl, description, learnMoreUrl, o
 						size="small"
 						color="secondary"
 						onClick={ () => {
-							window.open( learnMoreUrl, '_blank' );
+							window.open( learnMoreUrl, '_blank', 'noopener,noreferrer' );
 							onClose();
 						} }
 					>
