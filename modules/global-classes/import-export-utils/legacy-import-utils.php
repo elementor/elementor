@@ -28,6 +28,10 @@ class Legacy_Import_Utils {
 
 		$imported_classes = $global_classes_result->unwrap();
 
+		if ( empty( $imported_classes['items'] ) ) {
+			return Import_Utils::EMPTY_RESULT;
+		}
+
 		$repository_for_reading = Global_Classes_Repository::make( $kit_for_reading );
 		$repository_for_reading->set_preview( false );
 
@@ -35,11 +39,20 @@ class Legacy_Import_Utils {
 		$repository_for_writing->set_preview( false );
 
 		if ( 'override-all' === $conflict_resolution ) {
-			$repository_for_writing->delete_all();
+			$ids_to_delete = $repository_for_reading->get_order();
 
-			$repository_for_writing->put(
-				$imported_classes['items'],
-				$imported_classes['order']
+			$imported_items = $imported_classes['items'];
+			$imported_order = $imported_classes['order'];
+			$added_ids = array_keys( $imported_items );
+
+			$repository_for_writing->apply_changes(
+				$imported_items,
+				[
+					'added' => $added_ids,
+					'deleted' => $ids_to_delete,
+					'order' => true,
+				],
+				$imported_order
 			);
 
 			$result = Import_Utils::EMPTY_RESULT;
@@ -124,8 +137,16 @@ class Legacy_Import_Utils {
 
 		if ( ! empty( $items_to_add ) ) {
 			$final_order = array_merge( $added_order, $existing_order );
+			$added_ids = array_keys( $items_to_add );
 
-			$repository_for_writing->put( $items_to_add, $final_order );
+			$repository_for_writing->apply_changes(
+				$items_to_add,
+				[
+					'added' => $added_ids,
+					'order' => true,
+				],
+				$final_order
+			);
 		}
 
 		return $result;
