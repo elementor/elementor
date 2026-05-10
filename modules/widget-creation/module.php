@@ -78,7 +78,7 @@ class Module extends BaseModule {
 
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
-		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><?php echo esc_html__( 'Install Angie', 'elementor' ); ?></button>
+		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><?php echo esc_html__( 'Try for free', 'elementor' ); ?></button>
 		<# } #>
 		<?php
 	}

@@ -164,8 +164,8 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Click Install Angie to trigger the failure.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Click Try for free to trigger the failure.
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -197,8 +197,8 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Click Install Angie.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Click Try for free.
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -232,7 +232,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -258,7 +258,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -279,7 +279,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -306,7 +306,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			const installButton = screen.getByRole( 'button', { name: /Try for free/i } );
 
 			fireEvent.click( installButton );
 
@@ -339,7 +339,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Trigger install failure so the fallback button appears.
-			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Try for free/i } ) );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
@@ -363,7 +363,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			} );
 
 			// Trigger install failure so the fallback button appears.
-			fireEvent.click( screen.getByRole( 'button', { name: /Install Angie/i } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Try for free/i } ) );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();

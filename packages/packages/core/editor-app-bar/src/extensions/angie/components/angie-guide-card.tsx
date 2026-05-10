@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Chip, ClickAwayListener, CloseButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import { AngieLogoIcon } from '@elementor/icons';
 
 type Props = {
 	imageUrl: string;
@@ -46,7 +47,7 @@ export default function AngieGuideCard( { imageUrl, description, learnMoreUrl, o
 						color="accent"
 						onClick={ onInstall }
 					>
-						{ __( 'Install Angie', 'elementor' ) }
+						{ __( 'Try for free', 'elementor' ) }
 					</Button>
 				</Stack>
 			</Stack>
