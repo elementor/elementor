@@ -12,8 +12,6 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Order;
-use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -141,19 +139,13 @@ class Manager {
 		$kit_name = $kit_name ? $kit_name : esc_html__( 'Custom', 'elementor' );
 
 		$current_kit = $this->get_active_kit();
-		
-		$current_global_classes_order = $current_kit->get_meta( Global_Classes_Order::META_KEY ); //Global_Classes_Repository::make()->get_order();
-		$current_global_classes_frontend_labels = $current_kit->get_meta( Global_Classes_Labels::META_KEY_FRONTEND ); //Global_Classes_Repository::make()->set_preview( false )->all_labels();
-		$current_global_classes_preview_labels = $current_kit->get_meta( Global_Classes_Labels::META_KEY_PREVIEW ); //Global_Classes_Repository::make()->set_preview( true )->all_labels();
+
+		$kit_meta_data = $this->get_meta_to_preserve( $current_kit );
 
 		$id = $this->create( [
 			'post_title' => $kit_name,
 			'settings' => $settings,
-		], [
-			Global_Classes_Order::META_KEY => $current_global_classes_order,
-			Global_Classes_Labels::META_KEY_FRONTEND => $current_global_classes_frontend_labels,
-			Global_Classes_Labels::META_KEY_PREVIEW => $current_global_classes_preview_labels,
-		] );
+		], $kit_meta_data );
 
 		if ( $active ) {
 			update_option( self::OPTION_PREVIOUS, $this->get_active_id() );
@@ -161,6 +153,22 @@ class Manager {
 		}
 
 		return $id;
+	}
+
+	private function get_meta_to_preserve( Kit $current_kit ): array {
+		$meta_keys_to_preserve = apply_filters( 'elementor/kit/meta_to_preserve_on_kit_import', [] );
+
+		$kit_meta_data = [];
+
+		foreach ( $meta_keys_to_preserve as $meta_key ) {
+			$value = $current_kit->get_meta( $meta_key );
+
+			if ( ! empty( $value ) ) {
+				$kit_meta_data[ $meta_key ] = $value;
+			}
+		}
+
+		return $kit_meta_data;
 	}
 
 	public function create_default() {
