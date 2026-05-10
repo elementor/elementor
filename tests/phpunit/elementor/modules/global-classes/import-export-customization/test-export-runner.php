@@ -83,7 +83,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 					'props' => [
 						'color' => [
 							'$$type' => 'color',
-							'value' => '',
+							'value' => '<script>alert(1)</script>',
 						],
 						'padding' => [
 							'$$type' => 'size',
@@ -93,7 +93,6 @@ class Test_Export_Runner extends Elementor_Test_Base {
 							],
 						],
 					],
-					'custom_css' => null,
 				],
 			],
 		];
@@ -129,7 +128,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$this->assertEquals( $expected_order, json_decode( $files_by_path['global-classes/order.json'], true ) );
 	}
 
-	public function test_export__invalid_style_is_dropped() {
+	public function test_export__exports_classes_as_stored_without_sanitization() {
 		// Arrange.
 		$items = [
 			'g-valid' => [
@@ -157,10 +156,23 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$files_by_path = $this->index_files_by_path( $result['files'] );
 
 		$this->assertArrayHasKey( 'global-classes/g-valid.json', $files_by_path );
-		$this->assertArrayNotHasKey( 'global-classes/g-invalid.json', $files_by_path );
+		$this->assertArrayHasKey( 'global-classes/g-invalid.json', $files_by_path );
 
 		$this->assertEquals(
-			[ [ 'id' => 'g-valid', 'label' => 'Valid' ] ],
+			[
+				'id' => 'g-invalid',
+				'label' => 'invalid-export-style',
+				'type' => '__not_a_valid_style_type__',
+				'variants' => [],
+			],
+			json_decode( $files_by_path['global-classes/g-invalid.json'], true )
+		);
+
+		$this->assertEquals(
+			[
+				[ 'id' => 'g-valid', 'label' => 'Valid' ],
+				[ 'id' => 'g-invalid', 'label' => 'invalid-export-style' ],
+			],
 			json_decode( $files_by_path['global-classes/order.json'], true )
 		);
 	}
