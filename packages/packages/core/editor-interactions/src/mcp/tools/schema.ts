@@ -17,10 +17,10 @@ export const baseSchema = {
 		.optional()
 		.describe( 'Easing function for the animation. Use "easeIn" for free tier.' ),
 	excludedBreakpoints: z
-		.array( z.string() )
+		.array( z.enum( [ 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile' ] ) )
 		.optional()
 		.describe(
-			'Breakpoint IDs on which this interaction is disabled (e.g. ["mobile", "tablet"]). Omit to enable on all breakpoints.'
+			'Breakpoint IDs on which this interaction is disabled (e.g. ["mobile", "tablet"]). Fetch the "elementor://breakpoints/list" resource to get the valid IDs for the current site. Omit to enable on all breakpoints.'
 		),
 };
 
