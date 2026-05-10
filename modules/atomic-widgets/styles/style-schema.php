@@ -351,9 +351,11 @@ class Style_Schema {
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
 			'grid-column' => Span_Prop_Type::make()
-				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value.' ),
+				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
+				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value. Disallows URLs and semicolons.' ),
 			'grid-row' => Span_Prop_Type::make()
-				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value.' ),
+				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
+				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value. Disallows URLs and semicolons.' ),
 		];
 	}
 
