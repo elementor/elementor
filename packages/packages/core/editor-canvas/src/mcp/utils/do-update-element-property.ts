@@ -8,6 +8,7 @@ import {
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 import { type Utils as IUtils } from '@elementor/editor-variables';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type z } from '@elementor/schema';
 
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
@@ -135,4 +136,5 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		},
 		withHistory: false,
 	} );
+	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 };
