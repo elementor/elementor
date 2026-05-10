@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Chip, ClickAwayListener, CloseButton, Image, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { AngieLogoIcon } from '@elementor/icons';
 
 type Props = {
 	imageUrl: string;
