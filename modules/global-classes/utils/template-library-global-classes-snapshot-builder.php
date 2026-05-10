@@ -139,7 +139,10 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 
 		$items = [];
 		foreach ( $labels as $id => $label ) {
-			$items[ $id ] = [ 'id' => $id, 'label' => $label ];
+			$items[ $id ] = [
+				'id' => $id,
+				'label' => $label,
+			];
 		}
 
 		return [
@@ -180,7 +183,7 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 
 			$repository->apply_changes(
 				$new_items,
-				[ 
+				[
 					'added' => $added_ids,
 					'order' => true,
 				],
