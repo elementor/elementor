@@ -22,8 +22,12 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Markdown Rendering', 'elementor' ),
-			'description' => esc_html__( 'Serve page content as Markdown when AI crawlers request it via the Accept: text/markdown header, or when ?format=markdown is appended to the URL.', 'elementor' ),
+			'title' => esc_html__( 'Generate website markdown', 'elementor' ),
+			'description' => sprintf(
+				'%1$s <a href="https://go.elementor.com/wp-dash-generate-website-markdown-article/" target="_blank">%2$s</a>',
+				esc_html__( 'Serve your pages as Markdown files so AI agents can ingest and understand your content more efficiently.', 'elementor' ),
+				esc_html__( 'Learn more', 'elementor' )
+			),
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];
