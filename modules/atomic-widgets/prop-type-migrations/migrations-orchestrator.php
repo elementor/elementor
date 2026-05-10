@@ -70,6 +70,10 @@ class Migrations_Orchestrator {
 		Migrations_Cache::clear_all();
 	}
 
+	public static function clear_entity_migration_cache( int $id, string $data_identifier ): void {
+		Migrations_Cache::clear_migration_cache( $id, $data_identifier );
+	}
+
 	/**
 	 * Migrations orchestrator should follow the following steps:
 	 * 1. Check cache to see if the data is already migrated
