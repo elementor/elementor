@@ -9,12 +9,13 @@ export const imageSrcPropTypeUtil = createPropUtils(
 		.strictObject( {
 			id: unknownChildrenSchema,
 			url: z.null(),
+			alt: unknownChildrenSchema.optional(),
 		} )
 		.or(
 			z.strictObject( {
-				id: z.null(),
+				id: unknownChildrenSchema.optional().default( null ),
 				url: unknownChildrenSchema,
-				alt: unknownChildrenSchema,
+				alt: unknownChildrenSchema.optional(),
 			} )
 		)
 );
