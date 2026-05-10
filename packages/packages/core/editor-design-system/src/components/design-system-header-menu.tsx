@@ -34,7 +34,7 @@ export const DesignSystemHeaderMenu = () => {
 	const isExporting = useIsMutating( { mutationKey: [ EXPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
 	const isInProgress = isImporting || isExporting;
-	const triggerProps = isInProgress ? {} : bindTrigger( popupState );
+	const triggerProps = bindTrigger( popupState );
 
 	const handleImport = () => {
 		popupState.close();
@@ -62,9 +62,19 @@ export const DesignSystemHeaderMenu = () => {
 	};
 
 	const triggerLabel = __( 'Design system actions', 'elementor' );
-	const currentlyExportingLabel = __( `Export is in progress. The file will be downloaded when it's complete.`, 'elementor' );
-	const currentlyImportingLabel = __( `Import is in progress. You will receive a notification when it's complete.`, 'elementor' );
-	const tooltipLabel = isInProgress ? ( isExporting ? currentlyExportingLabel : currentlyImportingLabel ) : triggerLabel;
+	const currentlyExportingLabel = __(
+		`Export is in progress. The file will be downloaded when it's complete.`,
+		'elementor'
+	);
+	const currentlyImportingLabel = __(
+		`Import is in progress. You will receive a notification when it's complete.`,
+		'elementor'
+	);
+	const tooltipLabel = isInProgress
+		? isExporting
+			? currentlyExportingLabel
+			: currentlyImportingLabel
+		: triggerLabel;
 
 	return (
 		<>
@@ -75,7 +85,7 @@ export const DesignSystemHeaderMenu = () => {
 							{ ...triggerProps }
 							size="small"
 							aria-label={ triggerLabel }
-							disabled={ isImporting || isExporting }
+							disabled={ isInProgress }
 						>
 							<DotsVerticalIcon fontSize="small" />
 						</IconButton>
