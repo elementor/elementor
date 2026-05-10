@@ -34,7 +34,8 @@ export const DesignSystemHeaderMenu = () => {
 	const isImporting = useIsMutating( { mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 	const isExporting = useIsMutating( { mutationKey: [ EXPORT_DESIGN_SYSTEM_MUTATION_KEY ] } ) > 0;
 
-	const triggerProps = bindTrigger( popupState );
+	const isInProgress = isImporting || isExporting;
+	const triggerProps = isInProgress ? {} : bindTrigger( popupState );
 
 	const handleImport = () => {
 		popupState.close();
@@ -69,11 +70,7 @@ export const DesignSystemHeaderMenu = () => {
 				<Tooltip title={ triggerLabel } placement="top">
 					<span>
 						<IconButton { ...triggerProps } size="small" aria-label={ triggerLabel }>
-							{ isImporting || isExporting ? (
-								<CircularProgress size="1rem" />
-							) : (
-								<DotsVerticalIcon fontSize="small" />
-							) }
+							{ isInProgress ? <CircularProgress size="1rem" /> : <DotsVerticalIcon fontSize="small" /> }
 						</IconButton>
 					</span>
 				</Tooltip>
