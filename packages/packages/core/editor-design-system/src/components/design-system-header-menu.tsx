@@ -70,11 +70,10 @@ export const DesignSystemHeaderMenu = () => {
 		`Import is in progress. You will receive a notification when it's complete.`,
 		'elementor'
 	);
-	const tooltipLabel = isInProgress
-		? isExporting
-			? currentlyExportingLabel
-			: currentlyImportingLabel
-		: triggerLabel;
+	let tooltipLabel = triggerLabel;
+	if ( isInProgress ) {
+		tooltipLabel = isExporting ? currentlyExportingLabel : currentlyImportingLabel;
+	}
 
 	return (
 		<>
