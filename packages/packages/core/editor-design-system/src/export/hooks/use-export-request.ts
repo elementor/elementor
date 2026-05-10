@@ -7,6 +7,7 @@ export const EXPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-export' as const
 
 export const DEFAULT_EXPORT_FILE_NAME = 'design-system-export.zip';
 
+// 2 minutes
 const EXPORT_REQUEST_TIMEOUT_MS = 120_000;
 
 export type ExportResponseData = {
