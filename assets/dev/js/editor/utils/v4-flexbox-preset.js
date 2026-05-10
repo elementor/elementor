@@ -7,6 +7,7 @@ const SIZES_MAP = {
 	66: '66.6666',
 };
 
+
 const sizeProp = ( size, unit = 'px' ) => ( {
 	$$type: 'size',
 	value: { size, unit },
