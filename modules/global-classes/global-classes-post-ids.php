@@ -159,8 +159,8 @@ class Global_Classes_Post_IDs {
 
 		$placeholders = implode( ',', array_fill( 0, count( $class_ids ), '%s' ) );
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$sql = $wpdb->prepare(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders is a safe list of %s tokens generated above.
 			"SELECT pm.post_id, pm.meta_value
 			 FROM {$wpdb->postmeta} pm
 			 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
@@ -174,6 +174,7 @@ class Global_Classes_Post_IDs {
 				[ Global_Class_Post_Type::CPT, 'publish' ]
 			)
 		);
+		// phpcs:enable
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above.
 		$rows = $wpdb->get_results( $sql );
