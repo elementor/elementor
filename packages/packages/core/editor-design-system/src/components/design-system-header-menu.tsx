@@ -6,7 +6,6 @@ import { useIsMutating } from '@elementor/query';
 import {
 	bindMenu,
 	bindTrigger,
-	CircularProgress,
 	IconButton,
 	ListItemIcon,
 	ListItemText,
@@ -63,14 +62,22 @@ export const DesignSystemHeaderMenu = () => {
 	};
 
 	const triggerLabel = __( 'Design system actions', 'elementor' );
+	const currentlyExportingLabel = __( `Export is in progress. The file will be downloaded when it's complete.`, 'elementor' );
+	const currentlyImportingLabel = __( `Import is in progress. You will receive a notification when it's complete.`, 'elementor' );
+	const tooltipLabel = isInProgress ? ( isExporting ? currentlyExportingLabel : currentlyImportingLabel ) : triggerLabel;
 
 	return (
 		<>
 			{ isAdmin && (
-				<Tooltip title={ triggerLabel } placement="top">
+				<Tooltip title={ tooltipLabel } placement="top">
 					<span>
-						<IconButton { ...triggerProps } size="small" aria-label={ triggerLabel }>
-							{ isInProgress ? <CircularProgress size="1rem" /> : <DotsVerticalIcon fontSize="small" /> }
+						<IconButton
+							{ ...triggerProps }
+							size="small"
+							aria-label={ triggerLabel }
+							disabled={ isImporting || isExporting }
+						>
+							<DotsVerticalIcon fontSize="small" />
 						</IconButton>
 					</span>
 				</Tooltip>
