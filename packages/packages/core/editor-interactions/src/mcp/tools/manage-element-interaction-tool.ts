@@ -12,7 +12,6 @@ import {
 	extractString,
 } from '../../utils/prop-value-utils';
 import { generateTempInteractionId } from '../../utils/temp-id-utils';
-import { BREAKPOINTS_SCHEMA_URI } from '@elementor/editor-canvas';
 import { MAX_INTERACTIONS_PER_ELEMENT } from '../constants';
 import { INTERACTIONS_SCHEMA_URI } from '../resources/interactions-schema-resource';
 import { baseSchema, proSchema } from './schema';
@@ -24,9 +23,10 @@ const EMPTY_INTERACTIONS: ElementInteractions = {
 
 const EFFECTS_WITHOUT_TYPE = [ 'custom' ];
 
+const BREAKPOINTS_SCHEMA_URI = 'elementor://breakpoints/list';
+
 export const initManageElementInteractionTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
-
 	const extendedSchema = isProActive() ? { ...baseSchema, ...proSchema } : baseSchema;
 	const schema = {
 		elementId: z.string().describe( 'The ID of the element to read or modify interactions on' ),
