@@ -52,6 +52,9 @@ export class Close extends $e.modules.CommandBase {
 			headerMessage: __( 'You are leaving to a separate site part.', 'elementor' ),
 			message: __( 'Save your changes before moving on because the current document and the one you\u2019re moving to are separate site parts.', 'elementor' ),
 			closeButton: true,
+			closeButtonOptions: {
+				iconClass: 'eicon-close',
+			},
 			position: {
 				my: 'center center',
 				at: 'center center',
