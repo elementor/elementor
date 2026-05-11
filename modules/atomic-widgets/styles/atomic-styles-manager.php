@@ -125,10 +125,10 @@ class Atomic_Styles_Manager {
 				}
 
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
+				$is_valid_cache = $this->cache_validity->is_valid( $breakpoint_path );
 
-				if ( self::contains_dynamic_value( $style_params['get_styles']() ) ) {
+				if ( ! $is_valid_cache && self::contains_dynamic_value( $style_params['get_styles']() ) ) {
 					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
-					$this->cache_validity->validate( $breakpoint_path );
 
 					continue;
 				}
@@ -137,7 +137,7 @@ class Atomic_Styles_Manager {
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_path )
+					$is_valid_cache
 				);
 
 				$this->cache_validity->validate( $breakpoint_path );
