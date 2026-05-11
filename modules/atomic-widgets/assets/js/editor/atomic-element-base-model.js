@@ -34,16 +34,30 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		return this.modifyDefaultChildren( defaultChildren );
 	}
 
+	getRequiredChildren() {
+		const { required_children: requiredChildren = [] } = this.config;
+
+		return this.modifyRequiredChildren( requiredChildren );
+	}
+
 	onElementCreate() {
-		if ( this.get( 'skipDefaultChildren' ) ) {
+		const shouldSkipDefaultChildren = this.get( 'skipDefaultChildren' );
+		const requiredChildren = this.getRequiredChildren();
+		const defaultChildren = shouldSkipDefaultChildren ? [] : this.getDefaultChildren();
+		const childrenTemplate = [ ...requiredChildren, ...defaultChildren ];
+
+		if ( shouldSkipDefaultChildren ) {
 			this.unset( 'skipDefaultChildren', { silent: true } );
-			return;
 		}
 
-		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
+		this.set( 'elements', childrenTemplate.map( ( element ) => this.buildElement( element ) ) );
 	}
 
 	modifyDefaultChildren( element ) {
+		return element;
+	}
+
+	modifyRequiredChildren( element ) {
 		return element;
 	}
 

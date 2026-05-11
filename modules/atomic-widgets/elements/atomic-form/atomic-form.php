@@ -266,6 +266,21 @@ class Atomic_Form extends Atomic_Element_Base {
 		return 'form';
 	}
 
+	protected function define_required_children() {
+		return [
+			$this->build_status_message(
+				__( 'Great! We’ve received your information.', 'elementor' ),
+				'success',
+				__( 'Success message', 'elementor' )
+			),
+			$this->build_status_message(
+				__( 'We couldn’t process your submission. Please retry', 'elementor' ),
+				'error',
+				__( 'Error message', 'elementor' )
+			),
+		];
+	}
+
 	protected function define_default_children() {
 
 		$prefix = 'e-form-';
@@ -299,16 +314,6 @@ class Atomic_Form extends Atomic_Element_Base {
 				] ),
 			] )
 			->build();
-		$children[] = $this->build_status_message(
-			__( 'Great! We’ve received your information.', 'elementor' ),
-			'success',
-			__( 'Success message', 'elementor' )
-		);
-		$children[] = $this->build_status_message(
-			__( 'We couldn’t process your submission. Please retry', 'elementor' ),
-			'error',
-			__( 'Error message', 'elementor' )
-		);
 
 		return $children;
 	}
