@@ -2,7 +2,6 @@ import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { getElementSetting, updateElementSettings } from '@elementor/editor-elements';
 import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
-import { stylesRepository } from '@elementor/editor-styles-repository';
 
 // Externalized for use outside of Hooks
 
@@ -17,21 +16,6 @@ export function doApplyClasses( elementId: string, classIds: StyleDefinitionID[]
 		withHistory: false,
 	} );
 	setDocumentModifiedStatus( true );
-
-	ensureClassesAreLoaded( classIds );
-}
-
-function ensureClassesAreLoaded( classIds: StyleDefinitionID[] ) {
-	const providers = stylesRepository.getProviders();
-
-	classIds.forEach( ( classId ) => {
-		stylesRepository.getProviderByKey( classId )?.actions.get( classId );
-		const owningProvider = providers.find( ( provider ) =>
-			provider.actions.all().some( ( style ) => style.id === classId )
-		);
-
-		owningProvider?.actions.get( classId );
-	} );
 }
 
 export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, classesPropType = 'classes' ) {
@@ -40,7 +24,7 @@ export function doUnapplyClass( elementId: string, classId: StyleDefinitionID, c
 		return false;
 	}
 
-	const updatedClassIds = appliedClasses.filter( ( id: StyleDefinitionID ) => id !== classId );
+	const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
 	doApplyClasses( elementId, updatedClassIds, classesPropType );
 	return true;
 }
