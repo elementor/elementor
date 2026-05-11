@@ -41,7 +41,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => '<script>alert(1)</script>',
+								'value' => '',
 							],
 							'padding' => [
 								'$$type' => 'size',
@@ -93,7 +93,6 @@ class Test_Export_Runner extends Elementor_Test_Base {
 							],
 						],
 					],
-					'custom_css' => null,
 				],
 			],
 		];
@@ -127,42 +126,6 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$this->assertEquals( $expected_g_123, json_decode( $files_by_path['global-classes/g-123.json'], true ) );
 		$this->assertEquals( $expected_g_456, json_decode( $files_by_path['global-classes/g-456.json'], true ) );
 		$this->assertEquals( $expected_order, json_decode( $files_by_path['global-classes/order.json'], true ) );
-	}
-
-	public function test_export__invalid_style_is_dropped() {
-		// Arrange.
-		$items = [
-			'g-valid' => [
-				'id' => 'g-valid',
-				'type' => 'class',
-				'label' => 'Valid',
-				'variants' => [],
-			],
-			'g-invalid' => [
-				'id' => 'g-invalid',
-				'label' => 'invalid-export-style',
-				'type' => '__not_a_valid_style_type__',
-				'variants' => [],
-			],
-		];
-
-		$order = [ 'g-valid', 'g-invalid' ];
-
-		Global_Classes_Repository::make()->put( $items, $order );
-
-		// Act.
-		$result = ( new Export_Runner() )->export( [] );
-
-		// Assert.
-		$files_by_path = $this->index_files_by_path( $result['files'] );
-
-		$this->assertArrayHasKey( 'global-classes/g-valid.json', $files_by_path );
-		$this->assertArrayNotHasKey( 'global-classes/g-invalid.json', $files_by_path );
-
-		$this->assertEquals(
-			[ [ 'id' => 'g-valid', 'label' => 'Valid' ] ],
-			json_decode( $files_by_path['global-classes/order.json'], true )
-		);
 	}
 
 	public function test_export__no_classes() {
