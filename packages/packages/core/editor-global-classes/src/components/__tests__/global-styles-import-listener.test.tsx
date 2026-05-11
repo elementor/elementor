@@ -21,25 +21,7 @@ describe( '<GlobalStylesImportListener />', () => {
 		store = createStore();
 	} );
 
-	it( 'merges classes when payload is provided and does not trigger a server reload', () => {
-		renderWithStore( <GlobalStylesImportListener />, store );
-
-		const items = {
-			'class-1': { id: 'class-1', label: 'Class 1', type: 'class', variants: [] },
-		};
-
-		act( () => {
-			window.dispatchEvent(
-				new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT, {
-					detail: { global_classes: { items, order: [ 'class-1' ] } },
-				} )
-			);
-		} );
-
-		expect( loadCurrentDocumentClasses ).not.toHaveBeenCalled();
-	} );
-
-	it( 'falls back to a full server reload when the event has no payload', () => {
+	it( 'refetch server initial data after import event is dispatched', () => {
 		renderWithStore( <GlobalStylesImportListener />, store );
 
 		act( () => {
