@@ -90,6 +90,10 @@ describe( 'createV4FlexboxFromPreset', () => {
 		return model.styles?.[ lastId ]?.variants;
 	}
 
+	function getChildModels( model ) {
+		return model.elements ?? [];
+	}
+
 	test( 'c100 → 1 e-flexbox with flex-direction:column overriding the row base style', () => {
 		const target = makeFakeContainer( 'target' );
 
@@ -155,9 +159,8 @@ describe( 'createV4FlexboxFromPreset', () => {
 	test( 'c100-c50-50 → row parent + left child + right wrapper + 2 grandchildren', () => {
 		createV4FlexboxFromPreset( 'c100-c50-50', makeFakeContainer( 'target' ), {} );
 
-		expect( createCalls ).toHaveLength( 5 );
-
-		const [ parent, , rightCol ] = createdContainers;
+		expect( createCalls ).toHaveLength( 3 );
+		const [ parent ] = createdContainers;
 
 		expect( getProps( getModel( 0 ) ) ).toEqual( { 'flex-direction': ROW } );
 		expect( getProps( getModel( 1 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
@@ -166,13 +169,12 @@ describe( 'createV4FlexboxFromPreset', () => {
 			width: sizeProp( 50, '%' ),
 			padding: ZERO_PX,
 		} );
-		expect( getProps( getModel( 3 ) ) ).toEqual( { 'flex-direction': COLUMN } );
-		expect( getProps( getModel( 4 ) ) ).toEqual( { 'flex-direction': COLUMN } );
+		expect( getChildModels( getModel( 2 ) ) ).toHaveLength( 2 );
+		expect( getProps( getChildModels( getModel( 2 ) )[ 0 ] ) ).toEqual( { 'flex-direction': COLUMN } );
+		expect( getProps( getChildModels( getModel( 2 ) )[ 1 ] ) ).toEqual( { 'flex-direction': COLUMN } );
 
 		expect( createCalls[ 1 ].target ).toBe( parent );
 		expect( createCalls[ 2 ].target ).toBe( parent );
-		expect( createCalls[ 3 ].target ).toBe( rightCol );
-		expect( createCalls[ 4 ].target ).toBe( rightCol );
 	} );
 
 	test( 'createWrapper:false → reuses target as parent, only children are created', () => {
@@ -194,7 +196,7 @@ describe( 'createV4FlexboxFromPreset', () => {
 		for ( let i = 1; i <= 4; i++ ) {
 			const variants = getVariants( getModel( i ) );
 			expect( variants ).toHaveLength( 2 );
-			expect( variants[ 0 ].meta ).toEqual( { breakpoint: null, state: null } );
+			expect( variants[ 0 ].meta ).toEqual( { breakpoint: 'desktop', state: null } );
 			expect( variants[ 0 ].props ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 			expect( variants[ 1 ].meta ).toEqual( { breakpoint: 'mobile', state: null } );
 			expect( variants[ 1 ].props ).toEqual( { width: sizeProp( 100, '%' ) } );
