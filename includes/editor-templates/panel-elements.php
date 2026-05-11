@@ -107,7 +107,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<?php
 	$widget_creation_cta_text = Hints::is_plugin_active( 'angie' )
 		? __( 'Create custom widget', 'elementor' )
-		: __( 'Install Angie', 'elementor' );
+		: __( 'Try for free', 'elementor' );
 	?>
 <script type="text/template" id="tmpl-elementor-panel-elements-widget-creation-empty-state">
 	<div class="elementor-panel-elements-widget-creation__title"><?php echo esc_html__( 'No widget found for', 'elementor' ); ?> "{{{ searchTerm }}}"</div>
