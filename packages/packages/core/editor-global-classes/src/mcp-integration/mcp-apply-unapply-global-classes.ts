@@ -15,6 +15,7 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 				.describe( 'Instructions what to do next, Important to follow these instructions!' ),
 		},
 		name: 'apply-global-class',
+<<<<<<< HEAD
 		modelPreferences: {
 			intelligencePriority: 0.7,
 			speedPriority: 0.8,
@@ -42,6 +43,13 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 1. Apply multiple classes to a single element if needed (typography + color + spacing)
 2. After applying, the tool will remind you to remove duplicate inline styles from elementConfig
 3. Classes should describe purpose, not implementation (e.g., "heading-primary" not "big-red-text")`,
+=======
+		description: `Apply a global class to an element for shared design-system styling. Read the full guide at [${ APPLY_GLOBAL_CLASS_GUIDE_URI }].`,
+		requiredResources: [
+			{ description: 'Apply global class tool guide', uri: APPLY_GLOBAL_CLASS_GUIDE_URI },
+			{ description: 'Global classes list', uri: GLOBAL_CLASSES_URI },
+		],
+>>>>>>> 45161599ad (Fix: Use default model preferences for styling/design tools [ED-00000] (#35743))
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
 			const appliedClasses = doGetAppliedClasses( elementId );
@@ -63,6 +71,7 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		outputSchema: {
 			result: z.string().describe( 'Result message indicating the success of the unapply operation' ),
 		},
+<<<<<<< HEAD
 		modelPreferences: {
 			intelligencePriority: 0.7,
 			speedPriority: 0.8,
@@ -82,6 +91,10 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 If the user want to unapply a class by it's name and not ID, retrieve the id from the list, available at uri elementor://global-classes
 </note>
 `,
+=======
+		description: `Unapply a global class from an element by class ID. Resolve class names to IDs via [${ GLOBAL_CLASSES_URI }].`,
+		requiredResources: [ { description: 'Global classes list', uri: GLOBAL_CLASSES_URI } ],
+>>>>>>> 45161599ad (Fix: Use default model preferences for styling/design tools [ED-00000] (#35743))
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
 			const ok = doUnapplyClass( elementId, classId );

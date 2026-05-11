@@ -209,6 +209,7 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 			{ uri: STYLE_SCHEMA_URI, description: 'Style schema resources' },
 			{ uri: BREAKPOINTS_SCHEMA_URI, description: 'Breakpoints list' },
 		],
+<<<<<<< HEAD
 		modelPreferences: {
 			intelligencePriority: 0.85,
 			speedPriority: 0.6,
@@ -222,6 +223,9 @@ Naming pattern: [element-type]-[purpose/variant]-[modifier]
 DO NOT create global classes for: one-off styles, layout-specific properties.
 
 Use style schema at [elementor://styles/schema/{category}] for valid props. Errors include exact schema mismatch details.`,
+=======
+		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE compositions. Do NOT create classes for one-off styles or layout-specific properties.`,
+>>>>>>> 45161599ad (Fix: Use default model preferences for styling/design tools [ED-00000] (#35743))
 		schema,
 		outputSchema,
 		handler,
