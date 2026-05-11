@@ -411,69 +411,80 @@ class Atomic_Form extends Atomic_Element_Base {
 		return '';
 	}
 
-	private static function get_emails_prop_settings() {
-		return array_merge( ...array_map( [ self::class, 'get_indexed_email_prop_settings' ], range( 0, self::EMAIL_ACTION_COUNT - 1 ) ) );
-	}
-
-	private static function get_indexed_email_prop_settings( $index = 0 ) {
-		$key = 0 === $index ? self::ACTION_EMAIL : self::ACTION_EMAIL . '_' . ( $index + 1 );
-
-		$email_dependencies = Dependency_Manager::make()
-			->where( [
-				'operator' => 'contains',
-				'path' => [ 'actions-after-submit' ],
-				'value' => $key,
-				'effect' => 'hide',
-			] )
-			->get();
-
-		return [
-			$key => Emails_Prop_Type::make()
-				->set_dependencies( $email_dependencies )
-				->meta( Overridable_Prop_Type::ignore() )
-				->initial_value( [
-					'to' => String_Array_Prop_Type::generate( [
-						String_Prop_Type::generate( self::get_default_recipient_email() ),
-					] ),
-					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
-				] )
-				->default( [
-					'to' => String_Array_Prop_Type::generate( [
-						String_Prop_Type::generate( self::get_default_recipient_email() ),
-					] ),
-					'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
-				] ),
-		];
-	}
-
-	private function get_emails_control_settings() {
-		$form_action_chips = [];
-		$email_controls = [];
-		$email_label = __( 'Email', 'elementor' );
-		$prop_key = self::ACTION_EMAIL;
+	private static function get_emails_prop_settings(): array {
+		$props = [];
+		$default_value = self::get_default_email_value();
 
 		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
-			if ( 0 !== $i ) {
-				// translators: %d is the index of the email action.
-				$email_label = sprintf( __( 'Email %d', 'elementor' ), $i + 1 );
-				$prop_key = self::ACTION_EMAIL . '_' . ( $i + 1 );
-			}
+			$key = self::get_email_action_key( $i );
+
+			$props[ $key ] = Emails_Prop_Type::make()
+				->set_dependencies( self::make_action_dependency( $key ) )
+				->meta( Overridable_Prop_Type::ignore() )
+				->initial_value( $default_value )
+				->default( $default_value );
+		}
+
+		return $props;
+	}
+
+	private function get_emails_control_settings(): array {
+		$form_action_chips = [];
+		$email_controls = [];
+
+		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
+			$key = self::get_email_action_key( $i );
+			$label = self::get_email_action_label( $i );
 
 			$form_action_chips[] = [
-				'label' => $email_label,
-				'value' => $prop_key,
+				'label' => $label,
+				'value' => $key,
 			];
-			$email_controls[] = Email_Form_Action_Control::bind_to( $prop_key )
+
+			$email_controls[] = Email_Form_Action_Control::bind_to( $key )
 				->allow_free_chips()
-				->set_label( $email_label )
-				->set_meta( [
-					'topDivider' => true,
-				] );
+				->set_label( $label )
+				->set_meta( [ 'topDivider' => true ] );
 		}
 
 		return [
 			'form-action-chips' => $form_action_chips,
 			'email-controls' => $email_controls,
 		];
+	}
+
+	private static function get_email_action_key( int $index ): string {
+		return 0 === $index
+			? self::ACTION_EMAIL
+			: self::ACTION_EMAIL . '_' . ( $index + 1 );
+	}
+
+	private static function get_email_action_label( int $index ): string {
+		if ( 0 === $index ) {
+			return __( 'Email', 'elementor' );
+		}
+
+		// translators: %d is the index of the email action.
+		return sprintf( __( 'Email %d', 'elementor' ), $index + 1 );
+	}
+
+	private static function get_default_email_value(): array {
+		return [
+			'to' => String_Array_Prop_Type::generate( [
+				String_Prop_Type::generate( self::get_default_recipient_email() ),
+			] ),
+			'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+		];
+	}
+
+	private static function make_action_dependency( string $action_key ): ?array {
+		return Dependency_Manager::make()
+			->where( [
+				'operator' => 'contains',
+				'path' => [ 'actions-after-submit' ],
+				'value' => $action_key,
+				'effect' => 'hide',
+			] )
+			->get();
 	}
 }
