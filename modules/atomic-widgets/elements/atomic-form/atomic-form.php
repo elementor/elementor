@@ -110,6 +110,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( 'default' )
 				->meta( 'generates_class', 'form-state-{value}' ),
 			'actions-after-submit' => String_Array_Prop_Type::make()
+				->initial_value( [ String_Prop_Type::generate( self::ACTION_EMAIL ) ] )
 				->default( [ String_Prop_Type::generate( self::ACTION_EMAIL ) ] ),
 			'submissions_metadata' => String_Array_Prop_Type::make()
 				->set_dependencies( $submissions_metadata_dependencies )
