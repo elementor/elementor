@@ -72,11 +72,8 @@ for ( const { label, experiments } of EXPERIMENT_VARIANTS ) {
 			await expect( divBlock ).toHaveClass( new RegExp( `\\b${ className }\\b` ) );
 
 			await page.getByRole( 'button', { name: 'Class Manager' } ).click();
-			const saveAndContinueButton = page.getByRole( 'button', { name: 'Save & Continue' } );
-			if ( await saveAndContinueButton.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
-				await saveAndContinueButton.click();
-			}
-			await dismissClassManagerIntro( page );
+			await page.getByRole( 'button', { name: 'Save & Continue' } ).click();
+			await page.locator( '[aria-label="Got it introduction"]' ).click();
 			await page.locator( '[aria-label="More actions"]' ).first().click();
 			await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
 			await page.getByRole( 'button', { name: 'Delete' } ).click();
