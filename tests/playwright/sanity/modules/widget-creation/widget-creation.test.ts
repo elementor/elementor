@@ -15,6 +15,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 	const WIDGET_CREATION_MESSAGE = '.elementor-panel-elements-widget-creation__message';
 	const CREATE_WIDGET_MODAL = '[role="dialog"].MuiDialog-paper';
 	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install & Activate")';
+	const TERMS_CHECKBOX = 'input[type="checkbox"]';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 	const CUSTOM_WIDGETS_CATEGORY = '#elementor-panel-category-custom-widgets';
@@ -156,7 +157,11 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const modal = page.locator( CREATE_WIDGET_MODAL );
 				await expect( modal ).toBeVisible();
 
+				const termsCheckbox = modal.locator( TERMS_CHECKBOX );
+				await termsCheckbox.check();
+
 				const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
+				await expect( installButton ).toBeEnabled();
 				await installButton.click();
 
 				await page.waitForURL( /admin\.php.*angie-app/ );
