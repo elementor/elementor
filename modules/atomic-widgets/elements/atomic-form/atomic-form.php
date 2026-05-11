@@ -274,11 +274,6 @@ class Atomic_Form extends Atomic_Element_Base {
 			$this->build_input( __( 'Your message', 'elementor' ), 'textarea', $prefix . 'message' ),
 		];
 
-		if ( defined( 'ELEMENTOR_PRO_VERSION' ) && version_compare( ELEMENTOR_PRO_VERSION, '4.1.0', '>=' ) ) {
-			$children[] = $this->build_label( __( 'Upload', 'elementor' ), $prefix . 'file-upload' );
-			$children[] = $this->build_file_upload( $prefix . 'file-upload' );
-		}
-
 		$children[] = $this->build_checkbox_row( __( 'Checkbox', 'elementor' ), $prefix . 'checkbox' );
 
 		$children[] = Widget_Builder::make( 'e-form-submit-button' )
@@ -328,14 +323,6 @@ class Atomic_Form extends Atomic_Element_Base {
 					'children' => [],
 				] ),
 				'input-id' => String_Prop_Type::generate( $input_id ),
-			] )
-			->build();
-	}
-
-	private function build_file_upload( string $cssid ): array {
-		return Widget_Builder::make( 'e-form-file-upload' )
-			->settings( [
-				'_cssid' => String_Prop_Type::generate( $cssid ),
 			] )
 			->build();
 	}
