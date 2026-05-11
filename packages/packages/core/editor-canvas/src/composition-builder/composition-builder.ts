@@ -1,11 +1,13 @@
 import {
 	createElement,
 	type CreateElementParams,
+	deleteElement,
 	generateElementId,
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
 	type V1ElementConfig,
+	type V1ElementModelProps,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
@@ -17,6 +19,7 @@ type AnyConfig = Record< string, Record< string, AnyValue > >;
 
 type API = {
 	createElement: typeof createElement;
+	deleteElement: typeof deleteElement;
 	getWidgetsCache: typeof getWidgetsCache;
 	generateElementId: typeof generateElementId;
 	getContainer: typeof getContainer;
@@ -38,6 +41,7 @@ export class CompositionBuilder {
 	private rootContainers: V1Element[] = [];
 	private api: API = {
 		createElement,
+		deleteElement,
 		getWidgetsCache,
 		generateElementId,
 		getContainer,
@@ -94,14 +98,25 @@ export class CompositionBuilder {
 
 		node.setAttribute( 'id', id );
 
-		const base = {
+		const base: V1ElementModelProps = {
 			id,
 			skipDefaultChildren: true,
-			elements: children,
+			elements: children as V1ElementModelProps[ 'elements' ],
 			editor_settings: {
 				title: node.getAttribute( 'configuration-id' ) ?? undefined,
 			},
+			elType: 'widget',
 		};
+
+		// TODO: Restore this code once components are working in compositions
+		// if ( elementTag === 'e-component' ) {
+		// 	// apply component id before applying values
+		// 	const elementConfig = this.elementConfig[ String( node.getAttribute( 'configuration-id' ) ) ];
+		// 	if ( elementConfig ) {
+		// 		base.settings = base.settings || {};
+		// 		base.settings.component_instance = elementConfig.component_instance;
+		// 	}
+		// }
 
 		if ( isWidget ) {
 			return { ...base, elType: 'widget' as const, widgetType: elementTag };
@@ -140,13 +155,6 @@ export class CompositionBuilder {
 		}
 
 		return errors;
-	}
-
-	private findSchemaForNode( node: Element ) {
-		const widgetsCache = this.api.getWidgetsCache() || {};
-		const widgetType = node.tagName;
-		const widgetData = widgetsCache[ widgetType ]?.atomic_props_schema;
-		return widgetData || null;
 	}
 
 	private matchNodeByConfigId( configId: string ) {
@@ -282,15 +290,24 @@ export class CompositionBuilder {
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
 
-			const newElement = this.api.createElement( {
-				container: rootContainer,
-				model: modelTree as CreateElementParams[ 'model' ],
-				options: { useHistory: false },
-			} );
-
-			this.rootContainers.push( newElement );
-
-			await this.awaitViewRender( newElement );
+			try {
+				const newElement = this.api.createElement( {
+					container: rootContainer,
+					model: modelTree as CreateElementParams[ 'model' ],
+					options: { useHistory: false },
+				} );
+				this.rootContainers.push( newElement );
+				await this.awaitViewRender( newElement );
+			} catch ( e: unknown ) {
+				const attemptToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
+				if ( attemptToRestoreInvalidContainer ) {
+					this.api.deleteElement( {
+						container: attemptToRestoreInvalidContainer,
+						options: { useHistory: false },
+					} );
+				}
+				throw e;
+			}
 		}
 
 		const { configErrors, styleErrors, invalidStyles } = await this.applyProperties();
