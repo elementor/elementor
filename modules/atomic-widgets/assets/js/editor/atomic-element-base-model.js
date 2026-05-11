@@ -34,20 +34,12 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		return this.modifyDefaultChildren( defaultChildren );
 	}
 
-	getRequiredChildren() {
-		const { required_children: requiredChildren = [] } = this.config;
-
-		return this.modifyRequiredChildren( requiredChildren );
-	}
-
 	onElementCreate() {
 		const shouldSkipDefaultChildren = this.get( 'skipDefaultChildren' );
 		const defaultChildren = this.getDefaultChildren();
-		const requiredChildren = this.getRequiredChildren().map( ( child ) => this.markElementAsRequired( child ) );
-		const childrenTemplate = defaultChildren.length > 0 ? defaultChildren : requiredChildren;
 		const childrenForCreate = shouldSkipDefaultChildren
-			? childrenTemplate.filter( ( child ) => this.isRequiredElement( child ) )
-			: childrenTemplate;
+			? defaultChildren.filter( ( child ) => this.isRequiredElement( child ) )
+			: defaultChildren;
 
 		if ( shouldSkipDefaultChildren ) {
 			this.unset( 'skipDefaultChildren', { silent: true } );
@@ -60,22 +52,8 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		return element;
 	}
 
-	modifyRequiredChildren( element ) {
-		return element;
-	}
-
 	isRequiredElement( element ) {
 		return !! element?.meta?.required;
-	}
-
-	markElementAsRequired( element ) {
-		return {
-			...element,
-			meta: {
-				...( element.meta || {} ),
-				required: true,
-			},
-		};
 	}
 
 	buildElement( element ) {

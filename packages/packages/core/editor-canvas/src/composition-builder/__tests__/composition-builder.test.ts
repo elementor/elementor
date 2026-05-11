@@ -57,7 +57,7 @@ describe( 'CompositionBuilder', () => {
 
 		// Assert
 		const createArgs = createElementMock.mock.calls[ 0 ]?.[ 0 ] as CreateElementParams;
-		const childElements = ( createArgs.model?.elements || [] ) as Array<{ elType?: string; widgetType?: string }>;
+		const childElements = ( createArgs.model?.elements || [] ) as Array< { elType?: string; widgetType?: string } >;
 
 		expect( childElements.some( ( child ) => child.elType === 'e-form-success-message' ) ).toBe( true );
 		expect( childElements.some( ( child ) => child.elType === 'e-form-error-message' ) ).toBe( true );
@@ -74,7 +74,7 @@ describe( 'CompositionBuilder', () => {
 
 		// Assert
 		const createArgs = createElementMock.mock.calls[ 0 ]?.[ 0 ] as CreateElementParams;
-		const childElements = ( createArgs.model?.elements || [] ) as Array<{ elType?: string; widgetType?: string }>;
+		const childElements = ( createArgs.model?.elements || [] ) as Array< { elType?: string; widgetType?: string } >;
 		const successCount = childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length;
 
 		expect( successCount ).toBe( 1 );

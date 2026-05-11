@@ -193,7 +193,6 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	atomic_pseudo_states?: PseudoState[];
 	show_in_panel?: boolean;
 	allowed_child_types?: string[];
-	required_children?: Array< Record< string, TChild > >;
 	default_children?: Array< Record< string, TChild > >;
 	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;

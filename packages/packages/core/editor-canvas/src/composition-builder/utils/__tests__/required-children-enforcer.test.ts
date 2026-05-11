@@ -55,10 +55,7 @@ describe( 'RequiredChildrenEnforcer', () => {
 
 	it( 'should not duplicate required children that already exist', () => {
 		// Arrange
-		const xml = new DOMParser().parseFromString(
-			'<e-form><e-form-success-message /></e-form>',
-			'application/xml'
-		);
+		const xml = new DOMParser().parseFromString( '<e-form><e-form-success-message /></e-form>', 'application/xml' );
 		const enforcer = new RequiredChildrenEnforcer( 'e-form', createWidgetsCache() );
 
 		// Act

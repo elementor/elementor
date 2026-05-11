@@ -57,8 +57,9 @@ export class RequiredChildrenEnforcer {
 			return [];
 		}
 
-		return defaultChildren.filter( ( child ) => ( child as { meta?: { required?: boolean } } )?.meta?.required ) as
-			TemplateNode[];
+		return defaultChildren.filter(
+			( child ) => ( child as { meta?: { required?: boolean } } )?.meta?.required
+		) as TemplateNode[];
 	}
 
 	private createXmlNodeFromTemplate( template: TemplateNode, doc: Document ): Element {

@@ -91,7 +91,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
-		$config['required_children'] = $this->define_required_children();
 		$config['default_children'] = $this->define_default_children();
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
@@ -111,10 +110,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_default_children() {
-		return [];
-	}
-
-	protected function define_required_children() {
 		return [];
 	}
 
