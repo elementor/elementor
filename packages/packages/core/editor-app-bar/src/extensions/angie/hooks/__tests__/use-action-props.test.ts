@@ -35,7 +35,7 @@ describe( 'useAngieActionProps', () => {
 		expect( result.current.visible ).toBe( false );
 	} );
 
-	it( 'should dispatch create-widget with prompt and top_bar_icon entry point', () => {
+	it( 'should dispatch guide toggle event on click', () => {
 		mockIsAngieAvailable.mockReturnValue( false );
 		const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
 
@@ -44,11 +44,7 @@ describe( 'useAngieActionProps', () => {
 
 		expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
 		const event = dispatchSpy.mock.calls[ 0 ][ 0 ] as CustomEvent;
-		expect( event.type ).toBe( 'elementor/editor/create-widget' );
-		expect( event.detail ).toMatchObject( {
-			entry_point: 'top_bar_icon',
-			prompt: expect.stringContaining( 'Create a widget for me.' ),
-		} );
+		expect( event.type ).toBe( 'elementor/editor/toggle-angie-guide' );
 
 		dispatchSpy.mockRestore();
 	} );
