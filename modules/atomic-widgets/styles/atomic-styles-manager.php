@@ -32,6 +32,8 @@ class Atomic_Styles_Manager {
 
 	private array $fonts = [];
 
+	private array $dynamic_styles_decisions = [];
+
 	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
@@ -113,21 +115,19 @@ class Atomic_Styles_Manager {
 
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
-				$path = $style_params['path'];
-				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
-
-				$version = $this->cache_validity->get_meta( $path );
-
 				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
 				if ( ! $breakpoint_media ) {
 					continue;
 				}
 
-				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
-				$is_valid_cache = $this->cache_validity->is_valid( $breakpoint_path );
+				$path = $style_params['path'];
+				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
 
-				if ( ! $is_valid_cache && self::contains_dynamic_value( $style_params['get_styles']() ) ) {
+				$version = $this->cache_validity->get_meta( $path );
+				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
+
+				if ( $this->has_dynamic_styles( $style_key, $style_params['get_styles'] ) ) {
 					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
 
 					continue;
@@ -137,7 +137,7 @@ class Atomic_Styles_Manager {
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
 					$render_css,
-					$is_valid_cache
+					$this->cache_validity->is_valid( $breakpoint_path )
 				);
 
 				$this->cache_validity->validate( $breakpoint_path );
@@ -155,6 +155,14 @@ class Atomic_Styles_Manager {
 				);
 			}
 		}
+	}
+
+	private function has_dynamic_styles( string $style_key, callable $get_styles ): bool {
+		if ( ! array_key_exists( $style_key, $this->dynamic_styles_decisions ) ) {
+			$this->dynamic_styles_decisions[ $style_key ] = self::contains_dynamic_value( $get_styles() );
+		}
+
+		return $this->dynamic_styles_decisions[ $style_key ];
 	}
 
 	private function enqueue_inline_style( array $breakpoint_path, string $breakpoint_media, string $css, ?string $version ): void {
