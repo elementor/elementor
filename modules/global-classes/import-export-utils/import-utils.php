@@ -8,7 +8,8 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,16 +36,18 @@ class Import_Utils {
 		'failed' => [],
 	];
 
-	public static function import_classes( string $classes_dir, array $options = [], ?Kit $kit_for_reading = null ) {
+	public static function import_classes( string $classes_dir, array $options = [] ) {
 		$order_file = rtrim( $classes_dir, '/' ) . '/' . self::ORDER_FILE;
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
+		if ( ! $active_kit || ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
 			return self::EMPTY_RESULT;
 		}
 
 		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
-		$repository_for_reading = Global_Classes_Repository::make( $kit_for_reading );
-		$repository_for_writing = Global_Classes_Repository::make();
+
+		$classes_repository = Global_Classes_Repository::make( $active_kit );
+		$classes_repository->set_preview( false );
 
 		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
@@ -60,7 +63,7 @@ class Import_Utils {
 		$wpdb->query( 'START TRANSACTION' );
 
 		try {
-			[ 'result' => $result, 'changes' => $changes ] = self::do_import( $repository_for_reading, $repository_for_writing, $classes_dir, $imported_classes_order, $conflict_resolution );
+			[ 'result' => $result, 'changes' => $changes ] = self::do_import( $classes_repository, $classes_dir, $imported_classes_order, $conflict_resolution );
 			$wpdb->query( 'COMMIT' );
 		} catch ( \Throwable $e ) {
 			$wpdb->query( 'ROLLBACK' );
@@ -78,8 +81,7 @@ class Import_Utils {
 	}
 
 	private static function do_import(
-		Global_Classes_Repository $repository_for_reading,
-		Global_Classes_Repository $repository_for_writing,
+		Global_Classes_Repository $classes_repository,
 		string $classes_dir,
 		array $imported_classes_order,
 		string $conflict_resolution
@@ -89,19 +91,19 @@ class Import_Utils {
 		$modified_classes = [];
 		$deleted_classes = [];
 
-		$previous_order = $repository_for_reading->get_order();
+		$previous_order = $classes_repository->get_order();
 		$order_set = array_flip( $previous_order );
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$classes_dir = rtrim( $classes_dir, '/' );
 
 		if ( 'override-all' === $conflict_resolution ) {
 			$deleted_classes = $previous_order;
-			$repository_for_writing->delete_all();
+			$classes_repository->delete_all();
 			$previous_order = [];
 			$order_set = [];
 		}
 
-		$label_to_id_map = self::build_label_to_id_map_from_labels( $repository_for_reading->all_labels() );
+		$label_to_id_map = self::build_label_to_id_map_from_labels( $classes_repository->all_labels() );
 
 		$result = self::EMPTY_RESULT;
 
@@ -215,7 +217,7 @@ class Import_Utils {
 
 		if ( $has_changes ) {
 			$new_order = array_merge( $added_classes_order, $previous_order );
-			$repository_for_writing->update_order_and_labels( $new_order, $added_classes_labels );
+			$classes_repository->update_order_and_labels( $new_order, $added_classes_labels );
 
 			$changes = [
 				'added' => $added_classes_order,
@@ -248,7 +250,9 @@ class Import_Utils {
 			throw new \Exception( 'Failed to find existing class: ' . esc_html( $existing_id ) );
 		}
 
+		$post->set_preview( false );
 		$post->update_data( $sanitized_item );
+		Migrations_Orchestrator::clear_entity_migration_cache( $post->get_post_id(), Global_Classes_Repository::META_KEY_FRONTEND );
 		clean_post_cache( $post->get_post_id() );
 	}
 

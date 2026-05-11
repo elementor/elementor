@@ -1,59 +1,22 @@
 import * as React from 'react';
-import { NumberInput } from '@elementor/editor-controls';
-import { type SpanPropValue } from '@elementor/editor-props';
+import { GridSpanControl } from '@elementor/editor-controls';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
-import { useStylesField } from '../../../hooks/use-styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { StylesFieldLayout } from '../../styles-field-layout';
-
 type GridSpanCssProp = 'grid-column' | 'grid-row';
-
-const MIN_SPAN = 1;
 
 type GridSpanFieldProps = {
 	cssProp: GridSpanCssProp;
 	label: string;
 };
 
-const GridSpanFieldContent = ( { cssProp, label }: GridSpanFieldProps ) => {
-	const { value, setValue, canEdit } = useStylesField< SpanPropValue | null >( cssProp, {
-		history: { propDisplayName: label },
-	} );
-
-	const spanValue = value?.value ?? null;
-
-	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const raw = event.target.value;
-
-		if ( raw === '' ) {
-			setValue( null );
-			return;
-		}
-
-		const num = parseInt( raw, 10 );
-
-		if ( Number.isNaN( num ) ) {
-			return;
-		}
-
-		const clamped = Math.max( num, MIN_SPAN );
-		setValue( { $$type: 'span', value: clamped } );
-	};
-
+const GridSpanFieldContent = ( { label }: GridSpanFieldProps ) => {
 	return (
 		<StylesFieldLayout label={ label } direction="column">
-			<NumberInput
-				size="tiny"
-				type="number"
-				fullWidth
-				disabled={ ! canEdit }
-				value={ spanValue ?? '' }
-				onInput={ handleChange }
-				inputProps={ { min: MIN_SPAN } }
-			/>
+			<GridSpanControl />
 		</StylesFieldLayout>
 	);
 };
