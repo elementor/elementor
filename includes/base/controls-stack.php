@@ -227,7 +227,7 @@ abstract class Controls_Stack extends Base_Object {
 		/** We ignore possible notices, in order to support elements created prior to v1.8.0 and might include
 		 *  non-base 16 characters as part of their ID.
 		 */
-		return @hexdec( $this->id );
+		return @hexdec( (string) $this->id );
 	}
 
 	/**
