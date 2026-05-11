@@ -38,6 +38,7 @@ export * from './number-range';
 export * from './date-time';
 export * from './position';
 export * from './query';
+export * from './query-filter';
 export * from './html';
 export * from './html-v2';
 export * from './html-v3';
