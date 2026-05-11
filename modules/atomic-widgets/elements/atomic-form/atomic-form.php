@@ -191,7 +191,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_label( __( 'Include metadata', 'elementor' ) )
 				->set_meta( [ 'topDivider' => true ] ),
 			Text_Control::bind_to( 'webhook_url' )
-				->set_placeholder( __( 'Enter webhook URL', 'elementor' ) )
+				->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
 				->set_label( __( 'Webhook URL', 'elementor' ) )
 				->set_meta( [ 'topDivider' => true ] ),
 		] );
