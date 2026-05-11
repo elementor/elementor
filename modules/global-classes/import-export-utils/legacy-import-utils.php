@@ -27,8 +27,12 @@ class Legacy_Import_Utils {
 		}
 
 		$imported_classes = $global_classes_result->unwrap();
+
 		$repository_for_reading = Global_Classes_Repository::make( $kit_for_reading );
+		$repository_for_reading->set_preview( false );
+
 		$repository_for_writing = Global_Classes_Repository::make();
+		$repository_for_writing->set_preview( false );
 
 		if ( 'override-all' === $conflict_resolution ) {
 			$repository_for_writing->delete_all();
