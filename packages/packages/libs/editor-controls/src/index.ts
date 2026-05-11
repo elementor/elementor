@@ -46,6 +46,7 @@ export { InlineEditingControl } from './controls/inline-editing-control';
 export { EmailFormActionControl } from './controls/email-form-action-control';
 export { AttachmentTypeControl } from './controls/attachment-type-control';
 export { UnstableSizeControl } from './controls/size-control/unstable-size-control';
+export { GridSpanControl } from './controls/grid-span-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
