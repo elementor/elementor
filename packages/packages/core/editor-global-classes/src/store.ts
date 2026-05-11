@@ -43,6 +43,22 @@ export type ModifiedLabels = {
 
 const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
 
+const appendMissingItemIdsToOrder = ( order: StyleDefinitionID[], items: StyleDefinitionsMap ) => {
+	const seen = new Set( order );
+	for ( const id of Object.keys( items ) ) {
+		if ( ! seen.has( id ) ) {
+			seen.add( id );
+			order.push( id );
+		}
+	}
+};
+
+const syncGlobalClassesOrderWithItems = ( data: GlobalClasses ): GlobalClasses => {
+	const nextOrder = [ ...data.order ];
+	appendMissingItemIdsToOrder( nextOrder, data.items );
+	return { items: data.items, order: nextOrder };
+};
+
 const initialState: GlobalClassesState = {
 	data: { items: {}, order: [] },
 	classLabels: {},
@@ -72,9 +88,13 @@ export const slice = createSlice( {
 				classLabels: Record< StyleDefinitionID, string >;
 			} >
 		) {
-			state.initialData.frontend = frontend;
-			state.initialData.preview = preview;
-			state.data = preview;
+			// sanitize order
+			const frontendSynced = syncGlobalClassesOrderWithItems( frontend );
+			const previewSynced = syncGlobalClassesOrderWithItems( preview );
+
+			state.initialData.frontend = frontendSynced;
+			state.initialData.preview = previewSynced;
+			state.data = previewSynced;
 			state.classLabels = classLabels;
 
 			state.isDirty = false;
@@ -178,6 +198,8 @@ export const slice = createSlice( {
 		},
 
 		reset( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+			appendMissingItemIdsToOrder( state.data.order, state.data.items );
+
 			if ( context === 'frontend' ) {
 				localHistory.reset();
 				state.initialData.frontend = state.data;
@@ -243,6 +265,10 @@ export const slice = createSlice( {
 					state.classLabels[ id ] = previewClassData.label;
 				}
 			} );
+
+			appendMissingItemIdsToOrder( state.data.order, state.data.items );
+			appendMissingItemIdsToOrder( state.initialData.frontend.order, state.initialData.frontend.items );
+			appendMissingItemIdsToOrder( state.initialData.preview.order, state.initialData.preview.items );
 		},
 	},
 } );

@@ -92,8 +92,7 @@ describe( 'store', () => {
 			expect( data.items.existing.label ).toBe( 'Original' );
 		} );
 
-		it( 'should not change order array length when merging', () => {
-			// Arrange
+		it( 'should not change order when merge does not introduce new item ids', () => {
 			const existingClass = createMockStyleDefinition( { id: 'existing' } );
 			const order = [ 'existing' ];
 
@@ -105,7 +104,6 @@ describe( 'store', () => {
 				} )
 			);
 
-			// Act
 			dispatch(
 				slice.actions.mergeExistingClasses( {
 					preview: { existing: existingClass },
@@ -113,9 +111,53 @@ describe( 'store', () => {
 				} )
 			);
 
-			// Assert
 			const data = selectData( getState() );
 			expect( data.order ).toEqual( order );
+		} );
+
+		it( 'should append item ids missing from order on load', () => {
+			const classA = createMockStyleDefinition( { id: 'a' } );
+			const classB = createMockStyleDefinition( { id: 'b' } );
+
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: { a: classA, b: classB }, order: [ 'a' ] },
+					preview: { items: { a: classA, b: classB }, order: [ 'a' ] },
+					classLabels: classLabelsFor( [ 'a', 'b' ], { a: classA, b: classB } ),
+				} )
+			);
+
+			expect( selectPreviewInitialData( getState() ).order ).toEqual( [ 'a', 'b' ] );
+			expect( selectFrontendInitialData( getState() ).order ).toEqual( [ 'a', 'b' ] );
+		} );
+
+		it( 'should append merged class ids to orders when those ids were missing from order', () => {
+			const initialClass = createMockStyleDefinition( { id: 'initial' } );
+			const mergedClass = createMockStyleDefinition( { id: 'merged' } );
+
+			dispatch(
+				slice.actions.load( {
+					frontend: { items: { initial: initialClass }, order: [ 'initial' ] },
+					preview: { items: { initial: initialClass }, order: [ 'initial' ] },
+					classLabels: classLabelsFor( [ 'initial', 'merged' ], {
+						initial: initialClass,
+						merged: mergedClass,
+					} ),
+				} )
+			);
+
+			dispatch(
+				slice.actions.mergeExistingClasses( {
+					preview: { merged: mergedClass },
+					frontend: { merged: mergedClass },
+				} )
+			);
+
+			const expectedOrder = [ 'initial', 'merged' ];
+
+			expect( selectData( getState() ).order ).toEqual( expectedOrder );
+			expect( selectFrontendInitialData( getState() ).order ).toEqual( expectedOrder );
+			expect( selectPreviewInitialData( getState() ).order ).toEqual( expectedOrder );
 		} );
 
 		it( 'should preserve dirty state when set before merge', () => {

@@ -131,6 +131,33 @@ describe( 'saveGlobalClasses', () => {
 		);
 	} );
 
+	it( 'should detect deletes for classes after load normalises order to include item ids', async () => {
+		const orphanClass = createMockStyleDefinition( { id: 'orphan-class', label: 'orphan-class' } );
+
+		dispatch(
+			slice.actions.load( {
+				frontend: { items: { 'orphan-class': orphanClass }, order: [] },
+				preview: { items: { 'orphan-class': orphanClass }, order: [] },
+				classLabels: { 'orphan-class': 'orphan-class' },
+			} )
+		);
+
+		dispatch( slice.actions.delete( 'orphan-class' ) );
+
+		await saveGlobalClasses( { context: 'frontend' } );
+
+		expect( apiClient.publish ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				changes: {
+					added: [],
+					deleted: [ 'orphan-class' ],
+					modified: [],
+					order: true,
+				},
+			} )
+		);
+	} );
+
 	it( 'should handle mixed scenario: lazy load + create + modify', async () => {
 		// Arrange
 		const initialClass = createMockStyleDefinition( { id: 'initial' } );
