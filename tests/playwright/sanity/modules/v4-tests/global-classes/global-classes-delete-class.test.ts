@@ -239,6 +239,12 @@ for ( const { label, experiments } of EXPERIMENT_VARIANTS ) {
 				await deleteClassFromClassManager( page, className );
 			} );
 
+			await test.step( 'Save changes is enabled after delete', async () => {
+				await expect( page.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled( {
+					timeout: timeouts.heavyAction,
+				} );
+			} );
+
 			await test.step( 'Save and close the Class Manager', async () => {
 				await saveAndCloseClassManager( page );
 			} );
