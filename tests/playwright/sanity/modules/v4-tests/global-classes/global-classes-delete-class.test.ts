@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
-import { deleteClassFromClassManager, dismissClassManagerIntro, saveAndCloseClassManager } from './utils';
+import { deleteClassFromClassManager, dismissClassManagerIntro, getGlobalClasses, saveAndCloseClassManager } from './utils';
 
 const BACKGROUND_COLOR = '#ff0000';
 const BACKGROUND_COLOR_RGB = 'rgb(255, 0, 0)';
@@ -187,6 +187,81 @@ for ( const { label, experiments } of EXPERIMENT_VARIANTS ) {
 
 			// Assert — frontend reflects the deletion.
 			await test.step( 'Publish and verify no background on the published page', async () => {
+				const postId = await editor.getPageId();
+				await page.goto( `/?p=${ postId }` );
+				await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
+
+				const publishedWidget = page.locator( `[data-id="${ divBlockId }"]` );
+				await expect( publishedWidget ).toBeVisible( { timeout: timeouts.navigation } );
+				await expect
+					.poll( () => getComputedBackground( publishedWidget ), { timeout: timeouts.expect } )
+					.not.toBe( BACKGROUND_COLOR_RGB );
+			} );
+		} );
+
+		test( 'Deleting a global class that is not applied to any widget after publish, detach, and editor reload persists', async ( { page, apiRequests }, testInfo ) => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( experiments );
+			const editor = await wpAdmin.openNewPage();
+			const className = `delete-unapplied-${ Date.now() }`;
+
+			const divBlockId = await test.step( 'Add a widget with a global class styled with a background color', async () => {
+				const id = await addWidgetWithStyledGlobalClass( editor, className );
+				const widget = await editor.getWidget( id );
+				await expect.poll( () => getComputedBackground( widget ) ).toBe( BACKGROUND_COLOR_RGB );
+				return id;
+			} );
+
+			await test.step( 'Publish the page with the class applied', async () => {
+				await editor.publishPage();
+			} );
+
+			await test.step( 'Remove the global class from the widget and publish again', async () => {
+				await editor.selectElement( divBlockId );
+				await editor.v4Panel.openTab( 'style' );
+				await editor.v4Panel.style.removeGlobalClass( className );
+				await editor.publishPage();
+			} );
+
+			await test.step( 'Reload the editor so the class is not loaded via any widget selection', async () => {
+				await page.reload();
+				await editor.waitForPanelToLoad();
+			} );
+
+			await test.step( 'After reload, the global class chip is absent on the widget', async () => {
+				await editor.selectElement( divBlockId );
+				await editor.v4Panel.openTab( 'style' );
+				await expect( page.locator( `[aria-label="Edit ${ className }"]` ) ).toBeHidden();
+			} );
+
+			await test.step( 'Open Class Manager and delete the global class', async () => {
+				await openClassManagerFromStyleTab( page );
+				await deleteClassFromClassManager( page, className );
+			} );
+
+			await test.step( 'Save changes is enabled after delete', async () => {
+				await expect( page.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled( {
+					timeout: timeouts.heavyAction,
+				} );
+			} );
+
+			await test.step( 'Save and close the Class Manager', async () => {
+				await saveAndCloseClassManager( page );
+			} );
+
+			await test.step( 'The deleted class is absent from persisted global classes', async () => {
+				await expect
+					.poll(
+						async () => {
+							const { items } = await getGlobalClasses( apiRequests, page.context().request );
+							return Object.values( items ).some( ( item ) => item.label === className );
+						},
+						{ timeout: timeouts.heavyAction },
+					)
+					.toBe( false );
+			} );
+
+			await test.step( 'Published page has no background from the deleted class', async () => {
 				const postId = await editor.getPageId();
 				await page.goto( `/?p=${ postId }` );
 				await page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
