@@ -551,7 +551,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertWPError(
 			self::$manager->import_from_json(
 				[
-					'editor_post_id' => 999999999,
+					'editor_post_id' => PHP_INT_MAX,
 					'elements' => wp_json_encode( [] ),
 				]
 			),
@@ -560,6 +560,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	}
 
 	public function test_import_from_json__plain_elements_pass_through() {
+		// Arrange
 		$document = $this->factory()->documents->create_and_get();
 		$elements = [
 			[
@@ -575,6 +576,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			],
 		];
 
+		// Act
 		$result = self::$manager->import_from_json(
 			[
 				'editor_post_id' => $document->get_id(),
@@ -582,12 +584,14 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		);
 
+		// Assert
 		$this->assertEquals( $elements[0]['widgetType'], $result[0]['widgetType'] );
 		$this->assertEquals( $elements[0]['settings'], $result[0]['settings'] );
 		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
 	}
 
 	public function test_import_from_json__clears_template_id_to_zero() {
+		// Arrange
 		$document = $this->factory()->documents->create_and_get();
 		$elements = [
 			[
@@ -601,6 +605,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			],
 		];
 
+		// Act
 		$result = self::$manager->import_from_json(
 			[
 				'editor_post_id' => $document->get_id(),
@@ -608,10 +613,12 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		);
 
+		// Assert
 		$this->assertSame( 0, $result[0]['settings']['template_id'] );
 	}
 
 	public function test_import_from_json__clears_template_id_in_nested_elements() {
+		// Arrange
 		$document = $this->factory()->documents->create_and_get();
 		$elements = [
 			[
@@ -633,6 +640,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			],
 		];
 
+		// Act
 		$result = self::$manager->import_from_json(
 			[
 				'editor_post_id' => $document->get_id(),
@@ -640,10 +648,12 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		);
 
+		// Assert
 		$this->assertSame( 0, $result[0]['elements'][0]['settings']['template_id'] );
 	}
 
 	public function test_import_from_json__strips_html_cache() {
+		// Arrange
 		$document = $this->factory()->documents->create_and_get();
 		$elements = [
 			[
@@ -658,6 +668,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			],
 		];
 
+		// Act
 		$result = self::$manager->import_from_json(
 			[
 				'editor_post_id' => $document->get_id(),
@@ -665,10 +676,12 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		);
 
+		// Assert
 		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
 	}
 
 	public function test_import_from_json__strips_html_cache_in_nested_elements() {
+		// Arrange
 		$document = $this->factory()->documents->create_and_get();
 		$elements = [
 			[
@@ -691,6 +704,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			],
 		];
 
+		// Act
 		$result = self::$manager->import_from_json(
 			[
 				'editor_post_id' => $document->get_id(),
@@ -698,6 +712,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		);
 
+		// Assert
 		$this->assertArrayNotHasKey( 'htmlCache', $result[0]['elements'][0] );
 	}
 }
