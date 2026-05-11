@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import { ANGIE_GUIDE_TOGGLE_EVENT } from '../angie-consts';
 
 export function useAutoShow() {
