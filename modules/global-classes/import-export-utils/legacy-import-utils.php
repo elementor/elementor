@@ -6,17 +6,18 @@ use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Legacy_Import_Utils {
-	public static function import_classes( string $global_classes_file, string $conflict_resolution, ?Kit $kit_for_reading = null ): array {
+	public static function import_classes( string $global_classes_file, string $conflict_resolution ): array {
 		$global_classes = ImportExportUtils::read_json_file( $global_classes_file );
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( ! $kit_for_reading || ! $global_classes ) {
+		if ( ! $active_kit || ! $global_classes ) {
 			return Import_Utils::EMPTY_RESULT;
 		}
 
@@ -32,20 +33,17 @@ class Legacy_Import_Utils {
 			return Import_Utils::EMPTY_RESULT;
 		}
 
-		$repository_for_reading = Global_Classes_Repository::make( $kit_for_reading );
-		$repository_for_reading->set_preview( false );
-
-		$repository_for_writing = Global_Classes_Repository::make();
-		$repository_for_writing->set_preview( false );
+		$classes_repository = Global_Classes_Repository::make( $active_kit );
+		$classes_repository->set_preview( false );
 
 		if ( 'override-all' === $conflict_resolution ) {
-			$ids_to_delete = $repository_for_reading->get_order();
+			$ids_to_delete = $classes_repository->get_order();
 
 			$imported_items = $imported_classes['items'];
 			$imported_order = $imported_classes['order'];
 			$added_ids = array_keys( $imported_items );
 
-			$repository_for_writing->apply_changes(
+			$classes_repository->apply_changes(
 				$imported_items,
 				[
 					'added' => $added_ids,
@@ -76,8 +74,8 @@ class Legacy_Import_Utils {
 			return $result;
 		}
 
-		$existing_labels = $repository_for_reading->all_labels();
-		$existing_order = $repository_for_reading->get_order();
+		$existing_labels = $classes_repository->all_labels();
+		$existing_order = $classes_repository->get_order();
 		$existing_ids_set = array_flip( $existing_order );
 		$existing_label_keys = array_values( array_map( 'strtolower', $existing_labels ) );
 
@@ -139,7 +137,7 @@ class Legacy_Import_Utils {
 			$final_order = array_merge( $added_order, $existing_order );
 			$added_ids = array_keys( $items_to_add );
 
-			$repository_for_writing->apply_changes(
+			$classes_repository->apply_changes(
 				$items_to_add,
 				[
 					'added' => $added_ids,
