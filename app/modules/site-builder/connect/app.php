@@ -19,6 +19,10 @@ class App extends Library {
 	}
 
 	protected function get_api_url() {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_API_ORIGIN' ) ) {
+			return ELEMENTOR_SITE_BUILDER_API_ORIGIN . '/api/v2/builder/';
+		}
+
 		return static::API_URL;
 	}
 
