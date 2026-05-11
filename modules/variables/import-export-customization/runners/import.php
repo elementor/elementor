@@ -68,7 +68,7 @@ class Import extends Import_Runner_Base {
 			return $this->build_override_all_result( $imported_collection );
 		}
 
-		$existing_collection = $this->get_existing_collection( $repository, $imported_data );
+		$existing_collection = $this->get_existing_collection( $repository );
 		$imported_collection = Variables_Collection::hydrate( $variables_data );
 
 		$result = $this->resolve_collections( $existing_collection, $imported_collection, $conflict_resolution );
@@ -93,29 +93,8 @@ class Import extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function get_existing_collection( Variables_Repository $repository, array $imported_data ): Variables_Collection {
-		$existing = $repository->load();
-
-		if ( count( $existing->all() ) > 0 ) {
-			return $existing;
-		}
-
-		$was_new_kit_created = ! empty( $imported_data['site-settings']['imported_kit_id'] );
-
-		if ( ! $was_new_kit_created ) {
-			return $existing;
-		}
-
-		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
-
-		if ( ! $previous_kit_id ) {
-			return $existing;
-		}
-
-		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
-		$previous_repository = new Variables_Repository( $previous_kit );
-
-		return $previous_repository->load();
+	private function get_existing_collection( Variables_Repository $repository ): Variables_Collection {
+		return $repository->load();
 	}
 
 	private function resolve_collections(
