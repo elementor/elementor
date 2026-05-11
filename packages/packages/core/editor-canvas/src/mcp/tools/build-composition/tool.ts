@@ -58,6 +58,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			try {
 				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
 					createElement,
+					deleteElement,
 					getWidgetsCache,
 				} );
 				compositionBuilder.setElementConfig( elementConfig );

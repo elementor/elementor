@@ -19,25 +19,25 @@ const FEATURE_ITEMS = [
 		id: 'combineWidgets',
 		title: __( 'Use Atomic Elements alongside your existing widgets', 'elementor' ),
 		subtitle: __( 'No need to rebuild pages. Combine legacy & new workflows.', 'elementor' ),
-		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_combine_widgets.svg',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_combine_widgets.webp',
 	},
 	{
 		id: 'designSystems',
 		title: __( 'Build reusable design systems', 'elementor' ),
 		subtitle: __( 'Classes, Variables & Components give a clear path for scale.', 'elementor' ),
-		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_design_systems.svg',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_design_systems.webp',
 	},
 	{
 		id: 'consistentStyling',
 		title: __( 'Keep styles consistent across your site', 'elementor' ),
 		subtitle: __( 'A unified Style tab with full control over responsive design.', 'elementor' ),
-		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_consistent_styling.svg',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_consistent_styling.webp',
 	},
 	{
 		id: 'performance',
 		title: __( 'Get unparalleled performance', 'elementor' ),
 		subtitle: __( 'Clean code and a light CSS footprint with single-div wrappers.', 'elementor' ),
-		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_performance.svg',
+		image: 'https://assets.elementor.com/v4-promotion/v1/images/pop_up_performance.webp',
 	},
 ];
 
