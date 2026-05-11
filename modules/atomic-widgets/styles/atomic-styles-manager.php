@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Memo;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
@@ -125,6 +126,13 @@ class Atomic_Styles_Manager {
 
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
+				if ( self::contains_dynamic_value( $style_params['get_styles']() ) ) {
+					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
+					$this->cache_validity->validate( $breakpoint_path );
+
+					continue;
+				}
+
 				$style_file = $this->css_files_manager->get(
 					$this->convert_path_to_handle( $breakpoint_path ),
 					$breakpoint_media,
@@ -147,6 +155,40 @@ class Atomic_Styles_Manager {
 				);
 			}
 		}
+	}
+
+	private function enqueue_inline_style( array $breakpoint_path, string $breakpoint_media, string $css, ?string $version ): void {
+		if ( '' === $css ) {
+			return;
+		}
+
+		$handle = $this->convert_path_to_handle( $breakpoint_path );
+
+		if ( 'all' !== $breakpoint_media ) {
+			$css = $breakpoint_media . '{' . $css . '}';
+		}
+
+		wp_register_style( $handle, false, [], $version );
+		wp_enqueue_style( $handle );
+		wp_add_inline_style( $handle, $css );
+	}
+
+	private static function contains_dynamic_value( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		if ( Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
+			return true;
+		}
+
+		foreach ( $value as $item ) {
+			if ( self::contains_dynamic_value( $item ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function render_css( array $styles, string $style_key ) {
