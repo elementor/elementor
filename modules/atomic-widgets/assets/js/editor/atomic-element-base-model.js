@@ -42,15 +42,18 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 
 	onElementCreate() {
 		const shouldSkipDefaultChildren = this.get( 'skipDefaultChildren' );
-		const requiredChildren = this.getRequiredChildren();
-		const defaultChildren = shouldSkipDefaultChildren ? [] : this.getDefaultChildren();
-		const childrenTemplate = [ ...requiredChildren, ...defaultChildren ];
+		const defaultChildren = this.getDefaultChildren();
+		const requiredChildren = this.getRequiredChildren().map( ( child ) => this.markElementAsRequired( child ) );
+		const childrenTemplate = defaultChildren.length > 0 ? defaultChildren : requiredChildren;
+		const childrenForCreate = shouldSkipDefaultChildren
+			? childrenTemplate.filter( ( child ) => this.isRequiredElement( child ) )
+			: childrenTemplate;
 
 		if ( shouldSkipDefaultChildren ) {
 			this.unset( 'skipDefaultChildren', { silent: true } );
 		}
 
-		this.set( 'elements', childrenTemplate.map( ( element ) => this.buildElement( element ) ) );
+		this.set( 'elements', childrenForCreate.map( ( element ) => this.buildElement( element ) ) );
 	}
 
 	modifyDefaultChildren( element ) {
@@ -59,6 +62,20 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 
 	modifyRequiredChildren( element ) {
 		return element;
+	}
+
+	isRequiredElement( element ) {
+		return !! element?.meta?.required;
+	}
+
+	markElementAsRequired( element ) {
+		return {
+			...element,
+			meta: {
+				...( element.meta || {} ),
+				required: true,
+			},
+		};
 	}
 
 	buildElement( element ) {
@@ -74,6 +91,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			elements,
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
+			meta: element.meta || {},
 		};
 	}
 }
