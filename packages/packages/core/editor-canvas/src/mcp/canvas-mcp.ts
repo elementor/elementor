@@ -12,15 +12,6 @@ import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initGetElementConfigTool } from './tools/get-element-config/tool';
 
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
-	const { setMCPDescription } = reg;
-	setMCPDescription(
-		`Everything related to V4 ( Atomic ) canvas.
-# Canvas workflow for new compositions
-- Configure elements settings and styles
-- Build compositions/sections out of V4 atomic elements using context aware designs using the website resources
-- Get and retrieve element configuration values
-`
-	);
 	initWidgetsSchemaResource( reg );
 	initAvailableWidgetsResource( reg );
 	initDocumentStructureResource( reg );
