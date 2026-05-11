@@ -23,8 +23,30 @@ const getOffCanvasElements = () => {
 	} );
 };
 
+const getFormElements = () => {
+	const extendedWindow = window as unknown as ExtendedWindow;
+	const documentId = extendedWindow.elementor.config.document.id;
+	const selectors = [
+		`[data-elementor-id="${ documentId }"] input[id]:not([type="hidden"]):not([type="reset"]):not([type="button"])`,
+		`[data-elementor-id="${ documentId }"] select[id]`,
+		`[data-elementor-id="${ documentId }"] textarea[id]`,
+	];
+	const formElements = extendedWindow.elementor.$previewContents[ 0 ].querySelectorAll<
+		HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+	>( selectors.join( ', ' ) );
+
+	return Array.from( formElements ).map( ( formElement ) => {
+		const tagName = formElement.tagName.toLowerCase();
+		return {
+			label: `${ formElement.id } (${ tagName === 'input' ? formElement.getAttribute( 'type' ) : tagName })`,
+			value: formElement.id,
+		} as SelectOption;
+	} );
+};
+
 const collectionMethods = {
 	'off-canvas': getOffCanvasElements,
+	'form-elements': getFormElements,
 } as const;
 
 type SelectControlWrapperProps = Parameters< typeof SelectControl >[ 0 ] & {
