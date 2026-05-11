@@ -72,7 +72,7 @@ jobs:
             MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
           fi
           
-          BRANCH_NAME="${MAJOR}.${MINOR}"
+          BRANCH_NAME="${MAJOR}.$(printf '%02d' $MINOR)"
           DEV_BRANCH="version-${NEXT_VERSION}-to-main"
           
           echo "next_version=$NEXT_VERSION" >> $GITHUB_OUTPUT

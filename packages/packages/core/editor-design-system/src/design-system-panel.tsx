@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { __createPanel as createPanel } from '@elementor/editor-panels';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 
@@ -15,6 +16,7 @@ export const { panel, usePanelStatus, usePanelActions } = createPanel( {
 	},
 	onClose: async () => {
 		changeEditMode( 'edit' );
+		await reloadCurrentDocument();
 	},
 	isOpenPreviousElement: true,
 } );

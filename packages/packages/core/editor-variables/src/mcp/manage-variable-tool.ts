@@ -74,7 +74,7 @@ IMPORTANT: Never store px/rem values in a "global-font-variable". Use "global-si
 				.string()
 				.optional()
 				.describe(
-					`Variable value (required for create/update). Format depends on type:
+					`Variable value (required for create/update). Provide a plain CSS value matching the variable type (font: family name; color: CSS color; size: value with unit). Never JSON. Format depends on type:
 - global-color-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.COLOR ].description }
 - global-font-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.FONT ].description }
 - global-size-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.SIZE ].description }`
@@ -83,10 +83,6 @@ IMPORTANT: Never store px/rem values in a "global-font-variable". Use "global-si
 		outputSchema: {
 			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
 			message: z.string().optional().describe( 'Error details if status is error' ),
-		},
-		modelPreferences: {
-			intelligencePriority: 0.75,
-			speedPriority: 0.75,
 		},
 		requiredResources: [
 			{
@@ -105,6 +101,11 @@ DELETE: requires id. DESTRUCTIVE - confirm with user first.
 # NAMING - IMPORTANT
 the variables names should ALWAYS be lowercased and dashed spaced. example: "Headline Primary" should be "headline-primary"
 `,
+		description: `Create, update, or delete V4 global variables (distinct from legacy "globals").
+- Values: any valid CSS value, inserted as-is (1:1 with \`--css-var: VALUE\`). Do NOT pass JSON or legacy-globals object structures.
+- Names: lowercase, dash-separated (e.g. "Headline Primary" → "headline-primary").
+- Update: when renaming, keep the existing value; when updating value, keep the exact label.
+- Delete: destructive — confirm with user first.`,
 		handler: async ( params ) => {
 			const operations = getServiceActions( service );
 			const op = operations[ params.action ];

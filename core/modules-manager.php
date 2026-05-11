@@ -85,6 +85,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'mcp',
 			'wp-rest',
 			'safe-mode',
 			'ai',
