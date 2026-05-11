@@ -26,13 +26,10 @@
   "down": [
     { "op": { "fn": "set", "path": "$$type", "value": "email" } },
 
-    { "op": { "fn": "move", "src": "value.to.value.[0]", "dest": "__temp_to" } },
-    { "op": { "fn": "move", "src": "__temp_to", "dest": "value.to" } },
+    { "op": { "fn": "move", "src": "value.to.value.[0]", "dest": "value.to" } },
 
-    { "op": { "fn": "move", "src": "value.cc.value.[0]", "dest": "__temp_cc" } },
-    { "op": { "fn": "move", "src": "__temp_cc", "dest": "value.cc" } },
+    { "op": { "fn": "move", "src": "value.cc.value.[0]", "dest": "value.cc" } },
 
-    { "op": { "fn": "move", "src": "value.bcc.value.[0]", "dest": "__temp_bcc" } },
-    { "op": { "fn": "move", "src": "__temp_bcc", "dest": "value.bcc" } }
+    { "op": { "fn": "move", "src": "value.bcc.value.[0]", "dest": "value.bcc" } }
   ]
 }
