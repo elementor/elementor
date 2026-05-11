@@ -33,19 +33,11 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 	const selectedOptions = selectedValues.map( ( val ) => toChipsOption( val, options ) );
 
 	const handleChange = ( _: SyntheticEvent, newValue: ( ChipsOption | string )[] ) => {
-		const unique = new Set< string >();
-		const deduped: ChipsOption[] = [];
-
-		for ( const item of newValue ) {
-			const chipValue = typeof item === 'string' ? item : item.value;
-
-			if ( ! unique.has( chipValue ) ) {
-				unique.add( chipValue );
-				deduped.push( typeof item === 'string' ? { label: item, value: item } : item );
-			}
-		}
-
-		setValue( deduped.map( ( option ) => stringPropTypeUtil.create( option.value ) ) );
+		setValue(
+			newValue.map( ( option ) =>
+				stringPropTypeUtil.create( typeof option === 'string' ? option : option.value )
+			)
+		);
 	};
 
 	return (
@@ -57,6 +49,7 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 				size={ SIZE }
 				disabled={ disabled }
 				value={ selectedOptions }
+				filterSelectedOptions
 				onChange={ handleChange }
 				options={ options }
 				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
