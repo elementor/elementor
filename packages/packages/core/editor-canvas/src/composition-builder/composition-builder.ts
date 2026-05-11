@@ -299,9 +299,12 @@ export class CompositionBuilder {
 				this.rootContainers.push( newElement );
 				await this.awaitViewRender( newElement );
 			} catch ( e: unknown ) {
-				const attempToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
-				if ( attempToRestoreInvalidContainer ) {
-					this.api.deleteElement( { container: attempToRestoreInvalidContainer } );
+				const attemptToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
+				if ( attemptToRestoreInvalidContainer ) {
+					this.api.deleteElement( {
+						container: attemptToRestoreInvalidContainer,
+						options: { useHistory: false },
+					} );
 				}
 				throw e;
 			}
