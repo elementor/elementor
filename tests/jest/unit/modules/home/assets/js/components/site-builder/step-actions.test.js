@@ -70,14 +70,18 @@ const defaultWithoutInputProps = {
 describe( 'StepWithInput', () => {
 	afterEach( () => jest.clearAllMocks() );
 
-	it( 'disables the button when inputValue is empty', () => {
+	it( 'does not disable the button when inputValue is empty', () => {
 		const { getByRole } = render( <StepWithInput { ...defaultInputProps } inputValue="" /> );
-		expect( getByRole( 'button', { name: /create my site/i } ).disabled ).toBe( true );
+		expect( getByRole( 'button', { name: /create my site/i } ).disabled ).toBe( false );
 	} );
 
-	it( 'disables the button when inputValue is whitespace only', () => {
-		const { getByRole } = render( <StepWithInput { ...defaultInputProps } inputValue="   " /> );
-		expect( getByRole( 'button', { name: /create my site/i } ).disabled ).toBe( true );
+	it( 'does not call onSubmit when the button is clicked and inputValue is empty', () => {
+		const onSubmit = jest.fn();
+		const { getByRole } = render(
+			<StepWithInput { ...defaultInputProps } inputValue="" onSubmit={ onSubmit } />,
+		);
+		fireEvent.click( getByRole( 'button', { name: /create my site/i } ) );
+		expect( onSubmit ).not.toHaveBeenCalled();
 	} );
 
 	it( 'enables the button when inputValue has content', () => {
