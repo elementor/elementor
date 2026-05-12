@@ -8,13 +8,7 @@ import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-
 import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
-type Displays =
-	| 'block'
-	| 'flex'
-	| 'grid'
-	| 'inline-block'
-	| 'inline-flex'
-	| 'none';
+type Displays = 'block' | 'flex' | 'grid' | 'inline-block' | 'inline-flex' | 'none';
 
 const DISPLAY_LABEL = __( 'Display', 'elementor' );
 
