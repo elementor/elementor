@@ -11,11 +11,13 @@ import {
 	validateStyleLabel,
 } from '@elementor/editor-styles-repository';
 import { InfoAlert, WarningInfotip } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { ColorSwatchIcon, MapPinIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
 import {
 	type AutocompleteChangeReason,
 	Box,
+	Button,
 	Chip,
 	type ChipOwnProps,
 	FormLabel,
@@ -42,6 +44,22 @@ import { useApplyClass, useCreateAndApplyClass, useUnapplyClass } from './use-ap
 
 const ID = 'elementor-css-class-selector';
 const TAGS_LIMIT = 50;
+
+const EVENT_OPEN_GLOBAL_CLASSES_MANAGER = 'elementor/open-global-classes-manager';
+const EVENT_TOGGLE_DESIGN_SYSTEM = 'elementor/toggle-design-system';
+
+function openClassManagerPanel() {
+	if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		window.dispatchEvent(
+			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
+				detail: { tab: 'classes' as const },
+			} )
+		);
+		return;
+	}
+
+	window.dispatchEvent( new CustomEvent( EVENT_OPEN_GLOBAL_CLASSES_MANAGER ) );
+}
 
 type StyleDefOption = Option & {
 	color: ChipOwnProps[ 'color' ];
@@ -115,8 +133,10 @@ export function CssClassSelector() {
 					validate={ validate ?? undefined }
 					limitTags={ TAGS_LIMIT }
 					renderEmptyState={
-						isAtLimit
-							? ( props ) => <LimitReachedEmptyState { ...props } limitCount={ limitCount! } />
+						isAtLimit && typeof limitCount === 'number'
+							? ( props ) => (
+									<LimitReachedEmptyState limitCount={ limitCount } onClear={ props.onClear } />
+							  )
 							: EmptyState
 					}
 					getLimitTagsText={ ( more ) => (
@@ -205,16 +225,50 @@ const EmptyState = ( props: EmptyStateProps ) => (
 	</EmptyStateLayout>
 );
 
-const LimitReachedEmptyState = ( { limitCount, ...props }: EmptyStateProps & { limitCount: number } ) => (
-	<EmptyStateLayout { ...props }>
-		<Typography align="center" variant="caption" sx={ { mb: 2 } }>
-			{ __(
-				/* translators: %s is the maximum number of classes */
-				"You've reached the limit of %s classes. Remove an existing one to create a new class.",
-				'elementor'
-			).replace( '%s', String( limitCount ) ) }
-		</Typography>
-	</EmptyStateLayout>
+const LimitReachedEmptyState = ( {
+	limitCount,
+	onClear,
+}: Pick< EmptyStateProps, 'onClear' > & { limitCount: number } ) => (
+	<Box sx={ { py: 4 } }>
+		<Stack
+			gap={ 2 }
+			alignItems="center"
+			color="text.secondary"
+			justifyContent="center"
+			sx={ { px: 2, m: 'auto', maxWidth: '236px' } }
+		>
+			<ColorSwatchIcon sx={ { transform: 'rotate(90deg)' } } fontSize="large" />
+			<Typography align="center" variant="subtitle2">
+				{
+					/* translators: %s is the maximum number of classes */
+					__( 'Limit of %s classes reached', 'elementor' ).replace( '%s', String( limitCount ) )
+				}
+			</Typography>
+			<Typography align="center" variant="caption" component="div">
+				{ __( 'Remove a class to create a new one.', 'elementor' ) }{ ' ' }
+				<Link
+					color="inherit"
+					variant="caption"
+					component="button"
+					onClick={ onClear }
+					sx={ { verticalAlign: 'baseline' } }
+				>
+					{ __( 'Clear', 'elementor' ) }
+				</Link>
+			</Typography>
+			<Button
+				variant="outlined"
+				color="secondary"
+				size="small"
+				onClick={ () => {
+					openClassManagerPanel();
+					onClear();
+				} }
+			>
+				{ __( 'Class Manager', 'elementor' ) }
+			</Button>
+		</Stack>
+	</Box>
 );
 
 const updateClassByProvider = ( provider: string | null, data: UpdateActionPayload ) => {
