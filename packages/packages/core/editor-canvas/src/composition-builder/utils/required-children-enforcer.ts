@@ -77,6 +77,7 @@ private appendMissingRequiredChildren( node: Element ): void {
 	private createXmlNodeFromTemplate( template: TemplateNode, doc: Document ): Element {
 		const tagName = this.getTemplateNodeTagName( template );
 	
+
 		if ( ! tagName ) {
 			throw new Error( 'Failed to create required child node: Invalid template element type.' );
 		}
