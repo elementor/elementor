@@ -400,6 +400,23 @@ describe( '<CssClassSelector />', () => {
 		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should show existing classes in the dropdown when typing at the max classes limit', () => {
+		// Arrange.
+		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ { ...provider1, limit: 0 }, jest.fn() ] );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: 'Provider-1-a' } } );
+
+		// Assert - existing class is visible in dropdown.
+		expect( screen.getByRole( 'option', { name: 'Provider-1-a' } ) ).toBeInTheDocument();
+		// Assert - no "Create" option shown when at limit.
+		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should create, apply, and activate a class on click', async () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];

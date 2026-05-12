@@ -250,6 +250,15 @@ function useCreateAction() {
 		return {};
 	}
 
+	const entityName =
+		provider.labels.singular && provider.labels.plural
+			? ( provider.labels as CreatableAutocompleteProps< StyleDefOption >[ 'entityName' ] )
+			: undefined;
+
+	if ( hasReachedLimit( provider ) ) {
+		return { entityName };
+	}
+
 	const create = ( classLabel: string ) => {
 		const { createdId } = createAction( { classLabel } );
 		trackStyles( provider.getKey() ?? '', 'classCreated', {
@@ -259,24 +268,8 @@ function useCreateAction() {
 		} );
 	};
 
-	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult => {
-		if ( hasReachedLimit( provider ) ) {
-			return {
-				isValid: false,
-				/* translators: %s is the maximum number of classes */
-				errorMessage: __(
-					'You’ve reached the limit of %s classes. Please remove an existing one to create a new class.',
-					'elementor'
-				).replace( '%s', provider.limit.toString() ),
-			};
-		}
-		return validateStyleLabel( newClassLabel, event );
-	};
-
-	const entityName =
-		provider.labels.singular && provider.labels.plural
-			? ( provider.labels as CreatableAutocompleteProps< StyleDefOption >[ 'entityName' ] )
-			: undefined;
+	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult =>
+		validateStyleLabel( newClassLabel, event );
 
 	return { create, validate, entityName };
 }
