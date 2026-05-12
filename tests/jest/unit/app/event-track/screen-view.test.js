@@ -15,14 +15,14 @@ describe( 'ScreenViewTracking', () => {
 		DashboardUtils.isElementorPage.mockReturnValue( true );
 
 		// Mock getScreenData
-		const screenData = { screenId: 'elementor-settings', screenType: 'top_level_page', };
+		const screenData = { screenId: 'elementor-settings', screenType: 'top_level_page' };
 		jest.spyOn( ScreenViewTracking, 'getScreenData' ).mockReturnValue( screenData );
 
 		ScreenViewTracking.init();
 
 		expect( WpDashboardTracking.trackScreenViewed ).toHaveBeenCalledWith(
 			'elementor-settings',
-			'top_level_page'
+			'top_level_page',
 		);
 	} );
 
