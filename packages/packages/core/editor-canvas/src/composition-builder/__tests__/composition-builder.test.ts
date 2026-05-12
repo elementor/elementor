@@ -40,7 +40,7 @@ describe( 'CompositionBuilder', () => {
 	const createBuilder = ( xmlStructure: string ) =>
 		CompositionBuilder.fromXMLString( xmlStructure, {
 			createElement: createElementMock,
-			getWidgetsCache: () => createWidgetsCache(),
+			getWidgetsCache: < T extends V1ElementConfig >() => createWidgetsCache() as Record< string, T >,
 			generateElementId: jest.fn( () => Math.random().toString( 36 ).slice( 2 ) ),
 		} );
 

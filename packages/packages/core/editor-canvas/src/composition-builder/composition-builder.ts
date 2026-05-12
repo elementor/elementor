@@ -278,8 +278,8 @@ export class CompositionBuilder {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
 			}
 		} );
-	
-			Object.keys( widgetsCache ).forEach( ( elementType ) => {
+
+		Object.keys( widgetsCache ).forEach( ( elementType ) => {
 			const requiredChildrenEnforcer = new RequiredChildrenEnforcer( elementType, widgetsCache );
 			requiredChildrenEnforcer.enforce( this.xml );
 		} );
