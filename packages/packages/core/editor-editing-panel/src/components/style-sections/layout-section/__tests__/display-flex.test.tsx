@@ -13,7 +13,7 @@ import { getStylesSchema, type StyleDefinition } from '@elementor/editor-styles'
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { mockElement } from '../../../../__tests__/utils';
 import { ClassesPropProvider } from '../../../../contexts/classes-prop-context';
@@ -122,10 +122,18 @@ describe( '<DisplayField />', () => {
 		// Act.
 		renderDisplayField();
 
-		// Assert.
-		[ 'Block', 'Flex', 'Inline-block', 'Inline-flex' ].forEach( ( label ) => {
+		// Assert — toolbar toggles (includes `None`); overflow holds `Inline-flex` when grid experiment is off.
+		[ 'Block', 'Flex', 'None', 'Inline-block' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
+
+		const overflowMenuButton = screen
+			.getAllByRole( 'button' )
+			.find( ( btn ) => btn.getAttribute( 'aria-haspopup' ) === 'menu' );
+		expect( overflowMenuButton ).toBeDefined();
+		fireEvent.click( overflowMenuButton! );
+
+		expect( screen.getByRole( 'menuitem', { name: 'Inline-flex' } ) ).not.toHaveAttribute( 'aria-selected', 'true' );
 	} );
 } );
 
