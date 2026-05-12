@@ -141,6 +141,11 @@ class Global_Classes_Repository {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
+			$this->clear_preview_labels_for_ids( array_merge(
+				array_values( $to_create ),
+				array_values( $to_update ),
+				array_values( $to_delete )
+			) );
 		}
 
 		$this->cache = null;
@@ -239,6 +244,11 @@ class Global_Classes_Repository {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, array_values( $to_delete ) );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
+			$this->clear_preview_labels_for_ids( array_merge(
+				array_values( $to_create ),
+				array_values( $to_update ),
+				array_values( $to_delete )
+			) );
 		}
 	}
 
@@ -328,29 +338,26 @@ class Global_Classes_Repository {
 			$item = $items_by_id[ $class_id ];
 			$data = $this->build_class_data_for_storage( $item );
 			$kit = $this->get_kit();
+			$existing_post_id = $post_ids[ $class_id ] ?? null;
+			$existing_post = $existing_post_id ? Global_Class_Post::from_post_id( $existing_post_id, $is_preview ) : null;
 
-			if ( $is_preview ) {
-				$post_id = isset( $post_ids[ $class_id ] ) ? $post_ids[ $class_id ] : null;
-				$post = $post_id ? Global_Class_Post::from_post_id( $post_id, true ) : null;
+			if ( $existing_post ) {
+				$existing_post->update_data( $data );
 
-				if ( $post ) {
-					$post->set_preview( true );
-					$post->update_data( $data );
-					$post->update_label( $item['label'] );
-					clean_post_cache( $post->get_post_id() );
-				} else {
-					$created = Global_Class_Post::create( $class_id, $item['label'], $data, $kit );
-					if ( $created ) {
-						clean_post_cache( $created->get_post_id() );
-					}
+				if ( ! $is_preview ) {
+					$existing_post->update_label( $item['label'] );
 				}
-			} else {
-				$created = Global_Class_Post::create( $class_id, $item['label'], $data, $kit );
 
-				if ( $created ) {
-					$post_ids_map->set( $class_id, $created->get_post_id() );
-					clean_post_cache( $created->get_post_id() );
-				}
+				clean_post_cache( $existing_post->get_post_id() );
+
+				return;
+			}
+
+			$created = Global_Class_Post::create( $class_id, $item['label'], $data, $kit );
+
+			if ( $created ) {
+				$post_ids_map->set( $class_id, $created->get_post_id() );
+				clean_post_cache( $created->get_post_id() );
 			}
 		} );
 
@@ -370,7 +377,11 @@ class Global_Classes_Repository {
 
 				$data = $this->build_class_data_for_storage( $item );
 				$post->update_data( $data );
-				$post->update_label( $item['label'] );
+
+				if ( ! $is_preview ) {
+					$post->update_label( $item['label'] );
+				}
+
 				clean_post_cache( $post->get_post_id() );
 			}
 		);
@@ -389,6 +400,31 @@ class Global_Classes_Repository {
 
 		Global_Classes_Order::make( $this->get_kit() )->set_order( [] );
 		$this->labels()->set_labels( [] );
+	}
+
+	private function clear_preview_labels_for_ids( array $class_ids ): void {
+		if ( empty( $class_ids ) ) {
+			return;
+		}
+
+		$preview_labels = Global_Classes_Labels::make( $this->get_kit() )->set_preview( true );
+		$labels_map = $preview_labels->get_labels();
+
+		if ( empty( $labels_map ) ) {
+			return;
+		}
+
+		$ids_to_remove = array_intersect( array_unique( $class_ids ), array_keys( $labels_map ) );
+
+		if ( empty( $ids_to_remove ) ) {
+			return;
+		}
+
+		foreach ( $ids_to_remove as $id ) {
+			unset( $labels_map[ $id ] );
+		}
+
+		$preview_labels->set_labels( $labels_map );
 	}
 
 	private function bulk_clear_preview_meta( array $class_ids ): void {
