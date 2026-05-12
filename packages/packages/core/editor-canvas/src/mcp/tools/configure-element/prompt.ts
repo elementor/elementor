@@ -118,21 +118,11 @@ Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property fr
 	);
 
 	configureElementToolPrompt.instruction( `
-# When the operation cannot be completed via MCP
-If a property is not in the widget schema (e.g. the tool returns an error or the property simply does not appear), do NOT fall back to V3 editor instructions. This is a V4 (Elementor Editor) element. The V4 editor UI is different from V3.
+V4 only: If MCP fails, give manual steps using V4 UI.
 
-Tell the user how to do it manually in V4:
-
-**V4 Editor panel structure (for manual steps):**
-- Click the element on the canvas to select it
-- The left panel updates to show that element's settings
-- The panel has three tabs at the top: **General**, **Style**, **Interactions**
-- Under the **General** tab, settings are grouped into collapsible sections (e.g. **Content**, **Settings**)
-- Under the **Settings** section you'll find fields like **Tag**, **Link**, **ID**, **Attributes** and **Display Conditions**
-- **Style** settings (colors, typography, spacing, custom CSS) are under the **Style** tab
-
-**V4 does NOT have an "Advanced tab"** — equivalent settings are in the **Settings** section or **Style** tab.
-Never tell a V4 user to go to an "Advanced tab".
+V4 Editor structure:
+Panel tabs: General (→ Settings section: ID, Tag, Link), Style, Interactions.
+NO Advanced tab. Never mention Advanced tab.
 ` );
 
 	return configureElementToolPrompt.prompt();
