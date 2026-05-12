@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.8 - 2026-05-12 =
+
+Tweak: Updated WordPress compatibility to version 7.0
+
 = 4.0.7 - 2026-05-06 =
 
 * Tweak: Updated endpoint URL to align with migration infrastructure - Atomic Editor
