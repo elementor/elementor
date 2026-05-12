@@ -90,6 +90,7 @@ class Module extends BaseModule {
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
 			Global_Classes_Sync_Map::META_KEY,
+			Global_Classes_Post_IDs::META_KEY,
 		] );
 	}
 
