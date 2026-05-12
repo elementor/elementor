@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
+import { useSelectedElementSettings } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
 	type PropKey,
@@ -24,6 +25,7 @@ import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
+import { ChipsControl } from './chips-control';
 import { QueryChipsControl } from './query-chips-control';
 import { SelectControl, type SelectOption } from './select-control';
 
@@ -43,23 +45,30 @@ export const QueryFilterRepeaterControl = createControl(
 	}: QueryFilterRepeaterControlProps ) => {
 		const { propType, value, setValue } = useBoundProp( queryFilterArrayPropTypeUtil );
 
+		const { settings } = useSelectedElementSettings();
+
+		const visibleKeys = useMemo(
+			() => allowedKeys.filter( ( key ) => isKeyVisible( keyConfig[ key ]?.visibleWhen, settings ) ),
+			[ allowedKeys, keyConfig, settings ]
+		);
+
 		const usedKeys = useMemo( () => getUsedKeys( value ?? [] ), [ value ] );
 		const nextAvailableKey = useMemo(
-			() => allowedKeys.find( ( key ) => ! usedKeys.has( key ) ) ?? null,
-			[ allowedKeys, usedKeys ]
+			() => visibleKeys.find( ( key ) => ! usedKeys.has( key ) ) ?? null,
+			[ visibleKeys, usedKeys ]
 		);
 
 		const getKeySelectOptions = useMemo(
 			() => ( currentKey: string | null ) =>
-				allowedKeys.map( ( itemKey ) => ( {
+				visibleKeys.map( ( itemKey ) => ( {
 					value: itemKey,
 					label: keyConfig[ itemKey ]?.label ?? itemKey,
 					disabled: itemKey !== currentKey && usedKeys.has( itemKey ),
 				} ) ),
-			[ allowedKeys, keyConfig, usedKeys ]
+			[ visibleKeys, keyConfig, usedKeys ]
 		);
 
-		const initialFallback = useMemo( () => createItemForKey( allowedKeys[ 0 ] ?? '' ), [ allowedKeys ] );
+		const initialFallback = useMemo( () => createItemForKey( visibleKeys[ 0 ] ?? '' ), [ visibleKeys ] );
 
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
@@ -133,7 +142,12 @@ const ItemLabel = ( { value, keyConfig }: ItemLabelProps ) => {
 	const itemKey = stringPropTypeUtil.extract( value?.value?.key );
 	const label = ( itemKey && keyConfig[ itemKey ]?.label ) || __( 'Item', 'elementor' );
 	const chipLabels = extractChipLabels( value?.value?.values );
-	const suffix = chipLabels.length > 0 ? `: ${ chipLabels.join( ', ' ) }` : '';
+	const taxonomyLabels = extractTaxonomyLabels(
+		value?.value?.taxonomies as TaxonomiesPropValue,
+		itemKey ? keyConfig[ itemKey ] : undefined
+	);
+	const allLabels = [ ...chipLabels, ...taxonomyLabels ];
+	const suffix = allLabels.length > 0 ? `: ${ allLabels.join( ', ' ) }` : '';
 
 	return (
 		<Box component="span">
@@ -155,6 +169,11 @@ function extractChipLabels< T extends QueryArrayPropValue | undefined >( chipsPr
 
 type FilterItemValue = NonNullable< QueryFilterPropValue[ 'value' ] >;
 
+type SnapshotsByKey = Record<
+	string,
+	{ values?: FilterItemValue[ 'values' ] | null; taxonomies?: FilterItemValue[ 'taxonomies' ] | null }
+>;
+
 const ItemContent = ( {
 	keyConfig,
 	getKeySelectOptions,
@@ -166,7 +185,7 @@ const ItemContent = ( {
 } ) => {
 	const propContext = useBoundProp( queryFilterPropTypeUtil );
 
-	const valuesByKeyRef = useRef< Record< string, FilterItemValue[ 'values' ] | null > >( {} );
+	const snapshotsByKeyRef = useRef< SnapshotsByKey >( {} );
 
 	const handleValueChange = ( nextValue: FilterItemValue, options?: CreateOptions, meta?: { bind?: PropKey } ) => {
 		if ( meta?.bind !== 'key' ) {
@@ -178,17 +197,28 @@ const ItemContent = ( {
 		const newKey = stringPropTypeUtil.extract( nextValue?.key );
 
 		if ( previousKey ) {
-			valuesByKeyRef.current[ previousKey ] = propContext.value?.values ?? null;
+			snapshotsByKeyRef.current[ previousKey ] = {
+				values: propContext.value?.values ?? null,
+				taxonomies: propContext.value?.taxonomies ?? null,
+			};
 		}
 
-		const restoredValues = newKey ? valuesByKeyRef.current[ newKey ] ?? null : null;
+		const restored = newKey ? snapshotsByKeyRef.current[ newKey ] : undefined;
 
-		propContext.setValue( { ...nextValue, values: restoredValues }, options, meta );
+		propContext.setValue(
+			{
+				...nextValue,
+				values: restored?.values ?? null,
+				taxonomies: restored?.taxonomies ?? null,
+			},
+			options,
+			meta
+		);
 	};
 
 	const currentKey = stringPropTypeUtil.extract( propContext.value?.key );
 	const currentKeyConfig = currentKey ? keyConfig[ currentKey ] : undefined;
-	const hasValuesField = !! currentKeyConfig?.queryEndpoint;
+	const valueType = currentKeyConfig?.valueType ?? 'chips';
 	const keySelectOptions = useMemo( () => getKeySelectOptions( currentKey ), [ getKeySelectOptions, currentKey ] );
 
 	return (
@@ -204,7 +234,19 @@ const ItemContent = ( {
 						</PropKeyProvider>
 					</Grid>
 				</PopoverGridContainer>
-				{ hasValuesField && currentKeyConfig?.queryEndpoint && (
+				{ valueType === 'taxonomies' && currentKeyConfig?.staticOptions && (
+					<PopoverGridContainer flexWrap="wrap">
+						<Grid item xs={ 12 }>
+							<ControlFormLabel>{ currentKeyConfig.label }</ControlFormLabel>
+						</Grid>
+						<Grid item xs={ 12 }>
+							<PropKeyProvider bind="taxonomies">
+								<ChipsControl options={ currentKeyConfig.staticOptions } />
+							</PropKeyProvider>
+						</Grid>
+					</PopoverGridContainer>
+				) }
+				{ valueType !== 'taxonomies' && currentKeyConfig?.queryEndpoint && (
 					<PopoverGridContainer flexWrap="wrap">
 						<Grid item xs={ 12 }>
 							<ControlFormLabel>{ currentKeyConfig.label }</ControlFormLabel>
@@ -227,10 +269,55 @@ const ItemContent = ( {
 	);
 };
 
+export function isKeyVisible(
+	rule: QueryFilterKeyConfig[ 'visibleWhen' ] | undefined,
+	settings: Record< string, unknown > | null
+): boolean {
+	if ( ! rule ) {
+		return true;
+	}
+
+	if ( ! settings ) {
+		return false;
+	}
+
+	const raw = rule.path.reduce< unknown >( ( acc, segment ) => {
+		if ( acc && typeof acc === 'object' && segment in ( acc as Record< string, unknown > ) ) {
+			return ( acc as Record< string, unknown > )[ segment ];
+		}
+		return undefined;
+	}, settings );
+
+	const extracted = stringPropTypeUtil.extract( raw as Parameters< typeof stringPropTypeUtil.extract >[ 0 ] );
+
+	return extracted !== null && rule.in.includes( extracted );
+}
+
+type TaxonomiesPropValue = { value?: unknown[] | null } | null | undefined;
+
+function extractTaxonomyLabels(
+	taxonomiesProp: TaxonomiesPropValue,
+	config: QueryFilterKeyConfig | undefined
+): string[] {
+	const items = ( taxonomiesProp?.value ?? [] ) as Parameters< typeof stringPropTypeUtil.extract >[ 0 ][];
+	const slugs = items
+		.map( ( item ) => stringPropTypeUtil.extract( item ) )
+		.filter( ( slug ): slug is string => !! slug );
+
+	if ( ! slugs.length ) {
+		return [];
+	}
+
+	const options = config?.staticOptions ?? [];
+
+	return slugs.map( ( slug: string ) => options.find( ( opt ) => opt.value === slug )?.label ?? slug );
+}
+
 function createItemForKey( key: string ): QueryFilterPropValue {
 	return queryFilterPropTypeUtil.create( {
 		key: stringPropTypeUtil.create( key ),
 		values: null,
+		taxonomies: null,
 	} );
 }
 
