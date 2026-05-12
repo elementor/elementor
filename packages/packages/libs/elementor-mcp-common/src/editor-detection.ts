@@ -64,15 +64,13 @@ export function waitForElementorEditor(): Promise< void > {
 			}
 		};
 
-		window.addEventListener(
-			'DOMContentLoaded',
-			() => {
-				checkReady();
-			},
-			{
-				once: true,
-			}
-		);
+		// When the script is enqueued in the WP footer, DOMContentLoaded has already fired,
+		// so a one-shot listener would never resolve. Poll directly in that case.
+		if ( document.readyState === 'loading' ) {
+			window.addEventListener( 'DOMContentLoaded', checkReady, { once: true } );
+		} else {
+			checkReady();
+		}
 	} );
 }
 

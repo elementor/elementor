@@ -1,6 +1,7 @@
 import { type McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { loadDocumentSchema, loadDocumentSettings } from './context';
+import { getCurrentEditorSelection } from './get-current-editor-selection';
 import type { ElementorControls } from './types';
 import { encodeToolJson, getElementor } from './utils';
 
@@ -12,6 +13,9 @@ export const RESOURCE_URI_WIDGET_CONFIG_TEMPLATE = 'elementor://editor/widget-co
 
 export const RESOURCE_NAME_PAGE_SETTINGS = 'elementor-page-settings';
 export const RESOURCE_URI_PAGE_SETTINGS = 'elementor://editor/page-settings';
+
+export const RESOURCE_NAME_EDITOR_SELECTION = 'elementor-editor-selection';
+export const RESOURCE_URI_EDITOR_SELECTION = 'elementor://editor/selection';
 
 export function decodeResourceVariable( value: string ): string {
 	try {
@@ -53,6 +57,32 @@ async function handleGetWidgetSchema( params: { widgetType: string; action: stri
 }
 
 export function addElementorResources( server: McpServer ): void {
+	server.resource(
+		RESOURCE_NAME_EDITOR_SELECTION,
+		RESOURCE_URI_EDITOR_SELECTION,
+		{
+			description:
+				'Human-readable display name of the user\'s current Elementor editor focus, formatted as "<PageTitle>" or "<PageTitle> > <ElementName>".',
+		},
+		async ( uri ) => {
+			const snapshot = getCurrentEditorSelection();
+
+			if ( 'error' in snapshot && snapshot.error ) {
+				throw new Error( snapshot.error );
+			}
+
+			return {
+				contents: [
+					{
+						uri: uri.toString(),
+						mimeType: 'application/json',
+						text: JSON.stringify( snapshot ),
+					},
+				],
+			};
+		}
+	);
+
 	server.resource(
 		RESOURCE_NAME_PAGE_SETTINGS,
 		RESOURCE_URI_PAGE_SETTINGS,
