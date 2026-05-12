@@ -15,15 +15,9 @@ $e-dialog-confirm-space: 20px;
 		padding: $e-dialog-confirm-space;
 	}
 
-	.dialog-close-button {
-		inset-block-start: $e-dialog-confirm-space;
-		margin-block-start: 0;
-	}
-
 	.dialog-header {
 		font-size: 15px;
 		font-weight: 500;
-		padding-inline-end: $e-dialog-confirm-space;
 
 		&:after {
 			content: '';
