@@ -209,12 +209,13 @@ export const LayoutChip = styled( Chip, {
 	},
 	'&& .MuiChip-icon': {
 		fontSize: theme.spacing( 1.75 ),
+		color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.secondary,
 	},
 	'&&:hover': {
-		backgroundColor: theme.palette.secondary.dark,
-		color: theme.palette.secondary.contrastText,
+		backgroundColor: isSelected ? theme.palette.secondary.dark : theme.palette.action.hover,
+		color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.primary,
 		'&& .MuiChip-icon': {
-			color: `${ theme.palette.secondary.contrastText }`,
+			color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.primary,
 		},
 	},
 } ) );
