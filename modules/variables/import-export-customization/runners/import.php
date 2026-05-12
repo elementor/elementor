@@ -211,6 +211,8 @@ class Import extends Import_Runner_Base {
 		if ( false === $result ) {
 			throw new \RuntimeException( 'Failed to save global variables during import.' );
 		}
+
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	private function format_variable_as_entry( Variable $variable ): array {
