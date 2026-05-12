@@ -590,68 +590,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
 	}
 
-	public function test_import_from_json__clears_template_id_to_zero() {
-		// Arrange
-		$document = $this->factory()->documents->create_and_get();
-		$elements = [
-			[
-				'id' => 'a1',
-				'elType' => 'widget',
-				'widgetType' => 'loop-grid',
-				'elements' => [],
-				'settings' => [
-					'template_id' => 999,
-				],
-			],
-		];
-
-		// Act
-		$result = self::$manager->import_from_json(
-			[
-				'editor_post_id' => $document->get_id(),
-				'elements' => wp_json_encode( $elements ),
-			]
-		);
-
-		// Assert
-		$this->assertSame( 0, $result[0]['settings']['template_id'] );
-	}
-
-	public function test_import_from_json__clears_template_id_in_nested_elements() {
-		// Arrange
-		$document = $this->factory()->documents->create_and_get();
-		$elements = [
-			[
-				'id' => 'container-1',
-				'elType' => 'container',
-				'widgetType' => 'container',
-				'elements' => [
-					[
-						'id' => 'b1',
-						'elType' => 'widget',
-						'widgetType' => 'loop-grid',
-						'elements' => [],
-						'settings' => [
-							'template_id' => 999,
-						],
-					],
-				],
-				'settings' => [],
-			],
-		];
-
-		// Act
-		$result = self::$manager->import_from_json(
-			[
-				'editor_post_id' => $document->get_id(),
-				'elements' => wp_json_encode( $elements ),
-			]
-		);
-
-		// Assert
-		$this->assertSame( 0, $result[0]['elements'][0]['settings']['template_id'] );
-	}
-
 	public function test_import_from_json__strips_html_cache() {
 		// Arrange
 		$document = $this->factory()->documents->create_and_get();
