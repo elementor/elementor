@@ -3,7 +3,6 @@ name: PHPUnit
 permissions:
   contents: read
 
-
 on:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
