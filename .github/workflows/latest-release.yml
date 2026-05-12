@@ -5,7 +5,7 @@ env:
   PRERELEASE: 'false'
 
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
     branches:
       - main
@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   latest_release:
-    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'skip release' )
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip release' )
     permissions: write-all
     runs-on: ubuntu-22.04
     steps:

@@ -10,6 +10,7 @@ use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customiz
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -56,6 +57,7 @@ class Module extends BaseModule {
 		( new Import_Export_Customization() )->register_hooks();
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
+		add_filter( 'elementor/kit/meta_to_preserve_on_kit_import', [ $this, 'add_meta_to_preserve_on_kit_import' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 	}
 
@@ -100,5 +102,11 @@ class Module extends BaseModule {
 			'window.ElementorVariablesQuotaConfig = ' . wp_json_encode( $this->get_quota_config() ) . ';',
 			'before'
 		);
+	}
+
+	public function add_meta_to_preserve_on_kit_import( array $meta_keys ): array {
+		return array_merge( $meta_keys, [
+			Constants::VARIABLES_META_KEY,
+		] );
 	}
 }
