@@ -37,6 +37,14 @@ export const SCREEN_TYPES = {
 };
 
 export default class WpDashboardTracking {
+	static elementorPostTypes = [
+		'elementor_library',
+		'e-floating-buttons',
+		'elementor_snippet',
+		'elementor_font',
+		'elementor_icons',
+	];
+
 	static sessionStartTime = Date.now();
 	static lastActivityTime = Date.now();
 	static sessionEnded = false;
@@ -191,12 +199,11 @@ export default class WpDashboardTracking {
 			const action = params.get( 'action' );
 
 			const anyPageWithElementorString = 'elementor';
-			const elementorPages = [ anyPageWithElementorString, 'e-form-submissions' ];
-			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons', 'popup_templates' ];
+			const elementorPages = [ anyPageWithElementorString, 'e-form-submissions', 'popup_templates' ];
 
-			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
-				( postType && elementorPostTypes.includes( postType ) ) ||
-				( action && action.includes( 'elementor' ) );
+			return !! ( ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
+				( postType && this.elementorPostTypes.includes( postType ) ) ||
+				( action && action.includes( 'elementor' ) ) );
 		} catch ( error ) {
 			return false;
 		}

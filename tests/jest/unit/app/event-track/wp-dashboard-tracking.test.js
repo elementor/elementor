@@ -69,7 +69,10 @@ describe( 'WpDashboardTracking', () => {
 					'https://example.com/wp-admin/admin.php?page=e-form-submissions',
 					'https://example.com/wp-admin/post-new.php?post_type=elementor_library',
 					'https://example.com/wp-admin/post-new.php?post_type=e-floating-buttons',
-					'https://example.com/wp-admin/post-new.php?post_type=popup_templates',
+					'https://example.com/wp-admin/admin.php?page=popup_templates',
+					'https://example.com/wp-admin/edit.php?post_type=elementor_snippet',
+					'https://example.com/wp-admin/edit.php?post_type=elementor_font',
+					'https://example.com/wp-admin/edit.php?post_type=elementor_icons',
 				];
 
 				validUrls.forEach( ( url ) => {
