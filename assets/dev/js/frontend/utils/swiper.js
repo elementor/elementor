@@ -86,6 +86,16 @@ export default class SwiperHandler {
 			};
 		} );
 
-		return config;
+		return this.applyMotionPreferences( config );
+	}
+
+	applyMotionPreferences( config ) {
+		const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		if ( ! prefersReducedMotion ) {
+			return config;
+		}
+
+		return Object.assign( {}, config, { speed: 0, autoplay: false } );
 	}
 }
