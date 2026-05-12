@@ -114,10 +114,11 @@ export function CssClassSelector() {
 					onCreate={ create ?? undefined }
 					validate={ validate ?? undefined }
 					limitTags={ TAGS_LIMIT }
-					renderEmptyState={ isAtLimit
-					? ( props ) => <LimitReachedEmptyState { ...props } limitCount={ limitCount! } />
-					: EmptyState
-				}
+					renderEmptyState={
+						isAtLimit
+							? ( props ) => <LimitReachedEmptyState { ...props } limitCount={ limitCount! } />
+							: EmptyState
+					}
 					getLimitTagsText={ ( more ) => (
 						<Chip size="tiny" variant="standard" label={ `+${ more }` } clickable />
 					) }
@@ -209,7 +210,7 @@ const LimitReachedEmptyState = ( { limitCount, ...props }: EmptyStateProps & { l
 		<Typography align="center" variant="caption" sx={ { mb: 2 } }>
 			{ __(
 				/* translators: %s is the maximum number of classes */
-				'You\'ve reached the limit of %s classes. Remove an existing one to create a new class.',
+				"You've reached the limit of %s classes. Remove an existing one to create a new class.",
 				'elementor'
 			).replace( '%s', String( limitCount ) ) }
 		</Typography>
@@ -278,8 +279,11 @@ function useCreateAction() {
 			? ( provider.labels as CreatableAutocompleteProps< StyleDefOption >[ 'entityName' ] )
 			: undefined;
 
+	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult =>
+		validateStyleLabel( newClassLabel, event );
+
 	if ( hasReachedLimit( provider ) ) {
-		return { entityName, isAtLimit: true as const, limitCount: provider.limit };
+		return { entityName, isAtLimit: true as const, limitCount: provider.limit, validate };
 	}
 
 	const create = ( classLabel: string ) => {
@@ -290,9 +294,6 @@ function useCreateAction() {
 			classId: createdId,
 		} );
 	};
-
-	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult =>
-		validateStyleLabel( newClassLabel, event );
 
 	return { create, validate, entityName, isAtLimit: false as const };
 }
