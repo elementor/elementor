@@ -122,7 +122,7 @@ describe( '<DisplayField />', () => {
 		// Act.
 		renderDisplayField();
 
-		// Assert — toolbar toggles (includes `None`); overflow holds `Inline-flex` when grid experiment is off.
+		// Assert.
 		[ 'Block', 'Flex', 'None', 'Inline-block' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
