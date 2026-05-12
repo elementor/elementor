@@ -8,7 +8,13 @@ import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-
 import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
-type Displays = 'block' | 'flex' | 'grid' | 'inline-block' | 'inline-flex' | 'none';
+type Displays =
+	| 'block'
+	| 'flex'
+	| 'grid'
+	| 'inline-block'
+	| 'inline-flex'
+	| 'none';
 
 const DISPLAY_LABEL = __( 'Display', 'elementor' );
 
@@ -32,6 +38,12 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		showTooltip: true,
 	},
 	{
+		value: 'none',
+		renderContent: () => __( 'None', 'elementor' ),
+		label: __( 'None', 'elementor' ),
+		showTooltip: true,
+	},
+	{
 		value: 'inline-block',
 		renderContent: () => __( 'In-blk', 'elementor' ),
 		label: __( 'Inline-block', 'elementor' ),
@@ -41,12 +53,6 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		value: 'inline-flex',
 		renderContent: () => __( 'In-flx', 'elementor' ),
 		label: __( 'Inline-flex', 'elementor' ),
-		showTooltip: true,
-	},
-	{
-		value: 'none',
-		renderContent: () => __( 'None', 'elementor' ),
-		label: __( 'None', 'elementor' ),
 		showTooltip: true,
 	},
 ];
