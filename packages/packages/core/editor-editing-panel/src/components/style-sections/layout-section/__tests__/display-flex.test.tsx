@@ -127,13 +127,16 @@ describe( '<DisplayField />', () => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 
-		const overflowMenuButton = screen
+		const overflowMenuButtons = screen
 			.getAllByRole( 'button' )
-			.find( ( btn ) => btn.getAttribute( 'aria-haspopup' ) === 'menu' );
-		expect( overflowMenuButton ).toBeDefined();
-		fireEvent.click( overflowMenuButton! );
+			.filter( ( btn ) => btn.getAttribute( 'aria-haspopup' ) === 'menu' );
+		expect( overflowMenuButtons ).toHaveLength( 1 );
+		fireEvent.click( overflowMenuButtons[ 0 ] );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Inline-flex' } ) ).not.toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByRole( 'menuitem', { name: 'Inline-flex' } ) ).not.toHaveAttribute(
+			'aria-selected',
+			'true'
+		);
 	} );
 } );
 
