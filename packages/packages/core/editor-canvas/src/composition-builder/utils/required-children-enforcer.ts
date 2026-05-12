@@ -21,25 +21,37 @@ export class RequiredChildrenEnforcer {
 		}
 	}
 
-	private normalizeRequiredChildrenInNode( node: Element ) {
-		if ( node.tagName === this.elementType && this.requiredChildren.length ) {
-			const existingChildTypes = new Set( Array.from( node.children ).map( ( child ) => child.tagName ) );
-			for ( const requiredChild of this.requiredChildren ) {
-				const childType = this.getTemplateNodeTagName( requiredChild );
-				if ( ! childType || existingChildTypes.has( childType ) ) {
-					continue;
-				}
+private normalizeRequiredChildrenInNode( node: Element ): void {
+	this.appendMissingRequiredChildren( node );
 
-				const requiredNode = this.createXmlNodeFromTemplate( requiredChild, node.ownerDocument );
-				node.appendChild( requiredNode );
-				existingChildTypes.add( childType );
-			}
-		}
-
-		for ( const childNode of Array.from( node.children ) ) {
-			this.normalizeRequiredChildrenInNode( childNode );
-		}
+	for ( const childNode of Array.from( node.children ) ) {
+		this.normalizeRequiredChildrenInNode( childNode );
 	}
+}
+
+private appendMissingRequiredChildren( node: Element ): void {
+	if ( node.tagName !== this.elementType || ! this.requiredChildren.length ) {
+		return;
+	}
+
+	const existingChildTypes = new Set(
+		Array.from( node.children ).map( ( child ) => child.tagName )
+	);
+
+	for ( const requiredChild of this.requiredChildren ) {
+		const childType = this.getTemplateNodeTagName( requiredChild );
+
+		if ( ! childType || existingChildTypes.has( childType ) ) {
+			continue;
+		}
+
+		node.appendChild(
+			this.createXmlNodeFromTemplate( requiredChild, node.ownerDocument )
+		);
+
+		existingChildTypes.add( childType );
+	}
+}
 
 	private getTemplateNodeTagName( template: TemplateNode ): string {
 		const elementType = template.elType;
