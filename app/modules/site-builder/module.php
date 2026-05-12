@@ -96,7 +96,7 @@ class Module extends BaseModule {
 		$connect_auth = $this->get_connect_auth();
 
 		if ( ! $connect_auth ) {
-			return null;
+			return [];
 		}
 
 		return [

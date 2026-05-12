@@ -138,10 +138,14 @@ class Manager {
 	public function create_new_kit( $kit_name = '', $settings = [], $active = true ) {
 		$kit_name = $kit_name ? $kit_name : esc_html__( 'Custom', 'elementor' );
 
+		$current_kit = $this->get_active_kit();
+
+		$kit_meta_data = $this->get_meta_to_preserve( $current_kit );
+
 		$id = $this->create( [
 			'post_title' => $kit_name,
 			'settings' => $settings,
-		] );
+		], $kit_meta_data );
 
 		if ( $active ) {
 			update_option( self::OPTION_PREVIOUS, $this->get_active_id() );
@@ -149,6 +153,22 @@ class Manager {
 		}
 
 		return $id;
+	}
+
+	private function get_meta_to_preserve( Kit $current_kit ): array {
+		$meta_keys_to_preserve = apply_filters( 'elementor/kit/meta_to_preserve_on_kit_import', [] );
+
+		$kit_meta_data = [];
+
+		foreach ( $meta_keys_to_preserve as $meta_key ) {
+			$value = $current_kit->get_meta( $meta_key );
+
+			if ( ! empty( $value ) ) {
+				$kit_meta_data[ $meta_key ] = $value;
+			}
+		}
+
+		return $kit_meta_data;
 	}
 
 	public function create_default() {
