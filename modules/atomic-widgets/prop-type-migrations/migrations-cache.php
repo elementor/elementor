@@ -45,6 +45,18 @@ class Migrations_Cache {
 		update_post_meta( $id, $cache_meta_key, self::get_migration_state( $manifest_hash ) );
 	}
 
+	/**
+	 * Clear migration cache for a specific entity
+	 *
+	 * @param int    $id Meta ID, can be post ID or any other unique ID
+	 * @param string $data_identifier Unique identifier for Data. Different DB tables migrate separately, and therefore cached individually
+	 * @return void
+	 */
+	public static function clear_migration_cache( int $id, string $data_identifier ): void {
+		$cache_meta_key = self::get_cache_meta_key( $data_identifier );
+		delete_post_meta( $id, $cache_meta_key );
+	}
+
 	public static function clear_all(): void {
 		global $wpdb;
 
