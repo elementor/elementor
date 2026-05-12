@@ -27,6 +27,7 @@ class Atomic_Widget_Base_Styles {
 		$styles_manager->register(
 			[ self::STYLES_KEY ],
 			fn () => $this->get_all_base_styles(),
+			fn () => false
 		);
 	}
 

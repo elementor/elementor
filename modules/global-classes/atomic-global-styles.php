@@ -50,12 +50,25 @@ class Atomic_Global_Styles {
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->get_document_global_styles( $post_id, $context );
+			$is_dynamic = fn() => $this->is_document_styles_dynamic( $post_id, $context );
 
 			$styles_manager->register(
 				[ self::STYLES_KEY, $post_id, $context ],
-				$get_styles
+				$get_styles,
+				$is_dynamic
 			);
 		}
+	}
+
+	private function is_document_styles_dynamic( int $post_id, string $context ): bool {
+		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
+		$class_ids  = $this->relations->set_preview( $is_preview )->get_styles_by_post( $post_id );
+
+		if ( empty( $class_ids ) ) {
+			return false;
+		}
+
+		return (bool) apply_filters( 'elementor/atomic-widgets/global-classes/has-dynamic', false, $class_ids, $context );
 	}
 
 	private function get_document_global_styles( int $post_id, string $context ): array {

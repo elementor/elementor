@@ -302,7 +302,9 @@ class Global_Classes_Repository {
 	): void {
 		$relations = new Global_Classes_Relations();
 
-		$this->each_class_id_batch( array_values( $to_delete ), function ( string $class_id ) use ( $is_preview, $relations ) {
+		$context = $is_preview ? 'preview' : 'frontend';
+
+		$this->each_class_id_batch( array_values( $to_delete ), function ( string $class_id ) use ( $is_preview, $relations, $context ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
 
 			if ( $post ) {
@@ -315,9 +317,11 @@ class Global_Classes_Repository {
 					$post->delete();
 				}
 			}
+
+			do_action( 'elementor/atomic-widgets/global-classes/persisted', $class_id, null, $context );
 		} );
 
-		$this->each_class_id_batch( $to_create, function ( string $class_id ) use ( $items_by_id, $is_preview ) {
+		$this->each_class_id_batch( $to_create, function ( string $class_id ) use ( $items_by_id, $is_preview, $context ) {
 			if ( ! isset( $items_by_id[ $class_id ] ) ) {
 				return;
 			}
@@ -345,9 +349,11 @@ class Global_Classes_Repository {
 					clean_post_cache( $created->get_post_id() );
 				}
 			}
+
+			do_action( 'elementor/atomic-widgets/global-classes/persisted', $class_id, $data, $context );
 		} );
 
-		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items_by_id, $is_preview ) {
+		$this->each_class_id_batch( $to_update, function ( string $class_id ) use ( $items_by_id, $is_preview, $context ) {
 			if ( ! isset( $items_by_id[ $class_id ] ) ) {
 				return;
 			}
@@ -363,6 +369,8 @@ class Global_Classes_Repository {
 			$post->update_data( $data );
 			$post->update_label( $item['label'] );
 			clean_post_cache( $post->get_post_id() );
+
+			do_action( 'elementor/atomic-widgets/global-classes/persisted', $class_id, $data, $context );
 		} );
 	}
 

@@ -773,4 +773,91 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		$this->assertCount( 2, $remaining_files_with_key, 'All files not nested under the provided keys should remain' );
 	}
+
+	public function test_enqueue__uses_is_dynamic_callback_when_provided_and_returns_true() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs_called = false;
+		$get_style_defs = function () use ( &$get_style_defs_called ) {
+			$get_style_defs_called = true;
+			return $this->get_test_style_defs();
+		};
+
+		$is_dynamic = fn() => true;
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs, $is_dynamic ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs, $is_dynamic );
+		}, 100, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert — inline style registered (not file-based), put_contents never called
+		$this->filesystemMock->expects( $this->never() )->method( 'put_contents' );
+
+		global $wp_styles;
+		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+	}
+
+	public function test_enqueue__uses_is_dynamic_callback_when_provided_and_returns_false() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = fn() => $this->get_test_style_defs();
+		$is_dynamic     = fn() => false;
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		$put_contents_called = 0;
+		$this->filesystemMock->method( 'put_contents' )
+			->willReturnCallback( function () use ( &$put_contents_called ) {
+				$put_contents_called++;
+				return true;
+			} );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs, $is_dynamic ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs, $is_dynamic );
+		}, 100, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert — file cache was used (put_contents called), not inline
+		$this->assertGreaterThan( 0, $put_contents_called );
+	}
+
+	public function test_enqueue__is_dynamic_callback_called_once_regardless_of_breakpoints() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$is_dynamic_call_count = 0;
+		$is_dynamic = function () use ( &$is_dynamic_call_count ) {
+			$is_dynamic_call_count++;
+			return false;
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $is_dynamic ) {
+			$styles_manager->register( [ $this->test_style_key ], fn() => $this->get_test_style_defs(), $is_dynamic );
+		}, 100, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert — is_dynamic called exactly once, not once per breakpoint
+		$this->assertSame( 1, $is_dynamic_call_count );
+	}
 }

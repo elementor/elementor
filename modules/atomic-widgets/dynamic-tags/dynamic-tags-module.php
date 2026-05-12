@@ -2,9 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\DynamicTags\ImportExport\Dynamic_Transformer as Import_Export_Dynamic_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
+use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
+use Elementor\Modules\GlobalClasses\Global_Classes_Dynamic_Index;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Dynamic_Tags_Module {
+
+	const META_KEY_POST_DYNAMIC = '_elementor_post_styles_dynamic';
 
 	private static ?self $instance = null;
 
@@ -77,6 +82,88 @@ class Dynamic_Tags_Module {
 			'elementor/atomic-widgets/export/transformers/register',
 			fn ( $transformers ) => $this->register_import_export_transformer( $transformers )
 		);
+
+		add_action(
+			'elementor/atomic-widgets/global-classes/persisted',
+			fn( string $class_id, ?array $data, string $context ) => $this->mark_global_class( $class_id, $data, $context ),
+			10,
+			3
+		);
+
+		add_action(
+			'elementor/document/after_save',
+			fn( Document $document ) => $this->mark_document( $document ),
+			19,
+			1
+		);
+
+		add_filter(
+			'elementor/atomic-widgets/global-classes/has-dynamic',
+			fn( bool $current, array $class_ids, string $context ) => $current || $this->global_classes_have_dynamic( $class_ids, $context ),
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/atomic-widgets/post-styles/has-dynamic',
+			fn( bool $current, int $post_id ) => $current || '1' === get_post_meta( $post_id, self::META_KEY_POST_DYNAMIC, true ),
+			10,
+			2
+		);
+	}
+
+	private function mark_global_class( string $class_id, ?array $data, string $context ): void {
+		$index = $this->index_for_context( $context );
+
+		if ( ! $index ) {
+			return;
+		}
+
+		if ( null === $data ) {
+			$index->remove( $class_id );
+
+			return;
+		}
+
+		$index->mark( $class_id, Dynamic_Value_Detector::contains_dynamic_value( $data ) );
+	}
+
+	private function mark_document( Document $document ): void {
+		$post_id = $document->get_main_post()->ID;
+		$is_dynamic = false;
+
+		Atomic_Utils::traverse_post_elements( (string) $post_id, function( $element_data ) use ( &$is_dynamic ) {
+			if ( $is_dynamic ) {
+				return;
+			}
+
+			if ( Dynamic_Value_Detector::contains_dynamic_value( $element_data['styles'] ?? [] ) ) {
+				$is_dynamic = true;
+			}
+		} );
+
+		update_post_meta( $post_id, self::META_KEY_POST_DYNAMIC, $is_dynamic ? '1' : '0' );
+	}
+
+	private function global_classes_have_dynamic( array $class_ids, string $context ): bool {
+		$index = $this->index_for_context( $context );
+
+		if ( ! $index ) {
+			return false;
+		}
+
+		return $index->has_any( $class_ids );
+	}
+
+	private function index_for_context( string $context ): ?Global_Classes_Dynamic_Index {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$main_post = $kit->get_main_post();
+
+		if ( ! $main_post || 'trash' === $main_post->post_status ) {
+			return null;
+		}
+
+		return Global_Classes_Dynamic_Index::make( $kit )->set_preview( 'preview' === $context );
 	}
 
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {

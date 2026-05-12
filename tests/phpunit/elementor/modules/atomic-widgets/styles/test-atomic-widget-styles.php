@@ -416,6 +416,50 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
 	}
 
+	public function test_register_styles__passes_is_dynamic_callback_that_delegates_to_filter() {
+		// Arrange.
+		$atomic_widget_styles = new Atomic_Widget_Styles();
+		$atomic_widget_styles->register_hooks();
+
+		$post_id = $this->make_mock_post();
+
+		$captured_post_id = null;
+		$test_filter = function ( $current, $filter_post_id ) use ( &$captured_post_id ) {
+			$captured_post_id = $filter_post_id;
+			return true;
+		};
+		add_filter(
+			'elementor/atomic-widgets/post-styles/has-dynamic',
+			$test_filter,
+			10,
+			2
+		);
+
+		$is_dynamic_passed = null;
+
+		$this->mock_styles_manager
+			->expects( $this->once() )
+			->method( 'register' )
+			->with(
+				$this->anything(),
+				$this->anything(),
+				$this->callback( function ( $cb ) use ( &$is_dynamic_passed ) {
+					$is_dynamic_passed = $cb;
+					return is_callable( $cb );
+				} )
+			);
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $post_id ] );
+		$result = $is_dynamic_passed();
+
+		// Assert - the callback delegates to the filter, returning what the filter returns.
+		$this->assertTrue( $result );
+		$this->assertSame( $post_id, $captured_post_id );
+
+		remove_filter( 'elementor/atomic-widgets/post-styles/has-dynamic', $test_filter, 10 );
+	}
+
 	private function make_mock_post( $elements_data = [] ) {
 		$doc = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [

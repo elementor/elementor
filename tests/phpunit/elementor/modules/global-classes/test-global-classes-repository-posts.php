@@ -4,6 +4,7 @@ namespace Elementor\Tests\Phpunit\Modules\GlobalClasses;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Dynamic_Index;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
@@ -31,6 +32,8 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Dynamic_Index::META_KEY_FRONTEND );
+		$this->kit->delete_meta( Global_Classes_Dynamic_Index::META_KEY_PREVIEW );
 
 		foreach ( $this->created_post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
@@ -251,5 +254,41 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->created_post_ids[] = $ac2->get_post_id();
 		$this->assertNull( Global_Class_Post::find_by_class_id( 'ac-1' ) );
 		$this->assertSame( [ 'ac-2' => 'B' ], Global_Classes_Repository::make()->all_labels() );
+	}
+
+	public function test_zz_dynamic_index__get_ids_starts_empty() {
+		$this->assertSame( [], Global_Classes_Dynamic_Index::make( $this->kit )->get_ids() );
+	}
+
+	public function test_zz_dynamic_index__set_ids_persists_unique_values() {
+		$index = Global_Classes_Dynamic_Index::make( $this->kit );
+		$index->set_ids( [ 'g-1', 'g-2', 'g-1' ] );
+
+		$this->assertSame( [ 'g-1', 'g-2' ], Global_Classes_Dynamic_Index::make( $this->kit )->get_ids() );
+	}
+
+	public function test_zz_dynamic_index__mark_adds_and_removes_ids() {
+		$index = Global_Classes_Dynamic_Index::make( $this->kit );
+		$index->mark( 'g-a', true );
+		$this->assertSame( [ 'g-a' ], $index->get_ids() );
+
+		$index->mark( 'g-a', false );
+		$this->assertSame( [], $index->get_ids() );
+	}
+
+	public function test_zz_dynamic_index__remove_deletes_id() {
+		$index = Global_Classes_Dynamic_Index::make( $this->kit );
+		$index->set_ids( [ 'g-1', 'g-2' ] );
+		$index->remove( 'g-1' );
+
+		$this->assertSame( [ 'g-2' ], $index->get_ids() );
+	}
+
+	public function test_zz_dynamic_index__has_any_detects_intersection() {
+		$index = Global_Classes_Dynamic_Index::make( $this->kit );
+		$index->set_ids( [ 'g-1', 'g-3' ] );
+
+		$this->assertTrue( $index->has_any( [ 'g-2', 'g-3' ] ) );
+		$this->assertFalse( $index->has_any( [ 'g-2' ] ) );
 	}
 }

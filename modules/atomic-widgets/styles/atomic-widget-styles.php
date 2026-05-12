@@ -42,8 +42,9 @@ class Atomic_Widget_Styles {
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
+			$is_dynamic = fn() => (bool) apply_filters( 'elementor/atomic-widgets/post-styles/has-dynamic', false, $post_id );
 
-			$styles_manager->register( [ self::STYLES_KEY, $post_id, $context ], $get_styles );
+			$styles_manager->register( [ self::STYLES_KEY, $post_id, $context ], $get_styles, $is_dynamic );
 		}
 	}
 

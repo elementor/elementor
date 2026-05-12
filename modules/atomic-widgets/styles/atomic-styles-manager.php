@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Memo;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
@@ -57,11 +56,12 @@ class Atomic_Styles_Manager {
 		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $path ) => $this->clear_styles( $path ) );
 	}
 
-	public function register( array $path, callable $get_style_defs ) {
+	public function register( array $path, callable $get_style_defs, ?callable $is_dynamic = null ) {
 		$key = $this->convert_path_to_handle( $path );
 
 		$this->registered_styles_by_key[ $key ] = [
 			'get_styles' => $get_style_defs,
+			'is_dynamic' => $is_dynamic,
 			'path' => $path,
 		];
 	}
@@ -79,6 +79,7 @@ class Atomic_Styles_Manager {
 			->map_with_keys( fn ( $style_params, $style_key ) => [
 				$style_key => [
 					'get_styles' => $get_styles_memo->memoize( $style_key, $style_params['get_styles'] ),
+					'is_dynamic' => $style_params['is_dynamic'],
 					'path' => $style_params['path'],
 				],
 			])
@@ -127,7 +128,7 @@ class Atomic_Styles_Manager {
 				$version = $this->cache_validity->get_meta( $path );
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
 
-				if ( $this->has_dynamic_styles( $style_key, $style_params['get_styles'] ) ) {
+				if ( $this->has_dynamic_styles( $style_key, $style_params['is_dynamic'] ) ) {
 					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
 
 					continue;
@@ -157,9 +158,9 @@ class Atomic_Styles_Manager {
 		}
 	}
 
-	private function has_dynamic_styles( string $style_key, callable $get_styles ): bool {
+	private function has_dynamic_styles( string $style_key, ?callable $is_dynamic = null ): bool {
 		if ( ! array_key_exists( $style_key, $this->dynamic_styles_decisions ) ) {
-			$this->dynamic_styles_decisions[ $style_key ] = self::contains_dynamic_value( $get_styles() );
+			$this->dynamic_styles_decisions[ $style_key ] = $is_dynamic ? (bool) $is_dynamic() : false;
 		}
 
 		return $this->dynamic_styles_decisions[ $style_key ];
@@ -179,24 +180,6 @@ class Atomic_Styles_Manager {
 		wp_register_style( $handle, false, [], $version );
 		wp_enqueue_style( $handle );
 		wp_add_inline_style( $handle, $css );
-	}
-
-	private static function contains_dynamic_value( $value ): bool {
-		if ( ! is_array( $value ) ) {
-			return false;
-		}
-
-		if ( Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
-			return true;
-		}
-
-		foreach ( $value as $item ) {
-			if ( self::contains_dynamic_value( $item ) ) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	private function render_css( array $styles, string $style_key ) {
