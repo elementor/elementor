@@ -74,7 +74,7 @@ export function CssClassSelector() {
 	const [ renameError, setRenameError ] = useState< string | null >( null );
 
 	const handleSelect = useHandleSelect();
-	const { create, validate, entityName } = useCreateAction();
+	const { create, validate, entityName, isAtLimit, limitCount } = useCreateAction();
 
 	const appliedOptions = useAppliedOptions( options );
 	const active = appliedOptions.find( ( option ) => option.value === activeId ) ?? EMPTY_OPTION;
@@ -114,7 +114,10 @@ export function CssClassSelector() {
 					onCreate={ create ?? undefined }
 					validate={ validate ?? undefined }
 					limitTags={ TAGS_LIMIT }
-					renderEmptyState={ EmptyState }
+					renderEmptyState={ isAtLimit
+					? ( props ) => <LimitReachedEmptyState { ...props } limitCount={ limitCount! } />
+					: EmptyState
+				}
 					getLimitTagsText={ ( more ) => (
 						<Chip size="tiny" variant="standard" label={ `+${ more }` } clickable />
 					) }
@@ -166,7 +169,9 @@ export function CssClassSelector() {
 	);
 }
 
-const EmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
+type EmptyStateProps = { searchValue: string; onClear: () => void };
+
+const EmptyStateLayout = ( { searchValue, onClear, children }: EmptyStateProps & { children: React.ReactNode } ) => (
 	<Box sx={ { py: 4 } }>
 		<Stack
 			gap={ 1 }
@@ -181,16 +186,34 @@ const EmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: (
 				<br />
 				&ldquo;{ searchValue }&rdquo;.
 			</Typography>
-			<Typography align="center" variant="caption" sx={ { mb: 2 } }>
-				{ __( 'With your current role,', 'elementor' ) }
-				<br />
-				{ __( 'you can only use existing classes.', 'elementor' ) }
-			</Typography>
+			{ children }
 			<Link color="text.secondary" variant="caption" component="button" onClick={ onClear }>
 				{ __( 'Clear & try again', 'elementor' ) }
 			</Link>
 		</Stack>
 	</Box>
+);
+
+const EmptyState = ( props: EmptyStateProps ) => (
+	<EmptyStateLayout { ...props }>
+		<Typography align="center" variant="caption" sx={ { mb: 2 } }>
+			{ __( 'With your current role,', 'elementor' ) }
+			<br />
+			{ __( 'you can only use existing classes.', 'elementor' ) }
+		</Typography>
+	</EmptyStateLayout>
+);
+
+const LimitReachedEmptyState = ( { limitCount, ...props }: EmptyStateProps & { limitCount: number } ) => (
+	<EmptyStateLayout { ...props }>
+		<Typography align="center" variant="caption" sx={ { mb: 2 } }>
+			{ __(
+				/* translators: %s is the maximum number of classes */
+				'You\'ve reached the limit of %s classes. Remove an existing one to create a new class.',
+				'elementor'
+			).replace( '%s', String( limitCount ) ) }
+		</Typography>
+	</EmptyStateLayout>
 );
 
 const updateClassByProvider = ( provider: string | null, data: UpdateActionPayload ) => {
@@ -256,7 +279,7 @@ function useCreateAction() {
 			: undefined;
 
 	if ( hasReachedLimit( provider ) ) {
-		return { entityName };
+		return { entityName, isAtLimit: true as const, limitCount: provider.limit };
 	}
 
 	const create = ( classLabel: string ) => {
@@ -271,7 +294,7 @@ function useCreateAction() {
 	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult =>
 		validateStyleLabel( newClassLabel, event );
 
-	return { create, validate, entityName };
+	return { create, validate, entityName, isAtLimit: false as const };
 }
 
 function hasReachedLimit( provider: StylesProvider ) {
