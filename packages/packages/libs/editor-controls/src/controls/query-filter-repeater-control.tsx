@@ -3,12 +3,14 @@ import { useMemo, useRef } from 'react';
 import { useSelectedElementSettings } from '@elementor/editor-elements';
 import {
 	type CreateOptions,
+	extractValue,
 	type PropKey,
 	queryFilterArrayPropTypeUtil,
 	type QueryFilterKeyConfig,
 	queryFilterPropTypeUtil,
 	type QueryFilterPropValue,
 	type QueryPropValue,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 import { PlusIcon } from '@elementor/icons';
@@ -143,7 +145,7 @@ const ItemLabel = ( { value, keyConfig }: ItemLabelProps ) => {
 	const label = ( itemKey && keyConfig[ itemKey ]?.label ) || __( 'Item', 'elementor' );
 	const chipLabels = extractChipLabels( value?.value?.values );
 	const taxonomyLabels = extractTaxonomyLabels(
-		value?.value?.taxonomies as TaxonomiesPropValue,
+		value?.value?.taxonomies,
 		itemKey ? keyConfig[ itemKey ] : undefined
 	);
 	const allLabels = [ ...chipLabels, ...taxonomyLabels ];
@@ -281,26 +283,16 @@ export function isKeyVisible(
 		return false;
 	}
 
-	const raw = rule.path.reduce< unknown >( ( acc, segment ) => {
-		if ( acc && typeof acc === 'object' && segment in ( acc as Record< string, unknown > ) ) {
-			return ( acc as Record< string, unknown > )[ segment ];
-		}
-		return undefined;
-	}, settings );
-
-	const extracted = stringPropTypeUtil.extract( raw as Parameters< typeof stringPropTypeUtil.extract >[ 0 ] );
+	const extracted = stringPropTypeUtil.extract( extractValue( rule.path, settings ) );
 
 	return extracted !== null && rule.in.includes( extracted );
 }
 
-type TaxonomiesPropValue = { value?: unknown[] | null } | null | undefined;
-
 function extractTaxonomyLabels(
-	taxonomiesProp: TaxonomiesPropValue,
+	taxonomiesProp: QueryFilterPropValue[ 'value' ][ 'taxonomies' ],
 	config: QueryFilterKeyConfig | undefined
 ): string[] {
-	const items = ( taxonomiesProp?.value ?? [] ) as Parameters< typeof stringPropTypeUtil.extract >[ 0 ][];
-	const slugs = items
+	const slugs = ( stringArrayPropTypeUtil.extract( taxonomiesProp ) ?? [] )
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
 		.filter( ( slug ): slug is string => !! slug );
 
