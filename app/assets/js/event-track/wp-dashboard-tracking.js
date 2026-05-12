@@ -37,6 +37,14 @@ export const SCREEN_TYPES = {
 };
 
 export default class WpDashboardTracking {
+	static anyPageWithElementorString = 'elementor';
+
+	static elementorPages = [
+		this.anyPageWithElementorString,
+		'e-form-submissions',
+		'popup_templates',
+	];
+
 	static elementorPostTypes = [
 		'elementor_library',
 		'e-floating-buttons',
@@ -198,12 +206,9 @@ export default class WpDashboardTracking {
 			const postType = params.get( 'post_type' );
 			const action = params.get( 'action' );
 
-			const anyPageWithElementorString = 'elementor';
-			const elementorPages = [ anyPageWithElementorString, 'e-form-submissions', 'popup_templates' ];
-
-			return !! ( ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
+			return !! ( ( page && this.elementorPages.some( ( p ) => page.includes( p ) ) ) ||
 				( postType && this.elementorPostTypes.includes( postType ) ) ||
-				( action && action.includes( 'elementor' ) ) );
+				( action && action.includes( this.anyPageWithElementorString ) ) );
 		} catch ( error ) {
 			return false;
 		}

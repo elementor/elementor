@@ -5,7 +5,7 @@ export const DashboardUtils = {
 		const urlParams = new URLSearchParams( window.location.search );
 		const page = urlParams.get( 'page' );
 
-		if ( page && ( page.startsWith( 'elementor' ) || page.includes( 'elementor' ) || 'popup_templates' === page ) ) {
+		if ( page && WpDashboardTracking.elementorPages.some( ( p ) => page.includes( p ) ) ) {
 			return true;
 		}
 
