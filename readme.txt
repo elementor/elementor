@@ -357,7 +357,7 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 = 4.0.8 - 2026-05-12 =
 
-Tweak: Updated WordPress compatibility to version 7.0
+* Tweak: Updated WordPress compatibility to version 7.0
 
 = 4.0.7 - 2026-05-06 =
 
