@@ -1,7 +1,7 @@
 name: Cherry Pick Merged PR
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - closed
       - labeled
