@@ -4,9 +4,11 @@ namespace Elementor\Modules\Components\Widgets;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\Transformers\Overridable_Transformer;
+use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -99,5 +101,36 @@ class Component_Instance extends Atomic_Widget_Base {
 		}
 
 		return $overrides;
+	}
+
+	/**
+	 * Get inner elements data for recursive search.
+	 *
+	 * Overrides the parent method to return the origin component's inner elements
+	 * instead of direct children, since Component_Instance stores a reference
+	 * to the origin component rather than containing elements directly.
+	 *
+	 * @access public
+	 *
+	 * @return array Inner elements data from origin component.
+	 */
+	public function get_inner_elements_data_for_search(): array {
+		$settings = $this->get_settings();
+		$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
+
+		if ( $component_id  === null ) {
+			return [];
+		}
+
+		$repository = new Components_Repository();
+		$component = $repository->get( (int) $component_id );
+
+		if ( ! $component ) {
+			return [];
+		}
+
+		$elements_data = $component->get_elements_data();
+
+		return Format_Component_Elements_Id::format( $elements_data, [ $this->get_id() ] );
 	}
 }

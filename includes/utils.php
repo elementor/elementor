@@ -724,22 +724,64 @@ class Utils {
 		return $result;
 	}
 
+	/**
+	 * Find element recursive.
+	 *
+	 * Recursively searches through elements to find an element by its ID.
+	 * This method creates element instances to properly handle elements that
+	 * store inner elements differently (e.g., Component_Instance which
+	 * references an origin component).
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array  $elements Array of element data to search through.
+	 * @param string $id       The element ID to find.
+	 *
+	 * @return array|false The element data if found, false otherwise.
+	 */
 	public static function find_element_recursive( $elements, $id ) {
 		foreach ( $elements as $element ) {
 			if ( $id === $element['id'] ) {
 				return $element;
 			}
 
-			if ( ! empty( $element['elements'] ) ) {
-				$element = self::find_element_recursive( $element['elements'], $id );
+			$inner_elements = self::get_element_inner_elements_for_search( $element );
 
-				if ( $element ) {
-					return $element;
+			if ( ! empty( $inner_elements ) ) {
+				$found = self::find_element_recursive( $inner_elements, $id );
+
+				if ( $found ) {
+					return $found;
 				}
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get inner elements data for recursive search.
+	 *
+	 * Creates an element instance from element data and retrieves its inner
+	 * elements for searching. This allows elements like Component_Instance
+	 * to return their referenced component's elements.
+	 *
+	 * @since 3.29.0
+	 * @access private
+	 *
+	 * @param array $element_data The element data array.
+	 *
+	 * @return array Inner elements data array.
+	 */
+	private static function get_element_inner_elements_for_search( array $element_data ): array {
+		$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+		if ( $element_instance ) {
+			return $element_instance->get_inner_elements_data_for_search();
+		}
+
+		return ! empty( $element_data['elements'] ) ? $element_data['elements'] : [];
 	}
 
 	/**
