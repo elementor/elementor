@@ -2,11 +2,12 @@
 import { isProActive } from '@elementor/utils';
 
 import { service } from '../../service';
-import { generateVariablesPrompt } from '../variable-tool-prompt';
 import { initManageVariableTool } from '../manage-variable-tool';
+import { generateVariablesPrompt } from '../variable-tool-prompt';
 
 jest.mock( '../../service' );
 jest.mock( '@elementor/utils', () => ( {
+	...jest.requireActual( '@elementor/utils' ),
 	isProActive: jest.fn( () => true ),
 } ) );
 jest.mock( '../variable-tool-prompt', () => ( {

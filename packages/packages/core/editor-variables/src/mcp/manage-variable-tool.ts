@@ -1,11 +1,11 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { isProActive } from '@elementor/utils';
 import { z } from '@elementor/schema';
+import { isProActive } from '@elementor/utils';
 
 import { service } from '../service';
 import { validateLabel } from '../utils/validations';
+import { generateVariablesPrompt, MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
-import { MANAGE_VARIABLES_GUIDE_URI, generateVariablesPrompt } from './variable-tool-prompt';
 
 const VARIABLE_TYPES = {
 	COLOR: 'global-color-variable',
@@ -53,14 +53,20 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry, variablesReady: P
 		description: 'Manage V4 global variables (color, font, size). Read the guide resource before use.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
-			id: z.string().optional().describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
+			id: z
+				.string()
+				.optional()
+				.describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
 			type: z
 				.string()
 				.optional()
 				.describe(
 					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable" (requires Elementor Pro). NEVER store px/rem values in a font variable.'
 				),
-			label: z.string().optional().describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
+			label: z
+				.string()
+				.optional()
+				.describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
 			value: z
 				.string()
 				.optional()
@@ -74,7 +80,10 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry, variablesReady: P
 		},
 		requiredResources: [
 			{ uri: MANAGE_VARIABLES_GUIDE_URI, description: 'Full guide for variable types, naming rules, and usage' },
-			{ uri: GLOBAL_VARIABLES_URI, description: 'Current global variables — check before creating to avoid duplicates' },
+			{
+				uri: GLOBAL_VARIABLES_URI,
+				description: 'Current global variables — check before creating to avoid duplicates',
+			},
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
