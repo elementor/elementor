@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createMockPropType, renderControl } from 'test-utils';
+import { createMockPropType, dispatchCommandAfter, renderControl } from 'test-utils';
 import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import { useSessionStorage } from '@elementor/session';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { LinkControl } from '../link-control';
 
@@ -510,6 +510,48 @@ describe( '<LinkControl />', () => {
 
 		// Assert
 		expect( toggleButton ).toBeDisabled();
+	} );
+
+	it( 'should re-evaluate restriction when any element settings change via V1 command', async () => {
+		// Arrange - start unrestricted (sibling LinkControl has no link yet).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( { shouldRestrict: false } );
+
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		// Wait for the on-mount restriction check to settle as unrestricted.
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeEnabled();
+		} );
+
+		const callCountAfterMount = jest.mocked( getLinkInLinkRestriction ).mock.calls.length;
+
+		// Settle: give the on-mount debounced check time to fire (300ms),
+		// and confirm no further calls happen on their own.
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+		const callCountAfterSettle = jest.mocked( getLinkInLinkRestriction ).mock.calls.length;
+		expect( callCountAfterSettle ).toBeGreaterThanOrEqual( callCountAfterMount );
+
+		// Act - simulate a sibling element saving a link (V1 set-settings command).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'sibling-element-id',
+		} );
+
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		// Assert - the V1 command-end event must trigger another restriction
+		// re-check on this control (which has not changed its own value or elementId).
+		await waitFor( () => {
+			expect( jest.mocked( getLinkInLinkRestriction ).mock.calls.length ).toBeGreaterThan( callCountAfterSettle );
+		} );
+
+		// And the control should become disabled.
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeDisabled();
+		} );
 	} );
 
 	it( 'should show tooltip when inline link restriction is active', async () => {

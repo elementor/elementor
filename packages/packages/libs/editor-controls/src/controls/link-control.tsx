@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
+import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
@@ -76,15 +77,19 @@ export const LinkControl = createControl( ( props: Props ) => {
 		[ elementId, isActive, value, linkPlaceholder ]
 	);
 
+	useListenTo(
+		commandEndEvent( 'document/elements/set-settings' ),
+		() => {
+			debouncedCheckRestriction();
+		},
+		[ debouncedCheckRestriction ]
+	);
+
 	useEffect( () => {
 		debouncedCheckRestriction();
 
-		const handleInlineLinkChanged = ( event: Event ) => {
-			const customEvent = event as CustomEvent< { elementId: string } >;
-
-			if ( customEvent.detail.elementId === elementId ) {
-				debouncedCheckRestriction();
-			}
+		const handleInlineLinkChanged = () => {
+			debouncedCheckRestriction();
 		};
 
 		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
