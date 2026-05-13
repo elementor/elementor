@@ -3,13 +3,13 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 type ExtendedWindow = Window & {
-	__angieTopBarEventFired: boolean;
+	__angieTopBarEventDetail: Record< string, unknown >;
 };
 
-const ANGIE_GUIDE_TOGGLE_EVENT = 'elementor/editor/toggle-angie-guide';
+const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
 
 test.describe( 'Angie Top Bar Button @angie-top-bar', () => {
-	test( 'Angie button in tools menu dispatches toggle-angie-guide event', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Angie button in tools menu dispatches create-widget event with top_bar entry point', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
@@ -20,17 +20,20 @@ test.describe( 'Angie Top Bar Button @angie-top-bar', () => {
 
 		// Listen for the custom event before clicking.
 		await page.evaluate( ( eventName ) => {
-			window.addEventListener( eventName, () => {
-				( window as unknown as ExtendedWindow ).__angieTopBarEventFired = true;
+			window.addEventListener( eventName, ( e: CustomEvent ) => {
+				( window as unknown as ExtendedWindow ).__angieTopBarEventDetail = e.detail;
 			} );
-		}, ANGIE_GUIDE_TOGGLE_EVENT );
+		}, CREATE_WIDGET_EVENT );
 
 		await angieButton.click();
 
-		const eventFired = await page.evaluate( () => {
-			return ( window as unknown as ExtendedWindow ).__angieTopBarEventFired;
+		const detail = await page.evaluate( () => {
+			return ( window as unknown as ExtendedWindow ).__angieTopBarEventDetail;
 		} );
 
-		expect( eventFired ).toBe( true );
+		expect( detail ).toMatchObject( {
+			entry_point: 'top_bar',
+			prompt: expect.stringContaining( 'Create a widget for me.' ),
+		} );
 	} );
 } );
