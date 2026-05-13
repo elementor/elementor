@@ -32,10 +32,10 @@ const GridSpanField = ( { cssProp, label }: GridSpanFieldProps ) => (
 export const GridSpanFields = () => (
 	<Grid container gap={ 2 } flexWrap="nowrap">
 		<Grid item xs={ 6 }>
-			<GridSpanField cssProp="grid-column" label={ __( 'Column Span', 'elementor' ) } />
+			<GridSpanField cssProp="grid-column" label={ __( 'Grid column', 'elementor' ) } />
 		</Grid>
 		<Grid item xs={ 6 }>
-			<GridSpanField cssProp="grid-row" label={ __( 'Row Span', 'elementor' ) } />
+			<GridSpanField cssProp="grid-row" label={ __( 'Grid row', 'elementor' ) } />
 		</Grid>
 	</Grid>
 );
