@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type SyntheticEvent } from 'react';
 import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { Autocomplete, Chip, TextField } from '@elementor/ui';
+import { Autocomplete, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { ChipsList } from '../components/chips-list';
