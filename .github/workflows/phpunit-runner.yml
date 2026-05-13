@@ -40,7 +40,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
