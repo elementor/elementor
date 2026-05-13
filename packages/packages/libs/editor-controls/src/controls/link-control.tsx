@@ -70,11 +70,15 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 				if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
 					setIsActive( false );
+
+					if ( value !== null ) {
+						setValue( null );
+					}
 				}
 
 				setLinkInLinkRestriction( newRestriction );
 			}, 300 ),
-		[ elementId, isActive, value, linkPlaceholder ]
+		[ elementId, isActive, value, linkPlaceholder, setValue ]
 	);
 
 	useListenTo(

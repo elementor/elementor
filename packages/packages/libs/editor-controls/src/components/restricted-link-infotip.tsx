@@ -5,6 +5,8 @@ import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertAction, AlertTitle, Box, Infotip, Link } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useLinkNavigationContext } from '../context/link-navigation-context';
+
 const learnMoreButton = {
 	label: __( 'Learn More', 'elementor' ),
 	href: 'https://go.elementor.com/element-link-inside-link-infotip',
@@ -32,6 +34,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 	children,
 } ) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
+	const { showTakeMeThereButton } = useLinkNavigationContext();
 
 	const handleTakeMeClick = () => {
 		if ( elementId ) {
@@ -45,14 +48,16 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			icon={ <InfoCircleFilledIcon /> }
 			size="small"
 			action={
-				<AlertAction
-					sx={ { width: 'fit-content' } }
-					variant="contained"
-					color="secondary"
-					onClick={ handleTakeMeClick }
-				>
-					{ __( 'Take me there', 'elementor' ) }
-				</AlertAction>
+				showTakeMeThereButton && elementId ? (
+					<AlertAction
+						sx={ { width: 'fit-content' } }
+						variant="contained"
+						color="secondary"
+						onClick={ handleTakeMeClick }
+					>
+						{ __( 'Take me there', 'elementor' ) }
+					</AlertAction>
+				) : undefined
 			}
 		>
 			<AlertTitle>{ __( 'Nested links', 'elementor' ) }</AlertTitle>

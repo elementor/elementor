@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
 	ControlReplacementsProvider,
 	getControlReplacements,
+	HideTakeMeThereProvider,
 	PropKeyProvider,
 	PropProvider,
 	type SetValueMeta,
@@ -193,35 +194,39 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	};
 
 	return (
-		<OverridablePropProvider
-			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
-			componentInstanceElement={ componentInstanceElement }
-		>
-			<ElementProvider
-				element={ { id: elementId, type: elementType.key } }
-				elementType={ elementType }
-				settings={ resolvedElementSettings }
+		<HideTakeMeThereProvider>
+			<OverridablePropProvider
+				value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
+				componentInstanceElement={ componentInstanceElement }
 			>
-				<PropProvider
-					propType={ propTypeSchema }
-					value={ value }
-					setValue={ setValue }
-					baseValue={ baseValue }
-					isDisabled={ isDisabled }
+				<ElementProvider
+					element={ { id: elementId, type: elementType.key } }
+					elementType={ elementType }
+					settings={ resolvedElementSettings }
 				>
-					<PropKeyProvider bind={ overridableProp.overrideKey }>
-						<ControlReplacementsProvider replacements={ controlReplacements }>
-							<Box mb={ 1.5 }>
-								<ControlTypeContainer layout={ layout }>
-									{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
-									<OriginalControl control={ control } controlProps={ controlProps } />
-								</ControlTypeContainer>
-							</Box>
-						</ControlReplacementsProvider>
-					</PropKeyProvider>
-				</PropProvider>
-			</ElementProvider>
-		</OverridablePropProvider>
+					<PropProvider
+						propType={ propTypeSchema }
+						value={ value }
+						setValue={ setValue }
+						baseValue={ baseValue }
+						isDisabled={ isDisabled }
+					>
+						<PropKeyProvider bind={ overridableProp.overrideKey }>
+							<ControlReplacementsProvider replacements={ controlReplacements }>
+								<Box mb={ 1.5 }>
+									<ControlTypeContainer layout={ layout }>
+										{ layout !== 'custom' && (
+											<ControlLabel>{ overridableProp.label }</ControlLabel>
+										) }
+										<OriginalControl control={ control } controlProps={ controlProps } />
+									</ControlTypeContainer>
+								</Box>
+							</ControlReplacementsProvider>
+						</PropKeyProvider>
+					</PropProvider>
+				</ElementProvider>
+			</OverridablePropProvider>
+		</HideTakeMeThereProvider>
 	);
 }
 

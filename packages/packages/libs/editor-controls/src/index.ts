@@ -104,6 +104,7 @@ export {
 	type ControlReplacement,
 } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { HideTakeMeThereProvider } from './context/link-navigation-context';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';

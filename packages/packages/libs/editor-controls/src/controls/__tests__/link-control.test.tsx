@@ -4,6 +4,7 @@ import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } f
 import { useSessionStorage } from '@elementor/session';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { HideTakeMeThereProvider } from '../../context/link-navigation-context';
 import { LinkControl } from '../link-control';
 
 const propType = createMockPropType( {
@@ -554,6 +555,54 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
+	it( 'should clear partial value when restriction forcibly closes the active control', async () => {
+		// Arrange - control is active with a non-null value, restriction is initially absent.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( { shouldRestrict: false } );
+
+		const setValueSpy = jest.fn();
+		const props = {
+			...baseProps,
+			setValue: setValueSpy,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: {
+						$$type: 'url',
+						value: 'https://partial',
+					},
+					isTargetBlank: {
+						$$type: 'boolean',
+						value: false,
+					},
+				},
+			},
+		};
+
+		renderControl( <LinkControl { ...globalProps } />, props );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeEnabled();
+		} );
+
+		setValueSpy.mockClear();
+
+		// Act - sibling/ancestor gains a link, restriction becomes active.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'ancestor-id',
+		} );
+
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		// Assert - setValue(null) must be called so the partial URL is cleared.
+		await waitFor( () => {
+			expect( setValueSpy ).toHaveBeenCalledWith( null );
+		} );
+	} );
+
 	it( 'should show tooltip when inline link restriction is active', async () => {
 		// Arrange
 		const inlineLinkRestriction: LinkInLinkRestriction = {
@@ -574,5 +623,31 @@ describe( '<LinkControl />', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
 		} );
+	} );
+
+	it( 'should hide "Take me there" button when wrapped with HideTakeMeThereProvider', async () => {
+		// Arrange
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'ancestor-id',
+		} );
+
+		// Act
+		renderControl(
+			<HideTakeMeThereProvider>
+				<LinkControl { ...globalProps } placeholder="test" />
+			</HideTakeMeThereProvider>,
+			baseProps
+		);
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		// Assert - infotip text still shown, but the CTA button is absent.
+		await waitFor( () => {
+			expect( screen.getByText( 'from its parent container', { exact: false } ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
 	} );
 } );
