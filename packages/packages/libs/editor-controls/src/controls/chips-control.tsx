@@ -6,6 +6,7 @@ import { Autocomplete, Chip, TextField } from '@elementor/ui';
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
+import { ChipsList } from '../components/chips-list';
 
 export type ChipsOption = {
 	label: string;
@@ -54,14 +55,6 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
 				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
 				renderInput={ ( params ) => <TextField { ...params } /> }
-<<<<<<< HEAD
-				renderTags={ ( values, getTagProps ) =>
-					values.map( ( option, index ) => {
-						const { key, ...chipProps } = getTagProps( { index } );
-						return <Chip key={ key } size="tiny" label={ option.label } { ...chipProps } />;
-					} )
-				}
-=======
 				renderTags={ ( tagValues, getTagProps ) => (
 					<ChipsList
 						getLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
@@ -69,7 +62,6 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 						values={ tagValues }
 					/>
 				) }
->>>>>>> 8eaeebe394 (Internal: [V4] form actions email 2 [ED-23842])
 			/>
 		</ControlActions>
 	);
