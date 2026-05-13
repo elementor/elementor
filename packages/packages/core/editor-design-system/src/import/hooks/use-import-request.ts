@@ -1,5 +1,5 @@
 import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
-import { reloadCurrentDocument } from '@elementor/editor-documents';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
 
@@ -33,12 +33,12 @@ export const useImportRequest = () => {
 	return useMutation( {
 		mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ],
 		mutationFn: async ( { file, conflictStrategy }: ImportRequestArgs ): Promise< void > => {
+			await runCommand( 'document/save/auto', { force: true } );
+
 			const session = await uploadKit( file );
 			const runners = await startImport( session, conflictStrategy );
 
 			await runRunners( session, runners );
-
-			await reloadCurrentDocument();
 
 			window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT ) );
 		},
