@@ -18,7 +18,6 @@ export function useFilterOptions< TOption extends Option >( parameters: {
 
 	const filter = createFilterOptions< InternalOption< TOption > >( {
 		matchFrom: 'any',
-		stringify: ( option ) => normalizeClassSearch( option.label ),
 	} );
 
 	const filterOptions = (
