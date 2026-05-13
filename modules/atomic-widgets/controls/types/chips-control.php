@@ -28,14 +28,8 @@ class Chips_Control extends Atomic_Control_Base {
 		];
 	}
 
-	public function allow_free_chips(): self {
-		$this->free_chips = true;
-
-		return $this;
-	}
-
-	public function block_free_chips(): self {
-		$this->free_chips = false;
+	public function set_free_chips( bool $free_chips ): self {
+		$this->free_chips = $free_chips;
 
 		return $this;
 	}

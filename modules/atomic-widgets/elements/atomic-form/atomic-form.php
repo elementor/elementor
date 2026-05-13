@@ -429,7 +429,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			];
 
 			$email_controls[] = Email_Form_Action_Control::bind_to( $key )
-				->allow_free_chips()
+				->set_free_chips( true )
 				->set_label( $label )
 				->set_meta( [ 'topDivider' => true ] );
 		}

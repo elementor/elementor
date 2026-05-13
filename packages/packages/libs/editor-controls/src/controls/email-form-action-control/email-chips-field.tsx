@@ -8,7 +8,7 @@ import { ChipsList } from '../../components/chips-list';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { CHIP_TRIGGER_KEYS, isValidEmail } from './utils';
 
-type EmailChip = { label: string; value: string };
+// type EmailChip = { label: string; value: string };
 
 type EmailChipsFieldProps = {
 	fieldLabel: string;
@@ -25,8 +25,6 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 		.map( ( item ) => stringPropTypeUtil.extract( item ) )
 		.filter( ( val ): val is string => val !== null );
 
-	const selectedChips: EmailChip[] = selectedValues.map( ( addr ) => ( { label: addr, value: addr } ) );
-
 	const tryAddChip = ( raw: string ) => {
 		const address = raw.trim();
 
@@ -38,24 +36,16 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 		setInputValue( '' );
 	};
 
-	const handleChange = ( _: SyntheticEvent, newValue: ( EmailChip | string )[] ) => {
-		const unique = new Set< string >();
+	const handleChange = ( _: SyntheticEvent, newValue: string[] ) => {
 		const updated = [];
 
 		for ( const entry of newValue ) {
-			const address = ( typeof entry === 'string' ? entry : entry.value ).trim();
+			const address = entry.trim();
 
-			if ( ! address || unique.has( address ) ) {
+			if ( ! address || ! isValidEmail( address ) ) {
 				continue;
 			}
 
-			const isExisting = selectedValues.includes( address );
-
-			if ( ! isExisting && ! isValidEmail( address ) ) {
-				continue;
-			}
-
-			unique.add( address );
 			updated.push( stringPropTypeUtil.create( address ) );
 		}
 
@@ -95,21 +85,17 @@ export const EmailChipsField = ( { fieldLabel, placeholder }: EmailChipsFieldPro
 							setInputValue( val );
 						}
 					} }
-					value={ selectedChips }
+					value={ selectedValues }
 					onChange={ handleChange }
-					options={ [] as EmailChip[] }
+					options={ [] }
 					onBlur={ handleBlur }
-					getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
-					isOptionEqualToValue={ ( option, val ) => option.value === val.value }
+					getOptionLabel={ ( option ) => option }
+					isOptionEqualToValue={ ( option, val ) => option === val }
 					renderInput={ ( params ) => (
 						<TextField { ...params } placeholder={ placeholder } onKeyDown={ handleKeyDown } />
 					) }
 					renderTags={ ( tagValues, getTagProps ) => (
-						<ChipsList
-							getLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
-							getTagProps={ getTagProps }
-							values={ tagValues }
-						/>
+						<ChipsList getLabel={ ( option ) => option } getTagProps={ getTagProps } values={ tagValues } />
 					) }
 				/>
 			</Grid>
