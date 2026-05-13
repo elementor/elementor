@@ -94,6 +94,10 @@ class Module extends BaseModule {
 			return;
 		}
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
 		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><?php echo esc_html__( 'Try for free', 'elementor' ); ?></button>

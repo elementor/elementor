@@ -1,0 +1,72 @@
+import * as React from 'react';
+import { act } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+
+import { AngieGuideLocation } from '../angie-guide-location';
+import { ANGIE_GUIDE_TOGGLE_EVENT } from '../../angie-consts';
+
+const mockAngieGuideCardProps = jest.fn();
+
+jest.mock( '../angie-guide-card', () => ( {
+	AngieGuideCard: ( props: Record< string, unknown > ) => {
+		mockAngieGuideCardProps( props );
+		return <div data-testid="angie-guide-card" />;
+	},
+} ) );
+
+jest.mock( '../../hooks/use-auto-show', () => ( {
+	useAutoShow: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/events', () => ( {
+	useMixpanel: () => ( { dispatchEvent: jest.fn() } ),
+} ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+const mockIsAdmin = ( isAdmin: boolean ) => {
+	jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
+		isAdmin,
+		canUser: jest.fn(),
+		capabilities: [],
+	} );
+};
+
+describe( 'AngieGuideLocation', () => {
+	beforeEach( () => {
+		mockAngieGuideCardProps.mockReset();
+	} );
+
+	it( 'passes onInstall to AngieGuideCard when user is admin', () => {
+		// Arrange.
+		mockIsAdmin( true );
+		renderWithTheme( <AngieGuideLocation /> );
+
+		// Act — open the popover.
+		act( () => {
+			window.dispatchEvent( new CustomEvent( ANGIE_GUIDE_TOGGLE_EVENT ) );
+		} );
+
+		// Assert.
+		expect( mockAngieGuideCardProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { onInstall: expect.any( Function ) } )
+		);
+	} );
+
+	it( 'passes undefined onInstall to AngieGuideCard when user is not admin', () => {
+		// Arrange.
+		mockIsAdmin( false );
+		renderWithTheme( <AngieGuideLocation /> );
+
+		// Act — open the popover.
+		act( () => {
+			window.dispatchEvent( new CustomEvent( ANGIE_GUIDE_TOGGLE_EVENT ) );
+		} );
+
+		// Assert.
+		expect( mockAngieGuideCardProps ).toHaveBeenCalledWith(
+			expect.objectContaining( { onInstall: undefined } )
+		);
+	} );
+} );

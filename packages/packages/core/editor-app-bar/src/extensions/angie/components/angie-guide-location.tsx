@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { useMixpanel } from '@elementor/events';
 import { Infotip } from '@elementor/ui';
 
@@ -20,6 +21,7 @@ export function AngieGuideLocation() {
 	useAutoShow();
 	const [ anchorEl, setAnchorEl ] = useState< Element | null >( null );
 	const { dispatchEvent } = useMixpanel();
+	const { isAdmin } = useCurrentUserCapabilities();
 
 	const isOpen = Boolean( anchorEl );
 
@@ -65,7 +67,7 @@ export function AngieGuideLocation() {
 						imageUrl={ ANGIE_TOP_BAR_PROMOTION_IMAGE_URL }
 						description={ ANGIE_TOP_BAR_DESCRIPTION }
 						learnMoreUrl={ ANGIE_LEARN_MORE_URL }
-						onInstall={ handleInstall }
+						onInstall={ isAdmin ? handleInstall : undefined }
 						onClose={ handleClose }
 					/>
 				}

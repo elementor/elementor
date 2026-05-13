@@ -152,6 +152,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 											<Typography variant="body2" color="text.secondary">
 												{ __( 'I agree to the', 'elementor' ) }
 												<Link
+													sx={{ px: 0.5 }}
 													href="https://elementor.com/terms/angie-terms-conditions/"
 													target="_blank"
 													rel="noopener noreferrer"
@@ -160,6 +161,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 												</Link>
 												{ __( '&', 'elementor' ) }
 												<Link
+													sx={{ px: 0.5 }}
 													href="https://elementor.com/about/privacy/"
 													target="_blank"
 													rel="noopener noreferrer"
