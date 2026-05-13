@@ -5,8 +5,11 @@ namespace Elementor\Modules\WidgetCreation;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
+<<<<<<< ED-23998-show-angie-guide-for-existing-sites
 use Elementor\Plugin;
 use Elementor\User;
+=======
+>>>>>>> main
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -55,6 +58,7 @@ class AngiePromotion {
 	}
 
 	private static function register_for_existing_site( array $settings ): array {
+<<<<<<< ED-23998-show-angie-guide-for-existing-sites
 		if ( Upgrade_Manager::is_new_installation() ) {
 			return $settings;
 		}
@@ -77,6 +81,9 @@ class AngiePromotion {
 		update_option( self::ANGIE_GUIDE_AUTO_SHOWN_OPTION, 'yes' );
 		$settings['angie']['autoShow'] = true;
 
+=======
+		// Cases 2 & 3 (ED-23998, ED-23999) will be implemented here.
+>>>>>>> main
 		return $settings;
 	}
 }
