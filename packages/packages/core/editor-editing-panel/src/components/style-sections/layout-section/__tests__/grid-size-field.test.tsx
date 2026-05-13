@@ -94,7 +94,7 @@ describe( '<GridSizeFields />', () => {
 		expect( inputs[ 1 ] ).toHaveValue( 2 );
 	} );
 
-	it( 'should persist a new fr value as a size prop', () => {
+	it( 'should persist a new fr value as a grid-track-size prop', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		jest.mocked( useStylesFields ).mockReturnValue( {
@@ -111,7 +111,7 @@ describe( '<GridSizeFields />', () => {
 		// Assert.
 		expect( setValues ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				'grid-template-columns': { $$type: 'size', value: { size: 4, unit: 'fr' } },
+				'grid-template-columns': { $$type: 'grid-track-size', value: { size: 4, unit: 'fr' } },
 			} ),
 			expect.anything()
 		);

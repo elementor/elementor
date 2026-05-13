@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
@@ -345,10 +346,10 @@ class Style_Schema {
 			'flex' => Flex_Prop_Type::make(),
 			'grid-template-columns' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
+				->add_prop_type( Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
 			'grid-template-rows' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
+				->add_prop_type( Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),

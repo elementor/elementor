@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { ControlActions, createControl, SizeComponent, useBoundProp } from '@elementor/editor-controls';
-import { type PropValue, sizePropTypeUtil, type SizePropValue, stringPropTypeUtil } from '@elementor/editor-props';
+import {
+	gridTrackSizePropTypeUtil,
+	type GridTrackSizePropValue,
+	type PropValue,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -35,7 +40,7 @@ const parseString = ( css: string | null ): GridTrackValue => {
 	return { kind: 'custom', raw: css };
 };
 
-const parseSize = ( size: SizePropValue[ 'value' ] | null ): GridTrackValue => {
+const parseGridTrackSize = ( size: GridTrackSizePropValue[ 'value' ] | null ): GridTrackValue => {
 	if ( ! size ) {
 		return EMPTY;
 	}
@@ -43,19 +48,16 @@ const parseSize = ( size: SizePropValue[ 'value' ] | null ): GridTrackValue => {
 		const n = Number( size.size );
 		return Number.isFinite( n ) && n >= 1 ? { kind: 'fr', count: Math.trunc( n ) } : EMPTY;
 	}
-	if ( size.unit === CUSTOM ) {
-		const raw = String( size.size ?? '' );
-		return raw === '' ? EMPTY : { kind: 'custom', raw };
-	}
-	return EMPTY;
+	const raw = String( size.size ?? '' );
+	return raw === '' ? EMPTY : { kind: 'custom', raw };
 };
 
 const parseValue = ( value: PropValue | undefined | null ): GridTrackValue => {
 	if ( ! value ) {
 		return EMPTY;
 	}
-	if ( sizePropTypeUtil.isValid( value ) ) {
-		return parseSize( sizePropTypeUtil.extract( value ) );
+	if ( gridTrackSizePropTypeUtil.isValid( value ) ) {
+		return parseGridTrackSize( gridTrackSizePropTypeUtil.extract( value ) );
 	}
 	if ( stringPropTypeUtil.isValid( value ) ) {
 		return parseString( stringPropTypeUtil.extract( value ) );
@@ -79,9 +81,9 @@ const toPropValue = ( v: GridTrackValue ): PropValue => {
 		case 'empty':
 			return null;
 		case 'fr':
-			return sizePropTypeUtil.create( { size: v.count, unit: FR } );
+			return gridTrackSizePropTypeUtil.create( { size: v.count, unit: FR } );
 		case 'custom':
-			return sizePropTypeUtil.create( { size: v.raw, unit: CUSTOM } );
+			return gridTrackSizePropTypeUtil.create( { size: v.raw, unit: CUSTOM } );
 	}
 };
 
