@@ -73,8 +73,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Install Dependencies
@@ -88,8 +86,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 7.4
@@ -101,8 +97,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.0'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 8.0
@@ -114,8 +108,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 8.1

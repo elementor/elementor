@@ -13,8 +13,6 @@ runs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
     - name: Remove Composer GitHub OAuth token
       shell: bash
       run: composer config --global --unset github-oauth.github.com || true

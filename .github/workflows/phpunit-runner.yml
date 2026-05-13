@@ -46,8 +46,6 @@ jobs:
         with:
           php-version: ${{ matrix.php_versions }}
           coverage: none
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
       - name: Install Dependencies
