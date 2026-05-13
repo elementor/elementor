@@ -39,6 +39,7 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+		AngiePromotion::init();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'maybe_register_custom_widgets_category_fallback' ], 100 );
