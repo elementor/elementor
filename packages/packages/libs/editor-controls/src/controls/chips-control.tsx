@@ -4,9 +4,9 @@ import { stringArrayPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-p
 import { Autocomplete, Chip, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
+import { ChipsList } from '../components/chips-list';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
-import { ChipsList } from '../components/chips-list';
 
 export type ChipsOption = {
 	label: string;
