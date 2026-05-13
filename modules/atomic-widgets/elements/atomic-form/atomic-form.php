@@ -39,7 +39,6 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	public static $widget_description = 'A form container that holds form field widgets (labels, inputs, textareas, checkboxes, submit button) and status messages.';
 
-	public const EMAIL_ACTION_COUNT = 2;
 	public const ACTION_EMAIL = 'email';
 	public const ACTION_COLLECT_SUBMISSIONS = 'collect-submissions';
 	public const ACTION_WEBHOOK = 'webhook';
@@ -402,7 +401,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		$props = [];
 		$default_value = self::get_default_email_value();
 
-		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
+		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
 			$key = self::get_email_action_key( $i );
 
 			$props[ $key ] = Emails_Prop_Type::make()
@@ -419,7 +418,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		$form_action_chips = [];
 		$email_controls = [];
 
-		for ( $i = 0; $i < self::EMAIL_ACTION_COUNT; $i++ ) {
+		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
 			$key = self::get_email_action_key( $i );
 			$label = self::get_email_action_label( $i );
 
@@ -473,5 +472,9 @@ class Atomic_Form extends Atomic_Element_Base {
 				'effect' => 'hide',
 			] )
 			->get();
+	}
+
+	private static function get_email_action_count(): int {
+		return apply_filters( 'elementor/atomic/form/email_action_count', 1 );
 	}
 }
