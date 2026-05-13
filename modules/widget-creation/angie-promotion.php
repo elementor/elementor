@@ -40,7 +40,7 @@ class AngiePromotion {
 			return $settings;
 		}
 
-		$editor_visit_count = (int) get_option( Elementor_Counter::EDITOR_COUNTER_KEY, 0 );
+		$editor_visit_count = Elementor_Counter::instance()->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 
 		if ( $editor_visit_count <= 2 ) {
 			return $settings;

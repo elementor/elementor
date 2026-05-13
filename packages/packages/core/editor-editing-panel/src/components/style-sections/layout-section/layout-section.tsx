@@ -112,7 +112,7 @@ const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: stri
 const GridChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
 	<>
 		<PanelDivider />
-		<ControlFormLabel>{ __( 'Grid Child', 'elementor' ) }</ControlFormLabel>
+		<ControlFormLabel>{ __( 'Grid child', 'elementor' ) }</ControlFormLabel>
 		<GridSpanFields />
 		<AlignSelfGridChild parentStyleDirection={ parentStyleDirection } />
 		<FlexOrderField />
