@@ -4,6 +4,7 @@ import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
+import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
@@ -13,7 +14,6 @@ import { downloadBlob } from '../../export/download';
 import { IMPORT_DESIGN_SYSTEM_MUTATION_KEY } from '../hooks/use-import-request';
 import { ImportDesignSystemDialog } from '../import-design-system-dialog';
 import { trackDesignSystem } from '../tracking';
-import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 
 jest.mock( '@elementor/http-client', () => ( {
 	httpService: jest.fn(),
@@ -131,7 +131,9 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		const file = submitImport();
 
-		await waitFor( () => expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } ) );
+		await waitFor( () =>
+			expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } )
+		);
 
 		const inProgressCall = ( notify as jest.Mock ).mock.calls.find(
 			( [ payload ] ) => payload.id === 'design-system-import-started'
@@ -201,7 +203,9 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		submitImport();
 
-		await waitFor( () => expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } ) );
+		await waitFor( () =>
+			expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } )
+		);
 
 		const errorCall = await waitFor(
 			() => {
