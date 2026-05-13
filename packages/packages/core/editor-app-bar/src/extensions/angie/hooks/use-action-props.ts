@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { AI_WIDGET_CTA_VIEWED_EVENT, ANGIE_GUIDE_TOGGLE_EVENT } from '../angie-consts';
 
-export default function useActionProps() {
+export function useActionProps() {
 	const hasAngieInstalled = isAngieAvailable();
 	const visible = ! hasAngieInstalled;
 
