@@ -129,6 +129,14 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 	}
 	const propKey = elementPropSchema[ propertyName ].key;
 	const value = resolvePropValue( propertyValue, propKey );
+	const { valid, jsonSchema } = Schema.validatePropValue( elementPropSchema[ propertyName ], propertyValue );
+	if ( ! valid ) {
+		throw new Error(
+			`Invalid PropValue for elementId: ${ elementId }. PropKey: ${ propKey }, PropValue: ${ JSON.stringify(
+				propertyValue
+			) }\nExpected Schema: ${ jsonSchema }`
+		);
+	}
 	updateElementSettings( {
 		id: elementId,
 		props: {
