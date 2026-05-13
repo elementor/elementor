@@ -5,8 +5,9 @@ import { type SetValueMeta } from '../../bound-prop-context';
 type LengthUnit = 'px' | '%' | 'em' | 'rem' | 'vw' | 'vh' | 'ch';
 type AngleUnit = 'deg' | 'rad' | 'grad' | 'turn';
 type TimeUnit = 's' | 'ms';
+type GridTrackUnit = 'fr';
 
-type Unit = LengthUnit | AngleUnit | TimeUnit;
+type Unit = LengthUnit | AngleUnit | TimeUnit | GridTrackUnit;
 
 export type ExtendedSizeOption = 'auto' | 'custom';
 

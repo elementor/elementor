@@ -25,6 +25,12 @@ export const sizePropTypeUtil = createPropUtils(
 		)
 		.or(
 			z.strictObject( {
+				unit: z.literal( 'fr' ),
+				size: sizeNumberOrEmpty,
+			} )
+		)
+		.or(
+			z.strictObject( {
 				unit: z.literal( 'auto' ),
 				size: z.literal( '' ),
 			} )

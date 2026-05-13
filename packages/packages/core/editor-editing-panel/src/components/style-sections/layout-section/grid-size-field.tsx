@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { ControlActions, createControl, SizeComponent, useBoundProp } from '@elementor/editor-controls';
-import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil, type SizePropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -20,9 +20,10 @@ const UNITS: GridTrackUnit[] = [ FR, CUSTOM ];
 
 const EMPTY: GridTrackValue = { kind: 'empty' };
 
+// Backward-compat: legacy values were stored as `{$$type:'string', value:'repeat(N, 1fr)'}`.
 const REPEAT_FR_PATTERN = /^repeat\(\s*(\d+)\s*,\s*1fr\s*\)$/;
 
-const parseCss = ( css: string | null ): GridTrackValue => {
+const parseString = ( css: string | null ): GridTrackValue => {
 	if ( ! css ) {
 		return EMPTY;
 	}
@@ -32,6 +33,34 @@ const parseCss = ( css: string | null ): GridTrackValue => {
 		return count >= 1 ? { kind: 'fr', count } : EMPTY;
 	}
 	return { kind: 'custom', raw: css };
+};
+
+const parseSize = ( size: SizePropValue[ 'value' ] | null ): GridTrackValue => {
+	if ( ! size ) {
+		return EMPTY;
+	}
+	if ( size.unit === FR ) {
+		const n = Number( size.size );
+		return Number.isFinite( n ) && n >= 1 ? { kind: 'fr', count: Math.trunc( n ) } : EMPTY;
+	}
+	if ( size.unit === CUSTOM ) {
+		const raw = String( size.size ?? '' );
+		return raw === '' ? EMPTY : { kind: 'custom', raw };
+	}
+	return EMPTY;
+};
+
+const parseValue = ( value: PropValue | undefined | null ): GridTrackValue => {
+	if ( ! value ) {
+		return EMPTY;
+	}
+	if ( sizePropTypeUtil.isValid( value ) ) {
+		return parseSize( sizePropTypeUtil.extract( value ) );
+	}
+	if ( stringPropTypeUtil.isValid( value ) ) {
+		return parseString( stringPropTypeUtil.extract( value ) );
+	}
+	return EMPTY;
 };
 
 const fromSizeInput = ( v: { size: number | string; unit: GridTrackUnit } ): GridTrackValue => {
@@ -45,14 +74,14 @@ const fromSizeInput = ( v: { size: number | string; unit: GridTrackUnit } ): Gri
 	return { kind: 'custom', raw: String( v.size ) };
 };
 
-const toCss = ( v: GridTrackValue ): string | null => {
+const toPropValue = ( v: GridTrackValue ): PropValue => {
 	switch ( v.kind ) {
 		case 'empty':
 			return null;
 		case 'fr':
-			return `repeat(${ v.count }, 1fr)`;
+			return sizePropTypeUtil.create( { size: v.count, unit: FR } );
 		case 'custom':
-			return v.raw;
+			return sizePropTypeUtil.create( { size: v.raw, unit: CUSTOM } );
 	}
 };
 
@@ -132,15 +161,15 @@ const GridTrackSizeInput = createControl( ( props: GridTrackSizeInputProps ) => 
 ) );
 
 const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
-	const { value, setValue } = useStylesField< StringPropValue | null >( cssProp, {
+	const { value, setValue } = useStylesField< PropValue >( cssProp, {
 		history: { propDisplayName: label },
 	} );
 
 	const { placeholder: inheritedPlaceholder } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
 
-	const local = parseCss( stringPropTypeUtil.extract( value ) );
-	const inherited = parseCss( stringPropTypeUtil.extract( inheritedPlaceholder ) );
+	const local = parseValue( value );
+	const inherited = parseValue( inheritedPlaceholder );
 
 	const displayValue = local.kind !== 'empty' ? toSizeInput( local ) : toSizeInput( EMPTY, unitOf( inherited ) );
 	const placeholder = toPlaceholder( inherited );
@@ -152,8 +181,7 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 			return;
 		}
 
-		const css = toCss( next );
-		setValue( css === null ? null : { $$type: 'string', value: css } );
+		setValue( toPropValue( next ) );
 	};
 
 	return (

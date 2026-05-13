@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,26 +30,7 @@ class Style_Schema {
 			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
 		}
 
-		foreach ( [ 'grid-template-columns', 'grid-template-rows' ] as $grid_track_key ) {
-			if ( isset( $schema[ $grid_track_key ] ) ) {
-				$schema[ $grid_track_key ] = $this->update_grid_track( $schema[ $grid_track_key ] );
-			}
-		}
-
 		return $schema;
-	}
-
-	private function update_grid_track( $prop_type ) {
-		if ( $prop_type instanceof String_Prop_Type ) {
-			return Union_Prop_Type::create_from( $prop_type )
-				->add_prop_type( Size_Variable_Prop_Type::make() );
-		}
-
-		if ( $prop_type instanceof Union_Prop_Type ) {
-			$prop_type->add_prop_type( Size_Variable_Prop_Type::make() );
-		}
-
-		return $prop_type;
 	}
 
 	private function update( $prop_type ) {
