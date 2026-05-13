@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { closeDialog, FileUploadDropzone, FileUploadRow, openDialog } from '@elementor/editor-ui';
-import { Button, DialogActions, DialogContent, DialogHeader, DialogTitle, Stack } from '@elementor/ui';
+import { HelpIcon } from '@elementor/icons';
+import { Button, DialogActions, DialogContent, DialogHeader, DialogTitle, Link, Stack } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { ConflictOptions } from './components/conflict-options';
@@ -14,6 +15,7 @@ const ALLOWED_FILE_TYPES: `${ string }/${ string }`[] = [ 'application/zip' ];
 const FILE_INPUT_ACCEPT = 'application/zip,.zip';
 // TODO: Replace with the actual server-enforced limit once finalized.
 const MAX_FILE_SIZE_MB = 3;
+const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-import-export-design-system/';
 
 type Props = {
 	onClose: () => void;
@@ -88,6 +90,19 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 						/>
 					) }
 					<ConflictOptions value={ conflictStrategy } onChange={ handleConflictChange } />
+					<Stack direction="row" spacing={ 0.5 } alignItems="center" justifyContent="center">
+						<HelpIcon sx={ { fontSize: 16, color: 'text.tertiary' } } />
+						<Link
+							href={ LEARN_MORE_URL }
+							target="_blank"
+							rel="noopener noreferrer"
+							underline="always"
+							variant="caption"
+							color="text.tertiary"
+						>
+							{ __( 'Learn how design system imports work', 'elementor' ) }
+						</Link>
+					</Stack>
 				</Stack>
 			</DialogContent>
 			<DialogActions>
