@@ -30,7 +30,7 @@ export const GridSpanControl = createControl(
 			setValue( next === '' ? null : next );
 		};
 
-		const placeholder = propPlaceholder ?? boundPlaceholder ?? undefined;
+		const placeholder = propPlaceholder ?? boundPlaceholder ?? `e.g: 'span 2' or '1 / 3'`;
 
 		return (
 			<ControlActions>
