@@ -164,13 +164,24 @@ class Global_Class_Post {
 
 		$result = update_post_meta( $this->post->ID, $meta_key, $data );
 
+		if ( false === $result ) {
+			return false;
+		}
+
 		if ( ! $this->is_preview() ) {
 			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
 		}
 
 		update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
 
-		return false !== $result;
+		if ( ! $this->is_preview() ) {
+			// Bump modified time so Reconcile_Downgraded_Posts can tell migrated data from later edits and skip or rewrite accordingly.
+			wp_update_post( [
+				'ID' => $this->post->ID,
+			] );
+		}
+
+		return true;
 	}
 
 	public static function create(

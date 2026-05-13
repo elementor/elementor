@@ -3,6 +3,7 @@
 namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 
 use Elementor\Core\Database\Base_Migration;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
@@ -18,7 +19,7 @@ class Migrate_To_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
 
 	public function up() {
-		$this->ensure_cpt_registered();
+		Global_Class_Post_Type::ensure_registered();
 
 		$migrated = $this->migrate_global_classes_to_posts();
 
@@ -26,16 +27,10 @@ class Migrate_To_Posts extends Base_Migration {
 			return;
 		}
 
-		$this->update_document_tracking();
+		self::run_document_tracking( $this->get_kit() );
 
 		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
 		// $this->cleanup_kit_meta();
-	}
-
-	private function ensure_cpt_registered(): void {
-		if ( ! post_type_exists( Global_Class_Post_Type::CPT ) ) {
-			( new Global_Class_Post_Type() )->register_post_type();
-		}
 	}
 
 	private function migrate_global_classes_to_posts(): bool {
@@ -60,14 +55,14 @@ class Migrate_To_Posts extends Base_Migration {
 		$raw_items = $global_classes['items'];
 		$order = $global_classes['order'] ?? array_keys( $raw_items );
 
-		$items = $this->normalize_items( $raw_items );
+		$items = self::normalize_items( $raw_items );
 
 		Global_Classes_Repository::make( $kit )->put( $items, $order );
 
 		return true;
 	}
 
-	private function normalize_items( array $raw_items ): array {
+	public static function normalize_items( array $raw_items ): array {
 		$items = [];
 
 		foreach ( $raw_items as $class_id => $class_data ) {
@@ -97,9 +92,7 @@ class Migrate_To_Posts extends Base_Migration {
 		] );
 	}
 
-	private function update_document_tracking(): void {
-		$kit = $this->get_kit();
-
+	public static function run_document_tracking( ?Kit $kit ): void {
 		if ( ! $kit ) {
 			return;
 		}
