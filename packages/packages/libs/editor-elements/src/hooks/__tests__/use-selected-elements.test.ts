@@ -1,42 +1,36 @@
 import { createMockElementType, dispatchCommandAfter } from 'test-utils';
 import { act, renderHook } from '@testing-library/react';
 
-import { getElementType } from '../../sync/get-element-type';
-import { getSelectedElements } from '../../sync/get-selected-elements';
+import { getSelectedElement } from '../../sync/get-selected-elements';
 import { type Element } from '../../types';
 import { useSelectedElement } from '../use-selected-element';
 
 jest.mock( '../../sync/get-selected-elements' );
-jest.mock( '../../sync/get-element-type' );
 
-describe( 'useSelectedElements', () => {
-	beforeEach( () => {
-		jest.mocked( getElementType ).mockImplementation( ( type?: string ) => {
-			if ( type === 'atomic-heading' ) {
-				return createMockElementType( { key: 'atomic-heading', title: 'Heading' } );
-			}
+describe( 'useSelectedElement', () => {
+	const mockHeadingType = createMockElementType( { key: 'atomic-heading', title: 'Heading' } );
 
-			return null;
-		} );
-	} );
-
-	function selectElements( elements: Element[] ) {
+	function selectElements( element: Element ) {
 		act( () => {
-			jest.mocked( getSelectedElements ).mockReturnValue( elements );
+			const elementType = element.type === 'atomic-heading' ? mockHeadingType : null;
+
+			jest.mocked( getSelectedElement ).mockReturnValue(
+				elementType ? { element, elementType } : { element: null, elementType: null }
+			);
 			dispatchCommandAfter( 'document/elements/select' );
 		} );
 	}
 
 	function deselectElements() {
 		act( () => {
-			jest.mocked( getSelectedElements ).mockReturnValue( [] );
+			jest.mocked( getSelectedElement ).mockReturnValue( { element: null, elementType: null } );
 			dispatchCommandAfter( 'document/elements/deselect' );
 		} );
 	}
 
 	it( 'should return the selected element and its type', () => {
 		// Arrange.
-		selectElements( [ { id: '1', type: 'atomic-heading' } ] );
+		selectElements( { id: '1', type: 'atomic-heading' } );
 
 		// Act.
 		const { result } = renderHook( () => useSelectedElement() );
@@ -46,20 +40,6 @@ describe( 'useSelectedElements', () => {
 			element: { id: '1', type: 'atomic-heading' },
 			elementType: createMockElementType( { key: 'atomic-heading', title: 'Heading' } ),
 		} );
-	} );
-
-	it( 'should return empty values if multiple elements are selected', () => {
-		// Arrange.
-		selectElements( [
-			{ id: '1', type: 'atomic-heading' },
-			{ id: '2', type: 'atomic-heading' },
-		] );
-
-		// Act.
-		const { result } = renderHook( () => useSelectedElement() );
-
-		// Assert.
-		expect( result.current ).toEqual( { element: null, elementType: null } );
 	} );
 
 	it( 'should return empty values if no element is selected', () => {
@@ -75,7 +55,7 @@ describe( 'useSelectedElements', () => {
 
 	it( 'should return empty values if element type is not found', () => {
 		// Arrange.
-		selectElements( [ { id: '1', type: 'unknown' } ] );
+		selectElements( { id: '1', type: 'unknown' } );
 
 		// Act.
 		const { result } = renderHook( () => useSelectedElement() );
@@ -91,7 +71,10 @@ describe( 'useSelectedElements', () => {
 		{ name: 'deselect-all', event: 'document/elements/deselect-all' },
 	] )( 'should update values if $name is fired', ( { event } ) => {
 		// Arrange.
-		jest.mocked( getSelectedElements ).mockReturnValue( [ { id: '1', type: 'atomic-heading' } ] );
+		jest.mocked( getSelectedElement ).mockReturnValue( {
+			element: { id: '1', type: 'atomic-heading' },
+			elementType: mockHeadingType,
+		} );
 
 		// Act.
 		const { result } = renderHook( () => useSelectedElement() );
@@ -103,7 +86,10 @@ describe( 'useSelectedElements', () => {
 		} );
 
 		// Arrange.
-		jest.mocked( getSelectedElements ).mockReturnValue( [ { id: '2', type: 'atomic-heading' } ] );
+		jest.mocked( getSelectedElement ).mockReturnValue( {
+			element: { id: '2', type: 'atomic-heading' },
+			elementType: mockHeadingType,
+		} );
 
 		// Act.
 		act( () => {

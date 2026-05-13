@@ -3,6 +3,7 @@ import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { FilterKey } from '../../../../hooks/use-filtered-css-class-usage';
+import { trackGlobalClasses } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { filterConfig } from './filter-list';
@@ -14,6 +15,12 @@ export const ActiveFilters = () => {
 
 	const handleRemove = ( key: FilterKey ) => {
 		setFilters( ( prev ) => ( { ...prev, [ key ]: false } ) );
+		trackGlobalClasses( {
+			event: 'classManagerFilterUsed',
+			action: 'remove',
+			type: key,
+			trigger: 'header',
+		} );
 	};
 
 	const activeKeys = Object.keys( filters ).filter( ( key ): key is FilterKey => filters[ key as FilterKey ] );
@@ -35,6 +42,7 @@ export const ActiveFilters = () => {
 			</Stack>
 			{ showClearIcon && (
 				<ClearIconButton
+					trigger="header"
 					tooltipText={ __( 'Clear Filters', 'elementor' ) }
 					sx={ { margin: '0 0 auto auto' } }
 				/>

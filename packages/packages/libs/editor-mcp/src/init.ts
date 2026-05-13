@@ -1,44 +1,26 @@
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { AngieMcpSdk } from '@elementor-external/angie-sdk';
-
-import { activateMcpRegistration } from './mcp-registry';
-
-let sdk: AngieMcpSdk;
-
-export const getSDK = () => {
-	// @ts-ignore - QUnit fails this
-	const isMCPDisabled = !! ( globalThis as Record< string, unknown > ).__ELEMENTOR_MCP_DISABLED__;
-	if ( isMCPDisabled ) {
-		return {} as unknown as AngieMcpSdk;
-	}
-	if ( ! sdk ) {
-		sdk = new AngieMcpSdk();
-	}
-	return sdk;
-};
-
-export function init() {
-	if ( isExperimentActive( 'editor_mcp' ) ) {
-		return getSDK().waitForReady();
-	}
-	return Promise.resolve();
-}
+import { AngieMcpAdapter } from './adapters/angie-adapter';
+import { type ModelContext, WebMCPAdapter } from './adapters/web-mcp-adapter';
+import { activateAdapters, registerMcpAdapter, signalMcpReady } from './mcp-registry';
+import { getSDK } from './utils/get-sdk';
+import { isAngieAvailable } from './utils/is-angie-available';
 
 export function startMCPServer() {
-	if ( isExperimentActive( 'editor_mcp' ) ) {
-		return getSDK()
-			.waitForReady()
-			.then( () => activateMcpRegistration( sdk ) );
+	if ( typeof navigator !== 'undefined' && 'modelContext' in navigator ) {
+		registerMcpAdapter(
+			new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext )
+		);
 	}
-	return Promise.resolve();
+
+	if ( isAngieAvailable() ) {
+		registerMcpAdapter( new AngieMcpAdapter( getSDK() ) );
+	}
+
+	activateAdapters();
+	signalMcpReady();
 }
 
-document.addEventListener(
-	'DOMContentLoaded',
-	() => {
-		startMCPServer();
-	},
-	{
-		once: true,
-	}
-);
+if ( typeof document !== 'undefined' ) {
+	document.addEventListener( 'DOMContentLoaded', () => startMCPServer(), { once: true } );
+} else {
+	startMCPServer();
+}

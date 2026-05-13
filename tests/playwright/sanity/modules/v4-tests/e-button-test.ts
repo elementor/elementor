@@ -36,7 +36,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const button = await editor.getWidget( buttonId );
 
 		// Assert.
-		expect( await button.innerText() ).toBe( 'Click here' );
+		await expect( button ).toHaveText( 'Click here' );
 	} );
 
 	test( 'Button text can be changed', async ( { page, apiRequests }, testInfo ) => {

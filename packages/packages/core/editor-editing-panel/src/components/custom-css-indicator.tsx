@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { type BreakpointId, type BreakpointNode, getBreakpointsTree } from '@elementor/editor-responsive';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 
@@ -15,14 +16,14 @@ export const CustomCssIndicator = () => {
 		element: { id: elementId },
 	} = useElement();
 
-	const style = React.useMemo(
+	const style = useMemo(
 		() => ( styleId && provider ? provider.actions.get( styleId, { elementId } ) : null ),
 		[ styleId, provider, elementId ]
 	);
 
 	const hasContent = Boolean( customCss?.raw?.trim() );
 
-	const hasInheritedContent = React.useMemo( () => {
+	const hasInheritedContent = useMemo( () => {
 		if ( hasContent ) {
 			return false;
 		}

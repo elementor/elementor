@@ -1,0 +1,85 @@
+.e-form-placeholder {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px;
+	border: 2px dashed #d2d2d2;
+	text-align: center;
+	min-height: 200px;
+
+	&__icon {
+		font-size: 48px;
+		color: rgba(0, 0, 0, 0.54);
+		margin-bottom: 4px;
+	}
+
+	&__title {
+		font-family: Poppins, sans-serif;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: normal;
+		color: #000000;
+	}
+
+	&__description {
+		font-family: Poppins, sans-serif;
+		font-size: 12px;
+		font-weight: 400;
+		line-height: normal;
+		color: #3f444b;
+		margin-bottom: 16px;
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	&__remove-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 4px 10px;
+		height: 30px;
+		border: 1px solid rgba(81, 89, 98, 0.5);
+		border-radius: 8px;
+		background: #fff;
+		cursor: pointer;
+		font-family: Roboto, sans-serif;
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 22px;
+		letter-spacing: 0.46px;
+		color: #515962;
+		box-sizing: border-box;
+
+		&:hover {
+			background: #f1f2f3;
+		}
+	}
+
+	&__unlock-btn {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 4px 10px;
+		height: 30px;
+		border: none;
+		border-radius: 8px;
+		background: #93003f;
+		color: #fff;
+		cursor: pointer;
+		font-family: Roboto, sans-serif;
+		font-size: 13px;
+		font-weight: 500;
+		line-height: 22px;
+		letter-spacing: 0.46px;
+		text-decoration: none;
+		box-sizing: border-box;
+
+		&:hover {
+			background: #7a0032;
+		}
+	}
+}

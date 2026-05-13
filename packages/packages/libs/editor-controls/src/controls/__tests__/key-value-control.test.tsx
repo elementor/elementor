@@ -242,4 +242,52 @@ describe( 'KeyValueControl', () => {
 		expect( keyInput ).toHaveValue( '&lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;' );
 		expect( valueInput ).toHaveValue( 'Value &amp; &quot;quotes&quot; &#39;test&#39; &gt; end' );
 	} );
+
+	it( 'should handle dynamic tag values correctly', () => {
+		// Arrange
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'key-value',
+				value: {
+					key: { $$type: 'dynamic', name: 'post-meta', settings: { key: 'custom_field' } },
+					value: { $$type: 'string', value: 'staticValue' },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <KeyValueControl />, props );
+
+		// Assert
+		const keyInput = screen.getAllByRole( 'textbox' )[ 0 ];
+		const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
+
+		expect( keyInput ).toHaveValue( '' );
+		expect( valueInput ).toHaveValue( 'staticValue' );
+	} );
+
+	it( 'should handle both key and value as dynamic tags', () => {
+		// Arrange
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'key-value',
+				value: {
+					key: { $$type: 'dynamic', name: 'post-meta', settings: { key: 'custom_field' } },
+					value: { $$type: 'dynamic', name: 'post-title', settings: {} },
+				},
+			},
+		};
+
+		// Act
+		renderControl( <KeyValueControl />, props );
+
+		// Assert
+		const keyInput = screen.getAllByRole( 'textbox' )[ 0 ];
+		const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
+
+		expect( keyInput ).toHaveValue( '' );
+		expect( valueInput ).toHaveValue( '' );
+	} );
 } );

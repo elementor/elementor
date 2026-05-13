@@ -174,7 +174,7 @@ function useUndoableActions( {
 		}
 
 		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
-			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
+			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps, mode: 'replace' }, { elementId } );
 		}
 	}, [ elementId, breakpoint, state, classesProp ] );
 }

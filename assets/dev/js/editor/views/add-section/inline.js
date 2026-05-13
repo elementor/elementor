@@ -1,4 +1,5 @@
 import BaseAddSectionView from './base';
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
 
 class AddSectionView extends BaseAddSectionView {
 	className() {
@@ -20,6 +21,10 @@ class AddSectionView extends BaseAddSectionView {
 	}
 
 	onCloseButtonClick() {
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'close',
+			containerCreated: false,
+		} );
 		this.fadeToDeath();
 	}
 

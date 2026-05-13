@@ -6,6 +6,14 @@ import { type DynamicTag } from '../types';
 import { getDynamicPropType } from '../utils';
 
 export const usePropDynamicTags = () => {
+	return usePropDynamicTagsInternal( true );
+};
+
+export const useAllPropDynamicTags = () => {
+	return usePropDynamicTagsInternal( false );
+};
+
+const usePropDynamicTagsInternal = ( filterByLicense: boolean ) => {
 	let categories: string[] = [];
 
 	const { propType } = useBoundProp();
@@ -16,12 +24,17 @@ export const usePropDynamicTags = () => {
 		categories = propDynamicType?.settings.categories || [];
 	}
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	return useMemo( () => getDynamicTagsByCategories( categories ), [ categories.join() ] );
+	const categoriesKey = categories.join();
+
+	return useMemo(
+		() => getDynamicTagsByCategories( categories, filterByLicense ),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ categoriesKey, filterByLicense ]
+	);
 };
 
-const getDynamicTagsByCategories = ( categories: string[] ) => {
-	const { tags, groups } = getAtomicDynamicTags() || {};
+const getDynamicTagsByCategories = ( categories: string[], filterByLicense: boolean ) => {
+	const { tags, groups } = getAtomicDynamicTags( filterByLicense ) || {};
 
 	if ( ! categories.length || ! tags || ! groups ) {
 		return [];

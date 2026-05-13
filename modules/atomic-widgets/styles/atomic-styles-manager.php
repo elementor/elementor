@@ -5,8 +5,9 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Memo;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Memo;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,6 +31,8 @@ class Atomic_Styles_Manager {
 	const DEFAULT_BREAKPOINT = 'desktop';
 
 	private array $fonts = [];
+
+	private array $dynamic_styles_decisions = [];
 
 	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
@@ -112,18 +115,23 @@ class Atomic_Styles_Manager {
 
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
-				$path = $style_params['path'];
-				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
-
-				$version = $this->cache_validity->get_meta( $path );
-
 				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
 				if ( ! $breakpoint_media ) {
 					continue;
 				}
 
+				$path = $style_params['path'];
+				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
+
+				$version = $this->cache_validity->get_meta( $path );
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
+
+				if ( $this->has_dynamic_styles( $style_key, $style_params['get_styles'] ) ) {
+					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
+
+					continue;
+				}
 
 				$style_file = $this->css_files_manager->get(
 					$this->convert_path_to_handle( $breakpoint_path ),
@@ -147,6 +155,48 @@ class Atomic_Styles_Manager {
 				);
 			}
 		}
+	}
+
+	private function has_dynamic_styles( string $style_key, callable $get_styles ): bool {
+		if ( ! array_key_exists( $style_key, $this->dynamic_styles_decisions ) ) {
+			$this->dynamic_styles_decisions[ $style_key ] = self::contains_dynamic_value( $get_styles() );
+		}
+
+		return $this->dynamic_styles_decisions[ $style_key ];
+	}
+
+	private function enqueue_inline_style( array $breakpoint_path, string $breakpoint_media, string $css, ?string $version ): void {
+		if ( '' === $css ) {
+			return;
+		}
+
+		$handle = $this->convert_path_to_handle( $breakpoint_path );
+
+		if ( 'all' !== $breakpoint_media ) {
+			$css = $breakpoint_media . '{' . $css . '}';
+		}
+
+		wp_register_style( $handle, false, [], $version );
+		wp_enqueue_style( $handle );
+		wp_add_inline_style( $handle, $css );
+	}
+
+	private static function contains_dynamic_value( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		if ( Dynamic_Prop_Type::is_dynamic_prop_value( $value ) ) {
+			return true;
+		}
+
+		foreach ( $value as $item ) {
+			if ( self::contains_dynamic_value( $item ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function render_css( array $styles, string $style_key ) {

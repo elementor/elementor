@@ -606,8 +606,9 @@ class Widget_Text_Editor extends Widget_Base {
 		<?php if ( $should_render_inline_editing ) { ?>
 			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
-		<?php // PHPCS - the main text of a widget should not be escaped.
-				echo $editor_content; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		<?php // PHPCS - DO NOT REMOVE THIS ECHO - THE MAIN TEXT OF A WIDGET SHOULD NOT BE ESCAPED!
+			echo $editor_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		?>
 		<?php if ( $should_render_inline_editing ) { ?>
 			</div>
 		<?php } ?>
@@ -635,6 +636,17 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+	public function render_markdown(): string {
+		$editor_content = $this->get_settings_for_display( 'editor' );
+		$editor_content = $this->parse_text_editor( $editor_content );
+
+		if ( empty( $editor_content ) ) {
+			return '';
+		}
+
+		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $editor_content );
+	}
+
 	protected function content_template() {
 		?>
 		<#

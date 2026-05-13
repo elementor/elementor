@@ -30,6 +30,7 @@ class Utils {
 		'article',
 		'aside',
 		'button',
+		'form',
 		'div',
 		'footer',
 		'h1',
@@ -637,6 +638,21 @@ class Utils {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
+	public static function is_pro_installed_and_not_active(): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$file_path = self::get_elementor_pro_file_path();
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
+	}
+
+	private static function get_elementor_pro_file_path(): string {
+		return 'elementor-pro/elementor-pro.php';
+	}
+
 	/**
 	 * Convert HTMLEntities to UTF-8 characters
 	 *
@@ -956,5 +972,18 @@ class Utils {
 
 	public static function encode_string( string $decoded_string ): string {
 		return base64_encode( $decoded_string );
+	}
+
+	public static function html_to_plain_text( string $html ): string {
+		if ( empty( $html ) ) {
+			return '';
+		}
+
+		$text = preg_replace( '#<br\s*/?\s*>#i', ' ', $html );
+		$text = preg_replace( '#</?[a-z][^>]*>#i', ' ', $text );
+		$text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
+		$text = str_replace( "\xE2\x80\x8B", '', $text );
+
+		return trim( preg_replace( '/\s+/', ' ', $text ) );
 	}
 }

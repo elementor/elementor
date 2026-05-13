@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,6 +40,12 @@ class Toggle_Control extends Atomic_Control_Base {
 		if ( in_array( $size, $allowed_sizes, true ) ) {
 			$this->size = $size;
 		}
+
+		return $this;
+	}
+
+	public function set_full_width( bool $full_width ): self {
+		$this->full_width = $full_width;
 
 		return $this;
 	}

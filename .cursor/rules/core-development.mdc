@@ -28,6 +28,7 @@ Do not affirm my statements or assume my conclusions are correct. Question assum
 - Aim to keep files under 300 lines - split when it improves clarity
 - Write tests for critical paths only. Use AAA pattern with comments
 - Test your tests and run linting for both main repo and turbo-repo
+- Implement only what's required - avoid "nice to have" additions that aren't strictly necessary for the fix
 
 ## ELEMENTOR SPECIFIC RULES
 

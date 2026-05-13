@@ -4,7 +4,7 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { DynamicControl } from '../dynamic-control';
-import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
+import { useAllPropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 
 jest.mock( '../hooks/use-prop-dynamic-tags' );
 
@@ -12,8 +12,9 @@ const propType = createMockPropType( { kind: 'object' } );
 
 describe( '<DynamicControl />', () => {
 	beforeEach( () => {
-		jest.mocked( usePropDynamicTags ).mockReturnValue( [
+		jest.mocked( useAllPropDynamicTags ).mockReturnValue( [
 			{
+				meta: { origin: 'elementor', required_license: 'dynamic-tags' },
 				name: 'author-info',
 				categories: [ 'text' ],
 				label: 'Author Info',
@@ -50,6 +51,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'not-existing',
+			group: 'not-existing-group',
 			settings: {
 				[ bind ]: 'Hello, World!',
 			},
@@ -76,6 +78,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Hello, World!',
 			},
@@ -100,6 +103,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {},
 		} );
 
@@ -122,6 +126,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'text';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Hello, World!',
 				'other-setting': 'Other setting value',
@@ -148,6 +153,7 @@ describe( '<DynamicControl />', () => {
 		// Assert.
 		const newValue = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Goodbye, World!',
 				'other-setting': 'Other setting value',
@@ -168,7 +174,15 @@ const MockControl = () => {
 	return <input type="text" aria-label={ bind } value={ value } onChange={ handleChange } />;
 };
 
-const mockDynamicValue = ( { name, settings }: { name: string; settings: Record< string, unknown > } ) => ( {
+const mockDynamicValue = ( {
+	name,
+	settings,
+	group,
+}: {
+	name: string;
+	group: string;
+	settings: Record< string, unknown >;
+} ) => ( {
 	$$type: 'dynamic',
-	value: { name, settings },
+	value: { name, settings, group },
 } );

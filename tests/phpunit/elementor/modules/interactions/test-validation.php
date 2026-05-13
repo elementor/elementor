@@ -2,7 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-use Elementor\Modules\Interactions\Presets;
 use Elementor\Modules\Interactions\Validation;
 
 /**
@@ -13,20 +12,97 @@ use Elementor\Modules\Interactions\Validation;
  *
  */
 class Test_Validation extends TestCase {
-	/**
-	 * @return Presets
-	 */
-	private function stub_presets( $list_of_animations = [] ) {
-		$presets = $this->createMock( Presets::class );
 
-		$presets->method( 'list' )
-			->willReturn( $list_of_animations );
-
-		return $presets;
+	private function validation() {
+		return new Validation();
 	}
 
-	private function validation( $overrides = [] ) {
-		return new Validation( $this->stub_presets( $overrides ) );
+	private function create_prop_type_interaction( $trigger = 'load', $effect = 'fade', $type = 'in', $direction = '', $duration = 300, $delay = 0, $interaction_id = null ) {
+		$value = [
+			'trigger' => [
+				'$$type' => 'string',
+				'value' => $trigger,
+			],
+			'animation' => [
+				'$$type' => 'animation-preset-props',
+				'value' => [
+					'effect' => [
+						'$$type' => 'string',
+						'value' => $effect,
+					],
+					'type' => [
+						'$$type' => 'string',
+						'value' => $type,
+					],
+					'direction' => [
+						'$$type' => 'string',
+						'value' => $direction,
+					],
+					'timing_config' => [
+						'$$type' => 'timing-config',
+						'value' => [
+							'duration' => [
+								'$$type' => 'number',
+								'value' => $duration,
+							],
+							'delay' => [
+								'$$type' => 'number',
+								'value' => $delay,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		if ( $interaction_id !== null ) {
+			$value['interaction_id'] = [
+				'$$type' => 'string',
+				'value' => $interaction_id,
+			];
+		}
+
+		return [
+			'$$type' => 'interaction-item',
+			'value' => $value,
+		];
+	}
+
+	private function create_config_prop( array $config ) {
+		$config_value = [];
+
+		if ( array_key_exists( 'replay', $config ) ) {
+			$config_value['replay'] = [
+				'$$type' => 'boolean',
+				'value' => (bool) $config['replay'],
+			];
+		}
+
+		if ( array_key_exists( 'easing', $config ) ) {
+			$config_value['easing'] = [
+				'$$type' => 'string',
+				'value' => $config['easing'],
+			];
+		}
+
+		if ( array_key_exists( 'repeat', $config ) ) {
+			$config_value['repeat'] = [
+				'$$type' => 'string',
+				'value' => $config['repeat'],
+			];
+		}
+
+		if ( array_key_exists( 'times', $config ) ) {
+			$config_value['times'] = [
+				'$$type' => 'number',
+				'value' => $config['times'],
+			];
+		}
+
+		return [
+			'$$type' => 'config',
+			'value' => $config_value,
+		];
 	}
 
 	private function mock_document_data() {
@@ -69,140 +145,8 @@ class Test_Validation extends TestCase {
 		] );
 	}
 
-	public function test_sanitize__will_stip_interactions_that_are_missing_from_presets() {
-		$result = $this->validation()->sanitize( $this->mock_document_data__with_unknown_interactions() );
-
-		$expected = [
-			'elements' => [
-				[
-					'id' => '1',
-					'elType' => 'e-flexbox',
-					'settings' => [],
-					'interactions' => [],
-					'elements' => [
-						[
-							'id' => '2',
-							'elType' => 'widget',
-							'widgetType' => 'e-heading',
-							'interactions' => [],
-						],
-					],
-				],
-			],
-		];
-
-		$this->assertEquals( $expected, $result );
-	}
-
-	private function mock_document_data__with_unknown_interactions() {
-		return [
-			'elements' => [
-				[
-					'id' => '1',
-					'elType' => 'e-flexbox',
-					'settings' => [],
-					'interactions' => json_encode([
-						'items' => [
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'unknown-interaction-id1',
-								],
-							],
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'unknown-interaction-id2',
-								],
-							],
-						],
-						'version' => 1,
-					]),
-					'elements' => [
-						[
-							'id' => '2',
-							'elType' => 'widget',
-							'widgetType' => 'e-heading',
-							'interactions' => json_encode([
-								'items' => [
-									[
-										'animation' => [
-											'animation_type' => 'full-preset',
-											'animation_id' => 'unknown-interaction-id3',
-										],
-									],
-									[
-										'animation' => [
-											'animation_type' => 'full-preset',
-											'animation_id' => 'unknown-interaction-id4',
-										],
-									],
-								],
-								'version' => 1,
-							]),
-						],
-					],
-				],
-			],
-		];
-	}
-
-	public function test_sanitize__will_accept_interactions_present_in_presets() {
-		$result = $this->validation( [
-			[
-				'value' => 'load-fade-in--100-0',
-				'label' => 'Page load: Fade In (100ms/0ms)',
-			],
-			[
-				'value' => 'load-fade-in-top-200-0',
-				'label' => 'Page load: Fade In From top (200ms/0ms)',
-			],
-		] )->sanitize( $this->mock_document_data__with_interactions() );
-
-		$expected = [
-			'elements' => [
-				[
-					'id' => '1',
-					'elType' => 'e-flexbox',
-					'settings' => [],
-					'interactions' => json_encode([
-						'items' => [
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-						],
-						'version' => 1,
-					]),
-					'elements' => [
-						[
-							'id' => '2',
-							'elType' => 'widget',
-							'widgetType' => 'e-heading',
-							'interactions' => json_encode([
-								'items' => [
-									[
-										'animation' => [
-											'animation_type' => 'full-preset',
-											'animation_id' => 'load-fade-in-top-200-0',
-										],
-									]
-								],
-								'version' => 1,
-							]),
-						],
-					],
-				],
-			],
-		];
-
-		$this->assertEquals( $expected, $result );
-	}
-
-	private function mock_document_data__with_interactions() {
-		return [
+	public function test_sanitize__will_strip_interactions_with_invalid_trigger() {
+		$document = [
 			'elements' => [
 				[
 					'id' => '1',
@@ -210,19 +154,31 @@ class Test_Validation extends TestCase {
 					'settings' => [],
 					'interactions' => json_encode( [
 						'items' => [
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'unknown-interaction-id1',
-								],
-							],
+							$this->create_prop_type_interaction( 'invalid-trigger', 'fade', 'in' ),
 						],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_accept_valid_prop_type_interactions() {
+		$interaction1 = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+		$interaction2 = $this->create_prop_type_interaction( 'scrollIn', 'slide', 'in', 'top', 200, 50 );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction1 ],
 						'version' => 1,
 					] ),
 					'elements' => [
@@ -231,20 +187,7 @@ class Test_Validation extends TestCase {
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
 							'interactions' => json_encode( [
-								'items' => [
-									[
-										'animation' => [
-											'animation_type' => 'full-preset',
-											'animation_id' => 'load-fade-in-top-200-0',
-										],
-									],
-									[
-										'animation' => [
-											'animation_type' => 'full-preset',
-											'animation_id' => 'unknown-interaction-id2',
-										],
-									],
-								],
+								'items' => [ $interaction2 ],
 								'version' => 1,
 							] ),
 						],
@@ -252,53 +195,44 @@ class Test_Validation extends TestCase {
 				],
 			],
 		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$expected = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction1 ],
+						'version' => 1,
+					] ),
+					'elements' => [
+						[
+							'id' => '2',
+							'elType' => 'widget',
+							'widgetType' => 'e-heading',
+							'interactions' => json_encode( [
+								'items' => [ $interaction2 ],
+								'version' => 1,
+							] ),
+						],
+					],
+				],
+			],
+		];
+
+		$this->assertEquals( $expected, $result );
 	}
 
 	public function test_sanitize__will_throw_if_number_of_interactions_per_element_exceeds_the_limit() {
-		$document = $this->mock_document_data__with_interactions_overflow( 6 );
-
-		$this->expectException( \Exception::class );
-
-		$validation = $this->validation( [
-			[
-				'value' => 'load-fade-in--100-0',
-				'label' => 'Page load: Fade In (100ms/0ms)',
-			],
-		] );
-
-		$validation->sanitize( $document );
-		$validation->validate();
-	}
-
-	public function test_validate__will_not_throw_if_number_of_interactions_per_element_within_the_limit() {
-		$document = $this->mock_document_data__with_interactions_overflow( 5 );
-
-		$validation = $this->validation( [
-			[
-				'value' => 'load-fade-in--100-0',
-				'label' => 'Page load: Fade In (100ms/0ms)',
-			],
-		] );
-
-		$validation->sanitize( $document );
-		$validation->validate();
-
-		$this->assertTrue( true, 'No exception was thrown' );
-	}
-
-	private function mock_document_data__with_interactions_overflow( $number_of_interactions ) {
 		$interactions = [];
-		while ( 0 < $number_of_interactions ) {
-			$interactions[] = [
-				'animation' => [
-					'animation_type' => 'full-preset',
-					'animation_id' => 'load-fade-in--100-0',
-				],
-			];
-			--$number_of_interactions;
+		for ( $i = 0; $i < 6; $i++ ) {
+			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
 		}
 
-		return [
+		$document = [
 			'elements' => [
 				[
 					'id' => '1',
@@ -311,5 +245,276 @@ class Test_Validation extends TestCase {
 				],
 			],
 		];
+
+		$this->expectException( \Exception::class );
+
+		$validation = $this->validation();
+		$validation->sanitize( $document );
+		$validation->validate();
+	}
+
+	public function test_validate__will_not_throw_if_number_of_interactions_per_element_within_the_limit() {
+		$interactions = [];
+		for ( $i = 0; $i < 5; $i++ ) {
+			$interactions[] = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+		}
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => $interactions,
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$validation = $this->validation();
+		$validation->sanitize( $document );
+		$validation->validate();
+
+		$this->assertTrue( true, 'No exception was thrown' );
+	}
+
+	public function test_validate__will_not_throw_if_breakpoints_prop_is_valid() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+
+		$interaction['value']['breakpoints'] = [
+			'$$type' => 'interaction-breakpoints',
+			'value' => [
+				'excluded' => [
+					'$$type' => 'excluded-breakpoints',
+					'value' => [
+						[ '$$type' => 'string', 'value' => 'desktop' ],
+						[ '$$type' => 'string', 'value' => 'tablet' ],
+					],
+				],
+			],
+		];
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [
+							$interaction,
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$validation = $this->validation();
+		$result = $validation->sanitize( $document );
+		$validation->validate();
+
+		$expected_interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+
+		$expected_interaction['value']['breakpoints'] = [
+			'$$type' => 'interaction-breakpoints',
+			'value' => [
+				'excluded' => [
+					'$$type' => 'excluded-breakpoints',
+					'value' => [
+						[ '$$type' => 'string', 'value' => 'desktop' ],
+						[ '$$type' => 'string', 'value' => 'tablet' ],
+					],
+				],
+			],
+		];
+
+		$this->assertEquals( [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [
+							$expected_interaction
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		], $result );
+	}
+
+	public function test_sanitize__will_accept_valid_repeat_times_config() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'times',
+			'times' => 3,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_accept_interaction_with_empty_repeat_mode() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => '',
+			'times' => 1,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_strip_interaction_with_invalid_repeat_mode() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'invalid',
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertEquals( [], $result['elements'][0]['interactions'] );
+	}
+
+	public function test_sanitize__will_accept_all_diagonal_directions() {
+		$diagonal_directions = [ 'top-left', 'top-right', 'bottom-left', 'bottom-right' ];
+
+		foreach ( $diagonal_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertNotEmpty(
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be accepted but was stripped."
+			);
+		}
+	}
+
+	public function test_sanitize__will_strip_interaction_with_invalid_diagonal_direction() {
+		$invalid_directions = [ 'top-top', 'left-right', 'top-bottom', 'left-left', 'invalid', 'top-invalid' ];
+
+		foreach ( $invalid_directions as $direction ) {
+			$interaction = $this->create_prop_type_interaction( 'load', 'slide', 'in', $direction, 300, 0 );
+
+			$document = [
+				'elements' => [
+					[
+						'id' => '1',
+						'elType' => 'e-flexbox',
+						'settings' => [],
+						'interactions' => json_encode( [
+							'items' => [ $interaction ],
+							'version' => 1,
+						] ),
+					],
+				],
+			];
+
+			$result = $this->validation()->sanitize( $document );
+
+			$this->assertEquals(
+				[],
+				$result['elements'][0]['interactions'],
+				"Direction '$direction' should be stripped but was accepted."
+			);
+		}
+	}
+
+	public function test_sanitize__will_accept_interaction_with_times_when_repeat_is_loop() {
+		$interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1' );
+		$interaction['value']['animation']['value']['config'] = $this->create_config_prop( [
+			'replay' => false,
+			'easing' => 'easeIn',
+			'repeat' => 'loop',
+			'times' => 3,
+		] );
+
+		$document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+
+		$result = $this->validation()->sanitize( $document );
+
+		$this->assertNotEmpty( $result['elements'][0]['interactions'] );
 	}
 }

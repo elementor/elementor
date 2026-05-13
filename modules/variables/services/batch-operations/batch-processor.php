@@ -42,6 +42,7 @@ class Batch_Processor {
 		}
 
 		$variable = Variable::create_new( $data );
+		$variable->validate();
 
 		$collection->add_variable( $variable );
 
@@ -94,6 +95,7 @@ class Batch_Processor {
 
 		if ( isset( $operation['label'] ) ) {
 			$collection->assert_label_is_unique( $operation['label'], $id );
+			$variable->validate();
 		}
 
 		$variable->apply_changes( $operation );

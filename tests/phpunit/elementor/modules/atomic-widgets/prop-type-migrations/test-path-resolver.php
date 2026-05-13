@@ -1,0 +1,239 @@
+<?php
+
+namespace Elementor\Testing\Modules\AtomicWidgets\PropTypeMigrations;
+
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Path_Resolver;
+use ElementorEditorTesting\Elementor_Test_Base;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * @group prop-type-migrations
+ */
+class Test_Path_Resolver extends Elementor_Test_Base {
+
+	/**
+	 * @dataProvider resolve_data_provider
+	 */
+	public function test_resolve( array $data, string $pattern, array $expected_paths ) {
+		// Act.
+		$result = Path_Resolver::resolve( $pattern, $data );
+		$paths = array_map( fn( $item ) => $item['path'], $result );
+
+		// Assert.
+		$this->assertEquals( $expected_paths, $paths );
+	}
+
+	public function resolve_data_provider(): array {
+		return [
+			'simple path' => [
+				'data' => [ 'settings' => [ 'tag' => 'h3' ] ],
+				'pattern' => 'settings.tag',
+				'expected' => [ 'settings.tag' ],
+			],
+			'wildcard key' => [
+				'data' => [
+					'settings' => [
+						'link' => [ 'value' => 'a' ],
+						'text' => [ 'value' => 'b' ],
+					],
+				],
+				'pattern' => 'settings.*.value',
+				'expected' => [ 'settings.link.value', 'settings.text.value' ],
+			],
+			'array index wildcard' => [
+				'data' => [
+					'elements' => [
+						[ 'id' => '1' ],
+						[ 'id' => '2' ],
+					],
+				],
+				'pattern' => 'elements[*].id',
+				'expected' => [ 'elements[0].id', 'elements[1].id' ],
+			],
+			'nested wildcards' => [
+				'data' => [
+					'styles' => [
+						's1' => [
+							'variants' => [
+								[ 'props' => [ 'width' => 100 ] ],
+								[ 'props' => [ 'height' => 200 ] ],
+							],
+						],
+					],
+				],
+				'pattern' => 'styles.*.variants[*].props.*',
+				'expected' => [
+					'styles.s1.variants[0].props.width',
+					'styles.s1.variants[1].props.height',
+				],
+			],
+			'non-existent path returns empty' => [
+				'data' => [ 'settings' => [] ],
+				'pattern' => 'settings.nonexistent.value',
+				'expected' => [],
+			],
+			'array wildcard on object returns empty' => [
+				'data' => [
+					'value' => [
+						'hOffset' => [ '$$type' => 'size' ],
+						'vOffset' => [ '$$type' => 'size' ],
+					],
+				],
+				'pattern' => 'value[*].$$type',
+				'expected' => [],
+			],
+			'object wildcard on array returns empty' => [
+				'data' => [
+					'items' => [
+						[ '$$type' => 'string', 'value' => 'a' ],
+						[ '$$type' => 'string', 'value' => 'b' ],
+					],
+				],
+				'pattern' => 'items.*.$$type',
+				'expected' => [],
+			],
+			'object wildcard on object properties' => [
+				'data' => [
+					'value' => [
+						'hOffset' => [ '$$type' => 'size' ],
+						'vOffset' => [ '$$type' => 'size' ],
+					],
+				],
+				'pattern' => 'value.*.$$type',
+				'expected' => [ 'value.hOffset.$$type', 'value.vOffset.$$type' ],
+			],
+			'array wildcard on array indices' => [
+				'data' => [
+					'items' => [
+						[ '$$type' => 'string', 'value' => 'a' ],
+						[ '$$type' => 'string', 'value' => 'b' ],
+					],
+				],
+				'pattern' => 'items[*].$$type',
+				'expected' => [ 'items[0].$$type', 'items[1].$$type' ],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider get_data_provider
+	 */
+	public function test_get( array $data, string $path, $expected ) {
+		// Act.
+		$result = Path_Resolver::get( $path, $data );
+
+		// Assert.
+		$this->assertSame( $expected, $result );
+	}
+
+	public function get_data_provider(): array {
+		return [
+			'simple get' => [
+				'data' => [ 'settings' => [ 'tag' => 'h3' ] ],
+				'path' => 'settings.tag',
+				'expected' => 'h3',
+			],
+			'nested get' => [
+				'data' => [ 'settings' => [ 'link' => [ 'value' => [ 'tag' => 'a' ] ] ] ],
+				'path' => 'settings.link.value.tag',
+				'expected' => 'a',
+			],
+			'array index get' => [
+				'data' => [ 'elements' => [ [ 'id' => '1' ], [ 'id' => '2' ] ] ],
+				'path' => 'elements[1].id',
+				'expected' => '2',
+			],
+			'non-existent returns null' => [
+				'data' => [ 'settings' => [] ],
+				'path' => 'settings.nonexistent',
+				'expected' => null,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider resolve_with_wildcard_binding_data_provider
+	 */
+	public function test_resolve_with_wildcard_binding( array $data, string $pattern, array $wildcard_values, ?string $expected ) {
+		// Act.
+		$result = Path_Resolver::resolve_with_wildcard_binding( $pattern, $data, $wildcard_values );
+
+		// Assert.
+		$this->assertSame( $expected, $result );
+	}
+
+	public function resolve_with_wildcard_binding_data_provider(): array {
+		return [
+			'bind single wildcard' => [
+				'data' => [
+					'settings' => [
+						'link' => [ '$$type' => 'link' ],
+						'text' => [ '$$type' => 'string' ],
+					],
+				],
+				'pattern' => 'settings.*.$$type',
+				'wildcard_values' => [ [ 'key' => 'link', 'type' => 'key' ] ],
+				'expected' => 'settings.link.$$type',
+			],
+			'bind multiple wildcards' => [
+				'data' => [
+					'styles' => [
+						's1' => [
+							'variants' => [
+								[ 'props' => [ 'width' => [ '$$type' => 'size' ] ] ],
+							],
+						],
+					],
+				],
+				'pattern' => 'styles.*.variants[*].props.*.$$type',
+				'wildcard_values' => [
+					[ 'key' => 's1', 'type' => 'key' ],
+					[ 'key' => 0, 'type' => 'index' ],
+					[ 'key' => 'width', 'type' => 'key' ],
+				],
+				'expected' => 'styles.s1.variants[0].props.width.$$type',
+			],
+			'returns null if path does not exist' => [
+				'data' => [ 'settings' => [] ],
+				'pattern' => 'settings.*.value',
+				'wildcard_values' => [ [ 'key' => 'nonexistent', 'type' => 'key' ] ],
+				'expected' => null,
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider malformed_path_data_provider
+	 */
+	public function test_malformed_paths_throw_exceptions( string $path, string $expected_message ) {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+
+		// Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( $expected_message );
+
+		// Act
+		Path_Resolver::resolve( $path, $data );
+	}
+
+	public function malformed_path_data_provider(): array {
+		return [
+			'unmatched opening bracket' => [
+				'path' => 'settings[0',
+				'expected_message' => 'Malformed path: unmatched opening bracket in "settings[0"',
+			],
+			'unmatched closing bracket' => [
+				'path' => 'settings]',
+				'expected_message' => 'Malformed path: unmatched closing bracket in "settings]"',
+			],
+			'unmatched closing bracket in middle' => [
+				'path' => 'settings].tag',
+				'expected_message' => 'Malformed path: unmatched closing bracket in "settings].tag"',
+			],
+		];
+	}
+}

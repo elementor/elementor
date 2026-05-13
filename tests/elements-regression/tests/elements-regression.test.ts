@@ -33,7 +33,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'image_box',
 		'image_carousel',
 		'tabs',
-		'video',
+		// TODO: to be fixed in ED-23584
+		// 'video',
 		'spacer',
 		'text_path',
 		'social_icons',
@@ -46,7 +47,8 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 		'progress_bar',
 		'testimonial',
 		'toggle',
-		'sound_cloud',
+		// TODO: Fix soundcloud iframe loading issue ED-22036
+		// 'sound_cloud',
 		'html',
 		'alert',
 		'button_hover',

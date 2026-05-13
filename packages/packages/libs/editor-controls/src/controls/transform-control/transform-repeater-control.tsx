@@ -21,20 +21,26 @@ import { TransformSettingsControl } from './transform-settings-control';
 
 const SIZE = 'tiny';
 
-export const TransformRepeaterControl = createControl( () => {
-	const context = useBoundProp( transformPropTypeUtil );
-	const headerRef = useRef< HTMLDivElement >( null );
-	const popupState = usePopupState( { variant: 'popover' } );
+export const TransformRepeaterControl = createControl(
+	( { showChildrenPerspective }: { showChildrenPerspective: boolean } ) => {
+		const context = useBoundProp( transformPropTypeUtil );
+		const headerRef = useRef< HTMLDivElement >( null );
+		const popupState = usePopupState( { variant: 'popover' } );
 
-	return (
-		<PropProvider { ...context }>
-			<TransformSettingsControl popupState={ popupState } anchorRef={ headerRef } />
-			<PropKeyProvider bind={ 'transform-functions' }>
-				<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
-			</PropKeyProvider>
-		</PropProvider>
-	);
-} );
+		return (
+			<PropProvider { ...context }>
+				<TransformSettingsControl
+					popupState={ popupState }
+					anchorRef={ headerRef }
+					showChildrenPerspective={ showChildrenPerspective }
+				/>
+				<PropKeyProvider bind={ 'transform-functions' }>
+					<Repeater headerRef={ headerRef } propType={ context.propType } popupState={ popupState } />
+				</PropKeyProvider>
+			</PropProvider>
+		);
+	}
+);
 
 const ToolTip = (
 	<Box

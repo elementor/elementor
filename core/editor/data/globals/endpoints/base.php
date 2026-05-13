@@ -11,7 +11,7 @@ abstract class Base extends Endpoint {
 		parent::register();
 
 		$args = [
-			'id_arg_type_regex' => '[\w]+',
+			'id_arg_type_regex' => '[\w-]+',
 		];
 
 		$this->register_item_route( \WP_REST_Server::READABLE, $args );

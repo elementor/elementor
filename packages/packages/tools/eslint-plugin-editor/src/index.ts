@@ -1,5 +1,6 @@
 import type { Linter } from '@typescript-eslint/utils/ts-eslint';
 
+import { noPathImports } from './rules/no-path-imports';
 import { noReactNamespace } from './rules/no-react-namespace';
 
 export const meta = {
@@ -8,5 +9,6 @@ export const meta = {
 } satisfies Linter.PluginMeta;
 
 export const rules = {
+	'no-path-imports': noPathImports,
 	'no-react-namespace': noReactNamespace,
 } satisfies Linter.PluginRules;

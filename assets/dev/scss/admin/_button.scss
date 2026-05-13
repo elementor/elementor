@@ -10,6 +10,40 @@
 	--e-button-context-tint: var(--e-context-primary-tint-1);
 }
 
+.notice,
+.error,
+.updated {
+	a.e-button {
+		color: $white;
+		text-decoration: none;
+
+		&:hover,
+		&:focus,
+		&:active {
+			color: $white;
+			text-decoration: none;
+		}
+
+		&.e-button--outline {
+			color: var(--e-button-context-color);
+
+			&:hover,
+			&:focus {
+				color: var(--e-button-context-color-dark);
+			}
+		}
+
+		&.e-button--link {
+			color: var(--e-button-context-color);
+
+			&:hover,
+			&:focus {
+				color: var(--e-button-context-color-dark);
+			}
+		}
+	}
+}
+
 .e-button {
 	display: inline-block;
 	font-weight: var(--e-button-font-weight);

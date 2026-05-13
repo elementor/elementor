@@ -296,7 +296,12 @@ class Test_Manager extends Data_Test_Base {
 			'checklist/steps' => 'checklist',
 			'checklist/index' => 'checklist/{id}',
 			'checklist/user-progress' => 'checklist',
-			'checklist/index' => 'checklist/{id}'
+			'onboarding/index' => 'onboarding/{id}',
+			'onboarding/user-progress' => 'onboarding',
+			'onboarding/user-choices' => 'onboarding',
+			'onboarding/pro-install-screen' => 'onboarding',
+			'onboarding/install-pro' => 'onboarding',
+			'onboarding/install-theme' => 'onboarding',
 		], $this->manager->command_formats );
 	}
 }

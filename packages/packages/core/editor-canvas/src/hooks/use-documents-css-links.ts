@@ -1,6 +1,8 @@
-import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
-
-import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
+import {
+	__privateUseListenTo as useListenTo,
+	commandEndEvent,
+	getCanvasIframeDocument,
+} from '@elementor/editor-v1-adapters';
 
 const REMOVED_ATTR = 'data-e-removed';
 const DOCUMENT_WRAPPER_ATTR = 'data-elementor-id';

@@ -14,14 +14,18 @@ type Props = ElementOverlayProps & {
 };
 
 const OverlayBox = styled( Box, {
-	shouldForwardProp: ( prop ) => prop !== 'isSelected' && prop !== 'isSmallerOffset',
-} )< Pick< Props, 'isSelected' | 'isSmallerOffset' > >( ( { theme, isSelected, isSmallerOffset } ) => ( {
-	outline: `${ isSelected ? '2px' : '1px' } solid ${ theme.palette.primary.light }`,
-	outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
-	pointerEvents: 'none',
-} ) );
+	shouldForwardProp: ( prop ) => prop !== 'isSelected' && prop !== 'isSmallerOffset' && prop !== 'isGlobal',
+} )< Pick< Props, 'isSelected' | 'isSmallerOffset' | 'isGlobal' > >(
+	( { theme, isSelected, isSmallerOffset, isGlobal } ) => ( {
+		outline: `${ isSelected ? '2px' : '1px' } solid ${
+			isGlobal ? theme.palette.global.main : theme.palette.primary.light
+		}`,
+		outlineOffset: isSelected && ! isSmallerOffset ? '-2px' : '-1px',
+		pointerEvents: 'none',
+	} )
+);
 
-export const OutlineOverlay = ( { element, isSelected, id }: Props ): React.ReactElement | false => {
+export const OutlineOverlay = ( { element, isSelected, id, isGlobal = false }: Props ): React.ReactElement | false => {
 	const { context, floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	const { getFloatingProps, getReferenceProps } = useInteractions( [ useHover( context ) ] );
 	const hasOverlapping = useHasOverlapping();
@@ -36,6 +40,7 @@ export const OutlineOverlay = ( { element, isSelected, id }: Props ): React.Reac
 				<OverlayBox
 					ref={ floating.setRef }
 					isSelected={ isSelected }
+					isGlobal={ isGlobal }
 					style={ floating.styles }
 					data-element-overlay={ id }
 					role="presentation"

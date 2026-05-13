@@ -15,11 +15,12 @@ const mock = new Proxy(
 
 export const mockMcpRegistry = (): MCPRegistryEntry => {
 	return {
+		// @ts-ignore
+		resource: async () => {},
+		// @ts-ignore
+		sendResourceUpdated: () => {},
 		addTool: () => {},
 		setMCPDescription: () => {},
-		getActiveChatInfo() {
-			return { sessionId: 'mock-session-id', expiresAt: Date.now() + 3600000 };
-		},
 		mcpServer: mock as McpServer,
 	};
 };

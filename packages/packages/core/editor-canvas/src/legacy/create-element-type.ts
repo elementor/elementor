@@ -80,12 +80,18 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 		}
 
 		#dispatchPreviewEvent( eventType: string ) {
+			const element = this.getDomElement().get( 0 );
+
+			if ( ! element ) {
+				return;
+			}
+
 			legacyWindow.elementor?.$preview?.[ 0 ]?.contentWindow.dispatchEvent(
 				new CustomEvent( eventType, {
 					detail: {
 						id: this.model.get( 'id' ),
 						type: this.model.get( 'widgetType' ),
-						element: this.getDomElement().get( 0 ),
+						element,
 					},
 				} )
 			);

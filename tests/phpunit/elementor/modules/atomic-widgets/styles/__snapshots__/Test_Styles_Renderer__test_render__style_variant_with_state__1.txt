@@ -1,1 +1,1 @@
-.test-style:hover{color:blue;}
+.test-style:hover,.test-style:focus-visible{color:blue;}

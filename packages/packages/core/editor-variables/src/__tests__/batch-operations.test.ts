@@ -53,7 +53,7 @@ describe( 'batch-operations', () => {
 			};
 
 			// Act.
-			const operations = buildOperationsArray( originalVariables, currentVariables );
+			const operations = buildOperationsArray( originalVariables, currentVariables, [ 'e-gv-2' ] );
 
 			// Assert.
 			const createOps = operations.filter( ( op ) => op.type === 'create' );
@@ -109,7 +109,7 @@ describe( 'batch-operations', () => {
 			};
 
 			// Act.
-			const operations = buildOperationsArray( originalVariables, currentVariables );
+			const operations = buildOperationsArray( originalVariables, currentVariables, [] );
 			const deleteOps = operations.filter( ( op ) => op.type === 'delete' );
 
 			// Assert.

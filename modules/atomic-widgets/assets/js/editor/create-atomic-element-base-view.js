@@ -1,5 +1,5 @@
-import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
+import AtomicElementEmptyView from './container/atomic-element-empty-view';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 
@@ -9,16 +9,16 @@ export default function createAtomicElementBaseView( type ) {
 
 		emptyView: AtomicElementEmptyView,
 
-		tagName() {
-			if ( this.haveLink() ) {
-				return 'a';
+		_childrenRenderPromises: [],
+
+		_createElement( tag ) {
+			const previewDocument = elementor.$preview?.[ 0 ]?.contentDocument;
+
+			if ( previewDocument ) {
+				return previewDocument.createElement( tag );
 			}
 
-			const tagControl = this.model.getSetting( 'tag' );
-			const tagControlValue = tagControl?.value || tagControl;
-			const defaultTag = this.model.config.default_html_tag;
-
-			return tagControlValue || defaultTag;
+			return document.createElement( tag );
 		},
 
 		getChildViewContainer() {
@@ -39,149 +39,92 @@ export default function createAtomicElementBaseView( type ) {
 			];
 		},
 
-		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
+		getRenderContext() {
+			return this._parent?.getRenderContext?.();
 		},
 
-		// TODO: Copied from `views/column.js`.
-		ui() {
-			var ui = BaseElementView.prototype.ui.apply( this, arguments );
-
-			ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
-
-			return ui;
+		getResolverRenderContext() {
+			return this._parent?.getResolverRenderContext?.();
 		},
 
-		attributes() {
-			const attr = BaseElementView.prototype.attributes.apply( this );
-			const local = {};
-			const cssId = this.model.getSetting( '_cssid' );
-			const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
-			const initialAttributes = this?.model?.config?.initial_attributes ?? {};
-
-			if ( cssId ) {
-				local.id = cssId.value;
-			}
-
-			const href = this.getHref();
-
-			if ( href ) {
-				local.href = href;
-			}
-
-			local[ 'data-interaction-id' ] = this.model.get( 'id' );
-
-			customAttributes.forEach( ( attribute ) => {
-				const key = attribute.value?.key?.value;
-				const value = attribute.value?.value?.value;
-
-				if ( key && value ) {
-					local[ key ] = value;
-				}
-			} );
-
-			return {
-				...attr,
-				...initialAttributes,
-				...local,
-			};
-		},
-
-		// TODO: Copied from `views/column.js`.
-		attachElContent() {
-			BaseElementView.prototype.attachElContent.apply( this, arguments );
-
-			const $tooltip = jQuery( '<div>', {
-				class: 'elementor-column-percents-tooltip',
-				'data-side': elementorCommon.config.isRTL ? 'right' : 'left',
-			} );
-
-			this.$el.children( '.elementor-element-overlay' ).append( $tooltip );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentSize( size ) {
-			if ( ! size ) {
-				size = this.el.getBoundingClientRect().width;
-			}
-
-			return +( size / this.$el.parent().width() * 100 ).toFixed( 3 );
-		},
-
-		// TODO: Copied from `views/column.js`.
-		getPercentsForDisplay() {
-			const width = +this.model.getSetting( 'width' ) || this.getPercentSize();
-
-			return width.toFixed( 1 ) + '%';
-		},
-
-		renderOnChange( settings ) {
-			const changed = settings.changedAttributes();
-
-			setTimeout( () => {
-				this.updateHandlesPosition();
-			} );
-
-			if ( ! changed ) {
-				return;
-			}
-
-			BaseElementView.prototype.renderOnChange.apply( this, settings );
-
-			if ( changed.attributes ) {
-				const preserveAttrs = [ 'id', 'class', 'href' ];
-				const $elAttrs = this.$el[ 0 ].attributes;
-				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
-					const attrName = $elAttrs[ i ].name;
-					if ( ! preserveAttrs.includes( attrName ) ) {
-						this.$el.removeAttr( attrName );
-					}
-				}
-
-				const attrs = this.model.getSetting( 'attributes' )?.value || [];
-				attrs.forEach( ( attribute ) => {
-					const key = attribute?.value?.key?.value;
-					const value = attribute?.value?.value?.value;
-					if ( key && value ) {
-						this.$el.attr( key, value );
-					}
-				} );
-
-				return;
-			}
-
-			if ( changed.classes ) {
-				this.$el.attr( 'class', this.className() );
-
-				return;
-			}
-
-			if ( changed._cssid ) {
-				if ( changed._cssid.value ) {
-					this.$el.attr( 'id', changed._cssid.value );
+		render() {
+			this._currentRenderPromise = new Promise( ( resolve ) => {
+				// Optimize rendering by reusing existing child views instead of recreating them.
+				if ( this._shouldSkipFullRender() ) {
+					this._renderWithoutDomRecreation( resolve );
 				} else {
-					this.$el.removeAttr( 'id' );
+					this._renderWithDomRecreation( resolve );
 				}
+			} );
 
-				return;
+			return this;
+		},
+
+		_shouldSkipFullRender() {
+			return this.isRendered && this._hasConnectedChildren();
+		},
+
+		_hasConnectedChildren() {
+			if ( ! this.children?.length ) {
+				return false;
 			}
 
-			this.$el.addClass( this.getClasses() );
+			// If the parent's innerHTML was replaced, all children are detached together.
+			const firstChild = this.children.findByIndex( 0 );
+			return firstChild?.$el?.get( 0 )?.isConnected ?? false;
+		},
 
-			if ( this.isTagChanged( changed ) ) {
-				this.rerenderEntireView();
+		_renderWithoutDomRecreation( resolve ) {
+			this._beforeRender();
+			this._renderChildren();
+			this._waitForChildrenToComplete().then( () => {
+				this._afterRender();
+				resolve();
+			} );
+		},
+
+		_renderWithDomRecreation( resolve ) {
+			BaseElementView.prototype.render.apply( this, arguments );
+			this._waitForChildrenToComplete().then( () => {
+				resolve();
+			} );
+		},
+
+		_beforeRender() {
+			this._isRendering = true;
+			this.triggerMethod( 'before:render', this );
+		},
+
+		_afterRender() {
+			this._isRendering = false;
+			this.isRendered = true;
+			this.triggerMethod( 'render', this );
+		},
+
+		async _waitForChildrenToComplete() {
+			if ( this._childrenRenderPromises.length > 0 ) {
+				await Promise.all( this._childrenRenderPromises );
 			}
 		},
 
-		isTagChanged( changed ) {
-			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
+		_renderChildren() {
+			if ( this._shouldSkipFullRender() ) {
+				this.children?.each( ( childView ) => childView.render() );
+			} else {
+				BaseElementView.prototype._renderChildren.apply( this, arguments );
+			}
+
+			this._collectChildrenRenderPromises();
 		},
 
-		rerenderEntireView() {
-			const parent = this._parent;
-			this._parent.removeChildView( this );
+		_collectChildrenRenderPromises() {
+			this._childrenRenderPromises = [];
 
-			parent.addChild( this.model, AtomicElementView, this._index );
+			this.children?.each( ( childView ) => {
+				if ( childView._currentRenderPromise ) {
+					this._childrenRenderPromises.push( childView._currentRenderPromise );
+				}
+			} );
 		},
 
 		onRender() {
@@ -214,22 +157,6 @@ export default function createAtomicElementBaseView( type ) {
 			);
 		},
 
-		haveLink() {
-			return !! this.model.getSetting( 'link' )?.value?.destination?.value;
-		},
-
-		getHref() {
-			if ( ! this.haveLink() ) {
-				return;
-			}
-
-			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
-			const isPostId = 'number' === $$type;
-			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
-
-			return hrefPrefix + value;
-		},
-
 		droppableInitialize() {
 			this.$el.html5Droppable( this.getDroppableOptions() );
 		},
@@ -244,19 +171,31 @@ export default function createAtomicElementBaseView( type ) {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			];
 
-			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
-				saveActions.unshift(			{
+			const isAdministrator = elementor.config.user.is_administrator;
+			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
+
+			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+				const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+				const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+				const showPromoBadge = ! isProActive && ! isProOutdated;
+
+				const newBadge = `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`;
+				const badgeClass = 'elementor-context-menu-list__item__shortcut__promotion-badge';
+				const proBadge = `<a href="https://go.elementor.com/go-pro-components-Instance-create-context-menu/" target="_blank" onclick="event.stopPropagation()" class="${ badgeClass }"><i class="eicon-upgrade-crown"></i></a>`;
+
+				saveActions.unshift( {
 					name: 'save-component',
-					title: __( 'Save as a component', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					title: __( 'Create component', 'elementor' ),
+					shortcut: ( isProActive || isProOutdated ) ? newBadge : proBadge,
+					hasShortcutAction: showPromoBadge,
 					callback: this.saveAsComponent.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
+					isEnabled: () => ( isProActive || isProOutdated ) && ! this.getContainer().isLocked(),
 				} );
 			}
 
@@ -285,6 +224,32 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsComponent( openContextMenuEvent, options ) {
+			const hasProInstalled = window.elementorV2?.utils?.hasProInstalled?.() ?? false;
+			const isProOutdated = hasProInstalled && ! ( window.elementorV2?.utils?.isProAtLeast?.( '4.0' ) ?? false );
+
+			if ( isProOutdated ) {
+				window.elementorV2?.editorNotifications?.notify?.( {
+					type: 'info',
+					id: 'component-create-update',
+					message: __( 'To create new components, update Elementor Pro to the latest version.', 'elementor' ),
+					additionalActionProps: [ {
+						size: 'small',
+						variant: 'contained',
+						color: 'info',
+						href: '/wp-admin/plugins.php',
+						target: '_blank',
+						children: __( 'Update Now', 'elementor' ),
+					} ],
+				} );
+				return;
+			}
+
+			const isProActive = window.elementorV2?.utils?.isProActive?.() ?? true;
+
+			if ( ! isProActive ) {
+				return;
+			}
+
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
@@ -549,29 +514,6 @@ export default function createAtomicElementBaseView( type ) {
 			this.addSectionView = addSectionView;
 		},
 
-		getClasses() {
-			const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
-
-			if ( ! transformer ) {
-				return [];
-			}
-
-			return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
-		},
-
-		getClassString() {
-			const classes = this.getClasses();
-			const base = this.getBaseClass();
-
-			return [ base, ...classes ].join( ' ' );
-		},
-
-		getBaseClass() {
-			const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
-
-			return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
-		},
-
 		isOverflowHidden() {
 			const elementStyles = window.getComputedStyle( this.el );
 			const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
@@ -601,7 +543,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		isFirstElementInStructure() {
+			if ( ! this.model.collection ) {
+				return true;
+			}
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		},
 	} );
 

@@ -5,12 +5,15 @@ export type TVariable = {
 	order?: number;
 	deleted?: boolean;
 	deleted_at?: string;
+	sync_to_v3?: boolean;
 };
 
 export type TVariablesList = Record< string, TVariable >;
 
 const STORAGE_KEY = 'elementor-global-variables';
 const STORAGE_WATERMARK_KEY = 'elementor-global-variables-watermark';
+
+export const STORAGE_UPDATED_EVENT = 'variables:updated';
 
 export const OP_RW = 'RW';
 const OP_RO = 'RO';
@@ -20,6 +23,10 @@ export class Storage {
 		watermark: number;
 		variables: TVariablesList;
 	};
+
+	notifyChange() {
+		window.dispatchEvent( new Event( STORAGE_UPDATED_EVENT ) );
+	}
 
 	constructor() {
 		this.state = {
@@ -44,18 +51,21 @@ export class Storage {
 
 		localStorage.setItem( STORAGE_WATERMARK_KEY, this.state.watermark.toString() );
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	add( id: string, variable: TVariable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	update( id: string, variable: TVariable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
+		this.notifyChange();
 	}
 
 	watermark( watermark: number ) {

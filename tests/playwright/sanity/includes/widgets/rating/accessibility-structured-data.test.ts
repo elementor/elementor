@@ -25,17 +25,17 @@ test.describe( 'Rating accessibility & structured data @rating', () => {
 				worstRating = page.locator( '[itemprop="worstRating"]' ),
 				bestRating = page.locator( '[itemprop="bestRating"]' );
 
-			expect.soft( await ratingWrapper.getAttribute( 'aria-label' ) ).toEqual( 'Rated 3.54 out of 7' );
-			expect.soft( await ratingWrapper.getAttribute( 'content' ) ).toEqual( '3.54' );
-			expect.soft( await ratingWrapper.getAttribute( 'role' ) ).toEqual( 'img' );
-			expect.soft( await ratingWrapper.getAttribute( 'itemprop' ) ).toEqual( 'ratingValue' );
+			await expect.soft( ratingWrapper ).toHaveAttribute( 'aria-label', 'Rated 3.54 out of 7' );
+			await expect.soft( ratingWrapper ).toHaveAttribute( 'content', '3.54' );
+			await expect.soft( ratingWrapper ).toHaveAttribute( 'role', 'img' );
+			await expect.soft( ratingWrapper ).toHaveAttribute( 'itemprop', 'ratingValue' );
 
-			expect.soft( await ratingWidget.getAttribute( 'itemtype' ) ).toEqual( 'https://schema.org/Rating' );
-			expect.soft( await ratingWidget.getAttribute( 'itemprop' ) ).toEqual( 'reviewRating' );
-			expect.soft( await ratingWidget.getAttribute( 'itemscope' ) ).toEqual( '' );
+			await expect.soft( ratingWidget ).toHaveAttribute( 'itemtype', 'https://schema.org/Rating' );
+			await expect.soft( ratingWidget ).toHaveAttribute( 'itemprop', 'reviewRating' );
+			await expect.soft( ratingWidget ).toHaveAttribute( 'itemscope', '' );
 
-			expect.soft( await worstRating.getAttribute( 'content' ) ).toEqual( '0' );
-			expect.soft( await bestRating.getAttribute( 'content' ) ).toEqual( '7' );
+			await expect.soft( worstRating ).toHaveAttribute( 'content', '0' );
+			await expect.soft( bestRating ).toHaveAttribute( 'content', '7' );
 		} );
 	} );
 } );

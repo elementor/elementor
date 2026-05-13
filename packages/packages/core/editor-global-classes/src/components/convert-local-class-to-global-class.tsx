@@ -6,6 +6,7 @@ import { Divider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+import { trackGlobalClasses } from '../utils/tracking';
 
 type OwnProps = {
 	successCallback: ( _: string ) => void;
@@ -26,6 +27,12 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
 		if ( newId ) {
 			props.successCallback( newId );
+			trackGlobalClasses( {
+				classId: newId,
+				event: 'classCreated',
+				source: 'converted',
+				classTitle: newClassName,
+			} );
 		}
 	};
 

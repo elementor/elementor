@@ -2,8 +2,7 @@ import type { Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
 import {
 	type CustomCss,
-	isClassState,
-	isPseudoState,
+	getSelectorWithState,
 	type StyleDefinition,
 	type StyleDefinitionState,
 	type StyleDefinitionType,
@@ -11,7 +10,7 @@ import {
 import { decodeString } from '@elementor/utils';
 
 import { type PropsResolver } from './create-props-resolver';
-import { UnknownStyleStateError, UnknownStyleTypeError } from './errors';
+import { UnknownStyleTypeError } from './errors';
 
 export type StyleItem = {
 	id: string;
@@ -47,9 +46,28 @@ const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 	class: '.',
 };
 
+const DEFAULT_BREAKPOINT = 'desktop';
+const DEFAULT_STATE = 'normal';
+
+function getStyleUniqueKey( style: RendererStyleDefinition ): string {
+	const breakpoint = style.variants[ 0 ]?.meta?.breakpoint ?? DEFAULT_BREAKPOINT;
+	const state = style.variants[ 0 ]?.meta?.state ?? DEFAULT_STATE;
+	return `${ style.id }-${ breakpoint }-${ state }`;
+}
+
 export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
 	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
-		const stylesCssPromises = styles.map( async ( style ) => {
+		const seenKeys = new Set< string >();
+		const uniqueStyles = styles.filter( ( style ) => {
+			const key = getStyleUniqueKey( style );
+			if ( seenKeys.has( key ) ) {
+				return false;
+			}
+			seenKeys.add( key );
+			return true;
+		} );
+
+		const stylesCssPromises = uniqueStyles.map( async ( style ) => {
 			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
 				const css = await propsToCss( { props: variant.props, resolve, signal } );
 				const customCss = customCssToString( variant.custom_css );
@@ -92,20 +110,11 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
 
 		withState: ( state: StyleDefinitionState ) => {
-			if ( ! state ) {
-				return createStyleWrapper( value, wrapper );
-			}
+			const selector = getSelectorWithState( value, state );
 
-			if ( isClassState( state ) ) {
-				return createStyleWrapper( `${ value }.${ state }`, wrapper );
-			}
-
-			if ( isPseudoState( state ) ) {
-				return createStyleWrapper( `${ value }:${ state }`, wrapper );
-			}
-
-			throw new UnknownStyleStateError( { context: { state } } );
+			return createStyleWrapper( selector, wrapper );
 		},
+
 		withMediaQuery: ( breakpoint: Breakpoint | null ) => {
 			if ( ! breakpoint?.type ) {
 				return createStyleWrapper( value, wrapper );

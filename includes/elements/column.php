@@ -229,7 +229,7 @@ class Element_Column extends Element_Base {
 		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 		$space_between_widgets = $optimized_markup
 			? '--kit-widget-spacing: {{VALUE}}px'
-			: 'margin-block-end:: {{VALUE}}px';
+			: 'margin-block-end: {{VALUE}}px';
 
 		$this->add_responsive_control(
 			'space_between_widgets',

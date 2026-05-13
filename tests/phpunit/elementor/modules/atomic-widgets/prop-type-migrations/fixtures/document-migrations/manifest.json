@@ -1,0 +1,48 @@
+{
+  "widgetKeys": {
+    "e-heading": [
+      { "from": "old-title", "to": "title" },
+      { "from": "old-tag", "to": "tag" }
+		],
+    "e-image": [
+      { "from": "old-image", "to": "image" }
+		]
+  },
+  "propTypes": {
+    "a-string-to-html": {
+      "fromType": "a-string",
+      "toType": "html",
+      "path": "a-string-to-html.json"
+    },
+    "html-to-html-v2": {
+      "fromType": "html",
+      "toType": "html-v2",
+      "path": "html-to-html-v2.json"
+    },
+    "html-v2-to-html-v3": {
+      "fromType": "html-v2",
+      "toType": "html-v3",
+      "path": "html-v2-to-html-v3.json"
+    },
+    "old-image-to-image": {
+      "fromType": "old-image",
+      "toType": "image",
+      "path": "old-image-to-image.json"
+    },
+    "old-shadow-to-shadow": {
+      "fromType": "old-shadow",
+      "toType": "shadow",
+      "path": "old-shadow-to-shadow.json"
+    },
+    "old-string-to-string": {
+      "fromType": "old-string",
+      "toType": "string",
+      "path": "old-string-to-string.json"
+    },
+    "old-url-to-url": {
+      "fromType": "old-url",
+      "toType": "url",
+      "path": "old-url-to-url.json"
+    }
+  }
+}

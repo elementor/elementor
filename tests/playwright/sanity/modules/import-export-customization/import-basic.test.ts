@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
-test.describe( 'Import Export Customization - Basic Import', () => {
+test.describe( 'Import Export Customization - Basic Import @import_export_customization', () => {
 	test( 'should complete full import process with progress and summary', async ( { page } ) => {
 		await ImportExportHelpers.openImportPage( page );
 
@@ -22,7 +22,7 @@ test.describe( 'Import Export Customization - Basic Import', () => {
 		await ImportExportHelpers.openImportPage( page );
 
 		const importButton = page.locator( 'button:has-text("Import")' );
-		await expect( importButton ).not.toBeVisible();
+		await expect( importButton ).toBeHidden();
 
 		await ImportExportHelpers.uploadKitFile( page );
 

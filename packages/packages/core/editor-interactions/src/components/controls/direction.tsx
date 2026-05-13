@@ -1,65 +1,100 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import {
-	ControlFormLabel,
-	PopoverGridContainer,
-	type ToggleButtonGroupItem,
-	ToggleButtonGroupUi,
-} from '@elementor/editor-controls';
+import { StyledToggleButton, StyledToggleButtonGroup } from '@elementor/editor-controls';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
-import { Grid } from '@elementor/ui';
+import { Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type DirectionFieldProps } from '../../types';
 
 type Direction = 'top' | 'bottom' | 'left' | 'right';
 
-export function Direction( { value, onChange, interactionType }: DirectionFieldProps ) {
-	const options: ToggleButtonGroupItem< Direction >[] = useMemo( () => {
-		const isIn = interactionType === 'in';
+const AXIS: Record< Direction, 'vertical' | 'horizontal' > = {
+	top: 'vertical',
+	bottom: 'vertical',
+	left: 'horizontal',
+	right: 'horizontal',
+};
 
-		return [
+function parseValue( value: string ): Direction[] {
+	return value.split( '-' ).filter( Boolean ) as Direction[];
+}
+
+function serializeValue( directions: Direction[] ): string {
+	const vertical = directions.find( ( d ) => d === 'top' || d === 'bottom' );
+	const horizontal = directions.find( ( d ) => d === 'left' || d === 'right' );
+	if ( vertical && horizontal ) {
+		return `${ vertical }-${ horizontal }`;
+	}
+	return directions[ 0 ] ?? '';
+}
+
+function toggleDirection( current: Direction[], clicked: Direction ): Direction[] {
+	if ( current.includes( clicked ) ) {
+		return current.filter( ( d ) => d !== clicked );
+	}
+	const filtered = current.filter( ( d ) => AXIS[ d ] !== AXIS[ clicked ] );
+	return [ ...filtered, clicked ];
+}
+
+export function Direction( { value, onChange, interactionType }: DirectionFieldProps ) {
+	const isIn = interactionType === 'in';
+
+	const options = useMemo(
+		() => [
 			{
-				value: 'top',
+				dir: 'top' as Direction,
 				label: isIn ? __( 'From top', 'elementor' ) : __( 'To top', 'elementor' ),
-				renderContent: ( { size } ) =>
-					isIn ? <ArrowDownSmallIcon fontSize={ size } /> : <ArrowUpSmallIcon fontSize={ size } />,
-				showTooltip: true,
+				Icon: isIn ? ArrowDownSmallIcon : ArrowUpSmallIcon,
 			},
 			{
-				value: 'bottom',
-				label: interactionType === 'in' ? __( 'From bottom', 'elementor' ) : __( 'To bottom', 'elementor' ),
-				renderContent: ( { size } ) =>
-					isIn ? <ArrowUpSmallIcon fontSize={ size } /> : <ArrowDownSmallIcon fontSize={ size } />,
-				showTooltip: true,
+				dir: 'bottom' as Direction,
+				label: isIn ? __( 'From bottom', 'elementor' ) : __( 'To bottom', 'elementor' ),
+				Icon: isIn ? ArrowUpSmallIcon : ArrowDownSmallIcon,
 			},
 			{
-				value: 'left',
-				label: interactionType === 'in' ? __( 'From left', 'elementor' ) : __( 'To left', 'elementor' ),
-				renderContent: ( { size } ) =>
-					isIn ? <ArrowRightIcon fontSize={ size } /> : <ArrowLeftIcon fontSize={ size } />,
-				showTooltip: true,
+				dir: 'left' as Direction,
+				label: isIn ? __( 'From left', 'elementor' ) : __( 'To left', 'elementor' ),
+				Icon: isIn ? ArrowRightIcon : ArrowLeftIcon,
 			},
 			{
-				value: 'right',
-				label: interactionType === 'in' ? __( 'From right', 'elementor' ) : __( 'To right', 'elementor' ),
-				renderContent: ( { size } ) =>
-					isIn ? <ArrowLeftIcon fontSize={ size } /> : <ArrowRightIcon fontSize={ size } />,
-				showTooltip: true,
+				dir: 'right' as Direction,
+				label: isIn ? __( 'From right', 'elementor' ) : __( 'To right', 'elementor' ),
+				Icon: isIn ? ArrowLeftIcon : ArrowRightIcon,
 			},
-		];
-	}, [ interactionType ] );
+		],
+		[ isIn ]
+	);
+
+	const selectedDirections = useMemo( () => parseValue( value ), [ value ] );
 
 	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<ControlFormLabel> { __( 'Direction', 'elementor' ) }</ControlFormLabel>
-				</Grid>
-				<Grid item xs={ 6 }>
-					<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
-				</Grid>
-			</PopoverGridContainer>
-		</Grid>
+		<StyledToggleButtonGroup
+			size="tiny"
+			justify="end"
+			sx={ {
+				display: 'grid',
+				gridTemplateColumns: 'repeat(4, minmax(0, 25%))',
+				width: '100%',
+			} }
+		>
+			{ options.map( ( { dir, label, Icon } ) => (
+				<Tooltip key={ dir } title={ label } disableFocusListener placement="top">
+					<StyledToggleButton
+						value={ dir }
+						selected={ selectedDirections.includes( dir ) }
+						aria-label={ label }
+						size="tiny"
+						isPlaceholder={ false }
+						onChange={ () => {
+							const next = toggleDirection( selectedDirections, dir );
+							onChange( serializeValue( next ) );
+						} }
+					>
+						<Icon fontSize="tiny" />
+					</StyledToggleButton>
+				</Tooltip>
+			) ) }
+		</StyledToggleButtonGroup>
 	);
 }

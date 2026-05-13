@@ -5,7 +5,8 @@ import { type PropKey } from '@elementor/editor-props';
 import { createTopLevelObjectType } from '../controls-registry/create-top-level-object-type';
 import { DynamicConditionalControl } from './components/dynamic-conditional-control';
 import { useDynamicTag } from './hooks/use-dynamic-tag';
-import { dynamicPropTypeUtil, type DynamicPropValue } from './utils';
+import { type DynamicPropValue } from './types';
+import { dynamicPropTypeUtil } from './utils';
 
 type DynamicControlProps = React.PropsWithChildren< {
 	bind: PropKey;
@@ -13,7 +14,7 @@ type DynamicControlProps = React.PropsWithChildren< {
 
 export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 	const { value, setValue } = useBoundProp( dynamicPropTypeUtil );
-	const { name = '', settings } = value ?? {};
+	const { name = '', group = '', settings } = value ?? {};
 
 	const dynamicTag = useDynamicTag( name );
 
@@ -29,6 +30,7 @@ export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
 	const setDynamicValue: SetValue< Record< string, DynamicPropValue > > = ( newValues ) => {
 		setValue( {
 			name,
+			group,
 			settings: {
 				...settings,
 				...newValues,

@@ -26,26 +26,6 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
 	}
 
-	public function unlock( $post_id ) {
-		if ( ! $this->is_component_post( $post_id ) ) {
-				throw new \Exception( 'Post is not a component type' );
-		}
-
-		$lock_data = $this->is_locked( $post_id );
-		$current_user_id = get_current_user_id();
-
-		// Only allow unlocking if the current user owns the lock
-		if ( ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] !== (int) $current_user_id ) {
-			return false;
-		}
-
-		return parent::unlock( $post_id );
-	}
-
-	private function is_component_post( $post_id ) {
-		return get_post_type( $post_id ) === Component_Document::TYPE;
-	}
-
 	public function heartbeat_received( $response, $data ) {
 		if ( ! isset( $data['elementor_post_lock']['post_ID'] ) ) {
 			return $response;
@@ -57,46 +37,101 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 			return $response;
 		}
 
-		$lock_data = $this->is_locked( $post_id );
-		$current_user_id = get_current_user_id();
-		if ( $lock_data['is_locked'] && $current_user_id === (int) $lock_data['lock_user'] ) {
+		$lock_data = $this->get_lock_data( $post_id );
+		$user_id = get_current_user_id();
+		if ( $user_id === (int) $lock_data['locked_by'] ) {
 			$this->extend_lock( $post_id );
 		}
 
 		return $response;
 	}
 
-	public function get_updated_status( $post_id ) {
+
+	/**
+	 * Unlock a component.
+	 *
+	 * @param int $post_id The component ID to unlock
+	 * @return bool True if unlock was successful, false otherwise
+	 * @throws \Exception If post is not a component type.
+	 */
+	public function unlock( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
+				throw new \Exception( 'Post is not a component type' );
+		}
+
+		$lock_data = $this->get_lock_data( $post_id );
+		$current_user_id = get_current_user_id();
+		if ( $lock_data['locked_by'] && (int) $lock_data['locked_by'] !== (int) $current_user_id ) {
+			return false;
+		}
+		return parent::unlock( $post_id );
+	}
+
+	/**
+	 * Lock a component.
+	 *
+	 * @param int $post_id The component ID to lock
+	 * @return bool|null True if lock was successful, null if locked by another user, false otherwise
+	 * @throws \Exception If post is not a component type.
+	 */
+	public function lock( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			throw new \Exception( 'Post is not a component type' );
 		}
 
-		$lock_data = $this->is_locked( $post_id );
+		$lock_data = $this->get_lock_data( $post_id );
+		$is_expired = $this->is_lock_expired( $post_id );
 
-		if ( ! $lock_data['is_locked'] ) {
-			if ( null !== $lock_data['lock_time'] ) {
-				parent::unlock( $post_id );
-			}
-			return [
-				'is_locked' => false,
-				'lock_user' => null,
-				'lock_time' => null,
-			];
+		if ( $is_expired ) {
+			parent::unlock( $post_id );
+		} elseif ( $lock_data['locked_by'] ) {
+			return null;
 		}
 
-		$current_user_id = get_current_user_id();
-		if ( $current_user_id === (int) $lock_data['lock_user'] ) {
-			$lock_data['is_locked'] = false;
-		}
-
-		return $lock_data;
+		return parent::lock( $post_id );
 	}
 
-	public function lock( $document_id ) {
-		if ( ! $this->is_component_post( $document_id ) ) {
+	/**
+	 * Get lock data for a component.
+	 *
+	 * @param int $post_id The component ID
+	 * @return array Lock data with 'locked_by' (int|null), 'locked_at' (int|null)
+	 * @throws \Exception If post is not a component type.
+	 */
+	public function get_lock_data( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
 			throw new \Exception( 'Post is not a component type' );
 		}
 
-		return parent::lock( $document_id );
+		return parent::get_lock_data( $post_id );
+	}
+
+	/**
+	 * Extend the lock for a component.
+	 *
+	 * @param int $post_id The component ID
+	 * @return bool|null True if extended successfully, null if not locked or locked by another user
+	 * @throws \Exception If post is not a component type.
+	 */
+	public function extend_lock( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
+			throw new \Exception( 'Post is not a component type' );
+		}
+
+		$lock_data = $this->get_lock_data( $post_id );
+		if ( ! $lock_data['locked_by'] ) {
+			return null;
+		}
+
+		$current_user_id = get_current_user_id();
+		if ( (int) $lock_data['locked_by'] !== (int) $current_user_id ) {
+			return null;
+		}
+
+		return parent::extend_lock( $post_id );
+	}
+
+	private function is_component_post( $post_id ) {
+		return get_post_type( $post_id ) === Component_Document::TYPE;
 	}
 }

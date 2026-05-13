@@ -38,7 +38,7 @@ export const SingleSizeItemContent = ( { filterFunc }: { filterFunc: FilterFunct
 							<ControlFormLabel>{ valueName }</ControlFormLabel>
 						</Grid>
 						<Grid item xs={ 6 }>
-							<SizeControl anchorRef={ rowRef } enablePropTypeUnits isRepeaterControl />
+							<SizeControl anchorRef={ rowRef } enablePropTypeUnits />
 						</Grid>
 					</PopoverGridContainer>
 				</PropKeyProvider>

@@ -14,7 +14,7 @@ use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Style_Renderer extends TestCase {
@@ -186,7 +186,7 @@ class Test_Style_Renderer extends TestCase {
 		$css = $renderer->render( $styles );
 
 		// Assert.
-		$this->assertStringContainsString( '.state-test:hover{color:#111;}', $css );
+		$this->assertStringContainsString( '.state-test:hover,.state-test:focus-visible{color:#111;}', $css );
 		$this->assertStringContainsString( '.state-test.e--selected{color:#222;}', $css );
 	}
 

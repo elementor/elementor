@@ -15,15 +15,11 @@ const positionOptions = [
 	{ label: __( 'Sticky', 'elementor' ), value: 'sticky' },
 ];
 
-type Props = {
-	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
-};
-
-export const PositionField = ( { onChange }: Props ) => {
+export const PositionField = () => {
 	return (
 		<StylesField bind="position" propDisplayName={ POSITION_LABEL }>
 			<StylesFieldLayout label={ POSITION_LABEL }>
-				<SelectControl options={ positionOptions } onChange={ onChange } />
+				<SelectControl options={ positionOptions } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

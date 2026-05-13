@@ -2,68 +2,72 @@ import { ElementIndexNotFoundError, ElementNotFoundError, ElementParentNotFoundE
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
-import { type V1ElementData, type V1ElementModelProps } from './types';
+import { type V1Element, type V1ElementModelProps } from './types';
 
 type ElementLocation = {
-	containerId: string;
+	container: V1Element;
 	index: number;
 };
 
 type ReplaceElementArgs = {
-	currentElement: V1ElementData;
+	currentElementId: string;
 	newElement: Omit< V1ElementModelProps, 'id' >;
 	withHistory?: boolean;
 };
 
-export const replaceElement = ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
-	const { containerId, index } = getNewElementLocation( currentElement, newElement );
+export const replaceElement = ( { currentElementId, newElement, withHistory = true }: ReplaceElementArgs ) => {
+	const currentElementContainer = getContainer( currentElementId );
 
-	createElement( {
-		containerId,
+	if ( ! currentElementContainer ) {
+		throw new ElementNotFoundError( { context: { elementId: currentElementId } } );
+	}
+
+	const { container, index } = getNewElementContainer( currentElementContainer, newElement );
+
+	const newElementInstance = createElement( {
+		container,
 		model: newElement,
 		options: { at: index, useHistory: withHistory },
 	} );
 
-	deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
+	deleteElement( { container: currentElementContainer, options: { useHistory: withHistory } } );
+
+	return newElementInstance;
 };
 
-function getNewElementLocation(
-	currentElement: V1ElementData,
+function getNewElementContainer(
+	currentElementContainer: V1Element,
 	newElement: Omit< V1ElementModelProps, 'id' >
 ): ElementLocation {
-	let location: ElementLocation;
+	const { parent } = currentElementContainer;
 
-	const currentElementContainer = getContainer( currentElement.id );
-	if ( ! currentElementContainer ) {
-		throw new ElementNotFoundError( { context: { elementId: currentElement.id } } );
-	}
-
-	const parent = currentElementContainer.parent;
 	if ( ! parent ) {
-		throw new ElementParentNotFoundError( { context: { elementId: currentElement.id } } );
+		throw new ElementParentNotFoundError( { context: { elementId: currentElementContainer.id } } );
 	}
 
 	const elementIndex = currentElementContainer.view?._index ?? 0;
-	if ( elementIndex === undefined || elementIndex === -1 ) {
-		throw new ElementIndexNotFoundError( { context: { elementId: currentElement.id } } );
+
+	if ( elementIndex === -1 ) {
+		throw new ElementIndexNotFoundError( { context: { elementId: currentElementContainer.id } } );
 	}
 
-	location = { containerId: parent.id, index: elementIndex };
+	let location: ElementLocation = { container: parent, index: elementIndex };
 
-	// If the element is at document top level and is a widget, wrap it with an empty container
 	if ( parent.id === 'document' && newElement.elType === 'widget' ) {
-		location = createWrapperForWidget( parent.id, elementIndex );
+		location = createWrapperForWidget( parent, elementIndex );
 	}
 
 	return location;
 }
 
-function createWrapperForWidget( parentId: string, elementIndex: number ): ElementLocation {
+const DEFAULT_CONTAINER_TYPE = 'e-flexbox';
+
+function createWrapperForWidget( parent: V1Element, elementIndex: number ): ElementLocation {
 	const container = createElement( {
-		containerId: parentId,
-		model: { elType: 'container' },
+		container: parent,
+		model: { elType: DEFAULT_CONTAINER_TYPE },
 		options: { at: elementIndex, useHistory: false },
 	} );
 
-	return { containerId: container.id, index: 0 };
+	return { container, index: 0 };
 }

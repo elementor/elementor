@@ -11,6 +11,7 @@ import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors'
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
 import v4Panel from './atomic-elements-panel/v4-elements-panel';
+import { INLINE_EDITING_SELECTORS } from '../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -138,33 +139,11 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		// Wait for document state to be properly set after template import
-		await this.page.waitForFunction( () => {
-			interface ElementorWindow extends Window {
-				elementor?: {
-					documents?: {
-						getCurrent(): {
-							editor: { isChanged: boolean };
-						};
-					};
-					config?: {
-						user?: {
-							capabilities?: string[];
-						};
-					};
-				};
-			}
-			try {
-				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
-			} catch ( error ) {
-				return false;
-			}
-		}, {
-			timeout: 5000,
-			polling: 100,
-		} );
+		await this.page
+			.frameLocator( '#elementor-preview-iframe' )
+			.locator( '.elementor-element' )
+			.first()
+			.waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -557,7 +536,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selectLocator = this.page.locator( `.elementor-control-${ controlId } select` );
+		await selectLocator.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await selectLocator.selectOption( value, { timeout: timeouts.longAction } );
 	}
 
 	/**
@@ -1369,5 +1350,61 @@ export default class EditorPage extends BasePage {
 		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
+	}
+
+	async triggerEditingElement( elementId: string, waitFor: boolean = true ): Promise<Locator> {
+		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
+
+		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.veryShort );
+		await element.waitFor();
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+
+		if ( waitFor ) {
+			await inlineEditor.waitFor( { timeout: timeouts.action } );
+		}
+
+		return inlineEditor;
+	}
+
+	async selectInlineEditedText( elementId: string, substringOrSelectAll: string | true ): Promise<void> {
+		const inlineEditor = await this.triggerEditingElement( elementId );
+
+		if ( true === substringOrSelectAll ) {
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
+		}
+
+		if ( 'string' !== typeof substringOrSelectAll ) {
+			return;
+		}
+
+		const substring = substringOrSelectAll;
+		const entireText = await inlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
+	}
+
+	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+			return;
+		}
+
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
+
+		await button.click();
 	}
 }

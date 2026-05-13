@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -15,8 +15,6 @@ use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
  * we will see if we need to extend collection as time goes on
  */
 class Variables_Collection extends Collection {
-	const FORMAT_VERSION_V1 = 1;
-	const TOTAL_VARIABLES_COUNT = 100;
 
 	private int $watermark;
 
@@ -27,7 +25,7 @@ class Variables_Collection extends Collection {
 
 		$this->items = $items;
 		$this->watermark = $watermark;
-		$this->version = $version ?? self::FORMAT_VERSION_V1;
+		$this->version = $version ?? Constants::FORMAT_VERSION_V1;
 	}
 
 	public static function hydrate( array $record ): self {
@@ -65,11 +63,17 @@ class Variables_Collection extends Collection {
 		];
 	}
 
+
+	public function set_version( $version ): void {
+		$this->version = $version;
+	}
+
+
 	public static function default(): self {
 		return new self(
 			[],
 			0,
-			self::FORMAT_VERSION_V1
+			Constants::FORMAT_VERSION_V1
 		);
 	}
 
@@ -133,11 +137,11 @@ class Variables_Collection extends Collection {
 
 		foreach ( $this->all() as $variable ) {
 			if ( ! $variable->is_deleted() ) {
-				$active_count++;
+				++$active_count;
 			}
 		}
 
-		if ( self::TOTAL_VARIABLES_COUNT <= $active_count ) {
+		if ( Constants::TOTAL_VARIABLES_COUNT <= $active_count ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}

@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { buildOperationsArray, type OperationResult } from './batch-operations';
-import { OP_RW, Storage, type TVariablesList } from './storage';
+import { OP_RW, Storage, type TVariable, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
 
@@ -11,6 +11,18 @@ const storage = new Storage();
 export const service = {
 	variables: (): TVariablesList => {
 		return storage.load();
+	},
+
+	findIdByLabel( needle: string ): string {
+		const variableId = Object.entries( this.variables() ).find( ( [ , variable ] ) => variable.label === needle );
+		if ( ! variableId ) {
+			throw new Error( `Variable with label ${ needle } not found` );
+		}
+		return variableId[ 0 ];
+	},
+
+	findVariableByLabel( needle: string ): TVariable | null {
+		return Object.values( this.variables() ).find( ( variable ) => variable.label === needle ) || null;
 	},
 
 	getWatermark: (): number => {
@@ -77,9 +89,9 @@ export const service = {
 			} );
 	},
 
-	update: ( id: string, { label, value }: Omit< Variable, 'type' > ) => {
+	update: ( id: string, { label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] } ) => {
 		return apiClient
-			.update( id, label, value )
+			.update( id, label, value, type )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -142,9 +154,9 @@ export const service = {
 			} );
 	},
 
-	restore: ( id: string, label?: string, value?: string ) => {
+	restore: ( id: string, label?: string, value?: string, type?: string ) => {
 		return apiClient
-			.restore( id, label, value )
+			.restore( id, label, value, type )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -174,8 +186,8 @@ export const service = {
 			} );
 	},
 
-	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables );
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		if ( operations.length === 0 ) {
@@ -204,17 +216,17 @@ export const service = {
 
 				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if ( result.variable ) {
-							const { id: variableId, ...variableData } = result.variable;
+						const variableId = result.id;
 
+						if ( result.variable ) {
 							if ( result.type === 'create' ) {
-								storage.add( variableId, variableData );
+								storage.add( variableId, result.variable );
 							} else {
-								storage.update( variableId, variableData );
+								storage.update( variableId, result.variable );
 							}
 
 							styleVariablesRepository.update( {
-								[ variableId ]: variableData,
+								[ variableId ]: result.variable,
 							} );
 						}
 					} );

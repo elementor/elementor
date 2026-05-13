@@ -26,7 +26,7 @@ export const StrokeControl = createControl( () => {
 
 	return (
 		<PropProvider { ...propContext }>
-			<SectionContent>
+			<SectionContent gap={ 2 }>
 				<Control bind="width" label={ __( 'Stroke width', 'elementor' ) } ref={ rowRef }>
 					<SizeControl units={ units } anchorRef={ rowRef } />
 				</Control>
