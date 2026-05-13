@@ -176,25 +176,31 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		$new_items = $data['new_items'] ?? [];
 		$order = $data['order'] ?? [];
 
-		if ( ! empty( $new_items ) ) {
-			$repository = Global_Classes_Repository::make()->set_preview( false );
-
-			$added_ids = array_keys( $new_items );
-
-			$repository->apply_changes(
-				$new_items,
-				[
-					'added' => $added_ids,
-					'order' => true,
+		if ( empty( $new_items ) ) {
+			return [
+				'global_classes' => [
+					'added_items' => [],
+					'added_items_order' => [],
 				],
-				$order
-			);
+			];
 		}
+
+		$repository = Global_Classes_Repository::make()->set_preview( false );
+		$added_ids = array_keys( $new_items );
+
+		$repository->apply_changes(
+			$new_items,
+			[
+				'added' => $added_ids,
+				'order' => true,
+			],
+			$order
+		);
 
 		return [
 			'global_classes' => [
-				'items' => $data['updated_items'] ?? [],
-				'order' => $order,
+				'added_items_order' => $added_ids,
+				'added_items' => $new_items,
 			],
 		];
 	}
