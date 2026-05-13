@@ -104,6 +104,16 @@ describe( '<ImportDesignSystemDialog />', () => {
 		sharedQueryClient.clear();
 	} );
 
+	it( 'renders a "Learn more" link to the design system imports docs', () => {
+		setupHttpServiceMock();
+
+		renderWithQuery( <ImportDesignSystemDialog onClose={ jest.fn() } /> );
+
+		const link = screen.getByRole( 'link', { name: 'Learn how design system imports work' } );
+		expect( link ).toHaveAttribute( 'href', 'https://go.elementor.com/wp-dash-import-export-design-system/' );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
+	} );
+
 	it( 'disables the import button until a file and conflict strategy are selected', async () => {
 		setupHttpServiceMock();
 
