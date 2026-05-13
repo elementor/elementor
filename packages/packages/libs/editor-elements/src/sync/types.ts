@@ -29,6 +29,7 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		getPreviewContainer?: () => V1Element | undefined;
 		helpers?: {
 			isAtomicWidget?: ( model: unknown ) => boolean;
 		};

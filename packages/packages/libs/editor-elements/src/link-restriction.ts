@@ -2,6 +2,7 @@ import { type LinkPropValue } from '@elementor/editor-props';
 
 import { getContainer } from './sync/get-container';
 import { getElementSetting } from './sync/get-element-setting';
+import { type ExtendedWindow } from './sync/types';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
 
@@ -144,10 +145,27 @@ function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boo
 
 function getElementDOM( id: string ) {
 	try {
-		return getContainer( id )?.view?.el || null;
+		const fromContainer = getContainer( id )?.view?.el;
+
+		if ( fromContainer ) {
+			return fromContainer;
+		}
+
+		return queryPreviewDOMByElementId( id );
 	} catch {
 		return null;
 	}
+}
+
+function queryPreviewDOMByElementId( id: string ): HTMLElement | null {
+	const previewDocument = ( window as unknown as ExtendedWindow ).elementor?.getPreviewContainer?.()?.view?.el
+		?.ownerDocument;
+
+	if ( ! previewDocument ) {
+		return null;
+	}
+
+	return previewDocument.querySelector< HTMLElement >( `[data-id="${ id }"]` );
 }
 
 function isElementorElement( element: Element ): boolean {
