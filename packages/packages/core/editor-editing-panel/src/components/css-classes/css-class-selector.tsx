@@ -231,11 +231,11 @@ const LimitReachedEmptyState = ( {
 }: Pick< EmptyStateProps, 'onClear' > & { limitCount: number } ) => (
 	<Box sx={ { py: 4 } }>
 		<Stack
-			gap={ 2 }
+			gap={ 1 }
 			alignItems="center"
 			color="text.secondary"
 			justifyContent="center"
-			sx={ { px: 2, m: 'auto', maxWidth: '236px' } }
+			sx={ { px: 1, m: 'auto', maxWidth: '260px' } }
 		>
 			<ColorSwatchIcon sx={ { transform: 'rotate(90deg)' } } fontSize="large" />
 			<Typography align="center" variant="subtitle2">
