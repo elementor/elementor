@@ -22,6 +22,7 @@ export * from './url';
 export * from './layout-direction';
 export * from './link';
 export * from './email';
+export * from './emails';
 export * from './selection-size';
 export * from './background-prop-types/background';
 export * from './background-prop-types/background-overlay';
