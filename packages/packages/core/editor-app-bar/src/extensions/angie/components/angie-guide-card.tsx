@@ -10,7 +10,7 @@ type Props = {
 	onClose: () => void;
 };
 
-export default function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall, onClose }: Props ) {
+export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall, onClose }: Props ) {
 	return (
 		<ClickAwayListener onClickAway={ onClose }>
 			<Stack sx={ { width: 296 } } data-testid="e-angie-guide-card">
