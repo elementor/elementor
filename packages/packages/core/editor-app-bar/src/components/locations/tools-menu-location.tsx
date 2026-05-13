@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import AngieGuideLocation from '../../extensions/angie/components/angie-guide-location';
+import { AngieGuideLocation } from '../../extensions/angie/components/angie-guide-location';
 import { toolsMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';

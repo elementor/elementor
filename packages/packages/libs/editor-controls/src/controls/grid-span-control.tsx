@@ -27,7 +27,7 @@ export const GridSpanControl = createControl(
 		const { value, setValue, disabled, placeholder: boundPlaceholder } = useBoundProp( spanPropTypeUtil );
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
 
-		const placeholder = propPlaceholder ?? boundPlaceholder ?? undefined;
+		const placeholder = propPlaceholder ?? boundPlaceholder ?? `e.g: 'span 2' or '1 / 3'`;
 
 		return (
 			<ControlActions>
