@@ -2,10 +2,11 @@
 
 namespace Elementor\Modules\WidgetCreation;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
+use Elementor\Plugin;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -62,12 +63,11 @@ class AngiePromotion {
 			return $settings;
 		}
 
-		$is_container_active = 'active' === get_option( Experiments_Manager::OPTION_PREFIX . 'container' );
+		$is_container_active = Plugin::$instance->experiments->is_feature_active( 'container' );
 
 		if ( $is_container_active ) {
-			$is_atomic_active   = 'active' === get_option( Experiments_Manager::OPTION_PREFIX . 'e_atomic_elements' );
-			$user_intro         = get_user_meta( get_current_user_id(), 'elementor_introduction', true );
-			$is_promo_dismissed = ! empty( $user_intro['atomic_elements_promo'] );
+			$is_atomic_active   = Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
+			$is_promo_dismissed = ! empty( User::get_introduction_meta( 'atomic_elements_promo' ) );
 
 			if ( ! $is_atomic_active && ! $is_promo_dismissed ) {
 				return $settings;

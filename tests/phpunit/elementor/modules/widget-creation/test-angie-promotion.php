@@ -2,10 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\WidgetCreation;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Modules\WidgetCreation\AngiePromotion;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,8 +20,8 @@ class Test_Angie_Promotion extends Elementor_Test_Base {
 		delete_option( AngiePromotion::ANGIE_GUIDE_AUTO_SHOWN_OPTION );
 		Elementor_Counter::instance()->set_count( Elementor_Counter::EDITOR_COUNTER_KEY, 0 );
 		delete_option( Upgrade_Manager::INSTALLS_HISTORY_META );
-		delete_option( Experiments_Manager::OPTION_PREFIX . 'container' );
-		delete_option( Experiments_Manager::OPTION_PREFIX . 'e_atomic_elements' );
+		$this->reset_experiment( 'container' );
+		$this->reset_experiment( 'e_atomic_elements' );
 	}
 
 	public function tear_down() {
@@ -29,8 +29,8 @@ class Test_Angie_Promotion extends Elementor_Test_Base {
 
 		remove_all_filters( 'elementor/editor/localize_settings' );
 		delete_option( AngiePromotion::ANGIE_GUIDE_AUTO_SHOWN_OPTION );
-		delete_option( Experiments_Manager::OPTION_PREFIX . 'container' );
-		delete_option( Experiments_Manager::OPTION_PREFIX . 'e_atomic_elements' );
+		$this->reset_experiment( 'container' );
+		$this->reset_experiment( 'e_atomic_elements' );
 		delete_user_meta( get_current_user_id(), 'elementor_introduction' );
 	}
 
@@ -247,11 +247,15 @@ class Test_Angie_Promotion extends Elementor_Test_Base {
 	}
 
 	private function set_container_active(): void {
-		update_option( Experiments_Manager::OPTION_PREFIX . 'container', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'container', 'active' );
 	}
 
 	private function set_atomic_elements_active(): void {
-		update_option( Experiments_Manager::OPTION_PREFIX . 'e_atomic_elements', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'e_atomic_elements', 'active' );
+	}
+
+	private function reset_experiment( string $feature_name ): void {
+		Plugin::$instance->experiments->set_feature_default_state( $feature_name, 'inactive' );
 	}
 
 	private function set_promo_dismissed(): void {
