@@ -90,7 +90,7 @@ export const ImportDesignSystemDialog = ( { onClose }: Props ) => {
 						/>
 					) }
 					<ConflictOptions value={ conflictStrategy } onChange={ handleConflictChange } />
-					<Stack direction="row" spacing={ 0.5 } alignItems="center" justifyContent="center">
+					<Stack direction="row" spacing={ 0.5 } alignItems="center" justifyContent="flex-start">
 						<HelpIcon sx={ { fontSize: 16, color: 'text.tertiary' } } />
 						<Link
 							href={ LEARN_MORE_URL }
