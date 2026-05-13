@@ -1,11 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { isProActive } from '@elementor/utils';
+
 import { service } from '../../service';
+import { generateVariablesPrompt } from '../variable-tool-prompt';
 import { initManageVariableTool } from '../manage-variable-tool';
 
 jest.mock( '../../service' );
+jest.mock( '@elementor/utils', () => ( {
+	isProActive: jest.fn( () => true ),
+} ) );
+jest.mock( '../variable-tool-prompt', () => ( {
+	MANAGE_VARIABLES_GUIDE_URI: 'elementor://variables/tools/manage-global-variable-guide',
+	generateVariablesPrompt: jest.fn( () => 'mock guide' ),
+} ) );
+
+function createMockRegistryAndGetHandler(): { handler: any; getRegisteredTool: () => any } {
+	let registeredTool: any = null;
+	const reg = {
+		addTool: ( tool: any ) => {
+			registeredTool = tool;
+		},
+		resource: jest.fn(),
+		setMCPDescription: jest.fn(),
+		sendResourceUpdated: jest.fn(),
+		waitForReady: jest.fn(),
+	};
+	initManageVariableTool( reg as any, Promise.resolve() );
+	return {
+		handler: registeredTool?.handler,
+		getRegisteredTool: () => registeredTool,
+	};
+}
 
 describe( 'manage-variable-tool validation', () => {
-	let mockRegistryEntry: any;
 	let toolHandler: any;
 	let mockVariables: Record< string, any >;
 
@@ -24,14 +51,9 @@ describe( 'manage-variable-tool validation', () => {
 		( service as any ).delete = mockService.delete;
 		( service as any ).variables = mockService.variables;
 
-		const tools: any[] = [];
-		mockRegistryEntry = {
-			addTool: ( tool: any ) => tools.push( tool ),
-		};
-
-		initManageVariableTool( mockRegistryEntry );
-		const manageTool = tools[ 0 ];
-		toolHandler = manageTool.handler;
+		( isProActive as jest.Mock ).mockReturnValue( true );
+		const { handler } = createMockRegistryAndGetHandler();
+		toolHandler = handler;
 	} );
 
 	describe( 'create action', () => {
@@ -100,6 +122,61 @@ describe( 'manage-variable-tool validation', () => {
 			).rejects.toThrow();
 
 			expect( service.create ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'size variable Pro gating', () => {
+		it( 'should allow size variable creation when Pro is active', async () => {
+			// toolHandler in beforeEach is initialized with isProActive() = true
+			await toolHandler( {
+				action: 'create',
+				type: 'global-size-variable',
+				label: 'spacing-md',
+				value: '16px',
+			} );
+
+			expect( service.create ).toHaveBeenCalledWith( {
+				type: 'global-size-variable',
+				label: 'spacing-md',
+				value: '16px',
+			} );
+		} );
+
+		it( 'should block size variable creation when Pro is not active at call time', async () => {
+			// The Pro check happens inside the handler on every call, not at init time,
+			// so flipping the mock here (after init) is enough to simulate a free-tier user.
+			( isProActive as jest.Mock ).mockReturnValue( false );
+
+			await expect(
+				toolHandler( {
+					action: 'create',
+					type: 'global-size-variable',
+					label: 'spacing-md',
+					value: '16px',
+				} )
+			).rejects.toThrow( 'Creating size variables requires Elementor Pro.' );
+
+			expect( service.create ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should generate prompt without global-size-variable when Pro is not active', () => {
+			( isProActive as jest.Mock ).mockReturnValue( false );
+			( generateVariablesPrompt as jest.Mock ).mockRestore?.();
+
+			const { default: realPrompt } = jest.requireActual( '../variable-tool-prompt' );
+			const prompt = ( realPrompt as typeof generateVariablesPrompt )();
+
+			expect( prompt ).not.toContain( '**global-size-variable**' );
+			expect( prompt ).toContain( 'requires Elementor Pro' );
+		} );
+
+		it( 'should generate prompt with global-size-variable when Pro is active', () => {
+			( isProActive as jest.Mock ).mockReturnValue( true );
+
+			const { generateVariablesPrompt: realGeneratePrompt } = jest.requireActual( '../variable-tool-prompt' );
+			const prompt = ( realGeneratePrompt as typeof generateVariablesPrompt )();
+
+			expect( prompt ).toContain( '**global-size-variable**' );
 		} );
 	} );
 

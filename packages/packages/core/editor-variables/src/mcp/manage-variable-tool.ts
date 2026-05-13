@@ -1,33 +1,17 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { isProActive } from '@elementor/utils';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
 import { validateLabel } from '../utils/validations';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
+import { MANAGE_VARIABLES_GUIDE_URI, generateVariablesPrompt } from './variable-tool-prompt';
 
 const VARIABLE_TYPES = {
 	COLOR: 'global-color-variable',
 	FONT: 'global-font-variable',
 	SIZE: 'global-size-variable',
 } as const;
-
-type VariableType = ( typeof VARIABLE_TYPES )[ keyof typeof VARIABLE_TYPES ];
-
-const VARIABLE_TYPE_FORMATS: Record< VariableType, { example: string; description: string } > = {
-	[ VARIABLE_TYPES.COLOR ]: {
-		example: '#FF0000',
-		description: 'A CSS color value (hex, rgba, hsl). Example: "#FF0000" or "rgba(255,0,0,1)"',
-	},
-	[ VARIABLE_TYPES.FONT ]: {
-		example: 'Roboto',
-		description:
-			'A font FAMILY name only — NOT a size or px value. Example: "Roboto" or "Open Sans". NEVER pass pixel or rem values here.',
-	},
-	[ VARIABLE_TYPES.SIZE ]: {
-		example: '16px',
-		description: 'A CSS size/spacing value with a unit. Example: "16px" or "1.5rem"',
-	},
-};
 
 const PX_OR_REM_PATTERN = /^\d+(\.\d+)?(px|rem|em|vh|vw|%)$/i;
 const HEX_OR_RGB_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
@@ -48,36 +32,40 @@ function validateValueForType( type: string, value: string ): string {
 	return '';
 }
 
-export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+export const initManageVariableTool = ( reg: MCPRegistryEntry, variablesReady: Promise< unknown > ) => {
+	const { addTool, resource } = reg;
+
+	resource(
+		'manage-global-variable-guide',
+		MANAGE_VARIABLES_GUIDE_URI,
+		{
+			title: 'Manage Global Variable Guide',
+			description: 'Detailed guide for using the manage-global-variable tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generateVariablesPrompt() } ],
+		} )
+	);
+
 	addTool( {
 		name: 'manage-global-variable',
+		description: 'Manage V4 global variables (color, font, size). Read the guide resource before use.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
-			id: z
-				.string()
-				.optional()
-				.describe( 'Variable id (required for update/delete). Get from list-global-variables.' ),
+			id: z.string().optional().describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
 			type: z
 				.string()
 				.optional()
 				.describe(
-					`Variable type (required for create). Must be one of:
-- "global-color-variable" — for colors. Value must be a CSS color e.g. "${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.COLOR ].example }"
-- "global-font-variable" — for font FAMILIES only (NOT font sizes). Value must be a font family name e.g. "${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.FONT ].example }"
-- "global-size-variable" — for spacing, sizing, or any px/rem values. Value must include a unit e.g. "${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.SIZE ].example }"
-
-IMPORTANT: Never store px/rem values in a "global-font-variable". Use "global-size-variable" instead.`
+					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable" (requires Elementor Pro). NEVER store px/rem values in a font variable.'
 				),
-			label: z.string().optional().describe( 'Variable label (required for create/update)' ),
+			label: z.string().optional().describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
 			value: z
 				.string()
 				.optional()
 				.describe(
-					`Variable value (required for create/update). Provide a plain CSS value matching the variable type (font: family name; color: CSS color; size: value with unit). Never JSON. Format depends on type:
-- global-color-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.COLOR ].description }
-- global-font-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.FONT ].description }
-- global-size-variable: ${ VARIABLE_TYPE_FORMATS[ VARIABLE_TYPES.SIZE ].description }`
+					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only, never px/rem. Size: value with unit e.g. "16px" (Pro). Do NOT pass JSON.'
 				),
 		},
 		outputSchema: {
@@ -85,39 +73,20 @@ IMPORTANT: Never store px/rem values in a "global-font-variable". Use "global-si
 			message: z.string().optional().describe( 'Error details if status is error' ),
 		},
 		requiredResources: [
-			{
-				uri: GLOBAL_VARIABLES_URI,
-				description: 'Global variables',
-			},
+			{ uri: MANAGE_VARIABLES_GUIDE_URI, description: 'Full guide for variable types, naming rules, and usage' },
+			{ uri: GLOBAL_VARIABLES_URI, description: 'Current global variables — check before creating to avoid duplicates' },
 		],
-		description: `Manages global variables (create/update/delete). Existing variables available in resources.
-CREATE: requires type, label, value. Ensure label is unique. Match the type to the kind of value:
-  - Colors → global-color-variable (hex, rgba)
-  - Font families → global-font-variable (e.g. "Roboto") — NEVER put px/rem values here
-  - Sizes/spacing → global-size-variable (e.g. "16px")
-UPDATE: requires id, label, value. When renaming: keep existing value. When updating value: keep exact label.
-DELETE: requires id. DESTRUCTIVE - confirm with user first.
-
-# NAMING - IMPORTANT
-the variables names should ALWAYS be lowercased and dashed spaced. example: "Headline Primary" should be "headline-primary"
-`,
-		description: `Create, update, or delete V4 global variables (distinct from legacy "globals").
-- Values: any valid CSS value, inserted as-is (1:1 with \`--css-var: VALUE\`). Do NOT pass JSON or legacy-globals object structures.
-- Names: lowercase, dash-separated (e.g. "Headline Primary" → "headline-primary").
-- Update: when renaming, keep the existing value; when updating value, keep the exact label.
-- Delete: destructive — confirm with user first.`,
+		isDestructive: true,
 		handler: async ( params ) => {
+			await variablesReady;
 			const operations = getServiceActions( service );
 			const op = operations[ params.action ];
 			if ( op ) {
 				await op( params );
-				return {
-					status: 'ok',
-				};
+				return { status: 'ok' };
 			}
 			throw new Error( `Unknown action ${ params.action }` );
 		},
-		isDestructive: true, // Because delete is destructive
 	} );
 };
 
@@ -130,6 +99,9 @@ function getServiceActions( svc: typeof service ) {
 		create( { type, label, value }: Opts< { type: string; label: string; value: string } > ) {
 			if ( ! type || ! label || ! value ) {
 				throw new Error( 'Create requires type, label, and value' );
+			}
+			if ( type === VARIABLE_TYPES.SIZE && ! isProActive() ) {
+				throw new Error( 'Creating size variables requires Elementor Pro.' );
 			}
 			const labelError = validateLabel( label );
 			if ( labelError ) {

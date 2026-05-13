@@ -20,7 +20,7 @@ const buildGlobalVariablesPayload = async (): Promise< Record< string, GlobalVar
 	return merged;
 };
 
-export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
+export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry, variablesReady: Promise< unknown > ) => {
 	[ canvasMcpEntry, variablesMcpEntry ].forEach( ( entry ) => {
 		const { resource, sendResourceUpdated } = entry;
 
@@ -37,6 +37,7 @@ export const initVariablesResource = ( variablesMcpEntry: MCPRegistryEntry, canv
 				description: 'Global variables available (v4)',
 			},
 			async () => {
+				await variablesReady;
 				const variables = await buildGlobalVariablesPayload();
 
 				return {
