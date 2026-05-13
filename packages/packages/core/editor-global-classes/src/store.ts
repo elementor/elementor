@@ -244,6 +244,35 @@ export const slice = createSlice( {
 				}
 			} );
 		},
+
+		setOrderWithoutHistory( state, { payload }: PayloadAction< StyleDefinitionID[] > ) {
+			state.data.order = payload;
+		},
+
+		updateAfterTemplateImport(
+			state,
+			{
+				payload,
+			}: PayloadAction< {
+				addedItems: StyleDefinitionsMap;
+				addedIdsOrder: StyleDefinitionID[];
+				addedClassLabels: Record< StyleDefinitionID, string >;
+			} >
+		) {
+			// Update initial data
+			state.initialData.frontend.items = { ...state.initialData.frontend.items, ...payload.addedItems };
+			state.initialData.frontend.order = [ ...state.initialData.frontend.order, ...payload.addedIdsOrder ];
+
+			state.initialData.preview.items = { ...state.initialData.preview.items, ...payload.addedItems };
+			state.initialData.preview.order = [ ...state.initialData.preview.order, ...payload.addedIdsOrder ];
+
+			// Update current data
+			state.data.items = { ...state.data.items, ...payload.addedItems };
+			state.data.order = [ ...state.data.order, ...payload.addedIdsOrder ];
+
+			// Update class labels
+			state.classLabels = { ...state.classLabels, ...payload.addedClassLabels };
+		},
 	},
 } );
 
