@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ThemeProvider } from '@elementor/editor-ui';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
+import { ThemeProvider } from '@elementor/editor-ui';
 import { useMixpanel } from '@elementor/events';
 import { Infotip } from '@elementor/ui';
 
