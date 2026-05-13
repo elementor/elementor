@@ -248,8 +248,9 @@ const useFilteredCssClasses = (): StyleDefinition[] => {
 	);
 
 	const filteredClasses = useMemo( () => {
-		if ( searchValue.length > 1 ) {
-			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( searchValue.toLowerCase() ) );
+		const normalizedSearch = searchValue.replace( /[^a-zA-Z0-9_-]/g, '' ).toLowerCase();
+		if ( normalizedSearch.length > 1 ) {
+			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( normalizedSearch ) );
 		}
 		return cssClasses;
 	}, [ searchValue, cssClasses, lowercaseLabels ] );
