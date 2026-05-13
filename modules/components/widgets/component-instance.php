@@ -118,7 +118,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		$settings = $this->get_settings();
 		$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
 
-		if ( $component_id  === null ) {
+		if ( $component_id === null ) {
 			return [];
 		}
 
