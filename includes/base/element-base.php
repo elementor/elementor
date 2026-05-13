@@ -335,8 +335,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * Can be overridden by elements that store inner elements differently
 	 * (e.g., Component_Instance which references an origin component).
 	 *
-	 * @access public
-	 *
 	 * @return array Inner elements data array.
 	 */
 	public function get_inner_elements_data_for_search(): array {

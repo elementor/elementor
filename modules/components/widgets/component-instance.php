@@ -110,8 +110,6 @@ class Component_Instance extends Atomic_Widget_Base {
 	 * instead of direct children, since Component_Instance stores a reference
 	 * to the origin component rather than containing elements directly.
 	 *
-	 * @access public
-	 *
 	 * @return array Inner elements data from origin component.
 	 */
 	public function get_inner_elements_data_for_search(): array {
