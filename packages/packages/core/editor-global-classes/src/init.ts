@@ -57,12 +57,12 @@ export function init() {
 			id: 'global-classes-open-panel-from-url',
 			component: OpenPanelFromUrl,
 		} );
-
-		injectIntoLogic( {
-			id: 'global-classes-open-panel-from-event',
-			component: OpenPanelFromEvent,
-		} );
 	}
+
+	injectIntoLogic( {
+		id: 'global-classes-open-panel-from-event',
+		component: OpenPanelFromEvent,
+	} );
 
 	injectIntoCssClassConvert( {
 		id: 'global-classes-convert-from-local-class',
