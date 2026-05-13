@@ -20,7 +20,7 @@ jobs:
       github.event.workflow_run.head_repository.full_name == github.repository
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Get PR number
         id: pr
@@ -71,7 +71,7 @@ jobs:
           )
 
       - name: Upload plugin zip artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playground-plugin-pr${{ steps.pr.outputs.number }}-${{ github.event.workflow_run.head_sha }}
           path: plugin.zip
