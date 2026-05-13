@@ -117,6 +117,14 @@ Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property fr
 		'The $$type property is MANDATORY for every value; it is required to parse the value and apply application-level effects.'
 	);
 
+	configureElementToolPrompt.instruction( `
+V4 only: If MCP fails, give manual steps using V4 UI.
+
+V4 Editor structure:
+Panel tabs: General (→ Settings section: ID, Tag, Link), Style, Interactions.
+NO Advanced tab. Never mention Advanced tab.
+` );
+
 	return configureElementToolPrompt.prompt();
 };
 
