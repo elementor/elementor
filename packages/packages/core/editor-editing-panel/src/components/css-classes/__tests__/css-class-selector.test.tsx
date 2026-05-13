@@ -400,6 +400,39 @@ describe( '<CssClassSelector />', () => {
 		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should show existing classes in the dropdown when typing at the max classes limit', () => {
+		// Arrange.
+		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ { ...provider1, limit: 0 }, jest.fn() ] );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: 'Provider-1-a' } } );
+
+		// Assert - existing class is visible in dropdown.
+		expect( screen.getByRole( 'option', { name: 'Provider-1-a' } ) ).toBeInTheDocument();
+		// Assert - no "Create" option shown when at limit.
+		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should validate the input when typing an invalid class name at the max classes limit', () => {
+		// Arrange.
+		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ { ...provider1, limit: 0 }, jest.fn() ] );
+		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: false, errorMessage: 'Test error' } );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: '1invalid' } } );
+
+		// Assert - validateStyleLabel is invoked even when at limit, so format errors still surface.
+		expect( validateStyleLabel ).toHaveBeenCalledWith( '1invalid', 'inputChange' );
+	} );
+
 	it( 'should create, apply, and activate a class on click', async () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];

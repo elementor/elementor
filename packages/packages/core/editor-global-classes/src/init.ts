@@ -14,6 +14,7 @@ import { ClassManagerButton } from './components/class-manager/class-manager-but
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { OpenPanelFromEvent } from './components/open-panel-from-event';
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
@@ -55,6 +56,11 @@ export function init() {
 		injectIntoLogic( {
 			id: 'global-classes-open-panel-from-url',
 			component: OpenPanelFromUrl,
+		} );
+
+		injectIntoLogic( {
+			id: 'global-classes-open-panel-from-event',
+			component: OpenPanelFromEvent,
 		} );
 	}
 
