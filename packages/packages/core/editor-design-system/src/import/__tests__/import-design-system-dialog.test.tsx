@@ -2,9 +2,9 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
-import { reloadCurrentDocument } from '@elementor/editor-documents';
 import { dismissNotification, notify } from '@elementor/editor-notifications';
 import { closeDialog, openDialog } from '@elementor/editor-ui';
+import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 import { type QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
@@ -24,9 +24,9 @@ jest.mock( '@elementor/editor-notifications', () => ( {
 	notify: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-documents', () => ( {
-	...jest.requireActual( '@elementor/editor-documents' ),
-	reloadCurrentDocument: jest.fn().mockResolvedValue( undefined ),
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	__privateRunCommand: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => ( {
@@ -133,13 +133,17 @@ describe( '<ImportDesignSystemDialog />', () => {
 		await waitFor( () => expect( importButton ).toBeEnabled() );
 	} );
 
-	it( 'fires the in-progress notification, calls onClose and triggers the upload→import→runner flow', async () => {
+	it( 'runs auto save, fires the in-progress notification, calls onClose and triggers the upload→import→runner flow', async () => {
 		const { post } = setupHttpServiceMock();
 		const onClose = jest.fn();
 
 		renderWithQuery( <ImportDesignSystemDialog onClose={ onClose } /> );
 
 		const file = submitImport();
+
+		await waitFor( () =>
+			expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } )
+		);
 
 		const inProgressCall = ( notify as jest.Mock ).mock.calls.find(
 			( [ payload ] ) => payload.id === 'design-system-import-started'
@@ -195,7 +199,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
 		expect( eventListener ).toHaveBeenCalledTimes( 1 );
-		expect( reloadCurrentDocument ).toHaveBeenCalledTimes( 1 );
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
@@ -210,6 +213,10 @@ describe( '<ImportDesignSystemDialog />', () => {
 
 		submitImport();
 
+		await waitFor( () =>
+			expect( __privateRunCommand ).toHaveBeenCalledWith( 'document/save/auto', { force: true } )
+		);
+
 		const errorCall = await waitFor(
 			() => {
 				const call = ( notify as jest.Mock ).mock.calls.find(
@@ -222,7 +229,6 @@ describe( '<ImportDesignSystemDialog />', () => {
 		);
 
 		expect( dismissNotification ).toHaveBeenCalledWith( 'design-system-import-started' );
-		expect( reloadCurrentDocument ).not.toHaveBeenCalled();
 
 		await waitFor( () => expect( isImporting() ).toBe( false ) );
 
