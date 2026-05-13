@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { SizeComponent, useBoundProp } from '@elementor/editor-controls';
+import { ControlActions, createControl, SizeComponent, useBoundProp } from '@elementor/editor-controls';
 import { stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -106,6 +106,31 @@ const GridTrackField = ( { cssProp, label }: GridTrackFieldProps ) => (
 	</UiProviders>
 );
 
+type GridTrackSizeInputProps = {
+	value: { size: number | string; unit: GridTrackUnit };
+	placeholder?: string;
+	setValue: ( value: { size: number | string; unit: GridTrackUnit } ) => void;
+	anchorRef: React.RefObject< HTMLDivElement | null >;
+};
+
+const SizeFieldWrapper = ( { children }: { children: React.ReactNode } ) => (
+	<ControlActions>{ children as React.ReactElement }</ControlActions>
+);
+
+const GridTrackSizeInput = createControl( ( props: GridTrackSizeInputProps ) => (
+	<SizeComponent
+		units={ UNITS as unknown as Parameters< typeof SizeComponent >[ 0 ][ 'units' ] }
+		value={ props.value as Parameters< typeof SizeComponent >[ 0 ][ 'value' ] }
+		placeholder={ props.placeholder }
+		defaultUnit={ FR as Parameters< typeof SizeComponent >[ 0 ][ 'defaultUnit' ] }
+		setValue={ props.setValue as Parameters< typeof SizeComponent >[ 0 ][ 'setValue' ] }
+		onBlur={ () => {} }
+		min={ 1 }
+		anchorRef={ props.anchorRef }
+		SizeFieldWrapper={ SizeFieldWrapper }
+	/>
+) );
+
 const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	const { value, setValue } = useStylesField< StringPropValue | null >( cssProp, {
 		history: { propDisplayName: label },
@@ -114,7 +139,7 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	const { placeholder: inheritedPlaceholder } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
 
-	const local = parseCss( value?.value ?? null );
+	const local = parseCss( stringPropTypeUtil.extract( value ) );
 	const inherited = parseCss( stringPropTypeUtil.extract( inheritedPlaceholder ) );
 
 	const displayValue = local.kind !== 'empty' ? toSizeInput( local ) : toSizeInput( EMPTY, unitOf( inherited ) );
@@ -134,14 +159,10 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 	return (
 		<StylesFieldLayout label={ label } direction="column">
 			<div ref={ anchorRef }>
-				<SizeComponent
-					units={ UNITS as unknown as Parameters< typeof SizeComponent >[ 0 ][ 'units' ] }
-					value={ displayValue as Parameters< typeof SizeComponent >[ 0 ][ 'value' ] }
+				<GridTrackSizeInput
+					value={ displayValue }
 					placeholder={ placeholder }
-					defaultUnit={ FR as Parameters< typeof SizeComponent >[ 0 ][ 'defaultUnit' ] }
-					setValue={ handleChange as Parameters< typeof SizeComponent >[ 0 ][ 'setValue' ] }
-					onBlur={ () => {} }
-					min={ 1 }
+					setValue={ handleChange }
 					anchorRef={ anchorRef }
 				/>
 			</div>

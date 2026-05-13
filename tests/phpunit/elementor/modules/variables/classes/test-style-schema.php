@@ -111,6 +111,31 @@ class Test_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
+	public function test_augment__will_convert_grid_template_track_prop_types() {
+		// Arrange.
+		$style_def = [
+			'grid-template-columns' => String_Prop_Type::make(),
+			'grid-template-rows' => String_Prop_Type::make(),
+			'some-type' => String_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'some-type' => String_Prop_Type::make(),
+			'grid-template-columns' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() )
+				->add_prop_type( Size_Variable_Prop_Type::make() ),
+			'grid-template-rows' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() )
+				->add_prop_type( Size_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
 	public function test_augment__will_convert_item_of_array_prop_type() {
 		// Arrange.
 		$style_def = [

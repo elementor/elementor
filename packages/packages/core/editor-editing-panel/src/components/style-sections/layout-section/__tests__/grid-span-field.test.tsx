@@ -109,7 +109,7 @@ describe( '<GridSpanFields />', () => {
 		);
 	} );
 
-	it( 'should set empty string value when input is emptied', () => {
+	it( 'should clear the value when input is emptied', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		jest.mocked( useStylesFields ).mockReturnValue( {
@@ -127,7 +127,7 @@ describe( '<GridSpanFields />', () => {
 		// Assert.
 		expect( setValues ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				'grid-column': { $$type: 'span', value: '' },
+				'grid-column': null,
 			} ),
 			expect.anything()
 		);
