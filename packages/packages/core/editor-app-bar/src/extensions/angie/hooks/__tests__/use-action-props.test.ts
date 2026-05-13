@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import useActionProps from '../use-action-props';
+import { useActionProps } from '../use-action-props';
 
 const mockIsAngieAvailable = jest.fn();
 const mockTrackEvent = jest.fn();

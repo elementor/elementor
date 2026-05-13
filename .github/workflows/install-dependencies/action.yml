@@ -4,13 +4,18 @@ description: 'A composite action to install npm packages and Composer dependenci
 runs:
   using: 'composite'
   steps:
+    - name: Mask GitHub token
+      shell: bash
+      run: echo "::add-mask::${{ github.token }}"
     # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
     - name: Setup PHP 7.4
       id: setup-php
       uses: shivammathur/setup-php@v2
       with:
         php-version: '7.4'
-
+    - name: Remove Composer GitHub OAuth token
+      shell: bash
+      run: composer config --global --unset github-oauth.github.com || true
     - shell: bash
       run: |
         npm run install:ci
