@@ -16,7 +16,10 @@ export function useFilterOptions< TOption extends Option >( parameters: {
 } ) {
 	const { options, selected, onCreate, entityName } = parameters;
 
-	const filter = createFilterOptions< InternalOption< TOption > >( { matchFrom: 'any' } );
+	const filter = createFilterOptions< InternalOption< TOption > >( {
+		matchFrom: 'any',
+		stringify: ( option ) => normalizeClassSearch( option.label ),
+	} );
 
 	const filterOptions = (
 		optionList: InternalOption< TOption >[],
