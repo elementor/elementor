@@ -36,15 +36,16 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		$this->assertFalse( $post->was_edited() );
 	}
 
-	public function test_was_edited__legacy_boolean_true_still_edited() {
+	public function test_was_edited__no_edit_timestamp_not_edited() {
 		$post = Global_Class_Post::create( 'g-legacy-edited', 'legacy', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post->get_post_id();
 
-		update_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED, true );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED ); // Mock v4.01-beta1 creation
 
 		$reloaded = Global_Class_Post::from_post_id( $post->get_post_id() );
 
-		$this->assertTrue( $reloaded->was_edited() );
+		$this->assertFalse( $reloaded->was_edited() );
+		$this->assertFalse( $reloaded->has_edit_timestamp() );
 	}
 
 	public function test_create__should_create_post_with_correct_data() {
@@ -145,10 +146,11 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		], $array );
 	}
 
-	public function test_update_data__marks_post_as_edited_on_frontend_write() {
+	public function test_update_data__marks_post_as_has_edit_timestamp_on_post_creation() {
 		// Arrange
 		$post = Global_Class_Post::create( 'g-modified', 'modified-test', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post->get_post_id();
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED ); // Mock v4.01-beta1 creation
 
 		$new_data = [
 			'type' => 'class',
@@ -165,7 +167,8 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		$post->update_data( $new_data );
 
 		// Assert
-		$this->assertTrue( $post->was_edited() );
+		$this->assertTrue( $post->has_edit_timestamp() );
+		$this->assertFalse( $post->was_edited() ); // creation date == last edit date
 	}
 
 	public function test_update_data__should_update_frontend_data() {

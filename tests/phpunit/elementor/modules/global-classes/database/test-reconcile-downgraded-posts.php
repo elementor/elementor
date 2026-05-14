@@ -88,6 +88,8 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 		];
 
 		$post = Global_Class_Post::create( 'g-1', 'from-cpt', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED ); // Mock v4.01-beta1 creation
+
 		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
 		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'from-cpt' ] );
 
