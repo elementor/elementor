@@ -11,6 +11,7 @@ import {
 } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
+import { getRequiredDefaultChildTagNames } from '../../composition-builder/utils/required-default-child-tags';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
 
 const V3_LAYOUT_CONTROL_TYPES = new Set( [ 'section', 'tab', 'tabs' ] );
@@ -220,6 +221,11 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
 					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
 				};
+			}
+
+			const requiredDirectChildTags = getRequiredDefaultChildTagNames( widgetData );
+			if ( requiredDirectChildTags.length ) {
+				llmGuidance.required_direct_children = requiredDirectChildTags;
 			}
 
 			return {
