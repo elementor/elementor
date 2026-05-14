@@ -3,6 +3,8 @@ import { type V1ElementConfig } from '@elementor/editor-elements';
 import { RequiredChildrenEnforcer } from '../required-children-enforcer';
 
 describe( 'RequiredChildrenEnforcer', () => {
+	const FULL_FORM_DIRECT_CHILD_COUNT = 3;
+
 	const createWidgetsCache = (): Record< string, V1ElementConfig > => ( {
 		'e-form': {
 			title: 'Form',
@@ -39,31 +41,39 @@ describe( 'RequiredChildrenEnforcer', () => {
 		} as V1ElementConfig,
 	} );
 
-	it( 'should inject required children when missing', () => {
+	it( 'throws when required direct children are missing', () => {
 		// Arrange
 		const xml = new DOMParser().parseFromString( '<e-form><e-form-input /></e-form>', 'application/xml' );
 		const enforcer = new RequiredChildrenEnforcer( 'e-form', createWidgetsCache() );
 
-		// Act
-		enforcer.enforce( xml );
-
-		// Assert
-		const form = xml.querySelector( 'e-form' );
-		expect( form?.querySelector( ':scope > e-form-success-message' ) ).not.toBeNull();
-		expect( form?.querySelector( ':scope > e-form-error-message' ) ).not.toBeNull();
+		// Act & Assert
+		expect( () => enforcer.enforce( xml ) ).toThrow(
+			/Missing required direct child element tag\(s\): e-form-success-message, e-form-error-message/
+		);
 	} );
 
-	it( 'should not duplicate required children that already exist', () => {
+	it( 'throws when only some required direct children exist', () => {
 		// Arrange
 		const xml = new DOMParser().parseFromString( '<e-form><e-form-success-message /></e-form>', 'application/xml' );
 		const enforcer = new RequiredChildrenEnforcer( 'e-form', createWidgetsCache() );
 
+		// Act & Assert
+		expect( () => enforcer.enforce( xml ) ).toThrow(
+			/Missing required direct child element tag\(s\): e-form-error-message/
+		);
+	} );
+
+	it( 'does not throw when all required direct children exist', () => {
+		// Arrange
+		const xmlStr = '<e-form><e-form-success-message /><e-form-error-message /><e-form-input /></e-form>';
+		const xml = new DOMParser().parseFromString( xmlStr, 'application/xml' );
+		const enforcer = new RequiredChildrenEnforcer( 'e-form', createWidgetsCache() );
+
 		// Act
-		enforcer.enforce( xml );
+		expect( () => enforcer.enforce( xml ) ).not.toThrow();
 
 		// Assert
 		const form = xml.querySelector( 'e-form' );
-		expect( form?.querySelectorAll( ':scope > e-form-success-message' ) ).toHaveLength( 1 );
-		expect( form?.querySelectorAll( ':scope > e-form-error-message' ) ).toHaveLength( 1 );
+		expect( form?.children.length ).toBe( FULL_FORM_DIRECT_CHILD_COUNT );
 	} );
 } );

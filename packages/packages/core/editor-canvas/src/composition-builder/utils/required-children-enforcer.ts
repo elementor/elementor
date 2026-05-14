@@ -1,90 +1,60 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-type TemplateNode = Record< string, unknown >;
+import {
+	type DefaultChildTemplate,
+	getRequiredDefaultChildTemplates,
+	resolveDefaultChildTemplateTagName,
+} from './required-default-child-tags';
+
+const REQUIRED_CHILD_SCHEMA_HINT =
+	'Use the widget schema resource; under llm_guidance.required_direct_children for V4 widgets.';
 
 export class RequiredChildrenEnforcer {
 	private readonly elementType: string;
-	private readonly requiredChildren: TemplateNode[];
+	private readonly requiredTemplates: DefaultChildTemplate[];
 
 	constructor( elementType: string, widgetsCache: Record< string, V1ElementConfig > ) {
 		this.elementType = elementType;
-		this.requiredChildren = this.getRequiredChildrenFromDefaults( widgetsCache[ elementType ] );
+		this.requiredTemplates = getRequiredDefaultChildTemplates( widgetsCache[ elementType ] );
 	}
 
 	enforce( xml: Document ) {
-		if ( this.requiredChildren.length === 0 ) {
+		if ( this.requiredTemplates.length === 0 ) {
 			return;
 		}
+
+		const errors: string[] = [];
 
 		for ( const rootNode of Array.from( xml.children ) ) {
-			this.normalizeRequiredChildrenInNode( rootNode );
+			this.collectMissingRequiredErrors( rootNode, errors );
+		}
+
+		if ( errors.length ) {
+			throw new Error( `${ errors.join( '\n' ) }\n${ REQUIRED_CHILD_SCHEMA_HINT }` );
 		}
 	}
 
-	private normalizeRequiredChildrenInNode( node: Element ): void {
-		this.appendMissingRequiredChildren( node );
+	private collectMissingRequiredErrors( node: Element, errors: string[] ) {
+		if ( node.tagName === this.elementType ) {
+			const existingChildTags = new Set( Array.from( node.children ).map( ( child ) => child.tagName ) );
+			const missingTags = this.requiredTemplates
+				.map( resolveDefaultChildTemplateTagName )
+				.filter( ( tag ) => tag && ! existingChildTags.has( tag ) ) as string[];
+
+			if ( missingTags.length ) {
+				const configurationId = node.getAttribute( 'configuration-id' );
+				const location = configurationId
+					? `<${ node.tagName } configuration-id="${ configurationId }">`
+					: `<${ node.tagName }>`;
+
+				errors.push(
+					`${ location } Missing required direct child element tag(s): ${ missingTags.join( ', ' ) }.`
+				);
+			}
+		}
 
 		for ( const childNode of Array.from( node.children ) ) {
-			this.normalizeRequiredChildrenInNode( childNode );
+			this.collectMissingRequiredErrors( childNode, errors );
 		}
-	}
-
-	private appendMissingRequiredChildren( node: Element ): void {
-		if ( node.tagName !== this.elementType || ! this.requiredChildren.length ) {
-			return;
-		}
-
-		const existingChildTypes = new Set( Array.from( node.children ).map( ( child ) => child.tagName ) );
-
-		for ( const requiredChild of this.requiredChildren ) {
-			const childType = this.getTemplateNodeTagName( requiredChild );
-
-			if ( ! childType || existingChildTypes.has( childType ) ) {
-				continue;
-			}
-
-			node.appendChild( this.createXmlNodeFromTemplate( requiredChild, node.ownerDocument ) );
-
-			existingChildTypes.add( childType );
-		}
-	}
-
-	private getTemplateNodeTagName( template: TemplateNode ): string {
-		const elementType = template.elType;
-
-		if ( elementType === 'widget' ) {
-			return typeof template.widgetType === 'string' ? template.widgetType : '';
-		}
-
-		return typeof elementType === 'string' ? elementType : '';
-	}
-
-	private getRequiredChildrenFromDefaults( elementConfig: V1ElementConfig | undefined ): TemplateNode[] {
-		const defaultChildren = elementConfig?.default_children;
-
-		if ( ! Array.isArray( defaultChildren ) ) {
-			return [];
-		}
-
-		return defaultChildren.filter(
-			( child ) => ( child as { meta?: { required?: boolean } } )?.meta?.required
-		) as TemplateNode[];
-	}
-
-	private createXmlNodeFromTemplate( template: TemplateNode, doc: Document ): Element {
-		const tagName = this.getTemplateNodeTagName( template );
-
-		if ( ! tagName ) {
-			throw new Error( 'Failed to create required child node: Invalid template element type.' );
-		}
-
-		const node = doc.createElement( tagName );
-		const templateChildren = Array.isArray( template.elements ) ? template.elements : [];
-
-		for ( const child of templateChildren ) {
-			node.appendChild( this.createXmlNodeFromTemplate( child as TemplateNode, doc ) );
-		}
-
-		return node;
 	}
 }

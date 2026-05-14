@@ -190,7 +190,7 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 } );
 
 describe( 'CompositionBuilder.build required children', () => {
-	it( 'should inject required children before build when missing from XML', async () => {
+	it( 'rejects build when required direct children are absent from XML', async () => {
 		// Arrange
 		let elementIdSequence = 0;
 		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
@@ -242,18 +242,14 @@ describe( 'CompositionBuilder.build required children', () => {
 			}
 		);
 
-		// Act
-		await builder.build( createMockRootContainer() );
-
-		// Assert
-		const createArgs = createElementMock.mock.calls[ 0 ]?.[ 0 ] as CreateElementParams;
-		const childElements = ( createArgs.model?.elements || [] ) as Array< { elType?: string; widgetType?: string } >;
-
-		expect( childElements.some( ( child ) => child.elType === 'e-form-success-message' ) ).toBe( true );
-		expect( childElements.some( ( child ) => child.elType === 'e-form-error-message' ) ).toBe( true );
+		// Act & Assert
+		await expect( builder.build( createMockRootContainer() ) ).rejects.toThrow(
+			/Missing required direct child element tag\(s\): e-form-success-message, e-form-error-message/
+		);
+		expect( createElementMock ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not duplicate required child types that are already in XML', async () => {
+	it( 'rejects build when only some required direct children exist', async () => {
 		// Arrange
 		let elementIdSequence = 0;
 		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
@@ -305,15 +301,76 @@ describe( 'CompositionBuilder.build required children', () => {
 			}
 		);
 
+		// Act & Assert
+		await expect( builder.build( createMockRootContainer() ) ).rejects.toThrow(
+			/Missing required direct child element tag\(s\): e-form-error-message/
+		);
+		expect( createElementMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'creates elements when XML includes all required direct children', async () => {
+		// Arrange
+		let elementIdSequence = 0;
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const createElementMock = jest.fn().mockReturnValue( createdElement );
+		const formWidgetsCache = {
+			'e-form': {
+				title: 'Form',
+				controls: {},
+				elType: 'widget',
+				default_children: [
+					{
+						elType: 'e-form-success-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'e-form-error-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'widget',
+						widgetType: 'e-form-input',
+						elements: [],
+					},
+				],
+			},
+			'e-form-error-message': {
+				title: 'Error',
+				controls: {},
+				elType: 'e-form-error-message',
+			},
+			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
+			'e-form-success-message': {
+				title: 'Success',
+				controls: {},
+				elType: 'e-form-success-message',
+			},
+		} as Record< string, V1ElementConfig >;
+		const builder = CompositionBuilder.fromXMLString(
+			'<e-form configuration-id="form-1">' +
+				'<e-form-success-message /><e-form-error-message /><e-form-input />' +
+				'</e-form>',
+			{
+				createElement: createElementMock,
+				deleteElement: jest.fn(),
+				getContainer: jest.fn(),
+				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
+				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				doUpdateElementProperty: jest.fn(),
+			}
+		);
+
 		// Act
 		await builder.build( createMockRootContainer() );
 
 		// Assert
 		const createArgs = createElementMock.mock.calls[ 0 ]?.[ 0 ] as CreateElementParams;
 		const childElements = ( createArgs.model?.elements || [] ) as Array< { elType?: string; widgetType?: string } >;
-		const successCount = childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length;
 
-		expect( successCount ).toBe( 1 );
-		expect( childElements.some( ( child ) => child.elType === 'e-form-error-message' ) ).toBe( true );
+		expect( childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length ).toBe( 1 );
+		expect( childElements.filter( ( child ) => child.elType === 'e-form-error-message' ).length ).toBe( 1 );
+		expect( childElements.some( ( child ) => child.widgetType === 'e-form-input' ) ).toBe( true );
 	} );
 } );
