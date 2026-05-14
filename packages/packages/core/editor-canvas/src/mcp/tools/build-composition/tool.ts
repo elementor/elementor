@@ -58,33 +58,41 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			try {
 				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
 					createElement,
+					deleteElement,
 					getWidgetsCache,
 				} );
 				compositionBuilder.setElementConfig( elementConfig );
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const { invalidStyles, rootContainers: generatedRootContainers } =
-					await compositionBuilder.build( targetContainer );
+				const {
+					invalidStyles,
+					configErrors,
+					rootContainers: generatedRootContainers,
+				} = await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
-				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
-					const customCss = {
-						value: rawCssRules.join( ';\n' ),
-					};
-					doUpdateElementProperty( {
-						elementId,
-						propertyName: '_styles',
-						propertyValue: {
-							_styles: {
-								custom_css: customCss,
+				if ( configErrors.length ) {
+					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
+				} else {
+					Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
+						const customCss = {
+							value: rawCssRules.join( ';\n' ),
+						};
+						doUpdateElementProperty( {
+							elementId,
+							propertyName: '_styles',
+							propertyValue: {
+								_styles: {
+									custom_css: customCss,
+								},
 							},
-						},
-						elementType: 'widget',
+							elementType: 'widget',
+						} );
 					} );
-				} );
+				}
 			} catch ( error ) {
 				errors.push( error as Error );
 			}
