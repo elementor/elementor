@@ -4,8 +4,8 @@ import { type Props, type PropsSchema } from '@elementor/editor-props';
 import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
-import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 import { SettingsControl } from './settings-control';
