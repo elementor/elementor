@@ -17,11 +17,22 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     # Guard: only for PRs (not pushes to main), only for non-forks, only on successful builds
+    # if: >
+    #   github.event.workflow_run.event == 'pull_request' &&
+    #   github.event.workflow_run.conclusion == 'success' &&
+    #   github.event.workflow_run.head_repository.full_name == github.repository
     if: >
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_repository.full_name == github.repository
-
+      (
+        github.event_name == 'workflow_run' &&
+        github.event.workflow_run.event == 'pull_request' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_repository.full_name == github.repository
+      ) ||
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        !github.event.pull_request.draft
+      )
     steps:
       - uses: actions/checkout@v4
 
@@ -63,6 +74,16 @@ jobs:
 
       - name: Repack build artifact as plugin zip
         run: |
+          echo "event_name: ${{ github.event_name }}"
+          echo "event_pull_request: ${{ github.event.pull_request }}"
+          echo "event_workflow_run: ${{ github.event.workflow_run }}"
+          echo "event_workflow_run_event: ${{ github.event.workflow_run.event }}"
+          echo "event_workflow_run_conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "event_workflow_run_head_repository_full_name: ${{ github.event.workflow_run.head_repository.full_name }}"
+          echo "event_pull_request_head_repo_full_name: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "event_pull_request_draft: ${{ github.event.pull_request.draft }}"
+          echo "pr_number: ${{ steps.runctx.outputs.pr-number }}"
+          echo "head_sha: ${{ steps.runctx.outputs.head-sha }}"
           pwd
           unzip -oq build-artifact.zip -d build-artifact
           ls -la build-artifact
