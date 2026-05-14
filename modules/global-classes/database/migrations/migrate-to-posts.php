@@ -36,12 +36,11 @@ class Migrate_To_Posts extends Base_Migration {
 
 	private function migrate_global_classes_to_posts(): bool {
 		$kit = $this->get_kit();
-
 		if ( ! $kit ) {
 			return false;
 		}
 
-		$global_classes = $kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$global_classes = self::get_legacy_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {
 			return false;
@@ -70,6 +69,19 @@ class Migrate_To_Posts extends Base_Migration {
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 		] );
+	}
+
+	public static function get_legacy_global_classes( ?Kit $kit = null ): array {
+		$empty_result = [
+			'items' => [],
+			'order' => [],
+		];
+
+		if ( ! $kit ) {
+			return $empty_result;
+		}
+
+		return $kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND ) ?? $empty_result;
 	}
 
 	public static function run_document_tracking( ?Kit $kit ): void {
