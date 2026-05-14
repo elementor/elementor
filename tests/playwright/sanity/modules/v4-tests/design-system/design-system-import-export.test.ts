@@ -5,7 +5,6 @@ import * as path from 'path';
 import { type BrowserContext, expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import EditorPage from '../../../../pages/editor-page';
 import DesignSystemPage from './design-system-page';
 import {
 	cleanupDesignSystemData,
@@ -54,7 +53,6 @@ function extractZip( zipBuffer: Buffer ): Record< string, string > {
 
 test.describe( 'Design System Import/Export @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
-	let editor: EditorPage;
 	let page: Page;
 	let context: BrowserContext;
 	let designSystem: DesignSystemPage;
@@ -67,9 +65,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 		designSystem = new DesignSystemPage( page );
 	} );
 
-	test.beforeEach( async ( { apiRequests } ) => {
-		editor = await wpAdmin.openNewPage();
-		await cleanupDesignSystemData( apiRequests, page );
+	test.beforeEach( async ( { apiRequests, request } ) => {
+		await wpAdmin.openNewPage();
+		await cleanupDesignSystemData( apiRequests, request );
 	} );
 
 	test.afterEach( async () => {
@@ -79,8 +77,8 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 		tempFixtures.length = 0;
 	} );
 
-	test.afterAll( async ( { apiRequests } ) => {
-		await cleanupDesignSystemData( apiRequests, page );
+	test.afterAll( async ( { apiRequests, request } ) => {
+		await cleanupDesignSystemData( apiRequests, request );
 		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
@@ -107,7 +105,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 
 				await createTestVariable( apiRequests, request, {
 					id: 'e-gv-export-test',
-					label: 'Export Test Var',
+					label: 'ExportTestVar',
 					value: '#00ff00',
 					type: 'color',
 				} );
@@ -230,7 +228,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Mock export to fail on first attempt only', async () => {
 				await page.route( EXPORT_URL, async ( route ) => {
 					exportAttempts++;
-					if ( exportAttempts === 1 ) {
+					if ( 1 === exportAttempts ) {
 						await route.fulfill( {
 							status: 500,
 							contentType: 'application/json',
@@ -461,7 +459,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Create existing variable with a label that will conflict', async () => {
 				await createTestVariable( apiRequests, request, {
 					id: 'e-gv-existing-primary',
-					label: 'Primary Color',
+					label: 'PrimaryColor',
 					value: '#111111',
 					type: 'color',
 				} );
@@ -472,9 +470,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 					data: {
 						'e-gv-imported-primary': createColorVariable(
 							'e-gv-imported-primary',
-							'Primary Color',
+							'PrimaryColor',
 							'#222222',
-							0
+							0,
 						),
 					},
 					watermark: 'test',
@@ -491,11 +489,11 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Verify original value is preserved (not overwritten)', async () => {
 				const { variables } = await apiRequests.customGet(
 					request,
-					'index.php?rest_route=/elementor/v1/variables/list'
+					'index.php?rest_route=/elementor/v1/variables/list',
 				).then( ( r ) => r.data );
 
 				const primaryVar = Object.values( variables ).find(
-					( v: { label: string } ) => v.label === 'Primary Color'
+					( v: { label: string } ) => 'PrimaryColor' === v.label,
 				) as { value: string } | undefined;
 
 				expect( primaryVar?.value ).toBe( '#111111' );
@@ -508,7 +506,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Create existing variable', async () => {
 				await createTestVariable( apiRequests, request, {
 					id: 'e-gv-replace-test',
-					label: 'Replace Test',
+					label: 'ReplaceTest',
 					value: '#aaaaaa',
 					type: 'color',
 				} );
@@ -519,9 +517,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 					data: {
 						'e-gv-replace-imported': createColorVariable(
 							'e-gv-replace-imported',
-							'Replace Test',
+							'ReplaceTest',
 							'#bbbbbb',
-							0
+							0,
 						),
 					},
 					watermark: 'test',
@@ -538,11 +536,11 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Verify value is updated to the imported value', async () => {
 				const { variables } = await apiRequests.customGet(
 					request,
-					'index.php?rest_route=/elementor/v1/variables/list'
+					'index.php?rest_route=/elementor/v1/variables/list',
 				).then( ( r ) => r.data );
 
 				const replaceVar = Object.values( variables ).find(
-					( v: { label: string } ) => v.label === 'Replace Test'
+					( v: { label: string } ) => 'ReplaceTest' === v.label,
 				) as { value: string } | undefined;
 
 				expect( replaceVar?.value ).toBe( '#bbbbbb' );
@@ -555,7 +553,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Create existing color variable', async () => {
 				await createTestVariable( apiRequests, request, {
 					id: 'e-gv-type-mismatch',
-					label: 'Type Mismatch Var',
+					label: 'TypeMismatchVar',
 					value: '#cccccc',
 					type: 'color',
 				} );
@@ -566,9 +564,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 					data: {
 						'e-gv-type-mismatch-import': createFontSizeVariable(
 							'e-gv-type-mismatch-import',
-							'Type Mismatch Var',
+							'TypeMismatchVar',
 							'16px',
-							0
+							0,
 						),
 					},
 					watermark: 'test',
@@ -585,18 +583,18 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await test.step( 'Both original and renamed new variable should exist', async () => {
 				const { variables } = await apiRequests.customGet(
 					request,
-					'index.php?rest_route=/elementor/v1/variables/list'
+					'index.php?rest_route=/elementor/v1/variables/list',
 				).then( ( r ) => r.data );
 
 				const activeVariableLabels = Object.values( variables )
 					.filter( ( v: { deleted_at?: number | null } ) => ! v.deleted_at )
 					.map( ( v: { label: string } ) => v.label );
 
-				expect( activeVariableLabels ).toContain( 'Type Mismatch Var' );
+				expect( activeVariableLabels ).toContain( 'TypeMismatchVar' );
 				expect(
 					activeVariableLabels.some(
-						( l: string ) => l.includes( 'Type Mismatch Var' ) && l !== 'Type Mismatch Var'
-					)
+						( l: string ) => l.includes( 'TypeMismatchVar' ) && l !== 'TypeMismatchVar',
+					),
 				).toBe( true );
 			} );
 		} );
@@ -757,7 +755,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			const { request } = page.context();
 
 			const testClassName = 'Round Trip Class';
-			const testVariableName = 'Round Trip Var';
+			const testVariableName = 'RoundTripVar';
 
 			await test.step( 'Create test data', async () => {
 				await createTestClass( apiRequests, request, {
@@ -786,7 +784,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			} );
 
 			await test.step( 'Delete all data', async () => {
-				await cleanupDesignSystemData( apiRequests, page );
+				await cleanupDesignSystemData( apiRequests, request );
 			} );
 
 			await test.step( 'Import the exported zip', async () => {

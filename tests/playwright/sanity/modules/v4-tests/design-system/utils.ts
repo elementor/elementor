@@ -25,9 +25,8 @@ export async function initDesignSystemTest(
 
 export async function cleanupDesignSystemData(
 	apiRequests: ApiRequests,
-	page: Page,
+	request: APIRequestContext,
 ): Promise< void > {
-	const { request } = page.context();
 	await deleteAllGlobalClasses( apiRequests, request );
 	await deleteAllVariablesViaApi( apiRequests, request );
 }
