@@ -58,6 +58,7 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 		} );
 
 		return { success: true, deleted: order.length };
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch ( error ) {
 		return { success: false, deleted: 0 };
 	}

@@ -45,6 +45,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 			try {
 				await apiRequests.deleteUser( page.context().request, testUser.id );
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch ( error ) {
 				// Silently handle cleanup errors - test cleanup should not fail the test
 			}
