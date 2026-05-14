@@ -13,9 +13,11 @@ import {
 	ANGIE_TOP_BAR_PROMOTION_IMAGE_URL,
 	CREATE_WIDGET_EVENT,
 } from '../angie-consts';
-import AngieGuideCard from '../components/angie-guide-card';
+import { AngieGuideCard } from '../components/angie-guide-card';
+import { useAutoShow } from '../hooks/use-auto-show';
 
-export default function AngieGuideLocation() {
+export function AngieGuideLocation() {
+	useAutoShow();
 	const [ anchorEl, setAnchorEl ] = useState< Element | null >( null );
 	const { dispatchEvent } = useMixpanel();
 
