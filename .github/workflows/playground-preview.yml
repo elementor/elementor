@@ -60,7 +60,9 @@ jobs:
 
       - name: Repack build artifact as plugin zip
         run: |
+          pwd
           unzip -oq build-artifact.zip -d build-artifact
+          ls -la build-artifact
           if [ ! -d build-artifact/elementor ]; then
             echo "Expected build-artifact/elementor directory was not found"
             exit 1

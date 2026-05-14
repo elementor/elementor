@@ -217,12 +217,12 @@ jobs:
           git config --global user.name "GitHub Actions"
           git remote set-url origin https://x-access-token:${{ secrets.MAINTAIN_TOKEN }}@github.com/${{ github.repository }}.git
 
-          TAG_NAME="v${{ steps.version.outputs.FULL_VERSION }}"
+          TAG_NAME="v${{ steps.version.outputs.FULL_VERSION }}-packages"
 
           # Check if tag exists
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
             echo "Tag $TAG_NAME already exists, skipping creation"
           else
-            git tag -a "$TAG_NAME" -m "Release ${{ steps.version.outputs.FULL_VERSION }}"
+            git tag -a "$TAG_NAME" -m "Packages release ${{ steps.version.outputs.FULL_VERSION }}"
             git push origin "$TAG_NAME" || echo "Warning: Failed to push tag"
           fi
