@@ -8,6 +8,7 @@ export const queryFilterPropTypeUtil = createPropUtils(
 	z.strictObject( {
 		key: unknownChildrenSchema,
 		values: unknownChildrenSchema,
+		taxonomies: unknownChildrenSchema,
 	} )
 );
 
@@ -25,4 +26,7 @@ export type QueryFilterKeyConfig = {
 		params?: Record< string, unknown >;
 	} | null;
 	chipsPlaceholder?: string;
+	valueType?: 'chips' | 'taxonomies';
+	staticOptions?: { value: string; label: string }[];
+	visibleWhen?: { path: string[]; in: string[] };
 };
