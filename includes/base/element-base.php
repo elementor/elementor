@@ -327,22 +327,6 @@ abstract class Element_Base extends Controls_Stack {
 		return $this->children;
 	}
 
-	/**
-	 * Get inner elements data for recursive search.
-	 *
-	 * Returns the inner elements data that should be searched when looking for
-	 * nested elements. By default, returns the element's direct children data.
-	 * Can be overridden by elements that store inner elements differently
-	 * (e.g., Component_Instance which references an origin component).
-	 *
-	 * @return array Inner elements data array.
-	 */
-	public function get_inner_elements_data_for_search(): array {
-		$raw_data = $this->get_raw_data();
-
-		return $raw_data['elements'] ?? [];
-	}
-
 	public function render_markdown(): string {
 		$children = $this->get_children();
 

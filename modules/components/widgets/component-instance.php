@@ -103,25 +103,15 @@ class Component_Instance extends Atomic_Widget_Base {
 		return $overrides;
 	}
 
-	/**
-	 * Get inner elements data for recursive search.
-	 *
-	 * Overrides the parent method to return the origin component's inner elements
-	 * instead of direct children, since Component_Instance stores a reference
-	 * to the origin component rather than containing elements directly.
-	 *
-	 * @return array Inner elements data from origin component.
-	 */
 	public function get_inner_elements_data_for_search(): array {
-		$settings = $this->get_settings();
-		$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
+		$component_id = $this->get_component_id();
 
 		if ( null === $component_id ) {
 			return [];
 		}
 
 		$repository = new Components_Repository();
-		$component = $repository->get( (int) $component_id );
+		$component = $repository->get( $component_id );
 
 		if ( ! $component ) {
 			return [];
@@ -130,5 +120,15 @@ class Component_Instance extends Atomic_Widget_Base {
 		$elements_data = $component->get_elements_data();
 
 		return Format_Component_Elements_Id::format( $elements_data, [ $this->get_id() ] );
+	}
+
+	private function get_component_id(): ?int {
+		$settings = $this->get_settings();
+
+		if ( ! isset( $settings['component_instance']['value']['component_id']['value'] ) ) {
+			return null;
+		}
+
+		return (int) $settings['component_instance']['value']['component_id']['value'];
 	}
 }
