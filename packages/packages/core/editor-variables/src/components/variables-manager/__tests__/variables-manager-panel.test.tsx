@@ -323,9 +323,7 @@ describe( 'VariablesManagerPanel', () => {
 	describe( 'Search', () => {
 		it( 'should render search component correctly', () => {
 			// Arrange & Act
-			render(
-				<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
-			);
+			render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 			const searchInput = screen.getByPlaceholderText( 'Search' );
 			expect( searchInput ).toBeInTheDocument();
@@ -344,9 +342,7 @@ describe( 'VariablesManagerPanel', () => {
 			} );
 
 			// Act
-			render(
-				<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
-			);
+			render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 			// Assert
 			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();
