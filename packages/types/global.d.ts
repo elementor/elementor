@@ -101,6 +101,9 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 			config?: {
+				angie?: {
+					autoShow?: boolean;
+				};
 				controls?: {
 					font?: {
 						groups?: Record< string, string >;
