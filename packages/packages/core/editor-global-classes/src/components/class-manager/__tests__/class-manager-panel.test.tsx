@@ -54,15 +54,6 @@ jest.mock( '@elementor/editor-current-user', () => ( {
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
-	changeEditMode: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/editor-panels', () => ( {
-	...jest.requireActual( '@elementor/editor-panels' ),
-	__createPanel: jest.fn().mockReturnValue( {
-		panel: {},
-		usePanelActions: jest.fn( () => ( { close: jest.fn(), open: jest.fn() } ) ),
-	} ),
 } ) );
 
 jest.mock( '../panel-interactions', () => ( {

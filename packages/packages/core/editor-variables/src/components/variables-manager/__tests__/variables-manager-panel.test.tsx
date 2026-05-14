@@ -3,16 +3,9 @@ import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { VariablesManagerPanel, VariablesManagerPanelEmbedded } from '../variables-manager-panel';
+import { VariablesManagerPanelEmbedded } from '../variables-manager-panel';
 
 jest.mock( '@elementor/editor-panels', () => ( {
-	__createPanel: () => ( {
-		panel: {},
-		usePanelActions: () => ( {
-			close: jest.fn(),
-			open: jest.fn(),
-		} ),
-	} ),
 	PanelBody: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
 		<div role="region" data-props={ JSON.stringify( { sx } ) }>
 			{ children }
@@ -36,7 +29,6 @@ jest.mock( '@elementor/editor-ui', () => {
 	return {
 		__esModule: true,
 		...actual,
-		ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 		EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 		useDialog: jest.fn().mockReturnValue( {
 			open: jest.fn(),
@@ -63,14 +55,6 @@ jest.mock( '../hooks/use-error-navigation', () => ( {
 		createNavigationCallback: jest.fn(),
 		resetNavigation: jest.fn(),
 	} ),
-} ) );
-
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	changeEditMode: jest.fn(),
-	commandEndEvent: jest.fn(),
-	windowEvent: jest.fn(),
-	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
@@ -198,7 +182,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should pass variables and menu actions to table', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const table = screen.getByRole( 'grid' );
@@ -222,7 +206,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render save button in footer', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const button = screen.getByRole( 'button', { name: 'Save changes' } );
@@ -236,7 +220,9 @@ describe( 'VariablesManagerPanel', () => {
 		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
 
 		// Act
-		const { unmount } = render( <VariablesManagerPanel /> );
+		const { unmount } = render(
+			<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+		);
 
 		// Assert
 		expect( addEventListenerSpy ).toHaveBeenCalledWith( 'beforeunload', expect.any( Function ) );
@@ -252,7 +238,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should apply correct styles to panel body', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const body = screen.getByRole( 'region' );
@@ -275,7 +261,7 @@ describe( 'VariablesManagerPanel', () => {
 		} );
 
 		// Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		expect( close ).not.toHaveBeenCalled();
@@ -337,7 +323,9 @@ describe( 'VariablesManagerPanel', () => {
 	describe( 'Search', () => {
 		it( 'should render search component correctly', () => {
 			// Arrange & Act
-			render( <VariablesManagerPanel /> );
+			render(
+				<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+			);
 
 			const searchInput = screen.getByPlaceholderText( 'Search' );
 			expect( searchInput ).toBeInTheDocument();
@@ -356,7 +344,9 @@ describe( 'VariablesManagerPanel', () => {
 			} );
 
 			// Act
-			render( <VariablesManagerPanel /> );
+			render(
+				<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+			);
 
 			// Assert
 			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();

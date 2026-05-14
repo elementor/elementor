@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { __createPanel as createPanel, PanelBody, PanelFooter } from '@elementor/editor-panels';
-import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
+import { PanelBody, PanelFooter } from '@elementor/editor-panels';
+import { ConfirmationDialog, SaveChangesDialog, SearchField, useDialog } from '@elementor/editor-ui';
 import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
 import { Alert, AlertAction, AlertTitle, Box, Button, Divider, Infotip, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -20,7 +19,6 @@ import { useVariablesManagerState } from './hooks/use-variables-manager-state';
 import { VariableManagerCreateMenu } from './variables-manager-create-menu';
 import { VariablesManagerTable } from './variables-manager-table';
 
-const id = 'variables-manager';
 const STOP_SYNC_MESSAGE_KEY = 'stop-sync-variable';
 
 type StopSyncConfirmationDialogProps = {
@@ -28,19 +26,6 @@ type StopSyncConfirmationDialogProps = {
 	onClose: () => void;
 	onConfirm: () => void;
 };
-
-export const { panel, usePanelActions } = createPanel( {
-	id,
-	component: VariablesManagerPanel,
-	allowedEditModes: [ 'edit', id ],
-	onOpen: () => {
-		changeEditMode( id );
-	},
-	onClose: async () => {
-		changeEditMode( 'edit' );
-	},
-	isOpenPreviousElement: true,
-} );
 
 export type VariablesManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
@@ -53,15 +38,6 @@ export function VariablesManagerPanelEmbedded( {
 }: VariablesManagerPanelEmbeddedProps ) {
 	return (
 		<VariablesManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />
-	);
-}
-
-export function VariablesManagerPanel() {
-	const { close } = usePanelActions();
-	return (
-		<ThemeProvider>
-			<VariablesManagerPanelContent onRequestClose={ close } />
-		</ThemeProvider>
 	);
 }
 

@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { reloadCurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { __createPanel as createPanel, PanelFooter } from '@elementor/editor-panels';
-import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { PanelFooter } from '@elementor/editor-panels';
+import { ConfirmationDialog, SaveChangesDialog, useDialog } from '@elementor/editor-ui';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
 import { Alert, Box, Button, Chip, DialogHeader, Divider, ErrorBoundary, Stack } from '@elementor/ui';
@@ -35,8 +34,6 @@ type StopSyncConfirmationDialogProps = {
 	onConfirm: () => void;
 };
 
-const id = 'global-classes-manager';
-
 export type ClassManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
@@ -45,31 +42,6 @@ export type ClassManagerPanelEmbeddedProps = {
 export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
 	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />;
 }
-
-export function ClassManagerPanel() {
-	const { close } = usePanelActions();
-	return (
-		<ThemeProvider>
-			<ClassManagerPanelContent onRequestClose={ close } />
-		</ThemeProvider>
-	);
-}
-
-export const { panel, usePanelActions } = createPanel( {
-	id,
-	component: ClassManagerPanel,
-	allowedEditModes: [ 'edit', id ],
-	onOpen: () => {
-		changeEditMode( id );
-		blockPanelInteractions();
-	},
-	onClose: async () => {
-		changeEditMode( 'edit' );
-		await reloadCurrentDocument();
-		unblockPanelInteractions();
-	},
-	isOpenPreviousElement: true,
-} );
 
 type ClassManagerPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
