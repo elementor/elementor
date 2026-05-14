@@ -62,7 +62,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 
 	test.beforeEach( async ( { apiRequests } ) => {
 		editor = await wpAdmin.openNewPage();
-		await cleanupDesignSystemData( apiRequests, page.context().request );
+		await cleanupDesignSystemData( apiRequests, page );
 	} );
 
 	test.afterEach( async () => {
@@ -73,7 +73,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 	} );
 
 	test.afterAll( async ( { apiRequests } ) => {
-		await cleanupDesignSystemData( apiRequests, page.context().request );
+		await cleanupDesignSystemData( apiRequests, page );
 		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
@@ -165,6 +165,8 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			tempFixtures.push( fixturePath );
 		} );
 
+		// Reload editor so it initialises with the seeded class already in the DB.
+		editor = await wpAdmin.openNewPage();
 		let divBlockId: string;
 
 		await test.step( 'Add div block and assign the seeded class', async () => {
@@ -221,6 +223,8 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			tempFixtures.push( fixturePath );
 		} );
 
+		// Reload editor so it initialises with the seeded class already in the DB.
+		editor = await wpAdmin.openNewPage();
 		let divBlockId: string;
 
 		await test.step( 'Add div block and assign the seeded class', async () => {
