@@ -121,6 +121,12 @@ export default class DesignSystemPage {
 	}
 
 	async openFromToolbar(): Promise< void > {
+		const isInToolbar = await this.toolbarButton.isVisible( { timeout: 2_000 } ).catch( () => false );
+
+		if ( ! isInToolbar ) {
+			await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
+		}
+
 		await this.toolbarButton.click();
 		await this.dismissClassManagerIntroIfVisible();
 		await this.panelHeading.waitFor( { state: 'visible' } );
@@ -195,7 +201,7 @@ export default class DesignSystemPage {
 	}
 
 	async selectConflictStrategy( strategy: ConflictStrategy ): Promise< void > {
-		if ( strategy === 'keep' ) {
+		if ( 'keep' === strategy ) {
 			await this.keepExistingRadio.click();
 		} else {
 			await this.replaceExistingRadio.click();
