@@ -1,4 +1,4 @@
-import { type V1Element } from '@elementor/editor-elements';
+import { type CreateElementParams, type V1Element, type V1ElementConfig } from '@elementor/editor-elements';
 
 import { CompositionBuilder } from '../composition-builder';
 
@@ -186,5 +186,191 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 		// Assert
 		expect( deleteElement ).not.toHaveBeenCalled();
 		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'CompositionBuilder.build required children', () => {
+	it( 'rejects build when required direct children are absent from XML', async () => {
+		// Arrange
+		let elementIdSequence = 0;
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const createElementMock = jest.fn().mockReturnValue( createdElement );
+		const formWidgetsCache = {
+			'e-form': {
+				title: 'Form',
+				controls: {},
+				elType: 'widget',
+				default_children: [
+					{
+						elType: 'e-form-success-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'e-form-error-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'widget',
+						widgetType: 'e-form-input',
+						elements: [],
+					},
+				],
+			},
+			'e-form-error-message': {
+				title: 'Error',
+				controls: {},
+				elType: 'e-form-error-message',
+			},
+			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
+			'e-form-success-message': {
+				title: 'Success',
+				controls: {},
+				elType: 'e-form-success-message',
+			},
+		} as Record< string, V1ElementConfig >;
+		const builder = CompositionBuilder.fromXMLString(
+			'<e-form configuration-id="form-1"><e-form-input /></e-form>',
+			{
+				createElement: createElementMock,
+				deleteElement: jest.fn(),
+				getContainer: jest.fn(),
+				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
+				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				doUpdateElementProperty: jest.fn(),
+			}
+		);
+
+		// Act & Assert
+		await expect( builder.build( createMockRootContainer() ) ).rejects.toThrow(
+			/Missing required direct child element tag\(s\): e-form-success-message, e-form-error-message/
+		);
+		expect( createElementMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'rejects build when only some required direct children exist', async () => {
+		// Arrange
+		let elementIdSequence = 0;
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const createElementMock = jest.fn().mockReturnValue( createdElement );
+		const formWidgetsCache = {
+			'e-form': {
+				title: 'Form',
+				controls: {},
+				elType: 'widget',
+				default_children: [
+					{
+						elType: 'e-form-success-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'e-form-error-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'widget',
+						widgetType: 'e-form-input',
+						elements: [],
+					},
+				],
+			},
+			'e-form-error-message': {
+				title: 'Error',
+				controls: {},
+				elType: 'e-form-error-message',
+			},
+			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
+			'e-form-success-message': {
+				title: 'Success',
+				controls: {},
+				elType: 'e-form-success-message',
+			},
+		} as Record< string, V1ElementConfig >;
+		const builder = CompositionBuilder.fromXMLString(
+			'<e-form configuration-id="form-1"><e-form-success-message /><e-form-input /></e-form>',
+			{
+				createElement: createElementMock,
+				deleteElement: jest.fn(),
+				getContainer: jest.fn(),
+				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
+				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				doUpdateElementProperty: jest.fn(),
+			}
+		);
+
+		// Act & Assert
+		await expect( builder.build( createMockRootContainer() ) ).rejects.toThrow(
+			/Missing required direct child element tag\(s\): e-form-error-message/
+		);
+		expect( createElementMock ).not.toHaveBeenCalled();
+	} );
+
+	it( 'creates elements when XML includes all required direct children', async () => {
+		// Arrange
+		let elementIdSequence = 0;
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const createElementMock = jest.fn().mockReturnValue( createdElement );
+		const formWidgetsCache = {
+			'e-form': {
+				title: 'Form',
+				controls: {},
+				elType: 'widget',
+				default_children: [
+					{
+						elType: 'e-form-success-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'e-form-error-message',
+						meta: { required: true },
+						elements: [],
+					},
+					{
+						elType: 'widget',
+						widgetType: 'e-form-input',
+						elements: [],
+					},
+				],
+			},
+			'e-form-error-message': {
+				title: 'Error',
+				controls: {},
+				elType: 'e-form-error-message',
+			},
+			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
+			'e-form-success-message': {
+				title: 'Success',
+				controls: {},
+				elType: 'e-form-success-message',
+			},
+		} as Record< string, V1ElementConfig >;
+		const builder = CompositionBuilder.fromXMLString(
+			'<e-form configuration-id="form-1">' +
+				'<e-form-success-message /><e-form-error-message /><e-form-input />' +
+				'</e-form>',
+			{
+				createElement: createElementMock,
+				deleteElement: jest.fn(),
+				getContainer: jest.fn(),
+				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
+				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				doUpdateElementProperty: jest.fn(),
+			}
+		);
+
+		// Act
+		await builder.build( createMockRootContainer() );
+
+		// Assert
+		const createArgs = createElementMock.mock.calls[ 0 ]?.[ 0 ] as CreateElementParams;
+		const childElements = ( createArgs.model?.elements || [] ) as Array< { elType?: string; widgetType?: string } >;
+
+		expect( childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length ).toBe( 1 );
+		expect( childElements.filter( ( child ) => child.elType === 'e-form-error-message' ).length ).toBe( 1 );
+		expect( childElements.some( ( child ) => child.widgetType === 'e-form-input' ) ).toBe( true );
 	} );
 } );
