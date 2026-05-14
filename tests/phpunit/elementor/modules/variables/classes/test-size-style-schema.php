@@ -7,6 +7,7 @@ use \PHPUnit\Framework\TestCase;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -69,6 +70,35 @@ class Test_Size_Style_Schema extends TestCase {
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_convert_grid_track_size_when_pro_is_absent() {
+		// Arrange.
+		$style_def = [
+			'grid-template-columns' => Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ),
+		];
+
+		// Act.
+		// In the unit-test environment Pro is not loaded, so the Pro-version gate returns true
+		// and the size-variable union should be added just like any other Size_Prop_Type.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'grid-template-columns' => Union_Prop_Type::create_from(
+				Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() )
+			)->add_prop_type( Size_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_skip_grid_track_size_when_pro_is_below_required_version() {
+		// Asserting the "Pro is installed but below 4.2" branch requires redefining
+		// ELEMENTOR_PRO_VERSION at runtime, which the test framework does not support
+		// (see test-custom-css-pro-restriction.php for the same pattern). The behaviour
+		// is exercised via manual verification — see plan §Verification.
+		$this->markTestSkipped( 'Cannot redefine ELEMENTOR_PRO_VERSION constant in test environment.' );
 	}
 
 	public function test_augment__does_not_change_size_with_time_units() {
