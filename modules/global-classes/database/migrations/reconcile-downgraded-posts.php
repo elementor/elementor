@@ -15,6 +15,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * We have 3 groups of users at this stage when upgrading to this version:
+ * Group A: Users who have not yet upgraded to the new global classes before
+ * Group B: Users who have upgraded to the new format, then downgraded to the old structure and worked on them
+ * Group C: Users who have upgraded to the new format and have worked on them
+ *
+ * Groups 2 and 3 already have their DB version set to 2 since the last version.
+ * Group 2 has styling changes that would be ignored by this migration, so we need to handle it separately.
+ *
+ * This migration is responsible for reconciling the posts for Group B and C.
+ * Group A is an exception - following this code change they would have the new Migrate_To_Posts migration, which now initialize the last edit post meta
+ */
+
 class Reconcile_Downgraded_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
 
@@ -68,7 +81,12 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				continue;
 			}
 
-			if ( $post->was_edited() ) {
+			if ( $post->was_edited() || $post->has_edit_timestamp() ) {
+				/**
+				 * This check determines whether this style was actively worked on since its creation in the new format
+				 * or if this migration occurs as part of the same migration flow with the Migrate_To_Posts migration.
+				 * i.e. - this is the skip for group A (got the upgrade now, running the 2nd migration with the new code which sets an initial edit timestamp)
+				 */
 				continue;
 			}
 

@@ -29,6 +29,24 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
+	public function test_create__should_not_mark_post_as_edited() {
+		$post = Global_Class_Post::create( 'g-fresh', 'fresh-class', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		$this->assertFalse( $post->was_edited() );
+	}
+
+	public function test_was_edited__legacy_boolean_true_still_edited() {
+		$post = Global_Class_Post::create( 'g-legacy-edited', 'legacy', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		update_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED, true );
+
+		$reloaded = Global_Class_Post::from_post_id( $post->get_post_id() );
+
+		$this->assertTrue( $reloaded->was_edited() );
+	}
+
 	public function test_create__should_create_post_with_correct_data() {
 		// Arrange
 		$class_id = 'g-123';

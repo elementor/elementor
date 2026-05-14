@@ -132,7 +132,46 @@ class Global_Class_Post {
 	}
 
 	public function was_edited(): bool {
-		return (bool) get_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+		$last_edited = $this->get_last_edited_timestamp();
+		$creation = $this->get_creation_timestamp();
+
+		return $last_edited > $creation;
+	}
+
+	public function has_edit_timestamp(): bool {
+		return $this->get_last_edited_timestamp() > 0;
+	}
+
+	private function get_creation_timestamp(): int {
+		$dt = get_post_datetime( $this->post, 'date', 'gmt' );
+
+		if ( $dt ) {
+			return (int) $dt->format( 'U' );
+		}
+
+		return (int) strtotime( (string) $this->post->post_date );
+	}
+
+	private function get_last_edited_timestamp(): int {
+		$raw = get_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+
+		if ( self::is_timestamp( $raw ) ) {
+			return (int) $raw;
+		}
+
+		return 0;
+	}
+
+	private static function is_timestamp( $value ): bool {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		return (int) $value > 0;
+	}
+
+	private function get_current_timestamp(): int {
+		return (int) time();
 	}
 
 	public function update_label( string $label ): bool {
@@ -142,7 +181,7 @@ class Global_Class_Post {
 		] );
 
 		if ( ! is_wp_error( $result ) ) {
-			update_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, $this->get_current_timestamp() );
 		}
 
 		return ! is_wp_error( $result );
@@ -175,7 +214,7 @@ class Global_Class_Post {
 		update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
 
 		if ( ! $this->is_preview() ) {
-			update_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, $this->get_current_timestamp() );
 		}
 
 		return false !== $result;
@@ -205,7 +244,13 @@ class Global_Class_Post {
 		update_post_meta( $post_id, self::META_KEY_DATA, $normalized_data );
 		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
 
-		return self::from_post_id( $post_id );
+		$instance = self::from_post_id( $post_id );
+
+		if ( $instance ) {
+			update_post_meta( $post_id, self::META_KEY_EDITED, $instance->get_creation_timestamp() );
+		}
+
+		return $instance;
 	}
 
 	public function delete(): bool {
