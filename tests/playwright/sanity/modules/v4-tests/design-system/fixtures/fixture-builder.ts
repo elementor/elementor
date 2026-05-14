@@ -43,14 +43,14 @@ export type FixtureData = {
 export function createClassItem(
 	id: string,
 	label: string,
-	props: Record< string, unknown > = {}
+	props: Record< string, unknown > = { color: { $$type: 'color', value: '#000000' } },
 ): GlobalClassItem {
 	return {
 		id,
 		type: 'class',
 		label,
 		variants: [ {
-			meta: { breakpoint: null, state: null },
+			meta: { breakpoint: 'desktop', state: null },
 			props,
 			custom_css: null,
 		} ],
@@ -61,7 +61,7 @@ export function createColorVariable(
 	id: string,
 	label: string,
 	value: string,
-	order: number = 0
+	order: number = 0,
 ): VariableData {
 	return { id, type: 'color', label, value, order, deleted_at: null };
 }
@@ -70,7 +70,7 @@ export function createFontSizeVariable(
 	id: string,
 	label: string,
 	value: string,
-	order: number = 0
+	order: number = 0,
 ): VariableData {
 	return { id, type: 'font-size', label, value, order, deleted_at: null };
 }
@@ -79,28 +79,47 @@ export async function createDesignSystemZip( data: FixtureData ): Promise< Buffe
 	const tempDir = fs.mkdtempSync( path.join( os.tmpdir(), 'design-system-fixture-' ) );
 
 	try {
+		fs.writeFileSync(
+			path.join( tempDir, 'manifest.json' ),
+			JSON.stringify( { elementor_version: '4.1.0', version: '3.0' } ),
+		);
+
 		if ( data.classes ) {
+			const classesDir = path.join( tempDir, 'global-classes' );
+			fs.mkdirSync( classesDir );
+
+			for ( const classItem of Object.values( data.classes.items ) ) {
+				fs.writeFileSync(
+					path.join( classesDir, `${ classItem.id }.json` ),
+					JSON.stringify( classItem, null, 2 ),
+				);
+			}
+
+			const orderEntries = data.classes.order.map( ( id ) => ( {
+				id,
+				label: data.classes!.items[ id ].label,
+			} ) );
 			fs.writeFileSync(
-				path.join( tempDir, 'global-classes.json' ),
-				JSON.stringify( data.classes, null, 2 )
+				path.join( classesDir, 'order.json' ),
+				JSON.stringify( orderEntries, null, 2 ),
 			);
 		}
 
 		if ( data.variables ) {
 			fs.writeFileSync(
 				path.join( tempDir, 'global-variables.json' ),
-				JSON.stringify( data.variables, null, 2 )
+				JSON.stringify( data.variables, null, 2 ),
 			);
 		}
 
 		const zipPath = path.join( tempDir, 'output.zip' );
-		const filesToZip = fs.readdirSync( tempDir ).filter( ( f ) => f.endsWith( '.json' ) );
+		const entriesToZip = fs.readdirSync( tempDir ).filter( ( f ) => f !== 'output.zip' );
 
-		if ( filesToZip.length === 0 ) {
+		if ( 0 === entriesToZip.length ) {
 			throw new Error( 'createDesignSystemZip requires at least one of classes or variables' );
 		}
 
-		execSync( `zip -j "${ zipPath }" ${ filesToZip.map( ( f ) => `"${ f }"` ).join( ' ' ) }`, {
+		execSync( `zip -r "${ zipPath }" ${ entriesToZip.map( ( f ) => `"${ f }"` ).join( ' ' ) }`, {
 			cwd: tempDir,
 			stdio: 'pipe',
 		} );
@@ -119,14 +138,11 @@ export function cleanupTempFixture( filePath: string ): void {
 
 export const SAMPLE_CLASSES_DATA: GlobalClassesData = {
 	items: {
-		'e-gc-test-header': createClassItem( 'e-gc-test-header', 'Test Header', {
-			'font-size': '24px',
-			color: '#333333',
+		'e-gc-test-header': createClassItem( 'e-gc-test-header', 'TestHeader', {
+			color: { $$type: 'color', value: '#333333' },
 		} ),
-		'e-gc-test-button': createClassItem( 'e-gc-test-button', 'Test Button', {
-			'background-color': '#007bff',
-			color: '#ffffff',
-			padding: '10px 20px',
+		'e-gc-test-button': createClassItem( 'e-gc-test-button', 'TestButton', {
+			color: { $$type: 'color', value: '#ffffff' },
 		} ),
 	},
 	order: [ 'e-gc-test-header', 'e-gc-test-button' ],

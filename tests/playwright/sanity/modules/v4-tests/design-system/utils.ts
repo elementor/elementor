@@ -18,7 +18,7 @@ export async function initDesignSystemTest(
 	apiRequests: ApiRequests,
 ): Promise< WpAdminPage > {
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-	await wpAdminPage.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
+	// Await wpAdminPage.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
 	await wpAdminPage.openNewPage();
 	return wpAdminPage;
 }
@@ -45,8 +45,8 @@ export async function createTestClass(
 		type: 'class' as const,
 		label: options.label,
 		variants: [ {
-			meta: { breakpoint: null, state: null },
-			props: options.props ?? { color: '#000000' },
+			meta: { breakpoint: 'desktop', state: null },
+			props: options.props ?? { color: { $$type: 'color', value: '#000000' } },
 			custom_css: null,
 		} ],
 	};
@@ -60,7 +60,7 @@ export async function createTestClass(
 			type: 'class',
 			label: val.label,
 			variants: [ {
-				meta: { breakpoint: null, state: null },
+				meta: { breakpoint: 'desktop', state: null },
 				props: {},
 				custom_css: null,
 			} ],

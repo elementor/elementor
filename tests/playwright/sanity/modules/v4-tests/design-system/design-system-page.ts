@@ -65,7 +65,7 @@ export default class DesignSystemPage {
 	}
 
 	get importDialog(): Locator {
-		return this.page.getByRole( 'dialog' ).filter( { hasText: 'Import Design System' } );
+		return this.page.getByRole( 'dialog', { name: 'Import Design System' } );
 	}
 
 	get fileInput(): Locator {
@@ -73,7 +73,7 @@ export default class DesignSystemPage {
 	}
 
 	get uploadedFileRow(): Locator {
-		return this.importDialog.locator( '[class*="FileUploadRow"]' );
+		return this.importDialog.getByRole( 'button', { name: 'Remove file' } );
 	}
 
 	get keepExistingRadio(): Locator {
@@ -93,41 +93,43 @@ export default class DesignSystemPage {
 	}
 
 	get importInProgressNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'Import in Progress' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'Import in Progress' } );
 	}
 
 	get importSuccessNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'Design system imported' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'Design system imported' } );
 	}
 
 	get importFailedNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'import failed' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'import failed' } );
 	}
 
 	get exportInProgressNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'Export in progress' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'Export in progress' } );
 	}
 
 	get exportSuccessNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'Design system exported' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'Design system exported' } );
 	}
 
 	get exportFailedNotification(): Locator {
-		return this.page.locator( '#elementor-toast' ).filter( { hasText: 'export failed' } );
+		return this.page.getByRole( 'alert' ).filter( { hasText: 'export failed' } );
 	}
 
 	get tryAgainButton(): Locator {
-		return this.page.locator( '#elementor-toast' ).getByRole( 'button', { name: 'Try again' } );
+		return this.page.getByRole( 'alert' ).getByRole( 'button', { name: 'Try again' } );
 	}
 
 	async openFromToolbar(): Promise< void > {
 		const isInToolbar = await this.toolbarButton.isVisible( { timeout: 2_000 } ).catch( () => false );
 
-		if ( ! isInToolbar ) {
+		if ( isInToolbar ) {
+			await this.toolbarButton.click();
+		} else {
 			await this.page.getByRole( 'button', { name: 'More', exact: true } ).click();
+			await this.page.getByRole( 'menuitem', { name: 'Design System', exact: true } ).click();
 		}
 
-		await this.toolbarButton.click();
 		await this.dismissClassManagerIntroIfVisible();
 		await this.panelHeading.waitFor( { state: 'visible' } );
 	}
@@ -236,7 +238,7 @@ export default class DesignSystemPage {
 	}
 
 	async removeUploadedFile(): Promise< void > {
-		await this.uploadedFileRow.getByRole( 'button' ).first().click();
+		await this.uploadedFileRow.click();
 	}
 
 	getClassItem( className: string ): Locator {
