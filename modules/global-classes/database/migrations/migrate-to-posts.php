@@ -56,21 +56,11 @@ class Migrate_To_Posts extends Base_Migration {
 		$raw_items = $global_classes['items'];
 		$order = $global_classes['order'] ?? array_keys( $raw_items );
 
-		$items = self::normalize_items( $raw_items );
+		$items = Global_Class_Data_Normalizer::normalize_styles( $raw_items );
 
 		Global_Classes_Repository::make( $kit )->put( $items, $order );
 
 		return true;
-	}
-
-	public static function normalize_items( array $raw_items ): array {
-		$items = [];
-
-		foreach ( $raw_items as $class_id => $class_data ) {
-			$items[ $class_id ] = Global_Class_Data_Normalizer::normalize_style( $class_id, $class_data );
-		}
-
-		return $items;
 	}
 
 	private function get_existing_class_posts(): array {

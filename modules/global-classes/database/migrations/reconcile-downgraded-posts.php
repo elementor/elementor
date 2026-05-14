@@ -33,7 +33,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			return;
 		}
 
-		$items = Migrate_To_Posts::normalize_items( $legacy['items'] );
+		$items = Global_Class_Data_Normalizer::normalize_styles( $legacy['items'] );
 		$order = $legacy['order'] ?? array_keys( $items );
 
 		$touched_any = false;
