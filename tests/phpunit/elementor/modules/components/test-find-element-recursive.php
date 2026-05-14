@@ -1,7 +1,10 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Components\Module as Components_Module;
 use Elementor\Modules\Components\Utils\Format_Component_Elements_Id;
 use Elementor\Modules\Components\Widgets\Component_Instance;
 use Elementor\Plugin;
@@ -18,22 +21,30 @@ class Test_Find_Element_Recursive extends Elementor_Test_Base {
 
 	private bool $registered_component_widget = false;
 
+	private string $original_atomic_widgets_experiment_state;
+
+	private string $original_components_experiment_state;
+
 	public function setUp(): void {
 		parent::setUp();
 
 		$this->act_as_admin();
 
-		Plugin::$instance->documents->register_document_type(
-			Component_Document::TYPE,
-			Component_Document::get_class_full_name()
+		$this->original_atomic_widgets_experiment_state = Plugin::$instance->experiments
+			->get_features( Atomic_Widgets_Module::EXPERIMENT_NAME )['default'];
+		$this->original_components_experiment_state = Plugin::$instance->experiments
+			->get_features( Components_Module::EXPERIMENT_NAME )['default'];
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			Components_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
 		);
 
-		register_post_type( Component_Document::TYPE, [
-			'label' => Component_Document::get_title(),
-			'labels' => Component_Document::get_labels(),
-			'public' => false,
-			'supports' => Component_Document::get_supported_features(),
-		] );
+		new Components_Module();
 
 		if ( ! Plugin::$instance->widgets_manager->get_widget_types( Component_Instance::get_element_type() ) ) {
 			Plugin::$instance->widgets_manager->register( new Component_Instance( [], [] ) );
@@ -47,6 +58,17 @@ class Test_Find_Element_Recursive extends Elementor_Test_Base {
 		if ( $this->registered_component_widget ) {
 			Plugin::$instance->widgets_manager->unregister( Component_Instance::get_element_type() );
 		}
+
+		remove_all_filters( 'elementor/utils/find_element_recursive/inner_elements' );
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			$this->original_atomic_widgets_experiment_state
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			Components_Module::EXPERIMENT_NAME,
+			$this->original_components_experiment_state
+		);
 
 		parent::tearDown();
 	}

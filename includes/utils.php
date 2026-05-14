@@ -3,7 +3,6 @@ namespace Elementor;
 
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -731,9 +730,11 @@ class Utils {
 				return $element;
 			}
 
-			$inner_elements = self::is_component_instance( $element )
-				? self::get_element_inner_elements_for_search( $element )
-				: ( $element['elements'] ?? [] );
+			$inner_elements = apply_filters(
+				'elementor/utils/find_element_recursive/inner_elements',
+				$element['elements'] ?? [],
+				$element
+			);
 
 			if ( ! empty( $inner_elements ) ) {
 				$found = self::find_element_recursive( $inner_elements, $id );
@@ -745,22 +746,6 @@ class Utils {
 		}
 
 		return false;
-	}
-
-	private static function get_element_inner_elements_for_search( array $element_data ): array {
-		$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
-
-		if ( ! $element_instance ) {
-			return [];
-		}
-
-		return $element_instance->get_inner_elements_data_for_search();
-	}
-
-	private static function is_component_instance( array $element_data ): bool {
-		return isset( $element_data['elType'], $element_data['widgetType'] )
-			&& 'widget' === $element_data['elType']
-			&& Component_Instance::get_element_type() === $element_data['widgetType'];
 	}
 
 	/**
