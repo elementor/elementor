@@ -1,14 +1,16 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { expect } from '@playwright/test';
+import { type BrowserContext, expect, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
+import EditorPage from '../../../../pages/editor-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import DesignSystemPage from './design-system-page';
 import {
 	cleanupDesignSystemData,
 	createTestClass,
 	createTestVariable,
+	DESIGN_SYSTEM_EXPERIMENTS,
 } from './utils';
 import {
 	cleanupTempFixture,
@@ -43,17 +45,43 @@ async function createTempFixture( data: FixtureData ): Promise< string > {
 }
 
 test.describe( 'Design System Import/Export @v4-tests', () => {
-	test.afterAll( async ( { apiRequests, request } ) => {
-		await cleanupDesignSystemData( apiRequests, request );
+	let wpAdmin: WpAdminPage;
+	let editor: EditorPage;
+	let page: Page;
+	let context: BrowserContext;
+	let designSystem: DesignSystemPage;
+	const tempFixtures: string[] = [];
+
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		page = await context.newPage();
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
+		designSystem = new DesignSystemPage( page );
 	} );
 
-	test( 'export works and downloads a file with success notification', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const { request } = page.context();
-		const designSystem = new DesignSystemPage( page );
+	test.beforeEach( async ( { apiRequests } ) => {
+		editor = await wpAdmin.openNewPage();
+		await cleanupDesignSystemData( apiRequests, page.context().request );
+	} );
 
-		await test.step( 'Clean state and seed class + variable', async () => {
-			await cleanupDesignSystemData( apiRequests, request );
+	test.afterEach( async () => {
+		for ( const fixturePath of tempFixtures ) {
+			cleanupTempFixture( fixturePath );
+		}
+		tempFixtures.length = 0;
+	} );
+
+	test.afterAll( async ( { apiRequests } ) => {
+		await cleanupDesignSystemData( apiRequests, page.context().request );
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
+
+	test( 'export works and downloads a file with success notification', async ( { apiRequests } ) => {
+		const request = page.context().request;
+
+		await test.step( 'Seed class + variable', async () => {
 			await createTestClass( apiRequests, request, {
 				id: 'e-gc-export-test',
 				label: 'ExportTestClass',
@@ -67,8 +95,7 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			} );
 		} );
 
-		await test.step( 'Open editor and design system panel', async () => {
-			await wpAdmin.openNewPage();
+		await test.step( 'Open design system panel', async () => {
 			await designSystem.openFromToolbar();
 		} );
 
@@ -81,14 +108,10 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 		} );
 	} );
 
-	test( 'import works without conflicts and shows imported class', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const { request } = page.context();
-		const designSystem = new DesignSystemPage( page );
-		let fixturePath: string;
+	test( 'import works without conflicts and shows imported class', async ( { apiRequests } ) => {
+		const request = page.context().request;
 
-		await test.step( 'Clean state and seed only a variable (no class conflicts possible)', async () => {
-			await cleanupDesignSystemData( apiRequests, request );
+		await test.step( 'Seed only a variable (no class conflicts possible)', async () => {
 			await createTestVariable( apiRequests, request, {
 				id: 'e-gv-no-conflict',
 				label: 'ExistingVar',
@@ -98,16 +121,16 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 		} );
 
 		await test.step( 'Create import fixture with a new class not in DB', async () => {
-			fixturePath = await createTempFixture( { classes: SAMPLE_CLASSES_DATA } );
+			const fixturePath = await createTempFixture( { classes: SAMPLE_CLASSES_DATA } );
+			tempFixtures.push( fixturePath );
 		} );
 
-		await test.step( 'Open editor and design system panel', async () => {
-			await wpAdmin.openNewPage();
+		await test.step( 'Open design system panel', async () => {
 			await designSystem.openFromToolbar();
 		} );
 
 		await test.step( 'Import the fixture with keep strategy and wait for success', async () => {
-			await designSystem.performImport( fixturePath, 'keep' );
+			await designSystem.performImport( tempFixtures[ 0 ], 'keep' );
 			await designSystem.waitForImportSuccess();
 		} );
 
@@ -116,18 +139,13 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await expect( designSystem.getClassItem( 'TestHeader' ) ).toBeVisible();
 			await expect( designSystem.getClassItem( 'TestButton' ) ).toBeVisible();
 		} );
-
-		cleanupTempFixture( fixturePath );
 	} );
 
-	test( 'import with replace conflict overwrites existing class color on canvas', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const { request } = page.context();
-		const designSystem = new DesignSystemPage( page );
+	test( 'import with replace conflict overwrites existing class color on canvas', async ( { apiRequests } ) => {
+		const request = page.context().request;
 		let fixturePath: string;
 
-		await test.step( 'Clean state and seed conflicting class with original red color', async () => {
-			await cleanupDesignSystemData( apiRequests, request );
+		await test.step( 'Seed conflicting class with original red color', async () => {
 			await createTestClass( apiRequests, request, {
 				id: CONFLICT_CLASS_ID,
 				label: CONFLICT_CLASS_LABEL,
@@ -144,9 +162,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 					order: [ IMPORT_CLASS_ID ],
 				},
 			} );
+			tempFixtures.push( fixturePath );
 		} );
 
-		const editor = await wpAdmin.openNewPage();
 		let divBlockId: string;
 
 		await test.step( 'Add div block and assign the seeded class', async () => {
@@ -177,18 +195,13 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 				{ timeout: STYLE_POLL_TIMEOUT_MS },
 			).toBe( IMPORTED_BG_RGB );
 		} );
-
-		cleanupTempFixture( fixturePath );
 	} );
 
-	test( 'import with keep conflict preserves existing class color on canvas', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const { request } = page.context();
-		const designSystem = new DesignSystemPage( page );
+	test( 'import with keep conflict preserves existing class color on canvas', async ( { apiRequests } ) => {
+		const request = page.context().request;
 		let fixturePath: string;
 
-		await test.step( 'Clean state and seed conflicting class with original red color', async () => {
-			await cleanupDesignSystemData( apiRequests, request );
+		await test.step( 'Seed conflicting class with original red color', async () => {
 			await createTestClass( apiRequests, request, {
 				id: CONFLICT_CLASS_ID,
 				label: CONFLICT_CLASS_LABEL,
@@ -205,9 +218,9 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 					order: [ IMPORT_CLASS_ID ],
 				},
 			} );
+			tempFixtures.push( fixturePath );
 		} );
 
-		const editor = await wpAdmin.openNewPage();
 		let divBlockId: string;
 
 		await test.step( 'Add div block and assign the seeded class', async () => {
@@ -238,23 +251,14 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 				{ timeout: STYLE_POLL_TIMEOUT_MS },
 			).toBe( ORIGINAL_BG_RGB );
 		} );
-
-		cleanupTempFixture( fixturePath );
 	} );
 
-	test( 'import shows error for corrupted zip with try again button', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		const { request } = page.context();
-		const designSystem = new DesignSystemPage( page );
+	test( 'import shows error for corrupted zip with try again button', async () => {
 		const corruptedPath = path.join( os.tmpdir(), `temp-corrupted-${ Date.now() }.zip` );
+		fs.writeFileSync( corruptedPath, 'not a valid zip content' );
+		tempFixtures.push( corruptedPath );
 
-		await test.step( 'Clean state and create corrupted zip', async () => {
-			await cleanupDesignSystemData( apiRequests, request );
-			fs.writeFileSync( corruptedPath, 'not a valid zip content' );
-		} );
-
-		await test.step( 'Open editor and design system panel', async () => {
-			await wpAdmin.openNewPage();
+		await test.step( 'Open design system panel', async () => {
 			await designSystem.openFromToolbar();
 		} );
 
@@ -266,7 +270,5 @@ test.describe( 'Design System Import/Export @v4-tests', () => {
 			await designSystem.waitForImportFailure();
 			await expect( designSystem.tryAgainButton ).toBeVisible();
 		} );
-
-		fs.unlinkSync( corruptedPath );
 	} );
 } );

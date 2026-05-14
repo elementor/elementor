@@ -18,7 +18,7 @@ export async function initDesignSystemTest(
 	apiRequests: ApiRequests,
 ): Promise< WpAdminPage > {
 	const wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-	// Await wpAdminPage.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
+	await wpAdminPage.setExperiments( DESIGN_SYSTEM_EXPERIMENTS );
 	await wpAdminPage.openNewPage();
 	return wpAdminPage;
 }
