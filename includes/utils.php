@@ -986,4 +986,12 @@ class Utils {
 
 		return trim( preg_replace( '/\s+/', ' ', $text ) );
 	}
+
+	public static function get_pro_license_tier( bool $force = false ) {
+		return apply_filters( 'elementor/pro/license_data', null, $force );
+	}
+
+	public static function get_pro_version() {
+		return self::has_pro() ? ELEMENTOR_PRO_VERSION : null;
+	}
 }
