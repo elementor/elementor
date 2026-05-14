@@ -52,10 +52,14 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 		foreach ( $items as $class_id => $item ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
-			$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
+			$normalized_item = Global_Class_Data_Normalizer::normalize_style( $class_id, $item );
 
 			if ( ! $post ) {
-				$created = Global_Class_Post::create( $class_id, $item['label'], $normalized_data );
+				$created = Global_Class_Post::create(
+					$normalized_item['id'],
+					$normalized_item['label'],
+					$normalized_item
+				);
 
 				if ( $created ) {
 					$touched_any = true;
@@ -68,8 +72,9 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				continue;
 			}
 
+			$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $normalized_item );
 			$post->update_data( $normalized_data );
-			$post->update_label( $item['label'] );
+			$post->update_label( $normalized_item['label'] );
 			$touched_any = true;
 		}
 

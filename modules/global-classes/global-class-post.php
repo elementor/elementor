@@ -199,8 +199,10 @@ class Global_Class_Post {
 			return null;
 		}
 
+		$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $data );
+
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
-		update_post_meta( $post_id, self::META_KEY_DATA, $data );
+		update_post_meta( $post_id, self::META_KEY_DATA, $normalized_data );
 		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
 
 		return self::from_post_id( $post_id );
