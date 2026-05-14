@@ -6,6 +6,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Memo;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
@@ -33,6 +35,11 @@ class Atomic_Styles_Manager {
 	private array $fonts = [];
 
 	private array $dynamic_styles_decisions = [];
+
+	/**
+	 * @var array<string, array>
+	 */
+	private array $dynamic_placeholders = [];
 
 	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
@@ -202,7 +209,7 @@ class Atomic_Styles_Manager {
 	private function render_css( array $styles, string $style_key ) {
 		$style_fonts = Style_Fonts::make( $style_key );
 
-		return Styles_Renderer::make(
+		$renderer = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
 		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
 			if ( 'font-family' !== $key ) {
@@ -210,7 +217,39 @@ class Atomic_Styles_Manager {
 			}
 
 			$style_fonts->add( $value );
-		} )->render( $styles );
+		} );
+
+		$css = $renderer->render( $styles );
+
+		$this->dynamic_placeholders = array_merge(
+			$this->dynamic_placeholders,
+			$renderer->get_dynamic_placeholders()
+		);
+
+		return $css;
+	}
+
+	public function resolve_dynamic_css_variables_for_current_post(): array {
+		if ( empty( $this->dynamic_placeholders ) ) {
+			return [];
+		}
+
+		$resolved = [];
+		$resolver = Render_Props_Resolver::for_styles();
+		$schema = [ 'value' => String_Prop_Type::make() ];
+
+		foreach ( $this->dynamic_placeholders as $var_name => $dynamic_node ) {
+			$result = $resolver->resolve( $schema, [ 'value' => $dynamic_node ] );
+			$value = $result['value'] ?? null;
+
+			if ( null === $value || '' === $value ) {
+				continue;
+			}
+
+			$resolved[ $var_name ] = (string) $value;
+		}
+
+		return $resolved;
 	}
 
 	private function get_breakpoint_media( string $breakpoint_key ): ?string {

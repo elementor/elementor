@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -10,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 class Styles_Renderer {
 	const DEFAULT_SELECTOR_PREFIX = '.elementor';
+	const DYNAMIC_VAR_PREFIX = '--e-dyn';
 
 	/**
 	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
@@ -19,6 +21,11 @@ class Styles_Renderer {
 	private $on_prop_transform;
 
 	private string $selector_prefix;
+
+	/**
+	 * @var array<string, array>
+	 */
+	private array $dynamic_placeholders = [];
 
 	/**
 	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
@@ -68,6 +75,10 @@ class Styles_Renderer {
 		return $this;
 	}
 
+	public function get_dynamic_placeholders(): array {
+		return $this->dynamic_placeholders;
+	}
+
 	private function style_definition_to_css_string( array $style ): string {
 		$base_selector = $this->get_base_selector( $style );
 
@@ -75,10 +86,11 @@ class Styles_Renderer {
 			return '';
 		}
 
+		$class_id = $style['id'] ?? '';
 		$stylesheet = [];
 
-		foreach ( $style['variants'] as $variant ) {
-			$style_declaration = $this->variant_to_css_string( $base_selector, $variant );
+		foreach ( $style['variants'] as $variant_index => $variant ) {
+			$style_declaration = $this->variant_to_css_string( $base_selector, $variant, $class_id, (int) $variant_index );
 
 			if ( $style_declaration ) {
 				$stylesheet[] = $style_declaration;
@@ -113,8 +125,16 @@ class Styles_Renderer {
 		return null;
 	}
 
-	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+	private function variant_to_css_string( string $base_selector, array $variant, string $class_id = '', int $variant_index = 0 ): string {
+		$props = $variant['props'] ?? [];
+		$placeholder_css = '';
+
+		if ( ! empty( $variant['meta']['is_scoped'] ) && '' !== $class_id ) {
+			[ $props, $placeholder_css ] = $this->split_dynamic_props( $props, $class_id, $variant_index );
+		}
+
+		$css = $this->props_to_css_string( $props ) ?? '';
+		$css = $placeholder_css . $css;
 		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
 		if ( ! $css && ! $custom_css ) {
@@ -150,6 +170,34 @@ class Styles_Renderer {
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
+	}
+
+	/**
+	 * @return array{0: array, 1: string}
+	 */
+	private function split_dynamic_props( array $props, string $class_id, int $variant_index ): array {
+		$static_props = [];
+		$placeholder_css = '';
+
+		foreach ( $props as $prop_name => $prop_value ) {
+			if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
+				$static_props[ $prop_name ] = $prop_value;
+				continue;
+			}
+
+			$var_name = $this->generate_variable_placeholder( $class_id, $variant_index, $prop_name );
+			$this->dynamic_placeholders[ $var_name ] = $prop_value;
+			$placeholder_css .= $prop_name . ':var(' . $var_name . ');';
+		}
+
+		return [ $static_props, $placeholder_css ];
+	}
+
+	private function generate_variable_placeholder( string $class_id, int $variant_index, string $prop_name ): string {
+		$safe_class = preg_replace( '/[^a-zA-Z0-9_-]/', '', $class_id );
+		$safe_prop = preg_replace( '/[^a-zA-Z0-9_-]/', '', $prop_name );
+
+		return self::DYNAMIC_VAR_PREFIX . '-' . $safe_class . '-v' . $variant_index . '-' . $safe_prop;
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
