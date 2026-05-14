@@ -88,9 +88,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 	}
 
 	private function cpt_was_actively_edited( Global_Class_Post $post ): bool {
-		$wp_post = get_post( $post->get_post_id() );
-
-		return $wp_post && $wp_post->post_modified_gmt !== $wp_post->post_date_gmt;
+		return $post->was_edited();
 	}
 
 	private function storage_data( array $item ): array {

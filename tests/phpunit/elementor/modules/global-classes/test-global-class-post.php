@@ -127,13 +127,10 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		], $array );
 	}
 
-	public function test_update_data__bumps_post_modified_gmt_on_frontend_write() {
+	public function test_update_data__marks_post_as_edited_on_frontend_write() {
 		// Arrange
 		$post = Global_Class_Post::create( 'g-modified', 'modified-test', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $post->get_post_id();
-
-		$wp_post_before = get_post( $post->get_post_id() );
-		$modified_before = $wp_post_before->post_modified_gmt;
 
 		$new_data = [
 			'type' => 'class',
@@ -150,8 +147,7 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		$post->update_data( $new_data );
 
 		// Assert
-		$wp_post_after = get_post( $post->get_post_id() );
-		$this->assertNotSame( $modified_before, $wp_post_after->post_modified_gmt );
+		$this->assertTrue( $post->was_edited() );
 	}
 
 	public function test_update_data__should_update_frontend_data() {

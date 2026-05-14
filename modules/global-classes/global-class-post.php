@@ -18,6 +18,7 @@ class Global_Class_Post {
 	const META_KEY_ID = '_elementor_global_class_id';
 	const META_KEY_DATA = '_elementor_global_class_data';
 	const META_KEY_DATA_PREVIEW = '_elementor_global_class_data_preview';
+	const META_KEY_EDITED = '_elementor_global_class_edited';
 
 	protected array $context_keys = [
 		'data' => [
@@ -130,11 +131,19 @@ class Global_Class_Post {
 		);
 	}
 
+	public function was_edited(): bool {
+		return (bool) get_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+	}
+
 	public function update_label( string $label ): bool {
 		$result = wp_update_post( [
 			'ID' => $this->post->ID,
 			'post_title' => $label,
 		] );
+
+		if ( ! is_wp_error( $result ) ) {
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+		}
 
 		return ! is_wp_error( $result );
 	}
@@ -159,10 +168,6 @@ class Global_Class_Post {
 
 		$result = update_post_meta( $this->post->ID, $meta_key, $data );
 
-		if ( false === $result ) {
-			return false;
-		}
-
 		if ( ! $this->is_preview() ) {
 			delete_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW );
 		}
@@ -170,13 +175,10 @@ class Global_Class_Post {
 		update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
 
 		if ( ! $this->is_preview() ) {
-			// Bump modified time so Reconcile_Downgraded_Posts can tell migrated data from later edits and skip or rewrite accordingly.
-			wp_update_post( [
-				'ID' => $this->post->ID,
-			] );
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
 		}
 
-		return true;
+		return false !== $result;
 	}
 
 	public static function create(
