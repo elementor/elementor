@@ -173,32 +173,34 @@ class Atomic_Form extends Atomic_Element_Base {
 				->set_meta( [ 'topDivider' => true ] ),
 		];
 
-		$content_controls = array_merge( $content_controls, $email_controls );
-
-		$content_controls = array_merge( $content_controls, [
-			Chips_Control::bind_to( 'submissions_metadata' )
-				->set_options( [
-					[
-						'label' => __( 'User IP', 'elementor' ),
-						'value' => self::METADATA_REMOTE_IP,
-					],
-					[
-						'label' => __( 'User Agent', 'elementor' ),
-						'value' => self::METADATA_USER_AGENT,
-					],
-				] )
-				->set_label( __( 'Include metadata', 'elementor' ) )
-				->set_meta( [ 'topDivider' => true ] ),
-			Text_Control::bind_to( 'webhook_url' )
-				->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
-				->set_label( __( 'Webhook URL', 'elementor' ) )
-				->set_meta( [ 'topDivider' => true ] ),
-		] );
-
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( $content_controls ),
+			...$email_controls,
+			Section::make()
+				->set_label( __( 'Collect submissions', 'elementor' ) )
+				->set_items( [
+					Chips_Control::bind_to( 'submissions_metadata' )
+						->set_options( [
+							[
+								'label' => __( 'User IP', 'elementor' ),
+								'value' => self::METADATA_REMOTE_IP,
+							],
+							[
+								'label' => __( 'User Agent', 'elementor' ),
+								'value' => self::METADATA_USER_AGENT,
+							],
+						] )
+						->set_label( __( 'Include metadata', 'elementor' ) ),
+				] ),
+			Section::make()
+				->set_label( __( 'Webhook', 'elementor' ) )
+				->set_items( [
+					Text_Control::bind_to( 'webhook_url' )
+						->set_placeholder( __( 'https://your-webhook-url.com', 'elementor' ) )
+						->set_label( __( 'Webhook URL', 'elementor' ) ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
@@ -427,10 +429,13 @@ class Atomic_Form extends Atomic_Element_Base {
 				'value' => $key,
 			];
 
-			$email_controls[] = Email_Form_Action_Control::bind_to( $key )
-				->set_free_chips( true )
-				->set_label( $label )
-				->set_meta( [ 'topDivider' => true ] );
+			$email_controls[] = Section::make()
+					->set_label( $label )
+					->set_items( [
+						Email_Form_Action_Control::bind_to( $key )
+							->set_free_chips( true )
+							->set_label( $label ),
+					] );
 		}
 
 		return [
