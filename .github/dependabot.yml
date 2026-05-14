@@ -1,17 +1,5 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    target-branch: "main"
-    reviewers:
-      - "elementor/editor-core"
-    commit-message:
-      prefix: "Internal: "
-    labels:
-      - "dependencies"
-
   - package-ecosystem: "npm"
     directory: "/"
     target-branch: "main"
