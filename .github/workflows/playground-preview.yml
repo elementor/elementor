@@ -9,7 +9,7 @@ on:
     inputs:
       pr_number:
         description: "PR number"
-        required: false
+        required: true
 permissions:
   contents: write      # upload to ci-artifacts release
   pull-requests: write # post PR comment
@@ -18,11 +18,6 @@ permissions:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    # Guard: only for PRs (not pushes to main), only for non-forks, only on successful builds
-    # if: >
-    #   github.event.workflow_run.event == 'pull_request' &&
-    #   github.event.workflow_run.conclusion == 'success' &&
-    #   github.event.workflow_run.head_repository.full_name == github.repository
     if: >
       (
         github.event_name == 'workflow_run' &&
@@ -31,24 +26,82 @@ jobs:
         github.event.workflow_run.head_repository.full_name == github.repository
       ) ||
       (
-        github.event_name == 'pull_request' &&
-        github.event.pull_request.head.repo.full_name == github.repository &&
-        !github.event.pull_request.draft
+        github.event_name == 'workflow_dispatch'
       )
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get PR number
-        id: pr
+      - name: Resolve PR context and Build run
+        id: runctx
         uses: actions/github-script@v7
         with:
           script: |
-            const prs = context.payload.workflow_run.pull_requests;
-            if (!prs.length) {
-              core.setFailed('No pull request found for this workflow run');
-              return;
+            const { owner, repo } = context.repo;
+
+            let prNumber;
+            let headSha;
+            let buildRunId;
+
+            if (context.eventName === 'workflow_run') {
+              const run = context.payload.workflow_run;
+              const prs = run.pull_requests || [];
+              if (!prs.length) {
+                core.setFailed('No pull request found for this workflow run');
+                return;
+              }
+
+              prNumber = prs[0].number;
+              headSha = run.head_sha;
+              buildRunId = run.id;
+            } else {
+              prNumber = Number(core.getInput('pr_number', { required: true }));
+              if (!Number.isInteger(prNumber) || prNumber <= 0) {
+                core.setFailed('Invalid pr_number input');
+                return;
+              }
+
+              const { data: pr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: prNumber,
+              });
+
+              if (pr.head.repo.full_name !== `${owner}/${repo}`) {
+                core.setFailed('Manual run supports only PRs from the same repository');
+                return;
+              }
+
+              headSha = pr.head.sha;
+
+              const runsResp = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: 'build.yml',
+                event: 'pull_request',
+                head_sha: headSha,
+                per_page: 50,
+              });
+
+              const buildRun = runsResp.data.workflow_runs.find((run) =>
+                run.name === 'Build' &&
+                run.status === 'completed' &&
+                run.conclusion === 'success'
+              );
+
+              if (!buildRun) {
+                core.setFailed(
+                  `No successful Build run found for PR #${prNumber} at ${headSha}. ` +
+                  'Wait for Build to finish, then re-run this workflow.'
+                );
+                return;
+              }
+
+              buildRunId = buildRun.id;
             }
-            core.setOutput('number', prs[0].number);
+
+            core.setOutput('pr-number', String(prNumber));
+            core.setOutput('head-sha', headSha);
+            core.setOutput('build-run-id', String(buildRunId));
 
       - name: Download plugin artifact
         id: artifact
@@ -58,11 +111,11 @@ jobs:
             const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id,
+              run_id: Number('${{ steps.runctx.outputs.build-run-id }}'),
             });
             const hit = artifacts.find(a => a.name.startsWith('elementor-'));
             if (!hit) {
-              core.setFailed('No elementor artifact found in triggering workflow run');
+              core.setFailed('No elementor artifact found in resolved Build workflow run');
               return;
             }
             const dl = await github.rest.actions.downloadArtifact({
@@ -76,17 +129,6 @@ jobs:
 
       - name: Repack build artifact as plugin zip
         run: |
-          echo "event_name: ${{ github.event_name }}"
-          echo "event_pull_request: ${{ github.event.pull_request }}"
-          echo "event_workflow_run: ${{ github.event.workflow_run }}"
-          echo "event_workflow_run_event: ${{ github.event.workflow_run.event }}"
-          echo "event_workflow_run_conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "event_workflow_run_head_repository_full_name: ${{ github.event.workflow_run.head_repository.full_name }}"
-          echo "event_pull_request_head_repo_full_name: ${{ github.event.pull_request.head.repo.full_name }}"
-          echo "event_pull_request_draft: ${{ github.event.pull_request.draft }}"
-          echo "pr_number: ${{ steps.runctx.outputs.pr-number }}"
-          echo "head_sha: ${{ steps.runctx.outputs.head-sha }}"
-          pwd
           unzip -oq build-artifact.zip -d build-artifact
           ls -la build-artifact
           if [ ! -d build-artifact/elementor ]; then
@@ -101,7 +143,7 @@ jobs:
       - name: Upload plugin zip artifact
         uses: actions/upload-artifact@v4
         with:
-          name: playground-plugin-pr${{ steps.pr.outputs.number }}-${{ github.event.workflow_run.head_sha }}
+          name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
           path: plugin.zip
           if-no-files-found: error
           retention-days: 3
@@ -110,10 +152,10 @@ jobs:
         id: expose
         uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
         with:
-          artifact-name: playground-plugin-pr${{ steps.pr.outputs.number }}-${{ github.event.workflow_run.head_sha }}
+          artifact-name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
           artifact-filename: plugin.zip
-          pr-number: ${{ steps.pr.outputs.number }}
-          commit-sha: ${{ github.event.workflow_run.head_sha }}
+          pr-number: ${{ steps.runctx.outputs.pr-number }}
+          commit-sha: ${{ steps.runctx.outputs.head-sha }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare blueprint JSON
@@ -137,7 +179,7 @@ jobs:
         uses: WordPress/action-wp-playground-pr-preview@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-number: ${{ steps.pr.outputs.number }}
+          pr-number: ${{ steps.runctx.outputs.pr-number }}
           blueprint: ${{ steps.blueprint.outputs.json }}
           mode: append-to-description
           restore-button-if-removed: true
