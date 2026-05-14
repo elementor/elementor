@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Elements extends Elementor_Test_Base {
@@ -193,8 +195,9 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 	public function test_init_categories__v4_inactive__promotes_angie_and_custom_widgets_after_basic() {
 		// Arrange
-		$cb = $this->register_test_widget_categories();
-		update_option( \Elementor\Core\Experiments\Manager::OPTION_PREFIX . 'e_atomic_elements', 'inactive' );
+		$experiments = Plugin::$instance->experiments;
+		$cb          = $this->register_test_widget_categories();
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_INACTIVE );
 
 		$manager = $this->elementor()->elements_manager;
 		$this->reset_categories( $manager );
@@ -204,7 +207,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 		// Cleanup
 		remove_action( 'elementor/elements/categories_registered', $cb, 20 );
-		delete_option( \Elementor\Core\Experiments\Manager::OPTION_PREFIX . 'e_atomic_elements' );
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
 		$this->reset_categories( $manager );
 
 		// Assert – both sections land after 'basic' and before 'pro-elements'
@@ -221,8 +224,9 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 	public function test_init_categories__v4_active__promotes_angie_and_custom_widgets_after_atomic_elements() {
 		// Arrange
-		$cb = $this->register_test_widget_categories();
-		update_option( \Elementor\Core\Experiments\Manager::OPTION_PREFIX . 'e_atomic_elements', 'active' );
+		$experiments = Plugin::$instance->experiments;
+		$cb          = $this->register_test_widget_categories();
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
 
 		$manager = $this->elementor()->elements_manager;
 		$this->reset_categories( $manager );
@@ -232,7 +236,7 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 
 		// Cleanup
 		remove_action( 'elementor/elements/categories_registered', $cb, 20 );
-		delete_option( \Elementor\Core\Experiments\Manager::OPTION_PREFIX . 'e_atomic_elements' );
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
 		$this->reset_categories( $manager );
 
 		// Assert – angie-widgets lands after atomic-elements and before 'basic'
