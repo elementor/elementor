@@ -164,7 +164,7 @@ describe( 'manage-variable-tool validation', () => {
 			( isProActive as jest.Mock ).mockReturnValue( false );
 			( generateVariablesPrompt as jest.Mock ).mockRestore?.();
 
-			const { default: realPrompt } = jest.requireActual( '../variable-tool-prompt' );
+			const { generateVariablesPrompt: realPrompt } = jest.requireActual( '../variable-tool-prompt' );
 			const prompt = ( realPrompt as typeof generateVariablesPrompt )();
 
 			expect( prompt ).not.toContain( '**global-size-variable**' );
