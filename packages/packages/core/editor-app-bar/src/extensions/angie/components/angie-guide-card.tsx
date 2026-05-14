@@ -6,7 +6,7 @@ type Props = {
 	imageUrl: string;
 	description: string;
 	learnMoreUrl: string;
-	onInstall: () => void;
+	onInstall?: () => void;
 	onClose: () => void;
 };
 
@@ -42,9 +42,11 @@ export function AngieGuideCard( { imageUrl, description, learnMoreUrl, onInstall
 					>
 						{ __( 'Learn More', 'elementor' ) }
 					</Button>
-					<Button variant="contained" size="small" color="accent" onClick={ onInstall }>
-						{ __( 'Try for free', 'elementor' ) }
-					</Button>
+					{ onInstall && (
+						<Button variant="contained" size="small" color="accent" onClick={ onInstall }>
+							{ __( 'Try for free', 'elementor' ) }
+						</Button>
+					) }
 				</Stack>
 			</Stack>
 		</ClickAwayListener>
