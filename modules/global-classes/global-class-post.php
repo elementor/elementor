@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -121,18 +122,12 @@ class Global_Class_Post {
 	public function to_array( bool $skip_migration = false ): array {
 		$data = $this->get_data( $skip_migration );
 
-		$result = [
-			'id' => $this->get_class_id(),
-			'label' => $this->get_label(),
-			'type' => $data['type'] ?? 'class',
-			'variants' => $data['variants'] ?? [],
-		];
+		$class_id = $this->get_class_id();
 
-		if ( array_key_exists( 'sync_to_v3', $data ) ) {
-			$result['sync_to_v3'] = (bool) $data['sync_to_v3'];
-		}
-
-		return $result;
+		return Global_Class_Data_Normalizer::normalize_style(
+			$class_id,
+			array_merge( $data, [ 'label' => $this->get_label() ] )
+		);
 	}
 
 	public function update_label( string $label ): bool {

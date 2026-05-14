@@ -9,6 +9,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -66,18 +67,7 @@ class Migrate_To_Posts extends Base_Migration {
 		$items = [];
 
 		foreach ( $raw_items as $class_id => $class_data ) {
-			$item = [
-				'id' => $class_id,
-				'label' => $class_data['label'] ?? $class_id,
-				'type' => $class_data['type'] ?? 'class',
-				'variants' => $class_data['variants'] ?? [],
-			];
-
-			if ( array_key_exists( 'sync_to_v3', $class_data ) ) {
-				$item['sync_to_v3'] = (bool) $class_data['sync_to_v3'];
-			}
-
-			$items[ $class_id ] = $item;
+			$items[ $class_id ] = Global_Class_Data_Normalizer::normalize_style( $class_id, $class_data );
 		}
 
 		return $items;

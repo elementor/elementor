@@ -9,6 +9,7 @@ use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Labels;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -93,15 +94,6 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 	}
 
 	private function storage_data( array $item ): array {
-		$data = [
-			'type' => $item['type'] ?? 'class',
-			'variants' => $item['variants'] ?? [],
-		];
-
-		if ( array_key_exists( 'sync_to_v3', $item ) ) {
-			$data['sync_to_v3'] = (bool) $item['sync_to_v3'];
-		}
-
-		return $data;
+		return Global_Class_Data_Normalizer::normalize_style_fields( $item );
 	}
 }
