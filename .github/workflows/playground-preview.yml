@@ -4,6 +4,9 @@ on:
   workflow_run:
     workflows: ["Build"]
     types: [completed]
+  pull_request:
+    branches:
+      - 'main'
 
 permissions:
   contents: write      # upload to ci-artifacts release
