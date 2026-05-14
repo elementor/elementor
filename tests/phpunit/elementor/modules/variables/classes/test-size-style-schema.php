@@ -72,29 +72,27 @@ class Test_Size_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	public function test_augment__will_convert_grid_track_size_when_pro_is_absent() {
+	public function test_augment__will_skip_grid_track_size_when_pro_is_absent() {
 		// Arrange.
 		$style_def = [
 			'grid-template-columns' => Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ),
 		];
 
 		// Act.
-		// In the unit-test environment Pro is not loaded, so the Pro-version gate returns true
-		// and the size-variable union should be added just like any other Size_Prop_Type.
+		// In the unit-test environment Pro is not loaded, so the gate returns false and the
+		// Grid_Track_Size_Prop_Type is returned untouched (no Size_Variable union added).
 		$schema = $this->style_schema()->augment( $style_def );
 
 		// Assert.
 		$expected = [
-			'grid-template-columns' => Union_Prop_Type::create_from(
-				Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() )
-			)->add_prop_type( Size_Variable_Prop_Type::make() ),
+			'grid-template-columns' => Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	public function test_augment__will_skip_grid_track_size_when_pro_is_below_required_version() {
-		// Asserting the "Pro is installed but below 4.2" branch requires redefining
+	public function test_augment__will_convert_grid_track_size_when_pro_meets_required_version() {
+		// Asserting the "Pro is installed at ≥ 4.2" branch requires defining
 		// ELEMENTOR_PRO_VERSION at runtime, which the test framework does not support
 		// (see test-custom-css-pro-restriction.php for the same pattern). The behaviour
 		// is exercised via manual verification — see plan §Verification.

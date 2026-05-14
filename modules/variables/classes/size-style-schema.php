@@ -84,11 +84,8 @@ class Size_Style_Schema {
 	}
 
 	private function is_grid_track_variables_supported_by_pro(): bool {
-		if ( ! ElementorUtils::has_pro() ) {
-			return true;
-		}
-
-		return version_compare( ELEMENTOR_PRO_VERSION, self::PRO_VERSION_FOR_GRID_TRACK_VARIABLES, '>=' );
+		return ElementorUtils::has_pro()
+			&& version_compare( ELEMENTOR_PRO_VERSION, self::PRO_VERSION_FOR_GRID_TRACK_VARIABLES, '>=' );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {
