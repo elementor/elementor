@@ -151,6 +151,10 @@ function getElementDOM( id: string ) {
 			return fromContainer;
 		}
 
+		// Inner elements of component instances are rendered from Twig and have
+		// no V1 Backbone view, so getContainer(id) returns null. Fall back to
+		// querying the preview iframe document directly so link-in-link
+		// restriction still works for those elements.
 		return queryPreviewDOMByElementId( id );
 	} catch {
 		return null;
