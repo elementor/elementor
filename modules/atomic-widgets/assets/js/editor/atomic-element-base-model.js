@@ -35,16 +35,25 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	onElementCreate() {
-		if ( this.get( 'skipDefaultChildren' ) ) {
+		const shouldSkipDefaultChildren = this.get( 'skipDefaultChildren' );
+		const defaultChildren = this.getDefaultChildren();
+		const childrenForCreate = shouldSkipDefaultChildren
+			? defaultChildren.filter( ( child ) => this.isRequiredElement( child ) )
+			: defaultChildren;
+
+		if ( shouldSkipDefaultChildren ) {
 			this.unset( 'skipDefaultChildren', { silent: true } );
-			return;
 		}
 
-		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
+		this.set( 'elements', childrenForCreate.map( ( element ) => this.buildElement( element ) ) );
 	}
 
 	modifyDefaultChildren( element ) {
 		return element;
+	}
+
+	isRequiredElement( element ) {
+		return !! element?.meta?.required;
 	}
 
 	buildElement( element ) {
@@ -60,6 +69,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			elements,
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
+			meta: element.meta || {},
 		};
 	}
 }

@@ -8,6 +8,7 @@ class Element_Builder {
 	protected $is_locked = false;
 	protected $children = [];
 	protected $editor_settings = [];
+	protected $meta = [];
 
 	public static function make( string $element_type ) {
 		return new self( $element_type );
@@ -37,6 +38,11 @@ class Element_Builder {
 		return $this;
 	}
 
+	public function meta( array $meta ) {
+		$this->meta = $meta;
+		return $this;
+	}
+
 	public function build() {
 		$element_data = [
 			'elType' => $this->element_type,
@@ -44,6 +50,7 @@ class Element_Builder {
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
 			'elements' => $this->children,
+			...( ! empty( $this->meta ) ? [ 'meta' => $this->meta ] : [] ),
 		];
 
 		return $element_data;
