@@ -1,5 +1,5 @@
 import type { ElementorContainer } from './types';
-import { getElementor } from './utils';
+import { getCurrentSelection, getElementor } from './utils';
 
 export type EditorSelectionSnapshot = {
 	displayName: string;
@@ -10,14 +10,6 @@ type ContainerWithLabel = ElementorContainer & {
 	type?: string;
 	model: ElementorContainer[ 'model' ] & { widgetType?: string };
 };
-
-function selectionElementIds(): string[] {
-	const elementor = getElementor();
-	if ( ! elementor?.selection?.elements ) {
-		return [];
-	}
-	return Object.keys( elementor.selection.elements );
-}
 
 function getEditorPageTitleFromDocument(): string {
 	const document = getElementor()?.documents?.getCurrent();
@@ -60,7 +52,7 @@ function getElementDisplayName( container: ContainerWithLabel ): string {
 
 function primarySelectedContainer(): ContainerWithLabel | null {
 	const elementor = getElementor();
-	const primaryId = selectionElementIds()[ 0 ];
+	const primaryId = getCurrentSelection()[ 0 ];
 	if ( ! primaryId || ! elementor?.getContainer ) {
 		return null;
 	}
