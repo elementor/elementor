@@ -7,7 +7,6 @@ export const initTemplate = async ( page: Page, testInfo: TestInfo, apiRequests:
 	await wpAdminPage.setExperiments( {
 		e_variables: 'active',
 		e_atomic_elements: 'active',
-		e_editor_design_system_panel: 'inactive',
 	} );
 	await wpAdminPage.setExperiments( { e_variables_manager: 'active' } );
 	const editorPage = await wpAdminPage.openNewPage();

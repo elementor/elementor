@@ -1,26 +1,22 @@
 import * as React from 'react';
 import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { VariablesManagerPanel } from '../variables-manager-panel';
+import { VariablesManagerPanel, VariablesManagerPanelEmbedded } from '../variables-manager-panel';
 
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
 		panel: {},
 		usePanelActions: () => ( {
 			close: jest.fn(),
+			open: jest.fn(),
 		} ),
 	} ),
-	Panel: ( { children }: { children: React.ReactNode } ) => <div role="dialog">{ children }</div>,
 	PanelBody: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
 		<div role="region" data-props={ JSON.stringify( { sx } ) }>
 			{ children }
 		</div>
-	),
-	PanelHeader: ( { children }: { children: React.ReactNode } ) => <header>{ children }</header>,
-	PanelHeaderTitle: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
-		<h2 data-props={ JSON.stringify( { sx } ) }>{ children }</h2>
 	),
 	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
 } ) );
@@ -191,27 +187,18 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render panel structure correctly', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render(
+			<VariablesManagerPanelEmbedded
+				onRequestClose={ jest.fn() }
+				onExposeCloseAttempt={ jest.fn() }
+			/>
+		);
 
 		// Assert
-		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'region' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { level: 2 } ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render panel title with icon', () => {
-		// Arrange & Act
-		render( <VariablesManagerPanel /> );
-
-		// Assert
-		const title = screen.getByRole( 'heading', { level: 2 } );
-		const props = JSON.parse( title.getAttribute( 'data-props' ) || '{}' );
-		expect( props.sx ).toEqual( {
-			display: 'flex',
-			alignItems: 'center',
-			gap: 0.5,
-		} );
-		expect( title ).toHaveTextContent( 'Variables Manager' );
+		expect( screen.getByRole( 'grid', { name: 'Variables Table' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should pass variables and menu actions to table', () => {
@@ -278,7 +265,8 @@ describe( 'VariablesManagerPanel', () => {
 		expect( props.sx ).toEqual( {
 			display: 'flex',
 			flexDirection: 'column',
-			height: '100%',
+			flex: 1,
+			minHeight: 0,
 		} );
 	} );
 
@@ -318,16 +306,30 @@ describe( 'VariablesManagerPanel', () => {
 			handleOnChange: mockHandleOnChange,
 		} ) );
 
+		let attemptClose: ( () => void ) | null = null;
+
 		// Act
-		const { rerender } = render( <VariablesManagerPanel /> );
+		const { rerender } = render(
+			<VariablesManagerPanelEmbedded
+				onRequestClose={ jest.fn() }
+				onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+			/>
+		);
 
 		await screen.findByRole( 'grid', { name: 'Variables Table' } );
 
 		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
 
-		rerender( <VariablesManagerPanel /> );
+		rerender(
+			<VariablesManagerPanelEmbedded
+				onRequestClose={ jest.fn() }
+				onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+			/>
+		);
 
-		fireEvent.click( screen.getByLabelText( 'Close' ) );
+		act( () => {
+			attemptClose?.();
+		} );
 
 		// Assert
 		expect( openDialog ).toHaveBeenCalled();
