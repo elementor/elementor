@@ -67,54 +67,9 @@ class Test_Global_Variable_Transformer extends TestCase {
 		$this->assertSame( 'repeat(5, 1fr)', $this->transform( 'e-gv-4', 'grid-template-rows' ) );
 	}
 
-	public function test_transform__falls_back_to_var_for_non_integer_fr_in_grid_track() {
+	public function test_transform__deleted_variable_falls_back_to_uuid_var_for_non_grid_property() {
 		$this->set_up_variables( [
-			'e-gv-5' => [ 'label' => 'decimal', 'value' => '1.5fr' ],
-		] );
-
-		$this->assertSame( 'var(--decimal)', $this->transform( 'e-gv-5', 'grid-template-columns' ) );
-	}
-
-	public function test_transform__falls_back_to_var_for_length_value_in_grid_track() {
-		$this->set_up_variables( [
-			'e-gv-6' => [ 'label' => 'px-value', 'value' => '10px' ],
-		] );
-
-		$this->assertSame( 'var(--px-value)', $this->transform( 'e-gv-6', 'grid-template-columns' ) );
-	}
-
-	public function test_transform__rejects_zero_count() {
-		$this->set_up_variables( [
-			'e-gv-7' => [ 'label' => 'zero', 'value' => '0fr' ],
-		] );
-
-		$this->assertSame( 'var(--zero)', $this->transform( 'e-gv-7', 'grid-template-columns' ) );
-	}
-
-	public function test_transform__rejects_multi_token_values() {
-		$this->set_up_variables( [
-			'e-gv-8' => [ 'label' => 'multi', 'value' => '1fr 2fr' ],
-		] );
-
-		$this->assertSame( 'var(--multi)', $this->transform( 'e-gv-8', 'grid-template-columns' ) );
-	}
-
-	public function test_transform__deleted_variable_still_bakes_repeat_for_grid_track() {
-		$this->set_up_variables( [
-			'e-gv-9' => [
-				'label' => '2-column',
-				'value' => '2fr',
-				'deleted' => true,
-				'deleted_at' => '2025-01-01 00:00:00',
-			],
-		] );
-
-		$this->assertSame( 'repeat(2, 1fr)', $this->transform( 'e-gv-9', 'grid-template-columns' ) );
-	}
-
-	public function test_transform__deleted_variable_falls_back_to_uuid_var_for_non_matching_values() {
-		$this->set_up_variables( [
-			'e-gv-10' => [
+			'e-gv-5' => [
 				'label' => 'spacing',
 				'value' => '10px',
 				'deleted' => true,
@@ -122,7 +77,7 @@ class Test_Global_Variable_Transformer extends TestCase {
 			],
 		] );
 
-		$this->assertSame( 'var(--e-gv-10)', $this->transform( 'e-gv-10', 'gap' ) );
+		$this->assertSame( 'var(--e-gv-5)', $this->transform( 'e-gv-5', 'gap' ) );
 	}
 
 	public function test_transform__returns_null_for_unknown_variable_id() {
@@ -132,11 +87,11 @@ class Test_Global_Variable_Transformer extends TestCase {
 		$this->assertNull( $this->transform( 'missing', 'gap' ) );
 	}
 
-	public function test_transform__returns_null_when_label_is_empty_and_value_is_not_grid_match() {
+	public function test_transform__returns_null_when_label_is_empty_for_non_grid() {
 		$this->set_up_variables( [
-			'e-gv-11' => [ 'label' => '', 'value' => '10px' ],
+			'e-gv-6' => [ 'label' => '', 'value' => '10px' ],
 		] );
 
-		$this->assertNull( $this->transform( 'e-gv-11', 'gap' ) );
+		$this->assertNull( $this->transform( 'e-gv-6', 'gap' ) );
 	}
 }

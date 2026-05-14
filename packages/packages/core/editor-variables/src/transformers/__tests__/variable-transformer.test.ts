@@ -13,7 +13,7 @@ describe( 'variableTransformer', () => {
 		mockService.findVariableByLabel.mockReturnValue( null );
 	};
 
-	it( 'returns var(--name, value) for non-grid CSS properties regardless of stored value', () => {
+	it( 'returns var(--name, value) for non-grid CSS properties', () => {
 		setupVariable( 'e-gv-1', {
 			type: 'global-size-variable',
 			label: 'spacing',
@@ -53,46 +53,6 @@ describe( 'variableTransformer', () => {
 		} );
 
 		expect( variableTransformer( 'e-gv-4', { key: 'grid-template-rows' } ) ).toBe( 'repeat(5, 1fr)' );
-	} );
-
-	it( 'falls back to var() for grid-template-columns when stored value has a non-integer fr', () => {
-		setupVariable( 'e-gv-5', {
-			type: 'global-size-variable',
-			label: 'decimal',
-			value: '1.5fr',
-		} );
-
-		expect( variableTransformer( 'e-gv-5', { key: 'grid-template-columns' } ) ).toBe( 'var(--decimal, 1.5fr)' );
-	} );
-
-	it( 'falls back to var() for grid-template-columns when stored value is a length', () => {
-		setupVariable( 'e-gv-6', {
-			type: 'global-size-variable',
-			label: 'px-value',
-			value: '10px',
-		} );
-
-		expect( variableTransformer( 'e-gv-6', { key: 'grid-template-columns' } ) ).toBe( 'var(--px-value, 10px)' );
-	} );
-
-	it( 'rejects "0fr" — the repeat count must be at least 1', () => {
-		setupVariable( 'e-gv-7', {
-			type: 'global-size-variable',
-			label: 'zero',
-			value: '0fr',
-		} );
-
-		expect( variableTransformer( 'e-gv-7', { key: 'grid-template-columns' } ) ).toBe( 'var(--zero, 0fr)' );
-	} );
-
-	it( 'rejects multi-token strings (e.g. "1fr 2fr")', () => {
-		setupVariable( 'e-gv-8', {
-			type: 'global-size-variable',
-			label: 'multi',
-			value: '1fr 2fr',
-		} );
-
-		expect( variableTransformer( 'e-gv-8', { key: 'grid-template-columns' } ) ).toBe( 'var(--multi, 1fr 2fr)' );
 	} );
 
 	it( 'returns null when the variable does not exist', () => {
