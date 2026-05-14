@@ -730,11 +730,17 @@ class Utils {
 				return $element;
 			}
 
-			if ( ! empty( $element['elements'] ) ) {
-				$element = self::find_element_recursive( $element['elements'], $id );
+			$inner_elements = apply_filters(
+				'elementor/utils/find_element_recursive/inner_elements',
+				$element['elements'] ?? [],
+				$element
+			);
 
-				if ( $element ) {
-					return $element;
+			if ( ! empty( $inner_elements ) ) {
+				$found = self::find_element_recursive( $inner_elements, $id );
+
+				if ( $found ) {
+					return $found;
 				}
 			}
 		}
