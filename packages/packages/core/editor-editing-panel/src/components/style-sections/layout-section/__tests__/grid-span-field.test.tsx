@@ -33,7 +33,7 @@ const renderGridSpanFields = () => {
 };
 
 describe( '<GridSpanFields />', () => {
-	it( 'should render Column Span and Row Span labels', () => {
+	it( 'should render Grid column and Grid row labels', () => {
 		// Arrange.
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: { 'grid-column': null, 'grid-row': null },
@@ -45,8 +45,8 @@ describe( '<GridSpanFields />', () => {
 		renderGridSpanFields();
 
 		// Assert.
-		expect( screen.getByText( 'Column Span' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Row Span' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Grid column' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Grid row' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render text inputs', () => {
