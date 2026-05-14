@@ -17,7 +17,7 @@ const VARIABLE_TYPES = {
 const LENGTH_UNIT_PATTERN = /^(auto|\d+(\.\d+)?(px|rem|em|vh|vw|%|ch|s|ms))$/i;
 const COLOR_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
 
-function validateValueForType( type: string, value: string ): string {
+function validateValueForType( type: string, value: string ): string | null {
 	if ( type === VARIABLE_TYPES.FONT && LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
 		return `Font variable value must be a font family name (e.g. "Roboto"), not a size value like "${ value }". Use "global-size-variable" or "global-custom-size-variable" for spacing/size values.`;
 	}
@@ -30,7 +30,7 @@ function validateValueForType( type: string, value: string ): string {
 		return `Size variable value should include a CSS unit (e.g. "16px") or be "auto", got "${ value }".`;
 	}
 
-	return '';
+	return null;
 }
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
