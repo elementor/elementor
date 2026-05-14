@@ -8,8 +8,10 @@ export const generateVariablesPrompt = () => {
 	const proIsActive = isProActive();
 
 	const sizeVariableSection = proIsActive
-		? `- **global-size-variable** — CSS size value with a unit (Elementor Pro). Example: \`16px\`, \`1.5rem\`, \`2em\`, \`10vh\``
-		: `- ~~global-size-variable~~ — requires Elementor Pro (not available on this site)`;
+		? `- **global-size-variable** — A simple CSS length with a unit (Elementor Pro). Use this for fixed spacing, font sizes, or layout values. Example: \`16px\`, \`1.5rem\`, \`2em\`, \`10vh\`
+- **global-custom-size-variable** — Any CSS size expression that goes beyond a simple number + unit (Elementor Pro). Use this when the value is a CSS function, a keyword, or a combination of units that \`global-size-variable\` cannot represent. Example: \`auto\`, \`clamp(1rem, 2vw, 2rem)\`, \`calc(100% - 32px)\`, \`min(50vw, 600px)\`, \`300ms\`, \`2ch\`. When in doubt: if the value contains a function call or a keyword, use \`global-custom-size-variable\`.`
+		: `- ~~global-size-variable~~ — requires Elementor Pro (not available on this site)
+- ~~global-custom-size-variable~~ — requires Elementor Pro (not available on this site)`;
 
 	prompt.description( `
 # Purpose
@@ -52,6 +54,18 @@ Create a brand color:
 
 Create a heading font:
 { "action": "create", "type": "global-font-variable", "label": "font-heading", "value": "Playfair Display" }
+
+Create a simple spacing size:
+{ "action": "create", "type": "global-size-variable", "label": "spacing-md", "value": "16px" }
+
+Create a fluid/responsive size using a CSS function (use global-custom-size-variable, NOT global-size-variable):
+{ "action": "create", "type": "global-custom-size-variable", "label": "spacing-fluid", "value": "clamp(1rem, 2vw, 2rem)" }
+
+Create a size that is a keyword:
+{ "action": "create", "type": "global-custom-size-variable", "label": "width-auto", "value": "auto" }
+
+Create a size using calc():
+{ "action": "create", "type": "global-custom-size-variable", "label": "sidebar-width", "value": "calc(100% - 32px)" }
 
 Update a variable's value (keep exact label):
 { "action": "update", "id": "abc123", "label": "brand-primary", "value": "#0D47A1" }

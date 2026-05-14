@@ -11,22 +11,23 @@ const VARIABLE_TYPES = {
 	COLOR: 'global-color-variable',
 	FONT: 'global-font-variable',
 	SIZE: 'global-size-variable',
+	CUSTOM_SIZE: 'global-custom-size-variable',
 } as const;
 
-const PX_OR_REM_PATTERN = /^\d+(\.\d+)?(px|rem|em|vh|vw|%)$/i;
-const HEX_OR_RGB_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
+const LENGTH_UNIT_PATTERN = /^(auto|\d+(\.\d+)?(px|rem|em|vh|vw|%|ch|s|ms))$/i;
+const COLOR_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
 
 function validateValueForType( type: string, value: string ): string {
-	if ( type === VARIABLE_TYPES.FONT && PX_OR_REM_PATTERN.test( value.trim() ) ) {
-		return `Font variable value must be a font family name (e.g. "Roboto"), not a size value like "${ value }". Use "global-size-variable" for spacing/size values.`;
+	if ( type === VARIABLE_TYPES.FONT && LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
+		return `Font variable value must be a font family name (e.g. "Roboto"), not a size value like "${ value }". Use "global-size-variable" or "global-custom-size-variable" for spacing/size values.`;
 	}
 
-	if ( type === VARIABLE_TYPES.COLOR && ! HEX_OR_RGB_PATTERN.test( value.trim() ) ) {
+	if ( type === VARIABLE_TYPES.COLOR && ! COLOR_PATTERN.test( value.trim() ) ) {
 		return `Color variable value should be a CSS color (e.g. "#FF0000"), got "${ value }".`;
 	}
 
-	if ( type === VARIABLE_TYPES.SIZE && ! PX_OR_REM_PATTERN.test( value.trim() ) ) {
-		return `Size variable value should include a CSS unit (e.g. "16px"), got "${ value }".`;
+	if ( type === VARIABLE_TYPES.SIZE && ! LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
+		return `Size variable value should include a CSS unit (e.g. "16px") or be "auto", got "${ value }".`;
 	}
 
 	return '';
@@ -61,7 +62,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe(
-					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable" (requires Elementor Pro). NEVER store px/rem values in a font variable.'
+					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable", "global-custom-size-variable" (size types require Elementor Pro). NEVER store px/rem values in a font variable.'
 				),
 			label: z
 				.string()
@@ -71,7 +72,7 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 				.string()
 				.optional()
 				.describe(
-					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only, never px/rem. Size: value with unit e.g. "16px" (Pro). Do NOT pass JSON.'
+					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only, never px/rem. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
 				),
 		},
 		outputSchema: {
@@ -108,7 +109,7 @@ function getServiceActions( svc: typeof service ) {
 			if ( ! type || ! label || ! value ) {
 				throw new Error( 'Create requires type, label, and value' );
 			}
-			if ( type === VARIABLE_TYPES.SIZE && ! isProActive() ) {
+			if ( ( type === VARIABLE_TYPES.SIZE || type === VARIABLE_TYPES.CUSTOM_SIZE ) && ! isProActive() ) {
 				throw new Error( 'Creating size variables requires Elementor Pro.' );
 			}
 			const labelError = validateLabel( label );
