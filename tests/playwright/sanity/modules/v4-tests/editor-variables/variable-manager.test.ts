@@ -39,7 +39,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Font Variable exists after creating in panel', async ( ) => {
+	test( 'Font Variable exists after creating in panel', async () => {
 		const addedFontVariable = { name: 'test-font-variable', value: 'Arial', type: 'font' as const };
 		const variableRow = await variablesManagerPage.createVariableFromManager( addedFontVariable );
 		await expect( variableRow ).toBeVisible();
@@ -47,7 +47,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		await expect( page.locator( '#elementor-panel' ) ).toHaveScreenshot( 'font-variable-screenshot.png' );
 	} );
 
-	test( 'Color variable exists and screenshot', async ( ) => {
+	test( 'Color variable exists and screenshot', async () => {
 		const addedColorVariable = { name: 'test-color-variable', value: '#000000', type: 'color' as const };
 		const variableRow = await variablesManagerPage.createVariableFromManager( addedColorVariable );
 		await expect( variableRow ).toBeVisible();

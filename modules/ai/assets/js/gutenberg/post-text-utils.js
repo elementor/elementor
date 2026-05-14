@@ -1,7 +1,7 @@
 import { useEffect, useState } from '@wordpress/element';
 
 const { useSelect } = wp.data;
-export const useGutenbergPostText = ( ) => {
+export const useGutenbergPostText = () => {
 	const postContent = useSelect(
 		( select ) => select( 'core/editor' )?.getEditedPostContent(),
 		[],
