@@ -5,6 +5,8 @@ namespace Elementor\Modules\WidgetCreation;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Hints;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
+use Elementor\Plugin;
+use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -53,7 +55,28 @@ class AngiePromotion {
 	}
 
 	private static function register_for_existing_site( array $settings ): array {
-		// Cases 2 & 3 (ED-23998, ED-23999) will be implemented here.
+		if ( Upgrade_Manager::is_new_installation() ) {
+			return $settings;
+		}
+
+		if ( 'yes' === get_option( self::ANGIE_GUIDE_AUTO_SHOWN_OPTION ) ) {
+			return $settings;
+		}
+
+		$is_container_active = Plugin::$instance->experiments->is_feature_active( 'container' );
+
+		if ( $is_container_active ) {
+			$is_atomic_active   = Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
+			$is_promo_dismissed = ! empty( User::get_introduction_meta( 'atomic_elements_promo' ) );
+
+			if ( ! $is_atomic_active && ! $is_promo_dismissed ) {
+				return $settings;
+			}
+		}
+
+		update_option( self::ANGIE_GUIDE_AUTO_SHOWN_OPTION, 'yes' );
+		$settings['angie']['autoShow'] = true;
+
 		return $settings;
 	}
 }
