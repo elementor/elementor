@@ -29,14 +29,6 @@ type GridTrackFieldProps = {
 	label: string;
 };
 
-const GridTrackField = ( { cssProp, label }: GridTrackFieldProps ) => (
-	<UiProviders>
-		<StylesField bind={ cssProp } propDisplayName={ label }>
-			<GridTrackFieldContent cssProp={ cssProp } label={ label } />
-		</StylesField>
-	</UiProviders>
-);
-
 type GridTrackSizeInputProps = {
 	value: { size: number | string; unit: GridTrackUnit };
 	placeholder?: string;
@@ -44,11 +36,11 @@ type GridTrackSizeInputProps = {
 	anchorRef: React.RefObject< HTMLDivElement | null >;
 };
 
+type SizeComponentProps = Parameters< typeof SizeComponent >[ 0 ];
+
 const SizeFieldWrapper = ( { children }: { children: React.ReactNode } ) => (
 	<ControlActions>{ children as React.ReactElement }</ControlActions>
 );
-
-type SizeComponentProps = Parameters< typeof SizeComponent >[ 0 ];
 
 const GridTrackSizeInput = createControl( ( props: GridTrackSizeInputProps ) => (
 	<SizeComponent
@@ -101,6 +93,14 @@ const GridTrackFieldContent = ( { cssProp, label }: GridTrackFieldProps ) => {
 		</StylesFieldLayout>
 	);
 };
+
+const GridTrackField = ( { cssProp, label }: GridTrackFieldProps ) => (
+	<UiProviders>
+		<StylesField bind={ cssProp } propDisplayName={ label }>
+			<GridTrackFieldContent cssProp={ cssProp } label={ label } />
+		</StylesField>
+	</UiProviders>
+);
 
 export const GridSizeFields = () => (
 	<Grid container gap={ 2 } flexWrap="nowrap">
