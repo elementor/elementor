@@ -118,10 +118,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -139,10 +136,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -156,10 +150,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -188,10 +179,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -220,10 +208,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -260,7 +245,9 @@ describe( 'ClassManagerPanel', () => {
 				<QueryClientProvider client={ queryClient }>
 					<ClassManagerPanelEmbedded
 						onRequestClose={ onRequestClose }
-						onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+						onExposeCloseAttempt={ ( cb ) => {
+							attemptClose = cb;
+						} }
 					/>
 				</QueryClientProvider>
 			</ThemeProvider>,
@@ -297,7 +284,9 @@ describe( 'ClassManagerPanel', () => {
 				<QueryClientProvider client={ queryClient }>
 					<ClassManagerPanelEmbedded
 						onRequestClose={ onRequestClose }
-						onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+						onExposeCloseAttempt={ ( cb ) => {
+							attemptClose = cb;
+						} }
 					/>
 				</QueryClientProvider>
 			</ThemeProvider>,
@@ -346,7 +335,9 @@ describe( 'ClassManagerPanel', () => {
 				<QueryClientProvider client={ queryClient }>
 					<ClassManagerPanelEmbedded
 						onRequestClose={ onRequestClose }
-						onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+						onExposeCloseAttempt={ ( cb ) => {
+							attemptClose = cb;
+						} }
 					/>
 				</QueryClientProvider>
 			</ThemeProvider>,
@@ -367,10 +358,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -389,10 +377,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -407,10 +392,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -457,10 +439,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -521,7 +500,9 @@ describe( 'ClassManagerPanel', () => {
 				<QueryClientProvider client={ queryClient }>
 					<ClassManagerPanelEmbedded
 						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+						onExposeCloseAttempt={ ( cb ) => {
+							attemptClose = cb;
+						} }
 					/>
 				</QueryClientProvider>
 			</ThemeProvider>,
@@ -543,10 +524,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store
@@ -573,10 +551,7 @@ describe( 'ClassManagerPanel', () => {
 		renderWithStore(
 			<ThemeProvider>
 				<QueryClientProvider client={ queryClient }>
-					<ClassManagerPanelEmbedded
-						onRequestClose={ jest.fn() }
-						onExposeCloseAttempt={ jest.fn() }
-					/>
+					<ClassManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
 				</QueryClientProvider>
 			</ThemeProvider>,
 			store

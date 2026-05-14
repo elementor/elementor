@@ -1,25 +1,11 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import {
-	__createPanel as createPanel,
-	PanelBody,
-	PanelFooter,
-} from '@elementor/editor-panels';
+import { __createPanel as createPanel, PanelBody, PanelFooter } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { AlertTriangleFilledIcon, ColorFilterIcon, CopyIcon, TrashIcon } from '@elementor/icons';
-import {
-	Alert,
-	AlertAction,
-	AlertTitle,
-	Box,
-	Button,
-	Divider,
-	Infotip,
-	Stack,
-	usePopupState,
-} from '@elementor/ui';
+import { Alert, AlertAction, AlertTitle, Box, Button, Divider, Infotip, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { trackVariablesManagerEvent, trackVariableSyncToV3 } from '../../utils/tracking';
@@ -66,10 +52,7 @@ export function VariablesManagerPanelEmbedded( {
 	onExposeCloseAttempt,
 }: VariablesManagerPanelEmbeddedProps ) {
 	return (
-		<VariablesManagerPanelContent
-			onRequestClose={ onRequestClose }
-			onExposeCloseAttempt={ onExposeCloseAttempt }
-		/>
+		<VariablesManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />
 	);
 }
 
@@ -87,10 +70,7 @@ type VariablesManagerPanelContentProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-function VariablesManagerPanelContent( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: VariablesManagerPanelContentProps ) {
+function VariablesManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: VariablesManagerPanelContentProps ) {
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ isStopSyncSuppressed ] = useSuppressedMessage( STOP_SYNC_MESSAGE_KEY );
 
@@ -389,7 +369,11 @@ function VariablesManagerPanelContent( {
 											: undefined
 									}
 									icon={
-										serverError.IconComponent ? <serverError.IconComponent /> : <AlertTriangleFilledIcon />
+										serverError.IconComponent ? (
+											<serverError.IconComponent />
+										) : (
+											<AlertTriangleFilledIcon />
+										)
 									}
 								>
 									<AlertTitle>{ serverError.message }</AlertTitle>

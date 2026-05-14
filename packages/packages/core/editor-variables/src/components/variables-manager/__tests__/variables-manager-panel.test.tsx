@@ -187,12 +187,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render panel structure correctly', () => {
 		// Arrange & Act
-		render(
-			<VariablesManagerPanelEmbedded
-				onRequestClose={ jest.fn() }
-				onExposeCloseAttempt={ jest.fn() }
-			/>
-		);
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
@@ -312,7 +307,9 @@ describe( 'VariablesManagerPanel', () => {
 		const { rerender } = render(
 			<VariablesManagerPanelEmbedded
 				onRequestClose={ jest.fn() }
-				onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+				onExposeCloseAttempt={ ( cb ) => {
+					attemptClose = cb;
+				} }
 			/>
 		);
 
@@ -323,7 +320,9 @@ describe( 'VariablesManagerPanel', () => {
 		rerender(
 			<VariablesManagerPanelEmbedded
 				onRequestClose={ jest.fn() }
-				onExposeCloseAttempt={ ( cb ) => { attemptClose = cb; } }
+				onExposeCloseAttempt={ ( cb ) => {
+					attemptClose = cb;
+				} }
 			/>
 		);
 

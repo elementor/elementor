@@ -2,24 +2,12 @@ import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { reloadCurrentDocument, setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	__createPanel as createPanel,
-	PanelFooter,
-} from '@elementor/editor-panels';
+import { __createPanel as createPanel, PanelFooter } from '@elementor/editor-panels';
 import { ConfirmationDialog, SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
-import {
-	Alert,
-	Box,
-	Button,
-	Chip,
-	DialogHeader,
-	Divider,
-	ErrorBoundary,
-	Stack,
-} from '@elementor/ui';
+import { Alert, Box, Button, Chip, DialogHeader, Divider, ErrorBoundary, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
@@ -55,12 +43,7 @@ export type ClassManagerPanelEmbeddedProps = {
 };
 
 export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
-	return (
-		<ClassManagerPanelContent
-			onRequestClose={ onRequestClose }
-			onExposeCloseAttempt={ onExposeCloseAttempt }
-		/>
-	);
+	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />;
 }
 
 export function ClassManagerPanel() {
@@ -93,10 +76,7 @@ type ClassManagerPanelContentProps = {
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
 };
 
-function ClassManagerPanelContent( {
-	onRequestClose,
-	onExposeCloseAttempt,
-}: ClassManagerPanelContentProps ) {
+function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelContentProps ) {
 	const isDirty = useDirtyState();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
@@ -192,7 +172,13 @@ function ClassManagerPanelContent( {
 						} }
 					>
 						<Box px={ 2 } pb={ 1 }>
-							<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 0.5 } sx={ { pb: 0.5 } }>
+							<Stack
+								direction="row"
+								alignItems="center"
+								justifyContent="space-between"
+								gap={ 0.5 }
+								sx={ { pb: 0.5 } }
+							>
 								<Box sx={ { flexGrow: 1, minWidth: 0 } }>
 									<ClassManagerSearch />
 								</Box>
