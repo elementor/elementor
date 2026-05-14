@@ -40,9 +40,10 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 		foreach ( $items as $class_id => $item ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
+			$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
 
 			if ( ! $post ) {
-				$created = Global_Class_Post::create( $class_id, $item['label'], $this->storage_data( $item ) );
+				$created = Global_Class_Post::create( $class_id, $item['label'], $normalized_data );
 
 				if ( $created ) {
 					$touched_any = true;
@@ -55,7 +56,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				continue;
 			}
 
-			$post->update_data( $this->storage_data( $item ) );
+			$post->update_data( $normalized_data );
 			$post->update_label( $item['label'] );
 			$touched_any = true;
 		}
@@ -89,9 +90,5 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 	private function cpt_was_actively_edited( Global_Class_Post $post ): bool {
 		return $post->was_edited();
-	}
-
-	private function storage_data( array $item ): array {
-		return Global_Class_Data_Normalizer::normalize_style_fields( $item );
 	}
 }
