@@ -18,6 +18,8 @@ import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
 
+const CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE = 'createElement did not return an element container with a model.';
+
 type API = {
 	createElement: typeof createElement;
 	deleteElement: typeof deleteElement;
@@ -302,6 +304,9 @@ export class CompositionBuilder {
 					model: modelTree as CreateElementParams[ 'model' ],
 					options: { useHistory: false },
 				} );
+				if ( ! newElement?.model ) {
+					throw new Error( CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE );
+				}
 				this.rootContainers.push( newElement );
 				await this.awaitViewRender( newElement );
 			} catch ( e: unknown ) {
