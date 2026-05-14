@@ -74,6 +74,8 @@ jobs:
 
       - name: Repack build artifact as plugin zip
         run: |
+          pwd
+          ls -la
           echo "event_name: ${{ github.event_name }}"
           echo "event_pull_request: ${{ github.event.pull_request }}"
           echo "event_workflow_run: ${{ github.event.workflow_run }}"
@@ -84,7 +86,6 @@ jobs:
           echo "event_pull_request_draft: ${{ github.event.pull_request.draft }}"
           echo "pr_number: ${{ steps.runctx.outputs.pr-number }}"
           echo "head_sha: ${{ steps.runctx.outputs.head-sha }}"
-          pwd
           unzip -oq build-artifact.zip -d build-artifact
           ls -la build-artifact
           if [ ! -d build-artifact/elementor ]; then
