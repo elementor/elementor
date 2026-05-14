@@ -32,7 +32,7 @@ function validateValueForType( type: string, value: string ): string {
 	return '';
 }
 
-export const initManageVariableTool = ( reg: MCPRegistryEntry, variablesReady: Promise< unknown > ) => {
+export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
 
 	resource(
@@ -87,7 +87,6 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry, variablesReady: P
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
-			await variablesReady;
 			const operations = getServiceActions( service );
 			const op = operations[ params.action ];
 			if ( op ) {

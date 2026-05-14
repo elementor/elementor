@@ -26,7 +26,7 @@ function createMockRegistryAndGetHandler(): { handler: any; getRegisteredTool: (
 		sendResourceUpdated: jest.fn(),
 		waitForReady: jest.fn(),
 	};
-	initManageVariableTool( reg as any, Promise.resolve() );
+	initManageVariableTool( reg as any );
 	return {
 		handler: registeredTool?.handler,
 		getRegisteredTool: () => registeredTool,
