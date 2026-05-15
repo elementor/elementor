@@ -30,7 +30,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'fetches connectAuth on mount via POST', async () => {
+	it( 'fetches connectAuth on mount via GET', async () => {
 		mockFetch
 			.mockResolvedValueOnce( {
 				ok: true,
@@ -56,7 +56,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 			expect( mockFetch ).toHaveBeenCalledWith(
 				`${ MOCK_REST_ROOT }${ AUTH_PATH }`,
 				expect.objectContaining( {
-					method: 'POST',
+					method: 'GET',
 					credentials: 'include',
 					headers: expect.objectContaining( {
 						'X-WP-Nonce': 'test-nonce',
@@ -157,7 +157,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 			expect( mockFetch ).toHaveBeenCalledWith(
 				expect.stringContaining( AUTH_PATH ),
 				expect.objectContaining( {
-					method: 'POST',
+					method: 'GET',
 					headers: expect.objectContaining( {
 						'X-WP-Nonce': '',
 					} ),
@@ -210,6 +210,42 @@ describe( 'App - ConnectAuth Fetch', () => {
 					data: {
 						signature: 'test-sig',
 						accessToken: 123,
+						clientId: 'test-client',
+						homeUrl: 'https://example.com/',
+						siteKey: 'test-key',
+					},
+				} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
+
+		render( <App /> );
+
+		await waitFor( () => {
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
+				'Failed to fetch connectAuth:',
+				expect.objectContaining( {
+					message: expect.stringContaining( 'missing required Connect fields' ),
+				} )
+			);
+		} );
+
+		consoleErrorSpy.mockRestore();
+	} );
+
+	it( 'rejects response with empty string fields', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: true,
+					data: {
+						signature: '',
+						accessToken: 'test-token',
 						clientId: 'test-client',
 						homeUrl: 'https://example.com/',
 						siteKey: 'test-key',

@@ -135,4 +135,62 @@ class Test_Connect_Auth_Service extends \WP_UnitTestCase {
 		$this->assertIsArray( $expected_keys );
 		$this->assertCount( 5, $expected_keys );
 	}
+
+	public function test_get_connect_auth__returns_correct_signature_with_mocked_app() {
+		$mock_app = $this->createMock( \Elementor\App\Modules\SiteBuilder\Connect\App::class );
+		$mock_app->method( 'is_connected' )->willReturn( true );
+		$mock_app->method( 'get' )->willReturnMap( [
+			[ 'access_token', 'test-access-token-123' ],
+			[ 'client_id', 'test-client-id-456' ],
+			[ 'access_token_secret', 'test-secret-789' ],
+		] );
+		$mock_app->method( 'get_site_key' )->willReturn( 'test-site-key-abc' );
+
+		$mock_connect = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
+		$mock_connect->method( 'get_app' )->with( 'library' )->willReturn( $mock_app );
+
+		$mock_common = $this->createMock( \Elementor\Core\Common\Module::class );
+		$mock_common->method( 'get_component' )->with( 'connect' )->willReturn( $mock_connect );
+
+		$original_plugin = \Elementor\Plugin::$instance;
+		\Elementor\Plugin::$instance = $this->createMock( \Elementor\Plugin::class );
+		\Elementor\Plugin::$instance->common = $mock_common;
+
+		try {
+			$result = $this->service->get_connect_auth();
+
+			$this->assertIsArray( $result );
+			$this->assertArrayHasKey( 'signature', $result );
+			$this->assertArrayHasKey( 'accessToken', $result );
+			$this->assertArrayHasKey( 'clientId', $result );
+			$this->assertArrayHasKey( 'homeUrl', $result );
+			$this->assertArrayHasKey( 'siteKey', $result );
+
+			$this->assertSame( 'test-access-token-123', $result['accessToken'] );
+			$this->assertSame( 'test-client-id-456', $result['clientId'] );
+			$this->assertSame( 'test-site-key-abc', $result['siteKey'] );
+
+			$home_url = trailingslashit( home_url() );
+			$this->assertSame( $home_url, $result['homeUrl'] );
+
+			$connect_data = [
+				'access-token' => 'test-access-token-123',
+				'app' => 'library',
+				'client-id' => 'test-client-id-456',
+				'home-url' => $home_url,
+				'site-key' => 'test-site-key-abc',
+			];
+			ksort( $connect_data );
+
+			$expected_signature = hash_hmac(
+				'sha256',
+				wp_json_encode( $connect_data, JSON_NUMERIC_CHECK ),
+				'test-secret-789'
+			);
+
+			$this->assertSame( $expected_signature, $result['signature'] );
+		} finally {
+			\Elementor\Plugin::$instance = $original_plugin;
+		}
+	}
 }

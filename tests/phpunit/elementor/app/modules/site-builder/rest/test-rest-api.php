@@ -201,7 +201,7 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 
 		$route = $routes[ self::AUTH_ROUTE ][0];
 
-		$this->assertTrue( $route['methods']['POST'] );
+		$this->assertTrue( $route['methods']['GET'] );
 		$this->assertIsCallable( $route['callback'] );
 		$this->assertIsCallable( $route['permission_callback'] );
 	}
@@ -228,7 +228,7 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 	public function test_get_auth_credentials__via_rest_do_request_returns_503_when_unavailable() {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'administrator' ] ) );
 
-		$request = new WP_REST_Request( 'POST', self::AUTH_ROUTE );
+		$request = new WP_REST_Request( 'GET', self::AUTH_ROUTE );
 		$response = rest_do_request( $request );
 
 		$this->assertSame( WP_Http::SERVICE_UNAVAILABLE, $response->get_status() );
@@ -239,7 +239,7 @@ class Test_Rest_Api extends \WP_UnitTestCase {
 	public function test_get_auth_credentials__via_rest_do_request_is_rejected_for_non_admin() {
 		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
 
-		$request = new WP_REST_Request( 'POST', self::AUTH_ROUTE );
+		$request = new WP_REST_Request( 'GET', self::AUTH_ROUTE );
 		$response = rest_do_request( $request );
 
 		$this->assertContains( $response->get_status(), [ WP_Http::UNAUTHORIZED, WP_Http::FORBIDDEN ] );
