@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { render, waitFor } from '@testing-library/react';
+
 import { App } from '../app';
 
 const mockFetch = jest.fn();
@@ -69,20 +70,15 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles network errors gracefully', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
-			.mockRejectedValueOnce( new Error( 'Network error' ) )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+		mockFetch.mockRejectedValueOnce( new Error( 'Network error' ) ).mockResolvedValueOnce( {
+			ok: true,
+			json: async () => ( {} ),
+		} );
 
 		render( <App /> );
 
 		await waitFor( () => {
-			expect( consoleErrorSpy ).toHaveBeenCalledWith(
-				'Failed to fetch connectAuth:',
-				expect.any( Error )
-			);
+			expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Failed to fetch connectAuth:', expect.any( Error ) );
 		} );
 
 		consoleErrorSpy.mockRestore();

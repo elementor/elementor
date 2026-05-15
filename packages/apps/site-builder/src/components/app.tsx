@@ -81,7 +81,7 @@ function sendReferrerInfo(
 			type: 'referrer/info',
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
-				connectAuth: connectAuth,
+				connectAuth,
 				exitTo: config?.exitTo,
 				page: {
 					url: window.location.href,
@@ -199,9 +199,9 @@ export function App() {
 				return;
 			}
 
-			if ( event.origin !== allowedOrigin ) {
-				return;
-			}
+		if ( event.origin !== allowedOrigin ) {
+			return;
+		}
 
 		if ( event.source !== iframeRef.current?.contentWindow ) {
 			return;
