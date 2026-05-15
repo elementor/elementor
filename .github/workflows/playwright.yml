@@ -41,12 +41,6 @@ on:
           - standard
           - nightly
 
-permissions:
-  contents: write
-  pull-requests: write
-  actions: read
-  id-token: write
-
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -69,6 +63,8 @@ jobs:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
+    permissions:
+      contents: read
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
@@ -199,6 +195,9 @@ jobs:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
+    permissions:
+      contents: read
+      id-token: write
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
@@ -298,6 +297,10 @@ jobs:
     needs: Playwright
     runs-on: ubuntu-22.04
     name: Merge reports and build Allure report
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
     steps:
       - name: Pull repo
@@ -315,6 +318,9 @@ jobs:
         with:
           node-version: 24.15.0
           cache: 'npm'
+
+      - name: Install dependencies
+        run: npm run install:ci
 
       - name: GCP Authentication
         id: 'auth'
@@ -362,8 +368,7 @@ jobs:
       - name: Build test report
         run: |
           if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
-            npm install -g allure-commandline
-            allure generate --clean allure-results -o allure-report || mkdir -p allure-report
+            npx allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
             echo "No allure-results found. Creating empty report directory."
             mkdir -p allure-report
@@ -402,6 +407,9 @@ jobs:
     if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
