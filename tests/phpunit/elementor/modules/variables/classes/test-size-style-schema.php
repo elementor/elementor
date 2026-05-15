@@ -71,7 +71,7 @@ class Test_Size_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
-	public function test_augment__does_not_change_size_with_time_units() {
+public function test_augment__does_not_change_size_with_time_units() {
 		// Arrange.
 		$style_def = [
 			'duration' => Size_Prop_Type::make()->units( Size_Constants::transition() ),
