@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react';
-import { App } from 'elementor/packages/apps/site-builder/src/components/app';
+import { App } from '../app';
 
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
@@ -143,5 +143,64 @@ describe( 'App - ConnectAuth Fetch', () => {
 				} )
 			);
 		} );
+	} );
+
+	it( 'rejects response with missing required Connect fields', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: async () => ( {
+				success: true,
+				data: {
+					signature: 'test-sig',
+					accessToken: 'test-token',
+				},
+			} ),
+		} );
+
+		render( <App /> );
+
+		await waitFor( () => {
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
+				'Failed to fetch connectAuth:',
+				expect.objectContaining( {
+					message: expect.stringContaining( 'missing required Connect fields' ),
+				} )
+			);
+		} );
+
+		consoleErrorSpy.mockRestore();
+	} );
+
+	it( 'rejects response with non-string field types', async () => {
+		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: async () => ( {
+				success: true,
+				data: {
+					signature: 'test-sig',
+					accessToken: 123,
+					clientId: 'test-client',
+					homeUrl: 'https://example.com/',
+					siteKey: 'test-key',
+				},
+			} ),
+		} );
+
+		render( <App /> );
+
+		await waitFor( () => {
+			expect( consoleErrorSpy ).toHaveBeenCalledWith(
+				'Failed to fetch connectAuth:',
+				expect.objectContaining( {
+					message: expect.stringContaining( 'missing required Connect fields' ),
+				} )
+			);
+		} );
+
+		consoleErrorSpy.mockRestore();
 	} );
 } );

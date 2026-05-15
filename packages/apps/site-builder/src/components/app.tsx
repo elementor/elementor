@@ -35,6 +35,22 @@ type ConnectAuth = {
 	siteKey: string;
 };
 
+function isValidConnectAuth( data: unknown ): data is ConnectAuth {
+	if ( ! data || typeof data !== 'object' ) {
+		return false;
+	}
+
+	const auth = data as Record< string, unknown >;
+
+	return (
+		typeof auth.signature === 'string' &&
+		typeof auth.accessToken === 'string' &&
+		typeof auth.clientId === 'string' &&
+		typeof auth.homeUrl === 'string' &&
+		typeof auth.siteKey === 'string'
+	);
+}
+
 function sendReferrerInfo(
 	iframe: HTMLIFrameElement,
 	event: MessageEvent,
@@ -98,6 +114,8 @@ export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
 	const [ connectAuth, setConnectAuth ] = useState< ConnectAuth | null >( null );
+	const [ isAuthLoading, setIsAuthLoading ] = useState( true );
+	const pendingReferrerRequests = useRef< MessageEvent[] >( [] );
 
 	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
 
@@ -132,19 +150,36 @@ export function App() {
 
 				const json = await response.json();
 
-				if ( json.success && json.data ) {
+				if ( json.success && json.data && isValidConnectAuth( json.data ) ) {
 					setConnectAuth( json.data );
 				} else {
-					throw new Error( 'Invalid auth response' );
+					throw new Error( 'Invalid auth response: missing required Connect fields' );
 				}
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to fetch connectAuth:', err );
+			} finally {
+				setIsAuthLoading( false );
 			}
 		};
 
 		fetchConnectAuth();
 	}, [] );
+
+	useEffect( () => {
+		if ( isAuthLoading || ! iframeRef.current?.contentWindow || ! allowedOrigin ) {
+			return;
+		}
+
+		pendingReferrerRequests.current.forEach( ( event ) => {
+			const iframe = iframeRef.current;
+			if ( iframe?.contentWindow ) {
+				sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
+			}
+		} );
+
+		pendingReferrerRequests.current = [];
+	}, [ isAuthLoading, connectAuth, allowedOrigin, siteBuilderParams ] );
 
 	useEffect( () => {
 		if ( ! window.opener ) {
@@ -185,15 +220,19 @@ export function App() {
 				return;
 			}
 
-			const { type } = event.data ?? {};
+		const { type } = event.data ?? {};
 
-			if ( type === 'get/referrer/info' ) {
+		if ( type === 'get/referrer/info' ) {
+			if ( isAuthLoading ) {
+				pendingReferrerRequests.current.push( event );
+			} else {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
 					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
 				}
-				return;
 			}
+			return;
+		}
 
 			if ( type === 'site-planner/deploy-website' ) {
 				await handleDeploy( iframeRef.current, event );
@@ -206,7 +245,7 @@ export function App() {
 				}
 			}
 		},
-		[ allowedOrigin, siteBuilderParams, connectAuth ]
+		[ allowedOrigin, siteBuilderParams, connectAuth, isAuthLoading ]
 	);
 
 	useEffect( () => {
