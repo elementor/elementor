@@ -13,7 +13,6 @@ import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { validateInput } from '../mcp/utils/validate-input';
-import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
@@ -279,11 +278,6 @@ export class CompositionBuilder {
 			if ( ! widgetsCache[ node.tagName ] ) {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
 			}
-		} );
-
-		Object.keys( widgetsCache ).forEach( ( elementType ) => {
-			const requiredChildrenEnforcer = new RequiredChildrenEnforcer( elementType, widgetsCache );
-			requiredChildrenEnforcer.enforce( this.xml );
 		} );
 
 		const childTypeErrors: string[] = [];
