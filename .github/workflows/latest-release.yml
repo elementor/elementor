@@ -41,7 +41,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: .nvmrc
+          node-version: 24.15.0
       - name: Set POSTFIX value
         id: set_postfix_value
         uses: ./.github/workflows/set-postfix-value

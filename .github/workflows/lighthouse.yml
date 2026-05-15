@@ -44,7 +44,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version-file: .nvmrc
+          node-version: 24.15.0
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
