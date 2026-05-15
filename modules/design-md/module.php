@@ -63,9 +63,10 @@ class Module extends BaseModule {
 		}
 
 		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
-		$path = wp_parse_url( $request_uri, PHP_URL_PATH );
+		$request_path = untrailingslashit( (string) wp_parse_url( $request_uri, PHP_URL_PATH ) );
+		$expected_path = untrailingslashit( (string) wp_parse_url( home_url( '/design.md' ), PHP_URL_PATH ) );
 
-		return '/design.md' === untrailingslashit( $path );
+		return '' !== $expected_path && $request_path === $expected_path;
 	}
 
 	private function maybe_flush_rewrite_rules(): void {

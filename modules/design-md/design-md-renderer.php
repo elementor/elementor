@@ -325,23 +325,41 @@ class Design_Md_Renderer {
 		$indent = str_repeat( '  ', $depth );
 
 		foreach ( $data as $key => $value ) {
+			$safe_key = $this->yaml_key( (string) $key );
+
 			if ( is_array( $value ) ) {
-				$lines[] = $indent . $key . ':';
+				$lines[] = $indent . $safe_key . ':';
 				$this->yaml_write_tokens( $lines, $value, $depth + 1 );
 			} elseif ( is_int( $value ) ) {
-				$lines[] = $indent . $key . ': ' . $value;
+				$lines[] = $indent . $safe_key . ': ' . $value;
 			} else {
-				$lines[] = $indent . $key . ': ' . $this->yaml_quote( (string) $value );
+				$lines[] = $indent . $safe_key . ': ' . $this->yaml_quote( (string) $value );
 			}
 		}
 	}
 
 	private function yaml_quote( string $value ): string {
-		if ( str_starts_with( $value, '#' ) || str_starts_with( $value, '{' ) || str_contains( $value, ':' ) || str_contains( $value, '"' ) ) {
-			return '"' . addcslashes( $value, '"\\' ) . '"';
+		if ( '' === $value ) {
+			return '""';
 		}
 
-		return $value;
+		return '"' . str_replace(
+			[ '\\', '"', "\n", "\r", "\t" ],
+			[ '\\\\', '\\"', '\\n', '\\r', '\\t' ],
+			$value
+		) . '"';
+	}
+
+	private function yaml_key( string $key ): string {
+		if ( '' === $key ) {
+			return '""';
+		}
+
+		if ( preg_match( '/^[A-Za-z0-9_\-]+$/', $key ) ) {
+			return $key;
+		}
+
+		return $this->yaml_quote( $key );
 	}
 
 	private function render_markdown_body( array $tokens ): string {
@@ -460,8 +478,12 @@ class Design_Md_Renderer {
 
 	private function slugify( string $text ): string {
 		$text = strtolower( trim( $text ) );
-		$text = preg_replace( '/[^a-z0-9]+/', '-', $text );
+		$slug = preg_replace( '/[^a-z0-9]+/', '-', $text );
 
-		return trim( $text, '-' );
+		if ( ! is_string( $slug ) ) {
+			$slug = $text;
+		}
+
+		return trim( $slug, '-' );
 	}
 }
