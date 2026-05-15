@@ -319,6 +319,9 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
+      - name: Install dependencies
+        run: npm run install:ci
+
       - name: GCP Authentication
         id: 'auth'
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
@@ -365,8 +368,7 @@ jobs:
       - name: Build test report
         run: |
           if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
-            npm install -g allure-commandline
-            allure generate --clean allure-results -o allure-report || mkdir -p allure-report
+            npx allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
             echo "No allure-results found. Creating empty report directory."
             mkdir -p allure-report
