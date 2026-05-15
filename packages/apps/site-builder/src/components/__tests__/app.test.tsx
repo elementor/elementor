@@ -137,7 +137,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'falls back to defaults when wpApiSettings is missing', async () => {
 		delete window.wpApiSettings;
 
-		mockFetch.mockResolvedValueOnce( {
+		mockFetch.mockResolvedValue( {
 			ok: true,
 			json: async () => ( {
 				success: true,
@@ -169,16 +169,21 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'rejects response with missing required Connect fields', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			json: async () => ( {
-				success: true,
-				data: {
-					signature: 'test-sig',
-					accessToken: 'test-token',
-				},
-			} ),
-		} );
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: true,
+					data: {
+						signature: 'test-sig',
+						accessToken: 'test-token',
+					},
+				} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
@@ -197,19 +202,24 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'rejects response with non-string field types', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			json: async () => ( {
-				success: true,
-				data: {
-					signature: 'test-sig',
-					accessToken: 123,
-					clientId: 'test-client',
-					homeUrl: 'https://example.com/',
-					siteKey: 'test-key',
-				},
-			} ),
-		} );
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: true,
+					data: {
+						signature: 'test-sig',
+						accessToken: 123,
+						clientId: 'test-client',
+						homeUrl: 'https://example.com/',
+						siteKey: 'test-key',
+					},
+				} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
