@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
 import { App } from '../app';
 
@@ -30,19 +31,24 @@ describe( 'App - ConnectAuth Fetch', () => {
 	} );
 
 	it( 'fetches connectAuth on mount via POST', async () => {
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			json: async () => ( {
-				success: true,
-				data: {
-					signature: 'test-sig',
-					accessToken: 'test-token',
-					clientId: 'test-client',
-					homeUrl: 'https://example.com/',
-					siteKey: 'test-key',
-				},
-			} ),
-		} );
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: true,
+					data: {
+						signature: 'test-sig',
+						accessToken: 'test-token',
+						clientId: 'test-client',
+						homeUrl: 'https://example.com/',
+						siteKey: 'test-key',
+					},
+				} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
@@ -63,7 +69,12 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles network errors gracefully', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockRejectedValueOnce( new Error( 'Network error' ) );
+		mockFetch
+			.mockRejectedValueOnce( new Error( 'Network error' ) )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
@@ -80,10 +91,15 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles non-ok HTTP response', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockResolvedValueOnce( {
-			ok: false,
-			json: async () => ( {} ),
-		} );
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: false,
+				json: async () => ( {} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
@@ -97,12 +113,17 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles response with success:false', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockResolvedValueOnce( {
-			ok: true,
-			json: async () => ( {
-				success: false,
-			} ),
-		} );
+		mockFetch
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {
+					success: false,
+				} ),
+			} )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( {} ),
+			} );
 
 		render( <App /> );
 
