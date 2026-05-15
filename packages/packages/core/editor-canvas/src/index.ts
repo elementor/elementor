@@ -26,6 +26,7 @@ export { DOCUMENT_STRUCTURE_URI } from './mcp/resources/document-structure-resou
 export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
 export { createTransformer } from './transformers/create-transformer';
+export { formatGridTrackRepeat, isGridTrackProperty } from './transformers/styles/grid-track-renderer';
 export {
 	createTransformersRegistry,
 	stylesInheritanceTransformersRegistry,
