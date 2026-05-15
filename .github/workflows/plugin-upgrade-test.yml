@@ -1,6 +1,7 @@
 name: Upgrade Elementor test
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'elementor/upgrade-test'
@@ -19,7 +20,7 @@ jobs:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ needs.build-plugin.outputs.changelog_diff }}
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.build-plugin.outputs.changelog_diff }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
