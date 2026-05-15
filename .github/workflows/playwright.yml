@@ -160,25 +160,33 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Enable full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Resolve browsers to install
         id: browsers
         run: |
-          BROWSERS=""
-          if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
-            BROWSERS="chromium"
+          if [[ "$FULL_BROWSER_COMPAT" == "true" ]]; then
+            echo "list=chromium firefox webkit" >> $GITHUB_OUTPUT
+            echo "Installing browsers: chromium firefox webkit (full-browser-compatibility label)"
+          else
+            BROWSERS=""
+            if [[ "${{ github.event_name }}" != "workflow_dispatch" ]] || [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+              BROWSERS="chromium"
+            fi
+            if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+              BROWSERS="$BROWSERS firefox"
+            fi
+            if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
+              BROWSERS="$BROWSERS webkit"
+            fi
+            BROWSERS=$(echo "$BROWSERS" | xargs)
+            if [[ -z "$BROWSERS" ]]; then
+              BROWSERS="chromium"
+            fi
+            echo "list=$BROWSERS" >> $GITHUB_OUTPUT
+            echo "Installing browsers: $BROWSERS"
           fi
-          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
-            BROWSERS="$BROWSERS firefox"
-          fi
-          if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
-            BROWSERS="$BROWSERS webkit"
-          fi
-          BROWSERS=$(echo "$BROWSERS" | xargs)
-          if [[ -z "$BROWSERS" ]]; then
-            BROWSERS="chromium"
-          fi
-          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
-          echo "Installing browsers: $BROWSERS"
       - name: Install playwright/test
         run: |
           npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
@@ -279,24 +287,32 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Enable full browser compatibility mode
+        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
+        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
       - name: Resolve browsers to install
         id: browsers
         run: |
-          BROWSERS=""
-          if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
-            BROWSERS="chromium"
+          if [[ "$FULL_BROWSER_COMPAT" == "true" ]]; then
+            echo "list=chromium firefox webkit" >> $GITHUB_OUTPUT
+            echo "Installing browsers: chromium firefox webkit (full-browser-compatibility label)"
+          else
+            BROWSERS=""
+            if [[ "${{ inputs.browser_chromium }}" == "true" ]]; then
+              BROWSERS="chromium"
+            fi
+            if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
+              BROWSERS="$BROWSERS firefox"
+            fi
+            if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
+              BROWSERS="$BROWSERS webkit"
+            fi
+            BROWSERS=$(echo "$BROWSERS" | xargs)
+            if [[ -z "$BROWSERS" ]]; then
+              BROWSERS="chromium"
+            fi
+            echo "list=$BROWSERS" >> $GITHUB_OUTPUT
           fi
-          if [[ "${{ inputs.browser_firefox }}" == "true" ]]; then
-            BROWSERS="$BROWSERS firefox"
-          fi
-          if [[ "${{ inputs.browser_webkit }}" == "true" ]]; then
-            BROWSERS="$BROWSERS webkit"
-          fi
-          BROWSERS=$(echo "$BROWSERS" | xargs)
-          if [[ -z "$BROWSERS" ]]; then
-            BROWSERS="chromium"
-          fi
-          echo "list=$BROWSERS" >> $GITHUB_OUTPUT
       - name: Install playwright/test
         run: |
           npx playwright install --with-deps ${{ steps.browsers.outputs.list }}
