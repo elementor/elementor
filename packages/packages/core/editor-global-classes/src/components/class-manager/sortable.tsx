@@ -11,7 +11,12 @@ import {
 } from '@elementor/ui';
 
 export const SortableProvider = < T extends string >( props: UnstableSortableProviderProps< T > ) => (
-	<UnstableSortableProvider restrictAxis variant="static" dragPlaceholderStyle={ { opacity: '1' } } { ...props } />
+	<UnstableSortableProvider
+		restrictAxis
+		variant="static"
+		dragPlaceholderStyle={ { visibility: 'hidden' } }
+		{ ...props }
+	/>
 );
 
 export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement >;
@@ -24,10 +29,11 @@ export const SortableTrigger = ( props: SortableTriggerProps ) => (
 
 type SortableItemProps = {
 	id: UnstableSortableItemProps[ 'id' ];
+	style?: React.CSSProperties;
 	children: ( props: Partial< UnstableSortableItemRenderProps > ) => React.ReactNode;
 };
 
-export const SortableItem = ( { children, id, ...props }: SortableItemProps ) => {
+export const SortableItem = ( { children, id, style, ...props }: SortableItemProps ) => {
 	return (
 		<UnstableSortableItem
 			{ ...props }
@@ -46,7 +52,7 @@ export const SortableItem = ( { children, id, ...props }: SortableItemProps ) =>
 				return (
 					<Box
 						{ ...itemProps }
-						style={ itemStyle }
+						style={ { ...itemStyle, ...( ! isDragOverlay ? style : null ) } }
 						component={ 'li' }
 						role="listitem"
 						sx={ {

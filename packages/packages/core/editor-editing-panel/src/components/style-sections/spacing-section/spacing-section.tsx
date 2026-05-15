@@ -19,7 +19,6 @@ export const SpacingSection = () => {
 				<LinkedDimensionsControl
 					label={ MARGIN_LABEL }
 					isSiteRtl={ isSiteRtl }
-					extendedOptions={ [ 'auto' ] }
 					min={ -Number.MAX_SAFE_INTEGER }
 				/>
 			</StylesField>

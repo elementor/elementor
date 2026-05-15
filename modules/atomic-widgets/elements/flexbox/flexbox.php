@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Flexbox;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -14,12 +15,15 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Flexbox extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
@@ -40,7 +44,7 @@ class Flexbox extends Atomic_Element_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'layout' ];
 	}
 
 	public function get_icon() {
@@ -76,7 +80,7 @@ class Flexbox extends Atomic_Element_Base {
 				->description( 'The HTML tag for the flexbox container. Could be div, header, section, article, aside, footer, or a (link).' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 
 		return $schema;
@@ -179,5 +183,11 @@ class Flexbox extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+	}
+
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/flexbox' => __DIR__ . '/flexbox.html.twig',
+		];
 	}
 }

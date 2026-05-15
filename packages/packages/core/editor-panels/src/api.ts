@@ -77,7 +77,7 @@ function createUseStatus( id: PanelDeclaration[ 'id' ], options: UseRouteStatusO
 
 type UseActionsOptions< TOnOpenReturn > = {
 	onOpen?: () => TOnOpenReturn;
-	onClose?: ( state: TOnOpenReturn ) => void;
+	onClose?: ( state: TOnOpenReturn ) => Promise< void >;
 };
 
 function createUseActions< TOnOpenReturn >(
@@ -114,7 +114,7 @@ function createUseActions< TOnOpenReturn >(
 
 				dispatch( slice.actions.close( id ) );
 
-				options.onClose?.( stateSnapshot as TOnOpenReturn );
+				await options.onClose?.( stateSnapshot as TOnOpenReturn );
 
 				if ( previousSelectedElement ) {
 					try {

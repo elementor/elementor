@@ -84,9 +84,10 @@ class Dynamic_Tags_Editor_Config {
 			'name'            => $tag['name'],
 			'categories'      => $tag['categories'],
 			'label'           => $tag['title'] ?? '',
-			'group'           => $tag['group'] ?? '',
+			'group'           => $tag['atomic_group'] ?? $tag['group'] ?? '',
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
+			'meta'            => $tag['meta'] ?? [],
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
@@ -163,9 +164,9 @@ class Dynamic_Tags_Editor_Config {
 			return null;
 		}
 
-		$is_convertable = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
+		$is_convertible = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
 
-		if ( $is_convertable ) {
+		if ( $is_convertible ) {
 			throw new \Exception( 'Control must have name, section, label, and default' );
 		}
 
@@ -364,7 +365,6 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_media_control_to_atomic( $control ) {
 		return Image_Control::bind_to( $control['name'] )
-			->set_show_mode( 'media' )
 			->set_label( $control['label'] );
 	}
 

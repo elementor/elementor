@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 import { renderWithTheme } from 'test-utils';
+import { trackViewPromotion } from '@elementor/editor-controls';
 import { PopoverMenuList } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
@@ -16,11 +17,18 @@ jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
 jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
+	trackViewPromotion: jest.fn(),
 } ) );
+jest.mock( '../ui/no-search-results', () => ( {
+	NoSearchResults: () => <span>No results found</span>,
+} ) );
+
 jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
 	PopoverMenuList: jest.fn(),
+	PopoverBody: ( { children }: PropsWithChildren ) => children,
 } ) );
 
 jest.mocked( PopoverMenuList ).mockImplementation(
@@ -42,13 +50,6 @@ jest.mocked( PopoverMenuList ).mockImplementation(
 		);
 	}
 );
-
-jest.mock( '../ui/no-search-results', () => ( {
-	NoSearchResults: () => <span>No results found</span>,
-} ) );
-jest.mock( '@elementor/editor-editing-panel', () => ( {
-	PopoverBody: ( { children }: PropsWithChildren ) => children,
-} ) );
 
 const TestWrapper = ( { children, propTypeKey = 'color' }: { children: React.ReactNode; propTypeKey?: string } ) => {
 	return <VariableTypeProvider propTypeKey={ propTypeKey }>{ children }</VariableTypeProvider>;
@@ -366,6 +367,50 @@ describe( 'VariablesSelection', () => {
 
 			const addButton = screen.getByRole( 'button', { name: __( 'Create variable', 'elementor' ) } );
 			expect( addButton ).toBeDisabled();
+		} );
+
+		it( 'should call trackViewPromotion when disabled prop is true', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).toHaveBeenCalledWith( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		} );
+
+		it( 'should not call trackViewPromotion when disabled is false', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

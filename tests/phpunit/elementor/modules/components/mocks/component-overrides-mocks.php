@@ -84,6 +84,28 @@ class Component_Overrides_Mocks {
 					],
 					'groupId' => 'group-2',
 				],
+				'prop-uuid-5' => [
+					'overrideKey' => 'prop-uuid-5',
+					'label' => 'Exposed further button text',
+					'elementId' => 'button-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-component',
+					'propKey' => 'override',
+				'originValue' => [
+					'$$type' => 'html-v3',
+					'value' => [
+						'content' => ['$$type' => 'string', 'value' => 'Click here'],
+						'children' => [],
+					],
+				],
+					'originPropFields' => [
+						'elType' => 'widget',
+						'widgetType' => 'e-button',
+						'propKey' => 'text',
+						'elementId' => 'button-123',
+					],
+					'groupId' => 'group-2',
+				],
 			],
 			'groups' => [
 				'items' => [
@@ -95,7 +117,7 @@ class Component_Overrides_Mocks {
 					'group-2' => [
 						'id' => 'group-2-uuid',
 						'label' => 'Image',
-						'props' => [ 'prop-uuid-3', 'prop-uuid-4' ],
+						'props' => [ 'prop-uuid-3', 'prop-uuid-4', 'prop-uuid-5' ],
 					],
 				],
 				'order' => [ 'group-1-uuid', 'group-2-uuid' ],
@@ -107,12 +129,18 @@ class Component_Overrides_Mocks {
 		return [
 			'$$type' => 'override',
 			'value' => [
-				'override_key' => 'prop-uuid-1',
-				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
-				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
+			'override_key' => 'prop-uuid-1',
+			'override_value' => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => 'New Title'],
+					'children' => [],
+				],
 			],
-		];
-	}
+			'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
+		],
+	];
+}
 
 	public function get_mock_valid_heading_tag_component_override(): array {
 		return [
@@ -171,6 +199,29 @@ class Component_Overrides_Mocks {
 				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 			],
 		];
+	}
+
+	public function get_mock_component_overridable_props_with_autosave_only_prop(): array {
+		$base_props = $this->get_mock_component_overridable_props();
+
+		$base_props['props']['prop-uuid-autosave-only'] = [
+			'overrideKey' => 'prop-uuid-autosave-only',
+			'label' => 'Autosave Only Prop',
+			'elementId' => 'heading-456',
+			'elType' => 'widget',
+			'widgetType' => 'e-heading',
+			'propKey' => 'title',
+			'originValue' => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => 'Autosave Title'],
+					'children' => [],
+				],
+			],
+			'groupId' => 'group-1',
+		];
+
+		return $base_props;
 	}
 
 	public function get_mock_image_image_component_override_to_sanitize(): array {

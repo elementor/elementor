@@ -1,11 +1,9 @@
-import { initCreateVariableTool } from './create-variable-tool';
-import { initDeleteVariableTool } from './delete-variable-tool';
-import { initUpdateVariableTool } from './update-variable-tool';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+
+import { initManageVariableTool } from './manage-variable-tool';
 import { initVariablesResource } from './variables-resource';
 
-export function initMcp() {
-	initCreateVariableTool();
-	initUpdateVariableTool();
-	initDeleteVariableTool();
-	initVariablesResource();
+export function initMcp( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) {
+	initManageVariableTool( reg );
+	initVariablesResource( reg, canvasMcpEntry );
 }

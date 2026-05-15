@@ -186,8 +186,8 @@ export const service = {
 			} );
 	},
 
-	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables );
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		if ( operations.length === 0 ) {
@@ -216,17 +216,17 @@ export const service = {
 
 				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if ( result.variable ) {
-							const { id: variableId, ...variableData } = result.variable;
+						const variableId = result.id;
 
+						if ( result.variable ) {
 							if ( result.type === 'create' ) {
-								storage.add( variableId, variableData );
+								storage.add( variableId, result.variable );
 							} else {
-								storage.update( variableId, variableData );
+								storage.update( variableId, result.variable );
 							}
 
 							styleVariablesRepository.update( {
-								[ variableId ]: variableData,
+								[ variableId ]: result.variable,
 							} );
 						}
 					} );

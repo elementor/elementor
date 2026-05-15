@@ -49,10 +49,11 @@ class Module extends Module_Base {
 				'message' => esc_html__( 'Feedback submitted successfully.', 'elementor' ),
 			];
 		} else {
+			$message = $response['data']['message'] ?? esc_html__( 'Failed to submit feedback.', 'elementor' );
 			return [
 				'success' => false,
 				'code' => $response_code,
-				'message' => esc_html__( 'Failed to submit feedback.', 'elementor' ),
+				'message' => $message,
 			];
 		}
 	}

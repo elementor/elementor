@@ -70,7 +70,7 @@ const TemplateLibraryManager = function() {
 			};
 
 			jQuery.each( translationMap, function( type, title ) {
-				self.getDefaultTemplateTypeSafeData( title ).then( ( defaultTemplateData ) => {
+				self.getDefaultTemplateTypeSafeData( title, type ).then( ( defaultTemplateData ) => {
 					const safeData = jQuery.extend( true, {}, data, defaultTemplateData );
 					self.registerTemplateType( type, safeData );
 				} );
@@ -165,12 +165,16 @@ const TemplateLibraryManager = function() {
 					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 					canSaveToCloud: true,
 					saveBtnText: __( 'Move', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
 				},
 				copyDialog: {
 					description: __( 'Alternatively, you can move the template.', 'elementor' ),
 					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 					canSaveToCloud: true,
 					saveBtnText: __( 'Copy', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
 				},
 				bulkMoveDialog: {
 					description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
@@ -178,6 +182,8 @@ const TemplateLibraryManager = function() {
 					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
 					canSaveToCloud: true,
 					saveBtnText: __( 'Move', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
 				},
 				bulkCopyDialog: {
 					description: __( 'Alternatively, you can move the templates.', 'elementor' ),
@@ -185,26 +191,54 @@ const TemplateLibraryManager = function() {
 					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
 					canSaveToCloud: true,
 					saveBtnText: __( 'Copy', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
 				},
 			};
 		} );
 	};
 
-	this.getDefaultTemplateTypeSafeData = function( title ) {
+	this.getDefaultTemplateTypeSafeData = function( title, type ) {
 		return this.eventManager.getSaveTemplateExperimentVariant().then( ( experimentVariant ) => {
+			const isPageType = 'page' === type;
+
+			/* Translators: %s: Template type. */
+			const nameLabel = sprintf( __( '%s name', 'elementor' ), title );
+			const namePlaceholder = isPageType
+				? __( 'Type the page name here', 'elementor' )
+				: __( 'Give your template a name', 'elementor' );
+
 			return {
 				saveDialog: {
-					description: variantsConfig[ experimentVariant ]?.saveDialogDescription,
+					description: variantsConfig[ experimentVariant ]?.saveDialogDescription || '',
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to save this %s?', 'elementor' ), title ),
 				},
 				moveDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to move this %s?', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
 				},
 				copyDialog: {
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to cppy this %s?', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
+				},
+				bulkMoveDialog: {
+					saveLocationLabel: __( 'Where would you like to move selected templates?', 'elementor' ),
+				},
+				bulkCopyDialog: {
+					saveLocationLabel: __( 'Where would you like to copy selected templates?', 'elementor' ),
 				},
 			};
 		} );
@@ -807,6 +841,25 @@ const TemplateLibraryManager = function() {
 		return elementorCommon.ajax.addRequest( 'get_template_data', options );
 	};
 
+	this.hasGlobalStyles = function( templateData ) {
+		const hasClasses = templateData.global_classes?.items &&
+			Object.keys( templateData.global_classes.items ).length > 0;
+		const hasVariables = templateData.global_variables?.data &&
+			Object.keys( templateData.global_variables.data ).length > 0;
+		return hasClasses || hasVariables;
+	};
+
+	this.syncGlobalStylesBeforeSave = function() {
+		const promises = [];
+		const event = new CustomEvent( 'elementor/global-styles/before-save', {
+			detail: { promises },
+		} );
+
+		window.dispatchEvent( event );
+
+		return Promise.allSettled( promises );
+	};
+
 	this.markAsFavorite = function( templateModel, favorite ) {
 		this.clearLastRemovedItems();
 
@@ -951,15 +1004,6 @@ const TemplateLibraryManager = function() {
 		// TODO: Remove - it when all the data commands is ready, manage the cache!.
 		if ( 'local' === query.source || 'cloud' === query.source ) {
 			options.refresh = true;
-		}
-
-		const shouldStartSessionRecording = 'cloud' === query.source &&
-			elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
-			! elementor.templates.eventManager.isSessionRecordingInProgress();
-
-		if ( shouldStartSessionRecording ) {
-			elementor.templates.eventManager.startSessionRecording();
-			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 		}
 
 		this.setFilter( 'parent', null, query );

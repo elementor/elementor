@@ -16,6 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type SetValueMeta } from '../../bound-prop-context';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
+import { usePopoverDismiss } from '../../hooks/use-repeater-popover-dismiss';
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../control-repeater/locations';
 import { SectionContent } from '../section-content';
 import { RepeaterHeader } from './repeater-header';
@@ -79,6 +80,8 @@ type BaseItemSettings< T > = {
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
 	actions?: ( value: T ) => React.ReactNode;
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: ( value: T ) => void;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -273,6 +276,8 @@ export const Repeater = < T, >( {
 									toggleDisableItem={ () => toggleDisableRepeaterItem( index ) }
 									openOnMount={ openOnAdd && openItem === index }
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
+									onPopoverOpen={ itemSettings.onPopoverOpen }
+									onPopoverClose={ itemSettings.onPopoverClose }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
 									showRemove={ showRemove }
@@ -307,6 +312,8 @@ type RepeaterItemProps< T > = {
 	children: ( props: Pick< RepeaterItemContentProps< T >, 'anchorEl' > ) => React.ReactNode;
 	openOnMount: boolean;
 	onOpen: () => void;
+	onPopoverOpen?: ( value: T ) => void;
+	onPopoverClose?: ( value: T ) => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
 	showRemove: boolean;
@@ -325,6 +332,8 @@ const RepeaterItem = < T, >( {
 	toggleDisableItem,
 	openOnMount,
 	onOpen,
+	onPopoverOpen,
+	onPopoverClose,
 	showDuplicate,
 	showToggle,
 	showRemove,
@@ -332,20 +341,37 @@ const RepeaterItem = < T, >( {
 	actions,
 	value,
 }: RepeaterItemProps< T > ) => {
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
+	const wrappedOnPopoverClose = onPopoverClose ? () => onPopoverClose( value ) : undefined;
+	const { popoverState, popoverProps, ref, setRef } = usePopover(
+		openOnMount,
+		() => {
+			onOpen();
+			onPopoverOpen?.( value );
+		},
+		wrappedOnPopoverClose
+	);
+	const triggerProps = bindTrigger( popoverState );
+
+	usePopoverDismiss( { isOpen: popoverState.isOpen, onClose: popoverProps.onClose } );
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	return (
-		<>
+		<Box sx={ { display: 'contents' } }>
 			<RepeaterTag
 				disabled={ disabled }
 				label={ label }
 				ref={ setRef }
 				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...bindTrigger( popoverState ) }
+				{ ...triggerProps }
+				onClick={ ( e: React.MouseEvent< HTMLElement > ) => {
+					triggerProps.onClick( e );
+					if ( ! popoverState.isOpen ) {
+						onPopoverOpen?.( value );
+					}
+				} }
 				startIcon={ startIcon }
 				actions={
 					<>
@@ -377,11 +403,11 @@ const RepeaterItem = < T, >( {
 			<RepeaterPopover width={ ref?.getBoundingClientRect().width } { ...popoverProps } anchorEl={ ref }>
 				<Box>{ children( { anchorEl: ref } ) }</Box>
 			</RepeaterPopover>
-		</>
+		</Box>
 	);
 };
 
-const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
+const usePopover = ( openOnMount: boolean, onOpen: () => void, onPopoverClose?: () => void ) => {
 	const [ ref, setRef ] = useState< HTMLElement | null >( null );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
@@ -396,10 +422,15 @@ const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ref ] );
 
+	const onClose = () => {
+		popoverProps.onClose?.();
+		onPopoverClose?.();
+	};
+
 	return {
 		popoverState,
 		ref,
 		setRef,
-		popoverProps,
+		popoverProps: { ...popoverProps, onClose },
 	};
 };

@@ -1,25 +1,60 @@
 import * as React from 'react';
-import { createMockDocument, createMockStyleDefinition, dispatchDependencyCommand, renderWithStore } from 'test-utils';
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import {
+	createMockDocument,
+	createMockStyleDefinition,
+	createMockTrackingModule,
+	dispatchDependencyCommand,
+	mockTracking,
+	renderWithStore,
+} from 'test-utils';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
+const PANEL_TEST_ROW_HEIGHT = 40;
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count, getItemKey } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		return {
+			getTotalSize: jest.fn().mockReturnValue( count * PANEL_TEST_ROW_HEIGHT ),
+			getVirtualItems: jest.fn().mockReturnValue(
+				indices.map( ( index ) => ( {
+					index,
+					key: getItemKey ? getItemKey( index ) : index,
+					start: index * PANEL_TEST_ROW_HEIGHT,
+					end: ( index + 1 ) * PANEL_TEST_ROW_HEIGHT,
+					size: PANEL_TEST_ROW_HEIGHT,
+					lane: 0,
+				} ) )
+			),
+		};
+	} ),
+} ) );
+
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
+jest.mock( '../start-sync-to-v3-modal' );
 
 jest.mock( '../../../api' );
+
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
+	changeEditMode: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-panels', () => ( {
@@ -29,7 +64,12 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../panel-interactions', () => ( {
+	blockPanelInteractions: jest.fn(),
+	unblockPanelInteractions: jest.fn(),
+} ) );
+
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'ClassManagerPanel', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -62,6 +102,10 @@ describe( 'ClassManagerPanel', () => {
 			slice.actions.load( {
 				frontend: data,
 				preview: data,
+				classLabels: {
+					'class-1': 'Class 1',
+					'class-2': 'Class 2',
+				},
 			} )
 		);
 
@@ -102,12 +146,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -132,11 +173,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-2' ],
-				changes: { added: [], deleted: [ 'class-1' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-1' ], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -163,10 +202,9 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {
 					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'New label' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
 				},
 				order: [ 'class-2', 'class-1' ],
-				changes: { added: [], deleted: [], modified: [ 'class-1' ] },
+				changes: { added: [], deleted: [], modified: [ 'class-1' ], order: false },
 			} );
 		} );
 	} );
@@ -236,12 +274,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 
@@ -302,12 +337,7 @@ describe( 'ClassManagerPanel', () => {
 		expect( window.onbeforeunload ).toBeNull();
 	} );
 
-	it( 'should reload the current document after deleting classes and saving the change.', async () => {
-		// Arrange.
-
-		const invalidateCache = jest.fn();
-		jest.mocked( getV1DocumentsManager ).mockReturnValue( { invalidateCache } as never );
-
+	it( 'should save deleted classes successfully', async () => {
 		// Act.
 		renderWithStore(
 			<ThemeProvider>
@@ -344,15 +374,13 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
-		// Assert.
+		// Assert - Verify that publish was called with deleted class
 		await waitFor( () => {
-			expect( invalidateCache ).toHaveBeenCalled();
-		} );
-
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: 1,
-			shouldScroll: false,
-			shouldNavigateToDefaultRoute: false,
+			expect( apiClient.publish ).toHaveBeenCalledWith( {
+				items: {},
+				order: [ 'class-1' ],
+				changes: { added: [], deleted: [ 'class-2' ], modified: [], order: true },
+			} );
 		} );
 	} );
 
@@ -431,5 +459,67 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( discardButton );
 		expect( slice.actions.resetToInitialState ).toHaveBeenCalledWith( { context: 'frontend' } );
 		expect( store.getState().globalClasses.data.order ).toEqual( [ 'class-2', 'class-1' ] );
+	} );
+
+	it( 'should track classManagerSearched event when search field is focused', () => {
+		// Act
+		renderWithStore(
+			<QueryClientProvider client={ queryClient }>
+				<ClassManagerPanel />
+			</QueryClientProvider>,
+			store
+		);
+
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.focus( input );
+
+		// Assert
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classManagerSearched',
+		} );
+	} );
+
+	it( 'should track syncToV3 unsync event when stopping sync via confirmation dialog', async () => {
+		// Arrange
+		act( () => {
+			__dispatch( slice.actions.update( { style: { id: 'class-2', sync_to_v3: true } } ) );
+		} );
+
+		// Act
+		renderWithStore(
+			<ThemeProvider>
+				<QueryClientProvider client={ queryClient }>
+					<ClassManagerPanel />
+				</QueryClientProvider>
+			</ThemeProvider>,
+			store
+		);
+
+		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+
+		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
+
+		const stopSyncButton = screen.getByRole( 'menuitem', { name: /Stop syncing to Global Fonts/i } );
+
+		fireEvent.click( stopSyncButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'Un-sync typography class' ) ).toBeInTheDocument();
+		} );
+
+		// Act
+		fireEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
+
+		// Assert
+		await waitFor( () => {
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classSyncToV3',
+				classId: 'class-2',
+				action: 'unsync',
+			} );
+		} );
 	} );
 } );

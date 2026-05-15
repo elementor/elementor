@@ -73,10 +73,16 @@ export const useActions = () => {
 		movedElementIndex: number;
 	} ) => {
 		const tabContentContainer = getContainer( tabContentAreaId );
-		const tabContentId = tabContentContainer?.children?.[ movedElementIndex ]?.id;
+		const tabContent = tabContentContainer?.children?.[ movedElementIndex ];
+		const movedElement = getContainer( movedElementId );
+		const tabsMenu = getContainer( tabsMenuId );
 
-		if ( ! tabContentId ) {
-			throw new Error( 'Content ID is required' );
+		if ( ! tabContent ) {
+			throw new Error( 'Content element is required' );
+		}
+
+		if ( ! movedElement || ! tabsMenu ) {
+			throw new Error( 'Tab element or menu not found' );
 		}
 
 		const newDefault = calculateDefaultOnMove( {
@@ -89,13 +95,13 @@ export const useActions = () => {
 			title: __( 'Reorder Tabs', 'elementor' ),
 			moves: [
 				{
-					elementId: movedElementId,
-					targetContainerId: tabsMenuId,
+					element: movedElement,
+					targetContainer: tabsMenu,
 					options: { at: toIndex },
 				},
 				{
-					elementId: tabContentId,
-					targetContainerId: tabContentAreaId,
+					element: tabContent,
+					targetContainer: tabContentContainer,
 					options: { at: toIndex },
 				},
 			],
@@ -159,6 +165,13 @@ export const useActions = () => {
 		tabsMenuId: string;
 		items: ItemsActionPayload< TabItem >;
 	} ) => {
+		const tabContentArea = getContainer( tabContentAreaId );
+		const tabsMenu = getContainer( tabsMenuId );
+
+		if ( ! tabContentArea || ! tabsMenu ) {
+			throw new Error( 'Tab containers not found' );
+		}
+
 		items.forEach( ( { index } ) => {
 			const position = index + 1;
 
@@ -166,14 +179,14 @@ export const useActions = () => {
 				title: __( 'Tabs', 'elementor' ),
 				elements: [
 					{
-						containerId: tabContentAreaId,
+						container: tabContentArea,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
 							editor_settings: { title: `Tab ${ position } content`, initial_position: position },
 						},
 					},
 					{
-						containerId: tabsMenuId,
+						container: tabsMenu,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
 							editor_settings: { title: `Tab ${ position } trigger`, initial_position: position },

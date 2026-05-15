@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import { perspectiveOriginPropTypeUtil } from '@elementor/editor-props';
 import { Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -73,7 +74,7 @@ const PerspectiveOriginControlProvider = () => {
 };
 
 const ControlFields = ( { control }: { control: FieldProps } ) => {
-	const rowRef = React.useRef< HTMLDivElement >( null );
+	const rowRef = useRef< HTMLDivElement >( null );
 
 	return (
 		<PopoverGridContainer ref={ rowRef }>

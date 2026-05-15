@@ -57,11 +57,15 @@ const getBuildFiles = [
 	'!*.log',
 	'!hello-elementor/**',
 	'!.env',
+	'!Dockerfile',
+	'!.dockerignore',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
+	'vendor/elementor/wp-one-package/**',
+	'vendor/elementor/wp-notifications-package/**',
 ];
 
 const copy = {

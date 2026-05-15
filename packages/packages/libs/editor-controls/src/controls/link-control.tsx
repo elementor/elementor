@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
+import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -41,8 +42,9 @@ const SIZE = 'tiny';
 
 export const LinkControl = createControl( ( props: Props ) => {
 	const { value, path, setValue, ...propContext } = useBoundProp( linkPropTypeUtil );
+	const linkPlaceholder = propContext.placeholder;
 	const [ linkSessionValue, setLinkSessionValue ] = useSessionStorage< LinkSessionValue >( path.join( '/' ) );
-	const [ isActive, setIsActive ] = useState( !! value );
+	const [ isActive, setIsActive ] = useState( !! value || !! linkPlaceholder );
 
 	const {
 		allowCustomValues = true,
@@ -54,11 +56,47 @@ export const LinkControl = createControl( ( props: Props ) => {
 		ariaLabel,
 	} = props || {};
 
-	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
+	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState(
+		getLinkInLinkRestriction( elementId, value ?? linkPlaceholder )
+	);
+
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
+	const debouncedCheckRestriction = useMemo(
+		() =>
+			debounce( () => {
+				const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
+
+				if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
+					setIsActive( false );
+				}
+
+				setLinkInLinkRestriction( newRestriction );
+			}, 300 ),
+		[ elementId, isActive, value, linkPlaceholder ]
+	);
+
+	useEffect( () => {
+		debouncedCheckRestriction();
+
+		const handleInlineLinkChanged = ( event: Event ) => {
+			const customEvent = event as CustomEvent< { elementId: string } >;
+
+			if ( customEvent.detail.elementId === elementId ) {
+				debouncedCheckRestriction();
+			}
+		};
+
+		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+
+		return () => {
+			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+			debouncedCheckRestriction.cancel();
+		};
+	}, [ elementId, debouncedCheckRestriction ] );
+
 	const onEnabledChange = () => {
-		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ?? linkPlaceholder ) );
 
 		if ( linkInLinkRestriction.shouldRestrict && ! isActive ) {
 			return;
@@ -105,12 +143,14 @@ export const LinkControl = createControl( ( props: Props ) => {
 				>
 					<ControlLabel>{ label }</ControlLabel>
 					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
-						<ToggleIconControl
+						<IconButton
+							size={ SIZE }
+							onClick={ onEnabledChange }
+							aria-label={ __( 'Toggle link', 'elementor' ) }
 							disabled={ shouldDisableAddingLink }
-							active={ isActive }
-							onIconClick={ onEnabledChange }
-							label={ __( 'Toggle link', 'elementor' ) }
-						/>
+						>
+							{ isActive ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
+						</IconButton>
 					</RestrictedLinkInfotip>
 				</Stack>
 				<Collapse in={ isActive } timeout="auto" unmountOnExit>
@@ -141,18 +181,3 @@ export const LinkControl = createControl( ( props: Props ) => {
 		</PropProvider>
 	);
 } );
-
-type ToggleIconControlProps = {
-	disabled: boolean;
-	active: boolean;
-	onIconClick: () => void;
-	label?: string;
-};
-
-const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIconControlProps ) => {
-	return (
-		<IconButton size={ SIZE } onClick={ onIconClick } aria-label={ label } disabled={ disabled }>
-			{ active ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
-		</IconButton>
-	);
-};

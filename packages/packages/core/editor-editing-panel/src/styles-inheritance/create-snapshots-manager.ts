@@ -1,6 +1,7 @@
-import { filterEmptyValues } from '@elementor/editor-props';
+import { filterEmptyValues, type TransformablePropValue } from '@elementor/editor-props';
 import { type BreakpointId, type BreakpointNode } from '@elementor/editor-responsive';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
+import { hasVariable } from '@elementor/editor-variables';
 
 import {
 	type BreakpointsInheritancePath,
@@ -41,11 +42,11 @@ export function createSnapshotsManager(
 			};
 		}
 
-		if ( state && ! allBreakpointStatesSnapshots[ currentBreakpointKey ][ stateKey ] ) {
+		if ( state && ! allBreakpointStatesSnapshots[ currentBreakpointKey ]?.[ stateKey ] ) {
 			allBreakpointStatesSnapshots[ currentBreakpointKey ][ stateKey ] = buildStateSnapshotSlot(
 				getStylesByMeta( { breakpoint: currentBreakpointId, state } ),
 				parentBreakpoint,
-				allBreakpointStatesSnapshots[ currentBreakpointKey ],
+				allBreakpointStatesSnapshots[ currentBreakpointKey ] ?? {},
 				state
 			);
 		}
@@ -59,7 +60,7 @@ export function createSnapshotsManager(
 
 		if ( allBreakpointStatesSnapshots[ breakpointKey ]?.[ stateKey ] ) {
 			// snapshot was already made for this breakpoint+state
-			return allBreakpointStatesSnapshots[ breakpointKey ][ stateKey ].snapshot;
+			return allBreakpointStatesSnapshots[ breakpointKey ]?.[ stateKey ]?.snapshot;
 		}
 
 		const breakpointsChain = [ ...breakpointsInheritancePaths[ breakpointKey ], breakpoint ];
@@ -143,8 +144,13 @@ function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): Styles
 
 		Object.entries( props ).forEach( ( [ key, value ] ) => {
 			const filteredValue = filterEmptyValues( value );
+			const filteredVariableValue =
+				( filteredValue as TransformablePropValue< string, string > )?.$$type?.includes( 'variable' ) &&
+				! hasVariable( ( filteredValue as TransformablePropValue< string, string > )?.value )
+					? null
+					: filteredValue;
 
-			if ( filteredValue === null ) {
+			if ( filteredVariableValue === null ) {
 				return;
 			}
 
@@ -154,7 +160,7 @@ function buildInitialSnapshotFromStyles( styles: StyleVariantDetails[] ): Styles
 
 			const snapshotPropValue: SnapshotPropValue = {
 				...styleData,
-				value: filteredValue,
+				value: filteredVariableValue,
 			};
 
 			snapshot[ key ].push( snapshotPropValue );

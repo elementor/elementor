@@ -1,17 +1,9 @@
-import { createTransformer, RenderContext } from '@elementor/editor-canvas';
+import { createTransformer } from '@elementor/editor-canvas';
 import { __getState as getState } from '@elementor/store';
 
+import { type ComponentInstanceOverrideProp } from './prop-types/component-instance-override-prop-type';
 import { selectUnpublishedComponents } from './store/store';
-import { type ComponentOverridePropValue } from './types';
 import { getComponentDocumentData } from './utils/component-document-data';
-
-type ComponentInstanceContext = {
-	overrides?: Record< string, unknown >;
-};
-
-export const componentInstanceContext = new RenderContext< ComponentInstanceContext >( 'component-instance', {
-	overrides: {},
-} );
 
 export const componentInstanceTransformer = createTransformer(
 	async ( {
@@ -19,7 +11,7 @@ export const componentInstanceTransformer = createTransformer(
 		overrides: overridesValue,
 	}: {
 		component_id: number | string;
-		overrides?: ComponentOverridePropValue[];
+		overrides?: ComponentInstanceOverrideProp[];
 	} ) => {
 		const unpublishedComponents = selectUnpublishedComponents( getState() );
 

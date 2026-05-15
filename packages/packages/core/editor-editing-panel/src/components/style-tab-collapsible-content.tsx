@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
+import { CollapsibleContent } from '@elementor/editor-ui';
 
 import { StylesInheritanceSectionIndicators } from '../styles-inheritance/components/styles-inheritance-section-indicators';
-import { CollapsibleContent } from './collapsible-content';
+
 type Props = PropsWithChildren< { fields?: string[] } >;
 
 export const StyleTabCollapsibleContent = ( { fields = [], children }: Props ) => {

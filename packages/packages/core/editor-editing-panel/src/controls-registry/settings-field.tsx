@@ -2,28 +2,19 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	type ElementID,
-	getElementLabel,
-	getElementSettings,
-	updateElementSettings,
-	useElementSettings,
-} from '@elementor/editor-elements';
-import {
-	type CreateOptions,
-	isDependencyMet,
-	migratePropValue,
-	type PropKey,
-	type Props,
-	type PropsSchema,
-	type PropType,
-	type PropValue,
-} from '@elementor/editor-props';
+import { type ElementID, getElementLabel, getElementSettings, updateElementSettings } from '@elementor/editor-elements';
+import { type CreateOptions, type PropKey, type Props } from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import {
+	extractDependencyEffect,
+	extractOrderedDependencies,
+	getElementSettingsWithDefaults,
+	getUpdatedValues,
+	type Values,
+} from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -38,16 +29,10 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const {
 		element: { id: elementId },
 		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+		settings: currentElementSettings,
 	} = useElement();
 
-	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
-
-	const migratedValues = useMemo( () => {
-		return migratePropValues( elementSettingValues, propsSchema );
-	}, [ elementSettingValues, propsSchema ] );
-
-	const value = { [ bind ]: migratedValues?.[ bind ] ?? null };
-
+	const value = { [ bind ]: currentElementSettings?.[ bind ] ?? null };
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
@@ -55,20 +40,25 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		propDisplayName,
 	} );
 
+	const { isDisabled, isHidden } = extractDependencyEffect( bind, propsSchema, currentElementSettings );
+
+	if ( isHidden ) {
+		return null;
+	}
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
 		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
-		const settings = getUpdatedValues( newValue, dependents, propsSchema, migratedValues, elementId );
+		const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, settingsWithDefaults, elementId );
 		if ( withHistory ) {
 			undoableUpdateElementProp( settings );
 		} else {
 			updateElementSettings( { id: elementId, props: settings, withHistory: false } );
 		}
 	};
-
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, migratedValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
@@ -108,30 +98,4 @@ function useUndoableUpdateElementProp( {
 			}
 		);
 	}, [ elementId, propDisplayName ] );
-}
-
-function migratePropValues( values: Values, schema: PropsSchema ): Values {
-	if ( ! values ) {
-		return values;
-	}
-
-	const migrated: Values = {};
-
-	for ( const [ key, value ] of Object.entries( values ) ) {
-		if ( value === null || value === undefined ) {
-			migrated[ key ] = value;
-			continue;
-		}
-
-		const propType = schema[ key ];
-
-		if ( ! propType ) {
-			migrated[ key ] = value;
-			continue;
-		}
-
-		migrated[ key ] = migratePropValue( value, propType ) as Values[ string ];
-	}
-
-	return migrated;
 }

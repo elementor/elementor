@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
@@ -121,44 +120,11 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$this->register_menu( $admin_menu_manager );
-			}
-		}, Settings::ADMIN_MENU_PRIORITY + 30 );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );
 
-		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
-	public function add_items_to_hide( array $items ): array {
-		$items[] = 'elementor-system-info';
-		$items[] = 'elementor-element-manager';
-		$items[] = 'go_knowledge_base_site';
-
-		return $items;
-	}
-
-	/**
-	 * Register admin menu.
-	 *
-	 * Add new Elementor system info admin menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.9.0
-	 * @access private
-	 */
-	private function register_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {

@@ -1,7 +1,9 @@
+import { createRoot, type Root } from 'react-dom/client';
+
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
-import type ReplacementBase from './base';
+import { type ReplacementBase, type ReplacementBaseInterface, type TriggerMethod } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
@@ -32,12 +34,19 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 	const TemplatedView = createTemplatedElementView( options );
 
 	return class extends TemplatedView {
-		#replacement: ReplacementBase | null = null;
+		#replacement: ReplacementBaseInterface | null = null;
 		#config: ReplacementSettings;
+		#reactContainer: HTMLElement;
+		#reactRoot: Root;
 
 		constructor( ...args: unknown[] ) {
 			super( ...args );
 			const settings = this.model.get( 'settings' );
+
+			this.#reactContainer = this.el.ownerDocument.createElement( 'div' );
+			this.#reactContainer.style.display = 'none';
+			this.el.ownerDocument.body.appendChild( this.#reactContainer );
+			this.#reactRoot = createRoot( this.#reactContainer );
 
 			this.#config = {
 				getSetting: settings.get.bind( settings ),
@@ -45,12 +54,19 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
-				refreshView: this.render.bind( this ),
+				refreshView: this.refreshView.bind( this ),
+				reactRoot: this.#reactRoot,
+				reactContainer: this.#reactContainer,
 			};
 		}
 
 		refreshView() {
+			this.invalidateRenderCache?.();
 			this.render();
+		}
+
+		renderOnChange(): void {
+			this.#triggerAltMethod( 'renderOnChange' );
 		}
 
 		render() {
@@ -62,36 +78,43 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( ! this.#replacement?.shouldRenderReplacement() ) {
-				return TemplatedView.prototype.render.apply( this );
-			}
-
-			this.#replacement.render();
+			this.#triggerAltMethod( 'render' );
 		}
 
 		onDestroy() {
-			if ( this.#replacement ) {
-				this.#replacement.onDestroy();
-				this.#replacement = null;
-			}
-
-			TemplatedView.prototype.onDestroy.apply( this );
+			this.#triggerAltMethod( 'onDestroy' );
+			this.#reactRoot.unmount();
+			this.#reactContainer.remove();
 		}
 
 		_afterRender() {
-			if ( this.#replacement ) {
-				this.#replacement._afterRender();
-			}
-
-			TemplatedView.prototype._afterRender.apply( this );
+			this.#triggerAltMethod( '_afterRender' );
 		}
 
 		_beforeRender(): void {
-			if ( this.#replacement ) {
-				this.#replacement._beforeRender();
+			this.#triggerAltMethod( '_beforeRender' );
+		}
+
+		#triggerAltMethod( methodKey: keyof ReplacementBaseInterface ) {
+			const baseMethod = TemplatedView.prototype[ methodKey as TriggerMethod ].bind( this );
+			const shouldReplace = this.#replacement?.shouldRenderReplacement();
+			const altMethod = shouldReplace && this.#replacement?.[ methodKey ]?.bind( this.#replacement );
+
+			if ( ! altMethod || ! shouldReplace ) {
+				return baseMethod();
 			}
 
-			TemplatedView.prototype._beforeRender.apply( this );
+			const renderTiming = this.#replacement?.originalMethodsToTrigger()[ methodKey as TriggerMethod ] ?? 'never';
+
+			if ( renderTiming === 'before' ) {
+				baseMethod();
+			}
+
+			altMethod();
+
+			if ( renderTiming === 'after' ) {
+				baseMethod();
+			}
 		}
 	};
 };
@@ -103,17 +126,19 @@ export const createTemplatedElementTypeWithReplacements = ( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementType => {
 	const legacyWindow = window as unknown as LegacyWindow;
 
+	const view = createViewWithReplacements( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
 		}
 
 		getView() {
-			return createViewWithReplacements( {
-				type,
-				renderer,
-				element,
-			} );
+			return view;
 		}
 	};
 };

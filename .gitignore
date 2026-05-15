@@ -44,6 +44,14 @@ coverage/
 .phpunit.result.cache
 .npmrc
 
+# Code agents
+.cursor/
+!.cursor/rules/
+.claude/
+
+# PHPunit and PHPlint cache files
+*.cache
+
 # playwright
 test-results/
 **/storageState-*.json
@@ -53,3 +61,4 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+docker-output/

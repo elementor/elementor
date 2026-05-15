@@ -8,7 +8,12 @@ export type ClassState = {
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
 
-export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active' | StyleDefinitionAdditionalPseudoState;
+export type StyleDefinitionPseudoState =
+	| 'hover'
+	| 'focus'
+	| 'active'
+	| 'checked'
+	| StyleDefinitionAdditionalPseudoState;
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
@@ -38,6 +43,19 @@ export type StyleDefinition = {
 	variants: StyleDefinitionVariant[];
 	label: string;
 	type: StyleDefinitionType;
+	sync_to_v3?: boolean;
 };
 
 export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefinition >;
+
+export type Variable = {
+	key?: string;
+	label: string;
+	value: string;
+	type: string;
+	deleted?: boolean;
+	deleted_at?: string;
+	sync_to_v3?: boolean;
+};
+
+export type StyleVariables = Record< string, Variable >;

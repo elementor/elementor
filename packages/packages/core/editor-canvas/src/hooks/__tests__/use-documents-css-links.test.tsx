@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { createDOMElement } from 'test-utils';
+import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import { render, renderHook } from '@testing-library/react';
 
-import { getCanvasIframeDocument } from '../../sync/get-canvas-iframe-document';
 import { useDocumentsCssLinks } from '../use-documents-css-links';
 
-jest.mock( '../../sync/get-canvas-iframe-document', () => ( {
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	getCanvasIframeDocument: jest.fn(),
 } ) );
 

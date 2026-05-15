@@ -44,6 +44,12 @@ class Toggle_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	public function set_full_width( bool $full_width ): self {
+		$this->full_width = $full_width;
+
+		return $this;
+	}
+
 	public function set_exclusive( bool $exclusive ): self {
 		$this->exclusive = $exclusive;
 

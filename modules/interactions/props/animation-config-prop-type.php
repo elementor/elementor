@@ -1,0 +1,32 @@
+<?php
+
+namespace Elementor\Modules\Interactions\Props;
+
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\Interactions\Presets;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class Animation_Config_Prop_Type extends Object_Prop_Type {
+	public static function get_key(): string {
+		return 'config-v2';
+	}
+
+	protected function define_shape(): array {
+		return [
+			'replay' => Boolean_Prop_Type::make()->meta( 'pro', true )->description( 'Whether to replay the animation' ),
+			'easing' => String_Prop_Type::make()->meta( 'enum', Presets::easing_options() )->default( Presets::DEFAULT_EASING )->meta( 'pro', Presets::ADDITIONAL_EASING )->description( 'The easing function to use for the animation' ),
+			'relativeTo' => String_Prop_Type::make()->meta( 'pro', true )->description( 'The container scope used by scroll-based interactions' ),
+			'repeat' => String_Prop_Type::make()->meta( 'enum', Presets::REPEAT_OPTIONS )->default( Presets::DEFAULT_REPEAT )->meta( 'pro', true )->description( 'Repeat mode for interactions that can run multiple times' ),
+			'times' => Number_Prop_Type::make()->meta( 'pro', true )->description( 'Total number of times to play when repeat mode is "times"' ),
+			'start' => Size_Prop_Type::make()->units( '%' )->default_unit( '%' )->meta( 'pro', true )->description( 'The start to use for the animation' ),
+			'end' => Size_Prop_Type::make()->units( '%' )->default_unit( '%' )->meta( 'pro', true )->description( 'The end to use for the animation' ),
+		];
+	}
+}

@@ -1,4 +1,4 @@
-import ChevronLeftIcon from '@elementor/icons/ChevronLeftIcon';
+import ChevronRightIcon from '@elementor/icons/ChevronRightIcon';
 import SearchIcon from '@elementor/icons/SearchIcon';
 import EditorIcon from '../icons/editor';
 import PropTypes from 'prop-types';
@@ -21,8 +21,8 @@ const SidebarHeader = ( { siteTitle, onCollapse } ) => {
 					<SearchIcon />
 				</SearchButton>
 			</HeaderContent>
-			<CollapseButton onClick={ onCollapse } size="small">
-				<ChevronLeftIcon />
+			<CollapseButton onClick={ onCollapse } size="small" expanded>
+				<ChevronRightIcon />
 			</CollapseButton>
 		</HeaderContainer>
 	);

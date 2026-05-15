@@ -50,19 +50,25 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 		description: "Retrieve the element's configuration PropValues for a specific element by unique ID.",
 		schema,
 		outputSchema,
-		modelPreferences: {
-			intelligencePriority: 0.6,
-			speedPriority: 0.9,
-		},
 		handler: async ( { elementId } ) => {
 			const element = getContainer( elementId );
 			if ( ! element ) {
 				throw new Error( `Element with ID ${ elementId } not found.` );
 			}
+			const elementType = element.model.get( 'widgetType' ) || element.model.get( 'elType' ) || '';
+			const widgetData = getWidgetsCache()?.[ elementType ];
+			if ( ! widgetData ) {
+				throw new Error(
+					`Unknown element type: ${ elementType }. Check the available-widgets resource for valid types.`
+				);
+			}
+			if ( ! widgetData.atomic_props_schema ) {
+				throw new Error(
+					`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ elementType }`
+				);
+			}
 			const elementRawSettings = element.settings;
-			const propSchema =
-				getWidgetsCache()?.[ element.model.get( 'widgetType' ) || element.model.get( 'elType' ) || '' ]
-					?.atomic_props_schema;
+			const propSchema = getWidgetsCache()?.[ elementType ]?.atomic_props_schema;
 
 			if ( ! elementRawSettings || ! propSchema ) {
 				throw new Error( `No settings or prop schema found for element ID: ${ elementId }` );

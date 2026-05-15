@@ -1,6 +1,6 @@
 # Code of Conduct
 
-<a href="https://elemn.to/gh-to-elementor">![logo](https://user-images.githubusercontent.com/1778512/191041718-728d179e-07cb-4cb4-953a-6c294ee8c4db.png)</a>
+<a href="https://elemn.to/gh-to-elementor"><img src="/.github/assets/elementor-logo--gh-repo.svg" alt="Elementor Website Builder"></a>
 
 **The Elementor GitHub organization and its repositories are collaborative spaces for web creators, developers, enthusiasts, and users to contribute, share ideas, and help shape the future of Elementor in a positive and welcoming way.**
 
@@ -22,7 +22,7 @@ This Code of Conduct outlines expectations for everyone participating in any Ele
 
 To ensure that everyone feels welcome and safe, we ask all participants to follow these guidelines:
 
-### Be Respecful and Kind
+### Be Respectful and Kind
 
 Treat everyone with kindness and consideration. We welcome healthy discussions, but we do not tolerate disrespect, discrimination, or exclusionary behavior.
 

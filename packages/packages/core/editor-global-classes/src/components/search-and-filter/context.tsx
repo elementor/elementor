@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { useDebounceState } from '@elementor/utils';
 
 export type CheckedFilters = {
@@ -34,7 +34,7 @@ const INIT_CHECKED_FILTERS: CheckedFilters = {
 };
 
 export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren ) => {
-	const [ filters, setFilters ] = React.useState< CheckedFilters >( INIT_CHECKED_FILTERS );
+	const [ filters, setFilters ] = useState< CheckedFilters >( INIT_CHECKED_FILTERS );
 
 	const getInitialSearchValue = () => {
 		const storedValue = localStorage.getItem( 'elementor-global-classes-search' );

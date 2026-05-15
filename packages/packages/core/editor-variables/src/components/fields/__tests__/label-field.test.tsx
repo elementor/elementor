@@ -97,6 +97,25 @@ describe( 'LabelField', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
+	it( 'should call onChange with valid value when correcting invalid input (error.value is empty)', () => {
+		// Arrange — simulate state after a client-side error (error.value = '', not the rejected name)
+		const onChange = jest.fn();
+		render(
+			<LabelField
+				value=""
+				onChange={ onChange }
+				error={ { value: '', message: ERROR_MESSAGES.INVALID_CHARACTERS } }
+			/>
+		);
+		const input = screen.getByRole( 'textbox' );
+
+		// Act — user types a valid name after correcting invalid input
+		fireEvent.change( input, { target: { value: 'my-name' } } );
+
+		// Assert — should receive the valid value, not empty string
+		expect( onChange ).toHaveBeenCalledWith( 'my-name' );
+	} );
+
 	it( 'should call onChange with empty value when new value equals error value', () => {
 		// Arrange
 		const { props } = renderLabelField( {
@@ -149,6 +168,67 @@ describe( 'LabelField', () => {
 		// Assert
 		expect( input.selectionStart ).toBe( 0 );
 		expect( input.selectionEnd ).toBe( input.value.length );
+	} );
+
+	it( 'should call onKeyDown when a key is pressed', () => {
+		// Arrange
+		const onKeyDown = jest.fn();
+		renderLabelField( { onKeyDown } );
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.keyDown( input, { key: 'Enter' } );
+
+		// Assert
+		expect( onKeyDown ).toHaveBeenCalledTimes( 1 );
+		expect( onKeyDown ).toHaveBeenCalledWith( expect.objectContaining( { key: 'Enter' } ) );
+	} );
+
+	it( 'should call onKeyDown with correct event when Enter is pressed', () => {
+		// Arrange
+		const onKeyDown = jest.fn();
+		renderLabelField( { onKeyDown } );
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.keyDown( input, { key: 'Enter', code: 'Enter' } );
+
+		// Assert
+		expect( onKeyDown ).toHaveBeenCalledTimes( 1 );
+		const event = onKeyDown.mock.calls[ 0 ][ 0 ];
+		expect( event.key ).toBe( 'Enter' );
+	} );
+
+	it( 'should call onKeyDown for any key press', () => {
+		// Arrange
+		const onKeyDown = jest.fn();
+		renderLabelField( { onKeyDown } );
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.keyDown( input, { key: 'a' } );
+		fireEvent.keyDown( input, { key: 'Escape' } );
+		fireEvent.keyDown( input, { key: 'Tab' } );
+
+		// Assert
+		expect( onKeyDown ).toHaveBeenCalledTimes( 3 );
+		expect( onKeyDown ).toHaveBeenNthCalledWith( 1, expect.objectContaining( { key: 'a' } ) );
+		expect( onKeyDown ).toHaveBeenNthCalledWith( 2, expect.objectContaining( { key: 'Escape' } ) );
+		expect( onKeyDown ).toHaveBeenNthCalledWith( 3, expect.objectContaining( { key: 'Tab' } ) );
+	} );
+
+	it( 'should work normally when onKeyDown is not provided', () => {
+		// Arrange
+		const { props } = renderLabelField();
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.keyDown( input, { key: 'Enter' } );
+		fireEvent.change( input, { target: { value: 'new-value' } } );
+
+		// Assert
+		expect( props.onChange ).toHaveBeenCalledWith( 'new-value' );
+		expect( input ).toHaveValue( 'new-value' );
 	} );
 } );
 

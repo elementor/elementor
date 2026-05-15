@@ -1,15 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor One Menu Visibility', () => {
 	let editorUser: { id: string; username: string; password: string };
 	let contributorUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_editor_one' );
-
 		const context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -42,8 +39,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		}
 
 		await context.close();
-
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
@@ -51,7 +46,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = page.locator( '#toplevel_page_elementor' );
+		const elementorMenu = page.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await page.goto( '/wp-admin/admin.php?page=elementor' );
@@ -59,7 +54,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeVisible();
@@ -75,7 +70,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpAdmin.customLogin( editorUser.username, editorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = editorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = editorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
@@ -90,17 +85,22 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).toBeHidden();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
-		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
+		try {
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		} catch {
+			await templatesButton.click();
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		}
+
+		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).toBeHidden();
 
 		await editorContext.close();
 	} );
@@ -110,10 +110,12 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const contributorPage = await contributorContext.newPage();
 		const wpAdmin = new WpAdminPage( contributorPage, testInfo, apiRequests );
 
+		await contributorPage.pause();
+
 		await wpAdmin.customLogin( contributorUser.username, contributorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
@@ -128,19 +130,23 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).toBeHidden();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
-		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
+		try {
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		} catch {
+			await templatesButton.click();
+			await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
+		}
+
+		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).toBeHidden();
+		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).toBeHidden();
 
 		await contributorContext.close();
 	} );
 } );
-

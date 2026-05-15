@@ -1,58 +1,122 @@
-import { elementSelectorHandlers } from './handlers-registry';
-import { onElementDestroy, onElementRender, onElementSelectorRender } from './lifecycle-events';
+import { onElementDestroy, onElementRender } from './lifecycle-events';
+
+const ATOMIC_SELECTOR = '[data-e-type]';
+
+let domMutationObserverStarted = false;
+const pendingMutationNodes = new Set< Node >();
+let pendingMutationsRafId = 0;
 
 export function init() {
 	window.addEventListener( 'elementor/element/render', ( _event ) => {
 		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
 		const { id, type, element } = event.detail;
 
-		// Ensure the "destroy" event was not triggered before the render event.
-		onElementDestroy( { elementType: type, elementId: id } );
-
 		onElementRender( { element, elementType: type, elementId: id } );
 	} );
 
 	window.addEventListener( 'elementor/element/destroy', ( _event ) => {
-		const event = _event as CustomEvent< { id: string; type: string } >;
-		const { id, type } = event.detail;
+		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
+		const { id, type, element } = event.detail;
 
-		onElementDestroy( { elementType: type, elementId: id } );
+		onElementDestroy( { elementType: type, elementId: id, element } );
 	} );
 
-	document.addEventListener( 'DOMContentLoaded', () => {
-		const controller = new AbortController();
+	const bootDomHandlers = () => {
+		scanDocumentForAtomicElements();
+		startObservingDomForNewAtomicElements();
+	};
 
-		document.querySelectorAll( '[data-e-type]' ).forEach( ( element ) => {
-			const el = element as HTMLElement;
+	document.addEventListener( 'DOMContentLoaded', bootDomHandlers );
 
-			const { eType, id } = el.dataset;
+	if ( 'loading' !== document.readyState ) {
+		bootDomHandlers();
+	}
+}
 
-			if ( ! eType || ! id ) {
-				return;
+function triggerAtomicRender( atom: HTMLElement ) {
+	const eType = atom.dataset.eType;
+	const id = atom.dataset.id;
+
+	if ( ! eType || ! id ) {
+		return;
+	}
+
+	onElementRender( { element: atom, elementType: eType, elementId: id } );
+}
+
+function collectAtomicElementsInSubtree( root: Element ): HTMLElement[] {
+	const found: HTMLElement[] = [];
+
+	if ( root.matches( ATOMIC_SELECTOR ) ) {
+		found.push( root as HTMLElement );
+	}
+
+	root.querySelectorAll( ATOMIC_SELECTOR ).forEach( ( el ) => {
+		found.push( el as HTMLElement );
+	} );
+
+	return found;
+}
+
+function scanDocumentForAtomicElements() {
+	document.querySelectorAll( ATOMIC_SELECTOR ).forEach( ( el ) => {
+		const atom = el as HTMLElement;
+		const { eType, id } = atom.dataset;
+
+		if ( ! eType || ! id ) {
+			return;
+		}
+
+		triggerAtomicRender( atom );
+	} );
+}
+
+function startObservingDomForNewAtomicElements() {
+	if ( domMutationObserverStarted || 'undefined' === typeof MutationObserver ) {
+		return;
+	}
+
+	domMutationObserverStarted = true;
+
+	const observer = new MutationObserver( ( mutations ) => {
+		for ( const mutation of mutations ) {
+			mutation.addedNodes.forEach( ( node ) => {
+				pendingMutationNodes.add( node );
+			} );
+		}
+
+		queueProcessPendingMutationNodes();
+	} );
+
+	observer.observe( document.documentElement, {
+		childList: true,
+		subtree: true,
+	} );
+}
+
+function queueProcessPendingMutationNodes() {
+	if ( pendingMutationsRafId || ! pendingMutationNodes.size ) {
+		return;
+	}
+
+	pendingMutationsRafId = requestAnimationFrame( () => {
+		pendingMutationsRafId = 0;
+
+		const roots = Array.from( pendingMutationNodes );
+		pendingMutationNodes.clear();
+
+		const atoms = new Set< HTMLElement >();
+
+		for ( const node of roots ) {
+			if ( Node.ELEMENT_NODE !== node.nodeType ) {
+				continue;
 			}
 
-			window.dispatchEvent(
-				new CustomEvent( 'elementor/element/render', {
-					detail: {
-						id,
-						type: eType,
-						element,
-					},
-				} )
-			);
-		} );
-
-		Array.from( elementSelectorHandlers.keys() ).forEach( ( selector ) => {
-			Array.from( document.querySelectorAll( selector ) ).forEach( ( element ) => {
-				const el = element as HTMLElement;
-				const elementId = el?.closest( '[data-id]' )?.getAttribute( 'data-id' ) ?? '';
-
-				onElementSelectorRender( {
-					element,
-					controller,
-					elementId,
-				} );
+			collectAtomicElementsInSubtree( node as Element ).forEach( ( atom ) => {
+				atoms.add( atom );
 			} );
-		} );
+		}
+
+		atoms.forEach( ( atom ) => triggerAtomicRender( atom ) );
 	} );
 }

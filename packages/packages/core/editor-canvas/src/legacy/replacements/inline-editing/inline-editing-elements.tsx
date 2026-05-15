@@ -1,24 +1,31 @@
 import * as React from 'react';
-import { createRoot, type Root } from 'react-dom/client';
-import { InlineEditor } from '@elementor/editor-controls';
-import { getElementType } from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
-	htmlPropTypeUtil,
+	htmlV3PropTypeUtil,
+	parseHtmlChildren,
+	type PropType,
+	type PropValue,
 	stringPropTypeUtil,
-	type StringPropValue,
-	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { ThemeProvider } from '@elementor/ui';
+import { __privateRunCommandSync as runCommandSync, getCurrentEditMode, undoable } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
 
-import ReplacementBase from '../base';
-import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
+import { ReplacementBase, TRIGGER_TIMING } from '../base';
+import { CanvasInlineEditor } from './canvas-inline-editor';
+import { isInlineEditingAllowed } from './inline-editing-eligibility';
+import { INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
-const EXPERIMENT_KEY = 'v4-inline-text-editing';
+type TagPropType = PropType< 'tag' > & {
+	settings?: {
+		enum?: string[];
+	};
+};
+
+const HISTORY_DEBOUNCE_WAIT = 800;
 
 export default class InlineEditingReplacement extends ReplacementBase {
-	private inlineEditorRoot: Root | null = null;
 	private handlerAttached = false;
+	private editing = false;
 
 	getReplacementKey() {
 		return 'inline-editing';
@@ -29,46 +36,62 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	isEditingModeActive() {
-		return !! this.inlineEditorRoot;
+		return this.editing;
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && this.isEditingModeActive() && ! this.isValueDynamic();
+		return this.isInlineEditingEligible() && getCurrentEditMode() === 'edit';
 	}
 
-	handleRenderInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-
-		if ( ! this.isValueDynamic() ) {
-			this.renderInlineEditor();
+	handleRenderInlineEditor = () => {
+		if ( this.isEditingModeActive() || ! this.isInlineEditingEligible() ) {
+			return;
 		}
+
+		this.renderInlineEditor();
 	};
 
-	handleUnmountInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-		this.unmountInlineEditor();
-	};
+	renderOnChange() {
+		if ( this.isEditingModeActive() ) {
+			return;
+		}
+
+		this.refreshView();
+	}
 
 	onDestroy() {
 		this.resetInlineEditorRoot();
 	}
 
-	_beforeRender(): void {
+	_beforeRender() {
 		this.resetInlineEditorRoot();
 	}
 
 	_afterRender() {
-		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor );
+		if ( this.isInlineEditingEligible() && ! this.handlerAttached ) {
+			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
 	}
 
+	originalMethodsToTrigger() {
+		const before = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.before;
+		const after = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.after;
+
+		return {
+			_beforeRender: before,
+			_afterRender: after,
+			renderOnChange: after,
+			onDestroy: TRIGGER_TIMING.after,
+			render: before,
+		};
+	}
+
 	resetInlineEditorRoot() {
-		this.element.removeEventListener( 'dblclick', this.handleRenderInlineEditor );
+		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
-		this.inlineEditorRoot?.unmount?.();
-		this.inlineEditorRoot = null;
+		this.reactRoot.render( null );
+		this.editing = false;
 	}
 
 	unmountInlineEditor() {
@@ -76,86 +99,169 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		this.refreshView();
 	}
 
-	isValueDynamic() {
+	isInlineEditingEligible() {
 		const settingKey = this.getInlineEditablePropertyName();
-		const propValue = this.getSetting( settingKey ) as TransformablePropValue< string >;
+		const rawValue = this.getSetting( settingKey );
 
-		return propValue?.$$type === 'dynamic';
+		return isInlineEditingAllowed( { rawValue, propTypeFromSchema: this.getInlineEditablePropType() } );
 	}
 
 	getInlineEditablePropertyName(): string {
 		return INLINE_EDITING_PROPERTY_PER_TYPE[ this.type ] ?? '';
 	}
 
-	getHtmlPropType() {
+	getInlineEditablePropType() {
 		const propSchema = getElementType( this.type )?.propsSchema;
 		const propertyName = this.getInlineEditablePropertyName();
 
 		return propSchema?.[ propertyName ] ?? null;
 	}
 
-	getContentValue() {
-		const prop = this.getHtmlPropType();
-		const defaultValue = ( prop?.default as StringPropValue | null )?.value ?? '';
+	getInlineEditablePropValue() {
+		const prop = this.getInlineEditablePropType();
 		const settingKey = this.getInlineEditablePropertyName();
 
-		return (
-			htmlPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
-			htmlPropTypeUtil.extract( prop?.default ?? null ) ??
-			defaultValue ??
-			''
-		);
+		return this.getSetting( settingKey ) ?? prop?.default ?? null;
+	}
+
+	getExtractedContentValue() {
+		const propValue = this.getInlineEditablePropValue();
+		const extracted = htmlV3PropTypeUtil.extract( propValue );
+
+		return stringPropTypeUtil.extract( extracted?.content ?? null ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
-		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
+		const html = value || '';
+		const parsed = parseHtmlChildren( html );
 
-		this.setSetting( settingKey, valueToSave );
+		const valueToSave = htmlV3PropTypeUtil.create( {
+			content: parsed.content ? stringPropTypeUtil.create( parsed.content ) : null,
+			children: parsed.children,
+		} );
+
+		undoable(
+			{
+				do: () => {
+					const prevValue = this.getInlineEditablePropValue();
+
+					this.runCommand( settingKey, valueToSave );
+
+					return prevValue;
+				},
+				undo: ( _, prevValue ) => {
+					this.runCommand( settingKey, prevValue ?? null );
+				},
+			},
+			{
+				title: getElementLabel( this.id ),
+				// translators: %s is the name of the property that was edited.
+				subtitle: __( '%s edited', 'elementor' ).replace(
+					'%s',
+					this.getInlineEditablePropTypeKey() ?? 'Inline editing'
+				),
+				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
+			}
+		)();
+	}
+
+	getInlineEditablePropTypeKey() {
+		const propType = this.getInlineEditablePropType();
+
+		if ( ! propType ) {
+			return null;
+		}
+
+		if ( propType.kind === 'union' ) {
+			const textKeys = [ htmlV3PropTypeUtil.key, stringPropTypeUtil.key ];
+
+			for ( const key of textKeys ) {
+				if ( propType.prop_types[ key ] ) {
+					return key;
+				}
+			}
+
+			return null;
+		}
+
+		if ( 'key' in propType && typeof propType.key === 'string' ) {
+			return propType.key;
+		}
+
+		return null;
+	}
+
+	runCommand( key: string, value: PropValue | null ) {
+		runCommandSync(
+			'document/elements/set-settings',
+			{
+				container: getContainer( this.id ),
+				settings: {
+					[ key ]: value,
+				},
+			},
+			{ internal: true }
+		);
+		runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 	}
 
 	getExpectedTag() {
+		const tagPropType = this.getTagPropType();
+		const tagSettingKey = 'tag';
+
+		return (
+			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( tagPropType?.default ?? null ) ??
+			null
+		);
+	}
+
+	getTagPropType() {
 		const propsSchema = getElementType( this.type )?.propsSchema;
 
 		if ( ! propsSchema?.tag ) {
 			return null;
 		}
 
-		const tagSettingKey = 'tag';
+		const tagPropType = ( propsSchema.tag as TagPropType ) ?? null;
 
-		return (
-			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( propsSchema.tag.default ?? null ) ??
-			null
-		);
+		if ( tagPropType.kind === 'union' ) {
+			return ( tagPropType.prop_types.string as TagPropType ) ?? null;
+		}
+
+		return tagPropType;
 	}
 
 	renderInlineEditor() {
-		const propValue = this.getContentValue();
-		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
-		const expectedTag = this.getExpectedTag();
-
-		this.element.innerHTML = '';
-
-		if ( this.inlineEditorRoot ) {
+		if ( this.isEditingModeActive() ) {
 			this.resetInlineEditorRoot();
 		}
 
-		this.inlineEditorRoot = createRoot( this.element );
+		const contentElement = this.element.children?.[ 0 ] as HTMLElement | undefined;
 
-		this.inlineEditorRoot.render(
-			<ThemeProvider>
-				<InlineEditor
-					attributes={ { class: classes } }
-					value={ propValue }
-					setValue={ this.setContentValue.bind( this ) }
-					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
-					autofocus
-					showToolbar
-					getInitialPopoverPosition={ getInitialPopoverPosition }
-					expectedTag={ expectedTag }
-				/>
-			</ThemeProvider>
+		if ( ! contentElement ) {
+			return;
+		}
+
+		const elementClasses = contentElement.classList.toString();
+		const propValue = this.getExtractedContentValue();
+		const expectedTag = this.getExpectedTag();
+
+		contentElement.innerHTML = '';
+		this.editing = true;
+
+		this.reactRoot.render(
+			<CanvasInlineEditor
+				elementClasses={ elementClasses }
+				initialValue={ propValue }
+				expectedTag={ expectedTag }
+				rootElement={ this.element }
+				contentElement={ contentElement }
+				id={ this.id }
+				setValue={ this.setContentValue.bind( this ) }
+				requestDestroy={ this.unmountInlineEditor.bind( this ) }
+			/>
 		);
 	}
 }

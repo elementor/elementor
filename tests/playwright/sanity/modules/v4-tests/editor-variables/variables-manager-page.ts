@@ -21,7 +21,7 @@ export default class VariablesManagerPage {
 		const control = await this.getControl( styleSectionSelector, controlToAccessFrom );
 		const controlBoundingBox = await control.boundingBox();
 		await this.page.mouse.move( controlBoundingBox.x + ( controlBoundingBox.width / 2 ), controlBoundingBox.y + ( controlBoundingBox.height / 2 ) );
-		await this.page.click( EditorSelectors.floatingElements.v4.floatingActionsBar );
+		await this.page.locator( EditorSelectors.floatingElements.v4.floatingActionsBar ).getByLabel( 'Variables' ).click();
 		return control;
 	}
 
@@ -96,16 +96,9 @@ export default class VariablesManagerPage {
 	}
 
 	private async saveVariablesManager( shouldSave: boolean ) {
-		const saveButton = this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } );
-		const isSaveVisible = await saveButton.isVisible( { timeout: 1000 } ).catch( () => false );
-
-		if ( ! isSaveVisible ) {
-			return;
-		}
-
-		const isSaveEnabled = await saveButton.isEnabled();
+		const isSaveEnabled = await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).isEnabled();
 		if ( shouldSave || isSaveEnabled ) {
-			await saveButton.click();
+			await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
 			await this.page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
 		}
 	}

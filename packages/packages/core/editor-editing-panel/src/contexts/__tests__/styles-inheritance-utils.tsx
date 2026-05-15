@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockBreakpointsTree, createMockStylesProvider } from 'test-utils';
-import { type Element, type ElementType, useElementSetting } from '@elementor/editor-elements';
+import { type Element, type ElementType } from '@elementor/editor-elements';
 import { getBreakpointsTree } from '@elementor/editor-responsive';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_PROVIDER_KEY_PREFIX, stylesRepository } from '@elementor/editor-styles-repository';
@@ -32,29 +32,36 @@ export const initStyleInheritanceMocks = ( id: string ) => {
 	} );
 };
 
-export const getInheritanceChainForPath = ( element: Element, elementType: ElementType, path: string[] ) =>
+export const getInheritanceChainForPath = (
+	element: Element,
+	elementType: ElementType,
+	path: string[],
+	settings = {}
+) =>
 	renderHook( () => useStylesInheritanceChain( path ), {
 		wrapper: ( { children } ) => (
-			<ElementProvider element={ element } elementType={ elementType }>
+			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
 				<StyleInheritanceProvider>{ children }</StyleInheritanceProvider>
 			</ElementProvider>
 		),
 	} );
 
-export const getInheritanceSnapshot = ( element: Element, elementType: ElementType ) =>
+export const getInheritanceSnapshot = ( element: Element, elementType: ElementType, settings = {} ) =>
 	renderHook( () => useStylesInheritanceSnapshot(), {
 		wrapper: ( { children } ) => (
-			<ElementProvider element={ element } elementType={ elementType }>
+			<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
 				<StyleInheritanceProvider>{ children }</StyleInheritanceProvider>
 			</ElementProvider>
 		),
 	} );
 
 export const mockElementStyles = ( styles: StyleDefinition[] ) => {
-	jest.mocked( useElementSetting ).mockReturnValue( {
-		$$type: 'classes',
-		value: styles.map( ( { id } ) => id ),
-	} );
-
 	jest.mocked( stylesRepository.all ).mockReturnValue( styles );
+
+	return {
+		classes: {
+			$$type: 'classes',
+			value: styles.map( ( { id } ) => id ),
+		},
+	};
 };

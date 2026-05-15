@@ -51,10 +51,9 @@ test( 'block adding from panel an inner section inside an inner section', async 
 
 async function addWidgetByClick( editor: EditorPage, widgetType: string ) {
 	const title = widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 );
-	const elementsPanelItem = `.elementor-panel-category-items :text-is('${ title }')`;
 
 	await editor.openElementsPanel();
-	await editor.page.locator( elementsPanelItem ).click();
+	await editor.page.locator( '.elementor-panel-category-items' ).getByRole( 'button', { name: title, exact: true } ).click();
 
 	return editor.getPreviewFrame().locator( `.elementor-widget-${ widgetType }` ).getAttribute( 'data-id' );
 }

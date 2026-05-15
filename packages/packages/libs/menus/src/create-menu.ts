@@ -1,4 +1,5 @@
 import { createLocation } from '@elementor/locations';
+import { capitalize } from '@elementor/utils';
 
 import { createRegisterItem, type RegisterItem } from './create-register-item';
 import { createUseMenuItems, type UseMenuItems } from './create-use-menu-items';
@@ -8,6 +9,23 @@ export type Menu< TComponents extends Components, TGroups extends string > = {
 	useMenuItems: UseMenuItems< TGroups >;
 } & RegisterFns< TGroups, TComponents >;
 
+type Subscription = {
+	subscribe: ( listener: () => void ) => () => void;
+	notify: () => void;
+};
+
+function createSubscription(): Subscription {
+	const listeners = new Set< () => void >();
+
+	return {
+		subscribe: ( listener ) => {
+			listeners.add( listener );
+			return () => listeners.delete( listener );
+		},
+		notify: () => listeners.forEach( ( listener ) => listener() ),
+	};
+}
+
 export function createMenu< TComponents extends Components, TGroups extends string = 'default' >( {
 	groups = [],
 	components,
@@ -16,9 +34,10 @@ export function createMenu< TComponents extends Components, TGroups extends stri
 	components: TComponents;
 } ): Menu< TComponents, TGroups > {
 	const locations = createLocations< MenuGroups< TGroups > >( [ ...groups, 'default' ] );
+	const { subscribe, notify } = createSubscription();
 
-	const registerFns = createRegisterFns( locations, components );
-	const useMenuItems = createUseMenuItems( locations );
+	const registerFns = createRegisterFns( locations, components, notify );
+	const useMenuItems = createUseMenuItems( locations, subscribe );
 
 	return {
 		useMenuItems,
@@ -40,7 +59,8 @@ type RegisterFns< TGroups extends string, TComponents extends Components > = {
 
 function createRegisterFns< TGroups extends string, TComponents extends Components >(
 	locations: LocationsMap< MenuGroups< TGroups > >,
-	components: TComponents
+	components: TComponents,
+	notify: () => void
 ) {
 	return Object.entries( components ).reduce(
 		( acc, [ key, component ] ) => {
@@ -48,13 +68,9 @@ function createRegisterFns< TGroups extends string, TComponents extends Componen
 
 			return {
 				...acc,
-				[ name ]: createRegisterItem( locations, component ),
+				[ name ]: createRegisterItem( locations, component, notify ),
 			};
 		},
 		{} as RegisterFns< TGroups, TComponents >
 	);
-}
-
-function capitalize( str: string ) {
-	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }

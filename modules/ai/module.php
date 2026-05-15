@@ -1112,6 +1112,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_upload_image( $data ) {
+		$this->verify_upload_permissions( $data );
+
 		if ( empty( $data['image'] ) ) {
 			throw new \Exception( 'Missing image data' );
 		}

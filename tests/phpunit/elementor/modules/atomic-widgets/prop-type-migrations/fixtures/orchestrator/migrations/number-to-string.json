@@ -1,0 +1,34 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "string"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value",
+        "value": "$$current"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "number"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value",
+        "value": "$$current"
+      }
+    }
+  ]
+}

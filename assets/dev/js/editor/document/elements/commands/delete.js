@@ -35,6 +35,17 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			if ( ! container?.view || container.view.isDestroyed ) {
+				container = $e.components.get( 'document' ).utils.findContainerById( container.id ) ?? container;
+			}
+
+			if ( ! container?.view || container.view.isDestroyed ) {
+				if ( container?.parent ) {
+					$e.components.get( 'document' ).utils.removeModelFromParent( container.parent.id, container.id );
+				}
+				return;
+			}
+
 			if ( this.isHistoryActive() && this.history ) {
 				$e.internal( 'document/history/log-sub-item', {
 					container,
@@ -48,6 +59,7 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 				} );
 			}
 
+			this.dispatchDeleteEvent( container, args.callerName );
 			this.deselectRecursive( container.model.get( 'id' ) );
 
 			container.model.destroy();
@@ -59,6 +71,41 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return containers;
+	}
+
+	dispatchDeleteEvent( container, callerName ) {
+		try {
+			if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
+				return;
+			}
+
+			const elType = container.model.get( 'elType' ) ?? '';
+			const widgetType = container.model.get( 'widgetType' ) ?? '';
+			const widgetName = 'widget' === elType ? widgetType : elType;
+			const parentWidgetType = container.parent?.model?.get( 'widgetType' ) ?? '';
+			const parentType = parentWidgetType || container.parent?.type || '';
+
+			const eventData = {
+				app_type: 'editor',
+				window_name: 'editor',
+				interaction_type: 'click',
+				target_type: elType,
+				target_name: 'delete',
+				interaction_result: `${ elType }_deleted`,
+				target_location: 'canvas',
+				location_l1: parentType,
+				location_l2: widgetName,
+				interaction_description: `user_deleted_${ widgetName }_from_canvas`,
+			};
+
+			if ( callerName ) {
+				eventData.trigger = callerName;
+			}
+
+			elementorCommon.eventsManager.dispatchEvent( 'delete_element', eventData );
+		} catch {
+			// Silently fail — analytics should never break production functionality.
+		}
 	}
 
 	deselectRecursive( id ) {

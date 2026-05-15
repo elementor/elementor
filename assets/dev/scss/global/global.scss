@@ -45,14 +45,11 @@ body.rtl {
 
 // Elementor icon logo wrapper
 .e-logo-wrapper {
-	background: var(--e-a-bg-logo);
 	display: inline-block;
-	padding: 0.75em;
-	border-radius: 50%;
 	line-height: 1;
 
 	i {
-		color: var(--e-a-color-logo);
-		font-size: 1em;
+		color: var(--e-a-color-circle-logo);
+		font-size: 2.5em;
 	}
 }

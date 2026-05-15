@@ -226,6 +226,20 @@ class Test_Document extends Elementor_Test_Base {
 		wp_set_current_user( $before_user->ID );
 	}
 
+	public function test_get_autosave__creates_autosave_when_not_exists() {
+		// Arrange.
+		$this->act_as_admin();
+		$post = $this->factory()->create_and_get_default_post();
+		$document = Plugin::$instance->documents->get( $post->ID );
+
+		// Act.
+		$autosave = $document->get_autosave( get_current_user_id(), true );
+
+		// Assert.
+		$this->assertInstanceOf( \Elementor\Core\Base\Document::class, $autosave );
+		$this->assertNotEquals( $document->get_id(), $autosave->get_id() );
+	}
+
 	public function tearDown(): void {
 		parent::tearDown();
 

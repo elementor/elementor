@@ -1,17 +1,20 @@
 import * as React from 'react';
-import { ControlActionsProvider, ControlReplacementsProvider } from '@elementor/editor-controls';
-import { useSelectedElement } from '@elementor/editor-elements';
+import {
+	ControlActionsProvider,
+	ControlReplacementsProvider,
+	getControlReplacements,
+} from '@elementor/editor-controls';
+import { useSelectedElementSettings } from '@elementor/editor-elements';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { AtomIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
+import { controlActionsMenu } from '@elementor/menus';
 import { SessionStorageProvider } from '@elementor/session';
 import { ErrorBoundary } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider } from '../contexts/element-context';
-import { getControlReplacements } from '../control-replacement';
-import { controlActionsMenu } from '../controls-actions';
 import { getEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { EditorPanelErrorFallback } from './editing-panel-error-fallback';
 import { EditingPanelTabs } from './editing-panel-tabs';
@@ -21,7 +24,7 @@ export const { Slot: PanelHeaderTopSlot, inject: injectIntoPanelHeaderTop } = cr
 const { useMenuItems } = controlActionsMenu;
 
 export const EditingPanel = () => {
-	const { element, elementType } = useSelectedElement();
+	const { element, elementType, settings } = useSelectedElementSettings();
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;
 
@@ -56,7 +59,7 @@ export const EditingPanel = () => {
 				<ThemeProvider>
 					<ControlActionsProvider items={ menuItems }>
 						<ControlReplacementsProvider replacements={ controlReplacements }>
-							<ElementProvider element={ element } elementType={ elementType }>
+							<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
 								<Panel>
 									<PanelHeaderTopSlot />
 									{ panelContent }

@@ -1,6 +1,6 @@
 type Settings = Record< string, unknown >;
 
-type ChildRenderCallback = () => void;
+type ChildRenderCallback = ( event: Event ) => void;
 
 interface ListenToChildrenAPI {
 	render: ( callback: ChildRenderCallback ) => void;
@@ -36,6 +36,11 @@ export const register = ( { elementType, id, callback }: { elementType: string; 
 		elementTypeHandlers.get( elementType )?.set( id, callback );
 	}
 };
+
+Object.defineProperty( window, 'registerElementorElement', {
+	value: register,
+	enumerable: true,
+} );
 
 export const unregister = ( { elementType, id }: { elementType: string; id?: string } ) => {
 	if ( ! elementTypeHandlers.has( elementType ) ) {
@@ -77,12 +82,12 @@ export const unregisterBySelector = ( { selector, id }: { selector: string; id?:
 	}
 
 	if ( id ) {
-		elementTypeHandlers.get( selector )?.delete( id );
+		elementSelectorHandlers.get( selector )?.delete( id );
 
-		if ( elementTypeHandlers.get( selector )?.size === 0 ) {
-			elementTypeHandlers.delete( selector );
+		if ( elementSelectorHandlers.get( selector )?.size === 0 ) {
+			elementSelectorHandlers.delete( selector );
 		}
 	} else {
-		elementTypeHandlers.delete( selector );
+		elementSelectorHandlers.delete( selector );
 	}
 };

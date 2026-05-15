@@ -1,24 +1,12 @@
-const ELEMENT_ID = 'test-element-123';
-const BASE_ATTRIBUTES = {
-	'data-id': 'abc-123',
-	'data-element_type': 'e-div-block',
-	'data-model-cid': 'c456',
-};
-const INITIAL_ATTRIBUTES = {
-	'data-special-flag': 'true',
-};
-const CSS_ID_VALUE = 'custom-id';
-const HREF_VALUE = '/test-link';
-
-describe( 'createAtomicElementBaseView - renderOnChange', () => {
+describe( 'createAtomicElementBaseView - components Pro gating', () => {
 	let AtomicElementView;
 	let viewInstance;
 	let mockModel;
-	let mockElement;
-	let mockJQueryElement;
-	let BaseElementView;
+	let dispatchEventSpy;
 
 	beforeAll( async () => {
+		jest.resetModules();
+
 		global.Marionette = {
 			ItemView: class {},
 			CompositeView: {
@@ -31,29 +19,18 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 			},
 		};
 
-		global.jQuery = jest.fn( ( selector ) => {
-			if ( '<div>' === selector ) {
-				return {
-					class: '',
-					'data-side': '',
-				};
-			}
-			return mockJQueryElement;
-		} );
+		global.jQuery = jest.fn( () => ( {
+			children: jest.fn( () => ( { append: jest.fn() } ) ),
+		} ) );
 
 		global.elementorCommon = {
 			config: {
 				isRTL: false,
+				experimentalFeatures: { e_components: true },
 			},
 		};
 
-		BaseElementView = class {
-			constructor() {
-				this.model = mockModel;
-				this.el = mockElement;
-				this.$el = mockJQueryElement;
-			}
-
+		const BaseElementView = class {
 			static extend( props ) {
 				const Extended = class extends this {};
 				Object.assign( Extended.prototype, props );
@@ -61,26 +38,36 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 			}
 		};
 
-		BaseElementView.prototype.attributes = jest.fn( () => ( { ...BASE_ATTRIBUTES } ) );
-		BaseElementView.prototype.className = jest.fn( () => 'base-element-class' );
+		BaseElementView.prototype.attributes = jest.fn( () => ( {} ) );
+		BaseElementView.prototype.className = jest.fn( () => '' );
 		BaseElementView.prototype.renderOnChange = jest.fn();
 		BaseElementView.prototype.behaviors = jest.fn( () => ( {} ) );
 		BaseElementView.prototype.ui = jest.fn( () => ( {} ) );
+		BaseElementView.prototype.getContextMenuGroups = jest.fn( () => [
+			{ name: 'general', actions: [] },
+			{ name: 'clipboard', actions: [] },
+		] );
+
+		global._ = {
+			extend: Object.assign,
+			findWhere: ( arr, props ) => arr.find(
+				( item ) => Object.keys( props ).every( ( key ) => item[ key ] === props[ key ] ),
+			),
+		};
 
 		global.elementor = {
 			modules: {
 				elements: {
-					views: {
-						BaseElement: BaseElementView,
-					},
+					views: { BaseElement: BaseElementView },
 				},
 			},
 			config: {
 				elements: {},
+				user: { is_administrator: true },
 			},
-			helpers: {
-				getAtomicWidgetBaseStyles: jest.fn( () => ( {} ) ),
-			},
+			helpers: { getAtomicWidgetBaseStyles: jest.fn( () => ( {} ) ) },
+			$preview: [ { getBoundingClientRect: () => ( { left: 0, top: 0 } ) } ],
+			getContainer: jest.fn( () => ( { model: { toJSON: () => ( {} ) } } ) ),
 		};
 
 		const createAtomicElementBaseView = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/create-atomic-element-base-view' ) ).default;
@@ -88,105 +75,21 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 	} );
 
 	beforeEach( () => {
-		const mockAttributes = {
-			'data-id': BASE_ATTRIBUTES[ 'data-id' ],
-			'data-element_type': BASE_ATTRIBUTES[ 'data-element_type' ],
-			'data-model-cid': BASE_ATTRIBUTES[ 'data-model-cid' ],
-			'data-special-flag': INITIAL_ATTRIBUTES[ 'data-special-flag' ],
-			'data-interaction-id': ELEMENT_ID,
-			class: 'e-con e-atomic-element base-element-class',
-			id: CSS_ID_VALUE,
-			href: HREF_VALUE,
-		};
-
-		mockElement = {
-			tagName: 'DIV',
-			attributes: Object.keys( mockAttributes ).map( ( name ) => ( { name, value: mockAttributes[ name ] } ) ),
-			getBoundingClientRect: jest.fn( () => ( { width: 100 } ) ),
-		};
-
-		const removedAttrs = [];
-
-		mockJQueryElement = {
-			0: mockElement,
-			removeAttr: jest.fn( ( attrName ) => {
-				removedAttrs.push( attrName );
-				mockElement.attributes = mockElement.attributes.filter( ( attr ) => attr.name !== attrName );
-			} ),
-			attr: jest.fn( ( key, value ) => {
-				if ( value !== undefined ) {
-					const existingAttr = mockElement.attributes.find( ( attr ) => attr.name === key );
-					if ( existingAttr ) {
-						existingAttr.value = value;
-					} else {
-						mockElement.attributes.push( { name: key, value } );
-					}
-				}
-			} ),
-			addClass: jest.fn(),
-			find: jest.fn( () => ( { length: 0 } ) ),
-			children: jest.fn( () => ( {
-				append: jest.fn(),
-			} ) ),
-			parent: jest.fn( () => ( {
-				width: jest.fn( () => 1000 ),
-			} ) ),
-		};
-
 		mockModel = {
-			get: jest.fn( ( key ) => {
-				if ( 'id' === key ) {
-					return ELEMENT_ID;
-				}
-				return undefined;
-			} ),
-			getSetting: jest.fn( ( key ) => {
-				if ( 'attributes' === key ) {
-					return {
-						value: [
-							{
-								value: {
-									key: { value: 'data-custom' },
-									value: { value: 'my-value' },
-								},
-							},
-						],
-					};
-				}
-				if ( '_cssid' === key ) {
-					return { value: CSS_ID_VALUE };
-				}
-				if ( 'link' === key ) {
-					return {
-						value: {
-							destination: {
-								$$type: 'string',
-								value: HREF_VALUE,
-							},
-						},
-					};
-				}
-				if ( 'classes' === key ) {
-					return { value: [] };
-				}
-				return undefined;
-			} ),
-			config: {
-				initial_attributes: { ...INITIAL_ATTRIBUTES },
-			},
+			get: jest.fn( () => undefined ),
+			id: 'test-element',
 		};
 
 		viewInstance = new AtomicElementView();
 		viewInstance.model = mockModel;
-		viewInstance.el = mockElement;
-		viewInstance.$el = mockJQueryElement;
-		viewInstance._parent = null;
-		viewInstance.container = {
-			parent: { id: 'document' },
-		};
-		viewInstance.options = { model: mockModel };
+		viewInstance.getContainer = jest.fn( () => ( { isLocked: () => false } ) );
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => {} );
 
 		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy?.mockRestore();
 	} );
 
 	afterAll( () => {
@@ -194,133 +97,170 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 		delete global.jQuery;
 		delete global.elementorCommon;
 		delete global.elementor;
+		delete global._;
+		if ( global.window ) {
+			delete global.window.elementorV2;
+		}
 	} );
 
-	it( 'should preserve all attributes when custom attributes change', () => {
+	const setProState = ( { isActive, hasInstalled = false, isAtLeast = false } = {} ) => {
+		global.window = global.window || {};
+		global.window.elementorV2 = {
+			...( global.window.elementorV2 || {} ),
+			utils: {
+				isProActive: jest.fn( () => isActive ),
+				hasProInstalled: jest.fn( () => hasInstalled ),
+				isProAtLeast: jest.fn( () => isAtLeast ),
+			},
+		};
+	};
+
+	const findCreateAction = ( groups ) => {
+		const saveGroup = groups.find( ( g ) => 'save' === g.name );
+		return saveGroup?.actions?.find( ( a ) => 'save-component' === a.name );
+	};
+
+	it( 'should show new badge and enable create-component when Pro is active', () => {
 		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
+		setProState( { isActive: true, hasInstalled: true, isAtLeast: true } );
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeDefined();
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.shortcut ).toContain( 'New' );
+		expect( action.isEnabled() ).toBe( true );
+	} );
+
+	it( 'should show promotion crown badge and disable create-component when Pro is not installed', () => {
+		// Arrange
+		setProState( { isActive: false } );
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeDefined();
+		expect( action.shortcut ).toContain( 'eicon-upgrade-crown' );
+		expect( action.shortcut ).toContain( 'go-pro-components-Instance-create-context-menu' );
+		expect( action.isEnabled() ).toBe( false );
+	} );
+
+	it( 'should default to active when elementorV2 is not available', () => {
+		// Arrange
+		delete global.window.elementorV2;
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeDefined();
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.isEnabled() ).toBe( true );
+	} );
+
+	it( 'should not add create-component when user is not administrator', () => {
+		// Arrange
+		setProState( { isActive: true, hasInstalled: true, isAtLeast: true } );
+		global.elementor.config.user.is_administrator = false;
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeUndefined();
+
+		// Cleanup
+		global.elementor.config.user.is_administrator = true;
+	} );
+
+	it( 'should block saveAsComponent when Pro is not active', () => {
+		// Arrange
+		global.window.elementorV2 = {
+			utils: {
+				isProActive: () => false,
+				hasProInstalled: () => false,
+				isProAtLeast: () => false,
+			},
 		};
 
 		// Act
-		viewInstance.renderOnChange( settings );
+		viewInstance.saveAsComponent( { originalEvent: { clientX: 0, clientY: 0 } } );
 
 		// Assert
-		const currentAttributes = mockElement.attributes.map( ( attr ) => attr.name );
-
-		expect( currentAttributes ).toContain( 'data-id' );
-		expect( currentAttributes ).toContain( 'data-element_type' );
-		expect( currentAttributes ).toContain( 'data-model-cid' );
-		expect( currentAttributes ).toContain( 'data-special-flag' );
-		expect( currentAttributes ).toContain( 'data-interaction-id' );
-		expect( currentAttributes ).toContain( 'id' );
-		expect( currentAttributes ).toContain( 'href' );
-		expect( currentAttributes ).toContain( 'data-custom' );
+		expect( dispatchEventSpy ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should call attributes() to get complete attribute set when attributes change', () => {
+	it( 'should allow saveAsComponent when Pro is active', () => {
 		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
-		};
-
-		const attributesSpy = jest.spyOn( viewInstance, 'attributes' );
-
-		// Act
-		viewInstance.renderOnChange( settings );
-
-		// Assert
-		expect( attributesSpy ).toHaveBeenCalled();
-	} );
-
-	it( 'should not remove class attribute when custom attributes change', () => {
-		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
+		global.window.elementorV2 = {
+			utils: {
+				isProActive: () => true,
+				hasProInstalled: () => true,
+				isProAtLeast: () => true,
+			},
 		};
 
 		// Act
-		viewInstance.renderOnChange( settings );
+		viewInstance.saveAsComponent( { originalEvent: { clientX: 0, clientY: 0 } } );
 
 		// Assert
-		const currentAttributes = mockElement.attributes.map( ( attr ) => attr.name );
-		expect( currentAttributes ).toContain( 'class' );
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( { type: 'elementor/editor/open-save-as-component-form' } ),
+		);
 	} );
 
-	it( 'should remove old attributes except class before applying new ones', () => {
+	it( 'should allow saveAsComponent when elementorV2 is not available (defaults to active)', () => {
 		// Arrange
-		mockElement.attributes.push( { name: 'data-old-attribute', value: 'should-be-removed' } );
+		delete global.window.elementorV2;
 
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
+		// Act
+		viewInstance.saveAsComponent( { originalEvent: { clientX: 0, clientY: 0 } } );
+
+		// Assert
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( { type: 'elementor/editor/open-save-as-component-form' } ),
+		);
+	} );
+
+	it( 'should show new badge and enable create-component when Pro is outdated', () => {
+		// Arrange
+		setProState( { isActive: false, hasInstalled: true, isAtLeast: false } );
+
+		// Act
+		const action = findCreateAction( viewInstance.getContextMenuGroups() );
+
+		// Assert
+		expect( action ).toBeDefined();
+		expect( action.shortcut ).toContain( 'new-badge' );
+		expect( action.shortcut ).not.toContain( 'eicon-upgrade-crown' );
+		expect( action.isEnabled() ).toBe( true );
+	} );
+
+	it( 'should show info notification and block saveAsComponent when Pro is outdated', () => {
+		// Arrange
+		const notifySpy = jest.fn();
+		global.window.elementorV2 = {
+			utils: {
+				isProActive: () => false,
+				hasProInstalled: () => true,
+				isProAtLeast: () => false,
+			},
+			editorNotifications: { notify: notifySpy },
 		};
 
 		// Act
-		viewInstance.renderOnChange( settings );
+		viewInstance.saveAsComponent( { originalEvent: { clientX: 0, clientY: 0 } } );
 
 		// Assert
-		const currentAttributes = mockElement.attributes.map( ( attr ) => attr.name );
-		expect( currentAttributes ).not.toContain( 'data-old-attribute' );
-	} );
-
-	it( 'should include data-interaction-id from attributes() method', () => {
-		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
-		};
-
-		// Act
-		viewInstance.renderOnChange( settings );
-
-		// Assert
-		const interactionIdAttr = mockElement.attributes.find( ( attr ) => 'data-interaction-id' === attr.name );
-		expect( interactionIdAttr ).toBeDefined();
-		expect( interactionIdAttr.value ).toBe( ELEMENT_ID );
-	} );
-
-	it( 'should include initial_attributes from model config', () => {
-		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
-		};
-
-		// Act
-		viewInstance.renderOnChange( settings );
-
-		// Assert
-		const specialFlagAttr = mockElement.attributes.find( ( attr ) => 'data-special-flag' === attr.name );
-		expect( specialFlagAttr ).toBeDefined();
-		expect( specialFlagAttr.value ).toBe( 'true' );
-	} );
-
-	it( 'should include base attributes from BaseElementView', () => {
-		// Arrange
-		const settings = {
-			changedAttributes: jest.fn( () => ( {
-				attributes: true,
-			} ) ),
-		};
-
-		// Act
-		viewInstance.renderOnChange( settings );
-
-		// Assert
-		const currentAttributes = mockElement.attributes.map( ( attr ) => attr.name );
-		expect( currentAttributes ).toContain( 'data-id' );
-		expect( currentAttributes ).toContain( 'data-element_type' );
-		expect( currentAttributes ).toContain( 'data-model-cid' );
+		expect( dispatchEventSpy ).not.toHaveBeenCalled();
+		expect( notifySpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'info',
+				id: 'component-create-update',
+			} ),
+		);
 	} );
 } );
-

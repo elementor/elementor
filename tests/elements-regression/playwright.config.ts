@@ -2,8 +2,10 @@ import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
 
+const fullBrowserCompat = 'true' === process.env.FULL_BROWSER_COMPAT;
+
 process.env.DEV_SERVER = 'http://localhost:8888';
-process.env.TEST_SERVER = 'http://localhost:8888'; // Test server is the same as dev server in elements-regression
+process.env.TEST_SERVER = 'http://localhost:8889';
 process.env.DEBUG_PORT = 1 === Number( process.env.TEST_PARALLEL_INDEX ) ? '9223' : '9222';
 
 _config( {
@@ -12,6 +14,7 @@ _config( {
 
 export default defineConfig( {
 	testDir: './tests/',
+	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	globalSetup: resolve( __dirname, 'global-setup.ts' ),
 	timeout: 90_000,
 	globalTimeout: 60 * 15_000,
@@ -21,8 +24,8 @@ export default defineConfig( {
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 5 : 0,
-	workers: process.env.CI ? 3 : 1,
+	retries: process.env.CI ? 2 : 0,
+	workers: process.env.CI ? 2 : 1,
 	fullyParallel: true,
 	reporter: process.env.CI ? [
 		[ 'github' ],
@@ -32,7 +35,7 @@ export default defineConfig( {
 		: 'list',
 	use: {
 		launchOptions: {
-			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
+			args: fullBrowserCompat ? [] : [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
 		},
 		headless: !! process.env.CI,
 		ignoreHTTPSErrors: true,
@@ -44,4 +47,11 @@ export default defineConfig( {
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
 	},
+	...( fullBrowserCompat ? {
+		projects: [
+			{ name: 'chromium', use: { browserName: 'chromium' } },
+			{ name: 'firefox', use: { browserName: 'firefox' } },
+			{ name: 'webkit', use: { browserName: 'webkit' } },
+		],
+	} : {} ),
 } );

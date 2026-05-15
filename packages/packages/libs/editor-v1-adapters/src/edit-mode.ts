@@ -18,7 +18,7 @@ export function useEditMode() {
 	return useListenTo( windowEvent( 'elementor/edit-mode/change' ), getCurrentEditMode );
 }
 
-function getCurrentEditMode() {
+export function getCurrentEditMode() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
 	return extendedWindow.elementor.channels.dataEditMode.request( 'activeMode' );

@@ -10,10 +10,6 @@
 			.elementor-icon-box-wrapper {
 				text-align: end;
 				flex-direction: row-reverse;
-
-				[dir="rtl"] & { // BC for RTL direction.
-					flex-direction: row;
-				}
 			}
 		}
 
@@ -22,10 +18,6 @@
 			.elementor-icon-box-wrapper {
 				text-align: start;
 				flex-direction: row;
-
-				[dir="rtl"] & { // BC for RTL direction.
-					flex-direction: row-reverse;
-				}
 			}
 		}
 

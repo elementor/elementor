@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type DropShadowFilterPropValue, type FilterItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { CUSTOM_SIZE_LABEL } from '../../size-control';
 
@@ -16,7 +17,7 @@ export const DropShadowItemLabel = ( { value }: { value: FilterItemPropValue } )
 	return (
 		<Box component="span">
 			<Box component="span" style={ { textTransform: 'capitalize' } }>
-				Drop shadow:
+				{ __( 'Drop shadow:', 'elementor' ) }
 			</Box>
 			{ ` ${ labels.join( ' ' ) }` }
 		</Box>

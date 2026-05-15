@@ -198,7 +198,7 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 					'elType' => 'section',
 					'settings' => [
 						'background_image' => [
-							'url' => 'https://elementor.com/wp-content/uploads/2021/04/elementor-favicon-512.png'
+							'url' => 'https://elementor.com/wp-content/uploads/2026/01/HP-Hero-cover-video.webp'
 						]
 					]
 				]

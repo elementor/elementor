@@ -8,6 +8,7 @@ use Elementor\Modules\GlobalClasses\Module as GlobalClassesModule;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Module as VariablesModule;
+use Elementor\Modules\Components\Module as ComponentsModule;
 use Elementor\Plugin;
 
 class Opt_In {
@@ -18,6 +19,7 @@ class Opt_In {
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 		VariablesModule::EXPERIMENT_NAME,
+		ComponentsModule::EXPERIMENT_NAME,
 	];
 
 	const OPT_IN_FEATURES = [
@@ -27,12 +29,14 @@ class Opt_In {
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 		VariablesModule::EXPERIMENT_NAME,
+		ComponentsModule::EXPERIMENT_NAME,
 	];
 
 	public function init() {
 		$this->register_feature();
 
 		add_action( 'elementor/ajax/register_actions', fn( Ajax $ajax ) => $this->add_ajax_actions( $ajax ) );
+		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
 	private function register_feature() {
@@ -43,6 +47,10 @@ class Opt_In {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '4.0.0',
+			],
 		]);
 	}
 
@@ -79,5 +87,20 @@ class Opt_In {
 	private function add_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'editor_v4_opt_in', fn() => $this->ajax_opt_in_v4() );
 		$ajax->register_ajax_action( 'editor_v4_opt_out', fn() => $this->ajax_opt_out_v4() );
+	}
+
+	private function handle_rest_opt_in_v4() {
+		$this->ajax_opt_in_v4();
+		return new \WP_REST_Response( [
+			'success' => true,
+		], 200 );
+	}
+
+	private function register_routes() {
+		register_rest_route( 'elementor/v1', '/operations/opt-in-v4', [
+			'methods' => 'POST',
+			'callback' => fn() => $this->handle_rest_opt_in_v4(),
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
 	}
 }

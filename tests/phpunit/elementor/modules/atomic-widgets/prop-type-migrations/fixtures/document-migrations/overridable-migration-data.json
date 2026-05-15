@@ -1,0 +1,117 @@
+[
+	{
+		"id": "element_1",
+		"elType": "widget",
+		"widgetType": "e-heading",
+		"settings": {
+			"title": {
+				"$$type": "overridable",
+				"value": {
+					"override_key": "prop-123",
+					"origin_value": {
+						"$$type": "html",
+						"value": "Overridable Title"
+					}
+				}
+			}
+		}
+	},
+	{
+		"id": "flexbox-element-overrides",
+		"elType": "widget",
+		"settings": {
+			"component_instance": {
+				"$$type": "component-instance",
+				"value": {
+					"component_id": {
+						"$$type": "number",
+						"value": 1530
+					},
+					"overrides": {
+						"$$type": "overrides",
+						"value": [
+							{
+								"$$type": "override",
+								"value": {
+									"override_key": "prop-1774948276142-hbvo1d6",
+									"override_value": {
+										"$$type": "html",
+										"value": "This is a title1"
+									},
+									"schema_source": {
+										"type": "component",
+										"id": 1530
+									}
+								}
+							}
+						]
+					}
+				}
+			}
+		},
+		"interactions": [],
+		"elements": [],
+		"widgetType": "e-component",
+		"styles": [],
+		"componentId": 1530,
+		"isGlobal": true
+	},
+	{
+		"id": "flexbox-element-overrides-nested",
+		"elType": "e-flexbox",
+		"settings": {},
+		"interactions": [],
+		"elements": [
+			{
+				"id": "fd78ee2",
+				"elType": "widget",
+				"settings": {
+					"component_instance": {
+						"$$type": "component-instance",
+						"value": {
+							"component_id": {
+								"$$type": "number",
+								"value": 1530
+							},
+							"overrides": {
+								"$$type": "overrides",
+								"value": [
+									{
+										"$$type": "overridable",
+										"value": {
+											"override_key": "prop-1774949015125-0ez30mb",
+											"origin_value": {
+												"$$type": "override",
+												"value": {
+													"override_key": "prop-1774948276142-hbvo1d6",
+													"override_value": {
+														"$$type": "html",
+														"value": "This is a title2"
+													},
+													"schema_source": {
+														"type": "component",
+														"id": 1530
+													}
+												}
+											}
+										}
+									}
+								]
+							}
+						}
+					}
+				},
+				"defaultEditSettings": {
+					"defaultEditRoute": "content"
+				},
+				"interactions": [],
+				"elements": [],
+				"widgetType": "e-component",
+				"styles": [],
+				"componentId": 1530
+			}
+		],
+		"styles": [],
+		"editor_settings": []
+	}
+]

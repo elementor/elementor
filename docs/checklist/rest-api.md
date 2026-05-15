@@ -23,15 +23,15 @@ Use this endpoint to get the checklist global config, as well as users progress.
 
 ## Step keys dictionary
 
-| Key       		        		  | Type		|Description										 |
-|------------------------------------|-------------|----------------------------------------------------|
-| `should_allow_undo`                | `boolean`	|True if the unmark as done button should be enabled |
-| `is_completed`                     | `boolean`	|True if step should be "checked" as done			 |
-| `config.id`						  | `string`	|Step unique ID										 |
-| `config.title`					  | `string`	|Step title to be displayed as an item list			 |
-| `config.description`				  | `string`	|Step instructions inside the list card item element |
-| `config.learn_more_text`			  | `string`	|Text for the button, probably 'Learn More'			 |
-| `config.learn_more_url`			  | `string`	|URL for learn more button							 |
-| `config.cta_text`				  | `string`	|I.e. 'Create 3 pages'								 |
-| `config.cta_url`					  | `string`	|Url for the page in wich step can be completed		 |
-| `config.is_completetion_immutable` | `string`	|True if step can be undone and still be checked	 |
+| Key                              | Type      | Description                                         |
+|----------------------------------|-----------|-----------------------------------------------------|
+| `should_allow_undo`              | `boolean` | True if the unmark as done button should be enabled |
+| `is_completed`                   | `boolean` | True if step should be "checked" as done            |
+| `config.id`                      | `string`  | Step unique ID                                      |
+| `config.title`                   | `string`  | Step title to be displayed as an item list          |
+| `config.description`             | `string`  | Step instructions inside the list card item element |
+| `config.learn_more_text`         | `string`  | Text for the button, probably 'Learn More'          |
+| `config.learn_more_url`          | `string`  | URL for learn more button                           |
+| `config.cta_text`                | `string`  | I.e. 'Create 3 pages'                               |
+| `config.cta_url`                 | `string`  | Url for the page in which step can be completed     |
+| `config.is_completion_immutable` | `string`  | True if step can be undone and still be checked     |

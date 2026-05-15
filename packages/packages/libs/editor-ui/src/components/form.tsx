@@ -3,8 +3,9 @@ import { type FormEvent as FormEvent, type KeyboardEvent, type PropsWithChildren
 
 type Props = PropsWithChildren< {
 	onSubmit?: () => void;
+	'data-testid'?: string;
 } >;
-export const Form = ( { children, onSubmit }: Props ) => {
+export const Form = ( { children, onSubmit, 'data-testid': dataTestId }: Props ) => {
 	const formRef = useRef< HTMLFormElement >( null );
 
 	const handleSubmit = ( e: FormEvent< HTMLFormElement > | SubmitEvent ) => {
@@ -23,7 +24,12 @@ export const Form = ( { children, onSubmit }: Props ) => {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-		<form onSubmit={ handleSubmit } ref={ formRef } onKeyDown={ handleKeyDown }>
+		<form
+			onSubmit={ handleSubmit }
+			ref={ formRef }
+			onKeyDown={ handleKeyDown }
+			{ ...( dataTestId ? { 'data-testid': dataTestId } : {} ) }
+		>
 			{ children }
 		</form>
 	);

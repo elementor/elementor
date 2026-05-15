@@ -3,17 +3,16 @@ import ChevronRightIcon from '@elementor/icons/ChevronRightIcon';
 import EditorIcon from './icons/editor';
 import PropTypes from 'prop-types';
 import { SidebarCollapsedMenu } from './collapsed-menu';
-import { CollapsedHeaderContainer } from './collapsed-menu/styled-components';
 import { SidebarUpgradeCta } from './cta';
 import { SidebarHeader } from './header';
 import { SidebarMenu } from './menu';
-import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox } from './shared';
+import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox, CollapsedHeaderContainer } from './shared';
 import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
-import { useSidebarPosition } from './hooks/use-sidebar-position';
+import { useAdminMenuOffset } from './hooks/use-admin-menu-offset';
 
 const SidebarNavigation = ( { config } ) => {
 	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
-	useSidebarPosition();
+	useAdminMenuOffset();
 
 	if ( isCollapsed ) {
 		return (

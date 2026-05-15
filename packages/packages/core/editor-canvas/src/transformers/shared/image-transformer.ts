@@ -6,6 +6,7 @@ type Image = {
 	src?: {
 		id: number | null;
 		url: string | null;
+		alt?: string | null;
 	};
 	size?: string;
 };
@@ -14,7 +15,7 @@ export const imageTransformer = createTransformer( async ( value: Image ) => {
 	const { src, size } = value;
 
 	if ( ! src?.id ) {
-		return src?.url ? { src: src.url } : null;
+		return src?.url ? { src: src.url, alt: src.alt ?? '' } : null;
 	}
 
 	const attachment = await getMediaAttachment( { id: src.id } );
@@ -26,6 +27,7 @@ export const imageTransformer = createTransformer( async ( value: Image ) => {
 			src: sizedAttachment.url,
 			height: sizedAttachment.height,
 			width: sizedAttachment.width,
+			alt: attachment.alt,
 		};
 	}
 
@@ -34,6 +36,7 @@ export const imageTransformer = createTransformer( async ( value: Image ) => {
 			src: attachment.url,
 			height: attachment.height,
 			width: attachment.width,
+			alt: attachment.alt,
 		};
 	}
 

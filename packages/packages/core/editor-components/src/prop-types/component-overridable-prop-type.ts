@@ -14,4 +14,6 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 	} )
 );
 
-export type ComponentOverridablePropValue = z.infer< typeof componentOverridablePropTypeUtil.schema >[ 'value' ];
+export type ComponentOverridableProp = z.infer< typeof componentOverridablePropTypeUtil.schema >;
+
+export type ComponentOverridablePropValue = ComponentOverridableProp[ 'value' ];

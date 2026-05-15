@@ -2,7 +2,12 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
+import {
+	type DocumentSaveStatus,
+	type OverridableProps,
+	type PublishedComponent,
+	type UpdatedComponentName,
+} from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
@@ -87,20 +92,32 @@ export const apiClient = {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
-	getOverridableProps: async ( componentId: number ) =>
+	getOverridableProps: async ( componentIds: number[] ) =>
 		await httpService()
-			.get< HttpResponse< OverridableProps > >( `${ BASE_URL }/overridable-props`, {
-				params: {
-					componentId: componentId.toString(),
-				},
-			} )
-			.then( ( res ) => res.data.data ),
-	updateArchivedComponents: async ( componentIds: number[] ) =>
+			.get< HttpResponse< Record< number, OverridableProps | null >, { errors: Record< number, string > } > >(
+				`${ BASE_URL }/overridable-props`,
+				{
+					params: { 'componentIds[]': componentIds },
+				}
+			)
+			.then( ( res ) => res.data ),
+	updateArchivedComponents: async ( componentIds: number[], status: DocumentSaveStatus ) =>
 		await httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/archive`,
 				{
 					componentIds,
+					status,
+				}
+			)
+			.then( ( res ) => res.data.data ),
+	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[], status: DocumentSaveStatus ) =>
+		httpService()
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/update-titles`,
+				{
+					components: updatedComponentNames,
+					status,
 				}
 			)
 			.then( ( res ) => res.data.data ),

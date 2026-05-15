@@ -2,7 +2,7 @@
 
 namespace Elementor\Includes\Settings\AdminMenuItems;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,31 +11,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface {
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return 'manage_options';
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_MENU_SLUG;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_group_id() {
+	public function get_group_id(): string {
 		return Menu_Config::EDITOR_GROUP_ID;
 	}
 
-	public function get_label() {
-		return esc_html__( 'Home', 'elementor' );
+	public function get_label(): string {
+		return esc_html__( 'Quick start', 'elementor' );
 	}
 
-	public function get_position() {
+	public function get_position(): int {
 		return 10;
 	}
 
-	public function get_slug() {
+	public function get_slug(): string {
 		return 'elementor';
 	}
 

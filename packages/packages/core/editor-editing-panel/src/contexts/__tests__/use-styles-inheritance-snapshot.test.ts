@@ -1,5 +1,4 @@
 import { createMockElementType, createMockStyleDefinition } from 'test-utils';
-import { useElementSetting } from '@elementor/editor-elements';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 
 import { mockElement } from '../../__tests__/utils';
@@ -9,7 +8,6 @@ import { getInheritanceSnapshot, initStyleInheritanceMocks } from './styles-inhe
 jest.mock( '@elementor/editor-styles-repository' );
 jest.mock( '../classes-prop-context' );
 jest.mock( '@elementor/editor-responsive' );
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../style-context' );
 
 const mockStyle1 = createMockStyleDefinition( {
@@ -69,13 +67,15 @@ describe( 'useStylesInheritanceSnapshot', () => {
 		const element = mockElement();
 		const elementType = createMockElementType();
 
-		jest.mocked( useElementSetting ).mockReturnValue( {
-			$$type: 'classes',
-			value: styles.map( ( { id } ) => id ),
-		} );
+		const settings = {
+			classes: {
+				$$type: 'classes',
+				value: styles.map( ( { id } ) => id ),
+			},
+		};
 
 		// Act.
-		const { result } = getInheritanceSnapshot( element, elementType );
+		const { result } = getInheritanceSnapshot( element, elementType, settings );
 
 		// Assert.
 		expect( result.current ).toEqual( snapshot );

@@ -18,7 +18,7 @@ class Components_REST_API {
 	const API_BASE = 'components';
 	const LOCK_DOCUMENT_TYPE_NAME = 'components';
 	const STYLES_ROUTE = 'styles';
-	const MAX_COMPONENTS = 50;
+	const MAX_COMPONENTS = 100;
 
 	private $repository = null;
 	public function register_hooks() {
@@ -146,12 +146,15 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
-					'componentId' => [
-						'type' => 'integer',
+					'componentIds' => [
+						'type' => 'array',
+						'items' => [
+							'type' => 'integer',
+						],
 						'required' => true,
-						'description' => 'The component ID to get overridable props for',
+						'description' => 'The component IDs to get overridable props for',
 					],
 				],
 			],
@@ -238,7 +241,46 @@ class Components_REST_API {
 							'required' => true,
 						],
 						'required' => true,
-						'description' => 'The component ID to archive',
+						'description' => 'The component IDs to archive',
+					],
+					'status' => [
+						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+						'required' => true,
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_components_title( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'components' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'componentId' => [
+									'type' => 'number',
+									'required' => true,
+									'description' => 'The component ID to update title',
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'description' => 'The new title for the component',
+								],
+							],
+						],
+					],
+					'status' => [
+						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+						'required' => true,
 					],
 				],
 			],
@@ -249,11 +291,11 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$components_list = array_values( $components
-			->filter( fn( $component ) => empty( $component['is_archived'] ) )
 			->map( fn( $component ) => [
 				'id' => $component['id'],
 				'name' => $component['title'],
 				'uid' => $component['uid'],
+				'isArchived' => $component['is_archived'] ?? false,
 			] )
 		->all() );
 
@@ -272,36 +314,47 @@ class Components_REST_API {
 	}
 
 	private function get_overridable_props( \WP_REST_Request $request ) {
-		$component_id = (int) $request->get_param( 'componentId' );
+		$component_ids = $request->get_param( 'componentIds' );
 
-		if ( ! $component_id ) {
-			return Error_Builder::make( 'invalid_component_id' )
-				->set_status( 400 )
-				->set_message( __( 'Invalid component ID', 'elementor' ) )
-				->build();
+		$data = [];
+		$errors = [];
+
+		foreach ( $component_ids as $component_id ) {
+			$component_id = (int) $component_id;
+
+			/** @var Component $document */
+			$document = $this->get_repository()->get( $component_id );
+
+			if ( ! $document ) {
+				$errors[ $component_id ] = 'component_not_found';
+				continue;
+			}
+
+			// This is a fix for the case where overridable props in element settings where migrated
+			// but the overridable props metadata were not aligned with the new origin values.
+			// In version 4.0.1, we fixed this by running the align_overridable_props_with_elements method after the migration.
+			$document_version = $document->get_elementor_version();
+			$overridable_props_migration_fix_version = '4.0.1';
+			$should_align_overridable_props = version_compare( $document_version, $overridable_props_migration_fix_version, '<=' );
+			if ( $should_align_overridable_props ) {
+				$document->align_overridable_props_with_elements();
+			}
+
+			$overridable = $document->get_json_meta( Component::OVERRIDABLE_PROPS_META_KEY );
+
+			$data[ $component_id ] = empty( $overridable ) ? null : $overridable;
 		}
 
-		$document = $this->get_repository()->get( $component_id );
-
-		if ( ! $document ) {
-			return Error_Builder::make( 'component_not_found' )
-				->set_status( 404 )
-				->set_message( __( 'Component not found', 'elementor' ) )
-				->build();
-		}
-
-		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
-
-		if ( ! empty( $overridable ) ) {
-			$overridable = json_decode( $overridable, true );
-		} else {
-			$overridable = null;
-		}
-
-		return Response_Builder::make( $overridable )->build();
+		return Response_Builder::make( $data )
+			->set_meta( [ 'errors' => $errors ] )
+			->build();
 	}
 
 	private function create_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_create() ) {
+			return $this->get_insufficient_permissions_error( 'create' );
+		}
+
 		$save_status = $request->get_param( 'status' );
 
 		$items = Collection::make( $request->get_param( 'items' ) );
@@ -316,6 +369,26 @@ class Components_REST_API {
 				->build();
 		}
 
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
+				->build();
+		}
+
 		$validation_errors = [];
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
@@ -325,18 +398,18 @@ class Components_REST_API {
 
 			try {
 				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+
+				$status = Document::STATUS_AUTOSAVE === $save_status
+					? Document::STATUS_DRAFT
+					: $save_status;
+
+				$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
+
+				return [ $uid => $component_id ];
 			} catch ( \Exception $e ) {
 				$validation_errors[ $uid ] = $e->getMessage();
 				return [ $uid => null ];
 			}
-
-			$status = Document::STATUS_AUTOSAVE === $save_status
-				? Document::STATUS_DRAFT
-				: $save_status;
-
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
-
-			return [ $uid => $component_id ];
 		} );
 
 		if ( ! empty( $validation_errors ) ) {
@@ -352,26 +425,23 @@ class Components_REST_API {
 	}
 
 	private function update_statuses( \WP_REST_Request $request ) {
-		$status = $request->get_param( 'status' );
+		if ( ! Components_Access_Controller::can_publish() ) {
+			return $this->get_insufficient_permissions_error( 'publish' );
+		}
 
 		$result = Collection::make( $request->get_param( 'ids' ) )
-			->map( fn( $id ) => $this->get_repository()->get( $id ) )
-			->filter( fn( $component ) => (bool) $component )
 			->reduce(
-				function ( $result, Component $component ) use ( $status ) {
-					$post = $component->get_post();
-					$autosave = $component->get_newer_autosave();
+				function ( $result, int $component_id ) {
+					$component = $this->get_repository()->get( $component_id );
 
-					$elements = $autosave
-						? $autosave->get_json_meta( Document::ELEMENTOR_DATA_META_KEY )
-						: $component->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+					if ( ! $component ) {
+						$result['failed'][] = $component_id;
+						return $result;
+					}
 
-					$is_updated = $component->save( [
-						'settings' => [ 'post_status' => $status ],
-						'elements' => $elements,
-					] );
+					$publish_result = $this->get_repository()->publish_component( $component );
 
-					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
+					$result[ $publish_result ? 'success' : 'failed' ][] = $component_id;
 
 					return $result;
 				},
@@ -385,6 +455,10 @@ class Components_REST_API {
 	}
 
 	private function lock_component( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'lock' );
+		}
+
 		$component_id = $request->get_param( 'componentId' );
 		try {
 			$success = $this->get_component_lock_manager()->lock( $component_id );
@@ -407,6 +481,10 @@ class Components_REST_API {
 	}
 
 	private function unlock_component( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'unlock' );
+		}
+
 		$component_id = $request->get_param( 'componentId' );
 		try {
 			$success = $this->get_component_lock_manager()->unlock( $component_id );
@@ -428,6 +506,10 @@ class Components_REST_API {
 	}
 
 	private function get_lock_status( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_lock() ) {
+			return $this->get_insufficient_permissions_error( 'lock_status' );
+		}
+
 		$component_id = (int) $request->get_param( 'componentId' );
 		try {
 			$lock_manager = $this->get_component_lock_manager();
@@ -470,22 +552,16 @@ class Components_REST_API {
 		}
 	}
 
-	private function is_current_user_allow_to_edit( $component_id ) {
-		$current_user_id = get_current_user_id();
-		try {
-			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
-			return false;
+	private function archive_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_delete() ) {
+			return $this->get_insufficient_permissions_error( 'delete' );
 		}
 
-		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
-	}
-
-	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
+		$status = $request->get_param( 'status' );
+
 		try {
-			$result = $this->get_repository()->archive( $component_ids );
+			$result = $this->get_repository()->archive( $component_ids, $status );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
 			return Error_Builder::make( 'archive_failed' )
@@ -497,7 +573,37 @@ class Components_REST_API {
 		return Response_Builder::make( $result )->build();
 	}
 
+	private function update_components_title( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_rename() ) {
+			return $this->get_insufficient_permissions_error( 'rename' );
+		}
+
+		$failed_ids = [];
+		$success_ids = [];
+		$components = $request->get_param( 'components' );
+		$status = $request->get_param( 'status' );
+
+		foreach ( $components as $component ) {
+			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'], $status );
+
+			if ( ! $is_success ) {
+				$failed_ids[] = $component['componentId'];
+				continue;
+			}
+			$success_ids[] = $component['componentId'];
+
+		}
+		return Response_Builder::make( [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		] )->build();
+	}
+
 	private function create_validate_components( \WP_REST_Request $request ) {
+		if ( ! Components_Access_Controller::can_create() ) {
+			return $this->get_insufficient_permissions_error( 'create' );
+		}
+
 		$items = Collection::make( $request->get_param( 'items' ) );
 		$components = $this->get_repository()->all();
 
@@ -507,6 +613,26 @@ class Components_REST_API {
 			return Error_Builder::make( 'components_validation_failed' )
 				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
 				->build();
 		}
 
@@ -568,5 +694,16 @@ class Components_REST_API {
 		}
 
 		return $response;
+	}
+
+	private function get_insufficient_permissions_error( string $action ) {
+		return Error_Builder::make( 'insufficient_permissions' )
+			->set_status( 403 )
+			->set_message( __( 'You do not have permission to perform this action.', 'elementor' ) )
+			->set_meta( [
+				'action' => $action,
+				'tier' => Components_Access_Controller::get_access_tier(),
+			] )
+			->build();
 	}
 }

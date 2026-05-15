@@ -1,59 +1,57 @@
 'use strict';
 
-import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
+import {
+	config,
+	getKeyframes,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+	extractAnimationConfig,
+	extractInteractionId,
+	getAnimateFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+	resetElementStyles,
+} from './interactions-utils.js';
 
-function extractAnimationId( interaction ) {
-	if ( 'string' === typeof interaction ) {
-		return interaction;
-	}
-
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		const { trigger, animation } = interaction.value;
-		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
-			const { effect, type, direction, timing_config: timingConfig } = animation.value;
-			const triggerVal = trigger?.value || 'load';
-			const effectVal = effect?.value || 'fade';
-			const typeVal = type?.value || 'in';
-			const directionVal = direction?.value || '';
-			const duration = timingConfig?.value?.duration?.value ?? 300;
-			const delay = timingConfig?.value?.delay?.value ?? 0;
-			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
-		}
-	}
-
-	if ( interaction?.animation?.animation_id ) {
-		return interaction.animation.animation_id;
-	}
-
-	return null;
-}
+/**
+ * @type {Record<string, Promise<void> & { cancel: () => void }>}
+ */
+const playingInteractionsToStop = {};
 
 function applyAnimation( element, animConfig, animateFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
+	const { id } = element;
+	if ( playingInteractionsToStop[ id ] ) {
+		playingInteractionsToStop[ id ].cancel();
+		delete playingInteractionsToStop[ id ];
+	}
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		easing: config.easing,
+		ease: config().defaultEasing,
 	};
 
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
-	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
-	const transition = element.style.transition;
-	element.style.transition = 'none';
+
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
-		animateFunc( element, keyframes, options ).then( () => {
-			if ( 'out' === animConfig.type ) {
-				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
-				const resetKeyframes = {};
-				Object.keys( keyframes ).forEach( ( key ) => {
-					resetKeyframes[ key ] = resetValues[ key ];
-				} );
-				element.style.transition = transition;
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			}
+		const animation = animateFunc( element, keyframes, options );
+
+		playingInteractionsToStop[ id ] = animation;
+
+		animation.then( () => {
+			requestAnimationFrame( () => {
+				resetElementStyles( element );
+			} );
+
+			delete playingInteractionsToStop[ id ];
 		} );
 	} );
 }
@@ -76,29 +74,21 @@ function findElementByInteractionId( interactionId ) {
 }
 
 function applyInteractionsToElement( element, interactionsData ) {
-	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+	const animateFunc = getAnimateFunction();
 
 	if ( ! animateFunc ) {
 		return;
 	}
 
-	let parsedData;
-	if ( 'string' === typeof interactionsData ) {
-		try {
-			parsedData = JSON.parse( interactionsData );
-		} catch ( error ) {
-			return;
-		}
-	} else {
-		parsedData = interactionsData;
+	const parsedData = parseInteractionsData( interactionsData );
+	if ( ! parsedData ) {
+		return;
 	}
 
-	const interactions = Object.values( parsedData?.items );
+	const interactions = Object.values( parsedData?.items || [] );
 
 	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-
-		const animConfig = animationName && parseAnimationName( animationName );
+		const animConfig = extractAnimationConfig( interaction );
 
 		if ( animConfig ) {
 			applyAnimation( element, animConfig, animateFunc );
@@ -116,22 +106,44 @@ function handleInteractionsUpdate() {
 			( prev ) => prev.dataId === currentItem.dataId,
 		);
 
-		return ! previousItem || previousItem.interactions !== currentItem.interactions;
+		if ( ! previousItem ) {
+			return true;
+		}
+
+		const currentIds = ( currentItem.interactions?.items || [] )
+			.map( extractInteractionId )
+			.filter( Boolean )
+			.sort()
+			.join( ',' );
+
+		const prevIds = ( previousItem.interactions?.items || [] )
+			.map( extractInteractionId )
+			.filter( Boolean )
+			.sort()
+			.join( ',' );
+
+		return currentIds !== prevIds;
 	} );
 
 	changedItems.forEach( ( item ) => {
 		const element = findElementByInteractionId( item.dataId );
 		const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
-		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
-			const interactionsToApply = {
+
+		if ( ! element || ! item.interactions?.items?.length ) {
+			return;
+		}
+
+		const prevIds = new Set( ( prevInteractions?.items || [] ).map( extractInteractionId ).filter( Boolean ) );
+		const changedInteractions = item.interactions.items.filter( ( interaction ) => {
+			const id = extractInteractionId( interaction );
+			return ! id || ! prevIds.has( id );
+		} );
+
+		if ( changedInteractions.length > 0 ) {
+			applyInteractionsToElement( element, {
 				...item.interactions,
-				items: [ ...item.interactions.items ].filter( ( interaction, index ) => {
-					const currentAnimId = extractAnimationId( interaction );
-					const prevAnimId = extractAnimationId( prevInteractions?.items[ index ] );
-					return currentAnimId !== prevAnimId;
-				} ),
-			};
-			applyInteractionsToElement( element, interactionsToApply );
+				items: changedInteractions,
+			} );
 		}
 	} );
 
@@ -139,53 +151,50 @@ function handleInteractionsUpdate() {
 }
 
 function initEditorInteractionsHandler() {
-	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-		setTimeout( initEditorInteractionsHandler, 100 );
-		return;
-	}
+	waitForAnimateFunction( () => {
+		const head = document.head;
+		let scriptTag = null;
+		let observer = null;
 
-	const head = document.head;
-	let scriptTag = null;
-	let observer = null;
+		function setupObserver( tag ) {
+			if ( observer ) {
+				observer.disconnect();
+			}
 
-	function setupObserver( tag ) {
-		if ( observer ) {
-			observer.disconnect();
+			observer = new MutationObserver( () => {
+				handleInteractionsUpdate();
+			} );
+
+			observer.observe( tag, {
+				childList: true,
+				characterData: true,
+				subtree: true,
+			} );
+
+			handleInteractionsUpdate();
+			registerWindowEvents();
 		}
 
-		observer = new MutationObserver( () => {
-			handleInteractionsUpdate();
+		const headObserver = new MutationObserver( () => {
+			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
+				scriptTag = foundScriptTag;
+				setupObserver( scriptTag );
+				headObserver.disconnect();
+			}
 		} );
 
-		observer.observe( tag, {
+		headObserver.observe( head, {
 			childList: true,
-			characterData: true,
 			subtree: true,
 		} );
 
-		handleInteractionsUpdate();
-		registerWindowEvents();
-	}
-
-	const headObserver = new MutationObserver( () => {
-		const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		if ( foundScriptTag && foundScriptTag !== scriptTag ) {
-			scriptTag = foundScriptTag;
+		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		if ( scriptTag ) {
 			setupObserver( scriptTag );
 			headObserver.disconnect();
 		}
 	} );
-
-	headObserver.observe( head, {
-		childList: true,
-		subtree: true,
-	} );
-
-	scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-	if ( scriptTag ) {
-		setupObserver( scriptTag );
-		headObserver.disconnect();
-	}
 }
 
 function registerWindowEvents() {
@@ -193,21 +202,25 @@ function registerWindowEvents() {
 }
 
 function handlePlayInteractions( event ) {
-	const { elementId, animationId } = event.detail;
+	const { elementId, interactionId } = event.detail;
 	const interactionsData = getInteractionsData();
 	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
 	if ( ! item ) {
 		return;
 	}
+
 	const element = findElementByInteractionId( elementId );
-	if ( element ) {
-		const interactionsCopy = {
-			...item.interactions,
-			items: [ ...item.interactions.items ],
-		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => extractAnimationId( interactionItem ) === animationId );
-		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+	if ( ! element ) {
+		return;
 	}
+	const interactionsCopy = {
+		...item.interactions,
+		items: item.interactions.items.filter( ( interactionItem ) => {
+			const itemId = extractInteractionId( interactionItem );
+			return itemId === interactionId;
+		} ),
+	};
+	applyInteractionsToElement( element, interactionsCopy );
 }
 
 if ( 'loading' === document.readyState ) {

@@ -119,6 +119,16 @@ export function useCreateAndApplyClass() {
 
 					setActiveId( prevActiveId );
 				},
+				redo: (
+					{ classLabel }: CreateAndApplyClassPayload,
+					{ createdId }: CreateAndApplyClassUndoData
+				): CreateAndApplyClassUndoData => {
+					const prevActiveId = activeId;
+
+					createAction( classLabel, [], createdId );
+					applyClass( createdId );
+					return { prevActiveId, createdId };
+				},
 			},
 			{
 				title: __( 'Class', 'elementor' ),

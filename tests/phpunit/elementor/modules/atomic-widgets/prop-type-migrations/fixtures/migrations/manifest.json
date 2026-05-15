@@ -1,0 +1,44 @@
+{
+  "widgetKeys": {
+    "e-logo": [
+      { "from": "svg", "to": "icon" }
+    ]
+  },
+  "propTypes": {
+    "string-to-string_v2": {
+      "fromType": "string",
+      "toType": "string_v2",
+      "path": "string-to-string_v2.json"
+    },
+    "string_v2-to-html": {
+      "fromType": "string_v2",
+      "toType": "html",
+      "path": "string_v2-to-html.json"
+    },
+    "a-to-b": {
+      "fromType": "type_a",
+      "toType": "type_b",
+      "path": "a-to-b.json"
+    },
+    "b-to-c": {
+      "fromType": "type_b",
+      "toType": "type_c",
+      "path": "b-to-c.json"
+    },
+    "c-to-d": {
+      "fromType": "type_c",
+      "toType": "type_d",
+      "path": "c-to-d.json"
+    },
+    "group1-a-to-b": {
+      "fromType": "group1_a",
+      "toType": "group1_b",
+      "path": "group1-a-to-b.json"
+    },
+    "group2-x-to-y": {
+      "fromType": "group2_x",
+      "toType": "group2_y",
+      "path": "group2-x-to-y.json"
+    }
+  }
+}

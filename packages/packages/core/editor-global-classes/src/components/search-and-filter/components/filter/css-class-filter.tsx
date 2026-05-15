@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
 import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
@@ -18,7 +19,7 @@ export const CssClassFilter = () => {
 		disableAutoFocus: true,
 	} );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		if ( popupState.isOpen ) {
 			trackGlobalClasses( {
 				event: 'classManagerFiltersOpened',

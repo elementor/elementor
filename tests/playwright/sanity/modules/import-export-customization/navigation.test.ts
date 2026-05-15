@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { NavigationHelpers } from './helpers/navigation-helpers';
 
-test.describe( 'Import Export Customization - Navigation', () => {
+test.describe( 'Import Export Customization - Navigation @import_export_customization', () => {
 	test( 'should navigate to export page from Elementor Tools', async ( { page } ) => {
 		await NavigationHelpers.navigateToExportCustomizationPage( page );
 

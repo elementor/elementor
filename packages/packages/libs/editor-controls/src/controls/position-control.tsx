@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { getSelectRenderValue } from './select-control';
 import { SizeControl } from './size-control';
 
 type Positions =
@@ -40,6 +41,8 @@ export const PositionControl = () => {
 
 	const isCustom = !! positionContext.value;
 
+	const placeholder = positionContext.placeholder ? 'custom' : stringPropContext.placeholder ?? null;
+
 	const handlePositionChange = ( event: SelectChangeEvent< Positions > ) => {
 		const value = event.target.value || null;
 
@@ -60,9 +63,13 @@ export const PositionControl = () => {
 					<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
 						<Select
 							size="tiny"
+							displayEmpty
 							disabled={ stringPropContext.disabled }
 							value={ ( positionContext.value ? 'custom' : stringPropContext.value ) ?? '' }
 							onChange={ handlePositionChange }
+							renderValue={ ( selectedValue: string | null ) =>
+								getSelectRenderValue( positionOptions, placeholder, selectedValue )
+							}
 							fullWidth
 						>
 							{ positionOptions.map( ( { label, value } ) => (

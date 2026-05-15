@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
+import { type PopoverActionProps } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { type PopoverActionProps } from '../../popover-action';
 import { DynamicSelection } from '../components/dynamic-selection';
 import { supportsDynamic } from '../utils';
 

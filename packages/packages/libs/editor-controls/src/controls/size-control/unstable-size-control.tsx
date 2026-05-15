@@ -1,0 +1,101 @@
+import * as React from 'react';
+import { type RefObject, useRef } from 'react';
+import { type CreateOptions, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
+
+import { type SetValueMeta, useBoundProp } from '../../bound-prop-context';
+import ControlActions from '../../control-actions/control-actions';
+import { createControl } from '../../create-control';
+import { SizeComponent } from './size-component';
+import { type SizeVariant } from './types';
+import { isExtendedUnit } from './utils/is-extended-unit';
+import { resolveBoundPropValue } from './utils/resolve-bound-prop-value';
+import { getDefaultUnit } from './utils/settings/get-default-unit';
+import { getSizeUnits } from './utils/settings/get-size-units';
+import { shouldNullifyValue } from './utils/should-nullify-value';
+
+type Props = {
+	placeholder?: string | SizePropValue[ 'value' ];
+	variant?: SizeVariant;
+	anchorRef?: RefObject< HTMLDivElement | null >;
+	startIcon?: React.ReactNode;
+	ariaLabel?: string;
+	min?: number;
+	id?: string;
+};
+
+export const UnstableSizeControl = createControl(
+	( { variant = 'length', placeholder: propPlaceholder, anchorRef, startIcon, ariaLabel, min }: Props ) => {
+		const {
+			value,
+			setValue,
+			propType,
+			placeholder: boundPropPlaceholder,
+			restoreValue,
+		} = useBoundProp( sizePropTypeUtil );
+		const lastNonAutoValue = useRef< SizePropValue[ 'value' ] | null >( null );
+
+		const { sizeValue, placeholder } = resolveBoundPropValue(
+			value ?? lastNonAutoValue.current,
+			boundPropPlaceholder,
+			propPlaceholder
+		);
+
+		const units = getSizeUnits( propType, variant );
+		const defaultUnit = getDefaultUnit( propType );
+
+		const handleBlur = () => {
+			const isRequired = propType.settings.required;
+
+			if ( shouldNullifyValue( value ) && ! isRequired ) {
+				setValue( null );
+			}
+
+			if ( isRequired ) {
+				restoreValue();
+			}
+		};
+
+		const handleChange = ( newValue: SizePropValue[ 'value' ], options?: CreateOptions, meta?: SetValueMeta ) => {
+			if ( isTransitioningFromExtendedUnit( newValue, value ) ) {
+				lastNonAutoValue.current = newValue;
+
+				setValue( null );
+				return;
+			}
+
+			setValue( newValue, options, {
+				...meta,
+				validation: () => {
+					if ( propType.settings.required ) {
+						return newValue.size !== '';
+					}
+
+					return meta?.validation ? meta.validation( newValue ) : true;
+				},
+			} );
+		};
+
+		return (
+			<SizeComponent
+				units={ units }
+				value={ sizeValue }
+				anchorRef={ anchorRef }
+				placeholder={ placeholder }
+				defaultUnit={ defaultUnit }
+				onBlur={ handleBlur }
+				setValue={ handleChange }
+				SizeFieldWrapper={ ControlActions }
+				startIcon={ startIcon }
+				ariaLabel={ ariaLabel }
+				min={ min }
+			/>
+		);
+	}
+);
+
+const isTransitioningFromExtendedUnit = (
+	nextValue: SizePropValue[ 'value' ],
+	previousValue: SizePropValue[ 'value' ]
+): boolean => {
+	return ! isExtendedUnit( nextValue.unit ) && isExtendedUnit( previousValue?.unit ) && nextValue.size === '';
+};

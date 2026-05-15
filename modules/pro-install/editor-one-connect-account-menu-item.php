@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\ProInstall;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Plugin;
 
@@ -20,31 +20,31 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 		$this->script_config = $script_config;
 	}
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return 'manage_options';
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_MENU_SLUG;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Connect Account', 'elementor' );
 	}
 
-	public function get_page_title() {
+	public function get_page_title(): string {
 		return esc_html__( 'Connect Settings', 'elementor' );
 	}
 
-	public function get_position() {
+	public function get_position(): int {
 		return 1000;
 	}
 
-	public function get_slug() {
+	public function get_slug(): string {
 		return 'elementor-connect-account';
 	}
 
@@ -52,7 +52,7 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 		return 'sync';
 	}
 
-	public function get_group_id() {
+	public function get_group_id(): string {
 		return Menu_Config::SYSTEM_GROUP_ID;
 	}
 

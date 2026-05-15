@@ -1,0 +1,43 @@
+#e-dashboard-ally .ui-sortable-handle {
+	justify-content: flex-start;
+	gap: 8px;
+}
+
+#dashboard-widgets .e-dashboard-ally {
+	padding: 28px 0;
+
+	.e-dashboard-ally-img {
+		text-align: center;
+		margin-block-end: 16px;
+	}
+
+	.e-dashboard-ally-info {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		margin-block-end: 20px;
+	}
+
+	.e-dashboard-ally-title {
+		font-size: 20px;
+		line-height: 32px;
+		color: #0C0D0E;
+		margin-block-end: 0;
+	}
+
+	.e-dashboard-ally-description {
+		max-width: 295px;
+		font-size: 14px;
+		line-height: 20px;
+		color: #3F444B;
+		margin: 0 0 16px;
+	}
+}
+
+label[for="e-dashboard-ally-hide"] svg {
+	display: inline-block;
+	vertical-align: middle;
+	margin-inline-end: 4px;
+	margin-block-end: 2px;
+}

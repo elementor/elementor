@@ -1,12 +1,33 @@
 import { type ReplacementSettings } from '../types';
 
-export default class ReplacementBase {
+export type TriggerMethod = 'render' | 'renderOnChange' | 'onDestroy' | '_beforeRender' | '_afterRender';
+export type TriggerTiming = 'before' | 'after' | 'never';
+
+export const TRIGGER_TIMING: Record< string, TriggerTiming > = {
+	before: 'before',
+	after: 'after',
+	never: 'never',
+};
+
+export interface ReplacementBaseInterface {
+	renderOnChange?: () => void;
+	onDestroy?: () => void;
+	_beforeRender?: () => void;
+	_afterRender?: () => void;
+	shouldRenderReplacement: () => boolean;
+	render?: () => void;
+	originalMethodsToTrigger: () => Partial< Record< TriggerMethod, TriggerTiming > >;
+}
+
+export class ReplacementBase implements ReplacementBaseInterface {
 	protected getSetting: ReplacementSettings[ 'getSetting' ];
 	protected setSetting: ReplacementSettings[ 'setSetting' ];
 	protected element: ReplacementSettings[ 'element' ];
 	protected type: ReplacementSettings[ 'type' ];
 	protected id: ReplacementSettings[ 'id' ];
 	protected refreshView: ReplacementSettings[ 'refreshView' ];
+	protected reactRoot: ReplacementSettings[ 'reactRoot' ];
+	protected reactContainer: ReplacementSettings[ 'reactContainer' ];
 
 	constructor( settings: ReplacementSettings ) {
 		this.getSetting = settings.getSetting;
@@ -15,21 +36,25 @@ export default class ReplacementBase {
 		this.type = settings.type;
 		this.id = settings.id;
 		this.refreshView = settings.refreshView;
+		this.reactRoot = settings.reactRoot;
+		this.reactContainer = settings.reactContainer;
 	}
 
 	static getTypes(): string[] | null {
 		return null;
 	}
 
-	render(): void {}
-
-	onDestroy(): void {}
-
-	_beforeRender(): void {}
-
-	_afterRender(): void {}
-
 	shouldRenderReplacement(): boolean {
 		return true;
+	}
+
+	originalMethodsToTrigger() {
+		return {
+			_beforeRender: TRIGGER_TIMING.before,
+			_afterRender: TRIGGER_TIMING.after,
+			renderOnChange: TRIGGER_TIMING.never,
+			onDestroy: TRIGGER_TIMING.never,
+			render: TRIGGER_TIMING.never,
+		};
 	}
 }
