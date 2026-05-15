@@ -21,16 +21,16 @@ class Rest_Api {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/home-screen', [
 			'methods' => WP_REST_Server::READABLE,
 			'callback' => [ $this, 'get_home_screen' ],
-		'permission_callback' => fn() => current_user_can( 'manage_options' ),
-	] );
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
 
-	register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/auth', [
-		'methods' => WP_REST_Server::READABLE,
-		'callback' => [ $this, 'get_auth_credentials' ],
-		'permission_callback' => fn() => current_user_can( 'manage_options' ),
-	] );
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/auth', [
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => [ $this, 'get_auth_credentials' ],
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
 
-	register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/snapshot', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/snapshot', [
 			[
 				'methods' => WP_REST_Server::READABLE,
 				'callback' => [ $this, 'get_snapshot' ],
