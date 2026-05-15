@@ -24,6 +24,7 @@ class Size_Constants {
 	const UNIT_TURN = 'turn';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
+	const UNIT_FR = 'fr';
 
 	const DEFAULT_UNIT = self::UNIT_PX;
 
@@ -37,6 +38,7 @@ class Size_Constants {
 		self::UNIT_CH,
 		self::UNIT_VMIN,
 		self::UNIT_VMAX,
+		self::UNIT_FR,
 		self::UNIT_DEG,
 		self::UNIT_RAD,
 		self::UNIT_GRAD,
@@ -177,6 +179,14 @@ class Size_Constants {
 			...self::EXTENDED_UNITS,
 			...self::VIEWPORT_MIN_MAX_UNITS,
 			self::UNIT_PERCENT,
+			self::UNIT_FR,
+		];
+	}
+
+	public static function grid_track(): array {
+		return [
+			self::UNIT_FR,
+			self::UNIT_CUSTOM,
 		];
 	}
 
