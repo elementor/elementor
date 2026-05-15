@@ -146,15 +146,20 @@ class Test_Connect_Auth_Service extends \WP_UnitTestCase {
 		] );
 		$mock_app->method( 'get_site_key' )->willReturn( 'test-site-key-abc' );
 
-		$mock_connect = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
+		$mock_connect = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'get_app' ] )
+			->getMock();
 		$mock_connect->method( 'get_app' )->with( 'library' )->willReturn( $mock_app );
 
-		$mock_common = $this->createMock( \Elementor\Core\Common\Module::class );
+		$mock_common = $this->getMockBuilder( \stdClass::class )
+			->addMethods( [ 'get_component' ] )
+			->getMock();
 		$mock_common->method( 'get_component' )->with( 'connect' )->willReturn( $mock_connect );
 
 		$original_plugin = \Elementor\Plugin::$instance;
-		\Elementor\Plugin::$instance = $this->createMock( \Elementor\Plugin::class );
-		\Elementor\Plugin::$instance->common = $mock_common;
+		$mock_plugin = new \stdClass();
+		$mock_plugin->common = $mock_common;
+		\Elementor\Plugin::$instance = $mock_plugin;
 
 		try {
 			$result = $this->service->get_connect_auth();
