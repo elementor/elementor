@@ -5,7 +5,7 @@ import { __getState as getState } from '@elementor/store';
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
-import { selectClass } from '../store';
+import { placeholderDefinition, selectClass, selectClassLabels } from '../store';
 
 type EventMap = {
 	classCreated: {
@@ -220,16 +220,24 @@ const extractCssClassData = ( classId: StyleDefinitionID ) => {
 };
 
 const getCssClass = ( classId: StyleDefinitionID ) => {
-	const cssClass = selectClass( getState(), classId );
-	if ( ! cssClass ) {
-		throw new Error( `CSS class with ID ${ classId } not found` );
+	const state = getState();
+	const cssClass = selectClass( state, classId );
+
+	if ( cssClass ) {
+		return cssClass;
 	}
-	return cssClass;
+
+	const label = selectClassLabels( state )[ classId ];
+	if ( label !== undefined ) {
+		return placeholderDefinition( classId, label );
+	}
+
+	throw new Error( `CSS class with ID ${ classId } not found` );
 };
 
 const trackDeleteClass = async ( classId: StyleDefinitionID ) => {
-	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	const classTitle = getCssClass( classId ).label;
+	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	return { totalInstances, classTitle };
 };
 

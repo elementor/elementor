@@ -2,6 +2,8 @@
 
 namespace Elementor\Testing\Modules\WpRest;
 
+use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -26,11 +28,13 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		'items' => [
 			'g-1' => [
 				'id' => 'g-1',
+				'type' => 'class',
 				'label' => 'heading',
 				'variants' => [],
 			],
 			'g-2' => [
 				'id' => 'g-2',
+				'type' => 'class',
 				'label' => 'subheading',
 				'variants' => [],
 			],
@@ -61,13 +65,27 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		} );
 		do_action( 'rest_api_init' );
 
+		( new Global_Class_Post_Type() )->register_post_type();
+
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
 	}
 
 	public function tearDown(): void {
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
+		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
 		$this->kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+
+		$post_ids = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+		] );
+
+		foreach ( $post_ids as $post_id ) {
+			wp_delete_post( $post_id, true );
+		}
 
 		parent::tearDown();
 	}
@@ -83,7 +101,6 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status() );
 
 		$stored = Global_Classes_Repository::make()
-			->context( Global_Classes_Repository::CONTEXT_FRONTEND )
 			->all( true )
 			->get();
 
@@ -121,10 +138,13 @@ class Test_Design_System_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 200, $response->get_status() );
 
-		$classes_meta = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$stored_classes = Global_Classes_Repository::make()
+			->all()
+			->get();
+
 		$collection = ( new Variables_Repository( $this->kit ) )->load();
 
-		$this->assertEquals( $this->mock_global_classes['order'], $classes_meta['order'] );
+		$this->assertEquals( $this->mock_global_classes['order'], $stored_classes['order'] );
 		$this->assertCount( count( $this->mock_global_variables['data'] ), $collection->all() );
 		$this->assertEquals( 'Primary', $collection->get( 'e-gv-1' )->label() );
 	}

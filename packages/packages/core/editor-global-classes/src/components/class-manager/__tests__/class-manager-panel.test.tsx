@@ -18,6 +18,29 @@ import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
+const PANEL_TEST_ROW_HEIGHT = 40;
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count, getItemKey } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		return {
+			getTotalSize: jest.fn().mockReturnValue( count * PANEL_TEST_ROW_HEIGHT ),
+			getVirtualItems: jest.fn().mockReturnValue(
+				indices.map( ( index ) => ( {
+					index,
+					key: getItemKey ? getItemKey( index ) : index,
+					start: index * PANEL_TEST_ROW_HEIGHT,
+					end: ( index + 1 ) * PANEL_TEST_ROW_HEIGHT,
+					size: PANEL_TEST_ROW_HEIGHT,
+					lane: 0,
+				} ) )
+			),
+		};
+	} ),
+} ) );
+
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../class-manager-introduction' );
 jest.mock( '../start-sync-to-v3-modal' );
@@ -79,6 +102,10 @@ describe( 'ClassManagerPanel', () => {
 			slice.actions.load( {
 				frontend: data,
 				preview: data,
+				classLabels: {
+					'class-1': 'Class 1',
+					'class-2': 'Class 2',
+				},
 			} )
 		);
 
@@ -119,12 +146,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -149,11 +173,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-2' ],
-				changes: { added: [], deleted: [ 'class-1' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-1' ], modified: [], order: true },
 			} );
 		} );
 	} );
@@ -180,10 +202,9 @@ describe( 'ClassManagerPanel', () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
 				items: {
 					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'New label' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
 				},
 				order: [ 'class-2', 'class-1' ],
-				changes: { added: [], deleted: [], modified: [ 'class-1' ] },
+				changes: { added: [], deleted: [], modified: [ 'class-1' ], order: false },
 			} );
 		} );
 	} );
@@ -253,12 +274,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert.
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-					'class-2': createMockStyleDefinition( { id: 'class-2', label: 'Class 2' } ),
-				},
+				items: {},
 				order: [ 'class-1', 'class-2' ],
-				changes: { added: [], deleted: [], modified: [] },
+				changes: { added: [], deleted: [], modified: [], order: true },
 			} );
 		} );
 
@@ -359,11 +377,9 @@ describe( 'ClassManagerPanel', () => {
 		// Assert - Verify that publish was called with deleted class
 		await waitFor( () => {
 			expect( apiClient.publish ).toHaveBeenCalledWith( {
-				items: {
-					'class-1': createMockStyleDefinition( { id: 'class-1', label: 'Class 1' } ),
-				},
+				items: {},
 				order: [ 'class-1' ],
-				changes: { added: [], deleted: [ 'class-2' ], modified: [] },
+				changes: { added: [], deleted: [ 'class-2' ], modified: [], order: true },
 			} );
 		} );
 	} );

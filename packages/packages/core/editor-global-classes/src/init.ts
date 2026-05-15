@@ -7,12 +7,14 @@ import {
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { OpenPanelFromEvent } from './components/open-panel-from-event';
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
@@ -23,7 +25,10 @@ import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	registerSlice( slice );
-	registerPanel( panel );
+
+	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		registerPanel( panel );
+	}
 
 	stylesRepository.register( globalClassesStylesProvider );
 
@@ -47,10 +52,17 @@ export function init() {
 		component: PrefetchCssClassUsage,
 	} );
 
-	injectIntoLogic( {
-		id: 'global-classes-open-panel-from-url',
-		component: OpenPanelFromUrl,
-	} );
+	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
+		injectIntoLogic( {
+			id: 'global-classes-open-panel-from-url',
+			component: OpenPanelFromUrl,
+		} );
+
+		injectIntoLogic( {
+			id: 'global-classes-open-panel-from-event',
+			component: OpenPanelFromEvent,
+		} );
+	}
 
 	injectIntoCssClassConvert( {
 		id: 'global-classes-convert-from-local-class',
@@ -68,7 +80,15 @@ export function init() {
 	} );
 
 	initMcpIntegration(
-		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
+		getMCPByDomain( 'classes', {
+			instructions: 'MCP server for management of Elementor global classes',
+			docs: `Everything related to V4 ( Atomic ) global classes.
+# Global classes
+- Create/update/delete global classes
+- Get list of global classes
+- Get details of a global class
+`,
+		} ),
 		getMCPByDomain( 'canvas' )
 	);
 }

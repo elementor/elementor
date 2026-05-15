@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { imageSrcPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
+import { imageSrcPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { type MediaType, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -21,6 +21,10 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 	const { data: placeholderAttachment } = useWpMediaAttachment( placeholder?.id?.value || null );
 	const src = attachment?.url ?? url?.value ?? placeholderAttachment?.url ?? null;
 
+	const defaultUrl = imageSrcPropTypeUtil.extract( propType.default ?? null )?.url?.value;
+	const currentUrlForModal = url?.value && url.value !== defaultUrl ? url.value : undefined;
+	const currentAltForModal = ( value as { alt?: { value?: string } | null } | null | undefined )?.alt?.value;
+
 	const { open } = useWpMediaFrame( {
 		mediaTypes,
 		multiple: false,
@@ -35,10 +39,11 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 				url: null,
 			} );
 		},
-		onSelectUrl: ( selectedUrl ) => {
+		onSelectUrl: ( selectedUrl, alt ) => {
 			setValue( {
 				id: null,
 				url: urlPropTypeUtil.create( selectedUrl ),
+				alt: alt ? stringPropTypeUtil.create( alt ) : null,
 			} );
 		},
 	} );
@@ -74,7 +79,14 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 						>
 							{ __( 'Upload', 'elementor' ) }
 						</Button>
-						<Button size="tiny" variant="text" color="inherit" onClick={ () => open( { mode: 'url' } ) }>
+						<Button
+							size="tiny"
+							variant="text"
+							color="inherit"
+							onClick={ () =>
+								open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } )
+							}
+						>
 							{ __( 'Insert from URL', 'elementor' ) }
 						</Button>
 					</Stack>

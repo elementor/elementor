@@ -33,7 +33,7 @@ const renderGridSpanFields = () => {
 };
 
 describe( '<GridSpanFields />', () => {
-	it( 'should render Column Span and Row Span labels', () => {
+	it( 'should render Grid column and Grid row labels', () => {
 		// Arrange.
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: { 'grid-column': null, 'grid-row': null },
@@ -45,11 +45,11 @@ describe( '<GridSpanFields />', () => {
 		renderGridSpanFields();
 
 		// Assert.
-		expect( screen.getByText( 'Column Span' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Row Span' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Grid column' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Grid row' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render number inputs', () => {
+	it( 'should render text inputs', () => {
 		// Arrange.
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: { 'grid-column': null, 'grid-row': null },
@@ -61,7 +61,7 @@ describe( '<GridSpanFields />', () => {
 		renderGridSpanFields();
 
 		// Assert.
-		const inputs = screen.getAllByRole( 'spinbutton' );
+		const inputs = screen.getAllByRole( 'textbox' );
 		expect( inputs ).toHaveLength( 2 );
 	} );
 
@@ -69,8 +69,8 @@ describe( '<GridSpanFields />', () => {
 		// Arrange.
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: {
-				'grid-column': { $$type: 'span', value: 3 },
-				'grid-row': { $$type: 'span', value: 2 },
+				'grid-column': { $$type: 'span', value: '3' },
+				'grid-row': { $$type: 'span', value: '2' },
 			},
 			setValues: jest.fn(),
 			canEdit: true,
@@ -80,9 +80,9 @@ describe( '<GridSpanFields />', () => {
 		renderGridSpanFields();
 
 		// Assert.
-		const inputs = screen.getAllByRole( 'spinbutton' );
-		expect( inputs[ 0 ] ).toHaveValue( 3 );
-		expect( inputs[ 1 ] ).toHaveValue( 2 );
+		const inputs = screen.getAllByRole( 'textbox' );
+		expect( inputs[ 0 ] ).toHaveValue( '3' );
+		expect( inputs[ 1 ] ).toHaveValue( '2' );
 	} );
 
 	it( 'should update grid-column with span value on input', () => {
@@ -97,23 +97,23 @@ describe( '<GridSpanFields />', () => {
 		// Act.
 		renderGridSpanFields();
 
-		const inputs = screen.getAllByRole( 'spinbutton' );
-		fireEvent.input( inputs[ 0 ], { target: { value: '4' } } );
+		const inputs = screen.getAllByRole( 'textbox' );
+		fireEvent.input( inputs[ 0 ], { target: { value: 'span 4' } } );
 
 		// Assert.
 		expect( setValues ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				'grid-column': { $$type: 'span', value: 4 },
+				'grid-column': { $$type: 'span', value: 'span 4' },
 			} ),
 			expect.anything()
 		);
 	} );
 
-	it( 'should clear value when input is emptied', () => {
+	it( 'should clear the value when input is emptied', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		jest.mocked( useStylesFields ).mockReturnValue( {
-			values: { 'grid-column': { $$type: 'span', value: 3 }, 'grid-row': null },
+			values: { 'grid-column': { $$type: 'span', value: '3' }, 'grid-row': null },
 			setValues,
 			canEdit: true,
 		} );
@@ -121,7 +121,7 @@ describe( '<GridSpanFields />', () => {
 		// Act.
 		renderGridSpanFields();
 
-		const inputs = screen.getAllByRole( 'spinbutton' );
+		const inputs = screen.getAllByRole( 'textbox' );
 		fireEvent.input( inputs[ 0 ], { target: { value: '' } } );
 
 		// Assert.

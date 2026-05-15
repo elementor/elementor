@@ -241,7 +241,7 @@ describe( 'useWpMediaFrame', () => {
 		expect( frame.remove ).toHaveBeenCalled();
 	} );
 
-	it( 'should cleanup on close', () => {
+	it( 'should not cleanup on close to avoid WP lifecycle race conditions', () => {
 		// Arrange.
 		const mockMedia = createMedia( {} );
 
@@ -263,9 +263,9 @@ describe( 'useWpMediaFrame', () => {
 
 		frame.trigger( 'close' );
 
-		// Assert.
-		expect( frame.detach ).toHaveBeenCalled();
-		expect( frame.remove ).toHaveBeenCalled();
+		// Assert - cleanup is deferred to next open() or unmount, not triggered by close.
+		expect( frame.detach ).not.toHaveBeenCalled();
+		expect( frame.remove ).not.toHaveBeenCalled();
 	} );
 } );
 

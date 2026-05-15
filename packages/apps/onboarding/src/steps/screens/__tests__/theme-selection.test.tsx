@@ -124,11 +124,53 @@ describe( 'ThemeSelection', () => {
 			expect( helloBizCard ).toBeChecked();
 		} );
 
-		it( 'should call API with correct value when clicking Continue', async () => {
+		it( 'should call API with recommended theme when Continue is clicked without explicit selection', async () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act – explicitly select the Hello theme (recommended theme is visual-only)
+			// Act – click Continue without explicitly selecting a theme
+			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
+
+			// Assert – recommended theme (hello-elementor by default) is sent
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-choices' ),
+					expect.objectContaining( {
+						method: 'POST',
+						body: expect.stringContaining( 'hello-elementor' ),
+					} )
+				);
+			} );
+		} );
+
+		it( 'should call API with hello-biz when it is the recommended theme and Continue is clicked without explicit selection', async () => {
+			// Arrange
+			renderApp( {
+				isConnected: true,
+				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
+				choices: { building_for: 'business', site_about: [ 'online_store' ] },
+			} );
+
+			// Act – click Continue without explicitly selecting a theme
+			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
+
+			// Assert – recommended theme (hello-biz) is sent
+			await waitFor( () => {
+				expect( mockFetch ).toHaveBeenCalledWith(
+					expect.stringContaining( 'user-choices' ),
+					expect.objectContaining( {
+						method: 'POST',
+						body: expect.stringContaining( 'hello-biz' ),
+					} )
+				);
+			} );
+		} );
+
+		it( 'should call API with correct value when clicking Continue after explicit selection', async () => {
+			// Arrange
+			navigateToThemeSelection();
+
+			// Act
 			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 
@@ -148,7 +190,7 @@ describe( 'ThemeSelection', () => {
 			// Arrange
 			navigateToThemeSelection();
 
-			// Act – explicitly select first to enable Continue
+			// Act
 			fireEvent.click( screen.getByRole( 'radio', { name: 'Hello' } ) );
 			fireEvent.click( screen.getByText( 'Continue with this theme' ) );
 

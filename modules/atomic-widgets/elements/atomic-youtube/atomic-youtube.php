@@ -141,4 +141,15 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'elementor/elements/atomic-youtube' => __DIR__ . '/atomic-youtube.html.twig',
 		];
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$url = $settings['source'] ?? '';
+
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		return '[Video](' . esc_url( $url ) . ')';
+	}
 }

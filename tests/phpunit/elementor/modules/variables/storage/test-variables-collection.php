@@ -87,12 +87,12 @@ class Test_Variables_Collection extends TestCase {
 			'data' => [
 				'e-gtoacfcb' => [
 					'type' => 'global-size',
-					'label' => 'lable',
+					'label' => 'label',
 					'value' => '22px',
 				],
 				'e-gv-4fdi' => [
 					'type' => 'global-number',
-					'label' => 'number-lable',
+					'label' => 'number-label',
 					'value' => 27,
 				],
 			],
@@ -487,4 +487,3 @@ class Test_Variables_Collection extends TestCase {
 		$this->assertEquals( 9, $next_order );
 	}
 }
-
