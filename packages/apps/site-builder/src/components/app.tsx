@@ -27,11 +27,20 @@ type SiteBuilderParams = {
 	isOnePage?: boolean;
 };
 
+type ConnectAuth = {
+	signature: string;
+	accessToken: string;
+	clientId: string;
+	homeUrl: string;
+	siteKey: string;
+};
+
 function sendReferrerInfo(
 	iframe: HTMLIFrameElement,
 	event: MessageEvent,
 	targetOrigin: string,
-	siteBuilderParams: SiteBuilderParams
+	siteBuilderParams: SiteBuilderParams,
+	connectAuth: ConnectAuth | null
 ) {
 	const config = getConfig();
 
@@ -40,7 +49,7 @@ function sendReferrerInfo(
 			type: 'referrer/info',
 			instanceId: event.data?.payload?.instanceId ?? '',
 			info: {
-				connectAuth: config?.connectAuth,
+				connectAuth: connectAuth,
 				exitTo: config?.exitTo,
 				page: {
 					url: window.location.href,
@@ -88,6 +97,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
+	const [ connectAuth, setConnectAuth ] = useState< ConnectAuth | null >( null );
 
 	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
 
@@ -98,6 +108,43 @@ export function App() {
 			return '';
 		}
 	}, [ iframeUrl ] );
+
+	useEffect( () => {
+		const fetchConnectAuth = async () => {
+			try {
+				const wpApiSettings = window.wpApiSettings;
+				const nonce = wpApiSettings?.nonce || '';
+				const baseUrl = wpApiSettings?.root || '/wp-json/';
+				const authUrl = `${ baseUrl }elementor/v1/site-builder/auth`;
+
+				const response = await fetch( authUrl, {
+					method: 'POST',
+					credentials: 'include',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': nonce,
+					},
+				} );
+
+				if ( ! response.ok ) {
+					throw new Error( 'Failed to fetch auth credentials' );
+				}
+
+				const json = await response.json();
+
+				if ( json.success && json.data ) {
+					setConnectAuth( json.data );
+				} else {
+					throw new Error( 'Invalid auth response' );
+				}
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to fetch connectAuth:', err );
+			}
+		};
+
+		fetchConnectAuth();
+	}, [] );
 
 	useEffect( () => {
 		if ( ! window.opener ) {
@@ -143,7 +190,7 @@ export function App() {
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
 				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams );
+					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
 				}
 				return;
 			}
@@ -159,7 +206,7 @@ export function App() {
 				}
 			}
 		},
-		[ allowedOrigin, siteBuilderParams ]
+		[ allowedOrigin, siteBuilderParams, connectAuth ]
 	);
 
 	useEffect( () => {
@@ -168,8 +215,7 @@ export function App() {
 	}, [ handleMessage ] );
 
 	useEffect( () => {
-		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } )
-			.wpApiSettings;
+		const wpApiSettings = window.wpApiSettings;
 		const nonce = wpApiSettings?.nonce || '';
 		if ( ! nonce ) {
 			return;
