@@ -362,6 +362,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_active( $plugin ): bool {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return is_plugin_active( $plugin );
 	}
