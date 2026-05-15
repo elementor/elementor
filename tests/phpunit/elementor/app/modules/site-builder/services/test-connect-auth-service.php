@@ -139,11 +139,14 @@ class Test_Connect_Auth_Service extends \WP_UnitTestCase {
 	public function test_get_connect_auth__returns_correct_signature_with_mocked_app() {
 		$mock_app = $this->createMock( \Elementor\App\Modules\SiteBuilder\Connect\App::class );
 		$mock_app->method( 'is_connected' )->willReturn( true );
-		$mock_app->method( 'get' )->willReturnMap( [
-			[ 'access_token', 'test-access-token-123' ],
-			[ 'client_id', 'test-client-id-456' ],
-			[ 'access_token_secret', 'test-secret-789' ],
-		] );
+		$mock_app->method( 'get' )->willReturnCallback( function( $key ) {
+			$values = [
+				'access_token' => 'test-access-token-123',
+				'client_id' => 'test-client-id-456',
+				'access_token_secret' => 'test-secret-789',
+			];
+			return $values[ $key ] ?? null;
+		} );
 		$mock_app->method( 'get_site_key' )->willReturn( 'test-site-key-abc' );
 
 		$mock_connect = $this->getMockBuilder( \stdClass::class )
