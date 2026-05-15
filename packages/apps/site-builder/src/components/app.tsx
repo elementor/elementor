@@ -25,7 +25,7 @@ function wpRestFetch( path: string, init?: RequestInit ) {
 	const wpApiSettings = window.wpApiSettings;
 	const nonce = wpApiSettings?.nonce || '';
 	const baseUrl = wpApiSettings?.root || '/wp-json/';
-	
+
 	return fetch( `${ baseUrl }${ path }`, {
 		credentials: 'include',
 		...init,
@@ -59,11 +59,16 @@ function isValidConnectAuth( data: unknown ): data is ConnectAuth {
 	const auth = data as Record< string, unknown >;
 
 	return (
-		typeof auth.signature === 'string' && auth.signature.length > 0 &&
-		typeof auth.accessToken === 'string' && auth.accessToken.length > 0 &&
-		typeof auth.clientId === 'string' && auth.clientId.length > 0 &&
-		typeof auth.homeUrl === 'string' && auth.homeUrl.length > 0 &&
-		typeof auth.siteKey === 'string' && auth.siteKey.length > 0
+		typeof auth.signature === 'string' &&
+		auth.signature.length > 0 &&
+		typeof auth.accessToken === 'string' &&
+		auth.accessToken.length > 0 &&
+		typeof auth.clientId === 'string' &&
+		auth.clientId.length > 0 &&
+		typeof auth.homeUrl === 'string' &&
+		auth.homeUrl.length > 0 &&
+		typeof auth.siteKey === 'string' &&
+		auth.siteKey.length > 0
 	);
 }
 
@@ -199,34 +204,34 @@ export function App() {
 				return;
 			}
 
-		if ( event.origin !== allowedOrigin ) {
-			return;
-		}
-
-		if ( event.source !== iframeRef.current?.contentWindow ) {
-			return;
-		}
-
-		const { type } = event.data ?? {};
-
-		if ( type === 'get/referrer/info' ) {
-			const iframe = iframeRef.current;
-			if ( iframe?.contentWindow ) {
-				sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
+			if ( event.origin !== allowedOrigin ) {
+				return;
 			}
-			return;
-		}
 
-		if ( type === 'site-planner/deploy-website' ) {
-			await handleDeploy( iframeRef.current, event );
-		}
-
-		if ( type === 'element-selector/close' ) {
-			const exitTo = getConfig()?.exitTo;
-			if ( window.top && exitTo && typeof exitTo === 'string' ) {
-				window.top.location.href = exitTo;
+			if ( event.source !== iframeRef.current?.contentWindow ) {
+				return;
 			}
-		}
+
+			const { type } = event.data ?? {};
+
+			if ( type === 'get/referrer/info' ) {
+				const iframe = iframeRef.current;
+				if ( iframe?.contentWindow ) {
+					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
+				}
+				return;
+			}
+
+			if ( type === 'site-planner/deploy-website' ) {
+				await handleDeploy( iframeRef.current, event );
+			}
+
+			if ( type === 'element-selector/close' ) {
+				const exitTo = getConfig()?.exitTo;
+				if ( window.top && exitTo && typeof exitTo === 'string' ) {
+					window.top.location.href = exitTo;
+				}
+			}
 		},
 		[ allowedOrigin, siteBuilderParams, connectAuth ]
 	);
