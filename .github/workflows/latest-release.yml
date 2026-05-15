@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: write
-  id-token: write
   pull-requests: write
 
 # Cancel in-progress jobs or runs for the current workflow run
@@ -25,7 +24,6 @@ concurrency:
 jobs:
   latest_release:
     if: github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && !contains(github.event.pull_request.labels.*.name, 'skip release' )
-    permissions: write-all
     runs-on: ubuntu-22.04
     steps:
       - name: checkout branch
