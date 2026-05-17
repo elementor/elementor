@@ -8,10 +8,15 @@ permissions:
   contents: write      # upload to ci-artifacts release
   pull-requests: write # post PR comment
   actions: read
+  deployments: write
 
 jobs:
   preview:
     runs-on: ubuntu-latest
+    environment:
+      name: playground-preview
+      url: ${{ steps.post-preview.outputs.preview-url }}
+
     if: >
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
@@ -96,6 +101,12 @@ jobs:
           commit-sha: ${{ steps.runctx.outputs.head-sha }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish ci-artifacts release
+        run: |
+          gh release edit ci-artifacts --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Prepare blueprint JSON
         id: blueprint
         env:
@@ -114,6 +125,7 @@ jobs:
           NODE
 
       - name: Post Playground Preview comment
+        id: post-preview
         uses: WordPress/action-wp-playground-pr-preview@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
