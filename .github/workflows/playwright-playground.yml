@@ -87,7 +87,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+        run: |
+          echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+          echo "NODE_OPTIONS=--dns-result-order=ipv4first" >> $GITHUB_ENV
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
@@ -110,13 +112,19 @@ jobs:
           if [[ "${{ github.event_name }}" == "schedule" || "${{ inputs.run_mode }}" == "nightly" ]]; then
             WP_VER=nightly
           fi
-          npm run start-playground:ci -- --port=8888 --php=$PHP_VERSION --wp=$WP_VER &
-          npm run start-playground:ci -- --port=8889 --php=$PHP_VERSION --wp=$WP_VER &
+          npm run start-playground:ci -- --port=8888 --php=$PHP_VERSION --wp=$WP_VER --site-url=http://localhost:8888 &
+          npm run start-playground:ci -- --port=8889 --php=$PHP_VERSION --wp=$WP_VER --site-url=http://localhost:8889 &
           for PORT in 8888 8889; do
             echo "Waiting for playground on port $PORT..."
+            READY=false
             for i in {1..60}; do
-              curl -sf http://localhost:$PORT/wp-login.php > /dev/null && echo "Port $PORT ready" && break || sleep 5
+              curl -sf http://127.0.0.1:$PORT/wp-login.php > /dev/null && READY=true && break || sleep 5
             done
+            if [ "$READY" != "true" ]; then
+              echo "ERROR: Playground on port $PORT failed to start within 300 seconds"
+              exit 1
+            fi
+            echo "Port $PORT is ready"
           done
 
       - name: Export WordPress major version
@@ -196,7 +204,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set PHP_VERSION environment variable
-        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+        run: |
+          echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+          echo "NODE_OPTIONS=--dns-result-order=ipv4first" >> $GITHUB_ENV
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
@@ -215,13 +225,19 @@ jobs:
       - name: Install WordPress environment
         run: |
           npm run setup-templates
-          npm run start-playground:ci -- --port=8888 --php=$PHP_VERSION &
-          npm run start-playground:ci -- --port=8889 --php=$PHP_VERSION &
+          npm run start-playground:ci -- --port=8888 --php=$PHP_VERSION --site-url=http://localhost:8888 &
+          npm run start-playground:ci -- --port=8889 --php=$PHP_VERSION --site-url=http://localhost:8889 &
           for PORT in 8888 8889; do
             echo "Waiting for playground on port $PORT..."
+            READY=false
             for i in {1..60}; do
-              curl -sf http://localhost:$PORT/wp-login.php > /dev/null && echo "Port $PORT ready" && break || sleep 5
+              curl -sf http://127.0.0.1:$PORT/wp-login.php > /dev/null && READY=true && break || sleep 5
             done
+            if [ "$READY" != "true" ]; then
+              echo "ERROR: Playground on port $PORT failed to start within 300 seconds"
+              exit 1
+            fi
+            echo "Port $PORT is ready"
           done
 
       - name: WordPress debug information
