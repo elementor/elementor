@@ -35,6 +35,11 @@ class Design_Md_Renderer {
 			$tokens['colors'] = $colors;
 		}
 
+		$color_titles = $this->build_color_title_map( $settings );
+		if ( $color_titles ) {
+			$tokens['color_titles'] = $color_titles;
+		}
+
 		$typography = $this->build_typography_tokens( $settings );
 		if ( $typography ) {
 			$tokens['typography'] = $typography;
@@ -95,6 +100,31 @@ class Design_Md_Renderer {
 		return $colors;
 	}
 
+	private function build_color_title_map( array $settings ): array {
+		$titles = [];
+
+		$system_colors = $settings['system_colors'] ?? [];
+		foreach ( $system_colors as $item ) {
+			if ( empty( $item['color'] ) || empty( $item['_id'] ) ) {
+				continue;
+			}
+			$titles[ $item['_id'] ] = $item['title'] ?? '';
+		}
+
+		$custom_colors = $settings['custom_colors'] ?? [];
+		foreach ( $custom_colors as $item ) {
+			if ( empty( $item['color'] ) ) {
+				continue;
+			}
+			$key = ! empty( $item['_id'] ) ? $item['_id'] : $this->slugify( $item['title'] ?? '' );
+			if ( $key ) {
+				$titles[ $key ] = $item['title'] ?? '';
+			}
+		}
+
+		return $titles;
+	}
+
 	private function build_typography_tokens( array $settings ): array {
 		$typography = [];
 
@@ -120,19 +150,6 @@ class Design_Md_Renderer {
 			if ( $props ) {
 				$typography[ $id ] = $props;
 			}
-		}
-
-		$heading_levels = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
-		foreach ( $heading_levels as $level ) {
-			$props = $this->extract_group_typography( $settings, $level . '_typography_' );
-			if ( $props ) {
-				$typography[ $level ] = $props;
-			}
-		}
-
-		$body_props = $this->extract_group_typography( $settings, 'body_typography_' );
-		if ( $body_props ) {
-			$typography['body-md'] = $body_props;
 		}
 
 		return $typography;
@@ -238,6 +255,29 @@ class Design_Md_Renderer {
 	private function build_component_tokens( array $settings ): array {
 		$components = [];
 
+		$body = $this->build_body_component( $settings );
+		if ( $body ) {
+			$components['body'] = $body;
+		}
+
+		$link = $this->build_link_component( $settings );
+		if ( $link ) {
+			$components['link'] = $link;
+		}
+
+		$link_hover = $this->build_link_hover_component( $settings );
+		if ( $link_hover ) {
+			$components['link-hover'] = $link_hover;
+		}
+
+		$heading_levels = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ];
+		foreach ( $heading_levels as $level ) {
+			$heading = $this->build_heading_component( $settings, $level );
+			if ( $heading ) {
+				$components[ $level ] = $heading;
+			}
+		}
+
 		$button = $this->build_button_component( $settings );
 		if ( $button ) {
 			$components['button-primary'] = $button;
@@ -254,12 +294,12 @@ class Design_Md_Renderer {
 	private function build_button_component( array $settings ): array {
 		$component = [];
 
-		$bg_color = $settings['button_background_color'] ?? '';
+		$bg_color = $this->resolve_color_value( $settings, 'button_background_color' );
 		if ( $bg_color ) {
 			$component['backgroundColor'] = $bg_color;
 		}
 
-		$text_color = $settings['button_text_color'] ?? '';
+		$text_color = $this->resolve_color_value( $settings, 'button_text_color' );
 		if ( $text_color ) {
 			$component['textColor'] = $text_color;
 		}
@@ -275,23 +315,169 @@ class Design_Md_Renderer {
 			$component['padding'] = $padding['top'] . $unit;
 		}
 
+		$typo_ref = $this->resolve_typography_reference( $settings, 'button_typography' );
+		if ( $typo_ref ) {
+			$component['typography'] = $typo_ref;
+		} else {
+			$typography = $this->extract_group_typography( $settings, 'button_typography_' );
+			$component = array_merge( $component, $typography );
+		}
+
+		$border_type = $settings['button_border_border'] ?? '';
+		if ( $border_type ) {
+			$component['borderType'] = $border_type;
+		}
+
+		$border_width = $settings['button_border_width'] ?? [];
+		if ( ! empty( $border_width['top'] ) ) {
+			$unit = $border_width['unit'] ?? 'px';
+			$component['borderWidth'] = $border_width['top'] . $unit;
+		}
+
+		$border_color = $this->resolve_color_value( $settings, 'button_border_color' );
+		if ( $border_color ) {
+			$component['borderColor'] = $border_color;
+		}
+
 		return $component;
 	}
 
 	private function build_button_hover_component( array $settings ): array {
 		$component = [];
 
-		$bg_color = $settings['button_hover_background_color'] ?? '';
+		$bg_color = $this->resolve_color_value( $settings, 'button_hover_background_color' );
 		if ( $bg_color ) {
 			$component['backgroundColor'] = $bg_color;
 		}
 
-		$text_color = $settings['button_hover_text_color'] ?? '';
+		$text_color = $this->resolve_color_value( $settings, 'button_hover_text_color' );
 		if ( $text_color ) {
 			$component['textColor'] = $text_color;
 		}
 
+		$border_type = $settings['button_hover_border_border'] ?? '';
+		if ( $border_type ) {
+			$component['borderType'] = $border_type;
+		}
+
+		$border_width = $settings['button_hover_border_width'] ?? [];
+		if ( ! empty( $border_width['top'] ) ) {
+			$unit = $border_width['unit'] ?? 'px';
+			$component['borderWidth'] = $border_width['top'] . $unit;
+		}
+
+		$border_color = $this->resolve_color_value( $settings, 'button_hover_border_color' );
+		if ( $border_color ) {
+			$component['borderColor'] = $border_color;
+		}
+
+		$radius = $settings['button_hover_border_radius'] ?? [];
+		if ( ! empty( $radius['top'] ) ) {
+			$unit = $radius['unit'] ?? 'px';
+			$component['rounded'] = $radius['top'] . $unit;
+		}
+
 		return $component;
+	}
+
+	private function build_body_component( array $settings ): array {
+		$component = [];
+
+		$text_color = $this->resolve_color_value( $settings, 'body_color' );
+		if ( $text_color ) {
+			$component['textColor'] = $text_color;
+		}
+
+		$typo_ref = $this->resolve_typography_reference( $settings, 'body_typography' );
+		if ( $typo_ref ) {
+			$component['typography'] = $typo_ref;
+		} else {
+			$typography = $this->extract_group_typography( $settings, 'body_typography_' );
+			$component = array_merge( $component, $typography );
+		}
+
+		$paragraph_spacing = $this->extract_dimension( $settings, 'paragraph_spacing' );
+		if ( $paragraph_spacing ) {
+			$component['paragraphSpacing'] = $paragraph_spacing;
+		}
+
+		return $component;
+	}
+
+	private function build_link_component( array $settings ): array {
+		$component = [];
+
+		$text_color = $this->resolve_color_value( $settings, 'link_normal_color' );
+		if ( $text_color ) {
+			$component['textColor'] = $text_color;
+		}
+
+		$typo_ref = $this->resolve_typography_reference( $settings, 'link_normal_typography' );
+		if ( $typo_ref ) {
+			$component['typography'] = $typo_ref;
+		} else {
+			$typography = $this->extract_group_typography( $settings, 'link_normal_typography_' );
+			$component = array_merge( $component, $typography );
+		}
+
+		return $component;
+	}
+
+	private function build_link_hover_component( array $settings ): array {
+		$component = [];
+
+		$text_color = $this->resolve_color_value( $settings, 'link_hover_color' );
+		if ( $text_color ) {
+			$component['textColor'] = $text_color;
+		}
+
+		$typo_ref = $this->resolve_typography_reference( $settings, 'link_hover_typography' );
+		if ( $typo_ref ) {
+			$component['typography'] = $typo_ref;
+		} else {
+			$typography = $this->extract_group_typography( $settings, 'link_hover_typography_' );
+			$component = array_merge( $component, $typography );
+		}
+
+		return $component;
+	}
+
+	private function build_heading_component( array $settings, string $prefix ): array {
+		$component = [];
+
+		$text_color = $this->resolve_color_value( $settings, $prefix . '_color' );
+		if ( $text_color ) {
+			$component['textColor'] = $text_color;
+		}
+
+		$typo_ref = $this->resolve_typography_reference( $settings, $prefix . '_typography' );
+		if ( $typo_ref ) {
+			$component['typography'] = $typo_ref;
+		} else {
+			$typography = $this->extract_group_typography( $settings, $prefix . '_typography_' );
+			$component = array_merge( $component, $typography );
+		}
+
+		return $component;
+	}
+
+	private function resolve_color_value( array $settings, string $key ): string {
+		$global = $settings['__globals__'][ $key ] ?? '';
+		if ( $global && preg_match( '/globals\/colors\?id=(.+)/', $global, $matches ) ) {
+			return '{colors.' . $matches[1] . '}';
+		}
+
+		return $settings[ $key ] ?? '';
+	}
+
+	private function resolve_typography_reference( array $settings, string $group_name ): string {
+		$global_key = $group_name . '_typography';
+		$global = $settings['__globals__'][ $global_key ] ?? '';
+		if ( $global && preg_match( '/globals\/typography\?id=(.+)/', $global, $matches ) ) {
+			return '{typography.' . $matches[1] . '}';
+		}
+
+		return '';
 	}
 
 	private function extract_dimension( array $data, string $key ): string {
@@ -314,8 +500,9 @@ class Design_Md_Renderer {
 	}
 
 	private function render_yaml_frontmatter( array $tokens ): string {
+		$yaml_tokens = array_diff_key( $tokens, array_flip( [ 'color_titles' ] ) );
 		$lines = [ '---' ];
-		$this->yaml_write_tokens( $lines, $tokens, 0 );
+		$this->yaml_write_tokens( $lines, $yaml_tokens, 0 );
 		$lines[] = '---';
 
 		return implode( "\n", $lines );
@@ -378,7 +565,7 @@ class Design_Md_Renderer {
 		$description = $tokens['description'] ?? '';
 		$name = $tokens['name'] ?? '';
 
-		$lines = [ '## Overview' ];
+		$lines = [ "\n", '## Overview' ];
 
 		if ( $description ) {
 			$lines[] = '';
@@ -399,8 +586,11 @@ class Design_Md_Renderer {
 
 		$lines = [ '## Colors', '' ];
 
-		foreach ( $colors as $name => $hex ) {
-			$lines[] = '- **' . ucfirst( $name ) . ' (' . $hex . ')**';
+		$color_titles = $tokens['color_titles'] ?? [];
+
+		foreach ( $colors as $id => $hex ) {
+			$title = $color_titles[ $id ] ?? '';
+			$lines[] = '- **' . $id . '** (' . $hex . '): ' . $title;
 		}
 
 		return implode( "\n", $lines );
