@@ -5,17 +5,12 @@ import {
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { getMCPByDomain } from '@elementor/editor-mcp';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
-import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
-import { OpenPanelFromEvent } from './components/open-panel-from-event';
-import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
 import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
@@ -25,10 +20,6 @@ import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	registerSlice( slice );
-
-	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
-		registerPanel( panel );
-	}
 
 	stylesRepository.register( globalClassesStylesProvider );
 
@@ -51,18 +42,6 @@ export function init() {
 		id: 'global-classes-prefetch-css-class-usage',
 		component: PrefetchCssClassUsage,
 	} );
-
-	if ( ! isExperimentActive( 'e_editor_design_system_panel' ) ) {
-		injectIntoLogic( {
-			id: 'global-classes-open-panel-from-url',
-			component: OpenPanelFromUrl,
-		} );
-
-		injectIntoLogic( {
-			id: 'global-classes-open-panel-from-event',
-			component: OpenPanelFromEvent,
-		} );
-	}
 
 	injectIntoCssClassConvert( {
 		id: 'global-classes-convert-from-local-class',
