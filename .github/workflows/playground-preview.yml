@@ -1,5 +1,4 @@
-name: Playground PR Preview
-
+name: Playground PR Preview Deployments
 on:
   workflow_run:
     workflows: ["Build"]
