@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Modules\GlobalClasses\Database;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Core\Upgrade\Manager;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Migrate_To_Posts;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Reconcile_Downgraded_Posts;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
@@ -20,15 +21,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 	private Kit $kit;
 
+	private $install_history_snapshot = null;
+
+	private $legacy_signal_page_ids = [];
+
 	public function setUp(): void {
 		parent::setUp();
 
 		( new Global_Class_Post_Type() )->register_post_type();
 
 		$this->kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$saved = get_option( Manager::get_install_history_meta(), false );
+		$this->install_history_snapshot = is_array( $saved ) ? $saved : null;
+		$this->legacy_signal_page_ids = [];
 	}
 
 	public function tearDown(): void {
+		foreach ( $this->legacy_signal_page_ids as $page_id ) {
+			wp_delete_post( $page_id, true );
+		}
+		$this->legacy_signal_page_ids = [];
+
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 		$this->kit->delete_meta( Global_Classes_Order::META_KEY );
@@ -45,7 +59,43 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 			wp_delete_post( $post_id, true );
 		}
 
+		if ( null === $this->install_history_snapshot ) {
+			delete_option( Manager::get_install_history_meta() );
+		} else {
+			update_option( Manager::get_install_history_meta(), $this->install_history_snapshot );
+		}
+
 		parent::tearDown();
+	}
+
+	private function given_legacy_edit_document_signal(): void {
+		$intro_ts = time() - 2 * WEEK_IN_SECONDS;
+		$history = is_array( $this->install_history_snapshot ) ? $this->install_history_snapshot : [];
+		$history['4.1.0'] = $intro_ts;
+		update_option( Manager::get_install_history_meta(), $history );
+
+		$page_id = $this->factory()->post->create( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+
+		update_post_meta( $page_id, '_elementor_version', '4.0.5' );
+
+		$modified_gmt = gmdate( 'Y-m-d H:i:s', $intro_ts + DAY_IN_SECONDS );
+
+		wp_update_post( [
+			'ID' => $page_id,
+			'post_modified_gmt' => $modified_gmt,
+			'post_modified' => get_date_from_gmt( $modified_gmt ),
+		] );
+
+		$this->legacy_signal_page_ids[] = $page_id;
+	}
+
+	private function given_post_storage_intro_without_legacy_document_signal(): void {
+		$history = is_array( $this->install_history_snapshot ) ? $this->install_history_snapshot : [];
+		$history['4.1.0'] = time() - WEEK_IN_SECONDS;
+		update_option( Manager::get_install_history_meta(), $history );
 	}
 
 	public function test_migrate_then_reconcile__is_idempotent_for_fresh_cpts() {
@@ -80,6 +130,8 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 	}
 
 	public function test_reconcile__updates_untouched_cpt_from_legacy() {
+		$this->given_legacy_edit_document_signal();
+
 		$legacy_variants = [
 			[
 				'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
@@ -195,6 +247,101 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 		$new = Global_Class_Post::find_by_class_id( 'g-new' );
 		$this->assertNotNull( $new );
 		$this->assertSame( 'new-one', $new->get_label() );
+	}
+
+	public function test_reconcile__skips_overwrite_when_no_legacy_edit_document_signal() {
+		$this->given_post_storage_intro_without_legacy_document_signal();
+
+		$legacy_variants = [
+			[
+				'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+				'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'green' ] ],
+			],
+		];
+
+		$post = Global_Class_Post::create( 'g-1', 'from-cpt', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'from-cpt' ] );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'label' => 'from-legacy',
+					'type' => 'class',
+					'variants' => $legacy_variants,
+				],
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		$reloaded = Global_Class_Post::find_by_class_id( 'g-1' );
+		$this->assertSame( 'from-cpt', $reloaded->get_label() );
+		$this->assertSame( [], $reloaded->get_data()['variants'] );
+	}
+
+	public function test_reconcile__second_run_updates_from_legacy_when_edit_timestamp_cleared() {
+		$this->given_legacy_edit_document_signal();
+
+		$legacy_variants_first = [
+			[
+				'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+				'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'green' ] ],
+			],
+		];
+		$legacy_variants_second = [
+			[
+				'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+				'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ],
+			],
+		];
+
+		$post = Global_Class_Post::create( 'g-1', 'from-cpt', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'from-cpt' ] );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'label' => 'from-legacy',
+					'type' => 'class',
+					'variants' => $legacy_variants_first,
+				],
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		$reloaded = Global_Class_Post::find_by_class_id( 'g-1' );
+		$this->assertSame( 'green', $reloaded->get_data()['variants'][0]['props']['color']['value'] );
+
+		delete_post_meta( $reloaded->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [
+					'id' => 'g-1',
+					'label' => 'from-legacy-2',
+					'type' => 'class',
+					'variants' => $legacy_variants_second,
+				],
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		$reloaded_after_second = Global_Class_Post::find_by_class_id( 'g-1' );
+		$this->assertSame( 'from-legacy-2', $reloaded_after_second->get_label() );
+		$this->assertSame( 'red', $reloaded_after_second->get_data()['variants'][0]['props']['color']['value'] );
 	}
 
 	public function test_reconcile__preserves_orphan_cpt_not_in_legacy() {
