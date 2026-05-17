@@ -23,8 +23,19 @@
 		},
 		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
         { "step": "activateTheme", "themeFolderName": "hello-elementor" },
+        { "step": "wp-cli", "command": "wp plugin uninstall akismet --deactivate || echo 'Akismet not found or already removed'" },
+        { "step": "wp-cli", "command": "wp rewrite structure '/%postname%/' --hard" },
+        { "step": "wp-cli", "command": "wp user meta add admin wp_persisted_preferences 'a:2:{s:14:\"core/edit-post\";a:2:{b:1;s:12:\"welcomeGuide\";b:0;}}' || echo 'Welcome guide preference already set'" },
+        { "step": "wp-cli", "command": "wp option update e_editor_counter 10" },
+        { "step": "wp-cli", "command": "wp option update elementor_checklist '{\"last_opened_timestamp\":null,\"first_closed_checklist_in_editor\":true,\"is_popup_minimized\":false,\"steps\":[],\"should_open_in_editor\":false,\"editor_visit_count\":10}'" },
         { "step": "wp-cli", "command": "wp option add 'elementor_onboarded' 1" },
-        { "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements,container,e_opt_in_v4,e_classes"},
-        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999, "elementor_enable_ai": 0, "_e_welcome_popover_displayed": 1 }, "userId": 1 }
+        { "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements,container,e_opt_in_v4,e_classes" },
+        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999, "elementor_enable_ai": 0, "_e_welcome_popover_displayed": 1 }, "userId": 1 },
+        { "step": "wp-cli", "command": "wp plugin install wordpress-importer --activate || echo 'WordPress importer already installed'" },
+        { "step": "wp-cli", "command": "wp --user=admin elementor library import-dir /wordpress/elementor-templates || echo 'Template import failed or already imported'" },
+        { "step": "wp-cli", "command": "wp import /wordpress/elementor-playwright/sample-data/elementor-floating-buttons.xml --authors=skip --quiet --allow-root || echo 'Sample data import failed or already imported'" },
+        { "step": "wp-cli", "command": "wp cache flush" },
+        { "step": "wp-cli", "command": "wp rewrite flush --hard" },
+        { "step": "wp-cli", "command": "wp elementor flush-css" }
 	]
 }

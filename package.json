@@ -52,7 +52,8 @@
     "packages:version": "npm run version -w elementor-packages",
     "packages:release": "turbo build && npm run release -w elementor-packages",
     "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
-    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+        "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+        "start-playground:ci": "npx @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --mount=./tests/playwright:/wordpress/elementor-playwright --mount=./tests/playwright/templates:/wordpress/elementor-templates --mount=./tests/wp-env/config:/wordpress/elementor-config --mount=./templates/playwright:/wordpress/elementor-playwright-templates --mount=./tests/playwright/mu-plugins:/wordpress/wp-content/mu-plugins --blueprint=./tests/playwright/blueprints/ci.json",
     "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\"",
     "prepare": "husky"
   },
