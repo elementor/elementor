@@ -35,7 +35,9 @@ export const useVariablesManagerState = () => {
 		( newVariables: TVariablesList ) => {
 			const hasChanges = Object.entries( newVariables ).some( ( [ id, newVar ] ) => {
 				const existingVar = variables[ id ];
-				if ( ! existingVar ) return true;
+				if ( ! existingVar ) {
+					return true;
+				}
 				return (
 					existingVar.label !== newVar.label ||
 					existingVar.value !== newVar.value ||
