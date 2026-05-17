@@ -36,7 +36,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 	private const POST_STORAGE_INTRO_VERSION = '4.1.0';
 
-	private $should_overwrite_existing_from_legacy = null;
+	private $should_overwrite = null;
 
 	public function up() {
 		Global_Class_Post_Type::ensure_registered();
@@ -93,7 +93,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				continue;
 			}
 
-			if ( ! $this->should_overwrite_existing_posts_from_legacy() ) {
+			if ( ! $this->should_overwrite_existing_posts() ) {
 				continue;
 			}
 
@@ -106,16 +106,16 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 		return $touched_any;
 	}
 
-	private function should_overwrite_existing_posts_from_legacy(): bool {
-		if ( null !== $this->should_overwrite_existing_from_legacy ) {
-			return $this->should_overwrite_existing_from_legacy;
+	private function should_overwrite_existing_posts(): bool {
+		if ( null !== $this->should_overwrite ) {
+			return $this->should_overwrite;
 		}
 
 		$history = Manager::get_installs_history();
 		$intro_ts = $history[ self::POST_STORAGE_INTRO_VERSION ] ?? null;
 
 		if ( ! $intro_ts ) {
-			$this->should_overwrite_existing_from_legacy = true;
+			$this->should_overwrite = true;
 
 			return true;
 		}
@@ -148,13 +148,13 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			}
 
 			if ( version_compare( $version, self::POST_STORAGE_INTRO_VERSION, '<' ) ) {
-				$this->should_overwrite_existing_from_legacy = true;
+				$this->should_overwrite = true;
 
 				return true;
 			}
 		}
 
-		$this->should_overwrite_existing_from_legacy = false;
+		$this->should_overwrite = false;
 
 		return false;
 	}
