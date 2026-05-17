@@ -15,24 +15,24 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '../class-manager-panel', () => ( {
-	usePanelActions: jest.fn( () => ( { open: jest.fn() } ) ),
-} ) );
-
 jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 import { ClassManagerButton } from '../class-manager-button';
-import { usePanelActions } from '../class-manager-panel';
 
 describe( 'ClassManagerButton', () => {
 	const unsavedChangesMessage = 'You have unsaved changes';
+	let dispatchEventSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
+	} );
 
 	it( 'should navigate to the panel on click when the document is pristine', () => {
 		// Arrange.
-		const openPanel = jest.fn();
-
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
-
 		jest.mocked( useActiveDocument ).mockReturnValue( {
 			isDirty: false,
 		} as never );
@@ -47,7 +47,12 @@ describe( 'ClassManagerButton', () => {
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
 		// Assert.
-		expect( openPanel ).toHaveBeenCalled();
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/toggle-design-system',
+				detail: { tab: 'classes' },
+			} )
+		);
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerOpened',
 			source: 'style-panel',
@@ -57,9 +62,6 @@ describe( 'ClassManagerButton', () => {
 	it( 'should open the dialog if the document is dirty, and allow to cancel the action', () => {
 		// Arrange.
 		const save = jest.fn();
-		const openPanel = jest.fn();
-
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
 
 		jest.mocked( useActiveDocument ).mockReturnValue( {
 			isDirty: true,
@@ -83,16 +85,15 @@ describe( 'ClassManagerButton', () => {
 		// Assert.
 		expect( screen.queryByText( unsavedChangesMessage ) ).not.toBeInTheDocument();
 		expect( save ).not.toHaveBeenCalled();
-		expect( openPanel ).not.toHaveBeenCalled();
+		expect( dispatchEventSpy ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { type: 'elementor/toggle-design-system' } )
+		);
 		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should open the dialog if the document is dirty, and allow to save and continue', async () => {
 		// Arrange.
 		const save = jest.fn().mockResolvedValue( null );
-		const openPanel = jest.fn();
-
-		jest.mocked( usePanelActions ).mockReturnValue( { open: openPanel } as never );
 
 		jest.mocked( useActiveDocument ).mockReturnValue( {
 			isDirty: true,
@@ -119,7 +120,12 @@ describe( 'ClassManagerButton', () => {
 		} );
 
 		expect( save ).toHaveBeenCalled();
-		expect( openPanel ).toHaveBeenCalled();
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/toggle-design-system',
+				detail: { tab: 'classes' },
+			} )
+		);
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerOpened',
 			source: 'style-panel',

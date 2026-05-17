@@ -9,7 +9,6 @@ export const DESIGN_SYSTEM_EXPERIMENTS = {
 	e_classes: 'active',
 	e_variables: 'active',
 	e_variables_manager: 'active',
-	e_editor_design_system_panel: 'active',
 } as const;
 
 export async function initDesignSystemTest(
