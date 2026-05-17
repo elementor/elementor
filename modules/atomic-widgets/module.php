@@ -44,6 +44,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Stop
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Position_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Grid_Track_Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
@@ -90,6 +91,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
@@ -137,7 +139,6 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_CSS_GRID = 'e_css_grid';
-	const EXPERIMENT_DESIGN_SYSTEM_PANEL = 'e_editor_design_system_panel';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -246,15 +247,6 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_DESIGN_SYSTEM_PANEL,
-			'title' => esc_html__( 'Editor design system panel', 'elementor' ),
-			'description' => esc_html__( 'Unified design system entry in the editor (toolbar + single panel for variables and global classes).', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
 		$migrations_affecting_features = [];
@@ -358,6 +350,7 @@ class Module extends BaseModule {
 
 	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Grid_Track_Size_Prop_Type::get_key(), new Grid_Track_Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
 		$transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
