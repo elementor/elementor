@@ -96,6 +96,12 @@ jobs:
           commit-sha: ${{ steps.runctx.outputs.head-sha }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish ci-artifacts release
+        run: |
+          gh release edit ci-artifacts --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Prepare blueprint JSON
         id: blueprint
         env:
