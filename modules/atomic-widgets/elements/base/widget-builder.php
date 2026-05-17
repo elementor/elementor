@@ -44,8 +44,11 @@ class Widget_Builder {
 			'settings' => $this->settings,
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
-			...( ! empty( $this->meta ) ? [ 'meta' => $this->meta ] : [] ),
 		];
+
+		if ( ! empty( $this->meta ) ) {
+			$widget_data['meta'] = $this->meta;
+		}
 
 		return $widget_data;
 	}

@@ -50,8 +50,11 @@ class Element_Builder {
 			'isLocked' => $this->is_locked,
 			'editor_settings' => $this->editor_settings,
 			'elements' => $this->children,
-			...( ! empty( $this->meta ) ? [ 'meta' => $this->meta ] : [] ),
 		];
+
+		if ( ! empty( $this->meta ) ) {
+			$element_data['meta'] = $this->meta;
+		}
 
 		return $element_data;
 	}
