@@ -41,17 +41,18 @@ export function init() {
 		useProps: usePropVariableAction,
 	} );
 
-	variablesService.init().then( () => {
-		const variablesMcpRegistry = getMCPByDomain( 'variables', {
-			instructions: `Everything related to V4 ( Atomic ) variables.
+	variablesService.init();
+
+	const variablesMcpRegistry = getMCPByDomain( 'variables', {
+		instructions: `Everything related to V4 ( Atomic ) variables.
 # Global variables
 - Create/update/delete global variables
 - Get list of global variables
 - Get details of a global variable
 `,
-		} );
-		initMcp( variablesMcpRegistry, getMCPByDomain( 'canvas' ) );
 	} );
+
+	initMcp( variablesMcpRegistry, getMCPByDomain( 'canvas' ) );
 
 	injectIntoTop( {
 		id: 'canvas-style-variables-render',
