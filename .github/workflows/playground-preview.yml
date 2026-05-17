@@ -4,12 +4,6 @@ on:
   workflow_run:
     workflows: ["Build"]
     types: [completed]
-
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "PR number"
-        required: true
 permissions:
   contents: write      # upload to ci-artifacts release
   pull-requests: write # post PR comment
@@ -19,15 +13,8 @@ jobs:
   preview:
     runs-on: ubuntu-latest
     if: >
-      (
-        github.event_name == 'workflow_run' &&
-        github.event.workflow_run.event == 'pull_request' &&
-        github.event.workflow_run.conclusion == 'success' &&
-        github.event.workflow_run.head_repository.full_name == github.repository
-      ) ||
-      (
-        github.event_name == 'workflow_dispatch'
-      )
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
 
@@ -36,68 +23,16 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { owner, repo } = context.repo;
-
-            let prNumber;
-            let headSha;
-            let buildRunId;
-
-            if (context.eventName === 'workflow_run') {
-              const run = context.payload.workflow_run;
-              const prs = run.pull_requests || [];
-              if (!prs.length) {
-                core.setFailed('No pull request found for this workflow run');
-                return;
-              }
-
-              prNumber = prs[0].number;
-              headSha = run.head_sha;
-              buildRunId = run.id;
-            } else {
-              prNumber = Number(core.getInput('pr_number', { required: true }));
-              if (!Number.isInteger(prNumber) || prNumber <= 0) {
-                core.setFailed('Invalid pr_number input');
-                return;
-              }
-
-              const { data: pr } = await github.rest.pulls.get({
-                owner,
-                repo,
-                pull_number: prNumber,
-              });
-
-              if (pr.head.repo.full_name !== `${owner}/${repo}`) {
-                core.setFailed('Manual run supports only PRs from the same repository');
-                return;
-              }
-
-              headSha = pr.head.sha;
-
-              const runsResp = await github.rest.actions.listWorkflowRuns({
-                owner,
-                repo,
-                workflow_id: 'build.yml',
-                event: 'pull_request',
-                head_sha: headSha,
-                per_page: 50,
-              });
-
-              const buildRun = runsResp.data.workflow_runs.find((run) =>
-                run.name === 'Build' &&
-                run.status === 'completed' &&
-                run.conclusion === 'success'
-              );
-
-              if (!buildRun) {
-                core.setFailed(
-                  `No successful Build run found for PR #${prNumber} at ${headSha}. ` +
-                  'Wait for Build to finish, then re-run this workflow.'
-                );
-                return;
-              }
-
-              buildRunId = buildRun.id;
+            const run = context.payload.workflow_run;
+            const prs = run.pull_requests || [];
+            if (!prs.length) {
+              core.setFailed('No pull request found for this workflow run');
+              return;
             }
+
+            const prNumber = prs[0].number;
+            const headSha = run.head_sha;
+            const buildRunId = run.id;
 
             core.setOutput('pr-number', String(prNumber));
             core.setOutput('head-sha', headSha);
