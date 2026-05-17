@@ -679,7 +679,15 @@ class Manager {
 
 		$import_data = $document->get_import_data( [ 'content' => $elements ] );
 
-		return $import_data['content'];
+		$content = $document::on_import_update_dynamic_content(
+			$import_data['content'],
+			[ 'post_ids' => [] ]
+		);
+
+		return Plugin::$instance->db->iterate_data( $content, function( $element_data ) {
+			unset( $element_data['htmlCache'] );
+			return $element_data;
+		} );
 	}
 
 	public function process_global_styles( array $args ) {
