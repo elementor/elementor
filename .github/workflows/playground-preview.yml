@@ -64,6 +64,8 @@ jobs:
 
       - name: Repack build artifact as plugin zip
         run: |
+          echo "pr_number: ${{ inputs.pr_number }}"
+          echo "pwd: $(pwd)"
           unzip -oq build-artifact.zip -d build-artifact
           ls -la build-artifact
           if [ ! -f build-artifact/elementor.php ]; then
