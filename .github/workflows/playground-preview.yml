@@ -1,5 +1,4 @@
-name: Playground PR Preview
-
+name: Playground PR Preview Deployments
 on:
   workflow_run:
     workflows: ["Build"]
@@ -13,10 +12,6 @@ permissions:
 jobs:
   preview:
     runs-on: ubuntu-latest
-    environment:
-      name: playground-preview
-      url: ${{ steps.post-preview.outputs.preview-url }}
-
     if: >
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
@@ -28,6 +23,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            console.log('context: ${JSON.stringify(context)}');
             const run = context.payload.workflow_run;
             const prs = run.pull_requests || [];
             if (!prs.length) {
@@ -137,3 +133,31 @@ jobs:
           description-template: |
             ## Live Playground Preview
             {{PLAYGROUND_BUTTON}}
+
+      - name: Create PR deployment
+        uses: actions/github-script@v7
+        env:
+          HEAD_SHA: ${{ steps.runctx.outputs.head-sha }}
+          PR_NUMBER: ${{ steps.runctx.outputs.pr-number }}
+          PREVIEW_URL: ${{ steps.post-preview.outputs.preview-url }}
+        with:
+          script: |
+            const { data: deployment } = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: process.env.HEAD_SHA,
+              environment: 'playground-preview',
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: true,
+              description: `WP Playground preview for PR #${process.env.PR_NUMBER}`,
+            });
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'success',
+              environment_url: process.env.PREVIEW_URL,
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
+
