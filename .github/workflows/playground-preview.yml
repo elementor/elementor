@@ -66,12 +66,15 @@ jobs:
         run: |
           unzip -oq build-artifact.zip -d build-artifact
           ls -la build-artifact
-          if [ ! -d build-artifact/elementor ]; then
-            echo "Expected build-artifact/elementor directory was not found"
+          if [ ! -f build-artifact/elementor.php ]; then
+            echo "Downloaded artifact does not look like Elementor plugin root (missing elementor.php)"
             exit 1
           fi
+          rm -rf plugin-root
+          mkdir -p plugin-root/elementor
+          cp -a build-artifact/. plugin-root/elementor/
           (
-            cd build-artifact
+            cd plugin-root
             zip -rq "$GITHUB_WORKSPACE/plugin.zip" elementor
           )
 
