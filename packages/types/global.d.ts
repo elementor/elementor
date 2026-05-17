@@ -132,8 +132,8 @@ declare global {
 					title: string;
 				}
 			>;
+			getContainer?: ( id: string ) => V1Element;
 			helpers?: {
-				getContainer?: ( id: string ) => V1Element;
 				enqueueFont?: EnqueueFont;
 				hasPro?: () => boolean;
 			};
