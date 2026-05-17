@@ -89,11 +89,12 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			}
 
 			if ( $post->has_edit_timestamp() ) {
-				// Skip posts already went through the updated migration
+				// Group A - went through the updated migration
 				continue;
 			}
 
 			if ( ! $this->should_overwrite_existing_posts() ) {
+				// Group C - didn't have any posts updated in a lower version, after the installation of 4.1.0
 				continue;
 			}
 
