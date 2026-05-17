@@ -40,7 +40,7 @@ async function assertEditingPanelRestoredAfterClose(
 	await expect( page.locator( `[aria-label="Edit ${ deletedClassName }"]` ) ).toBeHidden();
 }
 
-const DELETE_CLASS_EXPERIMENTS = { e_atomic_elements: 'active', e_classes: 'active' } as const;
+const EXPERIMENTS = { e_atomic_elements: 'active', e_classes: 'active' } as const;
 
 test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -53,7 +53,7 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 
 	test( 'Deleting an assigned class from Class Manager should not remove the element overlay', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( DELETE_CLASS_EXPERIMENTS );
+		await wpAdmin.setExperiments( EXPERIMENTS );
 
 		const editor = await wpAdmin.openNewPage();
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
@@ -81,7 +81,7 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 
 	test( 'Deleting an applied class removes its styles in the editor and on the frontend', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( DELETE_CLASS_EXPERIMENTS );
+		await wpAdmin.setExperiments( EXPERIMENTS );
 		const editor = await wpAdmin.openNewPage();
 		const className = `delete-bg-${ Date.now() }`;
 
@@ -133,7 +133,7 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 
 	test( 'Deleting an applied class after a page reload restores the editing panel and removes styles on the frontend', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( DELETE_CLASS_EXPERIMENTS );
+		await wpAdmin.setExperiments( EXPERIMENTS );
 		const editor = await wpAdmin.openNewPage();
 		const className = `delete-bg-reload-${ Date.now() }`;
 
@@ -197,7 +197,7 @@ test.describe( 'Global Classes - Delete Class @v4-tests', () => {
 
 	test( 'Deleting a global class that is not applied to any widget after publish, detach, and editor reload persists', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( DELETE_CLASS_EXPERIMENTS );
+		await wpAdmin.setExperiments( EXPERIMENTS );
 		const editor = await wpAdmin.openNewPage();
 		const className = `delete-unapplied-${ Date.now() }`;
 
