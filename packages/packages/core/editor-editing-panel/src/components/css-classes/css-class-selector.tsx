@@ -11,7 +11,6 @@ import {
 	validateStyleLabel,
 } from '@elementor/editor-styles-repository';
 import { InfoAlert, WarningInfotip } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { ColorSwatchIcon, MapPinIcon } from '@elementor/icons';
 import { createLocation } from '@elementor/locations';
 import {
@@ -45,20 +44,12 @@ import { useApplyClass, useCreateAndApplyClass, useUnapplyClass } from './use-ap
 const ID = 'elementor-css-class-selector';
 const TAGS_LIMIT = 50;
 
-const EVENT_OPEN_GLOBAL_CLASSES_MANAGER = 'elementor/open-global-classes-manager';
-const EVENT_TOGGLE_DESIGN_SYSTEM = 'elementor/toggle-design-system';
-
 function openClassManagerPanel() {
-	if ( isExperimentActive( 'e_editor_design_system_panel' ) ) {
-		window.dispatchEvent(
-			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
-				detail: { tab: 'classes' as const },
-			} )
-		);
-		return;
-	}
-
-	window.dispatchEvent( new CustomEvent( EVENT_OPEN_GLOBAL_CLASSES_MANAGER ) );
+	window.dispatchEvent(
+		new CustomEvent( 'elementor/toggle-design-system', {
+			detail: { tab: 'classes' as const },
+		} )
+	);
 }
 
 type StyleDefOption = Option & {
