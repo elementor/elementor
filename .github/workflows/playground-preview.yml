@@ -1,37 +1,43 @@
-name: Playground PR Preview
-
+name: Playground PR Preview Deployments
 on:
   workflow_run:
     workflows: ["Build"]
     types: [completed]
-
 permissions:
   contents: write      # upload to ci-artifacts release
   pull-requests: write # post PR comment
+  actions: read
+  deployments: write
 
 jobs:
   preview:
     runs-on: ubuntu-latest
-    # Guard: only for PRs (not pushes to main), only for non-forks, only on successful builds
     if: >
       github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success' &&
-      github.event.workflow_run.head_repository.full_name == github.repository
-
+      github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get PR number
-        id: pr
+      - name: Resolve PR context and Build run
+        id: runctx
         uses: actions/github-script@v7
         with:
           script: |
-            const prs = context.payload.workflow_run.pull_requests;
+            console.log('context:${JSON.stringify(context)}');
+            const run = context.payload.workflow_run;
+            const prs = run.pull_requests || [];
             if (!prs.length) {
               core.setFailed('No pull request found for this workflow run');
               return;
             }
-            core.setOutput('number', prs[0].number);
+
+            const prNumber = prs[0].number;
+            const headSha = run.head_sha;
+            const buildRunId = run.id;
+
+            core.setOutput('pr-number', String(prNumber));
+            core.setOutput('head-sha', headSha);
+            core.setOutput('build-run-id', String(buildRunId));
 
       - name: Download plugin artifact
         id: artifact
@@ -41,11 +47,11 @@ jobs:
             const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id,
+              run_id: Number('${{ steps.runctx.outputs.build-run-id }}'),
             });
             const hit = artifacts.find(a => a.name.startsWith('elementor-'));
             if (!hit) {
-              core.setFailed('No elementor artifact found in triggering workflow run');
+              core.setFailed('No elementor artifact found in resolved Build workflow run');
               return;
             }
             const dl = await github.rest.actions.downloadArtifact({
@@ -54,14 +60,91 @@ jobs:
               artifact_id: hit.id,
               archive_format: 'zip',
             });
-            require('fs').writeFileSync('plugin.zip', Buffer.from(dl.data));
+            require('fs').writeFileSync('build-artifact.zip', Buffer.from(dl.data));
             core.setOutput('artifact-name', hit.name);
 
-      - name: Post Playground Preview comment
-        uses: WordPress/action-wp-playground-pr-preview@v2
+      - name: Repack build artifact as plugin zip
+        run: |
+          unzip -oq build-artifact.zip -d build-artifact
+          ls -la build-artifact
+          if [ ! -f build-artifact/elementor.php ]; then
+            echo "Downloaded artifact does not look like Elementor plugin root (missing elementor.php)"
+            exit 1
+          fi
+          rm -rf plugin-root
+          mkdir -p plugin-root/elementor
+          cp -a build-artifact/. plugin-root/elementor/
+          (
+            cd plugin-root
+            zip -rq "$GITHUB_WORKSPACE/plugin.zip" elementor
+          )
+
+      - name: Upload plugin zip artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+          path: plugin.zip
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Expose plugin zip on public URL
+        id: expose
+        uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
+        with:
+          artifact-name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+          artifact-filename: plugin.zip
+          pr-number: ${{ steps.runctx.outputs.pr-number }}
+          commit-sha: ${{ steps.runctx.outputs.head-sha }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          pr-number: ${{ steps.pr.outputs.number }}
-          plugin-zip-path: plugin.zip
-          blueprint: tests/playwright/blueprints/pr-preview.json
-          comment-header: "## Live Playground Preview"
+
+      - name: Publish ci-artifacts release
+        run: |
+          gh release edit ci-artifacts --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare blueprint JSON
+        id: blueprint
+        env:
+          PLUGIN_ZIP_URL: ${{ steps.expose.outputs.artifact-url }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const url = process.env.PLUGIN_ZIP_URL;
+          if (!url) {
+            throw new Error('Missing PLUGIN_ZIP_URL from expose step');
+          }
+          const template = fs.readFileSync('tests/playwright/blueprints/pr-preview.json', 'utf8');
+          const blueprint = template.replace(/\$PLUGIN_ZIP_URL/g, url);
+          JSON.parse(blueprint);
+          const playgroundUrl = `https://playground.wordpress.net/?blueprint-url=data:application/json,${encodeURIComponent(blueprint)}`;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `json<<BLUEPRINT_JSON_EOF\n${blueprint}\nBLUEPRINT_JSON_EOF\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `playground-url=${playgroundUrl}\n`);
+          NODE
+
+      - name: Create PR deployment
+        uses: actions/github-script@v7
+        env:
+          HEAD_SHA: ${{ steps.runctx.outputs.head-sha }}
+          PR_NUMBER: ${{ steps.runctx.outputs.pr-number }}
+          PREVIEW_URL: ${{ steps.blueprint.outputs.playground-url }}
+        with:
+          script: |
+            const { data: deployment } = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: process.env.HEAD_SHA,
+              environment: 'playground-preview',
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: true,
+              description: `WP Playground preview for PR #${process.env.PR_NUMBER}`,
+            });
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'success',
+              environment_url: process.env.PREVIEW_URL,
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });
