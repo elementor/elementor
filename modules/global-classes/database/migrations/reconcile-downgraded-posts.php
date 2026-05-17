@@ -29,7 +29,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * `should_overwrite_existing_posts_from_legacy`); otherwise existing CPT rows
  * are left as the source of truth.
  */
-
 class Reconcile_Downgraded_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
 
