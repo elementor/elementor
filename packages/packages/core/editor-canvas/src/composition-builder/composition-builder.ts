@@ -281,9 +281,12 @@ export class CompositionBuilder {
 			}
 		} );
 
-		Object.keys( widgetsCache ).forEach( ( elementType ) => {
-			const requiredChildrenEnforcer = new RequiredChildrenEnforcer( elementType, widgetsCache );
-			requiredChildrenEnforcer.enforce( this.xml );
+		const typesWithRequiredChildren = Object.keys( widgetsCache ).filter(
+			( elementType ) => getRequiredDefaultChildTemplates( widgetsCache[ elementType ] ).length > 0
+		);
+
+		typesWithRequiredChildren.forEach( ( elementType ) => {
+			new RequiredChildrenEnforcer( elementType, widgetsCache ).enforce( this.xml );
 		} );
 
 		const childTypeErrors: string[] = [];
