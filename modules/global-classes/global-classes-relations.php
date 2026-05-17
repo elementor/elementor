@@ -283,10 +283,8 @@ class Global_Classes_Relations {
 		}
 
 		Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( &$used_class_ids ) {
-			$used_class_ids = array_merge(
-				$used_class_ids,
-				Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data )
-			);
+			$ids = Atomic_Elements_Utils::collect_class_ids_from_element_data( $element_data );
+			$used_class_ids = array_merge( $used_class_ids, $ids );
 		} );
 
 		return array_values( array_unique( $used_class_ids ) );

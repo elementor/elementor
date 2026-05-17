@@ -6,8 +6,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Memo;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Plugin;
@@ -235,12 +233,20 @@ class Atomic_Styles_Manager {
 		}
 
 		$resolved = [];
-		$resolver = Render_Props_Resolver::for_styles();
-		$schema = [ 'value' => String_Prop_Type::make() ];
 
 		foreach ( $this->dynamic_placeholders as $var_name => $dynamic_node ) {
-			$result = $resolver->resolve( $schema, [ 'value' => $dynamic_node ] );
-			$value = $result['value'] ?? null;
+			if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $dynamic_node ) ) {
+				continue;
+			}
+
+			$tag_name     = $dynamic_node['value']['name'] ?? null;
+			$tag_settings = $dynamic_node['value']['settings'] ?? [];
+
+			if ( ! $tag_name ) {
+				continue;
+			}
+
+			$value = Plugin::$instance->dynamic_tags->get_tag_data_content( null, $tag_name, $tag_settings );
 
 			if ( null === $value || '' === $value ) {
 				continue;
