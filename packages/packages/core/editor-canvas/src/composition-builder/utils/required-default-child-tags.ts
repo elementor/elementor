@@ -1,31 +1,22 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-export type DefaultChildTemplate = Record< string, unknown >;
-
-export function resolveDefaultChildTemplateTagName( template: DefaultChildTemplate ): string {
-	const elementType = template.elType;
-
-	if ( elementType === 'widget' ) {
-		return typeof template.widgetType === 'string' ? template.widgetType : '';
-	}
-
-	return typeof elementType === 'string' ? elementType : '';
-}
-
-export function getRequiredDefaultChildTemplates( elementConfig: V1ElementConfig | undefined ): DefaultChildTemplate[] {
-	const defaultChildren = elementConfig?.default_children;
+export type ChildTemplate = {
+	widgetType?: string; elType?: string, meta?: { required?: boolean }
+};
+export function getRequiredDefaultChildTemplates( elementConfig: V1ElementConfig | undefined ): ChildTemplate[] {
+	const defaultChildren = elementConfig?.default_children as ChildTemplate[];
 
 	if ( ! Array.isArray( defaultChildren ) ) {
 		return [];
 	}
 
 	return defaultChildren.filter(
-		( child ): child is DefaultChildTemplate => !! ( child as { meta?: { required?: boolean } } )?.meta?.required
+		(child) => child?.meta?.required ?? false
 	);
 }
 
-export function getRequiredDefaultChildTagNames( elementConfig: V1ElementConfig | undefined ): string[] {
+export function getRequiredDefaultChildTypes( elementConfig: V1ElementConfig | undefined ): string[] {
 	return getRequiredDefaultChildTemplates( elementConfig )
-		.map( resolveDefaultChildTemplateTagName )
-		.filter( ( tag ) => Boolean( tag ) );
+		.map( ( child ) => child.widgetType ?? child.elType ?? '' )
+		.filter( ( type ) => Boolean( type ) );
 }

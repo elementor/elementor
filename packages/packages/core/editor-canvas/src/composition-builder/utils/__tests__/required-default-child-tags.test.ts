@@ -1,6 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-import { getRequiredDefaultChildTagNames, resolveDefaultChildTemplateTagName } from '../required-default-child-tags';
+import { getRequiredDefaultChildTypes } from '../required-default-child-tags';
 
 describe( 'required-default-child-tags', () => {
 	it( 'returns XML tag names for default children marked meta.required', () => {
@@ -27,20 +27,9 @@ describe( 'required-default-child-tags', () => {
 		} as unknown as V1ElementConfig;
 
 		// Act
-		const tags = getRequiredDefaultChildTagNames( config );
+		const tags = getRequiredDefaultChildTypes( config );
 
 		// Assert
 		expect( tags ).toEqual( [ 'e-form-success-message', 'e-form-input' ] );
-	} );
-
-	it( 'resolveDefaultChildTemplateTagName uses widgetType when elType is widget', () => {
-		// Arrange
-		const template = { elType: 'widget', widgetType: 'e-form-submit-button' };
-
-		// Act
-		const tag = resolveDefaultChildTemplateTagName( template );
-
-		// Assert
-		expect( tag ).toBe( 'e-form-submit-button' );
 	} );
 } );

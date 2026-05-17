@@ -1,9 +1,8 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import {
-	type DefaultChildTemplate,
+	type ChildTemplate,
 	getRequiredDefaultChildTemplates,
-	resolveDefaultChildTemplateTagName,
 } from './required-default-child-tags';
 
 const REQUIRED_CHILD_SCHEMA_HINT =
@@ -11,7 +10,7 @@ const REQUIRED_CHILD_SCHEMA_HINT =
 
 export class RequiredChildrenEnforcer {
 	private readonly elementType: string;
-	private readonly requiredTemplates: DefaultChildTemplate[];
+	private readonly requiredTemplates: ChildTemplate[];
 
 	constructor( elementType: string, widgetsCache: Record< string, V1ElementConfig > ) {
 		this.elementType = elementType;
@@ -38,8 +37,8 @@ export class RequiredChildrenEnforcer {
 		if ( node.tagName === this.elementType ) {
 			const existingChildTags = new Set( Array.from( node.children ).map( ( child ) => child.tagName ) );
 			const missingTags = this.requiredTemplates
-				.map( resolveDefaultChildTemplateTagName )
-				.filter( ( tag ) => tag && ! existingChildTags.has( tag ) ) as string[];
+				.map( ( child ) => child.widgetType ?? child.elType ?? '' )
+				.filter( ( type ) => type && ! existingChildTags.has( type ) ) as string[];
 
 			if ( missingTags.length ) {
 				const configurationId = node.getAttribute( 'configuration-id' );

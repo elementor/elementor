@@ -23,6 +23,42 @@ const createMinimalWidgetsCache = () =>
 		},
 	} ) as Record< string, { elType: string } >;
 
+const FORM_WIDGETS_CACHE_WITH_REQUIRED_CHILDREN = {
+	'e-form': {
+		title: 'Form',
+		controls: {},
+		elType: 'widget',
+		default_children: [
+			{
+				elType: 'e-form-success-message',
+				meta: { required: true },
+				elements: [],
+			},
+			{
+				elType: 'e-form-error-message',
+				meta: { required: true },
+				elements: [],
+			},
+			{
+				elType: 'widget',
+				widgetType: 'e-form-input',
+				elements: [],
+			},
+		],
+	},
+	'e-form-error-message': {
+		title: 'Error',
+		controls: {},
+		elType: 'e-form-error-message',
+	},
+	'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
+	'e-form-success-message': {
+		title: 'Success',
+		controls: {},
+		elType: 'e-form-success-message',
+	},
+} as const satisfies Record< string, V1ElementConfig >;
+
 const createMockRootContainer = (): V1Element =>
 	( {
 		id: 'root',
@@ -195,41 +231,6 @@ describe( 'CompositionBuilder.build required children', () => {
 		let elementIdSequence = 0;
 		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
 		const createElementMock = jest.fn().mockReturnValue( createdElement );
-		const formWidgetsCache = {
-			'e-form': {
-				title: 'Form',
-				controls: {},
-				elType: 'widget',
-				default_children: [
-					{
-						elType: 'e-form-success-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'e-form-error-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'widget',
-						widgetType: 'e-form-input',
-						elements: [],
-					},
-				],
-			},
-			'e-form-error-message': {
-				title: 'Error',
-				controls: {},
-				elType: 'e-form-error-message',
-			},
-			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
-			'e-form-success-message': {
-				title: 'Success',
-				controls: {},
-				elType: 'e-form-success-message',
-			},
-		} as Record< string, V1ElementConfig >;
 		const builder = CompositionBuilder.fromXMLString(
 			'<e-form configuration-id="form-1"><e-form-input /></e-form>',
 			{
@@ -237,7 +238,7 @@ describe( 'CompositionBuilder.build required children', () => {
 				deleteElement: jest.fn(),
 				getContainer: jest.fn(),
 				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
-				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				getWidgetsCache: jest.fn().mockReturnValue( FORM_WIDGETS_CACHE_WITH_REQUIRED_CHILDREN ),
 				doUpdateElementProperty: jest.fn(),
 			}
 		);
@@ -254,41 +255,6 @@ describe( 'CompositionBuilder.build required children', () => {
 		let elementIdSequence = 0;
 		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
 		const createElementMock = jest.fn().mockReturnValue( createdElement );
-		const formWidgetsCache = {
-			'e-form': {
-				title: 'Form',
-				controls: {},
-				elType: 'widget',
-				default_children: [
-					{
-						elType: 'e-form-success-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'e-form-error-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'widget',
-						widgetType: 'e-form-input',
-						elements: [],
-					},
-				],
-			},
-			'e-form-error-message': {
-				title: 'Error',
-				controls: {},
-				elType: 'e-form-error-message',
-			},
-			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
-			'e-form-success-message': {
-				title: 'Success',
-				controls: {},
-				elType: 'e-form-success-message',
-			},
-		} as Record< string, V1ElementConfig >;
 		const builder = CompositionBuilder.fromXMLString(
 			'<e-form configuration-id="form-1"><e-form-success-message /><e-form-input /></e-form>',
 			{
@@ -296,7 +262,7 @@ describe( 'CompositionBuilder.build required children', () => {
 				deleteElement: jest.fn(),
 				getContainer: jest.fn(),
 				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
-				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				getWidgetsCache: jest.fn().mockReturnValue( FORM_WIDGETS_CACHE_WITH_REQUIRED_CHILDREN ),
 				doUpdateElementProperty: jest.fn(),
 			}
 		);
@@ -313,41 +279,6 @@ describe( 'CompositionBuilder.build required children', () => {
 		let elementIdSequence = 0;
 		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
 		const createElementMock = jest.fn().mockReturnValue( createdElement );
-		const formWidgetsCache = {
-			'e-form': {
-				title: 'Form',
-				controls: {},
-				elType: 'widget',
-				default_children: [
-					{
-						elType: 'e-form-success-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'e-form-error-message',
-						meta: { required: true },
-						elements: [],
-					},
-					{
-						elType: 'widget',
-						widgetType: 'e-form-input',
-						elements: [],
-					},
-				],
-			},
-			'e-form-error-message': {
-				title: 'Error',
-				controls: {},
-				elType: 'e-form-error-message',
-			},
-			'e-form-input': { title: 'Input', controls: {}, elType: 'widget' },
-			'e-form-success-message': {
-				title: 'Success',
-				controls: {},
-				elType: 'e-form-success-message',
-			},
-		} as Record< string, V1ElementConfig >;
 		const builder = CompositionBuilder.fromXMLString(
 			'<e-form configuration-id="form-1">' +
 				'<e-form-success-message /><e-form-error-message /><e-form-input />' +
@@ -357,7 +288,7 @@ describe( 'CompositionBuilder.build required children', () => {
 				deleteElement: jest.fn(),
 				getContainer: jest.fn(),
 				generateElementId: jest.fn().mockImplementation( () => `form-comp-${ ++elementIdSequence }` ),
-				getWidgetsCache: jest.fn().mockReturnValue( formWidgetsCache ),
+				getWidgetsCache: jest.fn().mockReturnValue( FORM_WIDGETS_CACHE_WITH_REQUIRED_CHILDREN ),
 				doUpdateElementProperty: jest.fn(),
 			}
 		);
