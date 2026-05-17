@@ -35,6 +35,7 @@ jobs:
               return;
             }
 
+            echo "prs: ${JSON.stringify(prs)}";
             const prNumber = prs[0].number;
             const headSha = run.head_sha;
             const buildRunId = run.id;
