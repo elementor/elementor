@@ -67,7 +67,7 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 		// Assert
 		expect( getContainer ).toHaveBeenCalledWith( GENERATED_ELEMENT_ID );
 		expect( deleteElement ).toHaveBeenCalledTimes( 1 );
-		expect( deleteElement ).toHaveBeenCalledWith( { container: partialContainer } );
+		expect( deleteElement ).toHaveBeenCalledWith( { container: partialContainer, options: { useHistory: false } } );
 		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
 	} );
 
@@ -125,7 +125,7 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 		// Assert
 		expect( getContainer ).toHaveBeenCalledWith( GENERATED_ELEMENT_ID );
 		expect( deleteElement ).toHaveBeenCalledTimes( 1 );
-		expect( deleteElement ).toHaveBeenCalledWith( { container: partialContainer } );
+		expect( deleteElement ).toHaveBeenCalledWith( { container: partialContainer, options: { useHistory: false } } );
 		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
 	} );
 } );
