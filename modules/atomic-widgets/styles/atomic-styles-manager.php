@@ -127,25 +127,39 @@ class Atomic_Styles_Manager {
 				}
 
 				$path = $style_params['path'];
-				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
+				$get_style_payload = fn() => $this->render_style_payload_by_breakpoints(
+					$style_params['get_styles'],
+					$style_key,
+					$breakpoint_key,
+					$group_by_breakpoint_memo
+				);
 
 				$version = $this->cache_validity->get_meta( $path );
 				$breakpoint_path = array_merge( $path, [ $breakpoint_key ] );
+				$breakpoint_handle = $this->convert_path_to_handle( $breakpoint_path );
+				$is_breakpoint_cache_valid = $this->cache_validity->is_valid( $breakpoint_path );
 
 				if ( $this->has_dynamic_styles( $style_key, $style_params['get_styles'] ) ) {
-					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $render_css(), $version );
+					$payload = $get_style_payload();
+					$css = is_array( $payload ) ? (string) ( $payload['css'] ?? '' ) : (string) $payload;
+
+					$this->enqueue_inline_style( $breakpoint_path, $breakpoint_media, $css, $version );
 
 					continue;
 				}
 
 				$style_file = $this->css_files_manager->get(
-					$this->convert_path_to_handle( $breakpoint_path ),
+					$breakpoint_handle,
 					$breakpoint_media,
-					$render_css,
-					$this->cache_validity->is_valid( $breakpoint_path )
+					$get_style_payload,
+					$is_breakpoint_cache_valid
 				);
 
 				$this->cache_validity->validate( $breakpoint_path );
+
+				if ( $style_file && $is_breakpoint_cache_valid ) {
+					$this->merge_cached_dynamic_placeholders( $breakpoint_handle );
+				}
 
 				if ( ! $style_file ) {
 					continue;
@@ -164,7 +178,7 @@ class Atomic_Styles_Manager {
 
 	private function has_dynamic_styles( string $style_key, callable $get_styles ): bool {
 		if ( ! array_key_exists( $style_key, $this->dynamic_styles_decisions ) ) {
-			$this->dynamic_styles_decisions[ $style_key ] = self::contains_dynamic_value( $get_styles() );
+			$this->dynamic_styles_decisions[ $style_key ] = self::style_definitions_require_inline_dynamic_path( $get_styles() );
 		}
 
 		return $this->dynamic_styles_decisions[ $style_key ];
@@ -204,7 +218,49 @@ class Atomic_Styles_Manager {
 		return false;
 	}
 
-	private function render_css( array $styles, string $style_key ) {
+	private static function style_definitions_require_inline_dynamic_path( $style_definitions ): bool {
+		if ( ! is_array( $style_definitions ) ) {
+			return false;
+		}
+
+		foreach ( $style_definitions as $style ) {
+			if ( ! is_array( $style ) ) {
+				continue;
+			}
+
+			foreach ( $style['variants'] ?? [] as $variant ) {
+				if ( ! is_array( $variant ) ) {
+					continue;
+				}
+
+				$props = $variant['props'] ?? [];
+
+				if ( ! self::contains_dynamic_value( $props ) ) {
+					continue;
+				}
+
+				if ( ! empty( $variant['meta']['is_scoped'] ) ) {
+					continue;
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function merge_cached_dynamic_placeholders( string $breakpoint_handle ): void {
+		$cached = $this->css_files_manager->load_dynamic_placeholders( $breakpoint_handle );
+
+		if ( empty( $cached ) ) {
+			return;
+		}
+
+		$this->dynamic_placeholders = array_merge( $this->dynamic_placeholders, $cached );
+	}
+
+	private function render_style_payload( array $styles, string $style_key ): array {
 		$style_fonts = Style_Fonts::make( $style_key );
 
 		$renderer = Styles_Renderer::make(
@@ -218,13 +274,17 @@ class Atomic_Styles_Manager {
 		} );
 
 		$css = $renderer->render( $styles );
+		$placeholders = $renderer->get_dynamic_placeholders();
 
 		$this->dynamic_placeholders = array_merge(
 			$this->dynamic_placeholders,
-			$renderer->get_dynamic_placeholders()
+			$placeholders
 		);
 
-		return $css;
+		return [
+			'css' => $css,
+			'placeholders' => $placeholders,
+		];
 	}
 
 	public function resolve_dynamic_css_variables_for_current_post(): array {
@@ -264,12 +324,12 @@ class Atomic_Styles_Manager {
 		return $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 	}
 
-	private function render_css_by_breakpoints( callable $get_styles, string $style_key, string $breakpoint_key, Memo $group_by_breakpoint_memo ) {
+	private function render_style_payload_by_breakpoints( callable $get_styles, string $style_key, string $breakpoint_key, Memo $group_by_breakpoint_memo ): array {
 		$memo_key = $style_key . '-' . $breakpoint_key;
 		$get_grouped_styles = $group_by_breakpoint_memo->memoize( $memo_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
 		$grouped_styles = $get_grouped_styles();
 
-		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $style_key );
+		return $this->render_style_payload( $grouped_styles[ $breakpoint_key ] ?? [], $style_key );
 	}
 
 	private function group_by_breakpoint( $styles ) {

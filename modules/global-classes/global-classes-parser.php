@@ -116,8 +116,7 @@ class Global_Classes_Parser {
 				$style['variants'][ $variant_index ]['meta'] = [];
 			}
 
-		$is_scoped = self::props_contain_dynamic( $variant['props'] ?? [] );
-		$style['variants'][ $variant_index ]['meta']['is_scoped'] = $is_scoped;
+			$style['variants'][ $variant_index ]['meta']['is_scoped'] = self::props_contain_dynamic( $variant['props'] ?? [] );
 		}
 
 		return $style;

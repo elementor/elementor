@@ -398,6 +398,33 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		];
 	}
 
+	private function get_scoped_dynamic_test_style_defs( string $breakpoint = 'desktop' ) {
+		return [
+			'scoped-dynamic-style' => [
+				'id' => 'scoped-dynamic-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => $breakpoint,
+							'is_scoped' => true,
+						],
+						'props' => [
+							'color' => 'red',
+							'background-image' => [
+								'$$type' => 'dynamic',
+								'value' => [
+									'name' => 'fake-tag',
+									'settings' => [],
+								],
+							],
+						],
+					],
+				],
+			],
+		];
+	}
+
 	public function test_enqueue__bypasses_file_cache_for_dynamic_styles() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();
