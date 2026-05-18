@@ -213,9 +213,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 						<ControlReplacementsProvider replacements={ controlReplacements }>
 							<Box mb={ 1.5 }>
 								<ControlTypeContainer layout={ layout }>
-									{ layout !== 'custom' && (
-										<ControlLabel>{ overridableProp.label }</ControlLabel>
-									) }
+									{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
 									<OriginalControl control={ control } controlProps={ controlProps } />
 								</ControlTypeContainer>
 							</Box>
