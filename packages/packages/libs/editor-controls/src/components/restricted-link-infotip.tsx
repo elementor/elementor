@@ -10,8 +10,6 @@ import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertAction, AlertTitle, Box, Infotip, Link } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useLinkNavigationContext } from '../context/link-navigation-context';
-
 const learnMoreButton = {
 	label: __( 'Learn More', 'elementor' ),
 	href: 'https://go.elementor.com/element-link-inside-link-infotip',
@@ -56,15 +54,12 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 	children,
 } ) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
-	const { onTakeMeThere } = useLinkNavigationContext();
 
-	const takeMeThereHandler = onTakeMeThere === undefined ? selectElement : onTakeMeThere;
-	const targetInCurrentDocument = isTargetInCurrentDocument( elementId );
-	const showTakeMeThereCta = !! ( takeMeThereHandler && elementId && targetInCurrentDocument );
+	const showTakeMeThereCta = !! ( elementId && isTargetInCurrentDocument( elementId ) );
 
 	const handleTakeMeClick = () => {
-		if ( elementId && takeMeThereHandler ) {
-			takeMeThereHandler( elementId );
+		if ( elementId ) {
+			selectElement( elementId );
 		}
 	};
 

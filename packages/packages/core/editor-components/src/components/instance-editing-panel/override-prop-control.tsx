@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
 	ControlReplacementsProvider,
 	getControlReplacements,
-	LinkNavigationProvider,
 	PropKeyProvider,
 	PropProvider,
 	type SetValueMeta,
@@ -194,39 +193,37 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	};
 
 	return (
-		<LinkNavigationProvider onTakeMeThere={ null }>
-			<OverridablePropProvider
-				value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
-				componentInstanceElement={ componentInstanceElement }
+		<OverridablePropProvider
+			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
+			componentInstanceElement={ componentInstanceElement }
+		>
+			<ElementProvider
+				element={ { id: elementId, type: elementType.key } }
+				elementType={ elementType }
+				settings={ resolvedElementSettings }
 			>
-				<ElementProvider
-					element={ { id: elementId, type: elementType.key } }
-					elementType={ elementType }
-					settings={ resolvedElementSettings }
+				<PropProvider
+					propType={ propTypeSchema }
+					value={ value }
+					setValue={ setValue }
+					baseValue={ baseValue }
+					isDisabled={ isDisabled }
 				>
-					<PropProvider
-						propType={ propTypeSchema }
-						value={ value }
-						setValue={ setValue }
-						baseValue={ baseValue }
-						isDisabled={ isDisabled }
-					>
-						<PropKeyProvider bind={ overridableProp.overrideKey }>
-							<ControlReplacementsProvider replacements={ controlReplacements }>
-								<Box mb={ 1.5 }>
-									<ControlTypeContainer layout={ layout }>
-										{ layout !== 'custom' && (
-											<ControlLabel>{ overridableProp.label }</ControlLabel>
-										) }
-										<OriginalControl control={ control } controlProps={ controlProps } />
-									</ControlTypeContainer>
-								</Box>
-							</ControlReplacementsProvider>
-						</PropKeyProvider>
-					</PropProvider>
-				</ElementProvider>
-			</OverridablePropProvider>
-		</LinkNavigationProvider>
+					<PropKeyProvider bind={ overridableProp.overrideKey }>
+						<ControlReplacementsProvider replacements={ controlReplacements }>
+							<Box mb={ 1.5 }>
+								<ControlTypeContainer layout={ layout }>
+									{ layout !== 'custom' && (
+										<ControlLabel>{ overridableProp.label }</ControlLabel>
+									) }
+									<OriginalControl control={ control } controlProps={ controlProps } />
+								</ControlTypeContainer>
+							</Box>
+						</ControlReplacementsProvider>
+					</PropKeyProvider>
+				</PropProvider>
+			</ElementProvider>
+		</OverridablePropProvider>
 	);
 }
 
