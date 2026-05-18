@@ -45,9 +45,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 	} );
 
 	it( 'fetches connectAuth on mount via GET', async () => {
-		mockApiFetch
-			.mockResolvedValueOnce( validAuthPayload )
-			.mockResolvedValueOnce( {} );
+		mockApiFetch.mockResolvedValueOnce( validAuthPayload ).mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -95,9 +93,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles response with success:false', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockApiFetch
-			.mockResolvedValueOnce( { success: false } )
-			.mockResolvedValueOnce( {} );
+		mockApiFetch.mockResolvedValueOnce( { success: false } ).mockResolvedValueOnce( {} );
 
 		render( <App /> );
 

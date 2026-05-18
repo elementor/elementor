@@ -1,12 +1,9 @@
-import * as React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
+import type * as React from 'react';
 
 import type { ConnectAuth } from '../connect-auth-schema';
 import { deployWebsite } from '../deploy';
-import {
-	getElementorAiCurrentContext,
-	getSiteBuilderConfig,
-} from '../site-builder-config';
+import { getElementorAiCurrentContext, getSiteBuilderConfig } from '../site-builder-config';
 
 export type SiteBuilderParams = {
 	siteType?: string;
