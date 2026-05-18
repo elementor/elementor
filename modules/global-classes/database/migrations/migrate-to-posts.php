@@ -40,7 +40,7 @@ class Migrate_To_Posts extends Base_Migration {
 			return false;
 		}
 
-		$global_classes = self::get_legacy_global_classes( $kit );
+		$global_classes = self::get_aggregate_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {
 			return false;
@@ -71,7 +71,7 @@ class Migrate_To_Posts extends Base_Migration {
 		] );
 	}
 
-	public static function get_legacy_global_classes( ?Kit $kit = null ): array {
+	public static function get_aggregate_global_classes( ?Kit $kit = null ): array {
 		$empty_result = [
 			'items' => [],
 			'order' => [],

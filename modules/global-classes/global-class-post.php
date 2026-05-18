@@ -180,7 +180,7 @@ class Global_Class_Post {
 			'post_title' => $label,
 		] );
 
-		if ( ! is_wp_error( $result ) ) {
+		if ( ! is_wp_error( $result ) && ! $this->is_preview() ) {
 			update_post_meta( $this->post->ID, self::META_KEY_EDITED, $this->get_current_timestamp() );
 		}
 

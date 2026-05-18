@@ -19,17 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reconciles global class posts for users who already ran the posts migration.
  *
  * Upgrade states:
- * - A: still on legacy structure, handled by `Migrate_To_Posts` (which now sets an initial edit timestamp).
- * - B: upgraded, downgraded to legacy, then edited legacy classes.
+ * - A: still on aggregate structure, handled by `Migrate_To_Posts` (which now sets an initial edit timestamp).
+ * - B: upgraded, downgraded to the aggregated structure, then edited classes.
  * - C: upgraded and kept editing classes in posts.
  *
  * B and C already have DB version 2, so they skip `Migrate_To_Posts`.
- * This migration aligns legacy kit meta with class posts, for group B
+ * This migration aligns aggregate kit meta with class posts, for group B
  */
 class Reconcile_Downgraded_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
 
-	private const LEGACY_EDIT_SIGNAL_QUERY_LIMIT = 200;
+	private const QUERY_LIMIT = 10; // Just a safety measurement to make sure we have a big-enough sample size of new edits' versions
 
 	private const POST_STORAGE_INTRO_VERSION = '4.1.0';
 
@@ -44,14 +44,14 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			return;
 		}
 
-		$legacy = Migrate_To_Posts::get_legacy_global_classes( $kit );
+		$aggregate = Migrate_To_Posts::get_aggregate_global_classes( $kit );
 
-		if ( empty( $legacy ) || empty( $legacy['items'] ) ) {
+		if ( empty( $aggregate ) || empty( $aggregate['items'] ) ) {
 			return;
 		}
 
-		$items = Global_Class_Data_Normalizer::normalize_styles( $legacy['items'] );
-		$order = $legacy['order'] ?? array_keys( $items );
+		$items = Global_Class_Data_Normalizer::normalize_styles( $aggregate['items'] );
+		$order = $aggregate['order'] ?? array_keys( $items );
 
 		$touched_any = $this->reconcile_posts( $items );
 
@@ -65,24 +65,47 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 	}
 
 	private function reconcile_posts( array $items ): bool {
-		$touched_any = false;
+		$post_map = $this->build_post_map( $items );
+
+		if ( null === $post_map ) {
+			return false;
+		}
+
+		if ( ! $this->should_overwrite_existing_posts() ) {
+			return false;
+		}
+
+		return $this->apply_reconciliation( $items, $post_map );
+	}
+
+	/**
+	 * @return array<string, Global_Class_Post|null>|null Null when a Group A post is detected (edit timestamp found).
+	 */
+	private function build_post_map( array $items ): ?array {
+		$post_map = [];
 
 		foreach ( $items as $class_id => $item ) {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
-			$normalized_item = Global_Class_Data_Normalizer::normalize_style( $class_id, $item );
 
 			if ( $post && $post->has_edit_timestamp() ) {
-				// Group A
 				$this->set_should_overwrite( false );
-				continue;
+
+				return null;
 			}
 
-			if ( ! $this->should_overwrite_existing_posts() ) {
-				// Group C
-				continue;
-			}
+			$post_map[ $class_id ] = $post;
+		}
 
-			// Group B
+		return $post_map;
+	}
+
+	private function apply_reconciliation( array $items, array $post_map ): bool {
+		$touched_any = false;
+
+		foreach ( $items as $class_id => $item ) {
+			$post = $post_map[ $class_id ];
+			$normalized_item = Global_Class_Data_Normalizer::normalize_style( $class_id, $item );
+
 			if ( ! $post ) {
 				$created = Global_Class_Post::create(
 					$normalized_item['id'],
@@ -143,7 +166,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				$cpt,
 				self::POST_STORAGE_INTRO_VERSION,
 				$cutoff,
-				self::LEGACY_EDIT_SIGNAL_QUERY_LIMIT
+				self::QUERY_LIMIT
 			)
 		);
 
@@ -165,9 +188,9 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 	}
 
 	private function sync_order_and_labels( $kit, array $items, array $order ): void {
-		$legacy_ids = array_keys( $items );
+		$aggregated_ids = array_keys( $items );
 		$current_order = Global_Classes_Order::make( $kit )->get_order();
-		$merged_order = array_values( array_unique( array_merge( $order, array_diff( $current_order, $legacy_ids ) ) ) );
+		$merged_order = array_values( array_unique( array_merge( $order, array_diff( $current_order, $aggregated_ids ) ) ) );
 
 		Global_Classes_Order::make( $kit )->set_order( $merged_order );
 
