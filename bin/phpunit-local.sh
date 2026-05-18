@@ -46,11 +46,18 @@ start_mysql_container() {
   fi
 
   echo "Waiting for MySQL to be ready..."
-  local timeout=30
+  local timeout=60
   local elapsed=0
   until docker exec "${CONTAINER_NAME}" mysqladmin ping -u"${DB_USER}" -p"${DB_PASSWORD}" --silent 2>/dev/null; do
     if [ "${elapsed}" -ge "${timeout}" ]; then
-      echo "Error: MySQL on port ${DB_PORT} did not become ready within ${timeout}s. The container may be using different credentials."
+      echo ""
+      echo "Error: MySQL on port ${DB_PORT} did not respond within ${timeout}s."
+      echo ""
+      echo "A container is running on port ${DB_PORT} but may use different credentials than expected (user: ${DB_USER}, password: ${DB_PASSWORD})."
+      echo "Conflicting container: $(find_container_on_port)"
+      echo ""
+      echo "To fix: stop the conflicting container, then re-run."
+      echo "  docker stop $(find_container_on_port)"
       exit 1
     fi
     sleep 1
