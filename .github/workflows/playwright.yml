@@ -40,6 +40,15 @@ on:
         options:
           - standard
           - nightly
+      browser:
+        type: choice
+        description: 'Browser to run tests on'
+        required: true
+        default: 'chromium'
+        options:
+          - chromium
+          - firefox
+          - webkit
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -141,15 +150,28 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Enable full browser compatibility mode
-        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
-        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+      - name: Resolve browser configuration
+        env:
+          FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+        run: |
+          if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=all" >> $GITHUB_ENV
+          elif [ "$BROWSER_INPUT" != "chromium" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=$BROWSER_INPUT" >> $GITHUB_ENV
+          else
+            echo "BROWSER=chromium" >> $GITHUB_ENV
+          fi
       - name: Install playwright/test
         run: |
-          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
             npx playwright install --with-deps chromium firefox webkit
+          elif [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps "$BROWSER"
           else
-            npx playwright install chromium
+            npx playwright install --with-deps chromium
           fi
       - name: Run Playwright tests
         if: ${{
@@ -160,34 +182,63 @@ jobs:
           matrix.shardIndex != 'import_export_customization'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container"
-      - name: Run Playwright Plugin Container tests
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@plugin_tester_container" $PROJECT_ARG
+      - name: Run Playwright Plugin Section tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section"
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@plugin_tester_section" $PROJECT_ARG
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
-        run: npm run test:playwright -- --grep="@import_export_customization"
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG
       - name: Run core element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
-        run: npm run test:playwright:elements-regression:core
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:core -- $PROJECT_ARG
       - name: Run atomic element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
-        run: npm run test:playwright:elements-regression:atomic
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
       - uses: actions/upload-artifact@v4
         name: Upload Allure result
         if: always()
         with:
-          name: allure-results-${{ matrix.shardIndex }}
+          name: allure-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: allure-results
           if-no-files-found: ignore
           retention-days: 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.shardIndex }}
+          name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
@@ -239,25 +290,42 @@ jobs:
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Enable full browser compatibility mode
-        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
-        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+      - name: Resolve browser configuration
+        env:
+          FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+        run: |
+          if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=all" >> $GITHUB_ENV
+          elif [ "$BROWSER_INPUT" != "chromium" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=$BROWSER_INPUT" >> $GITHUB_ENV
+          else
+            echo "BROWSER=chromium" >> $GITHUB_ENV
+          fi
       - name: Install playwright/test
         run: |
-          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
             npx playwright install --with-deps chromium firefox webkit
+          elif [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps "$BROWSER"
           else
-            npx playwright install chromium
+            npx playwright install --with-deps chromium
           fi
       - name: Run Playwright tests
         env:
           REPEAT_EACH: ${{ inputs.repeat_each }}
           TEST_TAG: ${{ inputs.tag }}
         run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
           if [ -n "$REPEAT_EACH" ]; then
-            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH"
+            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH" $PROJECT_ARG
           else
-            npm run test:playwright -- --grep="$TEST_TAG"
+            npm run test:playwright -- --grep="$TEST_TAG" $PROJECT_ARG
           fi
       - name: GCP Authentication
         id: 'auth'
