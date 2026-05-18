@@ -1,35 +1,37 @@
-import { BrowserContext, Page, expect } from '@playwright/test';
+import { type BrowserContext, type Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
-
-import { initTemplate } from './utils';
-import VariablesManagerPage from './variables-manager-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import { cleanupVariables, initVariablesManagerTest } from './utils';
+import VariablesManagerPage from './variables-manager-page';
 
 test.describe( 'Variable Manager @v4-tests', () => {
-	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
+	let wpAdmin: WpAdminPage;
 	let variablesManagerPage: VariablesManagerPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
-		wpAdminPage = await initTemplate( page, testInfo, apiRequests );
+		wpAdmin = await initVariablesManagerTest( page, testInfo, apiRequests );
 		variablesManagerPage = new VariablesManagerPage( page );
 	} );
 
-	test.beforeEach( async () => {
-		await variablesManagerPage.deleteAllVariables();
+	test.beforeEach( async ( { apiRequests } ) => {
+		await cleanupVariables( apiRequests, page );
+		await wpAdmin.openNewPage();
+		variablesManagerPage = new VariablesManagerPage( page );
 	} );
 
-	test.afterAll( async () => {
-		await wpAdminPage?.resetExperiments();
+	test.afterAll( async ( { apiRequests } ) => {
+		await cleanupVariables( apiRequests, page );
+		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
 
 	test( 'Empty state', async () => {
 		await test.step( 'Display empty state message when no variables exist', async () => {
-			await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
+			await variablesManagerPage.openVariableManager();
 			await expect( page.getByText( 'Create your first variable' ) ).toBeVisible();
 		} );
 
