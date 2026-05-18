@@ -1318,6 +1318,68 @@ describe( '<CssClassSelector />', () => {
 		} );
 	} );
 
+	describe( 'Missing classes alert', () => {
+		it( 'should not show the alert when all applied classes exist in a provider', () => {
+			// Arrange & Act.
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+
+			// Assert.
+			expect( screen.queryByText( 'Some classes are missing' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show the alert when an applied class ID is not found in any provider', () => {
+			// Arrange.
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			// Act.
+			renderComponent( {
+				active: 'local',
+				appliedClasses: [ 'local', 'ghost-class-id' ],
+			} );
+
+			// Assert.
+			expect( screen.getByText( 'Some classes are missing' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'A class was removed from your site and is no longer active on this element' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'should show the alert even when the missing class is not the active one', () => {
+			// Arrange.
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			// Act — active is 'local' (valid), 'ghost-class-id' is the missing class.
+			renderComponent( {
+				active: 'local',
+				appliedClasses: [ 'local', 'provider-1-a', 'ghost-class-id' ],
+			} );
+
+			// Assert.
+			expect( screen.getByText( 'Some classes are missing' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should remove only the missing class IDs when dismiss is clicked, keeping valid ones', () => {
+			// Arrange.
+			const appliedClasses = [ 'local', 'provider-1-a', 'ghost-class-id' ];
+			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			renderComponent( { active: 'local', appliedClasses } );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+			// Assert — only the ghost id is stripped, valid classes remain.
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'mock-element',
+				props: {
+					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
+				},
+				withHistory: false,
+			} );
+		} );
+	} );
+
 	describe( 'Class history', () => {
 		let appliedClasses: string[];
 
