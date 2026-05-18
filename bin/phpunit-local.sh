@@ -31,17 +31,26 @@ start_mysql_container() {
     CONTAINER_NAME="${existing_on_port}"
   else
     local status
-    status=$(docker inspect --format '{{.State.Status}}' "${CONTAINER_NAME}" 2>/dev/null || echo "missing")
+    status=$(docker inspect --format '{{.State.Status}}' "${CONTAINER_NAME}" 2>/dev/null | tr -d '[:space:]' || echo "missing")
+    status="${status:-missing}"
 
     if [ "${status}" = "exited" ] || [ "${status}" = "created" ]; then
       echo "Starting existing MySQL container '${CONTAINER_NAME}'..."
       docker start "${CONTAINER_NAME}"
     elif [ "${status}" = "missing" ]; then
+      local arch
+      arch=$(uname -m)
+      local mysql_image="mysql:8.0"
+      if [ "${arch}" = "arm64" ]; then
+        mysql_image="mysql:8.4"
+      fi
+      echo "Pulling MySQL image '${mysql_image}'..."
+      docker pull "${mysql_image}"
       echo "Creating MySQL container '${CONTAINER_NAME}'..."
       docker run --name "${CONTAINER_NAME}" \
         -e MYSQL_ROOT_PASSWORD="${DB_PASSWORD}" \
         -p "${DB_PORT}:3306" \
-        -d mysql:8.0
+        -d "${mysql_image}"
     fi
   fi
 
@@ -51,13 +60,19 @@ start_mysql_container() {
   until docker exec "${CONTAINER_NAME}" mysqladmin ping -u"${DB_USER}" -p"${DB_PASSWORD}" --silent 2>/dev/null; do
     if [ "${elapsed}" -ge "${timeout}" ]; then
       echo ""
-      echo "Error: MySQL on port ${DB_PORT} did not respond within ${timeout}s."
+      echo "Error: MySQL in container '${CONTAINER_NAME}' did not respond within ${timeout}s."
       echo ""
-      echo "A container is running on port ${DB_PORT} but may use different credentials than expected (user: ${DB_USER}, password: ${DB_PASSWORD})."
-      echo "Conflicting container: $(find_container_on_port)"
-      echo ""
-      echo "To fix: stop the conflicting container, then re-run."
-      echo "  docker stop $(find_container_on_port)"
+      local conflicting
+      conflicting=$(find_container_on_port)
+      if [ -n "${conflicting}" ] && [ "${conflicting}" != "${CONTAINER_NAME}" ]; then
+        echo "A different container is running on port ${DB_PORT}: '${conflicting}'"
+        echo "It may use different credentials than expected (user: ${DB_USER}, password: ${DB_PASSWORD})."
+        echo "Stop it and re-run:"
+        echo "  docker stop ${conflicting}"
+      else
+        echo "The container may still be initializing. Check its logs:"
+        echo "  docker logs ${CONTAINER_NAME}"
+      fi
       exit 1
     fi
     sleep 1
