@@ -33,8 +33,24 @@ export const useVariablesManagerState = () => {
 
 	const handleOnChange = useCallback(
 		( newVariables: TVariablesList ) => {
-			setVariables( { ...variables, ...newVariables } );
-			setIsDirty( true );
+			const hasChanges = Object.entries( newVariables ).some( ( [ id, newVar ] ) => {
+				const existingVar = variables[ id ];
+				if ( ! existingVar ) {
+					return true;
+				}
+				return (
+					existingVar.label !== newVar.label ||
+					existingVar.value !== newVar.value ||
+					existingVar.order !== newVar.order ||
+					existingVar.type !== newVar.type ||
+					( existingVar.sync_to_v3 ?? false ) !== ( newVar.sync_to_v3 ?? false )
+				);
+			} );
+
+			if ( hasChanges ) {
+				setVariables( { ...variables, ...newVariables } );
+				setIsDirty( true );
+			}
 		},
 		[ variables ]
 	);
