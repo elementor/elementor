@@ -242,7 +242,11 @@ export default class DesignSystemPage {
 	}
 
 	getClassItem( className: string ): Locator {
-		return this.panel.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+		return this.panel
+			.getByRole( 'tabpanel' )
+			.locator( 'li' )
+			.filter( { has: this.page.getByRole( 'button', { name: 'More actions' } ) } )
+			.filter( { hasText: className } );
 	}
 
 	getVariableItem( variableName: string ): Locator {
