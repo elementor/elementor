@@ -36,6 +36,5 @@ export {
 export { type AnyTransformer, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';
 export { useCanvasDocument } from './hooks/use-canvas-document';
-export { useElementRect } from './hooks/use-element-rect';
 export { useEscapeOnCanvas } from './hooks/use-escape-on-canvas';
 export { doAfterRender } from './utils/after-render';
