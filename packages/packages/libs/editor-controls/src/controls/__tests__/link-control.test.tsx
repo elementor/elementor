@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { createMockPropType, dispatchCommandAfter, renderControl } from 'test-utils';
-import { getContainer, getCurrentDocumentId, getLinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import type { LinkInLinkRestriction } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getCurrentDocumentId,
+	getLinkInLinkRestriction,
+	selectElement,
+} from '@elementor/editor-elements';
 import { useSessionStorage } from '@elementor/session';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
