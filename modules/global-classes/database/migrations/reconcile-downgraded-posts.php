@@ -83,7 +83,6 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			}
 
 			// Group B
-
 			if ( ! $post ) {
 				$created = Global_Class_Post::create(
 					$normalized_item['id'],
