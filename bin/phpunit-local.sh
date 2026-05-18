@@ -84,7 +84,7 @@ start_mysql_container() {
 install_wp_test_suite() {
   rm -rf "${WP_TESTS_DIR}" /tmp/wordpress
 
-  mysql -u"${DB_USER}" -p"${DB_PASSWORD}" -h"127.0.0.1" -P"${DB_PORT}" \
+  docker exec "${CONTAINER_NAME}" mysql -u"${DB_USER}" -p"${DB_PASSWORD}" \
     -e "DROP DATABASE IF EXISTS \`${DB_NAME}\`;" 2>/dev/null
 
   WP_TESTS_DIR="${WP_TESTS_DIR}" \
