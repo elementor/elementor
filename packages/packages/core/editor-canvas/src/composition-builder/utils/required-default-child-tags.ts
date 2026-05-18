@@ -1,7 +1,9 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
 export type ChildTemplate = {
-	widgetType?: string; elType?: string, meta?: { required?: boolean }
+	widgetType?: string;
+	elType?: string;
+	meta?: { required?: boolean };
 };
 export function getRequiredDefaultChildTemplates( elementConfig: V1ElementConfig | undefined ): ChildTemplate[] {
 	const defaultChildren = elementConfig?.default_children as ChildTemplate[];
@@ -10,9 +12,7 @@ export function getRequiredDefaultChildTemplates( elementConfig: V1ElementConfig
 		return [];
 	}
 
-	return defaultChildren.filter(
-		(child) => child?.meta?.required ?? false
-	);
+	return defaultChildren.filter( ( child ) => child?.meta?.required ?? false );
 }
 
 export function getRequiredDefaultChildTypes( elementConfig: V1ElementConfig | undefined ): string[] {

@@ -13,6 +13,7 @@ import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { validateInput } from '../mcp/utils/validate-input';
+import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 
 type AnyValue = z.infer< z.ZodTypeAny >;

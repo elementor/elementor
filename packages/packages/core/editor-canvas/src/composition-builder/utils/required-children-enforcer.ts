@@ -1,9 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-import {
-	type ChildTemplate,
-	getRequiredDefaultChildTemplates,
-} from './required-default-child-tags';
+import { type ChildTemplate, getRequiredDefaultChildTemplates } from './required-default-child-tags';
 
 const REQUIRED_CHILD_SCHEMA_HINT =
 	'Use the widget schema resource; under llm_guidance.required_direct_children for V4 widgets.';
