@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { createMockPropType, dispatchCommandAfter, renderControl } from 'test-utils';
-import type { LinkInLinkRestriction } from '@elementor/editor-elements';
 import {
 	getContainer,
 	getCurrentDocumentId,
 	getLinkInLinkRestriction,
+	type LinkInLinkRestriction,
 	selectElement,
 } from '@elementor/editor-elements';
 import { useSessionStorage } from '@elementor/session';
