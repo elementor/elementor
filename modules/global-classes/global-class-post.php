@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 use Elementor\Plugin;
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +20,7 @@ class Global_Class_Post {
 	const META_KEY_ID = '_elementor_global_class_id';
 	const META_KEY_DATA = '_elementor_global_class_data';
 	const META_KEY_DATA_PREVIEW = '_elementor_global_class_data_preview';
+	const META_KEY_EDITED = '_elementor_global_class_edited';
 
 	protected array $context_keys = [
 		'data' => [
@@ -34,7 +36,7 @@ class Global_Class_Post {
 	}
 
 	public static function from_post( WP_Post $post, bool $is_preview = false ): self {
-		return ( new self( $post ) )->set_preview( $is_preview );
+		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function from_post_id( int $post_id, bool $is_preview = false ): ?self {
@@ -44,7 +46,7 @@ class Global_Class_Post {
 			return null;
 		}
 
-		return ( new self( $post ) )->set_preview( $is_preview );
+		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function find_by_class_id( string $class_id, bool $is_preview = false, ?Kit $kit = null ): ?self {
@@ -119,18 +121,55 @@ class Global_Class_Post {
 	public function to_array( bool $skip_migration = false ): array {
 		$data = $this->get_data( $skip_migration );
 
-		$result = [
-			'id' => $this->get_class_id(),
-			'label' => $this->get_label(),
-			'type' => $data['type'] ?? 'class',
-			'variants' => $data['variants'] ?? [],
-		];
+		$class_id = $this->get_class_id();
 
-		if ( array_key_exists( 'sync_to_v3', $data ) ) {
-			$result['sync_to_v3'] = (bool) $data['sync_to_v3'];
+		return Global_Class_Data_Normalizer::normalize_style(
+			$class_id,
+			array_merge( $data, [ 'label' => $this->get_label() ] )
+		);
+	}
+
+	public function was_edited(): bool {
+		$last_edited = $this->get_last_edited_timestamp();
+		$creation = $this->get_creation_timestamp();
+
+		return $last_edited > $creation;
+	}
+
+	public function has_edit_timestamp(): bool {
+		return $this->get_last_edited_timestamp() > 0;
+	}
+
+	private function get_creation_timestamp(): int {
+		$dt = get_post_datetime( $this->post, 'date', 'gmt' );
+
+		if ( $dt ) {
+			return (int) $dt->format( 'U' );
 		}
 
-		return $result;
+		return (int) strtotime( (string) $this->post->post_date );
+	}
+
+	private function get_last_edited_timestamp(): int {
+		$raw = get_post_meta( $this->post->ID, self::META_KEY_EDITED, true );
+
+		if ( self::is_timestamp( $raw ) ) {
+			return (int) $raw;
+		}
+
+		return 0;
+	}
+
+	private static function is_timestamp( $value ): bool {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		return (int) $value > 0;
+	}
+
+	protected function get_current_timestamp(): int {
+		return (int) time();
 	}
 
 	public function update_label( string $label ): bool {
@@ -138,6 +177,10 @@ class Global_Class_Post {
 			'ID' => $this->post->ID,
 			'post_title' => $label,
 		] );
+
+		if ( ! is_wp_error( $result ) && ! $this->is_preview() ) {
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, $this->get_current_timestamp() );
+		}
 
 		return ! is_wp_error( $result );
 	}
@@ -168,6 +211,10 @@ class Global_Class_Post {
 
 		update_post_meta( $this->post->ID, self::META_KEY_VERSION, $version );
 
+		if ( ! $this->is_preview() ) {
+			update_post_meta( $this->post->ID, self::META_KEY_EDITED, $this->get_current_timestamp() );
+		}
+
 		return false !== $result;
 	}
 
@@ -188,8 +235,10 @@ class Global_Class_Post {
 			return null;
 		}
 
+		$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $data );
+
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
-		update_post_meta( $post_id, self::META_KEY_DATA, $data );
+		update_post_meta( $post_id, self::META_KEY_DATA, $normalized_data );
 		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
 
 		$kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
@@ -198,7 +247,13 @@ class Global_Class_Post {
 			Global_Classes_Post_IDs::make( $kit )->set( $class_id, (int) $post_id );
 		}
 
-		return self::from_post_id( $post_id );
+		$instance = self::from_post_id( $post_id );
+
+		if ( $instance ) {
+			update_post_meta( $post_id, self::META_KEY_EDITED, $instance->get_creation_timestamp() );
+		}
+
+		return $instance;
 	}
 
 	public function delete(): bool {

@@ -5,6 +5,7 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -336,7 +337,7 @@ class Global_Classes_Repository {
 			}
 
 			$item = $items_by_id[ $class_id ];
-			$data = $this->build_class_data_for_storage( $item );
+			$data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
 			$kit = $this->get_kit();
 			$existing_post_id = $post_ids[ $class_id ] ?? null;
 			$existing_post = $existing_post_id ? Global_Class_Post::from_post_id( $existing_post_id, $is_preview ) : null;
@@ -375,7 +376,7 @@ class Global_Classes_Repository {
 					return;
 				}
 
-				$data = $this->build_class_data_for_storage( $item );
+				$data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
 				$post->update_data( $data );
 
 				if ( ! $is_preview ) {
@@ -460,18 +461,5 @@ class Global_Classes_Repository {
 		if ( function_exists( 'wp_cache_flush_runtime' ) ) {
 			wp_cache_flush_runtime();
 		}
-	}
-
-	private function build_class_data_for_storage( array $item ): array {
-		$data = [
-			'type' => $item['type'] ?? 'class',
-			'variants' => $item['variants'] ?? [],
-		];
-
-		if ( array_key_exists( 'sync_to_v3', $item ) ) {
-			$data['sync_to_v3'] = (bool) $item['sync_to_v3'];
-		}
-
-		return $data;
 	}
 }
