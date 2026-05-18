@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
-import { getContainer, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getCurrentDocumentId,
+	type LinkInLinkRestriction,
+	selectElement,
+} from '@elementor/editor-elements';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertAction, AlertTitle, Box, Infotip, Link } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -28,22 +33,38 @@ type RestrictedLinkInfotipProps = PropsWithChildren< {
 	isVisible: boolean;
 } >;
 
+function isTargetInCurrentDocument( elementId: string | null | undefined ): boolean {
+	if ( ! elementId ) {
+		return false;
+	}
+
+	const el = getContainer( elementId )?.view?.el;
+
+	if ( ! el ) {
+		return false;
+	}
+
+	const targetDocId = el.closest( '[data-elementor-id]' )?.getAttribute( 'data-elementor-id' );
+	const currentDocId = String( getCurrentDocumentId() ?? '' );
+
+	return !! ( targetDocId && currentDocId && targetDocId === currentDocId );
+}
+
 export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 	linkInLinkRestriction,
 	isVisible,
 	children,
 } ) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
-	const { onNavigate, hideCrossDocumentTargets = true } = useLinkNavigationContext();
+	const { onTakeMeThere } = useLinkNavigationContext();
 
-	const navigateHandler = onNavigate === undefined ? selectElement : onNavigate;
-	const isTargetInCurrentDocument = !! ( elementId && getContainer( elementId )?.view?.el );
-	const canNavigateToTarget =
-		!! navigateHandler && !! elementId && ( ! hideCrossDocumentTargets || isTargetInCurrentDocument );
+	const takeMeThereHandler = onTakeMeThere === undefined ? selectElement : onTakeMeThere;
+	const targetInCurrentDocument = isTargetInCurrentDocument( elementId );
+	const showTakeMeThereCta = !! ( takeMeThereHandler && elementId && targetInCurrentDocument );
 
-	const handleNavigateClick = () => {
-		if ( elementId && navigateHandler ) {
-			navigateHandler( elementId );
+	const handleTakeMeClick = () => {
+		if ( elementId && takeMeThereHandler ) {
+			takeMeThereHandler( elementId );
 		}
 	};
 
@@ -53,12 +74,12 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			icon={ <InfoCircleFilledIcon /> }
 			size="small"
 			action={
-				canNavigateToTarget ? (
+				showTakeMeThereCta ? (
 					<AlertAction
 						sx={ { width: 'fit-content' } }
 						variant="contained"
 						color="secondary"
-						onClick={ handleNavigateClick }
+						onClick={ handleTakeMeClick }
 					>
 						{ __( 'Take me there', 'elementor' ) }
 					</AlertAction>

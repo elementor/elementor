@@ -25,8 +25,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( anchoredDescendantId ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId: anchoredDescendantId,
 		};
 	}
@@ -35,8 +35,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( hasInlineLink ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId,
 		};
 	}
@@ -45,8 +45,8 @@ export function getLinkInLinkRestriction( elementId: string, resolvedValue?: Lin
 
 	if ( ancestor ) {
 		return {
-			shouldRestrict: true,
-			reason: 'ancestor',
+			shouldRestrict: true as const,
+			reason: 'ancestor' as const,
 			elementId: ancestor,
 		};
 	}

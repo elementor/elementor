@@ -1,27 +1,19 @@
 import * as React from 'react';
 import { createContext, type PropsWithChildren, useContext } from 'react';
 
-type NavigateHandler = ( elementId: string ) => void;
+type TakeMeThereHandler = ( elementId: string ) => void;
 
 type LinkNavigationContextValue = {
-	onNavigate?: NavigateHandler | null;
-	hideCrossDocumentTargets?: boolean;
+	onTakeMeThere?: TakeMeThereHandler | null;
 };
 
-const DEFAULT_VALUE: LinkNavigationContextValue = {
-	hideCrossDocumentTargets: true,
-};
-
-const LinkNavigationContext = createContext< LinkNavigationContextValue >( DEFAULT_VALUE );
+const LinkNavigationContext = createContext< LinkNavigationContextValue >( {} );
 
 export const useLinkNavigationContext = () => useContext( LinkNavigationContext );
 
 export const LinkNavigationProvider = ( {
-	onNavigate,
-	hideCrossDocumentTargets = true,
+	onTakeMeThere,
 	children,
 }: PropsWithChildren< LinkNavigationContextValue > ) => (
-	<LinkNavigationContext.Provider value={ { onNavigate, hideCrossDocumentTargets } }>
-		{ children }
-	</LinkNavigationContext.Provider>
+	<LinkNavigationContext.Provider value={ { onTakeMeThere } }>{ children }</LinkNavigationContext.Provider>
 );

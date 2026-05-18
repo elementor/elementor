@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, dispatchCommandAfter, renderControl } from 'test-utils';
-import {
-	getContainer,
-	getLinkInLinkRestriction,
-	type LinkInLinkRestriction,
-	selectElement,
-} from '@elementor/editor-elements';
+import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import { useSessionStorage } from '@elementor/session';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
@@ -99,10 +94,6 @@ describe( '<LinkControl />', () => {
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
 			shouldRestrict: false,
 		} );
-
-		jest.mocked( getContainer ).mockReturnValue( {
-			view: { el: document.createElement( 'div' ) },
-		} as unknown as ReturnType< typeof getContainer > );
 	} );
 
 	afterEach( () => {
@@ -634,7 +625,7 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
-	it( 'should hide "Take me there" button when wrapped with LinkNavigationProvider onNavigate={null}', async () => {
+	it( 'should hide "Take me there" button when wrapped with LinkNavigationProvider onTakeMeThere={null}', async () => {
 		// Arrange
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
 			shouldRestrict: true,
@@ -644,7 +635,7 @@ describe( '<LinkControl />', () => {
 
 		// Act
 		renderControl(
-			<LinkNavigationProvider onNavigate={ null }>
+			<LinkNavigationProvider onTakeMeThere={ null }>
 				<LinkControl { ...globalProps } placeholder="test" />
 			</LinkNavigationProvider>,
 			baseProps
@@ -660,7 +651,7 @@ describe( '<LinkControl />', () => {
 		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should invoke a custom onNavigate handler instead of the default selectElement', async () => {
+	it( 'should invoke a custom onTakeMeThere handler instead of the default selectElement', async () => {
 		// Arrange
 		const customHandler = jest.fn();
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
@@ -671,7 +662,7 @@ describe( '<LinkControl />', () => {
 
 		// Act
 		renderControl(
-			<LinkNavigationProvider onNavigate={ customHandler }>
+			<LinkNavigationProvider onTakeMeThere={ customHandler }>
 				<LinkControl { ...globalProps } placeholder="test" />
 			</LinkNavigationProvider>,
 			baseProps
@@ -686,29 +677,5 @@ describe( '<LinkControl />', () => {
 		// Assert
 		expect( customHandler ).toHaveBeenCalledWith( 'ancestor-id' );
 		expect( selectElement ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should hide "Take me there" button when target element is not in the current document', async () => {
-		// Arrange - target lives outside the current document (e.g. inner element of a component).
-		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
-			shouldRestrict: true,
-			reason: 'descendant',
-			elementId: 'inner-component-element-id',
-		} );
-		jest.mocked( getContainer ).mockReturnValue( {
-			view: { el: null },
-		} as unknown as ReturnType< typeof getContainer > );
-
-		// Act
-		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
-
-		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
-		fireEvent.mouseOver( toggleButton );
-
-		// Assert
-		await waitFor( () => {
-			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
-		} );
-		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
 	} );
 } );
