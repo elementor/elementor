@@ -1,10 +1,24 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getCurrentDocumentId,
+	getLinkInLinkRestriction,
+	type LinkInLinkRestriction,
+	selectElement,
+} from '@elementor/editor-elements';
 import { useSessionStorage } from '@elementor/session';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { LinkControl } from '../link-control';
+
+const buildContainerWithDocId = ( docId: string ) => {
+	const root = document.createElement( 'div' );
+	root.setAttribute( 'data-elementor-id', docId );
+	const el = document.createElement( 'div' );
+	root.appendChild( el );
+	return { view: { el } } as unknown as ReturnType< typeof getContainer >;
+};
 
 const propType = createMockPropType( {
 	kind: 'object',
@@ -93,6 +107,9 @@ describe( '<LinkControl />', () => {
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
 			shouldRestrict: false,
 		} );
+
+		jest.mocked( getCurrentDocumentId ).mockReturnValue( 100 );
+		jest.mocked( getContainer ).mockReturnValue( buildContainerWithDocId( '100' ) );
 	} );
 
 	afterEach( () => {
@@ -532,5 +549,27 @@ describe( '<LinkControl />', () => {
 		await waitFor( () => {
 			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
 		} );
+	} );
+
+	it( 'should hide "Take me there" button when target element lives in a different document', async () => {
+		// Arrange - target's data-elementor-id (200) differs from current document (100).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: 'inner-component-element-id',
+		} );
+		jest.mocked( getContainer ).mockReturnValue( buildContainerWithDocId( '200' ) );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		// Assert - infotip text still shown, but the CTA button is absent.
+		await waitFor( () => {
+			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
 	} );
 } );
