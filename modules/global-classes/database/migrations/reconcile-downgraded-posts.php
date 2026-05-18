@@ -24,10 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - C: upgraded and kept editing classes in posts.
  *
  * B and C already have DB version 2, so they skip `Migrate_To_Posts`.
- * This migration aligns legacy kit meta with class posts when a site shows
- * document saves on a build older than the post-storage intro (see
- * `should_overwrite_existing_posts_from_legacy`); otherwise existing CPT rows
- * are left as the source of truth.
+ * This migration aligns legacy kit meta with class posts, for group B
  */
 class Reconcile_Downgraded_Posts extends Base_Migration {
 	use Has_Kit_Dependency;
@@ -74,6 +71,19 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			$post = Global_Class_Post::find_by_class_id( $class_id, false );
 			$normalized_item = Global_Class_Data_Normalizer::normalize_style( $class_id, $item );
 
+			if ( $post && $post->has_edit_timestamp() ) {
+				// Group A
+				$this->set_should_overwrite( false );
+				continue;
+			}
+
+			if ( ! $this->should_overwrite_existing_posts() ) {
+				// Group C
+				continue;
+			}
+
+			// Group B
+
 			if ( ! $post ) {
 				$created = Global_Class_Post::create(
 					$normalized_item['id'],
@@ -88,16 +98,6 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				continue;
 			}
 
-			if ( $post->has_edit_timestamp() ) {
-				// Group A - went through the updated migration
-				continue;
-			}
-
-			if ( ! $this->should_overwrite_existing_posts() ) {
-				// Group C - didn't have any posts updated in a lower version, after the installation of 4.1.0
-				continue;
-			}
-
 			$normalized_data = Global_Class_Data_Normalizer::normalize_style_fields( $normalized_item );
 			$post->update_data( $normalized_data );
 			$post->update_label( $normalized_item['label'] );
@@ -105,6 +105,10 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 		}
 
 		return $touched_any;
+	}
+
+	private function set_should_overwrite( bool $should_overwrite ): void {
+		$this->should_overwrite = $should_overwrite;
 	}
 
 	private function should_overwrite_existing_posts(): bool {
@@ -116,7 +120,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 		$intro_ts = $history[ self::POST_STORAGE_INTRO_VERSION ] ?? null;
 
 		if ( ! $intro_ts ) {
-			$this->should_overwrite = true;
+			$this->set_should_overwrite( true );
 
 			return true;
 		}
@@ -135,6 +139,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 				WHERE pm.meta_key = '_elementor_version'
 					AND pm.meta_value <> %s
 					AND p.post_modified_gmt > %s
+				ORDER BY pm.meta_value ASC
 				LIMIT %d",
 				$cpt,
 				self::POST_STORAGE_INTRO_VERSION,
@@ -155,7 +160,7 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			}
 		}
 
-		$this->should_overwrite = false;
+		$this->set_should_overwrite( false );
 
 		return false;
 	}
@@ -167,18 +172,42 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 		Global_Classes_Order::make( $kit )->set_order( $merged_order );
 
-		$label_map = Global_Classes_Labels::make( $kit )->get_labels();
+		$labels = Global_Classes_Labels::make( $kit );
+		$label_map = $labels->get_labels();
+		$label_to_id = array_flip( $label_map );
 
 		foreach ( $merged_order as $id ) {
 			$class_post = Global_Class_Post::find_by_class_id( $id, false );
 
 			if ( $class_post && $class_post->was_edited() ) {
-				$label_map[ $id ] = $class_post->get_label();
+				$candidate = $class_post->get_label();
 			} elseif ( isset( $items[ $id ] ) ) {
-				$label_map[ $id ] = $items[ $id ]['label'];
+				$candidate = $items[ $id ]['label'];
+			} else {
+				continue;
 			}
+
+			// Original style using the current style's label
+			$owner_id = $label_to_id[ $candidate ] ?? null;
+
+			if ( $owner_id === $id ) {
+				continue;
+			}
+
+			if ( null !== $owner_id ) {
+				// Duplicate label - generate a unique one
+				$candidate = Global_Classes_Labels::generate_unique_label( $candidate, array_values( $label_map ) );
+			}
+
+			if ( $class_post && $class_post->get_label() !== $candidate ) {
+				$class_post->update_label( $candidate );
+			}
+
+			unset( $label_to_id[ $label_map[ $id ] ?? '' ] );
+			$label_map[ $id ] = $candidate;
+			$label_to_id[ $candidate ] = $id;
 		}
 
-		Global_Classes_Labels::make( $kit )->set_labels( $label_map );
+		$labels->set_labels( $label_map );
 	}
 }

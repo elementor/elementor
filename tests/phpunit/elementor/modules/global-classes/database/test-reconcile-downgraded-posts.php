@@ -230,9 +230,12 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 	}
 
 	public function test_reconcile__creates_missing_class_from_legacy() {
+		$this->given_legacy_edit_document_signal();
+
 		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
 		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'one' ] );
-		Global_Class_Post::create( 'g-1', 'one', [ 'type' => 'class', 'variants' => [] ] );
+		$post = Global_Class_Post::create( 'g-1', 'one', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED );
 
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
 			'items' => [
@@ -364,5 +367,122 @@ class Test_Reconcile_Downgraded_Posts extends Elementor_Test_Base {
 
 		$this->assertNotNull( Global_Class_Post::find_by_class_id( 'g-orphan' ) );
 		$this->assertSame( [ 'g-1', 'g-orphan' ], Global_Classes_Order::make( $this->kit )->get_order() );
+	}
+
+	public function test_reconcile__same_label_same_id__no_change() {
+		// Arrange - label already correctly mapped to the same id
+		Global_Class_Post::create( 'g-1', 'button', [ 'type' => 'class', 'variants' => [] ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'button' ] );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [ 'id' => 'g-1', 'label' => 'button', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		// Act
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		// Assert - label unchanged in both the post and the kit label map
+		$post = Global_Class_Post::find_by_class_id( 'g-1' );
+		$this->assertSame( 'button', $post->get_label() );
+		$this->assertSame( [ 'g-1' => 'button' ], Global_Classes_Labels::make( $this->kit )->get_labels() );
+	}
+
+	public function test_reconcile__same_label_different_id__generates_unique_label() {
+		// Arrange - two legacy items share the same label; g-2 arrives second and must get a DUP_ prefix.
+		// g-1 has no edit timestamp (simulates a pre-timestamp CPT row) so it goes through Group B,
+		// which requires the legacy-edit signal to allow overwriting.
+		$this->given_legacy_edit_document_signal();
+
+		$post1 = Global_Class_Post::create( 'g-1', 'button', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post1->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'button' ] );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [ 'id' => 'g-1', 'label' => 'button', 'type' => 'class', 'variants' => [] ],
+				'g-2' => [ 'id' => 'g-2', 'label' => 'button', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-1', 'g-2' ],
+		] );
+
+		// Act
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		// Assert - g-1 keeps its label; g-2 gets a unique DUP_ variant
+		$post1 = Global_Class_Post::find_by_class_id( 'g-1' );
+		$post2 = Global_Class_Post::find_by_class_id( 'g-2' );
+
+		$this->assertSame( 'button', $post1->get_label() );
+		$this->assertStringStartsWith( 'DUP_', $post2->get_label() );
+
+		$label_map = Global_Classes_Labels::make( $this->kit )->get_labels();
+		$this->assertSame( 'button', $label_map['g-1'] );
+		$this->assertStringStartsWith( 'DUP_', $label_map['g-2'] );
+		$this->assertNotSame( $label_map['g-1'], $label_map['g-2'] );
+	}
+
+	public function test_reconcile__label_not_in_map_but_id_has_different_label__updates_to_legacy_label() {
+		// Arrange - CPT exists with a stale label that no longer matches the legacy source
+		$post = Global_Class_Post::create( 'g-1', 'old-label', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'old-label' ] );
+
+		$this->given_legacy_edit_document_signal();
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [ 'id' => 'g-1', 'label' => 'new-label', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-1' ],
+		] );
+
+		// Act
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		// Assert - post and kit label map both reflect the legacy label
+		$reloaded = Global_Class_Post::find_by_class_id( 'g-1' );
+		$this->assertSame( 'new-label', $reloaded->get_label() );
+		$this->assertSame( [ 'g-1' => 'new-label' ], Global_Classes_Labels::make( $this->kit )->get_labels() );
+	}
+
+	public function test_reconcile__three_classes_share_label__all_get_unique_labels() {
+		// Arrange - none of the CPT rows have edit timestamps so all go through Group B,
+		// which requires the legacy-edit signal.
+		$this->given_legacy_edit_document_signal();
+
+		$post1 = Global_Class_Post::create( 'g-1', 'shared', [ 'type' => 'class', 'variants' => [] ] );
+		delete_post_meta( $post1->get_post_id(), Global_Class_Post::META_KEY_EDITED );
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ 'g-1' => 'shared' ] );
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, [
+			'items' => [
+				'g-1' => [ 'id' => 'g-1', 'label' => 'shared', 'type' => 'class', 'variants' => [] ],
+				'g-2' => [ 'id' => 'g-2', 'label' => 'shared', 'type' => 'class', 'variants' => [] ],
+				'g-3' => [ 'id' => 'g-3', 'label' => 'shared', 'type' => 'class', 'variants' => [] ],
+			],
+			'order' => [ 'g-1', 'g-2', 'g-3' ],
+		] );
+
+		// Act
+		( new Reconcile_Downgraded_Posts() )->up();
+
+		// Assert - all three end up with distinct labels
+		$label_map = Global_Classes_Labels::make( $this->kit )->get_labels();
+
+		$this->assertCount( 3, array_unique( array_values( $label_map ) ) );
+		$this->assertSame( 'shared', $label_map['g-1'] );
+		$this->assertStringStartsWith( 'DUP_', $label_map['g-2'] );
+		$this->assertStringStartsWith( 'DUP_', $label_map['g-3'] );
+		$this->assertNotSame( $label_map['g-2'], $label_map['g-3'] );
 	}
 }
