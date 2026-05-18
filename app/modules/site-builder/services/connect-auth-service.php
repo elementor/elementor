@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Connect_Auth_Service {
 
-	const SIGNATURE_ALGORITHM = 'sha256';
-
 	public function get_connect_auth(): ?array {
 		if ( ! Plugin::instance()->common ) {
 			return null;
@@ -45,9 +43,9 @@ class Connect_Auth_Service {
 		ksort( $connect_data );
 
 		$signature = hash_hmac(
-			self::SIGNATURE_ALGORITHM,
+			'sha256',
 			wp_json_encode( $connect_data, JSON_NUMERIC_CHECK ),
-			$access_token_secret
+			(string) $access_token_secret
 		);
 
 		return [
