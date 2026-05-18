@@ -34,11 +34,13 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 	children,
 } ) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
-	const { showTakeMeThereButton } = useLinkNavigationContext();
+	const { onTakeMeThere } = useLinkNavigationContext();
+
+	const takeMeThereHandler = onTakeMeThere === undefined ? selectElement : onTakeMeThere;
 
 	const handleTakeMeClick = () => {
-		if ( elementId ) {
-			selectElement( elementId );
+		if ( elementId && takeMeThereHandler ) {
+			takeMeThereHandler( elementId );
 		}
 	};
 
@@ -48,7 +50,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			icon={ <InfoCircleFilledIcon /> }
 			size="small"
 			action={
-				showTakeMeThereButton && elementId ? (
+				takeMeThereHandler && elementId ? (
 					<AlertAction
 						sx={ { width: 'fit-content' } }
 						variant="contained"

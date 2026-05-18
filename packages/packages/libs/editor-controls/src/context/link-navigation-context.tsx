@@ -1,18 +1,19 @@
 import * as React from 'react';
-import { createContext, useContext } from 'react';
+import { createContext, type PropsWithChildren, useContext } from 'react';
+
+type TakeMeThereHandler = ( elementId: string ) => void;
 
 type LinkNavigationContextValue = {
-	showTakeMeThereButton: boolean;
+	onTakeMeThere?: TakeMeThereHandler | null;
 };
 
-const LinkNavigationContext = createContext< LinkNavigationContextValue >( {
-	showTakeMeThereButton: true,
-} );
+const LinkNavigationContext = createContext< LinkNavigationContextValue >( {} );
 
 export const useLinkNavigationContext = () => useContext( LinkNavigationContext );
 
-export const HideTakeMeThereProvider = ( { children }: { children: React.ReactNode } ) => (
-	<LinkNavigationContext.Provider value={ { showTakeMeThereButton: false } }>
-		{ children }
-	</LinkNavigationContext.Provider>
+export const LinkNavigationProvider = ( {
+	onTakeMeThere,
+	children,
+}: PropsWithChildren< LinkNavigationContextValue > ) => (
+	<LinkNavigationContext.Provider value={ { onTakeMeThere } }>{ children }</LinkNavigationContext.Provider>
 );

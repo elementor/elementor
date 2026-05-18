@@ -4,7 +4,7 @@ import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } f
 import { useSessionStorage } from '@elementor/session';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { HideTakeMeThereProvider } from '../../context/link-navigation-context';
+import { LinkNavigationProvider } from '../../context/link-navigation-context';
 import { LinkControl } from '../link-control';
 
 const propType = createMockPropType( {
@@ -625,7 +625,7 @@ describe( '<LinkControl />', () => {
 		} );
 	} );
 
-	it( 'should hide "Take me there" button when wrapped with HideTakeMeThereProvider', async () => {
+	it( 'should hide "Take me there" button when wrapped with LinkNavigationProvider onTakeMeThere={null}', async () => {
 		// Arrange
 		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
 			shouldRestrict: true,
@@ -635,9 +635,9 @@ describe( '<LinkControl />', () => {
 
 		// Act
 		renderControl(
-			<HideTakeMeThereProvider>
+			<LinkNavigationProvider onTakeMeThere={ null }>
 				<LinkControl { ...globalProps } placeholder="test" />
-			</HideTakeMeThereProvider>,
+			</LinkNavigationProvider>,
 			baseProps
 		);
 
@@ -649,5 +649,33 @@ describe( '<LinkControl />', () => {
 			expect( screen.getByText( 'from its parent container', { exact: false } ) ).toBeInTheDocument();
 		} );
 		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should invoke a custom onTakeMeThere handler instead of the default selectElement', async () => {
+		// Arrange
+		const customHandler = jest.fn();
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'ancestor-id',
+		} );
+
+		// Act
+		renderControl(
+			<LinkNavigationProvider onTakeMeThere={ customHandler }>
+				<LinkControl { ...globalProps } placeholder="test" />
+			</LinkNavigationProvider>,
+			baseProps
+		);
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		const takeMeThereButton = await screen.findByRole( 'button', { name: 'Take me there' } );
+		fireEvent.click( takeMeThereButton );
+
+		// Assert
+		expect( customHandler ).toHaveBeenCalledWith( 'ancestor-id' );
+		expect( selectElement ).not.toHaveBeenCalled();
 	} );
 } );

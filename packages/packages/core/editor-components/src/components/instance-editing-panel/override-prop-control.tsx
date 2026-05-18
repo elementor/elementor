@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
 	ControlReplacementsProvider,
 	getControlReplacements,
-	HideTakeMeThereProvider,
+	LinkNavigationProvider,
 	PropKeyProvider,
 	PropProvider,
 	type SetValueMeta,
@@ -194,7 +194,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	};
 
 	return (
-		<HideTakeMeThereProvider>
+		<LinkNavigationProvider onTakeMeThere={ null }>
 			<OverridablePropProvider
 				value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 				componentInstanceElement={ componentInstanceElement }
@@ -226,7 +226,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 					</PropProvider>
 				</ElementProvider>
 			</OverridablePropProvider>
-		</HideTakeMeThereProvider>
+		</LinkNavigationProvider>
 	);
 }
 
