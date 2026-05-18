@@ -34,7 +34,7 @@ class Global_Class_Post {
 	}
 
 	public static function from_post( WP_Post $post, bool $is_preview = false ): self {
-		return ( new self( $post ) )->set_preview( $is_preview );
+		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function from_post_id( int $post_id, bool $is_preview = false ): ?self {
@@ -44,7 +44,7 @@ class Global_Class_Post {
 			return null;
 		}
 
-		return ( new self( $post ) )->set_preview( $is_preview );
+		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
 	public static function find_by_class_id( string $class_id, bool $is_preview = false ): ?self {
@@ -170,7 +170,7 @@ class Global_Class_Post {
 		return (int) $value > 0;
 	}
 
-	private function get_current_timestamp(): int {
+	protected function get_current_timestamp(): int {
 		return (int) time();
 	}
 
