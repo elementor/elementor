@@ -38,10 +38,11 @@ function validateValueForType( type: string, value: string ): string | null {
 	return null;
 }
 
-function isFontAvailable( value: string ) {
+function isFontAvailable( font: string ) {
 	const fonts = getFontConfigs();
+	const key = font.trim();
 
-	return !! fonts?.[ value ];
+	return !! fonts?.[ key ];
 }
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
