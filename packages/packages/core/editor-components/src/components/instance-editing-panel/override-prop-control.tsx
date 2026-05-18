@@ -194,7 +194,7 @@ function OverrideControl( { overridableProp }: InternalProps ) {
 	};
 
 	return (
-		<LinkNavigationProvider onTakeMeThere={ null }>
+		<LinkNavigationProvider onNavigate={ null }>
 			<OverridablePropProvider
 				value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
 				componentInstanceElement={ componentInstanceElement }

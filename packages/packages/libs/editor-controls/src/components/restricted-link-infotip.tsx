@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
-import { type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
+import { getContainer, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertAction, AlertTitle, Box, Infotip, Link } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -34,13 +34,16 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 	children,
 } ) => {
 	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
-	const { onTakeMeThere } = useLinkNavigationContext();
+	const { onNavigate, hideCrossDocumentTargets = true } = useLinkNavigationContext();
 
-	const takeMeThereHandler = onTakeMeThere === undefined ? selectElement : onTakeMeThere;
+	const navigateHandler = onNavigate === undefined ? selectElement : onNavigate;
+	const isTargetInCurrentDocument = !! ( elementId && getContainer( elementId )?.view?.el );
+	const canNavigateToTarget =
+		!! navigateHandler && !! elementId && ( ! hideCrossDocumentTargets || isTargetInCurrentDocument );
 
-	const handleTakeMeClick = () => {
-		if ( elementId && takeMeThereHandler ) {
-			takeMeThereHandler( elementId );
+	const handleNavigateClick = () => {
+		if ( elementId && navigateHandler ) {
+			navigateHandler( elementId );
 		}
 	};
 
@@ -50,12 +53,12 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			icon={ <InfoCircleFilledIcon /> }
 			size="small"
 			action={
-				takeMeThereHandler && elementId ? (
+				canNavigateToTarget ? (
 					<AlertAction
 						sx={ { width: 'fit-content' } }
 						variant="contained"
 						color="secondary"
-						onClick={ handleTakeMeClick }
+						onClick={ handleNavigateClick }
 					>
 						{ __( 'Take me there', 'elementor' ) }
 					</AlertAction>
