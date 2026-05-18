@@ -1,18 +1,31 @@
 import * as React from 'react';
 import { render, waitFor } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
 
 import { App } from '../app';
 
-const mockFetch = jest.fn();
-global.fetch = mockFetch;
+jest.mock( '@wordpress/api-fetch' );
 
-const MOCK_REST_ROOT = '/wp-json/';
-const AUTH_PATH = 'elementor/v1/site-builder/auth';
+const mockApiFetch = jest.mocked( apiFetch );
+
+const AUTH_PATH = '/elementor/v1/site-builder/auth';
+const SNAPSHOT_PATH = '/elementor/v1/site-builder/snapshot';
+
+const validAuthPayload = {
+	success: true,
+	data: {
+		signature: 'test-sig',
+		accessToken: 'test-token',
+		clientId: 'test-client',
+		homeUrl: 'https://example.com/',
+		siteKey: 'test-key',
+	},
+};
 
 describe( 'App - ConnectAuth Fetch', () => {
 	beforeEach( () => {
 		window.wpApiSettings = {
-			root: MOCK_REST_ROOT,
+			root: '/wp-json/',
 			nonce: 'test-nonce',
 		};
 
@@ -24,7 +37,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 			},
 		};
 
-		mockFetch.mockClear();
+		mockApiFetch.mockReset();
 	} );
 
 	afterEach( () => {
@@ -32,48 +45,29 @@ describe( 'App - ConnectAuth Fetch', () => {
 	} );
 
 	it( 'fetches connectAuth on mount via GET', async () => {
-		mockFetch
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {
-					success: true,
-					data: {
-						signature: 'test-sig',
-						accessToken: 'test-token',
-						clientId: 'test-client',
-						homeUrl: 'https://example.com/',
-						siteKey: 'test-key',
-					},
-				} ),
-			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+		mockApiFetch
+			.mockResolvedValueOnce( validAuthPayload )
+			.mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
 		await waitFor( () => {
-			expect( mockFetch ).toHaveBeenCalledWith(
-				`${ MOCK_REST_ROOT }${ AUTH_PATH }`,
-				expect.objectContaining( {
-					method: 'GET',
-					credentials: 'include',
-					headers: expect.objectContaining( {
-						'X-WP-Nonce': 'test-nonce',
-					} ),
-				} )
-			);
+			expect( mockApiFetch ).toHaveBeenCalledWith( {
+				path: AUTH_PATH,
+			} );
+		} );
+
+		expect( mockApiFetch ).toHaveBeenCalledWith( {
+			path: SNAPSHOT_PATH,
+			method: 'POST',
+			data: { value: {} },
 		} );
 	} );
 
 	it( 'handles network errors gracefully', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch.mockRejectedValueOnce( new Error( 'Network error' ) ).mockResolvedValueOnce( {
-			ok: true,
-			json: async () => ( {} ),
-		} );
+		mockApiFetch.mockRejectedValueOnce( new Error( 'Network error' ) ).mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -87,15 +81,7 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles non-ok HTTP response', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
-			.mockResolvedValueOnce( {
-				ok: false,
-				json: async () => ( {} ),
-			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+		mockApiFetch.mockRejectedValueOnce( new Error( 'Request failed' ) ).mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -109,17 +95,9 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'handles response with success:false', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {
-					success: false,
-				} ),
-			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+		mockApiFetch
+			.mockResolvedValueOnce( { success: false } )
+			.mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -130,56 +108,34 @@ describe( 'App - ConnectAuth Fetch', () => {
 		consoleErrorSpy.mockRestore();
 	} );
 
-	it( 'falls back to defaults when wpApiSettings is missing', async () => {
+	it( 'skips snapshot request when wpApiSettings nonce is missing', async () => {
 		delete window.wpApiSettings;
 
-		mockFetch.mockResolvedValue( {
-			ok: true,
-			json: async () => ( {
-				success: true,
-				data: {
-					signature: 'test-sig',
-					accessToken: 'test-token',
-					clientId: 'test-client',
-					homeUrl: 'https://example.com/',
-					siteKey: 'test-key',
-				},
-			} ),
-		} );
+		mockApiFetch.mockResolvedValue( validAuthPayload );
 
 		render( <App /> );
 
 		await waitFor( () => {
-			expect( mockFetch ).toHaveBeenCalledWith(
-				expect.stringContaining( AUTH_PATH ),
-				expect.objectContaining( {
-					method: 'GET',
-					headers: expect.objectContaining( {
-						'X-WP-Nonce': '',
-					} ),
-				} )
-			);
+			expect( mockApiFetch ).toHaveBeenCalledWith( {
+				path: AUTH_PATH,
+			} );
 		} );
+
+		expect( mockApiFetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'rejects response with missing required Connect fields', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
+		mockApiFetch
 			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {
-					success: true,
-					data: {
-						signature: 'test-sig',
-						accessToken: 'test-token',
-					},
-				} ),
+				success: true,
+				data: {
+					signature: 'test-sig',
+					accessToken: 'test-token',
+				},
 			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+			.mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -198,24 +154,18 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'rejects response with non-string field types', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
+		mockApiFetch
 			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {
-					success: true,
-					data: {
-						signature: 'test-sig',
-						accessToken: 123,
-						clientId: 'test-client',
-						homeUrl: 'https://example.com/',
-						siteKey: 'test-key',
-					},
-				} ),
+				success: true,
+				data: {
+					signature: 'test-sig',
+					accessToken: 123,
+					clientId: 'test-client',
+					homeUrl: 'https://example.com/',
+					siteKey: 'test-key',
+				},
 			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+			.mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
@@ -234,24 +184,18 @@ describe( 'App - ConnectAuth Fetch', () => {
 	it( 'rejects response with empty string fields', async () => {
 		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
 
-		mockFetch
+		mockApiFetch
 			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {
-					success: true,
-					data: {
-						signature: '',
-						accessToken: 'test-token',
-						clientId: 'test-client',
-						homeUrl: 'https://example.com/',
-						siteKey: 'test-key',
-					},
-				} ),
+				success: true,
+				data: {
+					signature: '',
+					accessToken: 'test-token',
+					clientId: 'test-client',
+					homeUrl: 'https://example.com/',
+					siteKey: 'test-key',
+				},
 			} )
-			.mockResolvedValueOnce( {
-				ok: true,
-				json: async () => ( {} ),
-			} );
+			.mockResolvedValueOnce( {} );
 
 		render( <App /> );
 
