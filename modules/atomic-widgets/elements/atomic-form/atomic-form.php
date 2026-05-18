@@ -359,6 +359,7 @@ class Atomic_Form extends Atomic_Element_Base {
 			: Form_Error_Message::get_element_type();
 
 		return Element_Builder::make( $element_type )
+			->meta( [ 'required' => true ] )
 			->settings( [
 				'attributes' => Attributes_Prop_Type::generate( [
 					Key_Value_Prop_Type::generate( [] ),
