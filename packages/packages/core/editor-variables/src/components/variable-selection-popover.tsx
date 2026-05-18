@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { PropTypeKey } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
+import { openVariablesSettings } from '../open-design-system';
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
@@ -28,11 +29,7 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
 	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
-		? () => {
-				window.dispatchEvent(
-					new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
-				);
-		  }
+		? openVariablesSettings
 		: undefined;
 
 	return (
