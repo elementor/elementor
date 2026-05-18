@@ -227,7 +227,6 @@ jobs:
             PROJECT_ARG="--project=$BROWSER"
           fi
           npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
-        run: npm run test:playwright:elements-regression:atomic
       - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()
