@@ -246,11 +246,6 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	onDestroy() {
-		if ( this.layoutOverlayAnimationFrame ) {
-			cancelAnimationFrame( this.layoutOverlayAnimationFrame );
-			this.layoutOverlayAnimationFrame = null;
-		}
-
 		elementorModules.frontend.handlers.Base.prototype.onDestroy.apply( this, arguments );
 	}
 
@@ -479,12 +474,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	scheduleInitLayoutOverlay() {
-		if ( this.layoutOverlayAnimationFrame ) {
-			return;
-		}
-
-		this.layoutOverlayAnimationFrame = requestAnimationFrame( () => {
-			this.layoutOverlayAnimationFrame = null;
+		requestAnimationFrame( () => {
 			this.initLayoutOverlay();
 		} );
 	}
