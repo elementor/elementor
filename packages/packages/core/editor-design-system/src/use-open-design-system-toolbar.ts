@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { type ToggleActionProps } from '@elementor/editor-app-bar';
 import { DropletHalfFilledIcon } from '@elementor/icons';
-import { EVENT_TOGGLE_DESIGN_SYSTEM } from './events';
 import { __ } from '@wordpress/i18n';
+
+const EVENT_TOGGLE = 'elementor/toggle-design-system';
 
 import { usePanelStatus } from './design-system-panel';
 import { getActiveDesignSystemTab } from './initial-tab';
@@ -14,7 +15,7 @@ export function useOpenDesignSystemToolbar(): ToggleActionProps {
 		const tab = getActiveDesignSystemTab() ?? 'variables';
 
 		window.dispatchEvent(
-			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
+			new CustomEvent( EVENT_TOGGLE, {
 				detail: { tab },
 			} )
 		);

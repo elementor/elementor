@@ -13,15 +13,13 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { usePanelActions, usePanelStatus } from '../design-system-panel';
-import {
-	EVENT_OPEN_CLASSES,
-	EVENT_OPEN_VARIABLES,
-	EVENT_SET_TAB,
-	EVENT_TOGGLE_DESIGN_SYSTEM,
-} from '../events';
 import { type DesignSystemTab, getActiveDesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
 
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
+const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
+const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
+const EVENT_TOGGLE = 'elementor/toggle-design-system';
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 
 const ACTIVE_PANEL_PARAM = 'active-panel';
 const PANEL_ID = 'design-system';
@@ -93,10 +91,10 @@ export function DesignSystemEntrypoints() {
 			} );
 		};
 
-		window.addEventListener( EVENT_TOGGLE_DESIGN_SYSTEM, handler as EventListener );
+		window.addEventListener( EVENT_TOGGLE, handler as EventListener );
 
 		return () => {
-			window.removeEventListener( EVENT_TOGGLE_DESIGN_SYSTEM, handler as EventListener );
+			window.removeEventListener( EVENT_TOGGLE, handler as EventListener );
 		};
 	}, [ close, gatedOpen ] );
 

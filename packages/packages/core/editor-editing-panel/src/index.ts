@@ -22,7 +22,6 @@ export { useStateByElement } from './hooks/use-state-by-element';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
 export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
-export { registerGoToClassManager } from './open-design-system';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';

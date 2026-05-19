@@ -38,14 +38,19 @@ import {
 	type ValidationEvent,
 	type ValidationResult,
 } from '../creatable-autocomplete';
-import { goToClassManager } from '../../open-design-system';
 import { CssClassItem } from './css-class-item';
 import { useApplyClass, useCreateAndApplyClass, useUnapplyClass } from './use-apply-and-unapply-class';
 
 const ID = 'elementor-css-class-selector';
 const TAGS_LIMIT = 50;
 
-const openClassManagerPanel = goToClassManager;
+function openClassManagerPanel() {
+	window.dispatchEvent(
+		new CustomEvent( 'elementor/toggle-design-system', {
+			detail: { tab: 'classes' as const },
+		} )
+	);
+}
 
 type StyleDefOption = Option & {
 	color: ChipOwnProps[ 'color' ];

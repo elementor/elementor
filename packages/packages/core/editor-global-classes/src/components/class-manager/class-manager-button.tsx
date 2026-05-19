@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
 import { trackGlobalClasses } from '../../utils/tracking';
-import { toggleClassManager } from '../../open-design-system';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
 export const ClassManagerButton = () => {
@@ -21,7 +20,11 @@ export const ClassManagerButton = () => {
 	}
 
 	const handleOpenPanel = () => {
-		toggleClassManager();
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/toggle-design-system', {
+				detail: { tab: 'classes' as const },
+			} )
+		);
 
 		trackGlobalClasses( {
 			event: 'classManagerOpened',

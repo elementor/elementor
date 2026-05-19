@@ -5,7 +5,6 @@ export {
 export { GLOBAL_CLASSES_URI } from './mcp-integration/classes-resource';
 
 export { init } from './init';
-export { registerClassManagerOpen, registerClassManagerToggle } from './open-design-system';
 
 export { loadExistingClasses } from './load-existing-classes';
 export { addDocumentClasses } from './load-document-classes';

@@ -3,8 +3,6 @@ import { createMockTrackingModule, mockTracking, renderWithQuery } from 'test-ut
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { registerClassManagerToggle } from '../../../open-design-system';
-
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	...jest.requireActual( '@elementor/editor-styles-repository' ),
 	useUserStylesCapability: jest.fn( () => ( {
@@ -17,17 +15,28 @@ jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlob
 import { ClassManagerButton } from '../class-manager-button';
 
 describe( 'ClassManagerButton', () => {
-	it( 'should call the registered toggle handler on click', () => {
-		// Arrange.
-		const toggleHandler = jest.fn();
-		registerClassManagerToggle( toggleHandler );
+	let dispatchEventSpy: jest.SpyInstance;
 
+	beforeEach( () => {
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
+	} );
+
+	it( 'should navigate to the panel on click', () => {
 		// Act.
 		renderWithQuery( <ClassManagerButton /> );
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
 		// Assert.
-		expect( toggleHandler ).toHaveBeenCalledTimes( 1 );
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/toggle-design-system',
+				detail: { tab: 'classes' },
+			} )
+		);
 	} );
 
 	it( 'should track classManagerOpened event on click', () => {

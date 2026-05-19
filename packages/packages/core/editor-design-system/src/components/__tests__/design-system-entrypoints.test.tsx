@@ -2,15 +2,13 @@ import * as React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { usePanelActions, usePanelStatus } from '../../design-system-panel';
-import {
-	EVENT_OPEN_CLASSES,
-	EVENT_OPEN_VARIABLES,
-	EVENT_SET_TAB,
-	EVENT_TOGGLE_DESIGN_SYSTEM,
-} from '../../events';
 import { getActiveDesignSystemTab, setPendingDesignSystemTab } from '../../initial-tab';
 import { DesignSystemEntrypoints } from '../design-system-entrypoints';
 
+const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
+const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
+const EVENT_TOGGLE = 'elementor/toggle-design-system';
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
 
 const mockSaveDocument = jest.fn().mockResolvedValue( undefined );
@@ -145,7 +143,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'variables' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
 			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
@@ -159,7 +157,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'classes' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
 			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
@@ -173,7 +171,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'invalid' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'invalid' } );
 			} );
 
 			const relevant = dispatchSpy.mock.calls
@@ -196,7 +194,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'variables' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
 			expect( mockClose ).toHaveBeenCalled();
@@ -208,7 +206,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'classes' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
 			expect( mockClose ).toHaveBeenCalled();
@@ -281,7 +279,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'classes' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
 			const setTabCall = dispatchSpy.mock.calls.find(
@@ -305,7 +303,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'classes' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
 			const dispatched = dispatchSpy2.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
@@ -416,7 +414,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'variables' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
 			expect( mockOpenSaveDialog ).toHaveBeenCalled();
@@ -429,7 +427,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'classes' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
 			} );
 
 			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
@@ -446,7 +444,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'variables' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
 			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
@@ -510,7 +508,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			act( () => {
-				dispatchWindowEvent( EVENT_TOGGLE_DESIGN_SYSTEM, { tab: 'variables' } );
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
 			} );
 
 			expect( mockClose ).toHaveBeenCalled();

@@ -4,7 +4,6 @@ import { ClassManagerPanelEmbedded } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
-import { EVENT_SET_TAB } from '../events';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -28,6 +27,8 @@ const stickyTabRowStyles = {
 export type DesignSystemPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 };
+
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );

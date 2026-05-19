@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { EVENT_SET_TAB } from '../../events';
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
+
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 jest.mock( '../design-system-header-menu', () => ( {
