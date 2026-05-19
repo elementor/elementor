@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 class CSS_Files_Manager {
 	const DEFAULT_CSS_DIR = 'elementor/css/';
 	const FILE_EXTENSION = '.css';
-	const PLACEHOLDERS_EXTENSION = '.placeholders.json';
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
 
@@ -18,7 +17,6 @@ class CSS_Files_Manager {
 				return null;
 			}
 
-			// Return the existing file
 			return Style_File::create(
 				$this->sanitize_handle( $handle ),
 				$this->get_filesystem_path( $this->get_path( $handle ) ),
@@ -27,52 +25,21 @@ class CSS_Files_Manager {
 			);
 		}
 
-		$payload = $get_payload();
+		$bundle = $this->normalize_payload( $get_payload() );
 
-		if ( is_string( $payload ) ) {
-			$css = $payload;
-			$placeholders = [];
-		} elseif ( is_array( $payload ) ) {
-			$css = (string) ( $payload['css'] ?? '' );
-			$placeholders = $payload['placeholders'] ?? [];
-			if ( ! is_array( $placeholders ) ) {
-				$placeholders = [];
-			}
-		} else {
-			return null;
-		}
-
-		if ( '' === $css ) {
+		if ( null === $bundle || '' === $bundle->get_css() ) {
 			return null;
 		}
 
 		$filesystem_path = $this->get_filesystem_path( $path );
 
-		$is_created = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
+		$is_created = $filesystem->put_contents( $filesystem_path, $bundle->get_css(), self::PERMISSIONS );
 
 		if ( false === $is_created ) {
 			return null;
 		}
 
-		if ( ! empty( $placeholders ) ) {
-			$placeholders_path = $this->get_placeholders_path( $handle );
-			$placeholders_fs_path = $this->get_filesystem_path( $placeholders_path );
-			$encoded = wp_json_encode( $placeholders, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-
-			if ( false === $encoded ) {
-				$filesystem->delete( $path );
-				return null;
-			}
-
-			$placeholders_written = $filesystem->put_contents( $placeholders_fs_path, $encoded, self::PERMISSIONS );
-
-			if ( false === $placeholders_written ) {
-				$filesystem->delete( $path );
-				return null;
-			}
-		} else {
-			$this->delete_placeholders_file( $handle );
-		}
+		$this->write_sidecars( $handle, $bundle->get_sidecars(), $filesystem, $path );
 
 		return Style_File::create(
 			$this->sanitize_handle( $handle ),
@@ -82,9 +49,12 @@ class CSS_Files_Manager {
 		);
 	}
 
-	public function load_dynamic_placeholders( string $handle ): array {
+	/**
+	 * @return array<string, array>
+	 */
+	public function load_sidecar( string $handle, string $extension ): array {
 		$filesystem = $this->get_filesystem();
-		$path = $this->get_placeholders_path( $handle );
+		$path = $this->get_sidecar_path( $handle, $extension );
 
 		if ( ! $filesystem->exists( $path ) ) {
 			return [];
@@ -93,6 +63,10 @@ class CSS_Files_Manager {
 		$raw = $filesystem->get_contents( $path );
 
 		if ( false === $raw || '' === $raw ) {
+			return [];
+		}
+
+		if ( ! is_string( $raw ) ) {
 			return [];
 		}
 
@@ -109,16 +83,88 @@ class CSS_Files_Manager {
 			$filesystem->delete( $path );
 		}
 
-		$this->delete_placeholders_file( $handle );
+		$this->delete_all_sidecars( $handle );
 	}
 
-	private function delete_placeholders_file( string $handle ): void {
-		$filesystem = $this->get_filesystem();
-		$path = $this->get_placeholders_path( $handle );
+	/**
+	 * @param array<string, string> $sidecars
+	 */
+	private function write_sidecars( string $handle, array $sidecars, \WP_Filesystem_Base $filesystem, string $css_path ): void {
+		$this->delete_all_sidecars( $handle );
 
-		if ( $filesystem->exists( $path ) ) {
-			$filesystem->delete( $path );
+		foreach ( $sidecars as $extension => $contents ) {
+			if ( '' === $contents ) {
+				continue;
+			}
+
+			$sidecar_path = $this->get_sidecar_path( $handle, $extension );
+			$sidecar_fs_path = $this->get_filesystem_path( $sidecar_path );
+			$written = $filesystem->put_contents( $sidecar_fs_path, $contents, self::PERMISSIONS );
+
+			if ( false === $written ) {
+				$filesystem->delete( $css_path );
+				return;
+			}
 		}
+	}
+
+	private function delete_all_sidecars( string $handle ): void {
+		$filesystem = $this->get_filesystem();
+
+		foreach ( $this->get_known_sidecar_extensions() as $extension ) {
+			$path = $this->get_sidecar_path( $handle, $extension );
+
+			if ( $filesystem->exists( $path ) ) {
+				$filesystem->delete( $path );
+			}
+		}
+	}
+
+	/**
+	 * @return string[]
+	 */
+	private function get_known_sidecar_extensions(): array {
+		return [
+			Dynamic_Styles_Manager::DEFINITIONS_EXTENSION,
+			Dynamic_Styles_Manager::LEGACY_PLACEHOLDERS_EXTENSION,
+		];
+	}
+
+	private function normalize_payload( $payload ): ?Style_Cache_Bundle {
+		if ( $payload instanceof Style_Cache_Bundle ) {
+			return $payload;
+		}
+
+		if ( is_string( $payload ) ) {
+			return Style_Cache_Bundle::create( $payload );
+		}
+
+		if ( ! is_array( $payload ) ) {
+			return null;
+		}
+
+		$css = (string) ( $payload['css'] ?? '' );
+		$sidecars = [];
+
+		if ( ! empty( $payload['sidecars'] ) && is_array( $payload['sidecars'] ) ) {
+			foreach ( $payload['sidecars'] as $extension => $contents ) {
+				if ( is_string( $extension ) && is_string( $contents ) ) {
+					$sidecars[ $extension ] = $contents;
+				}
+			}
+		}
+
+		$placeholders = $payload['placeholders'] ?? [];
+
+		if ( is_array( $placeholders ) && ! empty( $placeholders ) ) {
+			$encoded = wp_json_encode( $placeholders, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+			if ( false !== $encoded ) {
+				$sidecars[ Dynamic_Styles_Manager::DEFINITIONS_EXTENSION ] = $encoded;
+			}
+		}
+
+		return Style_Cache_Bundle::create( $css, $sidecars );
 	}
 
 	private function get_filesystem(): \WP_Filesystem_Base {
@@ -154,11 +200,11 @@ class CSS_Files_Manager {
 		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $handle;
 	}
 
-	private function get_placeholders_path( string $handle ): string {
+	private function get_sidecar_path( string $handle, string $extension ): string {
 		$upload_dir = wp_upload_dir();
 		$sanitized_handle = $this->sanitize_handle( $handle );
 
-		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $sanitized_handle . self::PLACEHOLDERS_EXTENSION;
+		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $sanitized_handle . $extension;
 	}
 
 	private function sanitize_handle( string $handle ): string {

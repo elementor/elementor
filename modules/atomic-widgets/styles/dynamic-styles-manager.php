@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Dynamic_Styles_Manager {
+	const DEFINITIONS_EXTENSION = '.dynamic-definitions.json';
+
+	const LEGACY_PLACEHOLDERS_EXTENSION = '.placeholders.json';
+
 	private static ?self $instance = null;
 
 	/**
@@ -57,6 +61,26 @@ class Dynamic_Styles_Manager {
 	 */
 	public function get_definitions(): array {
 		return $this->definitions;
+	}
+
+	/**
+	 * @param array<string, array> $placeholders
+	 */
+	public function definitions_to_sidecar_contents( array $placeholders ): string {
+		$encoded = wp_json_encode( $placeholders, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		return false === $encoded ? '' : $encoded;
+	}
+
+	/**
+	 * @param array<string, array> $raw
+	 */
+	public function hydrate_from_sidecar( array $raw ): void {
+		if ( empty( $raw ) ) {
+			return;
+		}
+
+		$this->register_placeholders( $raw );
 	}
 
 	/**

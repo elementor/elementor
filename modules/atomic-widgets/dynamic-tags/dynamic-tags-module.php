@@ -19,9 +19,16 @@ class Dynamic_Tags_Module {
 
 	private Dynamic_Tags_Schemas $schemas;
 
+	private Dynamic_Style_Policy $style_policy;
+
 	private function __construct() {
 		$this->schemas  = new Dynamic_Tags_Schemas();
 		$this->registry = new Dynamic_Tags_Editor_Config( $this->schemas );
+		$this->style_policy = new Dynamic_Style_Policy();
+	}
+
+	public function policy(): Dynamic_Style_Policy {
+		return $this->style_policy;
 	}
 
 	public static function instance( $fresh = false ): self {

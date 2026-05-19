@@ -425,6 +425,34 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_enqueue__uses_file_cache_for_scoped_dynamic_styles() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = fn () => $this->get_scoped_dynamic_test_style_defs();
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( true );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert.
+		global $wp_styles;
+		$handle = $this->test_style_key . '-desktop';
+		$registered = $wp_styles->registered[ $handle ] ?? null;
+
+		$this->assertNotEmpty( $registered, 'Scoped dynamic styles should be enqueued as a file.' );
+		$this->assertNotFalse( $registered->src, 'Scoped dynamic styles should use a cached CSS file, not inline-only.' );
+	}
+
 	public function test_enqueue__bypasses_file_cache_for_dynamic_styles() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();
