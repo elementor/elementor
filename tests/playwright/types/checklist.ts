@@ -1,9 +1,5 @@
-export type StepId =
-	| 'add_logo'
-	| 'set_fonts_and_colors'
-	| 'create_pages'
-	| 'setup_header'
-	| 'assign_homepage';
+type StepIdTuple = readonly [ 'add_logo', 'set_fonts_and_colors', 'create_pages', 'setup_header', 'assign_homepage' ];
+export type StepId = StepIdTuple[ number ];
 
 export const immutableStepIds: StepId[] = [ 'create_pages' ] as const;
 
