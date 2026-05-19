@@ -10,6 +10,8 @@ type ExtendedWindow = Window & {
 };
 
 const ANGIE_PLUGIN_SLUG = 'angie/angie';
+const ANGIE_INSTALL_SUCCESS_URL = /(?:page=angie-app|open-angie=1)/;
+const ANGIE_IFRAME_SELECTOR = 'iframe[src*="angie/"]';
 
 async function ensureAngieNotInstalled( request: APIRequestContext, apiRequests: ApiRequests ) {
 	try {
@@ -191,7 +193,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			await context?.close();
 		} );
 
-		test( 'Clicking Install navigates to Angie app admin page', async () => {
+		test( 'Clicking Install activates Angie and opens it in the editor or app admin', async () => {
 			editor = await wpAdmin.openNewPage();
 			await editor.openElementsPanel();
 
@@ -212,9 +214,18 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			await expect( installButton ).toBeEnabled();
 			await installButton.click();
 
-			await page.waitForURL( /admin\.php.*angie-app/, { timeout: timeouts.navigation } );
-			expect( page.url() ).toContain( 'admin.php' );
-			expect( page.url() ).toContain( 'angie-app' );
+			await expect.poll(
+				async () => {
+					if ( ANGIE_INSTALL_SUCCESS_URL.test( page.url() ) ) {
+						return true;
+					}
+
+					return page.locator( ANGIE_IFRAME_SELECTOR ).count().then( ( count ) => count > 0 );
+				},
+				{ timeout: timeouts.heavyAction },
+			).toBe( true );
+
+			await expect( modal ).toBeHidden();
 		} );
 	} );
 
