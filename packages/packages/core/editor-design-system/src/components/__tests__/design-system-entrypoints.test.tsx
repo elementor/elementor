@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { usePanelActions, usePanelStatus } from '../../design-system-panel';
 import { getActiveDesignSystemTab, setPendingDesignSystemTab } from '../../initial-tab';
@@ -440,12 +440,12 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			render( <DesignSystemEntrypoints /> );
 
-			await act( async () => {
-				fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
-			} );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
 
-			expect( mockSaveDocument ).toHaveBeenCalled();
-			expect( mockCloseSaveDialog ).toHaveBeenCalled();
+			await waitFor( () => {
+				expect( mockSaveDocument ).toHaveBeenCalled();
+				expect( mockCloseSaveDialog ).toHaveBeenCalled();
+			} );
 		} );
 
 		it( 'should still allow closing the panel when document is dirty', () => {

@@ -53,10 +53,14 @@ export function DesignSystemEntrypoints() {
 	);
 
 	const handleSaveAndContinue = useCallback( async () => {
-		await saveDocument();
-		closeSaveDialog();
-		pendingOpenRef.current?.();
-		pendingOpenRef.current = null;
+		try {
+			await saveDocument();
+			closeSaveDialog();
+			pendingOpenRef.current?.();
+			pendingOpenRef.current = null;
+		} catch {
+			// Keep dialog open;
+		}
 	}, [ saveDocument, closeSaveDialog ] );
 
 	const handleStayHere = useCallback( () => {

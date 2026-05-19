@@ -8,6 +8,8 @@ import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usa
 import { trackGlobalClasses } from '../../utils/tracking';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
+const EVENT_TOGGLE_DESIGN_SYSTEM = 'elementor/toggle-design-system';
+
 export const ClassManagerButton = () => {
 	const { prefetchClassesUsage } = usePrefetchCssClassUsage();
 
@@ -21,7 +23,7 @@ export const ClassManagerButton = () => {
 
 	const handleOpenPanel = () => {
 		window.dispatchEvent(
-			new CustomEvent( 'elementor/toggle-design-system', {
+			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
 				detail: { tab: 'classes' as const },
 			} )
 		);
