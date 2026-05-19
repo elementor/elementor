@@ -1,11 +1,24 @@
-import { BrowserContext, expect, Page } from '@playwright/test';
+import { type APIRequestContext, BrowserContext, expect, Page } from '@playwright/test';
+import ApiRequests from '../../../assets/api-requests';
+import { timeouts } from '../../../config/timeouts';
 import { parallelTest as test } from '../../../parallelTest';
 import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 type ExtendedWindow = Window & {
-  __createWidgetPrompt: string;
+	__createWidgetPrompt: string;
 };
+
+const ANGIE_PLUGIN_SLUG = 'angie/angie';
+
+async function ensureAngieNotInstalled( request: APIRequestContext, apiRequests: ApiRequests ) {
+	try {
+		await apiRequests.deactivatePlugin( request, ANGIE_PLUGIN_SLUG );
+		await apiRequests.deletePlugin( request, ANGIE_PLUGIN_SLUG );
+	} catch {
+		// Angie was not installed or is already removed.
+	}
+}
 
 test.describe( 'Widget Creation @widget-creation', () => {
 	const EXPERIMENT_NAME = 'e_widget_creation';
@@ -37,15 +50,19 @@ test.describe( 'Widget Creation @widget-creation', () => {
 		let page: Page;
 		let wpAdmin: WpAdminPage;
 		let editor: EditorPage;
+		let apiRequests: ApiRequests;
 
-		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		test.beforeAll( async ( { browser, apiRequests: requests }, testInfo ) => {
+			apiRequests = requests;
 			context = await browser.newContext();
 			page = await context.newPage();
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await ensureAngieNotInstalled( page.context().request, apiRequests );
 			await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'active' } );
 		} );
 
 		test.afterAll( async () => {
+			await ensureAngieNotInstalled( page.context().request, apiRequests );
 			await context?.close();
 		} );
 
@@ -54,7 +71,9 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			await editor.openElementsPanel();
 
 			await test.step( 'Custom widgets category row shows fallback empty state', async () => {
+				await page.locator( '#elementor-panel-elements-categories' ).waitFor();
 				const customWidgetsCategory = page.locator( CUSTOM_WIDGETS_CATEGORY );
+				await customWidgetsCategory.scrollIntoViewIfNeeded();
 				await expect( customWidgetsCategory ).toBeVisible();
 				await expect( customWidgetsCategory.locator( '.elementor-panel-heading-title' ) ).toContainText(
 					'Custom Widget',
@@ -146,28 +165,56 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				await closeButton.click();
 				await expect( modal ).toBeHidden();
 			} );
+		} );
+	} );
 
-			await test.step( 'Clicking Install navigates to plugin install page', async () => {
-				await clearSearch( page );
-				await searchWidgets( page, 'divider' );
+	test.describe( 'Angie install navigation', () => {
+		test.describe.configure( { retries: 0 } );
 
-				const cta = page.locator( WIDGET_CREATION_CTA );
-				await cta.click();
+		let context: BrowserContext;
+		let page: Page;
+		let wpAdmin: WpAdminPage;
+		let editor: EditorPage;
+		let apiRequests: ApiRequests;
 
-				const modal = page.locator( CREATE_WIDGET_MODAL );
-				await expect( modal ).toBeVisible();
+		test.beforeAll( async ( { browser, apiRequests: requests }, testInfo ) => {
+			apiRequests = requests;
+			context = await browser.newContext();
+			page = await context.newPage();
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await ensureAngieNotInstalled( page.context().request, apiRequests );
+			await wpAdmin.setExperiments( { [ EXPERIMENT_NAME ]: 'active' } );
+		} );
 
-				const termsCheckbox = modal.locator( TERMS_CHECKBOX );
-				await termsCheckbox.check();
+		test.afterAll( async () => {
+			await ensureAngieNotInstalled( page.context().request, apiRequests );
+			await context?.close();
+		} );
 
-				const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
-				await expect( installButton ).toBeEnabled();
-				await installButton.click();
+		test( 'Clicking Install navigates to Angie app admin page', async () => {
+			editor = await wpAdmin.openNewPage();
+			await editor.openElementsPanel();
 
-				await page.waitForURL( /admin\.php.*angie-app/ );
-				expect( page.url() ).toContain( 'admin.php' );
-				expect( page.url() ).toContain( 'angie-app' );
-			} );
+			await clearSearch( page );
+			await searchWidgets( page, 'divider' );
+
+			const cta = page.locator( WIDGET_CREATION_CTA );
+			await cta.scrollIntoViewIfNeeded();
+			await cta.click();
+
+			const modal = page.locator( CREATE_WIDGET_MODAL );
+			await expect( modal ).toBeVisible();
+
+			const termsCheckbox = modal.locator( TERMS_CHECKBOX );
+			await termsCheckbox.check();
+
+			const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
+			await expect( installButton ).toBeEnabled();
+			await installButton.click();
+
+			await page.waitForURL( /admin\.php.*angie-app/, { timeout: timeouts.navigation } );
+			expect( page.url() ).toContain( 'admin.php' );
+			expect( page.url() ).toContain( 'angie-app' );
 		} );
 	} );
 
