@@ -10,7 +10,6 @@ import { useQuotaPermissions } from '../hooks/use-quota-permissions';
 import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
-import { usePanelActions } from './variables-manager/variables-manager-panel';
 import { VariablesSelection } from './variables-selection';
 
 const VIEW_LIST = 'list';
@@ -28,10 +27,11 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
-	const { open } = usePanelActions();
 	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
 		? () => {
-				open();
+				window.dispatchEvent(
+					new CustomEvent( 'elementor/toggle-design-system', { detail: { tab: 'variables' as const } } )
+				);
 		  }
 		: undefined;
 
@@ -75,7 +75,7 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
-	const userQuotaPremissions = useQuotaPermissions( props.propTypeKey );
+	const userQuotaPermissions = useQuotaPermissions( props.propTypeKey );
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -121,7 +121,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
-				disabled={ ! userQuotaPremissions.canAdd() }
+				disabled={ ! userQuotaPermissions.canAdd() }
 			/>
 		);
 	}

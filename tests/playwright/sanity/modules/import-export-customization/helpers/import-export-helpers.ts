@@ -109,7 +109,7 @@ export class ImportExportHelpers {
 
 	static async waitForImportComplete( page: Page ): Promise<void> {
 		await page.waitForURL( /.*import-customization\/complete.*/, { timeout: 30000 } );
-		await expect( page.locator( 'text=Your website templates is now live on your site!' ) ).toBeVisible();
+		await expect( page.locator( 'text=Your website template is now live on your site!' ) ).toBeVisible();
 		await expect( page.locator( 'text=You\'ve imported and applied the following to your site:' ) ).toBeVisible();
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
 	}

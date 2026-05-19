@@ -21,6 +21,8 @@ class Elements_Manager {
 	const CATEGORY_ATOMIC_FORM = 'atomic-form';
 	const CATEGORY_FAVORITES = 'favorites';
 	const CATEGORY_ANGIE_WIDGETS = 'angie-widgets';
+	const CATEGORY_CUSTOM_WIDGETS = 'custom-widgets';
+	const CATEGORY_BASIC = 'basic';
 
 	/**
 	 * Element types.
@@ -383,7 +385,12 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
-		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, [ self::CATEGORY_ATOMIC_FORM, self::CATEGORY_ATOMIC_ELEMENTS ] );
+		$after_candidates = Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' )
+			? [ self::CATEGORY_ATOMIC_FORM, self::CATEGORY_ATOMIC_ELEMENTS ]
+			: [ self::CATEGORY_BASIC ];
+
+		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, $after_candidates );
+		$this->promote_category_after( self::CATEGORY_CUSTOM_WIDGETS, $after_candidates );
 
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),

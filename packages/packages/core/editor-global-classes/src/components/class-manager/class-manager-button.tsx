@@ -11,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
 import { trackGlobalClasses } from '../../utils/tracking';
-import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
 const trackGlobalClassesButton = () => {
@@ -23,7 +22,6 @@ const trackGlobalClassesButton = () => {
 
 export const ClassManagerButton = () => {
 	const document = useActiveDocument();
-	const { open: openPanel } = usePanelActions();
 	const { save: saveDocument } = useActiveDocumentActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const { prefetchClassesUsage } = usePrefetchCssClassUsage();
@@ -36,18 +34,23 @@ export const ClassManagerButton = () => {
 		return null;
 	}
 
+	const toggleClassesManagerPanel = () => {
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/toggle-design-system', {
+				detail: { tab: 'classes' as const },
+			} )
+		);
+	};
+
 	const handleOpenPanel = () => {
 		if ( document?.isDirty ) {
 			openSaveChangesDialog();
 			return;
 		}
 
-		openPanel();
+		toggleClassesManagerPanel();
+
 		trackGlobalClassesButton();
-		trackGlobalClasses( {
-			event: 'classManagerOpened',
-			source: 'style-panel',
-		} );
 		prefetchClassesUsage();
 	};
 
@@ -80,7 +83,7 @@ export const ClassManagerButton = () => {
 								action: async () => {
 									await saveDocument();
 									closeSaveChangesDialog();
-									openPanel();
+									toggleClassesManagerPanel();
 									trackGlobalClassesButton();
 									prefetchClassesUsage();
 								},

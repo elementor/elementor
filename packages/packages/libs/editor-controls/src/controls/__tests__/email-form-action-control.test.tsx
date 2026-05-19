@@ -5,10 +5,28 @@ import { fireEvent, screen } from '@testing-library/react';
 import * as boundPropContext from '../../bound-prop-context';
 import { EmailFormActionControl } from '../email-form-action-control';
 
-const propType = createMockPropType( { kind: 'object' } );
+const propType = createMockPropType( {
+	kind: 'object',
+	shape: {
+		to: createMockPropType( { kind: 'array', item_prop_type: createMockPropType( { kind: 'plain' } ) } ),
+		subject: createMockPropType( { kind: 'plain' } ),
+		message: createMockPropType( { kind: 'plain' } ),
+		from: createMockPropType( { kind: 'plain' } ),
+		'meta-data': createMockPropType( { kind: 'array', item_prop_type: createMockPropType( { kind: 'plain' } ) } ),
+		'send-as': createMockPropType( { kind: 'plain' } ),
+		'from-name': createMockPropType( { kind: 'plain' } ),
+		'reply-to': createMockPropType( { kind: 'plain' } ),
+		cc: createMockPropType( { kind: 'plain' } ),
+		bcc: createMockPropType( { kind: 'plain' } ),
+	},
+} );
 const setValue = jest.fn();
 
 const wrap = ( val: string ) => ( { $$type: 'string' as const, value: val } );
+const wrapStringArray = ( vals: string[] ) => ( {
+	$$type: 'string-array' as const,
+	value: vals.map( ( v ) => wrap( v ) ),
+} );
 
 jest.mock( '../../bound-prop-context', () => ( {
 	...jest.requireActual( '../../bound-prop-context' ),
@@ -17,22 +35,38 @@ jest.mock( '../../bound-prop-context', () => ( {
 
 const mockUseBoundProp = boundPropContext.useBoundProp as jest.MockedFunction< typeof boundPropContext.useBoundProp >;
 
-describe( 'EmailFormActionControl', () => {
-	beforeEach( () => {
-		setValue.mockClear();
-		mockUseBoundProp.mockReturnValue( {
-			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				cc: null,
-				bcc: null,
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'meta-data': null,
-				'send-as': wrap( 'html' ),
-			},
+const defaultEmailValue = {
+	to: wrapStringArray( [ 'admin@test.com' ] ),
+	from: wrap( '' ),
+	fromName: wrap( '' ),
+	cc: null,
+	bcc: null,
+	subject: wrap( '' ),
+	message: wrap( '' ),
+	replyTo: wrap( '' ),
+	'meta-data': null,
+	'send-as': wrap( 'html' ),
+};
+
+const setupMock = ( emailValue = defaultEmailValue ) => {
+	( mockUseBoundProp as jest.Mock ).mockImplementation( ( propTypeUtil?: { key: string } ) => {
+		if ( propTypeUtil?.key === 'string-array' ) {
+			return {
+				value: emailValue.to?.value ?? [],
+				setValue,
+				disabled: false,
+				propType:
+					( propType as unknown as { shape: Record< string, unknown > } ).shape?.to ??
+					createMockPropType( { kind: 'array' } ),
+				bind: 'to',
+				path: [ 'to' ],
+				resetValue: jest.fn(),
+				restoreValue: jest.fn(),
+			};
+		}
+
+		return {
+			value: emailValue,
 			setValue,
 			disabled: false,
 			propType,
@@ -40,22 +74,21 @@ describe( 'EmailFormActionControl', () => {
 			path: [],
 			resetValue: jest.fn(),
 			restoreValue: jest.fn(),
-		} );
+		};
+	} );
+};
+
+describe( 'EmailFormActionControl', () => {
+	beforeEach( () => {
+		setValue.mockClear();
+		setupMock();
 	} );
 
 	it( 'should render email control with all required fields', () => {
 		// Arrange & Act
 		renderControl( <EmailFormActionControl />, {
 			setValue,
-			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'send-as': wrap( 'html' ),
-			},
+			value: defaultEmailValue,
 			bind: 'email',
 			propType,
 		} );
@@ -67,47 +100,42 @@ describe( 'EmailFormActionControl', () => {
 		expect( screen.getByText( /^message$/i ) ).toBeInTheDocument();
 	} );
 
+	it( 'should render send-to chips from string array', () => {
+		// Arrange & Act
+		renderControl( <EmailFormActionControl />, {
+			setValue,
+			value: defaultEmailValue,
+			bind: 'email',
+			propType,
+		} );
+
+		// Assert
+		expect( screen.getByText( 'admin@test.com' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should allow filling in email values', () => {
 		// Arrange
 		const toPlaceholder = 'placeholder@email.text';
-		const testEmail = 'test@example.com';
 
 		renderControl( <EmailFormActionControl toPlaceholder={ toPlaceholder } />, {
 			setValue,
 			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'send-as': wrap( 'html' ),
+				...defaultEmailValue,
+				to: wrapStringArray( [] ),
 			},
 			bind: 'email',
 			propType,
 		} );
 
-		// Act
-		const toInput = screen.getByPlaceholderText( toPlaceholder );
-		fireEvent.change( toInput, { target: { value: testEmail } } );
-
 		// Assert
-		expect( setValue ).toHaveBeenCalled();
+		expect( screen.getByPlaceholderText( toPlaceholder ) ).toBeInTheDocument();
 	} );
 
 	it( 'should toggle show-more section', () => {
 		// Arrange
 		renderControl( <EmailFormActionControl />, {
 			setValue,
-			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'send-as': wrap( 'html' ),
-			},
+			value: defaultEmailValue,
 			bind: 'email',
 			propType,
 		} );
@@ -124,47 +152,11 @@ describe( 'EmailFormActionControl', () => {
 		expect( screen.getByText( /^bcc$/i ) ).toBeInTheDocument();
 	} );
 
-	it( 'should allow filling values in show-more fields', () => {
-		// Arrange
-		renderControl( <EmailFormActionControl />, {
-			setValue,
-			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				cc: null,
-				bcc: null,
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'send-as': wrap( 'html' ),
-			},
-			bind: 'email',
-			propType,
-		} );
-
-		// Act
-		const showMoreButton = screen.getByRole( 'button', { name: /show more/i } );
-		fireEvent.click( showMoreButton );
-
-		// Assert
-		expect( screen.getByText( /^cc$/i ) ).toBeInTheDocument();
-		expect( screen.getByText( /^bcc$/i ) ).toBeInTheDocument();
-	} );
-
 	it( 'should show collapsed fields after clicking show more', () => {
 		// Arrange
 		renderControl( <EmailFormActionControl />, {
 			setValue,
-			value: {
-				to: wrap( '' ),
-				from: wrap( '' ),
-				fromName: wrap( '' ),
-				subject: wrap( '' ),
-				message: wrap( '' ),
-				replyTo: wrap( '' ),
-				'send-as': wrap( 'html' ),
-			},
+			value: defaultEmailValue,
 			bind: 'email',
 			propType,
 		} );

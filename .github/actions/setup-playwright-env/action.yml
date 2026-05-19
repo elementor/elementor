@@ -9,7 +9,7 @@ inputs:
     description: 'PHP version to use'
     required: true
   browser:
-    description: 'Browser(s) to install: chromium, firefox, or both'
+    description: 'Browser(s) to install: chromium, firefox, both, webkit, or all'
     required: false
     default: 'chromium'
 
@@ -79,7 +79,9 @@ runs:
       run: |
         case "${{ inputs.browser }}" in
           firefox) echo "list=firefox" >> $GITHUB_OUTPUT ;;
+          webkit)  echo "list=webkit" >> $GITHUB_OUTPUT ;;
           both)    echo "list=chromium firefox" >> $GITHUB_OUTPUT ;;
+          all)     echo "list=chromium firefox webkit" >> $GITHUB_OUTPUT ;;
           *)       echo "list=chromium" >> $GITHUB_OUTPUT ;;
         esac
 

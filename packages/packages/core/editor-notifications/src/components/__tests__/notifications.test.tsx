@@ -13,7 +13,7 @@ import { act, render, renderHook, screen, waitFor } from '@testing-library/react
 
 import { notificationsSlice } from '../../slice';
 import { type NotificationData } from '../../types';
-import Wrapper, { notify, NotifyReact } from '../notifications';
+import Wrapper, { dismissNotification, notify, NotifyReact } from '../notifications';
 
 let enqueuedSnackbar: {
 	message: string;
@@ -240,6 +240,41 @@ describe( 'Notifications', () => {
 		await waitFor( () => {
 			expect( Array.from( Object.keys( store.getState().notifications ) ).length ).toBe( 1 );
 		} );
+	} );
+
+	it( 'should dismiss snackbar by id', async () => {
+		// Arrange.
+		render(
+			<Provider store={ store }>
+				<SnackbarProvider>
+					<Wrapper />
+				</SnackbarProvider>
+			</Provider>
+		);
+
+		const snackbarOpts = {
+			id: '1',
+			message: 'Test Notification 1',
+			type: 'info',
+			additionalActionProps: [],
+		};
+
+		// Act.
+		act( () => {
+			notify( snackbarOpts as NotificationData );
+		} );
+
+		await waitFor( () => {
+			expect( enqueuedSnackbar ).toHaveLength( 1 );
+		} );
+
+		act( () => {
+			dismissNotification( snackbarOpts.id );
+		} );
+
+		// Assert.
+		expect( closeSnackbar ).toHaveBeenCalledWith( snackbarOpts.id );
+		expect( store.getState().notifications ).toEqual( {} );
 	} );
 
 	it( 'should add snackbar with additional action buttons', async () => {

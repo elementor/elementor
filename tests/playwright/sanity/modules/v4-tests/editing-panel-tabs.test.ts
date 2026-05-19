@@ -123,7 +123,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			await scrollContainer.evaluate(
 				( el: HTMLElement ) => el.scrollBy( 0, 100 ),
 			);
-			await expect( arialFontFamilyLocator ).not.toBeVisible();
+			await expect( arialFontFamilyLocator ).toBeHidden();
 		} );
 
 		await expect.soft( panelHeader ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );

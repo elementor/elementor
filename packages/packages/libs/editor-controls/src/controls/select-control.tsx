@@ -66,7 +66,7 @@ export const SelectControl = createControl(
 	}
 );
 
-function getSelectRenderValue(
+export function getSelectRenderValue(
 	options: SelectOption[],
 	placeholder: string | null | undefined,
 	selectedValue: string | null

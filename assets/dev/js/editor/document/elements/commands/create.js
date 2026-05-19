@@ -15,8 +15,29 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 				model: data.modelToRestore,
 				options,
 			} );
-		} else {
+
+			return;
+		}
+
+		if ( ! elementor.helpers.isAtomicWidget( data.modelToRestore ) ) {
 			$e.run( 'document/elements/delete', { container: data.containerToRestore } );
+
+			return;
+		}
+
+		const containerToRestore = data.containerToRestore?.lookup?.() ?? data.containerToRestore;
+
+		if ( containerToRestore instanceof elementorModules.editor.Container ) {
+			$e.run( 'document/elements/delete', { container: containerToRestore } );
+
+			return;
+		}
+
+		const parentId = data.containerToRestore?.parent?.id;
+		const childId = data.containerToRestore?.id ?? data.modelToRestore?.id;
+
+		if ( parentId && childId ) {
+			$e.components.get( 'document' ).utils.removeModelFromParent( parentId, childId );
 		}
 	}
 

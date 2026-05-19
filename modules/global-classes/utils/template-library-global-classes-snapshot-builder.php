@@ -63,14 +63,14 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 			return null;
 		}
 
-		$current = self::make()->load_current_data();
-		$filtered_items = Template_Library_Import_Export_Utils::filter_items_by_ids( $current['items'], $ids );
+		$repository = Global_Classes_Repository::make()->set_preview( false );
+		$order = $repository->get_order();
+		$filtered_order = array_values( array_filter( $order, fn( $id ) => in_array( $id, $ids, true ) ) );
+		$filtered_items = $repository->get_by_ids( $ids );
 
 		if ( empty( $filtered_items ) ) {
 			return null;
 		}
-
-		$filtered_order = Template_Library_Import_Export_Utils::build_filtered_order( $current['order'], $filtered_items );
 
 		return self::parse_snapshot_or_null( [
 			'items' => $filtered_items,
@@ -134,11 +134,20 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 	}
 
 	protected function load_current_data(): array {
-		$current = Global_Classes_Repository::make()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->all()->get();
+		$repository = Global_Classes_Repository::make()->set_preview( true );
+		$labels = $repository->all_labels();
+
+		$items = [];
+		foreach ( $labels as $id => $label ) {
+			$items[ $id ] = [
+				'id' => $id,
+				'label' => $label,
+			];
+		}
 
 		return [
-			'items' => $current['items'] ?? [],
-			'order' => $current['order'] ?? [],
+			'items' => $items,
+			'order' => $repository->get_order(),
 		];
 	}
 
@@ -163,15 +172,35 @@ class Template_Library_Global_Classes_Snapshot_Builder extends Template_Library_
 		return count( $items );
 	}
 
-	protected function save_data( array $items, array $metadata ): array {
-		$order = $metadata['order'] ?? [];
+	protected function save_data( array $data, array $metadata ): array {
+		$new_items = $data['new_items'] ?? [];
+		$order = $data['order'] ?? [];
 
-		Global_Classes_Repository::make()->put( $items, $order );
+		if ( empty( $new_items ) ) {
+			return [
+				'global_classes' => [
+					'added_items' => [],
+					'added_items_order' => [],
+				],
+			];
+		}
+
+		$repository = Global_Classes_Repository::make()->set_preview( false );
+		$added_ids = array_keys( $new_items );
+
+		$repository->apply_changes(
+			$new_items,
+			[
+				'added' => $added_ids,
+				'order' => true,
+			],
+			$order
+		);
 
 		return [
 			'global_classes' => [
-				'items' => $items,
-				'order' => $order,
+				'added_items_order' => $added_ids,
+				'added_items' => $new_items,
 			],
 		];
 	}

@@ -408,6 +408,61 @@ describe( 'useStyleItems', () => {
 		] );
 	} );
 
+	it( 'should remove cached items for breakpoints whose variants no longer exist', async () => {
+		// Arrange.
+		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>
+			Promise.resolve(
+				styles.map( ( style: StyleDefinition ) => ( {
+					id: style.id,
+					breakpoint: style?.variants[ 0 ]?.meta.breakpoint || 'desktop',
+				} ) )
+			)
+		);
+
+		jest.mocked( useStyleRenderer ).mockReturnValue( renderStylesMock );
+
+		const styleWithTwoBreakpoints = createMockStyleDefinitionWithVariants( {
+			id: 'style1',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: { 'font-family': 'Arial' }, custom_css: null },
+				{ meta: { breakpoint: 'tablet', state: null }, props: { 'font-family': 'Roboto' }, custom_css: null },
+			],
+		} );
+
+		const mockProvider = createMockStylesProvider( { key: 'provider1', priority: 1 }, [ styleWithTwoBreakpoints ] );
+
+		jest.mocked( stylesRepository ).getProviders.mockReturnValue( [ mockProvider ] );
+
+		const { result } = renderHook( () => useStyleItems() );
+
+		await act( async () => {
+			mockProvider.actions.updateProps?.( {
+				id: 'style1',
+				meta: { breakpoint: null, state: null },
+				props: {},
+			} );
+		} );
+
+		expect( result.current ).toEqual( [
+			{ id: 'style1', breakpoint: 'desktop' },
+			{ id: 'style1', breakpoint: 'tablet' },
+		] );
+
+		// Act - simulate the tablet variant being removed (e.g. user cleared its only prop,
+		// global-classes store calls getNonEmptyVariants which drops empty variants).
+		await act( async () => {
+			mockProvider.actions.update?.( {
+				id: 'style1',
+				variants: [
+					{ meta: { breakpoint: null, state: null }, props: { 'font-family': 'Arial' }, custom_css: null },
+				],
+			} );
+		} );
+
+		// Assert - the tablet item must be evicted from the cache.
+		expect( result.current ).toEqual( [ { id: 'style1', breakpoint: 'desktop' } ] );
+	} );
+
 	it( 'should only re-render changed styles on differential update', async () => {
 		// Arrange.
 		const renderStylesMock = jest.fn().mockImplementation( ( { styles } ) =>

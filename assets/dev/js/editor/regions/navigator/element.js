@@ -123,6 +123,11 @@ export default class extends Marionette.CompositeView {
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
 		this.listenTo( this.model, 'title_external_change', this.onTitleExternalChange );
+		this.listenTo( this.model, 'navigator:add', this.onNavigatorAdd );
+	}
+
+	onNavigatorAdd( childModel, options ) {
+		this._onCollectionAdd( childModel, this.collection, options || {} );
 	}
 
 	onTitleExternalChange() {

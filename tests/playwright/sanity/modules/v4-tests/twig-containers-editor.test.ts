@@ -9,7 +9,6 @@ test.describe( 'Twig Containers Editor Rendering @twig-containers', () => {
 
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_twig_containers' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

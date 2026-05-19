@@ -200,8 +200,10 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems, getC
 					cssName: provider.actions.resolveCssName( style.id ),
 				} ) );
 
-			return renderStyles( { styles: breakToBreakpoints( changedStyles ), signal } ).then( ( rendered ) => {
-				updateCacheItems( cache, rendered );
+			const breakpointSplit = breakToBreakpoints( changedStyles );
+
+			return renderStyles( { styles: breakpointSplit, signal } ).then( ( rendered ) => {
+				updateCacheItems( cache, changedIds, rendered );
 
 				return getOrderedItems( cache );
 			} );
@@ -277,19 +279,15 @@ function getOrderedItems( cache: StyleItemsCache ): StyleItem[] {
 		.flat();
 }
 
-function updateCacheItems( cache: StyleItemsCache, changedItems: StyleItem[] ): void {
+function updateCacheItems( cache: StyleItemsCache, changedIds: string[], changedItems: StyleItem[] ): void {
+	for ( const id of changedIds ) {
+		cache.itemsById.delete( id );
+	}
+
 	for ( const item of changedItems ) {
-		const existing = cache.itemsById.get( item.id );
-		if ( existing ) {
-			const idx = existing.findIndex( ( e ) => e.breakpoint === item.breakpoint && e.state === item.state );
-			if ( idx >= 0 ) {
-				existing[ idx ] = item;
-			} else {
-				existing.push( item );
-			}
-		} else {
-			cache.itemsById.set( item.id, [ item ] );
-		}
+		const existing = cache.itemsById.get( item.id ) || [];
+		existing.push( item );
+		cache.itemsById.set( item.id, existing );
 	}
 }
 

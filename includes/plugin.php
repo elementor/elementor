@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
@@ -39,7 +40,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
+
 	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
+
+	private const SANITIZABLE_META_KEYS = [
+		'_elementor_data',
+		'_elementor_page_settings',
+	];
 
 	/**
 	 * Instance.
@@ -835,24 +842,32 @@ class Plugin {
 		if ( current_user_can( 'unfiltered_html' ) ) {
 			return $post;
 		}
-		$request_body = json_decode( $request->get_body(), true );
-		$meta = $request_body['meta'];
-		if ( is_null( $meta ) ) {
-			return $post;
-		}
-		$elementor_data = $meta['_elementor_data'] ?? [];
-		if ( is_string( $elementor_data ) ) {
-			$elementor_data = json_decode( $elementor_data );
-		}
-		if ( is_null( $elementor_data ) ) {
+
+		$meta = $request->get_param( 'meta' );
+		if ( empty( $meta ) || ! is_array( $meta ) ) {
 			return $post;
 		}
 
-		$elementor_data = map_deep( $elementor_data, function ( $value ) {
-			return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
-		} );
-		$request_body['meta']['_elementor_data'] = json_encode( $elementor_data );
-		$request->set_body( json_encode( $request_body ) );
+		foreach ( self::SANITIZABLE_META_KEYS as $meta_key ) {
+			$elementor_data = $meta[ $meta_key ] ?? null;
+			if ( is_null( $elementor_data ) ) {
+				continue;
+			}
+			if ( is_string( $elementor_data ) ) {
+				$elementor_data = json_decode( $elementor_data, true );
+			}
+			if ( empty( $elementor_data ) ) {
+				continue;
+			}
+
+			$elementor_data = map_deep($elementor_data, function ( $value ) {
+				return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
+			});
+
+			$meta[ $meta_key ] = wp_json_encode( $elementor_data );
+		}
+
+		$request->set_param( 'meta', $meta );
 		return $post;
 	}
 }

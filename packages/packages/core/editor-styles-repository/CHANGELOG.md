@@ -260,7 +260,7 @@
 - e6c904a: Make global classes state changes synchronous
 - efdadea: Create validation utils in style repository
 - da38fa9: Remove unused exports and add missing dependencies.
-- ffad70a: Fix base styles rendring
+- ffad70a: Fix base styles rendering
 - ad6fde0: Support history actions in style changes
 - Updated dependencies [c9133d7]
 - Updated dependencies [86863c1]
