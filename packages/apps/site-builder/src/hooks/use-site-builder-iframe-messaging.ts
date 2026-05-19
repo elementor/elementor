@@ -3,6 +3,12 @@ import type * as React from 'react';
 
 import type { ConnectAuth } from '../connect-auth-schema';
 import { resolveEditorRedirectPageId } from '../deploy/can-redirect-after-deploy';
+import {
+	clearPendingEditorRedirect,
+	completeEditorRedirectOnDeployAck,
+	type PendingEditorRedirect,
+	scheduleEditorRedirectAfterDeploy,
+} from '../deploy/deploy-editor-redirect';
 import type { DeployPayload } from '../deploy/types';
 import { deployWebsite } from '../deploy';
 import { getElementorAiCurrentContext, getSiteBuilderConfig } from '../site-builder-config';
@@ -101,7 +107,7 @@ export function useSiteBuilderIframeMessaging( {
 	siteBuilderParams,
 	connectAuth,
 }: UseSiteBuilderIframeMessagingArgs ): void {
-	const pendingRedirectUrlRef = useRef< string | null >( null );
+	const pendingRedirectRef = useRef< PendingEditorRedirect | null >( null );
 
 	const allowedOrigin = useMemo( () => {
 		try {
@@ -136,17 +142,19 @@ export function useSiteBuilderIframeMessaging( {
 			}
 
 			if ( type === 'site-planner/deploy-website' ) {
-				pendingRedirectUrlRef.current = null;
-				pendingRedirectUrlRef.current = await handleDeploy( iframeRef.current, event );
+				clearPendingEditorRedirect( pendingRedirectRef.current );
+				pendingRedirectRef.current = null;
+
+				const redirectUrl = await handleDeploy( iframeRef.current, event );
+				if ( redirectUrl ) {
+					pendingRedirectRef.current = scheduleEditorRedirectAfterDeploy( redirectUrl );
+				}
 				return;
 			}
 
 			if ( type === 'site-planner/deploy-website/ack' ) {
-				const redirectUrl = pendingRedirectUrlRef.current;
-				pendingRedirectUrlRef.current = null;
-				if ( redirectUrl ) {
-					window.location.href = redirectUrl;
-				}
+				completeEditorRedirectOnDeployAck( pendingRedirectRef.current );
+				pendingRedirectRef.current = null;
 				return;
 			}
 
@@ -164,4 +172,8 @@ export function useSiteBuilderIframeMessaging( {
 		window.addEventListener( 'message', handleMessage );
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
+
+	useEffect( () => {
+		return () => clearPendingEditorRedirect( pendingRedirectRef.current );
+	}, [] );
 }
