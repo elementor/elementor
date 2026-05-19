@@ -8,9 +8,17 @@ type ExtendedWindow = Window & {
 	elementor?: {
 		documents?: {
 			getCurrent?: () => {
+				id?: number;
 				config?: {
 					settings?: {
-						post_title?: string;
+						settings?: {
+							post_title?: string;
+						};
+					};
+				};
+				container?: {
+					settings?: {
+						get?: ( key: string ) => string | undefined;
 					};
 				};
 			};
@@ -27,7 +35,10 @@ export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 
 	const getPageTitle = (): string | null => {
 		const extendedWindow = window as ExtendedWindow;
-		const title = extendedWindow.elementor?.documents?.getCurrent?.()?.config?.settings?.post_title;
+		const currentDoc = extendedWindow.elementor?.documents?.getCurrent?.();
+		const title =
+			currentDoc?.container?.settings?.get?.( 'post_title' ) ??
+			currentDoc?.config?.settings?.settings?.post_title;
 		if ( ! title?.trim() ) {
 			return null;
 		}
@@ -37,9 +48,11 @@ export const initGeneralContextResource = ( reg: MCPRegistryEntry ) => {
 	const buildPayload = () => {
 		const extendedWindow = window as ExtendedWindow;
 		const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+		const currentDocId = extendedWindow.elementor?.documents?.getCurrent?.()?.id ?? null;
 		const postParam = new URLSearchParams( location.search ).get( 'post' );
 		const parsedPostId = postParam ? Number( postParam ) : null;
-		const postId = parsedPostId !== null && Number.isFinite( parsedPostId ) ? parsedPostId : null;
+		const urlPostId = parsedPostId !== null && Number.isFinite( parsedPostId ) ? parsedPostId : null;
+		const postId = currentDocId ?? urlPostId;
 		const pageTitle = getPageTitle();
 		const urlObject = new URL( window.location.href );
 		const pageUrl = urlObject.pathname + urlObject.search;

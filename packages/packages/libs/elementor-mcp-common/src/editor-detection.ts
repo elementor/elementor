@@ -64,15 +64,11 @@ export function waitForElementorEditor(): Promise< void > {
 			}
 		};
 
-		window.addEventListener(
-			'DOMContentLoaded',
-			() => {
-				checkReady();
-			},
-			{
-				once: true,
-			}
-		);
+		if ( document.readyState === 'loading' ) {
+			window.addEventListener( 'DOMContentLoaded', checkReady, { once: true } );
+		} else {
+			checkReady();
+		}
 	} );
 }
 
