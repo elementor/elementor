@@ -40,7 +40,11 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
+		// The ajax batcher keys pending requests by `unique_id` and defaults it to the action name.
+		// Concurrent `render_tags` batches (common with v4 awaited renders) would otherwise overwrite
+		// each other in the pending map, dropping the earlier batch's callbacks. A per-batch id keeps them distinct.
 		elementorCommon.ajax.addRequest( 'render_tags', {
+			unique_id: 'render_tags-' + elementorCommon.helpers.getUniqueId(),
 			data: {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),
