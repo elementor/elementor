@@ -6,7 +6,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.60"
+        "elementor/wp-one-package": "1.0.62"
     },
     "repositories": [
         {
@@ -41,6 +41,7 @@
         "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
         "test": "phpunit",
         "test:install": "bash ./bin/install-wp-tests-local.sh",
+        "phpunit:local": "bash ./bin/phpunit-local.sh",
         "coverage": "composer run coverage:test && composer run coverage:check",
         "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
         "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
