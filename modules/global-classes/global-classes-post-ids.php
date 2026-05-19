@@ -103,7 +103,6 @@ class Global_Classes_Post_IDs {
 			if ( get_post( $post_id ) ) {
 				$resolved[ $class_id ] = $post_id;
 			} else {
-				$this->remove_post_id( $post_id );
 				$missing[] = $class_id;
 			}
 		}
