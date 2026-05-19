@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { generateTempId } from '../../../batch-operations';
 import { getVariables } from '../../../hooks/use-prop-variables';
@@ -132,8 +132,10 @@ export const useVariablesManagerState = () => {
 		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
 	}, [ variables, searchValue ] );
 
+	const filteredVariablesMemo = useMemo( () => filteredVariables(), [ filteredVariables ] );
+
 	return {
-		variables: filteredVariables(),
+		variables: filteredVariablesMemo,
 		deletedVariables,
 		isDirty,
 		isSaveDisabled,
