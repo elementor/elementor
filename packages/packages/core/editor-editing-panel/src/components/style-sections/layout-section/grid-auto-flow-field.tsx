@@ -76,7 +76,7 @@ const GridAutoFlowFieldContent = () => {
 					/>
 				</Grid>
 				<Grid item>
-					<Tooltip title={ DENSE_LABEL }>
+					<Tooltip title={ DENSE_LABEL } placement="top">
 						<ToggleButton
 							value="dense"
 							selected={ dense }

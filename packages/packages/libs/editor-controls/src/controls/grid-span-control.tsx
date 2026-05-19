@@ -25,9 +25,12 @@ export const GridSpanControl = createControl(
 		ariaLabel?: string;
 	} ) => {
 		const { value, setValue, disabled, placeholder: boundPlaceholder } = useBoundProp( spanPropTypeUtil );
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
+		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			const next = event.target.value;
+			setValue( next === '' ? null : next );
+		};
 
-		const placeholder = propPlaceholder ?? boundPlaceholder ?? undefined;
+		const placeholder = propPlaceholder ?? boundPlaceholder ?? `e.g: 'span 2' or '1 / 3'`;
 
 		return (
 			<ControlActions>

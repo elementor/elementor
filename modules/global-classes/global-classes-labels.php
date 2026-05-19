@@ -73,6 +73,54 @@ class Global_Classes_Labels {
 		return $result;
 	}
 
+	public static function generate_unique_label( string $label, array $existing_labels ): string {
+		$prefix = 'DUP_';
+		$max_length = 50;
+
+		$has_prefix = str_starts_with( $label, $prefix );
+
+		if ( $has_prefix ) {
+			$base = substr( $label, strlen( $prefix ) );
+			$counter = 1;
+			$candidate = $prefix . $base . $counter;
+
+			while ( in_array( $candidate, $existing_labels, true ) ) {
+				$candidate = $prefix . $base . ( ++$counter );
+			}
+
+			if ( strlen( $candidate ) > $max_length ) {
+				$base = substr( $base, 0, $max_length - strlen( $prefix . $counter ) );
+				$candidate = $prefix . $base . $counter;
+			}
+
+			return $candidate;
+		}
+
+		$available_length = strlen( $label );
+		$candidate = $prefix . $label;
+
+		if ( strlen( $candidate ) > $max_length ) {
+			$available_length = $max_length - strlen( $prefix );
+			$candidate = $prefix . substr( $label, 0, $available_length );
+		}
+
+		$base = substr( $label, 0, $available_length );
+		$counter = 1;
+
+		while ( in_array( $candidate, $existing_labels, true ) ) {
+			$candidate = $prefix . $base . $counter;
+
+			if ( strlen( $candidate ) > $max_length ) {
+				$base = substr( $label, 0, $max_length - strlen( $prefix . $counter ) );
+				$candidate = $prefix . $base . $counter;
+			}
+
+			++$counter;
+		}
+
+		return $candidate;
+	}
+
 	public function set_labels( array $id_to_label ): bool {
 		$kit = $this->get_kit();
 

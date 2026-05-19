@@ -13,9 +13,13 @@ import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { validateInput } from '../mcp/utils/validate-input';
+import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
+import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
+
+const CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE = 'createElement did not return an element container with a model.';
 
 type API = {
 	createElement: typeof createElement;
@@ -278,6 +282,14 @@ export class CompositionBuilder {
 			}
 		} );
 
+		const typesWithRequiredChildren = Object.keys( widgetsCache ).filter(
+			( elementType ) => getRequiredDefaultChildTemplates( widgetsCache[ elementType ] ).length > 0
+		);
+
+		typesWithRequiredChildren.forEach( ( elementType ) => {
+			new RequiredChildrenEnforcer( elementType, widgetsCache ).enforce( this.xml );
+		} );
+
 		const childTypeErrors: string[] = [];
 		for ( const rootChild of Array.from( this.xml.children ) ) {
 			childTypeErrors.push( ...this.validateChildTypes( rootChild, widgetsCache ) );
@@ -296,6 +308,9 @@ export class CompositionBuilder {
 					model: modelTree as CreateElementParams[ 'model' ],
 					options: { useHistory: false },
 				} );
+				if ( ! newElement?.model ) {
+					throw new Error( CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE );
+				}
 				this.rootContainers.push( newElement );
 				await this.awaitViewRender( newElement );
 			} catch ( e: unknown ) {

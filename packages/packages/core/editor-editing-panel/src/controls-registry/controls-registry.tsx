@@ -32,7 +32,7 @@ import {
 	createArrayPropUtils,
 	dateRangePropTypeUtil,
 	DateTimePropTypeUtil,
-	emailPropTypeUtil,
+	emailsPropTypeUtil,
 	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
 	keyValuePropTypeUtil,
@@ -85,7 +85,7 @@ const controlTypes = {
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
 	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
 	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
-	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailPropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
 	'date-range': {
 		component: DateRangeControl,
 		layout: 'custom',
