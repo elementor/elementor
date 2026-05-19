@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { trackStyles } from '../../utils/tracking/subscribe';
 import { PENDING_CLASS_RENAME_SESSION_KEY } from './consts';
 import { useCssClass } from './css-class-context';
-import { useApplyClass } from './use-apply-and-unapply-class';
+import { useUndoableApplyClass } from './use-apply-and-unapply-class';
 
 const DUPLICATE_LABEL_PREFIX = 'copy-of';
 
@@ -24,7 +24,7 @@ export function getUniqueDuplicateLabel( originalLabel: string, existingLabels: 
 export function DuplicateClassMenuItem( { closeMenu }: { closeMenu: () => void } ) {
 	const { id: classId, provider } = useCssClass();
 	const { userCan } = useUserStylesCapability();
-	const applyClass = useApplyClass();
+	const applyClass = useUndoableApplyClass();
 	const [ , setPendingEditId ] = useSessionStorage( PENDING_CLASS_RENAME_SESSION_KEY, 'app' );
 
 	if ( ! provider || ! classId ) {

@@ -58,7 +58,7 @@ export async function deleteAllGlobalClasses( apiRequests: ApiRequests, request:
 		} );
 
 		return { success: true, deleted: order.length };
-	} catch ( error ) {
+	} catch {
 		return { success: false, deleted: 0 };
 	}
 }
