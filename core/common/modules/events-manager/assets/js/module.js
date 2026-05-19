@@ -17,6 +17,7 @@ export default class extends elementorModules.Module {
 	}
 
 	initializeMixpanel( onLoaded ) {
+<<<<<<< HEAD
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -25,6 +26,24 @@ export default class extends elementorModules.Module {
 				flags: true,
 				api_hosts: {
 					flags: 'https://api-eu.mixpanel.com',
+=======
+		if ( mixpanelInstance && mixpanelInstance.isInitialized ) {
+			onLoaded( mixpanelInstance );
+		} else {
+			mixpanelInstance = mixpanel.init(
+				elementorCommon.config.editor_events?.token,
+				{
+					persistence: 'localStorage',
+					autocapture: false,
+					flags: true,
+					api_host: 'https://api-eu.mixpanel.com',
+					loaded: onLoaded,
+					record_sessions_percent: 0,
+					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
+					record_min_ms: 5 * 1000, // 5 Seconds
+					record_max_ms: 30 * 1000, // 30 Seconds
+					record_mask_text_selector: '',
+>>>>>>> 4a0d6ece3b (Fix: Fix events logs name [ED-24149] (#35943))
 				},
 				loaded: onLoaded,
 			},
