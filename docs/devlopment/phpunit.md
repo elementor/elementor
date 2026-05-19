@@ -1,33 +1,58 @@
 # PHPUnit
 
-A quote from "phpunit" website that describes the tool ([https://phpunit.de/](https://phpunit.de/)):
+PHPUnit is the testing framework used for all PHP unit tests in this project. Tests live in `tests/phpunit/` and are organized by module/feature.
 
-"PHPUnit is a programmer-oriented testing framework for PHP. It is an instance of the xUnit architecture for unit testing frameworks."
- 
-## Installation
- 
-**Note:** Make sure to install `composer` before jumping to this section (a guide to install `composer` locate next to this guide).
- 
-To make sure we can run `phpunit` we have to install few things:
-1. Fresh WordPress installation just for the test (to make sure tests not affected by your current WordPress installation)
-2. Fresh database (to make sure tests not affected by your current database)
-3. `wp-testing-tools` - set of utils that helps us to test WordPress plugins and themes.
-4. `phpunit` bin file.
- 
-There is a script that handles all those requirements
-  
-#### SVN
+## Prerequisites
 
-before running the install script you should check if there is `svn` in your machine.
- 
-Run: `which svn` if something like `/usr/local/bin/svn` or `/usr/bin/svn` was returned you should skip this step.
+- [Docker](https://www.docker.com/) — runs the MySQL server in a container (no local MySQL server or client tools required)
+- [Composer](https://getcomposer.org/) — see the composer guide next to this one
+- [SVN](https://subversion.apache.org/) — required to pull the WordPress test suite
 
-Installing `svn` in mac: `brew install svn` (if you don't have "brew" install it: [https://brew.sh/](https://brew.sh/))
+Check whether SVN is already installed: `which svn`. If it prints a path (for example `/usr/bin/svn`), skip the install step below.
 
-Installing `svn` in Linux subsystem: `sudo apt-get install subversion`
+Install SVN on Mac: `brew install svn`  
+Install SVN on Linux: `sudo apt-get install subversion`
 
-#### Installation script
+## Running tests locally
 
-Run `composer run test:install`. it should prompt questions about your database credentials make sure to fill correct credentials.
+### Full suite
 
-That's all you can run `composer test` which will run the whole "Elementor" test suite, any argument that allowed to pass to `phpunit` command you can pass to `composer test` command, e.g: `composer test -- --filter Elementor_Test_Bootstrap`. just make sure to pass extra ` -- ` before your argument.
+```bash
+composer run phpunit:local
+```
+
+This command handles everything: starts (or reuses) a MySQL Docker container, downloads WordPress core and the WP test suite into `/tmp/`, then runs all tests.
+
+### Single test class or method
+
+```bash
+# All tests in a class
+composer run phpunit:local -- Test_Module
+
+# Single method
+composer run phpunit:local -- Test_Module::test_get_favorites
+
+# Partial match across any class (regex)
+composer run phpunit:local -- test_get_favorites
+```
+
+The filter is matched against fully qualified test names, so a partial class or method name is enough.
+
+### Run against a specific WordPress version
+
+```bash
+WP_VERSION=6.8 composer run phpunit:local
+```
+
+Supported versions: `latest`, `6.9`, `6.8` (matching CI).
+
+## How CI runs tests
+
+CI runs on every PR and merge group where PHP-related files changed (`.php`, `.twig`, `composer.json/lock`), and on a daily schedule (weekdays 08:30 UTC).
+
+| Job | WordPress versions | PHP versions |
+|---|---|---|
+| PR / Merge | `latest`, `6.9`, `6.8` | `7.4` – `8.3` |
+| Nightly | `latest`, `6.9`, `6.8`, `nightly` | `7.4` – `8.4` |
+
+Coverage reports are generated only on PHP 8.3 + latest WordPress.

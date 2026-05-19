@@ -29,6 +29,7 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		getPreviewContainer?: () => V1Element | undefined;
 		helpers?: {
 			isAtomicWidget?: ( model: unknown ) => boolean;
 		};
@@ -150,6 +151,7 @@ export type ElementInteractions = {
 export type V1ElementModelProps = {
 	title?: string;
 	isLocked?: boolean;
+	meta?: Record< string, unknown >;
 	widgetType?: string;
 	elType: string;
 	id: string;
