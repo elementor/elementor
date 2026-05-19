@@ -7,6 +7,11 @@ export type RenderContext< T = unknown > = Record< string, T >;
 export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
 
 export type LegacyWindow = Window & {
+	elementorCommon?: {
+		helpers?: {
+			getUniqueId?: () => string;
+		};
+	};
 	jQuery: JQueryStatic;
 	elementor: {
 		config: {

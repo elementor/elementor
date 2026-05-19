@@ -31,7 +31,7 @@ export type DynamicPropValue = TransformablePropValue<
 export type DynamicTagsManager = {
 	createTag: ( id: string, name: string, settings: Record< string, unknown > ) => TagInstance;
 	loadTagDataFromCache: ( tag: TagInstance ) => unknown;
-	refreshCacheFromServer: ( callback: () => void ) => void;
+	refreshCacheFromServer: ( callback: () => void, uniqueId?: string ) => void;
 };
 
 export type TagInstance = {
