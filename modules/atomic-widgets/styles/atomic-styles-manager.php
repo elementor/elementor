@@ -34,11 +34,6 @@ class Atomic_Styles_Manager {
 
 	private array $dynamic_styles_decisions = [];
 
-	/**
-	 * @var array<string, array>
-	 */
-	private array $dynamic_placeholders = [];
-
 	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
@@ -257,7 +252,7 @@ class Atomic_Styles_Manager {
 			return;
 		}
 
-		$this->dynamic_placeholders = array_merge( $this->dynamic_placeholders, $cached );
+		Dynamic_Styles_Manager::instance()->register_placeholders( $cached );
 	}
 
 	private function render_style_payload( array $styles, string $style_key ): array {
@@ -276,46 +271,12 @@ class Atomic_Styles_Manager {
 		$css = $renderer->render( $styles );
 		$placeholders = $renderer->get_dynamic_placeholders();
 
-		$this->dynamic_placeholders = array_merge(
-			$this->dynamic_placeholders,
-			$placeholders
-		);
+		Dynamic_Styles_Manager::instance()->register_placeholders( $placeholders );
 
 		return [
 			'css' => $css,
 			'placeholders' => $placeholders,
 		];
-	}
-
-	public function resolve_dynamic_css_variables_for_current_post(): array {
-		if ( empty( $this->dynamic_placeholders ) ) {
-			return [];
-		}
-
-		$resolved = [];
-
-		foreach ( $this->dynamic_placeholders as $var_name => $dynamic_node ) {
-			if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $dynamic_node ) ) {
-				continue;
-			}
-
-			$tag_name     = $dynamic_node['value']['name'] ?? null;
-			$tag_settings = $dynamic_node['value']['settings'] ?? [];
-
-			if ( ! $tag_name ) {
-				continue;
-			}
-
-			$value = Plugin::$instance->dynamic_tags->get_tag_data_content( null, $tag_name, $tag_settings );
-
-			if ( null === $value || '' === $value ) {
-				continue;
-			}
-
-			$resolved[ $var_name ] = (string) $value;
-		}
-
-		return $resolved;
 	}
 
 	private function get_breakpoint_media( string $breakpoint_key ): ?string {

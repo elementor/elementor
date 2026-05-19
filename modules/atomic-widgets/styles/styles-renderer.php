@@ -187,6 +187,15 @@ class Styles_Renderer {
 
 			$var_name = $this->generate_variable_placeholder( $class_id, $variant_index, $prop_name );
 			$this->dynamic_placeholders[ $var_name ] = $prop_value;
+			Dynamic_Styles_Manager::instance()->register(
+				$var_name,
+				$prop_value,
+				[
+					'class_id' => $class_id,
+					'prop_name' => $prop_name,
+					'variant_index' => $variant_index,
+				]
+			);
 			$placeholder_css .= $prop_name . ':var(' . $var_name . ');';
 		}
 
