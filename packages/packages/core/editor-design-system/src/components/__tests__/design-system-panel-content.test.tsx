@@ -57,6 +57,7 @@ const mockClassManagerPanelEmbedded = require( '@elementor/editor-global-classes
 	.ClassManagerPanelEmbedded as jest.Mock;
 
 jest.mock( '@elementor/ui', () => ( {
+	...jest.requireActual( '@elementor/ui' ),
 	useTabs: ( currentTab: string ) => ( {
 		getTabProps: ( tab: string ) => ( { value: tab } ),
 		getTabPanelProps: () => ( {} ),
@@ -80,23 +81,10 @@ jest.mock( '@elementor/ui', () => ( {
 			{ label }
 		</button>
 	),
-	Box: ( {
-		children,
-		role,
-		sx,
-	}: {
-		children: React.ReactNode;
-		role?: string;
-		sx?: { display?: string };
-	} ) => (
+	Box: ( { children, role, sx }: { children: React.ReactNode; role?: string; sx?: { display?: string } } ) => (
 		<div role={ role } style={ sx?.display === 'none' ? { display: 'none' } : undefined }>
 			{ children }
 		</div>
-	),
-	Stack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	Divider: () => <hr />,
-	CloseButton: ( { onClick, 'aria-label': ariaLabel }: { onClick: () => void; 'aria-label'?: string } ) => (
-		<button onClick={ onClick } aria-label={ ariaLabel || 'Close' } />
 	),
 } ) );
 
