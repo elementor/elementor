@@ -81,7 +81,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
-          path: plugin-root.zip
+          path: plugin-root
           if-no-files-found: error
           retention-days: 3
           
