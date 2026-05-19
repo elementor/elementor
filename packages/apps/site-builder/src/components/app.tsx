@@ -62,8 +62,10 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			homePageId: result.homePageId,
 			errors: result.errors,
 		} ) ) {
-			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
+			return `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
 		}
+
+		return null;
 	} catch ( err ) {
 		iframe?.contentWindow?.postMessage(
 			{
@@ -75,11 +77,14 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			},
 			origin
 		);
+
+		return null;
 	}
 }
 
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
+	const pendingRedirectUrlRef = useRef< string | null >( null );
 
 	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
 
@@ -116,7 +121,17 @@ export function App() {
 			}
 
 			if ( type === 'site-planner/deploy-website' ) {
-				await handleDeploy( iframeRef.current, event );
+				pendingRedirectUrlRef.current = null;
+				pendingRedirectUrlRef.current = await handleDeploy( iframeRef.current, event );
+				return;
+			}
+
+			if ( type === 'site-planner/deploy-website/ack' ) {
+				const redirectUrl = pendingRedirectUrlRef.current;
+				pendingRedirectUrlRef.current = null;
+				if ( redirectUrl ) {
+					window.location.href = redirectUrl;
+				}
 			}
 		},
 		[ allowedOrigin ]
