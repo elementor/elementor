@@ -19,50 +19,11 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	__useActiveDocumentActions: () => ( { save: mockSaveDocument } ),
 } ) );
 
-jest.mock( '@elementor/editor-ui', () => {
-	const actual: Record< string, unknown > = {
-		useDialog: jest.fn(),
-		ThemeProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
-	};
-
-	const SaveChangesDialogComponent = ( { children }: { children: React.ReactNode } ) => (
-		<div data-testid="save-dialog">{ children }</div>
-	);
-	SaveChangesDialogComponent.Title = ( { children }: { children: React.ReactNode } ) => (
-		<div data-testid="save-dialog-title">{ children }</div>
-	);
-	SaveChangesDialogComponent.Content = ( { children }: { children: React.ReactNode } ) => (
-		<div data-testid="save-dialog-content">{ children }</div>
-	);
-	SaveChangesDialogComponent.ContentText = ( { children }: { children: React.ReactNode } ) => (
-		<span>{ children }</span>
-	);
-	SaveChangesDialogComponent.Actions = ( {
-		actions,
-	}: {
-		actions: {
-			cancel?: { label: string; action: () => void };
-			confirm?: { label: string; action: () => void };
-		};
-	} ) => (
-		<div>
-			{ actions.cancel && (
-				<button data-testid="save-dialog-cancel" onClick={ actions.cancel.action }>
-					{ actions.cancel.label }
-				</button>
-			) }
-			{ actions.confirm && (
-				<button data-testid="save-dialog-confirm" onClick={ actions.confirm.action }>
-					{ actions.confirm.label }
-				</button>
-			) }
-		</div>
-	);
-
-	actual.SaveChangesDialog = SaveChangesDialogComponent;
-
-	return actual;
-} );
+jest.mock( '@elementor/editor-ui', () => ( {
+	...jest.requireActual( '@elementor/editor-ui' ),
+	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	useDialog: jest.fn(),
+} ) );
 
 import { useDialog } from '@elementor/editor-ui';
 
@@ -454,7 +415,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			dispatchSpy.mockRestore();
 		} );
 
-		it( 'should render save dialog content when dialog is open', () => {
+		it( 'should close the save dialog when "Stay here" is clicked', () => {
 			jest.mocked( useDialog ).mockReturnValue( {
 				open: mockOpenSaveDialog,
 				close: mockCloseSaveDialog,
@@ -463,20 +424,7 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			render( <DesignSystemEntrypoints /> );
 
-			expect( screen.getByTestId( 'save-dialog' ) ).toBeInTheDocument();
-			expect( screen.getByTestId( 'save-dialog-title' ) ).toHaveTextContent( 'You have unsaved changes' );
-		} );
-
-		it( 'should close dialog and clear pending open when "Stay here" is clicked', () => {
-			jest.mocked( useDialog ).mockReturnValue( {
-				open: mockOpenSaveDialog,
-				close: mockCloseSaveDialog,
-				isOpen: true,
-			} );
-
-			render( <DesignSystemEntrypoints /> );
-
-			fireEvent.click( screen.getByTestId( 'save-dialog-cancel' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Stay here' } ) );
 
 			expect( mockCloseSaveDialog ).toHaveBeenCalled();
 		} );
@@ -493,7 +441,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			render( <DesignSystemEntrypoints /> );
 
 			await act( async () => {
-				fireEvent.click( screen.getByTestId( 'save-dialog-confirm' ) );
+				fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
 			} );
 
 			expect( mockSaveDocument ).toHaveBeenCalled();
