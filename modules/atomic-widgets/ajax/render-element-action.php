@@ -30,12 +30,10 @@ class Render_Element_Action {
 		$is_edit_mode = $editor->is_edit_mode();
 		$editor->set_edit_mode( true );
 
-		$previous_query = $GLOBALS['wp_query'] ?? null;
-
-		query_posts( [
+		Plugin::$instance->db->switch_to_query( [
 			'p' => $post_id,
 			'post_type' => 'any',
-		] );
+		], true );
 
 		Plugin::$instance->documents->switch_to_document( $document );
 
@@ -43,11 +41,7 @@ class Render_Element_Action {
 			$render_html = $this->render_element( $element_data );
 		} finally {
 			$editor->set_edit_mode( $is_edit_mode );
-
-			if ( $previous_query ) {
-				$GLOBALS['wp_query'] = $previous_query;
-				wp_reset_postdata();
-			}
+			Plugin::$instance->db->restore_current_query();
 		}
 
 		return [
