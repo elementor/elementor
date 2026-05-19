@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { getLinkInLinkRestriction } from '@elementor/editor-elements';
+import { useEffect, useState } from 'react';
+import { getLinkInLinkRestriction, type LinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
+import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
+import { useDebouncedCallback } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -62,36 +63,39 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
-	const debouncedCheckRestriction = useMemo(
-		() =>
-			debounce( () => {
-				const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
+	const debouncedCheckRestriction = useDebouncedCallback( () => {
+		const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
 
-				if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
-					setIsActive( false );
-				}
+		if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
+			setIsActive( false );
 
-				setLinkInLinkRestriction( newRestriction );
-			}, 300 ),
-		[ elementId, isActive, value, linkPlaceholder ]
+			if ( value !== null ) {
+				setValue( null );
+			}
+		}
+
+		setLinkInLinkRestriction( ( prev ) => ( isSameRestriction( prev, newRestriction ) ? prev : newRestriction ) );
+	}, 300 );
+
+	useListenTo(
+		commandEndEvent( 'document/elements/set-settings' ),
+		() => {
+			debouncedCheckRestriction();
+		},
+		[ debouncedCheckRestriction ]
 	);
 
 	useEffect( () => {
 		debouncedCheckRestriction();
 
-		const handleInlineLinkChanged = ( event: Event ) => {
-			const customEvent = event as CustomEvent< { elementId: string } >;
-
-			if ( customEvent.detail.elementId === elementId ) {
-				debouncedCheckRestriction();
-			}
+		const handleInlineLinkChanged = () => {
+			debouncedCheckRestriction();
 		};
 
 		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
 
 		return () => {
 			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
-			debouncedCheckRestriction.cancel();
 		};
 	}, [ elementId, debouncedCheckRestriction ] );
 
@@ -181,3 +185,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 		</PropProvider>
 	);
 } );
+
+function isSameRestriction( a: LinkInLinkRestriction, b: LinkInLinkRestriction ): boolean {
+	return a.shouldRestrict === b.shouldRestrict && a.reason === b.reason && a.elementId === b.elementId;
+}
