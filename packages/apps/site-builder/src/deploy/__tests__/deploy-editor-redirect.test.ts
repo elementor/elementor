@@ -1,7 +1,7 @@
 import {
-	EDITOR_REDIRECT_ACK_FALLBACK_MS,
 	clearPendingEditorRedirect,
 	completeEditorRedirectOnDeployAck,
+	EDITOR_REDIRECT_ACK_FALLBACK_MS,
 	scheduleEditorRedirectAfterDeploy,
 } from '../deploy-editor-redirect';
 

@@ -22,9 +22,7 @@ jest.mock( '../steps/theme-parts' );
 
 const buildIncrementalPayload = (): DeployPayload => ( {
 	mode: 'incremental',
-	pages: [
-		{ id: 'planner-uuid-1', title: 'About', content: [] },
-	],
+	pages: [ { id: 'planner-uuid-1', title: 'About', content: [] } ],
 } );
 
 const buildFullPayload = (): DeployPayload => ( {

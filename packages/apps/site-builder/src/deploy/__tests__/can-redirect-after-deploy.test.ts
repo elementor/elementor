@@ -7,7 +7,7 @@ describe( 'resolveEditorRedirectPageId', () => {
 				isIncremental: true,
 				pages: [ { id: 'planner-a' }, { id: 'planner-b' } ],
 				pageIdMap: { 'planner-a': 10, 'planner-b': 99 },
-			} ),
+			} )
 		).toBe( 99 );
 	} );
 
@@ -16,7 +16,7 @@ describe( 'resolveEditorRedirectPageId', () => {
 			resolveEditorRedirectPageId( {
 				isIncremental: true,
 				pages: [ { id: 'planner-a' } ],
-			} ),
+			} )
 		).toBeNull();
 	} );
 
@@ -25,7 +25,7 @@ describe( 'resolveEditorRedirectPageId', () => {
 			resolveEditorRedirectPageId( {
 				isIncremental: false,
 				homePageId: 5,
-			} ),
+			} )
 		).toBe( 5 );
 	} );
 
@@ -36,7 +36,7 @@ describe( 'resolveEditorRedirectPageId', () => {
 				pages: [ { id: 'planner-a' } ],
 				pageIdMap: { 'planner-a': 10 },
 				errors: [ 'pages: failed' ],
-			} ),
+			} )
 		).toBeNull();
 	} );
 } );
@@ -48,14 +48,14 @@ describe( 'canRedirectToEditorAfterDeploy', () => {
 				isIncremental: true,
 				pages: [ { id: 'planner-a' }, { id: 'planner-b' } ],
 				pageIdMap: { 'planner-a': 10, 'planner-b': 99 },
-			} ),
+			} )
 		).toBe( true );
 	} );
 
 	it( 'returns false in incremental mode when pages are missing from the payload', () => {
-		expect(
-			canRedirectToEditorAfterDeploy( { isIncremental: true, pageIdMap: { 'planner-a': 10 } } ),
-		).toBe( false );
+		expect( canRedirectToEditorAfterDeploy( { isIncremental: true, pageIdMap: { 'planner-a': 10 } } ) ).toBe(
+			false
+		);
 	} );
 
 	it( 'returns false when homePageId is missing in full mode', () => {
@@ -68,7 +68,7 @@ describe( 'canRedirectToEditorAfterDeploy', () => {
 				isIncremental: false,
 				homePageId: 5,
 				errors: [ 'pages: failed' ],
-			} ),
+			} )
 		).toBe( false );
 	} );
 
@@ -78,7 +78,7 @@ describe( 'canRedirectToEditorAfterDeploy', () => {
 				isIncremental: false,
 				homePageId: 5,
 				errors: [ 'home_page: failed' ],
-			} ),
+			} )
 		).toBe( false );
 	} );
 
@@ -88,13 +88,11 @@ describe( 'canRedirectToEditorAfterDeploy', () => {
 				isIncremental: false,
 				homePageId: 5,
 				errors: [ 'global_variables: boom' ],
-			} ),
+			} )
 		).toBe( true );
 	} );
 
 	it( 'returns true when there are no errors', () => {
-		expect(
-			canRedirectToEditorAfterDeploy( { isIncremental: false, homePageId: 10 } ),
-		).toBe( true );
+		expect( canRedirectToEditorAfterDeploy( { isIncremental: false, homePageId: 10 } ) ).toBe( true );
 	} );
 } );
