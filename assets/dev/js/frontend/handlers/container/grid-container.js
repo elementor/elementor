@@ -19,6 +19,18 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		GridContainer.cacheByValues.clear();
 	}
 
+	static isGridLayoutReady( handler ) {
+		return handler.elements?.container?.classList.contains( 'e-grid' );
+	}
+
+	static hasValidGridDimensions( dimensions ) {
+		return dimensions?.rows?.length > 0 && dimensions?.columns?.length > 0;
+	}
+
+	static isDimensionsEntryCacheable( handler, entry ) {
+		return GridContainer.isGridLayoutReady( handler ) && GridContainer.hasValidGridDimensions( entry.dimensions );
+	}
+
 	static buildCalculationKey( handler ) {
 		const device = elementor.channels.deviceMode.request( 'currentMode' ),
 			elementSettings = handler.getElementSettings(),
@@ -86,13 +98,15 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const calculationKey = GridContainer.buildCalculationKey( handler ),
 			cached = GridContainer.cacheByValues.get( calculationKey );
 
-		if ( cached ) {
+		if ( cached?.dimensions ) {
 			return cached;
 		}
 
 		const entry = GridContainer.computeDimensionsCache( handler );
 
-		GridContainer.cacheByValues.set( calculationKey, entry );
+		if ( GridContainer.isDimensionsEntryCacheable( handler, entry ) ) {
+			GridContainer.cacheByValues.set( calculationKey, entry );
+		}
 
 		return entry;
 	}
@@ -110,9 +124,12 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			{ grid_auto_flow: gridAutoFlow } = handler.getElementSettings(),
 			flowTypeField = 'row' === gridAutoFlow ? 'columns' : 'rows',
 			maxElementsByItems = Math.ceil( childrenLength / gridDimensions[ flowTypeField ].length ) * gridDimensions[ flowTypeField ].length,
-			maxOutlineElements = maxElementsBySettings > maxElementsByItems ? maxElementsBySettings : maxElementsByItems;
+			maxOutlineElements = maxElementsBySettings > maxElementsByItems ? maxElementsBySettings : maxElementsByItems,
+			dimensionsEntry = { dimensions: gridDimensions, maxElementsNumber: maxElementsBySettings };
 
-		GridContainer.cacheByValues.set( outlineCacheKey, maxOutlineElements );
+		if ( GridContainer.isDimensionsEntryCacheable( handler, dimensionsEntry ) ) {
+			GridContainer.cacheByValues.set( outlineCacheKey, maxOutlineElements );
+		}
 
 		return maxOutlineElements;
 	}
@@ -124,20 +141,8 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.updateEmptyViewHeight = this.updateEmptyViewHeight.bind( this );
 	}
 
-	isActive( settings ) {
-		if ( ! elementorFrontend.isEditMode() ) {
-			return false;
-		}
-
-		const modelCid = settings?.$element?.data( 'model-cid' );
-
-		if ( ! modelCid ) {
-			return false;
-		}
-
-		const elementSettingsModel = elementorFrontend.config.elements.data[ modelCid ];
-
-		return elementSettingsModel && 'grid' === elementSettingsModel.get( 'container_type' );
+	isActive() {
+		return elementorFrontend.isEditMode();
 	}
 
 	getDefaultSettings() {
@@ -185,7 +190,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	onInit() {
 		super.onInit();
-		this.initLayoutOverlay();
+		this.scheduleInitLayoutOverlay();
 		this.updateEmptyViewHeight();
 		elementor.hooks.addAction( 'panel/open_editor/container', this.onPanelShow );
 	}
@@ -239,6 +244,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	bindEvents() {
 		GridContainer.bindDeviceModeListener();
+		elementor.channels.deviceMode.on( 'change', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.on( 'resize', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.on( 'resize', this.updateEmptyViewHeight );
 		this.addChildLifeCycleEventListeners();
@@ -251,6 +257,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 	unbindEvents() {
 		this.removeChildLifeCycleEventListeners();
+		elementor.channels.deviceMode.off( 'change', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.off( 'resize', this.onDeviceModeChange );
 		elementorFrontend.elements.$window.off( 'resize', this.updateEmptyViewHeight );
 		elementor.channels.editor.off( 'section:activated', this.handleGridControls.bind( this ) );
@@ -262,7 +269,9 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 
 		this.elements.emptyView = this.findElement( selectors.emptyView )[ 0 ];
 
-		if ( this.elements?.emptyView ) {
+		const isGridContainer = 'grid' === this.getElementSettings( 'container_type' );
+
+		if ( isGridContainer && this.elements?.emptyView ) {
 			this.elements.emptyView.style.display = this.shouldRemoveEmptyView() ? 'none' : 'block';
 		}
 
@@ -276,12 +285,13 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		}
 
 		const numberOfItems = this.getMaxOutlineElementsNumber(),
-			{ gridOutline } = this.elements;
+			gridOutlineElement = this.getGridOutlineElement();
 
 		if (
-			gridOutline?.isConnected &&
-			gridOutline.parentElement === this.elements.outlineParentContainer &&
-			gridOutline.childElementCount === numberOfItems
+			numberOfItems > 0 &&
+			gridOutlineElement?.isConnected &&
+			gridOutlineElement.parentElement === this.elements.outlineParentContainer &&
+			gridOutlineElement.childElementCount === numberOfItems
 		) {
 			this.setGridOutlineDimensions();
 			return;
@@ -306,8 +316,19 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		this.elements.outlineParentContainer = container.querySelector( boxedContainer ) || container;
 	}
 
+	getGridOutlineElement() {
+		const { gridOutline } = this.elements;
+
+		if ( ! gridOutline ) {
+			return null;
+		}
+
+		return gridOutline[ 0 ] || gridOutline;
+	}
+
 	removeExistingOverlay() {
-		this.elements.gridOutline?.remove();
+		this.getGridOutlineElement()?.remove();
+		this.elements.gridOutline = null;
 	}
 
 	createOverlayContainer() {
@@ -347,11 +368,11 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	setGridOutlineDimensions() {
-		const { gridOutline } = this.elements,
+		const gridOutlineElement = this.getGridOutlineElement(),
 			{ rows, columns } = this.getDeviceGridDimensions();
 
-		gridOutline.style.gridTemplateColumns = columns.value;
-		gridOutline.style.gridTemplateRows = rows.value;
+		gridOutlineElement.style.gridTemplateColumns = columns.value;
+		gridOutlineElement.style.gridTemplateRows = rows.value;
 	}
 
 	/**
@@ -398,6 +419,7 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 			'grid_rows_grid',
 			'grid_columns_grid',
 			'grid_gaps',
+			'grid_outline',
 			'container_type',
 			'boxed_width',
 			'content_width',
@@ -474,7 +496,12 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 	}
 
 	scheduleInitLayoutOverlay() {
-		requestAnimationFrame( () => {
+		if ( this.layoutOverlayAnimationFrame ) {
+			return;
+		}
+
+		this.layoutOverlayAnimationFrame = requestAnimationFrame( () => {
+			this.layoutOverlayAnimationFrame = null;
 			this.initLayoutOverlay();
 		} );
 	}
