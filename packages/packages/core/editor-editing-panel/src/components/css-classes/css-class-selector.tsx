@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ReactElement, useRef, useState } from 'react';
+import { type ReactElement, useCallback, useRef, useState } from 'react';
 import { type ClassesPropValue } from '@elementor/editor-props';
 import {
 	isElementsStylesProvider,
@@ -16,6 +16,7 @@ import { createLocation } from '@elementor/locations';
 import {
 	type AutocompleteChangeReason,
 	Box,
+	Button,
 	Chip,
 	type ChipOwnProps,
 	FormLabel,
@@ -38,10 +39,25 @@ import {
 	type ValidationResult,
 } from '../creatable-autocomplete';
 import { CssClassItem } from './css-class-item';
-import { useApplyClass, useCreateAndApplyClass, useUnapplyClass } from './use-apply-and-unapply-class';
+import { MissingClassesAlert } from './missing-classes-alert';
+import {
+	useCreateAndApplyClass,
+	useUnapplyClasses,
+	useUndoableApplyClass,
+	useUndoableUnapplyClass,
+} from './use-apply-and-unapply-class';
+import { useMissingClassesIds } from './use-missing-classes';
 
 const ID = 'elementor-css-class-selector';
 const TAGS_LIMIT = 50;
+
+function openClassManagerPanel() {
+	window.dispatchEvent(
+		new CustomEvent( 'elementor/toggle-design-system', {
+			detail: { tab: 'classes' as const },
+		} )
+	);
+}
 
 type StyleDefOption = Option & {
 	color: ChipOwnProps[ 'color' ];
@@ -74,7 +90,7 @@ export function CssClassSelector() {
 	const [ renameError, setRenameError ] = useState< string | null >( null );
 
 	const handleSelect = useHandleSelect();
-	const { create, validate, entityName } = useCreateAction();
+	const { create, validate, entityName, isAtLimit, limitCount } = useCreateAction();
 
 	const appliedOptions = useAppliedOptions( options );
 	const active = appliedOptions.find( ( option ) => option.value === activeId ) ?? EMPTY_OPTION;
@@ -84,6 +100,15 @@ export function CssClassSelector() {
 	const { userCan } = useUserStylesCapability();
 
 	const canEdit = active.provider ? userCan( active.provider ).updateProps : true;
+
+	const missingClassesIds = useMissingClassesIds();
+	const hasMissingClasses = missingClassesIds.length > 0;
+
+	const unapplyClasses = useUnapplyClasses();
+
+	const clearMissingClasses = useCallback( () => {
+		unapplyClasses( missingClassesIds );
+	}, [ missingClassesIds, unapplyClasses ] );
 
 	return (
 		<Stack p={ 2 }>
@@ -114,7 +139,13 @@ export function CssClassSelector() {
 					onCreate={ create ?? undefined }
 					validate={ validate ?? undefined }
 					limitTags={ TAGS_LIMIT }
-					renderEmptyState={ EmptyState }
+					renderEmptyState={
+						isAtLimit && typeof limitCount === 'number'
+							? ( props ) => (
+									<LimitReachedEmptyState limitCount={ limitCount } onClear={ props.onClear } />
+							  )
+							: EmptyState
+					}
 					getLimitTagsText={ ( more ) => (
 						<Chip size="tiny" variant="standard" label={ `+${ more }` } clickable />
 					) }
@@ -157,6 +188,7 @@ export function CssClassSelector() {
 					}
 				/>
 			</WarningInfotip>
+			{ hasMissingClasses && <MissingClassesAlert onDismiss={ clearMissingClasses } /> }
 			{ ! canEdit && (
 				<InfoAlert sx={ { mt: 1 } }>
 					{ __( 'With your current role, you can use existing classes but can’t modify them.', 'elementor' ) }
@@ -166,7 +198,9 @@ export function CssClassSelector() {
 	);
 }
 
-const EmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: () => void } ) => (
+type EmptyStateProps = { searchValue: string; onClear: () => void };
+
+const EmptyStateLayout = ( { searchValue, onClear, children }: EmptyStateProps & { children: React.ReactNode } ) => (
 	<Box sx={ { py: 4 } }>
 		<Stack
 			gap={ 1 }
@@ -181,14 +215,66 @@ const EmptyState = ( { searchValue, onClear }: { searchValue: string; onClear: (
 				<br />
 				&ldquo;{ searchValue }&rdquo;.
 			</Typography>
-			<Typography align="center" variant="caption" sx={ { mb: 2 } }>
-				{ __( 'With your current role,', 'elementor' ) }
-				<br />
-				{ __( 'you can only use existing classes.', 'elementor' ) }
-			</Typography>
+			{ children }
 			<Link color="text.secondary" variant="caption" component="button" onClick={ onClear }>
 				{ __( 'Clear & try again', 'elementor' ) }
 			</Link>
+		</Stack>
+	</Box>
+);
+
+const EmptyState = ( props: EmptyStateProps ) => (
+	<EmptyStateLayout { ...props }>
+		<Typography align="center" variant="caption" sx={ { mb: 2 } }>
+			{ __( 'With your current role,', 'elementor' ) }
+			<br />
+			{ __( 'you can only use existing classes.', 'elementor' ) }
+		</Typography>
+	</EmptyStateLayout>
+);
+
+const LimitReachedEmptyState = ( {
+	limitCount,
+	onClear,
+}: Pick< EmptyStateProps, 'onClear' > & { limitCount: number } ) => (
+	<Box sx={ { py: 4 } }>
+		<Stack
+			gap={ 1 }
+			alignItems="center"
+			color="text.secondary"
+			justifyContent="center"
+			sx={ { px: 1, m: 'auto', maxWidth: '260px' } }
+		>
+			<ColorSwatchIcon sx={ { transform: 'rotate(90deg)' } } fontSize="large" />
+			<Typography align="center" variant="subtitle2">
+				{
+					/* translators: %s is the maximum number of classes */
+					__( 'Limit of %s classes reached', 'elementor' ).replace( '%s', String( limitCount ) )
+				}
+			</Typography>
+			<Typography align="center" variant="caption" component="div">
+				{ __( 'Remove a class to create a new one.', 'elementor' ) }{ ' ' }
+				<Link
+					color="inherit"
+					variant="caption"
+					component="button"
+					onClick={ onClear }
+					sx={ { verticalAlign: 'baseline' } }
+				>
+					{ __( 'Clear', 'elementor' ) }
+				</Link>
+			</Typography>
+			<Button
+				variant="outlined"
+				color="secondary"
+				size="small"
+				onClick={ () => {
+					openClassManagerPanel();
+					onClear();
+				} }
+			>
+				{ __( 'Class Manager', 'elementor' ) }
+			</Button>
 		</Stack>
 	</Box>
 );
@@ -250,6 +336,18 @@ function useCreateAction() {
 		return {};
 	}
 
+	const entityName =
+		provider.labels.singular && provider.labels.plural
+			? ( provider.labels as CreatableAutocompleteProps< StyleDefOption >[ 'entityName' ] )
+			: undefined;
+
+	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult =>
+		validateStyleLabel( newClassLabel, event );
+
+	if ( hasReachedLimit( provider ) ) {
+		return { entityName, isAtLimit: true as const, limitCount: provider.limit, validate };
+	}
+
 	const create = ( classLabel: string ) => {
 		const { createdId } = createAction( { classLabel } );
 		trackStyles( provider.getKey() ?? '', 'classCreated', {
@@ -259,26 +357,7 @@ function useCreateAction() {
 		} );
 	};
 
-	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult => {
-		if ( hasReachedLimit( provider ) ) {
-			return {
-				isValid: false,
-				/* translators: %s is the maximum number of classes */
-				errorMessage: __(
-					'You’ve reached the limit of %s classes. Please remove an existing one to create a new class.',
-					'elementor'
-				).replace( '%s', provider.limit.toString() ),
-			};
-		}
-		return validateStyleLabel( newClassLabel, event );
-	};
-
-	const entityName =
-		provider.labels.singular && provider.labels.plural
-			? ( provider.labels as CreatableAutocompleteProps< StyleDefOption >[ 'entityName' ] )
-			: undefined;
-
-	return { create, validate, entityName };
+	return { create, validate, entityName, isAtLimit: false as const };
 }
 
 function hasReachedLimit( provider: StylesProvider ) {
@@ -303,8 +382,8 @@ function useAppliedOptions( options: StyleDefOption[] ) {
 }
 
 function useHandleSelect() {
-	const apply = useApplyClass();
-	const unapply = useUnapplyClass();
+	const apply = useUndoableApplyClass();
+	const unapply = useUndoableUnapplyClass();
 
 	return ( _selectedOptions: StyleDefOption[], reason: AutocompleteChangeReason, option: StyleDefOption ) => {
 		if ( ! option.value ) {
