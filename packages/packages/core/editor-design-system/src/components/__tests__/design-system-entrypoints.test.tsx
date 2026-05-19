@@ -429,7 +429,7 @@ describe( 'DesignSystemEntrypoints', () => {
 			expect( mockCloseSaveDialog ).toHaveBeenCalled();
 		} );
 
-		it( 'should save document and proceed when "Save & Continue" is clicked', () => {
+		it( 'should save document and proceed when "Save & Continue" is clicked', async () => {
 			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
 
 			jest.mocked( useDialog ).mockReturnValue( {
@@ -440,7 +440,9 @@ describe( 'DesignSystemEntrypoints', () => {
 
 			render( <DesignSystemEntrypoints /> );
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
+			await act( async () => {
+				fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
+			} );
 
 			expect( mockSaveDocument ).toHaveBeenCalled();
 			expect( mockCloseSaveDialog ).toHaveBeenCalled();
