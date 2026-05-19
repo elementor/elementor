@@ -187,27 +187,30 @@ class Global_Classes_Repository {
 			'order' => implode( ';', $order ) !== $current_order_string,
 		];
 
+		/**
+		 * We collect all affected ids before the put_to_posts execution
+		 * as the update mechanism would handle the Global_Classes_Relations as it iterates over the update batches
+		 * So once we get to the cleanup phase - we would no longer have the relevant relations
+		 *
+		 * On top of that - by collecting all affected posts in advance, means we would iterate over each document's elements only once
+		 * (as the alternative would be to trigger the cleanup per removed class, but that means we may end up iterating over the same document N times, if all N styles are used in it)
+		 */
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $deleted_class_ids );
+
 		$this->put_to_posts( $items, $order, $current_ids );
 
 		$this->cache = null;
 
 		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
 
-		/**
-		 * We collect all affected ids before the put_to_posts execution
-		 * as the update mechanism would handle the Global_Classes_Relations as it iterates over the update batches
-		 * So once we get to the cleanup phase - we would no longer have the relevant relations
-		 * 
-		 * On top of that - by collecting all affected posts in advance, means we would iterate over each document's elements only once
-		 * (as the alternative would be to trigger the cleanup per removed class, but that means we may end up iterating over the same document N times, if all N styles are used in it)
-		 */
-		$affected_post_ids = $this->get_posts_affected_by_deletion( $deleted_class_ids );
-
 		if ( ! empty( $deleted_class_ids ) && ! $this->is_preview() ) {
-			do_action( 'elementor/global_classes/cleanup', [
-				'styles_ids' => $deleted_class_ids,
-				'post_ids' => $affected_post_ids,
-			] );
+			do_action(
+				'elementor/global_classes/cleanup',
+				[
+					'styles_ids' => $deleted_class_ids,
+					'post_ids' => $affected_post_ids,
+				]
+			);
 		}
 	}
 
