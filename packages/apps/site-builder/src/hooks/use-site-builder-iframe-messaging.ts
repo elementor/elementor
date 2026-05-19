@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type * as React from 'react';
 
 import type { ConnectAuth } from '../connect-auth-schema';
+import { deployWebsite } from '../deploy';
 import { resolveEditorRedirectPageId } from '../deploy/can-redirect-after-deploy';
 import {
 	clearPendingEditorRedirect,
@@ -10,7 +11,6 @@ import {
 	scheduleEditorRedirectAfterDeploy,
 } from '../deploy/deploy-editor-redirect';
 import type { DeployPayload } from '../deploy/types';
-import { deployWebsite } from '../deploy';
 import { getElementorAiCurrentContext, getSiteBuilderConfig } from '../site-builder-config';
 
 export type SiteBuilderParams = {
@@ -54,6 +54,20 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 	const payload = event.data?.payload as DeployPayload | undefined;
 	const isIncremental = payload?.mode === 'incremental';
 
+	if ( ! payload ) {
+		iframe?.contentWindow?.postMessage(
+			{
+				type: 'site-planner/deploy-website/result',
+				payload: {
+					status: 'error',
+					error: 'Missing deploy payload',
+				},
+			},
+			origin
+		);
+		return null;
+	}
+
 	try {
 		const result = await deployWebsite( payload );
 
@@ -69,7 +83,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			isIncremental,
 			homePageId: result.homePageId,
 			pageIdMap: result.pageIdMap,
-			pages: payload?.pages,
+			pages: payload.pages,
 			errors: result.errors,
 		} );
 

@@ -2,16 +2,14 @@ export type RedirectAfterDeployArgs = {
 	errors?: string[];
 	homePageId?: number;
 	isIncremental: boolean;
-	pageIdMap?: Record<string, number>;
+	pageIdMap?: Record< string, number >;
 	pages?: { id: string }[];
 };
 
 const blockingErrorPrefixes = [ 'pages:', 'home_page:' ];
 
 const hasBlockingDeployErrors = ( errors?: string[] ): boolean =>
-	errors?.some( ( err ) =>
-		blockingErrorPrefixes.some( ( prefix ) => String( err ).startsWith( prefix ) ),
-	) ?? false;
+	errors?.some( ( err ) => blockingErrorPrefixes.some( ( prefix ) => String( err ).startsWith( prefix ) ) ) ?? false;
 
 export function resolveEditorRedirectPageId( args: RedirectAfterDeployArgs ): number | null {
 	if ( hasBlockingDeployErrors( args.errors ) ) {

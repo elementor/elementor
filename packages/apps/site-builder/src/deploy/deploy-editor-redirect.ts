@@ -10,12 +10,14 @@ export function scheduleEditorRedirectAfterDeploy(
 	options: {
 		fallbackMs?: number;
 		navigate?: ( url: string ) => void;
-	} = {},
+	} = {}
 ): PendingEditorRedirect {
 	const fallbackMs = options.fallbackMs ?? EDITOR_REDIRECT_ACK_FALLBACK_MS;
-	const navigate = options.navigate ?? ( ( url: string ) => {
-		window.location.href = url;
-	} );
+	const navigate =
+		options.navigate ??
+		( ( url: string ) => {
+			window.location.href = url;
+		} );
 
 	const pending: PendingEditorRedirect = {
 		redirectUrl,
@@ -52,7 +54,7 @@ export function completeEditorRedirectOnDeployAck(
 	pending: PendingEditorRedirect | null,
 	navigate: ( url: string ) => void = ( url: string ) => {
 		window.location.href = url;
-	},
+	}
 ): void {
 	const redirectUrl = pending?.redirectUrl;
 	clearPendingEditorRedirect( pending );

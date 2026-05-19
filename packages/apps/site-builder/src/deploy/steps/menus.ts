@@ -44,7 +44,10 @@ async function createMenu(
 	await Promise.all( menuItemPromises );
 }
 
-export async function createMenus( menus: DeployPayload[ 'menus' ], pageIdMap: Record< string, number > ) {
+export async function createMenus(
+	menus: NonNullable< DeployPayload[ 'menus' ] >,
+	pageIdMap: Record< string, number >
+) {
 	if ( menus.header?.length ) {
 		await createMenu( `Header-${ Date.now() }`, menus.header, pageIdMap, 'primary' );
 	}

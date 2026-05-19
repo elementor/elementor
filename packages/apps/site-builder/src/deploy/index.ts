@@ -135,10 +135,7 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 	};
 }
 
-function resolveHomePageId(
-	pages: DeployPayload[ 'pages' ],
-	pageIdMap: Record< string, number >,
-): number | undefined {
+function resolveHomePageId( pages: DeployPayload[ 'pages' ], pageIdMap: Record< string, number > ): number | undefined {
 	if ( pageIdMap.home ) {
 		return pageIdMap.home;
 	}
