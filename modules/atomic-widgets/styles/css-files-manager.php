@@ -25,21 +25,21 @@ class CSS_Files_Manager {
 			);
 		}
 
-		$bundle = $this->normalize_payload( $get_payload() );
+		$payload = $this->normalize_payload( $get_payload() );
 
-		if ( null === $bundle || '' === $bundle->get_css() ) {
+		if ( null === $payload || '' === $payload['css'] ) {
 			return null;
 		}
 
 		$filesystem_path = $this->get_filesystem_path( $path );
 
-		$is_created = $filesystem->put_contents( $filesystem_path, $bundle->get_css(), self::PERMISSIONS );
+		$is_created = $filesystem->put_contents( $filesystem_path, $payload['css'], self::PERMISSIONS );
 
 		if ( false === $is_created ) {
 			return null;
 		}
 
-		$this->write_sidecars( $handle, $bundle->get_sidecars(), $filesystem, $path );
+		$this->write_sidecars( $handle, $payload['sidecars'], $filesystem, $path );
 
 		return Style_File::create(
 			$this->sanitize_handle( $handle ),
@@ -130,13 +130,15 @@ class CSS_Files_Manager {
 		];
 	}
 
-	private function normalize_payload( $payload ): ?Style_Cache_Bundle {
-		if ( $payload instanceof Style_Cache_Bundle ) {
-			return $payload;
-		}
-
+	/**
+	 * @return array{css: string, sidecars: array<string, string>}|null
+	 */
+	private function normalize_payload( $payload ): ?array {
 		if ( is_string( $payload ) ) {
-			return Style_Cache_Bundle::create( $payload );
+			return [
+				'css' => $payload,
+				'sidecars' => [],
+			];
 		}
 
 		if ( ! is_array( $payload ) ) {
@@ -154,17 +156,10 @@ class CSS_Files_Manager {
 			}
 		}
 
-		$placeholders = $payload['placeholders'] ?? [];
-
-		if ( is_array( $placeholders ) && ! empty( $placeholders ) ) {
-			$encoded = wp_json_encode( $placeholders, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-
-			if ( false !== $encoded ) {
-				$sidecars[ Dynamic_Styles_Manager::DEFINITIONS_EXTENSION ] = $encoded;
-			}
-		}
-
-		return Style_Cache_Bundle::create( $css, $sidecars );
+		return [
+			'css' => $css,
+			'sidecars' => $sidecars,
+		];
 	}
 
 	private function get_filesystem(): \WP_Filesystem_Base {

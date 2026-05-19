@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Components\Transformers;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\Styles\Dynamic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Plugin;
@@ -69,6 +70,11 @@ class Component_Instance_Transformer extends Transformer_Base {
 			$content = ob_get_clean();
 
 			$content = apply_filters( 'elementor/frontend/the_content', $content );
+
+			$content = Dynamic_Styles_Manager::instance()->render_for_post(
+				$component->get_main_id(),
+				$content
+			);
 		}
 
 		Plugin::$instance->documents->restore_document();

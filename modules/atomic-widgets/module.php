@@ -103,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Rota
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Skew_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Styles\Dynamic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
@@ -256,6 +257,7 @@ class Module extends BaseModule {
 
 	private function register_hooks() {
 		Dynamic_Tags_Module::instance()->register_hooks();
+		Dynamic_Styles_Manager::instance()->register_hooks();
 		Atomic_Styles_Manager::instance()->register_hooks();
 		Migrations_Orchestrator::make()->register_hooks();
 		( new Atomic_Widget_Styles() )->register_hooks();

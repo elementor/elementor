@@ -3,7 +3,6 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Api\Parse_Result;
-use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Style_Policy;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
@@ -100,28 +99,10 @@ class Global_Classes_Parser {
 				continue;
 			}
 
-			$sanitized_items[ $sanitized_item['id'] ] = self::tag_scoped_variants( $sanitized_item );
+			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 		}
 
 		return $result->wrap( $sanitized_items );
-	}
-
-	private static function tag_scoped_variants( array $style ): array {
-		if ( empty( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
-			return $style;
-		}
-
-		$policy = new Dynamic_Style_Policy();
-
-		foreach ( $style['variants'] as $variant_index => $variant ) {
-			if ( ! isset( $style['variants'][ $variant_index ]['meta'] ) || ! is_array( $style['variants'][ $variant_index ]['meta'] ) ) {
-				$style['variants'][ $variant_index ]['meta'] = [];
-			}
-
-			$style['variants'][ $variant_index ]['meta']['is_scoped'] = $policy->variant_has_dynamic_props( $variant );
-		}
-
-		return $style;
 	}
 
 	public function parse_order( array $order, array $final_item_ids ) {

@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\Dynamic_Styles_Manager;
 use Elementor\Plugin;
 use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -33,9 +34,16 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 		remove_all_actions( 'elementor/frontend/after_enqueue_post_styles' );
+
+		Dynamic_Styles_Manager::reset();
+
+		do_action( 'elementor/atomic-widgets/styles/clear', [ $this->test_style_key ] );
+		do_action( 'elementor/atomic-widgets/styles/clear', [ $this->test_additional_style_key ] );
 	}
 
 	public function tearDown(): void {
+		Dynamic_Styles_Manager::reset();
+
 		parent::tearDown();
 
 		global $wp_filesystem;
@@ -398,69 +406,23 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		];
 	}
 
-	private function get_scoped_dynamic_test_style_defs( string $breakpoint = 'desktop' ) {
-		return [
-			'scoped-dynamic-style' => [
-				'id' => 'scoped-dynamic-style',
-				'type' => 'class',
-				'variants' => [
-					[
-						'meta' => [
-							'breakpoint' => $breakpoint,
-							'is_scoped' => true,
-						],
-						'props' => [
-							'color' => 'red',
-							'background-image' => [
-								'$$type' => 'dynamic',
-								'value' => [
-									'name' => 'fake-tag',
-									'settings' => [],
-								],
-							],
-						],
-					],
-				],
-			],
-		];
-	}
-
-	public function test_enqueue__uses_file_cache_for_scoped_dynamic_styles() {
-		// Arrange.
-		$styles_manager = new Atomic_Styles_Manager();
-		$styles_manager->register_hooks();
-
-		$get_style_defs = fn () => $this->get_scoped_dynamic_test_style_defs();
-
-		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
-		$this->filesystemMock->method( 'exists' )->willReturn( true );
-
-		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
-		}, 10, 1 );
-
-		do_action( 'elementor/post/render', 1 );
-
-		// Act.
-		do_action( 'elementor/frontend/after_enqueue_post_styles' );
-
-		// Assert.
-		global $wp_styles;
-		$handle = $this->test_style_key . '-desktop';
-		$registered = $wp_styles->registered[ $handle ] ?? null;
-
-		$this->assertNotEmpty( $registered, 'Scoped dynamic styles should be enqueued as a file.' );
-		$this->assertNotFalse( $registered->src, 'Scoped dynamic styles should use a cached CSS file, not inline-only.' );
-	}
-
-	public function test_enqueue__bypasses_file_cache_for_dynamic_styles() {
+	public function test_enqueue__uses_file_cache_for_dynamic_styles() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
 		$get_style_defs = fn () => $this->get_dynamic_test_style_defs();
+		$captured_css = '';
 
-		$this->filesystemMock->expects( $this->never() )->method( 'put_contents' );
+		$this->filesystemMock->method( 'put_contents' )->willReturnCallback(
+			function ( $path, $content ) use ( &$captured_css ) {
+				if ( str_contains( $path, '.css' ) ) {
+					$captured_css = $content;
+				}
+
+				return true;
+			}
+		);
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
@@ -476,22 +438,30 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$handle = $this->test_style_key . '-desktop';
 		$registered = $wp_styles->registered[ $handle ] ?? null;
 
-		$this->assertNotEmpty( $registered, 'Dynamic styles should still be registered.' );
-		$this->assertFalse( $registered->src, 'Dynamic styles should be registered with src=false (inline only).' );
-
-		$inline = $registered->extra['after'] ?? [];
-		$this->assertNotEmpty( $inline, 'Inline CSS should be added for dynamic styles.' );
-		$this->assertStringContainsString( '.elementor .dynamic-style{color:red;}', implode( '', $inline ) );
+		$this->assertNotEmpty( $registered, 'Dynamic styles should be enqueued as a file.' );
+		$this->assertNotFalse( $registered->src, 'Dynamic styles should use a cached CSS file.' );
+		$this->assertStringContainsString( '.elementor .dynamic-style{', $captured_css );
+		$this->assertStringContainsString( 'color:red;', $captured_css );
+		$this->assertStringContainsString( 'background-image:var(--e-dyn-', $captured_css );
 	}
 
-	public function test_enqueue__wraps_inline_dynamic_styles_with_media_query_for_non_default_breakpoint() {
+	public function test_enqueue__wraps_dynamic_styles_with_media_query_for_non_default_breakpoint() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
 		$get_style_defs = fn () => $this->get_dynamic_test_style_defs( 'mobile' );
+		$captured_css = '';
 
-		$this->filesystemMock->expects( $this->never() )->method( 'put_contents' );
+		$this->filesystemMock->method( 'put_contents' )->willReturnCallback(
+			function ( $path, $content ) use ( &$captured_css ) {
+				if ( str_contains( $path, '.css' ) ) {
+					$captured_css = $content;
+				}
+
+				return true;
+			}
+		);
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
@@ -503,24 +473,27 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
 		// Assert.
-		global $wp_styles;
-		$handle = $this->test_style_key . '-mobile';
-		$registered = $wp_styles->registered[ $handle ] ?? null;
-
-		$this->assertNotEmpty( $registered );
-
-		$inline = implode( '', $registered->extra['after'] ?? [] );
-		$this->assertStringContainsString( '@media(max-width:767px){', $inline );
-		$this->assertStringContainsString( '.elementor .dynamic-style{color:blue;}', str_replace( 'red', 'blue', $inline ) );
+		$this->assertStringContainsString( '@media(max-width:767px){', $captured_css );
+		$this->assertStringContainsString( '.elementor .dynamic-style{', $captured_css );
+		$this->assertStringContainsString( 'color:red;', $captured_css );
+		$this->assertStringContainsString( 'background-image:var(--e-dyn-', $captured_css );
 	}
 
 	public function test_enqueue__preserves_class_source_order_when_mixing_dynamic_and_static_definitions() {
-		// Arrange - two class definitions in the same style entry, in a specific order.
-		// `lower-priority` is emitted first, `higher-priority` second (so it wins on equal specificity).
-		// The higher-priority class has a dynamic value, which forces the entry through the inline path;
-		// the cascade order between the two classes must still be preserved.
+		// Arrange - two class definitions in the same style entry; cascade order must be preserved in the cached file.
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
+		$captured_css = '';
+
+		$this->filesystemMock->method( 'put_contents' )->willReturnCallback(
+			function ( $path, $content ) use ( &$captured_css ) {
+				if ( str_contains( $path, '.css' ) ) {
+					$captured_css = $content;
+				}
+
+				return true;
+			}
+		);
 
 		$get_style_defs = fn () => [
 			'lower-priority' => [
@@ -561,21 +534,16 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
 		// Assert.
-		global $wp_styles;
-		$inline = implode( '', $wp_styles->registered[ $this->test_style_key . '-desktop' ]->extra['after'] ?? [] );
-
-		$lower_pos = strpos( $inline, '.lower-priority' );
-		$higher_pos = strpos( $inline, '.higher-priority' );
+		$lower_pos = strpos( $captured_css, '.lower-priority' );
+		$higher_pos = strpos( $captured_css, '.higher-priority' );
 
 		$this->assertNotFalse( $lower_pos, 'Lower-priority rule must be present.' );
 		$this->assertNotFalse( $higher_pos, 'Higher-priority rule must be present.' );
 		$this->assertLessThan( $higher_pos, $lower_pos, 'Higher-priority class must be emitted AFTER lower-priority class so the cascade still resolves it last.' );
 	}
 
-	public function test_enqueue__preserves_enqueue_order_when_mixing_static_file_and_dynamic_inline_entries() {
-		// Arrange - two separate style entries (mimics e.g. globals + local), the first static
-		// (goes through the file cache) and the second dynamic (goes inline). The global enqueue
-		// order must match registration order so the document-level cascade is preserved.
+	public function test_enqueue__preserves_enqueue_order_when_mixing_static_and_dynamic_file_entries() {
+		// Arrange - two separate style entries; both use the file cache. Enqueue order must match registration order.
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
@@ -608,22 +576,25 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$dynamic_pos = array_search( $dynamic_handle, $queue, true );
 
 		$this->assertNotFalse( $static_pos, 'Static (file-cached) handle must be enqueued.' );
-		$this->assertNotFalse( $dynamic_pos, 'Dynamic (inline) handle must be enqueued.' );
+		$this->assertNotFalse( $dynamic_pos, 'Dynamic (file-cached) handle must be enqueued.' );
 		$this->assertLessThan( $dynamic_pos, $static_pos, 'Static handle (registered earlier) must be enqueued before the dynamic handle so cascade order is preserved.' );
 	}
 
-	public function test_enqueue__re_resolves_dynamic_styles_on_every_request() {
+	public function test_enqueue__writes_dynamic_definitions_sidecar_on_cache_miss() {
 		// Arrange.
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
-		$call_count = 0;
-		$get_style_defs = function () use ( &$call_count ) {
-			++$call_count;
-			return $this->get_dynamic_test_style_defs();
-		};
+		$get_style_defs = fn () => $this->get_dynamic_test_style_defs();
+		$written_paths = [];
 
-		$this->filesystemMock->expects( $this->never() )->method( 'put_contents' );
+		$this->filesystemMock->method( 'put_contents' )->willReturnCallback(
+			function ( $path, $content ) use ( &$written_paths ) {
+				$written_paths[] = $path;
+
+				return true;
+			}
+		);
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
@@ -631,21 +602,20 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		do_action( 'elementor/post/render', 1 );
 
-		// Act - simulate two consecutive page renders within the same request lifecycle.
-		do_action( 'elementor/frontend/after_enqueue_post_styles' );
-		$first_call_count = $call_count;
-
-		// Re-register and re-enqueue (mimics a second request resolving styles fresh).
-		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
-		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
-		}, 10, 1 );
-		do_action( 'elementor/post/render', 1 );
+		// Act.
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
-		// Assert - dynamic styles never short-circuit through the file cache, so the styles
-		// callback must run again on the second enqueue cycle (otherwise we'd serve stale values).
-		$this->assertGreaterThan( $first_call_count, $call_count, 'Dynamic styles must be re-evaluated, not served from cache.' );
+		// Assert.
+		$definitions_written = false;
+
+		foreach ( $written_paths as $path ) {
+			if ( str_contains( $path, Dynamic_Styles_Manager::DEFINITIONS_EXTENSION ) ) {
+				$definitions_written = true;
+				break;
+			}
+		}
+
+		$this->assertTrue( $definitions_written, 'Dynamic definitions sidecar must be written alongside the CSS file.' );
 	}
 
 	public function test_clear_files__invalidates_cache_for_path() {

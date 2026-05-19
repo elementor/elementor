@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,12 +14,14 @@ class Dynamic_Styles_Manager {
 
 	const LEGACY_PLACEHOLDERS_EXTENSION = '.placeholders.json';
 
+	const VAR_PREFIX = '--e-dyn-';
+
 	private static ?self $instance = null;
 
 	/**
-	 * @var array<string, Dynamic_Style_Definition>
+	 * @var array<string, array>
 	 */
-	private array $definitions = [];
+	private array $registry = [];
 
 	public static function instance(): self {
 		if ( ! self::$instance ) {
@@ -32,44 +35,92 @@ class Dynamic_Styles_Manager {
 		self::$instance = null;
 	}
 
-	/**
-	 * @param array<string, mixed> $meta
-	 */
-	public function register( string $var_name, array $dynamic_node, array $meta = [] ): void {
+	public function register_hooks(): void {
+		add_filter( 'elementor/frontend/the_content', [ $this, 'wrap_content_with_dynamic_vars' ], 20 );
+	}
+
+	public function register( array $dynamic_node ): string {
 		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $dynamic_node ) ) {
+			return '';
+		}
+
+		$encoded = wp_json_encode( $dynamic_node, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		if ( false === $encoded ) {
+			return '';
+		}
+
+		$var_name = self::VAR_PREFIX . substr( md5( $encoded ), 0, 12 );
+
+		$this->registry[ $var_name ] = $dynamic_node;
+
+		return $var_name;
+	}
+
+	public function render_for_post( int $post_id, string $html, array $wrapper_attrs = [] ): string {
+		if ( empty( $this->registry ) || '' === $html ) {
+			return $html;
+		}
+
+		$values = $this->resolve_for_post( $post_id );
+
+		if ( empty( $values ) ) {
+			return $html;
+		}
+
+		$style = $this->build_inline_style( $values );
+
+		if ( '' === $style ) {
+			return $html;
+		}
+
+		if ( ! empty( $wrapper_attrs['style'] ) ) {
+			$wrapper_attrs['style'] .= $style;
+		} else {
+			$wrapper_attrs['style'] = $style;
+		}
+
+		$attr_parts = [];
+
+		foreach ( $wrapper_attrs as $key => $value ) {
+			$attr_parts[] = sprintf( '%s="%s"', esc_attr( $key ), esc_attr( $value ) );
+		}
+
+		return sprintf( '<div %s>%s</div>', implode( ' ', $attr_parts ), $html );
+	}
+
+	public function serialize(): string {
+		if ( empty( $this->registry ) ) {
+			return '';
+		}
+
+		$encoded = wp_json_encode( $this->registry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		return false === $encoded ? '' : $encoded;
+	}
+
+	public function hydrate( string $json ): void {
+		if ( '' === $json ) {
 			return;
 		}
 
-		$this->definitions[ $var_name ] = new Dynamic_Style_Definition( $var_name, $dynamic_node, $meta );
-	}
+		$raw = json_decode( $json, true );
 
-	/**
-	 * @param array<string, array> $placeholders
-	 */
-	public function register_placeholders( array $placeholders ): void {
-		foreach ( $placeholders as $var_name => $dynamic_node ) {
+		if ( ! is_array( $raw ) ) {
+			return;
+		}
+
+		foreach ( $raw as $var_name => $dynamic_node ) {
 			if ( ! is_string( $var_name ) || ! is_array( $dynamic_node ) ) {
 				continue;
 			}
 
-			$this->register( $var_name, $dynamic_node );
+			if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $dynamic_node ) ) {
+				continue;
+			}
+
+			$this->registry[ $var_name ] = $dynamic_node;
 		}
-	}
-
-	/**
-	 * @return array<string, Dynamic_Style_Definition>
-	 */
-	public function get_definitions(): array {
-		return $this->definitions;
-	}
-
-	/**
-	 * @param array<string, array> $placeholders
-	 */
-	public function definitions_to_sidecar_contents( array $placeholders ): string {
-		$encoded = wp_json_encode( $placeholders, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
-
-		return false === $encoded ? '' : $encoded;
 	}
 
 	/**
@@ -80,13 +131,93 @@ class Dynamic_Styles_Manager {
 			return;
 		}
 
-		$this->register_placeholders( $raw );
+		$encoded = wp_json_encode( $raw, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+
+		if ( false === $encoded ) {
+			return;
+		}
+
+		$this->hydrate( $encoded );
+	}
+
+	public function wrap_content_with_dynamic_vars( string $content ): string {
+		if ( '' === $content || empty( $this->registry ) ) {
+			return $content;
+		}
+
+		$post_id = get_the_ID();
+
+		if ( ! $post_id ) {
+			return $content;
+		}
+
+		return $this->render_for_post(
+			$post_id,
+			$content,
+			[
+				'class' => 'e-dynamic-styles-root',
+			]
+		);
+	}
+
+	/**
+	 * @return array<string, string>
+	 */
+	private function resolve_for_post( int $post_id ): array {
+		$values = [];
+		$previous_post = $GLOBALS['post'] ?? null;
+		$post = get_post( $post_id );
+
+		if ( $post ) {
+			setup_postdata( $post );
+		}
+
+		foreach ( $this->registry as $var_name => $dynamic_node ) {
+			$value = $this->resolve_node( $dynamic_node );
+
+			if ( null === $value || '' === $value ) {
+				continue;
+			}
+
+			$values[ $var_name ] = $value;
+		}
+
+		if ( $post ) {
+			wp_reset_postdata();
+		}
+
+		if ( $previous_post instanceof \WP_Post ) {
+			$GLOBALS['post'] = $previous_post;
+		}
+
+		return $values;
+	}
+
+	private function resolve_node( array $dynamic_node ): ?string {
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $dynamic_node ) ) {
+			return null;
+		}
+
+		$tag_name = $dynamic_node['value']['name'] ?? null;
+		$tag_settings = $dynamic_node['value']['settings'] ?? [];
+
+		if ( ! $tag_name ) {
+			return null;
+		}
+
+		$value = Plugin::$instance->dynamic_tags->get_tag_data_content( null, $tag_name, $tag_settings );
+
+		if ( null === $value || '' === $value ) {
+			return null;
+		}
+
+		return (string) $value;
 	}
 
 	/**
 	 * @param array<string, string> $values
 	 */
-	public function build_inline_style( array $values ): string {
+	private function build_inline_style( array $values ): string {
 		$style = '';
 
 		foreach ( $values as $var_name => $value ) {
@@ -98,31 +229,5 @@ class Dynamic_Styles_Manager {
 		}
 
 		return $style;
-	}
-
-	/**
-	 * @param array<string, string> $values
-	 * @param array<string, string> $attrs
-	 */
-	public function wrap_scoped_html( string $html, array $values, array $attrs = [] ): string {
-		$style = $this->build_inline_style( $values );
-
-		if ( '' === $style ) {
-			return $html;
-		}
-
-		if ( ! empty( $attrs['style'] ) ) {
-			$attrs['style'] .= $style;
-		} else {
-			$attrs['style'] = $style;
-		}
-
-		$attr_parts = [];
-
-		foreach ( $attrs as $key => $value ) {
-			$attr_parts[] = sprintf( '%s="%s"', esc_attr( $key ), esc_attr( $value ) );
-		}
-
-		return sprintf( '<div %s>%s</div>', implode( ' ', $attr_parts ), $html );
 	}
 }
