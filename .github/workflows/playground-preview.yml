@@ -75,7 +75,9 @@ jobs:
           mkdir -p plugin-root/elementor
           cp -a build-artifact/. plugin-root/elementor/
           test -f plugin-root/elementor/elementor.php
+
       - name: Upload playground plugin artifact
+        id: playground-artifact
         uses: actions/upload-artifact@v4
         with:
           name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
