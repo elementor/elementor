@@ -49,9 +49,20 @@ export default defineConfig( {
 	},
 	...( fullBrowserCompat ? {
 		projects: [
-			{ name: 'chromium', use: { browserName: 'chromium' } },
-			{ name: 'firefox', use: { browserName: 'firefox' } },
-			{ name: 'webkit', use: { browserName: 'webkit' } },
+			{
+				name: 'chromium',
+				use: { browserName: 'chromium' },
+			},
+			{
+				name: 'firefox',
+				use: { browserName: 'firefox' },
+				snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-firefox-{platform}{ext}',
+			},
+			{
+				name: 'webkit',
+				use: { browserName: 'webkit' },
+				snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-webkit-{platform}{ext}',
+			},
 		],
 	} : {} ),
 } );
