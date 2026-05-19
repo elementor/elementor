@@ -18,6 +18,20 @@ check_docker() {
   fi
 }
 
+check_svn() {
+  if ! command -v svn &>/dev/null; then
+    echo "Error: svn is not installed or not in PATH."
+    echo "Mac: brew install subversion"
+    echo "Linux: sudo apt-get install subversion"
+    exit 1
+  fi
+}
+
+recreate_test_database() {
+  docker exec "${CONTAINER_NAME}" mysql -u"${DB_USER}" -p"${DB_PASSWORD}" \
+    -e "DROP DATABASE IF EXISTS \`${DB_NAME}\`; CREATE DATABASE \`${DB_NAME}\`;"
+}
+
 find_container_on_port() {
   docker ps --format '{{.Names}}\t{{.Ports}}' | awk -F'\t' -v port=":${DB_PORT}->" '$2 ~ port {print $1}' | head -1
 }
@@ -84,14 +98,14 @@ start_mysql_container() {
 install_wp_test_suite() {
   rm -rf "${WP_TESTS_DIR}" /tmp/wordpress
 
-  docker exec "${CONTAINER_NAME}" mysql -u"${DB_USER}" -p"${DB_PASSWORD}" \
-    -e "DROP DATABASE IF EXISTS \`${DB_NAME}\`;" 2>/dev/null
+  recreate_test_database
 
-  WP_TESTS_DIR="${WP_TESTS_DIR}" \
-    bash bin/install-wp-tests.sh "${DB_NAME}" "${DB_USER}" "${DB_PASSWORD}" "${DB_HOST}" "${WP_VERSION}" true
+  SKIP_INSTALL_DB=1 WP_TESTS_DIR="${WP_TESTS_DIR}" \
+    bash bin/install-wp-tests.sh "${DB_NAME}" "${DB_USER}" "${DB_PASSWORD}" "${DB_HOST}" "${WP_VERSION}"
 }
 
 check_docker
+check_svn
 start_mysql_container
 install_wp_test_suite
 

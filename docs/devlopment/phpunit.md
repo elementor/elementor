@@ -4,9 +4,11 @@ PHPUnit is the testing framework used for all PHP unit tests in this project. Te
 
 ## Prerequisites
 
-- [Docker](https://www.docker.com/) — used to run a MySQL container (no local MySQL setup required)
+- [Docker](https://www.docker.com/) — runs the MySQL server in a container (no local MySQL server or client tools required)
 - [Composer](https://getcomposer.org/) — see the composer guide next to this one
 - [SVN](https://subversion.apache.org/) — required to pull the WordPress test suite
+
+Check whether SVN is already installed: `which svn`. If it prints a path (for example `/usr/bin/svn`), skip the install step below.
 
 Install SVN on Mac: `brew install svn`  
 Install SVN on Linux: `sudo apt-get install subversion`
