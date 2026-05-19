@@ -34,11 +34,14 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
 	const variablesCloseAttemptRef = useRef< ( () => void ) | null >( null );
 	const classesCloseAttemptRef = useRef< ( () => void ) | null >( null );
+	const isChainingRef = useRef( false );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs( currentTab );
 
 	const chainedThroughClasses = useCallback( () => {
-		if ( classesCloseAttemptRef.current ) {
+		if ( ! isChainingRef.current && classesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
 			classesCloseAttemptRef.current();
+			isChainingRef.current = false;
 			return;
 		}
 
@@ -46,8 +49,10 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 	}, [ onRequestClose ] );
 
 	const chainedThroughVariables = useCallback( () => {
-		if ( variablesCloseAttemptRef.current ) {
+		if ( ! isChainingRef.current && variablesCloseAttemptRef.current ) {
+			isChainingRef.current = true;
 			variablesCloseAttemptRef.current();
+			isChainingRef.current = false;
 			return;
 		}
 
