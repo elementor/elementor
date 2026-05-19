@@ -1,5 +1,5 @@
 import { getContainer, getSelectedElements, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
-import { stringPropTypeUtil, type PropsSchema } from '@elementor/editor-props';
+import { type PropsSchema, stringPropTypeUtil } from '@elementor/editor-props';
 import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 export type Suggestion = {
@@ -37,13 +37,13 @@ function extractStringPropValue( value: unknown ): string | undefined {
 function getSettingWithDefault( child: V1Element, widgetType: string, key: string ): unknown {
 	const fromJson = child.settings.toJSON?.()?.[ key ];
 
-	if ( null != fromJson ) {
+	if ( fromJson !== null && fromJson !== undefined ) {
 		return fromJson;
 	}
 
 	const fromGet = child.settings.get( key );
 
-	if ( null != fromGet ) {
+	if ( fromGet !== null && fromGet !== undefined ) {
 		return fromGet;
 	}
 
@@ -98,7 +98,10 @@ export function useFormFieldSuggestions( options?: Options ): Suggestion[] {
 			formContainer.children.forEachRecursive?.( ( child ) => {
 				const widgetType = child.model.get( 'widgetType' ) as string | undefined;
 
-				if ( ! widgetType || ! FORM_FIELD_WIDGET_TYPES.includes( widgetType as ( typeof FORM_FIELD_WIDGET_TYPES )[ number ] ) ) {
+				if (
+					! widgetType ||
+					! FORM_FIELD_WIDGET_TYPES.includes( widgetType as ( typeof FORM_FIELD_WIDGET_TYPES )[ number ] )
+				) {
 					return;
 				}
 

@@ -5,9 +5,8 @@ import {
 	dispatchCommandAfter,
 	dispatchV1ReadyEvent,
 } from 'test-utils';
-import { act, renderHook } from '@testing-library/react';
-
 import { getContainer, getSelectedElements, getWidgetsCache } from '@elementor/editor-elements';
+import { act, renderHook } from '@testing-library/react';
 
 import { useFormFieldSuggestions } from '../use-form-field-suggestions';
 
@@ -21,11 +20,7 @@ const mockGetContainer = jest.mocked( getContainer );
 const mockGetSelectedElements = jest.mocked( getSelectedElements );
 const mockGetWidgetsCache = jest.mocked( getWidgetsCache );
 
-function createFormFieldChild(
-	id: string,
-	widgetType: string,
-	settings: Record< string, unknown > = {}
-) {
+function createFormFieldChild( id: string, widgetType: string, settings: Record< string, unknown > = {} ) {
 	const child = createMockChild( { id, elType: 'widget', widgetType } );
 
 	Object.entries( settings ).forEach( ( [ key, value ] ) => {
@@ -51,11 +46,15 @@ describe( 'useFormFieldSuggestions', () => {
 	} );
 
 	it( 'should include select, date picker, and time picker fields by css id', () => {
-		const form = createMockContainer( 'form-1', [
-			createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'country' } ),
-			createFormFieldChild( 'date-1', 'e-form-date-picker', { _cssid: 'appointment-date' } ),
-			createFormFieldChild( 'time-1', 'e-form-time-picker', { _cssid: 'appointment-time' } ),
-		], 'e-form' );
+		const form = createMockContainer(
+			'form-1',
+			[
+				createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'country' } ),
+				createFormFieldChild( 'date-1', 'e-form-date-picker', { _cssid: 'appointment-date' } ),
+				createFormFieldChild( 'time-1', 'e-form-time-picker', { _cssid: 'appointment-time' } ),
+			],
+			'e-form'
+		);
 
 		mockGetSelectedElements.mockReturnValue( [ { id: 'form-1', type: 'e-form' } ] );
 		mockGetContainer.mockReturnValue( form );
@@ -98,10 +97,14 @@ describe( 'useFormFieldSuggestions', () => {
 	} );
 
 	it( 'should deduplicate suggestions when multiple fields share the same css id', () => {
-		const form = createMockContainer( 'form-1', [
-			createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'e-form-select-13' } ),
-			createFormFieldChild( 'select-2', 'e-form-select', { _cssid: 'e-form-select-13' } ),
-		], 'e-form' );
+		const form = createMockContainer(
+			'form-1',
+			[
+				createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'e-form-select-13' } ),
+				createFormFieldChild( 'select-2', 'e-form-select', { _cssid: 'e-form-select-13' } ),
+			],
+			'e-form'
+		);
 
 		mockGetSelectedElements.mockReturnValue( [ { id: 'form-1', type: 'e-form' } ] );
 		mockGetContainer.mockReturnValue( form );
@@ -112,16 +115,20 @@ describe( 'useFormFieldSuggestions', () => {
 	} );
 
 	it( 'should list each field by its css id including radio buttons', () => {
-		const form = createMockContainer( 'form-1', [
-			createFormFieldChild( 'radio-1', 'e-form-radio-button', {
-				name: 'meal',
-				_cssid: 'e-form-radio-button-13',
-			} ),
-			createFormFieldChild( 'radio-2', 'e-form-radio-button', {
-				name: 'meal',
-				_cssid: 'e-form-radio-button-14',
-			} ),
-		], 'e-form' );
+		const form = createMockContainer(
+			'form-1',
+			[
+				createFormFieldChild( 'radio-1', 'e-form-radio-button', {
+					name: 'meal',
+					_cssid: 'e-form-radio-button-13',
+				} ),
+				createFormFieldChild( 'radio-2', 'e-form-radio-button', {
+					name: 'meal',
+					_cssid: 'e-form-radio-button-14',
+				} ),
+			],
+			'e-form'
+		);
 
 		mockGetSelectedElements.mockReturnValue( [ { id: 'form-1', type: 'e-form' } ] );
 		mockGetContainer.mockReturnValue( form );
@@ -155,10 +162,14 @@ describe( 'useFormFieldSuggestions', () => {
 	} );
 
 	it( 'should filter email fields when inputType is email', () => {
-		const form = createMockContainer( 'form-1', [
-			createFormFieldChild( 'input-1', 'e-form-input', { _cssid: 'email', type: 'email' } ),
-			createFormFieldChild( 'input-2', 'e-form-input', { _cssid: 'name', type: 'text' } ),
-		], 'e-form' );
+		const form = createMockContainer(
+			'form-1',
+			[
+				createFormFieldChild( 'input-1', 'e-form-input', { _cssid: 'email', type: 'email' } ),
+				createFormFieldChild( 'input-2', 'e-form-input', { _cssid: 'name', type: 'text' } ),
+			],
+			'e-form'
+		);
 
 		mockGetSelectedElements.mockReturnValue( [ { id: 'form-1', type: 'e-form' } ] );
 		mockGetContainer.mockReturnValue( form );
@@ -178,9 +189,11 @@ describe( 'useFormFieldSuggestions', () => {
 
 		expect( result.current ).toEqual( [] );
 
-		const updatedForm = createMockContainer( 'form-1', [
-			createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'country' } ),
-		], 'e-form' );
+		const updatedForm = createMockContainer(
+			'form-1',
+			[ createFormFieldChild( 'select-1', 'e-form-select', { _cssid: 'country' } ) ],
+			'e-form'
+		);
 
 		mockGetContainer.mockReturnValue( updatedForm );
 
@@ -199,9 +212,11 @@ describe( 'useFormFieldSuggestions', () => {
 
 		const { result } = renderHook( () => useFormFieldSuggestions() );
 
-		const updatedForm = createMockContainer( 'form-1', [
-			createFormFieldChild( 'date-1', 'e-form-date-picker', { _cssid: 'appointment-date' } ),
-		], 'e-form' );
+		const updatedForm = createMockContainer(
+			'form-1',
+			[ createFormFieldChild( 'date-1', 'e-form-date-picker', { _cssid: 'appointment-date' } ) ],
+			'e-form'
+		);
 
 		mockGetContainer.mockReturnValue( updatedForm );
 
