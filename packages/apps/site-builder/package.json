@@ -37,6 +37,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+    "@elementor/schema": "4.2.0",
     "@wordpress/api-fetch": "^6.42.0"
   },
   "peerDependencies": {
