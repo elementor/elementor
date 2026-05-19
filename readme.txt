@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.0.9 - 2026-05-19 =
+
+* Fix: Arrow navigation doesn't work in Carousel widgets when Reduced Motion is enabled ([#33613](https://github.com/elementor/elementor/issues/33613))
+
 = 4.0.8 - 2026-05-12 =
 
 * Tweak: Updated WordPress compatibility to version 7.0
