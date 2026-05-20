@@ -208,10 +208,23 @@ class Global_Classes_Post_IDs {
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above.
 		$rows = $wpdb->get_results( $sql );
-		$resolved = [];
+
+		$candidates = [];
 
 		foreach ( $rows as $row ) {
-			$resolved[ (string) $row->meta_value ] = (int) $row->post_id;
+			$candidates[ (string) $row->meta_value ][] = (int) $row->post_id;
+		}
+
+		$resolved = [];
+
+		foreach ( $candidates as $class_id => $post_ids ) {
+			sort( $post_ids );
+			$resolved[ $class_id ] = $post_ids[0];
+			$duplicates = array_slice( $post_ids, 1 );
+
+			foreach ( $duplicates as $duplicate_id ) {
+				wp_delete_post( $duplicate_id, true );
+			}
 		}
 
 		return $resolved;

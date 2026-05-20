@@ -139,6 +139,40 @@ class Test_Global_Classes_Post_IDs extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( $class_id, $map );
 	}
 
+	public function test_backfill__deduplicates_cpt_posts_with_same_class_id_and_keeps_oldest() {
+		// Arrange — simulate partial import: two CPT posts share the same class_id, no map entry
+		$class_id = 'g-dup-backfill-1';
+		$data = [ 'type' => 'class', 'variants' => [] ];
+
+		$older_id = wp_insert_post( [
+			'post_type'   => Global_Class_Post_Type::CPT,
+			'post_title'  => 'older',
+			'post_status' => 'publish',
+		] );
+		update_post_meta( $older_id, Global_Class_Post::META_KEY_ID, $class_id );
+		update_post_meta( $older_id, Global_Class_Post::META_KEY_DATA, $data );
+
+		$newer_id = wp_insert_post( [
+			'post_type'   => Global_Class_Post_Type::CPT,
+			'post_title'  => 'newer',
+			'post_status' => 'publish',
+		] );
+		update_post_meta( $newer_id, Global_Class_Post::META_KEY_ID, $class_id );
+		update_post_meta( $newer_id, Global_Class_Post::META_KEY_DATA, $data );
+
+		$this->created_post_ids[] = $older_id;
+
+		// Act — backfill triggers because there is no map entry
+		$post_id = Global_Classes_Post_IDs::make( $this->kit )->get_post_id( $class_id );
+
+		// Assert — oldest post survives, duplicate is deleted, map points at the survivor
+		$this->assertSame( $older_id, $post_id );
+		$this->assertNull( get_post( $newer_id ) );
+
+		$map = $this->kit->get_meta( Global_Classes_Post_IDs::META_KEY );
+		$this->assertSame( $older_id, $map[ $class_id ] );
+	}
+
 	public function test_delete_hook__updates_non_active_kit_map() {
 		// Arrange — create a second kit and associate a class with it (not the active kit)
 		$second_kit_id = Plugin::$instance->kits_manager->create( [ 'post_title' => 'Second Kit' ] );
