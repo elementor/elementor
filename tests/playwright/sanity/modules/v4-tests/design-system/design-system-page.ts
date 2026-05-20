@@ -130,6 +130,7 @@ export default class DesignSystemPage {
 			await this.page.getByRole( 'menuitem', { name: 'Design System', exact: true } ).click();
 		}
 
+		await this.dismissUnsavedChangesDialogIfVisible();
 		await this.dismissClassManagerIntroIfVisible();
 		await this.panelHeading.waitFor( { state: 'visible' } );
 	}
