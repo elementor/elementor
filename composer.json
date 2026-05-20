@@ -65,6 +65,19 @@
             "php": "7.4"
         }
     },
+    "audit": {
+        "ignore": {
+            "PKSA-sjvz-tbbr-vwth": "Twig 3.26+ requires PHP 8.1; 3.11.3 is max for PHP 7.4. Plugin-controlled templates only.",
+            "PKSA-h8hf-ytnd-5t9q": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-wwb1-81rc-pd65": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-kvv6-36cr-fkzb": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-n14z-jjjg-g8vd": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-3mcc-k66d-pydb": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-gw7n-z4yx-7xjt": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-dpx1-78wg-1kqs": "Same — pending PHP 8.1+ / Twig 3.26 upgrade.",
+            "PKSA-21g2-dzjv-sky5": "Same — pending PHP 8.1+ / Twig 3.26 upgrade."
+        }
+    },
     "authors": [
         {
             "name": "Elementor team"
