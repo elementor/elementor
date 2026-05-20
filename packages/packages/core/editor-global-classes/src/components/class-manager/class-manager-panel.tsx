@@ -40,8 +40,18 @@ export type ClassManagerPanelEmbeddedProps = {
 	isActive?: boolean;
 };
 
-export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt, isActive }: ClassManagerPanelEmbeddedProps ) {
-	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } isActive={ isActive } />;
+export function ClassManagerPanelEmbedded( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive,
+}: ClassManagerPanelEmbeddedProps ) {
+	return (
+		<ClassManagerPanelContent
+			onRequestClose={ onRequestClose }
+			onExposeCloseAttempt={ onExposeCloseAttempt }
+			isActive={ isActive }
+		/>
+	);
 }
 
 type ClassManagerPanelContentProps = {
@@ -50,7 +60,11 @@ type ClassManagerPanelContentProps = {
 	isActive?: boolean;
 };
 
-function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt, isActive = true }: ClassManagerPanelContentProps ) {
+function ClassManagerPanelContent( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive = true,
+}: ClassManagerPanelContentProps ) {
 	const isDirty = useDirtyState();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
