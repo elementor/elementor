@@ -595,12 +595,11 @@ class Editor {
 	 * @since X.X.X
 	 */
 	public static function send_document_isolation_policy_header() {
-		if ( ! self::should_use_document_isolation_policy() ) {
+		if ( ! self::should_use_document_isolation_policy() || headers_sent() ) {
 			return;
 		}
 
-		// @ suppresses "headers already sent" warnings in environments that have flushed output.
-		@header( 'Document-Isolation-Policy: isolate-and-credentialless' );
+		header( 'Document-Isolation-Policy: isolate-and-credentialless' );
 	}
 
 	/**
