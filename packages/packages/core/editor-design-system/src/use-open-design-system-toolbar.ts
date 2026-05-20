@@ -3,19 +3,23 @@ import { type ToggleActionProps } from '@elementor/editor-app-bar';
 import { DropletHalfFilledIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import { usePanelActions, usePanelStatus } from './design-system-panel';
+const EVENT_TOGGLE = 'elementor/toggle-design-system';
+
+import { usePanelStatus } from './design-system-panel';
+import { getActiveDesignSystemTab } from './initial-tab';
 
 export function useOpenDesignSystemToolbar(): ToggleActionProps {
 	const { isOpen } = usePanelStatus();
-	const { open, close } = usePanelActions();
 
 	const onClick = useCallback( () => {
-		if ( isOpen ) {
-			void close();
-		} else {
-			void open();
-		}
-	}, [ isOpen, open, close ] );
+		const tab = getActiveDesignSystemTab() ?? 'variables';
+
+		window.dispatchEvent(
+			new CustomEvent( EVENT_TOGGLE, {
+				detail: { tab },
+			} )
+		);
+	}, [] );
 
 	return {
 		title: __( 'Design System', 'elementor' ),
