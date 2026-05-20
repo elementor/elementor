@@ -38,6 +38,37 @@ class Test_Size_Prop_Type extends TestCase {
 		$this->assertSame( $expected, $result );
 	}
 
+	public function test_validate_accepts_empty_size_with_length_unit() {
+		$prop_type = Size_Prop_Type::make();
+
+		$value = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => '',
+				'unit' => 'px',
+			],
+		];
+
+		$this->assertTrue( $prop_type->validate( $value ) );
+	}
+
+	public function test_sanitize_preserves_empty_size_for_length_unit() {
+		$prop_type = Size_Prop_Type::make();
+
+		$input = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => '',
+				'unit' => 'px',
+			],
+		];
+
+		$result = $prop_type->sanitize( $input );
+
+		$this->assertSame( '', $result['value']['size'] );
+		$this->assertSame( 'px', $result['value']['unit'] );
+	}
+
 	public function test_units_method_sets_available_units_in_settings() {
 		// Arrange.
 		$prop_type = Size_Prop_Type::make();

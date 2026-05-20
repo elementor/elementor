@@ -2,8 +2,10 @@ import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { useParentElement } from '@elementor/editor-elements';
 import { type StringPropValue } from '@elementor/editor-props';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { ATOMIC_GRID_CONTROL_EXPERIMENT } from '../../../experiments';
 import { useElement } from '../../../contexts/element-context';
 import { useComputedStyle } from '../../../hooks/use-computed-style';
 import { useStylesField } from '../../../hooks/use-styles-field';
@@ -17,6 +19,7 @@ import { type FlexDirection, FlexDirectionField } from './flex-direction-field';
 import { FlexOrderField } from './flex-order-field';
 import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
+import { GridControlField } from './grid-control-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
@@ -29,16 +32,30 @@ export const LayoutSection = () => {
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
-	const { element } = useElement();
+	const { element, elementType } = useElement();
+	const isAtomicGridExperiment = isExperimentActive( ATOMIC_GRID_CONTROL_EXPERIMENT );
+	const isEGrid = elementType.key === 'e-grid';
+	const isDisplayGrid =
+		isAtomicGridExperiment &&
+		( isEGrid || shouldDisplayGridFields( display, displayPlaceholder as StringPropValue ) );
 	const parent = useParentElement( element.id );
 	const parentStyle = useComputedStyle( parent?.id || null );
 	const parentStyleDirection = parentStyle?.flexDirection ?? 'row';
+	const parentDisplay = parentStyle?.display ?? '';
+	const isParentFlex = 'flex' === parentDisplay || 'inline-flex' === parentDisplay;
+	const isParentGrid = 'grid' === parentDisplay || 'inline-grid' === parentDisplay;
 
 	return (
 		<SectionContent>
 			<DisplayField />
 			{ isDisplayFlex && <FlexFields /> }
-			{ 'flex' === parentStyle?.display && <FlexChildFields parentStyleDirection={ parentStyleDirection } /> }
+			{ isDisplayGrid && <GridFields /> }
+			{ ( isParentFlex || isParentGrid ) && (
+				<ContainerChildFields
+					isGridParent={ isParentGrid && ! isParentFlex }
+					parentStyleDirection={ parentStyleDirection as FlexDirection }
+				/>
+			) }
 		</SectionContent>
 	);
 };
@@ -61,13 +78,30 @@ const FlexFields = () => {
 	);
 };
 
-const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
+const ContainerChildFields = ( {
+	isGridParent,
+	parentStyleDirection,
+}: {
+	isGridParent: boolean;
+	parentStyleDirection: FlexDirection;
+} ) => (
 	<>
 		<PanelDivider />
-		<ControlFormLabel>{ __( 'Flex child', 'elementor' ) }</ControlFormLabel>
-		<AlignSelfChild parentStyleDirection={ parentStyleDirection as FlexDirection } />
+		<ControlFormLabel>
+			{ isGridParent ? __( 'Grid item', 'elementor' ) : __( 'Flex child', 'elementor' ) }
+		</ControlFormLabel>
+		<AlignSelfChild
+			parentStyleDirection={ isGridParent ? 'row' : parentStyleDirection }
+		/>
 		<FlexOrderField />
-		<FlexSizeField />
+		{ ! isGridParent && <FlexSizeField /> }
+	</>
+);
+
+const GridFields = () => (
+	<>
+		<PanelDivider />
+		<GridControlField />
 	</>
 );
 
@@ -79,4 +113,14 @@ const shouldDisplayFlexFields = ( display: StringPropValue | null, local: String
 	}
 
 	return 'flex' === value || 'inline-flex' === value;
+};
+
+const shouldDisplayGridFields = ( display: StringPropValue | null, local: StringPropValue ) => {
+	const value = display?.value ?? local?.value;
+
+	if ( ! value ) {
+		return false;
+	}
+
+	return 'grid' === value || 'inline-grid' === value;
 };

@@ -1,5 +1,6 @@
 const V4_DIV_BLOCK = 'e-div-block';
 const V4_FLEXBOX = 'e-flexbox';
+const V4_GRID = 'e-grid';
 const V4_TABS = 'e-tabs';
 const V4_HEADING = 'e-heading';
 const V4_PARAGRAPH = 'e-paragraph';
@@ -12,6 +13,7 @@ const V4_YOUTUBE = 'e-youtube';
 const V4_ATOM_SLUGS = {
 	divBlock: V4_DIV_BLOCK,
 	flexbox: V4_FLEXBOX,
+	grid: V4_GRID,
 	tabs: V4_TABS,
 	heading: V4_HEADING,
 	paragraph: V4_PARAGRAPH,
@@ -25,6 +27,7 @@ const V4_ATOM_SLUGS = {
 const V4_ATOM_SELECTORS = {
 	divBlock: getElementSelectorBySlug( V4_DIV_BLOCK ),
 	flexbox: getElementSelectorBySlug( V4_FLEXBOX ),
+	grid: getElementSelectorBySlug( V4_GRID ),
 	tabs: getElementSelectorBySlug( V4_TABS ),
 	heading: getElementSelectorBySlug( V4_HEADING ),
 	paragraph: getElementSelectorBySlug( V4_PARAGRAPH ),

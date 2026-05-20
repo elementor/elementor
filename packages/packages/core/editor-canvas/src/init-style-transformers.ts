@@ -13,6 +13,7 @@ import { createCombineArrayTransformer } from './transformers/styles/create-comb
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
 import { flexTransformer } from './transformers/styles/flex-transformer';
+import { gridTransformer } from './transformers/styles/grid-transformer';
 import { perspectiveOriginTransformer } from './transformers/styles/perspective-origin-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
@@ -73,6 +74,7 @@ export function initStyleTransformers() {
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
 		)
 		.register( 'flex', flexTransformer )
+		.register( 'grid', gridTransformer )
 		.register(
 			'border-width',
 			createMultiPropsTransformer(

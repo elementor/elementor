@@ -23,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -316,6 +317,8 @@ class Style_Schema {
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::layout() ) ),
+			'grid' => Grid_Prop_Type::make()
+				->description( 'CSS grid container: column/row tracks, gaps, and auto-flow (unified control).' ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
