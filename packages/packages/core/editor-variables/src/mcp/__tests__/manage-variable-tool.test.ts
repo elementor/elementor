@@ -6,6 +6,12 @@ import { initManageVariableTool } from '../manage-variable-tool';
 import { generateVariablesPrompt } from '../variable-tool-prompt';
 
 jest.mock( '../../service' );
+jest.mock( '../../sync/get-font-configs', () => ( {
+	getFontConfigs: jest.fn( () => ( {
+		Inter: 'google-font',
+		Roboto: 'google-font',
+	} ) ),
+} ) );
 jest.mock( '@elementor/utils', () => ( {
 	...jest.requireActual( '@elementor/utils' ),
 	isProActive: jest.fn( () => true ),
@@ -223,6 +229,21 @@ describe( 'manage-variable-tool validation', () => {
 			} );
 		} );
 
+		it( 'should reject unsupported font family on create', async () => {
+			await expect(
+				toolHandler( {
+					action: 'create',
+					type: 'global-font-variable',
+					label: 'heading-font',
+					value: 'NonExistentFont',
+				} )
+			).rejects.toThrow(
+				'Font "NonExistentFont" is not supported in WordPress. Please choose one of the available font families.'
+			);
+
+			expect( service.create ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should allow px value for a size variable', async () => {
 			await toolHandler( {
 				action: 'create',
@@ -282,6 +303,18 @@ describe( 'manage-variable-tool validation', () => {
 			await toolHandler( { action: 'update', id: '123', label: 'heading-font', value: 'Inter' } );
 
 			expect( service.update ).toHaveBeenCalledWith( '123', { label: 'heading-font', value: 'Inter' } );
+		} );
+
+		it( 'should reject unsupported font family on update', async () => {
+			mockVariables[ '123' ] = { type: 'global-font-variable', label: 'heading-font', value: 'Roboto' };
+
+			await expect(
+				toolHandler( { action: 'update', id: '123', label: 'heading-font', value: 'NonExistentFont' } )
+			).rejects.toThrow(
+				'Font "NonExistentFont" is not supported in WordPress. Please choose one of the available font families.'
+			);
+
+			expect( service.update ).not.toHaveBeenCalled();
 		} );
 	} );
 
