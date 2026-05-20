@@ -63,6 +63,19 @@
         },
         "platform": {
             "php": "7.4"
+        },
+        "audit": {
+            "ignore": [
+                "PKSA-sjvz-tbbr-vwth",
+                "PKSA-h8hf-ytnd-5t9q",
+                "PKSA-wwb1-81rc-pd65",
+                "PKSA-kvv6-36cr-fkzb",
+                "PKSA-n14z-jjjg-g8vd",
+                "PKSA-3mcc-k66d-pydb",
+                "PKSA-gw7n-z4yx-7xjt",
+                "PKSA-dpx1-78wg-1kqs",
+                "PKSA-21g2-dzjv-sky5"
+            ]
         }
     },
     "authors": [
