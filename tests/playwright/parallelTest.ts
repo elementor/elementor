@@ -1,6 +1,7 @@
 import { request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
+import { isOktaAuthEnabled, STORAGE_STATE } from './config/auth';
 import { fetchNonce, login } from './wp-authentication';
 import ApiRequests from './assets/api-requests';
 
@@ -19,6 +20,15 @@ export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStora
 
 	// Authenticate once per worker with a worker-scoped fixture.
 	workerStorageState: [ async ( { workerBaseURL }, use, testInfo ) => {
+		if (
+			isOktaAuthEnabled() &&
+			workerBaseURL === process.env.DEV_SERVER &&
+			fs.existsSync( STORAGE_STATE )
+		) {
+			await use( STORAGE_STATE );
+			return;
+		}
+
 		// Use parallelIndex as a unique identifier for each worker.
 		const id = testInfo.workerIndex;
 		const fileName = path.resolve( testInfo.project.outputDir, `.storageState-${ id }.json` );

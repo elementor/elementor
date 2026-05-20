@@ -155,6 +155,7 @@
     "load-grunt-tasks": "^5.1.0",
     "mini-css-extract-plugin": "^2.9.2",
     "msw": "^2.6.8",
+    "otpauth": "^9.5.1",
     "path": "^0.12.7",
     "playwright-lighthouse": "^4.0.0",
     "prettier": "npm:wp-prettier@^3.0.3",
