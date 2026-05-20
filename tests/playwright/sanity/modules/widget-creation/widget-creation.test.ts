@@ -11,7 +11,6 @@ type ExtendedWindow = Window & {
 
 const ANGIE_PLUGIN_SLUG = 'angie/angie';
 const ANGIE_INSTALL_SUCCESS_URL = /(?:page=angie-app|open-angie=1)/;
-const ANGIE_IFRAME_SELECTOR = 'iframe[src*="angie/"]';
 
 async function ensureAngieNotInstalled( request: APIRequestContext, apiRequests: ApiRequests ) {
 	try {
@@ -214,17 +213,8 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			await expect( installButton ).toBeEnabled();
 			await installButton.click();
 
-			await expect.poll(
-				async () => {
-					if ( ANGIE_INSTALL_SUCCESS_URL.test( page.url() ) ) {
-						return true;
-					}
-
-					return page.locator( ANGIE_IFRAME_SELECTOR ).count().then( ( count ) => count > 0 );
-				},
-				{ timeout: timeouts.heavyAction },
-			).toBe( true );
-
+			await page.waitForURL( ANGIE_INSTALL_SUCCESS_URL, { timeout: timeouts.heavyAction } );
+			await page.waitForLoadState( 'domcontentloaded' );
 			await expect( modal ).toBeHidden();
 		} );
 	} );
