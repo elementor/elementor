@@ -1,29 +1,21 @@
 const RECORD_SESSION_PERCENT = 1;
-const SESSION_RECORDING_DECISION_KEY = 'elementor_session_recording_decision';
+const SESSION_RECORDING_STARTED_KEY = 'elementor_session_recording_started';
 
 let sessionRecordingPairs = [];
 let activeEndEvent = null;
 let isRecording = false;
 
-function getStoredRecordingDecision() {
+function hasStoredRecordingStarted() {
 	try {
-		const value = sessionStorage.getItem( SESSION_RECORDING_DECISION_KEY );
-
-		if ( 'record' === value ) {
-			return true;
-		}
-
-		if ( 'skip' === value ) {
-			return false;
-		}
+		return 'true' === sessionStorage.getItem( SESSION_RECORDING_STARTED_KEY );
 	} catch ( error ) {}
 
-	return null;
+	return false;
 }
 
-function storeRecordingDecision( shouldRecord ) {
+function storeRecordingStarted() {
 	try {
-		sessionStorage.setItem( SESSION_RECORDING_DECISION_KEY, shouldRecord ? 'record' : 'skip' );
+		sessionStorage.setItem( SESSION_RECORDING_STARTED_KEY, 'true' );
 	} catch ( error ) {}
 }
 
@@ -59,19 +51,12 @@ export function handleSessionRecording( name, mixpanelInstance ) {
 	const matchedPair = sessionRecordingPairs.find( ( pair ) => pair.start === name );
 
 	if ( matchedPair ) {
-		let shouldRecord = getStoredRecordingDecision();
-		const hasStoredDecision = null !== shouldRecord;
+		const hasStartedInSession = hasStoredRecordingStarted();
 
-		if ( ! hasStoredDecision ) {
-			const distinctId = mixpanelInstance.get_distinct_id();
-			shouldRecord = shouldRecordSession( distinctId, RECORD_SESSION_PERCENT );
-			storeRecordingDecision( shouldRecord );
-		}
-
-		if ( ! shouldRecord ) {
+		if ( ! hasStartedInSession && ! shouldRecordSession( mixpanelInstance.get_distinct_id(), RECORD_SESSION_PERCENT ) ) {
 			isRecording = false;
 			activeEndEvent = null;
-			return hasStoredDecision ? null : 'recording_skipped';
+			return 'recording_skipped';
 		}
 
 		if ( isRecording ) {
@@ -81,6 +66,7 @@ export function handleSessionRecording( name, mixpanelInstance ) {
 		mixpanelInstance.start_session_recording();
 		isRecording = true;
 		activeEndEvent = matchedPair.end ?? null;
+		storeRecordingStarted();
 		return 'recording_started';
 	}
 
