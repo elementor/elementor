@@ -154,7 +154,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 												{ interpolateLinks(
 													sprintf(
 														// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
-														__( 'I agree to the %1$s & %2$s', 'elementor' ),
+														__( 'I agree to the %1$s & %2$s.', 'elementor' ),
 														'{{terms}}',
 														'{{privacy}}'
 													),
@@ -164,7 +164,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 															href: 'https://elementor.com/terms/angie-terms-conditions/',
 														},
 														privacy: {
-															label: __( 'Privacy Policy.', 'elementor' ),
+															label: __( 'Privacy Policy', 'elementor' ),
 															href: 'https://elementor.com/about/privacy/',
 														},
 													}
