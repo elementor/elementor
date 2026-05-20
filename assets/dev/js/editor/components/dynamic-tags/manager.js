@@ -52,33 +52,27 @@ module.exports = elementorModules.Module.extend( {
 				};
 
 				cacheCallbacks.forEach( function( entry ) {
-					var callback = entry.callback || entry;
-
-					callback();
+					entry.callback();
 				} );
 			},
 		};
 
-		var uniqueId = cacheCallbacks.reduce( function( found, entry ) {
-			return found || ( entry.unique_id || null );
-		}, null );
+		var disableCache = cacheCallbacks.some( function( entry ) {
+			return entry.disableCache;
+		} );
 
-		if ( uniqueId ) {
-			ajaxOptions.unique_id = uniqueId;
+		if ( disableCache ) {
+			ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
 		}
 
 		elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
 	},
 
-	refreshCacheFromServer( callback, uniqueId ) {
-		if ( uniqueId ) {
-			this.cacheCallbacks.push( {
-				callback,
-				unique_id: uniqueId,
-			} );
-		} else {
-			this.cacheCallbacks.push( callback );
-		}
+	refreshCacheFromServer( callback, options ) {
+		this.cacheCallbacks.push( {
+			callback,
+			disableCache: options?.disableCache,
+		} );
 
 		this.loadCacheRequests();
 	},

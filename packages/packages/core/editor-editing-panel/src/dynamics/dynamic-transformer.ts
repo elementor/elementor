@@ -1,4 +1,4 @@
-import { createTransformer, type LegacyWindow } from '@elementor/editor-canvas';
+import { createTransformer } from '@elementor/editor-canvas';
 import { isTransformable, type Props } from '@elementor/editor-props';
 
 import { DynamicTagsManagerNotFoundError } from './errors';
@@ -53,13 +53,11 @@ function getDynamicValue( name: string, settings: Record< string, unknown > ) {
 	}
 
 	return new Promise( ( resolve ) => {
-		const extendedWindow = window as unknown as LegacyWindow;
-		const getUniqueId = extendedWindow.elementorCommon?.helpers?.getUniqueId;
-
-		const uniqueId = getUniqueId ? `render_tags-${ getUniqueId() }` : undefined;
-
-		dynamicTags.refreshCacheFromServer( () => {
-			resolve( getTagValue() );
-		}, uniqueId );
+		dynamicTags.refreshCacheFromServer(
+			() => {
+				resolve( getTagValue() );
+			},
+			{ disableCache: true }
+		);
 	} );
 }
