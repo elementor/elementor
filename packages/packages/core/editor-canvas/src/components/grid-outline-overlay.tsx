@@ -1,19 +1,23 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { getElementEditorSettings } from '@elementor/editor-elements';
 import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
 import { Box } from '@elementor/ui';
 import { FloatingPortal } from '@floating-ui/react';
 
-import { useElementRect } from '../hooks/use-element-rect';
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
 import { type GridTracks, useGridTracks } from '../hooks/use-grid-tracks';
 import type { ElementOverlayProps } from '../types/element-overlay';
-import { findFirstEmptyCell, type GridCell } from '../utils/find-first-empty-cell';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
 
 const STROKE = 'rgba(192, 132, 252, 0.9)';
 const DASH = '4 4';
+const PERF_LABEL = 'grid-outline:A';
+
+function getHeapUsed(): number | null {
+	const memory = ( performance as unknown as { memory?: { usedJSHeapSize: number } } ).memory;
+	return memory ? memory.usedJSHeapSize : null;
+}
 
 function useGridOutlineEnabled( id: string ): boolean {
 	return useListenTo(
@@ -24,11 +28,6 @@ function useGridOutlineEnabled( id: string ): boolean {
 		},
 		[ id ]
 	);
-}
-
-function getFlowDirection( element: HTMLElement ): 'row' | 'column' {
-	const flow = getComputedStyle( element ).gridAutoFlow || 'row';
-	return flow.includes( 'column' ) ? 'column' : 'row';
 }
 
 function cumulative( sizes: number[], gap: number, leadingOffset: number ): number[] {
@@ -46,14 +45,23 @@ function cumulative( sizes: number[], gap: number, leadingOffset: number ): numb
 }
 
 type SvgProps = {
-	width: number;
-	height: number;
 	tracks: GridTracks;
 };
 
-const GridOutlineSvg = ( { width, height, tracks }: SvgProps ) => {
+const GridOutlineSvg = ( { tracks }: SvgProps ) => {
 	const xPositions = useMemo( () => cumulative( tracks.columns, tracks.columnGap, tracks.padding.left ), [ tracks ] );
 	const yPositions = useMemo( () => cumulative( tracks.rows, tracks.rowGap, tracks.padding.top ), [ tracks ] );
+
+	const totalWidth =
+		tracks.padding.left +
+		tracks.padding.right +
+		tracks.columns.reduce( ( sum, w ) => sum + w, 0 ) +
+		tracks.columnGap * Math.max( 0, tracks.columns.length - 1 );
+	const totalHeight =
+		tracks.padding.top +
+		tracks.padding.bottom +
+		tracks.rows.reduce( ( sum, h ) => sum + h, 0 ) +
+		tracks.rowGap * Math.max( 0, tracks.rows.length - 1 );
 
 	const lines: React.ReactElement[] = [];
 	xPositions.forEach( ( x, index ) => {
@@ -63,7 +71,7 @@ const GridOutlineSvg = ( { width, height, tracks }: SvgProps ) => {
 				x1={ x }
 				x2={ x }
 				y1={ tracks.padding.top }
-				y2={ height - tracks.padding.bottom }
+				y2={ totalHeight - tracks.padding.bottom }
 				stroke={ STROKE }
 				strokeWidth={ 1 }
 				strokeDasharray={ DASH }
@@ -76,7 +84,7 @@ const GridOutlineSvg = ( { width, height, tracks }: SvgProps ) => {
 			<line
 				key={ `h-${ index }` }
 				x1={ tracks.padding.left }
-				x2={ width - tracks.padding.right }
+				x2={ totalWidth - tracks.padding.right }
 				y1={ y }
 				y2={ y }
 				stroke={ STROKE }
@@ -89,9 +97,9 @@ const GridOutlineSvg = ( { width, height, tracks }: SvgProps ) => {
 
 	return (
 		<svg
-			width={ width }
-			height={ height }
-			viewBox={ `0 0 ${ width } ${ height }` }
+			width={ totalWidth }
+			height={ totalHeight }
+			viewBox={ `0 0 ${ totalWidth } ${ totalHeight }` }
 			style={ { position: 'absolute', inset: 0, overflow: 'visible', pointerEvents: 'none' } }
 			role="presentation"
 		>
@@ -100,74 +108,59 @@ const GridOutlineSvg = ( { width, height, tracks }: SvgProps ) => {
 	);
 };
 
-function cellCenter( cell: GridCell, tracks: GridTracks ): { x: number; y: number } | null {
-	if ( cell.column >= tracks.columns.length || cell.row >= tracks.rows.length ) {
-		return null;
-	}
-	const colStart =
-		tracks.padding.left +
-		tracks.columns.slice( 0, cell.column ).reduce( ( sum, w ) => sum + w, 0 ) +
-		tracks.columnGap * cell.column;
-	const rowStart =
-		tracks.padding.top +
-		tracks.rows.slice( 0, cell.row ).reduce( ( sum, h ) => sum + h, 0 ) +
-		tracks.rowGap * cell.row;
-	return {
-		x: colStart + tracks.columns[ cell.column ] / 2,
-		y: rowStart + tracks.rows[ cell.row ] / 2,
-	};
-}
-
-type PlusProps = { center: { x: number; y: number } };
-
-const FirstEmptyCellPlus = ( { center }: PlusProps ) => (
-	<Box
-		aria-hidden
-		sx={ {
-			position: 'absolute',
-			left: center.x,
-			top: center.y,
-			width: 24,
-			height: 24,
-			marginLeft: '-12px',
-			marginTop: '-12px',
-			borderRadius: '50%',
-			backgroundColor: 'rgba(192, 132, 252, 0.15)',
-			color: 'rgba(124, 58, 237, 1)',
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'center',
-			fontSize: 18,
-			lineHeight: 1,
-			pointerEvents: 'none',
-		} }
-	>
-		+
-	</Box>
-);
-
 export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
 	const enabled = useGridOutlineEnabled( id );
-	const rect = useElementRect( element );
-	const tracks = useGridTracks( element, rect );
+	const tracks = useGridTracks( element );
 	const { floating, isVisible } = useFloatingOnElement( { element, isSelected: true } );
-
-	const firstEmpty = useMemo( () => {
-		if ( tracks.columns.length === 0 || tracks.rows.length === 0 ) {
-			return null;
-		}
-		return findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length, getFlowDirection( element ) );
-		// rect dimensions trigger recompute on element resize / drag-in events that don't change track counts.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ element, tracks.columns.length, tracks.rows.length, rect.width, rect.height ] );
 
 	void isSelected;
 
-	if ( ! enabled || ! isVisible || tracks.columns.length === 0 || tracks.rows.length === 0 ) {
-		return null;
+	const shouldRender = enabled && isVisible && tracks.columns.length > 0 && tracks.rows.length > 0;
+
+	const renderCountRef = useRef( 0 );
+	const renderStartRef = useRef( 0 );
+	const heapStartRef = useRef( 0 );
+
+	if ( shouldRender ) {
+		renderStartRef.current = performance.now();
+		heapStartRef.current = getHeapUsed() ?? 0;
+		performance.mark( `${ PERF_LABEL }:render-start` );
 	}
 
-	const center = firstEmpty ? cellCenter( firstEmpty, tracks ) : null;
+	useEffect( () => {
+		if ( ! shouldRender ) {
+			return;
+		}
+
+		performance.mark( `${ PERF_LABEL }:render-end` );
+		performance.measure(
+			`${ PERF_LABEL }:render`,
+			`${ PERF_LABEL }:render-start`,
+			`${ PERF_LABEL }:render-end`
+		);
+
+		const duration = performance.now() - renderStartRef.current;
+		const heapAfter = getHeapUsed();
+		const heapDeltaKb =
+			null !== heapAfter ? ( ( heapAfter - heapStartRef.current ) / 1024 ).toFixed( 2 ) : 'n/a';
+		const heapTotalMb = null !== heapAfter ? ( heapAfter / 1024 / 1024 ).toFixed( 2 ) : 'n/a';
+		const isInitial = 0 === renderCountRef.current;
+		renderCountRef.current += 1;
+
+		// eslint-disable-next-line no-console
+		console.log(
+			`[grid-outline][A] ${ isInitial ? 'initial render' : 're-render' }: ${ duration.toFixed( 2 ) }ms, heap Δ: ${ heapDeltaKb }KB, heap total: ${ heapTotalMb }MB`,
+			{
+				columns: tracks.columns.length,
+				rows: tracks.rows.length,
+				renderCount: renderCountRef.current,
+			}
+		);
+	} );
+
+	if ( ! shouldRender ) {
+		return null;
+	}
 
 	return (
 		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
@@ -177,8 +170,7 @@ export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayP
 				role="presentation"
 				style={ { ...floating.styles, pointerEvents: 'none' } }
 			>
-				<GridOutlineSvg width={ rect.width } height={ rect.height } tracks={ tracks } />
-				{ center && <FirstEmptyCellPlus center={ center } /> }
+				<GridOutlineSvg tracks={ tracks } />
 			</Box>
 		</FloatingPortal>
 	);

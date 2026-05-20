@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 export type GridTracks = {
 	columns: number[];
 	rows: number[];
@@ -51,38 +49,37 @@ function inferImplicitRowSizes( element: HTMLElement, autoRowSize: number ): num
 	return sizes;
 }
 
-export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): GridTracks {
-	return useMemo( () => {
-		if ( ! element || ! element.ownerDocument?.defaultView ) {
-			return EMPTY;
-		}
-		const cs = element.ownerDocument.defaultView.getComputedStyle( element );
+export function useGridTracks( element: HTMLElement | null, rect?: DOMRect ): GridTracks {
+	if ( ! element || ! element.ownerDocument?.defaultView ) {
+		return EMPTY;
+	}
+	const cs = element.ownerDocument.defaultView.getComputedStyle( element );
 
-		const padding = {
-			top: parsePx( cs.paddingTop ),
-			right: parsePx( cs.paddingRight ),
-			bottom: parsePx( cs.paddingBottom ),
-			left: parsePx( cs.paddingLeft ),
-		};
-		const columnGap = parsePx( cs.columnGap );
-		const rowGap = parsePx( cs.rowGap );
+	const padding = {
+		top: parsePx( cs.paddingTop ),
+		right: parsePx( cs.paddingRight ),
+		bottom: parsePx( cs.paddingBottom ),
+		left: parsePx( cs.paddingLeft ),
+	};
+	const columnGap = parsePx( cs.columnGap );
+	const rowGap = parsePx( cs.rowGap );
 
-		let columns = parseTrackList( cs.gridTemplateColumns );
-		let rows = parseTrackList( cs.gridTemplateRows );
+	let columns = parseTrackList( cs.gridTemplateColumns );
+	let rows = parseTrackList( cs.gridTemplateRows );
 
-		const contentWidth = Math.max( 0, rect.width - padding.left - padding.right );
-		const contentHeight = Math.max( 0, rect.height - padding.top - padding.bottom );
+	const elementRect = rect ?? element.getBoundingClientRect();
+	const contentWidth = Math.max( 0, elementRect.width - padding.left - padding.right );
+	const contentHeight = Math.max( 0, elementRect.height - padding.top - padding.bottom );
 
-		if ( columns.length === 0 && contentWidth > 0 ) {
-			columns = [ contentWidth ];
-		}
+	if ( columns.length === 0 && contentWidth > 0 ) {
+		columns = [ contentWidth ];
+	}
 
-		if ( rows.length === 0 && contentHeight > 0 ) {
-			const autoRow = parsePx( cs.gridAutoRows ) || contentHeight;
-			const inferred = inferImplicitRowSizes( element, autoRow );
-			rows = inferred.length > 0 ? inferred : [ contentHeight ];
-		}
+	if ( rows.length === 0 && contentHeight > 0 ) {
+		const autoRow = parsePx( cs.gridAutoRows ) || contentHeight;
+		const inferred = inferImplicitRowSizes( element, autoRow );
+		rows = inferred.length > 0 ? inferred : [ contentHeight ];
+	}
 
-		return { columns, rows, columnGap, rowGap, padding };
-	}, [ element, rect.width, rect.height ] );
+	return { columns, rows, columnGap, rowGap, padding };
 }
