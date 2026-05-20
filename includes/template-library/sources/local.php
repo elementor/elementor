@@ -2000,7 +2000,7 @@ class Source_Local extends Source_Base {
 		$post_id = intval( $args['template_id'] );
 		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
 
-		if ( 'publish' === $post_status ) {
+		if ( 'publish' === $post_status && ! post_password_required( $post_id ) ) {
 			return true;
 		}
 
