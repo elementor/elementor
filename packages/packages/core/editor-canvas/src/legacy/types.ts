@@ -67,11 +67,13 @@ export declare class ElementType {
 	getView(): typeof ElementView;
 }
 
-type MarionetteExtendable< TBase = unknown > = {
+export type MarionetteExtendable< TInstance = unknown > = {
 	extend: < TExtended extends object >(
-		properties: TExtended & ThisType< TBase & TExtended >
-	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
+		properties: TExtended & ThisType< TInstance & TExtended >
+	) => typeof ElementView & MarionetteExtendable< TInstance & TExtended >;
 };
+
+export type NestedTemplatedElementViewClass = typeof ElementView & MarionetteExtendable< ElementView >;
 
 export declare class ElementView {
 	getChildType(): string[];
@@ -125,7 +127,7 @@ export declare class ElementView {
 
 	_renderTemplate(): void;
 
-	_renderChildren(): void;
+	_renderChildren(): Promise< void >;
 
 	_beforeRender(): void;
 
@@ -196,6 +198,8 @@ export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+	on: ( event: string, callback: () => void ) => void;
+	off: ( event: string, callback: () => void ) => void;
 	trigger: ( event: string, ...args: unknown[] ) => void;
 };
 
