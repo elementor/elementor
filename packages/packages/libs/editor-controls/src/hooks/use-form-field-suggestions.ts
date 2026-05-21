@@ -17,6 +17,10 @@ const FORM_FIELD_WIDGET_TYPES = [
 	'e-form-time-picker',
 ] as const;
 
+function isFormFieldWidgetType( widgetType: string ): boolean {
+	return ( FORM_FIELD_WIDGET_TYPES as readonly string[] ).includes( widgetType );
+}
+
 const FORM_ELEMENT_TYPE = 'e-form';
 const CSS_ID_PROP_KEY = '_cssid';
 
@@ -24,23 +28,11 @@ type Options = {
 	inputType?: string;
 };
 
-function extractStringPropValue( value: unknown ): string | undefined {
-	const extracted = stringPropTypeUtil.extract( value );
-
-	if ( extracted ) {
-		return extracted;
-	}
-
-	return typeof value === 'string' && value ? value : undefined;
+function extractStringPropValue( value: unknown ): string | null {
+	return stringPropTypeUtil.extract( value );
 }
 
 function getSettingWithDefault( child: V1Element, widgetType: string, key: string ): unknown {
-	const fromJson = child.settings.toJSON?.()?.[ key ];
-
-	if ( fromJson !== null && fromJson !== undefined ) {
-		return fromJson;
-	}
-
 	const fromGet = child.settings.get( key );
 
 	if ( fromGet !== null && fromGet !== undefined ) {
@@ -53,7 +45,7 @@ function getSettingWithDefault( child: V1Element, widgetType: string, key: strin
 }
 
 function getFieldCssId( child: V1Element, widgetType: string ): string | null {
-	return extractStringPropValue( getSettingWithDefault( child, widgetType, CSS_ID_PROP_KEY ) ) ?? null;
+	return extractStringPropValue( getSettingWithDefault( child, widgetType, CSS_ID_PROP_KEY ) );
 }
 
 function getFormContainer( elementId: string ): V1Element | null {
@@ -98,10 +90,7 @@ export function useFormFieldSuggestions( options?: Options ): Suggestion[] {
 			formContainer.children.forEachRecursive?.( ( child ) => {
 				const widgetType = child.model.get( 'widgetType' ) as string | undefined;
 
-				if (
-					! widgetType ||
-					! FORM_FIELD_WIDGET_TYPES.includes( widgetType as ( typeof FORM_FIELD_WIDGET_TYPES )[ number ] )
-				) {
+				if ( ! widgetType || ! isFormFieldWidgetType( widgetType ) ) {
 					return;
 				}
 
