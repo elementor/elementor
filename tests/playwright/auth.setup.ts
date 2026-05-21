@@ -4,6 +4,8 @@ import { getOktaTotpSecret, STORAGE_STATE } from './config/auth';
 
 const MY_ELEMENTOR_LOGIN = 'https://my.elementor.com/login/?redirect_to=%2Fwebsites';
 const MY_ELEMENTOR_WEBSITES = 'https://my.elementor.com/websites';
+const TOTP_PERIOD_SECONDS = 30;
+const TOTP_MIN_REMAINING_SECONDS = 3;
 
 setup( 'authenticate with Okta MFA', async ( { page } ) => {
 	setup.setTimeout( 180000 );
@@ -85,7 +87,7 @@ async function completeMfaChallenge( page: Page ) {
 		label: process.env.OKTA_USERNAME,
 		algorithm: 'SHA1',
 		digits: 6,
-		period: 30,
+		period: TOTP_PERIOD_SECONDS,
 		secret: getOktaTotpSecret()!,
 	} );
 
@@ -98,11 +100,39 @@ async function completeMfaChallenge( page: Page ) {
 	} );
 
 	await expect( async () => {
-		await totpInput.fill( totp.generate() );
+		await totpInput.fill( await generateTotpForSubmission( totp ) );
 		await page.getByRole( 'button', { name: 'Verify' } ).click();
 		await expect( invalidCodeMessage ).toBeHidden( { timeout: 8000 } );
 		await expect( mfaFormHeading ).toBeHidden( { timeout: 15000 } );
 	} ).toPass( {
 		timeout: 90000,
 	} );
+}
+
+function getSecondsUntilNextTotpWindow( periodSeconds: number ): number {
+	const nowSeconds = Math.floor( Date.now() / 1000 );
+	const elapsedInWindow = nowSeconds % periodSeconds;
+
+	return periodSeconds - elapsedInWindow;
+}
+
+async function waitForFreshTotpWindow(
+	periodSeconds: number,
+	minRemainingSeconds: number,
+): Promise<void> {
+	const secondsUntilRollover = getSecondsUntilNextTotpWindow( periodSeconds );
+
+	if ( secondsUntilRollover >= minRemainingSeconds ) {
+		return;
+	}
+
+	const waitMs = ( secondsUntilRollover + 1 ) * 1000;
+
+	await new Promise( ( resolve ) => setTimeout( resolve, waitMs ) );
+}
+
+async function generateTotpForSubmission( totp: OTPAuth.TOTP ): Promise<string> {
+	await waitForFreshTotpWindow( totp.period, TOTP_MIN_REMAINING_SECONDS );
+
+	return totp.generate();
 }
