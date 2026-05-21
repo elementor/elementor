@@ -578,7 +578,7 @@ class Editor {
 		 * Filters whether Elementor sends the Document-Isolation-Policy header
 		 * on the editor screen and preview iframe.
 		 *
-		 * @since X.X.X
+		 * @since 4.1.0
 		 *
 		 * @param bool $enabled Whether DIP is enabled. Defaults to true on a secure context.
 		 */
