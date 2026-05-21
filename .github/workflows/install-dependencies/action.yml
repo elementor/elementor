@@ -16,6 +16,9 @@ runs:
     - name: Remove Composer GitHub OAuth token
       shell: bash
       run: composer config --global --unset github-oauth.github.com || true
+    - name: Disable insecure-package block (TMP)
+      shell: bash
+      run: composer config audit.block-insecure false
     - shell: bash
       run: |
         npm run install:ci

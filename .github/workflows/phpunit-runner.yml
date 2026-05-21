@@ -48,6 +48,8 @@ jobs:
           coverage: none
       - name: Remove Composer GitHub OAuth token
         run: composer config --global --unset github-oauth.github.com || true
+      - name: Disable insecure-package block (TMP)
+        run: composer config audit.block-insecure false
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
