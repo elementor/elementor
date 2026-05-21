@@ -592,7 +592,7 @@ class Editor {
 	 * preview iframe handler. No-op when {@see self::should_use_document_isolation_policy()}
 	 * returns false.
 	 *
-	 * @since X.X.X
+	 * @since 4.1.0
 	 */
 	public static function send_document_isolation_policy_header() {
 		if ( ! self::should_use_document_isolation_policy() || headers_sent() ) {
