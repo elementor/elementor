@@ -560,7 +560,7 @@ class Editor {
 	 * localhost) so the helper short-circuits on insecure origins to avoid
 	 * sending a header that the browser will ignore.
 	 *
-	 * @since X.X.X
+	 * @since 4.1.0
 	 *
 	 * @return bool
 	 */
