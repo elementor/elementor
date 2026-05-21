@@ -1,30 +1,90 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
+import { isProActive } from '@elementor/utils';
 
 import { service } from '../service';
+import { getFontConfigs } from '../sync/get-font-configs';
 import { validateLabel } from '../utils/validations';
+import { generateVariablesPrompt, MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
+const VARIABLE_TYPES = {
+	COLOR: 'global-color-variable',
+	FONT: 'global-font-variable',
+	SIZE: 'global-size-variable',
+	CUSTOM_SIZE: 'global-custom-size-variable',
+} as const;
+
+const LENGTH_UNIT_PATTERN = /^(auto|\d+(\.\d+)?(px|rem|em|vh|vw|%|ch|s|ms))$/i;
+const COLOR_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
+
+function validateValueForType( type: string, value: string ): string | null {
+	if ( type === VARIABLE_TYPES.FONT && LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
+		return `Font variable value must be a font family name (e.g. "Roboto"), not a size value like "${ value }". Use "global-size-variable" or "global-custom-size-variable" for spacing/size values.`;
+	}
+
+	if ( type === VARIABLE_TYPES.COLOR && ! COLOR_PATTERN.test( value.trim() ) ) {
+		return `Color variable value should be a CSS color (e.g. "#FF0000"), got "${ value }".`;
+	}
+
+	if ( type === VARIABLE_TYPES.SIZE && ! LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
+		return `Size variable value should include a CSS unit (e.g. "16px") or be "auto", got "${ value }".`;
+	}
+
+	if ( type === VARIABLE_TYPES.FONT && ! isFontAvailable( value ) ) {
+		return `Font "${ value }" is not supported in WordPress. Please choose one of the available font families.`;
+	}
+
+	return null;
+}
+
+function isFontAvailable( font: string ) {
+	const fonts = getFontConfigs();
+	const key = font.trim();
+
+	return !! fonts?.[ key ];
+}
+
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+	const { addTool, resource } = reg;
+
+	resource(
+		'manage-global-variable-guide',
+		MANAGE_VARIABLES_GUIDE_URI,
+		{
+			title: 'Manage Global Variable Guide',
+			description: 'Detailed guide for using the manage-global-variable tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generateVariablesPrompt() } ],
+		} )
+	);
+
 	addTool( {
 		name: 'manage-global-variable',
+		description: 'Manage V4 global variables (color, font, size). Read the guide resource before use.',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
 			id: z
 				.string()
 				.optional()
-				.describe( 'Variable id (required for update/delete). Get from list-global-variables.' ),
+				.describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
 			type: z
 				.string()
 				.optional()
-				.describe( 'Variable type: "global-color-variable" or "global-font-variable" (required for create)' ),
-			label: z.string().optional().describe( 'Variable label (required for create/update)' ),
+				.describe(
+					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable", "global-custom-size-variable" (size types require Elementor Pro). NEVER store px/rem values in a font variable.'
+				),
+			label: z
+				.string()
+				.optional()
+				.describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
 			value: z
 				.string()
 				.optional()
 				.describe(
-					'The variable value (required for create/update). Provide a plain CSS value matching the variable type (font: family name; color: CSS color; size: value with unit). Never JSON.'
+					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only, never px/rem. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
 				),
 		},
 		outputSchema: {
@@ -32,28 +92,22 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 			message: z.string().optional().describe( 'Error details if status is error' ),
 		},
 		requiredResources: [
+			{ uri: MANAGE_VARIABLES_GUIDE_URI, description: 'Full guide for variable types, naming rules, and usage' },
 			{
 				uri: GLOBAL_VARIABLES_URI,
-				description: 'Global variables',
+				description: 'Current global variables — check before creating to avoid duplicates',
 			},
 		],
-		description: `Create, update, or delete V4 global variables (distinct from legacy "globals").
-- Values: any valid CSS value, inserted as-is (1:1 with \`--css-var: VALUE\`). Do NOT pass JSON or legacy-globals object structures.
-- Names: lowercase, dash-separated (e.g. "Headline Primary" → "headline-primary").
-- Update: when renaming, keep the existing value; when updating value, keep the exact label.
-- Delete: destructive — confirm with user first.`,
+		isDestructive: true,
 		handler: async ( params ) => {
 			const operations = getServiceActions( service );
 			const op = operations[ params.action ];
 			if ( op ) {
 				await op( params );
-				return {
-					status: 'ok',
-				};
+				return { status: 'ok' };
 			}
 			throw new Error( `Unknown action ${ params.action }` );
 		},
-		isDestructive: true, // Because delete is destructive
 	} );
 };
 
@@ -67,9 +121,16 @@ function getServiceActions( svc: typeof service ) {
 			if ( ! type || ! label || ! value ) {
 				throw new Error( 'Create requires type, label, and value' );
 			}
+			if ( ( type === VARIABLE_TYPES.SIZE || type === VARIABLE_TYPES.CUSTOM_SIZE ) && ! isProActive() ) {
+				throw new Error( 'Creating size variables requires Elementor Pro.' );
+			}
 			const labelError = validateLabel( label );
 			if ( labelError ) {
 				throw new Error( labelError );
+			}
+			const valueError = validateValueForType( type, value );
+			if ( valueError ) {
+				throw new Error( valueError );
 			}
 			return svc.create( { type, label, value } );
 		},
@@ -80,6 +141,13 @@ function getServiceActions( svc: typeof service ) {
 			const labelError = validateLabel( label );
 			if ( labelError ) {
 				throw new Error( labelError );
+			}
+			const existingVariable = svc.variables()[ id ];
+			if ( existingVariable ) {
+				const valueError = validateValueForType( existingVariable.type, value );
+				if ( valueError ) {
+					throw new Error( valueError );
+				}
 			}
 			return svc.update( id, { label, value } );
 		},

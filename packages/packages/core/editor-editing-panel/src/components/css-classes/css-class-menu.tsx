@@ -18,7 +18,7 @@ import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
 import { DuplicateClassMenuItem } from './duplicate-class-menu-item';
 import { LocalClassSubMenu } from './local-class-sub-menu';
-import { useUnapplyClass } from './use-apply-and-unapply-class';
+import { useUndoableUnapplyClass } from './use-apply-and-unapply-class';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -264,7 +264,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 
 function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void } ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
-	const unapplyClass = useUnapplyClass();
+	const unapplyClass = useUndoableUnapplyClass();
 
 	return classId ? (
 		<MenuListItem

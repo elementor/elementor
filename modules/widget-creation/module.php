@@ -20,6 +20,8 @@ class Module extends BaseModule {
 		'editor-widget-creation',
 	];
 
+	const ANGIE_CONSENT_OPTION = 'angie_external_scripts_consent';
+
 	public function get_name() {
 		return self::MODULE_NAME;
 	}
@@ -37,9 +39,25 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+		AngiePromotion::init();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 		add_action( 'elementor/elements/categories_registered', [ $this, 'maybe_register_custom_widgets_category_fallback' ], 100 );
+		add_action( 'rest_api_init', fn() => $this->register_consent_route() );
+	}
+
+	private function register_consent_route(): void {
+		register_rest_route( 'elementor/v1', '/angie/consent', [
+			'methods'             => 'POST',
+			'callback'            => fn() => $this->handle_save_consent(),
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
+	}
+
+	private function handle_save_consent(): \WP_REST_Response {
+		update_option( self::ANGIE_CONSENT_OPTION, 'yes' );
+
+		return new \WP_REST_Response( [ 'success' => true ], 200 );
 	}
 
 	public function maybe_register_custom_widgets_category_fallback( Elements_Manager $elements_manager ): void {
@@ -76,9 +94,13 @@ class Module extends BaseModule {
 			return;
 		}
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
-		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><?php echo esc_html__( 'Install Angie', 'elementor' ); ?></button>
+		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><?php echo esc_html__( 'Try for free', 'elementor' ); ?></button>
 		<# } #>
 		<?php
 	}

@@ -7,6 +7,7 @@ import { CreateWidget } from '../create-widget';
 const mockIsAngieAvailable = jest.fn();
 const mockTrackEvent = jest.fn();
 const mockInstallAngiePlugin = jest.fn();
+const mockSaveAngieConsent = jest.fn();
 const mockRedirectToAppAdmin = jest.fn();
 const mockSendPromptToAngie = jest.fn();
 const mockRedirectToInstallation = jest.fn();
@@ -17,6 +18,7 @@ jest.mock( '@elementor/editor-mcp', () => {
 		toolPrompts,
 		isAngieAvailable: () => mockIsAngieAvailable(),
 		installAngiePlugin: ( ...args: unknown[] ) => mockInstallAngiePlugin( ...args ),
+		saveAngieConsent: ( ...args: unknown[] ) => mockSaveAngieConsent( ...args ),
 		redirectToAppAdmin: ( ...args: unknown[] ) => mockRedirectToAppAdmin( ...args ),
 		redirectToInstallation: ( ...args: unknown[] ) => mockRedirectToInstallation( ...args ),
 		sendPromptToAngie: ( ...args: unknown[] ) => mockSendPromptToAngie( ...args ),
@@ -38,6 +40,7 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 		mockIsAngieAvailable.mockReset();
 		mockTrackEvent.mockReset();
 		mockInstallAngiePlugin.mockReset();
+		mockSaveAngieConsent.mockReset().mockResolvedValue( undefined );
 		mockRedirectToAppAdmin.mockReset();
 		mockSendPromptToAngie.mockReset();
 		mockRedirectToInstallation.mockReset();
@@ -164,8 +167,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Click Install Angie to trigger the failure.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Check terms and click Install & Activate to trigger the failure.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -197,8 +201,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Click Install Angie.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Check terms and click Install & Activate.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -220,6 +225,48 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 		} );
 	} );
 
+	describe( 'consent saving', () => {
+		it( 'saves consent to DB when Install & Activate is clicked', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act — check terms then click the button.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
+			} );
+		} );
+
+		it( 'saves consent even when plugin installation fails', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act — check terms then click the button.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockSaveAngieConsent ).toHaveBeenCalledTimes( 1 );
+			} );
+		} );
+	} );
+
 	describe( 'angie_install_completed', () => {
 		it( 'fires angie_install_completed and redirects after a successful install', async () => {
 			// Arrange.
@@ -231,8 +278,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Act — check terms then install.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -247,6 +295,28 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( 'My prompt' );
 		} );
 
+		it( 'redirects to app admin even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: true } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Act — check terms then install.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
+
+			fireEvent.click( installButton );
+
+			// Assert — redirect still fires even without a prompt.
+			await waitFor( () => {
+				expect( mockRedirectToAppAdmin ).toHaveBeenCalledWith( undefined );
+			} );
+		} );
+
 		it( 'does NOT fire angie_install_completed when install fails', async () => {
 			// Arrange.
 			mockIsAngieAvailable.mockReturnValue( false );
@@ -257,8 +327,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Act — check terms then install.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -284,8 +355,9 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 				dispatchCreateWidgetEvent( { prompt: 'My prompt', entry_point: 'top_bar_icon' } );
 			} );
 
-			// Act.
-			const installButton = screen.getByRole( 'button', { name: /Install Angie/i } );
+			// Act — check terms then install.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			const installButton = screen.getByRole( 'button', { name: /Install & Activate/i } );
 
 			fireEvent.click( installButton );
 
@@ -303,6 +375,58 @@ describe( 'CreateWidget — analytics instrumentation', () => {
 			expect( calls.indexOf( 'angie_install_started' ) ).toBeLessThan(
 				calls.indexOf( 'angie_install_completed' )
 			);
+		} );
+	} );
+
+	describe( 'fallback install', () => {
+		it( 'calls redirectToInstallation with the prompt when Install Manually is clicked', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { prompt: 'Build me a widget', entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears — check terms first.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( 'Build me a widget' );
+		} );
+
+		it( 'calls redirectToInstallation even when no prompt is provided', async () => {
+			// Arrange.
+			mockIsAngieAvailable.mockReturnValue( false );
+			mockInstallAngiePlugin.mockResolvedValue( { success: false } );
+			renderWithTheme( <CreateWidget /> );
+
+			act( () => {
+				dispatchCreateWidgetEvent( { entry_point: 'top_bar_icon' } );
+			} );
+
+			// Trigger install failure so the fallback button appears — check terms first.
+			fireEvent.click( screen.getByRole( 'checkbox' ) );
+			fireEvent.click( screen.getByRole( 'button', { name: /Install & Activate/i } ) );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: /Install Manually/i } ) ).toBeInTheDocument();
+			} );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: /Install Manually/i } ) );
+
+			// Assert — redirect fires even without a prompt.
+			expect( mockRedirectToInstallation ).toHaveBeenCalledWith( undefined );
 		} );
 	} );
 } );

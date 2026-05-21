@@ -2,13 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
-use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Email_Form_Action_Control extends Atomic_Control_Base {
+class Email_Form_Action_Control extends Chips_Control {
 	public function get_type(): string {
 		return 'email';
 	}
@@ -18,8 +16,8 @@ class Email_Form_Action_Control extends Atomic_Control_Base {
 	}
 
 	public function get_props(): array {
-		return [
+		return array_merge( parent::get_props(), [
 			'toPlaceholder' => self::get_default_recipient_email(),
-		];
+		] );
 	}
 }

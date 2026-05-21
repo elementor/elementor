@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
@@ -343,17 +344,21 @@ class Style_Schema {
 				'wrap-reverse',
 			] )->description( 'Specifies whether the flex items should wrap or not. CSS values: wrap, nowrap, wrap-reverse' ),
 			'flex' => Flex_Prop_Type::make(),
-			'grid-template-columns' => String_Prop_Type::make()
-				->description( 'Defines the columns of a grid container. Accepts any valid CSS grid-template-columns value, e.g. repeat(3, 1fr) or 100px 200px auto.' ),
-			'grid-template-rows' => String_Prop_Type::make()
-				->description( 'Defines the rows of a grid container. Accepts any valid CSS grid-template-rows value, e.g. repeat(3, 1fr) or 100px 200px auto.' ),
+			'grid-template-columns' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() )
+				->add_prop_type( Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
+			'grid-template-rows' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make() )
+				->add_prop_type( Grid_Track_Size_Prop_Type::make()->units( Size_Constants::grid_track() ) ),
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
 			'grid-column' => Span_Prop_Type::make()
-				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value.' ),
+				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
+				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value. Disallows URLs and semicolons.' ),
 			'grid-row' => Span_Prop_Type::make()
-				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value.' ),
+				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
+				->description( 'Defines a grid item row placement. Accepts values like span N or any valid CSS grid-row value. Disallows URLs and semicolons.' ),
 		];
 	}
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { AngieGuideLocation } from '../../extensions/angie/components/angie-guide-location';
 import { toolsMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';
@@ -21,6 +22,7 @@ export default function ToolsMenuLocation() {
 			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
 				<MenuItem key={ id } />
 			) ) }
+			<AngieGuideLocation />
 			<SendFeedbackPopupLocation />
 			<IntegrationsMenuLocation />
 			{ popoverMenuItems.length > 0 && (

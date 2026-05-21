@@ -5,6 +5,7 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
+use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -160,7 +161,7 @@ class Global_Classes_Repository {
 		] );
 	}
 
-	public function each_item( callable $cb, int $batch_size = self::READ_BATCH_SIZE ): void {
+	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {
 		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
 
 		if ( empty( $order ) ) {
@@ -169,7 +170,7 @@ class Global_Classes_Repository {
 
 		foreach ( array_chunk( $order, $batch_size ) as $chunk ) {
 			foreach ( $this->iterate_class_posts_for_ids( $chunk ) as $class_post ) {
-				$cb( $class_post->to_array() );
+				$cb( $class_post->to_array( $skip_migration ) );
 			}
 		}
 	}
@@ -323,7 +324,7 @@ class Global_Classes_Repository {
 			}
 
 			$item = $items_by_id[ $class_id ];
-			$data = $this->build_class_data_for_storage( $item );
+			$data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
 
 			if ( $is_preview ) {
 				$post = Global_Class_Post::find_by_class_id( $class_id, true );
@@ -359,7 +360,7 @@ class Global_Classes_Repository {
 				return;
 			}
 
-			$data = $this->build_class_data_for_storage( $item );
+			$data = Global_Class_Data_Normalizer::normalize_style_fields( $item );
 			$post->update_data( $data );
 			$post->update_label( $item['label'] );
 			clean_post_cache( $post->get_post_id() );
@@ -395,18 +396,5 @@ class Global_Classes_Repository {
 		if ( function_exists( 'wp_cache_flush_runtime' ) ) {
 			wp_cache_flush_runtime();
 		}
-	}
-
-	private function build_class_data_for_storage( array $item ): array {
-		$data = [
-			'type' => $item['type'] ?? 'class',
-			'variants' => $item['variants'] ?? [],
-		];
-
-		if ( array_key_exists( 'sync_to_v3', $item ) ) {
-			$data['sync_to_v3'] = (bool) $item['sync_to_v3'];
-		}
-
-		return $data;
 	}
 }

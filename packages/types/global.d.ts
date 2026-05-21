@@ -101,6 +101,9 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 			config?: {
+				angie?: {
+					autoShow?: boolean;
+				};
 				controls?: {
 					font?: {
 						groups?: Record< string, string >;
@@ -170,18 +173,15 @@ declare global {
 				siteTitle: string;
 				siteAbout: unknown;
 			};
-			connectAuth?: {
-					signature: string;
-					accessToken: string;
-					clientId: string;
-					homeUrl: string;
-					siteKey: string;
-				};
-			};
+		};
 		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 		ElementorVariablesQuotaConfig?: Record< string, number >;
 		ElementorVariablesQuotaConfigExtended?: Record< string, number >;
+		wpApiSettings?: {
+			root: string;
+			nonce: string;
+		};
 	}
 }
 
