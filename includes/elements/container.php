@@ -209,9 +209,7 @@ class Container extends Element_Base {
 			return;
 		}
 
-		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
-
-		$is_embed_video = null !== $video_properties && in_array( $video_properties['provider'], $video_embed_providers, true );
+		$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 		$this->add_render_attribute(
 			'background-video-container',

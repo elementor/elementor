@@ -1472,7 +1472,6 @@ class Element_Section extends Element_Base {
 	 */
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
-		$video_embed_providers = [ 'youtube', 'vimeo' ];
 		?>
 		<<?php
 			// PHPCS - the method get_html_tag is safe.
@@ -1480,10 +1479,8 @@ class Element_Section extends Element_Base {
 		?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
-				if ( $settings['background_video_link'] ) :
-					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
-
-					$is_embed_video = null !== $video_properties && in_array( $video_properties['provider'], $video_embed_providers, true );
+				if ( $settings['background_video_link'] ) :					
+					$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 					$this->add_render_attribute(
 						'background-video-container',
