@@ -199,7 +199,7 @@ class Container extends Element_Base {
 		// frontend handler only mounts YouTube/Vimeo players on .elementor-background-video-embed.
 		// Dailymotion and VideoPress must render .elementor-background-video-hosted so activate()
 		// can set the video src instead of querying a missing hosted element.
-		$background_video_embed_providers = [ 'youtube', 'vimeo' ];
+		$video_embed_providers = [ 'youtube', 'vimeo' ];
 
 		if ( 'video' !== $settings['background_background'] ) {
 			return;
@@ -211,7 +211,7 @@ class Container extends Element_Base {
 
 		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 
-		$is_embed_video = null !== $video_properties && in_array( $video_properties['provider'], $background_video_embed_providers, true );
+		$is_embed_video = null !== $video_properties && in_array( $video_properties['provider'], $video_embed_providers, true );
 
 		$this->add_render_attribute(
 			'background-video-container',
