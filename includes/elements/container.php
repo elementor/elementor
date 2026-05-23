@@ -195,6 +195,12 @@ class Container extends Element_Base {
 	protected function render_video_background() {
 		$settings = $this->get_settings_for_display();
 
+		// Embed::get_video_properties() recognizes four providers, but the background-video
+		// frontend handler only mounts YouTube/Vimeo players on .elementor-background-video-embed.
+		// Dailymotion and VideoPress must render .elementor-background-video-hosted so activate()
+		// can set the video src instead of querying a missing hosted element.
+		$background_video_embed_providers = [ 'youtube', 'vimeo' ];
+
 		if ( 'video' !== $settings['background_background'] ) {
 			return;
 		}
@@ -204,6 +210,8 @@ class Container extends Element_Base {
 		}
 
 		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+
+		$is_embed_video = null !== $video_properties && in_array( $video_properties['provider'], $background_video_embed_providers, true );
 
 		$this->add_render_attribute(
 			'background-video-container',
@@ -217,7 +225,7 @@ class Container extends Element_Base {
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
-			<?php if ( $video_properties ) : ?>
+			<?php if ( $is_embed_video ) : ?>
 				<div class="elementor-background-video-embed" role="presentation"></div>
 				<?php
 			else :
