@@ -1479,7 +1479,7 @@ class Element_Section extends Element_Base {
 		?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
-				if ( $settings['background_video_link'] ) :					
+				if ( $settings['background_video_link'] ) :
 					$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 					$this->add_render_attribute(
