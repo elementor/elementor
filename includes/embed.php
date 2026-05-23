@@ -25,7 +25,6 @@ class Embed {
 	 * get_video_properties() — the frontend background-video handler only mounts
 	 * YouTube/Vimeo players, so other providers must fall through to hosted rendering.
 	 *
-	 * @since 3.x.x
 	 * @access private
 	 * @static
 	 *
@@ -112,7 +111,7 @@ class Embed {
 	 * background-video handler renders as an embedded iframe player.
 	 *
 	 * @param string $video_url Video URL.
-	 * 
+	 *
 	 * @return bool
 	 **/
 	public static function is_embed_video( $video_url ) {
@@ -120,7 +119,7 @@ class Embed {
 
 		return null !== $video_properties && in_array( $video_properties['provider'], self::$video_embed_providers, true );
 	}
-	
+
 	/**
 	 * Get embed URL.
 	 *
