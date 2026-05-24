@@ -56,6 +56,33 @@ class Module extends BaseModule {
 	}
 
 	private function register_hooks() {
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_assets' ], PHP_INT_MAX);
+
 		return $this;
+	}
+
+	public function enqueue_assets() {
+		wp_enqueue_script(
+			self::MODULE_NAME,
+			$this->get_js_assets_url( self::MODULE_NAME ),
+			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			self::MODULE_NAME,
+			'elementorAssetsManager',
+			[
+				'styles' => [
+					'map' => $this->style_assets->assets_map(),
+					'priority_queue' => $this->style_assets->priority_queue(),
+				],
+				'scripts' => [
+					'map' => $this->script_assets->assets_map(),
+					'priority_queue' => $this->script_assets->priority_queue(),
+				],
+			]
+		);
 	}
 }

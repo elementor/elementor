@@ -15,12 +15,19 @@ class Assets {
 		$this->assets_map = [];
 	}
 
-	public function append( $handle, $dependencies = [] ) {
+	public function append( $handle, $uri, $dependencies = [], $options = [] ) {
 		if ( ! array_key_exists( $handle, $this->assets_map ) ) {
-			$this->assets_map[ $handle ] = [];
+			$this->assets_map[ $handle ] = [
+				'uri' => $uri,
+				'options' => $options,
+			];
 			$this->assets[ $handle ] = $dependencies;
 		}
 		return $this;
+	}
+
+	public function assets_map() {
+		return $this->assets_map;
 	}
 
 	public function priority_queue() {
