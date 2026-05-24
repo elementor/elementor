@@ -104,11 +104,15 @@ class Global_Classes_Repository {
 			return [];
 		}
 
+		$post_ids = Global_Classes_Post_IDs::make( $this->get_kit() )->get_post_ids( $class_ids );
 		$items = [];
 
-		foreach ( $this->iterate_class_posts_for_ids( $class_ids ) as $class_post ) {
-			$class_data = $class_post->to_array();
-			$items[ $class_data['id'] ] = $class_data;
+		foreach ( $post_ids as $class_id => $post_id ) {
+			$post = Global_Class_Post::from_post_id( $post_id, $this->is_preview() );
+
+			if ( $post ) {
+				$items[ $class_id ] = $post->to_array();
+			}
 		}
 
 		return $items;
@@ -302,26 +306,11 @@ class Global_Classes_Repository {
 				],
 			] );
 
-			$seen_class_ids = [];
-
 			foreach ( $posts as $post ) {
-				$class_id = get_post_meta( $post->ID, Global_Class_Post::META_KEY_ID, true );
-
-				if ( $class_id && isset( $seen_class_ids[ $class_id ] ) ) {
-					// if for some reason there's already a post meta to that class - delete any other ones
-					// otherwise we may end up updating a stale post meta
-					wp_delete_post( $post->ID, true );
-					continue;
-				}
-
-				if ( $class_id ) {
-					$seen_class_ids[ $class_id ] = true;
-				}
-
 				yield Global_Class_Post::from_post( $post, $this->is_preview() );
 				clean_post_cache( $post->ID );
 			}
-			unset( $posts, $seen_class_ids );
+			unset( $posts );
 			$this->flush_runtime_cache();
 		}
 	}

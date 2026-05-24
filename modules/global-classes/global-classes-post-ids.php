@@ -2,9 +2,11 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -39,20 +41,41 @@ class Global_Classes_Post_IDs {
 			return;
 		}
 
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit_ids = get_posts( [
+			'post_type'              => Source_Local::CPT,
+			'post_status'            => 'any',
+			'fields'                 => 'ids',
+			'posts_per_page'         => -1,
+			'no_found_rows'          => true,
+			'update_post_meta_cache' => false,
+			'meta_query'             => [
+				[
+					'key'   => Document::TYPE_META_KEY,
+					'value' => 'kit',
+				],
+			],
+		] );
 
-		if ( ! $kit ) {
-			return;
+		foreach ( $kit_ids as $kit_id ) {
+			$kit = Plugin::$instance->kits_manager->get_kit( $kit_id );
+
+			if ( $kit ) {
+				self::make( $kit )->remove_post_id( $post_id );
+			}
 		}
-
-		self::make( $kit )->remove_post_id( $post_id );
 	}
 
 	public function get_post_id( string $class_id ): ?int {
 		$map = $this->read_map();
 
 		if ( isset( $map[ $class_id ] ) ) {
-			return (int) $map[ $class_id ];
+			$post_id = (int) $map[ $class_id ];
+
+			if ( get_post( $post_id ) ) {
+				return $post_id;
+			}
+
+			$this->remove_post_id( $post_id );
 		}
 
 		$resolved = $this->backfill( [ $class_id ] );
@@ -70,8 +93,15 @@ class Global_Classes_Post_IDs {
 		$missing = [];
 
 		foreach ( $class_ids as $class_id ) {
-			if ( isset( $map[ $class_id ] ) ) {
-				$resolved[ $class_id ] = (int) $map[ $class_id ];
+			if ( ! isset( $map[ $class_id ] ) ) {
+				$missing[] = $class_id;
+				continue;
+			}
+
+			$post_id = (int) $map[ $class_id ];
+
+			if ( get_post( $post_id ) ) {
+				$resolved[ $class_id ] = $post_id;
 			} else {
 				$missing[] = $class_id;
 			}
@@ -178,10 +208,23 @@ class Global_Classes_Post_IDs {
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $sql is already prepared via $wpdb->prepare() above.
 		$rows = $wpdb->get_results( $sql );
-		$resolved = [];
+
+		$candidates = [];
 
 		foreach ( $rows as $row ) {
-			$resolved[ (string) $row->meta_value ] = (int) $row->post_id;
+			$candidates[ (string) $row->meta_value ][] = (int) $row->post_id;
+		}
+
+		$resolved = [];
+
+		foreach ( $candidates as $class_id => $post_ids ) {
+			sort( $post_ids );
+			$resolved[ $class_id ] = $post_ids[0];
+			$duplicates = array_slice( $post_ids, 1 );
+
+			foreach ( $duplicates as $duplicate_id ) {
+				wp_delete_post( $duplicate_id, true );
+			}
 		}
 
 		return $resolved;
