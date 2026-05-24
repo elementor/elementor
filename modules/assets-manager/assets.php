@@ -8,8 +8,73 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Assets {
 	private $assets;
+	private $assets_map;
 
 	public function __construct() {
 		$this->assets = [];
+		$this->assets_map = [];
+	}
+
+	public function append( $handle, $dependencies = [] ) {
+		if ( ! array_key_exists( $handle, $this->assets_map ) ) {
+			$this->assets_map[ $handle ] = [];
+			$this->assets[ $handle ] = $dependencies;
+		}
+		return $this;
+	}
+
+	public function priority_queue() {
+		$graph = [];
+		$inDegree = [];
+
+		foreach ( $this->assets as $handle => $dependencies ) {
+			if ( ! array_key_exists( $handle, $inDegree ) ) {
+				$inDegree[ $handle ] = 0;
+			}
+
+			foreach ( $dependencies as $dependency ) {
+				if ( ! array_key_exists( $dependency, $graph ) ) {
+					$graph[ $dependency ] = [];
+				}
+
+				$graph[ $dependency ][] = $handle;
+
+				$inDegree[ $handle ]++;
+
+				if ( ! array_key_exists( $dependency, $inDegree ) ) {
+					$inDegree[ $dependency ] = 0;
+				}
+			}
+		}
+
+		$queue = new \SplQueue();
+
+		foreach ( $inDegree as $handle => $count ) {
+			if ( 0 === $count ) {
+				$queue->enqueue( $handle );
+			}
+		}
+
+		$priority_queue = [];
+
+		while ( ! $queue->isEmpty() ) {
+			$current = $queue->dequeue();
+
+			$priority_queue[] = $current;
+
+			if ( ! array_key_exists( $current, $graph ) ) {
+				continue;
+			}
+
+			foreach ( $graph[ $current ] as $next ) {
+				$inDegree[ $next ]--;
+
+				if ( 0 === $inDegree[ $next ] ) {
+					$queue->enqueue( $next );
+				}
+			}
+		}
+
+		return $priority_queue;
 	}
 }

@@ -14,7 +14,8 @@ class Module extends BaseModule {
 	const MODULE_NAME = 'assets-manager';
 	const EXPERIMENT_NAME = 'e_assets_manager';
 
-	private $assets;
+	private $style_assets;
+	private $script_assets;
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -48,7 +49,9 @@ class Module extends BaseModule {
 	}
 
 	private function init() {
-		$this->assets = new Assets();
+		$this->style_assets = new Assets();
+		$this->script_assets = new Assets();
+
 		return $this;
 	}
 
