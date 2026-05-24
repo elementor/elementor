@@ -46,6 +46,7 @@ class Plugin {
 	private const SANITIZABLE_META_KEYS = [
 		'_elementor_data',
 		'_elementor_page_settings',
+		'_elementor_global_class_data',
 	];
 
 	/**
