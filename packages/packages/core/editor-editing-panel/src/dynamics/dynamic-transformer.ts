@@ -53,8 +53,11 @@ function getDynamicValue( name: string, settings: Record< string, unknown > ) {
 	}
 
 	return new Promise( ( resolve ) => {
-		dynamicTags.refreshCacheFromServer( () => {
-			resolve( getTagValue() );
-		} );
+		dynamicTags.refreshCacheFromServer(
+			() => {
+				resolve( getTagValue() );
+			},
+			{ disableCache: true }
+		);
 	} );
 }
