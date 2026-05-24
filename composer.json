@@ -22,6 +22,7 @@
             "vendor_prefixed/"
         ]
     },
+	
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.10.2",
         "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
