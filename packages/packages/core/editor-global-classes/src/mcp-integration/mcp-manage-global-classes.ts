@@ -26,25 +26,37 @@ const schema = {
 		default: z
 			.record(
 				z.string().describe( 'The style property name' ),
-				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` ),
-				z.any()
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
 			)
-			.describe( 'An object record containing style property names and their new values. MUST contain at least one property — empty objects are rejected.' ),
+			.describe(
+				'An object record containing style property names and their new values. MUST contain at least one property — empty objects are rejected.'
+			),
 		hover: z
-		.record(
-			z.string().describe( 'The style property name' ),
-			z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` ),
-			z.any()
-		)
-		.describe( 'An object record containing style property names and their new values to be set on the element. for :hover css state. optional' )
-		.optional(),
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :hover css state. optional'
+			)
+			.optional(),
 		focus: z
-			.record( z.string().describe( 'The style property name' ), z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` ), z.any() )
-			.describe( 'An object record containing style property names and their new values to be set on the element. for :focus css state. optional' )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :focus css state. optional'
+			)
 			.optional(),
 		active: z
-			.record( z.string().describe( 'The style property name' ), z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` ), z.any() )
-			.describe( 'An object record containing style property names and their new values to be set on the element. for :active css state. optional' )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :active css state. optional'
+			)
 			.optional(),
 	} ),
 	breakpoint: z
@@ -117,14 +129,20 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 			( stateProps ) => Object.keys( stateProps ).length > 0
 		);
 		if ( ! hasAnyProps ) {
-			throw new Error( `Props must not be empty. Each prop must be a PropValue object from the style schema.\n\nExample: { "display": { "$$type": "string", "value": "flex" }, "flex-direction": { "$$type": "string", "value": "column" } }\n\n${STYLE_SCHEMA_FULL_URI} to get the allowed values (look at the "value" enum in the schema response), then construct { "$$type": "string", "value": "<chosen value>" } for each property.\nAvailable Properties: ${ validProps.join( ', ' ) }` );
+			throw new Error(
+				`Props must not be empty. Each prop must be a PropValue object from the style schema.\n\nExample: { "display": { "$$type": "string", "value": "flex" }, "flex-direction": { "$$type": "string", "value": "column" } }\n\n${ STYLE_SCHEMA_FULL_URI } to get the allowed values (look at the "value" enum in the schema response), then construct { "$$type": "string", "value": "<chosen value>" } for each property.\nAvailable Properties: ${ validProps.join(
+					', '
+				) }`
+			);
 		}
 	}
 
 	if ( errors.length > 0 ) {
-		throw new Error( `Validation errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
-			', '
-		) }\nUpdate your input and try again.` );
+		throw new Error(
+			`Validation errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
+				', '
+			) }\nUpdate your input and try again.`
+		);
 	}
 
 	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
@@ -146,6 +164,17 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	} as { status: 'error' | 'ok'; message?: string; classId?: string };
 
 	try {
+		if ( action === 'delete' ) {
+			const deleted = await attemptDelete( {
+				classId,
+				stylesProvider: globalClassesStylesProvider,
+			} );
+			if ( deleted ) {
+				return { status: 'ok', message: `deleted global class with ID ${ classId }` };
+			}
+			throw new Error( 'error deleting class' );
+		}
+
 		let currentAction = action;
 		for await ( const [ state, props ] of Object.entries( propsWithStates ) ) {
 			switch ( currentAction ) {
@@ -183,17 +212,6 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 						throw new Error( 'error modifying class' );
 					}
 					break;
-				case 'delete':
-					const deleted = await attemptDelete( {
-						classId,
-						stylesProvider: globalClassesStylesProvider,
-					} );
-					if ( deleted ) {
-						result = { status: 'ok', message: `deleted global class with ID ${ classId }` };
-					} else {
-						throw new Error( 'error deleting class' );
-					}
-					break;
 				default:
 					throw new Error( `Unsupported action ${ action }` );
 			}
@@ -220,7 +238,7 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE applying them. Do NOT create classes for one-off styles.
 
 IMPORTANT: props must contain actual CSS property values — never pass empty objects.
-Fetch ${STYLE_SCHEMA_FULL_URI} to get the allowed values for each property, then use them to build the props object.
+Fetch ${ STYLE_SCHEMA_FULL_URI } to get the allowed values for each property, then use them to build the props object.
 
 Example — creating a flex column class:
 props.default = {
