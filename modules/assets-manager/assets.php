@@ -15,10 +15,10 @@ class Assets {
 		$this->assets_map = [];
 	}
 
-	public function append( $handle, $uri, $dependencies = [], $options = [] ) {
+	public function append( $handle, $uri, $dependencies = [], $version = '', $options = [] ) {
 		if ( ! array_key_exists( $handle, $this->assets_map ) ) {
 			$this->assets_map[ $handle ] = [
-				'uri' => $uri,
+				'uri' => $uri . ( $version ? '?ver=' . $version : '' ),
 				'options' => $options,
 			];
 			$this->assets[ $handle ] = $dependencies;

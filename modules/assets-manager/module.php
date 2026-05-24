@@ -62,12 +62,18 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_assets() {
+		do_action( 'elementor/assets-manager/register_styles', $this->style_assets );
+		do_action( 'elementor/assets-manager/register_scripts', $this->script_assets );
+
 		wp_enqueue_script(
 			self::MODULE_NAME,
 			$this->get_js_assets_url( self::MODULE_NAME ),
 			[],
 			ELEMENTOR_VERSION,
-			true
+			[
+				'in_footer' => true,
+				'strategy' => 'defer',
+			]
 		);
 
 		wp_localize_script(
