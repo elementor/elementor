@@ -140,6 +140,24 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			true
 		);
 
+		add_action( 'elementor/assets-manager/register_scripts', function( $assets ) {
+			$assets->append(
+				'ace',
+				'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
+				[],
+				'1.43.2',
+				true
+			);
+
+			$assets->append(
+				'ace-language-tools',
+				'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
+				[ 'ace' ],
+				'1.43.2',
+				true
+			);
+		} );
+
 		wp_register_script(
 			'elementor-editor',
 			"{$assets_url}js/editor{$min_suffix}.js",
@@ -157,8 +175,8 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'heartbeat',
 				'jquery-elementor-select2',
 				'flatpickr',
-				'ace',
-				'ace-language-tools',
+				// 'ace',
+				// 'ace-language-tools',
 				'jquery-hover-intent',
 				'nouislider',
 				'pickr',

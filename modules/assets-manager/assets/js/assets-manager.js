@@ -2,7 +2,7 @@
 
 import { appendCss, appendJs } from './utils';
 
-function enqueueAssets( w, utils ) {
+async function enqueueAssets( w, utils ) {
 	const assets = w.elementorAssetsManager ?? {};
 
 	for ( const handle of assets.styles?.priority_queue ?? {} ) {
@@ -12,12 +12,12 @@ function enqueueAssets( w, utils ) {
 
 	for ( const handle of assets.scripts?.priority_queue ?? {} ) {
 		const { uri, options } = assets.scripts?.map?.[ handle ] ?? {};
-		utils.appendJs( handle, uri, options );
+		await utils.appendJs( handle, uri, options );
 	}
 }
 
 ( function( w ) {
-	w.addEventListener( 'load', () => {
-		enqueueAssets( w, { appendCss, appendJs } );
+	w.addEventListener( 'load', async () => {
+		await enqueueAssets( w, { appendCss, appendJs } );
 	} );
 } )( window );

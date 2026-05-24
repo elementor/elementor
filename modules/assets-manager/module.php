@@ -65,6 +65,8 @@ class Module extends BaseModule {
 		do_action( 'elementor/assets-manager/register_styles', $this->style_assets );
 		do_action( 'elementor/assets-manager/register_scripts', $this->script_assets );
 
+		$this->dequeue_assets();
+
 		wp_enqueue_script(
 			self::MODULE_NAME,
 			$this->get_js_assets_url( self::MODULE_NAME ),
@@ -90,5 +92,17 @@ class Module extends BaseModule {
 				],
 			]
 		);
+	}
+
+	private function dequeue_assets() {
+		foreach ( array_keys( $this->style_assets->assets_map() ) as $handle ) {
+			wp_dequeue_style( $handle );
+		}
+
+		foreach ( array_keys( $this->script_assets->assets_map() ) as $handle ) {
+			wp_dequeue_script( $handle );
+		}
+
+		return $this;
 	}
 }
