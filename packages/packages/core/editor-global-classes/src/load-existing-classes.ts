@@ -40,10 +40,8 @@ async function fetchAndMergeClasses(): Promise< void > {
 		return;
 	}
 
-	const [ previewResponse, frontendResponse ] = await Promise.all( [
-		apiClient.getStylesByIds( idsToFetch, 'preview' ),
-		apiClient.getStylesByIds( idsToFetch, 'frontend' ),
-	] );
+	const previewResponse = await apiClient.getStylesByIds( idsToFetch, 'preview' );
+	const frontendResponse = await apiClient.getStylesByIds( idsToFetch, 'frontend' );
 	const previewItems = styleDefinitionsMapWithoutNull( previewResponse.data.data );
 	const frontendItems = styleDefinitionsMapWithoutNull( frontendResponse.data.data );
 

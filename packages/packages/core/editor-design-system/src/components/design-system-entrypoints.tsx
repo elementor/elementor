@@ -1,15 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+	__useActiveDocument as useActiveDocument,
+	__useActiveDocumentActions as useActiveDocumentActions,
+} from '@elementor/editor-documents';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import {
 	__privateListenTo as listenTo,
 	__privateOpenRoute as openRoute,
 	routeOpenEvent,
 } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
 
 import { usePanelActions, usePanelStatus } from '../design-system-panel';
 import { type DesignSystemTab, getActiveDesignSystemTab, setPendingDesignSystemTab } from '../initial-tab';
 
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
-
 const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
 const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
 const EVENT_TOGGLE = 'elementor/toggle-design-system';
@@ -23,6 +29,44 @@ const LEGACY_VARIABLES_PANEL = 'variables-manager';
 export function DesignSystemEntrypoints() {
 	const { open, close } = usePanelActions();
 	const { isOpen } = usePanelStatus();
+
+	const document = useActiveDocument();
+	const { save: saveDocument } = useActiveDocumentActions();
+	const { open: openSaveDialog, close: closeSaveDialog, isOpen: isSaveDialogOpen } = useDialog();
+
+	const documentRef = useRef( document );
+	documentRef.current = document;
+
+	const pendingOpenRef = useRef< ( () => void ) | null >( null );
+
+	const gatedOpen = useCallback(
+		( onClean: () => void ) => {
+			if ( documentRef.current?.isDirty ) {
+				pendingOpenRef.current = onClean;
+				openSaveDialog();
+				return;
+			}
+
+			onClean();
+		},
+		[ openSaveDialog ]
+	);
+
+	const handleSaveAndContinue = useCallback( async () => {
+		try {
+			await saveDocument();
+			closeSaveDialog();
+			pendingOpenRef.current?.();
+			pendingOpenRef.current = null;
+		} catch {
+			// Keep dialog open;
+		}
+	}, [ saveDocument, closeSaveDialog ] );
+
+	const handleStayHere = useCallback( () => {
+		closeSaveDialog();
+		pendingOpenRef.current = null;
+	}, [ closeSaveDialog ] );
 
 	const isOpenRef = useRef( isOpen );
 	isOpenRef.current = isOpen;
@@ -44,7 +88,11 @@ export function DesignSystemEntrypoints() {
 				return;
 			}
 
-			window.dispatchEvent( new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES ) );
+			gatedOpen( () => {
+				window.dispatchEvent(
+					new CustomEvent( tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES )
+				);
+			} );
 		};
 
 		window.addEventListener( EVENT_TOGGLE, handler as EventListener );
@@ -52,7 +100,7 @@ export function DesignSystemEntrypoints() {
 		return () => {
 			window.removeEventListener( EVENT_TOGGLE, handler as EventListener );
 		};
-	}, [ close ] );
+	}, [ close, gatedOpen ] );
 
 	const pendingTabRef = useRef< DesignSystemTab | null >( null );
 	const [ readyToOpenFromEvent, setReadyToOpenFromEvent ] = useState( false );
@@ -130,12 +178,38 @@ export function DesignSystemEntrypoints() {
 				if ( targetTab ) {
 					setPendingDesignSystemTab( targetTab );
 				}
-				void open();
+				gatedOpen( () => void open() );
 			} );
 		} );
 
 		return cleanup;
-	}, [ open ] );
+	}, [ open, gatedOpen ] );
 
-	return null;
+	return isSaveDialogOpen ? (
+		<ThemeProvider>
+			<SaveChangesDialog>
+				<SaveChangesDialog.Title>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
+				<SaveChangesDialog.Content>
+					<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
+						{ __(
+							"To open the Design System, save your page first. You can't continue without saving.",
+							'elementor'
+						) }
+					</SaveChangesDialog.ContentText>
+				</SaveChangesDialog.Content>
+				<SaveChangesDialog.Actions
+					actions={ {
+						cancel: {
+							label: __( 'Stay here', 'elementor' ),
+							action: handleStayHere,
+						},
+						confirm: {
+							label: __( 'Save & Continue', 'elementor' ),
+							action: handleSaveAndContinue,
+						},
+					} }
+				/>
+			</SaveChangesDialog>
+		</ThemeProvider>
+	) : null;
 }
