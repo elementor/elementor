@@ -431,6 +431,16 @@ class Icons_Manager {
 		return $element;
 	}
 
+	public static function get_library_style_handle( string $library ): string {
+		$tabs = self::get_icon_manager_tabs();
+
+		if ( ! isset( $tabs[ $library ]['name'] ) ) {
+			return '';
+		}
+
+		return 'elementor-icons-' . $tabs[ $library ]['name'];
+	}
+
 	public static function is_migration_allowed() {
 		static $migration_allowed = false;
 		if ( false === $migration_allowed ) {
