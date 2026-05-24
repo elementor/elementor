@@ -1,4 +1,4 @@
-import { type McpServer, callWpApi } from '@elementor/elementor-mcp-common';
+import { callWpApi, type McpServer } from '@elementor/elementor-mcp-common';
 
 type WPPage = {
 	id: number;
