@@ -20,11 +20,12 @@ import {
 	FormControlLabel,
 	IconButton,
 	Image,
-	Link,
 	Stack,
 	Typography,
 } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
+
+import { interpolateLinks } from '../interpolate-links';
 
 type ShowModalEventDetail = {
 	prompt?: string;
@@ -150,24 +151,24 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 										}
 										label={
 											<Typography variant="body2" color="text.secondary">
-												{ __( 'I agree to the', 'elementor' ) }
-												<Link
-													sx={ { px: 0.5 } }
-													href="https://elementor.com/terms/angie-terms-conditions/"
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													{ __( 'Terms', 'elementor' ) }
-												</Link>
-												{ __( '&', 'elementor' ) }
-												<Link
-													sx={ { px: 0.5 } }
-													href="https://elementor.com/about/privacy/"
-													target="_blank"
-													rel="noopener noreferrer"
-												>
-													{ __( 'Privacy Policy.', 'elementor' ) }
-												</Link>
+												{ interpolateLinks(
+													sprintf(
+														// translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
+														__( 'I agree to the %1$s & %2$s.', 'elementor' ),
+														'{{terms}}',
+														'{{privacy}}'
+													),
+													{
+														terms: {
+															label: __( 'Terms', 'elementor' ),
+															href: 'https://elementor.com/terms/angie-terms-conditions/',
+														},
+														privacy: {
+															label: __( 'Privacy Policy', 'elementor' ),
+															href: 'https://elementor.com/about/privacy/',
+														},
+													}
+												) }
 											</Typography>
 										}
 									/>
