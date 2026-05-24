@@ -181,6 +181,81 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
 		$this->assertEquals( $expected, $elements_data_2 );
 	}
 
+	public function test_deleted_global_classes_via_apply_changes() {
+		// Arrange.
+		( new Global_Classes_Cleanup() )->register_hooks();
+
+		$post_id_1 = $this->make_mock_post_with_elements( $this->mock_elementor_data );
+		$post_id_2 = $this->make_mock_post_with_elements( $this->mock_elementor_data );
+
+		$this->index_relations( $post_id_1, [ 'g-4-123', 'g-4-124' ] );
+		$this->index_relations( $post_id_2, [ 'g-4-123', 'g-4-124' ] );
+
+		$remaining_item = $this->mock_global_classes['items']['g-4-124'];
+
+		// Act - editor/API path uses apply_changes(), not put().
+		Global_Classes_Repository::make()->apply_changes(
+			[ 'g-4-124' => $remaining_item ],
+			[
+				'added' => [],
+				'deleted' => [ 'g-4-123' ],
+				'modified' => [],
+				'order' => false,
+			],
+			[ 'g-4-124' ]
+		);
+
+		// Assert.
+		$document_1 = Plugin::$instance->documents->get( $post_id_1 );
+		$elements_data_1 = $document_1->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+
+		$document_2 = Plugin::$instance->documents->get( $post_id_2 );
+		$elements_data_2 = $document_2->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+
+		$expected = [
+			[
+				'id' => 'abc123',
+				'elType' => 'e-div-block',
+				'settings' => [
+					'classes' => [
+						'value' => ['e-4-124']
+					]
+				],
+				'elements' => [
+					[
+						'id' => 'def456',
+						'elType' => 'e-div-block',
+						'settings' => [
+							'classes' => [
+								'value' => ['g-4-124', 'e-4-1222']
+							]
+						],
+						'elements' => [
+							[
+								'id' => 'ghi789',
+								'elType' => 'e-heading',
+								'settings' => [
+									'classes' => [
+										'value' => ['e-4-1222']
+									]
+								],
+							],
+							[
+								'id' => 'jkl10122',
+								'elType' => 'widget',
+								'widgetType' => 'e-heading',
+								'settings' => [],
+							]
+						],
+					],
+				],
+			],
+		];
+
+		$this->assertEquals( $expected, $elements_data_1 );
+		$this->assertEquals( $expected, $elements_data_2 );
+	}
+
 	private function make_mock_post_with_elements( array $elements_data ): int {
 		$document = $this->factory()->documents->create_and_get( [
 			'post_title' => 'Test Post',

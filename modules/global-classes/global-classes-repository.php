@@ -136,6 +136,8 @@ class Global_Classes_Repository {
 			}
 		}
 
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $to_delete );
+
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
 		$classes_order = Global_Classes_Order::make( $this->get_kit() );
@@ -162,6 +164,16 @@ class Global_Classes_Repository {
 			'modified' => $to_update,
 			'order' => $order_changed,
 		] );
+
+		if ( ! empty( $to_delete ) && ! $is_preview ) {
+			do_action(
+				'elementor/global_classes/cleanup',
+				[
+					'styles_ids' => $to_delete,
+					'post_ids' => $affected_post_ids,
+				]
+			);
+		}
 	}
 
 	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {
