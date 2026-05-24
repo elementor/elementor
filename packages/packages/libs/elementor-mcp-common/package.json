@@ -41,5 +41,7 @@
   "devDependencies": {
     "tsup": "^8.3.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.27.1"
+  }
 }
