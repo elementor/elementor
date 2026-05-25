@@ -16,7 +16,7 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Resolve PR context and Build run
         id: runctx
@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload Playground plugin artifact
         id: playground-artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
           path: plugin-root
