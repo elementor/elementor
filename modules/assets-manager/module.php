@@ -56,16 +56,16 @@ class Module extends BaseModule {
 	}
 
 	private function register_hooks() {
-		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX );
 
-		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
-		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX );
+		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX );
 
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
-		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX );
+		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX );
 
-		add_action( 'elementor/editor/footer', [ $this, 'manage_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/editor/footer', [ $this, 'manage_assets' ], PHP_INT_MAX );
 
 		return $this;
 	}
