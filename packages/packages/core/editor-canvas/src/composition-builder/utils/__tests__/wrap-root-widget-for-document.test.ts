@@ -17,12 +17,14 @@ const HEADING_MODEL: V1ElementModelProps = {
 
 describe( 'wrapRootWidgetForDocumentParent', () => {
 	it( 'wraps a root-level widget when parent is document', () => {
+		// Act
 		const { model, wrapped } = wrapRootWidgetForDocumentParent(
 			HEADING_MODEL,
 			DOCUMENT_EL_TYPE,
 			() => 'wrapper-id'
 		);
 
+		// Assert
 		expect( wrapped ).toBe( true );
 		expect( model.elType ).toBe( DEFAULT_DOCUMENT_WIDGET_WRAPPER );
 		expect( model.id ).toBe( 'wrapper-id' );
@@ -30,13 +32,16 @@ describe( 'wrapRootWidgetForDocumentParent', () => {
 	} );
 
 	it( 'does not wrap when parent is not document', () => {
+		// Act
 		const { model, wrapped } = wrapRootWidgetForDocumentParent( HEADING_MODEL, 'e-div-block', () => 'wrapper-id' );
 
+		// Assert
 		expect( wrapped ).toBe( false );
 		expect( model ).toBe( HEADING_MODEL );
 	} );
 
 	it( 'does not wrap layout elements on document', () => {
+		// Arrange
 		const divBlock: V1ElementModelProps = {
 			id: 'div-id',
 			elType: 'e-div-block',
@@ -44,8 +49,10 @@ describe( 'wrapRootWidgetForDocumentParent', () => {
 			elements: [],
 		};
 
+		// Act
 		const { model, wrapped } = wrapRootWidgetForDocumentParent( divBlock, DOCUMENT_EL_TYPE, () => 'wrapper-id' );
 
+		// Assert
 		expect( wrapped ).toBe( false );
 		expect( model ).toBe( divBlock );
 	} );
