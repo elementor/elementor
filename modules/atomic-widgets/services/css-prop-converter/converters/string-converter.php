@@ -47,7 +47,8 @@ class String_Converter extends Prop_Converter_Base {
 			'flex-end', 'left', 'right', 'anchor-center',
 		],
 		'align-content' => [
-			'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly',
+			'normal', 'stretch', 'center', 'start', 'end', 'flex-start', 'flex-end',
+			'baseline', 'space-between', 'space-around', 'space-evenly',
 		],
 		'align-items' => [
 			'normal', 'stretch', 'center', 'start', 'end', 'flex-start',

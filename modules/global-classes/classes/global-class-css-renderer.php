@@ -24,12 +24,13 @@ class Global_Class_Css_Renderer {
 			'block-end' => 'padding-bottom',
 			'inline-start' => 'padding-left',
 		],
-		'border-width' => [
-			'block-start' => 'border-top-width',
-			'inline-end' => 'border-right-width',
-			'block-end' => 'border-bottom-width',
-			'inline-start' => 'border-left-width',
-		],
+	];
+
+	private const BORDER_WIDTH_TO_PHYSICAL = [
+		'block-start' => 'border-top-width',
+		'inline-end' => 'border-right-width',
+		'block-end' => 'border-bottom-width',
+		'inline-start' => 'border-left-width',
 	];
 
 	private const BORDER_RADIUS_CORNERS = [
@@ -138,6 +139,9 @@ class Global_Class_Css_Renderer {
 			case 'dimensions':
 				return $this->render_dimensions( $property, $prop['value'] ?? null );
 
+			case 'border-width':
+				return $this->render_border_width( $prop['value'] ?? null );
+
 			case 'border-radius':
 				return $this->render_border_radius( $prop['value'] ?? null );
 
@@ -149,6 +153,9 @@ class Global_Class_Css_Renderer {
 
 			case 'box-shadow':
 				return $this->simple( $property, $this->render_box_shadow( $prop['value'] ?? null ) );
+
+			case 'layout-direction':
+				return $this->render_layout_direction( $prop['value'] ?? null );
 		}
 
 		return [];
@@ -237,6 +244,76 @@ class Global_Class_Css_Renderer {
 		}
 
 		return $lines;
+	}
+
+	private function render_border_width( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$rendered_sides = [];
+
+		foreach ( self::BORDER_WIDTH_TO_PHYSICAL as $logical => $physical ) {
+			$side = $value[ $logical ] ?? null;
+
+			if ( ! is_array( $side ) || ( $side['$$type'] ?? null ) !== 'size' ) {
+				continue;
+			}
+
+			$rendered = $this->render_size( $side['value'] ?? null );
+
+			if ( null === $rendered ) {
+				continue;
+			}
+
+			$rendered_sides[ $physical ] = $rendered;
+		}
+
+		if ( count( $rendered_sides ) === 4 && count( array_unique( $rendered_sides ) ) === 1 ) {
+			return [ 'border-width: ' . reset( $rendered_sides ) . ';' ];
+		}
+
+		$lines = [];
+
+		foreach ( $rendered_sides as $physical => $rendered ) {
+			$lines[] = $physical . ': ' . $rendered . ';';
+		}
+
+		return $lines;
+	}
+
+	private function render_layout_direction( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$row_prop = $value['row'] ?? null;
+		$column_prop = $value['column'] ?? null;
+
+		$row = ( is_array( $row_prop ) && ( $row_prop['$$type'] ?? null ) === 'size' )
+			? $this->render_size( $row_prop['value'] ?? null )
+			: null;
+		$column = ( is_array( $column_prop ) && ( $column_prop['$$type'] ?? null ) === 'size' )
+			? $this->render_size( $column_prop['value'] ?? null )
+			: null;
+
+		if ( null === $row && null === $column ) {
+			return [];
+		}
+
+		if ( null !== $row && null !== $column ) {
+			if ( $row === $column ) {
+				return [ 'gap: ' . $row . ';' ];
+			}
+
+			return [ 'gap: ' . $row . ' ' . $column . ';' ];
+		}
+
+		if ( null !== $row ) {
+			return [ 'row-gap: ' . $row . ';' ];
+		}
+
+		return [ 'column-gap: ' . $column . ';' ];
 	}
 
 	private function render_border_radius( $value ): array {

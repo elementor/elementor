@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Box_Sha
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Color_Converter;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Dimensions_Converter;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Flex_Converter;
+use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Gap_Converter;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Number_Converter;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\Size_Converter;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters\String_Converter;
@@ -31,6 +32,7 @@ class Css_Prop_Converter {
 			new Dimensions_Converter(),
 			new Border_Radius_Converter(),
 			new Flex_Converter(),
+			new Gap_Converter(),
 			new Background_Converter(),
 			new Box_Shadow_Converter(),
 		];

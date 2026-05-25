@@ -147,14 +147,14 @@ class Styles_Renderer {
 					call_user_func( $this->on_prop_transform, $prop, $value );
 				}
 
-				return $prop . ':' . $value . ';';
+				return $prop . ': ' . $value . ';';
 			} )
 			->implode( '' );
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
 		return ! empty( $custom_css['raw'] )
-			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			? Utils::decode_string( $custom_css['raw'], '' ) . "\n"
 			: '';
 	}
 

@@ -392,14 +392,19 @@ class Style_Schema {
 				'anchor-center',
 			] )->description( 'Defines how the browser distributes space between and around content items along the inline axis of a grid container. CSS values: center, start, end, flex-start, flex-end, left, right' ),
 			'align-content' => String_Prop_Type::make()->enum( [
+				'normal',
+				'stretch',
 				'center',
 				'start',
 				'end',
+				'flex-start',
+				'flex-end',
+				'baseline',
 				'space-between',
 				'space-around',
 				'space-evenly',
 			] )
-			->description( 'Aligns a flex container\'s lines within when there is extra space in the cross-axis. CSS values: center, start, end, space-between, space-around, space-evenly' ),
+			->description( 'Aligns a flex container\'s lines within when there is extra space in the cross-axis. CSS values: normal, stretch, center, start, end, flex-start, flex-end, baseline, space-between, space-around, space-evenly' ),
 			'align-items' => String_Prop_Type::make()->enum( [
 				'normal',
 				'stretch',

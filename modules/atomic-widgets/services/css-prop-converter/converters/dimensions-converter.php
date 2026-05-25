@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Prop_Converter_Base;
@@ -20,6 +21,13 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		'left' => 'inline-start',
 	];
 
+	private const LOGICAL_SIDES = [
+		'block-start',
+		'block-end',
+		'inline-start',
+		'inline-end',
+	];
+
 	private const FAMILIES = [
 		'margin' => 'margin',
 		'padding' => 'padding',
@@ -32,6 +40,10 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		foreach ( self::FAMILIES as $shorthand => $_ ) {
 			foreach ( array_keys( self::SIDE_TO_LOGICAL ) as $side ) {
 				$properties[] = $this->build_longhand( $shorthand, $side );
+			}
+
+			foreach ( self::LOGICAL_SIDES as $logical ) {
+				$properties[] = $this->build_longhand( $shorthand, $logical );
 			}
 		}
 
@@ -92,13 +104,23 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		$props = [];
 
 		foreach ( $buckets as $family => $sides ) {
-			$props[ $family ] = Dimensions_Prop_Type::generate( $this->build_dimensions_value( $sides ) );
+			$props[ $family ] = $this->wrap_for_family( $family, $sides );
 		}
 
 		return [
 			'props' => $props,
 			'unconverted' => $unconverted,
 		];
+	}
+
+	private function wrap_for_family( string $family, array $sides ): array {
+		$value = $this->build_sides_value( $sides );
+
+		if ( 'border-width' === $family ) {
+			return Border_Width_Prop_Type::generate( $value );
+		}
+
+		return Dimensions_Prop_Type::generate( $value );
 	}
 
 	private function resolve_family( string $property ): ?string {
@@ -109,6 +131,12 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		foreach ( self::FAMILIES as $shorthand => $family ) {
 			foreach ( array_keys( self::SIDE_TO_LOGICAL ) as $side ) {
 				if ( $property === $this->build_longhand( $shorthand, $side ) ) {
+					return $family;
+				}
+			}
+
+			foreach ( self::LOGICAL_SIDES as $logical ) {
+				if ( $property === $this->build_longhand( $shorthand, $logical ) ) {
 					return $family;
 				}
 			}
@@ -124,6 +152,12 @@ class Dimensions_Converter extends Prop_Converter_Base {
 
 		foreach ( self::SIDE_TO_LOGICAL as $side => $logical ) {
 			if ( $property === $this->build_longhand( $family, $side ) ) {
+				return $logical;
+			}
+		}
+
+		foreach ( self::LOGICAL_SIDES as $logical ) {
+			if ( $property === $this->build_longhand( $family, $logical ) ) {
 				return $logical;
 			}
 		}
@@ -192,7 +226,7 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		return null;
 	}
 
-	private function build_dimensions_value( array $sides ): array {
+	private function build_sides_value( array $sides ): array {
 		$value = [];
 
 		foreach ( [ 'block-start', 'inline-end', 'block-end', 'inline-start' ] as $key ) {
