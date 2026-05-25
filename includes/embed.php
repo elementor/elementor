@@ -17,6 +17,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Embed {
 
 	/**
+	 * Embeddable background video providers.
+	 *
+	 * Holds the list of providers whose background video is rendered as an embedded
+	 * iframe player (.elementor-background-video-embed) rather than a hosted <video>
+	 * element. This is intentionally a SUBSET of the providers recognized by
+	 * get_video_properties() — the frontend background-video handler only mounts
+	 * YouTube/Vimeo players, so other providers must fall through to hosted rendering.
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @var array Embeddable background video provider slugs.
+	 */
+	private static $video_embed_providers = [ 'youtube', 'vimeo' ];
+
+
+	/**
 	 * Provider match masks.
 	 *
 	 * Holds a list of supported providers with their URL structure in a regex format.
@@ -85,6 +102,22 @@ class Embed {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Is embeddable background video.
+	 *
+	 * Whether a given video URL belongs to a provider that the frontend
+	 * background-video handler renders as an embedded iframe player.
+	 *
+	 * @param string $video_url Video URL.
+	 *
+	 * @return bool
+	 **/
+	public static function is_embed_video( $video_url ) {
+		$video_properties = self::get_video_properties( $video_url );
+
+		return null !== $video_properties && in_array( $video_properties['provider'], self::$video_embed_providers, true );
 	}
 
 	/**

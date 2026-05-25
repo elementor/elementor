@@ -11,7 +11,7 @@ import {
 	setupTwigRenderer,
 	waitForChildrenToComplete,
 } from './twig-rendering-utils';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import { type ElementType, type ElementView, type LegacyWindow, type NestedTemplatedElementViewClass } from './types';
 
 export type NestedTemplatedElementConfig = TemplatedElementConfig & {
 	allowed_child_types?: string[];
@@ -90,7 +90,7 @@ export function createNestedTemplatedElementView( {
 	type,
 	renderer,
 	element,
-}: CreateNestedTemplatedElementViewOptions ): typeof ElementView {
+}: CreateNestedTemplatedElementViewOptions ): NestedTemplatedElementViewClass {
 	const legacyWindow = window as unknown as LegacyWindow;
 
 	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
@@ -396,5 +396,5 @@ export function createNestedTemplatedElementView( {
 
 			return originId ?? id;
 		},
-	} ) as unknown as typeof ElementView;
+	} ) as NestedTemplatedElementViewClass;
 }
