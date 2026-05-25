@@ -32,11 +32,11 @@ class Assets {
 
 	public function priority_queue() {
 		$graph = [];
-		$inDegree = [];
+		$in_degree = [];
 
 		foreach ( $this->assets as $handle => $dependencies ) {
-			if ( ! array_key_exists( $handle, $inDegree ) ) {
-				$inDegree[ $handle ] = 0;
+			if ( ! array_key_exists( $handle, $in_degree ) ) {
+				$in_degree[ $handle ] = 0;
 			}
 
 			foreach ( $dependencies as $dependency ) {
@@ -46,17 +46,17 @@ class Assets {
 
 				$graph[ $dependency ][] = $handle;
 
-				$inDegree[ $handle ]++;
+				$in_degree[ $handle ]++;
 
-				if ( ! array_key_exists( $dependency, $inDegree ) ) {
-					$inDegree[ $dependency ] = 0;
+				if ( ! array_key_exists( $dependency, $in_degree ) ) {
+					$in_degree[ $dependency ] = 0;
 				}
 			}
 		}
 
 		$queue = new \SplQueue();
 
-		foreach ( $inDegree as $handle => $count ) {
+		foreach ( $in_degree as $handle => $count ) {
 			if ( 0 === $count ) {
 				$queue->enqueue( $handle );
 			}
@@ -74,9 +74,9 @@ class Assets {
 			}
 
 			foreach ( $graph[ $current ] as $next ) {
-				$inDegree[ $next ]--;
+				$in_degree[ $next ]--;
 
-				if ( 0 === $inDegree[ $next ] ) {
+				if ( 0 === $in_degree[ $next ] ) {
 					$queue->enqueue( $next );
 				}
 			}
