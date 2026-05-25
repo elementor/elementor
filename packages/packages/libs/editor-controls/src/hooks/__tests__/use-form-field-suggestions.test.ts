@@ -24,8 +24,7 @@ function createFormFieldChild( id: string, widgetType: string, settings: Record<
 	const child = createMockChild( { id, elType: 'widget', widgetType } );
 
 	Object.entries( settings ).forEach( ( [ key, value ] ) => {
-		const settingValue =
-			typeof value === 'string' ? { $$type: 'string', value } : value;
+		const settingValue = typeof value === 'string' ? { $$type: 'string', value } : value;
 
 		child.settings.set( key, settingValue as never );
 	} );
