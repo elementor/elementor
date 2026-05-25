@@ -112,6 +112,14 @@ export default class extends Marionette.CompositeView {
 		return !! elementor.widgetsCache?.[ elType ]?.meta?.is_pro_promotion;
 	}
 
+	shouldShowChildrenInStructure() {
+		if ( this.isProPromotion() ) {
+			return false;
+		}
+
+		return elementor.hooks.applyFilters( 'navigator/element/show-children', true, this.model );
+	}
+
 	initialize() {
 		this.collection = this.isProPromotion()
 			? new Backbone.Collection()
@@ -124,6 +132,33 @@ export default class extends Marionette.CompositeView {
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
 		this.listenTo( this.model, 'title_external_change', this.onTitleExternalChange );
 		this.listenTo( this.model, 'navigator:add', this.onNavigatorAdd );
+
+		this._onRefreshChildrenRequest = this._onRefreshChildrenRequest.bind( this );
+		window.addEventListener( 'elementor/navigator/refresh-children', this._onRefreshChildrenRequest );
+	}
+
+	onDestroy() {
+		window.removeEventListener( 'elementor/navigator/refresh-children', this._onRefreshChildrenRequest );
+	}
+
+	_onRefreshChildrenRequest( event ) {
+		const targetId = event?.detail?.elementId;
+
+		if ( targetId && this.model.get( 'id' ) !== targetId ) {
+			return;
+		}
+
+		this.render();
+		this.syncNavigatorStructureState();
+		this.updateSelection();
+	}
+
+	addChild( child, ChildView, index ) {
+		if ( ! this.shouldShowChildrenInStructure() ) {
+			return;
+		}
+
+		return Marionette.CompositeView.prototype.addChild.call( this, child, ChildView, index );
 	}
 
 	onNavigatorAdd( childModel, options ) {
@@ -160,7 +195,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
-		if ( this.isProPromotion() ) {
+		if ( ! this.shouldShowChildrenInStructure() ) {
 			return false;
 		}
 
