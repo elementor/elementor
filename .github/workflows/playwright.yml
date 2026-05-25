@@ -93,7 +93,7 @@ jobs:
           - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set PHP_VERSION environment variable
         run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
@@ -102,10 +102,10 @@ jobs:
         uses: ScribeMD/docker-cache@0.5.0
         with:
           key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
       - name: Install dependencies
         run: |
@@ -227,7 +227,7 @@ jobs:
             PROJECT_ARG="--project=$BROWSER"
           fi
           npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()
         with:
@@ -235,7 +235,7 @@ jobs:
           path: allure-results
           if-no-files-found: ignore
           retention-days: 1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
@@ -252,15 +252,15 @@ jobs:
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set PHP_VERSION environment variable
         run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
       - name: Install dependencies
         run: |
@@ -339,7 +339,7 @@ jobs:
         run: |
           echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
           echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
           name: allure-report
@@ -354,7 +354,7 @@ jobs:
           destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}
           parent: false
           glob: '**'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-test-results-tagged-tests
@@ -372,7 +372,7 @@ jobs:
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
     steps:
       - name: Pull repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download allure data
         uses: actions/download-artifact@v4
@@ -381,10 +381,10 @@ jobs:
           path: allure-results
           merge-multiple: true
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
 
       - name: Install dependencies
@@ -442,7 +442,7 @@ jobs:
             mkdir -p allure-report
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
           name: allure-report
@@ -483,7 +483,7 @@ jobs:
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
         if: ${{ (needs.Playwright.result == 'failure') }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -497,7 +497,7 @@ jobs:
           owner: elementor
       - name: Checkout private action repository
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: elementor/elementor-tests-configuration
           token: ${{ steps.generate-token.outputs.token }}

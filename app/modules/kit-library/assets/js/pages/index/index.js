@@ -249,6 +249,7 @@ export default function Index( {
 							isSuccess && 0 === data.length && queryParams.ready && renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
 									title={ __( 'No results matched your search.', 'elementor' ) }
+									// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
 									description={ __( 'Try different keywords or ', 'elementor' ) }
 									button={ {
 										text: __( 'Continue browsing.', 'elementor' ),
