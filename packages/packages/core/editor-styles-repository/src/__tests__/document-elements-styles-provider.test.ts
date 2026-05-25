@@ -91,30 +91,11 @@ describe( 'documentElementsStylesProvider', () => {
 		expect( elementStyle ).toStrictEqual( styles[ 'style-2' ] );
 	} );
 
-	it( 'should return null when trying to get a style by id without passing an element id', () => {
-		// Arrange.
-		const styles: Record< string, StyleDefinition > = {
-			'style-1': {
-				id: 'style-1',
-				label: 'Style 1',
-				variants: [],
-				type: 'class',
-			},
-			'style-2': {
-				id: 'style-2',
-				label: 'Style 2',
-				variants: [],
-				type: 'class',
-			},
-		};
-
-		jest.mocked( getElementStyles ).mockImplementation( () => styles );
-
-		// Act.
-		const style = documentElementsStylesProvider.actions.get( 'style-1', { notElementId: 'test-value' } );
-
-		// Assert.
-		expect( style ).toBeNull();
+	it( 'should throw when trying to get a style by id without passing an element id', () => {
+		// Act & Assert.
+		expect( () => documentElementsStylesProvider.actions.get( 'style', { notElementId: 'test-value' } ) ).toThrow(
+			new InvalidElementsStyleProviderMetaError()
+		);
 	} );
 
 	it( 'should update style props', () => {
