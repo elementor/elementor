@@ -64,7 +64,7 @@ jobs:
           - shardIndex: "elements-regression-atomic"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Playwright environment
         id: setup
@@ -152,7 +152,7 @@ jobs:
             --update-snapshots
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snapshots-shard-${{ matrix.shardIndex }}
           path: |
@@ -169,7 +169,7 @@ jobs:
     if: ${{ inputs.test_grep != '' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Playwright environment
         id: setup
@@ -194,7 +194,7 @@ jobs:
             --grep="$TEST_GREP"
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snapshots-targeted
           path: |
@@ -211,7 +211,7 @@ jobs:
     if: always() && (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped')
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}

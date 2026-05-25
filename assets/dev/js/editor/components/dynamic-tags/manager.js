@@ -40,7 +40,7 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		elementorCommon.ajax.addRequest( 'render_tags', {
+		var ajaxOptions = {
 			data: {
 				post_id: elementor.config.document.id,
 				tags: Object.keys( cacheRequests ),
@@ -51,15 +51,28 @@ module.exports = elementorModules.Module.extend( {
 					...data,
 				};
 
-				cacheCallbacks.forEach( function( callback ) {
-					callback();
+				cacheCallbacks.forEach( function( entry ) {
+					entry.callback();
 				} );
 			},
+		};
+
+		var disableCache = cacheCallbacks.some( function( entry ) {
+			return entry.disableCache;
 		} );
+
+		if ( disableCache ) {
+			ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
+		}
+
+		elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
 	},
 
-	refreshCacheFromServer( callback ) {
-		this.cacheCallbacks.push( callback );
+	refreshCacheFromServer( callback, options ) {
+		this.cacheCallbacks.push( {
+			callback,
+			disableCache: options?.disableCache,
+		} );
 
 		this.loadCacheRequests();
 	},

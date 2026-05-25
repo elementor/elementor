@@ -141,6 +141,7 @@ export default function ImportKit() {
 						color="text.secondary"
 						data-testid="import-description"
 					>
+						{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
 						<Link
 							href="#"

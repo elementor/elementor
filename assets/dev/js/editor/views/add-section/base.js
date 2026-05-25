@@ -187,7 +187,7 @@ class AddSectionBase extends Marionette.ItemView {
 
 	getDroppableOptions() {
 		return {
-			isDroppingAllowed: ( ) => {
+			isDroppingAllowed: () => {
 				return ! elementor.channels.editor.request( 'element:dragged' )?.el?.dataset?.id;
 			},
 			onDropping: ( side, event ) => {
