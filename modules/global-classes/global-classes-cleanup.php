@@ -20,7 +20,7 @@ class Global_Classes_Cleanup {
 			'elementor/global_classes/cleanup',
 			fn( array $deleted_class_ids, array $affected_post_ids ) => $this->on_classes_deleted( $deleted_class_ids, $affected_post_ids ),
 			10,
-			1
+			2
 		);
 	}
 
