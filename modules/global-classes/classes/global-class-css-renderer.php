@@ -11,6 +11,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Class_Css_Renderer {
 
+	private const DIMENSIONS_TO_PHYSICAL = [
+		'margin' => [
+			'block-start' => 'margin-top',
+			'inline-end' => 'margin-right',
+			'block-end' => 'margin-bottom',
+			'inline-start' => 'margin-left',
+		],
+		'padding' => [
+			'block-start' => 'padding-top',
+			'inline-end' => 'padding-right',
+			'block-end' => 'padding-bottom',
+			'inline-start' => 'padding-left',
+		],
+		'border-width' => [
+			'block-start' => 'border-top-width',
+			'inline-end' => 'border-right-width',
+			'block-end' => 'border-bottom-width',
+			'inline-start' => 'border-left-width',
+		],
+	];
+
+	private const BORDER_RADIUS_CORNERS = [
+		'start-start' => 'border-top-left-radius',
+		'start-end' => 'border-top-right-radius',
+		'end-end' => 'border-bottom-right-radius',
+		'end-start' => 'border-bottom-left-radius',
+	];
+
 	public static function make(): self {
 		return new self();
 	}
@@ -79,30 +107,63 @@ class Global_Class_Css_Renderer {
 		$declarations = [];
 
 		foreach ( $props as $property => $prop ) {
-			$rendered_value = $this->render_prop_value( $prop );
+			$rendered = $this->render_prop( $property, $prop );
 
-			if ( null !== $rendered_value ) {
-				$declarations[] = $property . ': ' . $rendered_value . ';';
+			foreach ( $rendered as $line ) {
+				$declarations[] = $line;
 			}
 		}
 
 		return $declarations;
 	}
 
-	private function render_prop_value( $prop ): ?string {
+	private function render_prop( string $property, $prop ): array {
 		if ( ! is_array( $prop ) || ! isset( $prop['$$type'] ) ) {
-			return null;
+			return [];
 		}
 
 		switch ( $prop['$$type'] ) {
 			case 'color':
-				return is_string( $prop['value'] ?? null ) ? $prop['value'] : null;
+				return $this->simple( $property, $this->render_color( $prop['value'] ?? null ) );
 
 			case 'size':
-				return $this->render_size( $prop['value'] ?? null );
+				return $this->simple( $property, $this->render_size( $prop['value'] ?? null ) );
+
+			case 'number':
+				return $this->simple( $property, $this->render_number( $prop['value'] ?? null ) );
+
+			case 'string':
+				return $this->simple( $property, $this->render_string( $prop['value'] ?? null ) );
+
+			case 'dimensions':
+				return $this->render_dimensions( $property, $prop['value'] ?? null );
+
+			case 'border-radius':
+				return $this->render_border_radius( $prop['value'] ?? null );
+
+			case 'flex':
+				return $this->render_flex( $prop['value'] ?? null );
+
+			case 'background':
+				return $this->render_background( $prop['value'] ?? null );
+
+			case 'box-shadow':
+				return $this->simple( $property, $this->render_box_shadow( $prop['value'] ?? null ) );
 		}
 
-		return null;
+		return [];
+	}
+
+	private function simple( string $property, ?string $value ): array {
+		if ( null === $value || '' === $value ) {
+			return [];
+		}
+
+		return [ $property . ': ' . $value . ';' ];
+	}
+
+	private function render_color( $value ): ?string {
+		return is_string( $value ) ? $value : null;
 	}
 
 	private function render_size( $value ): ?string {
@@ -126,6 +187,202 @@ class Global_Class_Css_Renderer {
 		}
 
 		return $size . $unit;
+	}
+
+	private function render_number( $value ): ?string {
+		return is_numeric( $value ) ? (string) $value : null;
+	}
+
+	private function render_string( $value ): ?string {
+		return is_string( $value ) ? $value : null;
+	}
+
+	private function render_dimensions( string $property, $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$mapping = self::DIMENSIONS_TO_PHYSICAL[ $property ] ?? null;
+
+		if ( null === $mapping ) {
+			return [];
+		}
+
+		$rendered_sides = [];
+
+		foreach ( $mapping as $logical => $physical ) {
+			$side = $value[ $logical ] ?? null;
+
+			if ( ! is_array( $side ) || ! isset( $side['$$type'] ) || 'size' !== $side['$$type'] ) {
+				continue;
+			}
+
+			$rendered = $this->render_size( $side['value'] ?? null );
+
+			if ( null === $rendered ) {
+				continue;
+			}
+
+			$rendered_sides[ $physical ] = $rendered;
+		}
+
+		if ( count( $rendered_sides ) === 4 && count( array_unique( $rendered_sides ) ) === 1 ) {
+			return [ $property . ': ' . reset( $rendered_sides ) . ';' ];
+		}
+
+		$lines = [];
+
+		foreach ( $rendered_sides as $physical => $rendered ) {
+			$lines[] = $physical . ': ' . $rendered . ';';
+		}
+
+		return $lines;
+	}
+
+	private function render_border_radius( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$rendered_corners = [];
+
+		foreach ( self::BORDER_RADIUS_CORNERS as $corner => $physical ) {
+			$entry = $value[ $corner ] ?? null;
+
+			if ( ! is_array( $entry ) || ! isset( $entry['$$type'] ) || 'size' !== $entry['$$type'] ) {
+				continue;
+			}
+
+			$rendered = $this->render_size( $entry['value'] ?? null );
+
+			if ( null === $rendered ) {
+				continue;
+			}
+
+			$rendered_corners[ $physical ] = $rendered;
+		}
+
+		if ( count( $rendered_corners ) === 4 && count( array_unique( $rendered_corners ) ) === 1 ) {
+			return [ 'border-radius: ' . reset( $rendered_corners ) . ';' ];
+		}
+
+		$lines = [];
+
+		foreach ( $rendered_corners as $physical => $rendered ) {
+			$lines[] = $physical . ': ' . $rendered . ';';
+		}
+
+		return $lines;
+	}
+
+	private function render_flex( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$grow = $this->extract_inner( $value['flexGrow'] ?? null, 'number' );
+		$shrink = $this->extract_inner( $value['flexShrink'] ?? null, 'number' );
+		$basis_prop = $value['flexBasis'] ?? null;
+		$basis = ( is_array( $basis_prop ) && ( $basis_prop['$$type'] ?? null ) === 'size' )
+			? $this->render_size( $basis_prop['value'] ?? null )
+			: null;
+
+		$lines = [];
+
+		if ( null !== $grow ) {
+			$lines[] = 'flex-grow: ' . $grow . ';';
+		}
+
+		if ( null !== $shrink ) {
+			$lines[] = 'flex-shrink: ' . $shrink . ';';
+		}
+
+		if ( null !== $basis ) {
+			$lines[] = 'flex-basis: ' . $basis . ';';
+		}
+
+		return $lines;
+	}
+
+	private function render_background( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return [];
+		}
+
+		$color_prop = $value['color'] ?? null;
+
+		if ( is_array( $color_prop ) && ( $color_prop['$$type'] ?? null ) === 'color' ) {
+			$rendered = $this->render_color( $color_prop['value'] ?? null );
+
+			if ( null !== $rendered ) {
+				return [ 'background-color: ' . $rendered . ';' ];
+			}
+		}
+
+		return [];
+	}
+
+	private function render_box_shadow( $value ): ?string {
+		if ( ! is_array( $value ) ) {
+			return null;
+		}
+
+		$items = [];
+
+		foreach ( $value as $entry ) {
+			if ( ! is_array( $entry ) || ( $entry['$$type'] ?? null ) !== 'shadow' ) {
+				continue;
+			}
+
+			$shadow = $entry['value'] ?? null;
+
+			if ( ! is_array( $shadow ) ) {
+				continue;
+			}
+
+			$parts = [];
+			$position = $this->extract_inner( $shadow['position'] ?? null, 'string' );
+
+			if ( 'inset' === $position ) {
+				$parts[] = 'inset';
+			}
+
+			foreach ( [ 'hOffset', 'vOffset', 'blur', 'spread' ] as $axis ) {
+				$prop = $shadow[ $axis ] ?? null;
+
+				if ( ! is_array( $prop ) || ( $prop['$$type'] ?? null ) !== 'size' ) {
+					continue;
+				}
+
+				$rendered = $this->render_size( $prop['value'] ?? null );
+
+				if ( null === $rendered ) {
+					continue;
+				}
+
+				$parts[] = $rendered;
+			}
+
+			$color = $this->extract_inner( $shadow['color'] ?? null, 'color' );
+
+			if ( null !== $color ) {
+				$parts[] = $color;
+			}
+
+			if ( ! empty( $parts ) ) {
+				$items[] = implode( ' ', $parts );
+			}
+		}
+
+		return empty( $items ) ? null : implode( ', ', $items );
+	}
+
+	private function extract_inner( $prop, string $expected_type ) {
+		if ( ! is_array( $prop ) || ( $prop['$$type'] ?? null ) !== $expected_type ) {
+			return null;
+		}
+
+		return $prop['value'] ?? null;
 	}
 
 	private function render_custom_css( $custom_css ): array {
