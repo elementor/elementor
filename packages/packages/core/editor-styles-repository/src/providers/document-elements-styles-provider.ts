@@ -44,7 +44,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 
 		get: ( id, meta = {} ) => {
 			if ( ! isValidElementsMeta( meta ) ) {
-				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+				return null;
 			}
 
 			const styles = getElementStyles( meta.elementId ) ?? {};
