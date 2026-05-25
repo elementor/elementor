@@ -29,7 +29,7 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,10 +39,10 @@ jobs:
           git config --global user.name "${{ secrets.MAINTAIN_USERNAME || 'GitHub Actions' }}"
           git config --global user.email "${{ secrets.MAINTAIN_EMAIL || 'github-actions@github.com' }}"
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
 
       - name: Install dependencies

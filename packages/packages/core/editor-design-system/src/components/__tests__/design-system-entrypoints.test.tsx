@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { act, render } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { usePanelActions, usePanelStatus } from '../../design-system-panel';
 import { getActiveDesignSystemTab, setPendingDesignSystemTab } from '../../initial-tab';
@@ -10,6 +10,22 @@ const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
 const EVENT_TOGGLE = 'elementor/toggle-design-system';
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
+
+const mockSaveDocument = jest.fn().mockResolvedValue( undefined );
+const mockUseActiveDocument = jest.fn().mockReturnValue( null );
+
+jest.mock( '@elementor/editor-documents', () => ( {
+	__useActiveDocument: ( ...args: unknown[] ) => mockUseActiveDocument( ...args ),
+	__useActiveDocumentActions: () => ( { save: mockSaveDocument } ),
+} ) );
+
+jest.mock( '@elementor/editor-ui', () => ( {
+	...jest.requireActual( '@elementor/editor-ui' ),
+	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
+	useDialog: jest.fn(),
+} ) );
+
+import { useDialog } from '@elementor/editor-ui';
 
 jest.mock( '../../design-system-panel', () => ( {
 	usePanelActions: jest.fn(),
@@ -28,6 +44,10 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateListenTo: jest.fn( () => jest.fn() ),
 	__privateOpenRoute: jest.fn(),
 	routeOpenEvent: jest.fn( ( route: string ) => `route:open:${ route }` ),
+} ) );
+
+jest.mock( '@wordpress/i18n', () => ( {
+	__: ( str: string ) => str,
 } ) );
 
 import { __privateListenTo as listenTo, __privateOpenRoute as openRoute } from '@elementor/editor-v1-adapters';
@@ -54,6 +74,8 @@ async function fireRoutePanelOpen() {
 describe( 'DesignSystemEntrypoints', () => {
 	const mockOpen = jest.fn();
 	const mockClose = jest.fn();
+	const mockOpenSaveDialog = jest.fn();
+	const mockCloseSaveDialog = jest.fn();
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -65,6 +87,13 @@ describe( 'DesignSystemEntrypoints', () => {
 
 		jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: false, isBlocked: false } );
 		jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+		mockUseActiveDocument.mockReturnValue( null );
+
+		jest.mocked( useDialog ).mockReturnValue( {
+			open: mockOpenSaveDialog,
+			close: mockCloseSaveDialog,
+			isOpen: false,
+		} );
 
 		window.history.pushState( {}, '', '/' );
 	} );
@@ -334,8 +363,104 @@ describe( 'DesignSystemEntrypoints', () => {
 		} );
 	} );
 
-	it( 'should render nothing (null) into the DOM', () => {
+	it( 'should render nothing (null) into the DOM when no dialog is open', () => {
 		const { container } = render( <DesignSystemEntrypoints /> );
 		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	describe( 'document-dirty gating on open', () => {
+		it( 'should open the save dialog when document is dirty and toggle fires', () => {
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
+			} );
+
+			expect( mockOpenSaveDialog ).toHaveBeenCalled();
+		} );
+
+		it( 'should NOT dispatch open events when document is dirty', () => {
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+
+			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'classes' } );
+			} );
+
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
+			expect( dispatched ).not.toContain( EVENT_OPEN_CLASSES );
+			expect( dispatched ).not.toContain( EVENT_OPEN_VARIABLES );
+
+			dispatchSpy.mockRestore();
+		} );
+
+		it( 'should proceed normally when document is not dirty', () => {
+			mockUseActiveDocument.mockReturnValue( { isDirty: false } );
+
+			const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
+			} );
+
+			const dispatched = dispatchSpy.mock.calls.map( ( [ e ]: [ Event ] ) => ( e as Event ).type );
+			expect( dispatched ).toContain( EVENT_OPEN_VARIABLES );
+			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
+
+			dispatchSpy.mockRestore();
+		} );
+
+		it( 'should close the save dialog when "Stay here" is clicked', () => {
+			jest.mocked( useDialog ).mockReturnValue( {
+				open: mockOpenSaveDialog,
+				close: mockCloseSaveDialog,
+				isOpen: true,
+			} );
+
+			render( <DesignSystemEntrypoints /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Stay here' } ) );
+
+			expect( mockCloseSaveDialog ).toHaveBeenCalled();
+		} );
+
+		it( 'should save document and proceed when "Save & Continue" is clicked', async () => {
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+
+			jest.mocked( useDialog ).mockReturnValue( {
+				open: mockOpenSaveDialog,
+				close: mockCloseSaveDialog,
+				isOpen: true,
+			} );
+
+			render( <DesignSystemEntrypoints /> );
+
+			fireEvent.click( screen.getByRole( 'button', { name: 'Save & Continue' } ) );
+
+			await waitFor( () => {
+				expect( mockSaveDocument ).toHaveBeenCalled();
+				expect( mockCloseSaveDialog ).toHaveBeenCalled();
+			} );
+		} );
+
+		it( 'should still allow closing the panel when document is dirty', () => {
+			mockUseActiveDocument.mockReturnValue( { isDirty: true } );
+			jest.mocked( usePanelStatus ).mockReturnValue( { isOpen: true, isBlocked: false } );
+			jest.mocked( getActiveDesignSystemTab ).mockReturnValue( 'variables' );
+
+			render( <DesignSystemEntrypoints /> );
+
+			act( () => {
+				dispatchWindowEvent( EVENT_TOGGLE, { tab: 'variables' } );
+			} );
+
+			expect( mockClose ).toHaveBeenCalled();
+			expect( mockOpenSaveDialog ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
