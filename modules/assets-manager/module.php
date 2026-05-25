@@ -56,17 +56,41 @@ class Module extends BaseModule {
 	}
 
 	private function register_hooks() {
-		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'enqueue_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+
+		add_action( 'elementor/frontend/after_enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+
+		add_action( 'elementor/preview/enqueue_styles', [ $this, 'manage_style_assets' ], PHP_INT_MAX);
+		add_action( 'elementor/preview/enqueue_scripts', [ $this, 'manage_script_assets' ], PHP_INT_MAX);
+
+		add_action( 'elementor/editor/footer', [ $this, 'manage_assets' ], PHP_INT_MAX);
 
 		return $this;
 	}
 
-	public function enqueue_assets() {
+	public function manage_style_assets() {
 		do_action( 'elementor/assets-manager/register_styles', $this->style_assets );
+
+		foreach ( array_keys( $this->style_assets->assets_map() ) as $handle ) {
+			wp_dequeue_style( $handle );
+		}
+
+		return $this;
+	}
+
+	public function manage_script_assets() {
 		do_action( 'elementor/assets-manager/register_scripts', $this->script_assets );
 
-		$this->dequeue_assets();
+		foreach ( array_keys( $this->script_assets->assets_map() ) as $handle ) {
+			wp_dequeue_script( $handle );
+		}
 
+		return $this;
+	}
+
+	public function manage_assets() {
 		wp_enqueue_script(
 			self::MODULE_NAME,
 			$this->get_js_assets_url( self::MODULE_NAME ),
@@ -92,16 +116,6 @@ class Module extends BaseModule {
 				],
 			]
 		);
-	}
-
-	private function dequeue_assets() {
-		foreach ( array_keys( $this->style_assets->assets_map() ) as $handle ) {
-			wp_dequeue_style( $handle );
-		}
-
-		foreach ( array_keys( $this->script_assets->assets_map() ) as $handle ) {
-			wp_dequeue_script( $handle );
-		}
 
 		return $this;
 	}

@@ -10,7 +10,7 @@ async function enqueueAssets( w, utils ) {
 			continue;
 		}
 		const { uri, options } = assets.styles.map[ handle ] ?? {};
-		utils.appendCss( handle, uri, options );
+		await utils.appendCss( handle, uri, options );
 	}
 
 	for ( const handle of assets.scripts?.priority_queue ?? {} ) {
