@@ -73,6 +73,7 @@ class Module extends BaseModule {
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Get_Globals_Ability() )->register();
 		( new Abilities\Manage_Global_Classes_Ability() )->register();
+		( new Abilities\Manage_Post_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -97,6 +98,7 @@ class Module extends BaseModule {
 				'elementor/create-page',
 				'elementor/get-globals',
 				'elementor/manage-global-classes',
+				'elementor/manage-post',
 			],
 			[],
 			[]
