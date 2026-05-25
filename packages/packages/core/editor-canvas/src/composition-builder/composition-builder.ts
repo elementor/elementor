@@ -15,6 +15,7 @@ import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property
 import { validateInput } from '../mcp/utils/validate-input';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
+import { wrapRootWidgetForDocumentParent } from './utils/wrap-root-widget-for-document';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
@@ -301,20 +302,27 @@ export class CompositionBuilder {
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
+			const parentElType = rootContainer.model?.get?.( 'elType' ) as string | undefined;
+			const { model: modelToCreate } = wrapRootWidgetForDocumentParent(
+				modelTree as V1ElementModelProps,
+				parentElType,
+				() => this.api.generateElementId()
+			);
 
 			try {
 				const newElement = this.api.createElement( {
 					container: rootContainer,
-					model: modelTree as CreateElementParams[ 'model' ],
+					model: modelToCreate as CreateElementParams[ 'model' ],
 					options: { useHistory: false },
 				} );
+
 				if ( ! newElement?.model ) {
 					throw new Error( CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE );
 				}
 				this.rootContainers.push( newElement );
 				await this.awaitViewRender( newElement );
 			} catch ( e: unknown ) {
-				const attempToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
+				const attempToRestoreInvalidContainer = this.api.getContainer( modelToCreate.id as string );
 				if ( attempToRestoreInvalidContainer ) {
 					this.api.deleteElement( { container: attempToRestoreInvalidContainer } );
 				}
