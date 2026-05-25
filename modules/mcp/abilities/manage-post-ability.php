@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Services\Element_Css_Transformer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Manage_Post_Ability extends Abstract_Ability {
+
+	use Element_Css_Transformer;
 
 	private const VALID_OPERATIONS = [
 		'create',
@@ -31,7 +34,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Manage Elementor Post', 'elementor' ),
-			__( 'Create, update, trash, restore, delete, or write content for an Elementor v4 post in a single call. Operations: create | update | replace_content | append_content | trash | restore | delete. The `elements` field accepts the raw Elementor v4 element tree — build classes first via elementor/manage-global-classes and reference them by id in settings.classes. Breakpoints and pseudo-states are not part of this version.', 'elementor' ),
+			__( 'Create, update, trash, restore, delete, or write content for an Elementor v4 post in a single call. Operations: create | update | replace_content | append_content | trash | restore | delete. The `elements` field accepts the Elementor v4 element tree. Each node may include a `css` string (e.g. "padding:12px;background:#fff") that is converted to local styles before save. Build global classes via elementor/manage-global-classes and reference them by id in settings.classes. Breakpoints and pseudo-states are not part of this version.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
@@ -45,6 +48,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 					'dry_run' => [ 'type' => 'boolean' ],
 					'added' => [ 'type' => 'integer' ],
 					'deleted' => [ 'type' => 'boolean' ],
+					'css_gaps' => [ 'type' => 'array' ],
 				],
 			],
 			[
@@ -92,7 +96,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 					],
 					'elements' => [
 						'type' => 'array',
-						'description' => 'Raw Elementor v4 element tree. Required for replace_content and append_content; optional on create.',
+						'description' => 'Elementor v4 element tree. Required for replace_content and append_content; optional on create. Any node may include css: a semicolon-separated CSS declaration string converted to local styles (e.g. "padding:12px 16px;background:#375EFB"). Unsupported declarations fall through to custom_css; see css_gaps in the response.',
 					],
 					'dry_run' => [
 						'type' => 'boolean',
@@ -172,17 +176,17 @@ class Manage_Post_Ability extends Abstract_Ability {
 			return $permission_error;
 		}
 
-		$elements = isset( $input['elements'] ) && is_array( $input['elements'] ) ? $input['elements'] : null;
+		$elements = $this->prepare_elements_for_save( $input );
 		$dry_run = ! empty( $input['dry_run'] ) && null !== $elements;
 
 		if ( $dry_run ) {
-			return [
+			return $this->merge_css_gaps_into_response( [
 				'success' => true,
 				'operation' => 'create',
 				'post_id' => 0,
 				'post_status' => $post_status,
 				'dry_run' => true,
-			];
+			] );
 		}
 
 		$insert_args = [
@@ -236,9 +240,9 @@ class Manage_Post_Ability extends Abstract_Ability {
 			}
 		}
 
-		return $this->build_envelope( 'create', (int) $post_id, [
+		return $this->merge_css_gaps_into_response( $this->build_envelope( 'create', (int) $post_id, [
 			'post_status' => (string) get_post_status( $post_id ),
-		] );
+		] ) );
 	}
 
 	private function op_update( array $input ) {
@@ -305,7 +309,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 			return $document;
 		}
 
-		$elements = isset( $input['elements'] ) && is_array( $input['elements'] ) ? $input['elements'] : null;
+		$elements = $this->prepare_elements_for_save( $input );
 
 		if ( null === $elements ) {
 			return new \WP_Error(
@@ -318,12 +322,12 @@ class Manage_Post_Ability extends Abstract_Ability {
 		$post_id = $document->get_main_id();
 
 		if ( ! empty( $input['dry_run'] ) ) {
-			return [
+			return $this->merge_css_gaps_into_response( [
 				'success' => true,
 				'operation' => 'replace_content',
 				'post_id' => $post_id,
 				'dry_run' => true,
-			];
+			] );
 		}
 
 		$saved = $document->save( [ 'elements' => $elements ] );
@@ -336,7 +340,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 			);
 		}
 
-		return $this->build_envelope( 'replace_content', $post_id );
+		return $this->merge_css_gaps_into_response( $this->build_envelope( 'replace_content', $post_id ) );
 	}
 
 	private function op_append_content( array $input ) {
@@ -345,7 +349,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 			return $document;
 		}
 
-		$incoming = isset( $input['elements'] ) && is_array( $input['elements'] ) ? $input['elements'] : null;
+		$incoming = $this->prepare_elements_for_save( $input );
 
 		if ( null === $incoming ) {
 			return new \WP_Error(
@@ -358,13 +362,13 @@ class Manage_Post_Ability extends Abstract_Ability {
 		$post_id = $document->get_main_id();
 
 		if ( ! empty( $input['dry_run'] ) ) {
-			return [
+			return $this->merge_css_gaps_into_response( [
 				'success' => true,
 				'operation' => 'append_content',
 				'post_id' => $post_id,
 				'added' => count( $incoming ),
 				'dry_run' => true,
-			];
+			] );
 		}
 
 		$existing = $document->get_elements_data();
@@ -382,9 +386,9 @@ class Manage_Post_Ability extends Abstract_Ability {
 			);
 		}
 
-		return $this->build_envelope( 'append_content', $post_id, [
+		return $this->merge_css_gaps_into_response( $this->build_envelope( 'append_content', $post_id, [
 			'added' => count( $incoming ),
-		] );
+		] ) );
 	}
 
 	private function op_trash( array $input ) {
@@ -600,6 +604,26 @@ class Manage_Post_Ability extends Abstract_Ability {
 		}
 
 		return $is_new_post ? self::DEFAULT_NEW_POST_TEMPLATE : null;
+	}
+
+	private function prepare_elements_for_save( array $input ): ?array {
+		if ( ! isset( $input['elements'] ) || ! is_array( $input['elements'] ) ) {
+			return null;
+		}
+
+		$this->reset_element_css_transform_state();
+
+		return $this->transform_elements_with_css( $input['elements'] );
+	}
+
+	private function merge_css_gaps_into_response( array $response ): array {
+		$css_gaps = $this->get_element_css_gaps();
+
+		if ( ! empty( $css_gaps ) ) {
+			$response['css_gaps'] = $css_gaps;
+		}
+
+		return $response;
 	}
 
 	private function build_envelope( string $operation, int $post_id, array $extra = [] ): array {
