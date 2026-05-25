@@ -18,7 +18,7 @@ class Global_Classes_Cleanup {
 	public function register_hooks() {
 		add_action(
 			'elementor/global_classes/cleanup',
-			fn( $data ) => $this->on_classes_deleted( $data['styles_ids'], $data['post_ids'] ),
+			fn( array $deleted_class_ids, array $affected_post_ids ) => $this->on_classes_deleted( $deleted_class_ids, $affected_post_ids ),
 			10,
 			1
 		);

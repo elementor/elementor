@@ -168,10 +168,8 @@ class Global_Classes_Repository {
 		if ( ! empty( $to_delete ) && ! $is_preview ) {
 			do_action(
 				'elementor/global_classes/cleanup',
-				[
-					'styles_ids' => $to_delete,
-					'post_ids' => $affected_post_ids,
-				]
+				$to_delete,
+				$affected_post_ids
 			);
 		}
 	}
@@ -222,10 +220,8 @@ class Global_Classes_Repository {
 		if ( ! empty( $deleted_class_ids ) && ! $this->is_preview() ) {
 			do_action(
 				'elementor/global_classes/cleanup',
-				[
-					'styles_ids' => $deleted_class_ids,
-					'post_ids' => $affected_post_ids,
-				]
+				$deleted_class_ids,
+				$affected_post_ids
 			);
 		}
 	}
