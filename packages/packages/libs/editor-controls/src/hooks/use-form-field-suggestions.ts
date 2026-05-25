@@ -17,12 +17,12 @@ const FORM_FIELD_WIDGET_TYPES = [
 	'e-form-time-picker',
 ] as const;
 
+const FORM_ELEMENT_TYPE = 'e-form';
+const CSS_ID_PROP_KEY = '_cssid';
+
 function isFormFieldWidgetType( widgetType: string ): boolean {
 	return ( FORM_FIELD_WIDGET_TYPES as readonly string[] ).includes( widgetType );
 }
-
-const FORM_ELEMENT_TYPE = 'e-form';
-const CSS_ID_PROP_KEY = '_cssid';
 
 type Options = {
 	inputType?: string;
