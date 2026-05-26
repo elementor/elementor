@@ -34,6 +34,14 @@ class Post_Response {
 		return $response;
 	}
 
+	public static function with_normalized( array $response, array $normalizations ): array {
+		if ( ! empty( $normalizations ) ) {
+			$response['normalized'] = $normalizations;
+		}
+
+		return $response;
+	}
+
 	private static function edit_url_for( int $post_id ): string {
 		$document = Plugin::$instance->documents->get( $post_id );
 

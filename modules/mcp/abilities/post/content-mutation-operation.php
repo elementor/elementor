@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Post;
 
 use Elementor\Modules\Mcp\Abilities\Services\Element_Css_Transformer;
+use Elementor\Modules\Mcp\Abilities\Services\Element_Root_Normalizer;
 use Elementor\Modules\Mcp\Abilities\Services\Element_Spec_Resolver;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Context;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Response;
@@ -44,12 +45,15 @@ class Content_Mutation_Operation extends Post_Operation {
 		}
 
 		$transformer = Element_Css_Transformer::make();
-		$incoming = $transformer->transform( Element_Spec_Resolver::make()->resolve( $input['elements'] ) );
+		$resolved = Element_Spec_Resolver::make()->resolve( $input['elements'] );
+		$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
+		$normalizations = $normalized['normalizations'];
+		$incoming = $transformer->transform( $normalized['elements'] );
 
 		$post_id = $document->get_main_id();
 
 		if ( ! empty( $input['dry_run'] ) ) {
-			return $this->dry_run_response( $post_id, $incoming, $transformer );
+			return $this->dry_run_response( $post_id, $incoming, $transformer, $normalizations );
 		}
 
 		$payload = $this->build_save_payload( $document, $incoming );
@@ -61,17 +65,19 @@ class Content_Mutation_Operation extends Post_Operation {
 
 		$extras = 'append' === $this->mode ? [ 'added' => count( $incoming ) ] : [];
 
-		return Post_Response::with_unconverted_css(
+		$response = Post_Response::with_unconverted_css(
 			Post_Response::envelope( $this->operation_name(), $post_id, $extras ),
 			$transformer->get_unconverted_css()
 		);
+
+		return Post_Response::with_normalized( $response, $normalizations );
 	}
 
 	private function operation_name(): string {
 		return 'replace' === $this->mode ? 'replace_content' : 'append_content';
 	}
 
-	private function dry_run_response( int $post_id, array $incoming, Element_Css_Transformer $transformer ): array {
+	private function dry_run_response( int $post_id, array $incoming, Element_Css_Transformer $transformer, array $normalizations ): array {
 		$response = [
 			'success' => true,
 			'operation' => $this->operation_name(),
@@ -83,7 +89,9 @@ class Content_Mutation_Operation extends Post_Operation {
 			$response['added'] = count( $incoming );
 		}
 
-		return Post_Response::with_unconverted_css( $response, $transformer->get_unconverted_css() );
+		$response = Post_Response::with_unconverted_css( $response, $transformer->get_unconverted_css() );
+
+		return Post_Response::with_normalized( $response, $normalizations );
 	}
 
 	private function build_save_payload( $document, array $incoming ): array {

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Post;
 
 use Elementor\Modules\Mcp\Abilities\Services\Element_Css_Transformer;
+use Elementor\Modules\Mcp\Abilities\Services\Element_Root_Normalizer;
 use Elementor\Modules\Mcp\Abilities\Services\Element_Spec_Resolver;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Permissions;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Response;
@@ -33,10 +34,18 @@ class Create_Post_Operation extends Post_Operation {
 		}
 
 		$transformer = $this->prepare_transformer( $input );
-		$elements = $transformer ? $transformer->transform( Element_Spec_Resolver::make()->resolve( $input['elements'] ) ) : null;
+		$normalizations = [];
+		$elements = null;
+
+		if ( $transformer ) {
+			$resolved = Element_Spec_Resolver::make()->resolve( $input['elements'] );
+			$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
+			$normalizations = $normalized['normalizations'];
+			$elements = $transformer->transform( $normalized['elements'] );
+		}
 
 		if ( ! empty( $input['dry_run'] ) && null !== $elements ) {
-			return $this->dry_run_response( $post_type, $post_status, $transformer );
+			return $this->dry_run_response( $post_type, $post_status, $transformer, $normalizations );
 		}
 
 		$post_id = $this->insert_post( $title, $post_type, $post_status, $input['slug'] ?? null );
@@ -67,7 +76,9 @@ class Create_Post_Operation extends Post_Operation {
 			'post_status' => (string) get_post_status( $post_id ),
 		] );
 
-		return Post_Response::with_unconverted_css( $envelope, $transformer ? $transformer->get_unconverted_css() : [] );
+		$envelope = Post_Response::with_unconverted_css( $envelope, $transformer ? $transformer->get_unconverted_css() : [] );
+
+		return Post_Response::with_normalized( $envelope, $normalizations );
 	}
 
 	private function resolve_title( array $input ) {
@@ -111,8 +122,8 @@ class Create_Post_Operation extends Post_Operation {
 		return Element_Css_Transformer::make();
 	}
 
-	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer ): array {
-		return Post_Response::with_unconverted_css( [
+	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer, array $normalizations ): array {
+		$response = Post_Response::with_unconverted_css( [
 			'success' => true,
 			'operation' => 'create',
 			'post_id' => 0,
@@ -120,6 +131,8 @@ class Create_Post_Operation extends Post_Operation {
 			'post_status' => $post_status,
 			'dry_run' => true,
 		], $transformer ? $transformer->get_unconverted_css() : [] );
+
+		return Post_Response::with_normalized( $response, $normalizations );
 	}
 
 	private function insert_post( string $title, string $post_type, string $post_status, $slug ) {

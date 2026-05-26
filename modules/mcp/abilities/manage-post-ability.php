@@ -22,14 +22,14 @@ class Manage_Post_Ability extends Abstract_Ability {
 
 	private function ability_description(): string {
 		return __(
-			'Create, update, trash, restore, delete, or write content for an Elementor v4 post in a single call. Operations: create | update | replace_content | append_content | trash | restore | delete. The `elements` field accepts plain JSON nodes ({ widget, text, tag, url, css, classes, children }); $$type wrappers are never required from agents. Build global classes via elementor/manage-global-classes and reference them by id in classes:[]. Breakpoints and pseudo-states are not part of this version.',
+			'Create, update, trash, restore, delete, or write content for an Elementor v4 post in a single call. Operations: create | update | replace_content | append_content | trash | restore | delete. The `elements` field accepts plain JSON nodes ({ widget, text, tag, url, css, classes, children }); $$type wrappers are never required from agents. Build global classes via elementor/manage-global-classes and reference them by id in classes:[]. Breakpoints and pseudo-states are not part of this version. Root-level widgets without a container parent are auto-wrapped in an e-div-block; see the `normalized` field in the response for details.',
 			'elementor'
 		);
 	}
 
 	private function elements_field_description(): string {
 		return __(
-			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; unsupported declarations fall back to custom_css (see unconverted_css in the response). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create.',
+			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; unsupported declarations fall back to custom_css (see unconverted_css in the response). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create. At the document root, every widget must have a container parent; loose root widgets are auto-wrapped in an e-div-block (consecutive widgets are grouped into one wrapper).',
 			'elementor'
 		);
 	}
@@ -57,6 +57,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 					'added' => [ 'type' => 'integer' ],
 					'deleted' => [ 'type' => 'boolean' ],
 					'unconverted_css' => [ 'type' => 'array' ],
+					'normalized' => [ 'type' => 'array' ],
 				],
 			],
 			[
