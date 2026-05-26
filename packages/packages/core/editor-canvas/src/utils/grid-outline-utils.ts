@@ -1,5 +1,3 @@
-// Returns the set of dashed-line positions: both edges of every gap (and outer
-// boundaries of the track grid). N tracks → at most 2N boundaries.
 export function computeBoundaries( sizes: number[], gap: number, offset: number ): number[] {
 	if ( sizes.length === 0 ) {
 		return [];
