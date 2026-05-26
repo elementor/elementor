@@ -72,6 +72,17 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 			];
 		}
 
+		$uniform = $this->try_uniform_size( $corners );
+
+		if ( null !== $uniform ) {
+			return [
+				'props' => [
+					'border-radius' => Size_Prop_Type::generate( $uniform ),
+				],
+				'unconverted' => $unconverted,
+			];
+		}
+
 		$value = [];
 
 		foreach ( [ 'start-start', 'start-end', 'end-end', 'end-start' ] as $corner ) {
@@ -86,6 +97,32 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 			],
 			'unconverted' => $unconverted,
 		];
+	}
+
+	private function try_uniform_size( array $corners ): ?array {
+		$keys = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
+
+		foreach ( $keys as $key ) {
+			if ( ! isset( $corners[ $key ] ) ) {
+				return null;
+			}
+		}
+
+		$first = $corners[ $keys[0] ];
+
+		foreach ( $keys as $key ) {
+			$corner = $corners[ $key ];
+
+			if ( ( $corner['size'] ?? null ) !== ( $first['size'] ?? null ) ) {
+				return null;
+			}
+
+			if ( ( $corner['unit'] ?? null ) !== ( $first['unit'] ?? null ) ) {
+				return null;
+			}
+		}
+
+		return $first;
 	}
 
 	private function expand_shorthand( string $value ): ?array {

@@ -114,6 +114,12 @@ class Dimensions_Converter extends Prop_Converter_Base {
 	}
 
 	private function wrap_for_family( string $family, array $sides ): array {
+		$uniform = $this->try_uniform_size( $sides );
+
+		if ( null !== $uniform ) {
+			return Size_Prop_Type::generate( $uniform );
+		}
+
 		$value = $this->build_sides_value( $sides );
 
 		if ( 'border-width' === $family ) {
@@ -121,6 +127,32 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		}
 
 		return Dimensions_Prop_Type::generate( $value );
+	}
+
+	private function try_uniform_size( array $sides ): ?array {
+		$logical = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
+
+		foreach ( $logical as $key ) {
+			if ( ! isset( $sides[ $key ] ) ) {
+				return null;
+			}
+		}
+
+		$first = $sides[ $logical[0] ];
+
+		foreach ( $logical as $key ) {
+			$side = $sides[ $key ];
+
+			if ( ( $side['size'] ?? null ) !== ( $first['size'] ?? null ) ) {
+				return null;
+			}
+
+			if ( ( $side['unit'] ?? null ) !== ( $first['unit'] ?? null ) ) {
+				return null;
+			}
+		}
+
+		return $first;
 	}
 
 	private function resolve_family( string $property ): ?string {
