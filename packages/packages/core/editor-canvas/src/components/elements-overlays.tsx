@@ -20,7 +20,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element } ) => element.dataset.elementType === 'e-grid',
+		shouldRender: ( { element } ) => element.dataset.eType === 'e-grid',
 	},
 ];
 
@@ -66,7 +66,7 @@ function useElementsDom() {
 		[ windowEvent( 'elementor/editor/element-rendered' ), windowEvent( 'elementor/editor/element-destroyed' ) ],
 		() => {
 			return getElements()
-				.filter( ( el ) => ELEMENTS_DATA_ATTR in ( el.view?.el?.dataset ?? {} ) )
+				.filter( ( el ) => isV4Element( el.view?.el?.dataset ) )
 				.map( ( element ) => ( {
 					id: element.id,
 					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
@@ -75,4 +75,14 @@ function useElementsDom() {
 				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
 	);
+}
+
+function isV4Element( dataset: DOMStringMap | undefined ): boolean {
+	if ( ! dataset ) {
+		return false;
+	}
+
+	// V4 atomic widgets carry `data-atomic`; V4 atomic containers (grid/div-block/flexbox)
+	// don't, but they always carry `data-e-type` from the Twig macro.
+	return ELEMENTS_DATA_ATTR in dataset || 'eType' in dataset;
 }
