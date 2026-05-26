@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { booleanPropTypeUtil, type BooleanPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { FloatingPortal } from '@floating-ui/react';
 
@@ -11,11 +12,13 @@ import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 import { GridOutline } from './grid-outline';
 
 export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
-	const enabled = useElementSetting< boolean >( id, 'grid_outline' );
+	const setting = useElementSetting< BooleanPropValue >( id, 'grid_outline' );
+	const enabled = booleanPropTypeUtil.extract( setting );
 	const rect = useElementRect( element );
 	const tracks = useGridTracks( element, rect );
 	const { isVisible, floating } = useFloatingOnElement( { element, isSelected } );
 
+	// `enabled` is `null` until the setting persists — treat that as default (on).
 	if ( ! isSelected || enabled === false || ! isVisible ) {
 		return null;
 	}

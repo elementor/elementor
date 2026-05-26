@@ -75,6 +75,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.waitForPanelToLoad();
 
 		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
 
 		// Assert
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
