@@ -15,6 +15,7 @@ import { doUpdateElementProperty } from '../../utils/do-update-element-property'
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
+import { adaptLeafRootParams } from './xml-leaf-wrapper';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
@@ -46,9 +47,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
 		],
 		outputSchema,
-		handler: async ( params ) => {
-			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
-			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
+		handler: async ( rawParams ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( rawParams.xmlStructure );
+			const { xmlStructure, elementConfig, stylesConfig, customCSS } = adaptLeafRootParams( {
+				...rawParams,
+				widgetsCache: getWidgetsCache() ?? {},
+			} );
+
 			let generatedXML: string = '';
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
@@ -68,6 +73,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				const {
 					invalidStyles,
 					configErrors,
+					styleErrors,
 					rootContainers: generatedRootContainers,
 				} = await compositionBuilder.build( targetContainer );
 
@@ -92,6 +98,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							elementType: 'widget',
 						} );
 					} );
+				}
+
+				if ( styleErrors.length ) {
+					errors.push( ...styleErrors.map( ( msg ) => new Error( msg ) ) );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );

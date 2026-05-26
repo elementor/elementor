@@ -15,7 +15,6 @@ import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property
 import { validateInput } from '../mcp/utils/validate-input';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
-import { wrapRootWidgetForDocumentParent } from './utils/wrap-root-widget-for-document';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
@@ -163,7 +162,8 @@ export class CompositionBuilder {
 	}
 
 	private matchNodeByConfigId( configId: string ) {
-		const node = this.xml.querySelector( `[configuration-id="${ configId }"]` );
+		const escapedConfigId = CSS.escape( configId );
+		const node = this.xml.querySelector( `[configuration-id="${ escapedConfigId }"]` );
 		if ( ! node ) {
 			throw new Error( `Configuration id "${ configId }" does not have target node.` );
 		}
@@ -302,17 +302,11 @@ export class CompositionBuilder {
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
-			const parentElType = rootContainer.model?.get?.( 'elType' ) as string | undefined;
-			const { model: modelToCreate } = wrapRootWidgetForDocumentParent(
-				modelTree as V1ElementModelProps,
-				parentElType,
-				() => this.api.generateElementId()
-			);
 
 			try {
 				const newElement = this.api.createElement( {
 					container: rootContainer,
-					model: modelToCreate as CreateElementParams[ 'model' ],
+					model: modelTree as CreateElementParams[ 'model' ],
 					options: { useHistory: false },
 				} );
 
@@ -322,7 +316,7 @@ export class CompositionBuilder {
 				this.rootContainers.push( newElement );
 				await this.awaitViewRender( newElement );
 			} catch ( e: unknown ) {
-				const attempToRestoreInvalidContainer = this.api.getContainer( modelToCreate.id as string );
+				const attempToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
 				if ( attempToRestoreInvalidContainer ) {
 					this.api.deleteElement( { container: attempToRestoreInvalidContainer } );
 				}
