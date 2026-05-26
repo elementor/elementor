@@ -179,7 +179,7 @@
     "@elementor/icons": "~1.75.1",
     "@elementor/ui": "1.39.1",
     "@reach/router": "1.3.4",
-    "@reduxjs/toolkit": "^1.8.3",
+    "@reduxjs/toolkit": "^1.9.7",
     "@woocommerce/admin-layout": "^1.1.0",
     "@wordpress/components": "^27.4.0",
     "@wordpress/core-data": "^7.5.0",

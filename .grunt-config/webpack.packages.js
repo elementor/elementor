@@ -55,6 +55,8 @@ const common = {
 				{ request: REGEXES.wordpressPackages, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
+				{ request: '@reduxjs/toolkit', handle: 'elementor-vendors-redux' },
+				{ request: 'react-redux', handle: 'elementor-vendors-redux' },
 			]
 		} ),
 		new ExternalizeWordPressAssetsWebpackPlugin( {
@@ -65,6 +67,8 @@ const common = {
 				{ request: REGEXES.wordpressPackages, global: [ 'wp', '$1' ] },
 				{ request: 'react', global: 'React' },
 				{ request: 'react-dom', global: 'ReactDOM' },
+				{ request: '@reduxjs/toolkit', global: [ 'elementorVendors', 'reduxToolkit' ] },
+				{ request: 'react-redux', global: [ 'elementorVendors', 'reactRedux' ] },
 			]
 		} ),
 		new EntryInitializationWebpackPlugin( {
