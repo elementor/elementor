@@ -53,6 +53,8 @@ export default class EditorBase extends Marionette.Application {
 
 	refreshWidgetsRequest = null;
 
+	refreshWidgetsNextRequest = null;
+
 	activeBreakpointsUpdated = false;
 
 	helpers = require( 'elementor-editor-utils/helpers' );
@@ -1173,13 +1175,30 @@ export default class EditorBase extends Marionette.Application {
 
 	refreshWidgets() {
 		if ( this.refreshWidgetsRequest ) {
-			return this.refreshWidgetsRequest;
+			if ( ! this.refreshWidgetsNextRequest ) {
+				this.refreshWidgetsNextRequest = this.refreshWidgetsRequest
+					.catch( () => null )
+					.then( () => {
+						this.refreshWidgetsNextRequest = null;
+
+						return this.runRefreshWidgetsRequest();
+					} );
+			}
+
+			return this.refreshWidgetsNextRequest;
 		}
 
-		this.refreshWidgetsRequest = this.fetchRefreshedWidgets().finally( () => {
-			this.refreshWidgetsRequest = null;
+		return this.runRefreshWidgetsRequest();
+	}
+
+	runRefreshWidgetsRequest() {
+		const request = this.fetchRefreshedWidgets().finally( () => {
+			if ( request === this.refreshWidgetsRequest ) {
+				this.refreshWidgetsRequest = null;
+			}
 		} );
 
+		this.refreshWidgetsRequest = request;
 		return this.refreshWidgetsRequest;
 	}
 

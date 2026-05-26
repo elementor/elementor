@@ -1,4 +1,4 @@
-const EXPECTED_SINGLE_INVOCATION = 1;
+const EXPECTED_TRAILING_REFRESH_INVOCATIONS = 2;
 const PANEL_CONTAINER = 'panel';
 const PREVIEW_RELOAD_COMMAND = 'preview/reload';
 const REFRESH_WIDGETS_ACTION = 'refresh_widgets_config';
@@ -35,6 +35,7 @@ jQuery( () => {
 			};
 			elementor.widgetsCache = { stale: {} };
 			elementor.refreshWidgetsRequest = null;
+			elementor.refreshWidgetsNextRequest = null;
 			elementor.addWidgetsCache = ( widgets ) => {
 				elementor.widgetsCache = { ...elementor.widgetsCache, ...widgets };
 			};
@@ -59,25 +60,28 @@ jQuery( () => {
 			elementor.config.user = originalUser;
 			elementor.widgetsCache = originalWidgetsCache;
 			elementor.refreshWidgetsRequest = null;
+			elementor.refreshWidgetsNextRequest = null;
 		} );
 
-		QUnit.test( 'refreshWidgets(): reuses the active refresh request', async ( assert ) => {
-			const refreshedWidgets = { heading: { title: 'Heading' } },
-				refreshedCategories = { basic: { title: 'Basic' } },
+		QUnit.test( 'refreshWidgets(): queues a trailing refresh for calls made during an active request', async ( assert ) => {
+			const firstWidgets = { heading: { title: 'Heading' } },
+				firstCategories = { basic: { title: 'Basic' } },
+				nextWidgets = { button: { title: 'Button' } },
+				nextCategories = { custom: { title: 'Custom' } },
 				requestedActions = [],
 				refreshedContainers = [],
 				runCommands = [],
-				triggeredHooks = [];
+				triggeredHooks = [],
+				refreshResolvers = [];
 
 			let addWidgetsCacheInvocations = 0,
-				renderGlobalsInvocations = 0,
-				resolveRefresh;
+				renderGlobalsInvocations = 0;
 
 			elementorCommon.ajax.addRequest = ( action ) => {
 				requestedActions.push( action );
 
 				return new Promise( ( resolve ) => {
-					resolveRefresh = resolve;
+					refreshResolvers.push( resolve );
 				} );
 			};
 
@@ -108,25 +112,40 @@ jQuery( () => {
 			const firstRequest = elementor.refreshWidgets(),
 				secondRequest = elementor.refreshWidgets();
 
-			assert.strictEqual( secondRequest, firstRequest );
+			assert.notStrictEqual( secondRequest, firstRequest );
+			assert.deepEqual( requestedActions, [ REFRESH_WIDGETS_ACTION ] );
 
-			resolveRefresh( {
-				widgets: refreshedWidgets,
-				categories: refreshedCategories,
+			refreshResolvers[ 0 ]( {
+				widgets: firstWidgets,
+				categories: firstCategories,
 			} );
 
-			const response = await firstRequest;
+			const firstResponse = await firstRequest;
 
-			assert.deepEqual( response.widgets, refreshedWidgets );
-			assert.deepEqual( response.categories, refreshedCategories );
-			assert.deepEqual( requestedActions, [ REFRESH_WIDGETS_ACTION ] );
-			assert.deepEqual( elementor.widgetsCache, refreshedWidgets );
-			assert.deepEqual( elementor.config.document.panel.elements_categories, refreshedCategories );
-			assert.equal( addWidgetsCacheInvocations, EXPECTED_SINGLE_INVOCATION );
-			assert.equal( renderGlobalsInvocations, EXPECTED_SINGLE_INVOCATION );
-			assert.deepEqual( triggeredHooks, [ 'elementor/widgets/refreshed' ] );
-			assert.deepEqual( refreshedContainers, [ PANEL_CONTAINER ] );
-			assert.deepEqual( runCommands, [ PREVIEW_RELOAD_COMMAND ] );
+			await Promise.resolve();
+
+			assert.deepEqual( firstResponse.widgets, firstWidgets );
+			assert.deepEqual( firstResponse.categories, firstCategories );
+			assert.deepEqual( requestedActions, [ REFRESH_WIDGETS_ACTION, REFRESH_WIDGETS_ACTION ] );
+			assert.deepEqual( elementor.widgetsCache, firstWidgets );
+			assert.deepEqual( elementor.config.document.panel.elements_categories, firstCategories );
+
+			refreshResolvers[ 1 ]( {
+				widgets: nextWidgets,
+				categories: nextCategories,
+			} );
+
+			const secondResponse = await secondRequest;
+
+			assert.deepEqual( secondResponse.widgets, nextWidgets );
+			assert.deepEqual( secondResponse.categories, nextCategories );
+			assert.deepEqual( elementor.widgetsCache, nextWidgets );
+			assert.deepEqual( elementor.config.document.panel.elements_categories, nextCategories );
+			assert.equal( addWidgetsCacheInvocations, EXPECTED_TRAILING_REFRESH_INVOCATIONS );
+			assert.equal( renderGlobalsInvocations, EXPECTED_TRAILING_REFRESH_INVOCATIONS );
+			assert.deepEqual( triggeredHooks, [ 'elementor/widgets/refreshed', 'elementor/widgets/refreshed' ] );
+			assert.deepEqual( refreshedContainers, [ PANEL_CONTAINER, PANEL_CONTAINER ] );
+			assert.deepEqual( runCommands, [ PREVIEW_RELOAD_COMMAND, PREVIEW_RELOAD_COMMAND ] );
 		} );
 
 		QUnit.test( 'refreshWidgets(): clears the active refresh request after failure', async ( assert ) => {
@@ -143,10 +162,7 @@ jQuery( () => {
 				} );
 			};
 
-			const firstRequest = elementor.refreshWidgets(),
-				secondRequest = elementor.refreshWidgets();
-
-			assert.strictEqual( secondRequest, firstRequest );
+			const firstRequest = elementor.refreshWidgets();
 
 			rejectRefresh( refreshError );
 
