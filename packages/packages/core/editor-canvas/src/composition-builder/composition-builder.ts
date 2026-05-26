@@ -162,8 +162,7 @@ export class CompositionBuilder {
 	}
 
 	private matchNodeByConfigId( configId: string ) {
-		const escapedConfigId = CSS.escape( configId );
-		const node = this.xml.querySelector( `[configuration-id="${ escapedConfigId }"]` );
+		const node = this.xml.querySelector( `[configuration-id="${ configId }"]` );
 		if ( ! node ) {
 			throw new Error( `Configuration id "${ configId }" does not have target node.` );
 		}
@@ -309,7 +308,6 @@ export class CompositionBuilder {
 					model: modelTree as CreateElementParams[ 'model' ],
 					options: { useHistory: false },
 				} );
-
 				if ( ! newElement?.model ) {
 					throw new Error( CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE );
 				}
