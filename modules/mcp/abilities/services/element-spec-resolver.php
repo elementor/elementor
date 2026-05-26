@@ -37,6 +37,8 @@ class Element_Spec_Resolver {
 
 	private const CONTAINER_TYPES = [ 'e-flexbox', 'e-div-block' ];
 
+	private const ALLOWED_URL_SCHEMES = [ 'http', 'https', 'mailto', 'tel' ];
+
 	public static function make(): self {
 		return new self();
 	}
@@ -140,13 +142,14 @@ class Element_Spec_Resolver {
 				if ( '' !== $text ) {
 					$built['settings']['text'] = $this->html_v3( $text );
 				}
-				if ( isset( $node['url'] ) && is_string( $node['url'] ) && '' !== $node['url'] ) {
+				$url = $this->sanitize_button_url( $node['url'] ?? null );
+				if ( null !== $url ) {
 					$built['settings']['link'] = [
 						'$$type' => 'link',
 						'value' => [
 							'destination' => [
 								'$$type' => 'url',
-								'value' => $node['url'],
+								'value' => $url,
 							],
 							'isTargetBlank' => [
 								'$$type' => 'boolean',
@@ -183,5 +186,34 @@ class Element_Spec_Resolver {
 			return strtolower( $tag );
 		}
 		return 'h2';
+	}
+
+	/**
+	 * Sanitize a button destination URL.
+	 *
+	 * Accepts absolute URLs with allowed schemes, scheme-relative `//host`, root-relative
+	 * `/path`, and fragment-only anchors `#anchor`. Rejects everything else (including
+	 * `javascript:`, `data:`, `vbscript:`, `file:`).
+	 *
+	 * @return string|null sanitized URL, or null if input is invalid / empty.
+	 */
+	private function sanitize_button_url( $raw ): ?string {
+		if ( ! is_string( $raw ) ) {
+			return null;
+		}
+
+		$raw = trim( $raw );
+		if ( '' === $raw ) {
+			return null;
+		}
+
+		if ( str_starts_with( $raw, '#' ) || str_starts_with( $raw, '/' ) ) {
+			$sanitized = esc_url_raw( $raw );
+			return '' !== $sanitized ? $sanitized : null;
+		}
+
+		$sanitized = esc_url_raw( $raw, self::ALLOWED_URL_SCHEMES );
+
+		return '' !== $sanitized ? $sanitized : null;
 	}
 }

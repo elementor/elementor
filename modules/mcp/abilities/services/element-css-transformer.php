@@ -2,16 +2,25 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Services;
 
-use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Css_Prop_Converter;
+use Elementor\Modules\AtomicWidgets\Utils\Utils as Atomic_Utils;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Walks an element tree, converts each node's friendly `css` declaration string into a typed
+ * local style entry, and records any declarations that fell back to `custom_css` as css_gaps.
+ *
+ * Declaration parsing is fully delegated to `Css_Prop_Converter` in `modules/atomic-widgets/services/css-prop-converter/`.
+ * That service is the canonical CSS-to-v4-props pipeline (façade + classifier + per-shape converters
+ * across ~15 small files). This transformer focuses on the tree-walk + Elementor-specific concerns
+ * (per-element style id generation, `settings.classes.value` mirroring, base-style resets, and the
+ * `text-gradient:` shorthand expansion).
+ */
 class Element_Css_Transformer {
-
-	use Css_Shorthand_Parser;
-	use Base_Styles_Reset;
 
 	private array $element_css_gaps = [];
 
@@ -38,13 +47,13 @@ class Element_Css_Transformer {
 
 	private function transform_element_with_css( array $element ): array {
 		if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-			$child_elements = [];
+			$children = [];
 			foreach ( $element['elements'] as $child ) {
 				if ( is_array( $child ) ) {
-					$child_elements[] = $this->transform_element_with_css( $child );
+					$children[] = $this->transform_element_with_css( $child );
 				}
 			}
-			$element['elements'] = $child_elements;
+			$element['elements'] = $children;
 		}
 
 		$css = isset( $element['css'] ) && is_string( $element['css'] ) ? trim( $element['css'] ) : '';
@@ -57,52 +66,46 @@ class Element_Css_Transformer {
 
 		$id = isset( $element['id'] ) && is_string( $element['id'] ) && '' !== $element['id']
 			? $element['id']
-			: Utils::generate_id();
-
+			: Atomic_Utils::generate_id();
 		$element['id'] = $id;
 
 		$el_type = $this->resolve_element_type_for_css( $element );
 
-		$css_data         = $this->css_to_props_for_element( $css );
-		$user_props       = $css_data['props'];
-		$css_gaps         = $css_data['gaps'];
-		$custom_css_decls = $css_data['custom_css_decls'];
-		$merged_props     = $this->merge_base_style_resets( $user_props, $el_type );
+		$converted = $this->convert_node_css( $css );
+		$merged_props = Base_Styles_Reset::apply( $converted['props'], $el_type );
 
-		if ( empty( $merged_props ) && empty( $custom_css_decls ) ) {
+		if ( empty( $merged_props ) && '' === $converted['custom_css'] ) {
 			return $element;
 		}
 
-		$style_id = 'e-' . $id . '-s';
-		$variant  = [
-			'meta'  => [
+		$variant = [
+			'meta' => [
 				'breakpoint' => 'desktop',
-				'state'      => null,
+				'state' => null,
 			],
 			'props' => $merged_props,
 		];
 
-		if ( ! empty( $custom_css_decls ) ) {
-			// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
-			$variant['custom_css'] = [ 'raw' => base64_encode( implode( "\n", $custom_css_decls ) ) ];
+		if ( '' !== $converted['custom_css'] ) {
+			$variant['custom_css'] = [ 'raw' => $converted['custom_css'] ];
 		}
 
-		if ( ! empty( $css_gaps ) ) {
+		if ( ! empty( $converted['gaps'] ) ) {
 			$this->element_css_gaps[] = [
 				'element_id' => $id,
-				'css_gaps'   => $css_gaps,
+				'css_gaps' => $converted['gaps'],
 			];
 		}
 
-		$existing_styles = isset( $element['styles'] ) && is_array( $element['styles'] ) ? $element['styles'] : [];
+		$style_id = 'e-' . $id . '-s';
 
+		$existing_styles = isset( $element['styles'] ) && is_array( $element['styles'] ) ? $element['styles'] : [];
 		$existing_styles[ $style_id ] = [
-			'id'       => $style_id,
-			'type'     => 'class',
-			'label'    => 'local',
+			'id' => $style_id,
+			'type' => 'class',
+			'label' => 'local',
 			'variants' => [ $variant ],
 		];
-
 		$element['styles'] = $existing_styles;
 
 		$classes = $this->extract_element_classes( $element );
@@ -112,10 +115,9 @@ class Element_Css_Transformer {
 		if ( ! isset( $element['settings'] ) || ! is_array( $element['settings'] ) ) {
 			$element['settings'] = [];
 		}
-
 		$element['settings']['classes'] = [
 			'$$type' => 'classes',
-			'value'  => $classes,
+			'value' => $classes,
 		];
 
 		return $element;
@@ -142,69 +144,79 @@ class Element_Css_Transformer {
 		return array_values( array_filter( $element['settings']['classes']['value'], 'is_string' ) );
 	}
 
-	private function css_to_props_for_element( string $css ): array {
-		$valid_decls      = [];
-		$gap_entries      = [];
-		$custom_css_decls = [];
+	/**
+	 * Converts one node's raw `css` declaration string into typed props + custom_css blob + gap meta.
+	 *
+	 * Pipeline:
+	 *  1. Expand the Elementor-specific `text-gradient:` shorthand into 4 standard declarations.
+	 *  2. Hand the resulting string to `Css_Prop_Converter`.
+	 *  3. Merge the converter's `custom_css` (base64) with our pre-resolved gradient declarations,
+	 *     and merge gap metadata.
+	 */
+	private function convert_node_css( string $css ): array {
+		[ $cleaned_css, $extra_decls, $extra_gaps ] = $this->expand_text_gradient( $css );
+
+		$result = Css_Prop_Converter::make()->convert( $cleaned_css );
+
+		$converter_decls = array_map(
+			static function ( array $entry ): string {
+				return rtrim( $entry['declaration'], ';' ) . ';';
+			},
+			$result->get_unconverted()
+		);
+
+		$all_decls = array_merge( $extra_decls, $converter_decls );
+		$custom_css = empty( $all_decls )
+			? ''
+			: Utils::encode_string( implode( "\n", $all_decls ) );
+
+		return [
+			'props' => $result->get_props(),
+			'custom_css' => $custom_css,
+			'gaps' => array_merge( $extra_gaps, $result->get_unconverted() ),
+		];
+	}
+
+	/**
+	 * Extracts any `text-gradient: <value>;` declarations and returns:
+	 *  - the css string with those declarations removed
+	 *  - the 4 standard CSS declarations they expand to (for custom_css)
+	 *  - one gap entry per shorthand, explaining the expansion
+	 */
+	private function expand_text_gradient( string $css ): array {
+		if ( false === stripos( $css, 'text-gradient' ) ) {
+			return [ $css, [], [] ];
+		}
+
+		$cleaned = [];
+		$extra_decls = [];
+		$extra_gaps = [];
 
 		foreach ( array_filter( array_map( 'trim', explode( ';', $css ) ) ) as $decl ) {
 			$colon = strpos( $decl, ':' );
 			if ( false === $colon ) {
 				continue;
 			}
-			$prop  = strtolower( trim( substr( $decl, 0, $colon ) ) );
+
+			$prop = strtolower( trim( substr( $decl, 0, $colon ) ) );
 			$value = trim( substr( $decl, $colon + 1 ) );
-			if ( '' === $prop || '' === $value ) {
+
+			if ( 'text-gradient' !== $prop || '' === $value ) {
+				$cleaned[] = $decl;
 				continue;
 			}
 
-			if ( 'text-gradient' === $prop ) {
-				$custom_css_decls[] = "background: $value;";
-				$custom_css_decls[] = '-webkit-background-clip: text;';
-				$custom_css_decls[] = '-webkit-text-fill-color: transparent;';
-				$custom_css_decls[] = 'background-clip: text;';
-				$gap_entries[]      = [
-					'declaration' => "text-gradient: $value;",
-					'hint'        => 'Shorthand for gradient-text effect. Expanded to 4 CSS declarations in custom_css.',
-				];
-				continue;
-			}
+			$extra_decls[] = 'background: ' . $value . ';';
+			$extra_decls[] = '-webkit-background-clip: text;';
+			$extra_decls[] = '-webkit-text-fill-color: transparent;';
+			$extra_decls[] = 'background-clip: text;';
 
-			if ( 'border' === $prop ) {
-				$parsed = $this->parse_border_shorthand( $value );
-				if ( null !== $parsed ) {
-					array_push( $valid_decls, ...$parsed );
-				} else {
-					$custom_css_decls[] = "$prop: $value;";
-					$gap_entries[]      = [
-						'declaration' => "$prop: $value;",
-						'hint'        => 'border shorthand could not be fully parsed. Use border-width, border-style, and border-color separately.',
-					];
-				}
-				continue;
-			}
-
-			if ( $this->is_v4_gap( $prop, $value ) ) {
-				$custom_css_decls[] = "$prop: $value;";
-				$entry              = [
-					'declaration' => "$prop: $value;",
-				];
-				$hint               = $this->get_v4_gap_hint( $prop, $value );
-				if ( null !== $hint ) {
-					$entry['hint'] = $hint;
-				}
-				$gap_entries[] = $entry;
-			} else {
-				$valid_decls[] = $decl;
-			}
+			$extra_gaps[] = [
+				'declaration' => 'text-gradient: ' . $value,
+				'hint' => 'Shorthand for gradient-text effect. Expanded to 4 CSS declarations in custom_css.',
+			];
 		}
 
-		$props = ! empty( $valid_decls ) ? $this->css_to_props( implode( '; ', $valid_decls ) ) : [];
-
-		return [
-			'props'            => $props,
-			'gaps'             => $gap_entries,
-			'custom_css_decls' => $custom_css_decls,
-		];
+		return [ implode( '; ', $cleaned ), $extra_decls, $extra_gaps ];
 	}
 }
