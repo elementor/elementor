@@ -2,10 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
-use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\GlobalClasses\Services\Global_Classes_Read_Payload;
+use Elementor\Modules\Variables\Services\Variables_Read_Payload;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,18 +19,18 @@ class Get_Globals_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Globals', 'elementor' ),
-			__( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Use when you need kit-level styling context, not a single page tree.', 'elementor' ),
+			__( 'Returns site-wide Elementor design data: global classes (shared CSS classes from the kit) and variables (design tokens such as colors and fonts tied to the active kit). Each sub-object follows the canonical read shape used by the planned `elementor/list-global-classes` and `elementor/list-variables` abilities, so consumers can treat them symmetrically.', 'elementor' ),
 			'elementor',
 			[
 				'type' => 'object',
 				'properties' => [
 					'global_classes' => [
 						'type' => 'object',
-						'description' => 'Global class definitions and order from the active kit.',
+						'description' => 'Global class definitions from the active kit. Shape: { items, order, total, watermark, supported_breakpoints, supported_states }. `watermark` is always null for global classes (the repository has no per-collection counter).',
 					],
 					'variables' => [
 						'type' => 'object',
-						'description' => 'Variables list, total count, and watermark from the active kit.',
+						'description' => 'Variables (color, font, size) from the active kit. Shape: { items, total, watermark, supported_types }. `items` is the ID-keyed bag (renamed from the internal `data` field); `supported_types` is Pro-filtered.',
 					],
 				],
 			],
@@ -46,29 +44,15 @@ class Get_Globals_Ability extends Abstract_Ability {
 			function () {
 				return current_user_can( 'edit_posts' );
 			}
-			// No input_schema — this ability takes no input.
 		);
 	}
 
 	public function execute( $input = [] ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		$classes_payload = Global_Classes_Repository::make( $kit )->all()->get();
-
-		$variables_service = new Variables_Service(
-			new Variables_Repository( $kit ),
-			new Batch_Processor()
-		);
-
-		$variables_payload = $variables_service->load();
-
 		return [
-			'global_classes' => $classes_payload,
-			'variables' => [
-				'variables' => $variables_payload['data'] ?? [],
-				'total' => isset( $variables_payload['data'] ) ? count( $variables_payload['data'] ) : 0,
-				'watermark' => $variables_payload['watermark'] ?? null,
-			],
+			'global_classes' => Global_Classes_Read_Payload::build( $kit ),
+			'variables' => Variables_Read_Payload::build( $kit ),
 		];
 	}
 }
