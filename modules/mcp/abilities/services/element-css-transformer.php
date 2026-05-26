@@ -8,18 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-trait Element_Css_Transformer {
+class Element_Css_Transformer {
 
 	use Css_Shorthand_Parser;
 	use Base_Styles_Reset;
 
 	private array $element_css_gaps = [];
 
-	protected function reset_element_css_transform_state(): void {
-		$this->element_css_gaps = [];
+	public static function make(): self {
+		return new self();
 	}
 
-	protected function transform_elements_with_css( array $elements ): array {
+	public function transform( array $elements ): array {
 		$transformed = [];
 
 		foreach ( $elements as $element ) {
@@ -32,7 +32,7 @@ trait Element_Css_Transformer {
 		return $transformed;
 	}
 
-	protected function get_element_css_gaps(): array {
+	public function get_css_gaps(): array {
 		return $this->element_css_gaps;
 	}
 

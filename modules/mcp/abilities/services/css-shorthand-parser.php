@@ -557,7 +557,7 @@ trait Css_Shorthand_Parser {
 			return [
 				'output_key' => 'border-width',
 				'prop'       => [
-					'$$type' => 'dimensions',
+					'$$type' => 'border-width',
 					'value'  => [
 						'block-start'  => $tv,
 						'inline-end'   => $rv,
@@ -579,7 +579,7 @@ trait Css_Shorthand_Parser {
 		return [
 			'output_key' => 'border-width',
 			'prop'       => [
-				'$$type' => 'dimensions',
+				'$$type' => 'border-width',
 				'value'  => [
 					$side => $v,
 				],
