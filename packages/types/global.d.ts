@@ -45,6 +45,11 @@ interface OnboardingConfig {
 	};
 }
 
+interface RefreshWidgetsResponse {
+	widgets: Record< string, unknown >;
+	categories: Record< string, unknown >;
+}
+
 declare global {
 	interface Window {
 		elementorCommon?: {
@@ -137,6 +142,7 @@ declare global {
 				enqueueFont?: EnqueueFont;
 				hasPro?: () => boolean;
 			};
+			refreshWidgets?: () => Promise< RefreshWidgetsResponse >;
 			hooks?: {
 				addFilter: (
 					filterName: string,

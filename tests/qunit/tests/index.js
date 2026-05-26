@@ -3,6 +3,7 @@ export const tests = () => {
 	require( './modules/web-cli/assets/js/index' );
 
 	// Editor.
+	require( './assets/dev/js/editor/editor-base.spec' );
 	require( './assets/dev/js/editor/utils/helpers.spec' );
 	require( './assets/dev/js/editor/container/container.spec' );
 

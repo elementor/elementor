@@ -51,6 +51,8 @@ export default class EditorBase extends Marionette.Application {
 
 	previewLoadedOnce = false;
 
+	refreshWidgetsRequest = null;
+
 	activeBreakpointsUpdated = false;
 
 	helpers = require( 'elementor-editor-utils/helpers' );
@@ -1169,7 +1171,19 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
-	async refreshWidgets() {
+	refreshWidgets() {
+		if ( this.refreshWidgetsRequest ) {
+			return this.refreshWidgetsRequest;
+		}
+
+		this.refreshWidgetsRequest = this.fetchRefreshedWidgets().finally( () => {
+			this.refreshWidgetsRequest = null;
+		} );
+
+		return this.refreshWidgetsRequest;
+	}
+
+	async fetchRefreshedWidgets() {
 		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
 
 		this.widgetsCache = {};
