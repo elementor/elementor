@@ -29,6 +29,12 @@ class Declaration_Classifier {
 		],
 	];
 
+	private const INSET_FAMILIES = [
+		'inset' => [ 'inset-block-start', 'inset-inline-end', 'inset-block-end', 'inset-inline-start' ],
+		'inset-block' => [ 'inset-block-start', 'inset-block-end' ],
+		'inset-inline' => [ 'inset-inline-start', 'inset-inline-end' ],
+	];
+
 	public static function make(): self {
 		return new self();
 	}
@@ -72,6 +78,17 @@ class Declaration_Classifier {
 				}
 			}
 
+			if ( isset( self::INSET_FAMILIES[ $property ] ) ) {
+				$expanded = $this->expand_inset_shorthand( $property, $value );
+
+				if ( null !== $expanded ) {
+					foreach ( $expanded as $decl ) {
+						$declarations[] = $decl;
+					}
+					continue;
+				}
+			}
+
 			$declarations[] = [
 				'property' => $property,
 				'value' => $value,
@@ -79,6 +96,61 @@ class Declaration_Classifier {
 		}
 
 		return $declarations;
+	}
+
+	private function expand_inset_shorthand( string $property, string $value ): ?array {
+		$sides = self::INSET_FAMILIES[ $property ];
+		$parts = preg_split( '/\s+/', trim( $value ) );
+
+		if ( empty( $parts ) ) {
+			return null;
+		}
+
+		$values = $this->distribute_inset_values( $parts, count( $sides ) );
+
+		if ( null === $values ) {
+			return null;
+		}
+
+		$declarations = [];
+
+		foreach ( $sides as $index => $side ) {
+			$declarations[] = [
+				'property' => $side,
+				'value' => $values[ $index ],
+			];
+		}
+
+		return $declarations;
+	}
+
+	private function distribute_inset_values( array $parts, int $expected_sides ): ?array {
+		$count = count( $parts );
+
+		if ( 4 === $expected_sides ) {
+			switch ( $count ) {
+				case 1:
+					return [ $parts[0], $parts[0], $parts[0], $parts[0] ];
+				case 2:
+					return [ $parts[0], $parts[1], $parts[0], $parts[1] ];
+				case 3:
+					return [ $parts[0], $parts[1], $parts[2], $parts[1] ];
+				case 4:
+					return [ $parts[0], $parts[1], $parts[2], $parts[3] ];
+			}
+			return null;
+		}
+
+		if ( 2 === $expected_sides ) {
+			switch ( $count ) {
+				case 1:
+					return [ $parts[0], $parts[0] ];
+				case 2:
+					return [ $parts[0], $parts[1] ];
+			}
+		}
+
+		return null;
 	}
 
 	private function expand_border_shorthand( string $family, string $value ): ?array {

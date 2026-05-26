@@ -34,6 +34,20 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		'border-width' => 'border-width',
 	];
 
+	private const PAIR_PROPERTIES = [
+		'padding-inline' => [ 'padding', 'inline' ],
+		'padding-block' => [ 'padding', 'block' ],
+		'margin-inline' => [ 'margin', 'inline' ],
+		'margin-block' => [ 'margin', 'block' ],
+		'border-inline-width' => [ 'border-width', 'inline' ],
+		'border-block-width' => [ 'border-width', 'block' ],
+	];
+
+	private const PAIR_AXIS_SIDES = [
+		'inline' => [ 'inline-start', 'inline-end' ],
+		'block' => [ 'block-start', 'block-end' ],
+	];
+
 	public function get_supported_properties(): array {
 		$properties = array_keys( self::FAMILIES );
 
@@ -47,6 +61,10 @@ class Dimensions_Converter extends Prop_Converter_Base {
 			}
 		}
 
+		foreach ( array_keys( self::PAIR_PROPERTIES ) as $pair_property ) {
+			$properties[] = $pair_property;
+		}
+
 		return $properties;
 	}
 
@@ -55,6 +73,27 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		$unconverted = [];
 
 		foreach ( $declarations as $declaration ) {
+			if ( isset( self::PAIR_PROPERTIES[ $declaration['property'] ] ) ) {
+				$pair = $this->parse_pair_value( $declaration['value'] );
+
+				if ( null === $pair ) {
+					$unconverted[] = $this->unconverted(
+						$declaration['property'],
+						$declaration['value'],
+						'Pair-shorthand value could not be parsed; rendered via custom_css.'
+					);
+					continue;
+				}
+
+				[ $family, $axis ] = self::PAIR_PROPERTIES[ $declaration['property'] ];
+				[ $start_side, $end_side ] = self::PAIR_AXIS_SIDES[ $axis ];
+				[ $start_value, $end_value ] = $pair;
+
+				$buckets[ $family ][ $start_side ] = $start_value;
+				$buckets[ $family ][ $end_side ] = $end_value;
+				continue;
+			}
+
 			$family = $this->resolve_family( $declaration['property'] );
 
 			if ( null === $family ) {
@@ -203,6 +242,32 @@ class Dimensions_Converter extends Prop_Converter_Base {
 		}
 
 		return $shorthand . '-' . $side;
+	}
+
+	private function parse_pair_value( string $value ): ?array {
+		$parts = preg_split( '/\s+/', trim( $value ) );
+
+		if ( empty( $parts ) || count( $parts ) > 2 ) {
+			return null;
+		}
+
+		$first = Size_Value_Parser::parse( $parts[0] );
+
+		if ( null === $first ) {
+			return null;
+		}
+
+		if ( 1 === count( $parts ) ) {
+			return [ $first, $first ];
+		}
+
+		$second = Size_Value_Parser::parse( $parts[1] );
+
+		if ( null === $second ) {
+			return null;
+		}
+
+		return [ $first, $second ];
 	}
 
 	private function expand_shorthand( string $value ): ?array {

@@ -18,6 +18,10 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 		'border-top-right-radius' => 'start-end',
 		'border-bottom-right-radius' => 'end-end',
 		'border-bottom-left-radius' => 'end-start',
+		'border-start-start-radius' => 'start-start',
+		'border-start-end-radius' => 'start-end',
+		'border-end-end-radius' => 'end-end',
+		'border-end-start-radius' => 'end-start',
 	];
 
 	public function get_supported_properties(): array {
