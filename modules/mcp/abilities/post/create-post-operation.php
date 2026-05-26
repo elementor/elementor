@@ -67,7 +67,7 @@ class Create_Post_Operation extends Post_Operation {
 			'post_status' => (string) get_post_status( $post_id ),
 		] );
 
-		return Post_Response::with_css_gaps( $envelope, $transformer ? $transformer->get_css_gaps() : [] );
+		return Post_Response::with_unconverted_css( $envelope, $transformer ? $transformer->get_unconverted_css() : [] );
 	}
 
 	private function resolve_title( array $input ) {
@@ -112,14 +112,14 @@ class Create_Post_Operation extends Post_Operation {
 	}
 
 	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer ): array {
-		return Post_Response::with_css_gaps( [
+		return Post_Response::with_unconverted_css( [
 			'success' => true,
 			'operation' => 'create',
 			'post_id' => 0,
 			'post_type' => $post_type,
 			'post_status' => $post_status,
 			'dry_run' => true,
-		], $transformer ? $transformer->get_css_gaps() : [] );
+		], $transformer ? $transformer->get_unconverted_css() : [] );
 	}
 
 	private function insert_post( string $title, string $post_type, string $post_status, $slug ) {

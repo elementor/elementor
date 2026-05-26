@@ -29,7 +29,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 
 	private function elements_field_description(): string {
 		return __(
-			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; unsupported declarations fall back to custom_css (see css_gaps). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create.',
+			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; unsupported declarations fall back to custom_css (see unconverted_css in the response). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create.',
 			'elementor'
 		);
 	}
@@ -56,7 +56,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 					'dry_run' => [ 'type' => 'boolean' ],
 					'added' => [ 'type' => 'integer' ],
 					'deleted' => [ 'type' => 'boolean' ],
-					'css_gaps' => [ 'type' => 'array' ],
+					'unconverted_css' => [ 'type' => 'array' ],
 				],
 			],
 			[

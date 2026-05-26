@@ -32,6 +32,10 @@ class Base_Styles_Reset {
 		'e-image' => '',
 	];
 
+	public static function has_resets_for( string $el_type ): bool {
+		return ! empty( self::BASE_STYLE_RESETS[ $el_type ] ?? '' );
+	}
+
 	public static function apply( array $user_props, string $el_type ): array {
 		$reset_css = self::BASE_STYLE_RESETS[ $el_type ] ?? '';
 

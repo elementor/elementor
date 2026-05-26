@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Walks an element tree, converts each node's friendly `css` declaration string into a typed
- * local style entry, and records any declarations that fell back to `custom_css` as css_gaps.
+ * local style entry, and records any declarations that fell back to `custom_css` for reporting.
  *
  * Declaration parsing is fully delegated to `Css_Prop_Converter` in `modules/atomic-widgets/services/css-prop-converter/`.
  * That service is the canonical CSS-to-v4-props pipeline (façade + classifier + per-shape converters
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Element_Css_Transformer {
 
-	private array $element_css_gaps = [];
+	private array $unconverted_per_element = [];
 
 	public static function make(): self {
 		return new self();
@@ -41,8 +41,8 @@ class Element_Css_Transformer {
 		return $transformed;
 	}
 
-	public function get_css_gaps(): array {
-		return $this->element_css_gaps;
+	public function get_unconverted_css(): array {
+		return $this->unconverted_per_element;
 	}
 
 	private function transform_element_with_css( array $element ): array {
@@ -60,7 +60,10 @@ class Element_Css_Transformer {
 
 		unset( $element['css'] );
 
-		if ( '' === $css ) {
+		$el_type = $this->resolve_element_type_for_css( $element );
+		$needs_base_reset = Base_Styles_Reset::has_resets_for( $el_type );
+
+		if ( '' === $css && ! $needs_base_reset ) {
 			return $element;
 		}
 
@@ -69,9 +72,10 @@ class Element_Css_Transformer {
 			: Atomic_Utils::generate_id();
 		$element['id'] = $id;
 
-		$el_type = $this->resolve_element_type_for_css( $element );
+		$converted = '' !== $css
+			? $this->convert_node_css( $css )
+			: [ 'props' => [], 'custom_css' => '', 'unconverted' => [] ];
 
-		$converted = $this->convert_node_css( $css );
 		$merged_props = Base_Styles_Reset::apply( $converted['props'], $el_type );
 
 		if ( empty( $merged_props ) && '' === $converted['custom_css'] ) {
@@ -90,10 +94,10 @@ class Element_Css_Transformer {
 			$variant['custom_css'] = [ 'raw' => $converted['custom_css'] ];
 		}
 
-		if ( ! empty( $converted['gaps'] ) ) {
-			$this->element_css_gaps[] = [
+		if ( ! empty( $converted['unconverted'] ) ) {
+			$this->unconverted_per_element[] = [
 				'element_id' => $id,
-				'css_gaps' => $converted['gaps'],
+				'declarations' => $converted['unconverted'],
 			];
 		}
 
@@ -145,16 +149,17 @@ class Element_Css_Transformer {
 	}
 
 	/**
-	 * Converts one node's raw `css` declaration string into typed props + custom_css blob + gap meta.
+	 * Converts one node's raw `css` declaration string into typed props + custom_css blob + an
+	 * unconverted-declarations report.
 	 *
 	 * Pipeline:
 	 *  1. Expand the Elementor-specific `text-gradient:` shorthand into 4 standard declarations.
 	 *  2. Hand the resulting string to `Css_Prop_Converter`.
 	 *  3. Merge the converter's `custom_css` (base64) with our pre-resolved gradient declarations,
-	 *     and merge gap metadata.
+	 *     and merge the unconverted-declarations metadata.
 	 */
 	private function convert_node_css( string $css ): array {
-		[ $cleaned_css, $extra_decls, $extra_gaps ] = $this->expand_text_gradient( $css );
+		[ $cleaned_css, $extra_decls, $extra_unconverted ] = $this->expand_text_gradient( $css );
 
 		$result = Css_Prop_Converter::make()->convert( $cleaned_css );
 
@@ -173,7 +178,7 @@ class Element_Css_Transformer {
 		return [
 			'props' => $result->get_props(),
 			'custom_css' => $custom_css,
-			'gaps' => array_merge( $extra_gaps, $result->get_unconverted() ),
+			'unconverted' => array_merge( $extra_unconverted, $result->get_unconverted() ),
 		];
 	}
 
@@ -181,7 +186,7 @@ class Element_Css_Transformer {
 	 * Extracts any `text-gradient: <value>;` declarations and returns:
 	 *  - the css string with those declarations removed
 	 *  - the 4 standard CSS declarations they expand to (for custom_css)
-	 *  - one gap entry per shorthand, explaining the expansion
+	 *  - one unconverted entry per shorthand, explaining the expansion
 	 */
 	private function expand_text_gradient( string $css ): array {
 		if ( false === stripos( $css, 'text-gradient' ) ) {
@@ -190,7 +195,7 @@ class Element_Css_Transformer {
 
 		$cleaned = [];
 		$extra_decls = [];
-		$extra_gaps = [];
+		$extra_unconverted = [];
 
 		foreach ( array_filter( array_map( 'trim', explode( ';', $css ) ) ) as $decl ) {
 			$colon = strpos( $decl, ':' );
@@ -211,12 +216,12 @@ class Element_Css_Transformer {
 			$extra_decls[] = '-webkit-text-fill-color: transparent;';
 			$extra_decls[] = 'background-clip: text;';
 
-			$extra_gaps[] = [
+			$extra_unconverted[] = [
 				'declaration' => 'text-gradient: ' . $value,
 				'hint' => 'Shorthand for gradient-text effect. Expanded to 4 CSS declarations in custom_css.',
 			];
 		}
 
-		return [ implode( '; ', $cleaned ), $extra_decls, $extra_gaps ];
+		return [ implode( '; ', $cleaned ), $extra_decls, $extra_unconverted ];
 	}
 }

@@ -61,9 +61,9 @@ class Content_Mutation_Operation extends Post_Operation {
 
 		$extras = 'append' === $this->mode ? [ 'added' => count( $incoming ) ] : [];
 
-		return Post_Response::with_css_gaps(
+		return Post_Response::with_unconverted_css(
 			Post_Response::envelope( $this->operation_name(), $post_id, $extras ),
-			$transformer->get_css_gaps()
+			$transformer->get_unconverted_css()
 		);
 	}
 
@@ -83,7 +83,7 @@ class Content_Mutation_Operation extends Post_Operation {
 			$response['added'] = count( $incoming );
 		}
 
-		return Post_Response::with_css_gaps( $response, $transformer->get_css_gaps() );
+		return Post_Response::with_unconverted_css( $response, $transformer->get_unconverted_css() );
 	}
 
 	private function build_save_payload( $document, array $incoming ): array {

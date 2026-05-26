@@ -26,9 +26,9 @@ class Post_Response {
 		return array_merge( $envelope, $extras );
 	}
 
-	public static function with_css_gaps( array $response, array $gaps ): array {
-		if ( ! empty( $gaps ) ) {
-			$response['css_gaps'] = $gaps;
+	public static function with_unconverted_css( array $response, array $unconverted ): array {
+		if ( ! empty( $unconverted ) ) {
+			$response['unconverted_css'] = $unconverted;
 		}
 
 		return $response;
