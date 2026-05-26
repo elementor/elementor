@@ -21,6 +21,7 @@ import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
 import { GridJustifyItemsField } from './grid-justify-items-field';
+import { GridOutlineField } from './grid-outline-field';
 import { GridSizeFields } from './grid-size-field';
 import { GridSpanFields } from './grid-span-field';
 import { JustifyContentField } from './justify-content-field';
@@ -96,6 +97,8 @@ const GridFields = () => (
 		<PanelDivider />
 		<GridJustifyItemsField />
 		<AlignItemsField />
+		<PanelDivider />
+		<GridOutlineField />
 	</>
 );
 

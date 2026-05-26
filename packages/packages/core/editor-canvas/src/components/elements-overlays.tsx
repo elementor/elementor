@@ -8,6 +8,7 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
+import { GridOutlineOverlay } from './grid-outline-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
@@ -16,6 +17,10 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
 		shouldRender: () => true,
+	},
+	{
+		component: GridOutlineOverlay,
+		shouldRender: ( { element } ) => element.dataset.elementType === 'e-grid',
 	},
 ];
 
