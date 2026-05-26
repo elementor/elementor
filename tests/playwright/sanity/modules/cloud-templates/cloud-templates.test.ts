@@ -605,8 +605,8 @@ test.describe( 'Cloud Templates', () => {
 
 			const buttonRect = button.getBoundingClientRect();
 			const modalMessageRect = modalMessageElement.getBoundingClientRect();
-			const centerX = buttonRect.left + buttonRect.width / centerPositionDivisor;
-			const centerY = buttonRect.top + buttonRect.height / centerPositionDivisor;
+			const centerX = buttonRect.left + ( buttonRect.width / centerPositionDivisor );
+			const centerY = buttonRect.top + ( buttonRect.height / centerPositionDivisor );
 			const topElement = document.elementFromPoint( centerX, centerY );
 
 			return buttonRect.top >= modalMessageRect.top &&
