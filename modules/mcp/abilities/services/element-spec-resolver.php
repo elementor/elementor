@@ -20,13 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Element_Spec_Resolver {
 
 	private const WIDGET_SYNONYMS = [
-		'container' => 'e-flexbox',
-		'flexbox' => 'e-flexbox',
-		'section' => 'e-flexbox',
-		'e-flexbox' => 'e-flexbox',
+		'container' => 'e-div-block',
+		'section' => 'e-div-block',
 		'div' => 'e-div-block',
 		'div-block' => 'e-div-block',
 		'e-div-block' => 'e-div-block',
+		'flex' => 'e-flexbox',
+		'flexbox' => 'e-flexbox',
+		'e-flexbox' => 'e-flexbox',
 		'heading' => 'e-heading',
 		'paragraph' => 'e-paragraph',
 		'p' => 'e-paragraph',

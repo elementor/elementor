@@ -37,6 +37,13 @@ class Base_Styles_Reset {
 	}
 
 	public static function apply( array $user_props, string $el_type ): array {
+		$user_props = self::apply_widget_type_resets( $user_props, $el_type );
+		$user_props = self::apply_flex_column_default( $user_props );
+
+		return $user_props;
+	}
+
+	private static function apply_widget_type_resets( array $user_props, string $el_type ): array {
 		$reset_css = self::BASE_STYLE_RESETS[ $el_type ] ?? '';
 
 		if ( '' === $reset_css ) {
@@ -49,6 +56,32 @@ class Base_Styles_Reset {
 			if ( ! array_key_exists( $key, $user_props ) ) {
 				$user_props[ $key ] = $value;
 			}
+		}
+
+		return $user_props;
+	}
+
+	/**
+	 * When the resolved `display` is `flex` / `inline-flex` and the author did not set
+	 * `flex-direction`, default to `column`. This is tied to the display value rather than
+	 * to a specific widget alias, so `widget: "container"` (block) + `css: "display: flex"`
+	 * gets the same friendly default as `widget: "flexbox"`.
+	 */
+	private static function apply_flex_column_default( array $user_props ): array {
+		if ( array_key_exists( 'flex-direction', $user_props ) ) {
+			return $user_props;
+		}
+
+		$display = $user_props['display']['value'] ?? null;
+
+		if ( 'flex' !== $display && 'inline-flex' !== $display ) {
+			return $user_props;
+		}
+
+		$direction_props = Css_Prop_Converter::make()->convert( 'flex-direction: column;' )->get_props();
+
+		foreach ( $direction_props as $key => $value ) {
+			$user_props[ $key ] = $value;
 		}
 
 		return $user_props;
