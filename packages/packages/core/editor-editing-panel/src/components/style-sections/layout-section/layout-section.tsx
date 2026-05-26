@@ -90,6 +90,7 @@ const FlexFields = () => {
 
 const GridFields = () => (
 	<>
+		<GridOutlineField />
 		<GridSizeFields />
 		<GridAutoFlowField />
 		<PanelDivider />
@@ -97,8 +98,6 @@ const GridFields = () => (
 		<PanelDivider />
 		<GridJustifyItemsField />
 		<AlignItemsField />
-		<PanelDivider />
-		<GridOutlineField />
 	</>
 );
 

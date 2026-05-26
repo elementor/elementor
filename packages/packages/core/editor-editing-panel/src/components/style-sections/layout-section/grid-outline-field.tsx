@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { SettingsField } from '../../../controls-registry/settings-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
-const GRID_OUTLINE_LABEL = __( 'Show grid outline', 'elementor' );
+const GRID_OUTLINE_LABEL = __( 'Show Grid Outline', 'elementor' );
 
 export const GridOutlineField = () => {
 	return (
