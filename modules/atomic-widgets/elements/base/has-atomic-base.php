@@ -250,7 +250,7 @@ trait Has_Atomic_Base {
 		);
 		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
-		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props, $this );
 
 		return $this->transform_link_for_render( $parsed );
 	}
@@ -292,7 +292,7 @@ trait Has_Atomic_Base {
 		$single_schema = [ $key => $schema[ $key ] ];
 		$single_props = [ $key => $prop_value ];
 
-		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props, $this );
 
 		return $resolved[ $key ] ?? null;
 	}

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +21,7 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 		return static::instance( self::CONTEXT_EXPORT );
 	}
 
-	public function resolve( array $schema, array $props ): array {
+	public function resolve( array $schema, array $props, ?Element_Base $element = null ): array {
 		$resolved = [];
 
 		foreach ( $schema as $key => $prop_type ) {
@@ -28,7 +29,7 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
-			$value = $this->resolve_item( $props[ $key ] ?? null, $key, $prop_type );
+			$value = $this->resolve_item( $props[ $key ] ?? null, $key, $prop_type, $element );
 
 			if ( null === $value ) {
 				continue;
@@ -40,7 +41,7 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 		return $resolved;
 	}
 
-	protected function resolve_item( $value, $key, Prop_Type $prop_type ) {
+	protected function resolve_item( $value, $key, Prop_Type $prop_type, ?Element_Base $element = null ) {
 		if ( null === $value ) {
 			return null;
 		}
@@ -49,6 +50,6 @@ class Import_Export_Props_Resolver extends Props_Resolver {
 			return $value;
 		}
 
-		return $this->transform( $value, $key, $prop_type );
+		return $this->transform( $value, $key, $prop_type, $element );
 	}
 }

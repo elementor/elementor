@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -45,7 +46,7 @@ abstract class Props_Resolver {
 		return $this->transformers_registry;
 	}
 
-	protected function transform( $value, $key, Prop_Type $prop_type ) {
+	protected function transform( $value, $key, Prop_Type $prop_type, ?Element_Base $element = null ) {
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
 
@@ -65,7 +66,8 @@ abstract class Props_Resolver {
 
 			$value['value'] = $this->resolve(
 				$prop_type->get_shape(),
-				$value['value']
+				$value['value'],
+				$element
 			);
 		}
 
@@ -77,7 +79,7 @@ abstract class Props_Resolver {
 			$resolved_items = [];
 
 			foreach ( $value['value'] as $item ) {
-				$resolved = $this->resolve_item( $item, null, $prop_type->get_item_type() );
+				$resolved = $this->resolve_item( $item, null, $prop_type->get_item_type(), $element );
 
 				if ( null !== $resolved ) {
 					$resolved_items[] = $resolved;
@@ -97,7 +99,8 @@ abstract class Props_Resolver {
 			$context = Props_Resolver_Context::make()
 				->set_key( $key )
 				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
-				->set_prop_type( $prop_type );
+				->set_prop_type( $prop_type )
+				->set_element( $element );
 
 			return $transformer->transform( $value['value'], $context );
 		} catch ( Exception $e ) {
@@ -112,7 +115,7 @@ abstract class Props_Resolver {
 		);
 	}
 
-	abstract public function resolve( array $schema, array $props ): array;
+	abstract public function resolve( array $schema, array $props, ?Element_Base $element = null ): array;
 
-	abstract protected function resolve_item( $value, $key, Prop_Type $prop_type );
+	abstract protected function resolve_item( $value, $key, Prop_Type $prop_type, ?Element_Base $element = null );
 }
