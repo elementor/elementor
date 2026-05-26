@@ -1,4 +1,4 @@
-import { computeBoundaries, parseTrackList, snapToHalfPixel, toPx } from '../svg-utils';
+import { computeBoundaries, parseTrackList, snapToHalfPixel, toPx } from '../grid-outline-utils';
 
 describe( 'computeBoundaries', () => {
 	it( 'returns an empty list when there are no tracks', () => {

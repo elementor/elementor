@@ -58,7 +58,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		// Act - add a 4x3 grid
+		// Act
 		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
 		await editor.selectElement( gridId );
 		await editor.v4Panel.openTab( 'style' );
@@ -70,26 +70,24 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
 		await editor.v4Panel.style.changeSizeControl( rowsControl, 3 );
 
-		// Publish, then reload the editor to make sure the grid_outline setting persists
 		await editor.publishPage();
 		await page.reload();
 		await editor.waitForPanelToLoad();
 
 		await editor.selectElement( gridId );
 
-		// The outline SVG is portaled to the parent window under #elementor-preview-responsive-wrapper,
-		// so it lives outside the preview iframe and is located on the editor page directly.
+		// Assert
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
 
-		// Act - disable the outline via the Layout section toggle
+		// Act
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Layout' );
 		const outlineToggle = page.locator( '[aria-label="Show Grid Outline control"] input[type="checkbox"]' );
 		await outlineToggle.click();
 
-		// Assert - overlay is removed from the DOM
+		// Assert
 		await expect( gridOutline ).toHaveCount( 0 );
 	} );
 

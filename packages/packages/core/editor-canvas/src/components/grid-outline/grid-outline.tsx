@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { type GridTracks } from '../../hooks/use-grid-tracks';
+import { computeBoundaries, snapToHalfPixel } from '../../utils/grid-outline-utils';
 import { GridOutlineLine } from './grid-outline-line';
-import { computeBoundaries, snapToHalfPixel } from './svg-utils';
-import { type GridTracks } from './use-grid-tracks';
 
 type Props = {
 	tracks: GridTracks;

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { parseTrackList, toPx } from './svg-utils';
+import { parseTrackList, toPx } from '../utils/grid-outline-utils';
 
 export type GridTracks = {
 	columns: number[];

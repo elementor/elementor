@@ -5,10 +5,10 @@ import { FloatingPortal } from '@floating-ui/react';
 import { useElementRect } from '../../hooks/use-element-rect';
 import { useElementSetting } from '../../hooks/use-element-setting';
 import { useFloatingOnElement } from '../../hooks/use-floating-on-element';
+import { useGridTracks } from '../../hooks/use-grid-tracks';
 import type { ElementOverlayProps } from '../../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 import { GridOutline } from './grid-outline';
-import { useGridTracks } from './use-grid-tracks';
 
 export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
 	const enabled = useElementSetting< boolean >( id, 'grid_outline' );
