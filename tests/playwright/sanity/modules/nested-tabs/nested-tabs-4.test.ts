@@ -348,37 +348,39 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		} );
 
 		await test.step( 'Verify hover styling - internal CSS @nested-tabs-internal-css', async () => {
-			await wpCli( 'wp option update elementor_css_print_method internal' );
-			await wpCli( 'wp elementor experiments activate order_internal_css_printing' );
-			await wpCli( 'wp elementor flush_css' );
+			try {
+				await wpCli( 'wp option update elementor_css_print_method internal' );
+				await wpCli( 'wp elementor experiments activate order_internal_css_printing' );
+				await wpCli( 'wp elementor flush_css' );
 
-			await page.reload();
-			await page.waitForSelector( '.elementor-widget-n-tabs' );
-			await page.setViewportSize( viewportSize.desktop );
+				await page.reload();
+				await page.waitForSelector( '.elementor-widget-n-tabs' );
+				await page.setViewportSize( viewportSize.desktop );
 
-			await test.step( 'Verify hover styling - desktop', async () => {
-				await secondTab.hover();
-				await page.waitForTimeout( 500 );
+				await test.step( 'Verify hover styling - desktop', async () => {
+					await secondTab.hover();
+					await page.waitForTimeout( 500 );
 
-				expect.soft( await widget.screenshot( {
-					type: 'png',
-				} ) ).toMatchSnapshot( 'tabs-with-hover-desktop.png' );
-			} );
+					expect.soft( await widget.screenshot( {
+						type: 'png',
+					} ) ).toMatchSnapshot( 'tabs-with-hover-desktop.png' );
+				} );
 
-			await test.step( 'Verify hover styling - mobile', async () => {
-				await page.setViewportSize( viewportSize.mobile );
+				await test.step( 'Verify hover styling - mobile', async () => {
+					await page.setViewportSize( viewportSize.mobile );
 
-				await secondTab.hover();
-				await page.waitForTimeout( 500 );
+					await secondTab.hover();
+					await page.waitForTimeout( 500 );
 
-				expect.soft( await widget.screenshot( {
-					type: 'png',
-				} ) ).toMatchSnapshot( 'tabs-with-hover-mobile.png' );
-			} );
-
-			await wpCli( 'wp elementor experiments deactivate order_internal_css_printing' );
-			await wpCli( 'wp option update elementor_css_print_method external' );
-			await wpCli( 'wp elementor flush_css' );
+					expect.soft( await widget.screenshot( {
+						type: 'png',
+					} ) ).toMatchSnapshot( 'tabs-with-hover-mobile.png' );
+				} );
+			} finally {
+				await wpCli( 'wp elementor experiments deactivate order_internal_css_printing' );
+				await wpCli( 'wp option update elementor_css_print_method external' );
+				await wpCli( 'wp elementor flush_css' );
+			}
 		} );
 	} );
 
