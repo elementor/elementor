@@ -31,50 +31,74 @@ class Content_Mutation_Operation extends Post_Operation {
 			return $document;
 		}
 
-		$operation = 'replace' === $this->mode ? 'replace_content' : 'append_content';
-
 		if ( ! isset( $input['elements'] ) || ! is_array( $input['elements'] ) ) {
 			return new \WP_Error(
 				'missing_field',
 				sprintf(
 					/* translators: %s: operation name. */
 					__( 'elements is required for %s.', 'elementor' ),
-					$operation
+					$this->operation_name()
 				),
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
 
-		$resolved = Element_Spec_Resolver::make()->resolve( $input['elements'] );
 		$transformer = Element_Css_Transformer::make();
-		$incoming = $transformer->transform( $resolved );
+		$incoming = $transformer->transform( Element_Spec_Resolver::make()->resolve( $input['elements'] ) );
 
 		$post_id = $document->get_main_id();
 
 		if ( ! empty( $input['dry_run'] ) ) {
-			$response = [
-				'success' => true,
-				'operation' => $operation,
-				'post_id' => $post_id,
-				'dry_run' => true,
-			];
-
-			if ( 'append' === $this->mode ) {
-				$response['added'] = count( $incoming );
-			}
-
-			return Post_Response::with_css_gaps( $response, $transformer->get_css_gaps() );
+			return $this->dry_run_response( $post_id, $incoming, $transformer );
 		}
+
+		$payload = $this->build_save_payload( $document, $incoming );
+
+		$save_error = $this->save_elements( $document, $payload );
+		if ( $save_error ) {
+			return $save_error;
+		}
+
+		$extras = 'append' === $this->mode ? [ 'added' => count( $incoming ) ] : [];
+
+		return Post_Response::with_css_gaps(
+			Post_Response::envelope( $this->operation_name(), $post_id, $extras ),
+			$transformer->get_css_gaps()
+		);
+	}
+
+	private function operation_name(): string {
+		return 'replace' === $this->mode ? 'replace_content' : 'append_content';
+	}
+
+	private function dry_run_response( int $post_id, array $incoming, Element_Css_Transformer $transformer ): array {
+		$response = [
+			'success' => true,
+			'operation' => $this->operation_name(),
+			'post_id' => $post_id,
+			'dry_run' => true,
+		];
 
 		if ( 'append' === $this->mode ) {
-			$existing = $document->get_elements_data();
-			$existing = is_array( $existing ) ? $existing : [];
-			$to_save = array_merge( $existing, $incoming );
-		} else {
-			$to_save = $incoming;
+			$response['added'] = count( $incoming );
 		}
 
-		$saved = $document->save( [ 'elements' => $to_save ] );
+		return Post_Response::with_css_gaps( $response, $transformer->get_css_gaps() );
+	}
+
+	private function build_save_payload( $document, array $incoming ): array {
+		if ( 'replace' === $this->mode ) {
+			return $incoming;
+		}
+
+		$existing = $document->get_elements_data();
+		$existing = is_array( $existing ) ? $existing : [];
+
+		return array_merge( $existing, $incoming );
+	}
+
+	private function save_elements( $document, array $elements ): ?\WP_Error {
+		$saved = $document->save( [ 'elements' => $elements ] );
 
 		if ( ! $saved ) {
 			return new \WP_Error(
@@ -84,14 +108,6 @@ class Content_Mutation_Operation extends Post_Operation {
 			);
 		}
 
-		$extras = [];
-		if ( 'append' === $this->mode ) {
-			$extras['added'] = count( $incoming );
-		}
-
-		return Post_Response::with_css_gaps(
-			Post_Response::envelope( $operation, $post_id, $extras ),
-			$transformer->get_css_gaps()
-		);
+		return null;
 	}
 }

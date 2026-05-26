@@ -29,9 +29,9 @@ class Lifecycle_Operation extends Post_Operation {
 			return $post_id;
 		}
 
-		$permission_error = $this->check_permission( $post_id );
-		if ( $permission_error ) {
-			return $permission_error;
+		$auth_error = $this->authorize( $post_id );
+		if ( $auth_error ) {
+			return $auth_error;
 		}
 
 		$result = $this->dispatch( $post_id );
@@ -62,7 +62,7 @@ class Lifecycle_Operation extends Post_Operation {
 		] );
 	}
 
-	private function check_permission( int $post_id ): ?\WP_Error {
+	private function authorize( int $post_id ): ?\WP_Error {
 		if ( 'restore' === $this->verb ) {
 			if ( current_user_can( 'edit_post', $post_id ) ) {
 				return null;
