@@ -1,0 +1,39 @@
+import * as React from 'react';
+import { Box } from '@elementor/ui';
+import { FloatingPortal } from '@floating-ui/react';
+
+import { useElementRect } from '../../hooks/use-element-rect';
+import { useElementSetting } from '../../hooks/use-element-setting';
+import { useFloatingOnElement } from '../../hooks/use-floating-on-element';
+import type { ElementOverlayProps } from '../../types/element-overlay';
+import { CANVAS_WRAPPER_ID } from '../outline-overlay';
+import { GridOutline } from './grid-outline';
+import { useGridTracks } from './use-grid-tracks';
+
+export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
+	const enabled = useElementSetting< boolean >( id, 'grid_outline' );
+	const rect = useElementRect( element );
+	const tracks = useGridTracks( element, rect );
+	const { isVisible, floating } = useFloatingOnElement( { element, isSelected } );
+
+	if ( ! isSelected || enabled === false || ! isVisible ) {
+		return null;
+	}
+
+	if ( tracks.columns.length === 0 && tracks.rows.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
+			<Box
+				ref={ floating.setRef }
+				style={ { ...floating.styles, pointerEvents: 'none' } }
+				data-grid-outline={ id }
+				role="presentation"
+			>
+				<GridOutline tracks={ tracks } width={ rect.width } height={ rect.height } />
+			</Box>
+		</FloatingPortal>
+	);
+};

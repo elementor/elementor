@@ -8,7 +8,7 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { GridOutlineOverlay } from './grid-outline-overlay';
+import { GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
@@ -82,7 +82,5 @@ function isV4Element( dataset: DOMStringMap | undefined ): boolean {
 		return false;
 	}
 
-	// V4 atomic widgets carry `data-atomic`; V4 atomic containers (grid/div-block/flexbox)
-	// don't, but they always carry `data-e-type` from the Twig macro.
 	return ELEMENTS_DATA_ATTR in dataset || 'eType' in dataset;
 }
