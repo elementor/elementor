@@ -26,9 +26,10 @@ const makeParams = ( xmlStructure: string, overrides = {} ) =>
 	( {
 		xmlStructure,
 		stylesConfig: {},
+		elementConfig: {},
 		widgetsCache: makeWidgetsCache(),
 		...overrides,
-	} ) satisfies BuildCompositionParams;
+	} ) as BuildCompositionParams;
 
 describe( 'adaptLeafRootParams', () => {
 	it( 'wraps a leaf widget root in a div-block', () => {

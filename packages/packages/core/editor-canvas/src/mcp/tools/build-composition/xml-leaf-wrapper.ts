@@ -20,10 +20,11 @@ export type BuildCompositionParams = {
 	xmlStructure: string;
 	stylesConfig: Record< string, Record< string, unknown > >;
 	widgetsCache: Record< string, V1ElementConfig >;
+	elementConfig: Record< string, Record< string, unknown > >;
 	[ key: string ]: unknown;
 };
 
-export function adaptLeafRootParams< T extends BuildCompositionParams >( params: T ): BuildCompositionParams {
+export function adaptLeafRootParams< T extends BuildCompositionParams >( params: T ): T {
 	const doc = new DOMParser().parseFromString( params.xmlStructure, 'application/xml' );
 	const rootElement = doc.documentElement;
 
