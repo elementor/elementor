@@ -9,7 +9,7 @@ import { type GridTracks, useGridTracks } from '../hooks/use-grid-tracks';
 import type { ElementOverlayProps } from '../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
 
-const STROKE_COLOR = 'var(--e-a-color-accent, #c084fc)';
+const STROKE_COLOR = 'var(--e-a-border-color-bold, rgba(0, 0, 0, 0.12))';
 const DASH = '4 4';
 
 export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
