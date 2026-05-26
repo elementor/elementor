@@ -18,7 +18,6 @@ export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayP
 	const tracks = useGridTracks( element, rect );
 	const { isVisible, floating } = useFloatingOnElement( { element, isSelected } );
 
-	// `enabled` is `null` until the setting persists — treat that as default (on).
 	if ( ! isSelected || enabled === false || ! isVisible ) {
 		return null;
 	}
