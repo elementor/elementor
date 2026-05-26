@@ -73,7 +73,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				const {
 					invalidStyles,
 					configErrors,
-					styleErrors,
 					rootContainers: generatedRootContainers,
 				} = await compositionBuilder.build( targetContainer );
 
@@ -98,10 +97,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							elementType: 'widget',
 						} );
 					} );
-				}
-
-				if ( styleErrors.length ) {
-					errors.push( ...styleErrors.map( ( msg ) => new Error( msg ) ) );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );
