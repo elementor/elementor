@@ -35,6 +35,16 @@ jQuery( () => {
 			};
 			elementor.widgetsCache = { stale: {} };
 			elementor.refreshWidgetsRequest = null;
+			elementor.addWidgetsCache = ( widgets ) => {
+				elementor.widgetsCache = { ...elementor.widgetsCache, ...widgets };
+			};
+			elementor.kitManager = {
+				...elementor.kitManager,
+				renderGlobalsDefaultCSS: () => {},
+			};
+			elementor.hooks.doAction = () => {};
+			$e.routes.refreshContainer = () => {};
+			$e.run = () => {};
 		} );
 
 		hooks.afterEach( () => {
