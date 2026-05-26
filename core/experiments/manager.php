@@ -379,6 +379,15 @@ class Manager extends Base_Object {
 				'minimum_installation_version' => '3.30.0',
 			],
 		] );
+
+		$this->add_feature( [
+			'name' => 'order_internal_css_printing',
+			'title' => esc_html__( 'Order internal CSS printing', 'elementor' ),
+			'description' => esc_html__( 'Prints internal CSS in the same order as external CSS files for consistent cascade.', 'elementor' ),
+			'hidden' => true,
+			'default' => self::STATE_INACTIVE,
+			'release_status' => self::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	/**

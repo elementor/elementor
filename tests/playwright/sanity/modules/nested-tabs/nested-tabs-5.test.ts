@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { setTabItemColor, setTabBorderColor, templatePath } from './helper';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Verify the correct working of the title alignment', async ( { page, apiRequests }, testInfo ) => {
@@ -136,6 +137,29 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Check that non-active tab receives the hover background color.
 		await nonActiveTab.hover();
 		await expect.soft( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
+
+		await test.step( 'Assert - internal CSS @nested-tabs-internal-css', async () => {
+			await wpCli( 'wp option update elementor_css_print_method internal' );
+			await wpCli( 'wp elementor experiments activate order_internal_css_printing' );
+			await wpCli( 'wp elementor flush_css' );
+
+			await page.reload();
+			await page.waitForSelector( '.elementor-widget-n-tabs' );
+
+			await expect.soft( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+			await expect.soft( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
+			await expect.soft( nonActiveTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+
+			await activeTab.hover();
+			await expect.soft( activeTab ).not.toHaveCSS( 'background-color', hoverTabBackgroundColor );
+			await expect.soft( activeTab ).toHaveCSS( 'background-color', activeTabBackgroundColor );
+			await nonActiveTab.hover();
+			await expect.soft( nonActiveTab ).toHaveCSS( 'background-color', hoverTabBackgroundColor );
+
+			await wpCli( 'wp elementor experiments deactivate order_internal_css_printing' );
+			await wpCli( 'wp option update elementor_css_print_method external' );
+			await wpCli( 'wp elementor flush_css' );
+		} );
 	} );
 
 	test( 'Check if the hover style changes the normal tab styling', async ( { page, apiRequests }, testInfo ) => {

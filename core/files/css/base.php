@@ -232,13 +232,7 @@ abstract class Base extends Base_File {
 		}
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
-			$dep = $this->get_inline_dependency();
-			// If the dependency has already been printed ( like a template in footer )
-			if ( wp_styles()->query( $dep, 'done' ) ) {
-				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			} else {
-				wp_add_inline_style( $dep, $meta['css'] );
-			}
+			$this->enqueue_inline_css( $meta );
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
 			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
 		}
@@ -652,6 +646,32 @@ abstract class Base extends Base_File {
 	 */
 	protected function get_inline_dependency() {
 		return '';
+	}
+
+	private function enqueue_inline_css( array $meta ) {
+		$inline_stylesheet_handle = $this->get_inline_dependency();
+		$css_file_handle = $this->get_file_handle_id();
+		$is_inline_stylesheet_handle_printed = wp_styles()->query( $inline_stylesheet_handle, 'done' );
+
+		if ( $is_inline_stylesheet_handle_printed ) {
+			printf( '<style id="%1$s">%2$s</style>', $css_file_handle, $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			return;
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'order_internal_css_printing' ) ) {
+			$stylesheet_dependency_handles = $this->get_enqueue_dependencies();
+
+			if ( empty( $stylesheet_dependency_handles ) && $inline_stylesheet_handle ) {
+				$stylesheet_dependency_handles = [ $inline_stylesheet_handle ];
+			}
+
+			wp_register_style( $css_file_handle, false, $stylesheet_dependency_handles, null );
+			wp_enqueue_style( $css_file_handle );
+			wp_add_inline_style( $css_file_handle, $meta['css'] );
+			return;
+		}
+
+		wp_add_inline_style( $inline_stylesheet_handle, $meta['css'] );
 	}
 
 	/**
