@@ -1,4 +1,4 @@
-import { WebMCPAdapter, type ModelContext } from '../adapters/web-mcp-adapter';
+import { type ModelContext, WebMCPAdapter } from '../adapters/web-mcp-adapter';
 import { startMCPServer } from '../init';
 import { activateAdapters, registerMcpAdapter, signalMcpReady } from '../mcp-registry';
 
