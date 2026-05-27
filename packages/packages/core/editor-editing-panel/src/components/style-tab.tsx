@@ -84,6 +84,8 @@ export const StyleTab = () => {
 									'order',
 									'grid-column',
 									'grid-row',
+									'grid-auto-rows',
+									'grid-auto-columns',
 								] }
 							/>
 							<StyleTabSection

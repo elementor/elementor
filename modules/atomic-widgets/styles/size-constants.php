@@ -190,6 +190,16 @@ class Size_Constants {
 		];
 	}
 
+	public static function grid_auto_track(): array {
+		return self::sort_by_preferred_order( [
+			self::UNIT_PX,
+			self::UNIT_PERCENT,
+			self::UNIT_FR,
+			self::UNIT_AUTO,
+			self::UNIT_CUSTOM,
+		] );
+	}
+
 	public static function grouped_units(): array {
 		return [
 			'length' => self::LENGTH_UNITS,

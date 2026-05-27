@@ -10,6 +10,7 @@ import { useComputedStyle } from '../../../hooks/use-computed-style';
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
+import { StyleTabCollapsibleContent } from '../../style-tab-collapsible-content';
 import { AlignContentField } from './align-content-field';
 import { AlignItemsField } from './align-items-field';
 import { AlignSelfChild } from './align-self-child-field';
@@ -20,6 +21,7 @@ import { FlexOrderField } from './flex-order-field';
 import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
+import { GridAutoTrackFields } from './grid-auto-track-fields';
 import { GridJustifyItemsField } from './grid-justify-items-field';
 import { GridSizeFields } from './grid-size-field';
 import { GridSpanFields } from './grid-span-field';
@@ -91,6 +93,9 @@ const GridFields = () => (
 	<>
 		<GridSizeFields />
 		<GridAutoFlowField />
+		<StyleTabCollapsibleContent fields={ [ 'grid-auto-rows', 'grid-auto-columns' ] }>
+			<GridAutoTrackFields />
+		</StyleTabCollapsibleContent>
 		<PanelDivider />
 		<GapControlField />
 		<PanelDivider />
