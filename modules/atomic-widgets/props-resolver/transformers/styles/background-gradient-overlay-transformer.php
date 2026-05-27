@@ -17,7 +17,10 @@ class Background_Gradient_Overlay_Transformer extends Transformer_Base {
 		$stops = $value['stops'];
 
 		if ( 'radial' === $type ) {
-			return sprintf( 'radial-gradient(circle at %s, %s)', $positions, $stops );
+			if ( ! empty( $positions ) ) {
+				return sprintf( 'radial-gradient(circle at %s, %s)', $positions, $stops );
+			}
+			return sprintf( 'radial-gradient(%s)', $stops );
 		}
 
 		return sprintf( 'linear-gradient(%ddeg, %s)', $angle, $stops );
