@@ -29,15 +29,15 @@ jobs:
     steps:
 
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Remove package.json
         run: rm -f package*.json
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -105,7 +105,7 @@ jobs:
       - name: Upload reports
         id: upload-reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compare-v4-to-v3
           path: ${{ steps.run-performance-check.outputs.reports-path }}

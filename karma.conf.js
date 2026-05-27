@@ -26,6 +26,7 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/backbone.min.js',
 			'tests/qunit/vendor/wp-includes/react.min.js',
 			'tests/qunit/vendor/wp-includes/react-dom.min.js',
+			'assets/js/vendors-redux.min.js',
 			'tests/qunit/vendor/wp-includes/i18n.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
