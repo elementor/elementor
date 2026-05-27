@@ -7,6 +7,7 @@ const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
 // source-map-loader and the babel-loader dist exclude only match packages built from packages/packages/{core,libs} and packages/apps. Extend this if new first-party roots ship prebuilt dist next to sources.
+
 const packagesDistPattern = /[\\/]packages[\\/](?:packages[\\/](?:core|libs)|apps)[\\/][^\\/]+[\\/]dist[\\/]/;
 
 const REGEXES = {
