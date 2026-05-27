@@ -28,6 +28,9 @@ class Size_Constants {
 
 	const DEFAULT_UNIT = self::UNIT_PX;
 
+	const SIZE_ZERO_PX = [ 'size' => 0, 'unit' => self::UNIT_PX ];
+	const SIZE_AUTO    = [ 'size' => '', 'unit' => self::UNIT_AUTO ];
+
 	private const ORDER = [
 		self::UNIT_PX,
 		self::UNIT_PERCENT,

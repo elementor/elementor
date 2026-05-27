@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Prop_Converter_Base;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -20,9 +21,6 @@ class Flex_Converter extends Prop_Converter_Base {
 		'flex-shrink',
 		'flex-basis',
 	];
-
-	private const DEFAULT_BASIS_PX = [ 'size' => 0, 'unit' => 'px' ];
-	private const AUTO_BASIS = [ 'size' => '', 'unit' => 'auto' ];
 
 	public function get_supported_properties(): array {
 		return self::PROPERTIES;
@@ -118,11 +116,11 @@ class Flex_Converter extends Prop_Converter_Base {
 
 	private function keyword_shape( string $lowercase_value ): ?array {
 		if ( 'none' === $lowercase_value ) {
-			return $this->flex_shape( 0, 0, self::AUTO_BASIS );
+			return $this->flex_shape( 0, 0, Size_Constants::SIZE_AUTO );
 		}
 
 		if ( 'auto' === $lowercase_value ) {
-			return $this->flex_shape( 1, 1, self::AUTO_BASIS );
+			return $this->flex_shape( 1, 1, Size_Constants::SIZE_AUTO );
 		}
 
 		return null;
@@ -130,7 +128,7 @@ class Flex_Converter extends Prop_Converter_Base {
 
 	private function expand_one_part( string $part ): ?array {
 		if ( is_numeric( $part ) ) {
-			return $this->flex_shape( (float) $part, 1, self::DEFAULT_BASIS_PX );
+			return $this->flex_shape( (float) $part, 1, Size_Constants::SIZE_ZERO_PX );
 		}
 
 		$basis = Size_Value_Parser::parse( $part );
@@ -148,7 +146,7 @@ class Flex_Converter extends Prop_Converter_Base {
 		}
 
 		if ( is_numeric( $parts[1] ) ) {
-			return $this->flex_shape( (float) $parts[0], (float) $parts[1], self::DEFAULT_BASIS_PX );
+			return $this->flex_shape( (float) $parts[0], (float) $parts[1], Size_Constants::SIZE_ZERO_PX );
 		}
 
 		$basis = Size_Value_Parser::parse( $parts[1] );

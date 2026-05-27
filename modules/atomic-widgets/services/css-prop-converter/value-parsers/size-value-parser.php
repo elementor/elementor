@@ -22,10 +22,7 @@ class Size_Value_Parser {
 		$lower = strtolower( $value );
 
 		if ( Size_Constants::UNIT_AUTO === $lower ) {
-			return [
-				'size' => '',
-				'unit' => Size_Constants::UNIT_AUTO,
-			];
+			return Size_Constants::SIZE_AUTO;
 		}
 
 		foreach ( self::CUSTOM_FUNCTIONS as $prefix ) {

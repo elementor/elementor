@@ -29,7 +29,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 
 	private function elements_field_description(): string {
 		return __(
-			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; unsupported declarations fall back to custom_css (see unconverted_css in the response). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create. At the document root, every widget must have a container parent; loose root widgets are auto-wrapped in an e-div-block (consecutive widgets are grouped into one wrapper).',
+			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; declarations that cannot be converted fall back to custom_css — but custom_css only renders when Elementor Pro is active with an atomic-custom-css licence feature. Check custom_css_active in the response: if false, those declarations are stored but will NOT render on the published page (see unconverted_css for the list). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create. At the document root, every widget must have a container parent; loose root widgets are auto-wrapped in an e-div-block (consecutive widgets are grouped into one wrapper).',
 			'elementor'
 		);
 	}
@@ -57,6 +57,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 					'added' => [ 'type' => 'integer' ],
 					'deleted' => [ 'type' => 'boolean' ],
 					'unconverted_css' => [ 'type' => 'array' ],
+					'custom_css_active' => [ 'type' => 'boolean', 'description' => 'Present when unconverted_css is non-empty. true = Pro is active with atomic-custom-css licence, fallback declarations will render. false = they will NOT render.' ],
 					'normalized' => [ 'type' => 'array' ],
 				],
 			],

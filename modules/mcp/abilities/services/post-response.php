@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Mcp\Abilities\Services;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -29,9 +30,23 @@ class Post_Response {
 	public static function with_unconverted_css( array $response, array $unconverted ): array {
 		if ( ! empty( $unconverted ) ) {
 			$response['unconverted_css'] = $unconverted;
+			$response['custom_css_active'] = self::is_custom_css_supported();
 		}
 
 		return $response;
+	}
+
+	private static function is_custom_css_supported(): bool {
+		if ( ! Utils::has_pro() ) {
+			return false;
+		}
+
+		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
+			return false;
+		}
+
+		return \ElementorPro\License\API::is_license_active() &&
+			\ElementorPro\License\API::is_licence_has_feature( 'atomic-custom-css' );
 	}
 
 	public static function with_normalized( array $response, array $normalizations ): array {

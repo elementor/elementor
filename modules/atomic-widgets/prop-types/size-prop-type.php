@@ -86,10 +86,9 @@ class Size_Prop_Type extends Object_Prop_Type {
 			];
 		}
 
-		return [
-			'size' => Size_Constants::UNIT_AUTO === $value['unit'] ? '' : sanitize_text_field( $value['size'] ),
-			'unit' => $unit,
-		];
+		return Size_Constants::UNIT_AUTO === $value['unit']
+			? Size_Constants::SIZE_AUTO
+			: [ 'size' => sanitize_text_field( $value['size'] ), 'unit' => $unit ];
 	}
 
 	protected function define_shape(): array {

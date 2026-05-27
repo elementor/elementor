@@ -11,16 +11,13 @@ use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Prop_Converter_Bas
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Color_Value_Parser;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Css_Tokenizer;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Box_Shadow_Converter extends Prop_Converter_Base {
-
-	private const DEFAULT_SIZE = [ 'size' => 0, 'unit' => 'px' ];
-	private const DEFAULT_COLOR = 'rgba(0, 0, 0, 1)';
-	private const INSET = 'inset';
 
 	public function get_supported_properties(): array {
 		return [ 'box-shadow' ];
@@ -99,14 +96,14 @@ class Box_Shadow_Converter extends Prop_Converter_Base {
 	}
 
 	private function extract_inset( array &$tokens ): ?string {
-		if ( strtolower( $tokens[0] ) === self::INSET ) {
+		if ( strtolower( $tokens[0] ) === Shadow_Prop_Type::POSITION_INSET ) {
 			array_shift( $tokens );
-			return self::INSET;
+			return Shadow_Prop_Type::POSITION_INSET;
 		}
 
-		if ( strtolower( end( $tokens ) ) === self::INSET ) {
+		if ( strtolower( end( $tokens ) ) === Shadow_Prop_Type::POSITION_INSET ) {
 			array_pop( $tokens );
-			return self::INSET;
+			return Shadow_Prop_Type::POSITION_INSET;
 		}
 
 		return null;
@@ -139,9 +136,9 @@ class Box_Shadow_Converter extends Prop_Converter_Base {
 		$shape = [
 			'hOffset' => Size_Prop_Type::generate( $sizes[0] ),
 			'vOffset' => Size_Prop_Type::generate( $sizes[1] ),
-			'blur' => Size_Prop_Type::generate( $sizes[2] ?? self::DEFAULT_SIZE ),
-			'spread' => Size_Prop_Type::generate( $sizes[3] ?? self::DEFAULT_SIZE ),
-			'color' => Color_Prop_Type::generate( $color ?? self::DEFAULT_COLOR ),
+			'blur' => Size_Prop_Type::generate( $sizes[2] ?? Size_Constants::SIZE_ZERO_PX ),
+			'spread' => Size_Prop_Type::generate( $sizes[3] ?? Size_Constants::SIZE_ZERO_PX ),
+			'color' => Color_Prop_Type::generate( $color ?? Shadow_Prop_Type::DEFAULT_COLOR ),
 		];
 
 		if ( null !== $position ) {
