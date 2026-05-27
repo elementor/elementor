@@ -35,6 +35,7 @@ export function GridOutline( { tracks, width, height }: Props ) {
 					x2={ snapToHalfPixel( x ) }
 					y1={ contentTop }
 					y2={ contentBottom }
+					color={ tracks.borderColor }
 				/>
 			) ) }
 			{ horizontalLines.map( ( y, i ) => (
@@ -44,6 +45,7 @@ export function GridOutline( { tracks, width, height }: Props ) {
 					x2={ contentRight }
 					y1={ snapToHalfPixel( y ) }
 					y2={ snapToHalfPixel( y ) }
+					color={ tracks.borderColor }
 				/>
 			) ) }
 		</svg>
