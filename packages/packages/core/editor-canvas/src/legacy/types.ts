@@ -237,7 +237,7 @@ type ToJSON< T > = {
 	[ K in keyof T ]: T[ K ] extends BackboneModel< infer M > ? ToJSON< M > : T[ K ];
 };
 
-type ContextMenuGroup = {
+export type ContextMenuGroup = {
 	name: string;
 	actions: ContextMenuAction[];
 };
