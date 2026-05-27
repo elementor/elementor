@@ -12,6 +12,7 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
@@ -169,6 +170,7 @@ function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 	for ( const node of doc.querySelectorAll( '*' ) ) {
 		const type = node.tagName;
 		const widgetData = widgetsCache[ type ];
+
 		if ( ! widgetData ) {
 			continue;
 		}
@@ -179,6 +181,9 @@ function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 			throw new Error(
 				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
 			);
+		}
+		if ( ! isWidgetAvailableForLLM( widgetData ) ) {
+			throw new Error( `This tool does not support element type: ${ type }` );
 		}
 	}
 }
