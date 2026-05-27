@@ -3,6 +3,7 @@ import type * as React from 'react';
 
 import type { ConnectAuth } from '../connect-auth-schema';
 import { deployWebsite } from '../deploy';
+import { checkDesignSystem } from '../deploy/steps/check-design-system';
 import { getElementorAiCurrentContext, getSiteBuilderConfig } from '../site-builder-config';
 
 export type SiteBuilderParams = {
@@ -41,6 +42,10 @@ function sendReferrerInfo(
 	);
 }
 
+function openEditorForPage( homePageId: number ) {
+	window.location.href = `/wp-admin/post.php?post=${ homePageId }&action=elementor`;
+}
+
 async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
 	const origin = event.origin || '*';
 
@@ -56,7 +61,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 		);
 
 		if ( result.status === 'success' && result.homePageId ) {
-			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
+			openEditorForPage( result.homePageId );
 		}
 	} catch ( err ) {
 		iframe?.contentWindow?.postMessage(
@@ -69,6 +74,25 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			},
 			origin
 		);
+	}
+}
+
+async function handleCheckDesignSystem( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
+	const origin = event.origin || '*';
+	const result = await checkDesignSystem();
+	iframe?.contentWindow?.postMessage(
+		{
+			type: 'site-planner/check-design-system/result',
+			payload: result,
+		},
+		origin
+	);
+}
+
+function handleOpenEditor( event: MessageEvent ) {
+	const homePageId = Number( event.data?.payload?.homePageId );
+	if ( homePageId > 0 ) {
+		openEditorForPage( homePageId );
 	}
 }
 
@@ -119,6 +143,17 @@ export function useSiteBuilderIframeMessaging( {
 
 			if ( type === 'site-planner/deploy-website' ) {
 				await handleDeploy( iframeRef.current, event );
+				return;
+			}
+
+			if ( type === 'site-planner/check-design-system' ) {
+				await handleCheckDesignSystem( iframeRef.current, event );
+				return;
+			}
+
+			if ( type === 'site-planner/open-editor' ) {
+				handleOpenEditor( event );
+				return;
 			}
 
 			if ( type === 'element-selector/close' ) {

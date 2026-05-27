@@ -15,6 +15,12 @@ export type { DeployPayload, DeployResult };
 export async function deployWebsite( payload: DeployPayload ): Promise< DeployResult > {
 	const errors: string[] = [];
 
+	if ( payload.warnings?.length ) {
+		for ( const warning of payload.warnings ) {
+			errors.push( `content: ${ warning }` );
+		}
+	}
+
 	try {
 		await setSiteMetadata( payload.siteMeta );
 	} catch ( e ) {
@@ -103,10 +109,16 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		errors.push( `menus: ${ ( e as Error ).message }` );
 	}
 
+	const homePageId = pageIdMap.home || 0;
+	let status: DeployResult[ 'status' ] = 'success';
+	if ( errors.length ) {
+		status = homePageId ? 'partial_success' : 'error';
+	}
+
 	return {
-		status: errors.length ? 'error' : 'success',
+		status,
 		homeUrl: window.location.origin,
-		homePageId: pageIdMap.home || 0,
+		homePageId,
 		...( errors.length ? { errors, error: errors[ 0 ] } : {} ),
 	};
 }

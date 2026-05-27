@@ -58,10 +58,11 @@ export interface DeployPayload {
 	};
 	logo?: DeployLogo;
 	samplePosts?: DeploySamplePost[];
+	warnings?: string[];
 }
 
 export interface DeployResult {
-	status: 'success' | 'error';
+	status: 'success' | 'partial_success' | 'error';
 	homeUrl?: string;
 	homePageId?: number;
 	error?: string;
