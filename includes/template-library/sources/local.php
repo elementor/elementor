@@ -15,7 +15,6 @@ use Elementor\Utils;
 use Elementor\User;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
-use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
@@ -1998,31 +1997,16 @@ class Source_Local extends Source_Base {
 			$this->set_wordpress_adapter( new WordPress_Adapter() );
 		}
 
-		if ( ! $this->should_check_permissions( $args ) ) {
+		$post_id = intval( $args['template_id'] );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
+
+		if ( 'publish' === $post_status && ! post_password_required( $post_id ) ) {
 			return true;
 		}
 
-		$post_id = intval( $args['template_id'] );
-		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
-		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
-
-		$can_read_template = ! $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+		$can_read_template = $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
 
 		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
-	}
-
-	private function should_check_permissions( array $args ): bool {
-		if ( null === $this->elementor_adapter ) {
-			$this->set_elementor_adapter( new Elementor_Adapter() );
-		}
-
-		$check_permissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
-
-		if ( $check_permissions ) {
-			return false;
-		}
-
-		return true;
 	}
 
 	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
