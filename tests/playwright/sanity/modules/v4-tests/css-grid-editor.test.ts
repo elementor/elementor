@@ -53,6 +53,45 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await expect( layoutSection ).toHaveScreenshot( 'grid-controls-panel.png' );
 	} );
 
+	test( 'Grid outline overlay renders for a selected V4 grid and toggles off', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		// Act
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 4 );
+
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 3 );
+
+		await editor.publishPage();
+		await page.reload();
+		await editor.waitForPanelToLoad();
+
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+
+		// Assert
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
+
+		// Act
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+		const outlineToggle = page.locator( '[aria-label="Show Grid Outline control"] input[type="checkbox"]' );
+		await outlineToggle.click();
+
+		// Assert
+		await expect( gridOutline ).toHaveCount( 0 );
+	} );
+
 	test( 'Grid layout with content renders in editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
