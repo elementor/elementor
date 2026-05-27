@@ -134,6 +134,7 @@ class Modules_Manager {
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',
+			'a11y-announcements',
 			'components',
 			'interactions',
 			'feedback',

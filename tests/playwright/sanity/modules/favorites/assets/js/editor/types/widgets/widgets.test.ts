@@ -13,6 +13,7 @@ test.describe( 'Favorite widgets', () => {
 		const favoriteToAdd = 'Button';
 
 		const favoriteWidgets = new FavoriteWidgetsHelper( page );
+		await favoriteWidgets.ensureNotFavorited( favoriteToAdd );
 		await favoriteWidgets.add( favoriteToAdd );
 
 		const expectFavoriteVisible = async () => {
