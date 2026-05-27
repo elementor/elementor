@@ -29,8 +29,12 @@ class Post_Response {
 
 	public static function with_unconverted_css( array $response, array $unconverted ): array {
 		if ( ! empty( $unconverted ) ) {
-			$response['unconverted_css'] = $unconverted;
-			$response['custom_css_active'] = self::is_custom_css_supported();
+			if ( self::is_custom_css_supported() ) {
+				$response['css_via_custom_css'] = $unconverted;
+			} else {
+				$response['css_not_rendered'] = $unconverted;
+				$response['warning'] = __( 'Some CSS declarations could not be converted to typed style props and Elementor Pro atomic-custom-css is not active. These declarations are stored but will NOT render on the published page. See css_not_rendered for the list.', 'elementor' );
+			}
 		}
 
 		return $response;

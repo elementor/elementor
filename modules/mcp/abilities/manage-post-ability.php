@@ -29,7 +29,7 @@ class Manage_Post_Ability extends Abstract_Ability {
 
 	private function elements_field_description(): string {
 		return __(
-			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; declarations that cannot be converted fall back to custom_css — but custom_css only renders when Elementor Pro is active with an atomic-custom-css licence feature. Check custom_css_active in the response: if false, those declarations are stored but will NOT render on the published page (see unconverted_css for the list). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create. At the document root, every widget must have a container parent; loose root widgets are auto-wrapped in an e-div-block (consecutive widgets are grouped into one wrapper).',
+			'Plain JSON nodes. Each node: { widget, text?, tag?, url?, target_blank?, css?, classes?, children? }. widget: "container" | "div" | "heading" | "paragraph" | "button". text is plain string (inline <br>/<strong> allowed). url is for button (sanitized to http|https|mailto|tel|#anchor|/relative). css is a semicolon-separated declaration string converted to typed style props; declarations that cannot be converted fall back to custom_css. Response field css_via_custom_css = those declarations ARE rendering (Pro + atomic-custom-css active, no action needed). Response field css_not_rendered = those declarations will NOT render on the published page (Pro not active; see the warning field for details). classes is an array of global class ids (get them from elementor/manage-global-classes). children is recursive for containers. Raw v4 nodes ({elType, widgetType, settings.* with $$type}) are also accepted for backwards compatibility. Required for replace_content/append_content; optional on create. At the document root, every widget must have a container parent; loose root widgets are auto-wrapped in an e-div-block (consecutive widgets are grouped into one wrapper).',
 			'elementor'
 		);
 	}
@@ -56,8 +56,9 @@ class Manage_Post_Ability extends Abstract_Ability {
 					'dry_run' => [ 'type' => 'boolean' ],
 					'added' => [ 'type' => 'integer' ],
 					'deleted' => [ 'type' => 'boolean' ],
-					'unconverted_css' => [ 'type' => 'array' ],
-					'custom_css_active' => [ 'type' => 'boolean', 'description' => 'Present when unconverted_css is non-empty. true = Pro is active with atomic-custom-css licence, fallback declarations will render. false = they will NOT render.' ],
+					'css_via_custom_css' => [ 'type' => 'array', 'description' => 'CSS declarations that could not be converted to typed style props but ARE rendered via custom_css (Elementor Pro atomic-custom-css is active). No action needed.' ],
+					'css_not_rendered' => [ 'type' => 'array', 'description' => 'CSS declarations that could not be converted to typed style props and WILL NOT render — Elementor Pro atomic-custom-css is not active. These declarations are stored but invisible on the published page. Action needed.' ],
+					'warning' => [ 'type' => 'string', 'description' => 'Present only when css_not_rendered is non-empty. Describes the rendering gap and what to do.' ],
 					'normalized' => [ 'type' => 'array' ],
 				],
 			],
