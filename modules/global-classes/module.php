@@ -5,6 +5,7 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\DesignSystemSync\Classes\Global_Classes_Sync_Map;
 use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
@@ -40,6 +41,7 @@ class Module extends BaseModule {
 		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			( new Global_Class_Post_Type() )->register();
+			( new Global_Classes_Post_IDs() )->register_hooks();
 
 			$relations = new Global_Classes_Relations();
 			$relations->register_hooks();
@@ -74,7 +76,22 @@ class Module extends BaseModule {
 				20,
 				3
 			);
+
+			add_filter(
+				'elementor/kit/meta_to_preserve_on_kit_import',
+				[ $this, 'add_meta_to_preserve_on_kit_import' ]
+			);
 		}
+	}
+
+	public function add_meta_to_preserve_on_kit_import( array $meta_keys ): array {
+		return array_merge( $meta_keys, [
+			Global_Classes_Order::META_KEY,
+			Global_Classes_Labels::META_KEY_FRONTEND,
+			Global_Classes_Labels::META_KEY_PREVIEW,
+			Global_Classes_Sync_Map::META_KEY,
+			Global_Classes_Post_IDs::META_KEY,
+		] );
 	}
 
 	private function register_features() {

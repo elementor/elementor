@@ -7,6 +7,7 @@ import {
 } from '@elementor/editor-elements';
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
@@ -128,6 +129,14 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 	}
 	const propKey = elementPropSchema[ propertyName ].key;
 	const value = resolvePropValue( propertyValue, propKey );
+	const { valid, jsonSchema } = Schema.validatePropValue( elementPropSchema[ propertyName ], propertyValue );
+	if ( ! valid ) {
+		throw new Error(
+			`Invalid PropValue for elementId: ${ elementId }. PropKey: ${ propKey }, PropValue: ${ JSON.stringify(
+				propertyValue
+			) }\nExpected Schema: ${ jsonSchema }`
+		);
+	}
 	updateElementSettings( {
 		id: elementId,
 		props: {
@@ -135,4 +144,5 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		},
 		withHistory: false,
 	} );
+	runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 };

@@ -10,6 +10,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+class Global_Class_Post_With_Mocked_Time extends Global_Class_Post {
+	private int $fixed_timestamp;
+
+	public function set_fixed_timestamp( int $timestamp ): void {
+		$this->fixed_timestamp = $timestamp;
+	}
+
+	protected function get_current_timestamp(): int {
+		return $this->fixed_timestamp;
+	}
+}
+
 class Test_Global_Class_Post extends Elementor_Test_Base {
 	private array $created_post_ids = [];
 
@@ -29,6 +41,25 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
+	public function test_create__should_not_mark_post_as_edited() {
+		$post = Global_Class_Post::create( 'g-fresh', 'fresh-class', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		$this->assertFalse( $post->was_edited() );
+	}
+
+	public function test_was_edited__no_edit_timestamp_not_edited() {
+		$post = Global_Class_Post::create( 'g-legacy-edited', 'legacy', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED ); // Mock v4.01-beta1 creation
+
+		$reloaded = Global_Class_Post::from_post_id( $post->get_post_id() );
+
+		$this->assertFalse( $reloaded->was_edited() );
+		$this->assertFalse( $reloaded->has_edit_timestamp() );
+	}
+
 	public function test_create__should_create_post_with_correct_data() {
 		// Arrange
 		$class_id = 'g-123';
@@ -44,14 +75,13 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		];
 
 		// Act
-		$post = Global_Class_Post::create( $class_id, $label, $data, 5 );
+		$post = Global_Class_Post::create( $class_id, $label, $data );
 		$this->created_post_ids[] = $post->get_post_id();
 
 		// Assert
 		$this->assertNotNull( $post );
 		$this->assertSame( $class_id, $post->get_class_id() );
 		$this->assertSame( $label, $post->get_label() );
-		$this->assertSame( 5, $post->get_order() );
 		$this->assertSame( $data, $post->get_data() );
 	}
 
@@ -125,6 +155,35 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 			'type' => 'class',
 			'variants' => $data['variants'],
 		], $array );
+	}
+
+	public function test_update_data__marks_post_as_has_edit_timestamp_on_post_edit() {
+		// Arrange
+		$post = Global_Class_Post::create( 'g-modified', 'modified-test', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+		delete_post_meta( $post->get_post_id(), Global_Class_Post::META_KEY_EDITED ); // Mock v4.01-beta1 creation
+
+		/** @var Global_Class_Post_With_Mocked_Time $post_with_fixed_time */
+		$post_with_fixed_time = Global_Class_Post_With_Mocked_Time::from_post_id( $post->get_post_id() );
+		$post_with_fixed_time->set_fixed_timestamp( time() + 60 );
+
+		$new_data = [
+			'type' => 'class',
+			'variants' => [
+				[
+					'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
+					'props' => [ 'color' => [ '$$type' => 'color', 'value' => 'navy' ] ],
+				],
+			],
+		];
+
+		// Act
+		$post_with_fixed_time->set_preview( false );
+		$post_with_fixed_time->update_data( $new_data );
+
+		// Assert
+		$this->assertTrue( $post_with_fixed_time->has_edit_timestamp() );
+		$this->assertTrue( $post_with_fixed_time->was_edited() );
 	}
 
 	public function test_update_data__should_update_frontend_data() {

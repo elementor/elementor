@@ -1,5 +1,5 @@
 import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
-import { reloadCurrentDocument } from '@elementor/editor-documents';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
 
@@ -7,7 +7,7 @@ import { type ConflictStrategy } from '../types';
 
 const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
 
-const IMPORT_REQUEST_TIMEOUT_MS = 20_000;
+const IMPORT_REQUEST_TIMEOUT_MS = 120_000;
 
 const GLOBAL_CLASSES_RUNNER = 'global-classes';
 const GLOBAL_VARIABLES_RUNNER = 'global-variables';
@@ -33,12 +33,12 @@ export const useImportRequest = () => {
 	return useMutation( {
 		mutationKey: [ IMPORT_DESIGN_SYSTEM_MUTATION_KEY ],
 		mutationFn: async ( { file, conflictStrategy }: ImportRequestArgs ): Promise< void > => {
+			await runCommand( 'document/save/auto', { force: true } );
+
 			const session = await uploadKit( file );
 			const runners = await startImport( session, conflictStrategy );
 
 			await runRunners( session, runners );
-
-			await reloadCurrentDocument();
 
 			window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT ) );
 		},

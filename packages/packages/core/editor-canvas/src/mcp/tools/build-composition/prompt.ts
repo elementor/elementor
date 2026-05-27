@@ -2,6 +2,8 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
 
+export const BUILD_COMPOSITIONS_GUIDE_URI = 'elementor://canvas/tools/build-compositions-guide';
+
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -28,6 +30,7 @@ This tool support v4 elements only
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
 - Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`llm_guidance.required_direct_children\` lists element types that must appear as direct child tags in XML (from widget defaults)
 - \`allowed_child_types\` lists which element types can be nested inside
 - \`allowed_parents\` lists which element types this element can be placed inside
 

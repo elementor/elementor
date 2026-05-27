@@ -14,6 +14,7 @@ import { ClassManagerButton } from './components/class-manager/class-manager-but
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { OpenPanelFromEvent } from './components/open-panel-from-event';
 import { OpenPanelFromUrl } from './components/open-panel-from-url';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
@@ -56,6 +57,11 @@ export function init() {
 			id: 'global-classes-open-panel-from-url',
 			component: OpenPanelFromUrl,
 		} );
+
+		injectIntoLogic( {
+			id: 'global-classes-open-panel-from-event',
+			component: OpenPanelFromEvent,
+		} );
 	}
 
 	injectIntoCssClassConvert( {
@@ -74,7 +80,15 @@ export function init() {
 	} );
 
 	initMcpIntegration(
-		getMCPByDomain( 'classes', { instructions: 'MCP server for management of Elementor global classes' } ),
+		getMCPByDomain( 'classes', {
+			instructions: 'MCP server for management of Elementor global classes',
+			docs: `Everything related to V4 ( Atomic ) global classes.
+# Global classes
+- Create/update/delete global classes
+- Get list of global classes
+- Get details of a global class
+`,
+		} ),
 		getMCPByDomain( 'canvas' )
 	);
 }

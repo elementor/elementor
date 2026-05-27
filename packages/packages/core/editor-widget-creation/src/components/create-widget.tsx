@@ -5,12 +5,25 @@ import {
 	isAngieAvailable,
 	redirectToAppAdmin,
 	redirectToInstallation,
+	saveAngieConsent,
 	sendPromptToAngie,
 } from '@elementor/editor-mcp';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { trackEvent } from '@elementor/events';
 import { XIcon } from '@elementor/icons';
-import { Button, CircularProgress, Dialog, DialogContent, IconButton, Image, Stack, Typography } from '@elementor/ui';
+import {
+	Button,
+	Checkbox,
+	CircularProgress,
+	Dialog,
+	DialogContent,
+	FormControlLabel,
+	IconButton,
+	Image,
+	Link,
+	Stack,
+	Typography,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type ShowModalEventDetail = {
@@ -27,14 +40,15 @@ type CreateWidgetModalProps = {
 };
 
 const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
-const PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-promotion.svg';
-const AI_WIDGET_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
+const ANGIE_MODAL_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-modal-promotion.png';
+const ANGIE_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked' as const;
 const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
 const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed' as const;
 const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned' as const;
 
 function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
 	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
+	const [ agreedToTerms, setAgreedToTerms ] = useState( false );
 
 	const handleClose = () => {
 		if ( installState === 'installing' ) {
@@ -58,7 +72,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 			trigger_source: entryPoint,
 		} );
 
-		const result = await installAngiePlugin();
+		const [ result ] = await Promise.all( [ installAngiePlugin(), saveAngieConsent() ] );
 
 		if ( ! result.success ) {
 			setInstallState( 'error' );
@@ -102,31 +116,64 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 								objectFit: 'cover',
 								objectPosition: 'right center',
 							} }
-							src={ PROMOTION_IMAGE_URL }
+							src={ ANGIE_MODAL_PROMOTION_IMAGE_URL }
 						/>
-						<Stack gap={ 2 } justifyContent="center" p={ 4 }>
-							<Typography variant="h6" fontWeight={ 600 } whiteSpace="nowrap">
-								{ installState === 'error'
-									? __( 'Installation failed', 'elementor' )
-									: __( 'Install Angie to build custom widgets', 'elementor' ) }
-							</Typography>
-							<Typography variant="body2" color="text.secondary">
-								{ installState === 'error'
-									? __(
-											"We couldn't install Angie automatically. Click below to install it manually.",
-											'elementor'
-									  )
-									: __(
-											'Angie lets you generate custom widgets, sections, and code using simple instructions.',
-											'elementor'
-									  ) }
-							</Typography>
-							{ installState !== 'error' && (
-								<Typography variant="body2" color="text.secondary">
-									{ __( 'Install once to start building directly inside the editor.', 'elementor' ) }
+						<Stack justifyContent="space-between" p={ 4 }>
+							<Stack gap={ 2.5 } justifyContent="center" sx={ { flex: 1, paddingInlineEnd: 2.5 } }>
+								<Typography variant="h4" fontWeight={ 600 } color="text.secondary">
+									{ installState === 'error'
+										? __( 'Installation failed', 'elementor' )
+										: __( 'Create custom widgets with Angie', 'elementor' ) }
 								</Typography>
-							) }
-							<Stack direction="row" justifyContent="flex-end" sx={ { mt: 2 } }>
+								<Typography variant="body2">
+									{ installState === 'error'
+										? __(
+												"We couldn't install Angie automatically. Click below to install it manually.",
+												'elementor'
+										  )
+										: __(
+												'Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.',
+												'elementor'
+										  ) }
+								</Typography>
+								{ installState !== 'error' && (
+									<FormControlLabel
+										control={
+											<Checkbox
+												size="small"
+												checked={ agreedToTerms }
+												onChange={ (
+													_e: React.ChangeEvent< HTMLInputElement >,
+													checked: boolean
+												) => setAgreedToTerms( checked ) }
+											/>
+										}
+										label={
+											<Typography variant="body2" color="text.secondary">
+												{ __( 'I agree to the', 'elementor' ) }
+												<Link
+													sx={ { px: 0.5 } }
+													href="https://elementor.com/terms/angie-terms-conditions/"
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ __( 'Terms', 'elementor' ) }
+												</Link>
+												{ __( '&', 'elementor' ) }
+												<Link
+													sx={ { px: 0.5 } }
+													href="https://elementor.com/about/privacy/"
+													target="_blank"
+													rel="noopener noreferrer"
+												>
+													{ __( 'Privacy Policy.', 'elementor' ) }
+												</Link>
+											</Typography>
+										}
+									/>
+								) }
+							</Stack>
+							<Stack direction="row" justifyContent="flex-end">
 								{ installState === 'error' ? (
 									<Button variant="contained" color="accent" onClick={ handleFallbackInstall }>
 										{ __( 'Install Manually', 'elementor' ) }
@@ -136,7 +183,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 										variant="contained"
 										color="accent"
 										onClick={ handleInstall }
-										disabled={ installState === 'installing' }
+										disabled={ installState === 'installing' || ! agreedToTerms }
 										startIcon={
 											installState === 'installing' ? (
 												<CircularProgress size={ 18 } color="inherit" />
@@ -145,7 +192,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 									>
 										{ installState === 'installing'
 											? __( 'Installing…', 'elementor' )
-											: __( 'Install Angie', 'elementor' ) }
+											: __( 'Install & Activate', 'elementor' ) }
 									</Button>
 								) }
 							</Stack>
@@ -166,7 +213,7 @@ export function CreateWidget() {
 			const hasAngieInstalled = isAngieAvailable();
 
 			trackEvent( {
-				eventName: AI_WIDGET_CTA_CLICKED_EVENT,
+				eventName: ANGIE_CTA_CLICKED_EVENT,
 				entry_point: customEvent.detail.entry_point,
 				has_angie_installed: hasAngieInstalled,
 			} );

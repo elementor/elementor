@@ -13,17 +13,31 @@ import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-reso
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
-import { generatePrompt } from './prompt';
+import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+	const { addTool, resource } = reg;
+
+	resource(
+		'build-compositions-guide',
+		BUILD_COMPOSITIONS_GUIDE_URI,
+		{
+			title: 'Build Compositions Guide',
+			description: 'Detailed guide for using the build-compositions tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generatePrompt() } ],
+		} )
+	);
 
 	addTool( {
 		name: 'build-compositions',
-		description: generatePrompt(),
+		description: 'Build V4 element compositions on the Elementor canvas. Read the guide resource before use.',
 		schema,
 		requiredResources: [
+			{ description: 'Build compositions guide', uri: BUILD_COMPOSITIONS_GUIDE_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
@@ -47,33 +61,41 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			try {
 				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
 					createElement,
+					deleteElement,
 					getWidgetsCache,
 				} );
 				compositionBuilder.setElementConfig( elementConfig );
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const { invalidStyles, rootContainers: generatedRootContainers } =
-					await compositionBuilder.build( targetContainer );
+				const {
+					invalidStyles,
+					configErrors,
+					rootContainers: generatedRootContainers,
+				} = await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
-				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
-					const customCss = {
-						value: rawCssRules.join( ';\n' ),
-					};
-					doUpdateElementProperty( {
-						elementId,
-						propertyName: '_styles',
-						propertyValue: {
-							_styles: {
-								custom_css: customCss,
+				if ( configErrors.length ) {
+					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
+				} else {
+					Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
+						const customCss = {
+							value: rawCssRules.join( ';\n' ),
+						};
+						doUpdateElementProperty( {
+							elementId,
+							propertyName: '_styles',
+							propertyValue: {
+								_styles: {
+									custom_css: customCss,
+								},
 							},
-						},
-						elementType: 'widget',
+							elementType: 'widget',
+						} );
 					} );
-				} );
+				}
 			} catch ( error ) {
 				errors.push( error as Error );
 			}
