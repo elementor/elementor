@@ -177,12 +177,7 @@ function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 		if ( widgetData.elType !== 'widget' ) {
 			continue;
 		}
-		if ( ! widgetData.atomic_props_schema ) {
-			throw new Error(
-				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
-			);
-		}
-		if ( ! isWidgetAvailableForLLM( widgetData ) ) {
+		if ( ! isWidgetAvailableForLLM( widgetData ) || ! widgetData.atomic_props_schema ) {
 			throw new Error( `This tool does not support element type: ${ type }` );
 		}
 	}
