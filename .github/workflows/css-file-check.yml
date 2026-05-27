@@ -15,8 +15,10 @@ on:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: CSS size build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: CSS size build artifact
 
   check-size-limit:
     runs-on: ubuntu-22.04
