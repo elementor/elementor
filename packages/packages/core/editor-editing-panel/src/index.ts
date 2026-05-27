@@ -3,6 +3,7 @@ export { injectIntoCssClassConvert } from './components/css-classes/css-class-co
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
+export { EditingPanelTabs } from './components/editing-panel-tabs';
 export { SectionContent } from './components/section-content';
 export { SettingsControl } from './components/settings-control';
 export { SettingsField } from './controls-registry/settings-field';
