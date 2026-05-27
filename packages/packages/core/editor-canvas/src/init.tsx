@@ -3,6 +3,7 @@ import { getMCPByDomain } from '@elementor/editor-mcp';
 
 import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
+import { GridOutlines } from './components/grid-outlines';
 import { InteractionsRenderer } from './components/interactions-renderer';
 import { StyleRenderer } from './components/style-renderer';
 import { initFormAncestorEnforcement } from './form-structure/enforce-form-ancestor-commands';
@@ -34,6 +35,11 @@ export function init() {
 	injectIntoTop( {
 		id: 'elements-overlays',
 		component: ElementsOverlays,
+	} );
+
+	injectIntoTop( {
+		id: 'grid-outlines',
+		component: GridOutlines,
 	} );
 
 	injectIntoTop( {
