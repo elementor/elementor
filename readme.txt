@@ -355,6 +355,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.1.1 - 2026-05-27 =
+
+* Security Fix: Improved code security enforcement in content handling
+* Security Fix: Improved code security enforcement in template handling
+* Fix: Hiding one filter prevents other filters from being applied - Atomic Editor
+
 = 4.1.0 - 2026-05-26 =
 
 * New: Introducing the Design System panel for managing Variables and Classes in one place - Atomic Editor
