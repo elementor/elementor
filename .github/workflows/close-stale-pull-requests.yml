@@ -30,21 +30,20 @@ jobs:
           fi
 
           COMMENT="$(cat <<'STALE_PR_COMMENT'
-          Hi there :wave:
+          Hi there 👋
 
-          Thank you for taking the time to put this PR together and contribute to shape the future of Elementor. We really appreciate the effort and thought that went into it! :muscle:
+          Thank you for the time and effort you put into this PR and for contributing to Elementor. We truly appreciate your work and engagement with the community.
 
-          After a careful review and internal discussion, **we've decided not to move forward with this implementation at this time**. This doesn't take away from the value of your contribution. In many cases like this, it comes down to broader product considerations, priorities, or alignment with our current roadmap.
+          After internal considerations, we’ve decided not to move forward with this PR at this time.
 
-          That said, we're keeping this on our radar and may revisit the idea as part of a future enhancement.
+          Please note this is not a reflection on the quality or value of your contribution.
 
-          **Thanks again for your contribution and for being part of the Elementor community.** :pray:
+          Thank you again for contributing to Elementor and being part of the community. 🙏
 
-          Feel free to submit more PRs anytime. We're always happy to review and collaborate! :nerd_face:
+          We're always happy to review new submissions and collaborate further.
 
           Sincerely,
-
-          **The Elementor Team**
+          The Elementor Team
           STALE_PR_COMMENT
           )"
 
