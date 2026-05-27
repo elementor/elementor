@@ -58,6 +58,10 @@ class Test_Post_Query extends Elementor_Test_Base {
 			$request->set_param( Post_Query::ITEMS_COUNT_KEY, $params[ Post_Query::ITEMS_COUNT_KEY ] );
 		}
 
+		if ( isset( $params[ Post_Query::SEARCH_IN_CONTENT_KEY ] ) ) {
+			$request->set_param( Post_Query::SEARCH_IN_CONTENT_KEY, $params[ Post_Query::SEARCH_IN_CONTENT_KEY ] );
+		}
+
 		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
