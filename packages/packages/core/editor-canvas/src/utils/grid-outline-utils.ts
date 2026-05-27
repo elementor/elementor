@@ -1,4 +1,28 @@
-export function computeBoundaries( sizes: number[], gap: number, offset: number ): number[] {
+import { type GridTracks } from '../hooks/use-grid-tracks';
+
+export type OutlineGeometry = {
+	vertical: number[];
+	horizontal: number[];
+	top: number;
+	bottom: number;
+	left: number;
+	right: number;
+};
+
+export function computeOutlineGeometry( tracks: GridTracks, width: number, height: number ): OutlineGeometry {
+	const { columns, rows, columnGap, rowGap, padding } = tracks;
+
+	return {
+		vertical: computeBoundaries( columns, columnGap, padding.left ),
+		horizontal: computeBoundaries( rows, rowGap, padding.top ),
+		top: padding.top,
+		bottom: height - padding.bottom,
+		left: padding.left,
+		right: width - padding.right,
+	};
+}
+
+function computeBoundaries( sizes: number[], gap: number, offset: number ): number[] {
 	if ( sizes.length === 0 ) {
 		return [];
 	}

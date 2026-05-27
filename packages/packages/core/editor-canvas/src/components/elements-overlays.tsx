@@ -20,7 +20,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element } ) => element.dataset.eType === 'e-grid',
+		shouldRender: ( { element, isSelected } ) => isSelected && element.dataset.eType === 'e-grid',
 	},
 ];
 

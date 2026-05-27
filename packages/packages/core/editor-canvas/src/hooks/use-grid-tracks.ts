@@ -8,9 +8,6 @@ export type GridTracks = {
 	columnGap: number;
 	rowGap: number;
 	padding: { top: number; right: number; bottom: number; left: number };
-	// Color resolved inside the preview iframe — CSS variables resolve to
-	// different values in the parent window vs. the iframe, so we extract the
-	// iframe's value and pass it as a literal stroke color to the SVG.
 	borderColor: string;
 };
 

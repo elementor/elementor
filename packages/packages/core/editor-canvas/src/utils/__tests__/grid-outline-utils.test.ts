@@ -1,32 +1,86 @@
-import { computeBoundaries, parseTrackList, snapToHalfPixel, toPx } from '../grid-outline-utils';
+import { type GridTracks } from '../../hooks/use-grid-tracks';
+import { computeOutlineGeometry, parseTrackList, snapToHalfPixel, toPx } from '../grid-outline-utils';
 
-describe( 'computeBoundaries', () => {
-	it( 'returns an empty list when there are no tracks', () => {
-		expect( computeBoundaries( [], 8, 0 ) ).toEqual( [] );
+function makeTracks( partial: Partial< GridTracks > = {} ): GridTracks {
+	return {
+		columns: [],
+		rows: [],
+		columnGap: 0,
+		rowGap: 0,
+		padding: { top: 0, right: 0, bottom: 0, left: 0 },
+		borderColor: '',
+		...partial,
+	};
+}
+
+describe( 'computeOutlineGeometry', () => {
+	it( 'returns empty boundary lists when there are no tracks', () => {
+		const geometry = computeOutlineGeometry( makeTracks(), 100, 100 );
+
+		expect( geometry.vertical ).toEqual( [] );
+		expect( geometry.horizontal ).toEqual( [] );
 	} );
 
-	it( 'returns the outer edges for a single track with no gap', () => {
-		expect( computeBoundaries( [ 100 ], 0, 0 ) ).toEqual( [ 0, 100 ] );
+	it( 'shifts boundaries by the padding offset on each axis', () => {
+		const tracks = makeTracks( {
+			columns: [ 100, 100 ],
+			rows: [ 80, 80 ],
+			padding: { top: 5, right: 0, bottom: 0, left: 20 },
+		} );
+
+		const geometry = computeOutlineGeometry( tracks, 300, 300 );
+
+		expect( geometry.vertical ).toEqual( [ 20, 120, 220 ] );
+		expect( geometry.horizontal ).toEqual( [ 5, 85, 165 ] );
 	} );
 
-	it( 'returns both edges of every gap between tracks', () => {
-		// 3 tracks of 100px, 10px gaps, starting offset 0:
+	it( 'emits both edges of every gap between tracks', () => {
+		const tracks = makeTracks( {
+			columns: [ 100, 100, 100 ],
+			columnGap: 10,
+		} );
+
+		const geometry = computeOutlineGeometry( tracks, 400, 100 );
+
 		// 0 — 100 [gap 10] 110 — 210 [gap 10] 220 — 320
-		expect( computeBoundaries( [ 100, 100, 100 ], 10, 0 ) ).toEqual( [ 0, 100, 110, 210, 220, 320 ] );
+		expect( geometry.vertical ).toEqual( [ 0, 100, 110, 210, 220, 320 ] );
 	} );
 
-	it( 'collapses gap boundaries when gap is zero', () => {
-		expect( computeBoundaries( [ 50, 50, 50 ], 0, 0 ) ).toEqual( [ 0, 50, 100, 150 ] );
-	} );
+	it( 'collapses gap boundaries when the gap is zero', () => {
+		const tracks = makeTracks( {
+			rows: [ 50, 50, 50 ],
+			rowGap: 0,
+		} );
 
-	it( 'shifts every boundary by the offset', () => {
-		expect( computeBoundaries( [ 100, 100 ], 10, 20 ) ).toEqual( [ 20, 120, 130, 230 ] );
+		const geometry = computeOutlineGeometry( tracks, 100, 200 );
+
+		expect( geometry.horizontal ).toEqual( [ 0, 50, 100, 150 ] );
 	} );
 
 	it( 'handles uneven track sizes', () => {
-		// 1fr + 200px + 1fr resolved to e.g. 100, 200, 100 with a 5px gap and offset 10:
+		const tracks = makeTracks( {
+			columns: [ 100, 200, 100 ],
+			columnGap: 5,
+			padding: { top: 0, right: 0, bottom: 0, left: 10 },
+		} );
+
+		const geometry = computeOutlineGeometry( tracks, 500, 100 );
+
 		// 10 — 110 [5] 115 — 315 [5] 320 — 420
-		expect( computeBoundaries( [ 100, 200, 100 ], 5, 10 ) ).toEqual( [ 10, 110, 115, 315, 320, 420 ] );
+		expect( geometry.vertical ).toEqual( [ 10, 110, 115, 315, 320, 420 ] );
+	} );
+
+	it( 'derives the content rect from element size and padding', () => {
+		const tracks = makeTracks( {
+			padding: { top: 5, right: 8, bottom: 12, left: 20 },
+		} );
+
+		const geometry = computeOutlineGeometry( tracks, 300, 200 );
+
+		expect( geometry.top ).toBe( 5 );
+		expect( geometry.left ).toBe( 20 );
+		expect( geometry.right ).toBe( 292 );
+		expect( geometry.bottom ).toBe( 188 );
 	} );
 } );
 
@@ -79,7 +133,7 @@ describe( 'toPx', () => {
 		[ '0px', 0 ],
 		[ '10px', 10 ],
 		[ '99.5px', 99.5 ],
-		[ 'normal', 0 ], // gap reports "normal" when there is no gap
+		[ 'normal', 0 ],
 		[ '', 0 ],
 		[ 'auto', 0 ],
 	] )( 'parses %p as %p', ( input, expected ) => {
