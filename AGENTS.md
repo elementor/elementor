@@ -53,7 +53,7 @@ That script installs deps, builds, downloads Hello Elementor, runs `npm run star
 
 Manual equivalent: see [tests/test-environment-setup.md](tests/test-environment-setup.md) (steps: `npm run start-local-server` then `npm run test:setup:playwright`).
 
-If Docker is not running yet (VMs): start the daemon per your image, then ensure the socket is usable for the agent user (often `sudo dockerd` in background and relaxed socket permissions in disposable environments only).
+If Docker is not running on the VM yet, a typical pattern is `sudo dockerd &>/tmp/dockerd.log &` in the background, then ensure the Docker socket is usable for the agent user (for example `sudo chmod 666 /var/run/docker.sock` in **disposable** environments only). For a manual plugin tree under `./build/` without the setup script, flows often use `composer install --no-scripts --no-dev && composer dump-autoload && npx grunt copy`, then `npm run setup-templates`, then start **both** wp-lite-env instances (see `npm run start-local-server` in [package.json](package.json)).
 
 Admin: http://localhost:8888/wp-admin/ — user `admin`, password `password` (see test environment doc).
 
@@ -74,6 +74,6 @@ For CI-style mounted **build** output use `npm run wp-playground:ci` (expects `.
 - `npm run lint` runs ESLint at the repo root and in the `elementor-packages` workspace (`npm run lint -w elementor-packages`); both must pass.
 - PHPCS may report warnings without errors on the current tree; treat policy from maintainers, not only the exit summary.
 - `composer install` post-install can run php-scoper (Twig prefixing); dev dependency `humbug/php-scoper` must be present for a full dev install.
-- For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` plus `npx grunt copy`; restore dev deps with `composer install` when you need them again.
+- For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npx grunt copy`. Dev dependencies must be restored afterward with `composer install`.
 - [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned when troubleshooting.
 - Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).
