@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Prop_Converter_Base;
+use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Box_Shorthand_Parser;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Size_Value_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,6 +20,13 @@ class Gap_Converter extends Prop_Converter_Base {
 		'column-gap',
 	];
 
+	private const AXIS_KEYS = [ 'row', 'column' ];
+
+	private const AXIS_BY_PROPERTY = [
+		'row-gap' => 'row',
+		'column-gap' => 'column',
+	];
+
 	public function get_supported_properties(): array {
 		return self::PROPERTIES;
 	}
@@ -28,55 +36,18 @@ class Gap_Converter extends Prop_Converter_Base {
 		$unconverted = [];
 
 		foreach ( $declarations as $declaration ) {
-			$property = $declaration['property'];
-			$value = $declaration['value'];
+			$parsed = $this->parse_declaration( $declaration );
 
-			switch ( $property ) {
-				case 'row-gap':
-					$parsed = Size_Value_Parser::parse( $value );
-
-					if ( null === $parsed ) {
-						$unconverted[] = $this->unconverted(
-							$property,
-							$value,
-							'row-gap value could not be parsed; rendered via custom_css.'
-						);
-						break;
-					}
-
-					$axes['row'] = $parsed;
-					break;
-
-				case 'column-gap':
-					$parsed = Size_Value_Parser::parse( $value );
-
-					if ( null === $parsed ) {
-						$unconverted[] = $this->unconverted(
-							$property,
-							$value,
-							'column-gap value could not be parsed; rendered via custom_css.'
-						);
-						break;
-					}
-
-					$axes['column'] = $parsed;
-					break;
-
-				case 'gap':
-					$expanded = $this->expand_shorthand( $value );
-
-					if ( null === $expanded ) {
-						$unconverted[] = $this->unconverted(
-							$property,
-							$value,
-							'gap shorthand could not be parsed; rendered via custom_css.'
-						);
-						break;
-					}
-
-					$axes = array_merge( $axes, $expanded );
-					break;
+			if ( null === $parsed ) {
+				$unconverted[] = $this->unconverted(
+					$declaration['property'],
+					$declaration['value'],
+					$this->failure_hint( $declaration['property'] )
+				);
+				continue;
 			}
+
+			$axes = array_merge( $axes, $parsed );
 		}
 
 		if ( empty( $axes ) ) {
@@ -86,53 +57,41 @@ class Gap_Converter extends Prop_Converter_Base {
 			];
 		}
 
-		$value = [];
-
-		if ( isset( $axes['row'] ) ) {
-			$value['row'] = Size_Prop_Type::generate( $axes['row'] );
-		}
-
-		if ( isset( $axes['column'] ) ) {
-			$value['column'] = Size_Prop_Type::generate( $axes['column'] );
-		}
-
 		return [
-			'props' => [
-				'gap' => Layout_Direction_Prop_Type::generate( $value ),
-			],
+			'props' => [ 'gap' => Layout_Direction_Prop_Type::generate( $this->wrap_axes( $axes ) ) ],
 			'unconverted' => $unconverted,
 		];
 	}
 
-	private function expand_shorthand( string $value ): ?array {
-		$parts = preg_split( '/\s+/', trim( $value ) );
+	private function parse_declaration( array $declaration ): ?array {
+		if ( 'gap' === $declaration['property'] ) {
+			return Box_Shorthand_Parser::expand_axis( $declaration['value'], self::AXIS_KEYS );
+		}
 
-		if ( empty( $parts ) || count( $parts ) > 2 ) {
+		$size = Size_Value_Parser::parse( $declaration['value'] );
+
+		if ( null === $size ) {
 			return null;
 		}
 
-		$row = Size_Value_Parser::parse( $parts[0] );
+		return [ self::AXIS_BY_PROPERTY[ $declaration['property'] ] => $size ];
+	}
 
-		if ( null === $row ) {
-			return null;
+	private function failure_hint( string $property ): string {
+		return 'gap' === $property
+			? 'gap shorthand could not be parsed; rendered via custom_css.'
+			: sprintf( '%s value could not be parsed; rendered via custom_css.', $property );
+	}
+
+	private function wrap_axes( array $axes ): array {
+		$value = [];
+
+		foreach ( self::AXIS_KEYS as $axis ) {
+			if ( isset( $axes[ $axis ] ) ) {
+				$value[ $axis ] = Size_Prop_Type::generate( $axes[ $axis ] );
+			}
 		}
 
-		if ( 1 === count( $parts ) ) {
-			return [
-				'row' => $row,
-				'column' => $row,
-			];
-		}
-
-		$column = Size_Value_Parser::parse( $parts[1] );
-
-		if ( null === $column ) {
-			return null;
-		}
-
-		return [
-			'row' => $row,
-			'column' => $column,
-		];
+		return $value;
 	}
 }

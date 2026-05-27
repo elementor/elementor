@@ -71,6 +71,22 @@ class Size_Value_Parser {
 		return self::parse( $value );
 	}
 
+	public static function parse_list( array $tokens ): ?array {
+		$sizes = [];
+
+		foreach ( $tokens as $token ) {
+			$parsed = self::parse( $token );
+
+			if ( null === $parsed ) {
+				return null;
+			}
+
+			$sizes[] = $parsed;
+		}
+
+		return $sizes;
+	}
+
 	public static function parse_opacity( string $value ): ?array {
 		$value = trim( $value );
 

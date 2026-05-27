@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  *  - `linear-gradient( <direction-keyword>, <color> <offset>%, ... )` — `to top`, `to right`, etc.
  *  - `linear-gradient( <color> <offset>%, ... )` — angle defaults to 180deg (CSS spec)
  *  - `radial-gradient( <color> <offset>%, ... )` — bare radial without shape/position prefix
+ *  - `radial-gradient( circle at 30% 20%, <color> <offset>%, ... )` — shape/position prefix stripped; stops converted
  *
  * NOT supported (returns null; caller routes to custom_css):
- *  - Radial gradients with shape/position prefix (`circle at 30% 20%`, `ellipse closest-side`, ...)
  *  - Stops without an explicit `<offset>%`
  *  - `<angle>rad`, `<angle>turn`, `<angle>grad` units
  *  - Conic gradients
@@ -65,7 +65,10 @@ class Gradient_Value_Parser {
 		}
 
 		if ( 'radial' === $type && null === Color_Value_Parser::parse( self::strip_offset( trim( $parts[0] ) ) ) ) {
-			return null;
+			array_shift( $parts );
+			if ( count( $parts ) < 2 ) {
+				return null;
+			}
 		}
 
 		$stops = [];

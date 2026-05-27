@@ -5,7 +5,9 @@ namespace Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Converters;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\Prop_Converter_Base;
+use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Box_Shorthand_Parser;
 use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\AtomicWidgets\Services\CssPropConverter\ValueParsers\Uniform_Size_Detector;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,6 +26,8 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 		'border-end-start-radius' => 'end-start',
 	];
 
+	private const CORNER_KEYS = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
+
 	public function get_supported_properties(): array {
 		return array_merge( [ 'border-radius' ], array_keys( self::CORNER_LONGHANDS ) );
 	}
@@ -33,40 +37,18 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 		$unconverted = [];
 
 		foreach ( $declarations as $declaration ) {
-			$property = $declaration['property'];
-			$value = $declaration['value'];
-
-			if ( 'border-radius' === $property ) {
-				$expanded = $this->expand_shorthand( $value );
-
-				if ( null === $expanded ) {
-					$unconverted[] = $this->unconverted(
-						$property,
-						$value,
-						'Shorthand value could not be parsed; rendered via custom_css.'
-					);
-					continue;
-				}
-
-				foreach ( $expanded as $corner => $size_value ) {
-					$corners[ $corner ] = $size_value;
-				}
-
-				continue;
-			}
-
-			$parsed = Size_Value_Parser::parse( $value );
+			$parsed = $this->parse_declaration( $declaration );
 
 			if ( null === $parsed ) {
 				$unconverted[] = $this->unconverted(
-					$property,
-					$value,
-					'Value could not be parsed as a size; rendered via custom_css.'
+					$declaration['property'],
+					$declaration['value'],
+					$this->failure_hint( $declaration['property'] )
 				);
 				continue;
 			}
 
-			$corners[ self::CORNER_LONGHANDS[ $property ] ] = $parsed;
+			$corners = array_merge( $corners, $parsed );
 		}
 
 		if ( empty( $corners ) ) {
@@ -76,109 +58,51 @@ class Border_Radius_Converter extends Prop_Converter_Base {
 			];
 		}
 
-		$uniform = $this->try_uniform_size( $corners );
+		return [
+			'props' => [ 'border-radius' => $this->build_radius_shape( $corners ) ],
+			'unconverted' => $unconverted,
+		];
+	}
 
-		if ( null !== $uniform ) {
-			return [
-				'props' => [
-					'border-radius' => Size_Prop_Type::generate( $uniform ),
-				],
-				'unconverted' => $unconverted,
-			];
+	private function parse_declaration( array $declaration ): ?array {
+		if ( 'border-radius' === $declaration['property'] ) {
+			return Box_Shorthand_Parser::expand_box( $declaration['value'], self::CORNER_KEYS );
 		}
 
+		$size = Size_Value_Parser::parse( $declaration['value'] );
+
+		if ( null === $size ) {
+			return null;
+		}
+
+		return [ self::CORNER_LONGHANDS[ $declaration['property'] ] => $size ];
+	}
+
+	private function failure_hint( string $property ): string {
+		return 'border-radius' === $property
+			? 'Shorthand value could not be parsed; rendered via custom_css.'
+			: 'Value could not be parsed as a size; rendered via custom_css.';
+	}
+
+	private function build_radius_shape( array $corners ): array {
+		$uniform = Uniform_Size_Detector::find( $corners, self::CORNER_KEYS );
+
+		if ( null !== $uniform ) {
+			return Size_Prop_Type::generate( $uniform );
+		}
+
+		return Border_Radius_Prop_Type::generate( $this->wrap_corners( $corners ) );
+	}
+
+	private function wrap_corners( array $corners ): array {
 		$value = [];
 
-		foreach ( [ 'start-start', 'start-end', 'end-end', 'end-start' ] as $corner ) {
+		foreach ( self::CORNER_KEYS as $corner ) {
 			if ( isset( $corners[ $corner ] ) ) {
 				$value[ $corner ] = Size_Prop_Type::generate( $corners[ $corner ] );
 			}
 		}
 
-		return [
-			'props' => [
-				'border-radius' => Border_Radius_Prop_Type::generate( $value ),
-			],
-			'unconverted' => $unconverted,
-		];
-	}
-
-	private function try_uniform_size( array $corners ): ?array {
-		$keys = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
-
-		foreach ( $keys as $key ) {
-			if ( ! isset( $corners[ $key ] ) ) {
-				return null;
-			}
-		}
-
-		$first = $corners[ $keys[0] ];
-
-		foreach ( $keys as $key ) {
-			$corner = $corners[ $key ];
-
-			if ( ( $corner['size'] ?? null ) !== ( $first['size'] ?? null ) ) {
-				return null;
-			}
-
-			if ( ( $corner['unit'] ?? null ) !== ( $first['unit'] ?? null ) ) {
-				return null;
-			}
-		}
-
-		return $first;
-	}
-
-	private function expand_shorthand( string $value ): ?array {
-		$parts = preg_split( '/\s+/', trim( $value ) );
-
-		if ( empty( $parts ) || count( $parts ) > 4 ) {
-			return null;
-		}
-
-		$parsed = [];
-
-		foreach ( $parts as $part ) {
-			$size = Size_Value_Parser::parse( $part );
-
-			if ( null === $size ) {
-				return null;
-			}
-
-			$parsed[] = $size;
-		}
-
-		switch ( count( $parsed ) ) {
-			case 1:
-				return [
-					'start-start' => $parsed[0],
-					'start-end' => $parsed[0],
-					'end-end' => $parsed[0],
-					'end-start' => $parsed[0],
-				];
-			case 2:
-				return [
-					'start-start' => $parsed[0],
-					'start-end' => $parsed[1],
-					'end-end' => $parsed[0],
-					'end-start' => $parsed[1],
-				];
-			case 3:
-				return [
-					'start-start' => $parsed[0],
-					'start-end' => $parsed[1],
-					'end-end' => $parsed[2],
-					'end-start' => $parsed[1],
-				];
-			case 4:
-				return [
-					'start-start' => $parsed[0],
-					'start-end' => $parsed[1],
-					'end-end' => $parsed[2],
-					'end-start' => $parsed[3],
-				];
-		}
-
-		return null;
+		return $value;
 	}
 }
