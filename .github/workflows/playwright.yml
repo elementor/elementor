@@ -234,7 +234,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
@@ -353,7 +353,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-tagged-tests
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   Build-report:
