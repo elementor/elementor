@@ -1,9 +1,6 @@
 import * as React from 'react';
 
-// Fallback if `--e-a-border-color-bold` can't be resolved from the iframe
-// (e.g. before the preview stylesheet loads).
 const FALLBACK_COLOR = 'rgba(0, 0, 0, 0.12)';
-// Mirrors the CSS `1px dashed` rendering used by `.elementor-first-add`.
 export const DASH = '2 2';
 
 type Props = {
