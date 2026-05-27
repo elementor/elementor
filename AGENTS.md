@@ -3,14 +3,13 @@
 ## Cursor Cloud specific instructions
 
 ### System Requirements (pre-installed in update script)
-- Node.js 24.15.0 (via nvm, path prepended in `~/.bashrc`)
-- npm 11.x (comes with Node 24)
-- PHP 8.3 with extensions: mbstring, xml, zip, curl, dom, bcmath
+- Node.js version from `.nvmrc` (via nvm, path prepended in `~/.bashrc`)
+- PHP >= 7.4 with extensions: mbstring, xml, zip, curl, dom, bcmath
 - Composer 2.x
 - Docker (with fuse-overlayfs + iptables-legacy for nested containers)
 
 ### PATH Note
-The VM has a system Node at `/exec-daemon/node` (v22). The nvm-managed v24.15.0 is prepended to PATH via `~/.bashrc`. If commands fail with engine mismatch, verify `which node` points to `~/.nvm/versions/node/v24.15.0/bin/node`.
+The VM has a system Node at `/exec-daemon/node` that may be a different version. The nvm-managed Node (version from `.nvmrc`) is prepended to PATH via `~/.bashrc`. If commands fail with engine mismatch, verify `which node` points to the nvm-managed binary.
 
 ### Key Commands (see CONTRIBUTING.md and package.json for full list)
 | Action | Command |
@@ -43,5 +42,5 @@ WordPress will be available at http://localhost:8888 (admin/password).
 - PHPCS reports only warnings (0 errors) on the current codebase - this is expected.
 - The `composer install` post-install script runs `php-scoper` to prefix Twig. This requires the `humbug/php-scoper` dev dependency.
 - For production-like builds (`./build` dir), use `composer install --no-scripts --no-dev` first, then `npx grunt copy`. Dev dependencies must be restored afterward with `composer install`.
-- The `engines` field requires Node >=24.15.0. Do not downgrade.
+- The `engines` field in `package.json` enforces the minimum Node version. Always use the version from `.nvmrc`.
 - Husky pre-commit hook runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192`.
