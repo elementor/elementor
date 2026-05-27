@@ -41,6 +41,7 @@ class Module extends BaseModule {
 		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			( new Global_Class_Post_Type() )->register();
+			( new Global_Classes_Post_IDs() )->register_hooks();
 
 			$relations = new Global_Classes_Relations();
 			$relations->register_hooks();
@@ -89,6 +90,7 @@ class Module extends BaseModule {
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
 			Global_Classes_Sync_Map::META_KEY,
+			Global_Classes_Post_IDs::META_KEY,
 		] );
 	}
 

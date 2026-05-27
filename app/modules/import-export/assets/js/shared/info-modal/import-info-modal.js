@@ -24,7 +24,8 @@ export default function ImportInfoModal( props ) {
 							url="https://go.elementor.com/app-what-are-kits"
 							onClick={ () => eventTracking( 'Learn more about website templates' ) }
 						>
-							{ __( ' Learn more about Website Templates', 'elementor' ) }
+							{							// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
+							}							{ __( ' Learn more about Website Templates', 'elementor' ) }
 						</InlineLink>
 					</>
 				</InfoModal.Text>

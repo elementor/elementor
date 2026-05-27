@@ -75,14 +75,13 @@ class Test_Global_Class_Post extends Elementor_Test_Base {
 		];
 
 		// Act
-		$post = Global_Class_Post::create( $class_id, $label, $data, 5 );
+		$post = Global_Class_Post::create( $class_id, $label, $data );
 		$this->created_post_ids[] = $post->get_post_id();
 
 		// Assert
 		$this->assertNotNull( $post );
 		$this->assertSame( $class_id, $post->get_class_id() );
 		$this->assertSame( $label, $post->get_label() );
-		$this->assertSame( 5, $post->get_order() );
 		$this->assertSame( $data, $post->get_data() );
 	}
 
