@@ -97,10 +97,11 @@ function resolvePropValue(
 		return resolveOverridableOverride( matchingOverride, originValue );
 	}
 
-	// for regular props, when there's a matching override, return the matching override value
+	// for regular props, when there's a non null matching override, return the matching override value,
+	// otherwise return the origin value
 	const matchingOverrideValue = componentInstanceOverridePropTypeUtil.extract( matchingOverride )
 		?.override_value as PropValue | null;
-	return matchingOverrideValue;
+	return matchingOverrideValue ?? originValue;
 }
 
 function resolveOverridableOverride(
