@@ -295,11 +295,11 @@ describe( '<OverridePropControl />', () => {
 			const overrideWithNullValue = componentInstanceOverridePropTypeUtil.create( {
 				override_key: INNER_OVERRIDE_KEY_1,
 				override_value: {
-					"$$type": "html-v3",
-					"value": {
-						"content": null,
-						"children": []
-					}
+					$$type: 'html-v3',
+					value: {
+						content: null,
+						children: [],
+					},
 				},
 				schema_source: { type: 'component', id: INNER_COMPONENT_ID },
 			} );
@@ -391,11 +391,11 @@ describe( '<OverridePropControl />', () => {
 				origin_value: componentInstanceOverridePropTypeUtil.create( {
 					override_key: MIDDLE_OVERRIDE_KEY_1,
 					override_value: {
-						"$$type": "html-v3",
-						"value": {
-							"content": null,
-							"children": []
-						}
+						$$type: 'html-v3',
+						value: {
+							content: null,
+							children: [],
+						},
 					},
 					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
 				} ),
@@ -541,11 +541,11 @@ describe( '<OverridePropControl />', () => {
 				origin_value: componentInstanceOverridePropTypeUtil.create( {
 					override_key: MIDDLE_OVERRIDE_KEY_2,
 					override_value: {
-						"$$type": "html-v3",
-						"value": {
-							"content": null,
-							"children": []
-						}
+						$$type: 'html-v3',
+						value: {
+							content: null,
+							children: [],
+						},
 					},
 					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
 				} ),
@@ -775,7 +775,7 @@ describe( '<OverridePropControl />', () => {
 			const input = screen.getByRole( 'textbox' );
 			expect( input ).toHaveValue( '' );
 			expect( input ).toHaveAttribute( 'placeholder', 'Innermost Origin Value' );
-});
+		} );
 	} );
 } );
 
