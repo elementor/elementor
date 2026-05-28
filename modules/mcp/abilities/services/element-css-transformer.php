@@ -73,7 +73,7 @@ class Element_Css_Transformer {
 		$element['id'] = $id;
 
 		$converted = '' !== $css
-			? $this->convert_node_css( $css )
+			? self::convert_node_css( $css )
 			: [ 'props' => [], 'custom_css' => '', 'unconverted' => [] ];
 
 		$merged_props = Base_Styles_Reset::apply( $converted['props'], $el_type );
@@ -157,9 +157,17 @@ class Element_Css_Transformer {
 	 *  2. Hand the resulting string to `Css_Prop_Converter`.
 	 *  3. Merge the converter's `custom_css` (base64) with our pre-resolved gradient declarations,
 	 *     and merge the unconverted-declarations metadata.
+	 *
+	 * IMPORTANT: This transformer (`transform_element_with_css` above) OVERWRITES any pre-existing
+	 * `styles[e-<id>-s]` entry with a single fresh variant — fine for first-write paths
+	 * (`create` / `replace_content` / `append_content`) but wrong for surgical patches.
+	 * Surgical patches must use {@see Element_Style_Patcher::merge_into_local()} which calls this
+	 * static converter for typing but merges prop-by-prop into the existing variant.
+	 *
+	 * @internal Promoted to public-static for reuse by Element_Style_Patcher.
 	 */
-	private function convert_node_css( string $css ): array {
-		[ $cleaned_css, $extra_decls, $extra_unconverted ] = $this->expand_text_gradient( $css );
+	public static function convert_node_css( string $css ): array {
+		[ $cleaned_css, $extra_decls, $extra_unconverted ] = self::expand_text_gradient( $css );
 
 		$result = Css_Prop_Converter::make()->convert( $cleaned_css );
 
@@ -187,8 +195,10 @@ class Element_Css_Transformer {
 	 *  - the css string with those declarations removed
 	 *  - the 4 standard CSS declarations they expand to (for custom_css)
 	 *  - one unconverted entry per shorthand, explaining the expansion
+	 *
+	 * @internal Promoted to public-static for reuse by `convert_node_css` (also static).
 	 */
-	private function expand_text_gradient( string $css ): array {
+	private static function expand_text_gradient( string $css ): array {
 		if ( false === stripos( $css, 'text-gradient' ) ) {
 			return [ $css, [], [] ];
 		}

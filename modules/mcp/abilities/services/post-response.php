@@ -61,6 +61,20 @@ class Post_Response {
 		return $response;
 	}
 
+	public static function with_preview( array $response, array $elements ): array {
+		$response['preview'] = Element_Tree_Preview::render( $elements );
+
+		return $response;
+	}
+
+	public static function with_patched_element( array $response, ?array $node ): array {
+		if ( null !== $node ) {
+			$response['patched_element'] = $node;
+		}
+
+		return $response;
+	}
+
 	public static function unresolved_error( array $unresolved ): ?\WP_Error {
 		if ( empty( $unresolved ) ) {
 			return null;
@@ -68,8 +82,11 @@ class Post_Response {
 
 		$details = [];
 		foreach ( $unresolved as $entry ) {
-			if ( ( $entry['reason'] ?? '' ) === 'unknown_widget' ) {
+			$reason = $entry['reason'] ?? '';
+			if ( 'unknown_widget' === $reason ) {
 				$details[] = sprintf( 'unknown widget "%s"', (string) ( $entry['widget'] ?? '' ) );
+			} elseif ( 'missing_image_source' === $reason ) {
+				$details[] = 'image widget needs image_id (int) or image_url (http/https)';
 			} else {
 				$details[] = 'node missing required "widget" key';
 			}
@@ -79,7 +96,7 @@ class Post_Response {
 			'unresolved_elements',
 			sprintf(
 				/* translators: 1: list of unresolved element problems, 2: supported widget names. */
-				__( 'Could not resolve %1$d element(s): %2$s. Use one of: container | div | flex | heading | paragraph | button (or the e- prefixed equivalents: e-div-block | e-flexbox | e-heading | e-paragraph | e-button).', 'elementor' ),
+				__( 'Could not resolve %1$d element(s): %2$s. Use one of: container | div | flex | heading | paragraph | button | image (or the e- prefixed equivalents: e-div-block | e-flexbox | e-heading | e-paragraph | e-button | e-image).', 'elementor' ),
 				count( $unresolved ),
 				implode( '; ', $details )
 			),

@@ -36,6 +36,7 @@ class Create_Post_Operation extends Post_Operation {
 		$transformer = $this->prepare_transformer( $input );
 		$normalizations = [];
 		$elements = null;
+		$preview_elements = [];
 
 		if ( $transformer ) {
 			$resolver = Element_Spec_Resolver::make();
@@ -46,11 +47,12 @@ class Create_Post_Operation extends Post_Operation {
 			}
 			$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
 			$normalizations = $normalized['normalizations'];
+			$preview_elements = $normalized['elements'];
 			$elements = $transformer->transform( $normalized['elements'] );
 		}
 
 		if ( ! empty( $input['dry_run'] ) && null !== $elements ) {
-			return $this->dry_run_response( $post_type, $post_status, $transformer, $normalizations );
+			return $this->dry_run_response( $post_type, $post_status, $transformer, $normalizations, $preview_elements );
 		}
 
 		$post_id = $this->insert_post( $title, $post_type, $post_status, $input['slug'] ?? null );
@@ -127,7 +129,7 @@ class Create_Post_Operation extends Post_Operation {
 		return Element_Css_Transformer::make();
 	}
 
-	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer, array $normalizations ): array {
+	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer, array $normalizations, array $preview_elements ): array {
 		$response = Post_Response::with_unconverted_css( [
 			'success' => true,
 			'operation' => 'create',
@@ -137,7 +139,9 @@ class Create_Post_Operation extends Post_Operation {
 			'dry_run' => true,
 		], $transformer ? $transformer->get_unconverted_css() : [] );
 
-		return Post_Response::with_normalized( $response, $normalizations );
+		$response = Post_Response::with_normalized( $response, $normalizations );
+
+		return Post_Response::with_preview( $response, $preview_elements );
 	}
 
 	private function insert_post( string $title, string $post_type, string $post_status, $slug ) {

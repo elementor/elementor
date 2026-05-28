@@ -43,6 +43,8 @@
   },
   "dependencies": {
     "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@^1.4.5",
+    "@elementor/editor-elements": "4.2.0",
+    "@elementor/editor-props": "4.2.0",
     "@elementor/editor-v1-adapters": "4.2.0",
     "@elementor/elementor-mcp-common": "4.2.0",
     "@elementor/schema": "4.2.0",

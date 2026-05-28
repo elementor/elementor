@@ -40,7 +40,6 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-mcp": "4.2.0",
     "@elementor/editor-props": "4.2.0",
     "@elementor/editor-styles": "4.2.0",
     "@elementor/editor-v1-adapters": "4.2.0",
