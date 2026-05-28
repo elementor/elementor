@@ -16,7 +16,7 @@ runs:
   using: "composite"
   steps:
       - name: Post to a Slack channel
-        uses: slackapi/slack-github-action@v1.23.0
+        uses: slackapi/slack-github-action@v3
         with:
           channel-id: ${{ inputs.SLACK_TAG_CHANNELS }}
           payload: ${{ inputs.PAYLOAD }}
