@@ -150,19 +150,31 @@ ControlWysiwygItemView = ControlBaseDataView.extend( {
 		editorProps.toolbar2 = editorAdvancedToolbarButtons.join( ',' );
 	},
 
+	isTextEditorWidget() {
+		return 'text-editor' === this.container?.model?.get( 'widgetType' );
+	},
+
 	onReady() {
+		const isTextEditor = this.isTextEditorWidget();
+		const initialTextareaValue = isTextEditor ? '' : this.getControlValue();
 		const $editor = jQuery( elementor.config.wp_editor.replace( /elementorwpeditor/g, this.editorID ).replace( '%%EDITORCONTENT%%', '' ) );
 
-		$editor.find( '.wp-editor-area' ).text( this.getControlValue() );
+		$editor.find( '.wp-editor-area' ).text( initialTextareaValue );
 
 		$editor.find( `.wp-editor-tabs` ).addClass( 'elementor-control-dynamic-switcher-wrapper' );
 
 		this.ui.inputWrapper.html( $editor );
 
 		setTimeout( () => {
-			if ( ! this.isDestroyed && this.editor ) {
-				this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
+			if ( this.isDestroyed || ! this.editor ) {
+				return;
 			}
+
+			if ( isTextEditor ) {
+				this.editor.setContent( this.getControlValue() );
+			}
+
+			this.editor.on( 'keyup change undo redo', this.saveEditor.bind( this ) );
 		}, 100 );
 	},
 

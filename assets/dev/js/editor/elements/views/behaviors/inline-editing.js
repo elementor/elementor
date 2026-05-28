@@ -63,7 +63,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			inlineEditingConfig = elementor.config.inlineEditing,
 			contentHTML = editModel.getSetting( this.getEditingSettingKey() );
 
-		if ( 'advanced' === mode ) {
+		if ( 'advanced' === mode && 'text-editor' !== this.view.model.get( 'widgetType' ) ) {
 			contentHTML = wp.editor.autop( contentHTML );
 		}
 
