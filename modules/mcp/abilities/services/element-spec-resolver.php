@@ -39,6 +39,9 @@ class Element_Spec_Resolver {
 		'label' => 'e-paragraph',
 		'button' => 'e-button',
 		'e-button' => 'e-button',
+		'image' => 'e-image',
+		'img' => 'e-image',
+		'e-image' => 'e-image',
 	];
 
 	private const CONTAINER_TYPES = [ 'e-flexbox', 'e-div-block' ];
@@ -126,7 +129,7 @@ class Element_Spec_Resolver {
 			}
 		}
 
-		$css = $this->normalize_css( $node['css'] ?? null );
+		$css = self::normalize_css( $node['css'] ?? null );
 		if ( null !== $css ) {
 			$built['css'] = $css;
 		}
@@ -144,17 +147,17 @@ class Element_Spec_Resolver {
 		switch ( $widget_type ) {
 			case 'e-heading':
 				if ( '' !== $text ) {
-					$built['settings']['title'] = $this->html_v3( $text );
+					$built['settings']['title'] = self::html_v3_envelope( $text );
 				}
 				$built['settings']['tag'] = [
 					'$$type' => 'string',
-					'value' => $this->normalize_heading_tag( $node['tag'] ?? null ),
+					'value' => self::normalize_heading_tag( $node['tag'] ?? null ),
 				];
 				break;
 
 			case 'e-paragraph':
 				if ( '' !== $text ) {
-					$built['settings']['paragraph'] = $this->html_v3( $text );
+					$built['settings']['paragraph'] = self::html_v3_envelope( $text );
 				}
 				if ( isset( $node['tag'] ) && is_string( $node['tag'] ) && '' !== $node['tag'] ) {
 					$built['settings']['tag'] = [
@@ -166,9 +169,9 @@ class Element_Spec_Resolver {
 
 			case 'e-button':
 				if ( '' !== $text ) {
-					$built['settings']['text'] = $this->html_v3( $text );
+					$built['settings']['text'] = self::html_v3_envelope( $text );
 				}
-				$url = $this->sanitize_button_url( $node['url'] ?? null );
+				$url = self::sanitize_button_url( $node['url'] ?? null );
 				if ( null !== $url ) {
 					$built['settings']['link'] = [
 						'$$type' => 'link',
@@ -191,10 +194,102 @@ class Element_Spec_Resolver {
 					];
 				}
 				break;
+
+			case 'e-image':
+				$image_src = $this->build_image_src( $node );
+				if ( null !== $image_src ) {
+					$built['settings']['image'] = [
+						'$$type' => 'image',
+						'value' => [
+							'src' => [
+								'$$type' => 'image-src',
+								'value' => $image_src,
+							],
+							'size' => [
+								'$$type' => 'string',
+								'value' => self::normalize_image_size( $node['size'] ?? null ),
+							],
+						],
+					];
+				} else {
+					$this->unresolved[] = [
+						'reason' => 'missing_image_source',
+						'widget' => 'e-image',
+						'expected' => 'image_id (int) or image_url (http/https)',
+					];
+				}
+
+				$link_url = self::sanitize_button_url( $node['url'] ?? null );
+				if ( null !== $link_url ) {
+					$built['settings']['link'] = [
+						'$$type' => 'link',
+						'value' => [
+							'destination' => [
+								'$$type' => 'url',
+								'value' => $link_url,
+							],
+							'isTargetBlank' => [
+								'$$type' => 'boolean',
+								'value' => ! empty( $node['target_blank'] ),
+							],
+						],
+					];
+				}
+				break;
 		}
 	}
 
-	private function normalize_css( $raw ): ?string {
+	private function build_image_src( array $node ): ?array {
+		$alt_raw = isset( $node['alt'] ) && is_string( $node['alt'] ) ? trim( $node['alt'] ) : '';
+		$alt_envelope = '' !== $alt_raw
+			? [ '$$type' => 'string', 'value' => $alt_raw ]
+			: null;
+
+		if ( isset( $node['image_id'] ) && is_numeric( $node['image_id'] ) && (int) $node['image_id'] > 0 ) {
+			return [
+				'id' => [
+					'$$type' => 'image-attachment-id',
+					'value' => (int) $node['image_id'],
+				],
+				'url' => null,
+				'alt' => $alt_envelope,
+			];
+		}
+
+		if ( isset( $node['image_url'] ) && is_string( $node['image_url'] ) ) {
+			$raw = trim( $node['image_url'] );
+			if ( '' !== $raw ) {
+				$sanitized = esc_url_raw( $raw, [ 'http', 'https' ] );
+				if ( '' !== $sanitized ) {
+					return [
+						'id' => null,
+						'url' => [
+							'$$type' => 'url',
+							'value' => $sanitized,
+						],
+						'alt' => $alt_envelope,
+					];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static function normalize_image_size( $raw ): string {
+		if ( is_string( $raw ) ) {
+			$trimmed = trim( $raw );
+			if ( '' !== $trimmed ) {
+				return $trimmed;
+			}
+		}
+		return 'full';
+	}
+
+	/**
+	 * @internal Promoted to public-static for reuse by Element_Mutation_Operation.
+	 */
+	public static function normalize_css( $raw ): ?string {
 		if ( is_string( $raw ) ) {
 			$trimmed = trim( $raw );
 			return '' !== $trimmed ? $trimmed : null;
@@ -217,7 +312,10 @@ class Element_Spec_Resolver {
 		return null;
 	}
 
-	private function html_v3( string $text ): array {
+	/**
+	 * @internal Promoted to public-static for reuse by Element_Mutation_Operation.
+	 */
+	public static function html_v3_envelope( string $text ): array {
 		return [
 			'$$type' => 'html-v3',
 			'value' => [
@@ -230,7 +328,10 @@ class Element_Spec_Resolver {
 		];
 	}
 
-	private function normalize_heading_tag( $tag ): string {
+	/**
+	 * @internal Promoted to public-static for reuse by Element_Mutation_Operation.
+	 */
+	public static function normalize_heading_tag( $tag ): string {
 		if ( is_string( $tag ) && preg_match( '/^h[1-6]$/i', $tag ) ) {
 			return strtolower( $tag );
 		}
@@ -244,9 +345,10 @@ class Element_Spec_Resolver {
 	 * `/path`, and fragment-only anchors `#anchor`. Rejects everything else (including
 	 * `javascript:`, `data:`, `vbscript:`, `file:`).
 	 *
+	 * @internal Promoted to public-static for reuse by Element_Mutation_Operation.
 	 * @return string|null sanitized URL, or null if input is invalid / empty.
 	 */
-	private function sanitize_button_url( $raw ): ?string {
+	public static function sanitize_button_url( $raw ): ?string {
 		if ( ! is_string( $raw ) ) {
 			return null;
 		}
