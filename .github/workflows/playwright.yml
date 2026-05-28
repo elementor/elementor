@@ -6,16 +6,7 @@ on:
     branches:
       - main
       - '[0-9].[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
-      - '**/package.json'
-      - 'tests/phpunit/**'
+  merge_group:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
@@ -63,10 +54,13 @@ jobs:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
-    name: Build plugin
+    name: Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
@@ -78,6 +72,7 @@ jobs:
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -239,7 +234,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
@@ -358,7 +353,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-tagged-tests
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   Build-report:
