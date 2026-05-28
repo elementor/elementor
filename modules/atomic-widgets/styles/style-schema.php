@@ -353,8 +353,12 @@ class Style_Schema {
 			'grid-auto-flow' => String_Prop_Type::make()
 				->enum( [ 'row', 'column', 'row dense', 'column dense' ] )
 				->description( 'Controls how auto-placed items flow in the grid. CSS values: row, column, row dense, column dense.' ),
-			'grid-auto-rows' => Size_Prop_Type::make()->units( Size_Constants::grid_auto_track() ),
-			'grid-auto-columns' => Size_Prop_Type::make()->units( Size_Constants::grid_auto_track() ),
+			'grid-auto-rows' => Size_Prop_Type::make()
+				->units( Size_Constants::grid_auto_track() )
+				->default_unit( Size_Constants::UNIT_FR ),
+			'grid-auto-columns' => Size_Prop_Type::make()
+				->units( Size_Constants::grid_auto_track() )
+				->default_unit( Size_Constants::UNIT_FR ),
 			'grid-column' => Span_Prop_Type::make()
 				->regex( '/^(?!.*https?:\/\/)(?!.*;).*$/' )
 				->description( 'Defines a grid item column placement. Accepts values like span N or any valid CSS grid-column value. Disallows URLs and semicolons.' ),

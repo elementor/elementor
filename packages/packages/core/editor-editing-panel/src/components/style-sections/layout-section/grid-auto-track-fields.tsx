@@ -28,7 +28,7 @@ type GridAutoTrackFieldProps = {
 const GridAutoTrackField = ( { bind, infoTooltip, label, rowRef }: GridAutoTrackFieldProps ) => (
 	<StylesField bind={ bind } propDisplayName={ label }>
 		<StylesFieldLayout infoTooltip={ infoTooltip } label={ label } ref={ rowRef }>
-			<SizeControl enablePropTypeUnits anchorRef={ rowRef } />
+			<SizeControl enablePropTypeUnits defaultUnit="fr" anchorRef={ rowRef } />
 		</StylesFieldLayout>
 	</StylesField>
 );
