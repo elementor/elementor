@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Services;
 
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,13 +24,24 @@ class Element_Spec_Resolver {
 
 	private const WIDGET_SYNONYMS = [
 		'container' => 'e-div-block',
+		'e-container' => 'e-div-block',
 		'section' => 'e-div-block',
+		'e-section' => 'e-div-block',
 		'div' => 'e-div-block',
+		'e-div' => 'e-div-block',
 		'div-block' => 'e-div-block',
 		'e-div-block' => 'e-div-block',
+		'block' => 'e-div-block',
+		'e-block' => 'e-div-block',
+		'wrapper' => 'e-div-block',
+		'group' => 'e-div-block',
 		'flex' => 'e-flexbox',
+		'e-flex' => 'e-flexbox',
 		'flexbox' => 'e-flexbox',
 		'e-flexbox' => 'e-flexbox',
+		'row' => 'e-flexbox',
+		'column' => 'e-flexbox',
+		'col' => 'e-flexbox',
 		'heading' => 'e-heading',
 		'e-heading' => 'e-heading',
 		'paragraph' => 'e-paragraph',
@@ -196,28 +208,19 @@ class Element_Spec_Resolver {
 				break;
 
 			case 'e-image':
-				$image_src = $this->build_image_src( $node );
-				if ( null !== $image_src ) {
-					$built['settings']['image'] = [
-						'$$type' => 'image',
-						'value' => [
-							'src' => [
-								'$$type' => 'image-src',
-								'value' => $image_src,
-							],
-							'size' => [
-								'$$type' => 'string',
-								'value' => self::normalize_image_size( $node['size'] ?? null ),
-							],
+				$built['settings']['image'] = [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => $this->build_image_src( $node ),
 						],
-					];
-				} else {
-					$this->unresolved[] = [
-						'reason' => 'missing_image_source',
-						'widget' => 'e-image',
-						'expected' => 'image_id (int) or image_url (http/https)',
-					];
-				}
+						'size' => [
+							'$$type' => 'string',
+							'value' => self::normalize_image_size( $node['size'] ?? null ),
+						],
+					],
+				];
 
 				$link_url = self::sanitize_button_url( $node['url'] ?? null );
 				if ( null !== $link_url ) {
@@ -239,7 +242,7 @@ class Element_Spec_Resolver {
 		}
 	}
 
-	private function build_image_src( array $node ): ?array {
+	private function build_image_src( array $node ): array {
 		$alt_raw = isset( $node['alt'] ) && is_string( $node['alt'] ) ? trim( $node['alt'] ) : '';
 		$alt_envelope = '' !== $alt_raw
 			? [ '$$type' => 'string', 'value' => $alt_raw ]
@@ -256,24 +259,31 @@ class Element_Spec_Resolver {
 			];
 		}
 
-		if ( isset( $node['image_url'] ) && is_string( $node['image_url'] ) ) {
-			$raw = trim( $node['image_url'] );
-			if ( '' !== $raw ) {
-				$sanitized = esc_url_raw( $raw, [ 'http', 'https' ] );
-				if ( '' !== $sanitized ) {
-					return [
-						'id' => null,
-						'url' => [
-							'$$type' => 'url',
-							'value' => $sanitized,
-						],
-						'alt' => $alt_envelope,
-					];
-				}
-			}
+		$url = self::sanitize_image_url( $node['image_url'] ?? null );
+		if ( null === $url ) {
+			$url = Placeholder_Image::get_placeholder_image();
 		}
 
-		return null;
+		return [
+			'id' => null,
+			'url' => [
+				'$$type' => 'url',
+				'value' => $url,
+			],
+			'alt' => $alt_envelope,
+		];
+	}
+
+	private static function sanitize_image_url( $raw ): ?string {
+		if ( ! is_string( $raw ) ) {
+			return null;
+		}
+		$raw = trim( $raw );
+		if ( '' === $raw ) {
+			return null;
+		}
+		$sanitized = esc_url_raw( $raw, [ 'http', 'https' ] );
+		return '' !== $sanitized ? $sanitized : null;
 	}
 
 	private static function normalize_image_size( $raw ): string {

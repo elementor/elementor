@@ -82,11 +82,8 @@ class Post_Response {
 
 		$details = [];
 		foreach ( $unresolved as $entry ) {
-			$reason = $entry['reason'] ?? '';
-			if ( 'unknown_widget' === $reason ) {
+			if ( ( $entry['reason'] ?? '' ) === 'unknown_widget' ) {
 				$details[] = sprintf( 'unknown widget "%s"', (string) ( $entry['widget'] ?? '' ) );
-			} elseif ( 'missing_image_source' === $reason ) {
-				$details[] = 'image widget needs image_id (int) or image_url (http/https)';
 			} else {
 				$details[] = 'node missing required "widget" key';
 			}
