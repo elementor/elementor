@@ -38,7 +38,12 @@ class Create_Post_Operation extends Post_Operation {
 		$elements = null;
 
 		if ( $transformer ) {
-			$resolved = Element_Spec_Resolver::make()->resolve( $input['elements'] );
+			$resolver = Element_Spec_Resolver::make();
+			$resolved = $resolver->resolve( $input['elements'] );
+			$unresolved_error = Post_Response::unresolved_error( $resolver->get_unresolved() );
+			if ( $unresolved_error ) {
+				return $unresolved_error;
+			}
 			$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
 			$normalizations = $normalized['normalizations'];
 			$elements = $transformer->transform( $normalized['elements'] );

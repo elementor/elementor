@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Services;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -29,16 +31,21 @@ class Element_Spec_Resolver {
 		'flexbox' => 'e-flexbox',
 		'e-flexbox' => 'e-flexbox',
 		'heading' => 'e-heading',
+		'e-heading' => 'e-heading',
 		'paragraph' => 'e-paragraph',
+		'e-paragraph' => 'e-paragraph',
 		'p' => 'e-paragraph',
 		'text' => 'e-paragraph',
 		'label' => 'e-paragraph',
 		'button' => 'e-button',
+		'e-button' => 'e-button',
 	];
 
 	private const CONTAINER_TYPES = [ 'e-flexbox', 'e-div-block' ];
 
 	private const ALLOWED_URL_SCHEMES = [ 'http', 'https', 'mailto', 'tel' ];
+
+	private array $unresolved = [];
 
 	public static function make(): self {
 		return new self();
@@ -57,8 +64,15 @@ class Element_Spec_Resolver {
 		return $resolved;
 	}
 
+	public function get_unresolved(): array {
+		return $this->unresolved;
+	}
+
 	private function resolve_node( array $node ): array {
 		if ( isset( $node['elType'] ) ) {
+			if ( empty( $node['id'] ) || ! is_string( $node['id'] ) ) {
+				$node['id'] = Utils::generate_random_string();
+			}
 			if ( isset( $node['elements'] ) && is_array( $node['elements'] ) ) {
 				$node['elements'] = $this->resolve( $node['elements'] );
 			}
@@ -66,6 +80,10 @@ class Element_Spec_Resolver {
 		}
 
 		if ( ! isset( $node['widget'] ) || ! is_string( $node['widget'] ) ) {
+			$this->unresolved[] = [
+				'reason' => 'missing_widget',
+				'received_keys' => array_keys( $node ),
+			];
 			return $node;
 		}
 
@@ -73,12 +91,18 @@ class Element_Spec_Resolver {
 		$widget_type = self::WIDGET_SYNONYMS[ $widget_alias ] ?? null;
 
 		if ( null === $widget_type ) {
+			$this->unresolved[] = [
+				'reason' => 'unknown_widget',
+				'widget' => $node['widget'],
+				'supported' => array_values( array_unique( array_values( self::WIDGET_SYNONYMS ) ) ),
+			];
 			return $node;
 		}
 
 		$is_container = in_array( $widget_type, self::CONTAINER_TYPES, true );
 
 		$built = [
+			'id' => isset( $node['id'] ) && is_string( $node['id'] ) && '' !== $node['id'] ? $node['id'] : Utils::generate_random_string(),
 			'elType' => $is_container ? $widget_type : 'widget',
 		];
 
@@ -102,8 +126,9 @@ class Element_Spec_Resolver {
 			}
 		}
 
-		if ( isset( $node['css'] ) && is_string( $node['css'] ) ) {
-			$built['css'] = $node['css'];
+		$css = $this->normalize_css( $node['css'] ?? null );
+		if ( null !== $css ) {
+			$built['css'] = $css;
 		}
 
 		if ( $is_container && isset( $node['children'] ) && is_array( $node['children'] ) ) {
@@ -167,6 +192,29 @@ class Element_Spec_Resolver {
 				}
 				break;
 		}
+	}
+
+	private function normalize_css( $raw ): ?string {
+		if ( is_string( $raw ) ) {
+			$trimmed = trim( $raw );
+			return '' !== $trimmed ? $trimmed : null;
+		}
+
+		if ( is_array( $raw ) ) {
+			$declarations = [];
+			foreach ( $raw as $property => $value ) {
+				if ( ! is_string( $property ) || '' === trim( $property ) ) {
+					continue;
+				}
+				if ( is_bool( $value ) || null === $value ) {
+					continue;
+				}
+				$declarations[] = trim( $property ) . ': ' . trim( (string) $value );
+			}
+			return ! empty( $declarations ) ? implode( '; ', $declarations ) : null;
+		}
+
+		return null;
 	}
 
 	private function html_v3( string $text ): array {
