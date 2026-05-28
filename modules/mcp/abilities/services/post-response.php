@@ -61,6 +61,35 @@ class Post_Response {
 		return $response;
 	}
 
+	public static function unresolved_error( array $unresolved ): ?\WP_Error {
+		if ( empty( $unresolved ) ) {
+			return null;
+		}
+
+		$details = [];
+		foreach ( $unresolved as $entry ) {
+			if ( ( $entry['reason'] ?? '' ) === 'unknown_widget' ) {
+				$details[] = sprintf( 'unknown widget "%s"', (string) ( $entry['widget'] ?? '' ) );
+			} else {
+				$details[] = 'node missing required "widget" key';
+			}
+		}
+
+		return new \WP_Error(
+			'unresolved_elements',
+			sprintf(
+				/* translators: 1: list of unresolved element problems, 2: supported widget names. */
+				__( 'Could not resolve %1$d element(s): %2$s. Use one of: container | div | flex | heading | paragraph | button (or the e- prefixed equivalents: e-div-block | e-flexbox | e-heading | e-paragraph | e-button).', 'elementor' ),
+				count( $unresolved ),
+				implode( '; ', $details )
+			),
+			[
+				'status' => \WP_Http::BAD_REQUEST,
+				'unresolved_elements' => $unresolved,
+			]
+		);
+	}
+
 	private static function edit_url_for( int $post_id ): string {
 		$document = Plugin::$instance->documents->get( $post_id );
 
