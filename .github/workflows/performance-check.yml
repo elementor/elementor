@@ -17,8 +17,10 @@ on:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: Performance build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Performance build artifact
 
   compare-v4-to-v3:
     name: Compare V4 to V3

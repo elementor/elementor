@@ -23,6 +23,7 @@ import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
 import { GridAutoTrackFields } from './grid-auto-track-fields';
 import { GridJustifyItemsField } from './grid-justify-items-field';
+import { GridOutlineField } from './grid-outline-field';
 import { GridSizeFields } from './grid-size-field';
 import { GridSpanFields } from './grid-span-field';
 import { JustifyContentField } from './justify-content-field';
@@ -91,6 +92,7 @@ const FlexFields = () => {
 
 const GridFields = () => (
 	<>
+		<GridOutlineField />
 		<GridSizeFields />
 		<GridAutoFlowField />
 		<StyleTabCollapsibleContent fields={ [ 'grid-auto-rows', 'grid-auto-columns' ] }>

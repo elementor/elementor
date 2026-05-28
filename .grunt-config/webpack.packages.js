@@ -6,6 +6,8 @@ const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dir
 const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
 const TerserPlugin = require( 'terser-webpack-plugin' );
 
+// source-map-loader and the babel-loader dist exclude only match packages built from packages/packages/{core,libs} and packages/apps. Extend this if new first-party roots ship prebuilt dist next to sources.
+
 const packagesDistPattern = /[\\/]packages[\\/](?:packages[\\/](?:core|libs)|apps)[\\/][^\\/]+[\\/]dist[\\/]/;
 
 const REGEXES = {
@@ -68,6 +70,7 @@ function createCommonConfig( entrySource ) {
 			extensions: [ '.tsx', '.ts', '.js', '.jsx', '.mjs' ],
 		},
 		ignoreWarnings: [
+			// Many upstream maps are incomplete; surfacing every parse failure is noise without improving the bundle.
 			/Failed to parse source map/,
 		],
 		cache: filesystemCache,
@@ -120,6 +123,7 @@ const devConfig = {
 	devtool: 'source-map',
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	optimization: {
+		// Faster rebuilds and stacks that line up with TypeScript; output is larger than the previous minimized dev bundles.
 		minimize: false,
 	},
 	output: {
@@ -131,6 +135,8 @@ const devConfig = {
 const prodConfig = {
 	...prodCommon,
 	mode: 'production',
+	// Keep prod free of emitted source maps without depending on webpack default behavior across upgrades.
+	devtool: false,
 	optimization: {
 		minimize: true,
 		minimizer: [
@@ -197,6 +203,9 @@ function getPackageEntryPath( packageDir, entrySource ) {
 	if ( fs.existsSync( distJs ) ) {
 		return distJs;
 	}
+
+	// Production asked for dist but it is missing; falling back to src would ship a mixed graph without this signal.
+	console.warn( '[webpack.packages] Production build is using TypeScript instead of missing dist:', distJs );
 
 	return srcTs;
 }
