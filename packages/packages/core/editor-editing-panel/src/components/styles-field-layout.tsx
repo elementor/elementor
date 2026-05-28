@@ -7,18 +7,25 @@ type StylesFieldLayoutProps = {
 	label: string;
 	children: React.ReactNode;
 	direction?: 'row' | 'column';
+	infoTooltip?: string;
 };
 
 export const StylesFieldLayout = React.forwardRef< HTMLDivElement, StylesFieldLayoutProps >( ( props, ref ) => {
-	const { direction = 'row', children, label } = props;
+	const { direction = 'row', children, label, infoTooltip } = props;
 
 	const LayoutComponent = direction === 'row' ? Row : Column;
 
-	return <LayoutComponent label={ label } ref={ ref } children={ children } />;
+	return <LayoutComponent label={ label } infoTooltip={ infoTooltip } ref={ ref } children={ children } />;
 } );
 
-const Row = React.forwardRef< HTMLDivElement, { label: string; children: React.ReactNode } >(
-	( { label, children }, ref ) => {
+type LayoutProps = {
+	label: string;
+	children: React.ReactNode;
+	infoTooltip?: string;
+};
+
+const Row = React.forwardRef< HTMLDivElement, LayoutProps >(
+	( { label, children, infoTooltip }, ref ) => {
 		return (
 			<Grid
 				container
@@ -29,7 +36,7 @@ const Row = React.forwardRef< HTMLDivElement, { label: string; children: React.R
 				aria-label={ `${ label } control` }
 			>
 				<Grid item xs={ 6 }>
-					<ControlLabel>{ label }</ControlLabel>
+					<ControlLabel infoTooltip={ infoTooltip }>{ label }</ControlLabel>
 				</Grid>
 				<Grid
 					item
@@ -45,11 +52,11 @@ const Row = React.forwardRef< HTMLDivElement, { label: string; children: React.R
 	}
 );
 
-const Column = React.forwardRef< HTMLDivElement, { label: string; children: React.ReactNode } >(
-	( { label, children }, ref ) => {
+const Column = React.forwardRef< HTMLDivElement, LayoutProps >(
+	( { label, children, infoTooltip }, ref ) => {
 		return (
 			<Stack gap={ 0.75 } ref={ ref }>
-				<ControlLabel>{ label }</ControlLabel>
+				<ControlLabel infoTooltip={ infoTooltip }>{ label }</ControlLabel>
 				{ children }
 			</Stack>
 		);
