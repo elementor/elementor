@@ -65,6 +65,18 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$min_suffix = $this->config->get( 'min_suffix' );
 
 		return [
+			'font-awesome' => [
+				'src' => "{$assets_url}lib/font-awesome/css/font-awesome{$min_suffix}.css",
+				'deps' => [],
+				'ver' => '4.7.0',
+			],
+
+			'elementor-select2' => [
+				'src' => "{$assets_url}lib/e-select2/css/e-select2{$min_suffix}.css",
+				'deps' => [],
+				'ver' => '4.0.6-rc.1',
+			],
+
 			'pickr' => [
 				'src' => "{$assets_url}lib/pickr/themes/monolith.min.css",
 				'deps' => [],
@@ -158,6 +170,18 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			true
 		);
 
+		$source_map = $this->scripts_source_map();
+
+		foreach ( $source_map as $handle => $script ) {
+			wp_register_script(
+				$handle,
+				$script['src'],
+				$script['deps'],
+				$script['ver'],
+				true
+			);
+		}
+
 		wp_register_script(
 			'elementor-editor',
 			"{$assets_url}js/editor{$min_suffix}.js",
@@ -171,6 +195,10 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'perfect-scrollbar',
 				'nprogress',
 				'tipsy',
+				'pickr',
+				'ace',
+				'ace-language-tools',
+				'flatpickr',
 				'imagesloaded',
 				'heartbeat',
 				'jquery-elementor-select2',
@@ -194,18 +222,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
-
-		$source_map = $this->scripts_source_map();
-
-		foreach ( $source_map as $handle => $script ) {
-			wp_register_script(
-				$handle,
-				$script['src'],
-				$script['deps'],
-				$script['ver'],
-				true
-			);
-		}
 
 		add_action( 'elementor/assets-manager/register_scripts', function( $assets ) use ( $source_map ) {
 			foreach ( $source_map as $handle => $script ) {
@@ -234,20 +250,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$assets_url = $this->config->get( 'assets_url' );
 		$min_suffix = $this->config->get( 'min_suffix' );
 		$direction_suffix = $this->config->get( 'direction_suffix' );
-
-		wp_register_style(
-			'font-awesome',
-			"{$assets_url}lib/font-awesome/css/font-awesome{$min_suffix}.css",
-			[],
-			'4.7.0'
-		);
-
-		wp_register_style(
-			'elementor-select2',
-			"{$assets_url}lib/e-select2/css/e-select2{$min_suffix}.css",
-			[],
-			'4.0.6-rc.1'
-		);
 
 		wp_register_style(
 			'google-font-roboto',
