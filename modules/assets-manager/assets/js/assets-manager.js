@@ -9,16 +9,30 @@ async function enqueueAssets( w, utils ) {
 		if ( ! assets.styles?.map?.[ handle ] ) {
 			continue;
 		}
+
 		const { uri, options } = assets.styles.map[ handle ] ?? {};
-		await utils.appendCss( handle, uri, options );
+
+		try {
+			await utils.appendCss( handle, uri, options );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( `Failed to append CSS asset: ${ handle }`, error );
+		}
 	}
 
 	for ( const handle of assets.scripts?.priority_queue ?? {} ) {
 		if ( ! assets.scripts?.map?.[ handle ] ) {
 			continue;
 		}
+
 		const { uri, options } = assets.scripts.map[ handle ] ?? {};
-		await utils.appendJs( handle, uri, options );
+
+		try {
+			await utils.appendJs( handle, uri, options );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( `Failed to append JS asset: ${ handle }`, error );
+		}
 	}
 }
 
