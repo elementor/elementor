@@ -182,6 +182,18 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			);
 		}
 
+		add_action( 'elementor/assets-manager/register_scripts', function( $assets ) use ( $source_map ) {
+			foreach ( $source_map as $handle => $script ) {
+				$assets->append(
+					$handle,
+					$script['src'],
+					$script['deps'],
+					$script['ver'],
+					true
+				);
+			}
+		} );
+
 		wp_register_script(
 			'elementor-editor',
 			"{$assets_url}js/editor{$min_suffix}.js",
@@ -195,15 +207,15 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				'perfect-scrollbar',
 				'nprogress',
 				'tipsy',
-				'pickr',
-				'ace',
-				'ace-language-tools',
-				'flatpickr',
 				'imagesloaded',
 				'heartbeat',
 				'jquery-elementor-select2',
+				'flatpickr',
+				'ace',
+				'ace-language-tools',
 				'jquery-hover-intent',
 				'nouislider',
+				'pickr',
 				'react',
 				'react-dom',
 			],
@@ -222,18 +234,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
-
-		add_action( 'elementor/assets-manager/register_scripts', function( $assets ) use ( $source_map ) {
-			foreach ( $source_map as $handle => $script ) {
-				$assets->append(
-					$handle,
-					$script['src'],
-					$script['deps'],
-					$script['ver'],
-					true
-				);
-			}
-		} );
 	}
 
 	/**
@@ -254,26 +254,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-			[],
-			ELEMENTOR_VERSION
-		);
-
-		wp_register_style(
-			'elementor-editor',
-			"{$assets_url}css/editor{$direction_suffix}{$min_suffix}.css",
-			[
-				'elementor-common',
-				'elementor-select2',
-				'elementor-icons',
-				'wp-auth-check',
-				'google-font-roboto',
-			],
-			ELEMENTOR_VERSION
-		);
-
-		wp_register_style(
-			'elementor-responsive-bar',
-			"{$assets_url}css/responsive-bar{$min_suffix}.css",
 			[],
 			ELEMENTOR_VERSION
 		);
@@ -299,6 +279,28 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 				);
 			}
 		} );
+
+		wp_register_style(
+			'elementor-editor',
+			"{$assets_url}css/editor{$direction_suffix}{$min_suffix}.css",
+			[
+				'elementor-common',
+				'elementor-select2',
+				'elementor-icons',
+				'wp-auth-check',
+				'google-font-roboto',
+				'flatpickr',
+				'pickr',
+			],
+			ELEMENTOR_VERSION
+		);
+
+		wp_register_style(
+			'elementor-responsive-bar',
+			"{$assets_url}css/responsive-bar{$min_suffix}.css",
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	/**
