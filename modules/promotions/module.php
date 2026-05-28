@@ -22,6 +22,7 @@ use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -52,6 +53,10 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
+
+		if ( Utils::is_sale_time() ) {
+			add_filter( 'add_menu_classes', [ $this, 'override_one_menu_upgrade_label_during_sale' ] );
+		}
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -108,6 +113,26 @@ class Module extends Base_Module {
 			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
+	}
+
+	public function override_one_menu_upgrade_label_during_sale( $menu ) {
+		global $submenu;
+
+		$parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+		$upgrade_slug = 'elementor-one-upgrade';
+
+		if ( empty( $submenu[ $parent_slug ] ) ) {
+			return $menu;
+		}
+
+		foreach ( $submenu[ $parent_slug ] as &$item ) {
+			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
+				$item[0] = esc_html__( 'Upgrade & Save', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
+
+		return $menu;
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
