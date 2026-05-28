@@ -188,8 +188,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 					$handle,
 					$script['src'],
 					$script['deps'],
-					$script['ver'],
-					true
+					$script['ver']
 				);
 			}
 		} );
