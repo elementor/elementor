@@ -1,20 +1,35 @@
-# Elementor Development Guide
+# Agent and cloud environment guide
 
-## Cursor Cloud specific instructions
+Short reference for Cursor Cloud and other non-interactive agents. For full human onboarding use [CONTRIBUTING.md](.github/CONTRIBUTING.md) and [tests/test-environment-setup.md](tests/test-environment-setup.md).
 
-### System Requirements (pre-installed in update script)
-- Node.js version from `.nvmrc` (via nvm, path prepended in `~/.bashrc`)
-- PHP >= 7.4 with extensions: mbstring, xml, zip, curl, dom, bcmath
+## Choosing a WordPress environment
+
+| Runtime | When to use | Ports / URL |
+|--------|-------------|----------------|
+| **wp-lite-env** (Docker) | Same stack as Playwright in CI (`.github/workflows/playwright.yml`). Full PHP/MySQL containers, two WP instances. | http://localhost:8888 and http://localhost:8889 |
+| **WP Playground CLI** (`npm run wp-playground`) | No Docker. WordPress in WASM; quick editor and blueprint-driven setup. Default listen address matches local Playwright dev base URL. | http://127.0.0.1:9400 |
+| **wp-env** (`npm run wp-env`, [.wp-env.json](.wp-env.json)) | Alternative Docker-based `@wordpress/env` setup used in other workflows and docs. | See `@wordpress/env` defaults after `wp-env start` |
+
+Use **wp-lite-env** when you need Docker parity with CI (full Playwright against 8888/8889, `setup.sh`, theme on disk). Use **WP Playground** when Docker is missing or broken; it is sufficient for many editor checks and aligns with `tests/playwright/playwright.config.ts` local `localDevServer` / `localTestServer` (both `http://127.0.0.1:9400` when not in CI). WP Playground still uses a blueprint ([tests/playwright/blueprints/local.json](tests/playwright/blueprints/local.json)) so PHP/WordPress versions may differ from [tests/playwright/.playwright-wp-lite-env.json](tests/playwright/.playwright-wp-lite-env.json).
+
+## Cursor Cloud specifics
+
+### System requirements (typical VM image)
+
+- Node.js version from [.nvmrc](.nvmrc) (via nvm; PATH in `~/.bashrc`)
+- PHP >= 7.4 with extensions: mbstring, xml, zip, curl, dom, bcmath (see [composer.json](composer.json))
 - Composer 2.x
-- Docker (with fuse-overlayfs + iptables-legacy for nested containers)
+- Docker only if you use wp-lite-env or wp-env (often needs fuse-overlayfs and iptables-legacy in nested setups)
 
-### PATH Note
-The VM has a system Node at `/exec-daemon/node` that may be a different version. The nvm-managed Node (version from `.nvmrc`) is prepended to PATH via `~/.bashrc`. If commands fail with engine mismatch, verify `which node` points to the nvm-managed binary.
+### PATH
 
-### Key Commands (see CONTRIBUTING.md and package.json for full list)
+The image may ship a system Node under `/exec-daemon/node` that does not match `.nvmrc`. If installs or engines fail, confirm `which node` points at the nvm-managed binary.
+
+### Common commands
+
 | Action | Command |
 |--------|---------|
-| Install all deps | `npm ci --ignore-scripts && composer install` |
+| Install deps | `npm ci --ignore-scripts && composer install` |
 | Build packages | `npm run build:packages` |
 | Build styles | `npx grunt styles` |
 | Build scripts | `npx grunt scripts` |
@@ -22,25 +37,43 @@ The VM has a system Node at `/exec-daemon/node` that may be a different version.
 | Lint JS/TS (root) | `npx eslint .` |
 | Lint JS/TS (packages) | `cd packages && npx eslint . --report-unused-disable-directives-severity error` |
 | Lint PHP | `vendor/bin/phpcs --extensions=php --standard=./ruleset.xml .` |
-| Jest tests (main) | `npm run test:jest` |
-| Jest tests (packages) | `npm run test:packages` |
-| All Jest tests | `npm run test` |
+| Jest (main) | `npm run test:jest` |
+| Jest (packages) | `npm run test:packages` |
+| All Jest | `npm run test` |
 
-### Starting the WordPress Dev Environment
-The WordPress test environment uses `@elementor/wp-lite-env` (Docker-based). Before starting:
-1. Docker daemon must be running: `sudo dockerd &>/tmp/dockerd.log &` then `sudo chmod 666 /var/run/docker.sock`
-2. Build the plugin into `./build/`: `composer install --no-scripts --no-dev && composer dump-autoload && npx grunt copy`
-3. Download hello-elementor theme if not present: `curl -L -o hello-elementor.zip https://downloads.wordpress.org/theme/hello-elementor.zip && unzip -o hello-elementor.zip && rm hello-elementor.zip`
-4. Set up templates: `npm run setup-templates`
-5. Start: `npx wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888`
-6. Run setup: `npm run test:setup:playwright`
+## wp-lite-env (Docker): full setup
 
-WordPress will be available at http://localhost:8888 (admin/password).
+Non-interactive one-shot (skips container cleanup prompt):
 
-### Gotchas
-- The `npm run lint` command runs ESLint on root AND packages workspace (`npm run lint -w elementor-packages`). Both must pass.
-- PHPCS reports only warnings (0 errors) on the current codebase - this is expected.
-- The `composer install` post-install script runs `php-scoper` to prefix Twig. This requires the `humbug/php-scoper` dev dependency.
-- For production-like builds (`./build` dir), use `composer install --no-scripts --no-dev` first, then `npx grunt copy`. Dev dependencies must be restored afterward with `composer install`.
-- The `engines` field in `package.json` enforces the minimum Node version. Always use the version from `.nvmrc`.
-- Husky pre-commit hook runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192`.
+```bash
+SKIP_CONFIRMATION=true npm run env:setup
+```
+
+That script installs deps, builds, downloads Hello Elementor, runs `npm run start-local-server` (8888 **and** 8889), then `npm run test:setup:playwright`. Do not start only 8888 and then run `npm run test:setup:playwright` alone; [package.json](package.json) expects both ports.
+
+Manual equivalent: see [tests/test-environment-setup.md](tests/test-environment-setup.md) (steps: `npm run start-local-server` then `npm run test:setup:playwright`).
+
+If Docker is not running on the VM yet, a typical pattern is `sudo dockerd &>/tmp/dockerd.log &` in the background, then ensure the Docker socket is usable for the agent user (for example `sudo chmod 666 /var/run/docker.sock` in **disposable** environments only). For a manual plugin tree under `./build/` without the setup script, flows often use `composer install --no-scripts --no-dev && composer dump-autoload && npx grunt copy`, then `npm run setup-templates`, then start **both** wp-lite-env instances (see `npm run start-local-server` in [package.json](package.json)).
+
+Admin: http://localhost:8888/wp-admin/ — user `admin`, password `password` (see test environment doc).
+
+## WP Playground CLI (no Docker)
+
+After `npm ci` (or full install per repo):
+
+```bash
+npm run wp-playground
+```
+
+Wait until the CLI prints that WordPress is running, then open http://127.0.0.1:9400 . This flow was smoke-tested with the same CLI flags as [package.json](package.json) `wp-playground` in a clean agent-style environment without Docker.
+
+For CI-style mounted **build** output use `npm run wp-playground:ci` (expects `./build`).
+
+## Gotchas
+
+- `npm run lint` runs ESLint at the repo root and in the `elementor-packages` workspace (`npm run lint -w elementor-packages`); both must pass.
+- PHPCS may report warnings without errors on the current tree; treat policy from maintainers, not only the exit summary.
+- `composer install` post-install can run php-scoper (Twig prefixing); dev dependency `humbug/php-scoper` must be present for a full dev install.
+- For a production-like plugin tree under `./build`, many flows use `composer install --no-scripts --no-dev` first, then `npx grunt copy`. Dev dependencies must be restored afterward with `composer install`.
+- [package.json](package.json) `engines` and `.nvmrc` define the Node version; keep them aligned when troubleshooting.
+- Husky pre-commit runs `lint-staged` with `NODE_OPTIONS=--max-old-space-size=8192` (see [.husky/pre-commit](.husky/pre-commit)).

@@ -10,8 +10,10 @@ permissions:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: PR Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: PR Playwright build artifact
 
   playwright-tests:
     name: Playwright Tests
