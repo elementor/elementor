@@ -128,6 +128,7 @@ class Module extends BaseModule {
 			// Each entry defines a recording window: recording starts when 'start' fires
 			// and stops when 'end' fires. 'end' is optional — omit or set to null to record indefinitely.
 			[ 'start' => 'editor_loaded' ],
+			[ 'start' => 'ob_onboarding_initialized' ],
 		];
 	}
 

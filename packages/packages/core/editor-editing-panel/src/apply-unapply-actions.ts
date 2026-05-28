@@ -30,7 +30,10 @@ function ensureClassesAreLoaded( classIds: StyleDefinitionID[] ) {
 			provider.actions.all().some( ( style ) => style.id === classId )
 		);
 
-		owningProvider?.actions.get( classId );
+		try {
+			// this is essentially to enforce the loading of a class if we have async lazy-loading style providers, e.g. global classes
+			owningProvider?.actions.get( classId );
+		} catch {}
 	} );
 }
 

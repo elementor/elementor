@@ -5,11 +5,24 @@ import { activateAdapters, registerMcpAdapter, signalMcpReady } from './mcp-regi
 import { getSDK } from './utils/get-sdk';
 import { isAngieAvailable } from './utils/is-angie-available';
 
+type ModelContextHost = {
+	modelContext?: ModelContext;
+};
+
+function getModelContext(): ModelContext | undefined {
+	const documentModelContext =
+		typeof document !== 'undefined' ? ( document as unknown as ModelContextHost ).modelContext : undefined;
+	const navigatorModelContext =
+		typeof navigator !== 'undefined' ? ( navigator as unknown as ModelContextHost ).modelContext : undefined;
+
+	return documentModelContext || navigatorModelContext;
+}
+
 export function startMCPServer() {
-	if ( typeof navigator !== 'undefined' && 'modelContext' in navigator ) {
-		registerMcpAdapter(
-			new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext )
-		);
+	const modelContext = getModelContext();
+
+	if ( modelContext ) {
+		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
 	}
 
 	if ( isAngieAvailable() ) {

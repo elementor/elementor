@@ -313,6 +313,34 @@ trait Post_Query {
 					],
 				],
 			],
+			'content_search_on_finds_match_in_post_content_when_title_does_not_match' => [
+				'params' => $this->build_params( [
+					Post_Query_Class::INCLUDED_TYPE_KEY => [ 'movie' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_IN_CONTENT_KEY => true,
+					Post_Query_Class::SEARCH_TERM_KEY => 'thriller',
+				] ),
+				'expected' => [
+					[
+						'id' => $this->posts[9]->ID,
+						'label' => $this->posts[9]->post_title,
+					],
+				],
+			],
+			'content_search_off_by_default_does_not_match_content_only_term' => [
+				'params' => $this->build_params( [
+					Post_Query_Class::INCLUDED_TYPE_KEY => [ 'movie' ],
+					Post_Query_Class::KEYS_CONVERSION_MAP_KEY => [
+						'ID' => 'id',
+						'post_title' => 'label',
+					],
+					Post_Query_Class::SEARCH_TERM_KEY => 'thriller',
+				] ),
+				'expected' => [],
+			],
 		];
 	}
 

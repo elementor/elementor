@@ -26,8 +26,10 @@ on:
 jobs:
   build-plugin-lh:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    name: Build plugin
+    name: Lighthouse build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Lighthouse build artifact
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4
@@ -47,7 +49,7 @@ jobs:
           node-version: 24.15.0
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
