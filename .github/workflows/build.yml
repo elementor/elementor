@@ -5,16 +5,14 @@ on:
     branches:
       - 'main'
       - '[0-9].[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
+  merge_group:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      job_name:
+        type: string
+        required: false
+        default: Build plugin
     outputs:
       artifact_name:
         value: ${{ jobs.build-plugin.outputs.artifact_name }}
@@ -37,7 +35,7 @@ permissions:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: ${{ inputs.job_name || 'Build plugin' }}
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -105,7 +103,7 @@ jobs:
 
       - name: Find existing comment on PR (Elementor repo)
         if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         id: find
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -114,7 +112,7 @@ jobs:
 
       - name: Comment build info on PR (Elementor repo)
         if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}

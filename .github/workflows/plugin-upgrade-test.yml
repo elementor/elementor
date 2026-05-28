@@ -22,6 +22,8 @@ on:
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Plugin upgrade build artifact
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-22.04
@@ -39,7 +41,7 @@ jobs:
         run: |
           npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -80,7 +82,7 @@ jobs:
     needs: run-upgrade-test
     if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
     runs-on: ubuntu-22.04
-    name: Playwright - Test Results
+    name: Plugin upgrade - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.run-upgrade-test.result }}"

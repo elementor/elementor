@@ -101,9 +101,22 @@ class App extends BaseApp {
 	 */
 	public function register_scripts() {
 		wp_register_script(
+			'elementor-vendors-redux',
+			$this->get_js_assets_url( 'vendors-redux' ),
+			[
+				'react',
+				'react-dom',
+			],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
 			'elementor-common-modules',
 			$this->get_js_assets_url( 'common-modules' ),
-			[],
+			[
+				'elementor-vendors-redux',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);

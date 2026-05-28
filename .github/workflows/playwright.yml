@@ -6,16 +6,7 @@ on:
     branches:
       - main
       - '[0-9].[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
-      - '**/package.json'
-      - 'tests/phpunit/**'
+  merge_group:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
@@ -63,10 +54,13 @@ jobs:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
-    name: Build plugin
+    name: Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
@@ -78,6 +72,7 @@ jobs:
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -111,7 +106,7 @@ jobs:
         run: |
           npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -239,7 +234,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
@@ -266,7 +261,7 @@ jobs:
         run: |
           npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -348,7 +343,7 @@ jobs:
           retention-days: 1
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/upload-cloud-storage@v2
+        uses: google-github-actions/upload-cloud-storage@v3
         with:
           path: allure-report/
           destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}
@@ -358,7 +353,7 @@ jobs:
         if: always()
         with:
           name: playwright-test-results-tagged-tests
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   Build-report:
@@ -375,7 +370,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download allure data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: allure-results-*
           path: allure-results
@@ -410,7 +405,7 @@ jobs:
 
       - name: Install gcloud CLI
         if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@v3
 
       - name: Download previous report for main branch
         if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
@@ -452,7 +447,7 @@ jobs:
 
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/upload-cloud-storage@v2
+        uses: google-github-actions/upload-cloud-storage@v3
         with:
           path: allure-report/
           destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.ref == 'refs/heads/main' && 'main' || github.run_id }}
@@ -490,7 +485,7 @@ jobs:
       - name: Generate a token
         id: generate-token
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
