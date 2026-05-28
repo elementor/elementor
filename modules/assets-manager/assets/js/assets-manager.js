@@ -5,7 +5,7 @@ import { appendCss, appendJs } from './utils';
 async function enqueueAssets( w, utils ) {
 	const assets = w.elementorAssetsManager ?? {};
 
-	for ( const handle of assets.styles?.priority_queue ?? {} ) {
+	for ( const handle of assets.styles?.priority_queue ?? [] ) {
 		if ( ! assets.styles?.map?.[ handle ] ) {
 			continue;
 		}
@@ -20,7 +20,7 @@ async function enqueueAssets( w, utils ) {
 		}
 	}
 
-	for ( const handle of assets.scripts?.priority_queue ?? {} ) {
+	for ( const handle of assets.scripts?.priority_queue ?? [] ) {
 		if ( ! assets.scripts?.map?.[ handle ] ) {
 			continue;
 		}
