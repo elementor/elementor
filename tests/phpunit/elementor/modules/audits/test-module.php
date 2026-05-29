@@ -19,17 +19,28 @@ class Test_Module extends TestCase {
 		$this->assertSame( 'audits', $module->get_name() );
 	}
 
-	public function test_inline_config_is_printed_when_editor_assets_enqueue() {
+	public function test_packages_filter_adds_floating_panels_and_audits() {
 		// Arrange.
-		$module = Module::instance();
-		$module->register_data_controller();
-		wp_register_script( 'elementor-audits', 'http://example.test/audits.js', [], '1.0', true );
+		Module::instance();
 
 		// Act.
-		do_action( 'elementor/editor/before_enqueue_scripts' );
+		$packages = apply_filters( 'elementor/editor/v2/packages', [] );
 
-		// Assert: the inline script body must contain the global init.
-		$inline = wp_scripts()->get_data( 'elementor-audits', 'data' );
+		// Assert.
+		$this->assertContains( 'editor-floating-panels', $packages );
+		$this->assertContains( 'editor-audits', $packages );
+	}
+
+	public function test_inline_config_is_printed_when_editor_assets_enqueue() {
+		// Arrange.
+		Module::instance();
+		wp_register_script( 'elementor-v2-editor-audits', 'http://example.test/editor-audits.js', [], '1.0', true );
+
+		// Act.
+		do_action( 'elementor/editor/v2/scripts/enqueue' );
+
+		// Assert.
+		$inline = wp_scripts()->get_data( 'elementor-v2-editor-audits', 'data' );
 		$this->assertIsString( $inline );
 		$this->assertStringContainsString( 'window.elementorAudits', $inline );
 		$this->assertStringContainsString( '"audits"', $inline );
