@@ -38,15 +38,27 @@ describe( 'applyDragDelta', () => {
 		expect( next ).toEqual( { insetInlineStart: 125, insetBlockStart: 40 } );
 	} );
 
-	it( 'never returns negative inline-start', () => {
+	it( 'clamps inline-start at 0 when the inline delta would push it negative', () => {
 		// Arrange.
-		const start = { insetInlineStart: 5, insetBlockStart: 5 };
+		const start = { insetInlineStart: 5, insetBlockStart: 80 };
 
 		// Act.
-		const next = applyDragDelta( start, { inlineDelta: -100, blockDelta: -100 } );
+		const next = applyDragDelta( start, { inlineDelta: -100, blockDelta: 0 } );
 
 		// Assert.
 		expect( next.insetInlineStart ).toBe( 0 );
+		expect( next.insetBlockStart ).toBe( 80 );
+	} );
+
+	it( 'clamps block-start at 0 when the block delta would push it negative', () => {
+		// Arrange.
+		const start = { insetInlineStart: 80, insetBlockStart: 5 };
+
+		// Act.
+		const next = applyDragDelta( start, { inlineDelta: 0, blockDelta: -100 } );
+
+		// Assert.
+		expect( next.insetInlineStart ).toBe( 80 );
 		expect( next.insetBlockStart ).toBe( 0 );
 	} );
 } );
