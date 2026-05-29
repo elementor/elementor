@@ -9,7 +9,7 @@ export function useAuditToggleProps(): ToggleActionProps {
 	const { toggle } = auditPanel.useFloatingPanelActions();
 
 	return {
-		title: __( 'Audit page', 'elementor' ),
+		title: __( 'Audit Page', 'elementor' ),
 		icon: ShieldCheckIcon,
 		selected: isOpen,
 		onClick: () => toggle(),

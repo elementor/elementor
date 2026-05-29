@@ -2457,7 +2457,7 @@ export function useAuditToggleProps() {
     const { toggle } = auditPanel.useFloatingPanelActions();
 
     return {
-        title: __( 'Audit page', 'elementor' ),
+        title: __( 'Audit Page', 'elementor' ),
         selected: isOpen,
         onClick: () => toggle(),
     };
