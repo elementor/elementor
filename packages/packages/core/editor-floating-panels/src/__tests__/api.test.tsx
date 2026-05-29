@@ -8,9 +8,12 @@ import {
 	__registerSlice,
 	__StoreProvider as StoreProvider,
 } from '@elementor/store';
-import { act, renderHook } from '@testing-library/react';
+import { act, fireEvent, renderHook, screen } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
 
-import { createFloatingPanel } from '../api';
+import { createFloatingPanel, registerFloatingPanel } from '../api';
+import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
+import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
 import { selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
@@ -126,5 +129,80 @@ describe( 'createFloatingPanel', () => {
 
 		// Assert.
 		expect( result.current.status.isOpen ).toBe( false );
+	} );
+
+	it( 'host does not render a closed panel even when injected', () => {
+		// Arrange.
+		const mock = createFloatingPanel( declaration );
+		registerFloatingPanel( mock.panel );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		// Act.
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		// Assert.
+		expect( screen.queryByText( 'Body content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'opens and closes a registered panel via the actions hook', () => {
+		// Arrange.
+		const MockPanelComponent: ComponentType = () => (
+			<>
+				<FloatingPanelHeader panelId={ declaration.id } title="Audit" />
+				<FloatingPanelBody>Body content</FloatingPanelBody>
+			</>
+		);
+
+		const mock = createFloatingPanel( { ...declaration, component: MockPanelComponent } );
+		registerFloatingPanel( mock.panel );
+
+		const OpenCloseButtons = () => {
+			const { open, close } = mock.useFloatingPanelActions();
+
+			return (
+				<>
+					<button onClick={ open }>Open</button>
+					<button onClick={ close }>Close</button>
+				</>
+			);
+		};
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<OpenCloseButtons />
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		// Act — open.
+		act( () => {
+			fireEvent.click( screen.getByText( 'Open' ) );
+		} );
+
+		// Assert.
+		expect( screen.getByText( 'Body content' ) ).toBeInTheDocument();
+
+		// Act — close.
+		act( () => {
+			fireEvent.click( screen.getByText( 'Close' ) );
+		} );
+
+		// Assert.
+		expect( screen.queryByText( 'Body content' ) ).not.toBeInTheDocument();
 	} );
 } );
