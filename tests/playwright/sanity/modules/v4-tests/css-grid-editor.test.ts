@@ -92,6 +92,74 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await expect( gridOutline ).toHaveCount( 0 );
 	} );
 
+	test( 'Grid outline updates live when columns, rows, and breakpoint change', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+
+		const countLines = async () =>
+			gridOutline.locator( 'svg line' ).evaluateAll( ( lines ) => {
+				let vertical = 0;
+				let horizontal = 0;
+
+				for ( const line of lines ) {
+					if ( line.getAttribute( 'x1' ) === line.getAttribute( 'x2' ) ) {
+						vertical++;
+					} else if ( line.getAttribute( 'y1' ) === line.getAttribute( 'y2' ) ) {
+						horizontal++;
+					}
+				}
+
+				return { vertical, horizontal };
+			} );
+
+		// Act & Assert
+		await test.step( 'Column count change updates vertical lines without reload', async () => {
+			const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+
+			await editor.v4Panel.style.changeSizeControl( columnsControl, 2 );
+			await expect.poll( async () => ( await countLines() ).vertical ).toBeGreaterThan( 0 );
+			const twoColumns = ( await countLines() ).vertical;
+
+			await editor.v4Panel.style.changeSizeControl( columnsControl, 5 );
+			await expect.poll( async () => ( await countLines() ).vertical ).toBeGreaterThan( twoColumns );
+		} );
+
+		await test.step( 'Row count change updates horizontal lines without reload', async () => {
+			const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+
+			await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+			await expect.poll( async () => ( await countLines() ).horizontal ).toBeGreaterThan( 0 );
+			const twoRows = ( await countLines() ).horizontal;
+
+			await editor.v4Panel.style.changeSizeControl( rowsControl, 4 );
+			await expect.poll( async () => ( await countLines() ).horizontal ).toBeGreaterThan( twoRows );
+		} );
+
+		await test.step( 'Per-breakpoint columns update the outline in the matching device mode', async () => {
+			const desktopVertical = ( await countLines() ).vertical;
+
+			await editor.changeResponsiveView( 'tablet' );
+			await expect( gridOutline ).toBeVisible();
+
+			const tabletColumns = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+			await editor.v4Panel.style.changeSizeControl( tabletColumns, 3 );
+			await expect.poll( async () => ( await countLines() ).vertical ).not.toBe( desktopVertical );
+
+			await editor.changeResponsiveView( 'desktop' );
+			await expect.poll( async () => ( await countLines() ).vertical ).toBe( desktopVertical );
+		} );
+	} );
+
 	test( 'Grid layout with content renders in editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
