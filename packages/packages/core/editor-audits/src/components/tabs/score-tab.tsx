@@ -25,11 +25,7 @@ const OVERALL_GAUGE_SIZE = 128;
 export default function ScoreTab( { report, onCategoryClick }: Props ) {
 	return (
 		<Box sx={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 } }>
-			<ScoreGauge
-				score={ report.overall }
-				label={ __( 'Overall', 'elementor' ) }
-				size={ OVERALL_GAUGE_SIZE }
-			/>
+			<ScoreGauge score={ report.overall } label={ __( 'Overall', 'elementor' ) } size={ OVERALL_GAUGE_SIZE } />
 			<Box sx={ { display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' } }>
 				{ TAB_CATEGORIES.filter( ( category ) => report.categories[ category ].total > 0 ).map(
 					( category ) => (

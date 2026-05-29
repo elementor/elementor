@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
 import { Box, Button, Tab, Tabs, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -33,7 +34,7 @@ declare global {
 
 export default function AuditPanel() {
 	const { status, report, error, run } = useAuditReport();
-	const [ activeTab, setActiveTab ] = React.useState< 'score' | AuditCategory >( 'score' );
+	const [ activeTab, setActiveTab ] = useState< 'score' | AuditCategory >( 'score' );
 
 	const currentDocumentId = window.elementor?.documents?.getCurrent?.()?.id ?? 0;
 	const onRun = () => run( currentDocumentId );

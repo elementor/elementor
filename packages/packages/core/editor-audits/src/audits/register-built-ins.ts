@@ -4,12 +4,15 @@ import {
 	evaluator as defaultDesignSystemEvaluator,
 } from './default-design-system';
 import { descriptor as headingStructureDescriptor, evaluator as headingStructureEvaluator } from './heading-structure';
-import { descriptor as iconLinkDescriptor, evaluator as iconLinkEvaluator } from './icon-widget-link-missing-aria-label';
-import { descriptor as carouselNameDescriptor, evaluator as carouselNameEvaluator } from './image-carousel-default-name';
 import {
-	descriptor as imagesMissingAltDescriptor,
-	evaluator as imagesMissingAltEvaluator,
-} from './images-missing-alt';
+	descriptor as iconLinkDescriptor,
+	evaluator as iconLinkEvaluator,
+} from './icon-widget-link-missing-aria-label';
+import {
+	descriptor as carouselNameDescriptor,
+	evaluator as carouselNameEvaluator,
+} from './image-carousel-default-name';
+import { descriptor as imagesMissingAltDescriptor, evaluator as imagesMissingAltEvaluator } from './images-missing-alt';
 import { descriptor as imagesTooLargeDescriptor, evaluator as imagesTooLargeEvaluator } from './images-too-large';
 import { descriptor as missingExcerptDescriptor, evaluator as missingExcerptEvaluator } from './missing-excerpt';
 import {

@@ -19,9 +19,7 @@ describe( descriptor.id, () => {
 	} );
 
 	it( 'fails when icon link has no aria-label custom attribute', async () => {
-		const tree = [
-			makeWidget( 'icn', 'icon', { link: { url: 'https://example.com' }, custom_attributes: '' } ),
-		];
+		const tree = [ makeWidget( 'icn', 'icon', { link: { url: 'https://example.com' }, custom_attributes: '' } ) ];
 		const result = await evaluator( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );

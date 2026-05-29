@@ -3,10 +3,7 @@ import { httpService } from '@elementor/http-client';
 import { getWindowConfig } from '../lib/window-config';
 import { type PageContextResponse } from '../types';
 
-export async function fetchPageContext(
-	documentId: number,
-	attachmentIds: number[]
-): Promise< PageContextResponse > {
+export async function fetchPageContext( documentId: number, attachmentIds: number[] ): Promise< PageContextResponse > {
 	const { restNamespace, nonce } = getWindowConfig();
 	const url = `/wp-json/${ restNamespace }/audits/page-context`;
 

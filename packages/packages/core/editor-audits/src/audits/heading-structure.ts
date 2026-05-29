@@ -7,10 +7,7 @@ export const descriptor: AuditDescriptor = {
 	id: 'audits/heading-structure',
 	title: __( 'Heading structure', 'elementor' ),
 	description: __( 'Pages should have exactly one H1 and a non-skipping heading order.', 'elementor' ),
-	fixHint: __(
-		'Ensure your page has one H1 and that heading levels do not skip (no H2 → H4).',
-		'elementor'
-	),
+	fixHint: __( 'Ensure your page has one H1 and that heading levels do not skip (no H2 → H4).', 'elementor' ),
 	categories: [ 'seo', 'accessibility' ],
 	severity: 'error',
 	weight: 10,

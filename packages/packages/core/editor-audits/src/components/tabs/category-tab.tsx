@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Box, Collapse, Typography } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -15,7 +16,7 @@ export default function CategoryTab( { category, report }: Props ) {
 	const failed = inCategory.filter( ( r ) => r.result.status === 'fail' );
 	const passed = inCategory.filter( ( r ) => r.result.status === 'pass' );
 	const skipped = inCategory.filter( ( r ) => r.result.status === 'skipped' );
-	const [ showPassed, setShowPassed ] = React.useState( false );
+	const [ showPassed, setShowPassed ] = useState( false );
 
 	const totalViolations = failed.reduce(
 		( n, r ) => n + ( r.result.status === 'fail' ? r.result.violations.length : 0 ),

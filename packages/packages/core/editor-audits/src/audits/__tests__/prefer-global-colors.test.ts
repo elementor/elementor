@@ -3,9 +3,7 @@ import { makeContext, makeWidget } from './fixtures';
 
 describe( descriptor.id, () => {
 	it( 'is skipped when the kit has no global colors', async () => {
-		const result = await evaluator(
-			makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } )
-		);
+		const result = await evaluator( makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } ) );
 
 		expect( result.status ).toBe( 'skipped' );
 	} );

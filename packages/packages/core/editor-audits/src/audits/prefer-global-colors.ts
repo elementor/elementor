@@ -8,10 +8,7 @@ const HEX_RE = /^#[0-9a-f]{3,8}$/i;
 export const descriptor: AuditDescriptor = {
 	id: 'audits/prefer-global-colors',
 	title: __( 'Prefer global colors over hard-coded values', 'elementor' ),
-	description: __(
-		'Global colors make the design consistent and easy to update site-wide.',
-		'elementor'
-	),
+	description: __( 'Global colors make the design consistent and easy to update site-wide.', 'elementor' ),
 	fixHint: __( "Replace the hard-coded color with one of your kit's global colors.", 'elementor' ),
 	categories: [ 'health', 'best-practices' ],
 	severity: 'info',

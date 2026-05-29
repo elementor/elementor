@@ -5,10 +5,13 @@ const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'per
 type Input = Array< { descriptor: AuditDescriptor; result: AuditResult } >;
 
 export function computeReport( documentId: number, results: Input ): PageAuditReport {
-	const categories = ALL_CATEGORIES.reduce( ( acc, category ) => {
-		acc[ category ] = { score: 0, failed: 0, total: 0 };
-		return acc;
-	}, {} as PageAuditReport[ 'categories' ] );
+	const categories = ALL_CATEGORIES.reduce(
+		( acc, category ) => {
+			acc[ category ] = { score: 0, failed: 0, total: 0 };
+			return acc;
+		},
+		{} as PageAuditReport[ 'categories' ]
+	);
 
 	const counted = results.filter( ( r ) => r.result.status !== 'skipped' );
 

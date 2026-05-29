@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
 import { Box, Collapse, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -12,7 +13,7 @@ type Props = {
 };
 
 export default function ViolationRow( { descriptor, violations }: Props ) {
-	const [ expanded, setExpanded ] = React.useState( false );
+	const [ expanded, setExpanded ] = useState( false );
 	const { focus } = useViolationFocus();
 
 	return (
@@ -51,7 +52,6 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				<Box role="list" sx={ { pb: 1 } }>
 					{ violations.map( ( violation, idx ) => (
 						<Box
-							// eslint-disable-next-line react/no-array-index-key
 							key={ idx }
 							role="button"
 							tabIndex={ 0 }

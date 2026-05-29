@@ -9,9 +9,7 @@ describe( descriptor.id, () => {
 	} );
 
 	it( 'fails when a section is present', async () => {
-		const tree: ElementSnapshotNode[] = [
-			{ id: 's1', elType: 'section', settings: {}, elements: [] },
-		];
+		const tree: ElementSnapshotNode[] = [ { id: 's1', elType: 'section', settings: {}, elements: [] } ];
 		const result = await evaluator( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );

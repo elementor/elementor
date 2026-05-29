@@ -1,9 +1,4 @@
-import {
-	type AuditContext,
-	type ElementSnapshotNode,
-	type KitSnapshot,
-	type PageContextResponse,
-} from '../../types';
+import { type AuditContext, type ElementSnapshotNode, type KitSnapshot, type PageContextResponse } from '../../types';
 
 const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	post_title: 'Hello',
