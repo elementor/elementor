@@ -17,6 +17,9 @@ class Module extends BaseModule {
 	const REST_NAMESPACE = 'elementor/v1';
 
 	const PACKAGES = [
+		'editor-props',
+		'editor-styles',
+		'editor-elements',
 		'editor-floating-panels',
 		'editor-audits',
 	];
