@@ -1,5 +1,5 @@
 import { type GridTracks } from '../../hooks/use-grid-tracks';
-import { computeOutlineGeometry, parseTrackList, snapToHalfPixel, toPx } from '../grid-outline-utils';
+import { computeOutlineGeometry, parseTrackList, snapToHalfPixel, toGridTracks, toPx } from '../grid-outline-utils';
 
 function makeTracks( partial: Partial< GridTracks > = {} ): GridTracks {
 	return {
@@ -138,5 +138,92 @@ describe( 'toPx', () => {
 		[ 'auto', 0 ],
 	] )( 'parses %p as %p', ( input, expected ) => {
 		expect( toPx( input ) ).toBe( expected );
+	} );
+} );
+
+type ComputedStyleParts = {
+	gridTemplateColumns: string;
+	gridTemplateRows: string;
+	columnGap: string;
+	rowGap: string;
+	paddingTop: string;
+	paddingRight: string;
+	paddingBottom: string;
+	paddingLeft: string;
+	borderColor: string;
+};
+
+function mockComputedStyle( parts: Partial< ComputedStyleParts > = {} ): CSSStyleDeclaration {
+	const resolved: ComputedStyleParts = {
+		gridTemplateColumns: 'none',
+		gridTemplateRows: 'none',
+		columnGap: 'normal',
+		rowGap: 'normal',
+		paddingTop: '0px',
+		paddingRight: '0px',
+		paddingBottom: '0px',
+		paddingLeft: '0px',
+		borderColor: '',
+		...parts,
+	};
+
+	return {
+		gridTemplateColumns: resolved.gridTemplateColumns,
+		gridTemplateRows: resolved.gridTemplateRows,
+		columnGap: resolved.columnGap,
+		rowGap: resolved.rowGap,
+		paddingTop: resolved.paddingTop,
+		paddingRight: resolved.paddingRight,
+		paddingBottom: resolved.paddingBottom,
+		paddingLeft: resolved.paddingLeft,
+		getPropertyValue: ( name: string ) => ( name === '--e-a-border-color-bold' ? resolved.borderColor : '' ),
+	} as unknown as CSSStyleDeclaration;
+}
+
+describe( 'toGridTracks', () => {
+	it( 'parses resolved track lists, gaps, and padding from computed style', () => {
+		const tracks = toGridTracks(
+			mockComputedStyle( {
+				gridTemplateColumns: '100px 100px 100px',
+				gridTemplateRows: '80px 80px',
+				columnGap: '10px',
+				rowGap: '8px',
+				paddingTop: '5px',
+				paddingRight: '6px',
+				paddingBottom: '7px',
+				paddingLeft: '8px',
+			} )
+		);
+
+		expect( tracks ).toEqual( {
+			columns: [ 100, 100, 100 ],
+			rows: [ 80, 80 ],
+			columnGap: 10,
+			rowGap: 8,
+			padding: { top: 5, right: 6, bottom: 7, left: 8 },
+			borderColor: '',
+		} );
+	} );
+
+	it( 'returns empty track lists when the template is "none"', () => {
+		const tracks = toGridTracks( mockComputedStyle() );
+
+		expect( tracks.columns ).toEqual( [] );
+		expect( tracks.rows ).toEqual( [] );
+	} );
+
+	it( 'reports gap as 0 when computed style returns "normal"', () => {
+		const tracks = toGridTracks(
+			mockComputedStyle( { gridTemplateColumns: '100px 100px', columnGap: 'normal', rowGap: 'normal' } )
+		);
+
+		expect( tracks.columnGap ).toBe( 0 );
+		expect( tracks.rowGap ).toBe( 0 );
+	} );
+
+	it( 'trims the --e-a-border-color-bold CSS variable', () => {
+		const tracks = toGridTracks( mockComputedStyle( { borderColor: '  #d5d8dc  ' } ) );
+
+		expect( tracks.borderColor ).toBe( '#d5d8dc' );
 	} );
 } );

@@ -110,30 +110,6 @@ describe( 'useGridTracks', () => {
 		} );
 	} );
 
-	it( 'reads the --e-a-border-color-bold CSS variable from the iframe', () => {
-		const { element } = mockElement( {
-			gridTemplateColumns: '100px',
-			'--e-a-border-color-bold': '  #d5d8dc  ',
-		} );
-
-		const { result } = renderHook( () => useGridTracks( element, RECT ) );
-
-		expect( result.current.borderColor ).toBe( '#d5d8dc' );
-	} );
-
-	it( 'reports gap as 0 when computed style returns "normal"', () => {
-		const { element } = mockElement( {
-			gridTemplateColumns: '100px 100px',
-			columnGap: 'normal',
-			rowGap: 'normal',
-		} );
-
-		const { result } = renderHook( () => useGridTracks( element, RECT ) );
-
-		expect( result.current.columnGap ).toBe( 0 );
-		expect( result.current.rowGap ).toBe( 0 );
-	} );
-
 	it( 'recomputes when the rect dimensions change', () => {
 		const { element, getComputedStyle } = mockElement( { gridTemplateColumns: '100px' } );
 

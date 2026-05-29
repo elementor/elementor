@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
 import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
-import { parseTrackList, toPx } from '../utils/grid-outline-utils';
+import { toGridTracks } from '../utils/grid-outline-utils';
 
 export type GridTracks = {
 	columns: number[];
@@ -41,7 +41,7 @@ export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): Gri
 		}
 
 		const frame = previewWindow.requestAnimationFrame( () => {
-			setTracks( readGridTracks( previewWindow, element ) );
+			setTracks( toGridTracks( previewWindow.getComputedStyle( element ) ) );
 		} );
 
 		return () => {
@@ -50,22 +50,4 @@ export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): Gri
 	}, [ element, rect.width, rect.height, trigger ] );
 
 	return tracks;
-}
-
-function readGridTracks( previewWindow: Window, element: HTMLElement ): GridTracks {
-	const computedStyle = previewWindow.getComputedStyle( element );
-
-	return {
-		columns: parseTrackList( computedStyle.gridTemplateColumns ),
-		rows: parseTrackList( computedStyle.gridTemplateRows ),
-		columnGap: toPx( computedStyle.columnGap ),
-		rowGap: toPx( computedStyle.rowGap ),
-		padding: {
-			top: toPx( computedStyle.paddingTop ),
-			right: toPx( computedStyle.paddingRight ),
-			bottom: toPx( computedStyle.paddingBottom ),
-			left: toPx( computedStyle.paddingLeft ),
-		},
-		borderColor: computedStyle.getPropertyValue( '--e-a-border-color-bold' ).trim(),
-	};
 }

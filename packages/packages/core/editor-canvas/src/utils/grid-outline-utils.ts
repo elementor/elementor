@@ -9,6 +9,22 @@ export type OutlineGeometry = {
 	right: number;
 };
 
+export function toGridTracks( computedStyle: CSSStyleDeclaration ): GridTracks {
+	return {
+		columns: parseTrackList( computedStyle.gridTemplateColumns ),
+		rows: parseTrackList( computedStyle.gridTemplateRows ),
+		columnGap: toPx( computedStyle.columnGap ),
+		rowGap: toPx( computedStyle.rowGap ),
+		padding: {
+			top: toPx( computedStyle.paddingTop ),
+			right: toPx( computedStyle.paddingRight ),
+			bottom: toPx( computedStyle.paddingBottom ),
+			left: toPx( computedStyle.paddingLeft ),
+		},
+		borderColor: computedStyle.getPropertyValue( '--e-a-border-color-bold' ).trim(),
+	};
+}
+
 export function computeOutlineGeometry( tracks: GridTracks, width: number, height: number ): OutlineGeometry {
 	const { columns, rows, columnGap, rowGap, padding } = tracks;
 
