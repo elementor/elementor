@@ -66,10 +66,7 @@ export const slice = __createSlice( {
 				panel.position = action.payload.position;
 			}
 		},
-		setSize(
-			state,
-			action: PayloadAction< { id: string; size: { inlineSize: number; blockSize: number } } >
-		) {
+		setSize( state, action: PayloadAction< { id: string; size: { inlineSize: number; blockSize: number } } > ) {
 			const panel = state.byId[ action.payload.id ];
 
 			if ( panel ) {

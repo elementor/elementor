@@ -1,12 +1,12 @@
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
-import { selectIsOpen } from '../store/selectors';
+import { type GlobalState, selectIsOpen } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type DockMode, type LogicalPosition } from '../types';
 
 export function useFloatingPanelActions( id: string ) {
 	const dispatch = useDispatch();
-	const isOpen = useSelector( ( state ) => selectIsOpen( state, id ) );
+	const isOpen = useSelector( ( state: GlobalState ) => selectIsOpen( state, id ) );
 
 	const open = () => {
 		dispatch( slice.actions.open( id ) );

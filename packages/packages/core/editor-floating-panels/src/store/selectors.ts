@@ -2,7 +2,7 @@ import { __createSelector } from '@elementor/store';
 
 import { type FloatingPanelsSliceState } from './slice';
 
-type GlobalState = { floatingPanels: FloatingPanelsSliceState };
+export type GlobalState = { floatingPanels: FloatingPanelsSliceState };
 
 export function selectPanelState( state: GlobalState, id: string ) {
 	return state.floatingPanels.byId[ id ];
@@ -28,11 +28,9 @@ export function selectTopZIndex( state: GlobalState ): number {
 	return state.floatingPanels.topZIndex;
 }
 
-export const selectOpenPanelIds = __createSelector(
-	[ ( state: GlobalState ) => state.floatingPanels.byId ],
-	( byId ) =>
-		Object.entries( byId )
-			.filter( ( [ , panel ] ) => panel.isOpen )
-			.sort( ( [ , a ], [ , b ] ) => a.zIndex - b.zIndex )
-			.map( ( [ id ] ) => id )
+export const selectOpenPanelIds = __createSelector( [ ( state: GlobalState ) => state.floatingPanels.byId ], ( byId ) =>
+	Object.entries( byId )
+		.filter( ( [ , panel ] ) => panel.isOpen )
+		.sort( ( [ , a ], [ , b ] ) => a.zIndex - b.zIndex )
+		.map( ( [ id ] ) => id )
 );

@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { type ReactNode, useEffect, useMemo } from 'react';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { useFloatingPanelsInjections } from '../../location';
-import { selectOpenPanelIds, selectPanelState, selectTopZIndex } from '../../store/selectors';
+import { type GlobalState, selectOpenPanelIds, selectPanelState, selectTopZIndex } from '../../store/selectors';
 import { slice } from '../../store/slice';
 import PanelWindow from './panel-window';
 
@@ -12,11 +13,11 @@ export default function FloatingPanelsHost() {
 	const injections = useFloatingPanelsInjections();
 	const dispatch = useDispatch();
 
-	const declarationById = React.useMemo( () => {
+	const declarationById = useMemo( () => {
 		return Object.fromEntries( injections.map( ( inj ) => [ inj.id, inj ] ) );
 	}, [ injections ] );
 
-	React.useEffect( () => {
+	useEffect( () => {
 		function onKeyDown( event: KeyboardEvent ) {
 			if ( event.key !== 'Escape' ) {
 				return;
@@ -66,11 +67,11 @@ function HostedPanel( {
 	onFocus,
 }: {
 	id: string;
-	children: React.ReactNode;
+	children: ReactNode;
 	onFocus: () => void;
 	topZIndex: number;
 } ) {
-	const panel = useSelector( ( state ) => selectPanelState( state, id ) );
+	const panel = useSelector( ( state: GlobalState ) => selectPanelState( state, id ) );
 
 	if ( ! panel ) {
 		return null;

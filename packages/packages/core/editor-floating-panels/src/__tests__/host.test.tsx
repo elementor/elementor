@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { renderWithTheme } from 'test-utils';
 import {
 	__createStore,
 	__deleteStore,
@@ -8,7 +9,6 @@ import {
 	__StoreProvider as StoreProvider,
 } from '@elementor/store';
 import { fireEvent, screen } from '@testing-library/react';
-import { renderWithTheme } from 'test-utils';
 
 import FloatingPanelsHost from '../components/internal/host';
 import { injectIntoFloatingPanels } from '../location';

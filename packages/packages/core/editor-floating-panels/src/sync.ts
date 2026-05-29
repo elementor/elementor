@@ -7,8 +7,8 @@ import { type FloatingPanelState } from './types';
 const PERSIST_DEBOUNCE_MS = 250;
 
 export interface PanelStateStorage {
-	read(): string | null;
-	write( value: string ): void;
+	read: () => string | null;
+	write: ( value: string ) => void;
 }
 
 export const localStorageAdapter: PanelStateStorage = {

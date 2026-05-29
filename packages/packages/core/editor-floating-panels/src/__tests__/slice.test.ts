@@ -1,12 +1,6 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
-import {
-	selectIsOpen,
-	selectMode,
-	selectPanelState,
-	selectPosition,
-	selectTopZIndex,
-} from '../store/selectors';
+import { selectIsOpen, selectMode, selectPanelState, selectPosition, selectTopZIndex } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type FloatingPanelDefaults } from '../types';
 
@@ -114,8 +108,14 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 2 );
+
 		const a = selectPanelState( __getState(), 'a' );
 		const b = selectPanelState( __getState(), 'b' );
-		expect( b!.zIndex ).toBeGreaterThan( a!.zIndex );
+
+		if ( ! a || ! b ) {
+			throw new Error( 'Expected both panels to be registered' );
+		}
+
+		expect( b.zIndex ).toBeGreaterThan( a.zIndex );
 	} );
 } );

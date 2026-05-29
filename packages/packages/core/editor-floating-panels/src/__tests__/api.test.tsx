@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { type ComponentType } from 'react';
+import { renderWithTheme } from 'test-utils';
 import {
 	__createStore,
 	__deleteStore,
@@ -9,7 +10,6 @@ import {
 	__StoreProvider as StoreProvider,
 } from '@elementor/store';
 import { act, fireEvent, renderHook, screen } from '@testing-library/react';
-import { renderWithTheme } from 'test-utils';
 
 import { createFloatingPanel, registerFloatingPanel } from '../api';
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
@@ -190,17 +190,13 @@ describe( 'createFloatingPanel', () => {
 		);
 
 		// Act — open.
-		act( () => {
-			fireEvent.click( screen.getByText( 'Open' ) );
-		} );
+		fireEvent.click( screen.getByText( 'Open' ) );
 
 		// Assert.
 		expect( screen.getByText( 'Body content' ) ).toBeInTheDocument();
 
 		// Act — close.
-		act( () => {
-			fireEvent.click( screen.getByText( 'Close' ) );
-		} );
+		fireEvent.click( screen.getByText( 'Close' ) );
 
 		// Assert.
 		expect( screen.queryByText( 'Body content' ) ).not.toBeInTheDocument();
