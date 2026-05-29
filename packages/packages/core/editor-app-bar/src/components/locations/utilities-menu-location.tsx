@@ -5,7 +5,7 @@ import { utilitiesMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';
 
-const MAX_TOOLBAR_ACTIONS = 4;
+const MAX_TOOLBAR_ACTIONS = 5;
 
 const { useMenuItems } = utilitiesMenu;
 

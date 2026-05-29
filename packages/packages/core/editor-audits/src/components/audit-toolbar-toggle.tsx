@@ -2,7 +2,7 @@ import { utilitiesMenu } from '@elementor/editor-app-bar';
 
 import { useAuditToggleProps } from '../hooks/use-audit-toggle-props';
 
-const AUDIT_TOGGLE_PRIORITY = 30;
+const AUDIT_TOGGLE_PRIORITY = 25;
 
 export function registerAuditToolbarToggle(): void {
 	utilitiesMenu.registerToggleAction( {
