@@ -1,0 +1,69 @@
+import * as React from 'react';
+import {
+	__createStore,
+	__deleteStore,
+	__dispatch,
+	__getStore,
+	__registerSlice,
+	__StoreProvider as StoreProvider,
+} from '@elementor/store';
+import { fireEvent, screen } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+
+import FloatingPanelsHost from '../components/internal/host';
+import { injectIntoFloatingPanels } from '../location';
+import { slice } from '../store/slice';
+
+describe( 'FloatingPanelsHost', () => {
+	beforeEach( () => {
+		__registerSlice( slice );
+		__createStore();
+	} );
+
+	afterEach( () => {
+		__deleteStore();
+	} );
+
+	it( 'closes the top-most open panel on ESC', () => {
+		// Arrange.
+		const PanelA = () => <div>Panel A body</div>;
+
+		injectIntoFloatingPanels( { id: 'a', component: PanelA } );
+
+		__dispatch(
+			slice.actions.register( {
+				id: 'a',
+				defaults: {
+					width: 200,
+					height: 300,
+					minWidth: 100,
+					minHeight: 100,
+					initialMode: 'floating',
+				},
+			} )
+		);
+		__dispatch( slice.actions.open( 'a' ) );
+		__dispatch( slice.actions.bringToFront( 'a' ) );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store not initialized' );
+		}
+
+		renderWithTheme(
+			<StoreProvider store={ store }>
+				<FloatingPanelsHost />
+			</StoreProvider>
+		);
+
+		// Assert.
+		expect( screen.getByText( 'Panel A body' ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.keyDown( document, { key: 'Escape' } );
+
+		// Assert.
+		expect( screen.queryByText( 'Panel A body' ) ).not.toBeInTheDocument();
+	} );
+} );

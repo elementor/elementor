@@ -24,7 +24,7 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 }
 
 export function registerFloatingPanel(
-	declaration: Pick< FloatingPanelDeclaration, 'id' | 'component' | 'icon' | 'title' >
+	declaration: Pick< FloatingPanelDeclaration, 'id' | 'component' >
 ): void {
-	injectIntoFloatingPanels( declaration );
+	injectIntoFloatingPanels( { id: declaration.id, component: declaration.component } );
 }

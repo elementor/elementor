@@ -5,13 +5,12 @@ import { useFloatingPanelStatus } from '../../hooks/use-floating-panel-status';
 
 type Props = {
 	panelId: string;
-	title: string;
 	zIndex: number;
 	onFocus: () => void;
 	children: React.ReactNode;
 };
 
-export default function PanelWindow( { panelId, title, zIndex, onFocus, children }: Props ) {
+export default function PanelWindow( { panelId, zIndex, onFocus, children }: Props ) {
 	const { mode, position, size } = useFloatingPanelStatus( panelId );
 
 	if ( ! position || ! size ) {
@@ -41,7 +40,7 @@ export default function PanelWindow( { panelId, title, zIndex, onFocus, children
 			data-floating-panel={ panelId }
 			elevation={ mode === 'floating' ? 8 : 0 }
 			role="dialog"
-			aria-label={ title }
+			aria-label={ panelId }
 			onMouseDown={ onFocus }
 			sx={ {
 				...( mode === 'docked' ? dockedSx : floatingSx ),
