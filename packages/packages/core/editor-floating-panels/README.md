@@ -12,4 +12,50 @@ See the design spec at
 [`docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md`](../../../../docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md)
 for the motivation, requirements, and intended consumers.
 
-A full usage example will be added once the public API lands.
+## Usage
+
+```ts
+import {
+	createFloatingPanel,
+	FloatingPanelBody,
+	FloatingPanelHeader,
+	registerFloatingPanel,
+} from '@elementor/editor-floating-panels';
+
+const myPanel = createFloatingPanel( {
+	id: 'my-panel',
+	title: 'My Panel',
+	icon: MyIcon,
+	component: MyPanelComponent,
+	defaults: {
+		width: 320,
+		height: 480,
+		minWidth: 240,
+		minHeight: 320,
+		initialMode: 'docked',
+	},
+} );
+
+registerFloatingPanel( myPanel.panel );
+
+function MyPanelComponent() {
+	return (
+		<>
+			<FloatingPanelHeader panelId="my-panel" title="My Panel" />
+			<FloatingPanelBody>Body content</FloatingPanelBody>
+		</>
+	);
+}
+```
+
+Call `init()` once during editor bootstrap to register the slice, sync persisted state, and mount the host into the editor's top location.
+
+## Persistence
+
+Panel state (open/closed, mode, position, size, z-index) is persisted via a
+`PanelStateStorage` adapter. The default implementation uses `localStorage`, so
+state survives reloads on the same browser. Pass a custom adapter to `sync()`
+to swap in a server-side store.
+
+See `docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md` §6 for the
+design.
