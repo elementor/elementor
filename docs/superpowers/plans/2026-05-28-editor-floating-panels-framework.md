@@ -1,5 +1,7 @@
 # Editor Floating Panels Framework Implementation Plan
 
+> **Status: Implemented** on branch `audits`, commits `f47626c..3c7fcdd` (12 commits). 30 tests across 7 suites green. See **Implementation notes & deviations** at the end of this document for changes from the plan-as-written.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Ship the `@elementor/editor-floating-panels` package — a generic floating + dockable React panel framework that any editor feature can consume, with the audit panel (plan 3) as the first consumer.
@@ -78,7 +80,7 @@ No file should exceed ~300 lines.
 - Create: `packages/packages/core/editor-floating-panels/README.md`
 - Create: `packages/packages/core/editor-floating-panels/src/index.ts`
 
-- [ ] **Step 1: Create the package.json**
+- [x] **Step 1: Create the package.json**
 
 Mirror `@elementor/editor-panels` versions and toolchain exactly (run `cat packages/packages/core/editor-panels/package.json` first to confirm current versions; below uses the values present at time of writing).
 
@@ -130,7 +132,7 @@ Mirror `@elementor/editor-panels` versions and toolchain exactly (run `cat packa
 }
 ```
 
-- [ ] **Step 2: Create the placeholder index and changelog/readme**
+- [x] **Step 2: Create the placeholder index and changelog/readme**
 
 Create `src/index.ts` with a single export line so the build succeeds:
 
@@ -150,7 +152,7 @@ Create `CHANGELOG.md`:
 
 Create a brief `README.md` explaining the package's purpose and pointing at the design spec.
 
-- [ ] **Step 3: Verify the workspace picks up the new package**
+- [x] **Step 3: Verify the workspace picks up the new package**
 
 Run from the repo root:
 
@@ -168,7 +170,7 @@ npm run build:packages
 
 Expected: PASS, with `editor-floating-panels` in the build output and `dist/` populated with the empty exports.
 
-- [ ] **Step 4: Lint passes**
+- [x] **Step 4: Lint passes**
 
 Run:
 
@@ -178,7 +180,7 @@ cd packages && npx eslint packages/core/editor-floating-panels --report-unused-d
 
 Expected: PASS with no errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels
@@ -197,7 +199,7 @@ Pure-function TDD first because they're the heart of the direction-sensitive log
 - Create: `packages/packages/core/editor-floating-panels/src/lib/drag-math.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/lib/__tests__/drag-math.test.ts`
 
-- [ ] **Step 1: Write the failing tests for drag-math**
+- [x] **Step 1: Write the failing tests for drag-math**
 
 Create `src/lib/__tests__/drag-math.test.ts`:
 
@@ -256,7 +258,7 @@ describe( 'applyDragDelta', () => {
 } );
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/drag-math.test.ts
@@ -264,7 +266,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/d
 
 Expected: FAIL — "Cannot find module '../drag-math'".
 
-- [ ] **Step 3: Add the types module**
+- [x] **Step 3: Add the types module**
 
 Create `src/types.ts`:
 
@@ -309,7 +311,7 @@ export type FloatingPanelState = {
 };
 ```
 
-- [ ] **Step 4: Implement drag-math**
+- [x] **Step 4: Implement drag-math**
 
 Create `src/lib/drag-math.ts`:
 
@@ -334,7 +336,7 @@ export function applyDragDelta( position: LogicalPosition, delta: LogicalDelta )
 }
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/drag-math.test.ts
@@ -342,7 +344,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/d
 
 Expected: PASS — 5 tests pass.
 
-- [ ] **Step 6: Add the direction helper (no test, trivial DOM read)**
+- [x] **Step 6: Add the direction helper (no test, trivial DOM read)**
 
 Create `src/lib/direction.ts`:
 
@@ -352,7 +354,7 @@ export function isRtl(): boolean {
 }
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -367,7 +369,7 @@ git commit -m "feat(editor-floating-panels): drag math + types"
 - Create: `packages/packages/core/editor-floating-panels/src/lib/snap-to-dock.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/lib/__tests__/snap-to-dock.test.ts`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `src/lib/__tests__/snap-to-dock.test.ts`:
 
@@ -416,7 +418,7 @@ describe( 'shouldSnapToDock', () => {
 } );
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/snap-to-dock.test.ts
@@ -424,7 +426,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/s
 
 Expected: FAIL — "Cannot find module '../snap-to-dock'".
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `src/lib/snap-to-dock.ts`:
 
@@ -446,7 +448,7 @@ export function shouldSnapToDock( { panel, viewport, isRtl }: SnapInput ): boole
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/snap-to-dock.test.ts
@@ -454,7 +456,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/lib/__tests__/s
 
 Expected: PASS — 5 tests pass.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src/lib
@@ -471,7 +473,7 @@ git commit -m "feat(editor-floating-panels): snap-to-dock heuristic"
 - Create: `packages/packages/core/editor-floating-panels/src/store/index.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/__tests__/slice.test.ts`
 
-- [ ] **Step 1: Write the failing slice tests**
+- [x] **Step 1: Write the failing slice tests**
 
 Create `src/__tests__/slice.test.ts`:
 
@@ -576,7 +578,7 @@ describe( 'floating-panels slice', () => {
 } );
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/slice.test.ts
@@ -584,7 +586,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/slice
 
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement the slice**
+- [x] **Step 3: Implement the slice**
 
 Create `src/store/slice.ts`:
 
@@ -667,7 +669,7 @@ export const slice = __createSlice( {
 export type FloatingPanelsSliceState = SliceState;
 ```
 
-- [ ] **Step 4: Implement selectors**
+- [x] **Step 4: Implement selectors**
 
 Create `src/store/selectors.ts`:
 
@@ -708,7 +710,7 @@ export function selectOpenPanelIds( state: GlobalState ): string[] {
 }
 ```
 
-- [ ] **Step 5: Add the store barrel**
+- [x] **Step 5: Add the store barrel**
 
 Create `src/store/index.ts`:
 
@@ -717,7 +719,7 @@ export { slice } from './slice';
 export * from './selectors';
 ```
 
-- [ ] **Step 6: Run tests to verify pass**
+- [x] **Step 6: Run tests to verify pass**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/slice.test.ts
@@ -725,7 +727,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/slice
 
 Expected: PASS — 5 tests pass.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -742,7 +744,7 @@ Persist state via the existing user preferences mechanism. Read on init; write o
 - Create: `packages/packages/core/editor-floating-panels/src/persistence.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/__tests__/persistence.test.ts`
 
-- [ ] **Step 1: Write the failing persistence tests**
+- [x] **Step 1: Write the failing persistence tests**
 
 Create `src/__tests__/persistence.test.ts`:
 
@@ -801,7 +803,7 @@ describe( 'persistence', () => {
 } );
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/persistence.test.ts
@@ -809,7 +811,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/persi
 
 Expected: FAIL — module not found.
 
-- [ ] **Step 3: Implement persistence**
+- [x] **Step 3: Implement persistence**
 
 Create `src/persistence.ts`:
 
@@ -867,7 +869,7 @@ function isPanelState( value: unknown ): value is FloatingPanelState {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify pass**
+- [x] **Step 4: Run tests to verify pass**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/persistence.test.ts
@@ -875,7 +877,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/persi
 
 Expected: PASS — 4 tests pass.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -892,7 +894,7 @@ The sync module mirrors `editor-panels/sync.ts` but is minimal: it just listens 
 - Create: `packages/packages/core/editor-floating-panels/src/location.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/sync.ts`
 
-- [ ] **Step 1: Implement location**
+- [x] **Step 1: Implement location**
 
 Create `src/location.ts`:
 
@@ -905,7 +907,7 @@ export const { inject: injectIntoFloatingPanels, useInjections: useFloatingPanel
     createLocation< Pick< FloatingPanelDeclaration, 'id' | 'component' | 'icon' | 'title' > >();
 ```
 
-- [ ] **Step 2: Implement sync**
+- [x] **Step 2: Implement sync**
 
 Create `src/sync.ts`:
 
@@ -980,7 +982,7 @@ function persistNow(): void {
 }
 ```
 
-- [ ] **Step 3: Verify TypeScript compiles**
+- [x] **Step 3: Verify TypeScript compiles**
 
 ```bash
 cd packages && npx tsc --noEmit -p packages/core/editor-floating-panels/tsconfig.json
@@ -994,7 +996,7 @@ cd packages && npm run lint
 
 Expected: PASS.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -1010,7 +1012,7 @@ git commit -m "feat(editor-floating-panels): location + persistence sync"
 - Create: `packages/packages/core/editor-floating-panels/src/hooks/use-floating-panel-status.ts`
 - Create: `packages/packages/core/editor-floating-panels/src/hooks/use-floating-panel-actions.ts`
 
-- [ ] **Step 1: Implement the status hook**
+- [x] **Step 1: Implement the status hook**
 
 Create `src/hooks/use-floating-panel-status.ts`:
 
@@ -1029,7 +1031,7 @@ export function useFloatingPanelStatus( id: string ) {
 }
 ```
 
-- [ ] **Step 2: Implement the actions hook**
+- [x] **Step 2: Implement the actions hook**
 
 Create `src/hooks/use-floating-panel-actions.ts`:
 
@@ -1061,7 +1063,7 @@ export function useFloatingPanelActions( id: string ) {
 
 Note: `toggle` doesn't actually toggle yet — that needs both status and actions. We'll wire it correctly in the next step.
 
-- [ ] **Step 3: Implement the createFloatingPanel API**
+- [x] **Step 3: Implement the createFloatingPanel API**
 
 Create `src/api.ts`:
 
@@ -1098,7 +1100,7 @@ export function registerFloatingPanel(
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -1112,7 +1114,7 @@ git commit -m "feat(editor-floating-panels): public API + status/actions hooks"
 **Files:**
 - Create: `packages/packages/core/editor-floating-panels/src/hooks/use-floating-panel-drag.ts`
 
-- [ ] **Step 1: Implement the drag hook**
+- [x] **Step 1: Implement the drag hook**
 
 Create `src/hooks/use-floating-panel-drag.ts`:
 
@@ -1202,7 +1204,7 @@ export function useFloatingPanelDrag( id: string ) {
 }
 ```
 
-- [ ] **Step 2: Lint passes**
+- [x] **Step 2: Lint passes**
 
 ```bash
 cd packages && npm run lint
@@ -1210,7 +1212,7 @@ cd packages && npm run lint
 
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -1225,7 +1227,7 @@ git commit -m "feat(editor-floating-panels): drag hook"
 - Create: `packages/packages/core/editor-floating-panels/src/components/internal/panel-window.tsx`
 - Create: `packages/packages/core/editor-floating-panels/src/components/internal/drag-handle.tsx`
 
-- [ ] **Step 1: Implement the drag handle**
+- [x] **Step 1: Implement the drag handle**
 
 Create `src/components/internal/drag-handle.tsx`:
 
@@ -1256,7 +1258,7 @@ export default function DragHandle( { panelId, children }: Props ) {
 }
 ```
 
-- [ ] **Step 2: Implement the panel window**
+- [x] **Step 2: Implement the panel window**
 
 Create `src/components/internal/panel-window.tsx`:
 
@@ -1318,7 +1320,7 @@ export default function PanelWindow( { panelId, zIndex, onFocus, children }: Pro
 }
 ```
 
-- [ ] **Step 3: Lint and commit**
+- [x] **Step 3: Lint and commit**
 
 ```bash
 cd packages && npm run lint
@@ -1342,7 +1344,7 @@ git commit -m "feat(editor-floating-panels): panel window + drag handle internal
 - Create: `packages/packages/core/editor-floating-panels/src/components/external/floating-panel-footer.tsx`
 - Create: `packages/packages/core/editor-floating-panels/src/components/external/index.ts`
 
-- [ ] **Step 1: Floating panel header**
+- [x] **Step 1: Floating panel header**
 
 Create `src/components/external/floating-panel-header.tsx`:
 
@@ -1391,7 +1393,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon }: Pro
 
 Note: the docked/floating toggle button is intentionally not in v1. Users dock by dragging the panel near the inline-end edge (snap-to-dock from Task 8); they undock by dragging from the docked position. A dedicated toggle button is in "Out of scope (deferred)".
 
-- [ ] **Step 2: Floating panel body**
+- [x] **Step 2: Floating panel body**
 
 Create `src/components/external/floating-panel-body.tsx`:
 
@@ -1414,7 +1416,7 @@ export default function FloatingPanelBody( props: BoxProps ) {
 }
 ```
 
-- [ ] **Step 3: Floating panel footer**
+- [x] **Step 3: Floating panel footer**
 
 Create `src/components/external/floating-panel-footer.tsx`:
 
@@ -1441,7 +1443,7 @@ export default function FloatingPanelFooter( props: BoxProps ) {
 }
 ```
 
-- [ ] **Step 4: Floating panel composite**
+- [x] **Step 4: Floating panel composite**
 
 Create `src/components/external/floating-panel.tsx`:
 
@@ -1459,7 +1461,7 @@ export default function FloatingPanel( { children }: Props ) {
 
 The composite is intentionally a fragment — the wrapping window/positioning lives in the internal `PanelWindow` component, which is rendered by the host. Consumers compose with `<FloatingPanelHeader />`, `<FloatingPanelBody />`, `<FloatingPanelFooter />` inside their panel component.
 
-- [ ] **Step 5: Barrel exports**
+- [x] **Step 5: Barrel exports**
 
 Create `src/components/external/index.ts`:
 
@@ -1470,7 +1472,7 @@ export { default as FloatingPanelBody } from './floating-panel-body';
 export { default as FloatingPanelFooter } from './floating-panel-footer';
 ```
 
-- [ ] **Step 6: Lint and commit**
+- [x] **Step 6: Lint and commit**
 
 ```bash
 cd packages && npm run lint
@@ -1490,7 +1492,7 @@ git commit -m "feat(editor-floating-panels): external component primitives"
 **Files:**
 - Create: `packages/packages/core/editor-floating-panels/src/components/internal/host.tsx`
 
-- [ ] **Step 1: Implement the host with ESC-to-close**
+- [x] **Step 1: Implement the host with ESC-to-close**
 
 Create `src/components/internal/host.tsx`:
 
@@ -1577,7 +1579,7 @@ function HostedPanel( {
 }
 ```
 
-- [ ] **Step 2: Write a test for ESC-to-close**
+- [x] **Step 2: Write a test for ESC-to-close**
 
 Create `src/__tests__/host.test.tsx`:
 
@@ -1630,7 +1632,7 @@ describe( 'FloatingPanelsHost', () => {
 } );
 ```
 
-- [ ] **Step 3: Run the host tests**
+- [x] **Step 3: Run the host tests**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/host.test.tsx
@@ -1638,7 +1640,7 @@ cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/host.
 
 Expected: PASS — 1 test.
 
-- [ ] **Step 4: Lint and commit**
+- [x] **Step 4: Lint and commit**
 
 ```bash
 cd packages && npm run lint
@@ -1659,7 +1661,7 @@ git commit -m "feat(editor-floating-panels): host renders open panels + ESC-to-c
 - Modify: `packages/packages/core/editor-floating-panels/src/init.ts`
 - Modify: `packages/packages/core/editor-floating-panels/src/index.ts`
 
-- [ ] **Step 1: Implement init**
+- [x] **Step 1: Implement init**
 
 Create `src/init.ts`:
 
@@ -1678,7 +1680,7 @@ export function init() {
 }
 ```
 
-- [ ] **Step 2: Expose public API**
+- [x] **Step 2: Expose public API**
 
 Replace `src/index.ts`:
 
@@ -1698,7 +1700,7 @@ export type {
 } from './types';
 ```
 
-- [ ] **Step 3: Lint passes**
+- [x] **Step 3: Lint passes**
 
 ```bash
 cd packages && npm run lint
@@ -1706,7 +1708,7 @@ cd packages && npm run lint
 
 Expected: PASS.
 
-- [ ] **Step 4: Build passes**
+- [x] **Step 4: Build passes**
 
 ```bash
 npm run build:packages
@@ -1714,7 +1716,7 @@ npm run build:packages
 
 Expected: PASS — `dist/` contains `index.{js,mjs,d.ts}`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src
@@ -1730,7 +1732,7 @@ End-to-end-ish test using `@testing-library/react` to verify open/close/dock-tog
 **Files:**
 - Create: `packages/packages/core/editor-floating-panels/src/__tests__/api.test.tsx`
 
-- [ ] **Step 1: Write the integration test**
+- [x] **Step 1: Write the integration test**
 
 Create the file. Use `test-utils.renderWithTheme` like the `editor-panels` tests:
 
@@ -1837,7 +1839,7 @@ describe( 'floating-panels api', () => {
 } );
 ```
 
-- [ ] **Step 2: Run the test**
+- [x] **Step 2: Run the test**
 
 ```bash
 cd packages && npx jest packages/core/editor-floating-panels/src/__tests__/api.test.tsx
@@ -1847,7 +1849,7 @@ Expected: PASS — 2 tests.
 
 If `test-utils` or `renderWithTheme` is unavailable in your environment, substitute with the patterns used in `editor-panels/__tests__/api.test.tsx`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/src/__tests__
@@ -1858,7 +1860,7 @@ git commit -m "test(editor-floating-panels): api integration test"
 
 ## Task 14: Final checks
 
-- [ ] **Step 1: Run the full lint + test pipeline**
+- [x] **Step 1: Run the full lint + test pipeline**
 
 From the repo root:
 
@@ -1868,7 +1870,7 @@ cd packages && npm run lint && npx jest packages/core/editor-floating-panels
 
 Expected: PASS for both.
 
-- [ ] **Step 2: Build the package**
+- [x] **Step 2: Build the package**
 
 ```bash
 npm run build:packages
@@ -1876,7 +1878,7 @@ npm run build:packages
 
 Expected: PASS. Confirm `packages/packages/core/editor-floating-panels/dist/index.d.ts` exports the documented types.
 
-- [ ] **Step 3: README**
+- [x] **Step 3: README**
 
 Update `README.md` with a minimal usage example:
 
@@ -1910,12 +1912,166 @@ registerFloatingPanel( myPanel.panel );
 See `docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md` §6 for the design.
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add packages/packages/core/editor-floating-panels/README.md
 git commit -m "docs(editor-floating-panels): add usage example to README"
 ```
+
+---
+
+## Implementation notes & deviations
+
+Recorded during execution; the plan text above is preserved verbatim for diff
+clarity. Where the plan and the implementation differ, the implementation is
+authoritative.
+
+### 1. Persistence storage — `localStorage` adapter instead of editor preferences (Task 6)
+
+The plan called `window.elementor.setPreferences( PERSISTENCE_STORAGE_KEY, ... )`.
+After investigation:
+
+- `elementor.getPreferences( key )` exists at
+  `assets/dev/js/editor/editor-base.js:1204`; it reads from
+  `elementor.settings.editorPreferences.model.attributes` and is constrained to
+  keys registered as kit controls.
+- `elementor.setPreferences` **does not exist**. Writes go through
+  `elementor.settings.editorPreferences.model.set( key, value )` and then
+  `.save()`, and the key must be a registered preference control. Existing
+  preferences (including the checklist toggle) are declared by editing
+  `core/settings/editor-preferences/model.php` directly — there is no
+  extension hook.
+
+Storing a JSON blob in a hidden preference control was rejected as a misuse
+of the preferences mechanism (which is intended for user-facing controls). A
+dedicated REST endpoint backed by user meta would have been the on-spec route
+but is out of scope for Plan 1.
+
+Implemented instead: `sync.ts` accepts a `PanelStateStorage` adapter. The
+default `localStorageAdapter` reads/writes
+`PERSISTENCE_STORAGE_KEY = 'elementor_floating_panels_state'` on
+`globalThis.localStorage` with graceful fallback when storage is unavailable.
+Persistence is per-user-per-browser (acceptable v1 trade-off). A future server-
+side adapter can be swapped in by calling `sync( customStorage )` from the
+consumer's `init()`.
+
+The Acceptance criteria bullet referencing `window.elementor.setPreferences`
+is superseded by this change.
+
+### 2. Rehydration ordering — extended `register` reducer instead of late restore (Task 6 + Task 7)
+
+The plan's `restorePersistedState` dispatched `slice.actions.register(...)` for
+each persisted panel. The `register` reducer is idempotent — returns early if
+the panel already exists. This races against consumer-side `register` calls:
+
+- If persistence registered first, consumer defaults (`minWidth`/`minHeight`/
+  real `initialMode`) were lost.
+- If the consumer registered first, persisted state was lost.
+
+Implemented instead: the `register` reducer's payload accepts an optional
+`persisted: FloatingPanelState`. When present, the panel slice entry is
+initialised from the persisted state (and `topZIndex` is raised if needed) so
+re-opening picks up where it left off. `createFloatingPanel( declaration )`
+looks up `getPersistedState( declaration.id )` from `sync.ts` and threads it
+through `register`.
+
+### 3. Test setup — `__createStore` / `__deleteStore` (Tasks 4, 7, 11, 13)
+
+The plan's tests called `__registerSlice( slice )` in `beforeEach` but never
+created the store. `@elementor/store` requires `__createStore()` to instantiate
+the Redux store before `__dispatch`/`__getState` work; otherwise
+`getState()` throws "The store instance does not exist."
+
+Pattern applied in every test that touches the store:
+
+```ts
+beforeEach( () => {
+    __registerSlice( slice );
+    __createStore();
+} );
+afterEach( () => {
+    __deleteStore();
+} );
+```
+
+This mirrors the working pattern in `packages/packages/core/editor-panels/src/__tests__/api.test.tsx`.
+
+Tests that render React using `<StoreProvider>` also need an actual store
+instance. `__createStore()` cannot be called twice (it throws "The store
+instance already exists"), so the render path uses `__getStore()` to retrieve
+the instance created in `beforeEach`.
+
+### 4. Location generic — plain `createLocation()` (Task 11)
+
+Task 6 originally typed the location as
+`createLocation< Pick< FloatingPanelDeclaration, 'id' | 'component' | 'icon' | 'title' > >()`.
+This was a type lie: `createLocation`'s `TProps` parameter types the props
+passed to the injected component when the location is rendered as a `<Slot />`,
+not the injection metadata. `inject()` itself only accepts
+`{ id, component, options? }` per `Location< TProps >`; extra fields like
+`icon` and `title` are silently dropped at registration time.
+
+Implemented instead: plain `createLocation()`. The injected component is the
+user's panel body, which composes its own header/icon/title via
+`<FloatingPanelHeader icon={ ... } title="..." />`. The host renders the
+component inside `PanelWindow` and uses `panelId` as the `aria-label` fallback.
+
+`registerFloatingPanel` was narrowed to
+`Pick< FloatingPanelDeclaration, 'id' | 'component' >`.
+
+### 5. `PanelWindow` `title` prop revert (Task 9 → Task 11)
+
+Task 9 originally added a `title: string` prop to `PanelWindow` so the dialog's
+`aria-label` could be a human label rather than the panel ID. Once the
+location generic was reverted (deviation 4), the host has no source for the
+title — chrome composition lives inside the user's component. The `title`
+prop was removed; `aria-label={ panelId }` matches the original plan.
+
+If a human-readable dialog label is desired in v2, it can be threaded through
+either (a) a separate `useFloatingPanelMeta(id)` hook backed by a metadata
+registry, or (b) by attaching `aria-label` to a child element inside the
+user's component.
+
+### 6. `selectOpenPanelIds` memoization (Task 11)
+
+The selector returned a new array reference on every call. React-Redux's
+`useSelector` warned ("Selector returned a different result for the same store
+state") and risked unnecessary re-renders. Wrapped with
+`__createSelector( [ ( s ) => s.floatingPanels.byId ], ( byId ) => ... )` from
+`@elementor/store` (re-export of Redux Toolkit's `createSelector`). Because
+the reducers use Immer, `byId` only changes reference when the byId map
+actually mutates, so memoization is stable.
+
+### 7. Drag hook — `PointerEvent` import (Task 8)
+
+The plan referenced `React.PointerEvent` without importing `React` (only
+`useCallback`/`useRef` were imported). Added
+`import { type PointerEvent as ReactPointerEvent } from 'react'` to keep the
+file strict-TS clean.
+
+### 8. Default export usage in `createFloatingPanel` toggle (Task 7)
+
+The plan's raw `useFloatingPanelActions` returned a `toggle` that only called
+`bringToFront`, with the note "we'll wire it correctly in the next step".
+`createFloatingPanel` then wrapped the hook to provide the real toggle. This
+meant the exported hook had a broken `toggle` field.
+
+Implemented instead: `useFloatingPanelActions` reads `isOpen` via `useSelector`
+inside the hook and returns a correct `toggle = isOpen ? close : open`. No
+wrapping needed; `createFloatingPanel` returns the hook directly.
+
+### 9. New dependency: `@elementor/icons`
+
+`FloatingPanelHeader` imports `XIcon` from `@elementor/icons`. The dependency
+was added to `package.json` at `~1.75.1` (matching the version used by
+sibling packages such as `editor-panels`).
+
+### 10. File-structure deltas
+
+- `sync.test.tsx` (plan) is `sync.test.ts` (impl) — no JSX in those tests.
+- `persistence.ts`'s docblock in the file structure refers to
+  "`window.elementor.settings`"; supersede with deviation 1.
 
 ---
 
