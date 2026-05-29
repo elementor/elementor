@@ -35,6 +35,19 @@ class Module extends BaseModule {
 		add_action( 'rest_api_init', function () {
 			( new Rest_Api() )->register_routes();
 		} );
+
+		add_action( 'init', [ $this, 'register_post_meta' ] );
+	}
+
+	public function register_post_meta() {
+		register_post_meta( '', '_elementor_created_with', [
+			'show_in_rest' => true,
+			'single' => true,
+			'type' => 'string',
+			'auth_callback' => function() {
+				return current_user_can( 'edit_posts' );
+			},
+		] );
 	}
 
 	private function register_experiment() {

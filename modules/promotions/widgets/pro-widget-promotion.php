@@ -41,15 +41,56 @@ class Pro_Widget_Promotion extends Widget_Base {
 	protected function register_controls() {}
 
 	protected function render() {
-		if ( $this->is_editor_render() ) {
-			$this->render_promotion();
+		if ( ! $this->is_editor_render() ) {
+			if ( $this->has_rendered_html() ) {
+				$this->render_frozen_frontend();
+			} else {
+				$this->render_empty_content();
+			}
+			return;
+		}
+
+		if ( $this->has_rendered_html() ) {
+			$this->render_frozen_preview();
 		} else {
-			$this->render_empty_content();
+			$this->render_promotion();
 		}
 	}
 
 	private function is_editor_render(): bool {
 		return \Elementor\Plugin::$instance->editor->is_edit_mode();
+	}
+
+	private function has_rendered_html(): bool {
+		return ! empty( $this->get_settings( '__rendered_html' ) );
+	}
+
+	private function render_frozen_preview() {
+		$rendered_html = $this->get_settings( '__rendered_html' );
+		$promotion_url = esc_url( 'https://go.elementor.com/go-pro-element-pro/' );
+		?>
+		<div class="e-site-builder-frozen-preview">
+			<div class="e-frozen-content">
+				<?php echo wp_kses_post( $rendered_html ); ?>
+			</div>
+			<div class="e-frozen-overlay">
+				<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
+				<div class="e-actions">
+					<a href="#" class="e-btn e-btn-txt e-promotion-delete"><?php echo esc_html__( 'Remove', 'elementor' ); ?></a>
+					<a href="<?php echo $promotion_url; ?>" rel="noreferrer" target="_blank" class="e-btn go-pro elementor-clickable e-promotion-go-pro"><?php echo esc_html__( 'Go Pro', 'elementor' ); ?></a>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function render_frozen_frontend() {
+		$rendered_html = $this->get_settings( '__rendered_html' );
+		?>
+		<div class="e-site-builder-frozen-content">
+			<?php echo wp_kses_post( $rendered_html ); ?>
+		</div>
+		<?php
 	}
 
 	private function render_promotion() {

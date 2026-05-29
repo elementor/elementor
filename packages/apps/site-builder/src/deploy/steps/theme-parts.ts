@@ -67,6 +67,7 @@ export async function createThemeParts( parts: ThemePartEntry[] ) {
 					_elementor_template_type: part.type,
 					_elementor_data: JSON.stringify( part.content ),
 					_elementor_conditions: part.themeBuilderCondition || 'include/general',
+					_elementor_created_with: 'site_builder',
 				},
 			},
 		} );

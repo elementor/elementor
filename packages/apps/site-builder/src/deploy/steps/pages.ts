@@ -16,6 +16,7 @@ export async function createPages( pages: DeployPage[] ) {
 					_elementor_edit_mode: 'builder',
 					_elementor_template_type: 'wp-page',
 					_elementor_data: JSON.stringify( page.content ),
+					_elementor_created_with: 'site_builder',
 				},
 			},
 		} );
