@@ -62,18 +62,20 @@ class Element_Spec_Resolver {
 
 	private array $unresolved = [];
 
+	private array $warnings = [];
+
 	public static function make(): self {
 		return new self();
 	}
 
-	public function resolve( array $elements ): array {
+	public function resolve( array $elements, string $path = 'elements' ): array {
 		$resolved = [];
 
-		foreach ( $elements as $element ) {
+		foreach ( $elements as $index => $element ) {
 			if ( ! is_array( $element ) ) {
 				continue;
 			}
-			$resolved[] = $this->resolve_node( $element );
+			$resolved[] = $this->resolve_node( $element, $path . '[' . $index . ']' );
 		}
 
 		return $resolved;
@@ -83,13 +85,17 @@ class Element_Spec_Resolver {
 		return $this->unresolved;
 	}
 
-	private function resolve_node( array $node ): array {
+	public function get_warnings(): array {
+		return $this->warnings;
+	}
+
+	private function resolve_node( array $node, string $path ): array {
 		if ( isset( $node['elType'] ) ) {
 			if ( empty( $node['id'] ) || ! is_string( $node['id'] ) ) {
 				$node['id'] = Utils::generate_random_string();
 			}
 			if ( isset( $node['elements'] ) && is_array( $node['elements'] ) ) {
-				$node['elements'] = $this->resolve( $node['elements'] );
+				$node['elements'] = $this->resolve( $node['elements'], $path . '.elements' );
 			}
 			return $node;
 		}
@@ -97,6 +103,7 @@ class Element_Spec_Resolver {
 		if ( ! isset( $node['widget'] ) || ! is_string( $node['widget'] ) ) {
 			$this->unresolved[] = [
 				'reason' => 'missing_widget',
+				'path' => $path,
 				'received_keys' => array_keys( $node ),
 			];
 			return $node;
@@ -108,6 +115,7 @@ class Element_Spec_Resolver {
 		if ( null === $widget_type ) {
 			$this->unresolved[] = [
 				'reason' => 'unknown_widget',
+				'path' => $path,
 				'widget' => $node['widget'],
 				'supported' => array_values( array_unique( array_values( self::WIDGET_SYNONYMS ) ) ),
 			];
@@ -117,7 +125,7 @@ class Element_Spec_Resolver {
 		$is_container = in_array( $widget_type, self::CONTAINER_TYPES, true );
 
 		$built = [
-			'id' => isset( $node['id'] ) && is_string( $node['id'] ) && '' !== $node['id'] ? $node['id'] : Utils::generate_random_string(),
+			'id' => self::resolve_element_id( $node ),
 			'elType' => $is_container ? $widget_type : 'widget',
 		];
 
@@ -128,7 +136,7 @@ class Element_Spec_Resolver {
 		$built['settings'] = [];
 
 		if ( ! $is_container ) {
-			$this->apply_widget_settings( $widget_type, $node, $built );
+			$this->apply_widget_settings( $widget_type, $node, $built, $path );
 		}
 
 		if ( isset( $node['classes'] ) && is_array( $node['classes'] ) ) {
@@ -147,13 +155,25 @@ class Element_Spec_Resolver {
 		}
 
 		if ( $is_container && isset( $node['children'] ) && is_array( $node['children'] ) ) {
-			$built['elements'] = $this->resolve( $node['children'] );
+			$built['elements'] = $this->resolve( $node['children'], $path . '.children' );
 		}
 
 		return $built;
 	}
 
-	private function apply_widget_settings( string $widget_type, array $node, array &$built ): void {
+	/**
+	 * Decide the v4 element id. Only a non-empty string `id` is treated as the
+	 * element id; a numeric `id` on an image node is consumed by build_image_src()
+	 * as an attachment-id alias (see WP-natural alias mapping for e-image).
+	 */
+	private static function resolve_element_id( array $node ): string {
+		if ( isset( $node['id'] ) && is_string( $node['id'] ) && '' !== $node['id'] ) {
+			return $node['id'];
+		}
+		return Utils::generate_random_string();
+	}
+
+	private function apply_widget_settings( string $widget_type, array $node, array &$built, string $path ): void {
 		$text = isset( $node['text'] ) && is_string( $node['text'] ) ? $node['text'] : '';
 
 		switch ( $widget_type ) {
@@ -183,21 +203,10 @@ class Element_Spec_Resolver {
 				if ( '' !== $text ) {
 					$built['settings']['text'] = self::html_v3_envelope( $text );
 				}
-				$url = self::sanitize_button_url( $node['url'] ?? null );
-				if ( null !== $url ) {
-					$built['settings']['link'] = [
-						'$$type' => 'link',
-						'value' => [
-							'destination' => [
-								'$$type' => 'url',
-								'value' => $url,
-							],
-							'isTargetBlank' => [
-								'$$type' => 'boolean',
-								'value' => ! empty( $node['target_blank'] ),
-							],
-						],
-					];
+				$this->warn_legacy_link_keys( $node, $path );
+				$link = self::build_link( $node );
+				if ( null !== $link ) {
+					$built['settings']['link'] = $link;
 				}
 				if ( isset( $node['tag'] ) && is_string( $node['tag'] ) && '' !== $node['tag'] ) {
 					$built['settings']['tag'] = [
@@ -213,7 +222,7 @@ class Element_Spec_Resolver {
 					'value' => [
 						'src' => [
 							'$$type' => 'image-src',
-							'value' => $this->build_image_src( $node ),
+							'value' => $this->build_image_src( $node, $path ),
 						],
 						'size' => [
 							'$$type' => 'string',
@@ -222,53 +231,141 @@ class Element_Spec_Resolver {
 					],
 				];
 
-				$link_url = self::sanitize_button_url( $node['url'] ?? null );
-				if ( null !== $link_url ) {
-					$built['settings']['link'] = [
-						'$$type' => 'link',
-						'value' => [
-							'destination' => [
-								'$$type' => 'url',
-								'value' => $link_url,
-							],
-							'isTargetBlank' => [
-								'$$type' => 'boolean',
-								'value' => ! empty( $node['target_blank'] ),
-							],
-						],
-					];
+				$this->warn_legacy_link_keys( $node, $path );
+				$link = self::build_link( $node );
+				if ( null !== $link ) {
+					$built['settings']['link'] = $link;
 				}
 				break;
 		}
 	}
 
-	private function build_image_src( array $node ): array {
+	/**
+	 * Build a v4 link envelope from friendly node fields.
+	 *
+	 * Only `link_url` / `link_target_blank` are accepted; legacy `url` /
+	 * `target_blank` are ignored on button/image nodes (callers receive a
+	 * warnings[] entry from warn_legacy_link_keys() telling them to rename).
+	 */
+	private static function build_link( array $node ): ?array {
+		$url = self::sanitize_button_url( $node['link_url'] ?? null );
+		if ( null === $url ) {
+			return null;
+		}
+		return [
+			'$$type' => 'link',
+			'value' => [
+				'destination' => [
+					'$$type' => 'url',
+					'value' => $url,
+				],
+				'isTargetBlank' => [
+					'$$type' => 'boolean',
+					'value' => ! empty( $node['link_target_blank'] ),
+				],
+			],
+		];
+	}
+
+	private function warn_legacy_link_keys( array $node, string $path ): void {
+		$legacy = [];
+		if ( array_key_exists( 'url', $node ) ) {
+			$legacy['url'] = 'link_url';
+		}
+		if ( array_key_exists( 'target_blank', $node ) ) {
+			$legacy['target_blank'] = 'link_target_blank';
+		}
+		if ( empty( $legacy ) ) {
+			return;
+		}
+
+		$renames = [];
+		foreach ( $legacy as $old => $new ) {
+			$renames[] = $old . ' → ' . $new;
+		}
+
+		$this->warnings[] = [
+			'reason' => 'legacy_link_keys_ignored',
+			'path' => $path,
+			'keys' => array_keys( $legacy ),
+			'hint' => 'Rename: ' . implode( ', ', $renames ) . '. The legacy url / target_blank fields are no longer accepted on button or image nodes; their values were ignored.',
+		];
+	}
+
+	private const IMAGE_ID_ALIASES = [ 'image_id', 'attachment_id', 'media_id' ];
+	private const IMAGE_URL_ALIASES = [ 'image_url', 'src' ];
+
+	private function build_image_src( array $node, string $path ): array {
 		$alt_raw = isset( $node['alt'] ) && is_string( $node['alt'] ) ? trim( $node['alt'] ) : '';
 		$alt_envelope = '' !== $alt_raw
 			? [ '$$type' => 'string', 'value' => $alt_raw ]
 			: null;
 
-		if ( isset( $node['image_id'] ) && is_numeric( $node['image_id'] ) && (int) $node['image_id'] > 0 ) {
-			return [
-				'id' => [
-					'$$type' => 'image-attachment-id',
-					'value' => (int) $node['image_id'],
-				],
-				'url' => null,
-				'alt' => $alt_envelope,
-			];
+		$source_keys_seen = [];
+
+		foreach ( self::IMAGE_ID_ALIASES as $key ) {
+			if ( ! isset( $node[ $key ] ) ) {
+				continue;
+			}
+			$source_keys_seen[] = $key;
+			if ( is_numeric( $node[ $key ] ) && (int) $node[ $key ] > 0 ) {
+				return [
+					'id' => [
+						'$$type' => 'image-attachment-id',
+						'value' => (int) $node[ $key ],
+					],
+					'url' => null,
+					'alt' => $alt_envelope,
+				];
+			}
 		}
 
-		$url = self::sanitize_image_url( $node['image_url'] ?? null );
-		if ( null === $url ) {
-			$url = Placeholder_Image::get_placeholder_image();
+		if ( isset( $node['id'] ) && is_numeric( $node['id'] ) ) {
+			$source_keys_seen[] = 'id';
+			if ( (int) $node['id'] > 0 ) {
+				return [
+					'id' => [
+						'$$type' => 'image-attachment-id',
+						'value' => (int) $node['id'],
+					],
+					'url' => null,
+					'alt' => $alt_envelope,
+				];
+			}
+		}
+
+		foreach ( self::IMAGE_URL_ALIASES as $key ) {
+			if ( ! isset( $node[ $key ] ) ) {
+				continue;
+			}
+			$source_keys_seen[] = $key;
+			$url = self::sanitize_image_url( $node[ $key ] );
+			if ( null !== $url ) {
+				return [
+					'id' => null,
+					'url' => [
+						'$$type' => 'url',
+						'value' => $url,
+					],
+					'alt' => $alt_envelope,
+				];
+			}
+		}
+
+		if ( ! empty( $source_keys_seen ) ) {
+			$this->warnings[] = [
+				'reason' => 'image_source_unresolved',
+				'path' => $path,
+				'keys' => array_values( array_unique( $source_keys_seen ) ),
+				'hint' => 'Image source keys were present but none resolved to a valid image; Elementor placeholder used. Use image_id (positive integer attachment id) or image_url (http/https). Aliases accepted: attachment_id, media_id, numeric id (for attachment); src (for url).',
+			];
 		}
 
 		return [
 			'id' => null,
 			'url' => [
 				'$$type' => 'url',
-				'value' => $url,
+				'value' => Placeholder_Image::get_placeholder_image(),
 			],
 			'alt' => $alt_envelope,
 		];

@@ -37,6 +37,7 @@ class Create_Post_Operation extends Post_Operation {
 		$normalizations = [];
 		$elements = null;
 		$preview_elements = [];
+		$warnings = [];
 
 		if ( $transformer ) {
 			$resolver = Element_Spec_Resolver::make();
@@ -45,6 +46,7 @@ class Create_Post_Operation extends Post_Operation {
 			if ( $unresolved_error ) {
 				return $unresolved_error;
 			}
+			$warnings = $resolver->get_warnings();
 			$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
 			$normalizations = $normalized['normalizations'];
 			$preview_elements = $normalized['elements'];
@@ -52,7 +54,7 @@ class Create_Post_Operation extends Post_Operation {
 		}
 
 		if ( ! empty( $input['dry_run'] ) && null !== $elements ) {
-			return $this->dry_run_response( $post_type, $post_status, $transformer, $normalizations, $preview_elements );
+			return $this->dry_run_response( $post_type, $post_status, $transformer, $normalizations, $preview_elements, $warnings );
 		}
 
 		$post_id = $this->insert_post( $title, $post_type, $post_status, $input['slug'] ?? null );
@@ -85,7 +87,9 @@ class Create_Post_Operation extends Post_Operation {
 
 		$envelope = Post_Response::with_unconverted_css( $envelope, $transformer ? $transformer->get_unconverted_css() : [] );
 
-		return Post_Response::with_normalized( $envelope, $normalizations );
+		$envelope = Post_Response::with_normalized( $envelope, $normalizations );
+
+		return Post_Response::with_warnings( $envelope, $warnings );
 	}
 
 	private function resolve_title( array $input ) {
@@ -129,7 +133,7 @@ class Create_Post_Operation extends Post_Operation {
 		return Element_Css_Transformer::make();
 	}
 
-	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer, array $normalizations, array $preview_elements ): array {
+	private function dry_run_response( string $post_type, string $post_status, ?Element_Css_Transformer $transformer, array $normalizations, array $preview_elements, array $warnings ): array {
 		$response = Post_Response::with_unconverted_css( [
 			'success' => true,
 			'operation' => 'create',
@@ -140,6 +144,8 @@ class Create_Post_Operation extends Post_Operation {
 		], $transformer ? $transformer->get_unconverted_css() : [] );
 
 		$response = Post_Response::with_normalized( $response, $normalizations );
+
+		$response = Post_Response::with_warnings( $response, $warnings );
 
 		return Post_Response::with_preview( $response, $preview_elements );
 	}

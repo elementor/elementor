@@ -51,6 +51,7 @@ class Content_Mutation_Operation extends Post_Operation {
 		if ( $unresolved_error ) {
 			return $unresolved_error;
 		}
+		$warnings = $resolver->get_warnings();
 		$normalized = Element_Root_Normalizer::make()->normalize( $resolved );
 		$normalizations = $normalized['normalizations'];
 		$preview_elements = $normalized['elements'];
@@ -59,7 +60,7 @@ class Content_Mutation_Operation extends Post_Operation {
 		$post_id = $document->get_main_id();
 
 		if ( ! empty( $input['dry_run'] ) ) {
-			return $this->dry_run_response( $post_id, $incoming, $transformer, $normalizations, $preview_elements );
+			return $this->dry_run_response( $post_id, $incoming, $transformer, $normalizations, $preview_elements, $warnings );
 		}
 
 		$payload = $this->build_save_payload( $document, $incoming );
@@ -76,14 +77,16 @@ class Content_Mutation_Operation extends Post_Operation {
 			$transformer->get_unconverted_css()
 		);
 
-		return Post_Response::with_normalized( $response, $normalizations );
+		$response = Post_Response::with_normalized( $response, $normalizations );
+
+		return Post_Response::with_warnings( $response, $warnings );
 	}
 
 	private function operation_name(): string {
 		return 'replace' === $this->mode ? 'replace_content' : 'append_content';
 	}
 
-	private function dry_run_response( int $post_id, array $incoming, Element_Css_Transformer $transformer, array $normalizations, array $preview_elements ): array {
+	private function dry_run_response( int $post_id, array $incoming, Element_Css_Transformer $transformer, array $normalizations, array $preview_elements, array $warnings ): array {
 		$response = [
 			'success' => true,
 			'operation' => $this->operation_name(),
@@ -98,6 +101,8 @@ class Content_Mutation_Operation extends Post_Operation {
 		$response = Post_Response::with_unconverted_css( $response, $transformer->get_unconverted_css() );
 
 		$response = Post_Response::with_normalized( $response, $normalizations );
+
+		$response = Post_Response::with_warnings( $response, $warnings );
 
 		return Post_Response::with_preview( $response, $preview_elements );
 	}

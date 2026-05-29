@@ -67,6 +67,14 @@ class Post_Response {
 		return $response;
 	}
 
+	public static function with_warnings( array $response, array $warnings ): array {
+		if ( ! empty( $warnings ) ) {
+			$response['warnings'] = $warnings;
+		}
+
+		return $response;
+	}
+
 	public static function with_patched_element( array $response, ?array $node ): array {
 		if ( null !== $node ) {
 			$response['patched_element'] = $node;
