@@ -85,6 +85,24 @@ describe( 'floating-panels slice', () => {
 		} );
 	} );
 
+	it( 'register with persisted state restores that state verbatim', () => {
+		// Arrange.
+		const persisted = {
+			isOpen: true,
+			mode: 'floating' as const,
+			position: { insetInlineStart: 500, insetBlockStart: 200 },
+			size: { inlineSize: 400, blockSize: 500 },
+			zIndex: 7,
+		};
+
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults, persisted } ) );
+
+		// Assert.
+		expect( selectPanelState( __getState(), 'a' ) ).toEqual( persisted );
+		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 7 );
+	} );
+
 	it( 'bringToFront raises zIndex above all others', () => {
 		// Arrange.
 		__dispatch( slice.actions.register( { id: 'a', defaults } ) );

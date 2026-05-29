@@ -16,20 +16,27 @@ export const slice = __createSlice( {
 	name: 'floatingPanels',
 	initialState,
 	reducers: {
-		register( state, action: PayloadAction< { id: string; defaults: FloatingPanelDefaults } > ) {
-			const { id, defaults } = action.payload;
+		register(
+			state,
+			action: PayloadAction< { id: string; defaults: FloatingPanelDefaults; persisted?: FloatingPanelState } >
+		) {
+			const { id, defaults, persisted } = action.payload;
 
 			if ( state.byId[ id ] ) {
 				return;
 			}
 
-			state.byId[ id ] = {
+			state.byId[ id ] = persisted ?? {
 				isOpen: false,
 				mode: defaults.initialMode,
 				position: defaults.initialPosition ?? { insetInlineStart: 24, insetBlockStart: 80 },
 				size: { inlineSize: defaults.width, blockSize: defaults.height },
 				zIndex: 0,
 			};
+
+			if ( persisted && persisted.zIndex > state.topZIndex ) {
+				state.topZIndex = persisted.zIndex;
+			}
 		},
 		open( state, action: PayloadAction< string > ) {
 			const panel = state.byId[ action.payload ];
