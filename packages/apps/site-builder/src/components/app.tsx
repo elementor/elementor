@@ -9,6 +9,8 @@ import {
 	useSiteBuilderIframeMessaging,
 } from '../hooks/use-site-builder-iframe-messaging';
 import { getSiteBuilderConfig } from '../site-builder-config';
+import { buildIframeUrl } from '../utils/build-iframe-url';
+import { SiteBuilderLoader } from './site-builder-loader';
 
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
@@ -20,31 +22,71 @@ const iframeStyle: React.CSSProperties = {
 	zIndex: 10000,
 };
 
+const AUTH_PATH = '/elementor/v1/site-builder/auth';
+const HOME_SCREEN_PATH = '/elementor/v1/site-builder/home-screen';
+const SNAPSHOT_PATH = '/elementor/v1/site-builder/snapshot';
+
 type SiteBuilderAuthResponse = {
 	success?: boolean;
 	data?: unknown;
 };
 
+type HomeScreenResponse = {
+	sessionId?: string | null;
+	step?: number | null;
+};
+
+function parseHomeScreenSession( data: HomeScreenResponse | null | undefined ) {
+	if ( ! data ) {
+		return null;
+	}
+
+	const sessionId = typeof data.sessionId === 'string' ? data.sessionId.trim() : '';
+	const step = Number.isFinite( data.step ) ? Number( data.step ) : null;
+
+	if ( ! sessionId || step === null ) {
+		return null;
+	}
+
+	return { sessionId, step };
+}
+
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
 	const [ connectAuth, setConnectAuth ] = useState< ConnectAuth | null >( null );
+	const [ homeScreenSession, setHomeScreenSession ] = useState< ReturnType<typeof parseHomeScreenSession > >( null );
+	const [ isHomeScreenFetchSettled, setIsHomeScreenFetchSettled ] = useState( false );
 
-	const iframeUrl = useMemo( () => getSiteBuilderConfig()?.iframeUrl ?? '', [] );
+	const baseIframeUrl = useMemo( () => getSiteBuilderConfig()?.iframeUrl ?? '', [] );
+
+	const iframeUrl = useMemo( () => {
+		if ( ! isHomeScreenFetchSettled ) {
+			return '';
+		}
+
+		return buildIframeUrl( baseIframeUrl, homeScreenSession );
+	}, [ baseIframeUrl, homeScreenSession, isHomeScreenFetchSettled ] );
 
 	useSiteBuilderIframeMessaging( {
 		iframeRef,
-		iframeUrl,
+		iframeUrl: iframeUrl || baseIframeUrl,
 		siteBuilderParams,
 		connectAuth,
 	} );
 
 	useEffect( () => {
+		let cancelled = false;
+
 		const fetchConnectAuth = async () => {
 			try {
 				const json = await apiFetch< SiteBuilderAuthResponse >( {
-					path: '/elementor/v1/site-builder/auth',
+					path: AUTH_PATH,
 				} );
+
+				if ( cancelled ) {
+					return;
+				}
 
 				if ( json.success && json.data && isValidConnectAuth( json.data ) ) {
 					setConnectAuth( json.data );
@@ -52,12 +94,39 @@ export function App() {
 					throw new Error( 'Invalid auth response: missing required Connect fields' );
 				}
 			} catch ( err ) {
-				// eslint-disable-next-line no-console
-				console.error( 'Failed to fetch connectAuth:', err );
+				if ( ! cancelled ) {
+					// eslint-disable-next-line no-console
+					console.error( 'Failed to fetch connectAuth:', err );
+				}
 			}
 		};
 
-		fetchConnectAuth();
+		const fetchHomeScreen = async () => {
+			try {
+				const data = await apiFetch< HomeScreenResponse >( {
+					path: HOME_SCREEN_PATH,
+				} );
+
+				if ( ! cancelled ) {
+					setHomeScreenSession( parseHomeScreenSession( data ) );
+				}
+			} catch {
+				if ( ! cancelled ) {
+					setHomeScreenSession( null );
+				}
+			} finally {
+				if ( ! cancelled ) {
+					setIsHomeScreenFetchSettled( true );
+				}
+			}
+		};
+
+		void fetchConnectAuth();
+		void fetchHomeScreen();
+
+		return () => {
+			cancelled = true;
+		};
 	}, [] );
 
 	useEffect( () => {
@@ -93,11 +162,15 @@ export function App() {
 		}
 
 		apiFetch( {
-			path: '/elementor/v1/site-builder/snapshot',
+			path: SNAPSHOT_PATH,
 			method: 'POST',
 			data: { value: {} },
 		} ).catch( () => {} );
 	}, [] );
+
+	if ( ! iframeUrl ) {
+		return <SiteBuilderLoader />;
+	}
 
 	return (
 		<iframe
