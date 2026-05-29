@@ -1,0 +1,130 @@
+import * as React from 'react';
+import { type ComponentType } from 'react';
+import {
+	__createStore,
+	__deleteStore,
+	__getState,
+	__getStore,
+	__registerSlice,
+	__StoreProvider as StoreProvider,
+} from '@elementor/store';
+import { act, renderHook } from '@testing-library/react';
+
+import { createFloatingPanel } from '../api';
+import { encodePersistedState } from '../persistence';
+import { selectPanelState } from '../store/selectors';
+import { slice } from '../store/slice';
+import { type PanelStateStorage, sync } from '../sync';
+import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
+
+const Icon: ComponentType = () => null;
+const Body: ComponentType = () => null;
+
+const declaration: FloatingPanelDeclaration = {
+	id: 'audit-panel',
+	title: 'Audit',
+	icon: Icon,
+	component: Body,
+	defaults: {
+		width: 320,
+		height: 480,
+		minWidth: 240,
+		minHeight: 320,
+		initialMode: 'docked',
+	},
+};
+
+function memoryStorage( initial: string | null = null ): PanelStateStorage {
+	let value = initial;
+
+	return {
+		read: () => value,
+		write: ( v ) => {
+			value = v;
+		},
+	};
+}
+
+describe( 'createFloatingPanel', () => {
+	beforeEach( () => {
+		__registerSlice( slice );
+		__createStore();
+	} );
+
+	afterEach( () => {
+		__deleteStore();
+	} );
+
+	it( 'registers the panel with defaults when no persisted state exists', () => {
+		// Arrange.
+		sync( memoryStorage() );
+
+		// Act.
+		createFloatingPanel( declaration );
+
+		// Assert.
+		const state = selectPanelState( __getState(), declaration.id );
+		expect( state ).toMatchObject( {
+			isOpen: false,
+			mode: 'docked',
+			size: { inlineSize: 320, blockSize: 480 },
+		} );
+	} );
+
+	it( 'rehydrates from persisted state when present', () => {
+		// Arrange.
+		const persisted: FloatingPanelState = {
+			isOpen: true,
+			mode: 'floating',
+			position: { insetInlineStart: 600, insetBlockStart: 240 },
+			size: { inlineSize: 400, blockSize: 520 },
+			zIndex: 5,
+		};
+		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
+
+		// Act.
+		createFloatingPanel( declaration );
+
+		// Assert.
+		expect( selectPanelState( __getState(), declaration.id ) ).toEqual( persisted );
+	} );
+
+	it( 'toggle closes an open panel and opens a closed one', () => {
+		// Arrange.
+		sync( memoryStorage() );
+		const { useFloatingPanelStatus, useFloatingPanelActions } = createFloatingPanel( declaration );
+
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const wrapper = ( { children }: { children: React.ReactNode } ) => (
+			<StoreProvider store={ store }>{ children }</StoreProvider>
+		);
+
+		const { result } = renderHook(
+			() => ( {
+				status: useFloatingPanelStatus(),
+				actions: useFloatingPanelActions(),
+			} ),
+			{ wrapper }
+		);
+
+		// Assert — initial closed.
+		expect( result.current.status.isOpen ).toBe( false );
+
+		// Act — open via toggle.
+		act( () => result.current.actions.toggle() );
+
+		// Assert.
+		expect( result.current.status.isOpen ).toBe( true );
+
+		// Act — close via toggle.
+		act( () => result.current.actions.toggle() );
+
+		// Assert.
+		expect( result.current.status.isOpen ).toBe( false );
+	} );
+} );
