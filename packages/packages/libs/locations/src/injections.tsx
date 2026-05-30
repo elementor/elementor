@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useSyncExternalStore } from 'react';
 
 import InjectedComponentWrapper from './components/injected-component-wrapper';
 import { type AnyProps, type Id, type InjectedComponent, type Injection, type Location } from './types';
 
 type InjectionsMap< TProps extends object = AnyProps > = Map< Id, Injection< TProps > >;
+type Unsubscribe = () => void;
+type Subscribe = ( listener: () => void ) => Unsubscribe;
 
 export const DEFAULT_PRIORITY = 10;
 
@@ -20,9 +22,24 @@ export function createGetInjections< TProps extends object = AnyProps >( injecti
 }
 
 export function createUseInjections< TProps extends object = AnyProps >(
-	getInjections: Location< TProps >[ 'getInjections' ]
+	getInjections: Location< TProps >[ 'getInjections' ],
+	subscribe: Subscribe
 ) {
-	return () => useMemo( () => getInjections(), [] );
+	let snapshot: Injection< TProps >[] | null = null;
+
+	subscribe( () => {
+		snapshot = null;
+	} );
+
+	const getSnapshot = () => {
+		if ( ! snapshot ) {
+			snapshot = getInjections();
+		}
+
+		return snapshot;
+	};
+
+	return () => useSyncExternalStore( subscribe, getSnapshot );
 }
 
 export function wrapInjectedComponent< TProps extends object = AnyProps >( Component: InjectedComponent< TProps > ) {

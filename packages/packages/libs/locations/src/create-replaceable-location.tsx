@@ -20,14 +20,24 @@ type ReplaceableInjectionsMap< TProps extends object = AnyProps > = Map< Id, Rep
 
 export function createReplaceableLocation< TProps extends object = AnyProps >(): ReplaceableLocation< TProps > {
 	const injections: ReplaceableInjectionsMap< TProps > = new Map();
+	const listeners = new Set< () => void >();
+
+	const subscribe = ( listener: () => void ) => {
+		listeners.add( listener );
+		return () => listeners.delete( listener );
+	};
+
+	const notify = () => listeners.forEach( ( l ) => l() );
 
 	const getInjections = createGetInjections( injections );
-	const useInjections = createUseInjections( getInjections );
+	const useInjections = createUseInjections( getInjections, subscribe );
 	const Slot = createReplaceable( useInjections );
-	const inject = createRegister( injections );
+	const inject = createRegister( injections, notify );
 
-	// Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
-	flushInjectionsFns.push( () => injections.clear() );
+	flushInjectionsFns.push( () => {
+		injections.clear();
+		notify();
+	} );
 
 	return {
 		getInjections,
@@ -53,7 +63,10 @@ function createReplaceable< TProps extends PropsWithChildren< object > = AnyProp
 	};
 }
 
-function createRegister< TProps extends object = AnyProps >( injections: ReplaceableInjectionsMap< TProps > ) {
+function createRegister< TProps extends object = AnyProps >(
+	injections: ReplaceableInjectionsMap< TProps >,
+	notify: () => void
+) {
 	return ( { component, id, condition = () => true, options = {} }: ReplaceableInjectArgs< TProps > ) => {
 		injections.set( id, {
 			id,
@@ -61,5 +74,7 @@ function createRegister< TProps extends object = AnyProps >( injections: Replace
 			condition,
 			priority: options.priority ?? DEFAULT_PRIORITY,
 		} );
+
+		notify();
 	};
 }

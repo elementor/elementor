@@ -10,17 +10,28 @@ import {
 import { type AnyProps, type Id, type InjectArgs, type Injection, type Location } from './types';
 
 type InjectionsMap< TProps extends object = AnyProps > = Map< Id, Injection< TProps > >;
+type Listener = () => void;
 
 export function createLocation< TProps extends object = AnyProps >(): Location< TProps > {
 	const injections: InjectionsMap< TProps > = new Map();
+	const listeners = new Set< Listener >();
+
+	const subscribe = ( listener: Listener ) => {
+		listeners.add( listener );
+		return () => listeners.delete( listener );
+	};
+
+	const notify = () => listeners.forEach( ( l ) => l() );
 
 	const getInjections = createGetInjections( injections );
-	const useInjections = createUseInjections( getInjections );
+	const useInjections = createUseInjections( getInjections, subscribe );
 	const Slot = createSlot( useInjections );
-	const inject = createInject( injections );
+	const inject = createInject( injections, notify );
 
-	// Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
-	flushInjectionsFns.push( () => injections.clear() );
+	flushInjectionsFns.push( () => {
+		injections.clear();
+		notify();
+	} );
 
 	return {
 		inject,
@@ -44,7 +55,7 @@ function createSlot< TProps extends object = AnyProps >( useInjections: Location
 	};
 }
 
-function createInject< TProps extends object = AnyProps >( injections: InjectionsMap< TProps > ) {
+function createInject< TProps extends object = AnyProps >( injections: InjectionsMap< TProps >, notify: Listener ) {
 	return ( { component, id, options = {} }: InjectArgs< TProps > ) => {
 		if ( injections.has( id ) && ! options?.overwrite ) {
 			// eslint-disable-next-line no-console
@@ -60,5 +71,7 @@ function createInject< TProps extends object = AnyProps >( injections: Injection
 			component: wrapInjectedComponent( component ),
 			priority: options.priority ?? DEFAULT_PRIORITY,
 		} );
+
+		notify();
 	};
 }

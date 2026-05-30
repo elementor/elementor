@@ -7,6 +7,6 @@ import { sync } from './sync';
 
 export function init() {
 	__registerSlice( slice );
-	sync();
 	injectIntoTop( { id: 'floating-panels', component: FloatingPanelsHost } );
+	sync();
 }

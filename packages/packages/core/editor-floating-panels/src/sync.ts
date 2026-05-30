@@ -1,4 +1,4 @@
-import { __getState, __subscribe } from '@elementor/store';
+import { __getState, __getStore, __subscribe } from '@elementor/store';
 
 import { decodePersistedState, encodePersistedState, PERSISTENCE_STORAGE_KEY } from './persistence';
 import { type FloatingPanelsSliceState } from './store/slice';
@@ -40,18 +40,33 @@ export function getPersistedState( id: string ): FloatingPanelState | undefined 
 	return cachedPersistedState[ id ];
 }
 
+const STORE_READY_POLL_MS = 16;
+
 function schedulePersistence( storage: PanelStateStorage ): void {
 	let timer: ReturnType< typeof setTimeout > | null = null;
 
-	__subscribe( () => {
-		if ( timer ) {
-			clearTimeout( timer );
+	const subscribe = () => {
+		__subscribe( () => {
+			if ( timer ) {
+				clearTimeout( timer );
+			}
+
+			timer = setTimeout( () => {
+				const state = __getState() as { floatingPanels?: FloatingPanelsSliceState };
+
+				storage.write( encodePersistedState( state.floatingPanels?.byId ?? {} ) );
+			}, PERSIST_DEBOUNCE_MS );
+		} );
+	};
+
+	const waitForStore = () => {
+		if ( __getStore() ) {
+			subscribe();
+			return;
 		}
 
-		timer = setTimeout( () => {
-			const state = __getState() as { floatingPanels?: FloatingPanelsSliceState };
+		setTimeout( waitForStore, STORE_READY_POLL_MS );
+	};
 
-			storage.write( encodePersistedState( state.floatingPanels?.byId ?? {} ) );
-		}, PERSIST_DEBOUNCE_MS );
-	} );
+	waitForStore();
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { createLocation } from '../create-location';
 
@@ -221,6 +221,23 @@ describe( 'createLocation', () => {
 		expect( screen.getByText( 'Test 1' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Test 3' ) ).toBeInTheDocument();
 		expect( mockConsoleError ).toHaveBeenCalled();
+	} );
+
+	it( 'should render a component injected after the Slot has mounted', () => {
+		// Arrange.
+		const { inject, Slot } = createLocation();
+
+		render( <Slot /> );
+
+		expect( screen.queryByText( 'Late injection' ) ).not.toBeInTheDocument();
+
+		// Act — inject after mount.
+		act( () => {
+			inject( { id: 'test-late', component: () => <div>Late injection</div> } );
+		} );
+
+		// Assert.
+		expect( screen.getByText( 'Late injection' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should pass the props from Slot to the injected component', () => {
