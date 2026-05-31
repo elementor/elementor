@@ -144,7 +144,7 @@ describe( 'doUpdateElementProperty', () => {
 		);
 	} );
 
-	it( 'merges incoming custom_css with existing local style custom_css', () => {
+	it( 'replaces existing local style custom_css by default', () => {
 		// Arrange
 		jest.mocked( getElementStyles ).mockReturnValue( {
 			[ LOCAL_STYLE_ID ]: {
@@ -168,6 +168,43 @@ describe( 'doUpdateElementProperty', () => {
 			propertyValue: {
 				custom_css: ADDITIONAL_CUSTOM_CSS,
 			},
+		} );
+
+		// Assert
+		expect( updateElementStyle ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				custom_css: {
+					raw: btoa( ADDITIONAL_CUSTOM_CSS ),
+				},
+			} )
+		);
+	} );
+
+	it( 'merges incoming custom_css with stored css when customCssWriteMode is merge-with-stored', () => {
+		// Arrange
+		jest.mocked( getElementStyles ).mockReturnValue( {
+			[ LOCAL_STYLE_ID ]: {
+				id: LOCAL_STYLE_ID,
+				label: 'local',
+				type: 'class',
+				variants: [],
+			},
+		} );
+		jest.mocked( getVariantByMeta ).mockReturnValue( {
+			meta: { breakpoint: 'desktop', state: null },
+			props: {},
+			custom_css: { raw: btoa( EXISTING_CUSTOM_CSS ) },
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: '_styles',
+			propertyValue: {
+				custom_css: ADDITIONAL_CUSTOM_CSS,
+			},
+			customCssWriteMode: 'merge-with-stored',
 		} );
 
 		// Assert

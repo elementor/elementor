@@ -19,11 +19,13 @@ const LOCAL_STYLE_META = {
 	breakpoint: 'desktop',
 	state: null,
 } as const;
+type CustomCssWriteMode = 'replace' | 'merge-with-stored';
 type OwnParams = {
 	elementId: string;
 	elementType: string;
 	propertyName: string;
 	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
+	customCssWriteMode?: CustomCssWriteMode;
 };
 
 export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
@@ -37,7 +39,7 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
 }
 
 export const doUpdateElementProperty = ( params: OwnParams ) => {
-	const { elementId, propertyName, propertyValue, elementType } = params;
+	const { elementId, propertyName, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;
@@ -77,11 +79,16 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! customCssValue ) {
 					customCssValue = '';
 				}
-				const mergedCustomCssText = mergeCustomCssText( existingCustomCssText, customCssValue as string );
-				if ( mergedCustomCssText ) {
+				const customCssText =
+					customCssWriteMode === 'merge-with-stored'
+						? mergeCustomCssText( existingCustomCssText, customCssValue as string )
+						: String( customCssValue );
+				if ( customCssText ) {
 					customCss = {
-						raw: btoa( mergedCustomCssText ),
+						raw: btoa( customCssText ),
 					};
+				} else {
+					customCss = { raw: btoa( '' ) };
 				}
 				return;
 			}

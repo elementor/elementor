@@ -177,7 +177,7 @@ Outbound `propToLlm` expands `dynamic` back to static branch + `bindTo`.
 - **`enrichWithIntention(schema, text)`** — caller-only; used on **per-category styles MCP resource** after `propTypeToLlmJsonSchema`. Adds required top-level `$intention` string (“Desired CSS in format property: value;”).
 - **Not** part of `propTypeToLlmJsonSchema` or widget schemas.
 - **`$intention` is not a stored prop.** Stripped in `adjustLlmPropValueSchema` before persist.
-- **Build-compositions recovery:** if style props fail `validateLlmJson` but `$intention` is present, `CompositionBuilder` merges `$intention` CSS with explicit `customCSS` param and writes once as `custom_css`. `doUpdateElementProperty` merges new `custom_css` with any existing local variant CSS (`merge-custom-css.ts`).
+- **Build-compositions recovery:** if style props fail `validateLlmJson` but `$intention` is present, `CompositionBuilder` merges `$intention` CSS with explicit `customCSS` param and writes once as `custom_css`. **`configure-element` and other explicit `custom_css` writes replace stored CSS** (default `customCssWriteMode: 'replace'` in `doUpdateElementProperty`).
 
 ### `adjustLlmPropValueSchema` — transitional (still called)
 
