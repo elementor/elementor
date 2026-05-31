@@ -1,6 +1,13 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
-import { selectIsOpen, selectMinSize, selectPanelState, selectPosition, selectSize, selectTopZIndex } from '../store/selectors';
+import {
+	selectIsOpen,
+	selectMinSize,
+	selectPanelState,
+	selectPosition,
+	selectSize,
+	selectTopZIndex,
+} from '../store/selectors';
 import { slice } from '../store/slice';
 import { type FloatingPanelDefaults } from '../types';
 
