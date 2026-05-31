@@ -14,7 +14,7 @@ export const ControlLabel = ( { children, infoTooltip }: ControlLabelProps ) => 
 			<ControlFormLabel>{ children }</ControlFormLabel>
 			{ infoTooltip && (
 				<Tooltip title={ infoTooltip } placement="top">
-					<InfoCircleIcon fontSize="tiny" aria-label={ infoTooltip } />
+					<InfoCircleIcon fontSize="tiny" />
 				</Tooltip>
 			) }
 			<ControlAdornments />
