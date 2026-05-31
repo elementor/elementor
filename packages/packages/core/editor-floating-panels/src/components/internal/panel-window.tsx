@@ -1,16 +1,20 @@
 import * as React from 'react';
-import { Box, Paper } from '@elementor/ui';
+import { Box, Fade, Paper } from '@elementor/ui';
 
 import { useFloatingPanelStatus } from '../../hooks/use-floating-panel-status';
+
+const FADE_ENTER_MS = 225;
+const FADE_EXIT_MS = 195;
 
 type Props = {
 	panelId: string;
 	zIndex: number;
+	visible: boolean;
 	onFocus: () => void;
 	children: React.ReactNode;
 };
 
-export default function PanelWindow( { panelId, zIndex, onFocus, children }: Props ) {
+export default function PanelWindow( { panelId, zIndex, visible, onFocus, children }: Props ) {
 	const { position, size } = useFloatingPanelStatus( panelId );
 
 	if ( ! position || ! size ) {
@@ -27,23 +31,26 @@ export default function PanelWindow( { panelId, zIndex, onFocus, children }: Pro
 	};
 
 	return (
-		<Paper
-			data-floating-panel={ panelId }
-			elevation={ 0 }
-			role="dialog"
-			aria-label={ panelId }
-			onMouseDown={ onFocus }
-			sx={ {
-				...floatingSx,
-				display: 'flex',
-				flexDirection: 'column',
-				bgcolor: 'var(--e-a-bg-default)',
-				color: 'var(--e-a-color-txt)',
-				border: 'var(--e-a-border)',
-				boxShadow: `0 2px 20px 0 rgba(0, 0, 0, 0.1)`,
-			} }
-		>
-			<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
-		</Paper>
+		<Fade in={ visible } timeout={ { enter: FADE_ENTER_MS, exit: FADE_EXIT_MS } }>
+			<Paper
+				data-floating-panel={ panelId }
+				elevation={ 0 }
+				role="dialog"
+				aria-label={ panelId }
+				aria-hidden={ ! visible }
+				onMouseDown={ onFocus }
+				sx={ {
+					...floatingSx,
+					display: 'flex',
+					flexDirection: 'column',
+					bgcolor: 'var(--e-a-bg-default)',
+					color: 'var(--e-a-color-txt)',
+					border: 'var(--e-a-border)',
+					boxShadow: `0 2px 20px 0 rgba(0, 0, 0, 0.1)`,
+				} }
+			>
+				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
+			</Paper>
+		</Fade>
 	);
 }

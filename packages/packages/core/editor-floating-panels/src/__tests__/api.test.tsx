@@ -19,6 +19,7 @@ import { selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type PanelStateStorage, sync } from '../sync';
 import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
+import { mockEditMode } from './mock-edit-mode';
 
 const Icon: ComponentType = () => null;
 const Body: ComponentType = () => null;
@@ -49,6 +50,7 @@ function memoryStorage( initial: string | null = null ): PanelStateStorage {
 
 describe( 'createFloatingPanel', () => {
 	beforeEach( () => {
+		mockEditMode( 'edit' );
 		__registerSlice( slice );
 		__createStore();
 	} );
