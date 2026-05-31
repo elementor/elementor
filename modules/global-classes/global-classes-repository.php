@@ -71,7 +71,7 @@ class Global_Classes_Repository {
 	}
 
 	public function get_order(): array {
-		return Global_Classes_Order::make( $this->get_kit() )->get_order();
+		return Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() )->get_order();
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
@@ -138,7 +138,7 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 		$labels->set_labels( $final_label_map );
 
@@ -229,7 +229,7 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 
 		$label_map = [];
