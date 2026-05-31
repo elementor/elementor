@@ -75,7 +75,9 @@ class Global_Classes_Repository {
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
-		Global_Classes_Order::make( $this->get_kit() )->set_order( $order );
+		Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->set_order( $order );
 
 		$labels = $this->labels();
 		$existing_labels = $labels->get_labels();
@@ -144,6 +146,9 @@ class Global_Classes_Repository {
 
 		if ( ! $is_preview ) {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
+			Global_Classes_Order::make( $this->get_kit() )
+				->set_preview( true )
+				->set_order( $order );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
 			$this->clear_preview_labels_for_ids( array_merge(
@@ -179,7 +184,9 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
+		$current_ids = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
 
 		$new_ids = array_keys( $items );
 
@@ -200,8 +207,9 @@ class Global_Classes_Repository {
 	}
 
 	private function all_from_posts(): Global_Classes {
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
-		$order = $classes_order->get_order();
+		$order = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
 
 		if ( empty( $order ) ) {
 			return Global_Classes::make( [], [] );
