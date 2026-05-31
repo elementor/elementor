@@ -1,5 +1,6 @@
-import { type PropType } from '../types';
+import { type PropType, type PropValue, type TransformablePropValue } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
+import { canonicalizeHtmlV3PropValue } from './html-v3-canonical-shape';
 import { LLMDialectAdapter } from './llm-prop-schema';
 
 const isHtmlV3PropTypeDefinition = ( propType: PropType ): boolean =>
@@ -50,5 +51,12 @@ export function registerHtmlV3LLMDialectAdapter() {
 		id: 'html-v3',
 		matches: isHtmlV3PropTypeDefinition,
 		toDialectSchema: ( schema ) => sanitizeHtmlV3LlmSchema( schema ),
+	} );
+
+	LLMDialectAdapter.register( 'html-v3', {
+		toPropValue: ( propValue ) =>
+			canonicalizeHtmlV3PropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
+		toDialectValue: ( propValue ) =>
+			canonicalizeHtmlV3PropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
 	} );
 }

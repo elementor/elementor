@@ -143,6 +143,9 @@ const dynamicToDialectValue = (
 	} as TransformablePropValue< string, unknown >;
 };
 
+const normalizeDynamicFallback = ( fallback: PropValue ): PropValue =>
+	htmlV3ToDynamicFallback( LLMDialectAdapter.applyRegisteredTypeDialect( fallback ) );
+
 const bindToToPropValue = ( maybeLLMDialectPropValue: TransformablePropValue< string, unknown > ): DynamicPropValue => {
 	const dialectValue = maybeLLMDialectPropValue as TransformablePropValue< string, unknown > & {
 		bindTo?: string;
@@ -169,7 +172,7 @@ const bindToToPropValue = ( maybeLLMDialectPropValue: TransformablePropValue< st
 	}
 
 	if ( fallback ) {
-		settings.fallback = htmlV3ToDynamicFallback( fallback );
+		settings.fallback = normalizeDynamicFallback( fallback as PropValue );
 	}
 
 	return {
@@ -182,10 +185,42 @@ const bindToToPropValue = ( maybeLLMDialectPropValue: TransformablePropValue< st
 	};
 };
 
+const dynamicToCanonicalPropValue = ( propValue: TransformablePropValue< string, unknown > ): DynamicPropValue => {
+	if ( propValue.$$type !== 'dynamic' ) {
+		return propValue as DynamicPropValue;
+	}
+
+	const dynamicValue = ( propValue as DynamicPropValue ).value;
+	const fallback = dynamicValue?.settings?.fallback;
+
+	if ( ! fallback ) {
+		return propValue as DynamicPropValue;
+	}
+
+	return {
+		$$type: 'dynamic',
+		value: {
+			...dynamicValue,
+			settings: {
+				...dynamicValue.settings,
+				fallback: normalizeDynamicFallback( fallback as PropValue ) as TransformablePropValue<
+					PropKey,
+					unknown
+				>,
+			},
+		},
+	};
+};
+
 export function registerDynamicPropTypeLLMDialectAdapter() {
 	LLMDialectAdapter.registerGlobalValueAdapter( {
 		toDialectValue: dynamicToDialectValue,
 		toPropValue: bindToToPropValue,
+	} );
+
+	LLMDialectAdapter.register( 'dynamic', {
+		toPropValue: dynamicToCanonicalPropValue,
+		toDialectValue: ( propValue ) => propValue,
 	} );
 
 	LLMDialectAdapter.registerSchemaDialect( {

@@ -94,6 +94,21 @@ class LLMDialectAdapterClass {
 		return schemaCleanup ? schemaCleanup( dialectSchema ) : dialectSchema;
 	}
 
+	applyRegisteredTypeDialect( value: unknown ): PropValue {
+		if ( typeof value !== 'object' || value === null || typeof ( value as AnyValue ).$$type !== 'string' ) {
+			return value as PropValue;
+		}
+
+		let result = value as AnyValue;
+		const adapter = valueAdaptersRegistry.get( result.$$type );
+
+		if ( adapter ) {
+			result = adapter.toPropValue( result );
+		}
+
+		return result as PropValue;
+	}
+
 	toPropValue( value: unknown ): PropValue {
 		if ( typeof value !== 'object' || value === null || typeof ( value as AnyValue ).$$type !== 'string' ) {
 			return value as PropValue;

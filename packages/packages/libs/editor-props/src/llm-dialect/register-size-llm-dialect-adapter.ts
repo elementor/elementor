@@ -68,10 +68,13 @@ export function registerSizeLLMDialectAdapter() {
 		toDialectSchema: ( schema, propType ) => flattenSizeLlmSchema( schema, propType ),
 	} );
 
-	LLMDialectAdapter.register( 'size', {
-		toPropValue: ( propValue ) =>
+	const sizeValueAdapter = {
+		toPropValue: ( propValue: TransformablePropValue< string, unknown > ) =>
 			canonicalizeSizePropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
-		toDialectValue: ( propValue ) =>
+		toDialectValue: ( propValue: PropValue ) =>
 			canonicalizeSizePropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
-	} );
+	};
+
+	LLMDialectAdapter.register( 'size', sizeValueAdapter );
+	LLMDialectAdapter.register( 'grid-track-size', sizeValueAdapter );
 }
