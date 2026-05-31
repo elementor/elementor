@@ -80,8 +80,8 @@ class Birthday {
 	}
 
 	private static function is_campaign_time() {
-		$start = new \DateTime( '2026-06-15 12:00:00', new \DateTimeZone( 'UTC' ) );
-		$end = new \DateTime( '2026-06-18 03:59:00', new \DateTimeZone( 'UTC' ) );
+		$start = new \DateTime( '2026-06-15 10:00:00', new \DateTimeZone( 'UTC' ) );
+		$end = new \DateTime( '2026-06-17 03:59:00', new \DateTimeZone( 'UTC' ) );
 		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
 
 		return $now >= $start && $now <= $end;
