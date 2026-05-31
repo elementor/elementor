@@ -9,6 +9,7 @@ import {
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
 import { OutlineOverlay } from './outline-overlay';
+import { ResizeHandlesOverlay } from './resize-handles-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 
@@ -16,6 +17,10 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
 		shouldRender: () => true,
+	},
+	{
+		component: ResizeHandlesOverlay,
+		shouldRender: ( { isSelected } ) => isSelected,
 	},
 ];
 

@@ -78,10 +78,12 @@ describe( '<ElementsOverlays />', () => {
 
 		// Assert.
 		await waitFor( () => {
-			const overlay = screen.getByRole( 'presentation' );
-			expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic2' );
+			const overlay = screen
+				.getAllByRole( 'presentation' )
+				.find( ( node ) => node.getAttribute( 'data-element-overlay' ) === 'atomic2' );
+			expect( overlay ).toBeDefined();
 			// eslint-disable-next-line testing-library/no-test-id-queries
-			expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay );
+			expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay as HTMLElement );
 		} );
 	} );
 
@@ -179,8 +181,11 @@ describe( '<ElementsOverlays />', () => {
 		renderWithTheme( <ElementsOverlays /> );
 
 		// Assert
-		const overlay = await screen.findByRole( 'presentation' );
-		expect( overlay ).toBeInTheDocument();
-		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic1' );
+		await waitFor( () => {
+			const overlay = screen
+				.getAllByRole( 'presentation' )
+				.find( ( node ) => node.getAttribute( 'data-element-overlay' ) === 'atomic1' );
+			expect( overlay ).toBeDefined();
+		} );
 	} );
 } );

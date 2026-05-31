@@ -47,6 +47,7 @@
     "@elementor/editor-notifications": "4.2.0",
     "@elementor/editor-props": "4.2.0",
     "@elementor/editor-responsive": "4.2.0",
+    "@elementor/session": "4.2.0",
     "@elementor/editor-styles": "4.2.0",
     "@elementor/editor-styles-repository": "4.2.0",
     "@elementor/editor-ui": "4.2.0",
