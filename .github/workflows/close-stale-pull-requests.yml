@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   close-stale:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Close pull requests with no updates in 3 months
