@@ -1,4 +1,5 @@
 import { type LogicalPosition } from '../types';
+import { clamp } from './clamp';
 
 export type PhysicalDelta = { dx: number; dy: number };
 export type LogicalDelta = { inlineDelta: number; blockDelta: number };
@@ -29,8 +30,4 @@ export function applyDragDelta( position: LogicalPosition, delta: LogicalDelta, 
 			bounds.maxBlockStart
 		),
 	};
-}
-
-function clamp( value: number, min: number, max: number ): number {
-	return Math.min( Math.max( min, value ), Math.max( min, max ) );
 }

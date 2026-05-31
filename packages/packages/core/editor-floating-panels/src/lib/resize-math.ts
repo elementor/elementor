@@ -1,4 +1,5 @@
 import { type LogicalPosition, type LogicalSize } from '../types';
+import { clamp } from './clamp';
 
 export type ResizeEdge = 'inline-start' | 'inline-end' | 'block-end';
 
@@ -9,10 +10,6 @@ export type ResizeBounds = {
 	maxBlockSize: number;
 	minInlineStart: number;
 };
-
-function clamp( value: number, min: number, max: number ): number {
-	return Math.min( Math.max( min, value ), Math.max( min, max ) );
-}
 
 export function applyInlineEndResize( size: LogicalSize, inlineDelta: number, bounds: ResizeBounds ): LogicalSize {
 	return {
