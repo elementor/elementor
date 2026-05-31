@@ -26,7 +26,7 @@ export type ElementType = {
 export type ControlsSection = {
 	type: 'section';
 	value: {
-		id: string | null;
+		id?: string | null;
 		description?: string;
 		label: string;
 		items: ControlItem[];
