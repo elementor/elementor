@@ -13,13 +13,14 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Close pull requests with no updates in 3 months
+      - name: Close pull requests with no updates in configured months
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STALE_PR_MONTHS: ${{ vars.STALE_PR_MONTHS || '3' }}
         run: |
           set -euo pipefail
 
-          THRESHOLD=$(date -d '3 months ago' +%s)
+          THRESHOLD=$(date -d "${STALE_PR_MONTHS} months ago" +%s)
 
           gh pr list --repo "${{ github.repository }}" --state open --limit 1000 \
             --json number,title,updatedAt > prs.json
