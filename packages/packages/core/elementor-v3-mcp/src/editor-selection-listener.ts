@@ -24,9 +24,12 @@ type CommandRunDetail = { command?: string; args?: unknown };
 export function setupEditorSelectionListener( server: McpServer ): void {
 	let debounceTimer: ReturnType< typeof setTimeout > | null = null;
 
-	const sendUpdate = ( uri: string ) => {
-		void server.server.sendResourceUpdated( { uri } ).catch( ( error: Error ) => {
-			if ( ! error?.message?.includes( 'Not connected' ) ) {
+	const sendUpdate = () => {
+		void server.server.sendResourceUpdated( { uri: RESOURCE_URI_CURRENT_CONTEXT } ).catch( ( error: Error ) => {
+			const isSafeError =
+				error?.message?.includes( 'Not connected' ) ||
+				error?.message?.includes( 'does not support notifying about resources' );
+			if ( ! isSafeError ) {
 				throw error;
 			}
 		} );
@@ -43,7 +46,7 @@ export function setupEditorSelectionListener( server: McpServer ): void {
 		if ( debounceTimer ) {
 			clearTimeout( debounceTimer );
 		}
-		debounceTimer = setTimeout( () => sendUpdate( RESOURCE_URI_CURRENT_CONTEXT ), DEBOUNCE_MS );
+		debounceTimer = setTimeout( sendUpdate, DEBOUNCE_MS );
 	};
 
 	window.addEventListener( COMMAND_EVENT_NAME, handleCommandRun );

@@ -11,19 +11,13 @@ export type EditorSelectionSnapshot = {
 	selectedElementType: string | null;
 };
 
-type ContainerWithLabel = ElementorContainer & {
-	label?: string;
-	type?: string;
-	model: ElementorContainer[ 'model' ] & { widgetType?: string };
-};
-
 function getEditorPageTitle(): string {
 	const settings = getElementor()?.documents?.getCurrent()?.config?.settings;
 	const title = ( settings?.settings?.post_title ?? ( settings as Record< string, unknown > | undefined )?.post_title ) as string | undefined;
 	return title || 'Untitled';
 }
 
-function getElementDisplayName( container: ContainerWithLabel ): string {
+function getElementDisplayName( container: ElementorContainer ): string {
 	if ( container.label ) {
 		return container.label;
 	}
@@ -53,7 +47,7 @@ export function getCurrentEditorSelection(): { error: string } | EditorSelection
 
 	const pageTitle = getEditorPageTitle();
 	const primaryId = getCurrentSelection()[ 0 ];
-	const container = primaryId ? ( elementor.getContainer( primaryId ) as ContainerWithLabel | null ) : null;
+	const container = primaryId ? elementor.getContainer( primaryId ) : null;
 
 	if ( ! container?.id ) {
 		return {
