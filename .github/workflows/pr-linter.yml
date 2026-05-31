@@ -33,7 +33,7 @@ jobs:
 
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { execFileSync } = require('node:child_process');
