@@ -13,13 +13,7 @@ const SELECTION_COMMANDS = new Set( [
 
 const DEBOUNCE_MS = 50;
 
-// In Elementor 4.x the V1 `$e.commands.on('run:after', ...)` callback is no longer fired
-// for selection commands — they're dispatched as `CustomEvent('elementor/commands/run/after')`
-// on `window`, with `event.detail = { command, args }` (see editor-v1-adapters' listeners.ts).
-// Subscribing at the DOM-event layer keeps the listener working across Elementor 4.x versions.
 const COMMAND_EVENT_NAME = 'elementor/commands/run/after';
-
-type CommandRunDetail = { command?: string; args?: unknown };
 
 export function setupEditorSelectionListener( server: McpServer ): void {
 	let debounceTimer: ReturnType< typeof setTimeout > | null = null;
@@ -39,7 +33,7 @@ export function setupEditorSelectionListener( server: McpServer ): void {
 		if ( ! ( event instanceof CustomEvent ) ) {
 			return;
 		}
-		const command = ( event.detail as CommandRunDetail | undefined )?.command;
+		const command = ( event.detail as { command?: string } | undefined )?.command;
 		if ( ! command || ! SELECTION_COMMANDS.has( command ) ) {
 			return;
 		}

@@ -3,7 +3,7 @@ import { getCurrentSelection, getElementor } from './utils';
 
 export type EditorSelectionSnapshot = {
 	displayName: string;
-	documentId: string | number;
+	documentId: string;
 	pageTitle: string;
 	selectedElementId: string | null;
 	selectedParentId: string | null;
@@ -12,8 +12,8 @@ export type EditorSelectionSnapshot = {
 };
 
 function getEditorPageTitle(): string {
-	const settings = getElementor()?.documents?.getCurrent()?.config?.settings;
-	const title = ( settings?.settings?.post_title ?? ( settings as Record< string, unknown > | undefined )?.post_title ) as string | undefined;
+	const title = getElementor()?.documents?.getCurrent()?.config?.settings?.settings
+		?.post_title as string | undefined;
 	return title || 'Untitled';
 }
 
