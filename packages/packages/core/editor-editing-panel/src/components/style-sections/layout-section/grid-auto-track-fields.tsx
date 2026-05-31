@@ -7,6 +7,10 @@ import { __ } from '@wordpress/i18n';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 
+const DEFAULT_UNIT = 'fr' as const;
+
+type SizeControlProps = React.ComponentProps< typeof SizeControl >;
+
 const AUTO_ROWS_LABEL = __( 'Auto rows', 'elementor' );
 const AUTO_COLUMNS_LABEL = __( 'Auto columns', 'elementor' );
 const AUTO_ROWS_TOOLTIP = __(
@@ -28,7 +32,11 @@ type GridAutoTrackFieldProps = {
 const GridAutoTrackField = ( { bind, infoTooltip, label, rowRef }: GridAutoTrackFieldProps ) => (
 	<StylesField bind={ bind } propDisplayName={ label }>
 		<StylesFieldLayout infoTooltip={ infoTooltip } label={ label } ref={ rowRef }>
-			<SizeControl enablePropTypeUnits defaultUnit="fr" anchorRef={ rowRef } />
+			<SizeControl
+				enablePropTypeUnits
+				defaultUnit={ DEFAULT_UNIT as SizeControlProps[ 'defaultUnit' ] }
+				anchorRef={ rowRef }
+			/>
 		</StylesFieldLayout>
 	</StylesField>
 );
