@@ -171,7 +171,7 @@ export function addElementorResources( server: McpServer ): void {
 		async ( uri ) => {
 			const snapshot = getCurrentEditorSelection();
 
-			if ( 'error' in snapshot && snapshot.error ) {
+			if ( 'error' in snapshot ) {
 				throw new Error( snapshot.error );
 			}
 

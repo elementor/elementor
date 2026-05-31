@@ -18,32 +18,18 @@ type ContainerWithLabel = ElementorContainer & {
 };
 
 function getEditorPageTitle(): string {
-	const document = getElementor()?.documents?.getCurrent();
-	if ( ! document ) {
-		return 'Untitled';
-	}
-	const fromNested = document.config?.settings?.settings?.post_title;
-	if ( typeof fromNested === 'string' && fromNested ) {
-		return fromNested;
-	}
-	const legacy = ( document.config?.settings as Record< string, unknown > | undefined )?.post_title;
-	if ( typeof legacy === 'string' && legacy ) {
-		return legacy;
-	}
-	return 'Untitled';
+	const settings = getElementor()?.documents?.getCurrent()?.config?.settings;
+	const title = ( settings?.settings?.post_title ?? ( settings as Record< string, unknown > | undefined )?.post_title ) as string | undefined;
+	return title || 'Untitled';
 }
 
 function getElementDisplayName( container: ContainerWithLabel ): string {
 	if ( container.label ) {
 		return container.label;
 	}
-	const attrWidgetType = container.model?.attributes?.widgetType;
-	if ( typeof attrWidgetType === 'string' && attrWidgetType ) {
-		return attrWidgetType.charAt( 0 ).toUpperCase() + attrWidgetType.slice( 1 ).replace( /-/g, ' ' );
-	}
-	const modelWidgetType = container.model?.widgetType;
-	if ( modelWidgetType ) {
-		return modelWidgetType.charAt( 0 ).toUpperCase() + modelWidgetType.slice( 1 ).replace( /-/g, ' ' );
+	const widgetType = ( container.model?.attributes?.widgetType ?? container.model?.widgetType ) as string | undefined;
+	if ( widgetType ) {
+		return widgetType.charAt( 0 ).toUpperCase() + widgetType.slice( 1 ).replace( /-/g, ' ' );
 	}
 	if ( container.type === 'container' ) {
 		return 'Container';
@@ -52,15 +38,6 @@ function getElementDisplayName( container: ContainerWithLabel ): string {
 		return 'Section';
 	}
 	return `Element ${ container.id }`;
-}
-
-function primarySelectedContainer(): ContainerWithLabel | null {
-	const elementor = getElementor();
-	const primaryId = getCurrentSelection()[ 0 ];
-	if ( ! primaryId || ! elementor?.getContainer ) {
-		return null;
-	}
-	return elementor.getContainer( primaryId ) as ContainerWithLabel | null;
 }
 
 export function getCurrentEditorSelection(): { error: string } | EditorSelectionSnapshot {
@@ -75,7 +52,8 @@ export function getCurrentEditorSelection(): { error: string } | EditorSelection
 	}
 
 	const pageTitle = getEditorPageTitle();
-	const container = primarySelectedContainer();
+	const primaryId = getCurrentSelection()[ 0 ];
+	const container = primaryId ? ( elementor.getContainer( primaryId ) as ContainerWithLabel | null ) : null;
 
 	if ( ! container?.id ) {
 		return {
@@ -98,7 +76,7 @@ export function getCurrentEditorSelection(): { error: string } | EditorSelection
 		pageTitle,
 		selectedElementId: container.id,
 		selectedParentId: container.parent?.id ?? null,
-		selectedWidgetType: typeof widgetType === 'string' ? widgetType : null,
+		selectedWidgetType: widgetType,
 		selectedElementType: typeof elementType === 'string' ? elementType : 'widget',
 	};
 }

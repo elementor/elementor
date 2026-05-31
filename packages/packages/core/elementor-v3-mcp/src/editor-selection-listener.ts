@@ -25,16 +25,11 @@ export function setupEditorSelectionListener( server: McpServer ): void {
 	let debounceTimer: ReturnType< typeof setTimeout > | null = null;
 
 	const sendUpdate = ( uri: string ) => {
-		void Promise.resolve( server.server.sendResourceUpdated( { uri } ) ).catch( ( error: Error ) => {
-			if ( error?.message?.includes( 'Not connected' ) ) {
-				return;
+		void server.server.sendResourceUpdated( { uri } ).catch( ( error: Error ) => {
+			if ( ! error?.message?.includes( 'Not connected' ) ) {
+				throw error;
 			}
-			throw error;
 		} );
-	};
-
-	const emit = () => {
-		sendUpdate( RESOURCE_URI_CURRENT_CONTEXT );
 	};
 
 	const handleCommandRun = ( event: Event ) => {
@@ -48,7 +43,7 @@ export function setupEditorSelectionListener( server: McpServer ): void {
 		if ( debounceTimer ) {
 			clearTimeout( debounceTimer );
 		}
-		debounceTimer = setTimeout( emit, DEBOUNCE_MS );
+		debounceTimer = setTimeout( () => sendUpdate( RESOURCE_URI_CURRENT_CONTEXT ), DEBOUNCE_MS );
 	};
 
 	window.addEventListener( COMMAND_EVENT_NAME, handleCommandRun );
