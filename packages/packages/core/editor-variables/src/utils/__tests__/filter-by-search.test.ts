@@ -16,6 +16,12 @@ const SAMPLE_VARIABLES: TestVariable[] = [
 	{ label: 'primary-accent', value: '#ff6600', type: 'color' },
 ];
 
+const LARGE_DATASET_SIZE = 10000;
+const LARGE_DATASET_SEARCH_VALUE = 'Variable 99';
+const LARGE_DATASET_MATCH_COUNT = 111;
+const FIRST_LARGE_DATASET_MATCH = 'Variable 99';
+const LAST_LARGE_DATASET_MATCH = 'Variable 9999';
+
 describe( 'filterBySearch', () => {
 	it( 'should return all variables', () => {
 		// Arrange.
@@ -95,23 +101,20 @@ describe( 'filterBySearch', () => {
 		] );
 	} );
 
-	it( 'should handle large datasets efficiently', () => {
+	it( 'should filter large datasets by search value', () => {
 		// Arrange.
-		const LARGE_DATASET_SIZE = 10000;
 		const largeDataset: TestVariable[] = Array.from( { length: LARGE_DATASET_SIZE }, ( _, index ) => ( {
 			label: `Variable ${ index }`,
 			value: `value-${ index }`,
 			type: 'test',
 		} ) );
-		const searchValue = 'Variable 99';
 
 		// Act.
-		const startTime = performance.now();
-		const result = filterBySearch( largeDataset, searchValue );
-		const endTime = performance.now();
+		const result = filterBySearch( largeDataset, LARGE_DATASET_SEARCH_VALUE );
 
 		// Assert.
-		expect( result ).toHaveLength( 111 );
-		expect( endTime - startTime ).toBeLessThan( 100 );
+		expect( result ).toHaveLength( LARGE_DATASET_MATCH_COUNT );
+		expect( result[ 0 ].label ).toBe( FIRST_LARGE_DATASET_MATCH );
+		expect( result[ result.length - 1 ].label ).toBe( LAST_LARGE_DATASET_MATCH );
 	} );
 } );

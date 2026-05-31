@@ -44,8 +44,10 @@ jobs:
     uses: ./.github/workflows/calculate_php_version.yml
 
   build-plugin:
-    name: Build plugin
+    name: Snapshot build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Snapshot build artifact
 
   update-snapshots:
     name: Update snapshots - shard ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
@@ -217,7 +219,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download all snapshot artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: snapshots-*
           path: tests/

@@ -165,6 +165,7 @@
     "react-query": "^3.39.1",
     "sass": "^1.83.0",
     "semver": "^7.7.2",
+    "source-map-loader": "^5.0.0",
     "styled-components": "^6.1.13",
     "terser-webpack-plugin": "^5.3.11",
     "ts-node": "^10.9.2",

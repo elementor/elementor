@@ -10,8 +10,10 @@ permissions:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: PR Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: PR Playwright build artifact
 
   playwright-tests:
     name: Playwright Tests
@@ -29,7 +31,7 @@ jobs:
           cache: 'npm'
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
