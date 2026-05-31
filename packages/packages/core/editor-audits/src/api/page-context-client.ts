@@ -5,7 +5,7 @@ import { type PageContextResponse } from '../types';
 
 export async function fetchPageContext( documentId: number, attachmentIds: number[] ): Promise< PageContextResponse > {
 	const { restNamespace, nonce } = getWindowConfig();
-	const url = `/wp-json/${ restNamespace }/audits/page-context`;
+	const url = `${ restNamespace }/audits/page-context`;
 
 	const response = await httpService().get< PageContextResponse >( url, {
 		params: {

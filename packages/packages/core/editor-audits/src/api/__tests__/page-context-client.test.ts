@@ -26,7 +26,7 @@ describe( 'fetchPageContext', () => {
 
 		// Assert.
 		expect( get ).toHaveBeenCalledWith(
-			expect.stringContaining( '/elementor/v1/audits/page-context' ),
+			expect.stringContaining( 'elementor/v1/audits/page-context' ),
 			expect.objectContaining( {
 				params: expect.objectContaining( { document_id: 42 } ),
 			} )
