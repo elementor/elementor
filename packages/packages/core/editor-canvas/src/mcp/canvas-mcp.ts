@@ -7,7 +7,8 @@ import { initEditorStateResource } from './resources/editor-state-resource';
 import { initGeneralContextResource } from './resources/general-context-resource';
 import { initSelectedElementResource } from './resources/selected-element-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
-import { initBuildCompositionsTool } from './tools/build-composition/tool';
+// Temporarily disabled while the dedicated generate-page domain is active.
+// import { initBuildCompositionsTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initGetElementConfigTool } from './tools/get-element-config/tool';
 
@@ -18,7 +19,8 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initSelectedElementResource( reg );
 	initEditorStateResource( reg );
 	initGeneralContextResource( reg );
-	initBuildCompositionsTool( reg );
+	// Temporarily disabled while the dedicated generate-page domain is active.
+	// initBuildCompositionsTool( reg );
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );
 	initBreakpointsResource( reg );
