@@ -1,5 +1,7 @@
 # Editor Floating Panels Framework Implementation Plan
 
+> **Update (2026-05-31): theming via `--e-a-*` CSS variables.** Panel chrome (`panel-window`, header, footer) now uses editor theme variables (`--e-a-bg-default`, `--e-a-color-txt`, `--e-a-border-color`, `--e-a-popover-shadow`) instead of MUI palette tokens, so dark/light mode follows the editor `ui_theme`. See `docs/superpowers/specs/2026-05-31-floating-panels-theming-design.md`.
+
 > **Update (2026-05-31): docking removed.** The framework is now float-only and drag-anywhere (clamped within the viewport). The dock axis (`DockMode`, `initialMode`, `setMode`), the docked CSS branch in `panel-window`, and the `snap-to-dock` module/heuristic described throughout this plan have been removed. Drag math clamps per axis: block-start to `[48px, viewportBlock − panelBlock]` (never covers the app bar) and inline-start to `[#elementor-panel width, viewportInline − panelInline]` (never covers the side panel; direction-correct in LTR and RTL via the shared logical start edge). See `docs/superpowers/specs/2026-05-31-floating-panels-remove-docking-design.md`. Docking-related tasks and snippets below (e.g. Task 3 snap-to-dock, the `setMode`/`initialMode` references) are historical.
 
 > **Status: Implemented** on branch `audits`, commits `f47626c..3c7fcdd` (12 commits). 30 tests across 7 suites green. See **Implementation notes & deviations** at the end of this document for changes from the plan-as-written.

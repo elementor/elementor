@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { XIcon } from '@elementor/icons';
 import { Box, IconButton, Typography } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useFloatingPanelActions } from '../../hooks/use-floating-panel-actions';
 import DragHandle from '../internal/drag-handle';
@@ -18,24 +19,27 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon }: Pro
 		<Box
 			sx={ {
 				display: 'flex',
-				alignItems: 'center',
-				gap: 1,
-				px: 1.5,
-				py: 1,
+				alignItems: 'stretch',
 				borderBottom: 1,
-				borderColor: 'divider',
+				borderColor: 'var(--e-a-border-color)',
 			} }
 		>
 			<DragHandle panelId={ panelId }>
-				<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+				<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' } }>
 					{ Icon ? <Icon /> : null }
-					<Typography variant="subtitle2" component="h2">
+					<Typography component="h2" sx={ { textAlign: 'center', fontSize: '13px', fontWeight: 400 } }>
 						{ title }
 					</Typography>
 				</Box>
 			</DragHandle>
-			<IconButton size="small" aria-label="Close panel" onClick={ close }>
-				<XIcon />
+			<IconButton
+				size="small"
+				color="inherit"
+				aria-label={ __( 'Close panel', 'elementor' ) }
+				onClick={ close }
+				sx={ { borderRadius: 0, p: 1 } }
+			>
+				<XIcon fontSize="small" />
 			</IconButton>
 		</Box>
 	);

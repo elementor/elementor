@@ -29,7 +29,7 @@ export default function PanelWindow( { panelId, zIndex, onFocus, children }: Pro
 	return (
 		<Paper
 			data-floating-panel={ panelId }
-			elevation={ 8 }
+			elevation={ 0 }
 			role="dialog"
 			aria-label={ panelId }
 			onMouseDown={ onFocus }
@@ -37,7 +37,10 @@ export default function PanelWindow( { panelId, zIndex, onFocus, children }: Pro
 				...floatingSx,
 				display: 'flex',
 				flexDirection: 'column',
-				bgcolor: 'background.default',
+				bgcolor: 'var(--e-a-bg-default)',
+				color: 'var(--e-a-color-txt)',
+				border: 'var(--e-a-border)',
+				boxShadow: `0 2px 20px 0 rgba(0, 0, 0, 0.1)`,
 			} }
 		>
 			<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>

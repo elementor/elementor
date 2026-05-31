@@ -44,7 +44,8 @@
     "@elementor/icons": "~1.75.1",
     "@elementor/locations": "4.2.0",
     "@elementor/store": "4.2.0",
-    "@elementor/ui": "1.37.5"
+    "@elementor/ui": "1.37.5",
+    "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

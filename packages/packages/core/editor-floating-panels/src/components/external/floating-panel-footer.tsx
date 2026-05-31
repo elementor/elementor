@@ -9,7 +9,7 @@ export default function FloatingPanelFooter( props: BoxProps ) {
 				px: 2,
 				py: 1.5,
 				borderTop: 1,
-				borderColor: 'divider',
+				borderColor: 'var(--e-a-border-color)',
 				display: 'flex',
 				alignItems: 'center',
 				gap: 1,
