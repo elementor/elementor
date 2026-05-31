@@ -1,7 +1,8 @@
 import { initLlmDialect } from '../../llm-dialect/init';
-import { STUBS, TAGS } from '../test-utils/stubs';
+import { type PropType, type TransformablePropValue } from '../../types';
 import { propValuesFromLlm } from '../prop-values-from-llm';
 import { propValuesToLlm } from '../prop-values-to-llm';
+import { STUBS, TAGS } from '../test-utils/stubs';
 
 describe( 'propValuesToLlm', () => {
 	beforeAll( () => {
@@ -85,7 +86,9 @@ describe( 'propValuesToLlm', () => {
 				'html-v3': { kind: 'object', key: 'html-v3', shape: {} },
 				dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'text' ] } },
 			},
-		};
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
 		const propValue = {
 			$$type: 'dynamic',
 			value: {
@@ -137,7 +140,7 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const llmValue = propValuesToLlm( propValue );
+		const llmValue = propValuesToLlm( propValue ) as TransformablePropValue< 'object', Record< string, unknown > >;
 
 		// Assert
 		expect( llmValue.value.label ).toEqual( {
@@ -194,6 +197,8 @@ describe( 'propValuesToLlm', () => {
 		const dimensionsPropType = {
 			kind: 'object',
 			key: 'dimensions',
+			settings: {},
+			meta: {},
 			shape: {
 				top: {
 					kind: 'object',
@@ -224,7 +229,7 @@ describe( 'propValuesToLlm', () => {
 					},
 				},
 			},
-		};
+		} as unknown as PropType;
 		const propValue = {
 			$$type: 'dimensions',
 			value: {
@@ -260,7 +265,10 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const llmValue = propValuesToLlm( propValue, { propType: dimensionsPropType } );
+		const llmValue = propValuesToLlm( propValue, { propType: dimensionsPropType } ) as TransformablePropValue<
+			'dimensions',
+			Record< string, unknown >
+		>;
 
 		// Assert
 		expect( llmValue.value.top ).toEqual( flatTopSize );

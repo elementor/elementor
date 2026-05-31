@@ -1,8 +1,5 @@
-import {
-	dynamicFallbackToHtmlV3,
-	htmlV3ToDynamicFallback,
-	isHtmlV3UnionPropType,
-} from '../html-v3-dynamic-fallback';
+import { type PropType } from '../../types';
+import { dynamicFallbackToHtmlV3, htmlV3ToDynamicFallback, isHtmlV3UnionPropType } from '../html-v3-dynamic-fallback';
 
 describe( 'html-v3 dynamic fallback conversion', () => {
 	it( 'should flatten html-v3 fallback to string for canonical dynamic storage', () => {
@@ -56,7 +53,7 @@ describe( 'html-v3 dynamic fallback conversion', () => {
 		};
 
 		// Act
-		const isHtmlV3Union = isHtmlV3UnionPropType( titlePropType );
+		const isHtmlV3Union = isHtmlV3UnionPropType( titlePropType as unknown as PropType );
 
 		// Assert
 		expect( isHtmlV3Union ).toBe( true );

@@ -2,7 +2,7 @@ import { LLMDialectAdapter } from '../../../llm-dialect/llm-prop-schema';
 import { registerDynamicPropTypeLLMDialectAdapter } from '../../../llm-dialect/register-dynamic-prop-type-llm-dialect-adapter';
 import type * as Types from '../../../types';
 import { propTypeToJsonSchema } from '../../props-to-llm-schema';
-import { STUBS, TAGS } from '../../test-utils/stubs';
+import { STUBS } from '../../test-utils/stubs';
 import { validatePropValue } from '../../validate-prop-value';
 
 type PlainPropType = Types.PropType & { key: string };
@@ -47,7 +47,7 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 			const dynamicPropType = STUBS.dynamicString;
 
 			beforeAll( () => {
-				registerDynamicPropTypeLLMDialectAdapter( TAGS );
+				registerDynamicPropTypeLLMDialectAdapter();
 			} );
 
 			describe( 'should convert dynamic string to LLM Dialect', () => {

@@ -1,6 +1,6 @@
-import { LLMDialectAdapter, type LlmDialectValueContext } from '../llm-dialect/llm-prop-schema';
 import { initLlmDialect } from '../llm-dialect/init';
-import { type ObjectPropType, type PropType, type PropValue, type TransformablePropValue } from '../types';
+import { LLMDialectAdapter, type LlmDialectValueContext } from '../llm-dialect/llm-prop-schema';
+import { type ObjectPropType, type PropType, type TransformablePropValue } from '../types';
 
 export type PropToLlmOptions = LlmDialectValueContext;
 
@@ -19,10 +19,7 @@ const getChildPropType = ( propType: PropType | undefined, key: string ): PropTy
 	return ( propType as ObjectPropType ).shape?.[ key ];
 };
 
-export const applyDialectFromTree = (
-	value: unknown,
-	context: LlmDialectValueContext = {}
-): unknown => {
+export const applyDialectFromTree = ( value: unknown, context: LlmDialectValueContext = {} ): unknown => {
 	if ( Array.isArray( value ) ) {
 		return value.map( ( item ) => applyDialectFromTree( item, context ) );
 	}

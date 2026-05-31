@@ -18,8 +18,8 @@ type DynamicPropValue = TransformablePropValue<
 	{
 		name: string;
 		group: string;
-		settings: Record< string, unknown > & {
-			fallback: TransformablePropValue< PropKey, unknown >;
+		settings?: Record< string, unknown > & {
+			fallback?: TransformablePropValue< PropKey, unknown >;
 		};
 	}
 >;
@@ -115,7 +115,10 @@ const addBindable = ( schema: JsonSchema7, categories: string[] = [] ) => {
 	};
 };
 
-const dynamicToDialectValue = ( propValue: Record< string, unknown >, context?: LlmDialectValueContext ) => {
+const dynamicToDialectValue = (
+	propValue: TransformablePropValue< string, unknown >,
+	context?: LlmDialectValueContext
+): TransformablePropValue< string, unknown > => {
 	if ( propValue.$$type !== 'dynamic' ) {
 		return propValue;
 	}
@@ -129,19 +132,28 @@ const dynamicToDialectValue = ( propValue: Record< string, unknown >, context?: 
 
 	const dialectFallback = isHtmlV3UnionPropType( context?.propType ) ? dynamicFallbackToHtmlV3( fallback ) : fallback;
 
+	if ( typeof dialectFallback !== 'object' || dialectFallback === null || ! ( '$$type' in dialectFallback ) ) {
+		return propValue;
+	}
+
 	return {
 		...dialectFallback,
 		bindTo: dynamicValue.name,
 		allowBind: true,
-	};
+	} as TransformablePropValue< string, unknown >;
 };
 
-const bindToToPropValue = ( maybeLLMDialectPropValue: Record< string, unknown > ) => {
-	if ( typeof maybeLLMDialectPropValue.bindTo !== 'string' ) {
-		return maybeLLMDialectPropValue;
+const bindToToPropValue = ( maybeLLMDialectPropValue: TransformablePropValue< string, unknown > ): DynamicPropValue => {
+	const dialectValue = maybeLLMDialectPropValue as TransformablePropValue< string, unknown > & {
+		bindTo?: string;
+		allowBind?: boolean;
+	};
+
+	if ( typeof dialectValue.bindTo !== 'string' ) {
+		return maybeLLMDialectPropValue as DynamicPropValue;
 	}
 
-	const { bindTo, allowBind: _allowBind, ...rest } = maybeLLMDialectPropValue;
+	const { bindTo, allowBind: _allowBind, ...rest } = dialectValue;
 	const fallback =
 		typeof rest.$$type === 'string'
 			? {

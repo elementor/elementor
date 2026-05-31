@@ -1,4 +1,4 @@
-import { type ObjectPropType, type PropType } from '../types';
+import { type ObjectPropType, type PropType, type PropValue, type TransformablePropValue } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { LLMDialectAdapter } from './llm-prop-schema';
 import { canonicalizeSizePropValue } from './size-canonical-shape';
@@ -6,7 +6,8 @@ import { canonicalizeSizePropValue } from './size-canonical-shape';
 const SIZE_PROP_TYPE_KEYS = new Set( [ 'size', 'grid-track-size' ] );
 const SIZE_INNER_REQUIRED = [ 'unit', 'size' ] as const;
 
-const isSizePropTypeDefinition = ( propType: PropType ): boolean => SIZE_PROP_TYPE_KEYS.has( propType.key );
+const isSizePropTypeDefinition = ( propType: PropType ): boolean =>
+	propType.kind === 'object' && 'key' in propType && SIZE_PROP_TYPE_KEYS.has( propType.key );
 
 const extractUnitEnum = ( schema: JsonSchema7, propType: PropType ): string[] | undefined => {
 	const fromSettings = propType.settings?.available_units;
@@ -68,7 +69,9 @@ export function registerSizeLLMDialectAdapter() {
 	} );
 
 	LLMDialectAdapter.register( 'size', {
-		toPropValue: ( propValue ) => canonicalizeSizePropValue( propValue ),
-		toDialectValue: ( propValue ) => canonicalizeSizePropValue( propValue ),
+		toPropValue: ( propValue ) =>
+			canonicalizeSizePropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
+		toDialectValue: ( propValue ) =>
+			canonicalizeSizePropValue( propValue as PropValue ) as TransformablePropValue< string, unknown >,
 	} );
 }

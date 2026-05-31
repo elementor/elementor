@@ -1,3 +1,4 @@
+import { type PropType } from '../../types';
 import { propTypeToLlmJsonSchema } from '../../utils/props-to-llm-schema';
 import { initLlmDialect } from '../init';
 import { LLMDialectAdapter } from '../llm-prop-schema';
@@ -25,7 +26,7 @@ const SIZE_PROP_TYPE = {
 		},
 	},
 	meta: {},
-};
+} as unknown as PropType;
 
 const FLAT_SIZE_INNER_SCHEMA = {
 	type: 'object',
@@ -71,13 +72,13 @@ describe( 'LLM schema dialect registration', () => {
 		// Arrange
 		LLMDialectAdapter.registerSchemaDialect( {
 			id: 'test-single-anyof-wrapper',
-			matches: ( propType ) => propType.key === 'string',
+			matches: ( propType ) => propType.kind === 'string' && 'key' in propType && propType.key === 'string',
 			toDialectSchema: ( schema ) => ( {
 				description: 'Late dialect description',
 				anyOf: [ schema ],
 			} ),
 		} );
-		const stringPropType = { kind: 'string', key: 'string', settings: {} };
+		const stringPropType = { kind: 'string', key: 'string', settings: {}, meta: {} } as unknown as PropType;
 
 		// Act
 		const schema = propTypeToLlmJsonSchema( stringPropType );
@@ -93,7 +94,7 @@ describe( 'LLM schema dialect registration', () => {
 		const gridTrackSizePropType = {
 			...SIZE_PROP_TYPE,
 			key: 'grid-track-size',
-		};
+		} as unknown as PropType;
 
 		// Act
 		const sizeSchema = propTypeToLlmJsonSchema( SIZE_PROP_TYPE );
@@ -114,7 +115,7 @@ describe( 'LLM schema dialect registration', () => {
 				top: SIZE_PROP_TYPE,
 			},
 			meta: {},
-		};
+		} as unknown as PropType;
 
 		// Act
 		const schema = propTypeToLlmJsonSchema( dimensionsPropType );
@@ -131,14 +132,18 @@ describe( 'LLM schema dialect registration', () => {
 				string: { kind: 'string', key: 'string', settings: {} },
 				dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'text' ] } },
 			},
-		};
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
 		const sizeUnionPropType = {
 			kind: 'union',
 			prop_types: {
 				size: SIZE_PROP_TYPE,
 				'global-size-variable': { kind: 'string', key: 'global-size-variable', settings: {} },
 			},
-		};
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
 
 		// Act
 		const dynamicUnionSchema = propTypeToLlmJsonSchema( dynamicUnionPropType );
@@ -156,7 +161,13 @@ describe( 'LLM schema dialect registration', () => {
 
 	it( 'should not flatten non-size object prop types', () => {
 		// Arrange
-		const dimensionsPropType = { kind: 'object', key: 'dimensions', shape: {}, meta: {} };
+		const dimensionsPropType = {
+			kind: 'object',
+			key: 'dimensions',
+			shape: {},
+			meta: {},
+			settings: {},
+		} as unknown as PropType;
 
 		// Act
 		const schema = propTypeToLlmJsonSchema( dimensionsPropType );

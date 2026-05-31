@@ -2,7 +2,8 @@ import { type PropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { LLMDialectAdapter } from './llm-prop-schema';
 
-const isHtmlV3PropTypeDefinition = ( propType: PropType ): boolean => propType.key === 'html-v3';
+const isHtmlV3PropTypeDefinition = ( propType: PropType ): boolean =>
+	propType.kind === 'object' && 'key' in propType && propType.key === 'html-v3';
 
 const stripBindToFromSchema = ( schema: JsonSchema7 ): JsonSchema7 => {
 	const result = structuredClone( schema );
@@ -37,7 +38,10 @@ const sanitizeHtmlV3LlmSchema = ( schema: JsonSchema7 ): JsonSchema7 => {
 		};
 	}
 
-	result.properties.value.properties.content = sanitizedContent;
+	if ( result.properties?.value?.properties ) {
+		result.properties.value.properties.content = sanitizedContent;
+	}
+
 	return result;
 };
 
