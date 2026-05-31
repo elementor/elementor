@@ -90,7 +90,7 @@ export function getCurrentEditorSelection(): { error: string } | EditorSelection
 	}
 
 	const widgetType = ( container.model?.attributes?.widgetType as string ) ?? null;
-	const elementType = ( container.type ?? container.model?.attributes?.elType as string ) ?? 'widget';
+	const elementType = container.type ?? ( container.model?.attributes?.elType as string ) ?? 'widget';
 
 	return {
 		displayName: `${ pageTitle } > ${ getElementDisplayName( container ) }`,

@@ -14,8 +14,8 @@ export const RESOURCE_URI_WIDGET_CONFIG_TEMPLATE = 'elementor://editor/widget-co
 export const RESOURCE_NAME_PAGE_SETTINGS = 'elementor-page-settings';
 export const RESOURCE_URI_PAGE_SETTINGS = 'elementor://editor/page-settings';
 
-export const RESOURCE_NAME_CURRENT_CONTEXT = 'elementor-current-context';
-export const RESOURCE_URI_CURRENT_CONTEXT = 'elementor://context/current-page';
+export const RESOURCE_NAME_CURRENT_CONTEXT = 'elementor-editor-selection';
+export const RESOURCE_URI_CURRENT_CONTEXT = 'elementor://editor/selection';
 
 export function decodeResourceVariable( value: string ): string {
 	try {
@@ -186,5 +186,4 @@ export function addElementorResources( server: McpServer ): void {
 			};
 		}
 	);
-
 }
