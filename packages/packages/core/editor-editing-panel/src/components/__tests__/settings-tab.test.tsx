@@ -403,12 +403,14 @@ describe( '<SettingsTab />', () => {
 } );
 
 export const mockSection = ( {
+	id = 'section',
 	label = 'Section',
 	description = 'Section description',
 	items = [],
 }: Partial< ControlsSection[ 'value' ] > ): ControlsSection => ( {
 	type: 'section',
 	value: {
+		id,
 		label,
 		description,
 		items,
