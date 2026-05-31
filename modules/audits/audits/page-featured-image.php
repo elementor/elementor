@@ -6,14 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Missing_Featured_Image extends Audit_Descriptor {
+class Page_Featured_Image extends Audit_Descriptor {
 
 	public function get_id(): string {
 		return 'audits/missing-featured-image';
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'Missing featured image', 'elementor' );
+		return esc_html__( 'Featured image', 'elementor' );
 	}
 
 	public function get_description(): string {

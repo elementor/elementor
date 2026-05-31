@@ -9,10 +9,10 @@ use Elementor\Modules\Audits\Audits\Icon_Widget_Link_Missing_Aria_Label;
 use Elementor\Modules\Audits\Audits\Image_Carousel_Default_Name;
 use Elementor\Modules\Audits\Audits\Images_Missing_Alt;
 use Elementor\Modules\Audits\Audits\Images_Too_Large;
-use Elementor\Modules\Audits\Audits\Missing_Excerpt;
-use Elementor\Modules\Audits\Audits\Missing_Featured_Image;
-use Elementor\Modules\Audits\Audits\Missing_Page_Title;
 use Elementor\Modules\Audits\Audits\Nested_Boxed_Containers;
+use Elementor\Modules\Audits\Audits\Page_Excerpt;
+use Elementor\Modules\Audits\Audits\Page_Featured_Image;
+use Elementor\Modules\Audits\Audits\Page_Title;
 use Elementor\Modules\Audits\Audits\Prefer_Global_Colors;
 use Elementor\Modules\Audits\Audits\Uses_Sections_Or_Columns;
 
@@ -48,17 +48,26 @@ class Audits_Manager {
 	 */
 	private function get_built_in_audits(): array {
 		return [
-			new Missing_Page_Title(),
-			new Missing_Excerpt(),
-			new Missing_Featured_Image(),
-			new Uses_Sections_Or_Columns(),
+			// page settings
+			new Page_Title(),
+			new Page_Excerpt(),
+			new Page_Featured_Image(),
+			
+			// site settings
 			new Default_Design_System(),
+			new Prefer_Global_Colors(),
+
+			// general
 			new Heading_Structure(),
 			new Images_Missing_Alt(),
 			new Images_Too_Large(),
-			new Prefer_Global_Colors(),
-			new Image_Carousel_Default_Name(),
+
+			// layout
+			new Uses_Sections_Or_Columns(),
 			new Nested_Boxed_Containers(),
+
+			// widgets
+			new Image_Carousel_Default_Name(),
 			new Icon_Widget_Link_Missing_Aria_Label(),
 		];
 	}

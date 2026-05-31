@@ -6,14 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Missing_Page_Title extends Audit_Descriptor {
+class Page_Title extends Audit_Descriptor {
 
 	public function get_id(): string {
 		return 'audits/missing-page-title';
 	}
 
 	public function get_title(): string {
-		return esc_html__( 'Missing page title', 'elementor' );
+		return esc_html__( 'Page title', 'elementor' );
 	}
 
 	public function get_description(): string {
