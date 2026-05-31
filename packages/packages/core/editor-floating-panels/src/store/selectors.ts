@@ -20,6 +20,10 @@ export function selectSize( state: GlobalState, id: string ) {
 	return state.floatingPanels.byId[ id ]?.size;
 }
 
+export function selectMinSize( state: GlobalState, id: string ) {
+	return state.floatingPanels.minSizeById[ id ];
+}
+
 export function selectTopZIndex( state: GlobalState ): number {
 	return state.floatingPanels.topZIndex;
 }

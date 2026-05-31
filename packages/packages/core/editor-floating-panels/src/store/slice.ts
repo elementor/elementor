@@ -1,14 +1,16 @@
 import { __createSlice, type PayloadAction } from '@elementor/store';
 
-import { type FloatingPanelDefaults, type FloatingPanelState, type LogicalPosition } from '../types';
+import { type FloatingPanelDefaults, type FloatingPanelState, type LogicalPosition, type LogicalSize } from '../types';
 
 type SliceState = {
 	byId: Record< string, FloatingPanelState >;
+	minSizeById: Record< string, LogicalSize >;
 	topZIndex: number;
 };
 
 const initialState: SliceState = {
 	byId: {},
+	minSizeById: {},
 	topZIndex: 0,
 };
 
@@ -21,6 +23,8 @@ export const slice = __createSlice( {
 			action: PayloadAction< { id: string; defaults: FloatingPanelDefaults; persisted?: FloatingPanelState } >
 		) {
 			const { id, defaults, persisted } = action.payload;
+
+			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
 
 			if ( state.byId[ id ] ) {
 				return;

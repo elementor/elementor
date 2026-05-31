@@ -1,6 +1,6 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
-import { selectIsOpen, selectPanelState, selectPosition, selectTopZIndex } from '../store/selectors';
+import { selectIsOpen, selectMinSize, selectPanelState, selectPosition, selectSize, selectTopZIndex } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type FloatingPanelDefaults } from '../types';
 
@@ -29,6 +29,7 @@ describe( 'floating-panels slice', () => {
 		const state = selectPanelState( __getState(), 'a' );
 		expect( state ).toMatchObject( { isOpen: false } );
 		expect( state?.size ).toEqual( { inlineSize: 320, blockSize: 480 } );
+		expect( selectMinSize( __getState(), 'a' ) ).toEqual( { inlineSize: 240, blockSize: 320 } );
 	} );
 
 	it( 'opens and closes a panel', () => {
@@ -67,7 +68,7 @@ describe( 'floating-panels slice', () => {
 		} );
 	} );
 
-	it( 'register with persisted state restores that state verbatim', () => {
+	it( 'register with persisted state restores that state and derives min size from defaults', () => {
 		// Arrange.
 		const persisted = {
 			isOpen: true,
@@ -81,7 +82,19 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectPanelState( __getState(), 'a' ) ).toEqual( persisted );
+		expect( selectMinSize( __getState(), 'a' ) ).toEqual( { inlineSize: 240, blockSize: 320 } );
 		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 7 );
+	} );
+
+	it( 'updates size', () => {
+		// Arrange.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+
+		// Act.
+		__dispatch( slice.actions.setSize( { id: 'a', size: { inlineSize: 600, blockSize: 700 } } ) );
+
+		// Assert.
+		expect( selectSize( __getState(), 'a' ) ).toEqual( { inlineSize: 600, blockSize: 700 } );
 	} );
 
 	it( 'bringToFront raises zIndex above all others', () => {
