@@ -50,7 +50,10 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName, propSchema ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const { valid } = Schema.validatePropValue( propSchema, propValue as PropValue );
+				const converted = Schema.propFromLlm( propValue as PropValue, {
+					forceKey: propSchema.key,
+				} );
+				const { valid } = Schema.validatePropValue( propSchema, converted );
 				if ( ! valid ) {
 					errors.push(
 						`Invalid property "${ propName }". Validate input with resource [${ STYLE_SCHEMA_URI.replace(

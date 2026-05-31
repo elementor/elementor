@@ -119,7 +119,7 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
 			}
-			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
+			const asJson = Schema.propTypeToLlmJsonSchema( stylesSchema as PropType );
 			return {
 				contents: [
 					{
@@ -186,7 +186,7 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 			const asJson = Object.fromEntries(
 				Object.entries( propSchema )
 					.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
-					.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType ) ] )
+					.map( ( [ key, propType ] ) => [ key, Schema.propTypeToLlmJsonSchema( propType ) ] )
 			);
 
 			const description =

@@ -1,5 +1,7 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { getMCPByDomain } from '@elementor/editor-mcp';
+import { initLlmDialect } from '@elementor/editor-props';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 
 import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
@@ -30,6 +32,10 @@ export function init() {
 	initLegacyViews();
 
 	initSettingsTransformers();
+
+	initLlmDialect( {
+		resolveDynamicTags: () => getElementorConfig()?.atomicDynamicTags?.tags,
+	} );
 
 	injectIntoTop( {
 		id: 'elements-overlays',

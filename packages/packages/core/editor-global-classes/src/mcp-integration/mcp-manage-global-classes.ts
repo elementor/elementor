@@ -150,7 +150,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		.Utils as typeof IUtils;
 	Object.values( propsWithStates ).forEach( ( props ) => {
 		Object.keys( props ).forEach( ( key ) => {
-			props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
+			props[ key ] = Schema.propFromLlm( props[ key ], {
 				transformers: Utils.globalVariablesLLMResolvers,
 			} );
 		} );

@@ -1,7 +1,6 @@
-import { numberPropTypeUtil, type NumberPropValue, stringPropTypeUtil, type StringPropValue } from '../prop-types';
+import { htmlV3ToDynamicFallback } from '../llm-dialect/html-v3-dynamic-fallback';
+import { canonicalizeSizePropValue } from '../llm-dialect/size-canonical-shape';
 import { type ObjectPropValue, type PropValue, type TransformablePropValue } from '../types';
-
-const ensureNotNull = ( v: unknown, fallback: unknown ) => ( v === null ? fallback : v );
 
 type PropConverter = ( value: unknown ) => PropValue;
 
@@ -13,6 +12,9 @@ type Options = {
 const defaultOptions: Options = {
 	transformers: {},
 };
+
+const isTransformablePropValue = ( value: unknown ): value is TransformablePropValue< string, unknown > =>
+	typeof value === 'object' && value !== null && '$$type' in value;
 
 export const adjustLlmPropValueSchema = (
 	value: Readonly< PropValue >,
@@ -30,40 +32,35 @@ export const adjustLlmPropValueSchema = (
 	if ( '$intention' in transformablePropValue ) {
 		delete ( transformablePropValue as Record< string, unknown > ).$intention;
 	}
-	if ( forceKey ) {
+	if ( forceKey && transformablePropValue.$$type !== 'dynamic' ) {
 		transformablePropValue.$$type = forceKey;
 	}
 
 	// fix by type - Size is the only case where we have a non-valid structure
 	switch ( transformablePropValue.$$type ) {
-		case 'size': {
-			const { value: rawSizePropValue } = transformablePropValue as TransformablePropValue<
-				string,
-				{ size: StringPropValue | NumberPropValue; unit: StringPropValue }
-			>;
-			const unit =
-				typeof rawSizePropValue.unit === 'string'
-					? rawSizePropValue.unit
-					: ensureNotNull( stringPropTypeUtil.extract( rawSizePropValue.unit ), 'px' );
-			const size =
-				typeof rawSizePropValue.size === 'string' || typeof rawSizePropValue.size === 'number'
-					? rawSizePropValue.size
-					: ensureNotNull(
-							stringPropTypeUtil.extract( rawSizePropValue.size ),
-							numberPropTypeUtil.extract( rawSizePropValue.size )
-					  );
-			return {
-				$$type: 'size',
-				value: {
-					unit,
-					size,
-				},
-			};
+		case 'dynamic': {
+			const dynamicValue = (
+				transformablePropValue as TransformablePropValue<
+					'dynamic',
+					{
+						name: string;
+						group?: string;
+						settings?: Record< string, unknown >;
+					}
+				>
+			 ).value;
+
+			if ( dynamicValue?.settings?.fallback ) {
+				dynamicValue.settings.fallback = htmlV3ToDynamicFallback( dynamicValue.settings.fallback as PropValue );
+			}
+			break;
 		}
+		case 'size':
+			return canonicalizeSizePropValue( transformablePropValue as PropValue );
 		case 'html-v3': {
 			const { value: rawHtmlV3PropValue } = transformablePropValue as TransformablePropValue<
 				string,
-				{ content: StringPropValue; children: PropValue[] }
+				{ content: PropValue; children: PropValue[] }
 			>;
 			return {
 				$$type: 'html-v3',
@@ -88,9 +85,23 @@ export const adjustLlmPropValueSchema = (
 		} else {
 			const { value: objectValue } = transformablePropValue as ObjectPropValue;
 			const clonedObject = clone as ObjectPropValue;
-			clonedObject.value = {} as ( typeof clonedObject )[ 'value' ]; // Record< string, PropValue >;
+			clonedObject.value = { ...objectValue };
 			Object.entries( objectValue ).forEach( ( [ key, childProp ] ) => {
-				clonedObject.value[ key ] = adjustLlmPropValueSchema( childProp as PropValue, { transformers } );
+				if ( isTransformablePropValue( childProp ) ) {
+					clonedObject.value[ key ] = adjustLlmPropValueSchema( childProp as PropValue, { transformers } );
+					return;
+				}
+				if ( typeof childProp !== 'object' || childProp === null || Array.isArray( childProp ) ) {
+					return;
+				}
+				clonedObject.value[ key ] = Object.fromEntries(
+					Object.entries( childProp as Record< string, unknown > ).map( ( [ nestedKey, nestedValue ] ) => [
+						nestedKey,
+						isTransformablePropValue( nestedValue )
+							? adjustLlmPropValueSchema( nestedValue as PropValue, { transformers } )
+							: nestedValue,
+					] )
+				);
 			} );
 		}
 	}

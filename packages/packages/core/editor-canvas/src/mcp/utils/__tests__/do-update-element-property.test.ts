@@ -15,7 +15,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 jest.mock( '@elementor/editor-props', () => ( {
 	getPropSchemaFromCache: jest.fn(),
 	Schema: {
-		adjustLlmPropValueSchema: jest.fn( ( value: unknown ) => value ),
+		propFromLlm: jest.fn( ( value: unknown ) => value ),
 		validatePropValue: jest.fn(),
 	},
 } ) );
@@ -56,7 +56,7 @@ describe( 'doUpdateElementProperty', () => {
 		// @ts-ignore: Mock values for test
 		jest.mocked( getWidgetsCache ).mockReturnValue( widgetsCacheFixture );
 		// @ts-ignore: Mock values for test
-		jest.mocked( Schema.adjustLlmPropValueSchema ).mockImplementation( ( value: unknown ) => value );
+		jest.mocked( Schema.propFromLlm ).mockImplementation( ( value: unknown ) => value );
 		jest.mocked( Schema.validatePropValue ).mockReset();
 	} );
 
@@ -67,6 +67,8 @@ describe( 'doUpdateElementProperty', () => {
 	it( 'throws when Schema.validatePropValue reports invalid PropValue and does not persist', () => {
 		// Arrange
 		const propertyValue = { invalid: true };
+		const convertedValue = { $$type: 'string', value: 'converted' };
+		jest.mocked( Schema.propFromLlm ).mockReturnValue( convertedValue );
 		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
 			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
 			valid: false,
@@ -93,7 +95,7 @@ describe( 'doUpdateElementProperty', () => {
 		expect( ( thrown as Error ).message ).toContain( ELEMENT_ID );
 		expect( ( thrown as Error ).message ).toContain( PROP_SCHEMA_ENTRY.key );
 		expect( ( thrown as Error ).message ).toContain( EXPECTED_JSON_SCHEMA_SNIPPET );
-		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
+		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, convertedValue );
 		expect( updateElementSettings ).not.toHaveBeenCalled();
 		expect( __privateRunCommandSync ).not.toHaveBeenCalled();
 	} );
@@ -101,6 +103,8 @@ describe( 'doUpdateElementProperty', () => {
 	it( 'updates settings when Schema.validatePropValue reports valid PropValue', () => {
 		// Arrange
 		const propertyValue = 'resolved-title';
+		const convertedValue = { $$type: 'string', value: propertyValue };
+		jest.mocked( Schema.propFromLlm ).mockReturnValue( convertedValue );
 		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
 			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
 			valid: true,
@@ -117,12 +121,12 @@ describe( 'doUpdateElementProperty', () => {
 		} );
 
 		// Assert
-		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
+		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, convertedValue );
 		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
 		expect( updateElementSettings ).toHaveBeenCalledWith( {
 			id: ELEMENT_ID,
 			props: {
-				[ PROPERTY_NAME ]: propertyValue,
+				[ PROPERTY_NAME ]: convertedValue,
 			},
 			withHistory: false,
 		} );

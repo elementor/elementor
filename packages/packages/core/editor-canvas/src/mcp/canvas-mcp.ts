@@ -3,6 +3,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { initAvailableWidgetsResource } from './resources/available-widgets-resource';
 import { initBreakpointsResource } from './resources/breakpoints-resource';
 import { initDocumentStructureResource } from './resources/document-structure-resource';
+import { initDynamicTagsResource } from './resources/dynamic-tags-resource';
 import { initEditorStateResource } from './resources/editor-state-resource';
 import { initGeneralContextResource } from './resources/general-context-resource';
 import { initSelectedElementResource } from './resources/selected-element-resource';
@@ -22,4 +23,5 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );
 	initBreakpointsResource( reg );
+	initDynamicTagsResource( reg );
 };

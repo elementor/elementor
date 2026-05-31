@@ -1,6 +1,8 @@
+import { LLMDialectAdapter } from '../../../llm-dialect/llm-prop-schema';
+import { registerDynamicPropTypeLLMDialectAdapter } from '../../../llm-dialect/register-dynamic-prop-type-llm-dialect-adapter';
 import type * as Types from '../../../types';
 import { propTypeToJsonSchema } from '../../props-to-llm-schema';
-import { STUBS } from '../../test-utils/stubs';
+import { STUBS, TAGS } from '../../test-utils/stubs';
 import { validatePropValue } from '../../validate-prop-value';
 
 type PlainPropType = Types.PropType & { key: string };
@@ -40,6 +42,52 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 				expect( errors?.length ).toBeGreaterThan( 0 );
 			} );
 		} );
+
+		describe( 'Dynamic prop types', () => {
+			const dynamicPropType = STUBS.dynamicString;
+
+			beforeAll( () => {
+				registerDynamicPropTypeLLMDialectAdapter( TAGS );
+			} );
+
+			describe( 'should convert dynamic string to LLM Dialect', () => {
+				let jsonSchema: ReturnType< typeof propTypeToJsonSchema >;
+
+				beforeAll( () => {
+					jsonSchema = propTypeToJsonSchema( dynamicPropType, LLMDialectAdapter );
+				} );
+
+				it( 'Schema structure', () => {
+					const testedValue = jsonSchema.anyOf?.[ 0 ];
+					expect( jsonSchema.description ).toStrictEqual( dynamicPropType.meta.description );
+					expect( Array.isArray( jsonSchema.anyOf ) ).toBeTruthy();
+					expect( jsonSchema.anyOf ).toHaveLength( 1 );
+					expect( testedValue ).toBeInstanceOf( Object );
+					expect( testedValue ).toHaveProperty( 'type', 'object' );
+					expect( testedValue?.properties?.value ).toEqual( {
+						type: 'string',
+					} );
+					expect( testedValue?.properties?.bindTo ).toHaveProperty( 'type', 'string' );
+					expect( testedValue?.properties?.bindTo ).toHaveProperty( 'description' );
+					expect( jsonSchema?.allowBind ).toBe( true );
+					expect( testedValue?.properties ).toHaveProperty( '$$type', {
+						type: 'string',
+						const: 'string',
+					} );
+				} );
+
+				// @ts-ignore
+				dynamicPropType.prop_types.dynamic.settings.categories.forEach( ( category ) =>
+					it( `should have bindTo tag name for category ${ category }`, () => {
+						const testedValue = jsonSchema.anyOf?.[ 0 ];
+						const enumValues = testedValue?.properties?.bindTo?.description as string | undefined;
+						expect( enumValues ).toBeDefined();
+						expect( enumValues?.includes( category ) );
+					} )
+				);
+			} );
+		} );
+
 		describe( 'String prop type with enum', () => {
 			const enumPropType = STUBS.alignContent;
 			const validEnumValues = < string[] >( enumPropType.settings.enum || [] );

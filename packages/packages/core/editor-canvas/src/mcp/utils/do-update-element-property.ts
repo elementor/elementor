@@ -24,7 +24,7 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
 	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
 		.Utils as typeof IUtils;
-	return Schema.adjustLlmPropValueSchema( value as PropValue, {
+	return Schema.propFromLlm( value as PropValue, {
 		forceKey,
 		transformers: Utils.globalVariablesLLMResolvers,
 	} );
@@ -129,11 +129,11 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 	}
 	const propKey = elementPropSchema[ propertyName ].key;
 	const value = resolvePropValue( propertyValue, propKey );
-	const { valid, jsonSchema } = Schema.validatePropValue( elementPropSchema[ propertyName ], propertyValue );
+	const { valid, jsonSchema } = Schema.validatePropValue( elementPropSchema[ propertyName ], value );
 	if ( ! valid ) {
 		throw new Error(
 			`Invalid PropValue for elementId: ${ elementId }. PropKey: ${ propKey }, PropValue: ${ JSON.stringify(
-				propertyValue
+				value
 			) }\nExpected Schema: ${ jsonSchema }`
 		);
 	}

@@ -1,3 +1,4 @@
+import { DYNAMIC_TAGS_URI } from './resources/dynamic-tags-resource';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
 const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
@@ -20,6 +21,7 @@ The \`$$type\` defines how Elementor interprets the value. Providing the correct
 ## Design System Resources
 - **Global Variables**: Reusable colors, sizes, and fonts (\`elementor://global-variables\`)
 - **Global Classes**: Reusable style sets that can be applied to elements (\`elementor://global-classes\`)
+- **Dynamic Tags**: Bindable dynamic content tags for LLM dialect props (\`${ DYNAMIC_TAGS_URI }\`)
 - **Widget Schemas**: Configuration options for each widget type (\`${ WIDGET_SCHEMA_URI }\`)
 - **Style Schema**: Common styles shared across all widgets and containers (\`${ STYLE_SCHEMA_URI }\`)
 

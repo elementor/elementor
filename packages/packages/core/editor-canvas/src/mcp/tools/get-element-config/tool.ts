@@ -1,6 +1,7 @@
 import { getContainer, getElementStyles, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type PropValue, Schema } from '@elementor/editor-props';
+import { type PropType, type PropValue, Schema } from '@elementor/editor-props';
+import { getStylesSchema } from '@elementor/editor-styles';
 import { z } from '@elementor/schema';
 
 const schema = {
@@ -47,7 +48,8 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 
 	addTool( {
 		name: 'get-element-configuration-values',
-		description: "Retrieve the element's configuration PropValues for a specific element by unique ID.",
+		description:
+			"Retrieve the element's configuration values in LLM dialect format for a specific element by unique ID.",
 		schema,
 		outputSchema,
 		handler: async ( { elementId } ) => {
@@ -76,9 +78,15 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 
 			const propValues: Record< string, PropValue > = {};
 			const stylePropValues: Record< string, PropValue > = {};
+			const styleSchema = getStylesSchema();
 
 			Schema.configurableKeys( propSchema ).forEach( ( key ) => {
-				propValues[ key ] = structuredClone( elementRawSettings.get( key ) );
+				const rawValue = elementRawSettings.get( key );
+				if ( rawValue !== undefined && rawValue !== null ) {
+					propValues[ key ] = Schema.propToLlm( structuredClone( rawValue ), {
+						propType: propSchema[ key ] as PropType,
+					} );
+				}
 			} );
 			const elementStyles = getElementStyles( elementId ) || {};
 			const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
@@ -90,8 +98,11 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 				if ( defaultVariant ) {
 					const styleProps = defaultVariant.props || {};
 					Object.keys( styleProps ).forEach( ( stylePropName ) => {
-						if ( typeof styleProps[ stylePropName ] !== 'undefined' ) {
-							stylePropValues[ stylePropName ] = structuredClone( styleProps[ stylePropName ] );
+						const rawStyleValue = styleProps[ stylePropName ];
+						if ( typeof rawStyleValue !== 'undefined' ) {
+							stylePropValues[ stylePropName ] = Schema.propToLlm( structuredClone( rawStyleValue ), {
+								propType: styleSchema[ stylePropName ] as PropType,
+							} );
 						}
 					} );
 					if ( defaultVariant.custom_css ) {

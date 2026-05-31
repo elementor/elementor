@@ -10,6 +10,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
@@ -40,6 +41,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Build compositions guide', uri: BUILD_COMPOSITIONS_GUIDE_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },

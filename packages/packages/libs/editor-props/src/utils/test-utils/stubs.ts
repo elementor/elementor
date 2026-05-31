@@ -1,4 +1,14 @@
-import { type ObjectPropType, type PropsSchema } from '../../types';
+import { type ObjectPropType, type PropsSchema, type UnionPropType } from '../../types';
+
+const _STRING_PROP_TYPE = {
+	kind: 'string',
+	key: 'string',
+	settings: {},
+	default: null,
+	meta: {},
+	dependencies: undefined,
+	initial_value: null,
+};
 
 export const STUBS = {
 	tag: {
@@ -967,4 +977,424 @@ export const STUBS = {
 		dependencies: null,
 		initial_value: null,
 	} as unknown as ObjectPropType,
+	dynamicString: {
+		kind: 'union',
+		default: null,
+		meta: {
+			description: 'Test',
+		},
+		settings: {
+			required: false,
+		},
+		prop_types: {
+			string: _STRING_PROP_TYPE,
+			dynamic: {
+				kind: 'plain',
+				key: 'dynamic',
+				default: null,
+				meta: {},
+				settings: {
+					categories: [ 'text', 'url', 'post_meta' ],
+				},
+			},
+		},
+	} as UnionPropType,
 } as PropsSchema;
+
+export const TAGS = {
+	tags: {
+		popup: {
+			name: 'popup',
+			categories: [ 'url' ],
+			label: 'Popup',
+			group: 'action',
+			meta: [],
+		},
+		'off-canvas': {
+			name: 'off-canvas',
+			categories: [ 'url' ],
+			label: 'Off-Canvas',
+			group: 'action',
+			meta: [],
+		},
+		'archive-description': {
+			name: 'archive-description',
+			categories: [ 'text' ],
+			label: 'Archive Description',
+			group: 'archive',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'archive-meta': {
+			name: 'archive-meta',
+			categories: [ 'text' ],
+			label: 'Archive Meta',
+			group: 'archive',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'archive-title': {
+			name: 'archive-title',
+			categories: [ 'text' ],
+			label: 'Archive Title',
+			group: 'archive',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'archive-url': {
+			name: 'archive-url',
+			categories: [ 'url' ],
+			label: 'Archive URL',
+			group: 'archive',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'author-info': {
+			name: 'author-info',
+			categories: [ 'text' ],
+			label: 'Author Info',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'author-meta': {
+			name: 'author-meta',
+			categories: [ 'text' ],
+			label: 'Author Meta',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'author-name': {
+			name: 'author-name',
+			categories: [ 'text' ],
+			label: 'Author Name',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'author-profile-picture': {
+			name: 'author-profile-picture',
+			categories: [ 'image', 'media' ],
+			label: 'Author Profile Picture',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'author-url': {
+			name: 'author-url',
+			categories: [ 'url' ],
+			label: 'Author URL',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'comments-number': {
+			name: 'comments-number',
+			categories: [ 'text', 'number' ],
+			label: 'Comments Number',
+			group: 'comments',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'comments-url': {
+			name: 'comments-url',
+			categories: [ 'url' ],
+			label: 'Comments URL',
+			group: 'comments',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'page-title': {
+			name: 'page-title',
+			categories: [ 'text' ],
+			label: 'Page Title',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-date': {
+			name: 'post-date',
+			categories: [ 'text' ],
+			label: 'Post Date',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-excerpt': {
+			name: 'post-excerpt',
+			categories: [ 'text' ],
+			label: 'Post Excerpt',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-featured-image': {
+			name: 'post-featured-image',
+			categories: [ 'image', 'media' ],
+			label: 'Featured Image',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-gallery': {
+			name: 'post-gallery',
+			categories: [ 'gallery' ],
+			label: 'Post Image Attachments',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-id': {
+			name: 'post-id',
+			categories: [ 'text', 'number' ],
+			label: 'Post ID',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-time': {
+			name: 'post-time',
+			categories: [ 'text' ],
+			label: 'Post Time',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-title': {
+			name: 'post-title',
+			categories: [ 'text' ],
+			label: 'Post Title',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-url': {
+			name: 'post-url',
+			categories: [ 'url' ],
+			label: 'Post URL',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'site-logo': {
+			name: 'site-logo',
+			categories: [ 'image' ],
+			label: 'Site Logo',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'site-tagline': {
+			name: 'site-tagline',
+			categories: [ 'text' ],
+			label: 'Site Tagline',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'site-title': {
+			name: 'site-title',
+			categories: [ 'text' ],
+			label: 'Site Title',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'site-url': {
+			name: 'site-url',
+			categories: [ 'url' ],
+			label: 'Site URL',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'internal-url': {
+			name: 'internal-url',
+			categories: [ 'url' ],
+			label: 'Internal URL',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'current-date-time': {
+			name: 'current-date-time',
+			categories: [ 'text' ],
+			label: 'Current Date Time',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'reload-page': {
+			name: 'reload-page',
+			categories: [ 'url' ],
+			label: 'Reload Page',
+			group: 'action',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'request-arg': {
+			name: 'request-arg',
+			categories: [ 'text', 'post_meta' ],
+			label: 'Request Parameter',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		lightbox: {
+			name: 'lightbox',
+			categories: [ 'url' ],
+			label: 'Lightbox',
+			group: 'action',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'featured-image-data': {
+			name: 'featured-image-data',
+			categories: [ 'text', 'url', 'post_meta' ],
+			label: 'Featured Image Data',
+			group: 'media',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		shortcode: {
+			name: 'shortcode',
+			categories: [ 'text', 'number', 'url', 'post_meta', 'datetime' ],
+			label: 'Shortcode',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'contact-url': {
+			name: 'contact-url',
+			categories: [ 'url' ],
+			label: 'Contact URL',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'user-info': {
+			name: 'user-info',
+			categories: [ 'text' ],
+			label: 'User Info',
+			group: 'site',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'user-profile-picture': {
+			name: 'user-profile-picture',
+			categories: [ 'image', 'media' ],
+			label: 'User Profile Picture',
+			group: 'author',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags',
+			},
+		},
+		'post-custom-field': {
+			name: 'post-custom-field',
+			categories: [ 'text', 'url', 'post_meta', 'color', 'datetime', 'media', 'svg' ],
+			label: 'Post Custom Field',
+			group: 'post',
+			meta: {
+				origin: 'elementor',
+				required_license: 'dynamic-tags-acf',
+			},
+		},
+	},
+	groups: {
+		base: {
+			title: 'Base Tags',
+		},
+		post: {
+			title: 'Post',
+		},
+		archive: {
+			title: 'Archive',
+		},
+		site: {
+			title: 'Site',
+		},
+		media: {
+			title: 'Media',
+		},
+		action: {
+			title: 'Actions',
+		},
+		author: {
+			title: 'Author',
+		},
+		comments: {
+			title: 'Comments',
+		},
+		woocommerce: {
+			title: 'WooCommerce',
+		},
+	},
+};
