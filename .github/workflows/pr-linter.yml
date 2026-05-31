@@ -2,14 +2,6 @@ name: PR Linter
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -41,7 +33,7 @@ jobs:
 
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { execFileSync } = require('node:child_process');

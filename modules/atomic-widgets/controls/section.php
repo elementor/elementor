@@ -63,9 +63,10 @@ class Section implements JsonSerializable {
 		return [
 			'type' => 'section',
 			'value' => [
-				'label' => $this->label,
+				'id'          => $this->id,
+				'label'       => $this->label,
 				'description' => $this->description,
-				'items' => $this->items,
+				'items'       => $this->items,
 			],
 		];
 	}

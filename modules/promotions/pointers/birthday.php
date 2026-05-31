@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Birthday {
 	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-birthday/';
-	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const SEEN_TODAY_KEY = '_elementor-2025-birthday';
-	const DISMISS_ACTION_KEY = 'birthday_pointer_2025';
+	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor-home';
+	const SEEN_TODAY_KEY = '_elementor-2026-birthday';
+	const DISMISS_ACTION_KEY = 'birthday_pointer_2026';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
@@ -27,8 +27,8 @@ class Birthday {
 		$this->set_seen_today();
 		$this->enqueue_dependencies();
 
-		$pointer_content = '<h3>' . esc_html__( 'Elementor’s 9th Birthday sale!', 'elementor' ) . '</h3>';
-		$pointer_content .= '<p>' . esc_html__( 'Celebrate Elementor’s birthday with us—exclusive deals are available now.', 'elementor' );
+		$pointer_content = '<h3>' . esc_html__( 'Elementor’s 10th Birthday sale!', 'elementor' ) . '</h3>';
+		$pointer_content .= '<p>' . esc_html__( 'Get more capabilities for less with exclusive discounts. Limited time only.', 'elementor' );
 		$pointer_content .= sprintf(
 			'<p><a class="button button-primary" href="%s" target="_blank">%s</a></p>',
 			self::PROMOTION_URL,
@@ -80,8 +80,8 @@ class Birthday {
 	}
 
 	private static function is_campaign_time() {
-		$start = new \DateTime( '2025-06-10 12:00:00', new \DateTimeZone( 'UTC' ) );
-		$end = new \DateTime( '2025-06-17 03:59:00', new \DateTimeZone( 'UTC' ) );
+		$start = new \DateTime( '2026-06-15 10:00:00', new \DateTimeZone( 'UTC' ) );
+		$end = new \DateTime( '2026-06-17 03:59:00', new \DateTimeZone( 'UTC' ) );
 		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
 
 		return $now >= $start && $now <= $end;
