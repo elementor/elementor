@@ -70,10 +70,22 @@ export interface DeployResult {
 
 export interface WpPost {
 	id: number;
+	link?: string;
+}
+
+export interface CreatePagesResult {
+	pageIdMap: Record< string, number >;
+	pageUrlMap: Record< string, string >;
 }
 
 export interface WpMenu {
 	id: number;
+	slug: string;
+}
+
+export interface CreatedMenus {
+	header?: WpMenu;
+	footer?: WpMenu;
 }
 
 export interface ElementorSettingResponse {
