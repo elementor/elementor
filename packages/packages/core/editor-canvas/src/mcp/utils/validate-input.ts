@@ -1,5 +1,5 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { type PropsSchema, type PropValue, Schema } from '@elementor/editor-props';
+import { type PropsSchema, Schema } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
 import { STYLE_SCHEMA_URI } from '../resources/widgets-schema-resource';
@@ -50,10 +50,7 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName, propSchema ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const converted = Schema.propFromLlm( propValue as PropValue, {
-					forceKey: propSchema.key,
-				} );
-				const { valid } = Schema.validatePropValue( propSchema, converted );
+				const { valid } = Schema.validateLlmJson( propSchema, propValue );
 				if ( ! valid ) {
 					errors.push(
 						`Invalid property "${ propName }". Validate input with resource [${ STYLE_SCHEMA_URI.replace(

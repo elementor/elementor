@@ -1,6 +1,6 @@
-import { initLlmDialect } from '../init';
 import { type ObjectPropType, type UnionPropType } from '../../types';
 import { propTypeToLlmJsonSchema } from '../../utils/props-to-llm-schema';
+import { initLlmDialect } from '../init';
 
 const stringPropType = {
 	kind: 'string',
@@ -82,13 +82,13 @@ describe( 'html-v3 LLM schema dialect', () => {
 
 		// Act
 		const schema = propTypeToLlmJsonSchema( titlePropType );
-		const htmlV3Branch = schema.anyOf?.find( ( branch ) => branch.properties?.$$type?.const === 'html-v3' );
-		const contentSchema = htmlV3Branch?.properties?.value?.properties?.content;
+		const contentSchema = schema.properties?.value?.properties?.content;
 
 		// Assert
 		expect( schema.allowBind ).toBe( true );
-		expect( htmlV3Branch?.properties?.bindTo ).toBeDefined();
-		expect( htmlV3Branch?.properties?.bindTo?.description ).toContain( expectedCategories );
+		expect( schema.properties?.$$type?.const ).toBe( 'html-v3' );
+		expect( schema.properties?.bindTo ).toBeDefined();
+		expect( schema.properties?.bindTo?.description ).toContain( expectedCategories );
 		expect( contentSchema?.properties?.bindTo ).toBeUndefined();
 		expect( contentSchema?.allowBind ).toBeUndefined();
 	} );
@@ -96,15 +96,11 @@ describe( 'html-v3 LLM schema dialect', () => {
 	it( 'should strip dynamic from html-v3 nested content union', () => {
 		// Arrange
 		const schema = propTypeToLlmJsonSchema( titlePropType );
-		const htmlV3Branch = schema.anyOf?.find( ( branch ) => branch.properties?.$$type?.const === 'html-v3' );
-		const contentSchema = htmlV3Branch?.properties?.value?.properties?.content;
-
-		// Act
-		const contentBranches = contentSchema?.anyOf ?? [];
+		const contentSchema = schema.properties?.value?.properties?.content;
 
 		// Assert
-		expect( contentBranches ).toHaveLength( 1 );
-		expect( contentBranches[ 0 ]?.properties?.$$type?.const ).toBe( 'string' );
+		expect( contentSchema?.anyOf ).toBeUndefined();
+		expect( contentSchema?.properties?.$$type?.const ).toBe( 'string' );
 	} );
 
 	it( 'should not add bindTo on nested unions inside object shapes', () => {

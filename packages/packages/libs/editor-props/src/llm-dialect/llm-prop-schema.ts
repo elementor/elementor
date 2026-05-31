@@ -55,6 +55,7 @@ const valueAdaptersRegistry: Map< string, ReturnType< typeof createValueAdapterC
 const globalValueAdapter = createValueAdapterChain();
 const schemaDialectAdapters: DialectSchemaAdapter[] = [];
 const schemaDialectAdapterIds = new Set< string >();
+let schemaCleanup: ( ( schema: JsonSchema7 ) => JsonSchema7 ) | null = null;
 
 class LLMDialectAdapterClass {
 	registerSchemaDialect( adapter: DialectSchemaAdapter ) {
@@ -64,6 +65,14 @@ class LLMDialectAdapterClass {
 
 		schemaDialectAdapterIds.add( adapter.id );
 		schemaDialectAdapters.push( adapter );
+	}
+
+	registerSchemaCleanup( cleanup: ( schema: JsonSchema7 ) => JsonSchema7 ) {
+		if ( schemaCleanup ) {
+			throw new Error( 'Duplicate LLM schema cleanup registration.' );
+		}
+
+		schemaCleanup = cleanup;
 	}
 
 	register( key: PropTypeKey, adapter: DialectValueAdapter ) {
@@ -78,9 +87,11 @@ class LLMDialectAdapterClass {
 	}
 
 	toDialectSchema( currentSchema: JsonSchema7, propType: PropType, context?: LlmDialectSchemaContext ) {
-		return schemaDialectAdapters
+		const dialectSchema = schemaDialectAdapters
 			.filter( ( { matches } ) => matches( propType ) )
 			.reduce( ( payload, { toDialectSchema } ) => toDialectSchema( payload, propType, context ), currentSchema );
+
+		return schemaCleanup ? schemaCleanup( dialectSchema ) : dialectSchema;
 	}
 
 	toPropValue( value: unknown ): PropValue {

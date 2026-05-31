@@ -1,10 +1,43 @@
+import { propTypeToLlmJsonSchema } from '../../utils/props-to-llm-schema';
 import { initLlmDialect } from '../init';
 import { LLMDialectAdapter } from '../llm-prop-schema';
-import {
-	isHtmlV3PropTypeDefinition,
-	isSizePropTypeDefinition,
-	isUnionWithDynamicPropType,
-} from '../prop-type-schema-matchers';
+
+const SIZE_PROP_TYPE = {
+	kind: 'object',
+	key: 'size',
+	settings: {
+		available_units: [ 'px', 'rem', 'em' ],
+	},
+	shape: {
+		unit: {
+			kind: 'string',
+			key: 'string',
+			settings: {
+				enum: [ 'px', 'rem', 'em', '%' ],
+			},
+		},
+		size: {
+			kind: 'union',
+			prop_types: {
+				number: { kind: 'number', key: 'number', settings: {} },
+				string: { kind: 'string', key: 'string', settings: {} },
+			},
+		},
+	},
+	meta: {},
+};
+
+const FLAT_SIZE_INNER_SCHEMA = {
+	type: 'object',
+	properties: {
+		unit: { type: 'string', enum: [ 'px', 'rem', 'em' ] },
+		size: {
+			oneOf: [ { type: 'number' }, { type: 'string' } ],
+		},
+	},
+	required: [ 'unit', 'size' ],
+	additionalProperties: false,
+};
 
 describe( 'LLM schema dialect registration', () => {
 	beforeAll( () => {
@@ -16,7 +49,7 @@ describe( 'LLM schema dialect registration', () => {
 		const duplicateRegistration = () =>
 			LLMDialectAdapter.registerSchemaDialect( {
 				id: 'size',
-				matches: isSizePropTypeDefinition,
+				matches: () => true,
 				toDialectSchema: ( schema ) => schema,
 			} );
 
@@ -25,11 +58,73 @@ describe( 'LLM schema dialect registration', () => {
 		expect( duplicateRegistration ).toThrow( 'Duplicate LLM schema dialect registration: "size".' );
 	} );
 
-	it( 'should match only the expected schema dialects for representative prop types', () => {
+	it( 'should throw when registering duplicate schema cleanup', () => {
 		// Arrange
-		const sizePropType = { kind: 'object', key: 'size', shape: {} };
-		const gridTrackSizePropType = { kind: 'object', key: 'grid-track-size', shape: {} };
-		const htmlV3PropType = { kind: 'object', key: 'html-v3', shape: {} };
+		const duplicateRegistration = () => LLMDialectAdapter.registerSchemaCleanup( ( schema ) => schema );
+
+		// Act
+		// Assert
+		expect( duplicateRegistration ).toThrow( 'Duplicate LLM schema cleanup registration.' );
+	} );
+
+	it( 'should run schema cleanup after dialect adapters registered later', () => {
+		// Arrange
+		LLMDialectAdapter.registerSchemaDialect( {
+			id: 'test-single-anyof-wrapper',
+			matches: ( propType ) => propType.key === 'string',
+			toDialectSchema: ( schema ) => ( {
+				description: 'Late dialect description',
+				anyOf: [ schema ],
+			} ),
+		} );
+		const stringPropType = { kind: 'string', key: 'string', settings: {} };
+
+		// Act
+		const schema = propTypeToLlmJsonSchema( stringPropType );
+
+		// Assert
+		expect( schema.anyOf ).toBeUndefined();
+		expect( schema.description ).toBe( 'Late dialect description' );
+		expect( schema.properties?.$$type?.const ).toBe( 'string' );
+	} );
+
+	it( 'should flatten size inner schema for size and grid-track-size prop types', () => {
+		// Arrange
+		const gridTrackSizePropType = {
+			...SIZE_PROP_TYPE,
+			key: 'grid-track-size',
+		};
+
+		// Act
+		const sizeSchema = propTypeToLlmJsonSchema( SIZE_PROP_TYPE );
+		const gridTrackSchema = propTypeToLlmJsonSchema( gridTrackSizePropType );
+
+		// Assert
+		expect( sizeSchema.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
+		expect( gridTrackSchema.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
+	} );
+
+	it( 'should flatten nested size fields inside object prop types', () => {
+		// Arrange
+		const dimensionsPropType = {
+			kind: 'object',
+			key: 'dimensions',
+			settings: {},
+			shape: {
+				top: SIZE_PROP_TYPE,
+			},
+			meta: {},
+		};
+
+		// Act
+		const schema = propTypeToLlmJsonSchema( dimensionsPropType );
+
+		// Assert
+		expect( schema.properties?.value?.properties?.top?.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
+	} );
+
+	it( 'should add bindTo only for unions that include dynamic', () => {
+		// Arrange
 		const dynamicUnionPropType = {
 			kind: 'union',
 			prop_types: {
@@ -40,26 +135,33 @@ describe( 'LLM schema dialect registration', () => {
 		const sizeUnionPropType = {
 			kind: 'union',
 			prop_types: {
-				size: { kind: 'object', key: 'size', shape: {} },
+				size: SIZE_PROP_TYPE,
 				'global-size-variable': { kind: 'string', key: 'global-size-variable', settings: {} },
 			},
 		};
-		const dimensionsPropType = { kind: 'object', key: 'dimensions', shape: {} };
 
 		// Act
-		const sizeMatches = isSizePropTypeDefinition( sizePropType );
-		const gridTrackMatches = isSizePropTypeDefinition( gridTrackSizePropType );
-		const htmlMatches = isHtmlV3PropTypeDefinition( htmlV3PropType );
-		const dynamicUnionMatches = isUnionWithDynamicPropType( dynamicUnionPropType );
-		const sizeUnionMatches = isUnionWithDynamicPropType( sizeUnionPropType );
-		const dimensionsMatches = isSizePropTypeDefinition( dimensionsPropType );
+		const dynamicUnionSchema = propTypeToLlmJsonSchema( dynamicUnionPropType );
+		const sizeUnionSchema = propTypeToLlmJsonSchema( sizeUnionPropType );
 
 		// Assert
-		expect( sizeMatches ).toBe( true );
-		expect( gridTrackMatches ).toBe( true );
-		expect( htmlMatches ).toBe( true );
-		expect( dynamicUnionMatches ).toBe( true );
-		expect( sizeUnionMatches ).toBe( false );
-		expect( dimensionsMatches ).toBe( false );
+		expect( dynamicUnionSchema.allowBind ).toBe( true );
+		expect( dynamicUnionSchema.anyOf ).toBeUndefined();
+		expect( dynamicUnionSchema.properties?.$$type?.const ).toBe( 'string' );
+		expect( dynamicUnionSchema.properties?.bindTo ).toBeDefined();
+		expect( sizeUnionSchema.allowBind ).toBeUndefined();
+		expect( sizeUnionSchema.anyOf ).toHaveLength( 2 );
+		expect( sizeUnionSchema.anyOf?.[ 0 ]?.properties?.bindTo ).toBeUndefined();
+	} );
+
+	it( 'should not flatten non-size object prop types', () => {
+		// Arrange
+		const dimensionsPropType = { kind: 'object', key: 'dimensions', shape: {}, meta: {} };
+
+		// Act
+		const schema = propTypeToLlmJsonSchema( dimensionsPropType );
+
+		// Assert
+		expect( schema.properties?.value?.properties?.unit ).toBeUndefined();
 	} );
 } );

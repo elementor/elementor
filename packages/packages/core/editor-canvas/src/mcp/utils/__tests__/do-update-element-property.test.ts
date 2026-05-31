@@ -1,5 +1,11 @@
-import { getWidgetsCache, updateElementSettings } from '@elementor/editor-elements';
+import {
+	getElementStyles,
+	getWidgetsCache,
+	updateElementSettings,
+	updateElementStyle,
+} from '@elementor/editor-elements';
 import { Schema } from '@elementor/editor-props';
+import { getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
 import { doUpdateElementProperty } from '../do-update-element-property';
@@ -16,12 +22,13 @@ jest.mock( '@elementor/editor-props', () => ( {
 	getPropSchemaFromCache: jest.fn(),
 	Schema: {
 		propFromLlm: jest.fn( ( value: unknown ) => value ),
-		validatePropValue: jest.fn(),
+		validateLlmJson: jest.fn(),
 	},
 } ) );
 
 jest.mock( '@elementor/editor-styles', () => ( {
 	getStylesSchema: jest.fn( () => ( {} ) ),
+	getVariantByMeta: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -30,8 +37,10 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 const ELEMENT_ID = 'test-element-id';
 const ELEMENT_TYPE = 'atomic-heading';
-const EXPECTED_JSON_SCHEMA_SNIPPET = '{"type":"object"}';
 const PROPERTY_NAME = 'title';
+const LOCAL_STYLE_ID = 'local-style-id';
+const EXISTING_CUSTOM_CSS = 'padding: 2rem;';
+const ADDITIONAL_CUSTOM_CSS = 'font-size: 1.5rem;';
 const PROP_SCHEMA_ENTRY = { key: 'titlePropKey' };
 
 const widgetsCacheFixture = {
@@ -57,23 +66,22 @@ describe( 'doUpdateElementProperty', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( widgetsCacheFixture );
 		// @ts-ignore: Mock values for test
 		jest.mocked( Schema.propFromLlm ).mockImplementation( ( value: unknown ) => value );
-		jest.mocked( Schema.validatePropValue ).mockReset();
+		jest.mocked( Schema.validateLlmJson ).mockReset();
 	} );
 
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'throws when Schema.validatePropValue reports invalid PropValue and does not persist', () => {
+	it( 'throws when Schema.validateLlmJson reports invalid LLM value and does not persist', () => {
 		// Arrange
 		const propertyValue = { invalid: true };
 		const convertedValue = { $$type: 'string', value: 'converted' };
 		jest.mocked( Schema.propFromLlm ).mockReturnValue( convertedValue );
-		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
-			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
+		jest.mocked( Schema.validateLlmJson ).mockReturnValue( {
+			jsonSchema: { type: 'object' },
 			valid: false,
-			errorMessages: 'error',
-			errors: [],
+			errors: [ 'root: invalid' ],
 		} );
 
 		// Act
@@ -91,24 +99,23 @@ describe( 'doUpdateElementProperty', () => {
 
 		// Assert
 		expect( thrown ).toBeInstanceOf( Error );
-		expect( ( thrown as Error ).message ).toMatch( /Invalid PropValue/ );
+		expect( ( thrown as Error ).message ).toMatch( /Invalid LLM PropValue/ );
 		expect( ( thrown as Error ).message ).toContain( ELEMENT_ID );
 		expect( ( thrown as Error ).message ).toContain( PROP_SCHEMA_ENTRY.key );
-		expect( ( thrown as Error ).message ).toContain( EXPECTED_JSON_SCHEMA_SNIPPET );
-		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, convertedValue );
+		expect( Schema.validateLlmJson ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
+		expect( Schema.propFromLlm ).not.toHaveBeenCalled();
 		expect( updateElementSettings ).not.toHaveBeenCalled();
 		expect( __privateRunCommandSync ).not.toHaveBeenCalled();
 	} );
 
-	it( 'updates settings when Schema.validatePropValue reports valid PropValue', () => {
+	it( 'updates settings when Schema.validateLlmJson reports valid LLM value', () => {
 		// Arrange
 		const propertyValue = 'resolved-title';
 		const convertedValue = { $$type: 'string', value: propertyValue };
 		jest.mocked( Schema.propFromLlm ).mockReturnValue( convertedValue );
-		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
-			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
+		jest.mocked( Schema.validateLlmJson ).mockReturnValue( {
+			jsonSchema: { type: 'object' },
 			valid: true,
-			errorMessages: [],
 			errors: [],
 		} );
 
@@ -121,7 +128,7 @@ describe( 'doUpdateElementProperty', () => {
 		} );
 
 		// Assert
-		expect( Schema.validatePropValue ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, convertedValue );
+		expect( Schema.validateLlmJson ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
 		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
 		expect( updateElementSettings ).toHaveBeenCalledWith( {
 			id: ELEMENT_ID,
@@ -134,6 +141,42 @@ describe( 'doUpdateElementProperty', () => {
 			'document/save/set-is-modified',
 			{ status: true },
 			{ internal: true }
+		);
+	} );
+
+	it( 'merges incoming custom_css with existing local style custom_css', () => {
+		// Arrange
+		jest.mocked( getElementStyles ).mockReturnValue( {
+			[ LOCAL_STYLE_ID ]: {
+				id: LOCAL_STYLE_ID,
+				label: 'local',
+				type: 'class',
+				variants: [],
+			},
+		} );
+		jest.mocked( getVariantByMeta ).mockReturnValue( {
+			meta: { breakpoint: 'desktop', state: null },
+			props: {},
+			custom_css: { raw: btoa( EXISTING_CUSTOM_CSS ) },
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: '_styles',
+			propertyValue: {
+				custom_css: ADDITIONAL_CUSTOM_CSS,
+			},
+		} );
+
+		// Assert
+		expect( updateElementStyle ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				custom_css: {
+					raw: btoa( `${ EXISTING_CUSTOM_CSS }\n${ ADDITIONAL_CUSTOM_CSS }` ),
+				},
+			} )
 		);
 	} );
 } );

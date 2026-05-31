@@ -12,7 +12,6 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
@@ -67,33 +66,14 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const {
-					invalidStyles,
-					configErrors,
-					rootContainers: generatedRootContainers,
-				} = await compositionBuilder.build( targetContainer );
+				const { configErrors, rootContainers: generatedRootContainers } =
+					await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
-				} else {
-					Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
-						const customCss = {
-							value: rawCssRules.join( ';\n' ),
-						};
-						doUpdateElementProperty( {
-							elementId,
-							propertyName: '_styles',
-							propertyValue: {
-								_styles: {
-									custom_css: customCss,
-								},
-							},
-							elementType: 'widget',
-						} );
-					} );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );

@@ -117,9 +117,11 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 				errors.push( `Property "${ key }" does not exist in styles schema.` );
 				return;
 			}
-			const { valid, jsonSchema } = Schema.validatePropValue( propType, props[ key ] );
+			const { valid, jsonSchema } = Schema.validateLlmJson( propType, props[ key ] );
 			if ( ! valid ) {
-				errors.push( `- Property "${ key }" has invalid value\n  Expected schema: ${ jsonSchema }\n` );
+				errors.push(
+					`- Property "${ key }" has invalid value\n  Expected schema: ${ JSON.stringify( jsonSchema ) }\n`
+				);
 			}
 		} );
 	} );

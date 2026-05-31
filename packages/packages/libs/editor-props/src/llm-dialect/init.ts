@@ -1,3 +1,4 @@
+import { registerSchemaCleanupLlmDialectAdapter } from './cleanup-llm-json-schema';
 import {
 	type LlmDynamicTagMetadata,
 	registerLlmDialectDynamicTags,
@@ -32,5 +33,6 @@ export const initLlmDialect = ( options: InitLlmDialectOptions = {} ) => {
 	registerDynamicPropTypeLLMDialectAdapter();
 	registerHtmlV3LLMDialectAdapter();
 	registerSizeLLMDialectAdapter();
+	registerSchemaCleanupLlmDialectAdapter();
 	initialized = true;
 };

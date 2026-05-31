@@ -1,14 +1,29 @@
-import { type CreateElementParams, type V1Element, type V1ElementConfig } from '@elementor/editor-elements';
+import {
+	type CreateElementParams,
+	getWidgetsCache,
+	type V1Element,
+	type V1ElementConfig,
+} from '@elementor/editor-elements';
 
 import { CompositionBuilder } from '../composition-builder';
 
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getWidgetsCache: jest.fn(),
+} ) );
+
 const ROOT_CHILD_TAG = 'column';
+const WIDGET_TAG = 'atomic-heading';
 const GENERATED_ELEMENT_ID = 'generated-element-id';
 const CONFIG_ID = 'cfg-a';
 const ELEMENT_CONFIG_PROPERTY = 'title';
-const ELEMENT_CONFIG_VALUE = 'configured-value';
+const ELEMENT_CONFIG_VALUE = {
+	$$type: 'string',
+	value: 'configured-value',
+};
 
 const xmlStringWithConfiguration = `<${ ROOT_CHILD_TAG } configuration-id="${ CONFIG_ID }" />`;
+const xmlStringWithWidgetConfiguration = `<${ WIDGET_TAG } configuration-id="${ CONFIG_ID }" />`;
 
 const createElementConfigPayload = () => ( {
 	[ CONFIG_ID ]: {
@@ -22,6 +37,22 @@ const createMinimalWidgetsCache = () =>
 			elType: 'column',
 		},
 	} ) as Record< string, { elType: string } >;
+
+const createWidgetsCacheWithAtomicPropsSchema = (): Record< string, V1ElementConfig > =>
+	( {
+		[ WIDGET_TAG ]: {
+			title: WIDGET_TAG,
+			controls: {},
+			elType: 'widget',
+			atomic_props_schema: {
+				title: {
+					kind: 'string',
+					key: 'string',
+					settings: {},
+				},
+			},
+		},
+	} ) as unknown as Record< string, V1ElementConfig >;
 
 const FORM_WIDGETS_CACHE_WITH_REQUIRED_CHILDREN = {
 	'e-form': {
@@ -176,12 +207,13 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 		const getContainer = jest
 			.fn()
 			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
-		const builder = CompositionBuilder.fromXMLString( xmlStringWithConfiguration, {
+		jest.mocked( getWidgetsCache ).mockReturnValue( createWidgetsCacheWithAtomicPropsSchema() );
+		const builder = CompositionBuilder.fromXMLString( xmlStringWithWidgetConfiguration, {
 			createElement,
 			deleteElement,
 			getContainer,
 			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
-			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
+			getWidgetsCache: jest.fn().mockReturnValue( createWidgetsCacheWithAtomicPropsSchema() ),
 			doUpdateElementProperty,
 		} );
 		builder.setElementConfig( createElementConfigPayload() );
@@ -197,7 +229,7 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 			elementId: GENERATED_ELEMENT_ID,
 			propertyName: ELEMENT_CONFIG_PROPERTY,
 			propertyValue: ELEMENT_CONFIG_VALUE,
-			elementType: ROOT_CHILD_TAG,
+			elementType: WIDGET_TAG,
 		} );
 	} );
 

@@ -1,6 +1,45 @@
+import { type PropType } from '../types';
+import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { LLMDialectAdapter } from './llm-prop-schema';
-import { isHtmlV3PropTypeDefinition } from './prop-type-schema-matchers';
-import { sanitizeHtmlV3LlmSchema } from './sanitize-html-v3-llm-schema';
+
+const isHtmlV3PropTypeDefinition = ( propType: PropType ): boolean => propType.key === 'html-v3';
+
+const stripBindToFromSchema = ( schema: JsonSchema7 ): JsonSchema7 => {
+	const result = structuredClone( schema );
+	delete result.allowBind;
+
+	if ( result.properties?.bindTo ) {
+		const { bindTo: _bindTo, ...remainingProperties } = result.properties;
+		result.properties = remainingProperties;
+	}
+
+	if ( Array.isArray( result.anyOf ) ) {
+		result.anyOf = result.anyOf.map( stripBindToFromSchema );
+	}
+
+	return result;
+};
+
+const sanitizeHtmlV3LlmSchema = ( schema: JsonSchema7 ): JsonSchema7 => {
+	const result = structuredClone( schema );
+	const contentSchema = result.properties?.value?.properties?.content as JsonSchema7 | undefined;
+
+	if ( ! contentSchema ) {
+		return result;
+	}
+
+	let sanitizedContent = stripBindToFromSchema( contentSchema );
+
+	if ( Array.isArray( sanitizedContent.anyOf ) ) {
+		sanitizedContent = {
+			...sanitizedContent,
+			anyOf: sanitizedContent.anyOf.filter( ( branch ) => branch.properties?.$$type?.const === 'string' ),
+		};
+	}
+
+	result.properties.value.properties.content = sanitizedContent;
+	return result;
+};
 
 export function registerHtmlV3LLMDialectAdapter() {
 	LLMDialectAdapter.registerSchemaDialect( {

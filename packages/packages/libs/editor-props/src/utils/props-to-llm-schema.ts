@@ -1,4 +1,8 @@
-import { LLMDialectAdapter, type DialectPropAdapter, type LlmDialectSchemaContext } from '../llm-dialect/llm-prop-schema';
+import {
+	type DialectPropAdapter,
+	LLMDialectAdapter,
+	type LlmDialectSchemaContext,
+} from '../llm-dialect/llm-prop-schema';
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
@@ -99,6 +103,7 @@ function convertPlainPropType(
  * @param propType   The union prop type to convert
  * @param baseSchema Base schema to extend
  * @param dialect
+ * @param context
  */
 function convertUnionPropType(
 	propType: PropType & { kind: 'union' },

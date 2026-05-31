@@ -6,13 +6,19 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
-import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
+import { type CustomCss, getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
+import { mergeCustomCssText, readStoredCustomCssText } from './merge-custom-css';
+
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
+const LOCAL_STYLE_META = {
+	breakpoint: 'desktop',
+	state: null,
+} as const;
 type OwnParams = {
 	elementId: string;
 	elementType: string;
@@ -30,10 +36,6 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
 	} );
 }
 
-/*
- * This function expects a PropValue bag for updating an element.
- * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
- */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
 	if ( propertyName === '_styles' ) {
@@ -49,9 +51,21 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
 				}
+				const { valid, jsonSchema } = Schema.validateLlmJson( styleSchema[ key ], val );
+				if ( ! valid ) {
+					throw new Error(
+						`Invalid LLM style value for "${ key }" on elementId: ${ elementId }. PropValue: ${ JSON.stringify(
+							val
+						) }\nExpected Schema: ${ JSON.stringify( jsonSchema ) }`
+					);
+				}
 				return [ key, resolvePropValue( val, propKey ) ];
 			} )
 		);
+		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
+		const existingCustomCssText = localStyle
+			? readStoredCustomCssText( getVariantByMeta( localStyle, LOCAL_STYLE_META )?.custom_css?.raw )
+			: '';
 		let customCss: CustomCss | undefined;
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
@@ -63,9 +77,12 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! customCssValue ) {
 					customCssValue = '';
 				}
-				customCss = {
-					raw: btoa( customCssValue as string ),
-				};
+				const mergedCustomCssText = mergeCustomCssText( existingCustomCssText, customCssValue as string );
+				if ( mergedCustomCssText ) {
+					customCss = {
+						raw: btoa( mergedCustomCssText ),
+					};
+				}
 				return;
 			}
 			const isSupported = !! propertyRawSchema;
@@ -83,7 +100,6 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			}
 		} );
 		delete transformedStyleValues.custom_css;
-		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
 			createElementStyle( {
 				elementId,
@@ -127,16 +143,17 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			) }`
 		);
 	}
-	const propKey = elementPropSchema[ propertyName ].key;
-	const value = resolvePropValue( propertyValue, propKey );
-	const { valid, jsonSchema } = Schema.validatePropValue( elementPropSchema[ propertyName ], value );
+	const propSchema = elementPropSchema[ propertyName ];
+	const propKey = propSchema.key;
+	const { valid, jsonSchema } = Schema.validateLlmJson( propSchema, propertyValue );
 	if ( ! valid ) {
 		throw new Error(
-			`Invalid PropValue for elementId: ${ elementId }. PropKey: ${ propKey }, PropValue: ${ JSON.stringify(
-				value
-			) }\nExpected Schema: ${ jsonSchema }`
+			`Invalid LLM PropValue for elementId: ${ elementId }. PropKey: ${ propKey }, PropValue: ${ JSON.stringify(
+				propertyValue
+			) }\nExpected Schema: ${ JSON.stringify( jsonSchema ) }`
 		);
 	}
+	const value = resolvePropValue( propertyValue, propKey );
 	updateElementSettings( {
 		id: elementId,
 		props: {
