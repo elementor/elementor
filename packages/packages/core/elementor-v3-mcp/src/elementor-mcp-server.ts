@@ -2,6 +2,7 @@ import { getAngieSdk } from '@elementor/editor-mcp';
 import { waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { setupEditorSelectionListener } from './editor-selection-listener';
 import { addV3DescriptionResource, V3_DESCRIPTION } from './mcp-description-resource';
 import { addElementorResources } from './resources';
 import { addAiTool, addDynamicTool, addPageTool, addRoutesTool, addStylingTool, addUiTool } from './tools';
@@ -36,6 +37,8 @@ export async function createElementorServer(): Promise< McpServer > {
 	addRoutesTool( server );
 	addAiTool( server );
 	addStylingTool( server );
+
+	setupEditorSelectionListener( server );
 
 	const sdk = getAngieSdk();
 	await sdk.waitForReady();

@@ -72,6 +72,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Inline_Editing_Control::bind_to( 'text' )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) )
