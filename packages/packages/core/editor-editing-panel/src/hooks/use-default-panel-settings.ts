@@ -9,7 +9,7 @@ export type { Defaults as ElementPanelDefaults };
 
 const fallbackEditorSettings: Defaults = {
 	defaultSectionsExpanded: {
-		settings: [ 'Content', 'Settings' ],
+		settings: [ 'content', 'settings' ],
 		style: [],
 	},
 	defaultTab: 'settings',
