@@ -2,6 +2,7 @@ import { type PointerEvent as ReactPointerEvent, useCallback, useRef } from 'rea
 
 import { isRtl } from '../lib/direction';
 import { applyDragDelta, type DragBounds, physicalToLogicalDelta } from '../lib/drag-math';
+import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type LogicalPosition, type LogicalSize } from '../types';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
@@ -12,13 +13,6 @@ type DragSession = {
 	startClientY: number;
 	startPosition: LogicalPosition;
 };
-
-const APP_BAR_HEIGHT_PX = 48;
-const SIDE_PANEL_SELECTOR = '#elementor-panel';
-
-function getSidePanelInlineSize(): number {
-	return document.querySelector< HTMLElement >( SIDE_PANEL_SELECTOR )?.getBoundingClientRect().width ?? 0;
-}
 
 function getDragBounds( size: LogicalSize | undefined ): DragBounds {
 	return {
