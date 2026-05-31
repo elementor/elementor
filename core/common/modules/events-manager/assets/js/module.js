@@ -31,9 +31,7 @@ export default class extends elementorModules.Module {
 					persistence: 'localStorage',
 					autocapture: false,
 					flags: true,
-					api_hosts: {
-						flags: 'https://api-eu.mixpanel.com',
-					},
+					api_host: 'https://api-eu.mixpanel.com',
 					loaded: onLoaded,
 					record_sessions_percent: 0,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds

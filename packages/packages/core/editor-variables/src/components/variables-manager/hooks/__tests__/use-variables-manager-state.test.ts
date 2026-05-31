@@ -35,6 +35,42 @@ describe( 'useVariablesManagerState', () => {
 		expect( result.current.variables ).toEqual( updatedVariables );
 	} );
 
+	it( 'does NOT set isDirty when handleOnChange is called with identical data', () => {
+		const initialVariables = {
+			'var-1': { label: 'Primary', value: '#ff0000', type: 'color' },
+		};
+
+		jest.mocked( getVariables ).mockReturnValue( initialVariables );
+
+		const { result } = renderHook( () => useVariablesManagerState() );
+
+		act( () => {
+			result.current.handleOnChange( {
+				'var-1': { label: 'Primary', value: '#ff0000', type: 'color' },
+			} );
+		} );
+
+		expect( result.current.isDirty ).toBe( false );
+	} );
+
+	it( 'sets isDirty when handleOnChange is called with changed data', () => {
+		const initialVariables = {
+			'var-1': { label: 'Primary', value: '#ff0000', type: 'color' },
+		};
+
+		jest.mocked( getVariables ).mockReturnValue( initialVariables );
+
+		const { result } = renderHook( () => useVariablesManagerState() );
+
+		act( () => {
+			result.current.handleOnChange( {
+				'var-1': { label: 'Primary', value: '#00ff00', type: 'color' },
+			} );
+		} );
+
+		expect( result.current.isDirty ).toBe( true );
+	} );
+
 	it( 'resets dirty and deleted state on storage update', () => {
 		jest.mocked( getVariables )
 			.mockReturnValueOnce( { 'var-1': { label: 'a', value: '1', type: 'color' } } )

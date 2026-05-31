@@ -4,8 +4,8 @@ on:
     workflows: ["Build"]
     types: [completed]
 permissions:
-  contents: write      # upload to ci-artifacts release
-  pull-requests: write # post PR comment
+  contents: read
+  pull-requests: write
   actions: read
   deployments: write
 
@@ -16,11 +16,11 @@ jobs:
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Resolve PR context and Build run
         id: runctx
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             console.log('context:${JSON.stringify(context)}');
@@ -41,7 +41,7 @@ jobs:
 
       - name: Download plugin artifact
         id: artifact
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
@@ -63,10 +63,9 @@ jobs:
             require('fs').writeFileSync('build-artifact.zip', Buffer.from(dl.data));
             core.setOutput('artifact-name', hit.name);
 
-      - name: Repack build artifact as plugin zip
+      - name: Repack build artifact for Playground
         run: |
           unzip -oq build-artifact.zip -d build-artifact
-          ls -la build-artifact
           if [ ! -f build-artifact/elementor.php ]; then
             echo "Downloaded artifact does not look like Elementor plugin root (missing elementor.php)"
             exit 1
@@ -74,56 +73,39 @@ jobs:
           rm -rf plugin-root
           mkdir -p plugin-root/elementor
           cp -a build-artifact/. plugin-root/elementor/
-          (
-            cd plugin-root
-            zip -rq "$GITHUB_WORKSPACE/plugin.zip" elementor
-          )
+          test -f plugin-root/elementor/elementor.php
 
-      - name: Upload plugin zip artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload Playground plugin artifact
+        id: playground-artifact
+        uses: actions/upload-artifact@v7
         with:
           name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
-          path: plugin.zip
+          path: plugin-root
           if-no-files-found: error
           retention-days: 3
-
-      - name: Expose plugin zip on public URL
-        id: expose
-        uses: WordPress/action-wp-playground-pr-preview/.github/actions/expose-artifact-on-public-url@v2
-        with:
-          artifact-name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
-          artifact-filename: plugin.zip
-          pr-number: ${{ steps.runctx.outputs.pr-number }}
-          commit-sha: ${{ steps.runctx.outputs.head-sha }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish ci-artifacts release
-        run: |
-          gh release edit ci-artifacts --draft=false
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Prepare blueprint JSON
         id: blueprint
         env:
-          PLUGIN_ZIP_URL: ${{ steps.expose.outputs.artifact-url }}
+          ARTIFACT_NAME: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
         run: |
           node <<'NODE'
           const fs = require('fs');
-          const url = process.env.PLUGIN_ZIP_URL;
-          if (!url) {
-            throw new Error('Missing PLUGIN_ZIP_URL from expose step');
-          }
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+          const artifactName = process.env.ARTIFACT_NAME;
+          const runId = process.env.GITHUB_RUN_ID;
+          const url = `https://nightly.link/${owner}/${repo}/actions/runs/${runId}/${artifactName}.zip`;
           const template = fs.readFileSync('tests/playwright/blueprints/pr-preview.json', 'utf8');
           const blueprint = template.replace(/\$PLUGIN_ZIP_URL/g, url);
           JSON.parse(blueprint);
           const playgroundUrl = `https://playground.wordpress.net/?blueprint-url=data:application/json,${encodeURIComponent(blueprint)}`;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `plugin-zip-url=${url}\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `json<<BLUEPRINT_JSON_EOF\n${blueprint}\nBLUEPRINT_JSON_EOF\n`);
           fs.appendFileSync(process.env.GITHUB_OUTPUT, `playground-url=${playgroundUrl}\n`);
           NODE
 
       - name: Create PR deployment
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           HEAD_SHA: ${{ steps.runctx.outputs.head-sha }}
           PR_NUMBER: ${{ steps.runctx.outputs.pr-number }}
@@ -148,4 +130,3 @@ jobs:
               environment_url: process.env.PREVIEW_URL,
               log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
             });
-

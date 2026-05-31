@@ -1,5 +1,36 @@
 == Changelog ==
 
+= 4.1.1 - 2026-05-27 =
+
+* Security Fix: Improved code security enforcement in content handling
+* Security Fix: Improved code security enforcement in template handling
+* Fix: Hiding one filter prevents other filters from being applied - Atomic Editor
+
+= 4.1.0 - 2026-05-26 =
+
+* New: Introducing the Design System panel for managing Variables and Classes in one place - Atomic Editor
+* New: Introducing Angie in the Editor to help generate and modify Atomic layouts, Components, Forms, Classes, and Variables - Atomic Editor
+* New: Introducing Markdown rendering as an Alpha experiment to improve how content is structured for AI systems
+* Tweak: Added import and export for Variables and Classes from the Design System panel - Atomic Editor
+* Tweak: Increased the Class limit to 1000 - Atomic Editor
+* Tweak: Added duplicate support for Variables in the Variables Manager - Atomic Editor
+* Tweak: Added duplicate support for Classes in the Class field - Atomic Editor
+* Tweak: Added support for Variables in additional style controls, including Effects, Filters, and Box Shadow - Atomic Editor
+* Tweak: Added multi-select support to Direction control in Interactions - Atomic Editor
+* Tweak: Added Interaction actions to the History panel - Atomic Editor
+* Tweak: Added support for negative Box Shadow values - Atomic Editor
+* Tweak: Improved reordering of Component properties with full drag-and-drop support - Atomic Editor
+* Tweak: Updated Position and Z-index control visibility and behavior - Atomic Editor
+* Tweak: Updated the minimum required WordPress version to 6.8
+* Tweak: Added the External URL option to Image control - Atomic Editor
+* Fix: Slide Interactions can be applied without selecting a direction - Atomic Editor
+* Fix: Undo does not work as expected for individual Class properties - Atomic Editor
+* Fix: Font family values persist on Global Classes after deletion - Atomic Editor
+
+= 4.0.9 - 2026-05-19 =
+
+* Fix: Arrow navigation doesn't work in Carousel widgets when Reduced Motion is enabled ([#33613](https://github.com/elementor/elementor/issues/33613))
+
 = 4.0.8 - 2026-05-12 =
 
 * Tweak: Updated WordPress compatibility to version 7.0

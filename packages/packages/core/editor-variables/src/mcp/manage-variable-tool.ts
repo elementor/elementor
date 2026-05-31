@@ -3,6 +3,7 @@ import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
 import { service } from '../service';
+import { getFontConfigs } from '../sync/get-font-configs';
 import { validateLabel } from '../utils/validations';
 import { generateVariablesPrompt, MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
@@ -30,7 +31,18 @@ function validateValueForType( type: string, value: string ): string | null {
 		return `Size variable value should include a CSS unit (e.g. "16px") or be "auto", got "${ value }".`;
 	}
 
+	if ( type === VARIABLE_TYPES.FONT && ! isFontAvailable( value ) ) {
+		return `Font "${ value }" is not supported in WordPress. Please choose one of the available font families.`;
+	}
+
 	return null;
+}
+
+function isFontAvailable( font: string ) {
+	const fonts = getFontConfigs();
+	const key = font.trim();
+
+	return !! fonts?.[ key ];
 }
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {

@@ -355,70 +355,32 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 4.0.8 - 2026-05-12 =
+= 4.1.1 - 2026-05-27 =
 
-* Tweak: Updated WordPress compatibility to version 7.0
+* Security Fix: Improved code security enforcement in content handling
+* Security Fix: Improved code security enforcement in template handling
+* Fix: Hiding one filter prevents other filters from being applied - Atomic Editor
 
-= 4.0.7 - 2026-05-06 =
+= 4.1.0 - 2026-05-26 =
 
-* Tweak: Updated endpoint URL to align with migration infrastructure - Atomic Editor
-
-= 4.0.6 - 2026-05-04 =
-
-* Security Fix: Improved code security enforcement in query handling
-
-= 4.0.5 - 2026-04-30 =
-
-* Security Fix: Improved code security enforcement in input handling
-
-= 4.0.4 - 2026-04-28 =
-
-* Tweak: Optimized handling of repeated background requests - Atomic Editor
-* Fix: Link in atomic elements wraps subsequent elements incorrectly – Atomic Editor ([#35559](https://github.com/elementor/elementor/issues/35559))
-* Fix: Interactions disappear when editing elements - Atomic Editor
-
-= 4.0.3 - 2026-04-20 =
-
-* Fix: UI and functionality issues in Tabs - Atomic Editor
-* Fix: Classes not saving in various scenarios - Atomic Editor
-* Fix: Cannot edit styles of components inside Loop Item templates - Atomic Editor
-* Fix: Loading screen gets stuck when attempting to load non-existing posts - Atomic Editor
-
-= 4.0.2 - 2026-04-13 =
-
-* Security Fix: Improved code security enforcement in global style settings
-* Fix: Exposed props are not displayed on first load in instance panel for nested components - Atomic Editor
-* Fix: Interactions apply only to the first matching element instead of all instances on the page - Atomic Editor
-
-= 4.0.1 - 2026-04-01 =
-
-* Fix: Interactions on canvas do not work across various elements - Atomic Editor
-* Fix: Inline editing affects button width when clicking inside a Tabs content container - Atomic Editor
-* Fix: Styling changes to atomic elements appear on canvas only after refresh in Firefox browser - Atomic Editor
-* Fix: Importing classes with duplicate names prevents elements from being edited - Atomic Editor
-
-= 4.0.0 - 2026-03-30 =
-
-* New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
-* New: Introducing self-hosted Video Atomic Element - Atomic Editor
-* New: Introducing a new onboarding flow for new Editor installations to provide better guidance for getting started
-* Tweak: Updated Atomic Editor status to Stable - Atomic Editor
-* Tweak: Enabled Atomic Editor by default for new websites - Atomic Editor
-* Tweak: Added inline editing support for the Atomic Button element - Atomic Editor
-* Tweak: Improved performance and ordering of Global Classes styles on the frontend - Atomic Editor
-* Tweak: Improved request reliability during temporary network issues - Atomic Editor
-* Tweak: Improved size control structure and behavior - Atomic Editor
-* Tweak: Added support for importing and exporting Classes and Variables through website templates
-* Tweak: Added support for importing and exporting Classes and Variables through templates
-* Tweak: Improved accessibility in Cloud Templates modal
-* Fix: PHP warnings in the editor when WP_DEBUG is enabled after updating to WordPress 6.9.1 ([#34617](https://github.com/elementor/elementor/issues/34617), [#34831](https://github.com/elementor/elementor/issues/34831))
-* Fix: Typography modal fails to apply settings after using the "Back to default" reset option
-* Fix: Data Updater does not run automatically after plugin updates
-* Fix: Revision is not working as expected - Atomic Editor
-* Fix: Styling issues in Repeater Indications popovers – Atomic Editor
-* Fix: Selecting "auto" for size returns an incorrect value - Atomic Editor
-* Fix: Resetting position does not clear related properties - Atomic Editor
-* Fix: Variable name field does not auto-focus on creation in Variables - Atomic Editor
+* New: Introducing the Design System panel for managing Variables and Classes in one place - Atomic Editor
+* New: Introducing Angie in the Editor to help generate and modify Atomic layouts, Components, Forms, Classes, and Variables - Atomic Editor
+* New: Introducing Markdown rendering as an Alpha experiment to improve how content is structured for AI systems
+* Tweak: Added import and export for Variables and Classes from the Design System panel - Atomic Editor
+* Tweak: Increased the Class limit to 1000 - Atomic Editor
+* Tweak: Added duplicate support for Variables in the Variables Manager - Atomic Editor
+* Tweak: Added duplicate support for Classes in the Class field - Atomic Editor
+* Tweak: Added support for Variables in additional style controls, including Effects, Filters, and Box Shadow - Atomic Editor
+* Tweak: Added multi-select support to Direction control in Interactions - Atomic Editor
+* Tweak: Added Interaction actions to the History panel - Atomic Editor
+* Tweak: Added support for negative Box Shadow values - Atomic Editor
+* Tweak: Improved reordering of Component properties with full drag-and-drop support - Atomic Editor
+* Tweak: Updated Position and Z-index control visibility and behavior - Atomic Editor
+* Tweak: Updated the minimum required WordPress version to 6.8
+* Tweak: Added the External URL option to Image control - Atomic Editor
+* Fix: Slide Interactions can be applied without selecting a direction - Atomic Editor
+* Fix: Undo does not work as expected for individual Class properties - Atomic Editor
+* Fix: Font family values persist on Global Classes after deletion - Atomic Editor
 
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

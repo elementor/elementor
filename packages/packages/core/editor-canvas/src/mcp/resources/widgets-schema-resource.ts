@@ -11,6 +11,7 @@ import {
 } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
+import { getRequiredDefaultChildTypes } from '../../composition-builder/utils/required-default-child-tags';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
 
 const V3_LAYOUT_CONTROL_TYPES = new Set( [ 'section', 'tab', 'tabs' ] );
@@ -55,9 +56,14 @@ function extractV3ControlsMetadata( controls: unknown ): Record< string, V3Contr
 	return result;
 }
 
+export const CANVAS_SERVER_NAME = 'editor-canvas';
+
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
+export const WIDGET_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ WIDGET_SCHEMA_URI }`;
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
+export const STYLE_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ STYLE_SCHEMA_URI }`;
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
+export const BEST_PRACTICES_FULL_URI = `${ CANVAS_SERVER_NAME }_${ BEST_PRACTICES_URI }`;
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
@@ -220,6 +226,11 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
 					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
 				};
+			}
+
+			const requiredDirectChildTags = getRequiredDefaultChildTypes( widgetData );
+			if ( requiredDirectChildTags.length ) {
+				llmGuidance.required_direct_children = requiredDirectChildTags;
 			}
 
 			return {

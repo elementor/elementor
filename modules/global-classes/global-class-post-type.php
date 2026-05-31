@@ -24,4 +24,10 @@ class Global_Class_Post_Type {
 			'supports' => [ 'title' ],
 		] );
 	}
+
+	public static function ensure_registered(): void {
+		if ( ! post_type_exists( self::CPT ) ) {
+			( new self() )->register_post_type();
+		}
+	}
 }
