@@ -33,7 +33,6 @@ const declaration: FloatingPanelDeclaration = {
 		height: 480,
 		minWidth: 240,
 		minHeight: 320,
-		initialMode: 'docked',
 	},
 };
 
@@ -69,7 +68,6 @@ describe( 'createFloatingPanel', () => {
 		const state = selectPanelState( __getState(), declaration.id );
 		expect( state ).toMatchObject( {
 			isOpen: false,
-			mode: 'docked',
 			size: { inlineSize: 320, blockSize: 480 },
 		} );
 	} );
@@ -78,7 +76,6 @@ describe( 'createFloatingPanel', () => {
 		// Arrange.
 		const persisted: FloatingPanelState = {
 			isOpen: true,
-			mode: 'floating',
 			position: { insetInlineStart: 600, insetBlockStart: 240 },
 			size: { inlineSize: 400, blockSize: 520 },
 			zIndex: 5,

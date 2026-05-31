@@ -3,10 +3,10 @@
 > [!WARNING]
 > This package is under development and not ready for production use.
 
-A generic floating + dockable React panel framework for the Elementor editor. It
-provides the primitives used by feature packages (for example, the editor audit
-feature) to render panels that can float over the canvas or dock to the editor
-chrome, independent of any specific feature concern.
+A generic floating React panel framework for the Elementor editor. It provides
+the primitives used by feature packages (for example, the editor audit feature)
+to render panels that float over the canvas and can be dragged freely within the
+viewport, independent of any specific feature concern.
 
 See the design spec at
 [`docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md`](../../../../docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md)
@@ -32,7 +32,6 @@ const myPanel = createFloatingPanel( {
 		height: 480,
 		minWidth: 240,
 		minHeight: 320,
-		initialMode: 'docked',
 	},
 } );
 
@@ -52,7 +51,7 @@ Call `init()` once during editor bootstrap to register the slice, sync persisted
 
 ## Persistence
 
-Panel state (open/closed, mode, position, size, z-index) is persisted via a
+Panel state (open/closed, position, size, z-index) is persisted via a
 `PanelStateStorage` adapter. The default implementation uses `localStorage`, so
 state survives reloads on the same browser. Pass a custom adapter to `sync()`
 to swap in a server-side store.

@@ -4,7 +4,6 @@ export { useFloatingPanelActions } from './hooks/use-floating-panel-actions';
 export { useFloatingPanelStatus } from './hooks/use-floating-panel-status';
 export { init } from './init';
 export type {
-	DockMode,
 	FloatingPanelDeclaration,
 	FloatingPanelDefaults,
 	FloatingPanelState,

@@ -1,5 +1,7 @@
 # Editor Floating Panels Framework Implementation Plan
 
+> **Update (2026-05-31): docking removed.** The framework is now float-only and drag-anywhere (clamped within the viewport). The dock axis (`DockMode`, `initialMode`, `setMode`), the docked CSS branch in `panel-window`, and the `snap-to-dock` module/heuristic described throughout this plan have been removed. Drag math clamps per axis: block-start to `[48px, viewportBlock − panelBlock]` (never covers the app bar) and inline-start to `[#elementor-panel width, viewportInline − panelInline]` (never covers the side panel; direction-correct in LTR and RTL via the shared logical start edge). See `docs/superpowers/specs/2026-05-31-floating-panels-remove-docking-design.md`. Docking-related tasks and snippets below (e.g. Task 3 snap-to-dock, the `setMode`/`initialMode` references) are historical.
+
 > **Status: Implemented** on branch `audits`, commits `f47626c..3c7fcdd` (12 commits). 30 tests across 7 suites green. See **Implementation notes & deviations** at the end of this document for changes from the plan-as-written.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

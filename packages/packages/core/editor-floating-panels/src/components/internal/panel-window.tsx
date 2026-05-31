@@ -11,20 +11,11 @@ type Props = {
 };
 
 export default function PanelWindow( { panelId, zIndex, onFocus, children }: Props ) {
-	const { mode, position, size } = useFloatingPanelStatus( panelId );
+	const { position, size } = useFloatingPanelStatus( panelId );
 
 	if ( ! position || ! size ) {
 		return null;
 	}
-
-	const dockedSx = {
-		position: 'fixed' as const,
-		insetInlineEnd: 0,
-		insetBlockStart: 'var(--e-editor-app-bar-height, 60px)',
-		insetBlockEnd: 0,
-		inlineSize: `${ size.inlineSize }px`,
-		zIndex,
-	};
 
 	const floatingSx = {
 		position: 'fixed' as const,
@@ -38,12 +29,12 @@ export default function PanelWindow( { panelId, zIndex, onFocus, children }: Pro
 	return (
 		<Paper
 			data-floating-panel={ panelId }
-			elevation={ mode === 'floating' ? 8 : 0 }
+			elevation={ 8 }
 			role="dialog"
 			aria-label={ panelId }
 			onMouseDown={ onFocus }
 			sx={ {
-				...( mode === 'docked' ? dockedSx : floatingSx ),
+				...floatingSx,
 				display: 'flex',
 				flexDirection: 'column',
 				bgcolor: 'background.default',

@@ -12,10 +12,6 @@ export function selectIsOpen( state: GlobalState, id: string ): boolean {
 	return state.floatingPanels.byId[ id ]?.isOpen ?? false;
 }
 
-export function selectMode( state: GlobalState, id: string ) {
-	return state.floatingPanels.byId[ id ]?.mode;
-}
-
 export function selectPosition( state: GlobalState, id: string ) {
 	return state.floatingPanels.byId[ id ]?.position;
 }

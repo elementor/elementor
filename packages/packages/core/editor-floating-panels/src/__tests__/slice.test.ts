@@ -1,6 +1,6 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
-import { selectIsOpen, selectMode, selectPanelState, selectPosition, selectTopZIndex } from '../store/selectors';
+import { selectIsOpen, selectPanelState, selectPosition, selectTopZIndex } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type FloatingPanelDefaults } from '../types';
 
@@ -9,7 +9,6 @@ const defaults: FloatingPanelDefaults = {
 	height: 480,
 	minWidth: 240,
 	minHeight: 320,
-	initialMode: 'docked',
 };
 
 describe( 'floating-panels slice', () => {
@@ -28,7 +27,7 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		const state = selectPanelState( __getState(), 'a' );
-		expect( state ).toMatchObject( { isOpen: false, mode: 'docked' } );
+		expect( state ).toMatchObject( { isOpen: false } );
 		expect( state?.size ).toEqual( { inlineSize: 320, blockSize: 480 } );
 	} );
 
@@ -47,17 +46,6 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectIsOpen( __getState(), 'a' ) ).toBe( false );
-	} );
-
-	it( 'switches dock mode', () => {
-		// Arrange.
-		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
-
-		// Act.
-		__dispatch( slice.actions.setMode( { id: 'a', mode: 'floating' } ) );
-
-		// Assert.
-		expect( selectMode( __getState(), 'a' ) ).toBe( 'floating' );
 	} );
 
 	it( 'updates position', () => {
@@ -83,7 +71,6 @@ describe( 'floating-panels slice', () => {
 		// Arrange.
 		const persisted = {
 			isOpen: true,
-			mode: 'floating' as const,
 			position: { insetInlineStart: 500, insetBlockStart: 200 },
 			size: { inlineSize: 400, blockSize: 500 },
 			zIndex: 7,

@@ -45,7 +45,6 @@ function isPanelState( value: unknown ): value is FloatingPanelState {
 
 	return (
 		typeof v.isOpen === 'boolean' &&
-		( v.mode === 'docked' || v.mode === 'floating' ) &&
 		typeof v.position === 'object' &&
 		v.position !== null &&
 		typeof v.size === 'object' &&

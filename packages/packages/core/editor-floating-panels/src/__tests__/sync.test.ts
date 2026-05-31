@@ -7,7 +7,6 @@ import { type FloatingPanelDefaults, type FloatingPanelState } from '../types';
 
 const persisted: FloatingPanelState = {
 	isOpen: true,
-	mode: 'docked',
 	position: { insetInlineStart: 24, insetBlockStart: 80 },
 	size: { inlineSize: 320, blockSize: 480 },
 	zIndex: 1,
@@ -18,7 +17,6 @@ const defaults: FloatingPanelDefaults = {
 	height: 480,
 	minWidth: 240,
 	minHeight: 320,
-	initialMode: 'docked',
 };
 
 function createMemoryStorage( initial: string | null = null ): PanelStateStorage & { snapshot: () => string | null } {

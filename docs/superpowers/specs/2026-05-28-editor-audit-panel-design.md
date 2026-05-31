@@ -205,17 +205,16 @@ type PageAuditReport = {
 
 ## 6. Floating panel framework — `@elementor/editor-floating-panels`
 
+> **Update (2026-05-31): docking removed.** Panels are now float-only and drag-anywhere, clamped within the viewport. `DockMode`, `initialMode`, `setMode`, the docked CSS branch, and the snap-to-dock heuristic no longer exist. See `docs/superpowers/specs/2026-05-31-floating-panels-remove-docking-design.md`. The docking-specific text below is retained for historical context only.
+
 ### Public types
 
 ```ts
-type DockMode = 'docked' | 'floating';
-
 type FloatingPanelDefaults = {
     width: number;
     height: number;
     minWidth: number;
     minHeight: number;
-    initialMode: DockMode;
     initialPosition?: {                          // logical, not physical
         insetBlockStart: number;
         insetInlineStart: number;
@@ -235,27 +234,21 @@ type FloatingPanelDeclaration = {
 
 - `createFloatingPanel(declaration): { panel, useFloatingPanelStatus, useFloatingPanelActions }`
 - `registerFloatingPanel({ id, ... }): void`
-- Component primitives: `FloatingPanel`, `FloatingPanelHeader` (with built-in drag handle, dock-toggle button, close button), `FloatingPanelBody`, `FloatingPanelFooter`.
+- Component primitives: `FloatingPanel`, `FloatingPanelHeader` (with built-in drag handle and close button), `FloatingPanelBody`, `FloatingPanelFooter`.
 
 ### Internals
 
-- **Store slice** `floatingPanels` keyed by panel ID. Each entry: `{ isOpen, mode, position, size, isFocused }`. Multiple panels can be open simultaneously (unlike `editor-panels`).
-- **Persistence**: state is mirrored to a per-user setting (`elementor_floating_panels_state`) so position/dock survives reloads, using the same WP user-preferences mechanism the checklist uses.
-- **Host component**: injected once into the editor viewport via `injectIntoTop` from `@elementor/editor`. Renders all open panels into a fixed-position layer above the canvas and below modals.
-- **Dock target: inline-end only.**
-  - Docked CSS: `position: fixed; inset-inline-end: 0; inset-block-start: <app-bar-height>; inset-block-end: 0; inline-size: var(--e-floating-panel-width)`.
-  - Floating CSS: `position: fixed; inset-inline-start: var(--pos-inline); inset-block-start: var(--pos-block); inline-size / block-size from store`.
-  - Canvas reservation: when at least one panel is docked, the host sets `--e-floating-panels-docked-size` on the editor root; the canvas applies `margin-inline-end: var(--e-floating-panels-docked-size, 0)`.
-- **Drag math**: pointer events are physical. Single conversion at the boundary: `inlineDelta = isRtl ? -clientDeltaX : clientDeltaX`. Internals only ever see logical values.
-- **Snap-to-dock heuristic**: distance to the inline-end edge of the viewport is computed direction-aware; below threshold → snap to docked.
-- **Z-stacking & focus**: clicking a floating panel brings it to the top of the stack. ESC closes the focused floating panel only.
-- **Accessibility**: each panel is `role="dialog"` with `aria-label` from `title`; keyboard-draggable via arrow keys when the drag handle has focus; **no** focus trap (the user must keep editing elements behind the panel).
-- **Small viewports**: below a breakpoint, force `mode` to `docked` and disable drag.
+- **Store slice** `floatingPanels` keyed by panel ID. Each entry: `{ isOpen, position, size, zIndex }`. Multiple panels can be open simultaneously (unlike `editor-panels`).
+- **Persistence**: state is mirrored to storage (`elementor_floating_panels_state`) so position survives reloads.
+- **Host component**: injected once into the editor viewport via the floating-panels location. Renders all open panels into a fixed-position layer above the canvas and below modals.
+- **Floating positioning only**: `position: fixed; inset-inline-start: var(--pos-inline); inset-block-start: var(--pos-block); inline-size / block-size from store`.
+- **Drag math**: pointer events are physical. Single conversion at the boundary: `inlineDelta = isRtl ? -clientDeltaX : clientDeltaX`. Internals only ever see logical values. Drag is clamped per axis: block-start to `[48px, viewportBlock − panelBlock]` (never covers the app bar) and inline-start to `[#elementor-panel width, viewportInline − panelInline]` (never covers the side panel). The single width-based inline minimum is direction-correct because `#elementor-panel` and `insetInlineStart` share the same logical start edge in LTR and RTL.
+- **Z-stacking & focus**: clicking a panel brings it to the top of the stack. ESC closes the top-most open panel.
+- **Accessibility**: each panel is `role="dialog"` with `aria-label` from `title`; **no** focus trap (the user must keep editing elements behind the panel).
 
 ### Risks called out
 
-- Right-dock interaction with the editor canvas is the single biggest risk. The current canvas assumes one V1 panel on the inline-start. We need to verify the docked V2 panel on the inline-end doesn't fight V1 panel CSS and that the canvas margin math works for both directions.
-- Persistence is server-side user prefs (not localStorage). Multi-tab convergence is last-write-wins on the server.
+- Persistence is last-write-wins across tabs.
 
 ## 7. Built-in audits (12)
 

@@ -2,7 +2,7 @@ import { __useDispatch as useDispatch, __useSelector as useSelector } from '@ele
 
 import { type GlobalState, selectIsOpen } from '../store/selectors';
 import { slice } from '../store/slice';
-import { type DockMode, type LogicalPosition } from '../types';
+import { type LogicalPosition } from '../types';
 
 export function useFloatingPanelActions( id: string ) {
 	const dispatch = useDispatch();
@@ -19,7 +19,6 @@ export function useFloatingPanelActions( id: string ) {
 		open,
 		close,
 		toggle: () => ( isOpen ? close() : open() ),
-		setMode: ( mode: DockMode ) => dispatch( slice.actions.setMode( { id, mode } ) ),
 		setPosition: ( position: LogicalPosition ) => dispatch( slice.actions.setPosition( { id, position } ) ),
 		focus: () => dispatch( slice.actions.bringToFront( id ) ),
 	};

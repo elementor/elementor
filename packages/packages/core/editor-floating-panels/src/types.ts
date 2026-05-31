@@ -1,7 +1,5 @@
 import { type ComponentType } from 'react';
 
-export type DockMode = 'docked' | 'floating';
-
 export type LogicalPosition = {
 	insetInlineStart: number;
 	insetBlockStart: number;
@@ -29,7 +27,6 @@ export type FloatingPanelDefaults = {
 	height: number;
 	minWidth: number;
 	minHeight: number;
-	initialMode: DockMode;
 	initialPosition?: LogicalPosition;
 };
 
@@ -43,7 +40,6 @@ export type FloatingPanelDeclaration = {
 
 export type FloatingPanelState = {
 	isOpen: boolean;
-	mode: DockMode;
 	position: LogicalPosition;
 	size: LogicalSize;
 	zIndex: number;

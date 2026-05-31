@@ -1,5 +1,7 @@
 # Editor Audits Package Implementation Plan
 
+> **Update (2026-05-31): floating-panels docking removed.** The `initialMode: 'docked'` field shown in this plan's `panel-instance.ts` snippet no longer exists; the audit panel now opens floating. See `docs/superpowers/specs/2026-05-31-floating-panels-remove-docking-design.md`.
+
 > **Status (2026-05-29):** ✅ All 18 tasks complete. Code-only mode for E2E (T17) and PHPUnit assertions (T16's updated test) — see "Implementation notes & deviations" below for everything that diverged from this plan.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

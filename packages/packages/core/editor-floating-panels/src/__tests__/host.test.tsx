@@ -38,7 +38,6 @@ describe( 'FloatingPanelsHost', () => {
 					height: 300,
 					minWidth: 100,
 					minHeight: 100,
-					initialMode: 'floating',
 				},
 			} )
 		);

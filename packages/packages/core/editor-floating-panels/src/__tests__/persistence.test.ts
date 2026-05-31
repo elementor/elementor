@@ -6,7 +6,6 @@ describe( 'persistence', () => {
 		const input = {
 			'audit-panel': {
 				isOpen: true,
-				mode: 'docked' as const,
 				position: { insetInlineStart: 24, insetBlockStart: 80 },
 				size: { inlineSize: 320, blockSize: 480 },
 				zIndex: 3,
@@ -35,7 +34,6 @@ describe( 'persistence', () => {
 			'audit-panel': 'not an object',
 			'valid-panel': {
 				isOpen: false,
-				mode: 'floating',
 				position: { insetInlineStart: 10, insetBlockStart: 10 },
 				size: { inlineSize: 300, blockSize: 400 },
 				zIndex: 1,
