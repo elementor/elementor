@@ -68,7 +68,7 @@ export default function AuditPanel() {
 					</Box>
 				) }
 			</FloatingPanelBody>
-			<FloatingPanelFooter>
+			<FloatingPanelFooter panelId="audit-panel">
 				{ lastScanLabel ? (
 					<Typography variant="caption" sx={ { flex: 1 } }>
 						{ __( 'Last scan:', 'elementor' ) } { lastScanLabel }
