@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { Box, type BoxProps } from '@elementor/ui';
 
-export default function FloatingPanelFooter( props: BoxProps ) {
+import ResizeHandle from '../internal/resize-handle';
+
+type Props = BoxProps & {
+	panelId?: string;
+};
+
+export default function FloatingPanelFooter( { panelId, children, sx, ...props }: Props ) {
 	return (
 		<Box
 			{ ...props }
@@ -13,8 +19,18 @@ export default function FloatingPanelFooter( props: BoxProps ) {
 				display: 'flex',
 				alignItems: 'center',
 				gap: 1,
-				...( props.sx ?? {} ),
+				position: panelId ? 'relative' : undefined,
+				...( sx ?? {} ),
 			} }
-		/>
+		>
+			{ children }
+			{ panelId ? (
+				<>
+					<ResizeHandle panelId={ panelId } edge="inline-start" />
+					<ResizeHandle panelId={ panelId } edge="inline-end" />
+					<ResizeHandle panelId={ panelId } edge="block-end" />
+				</>
+			) : null }
+		</Box>
 	);
 }
