@@ -15,7 +15,7 @@ export const SettingsTab = () => {
 	const settingsDefault = useDefaultPanelSettings();
 	const currentSettings = settings as Props;
 
-	const isDefaultExpanded = ( sectionId: string | null ) =>
+	const isDefaultExpanded = ( sectionId: string | null | undefined ) =>
 		!! sectionId && settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
 
 	return (
