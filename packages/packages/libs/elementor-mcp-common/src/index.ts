@@ -1,4 +1,12 @@
 export {
+	McpServer,
+	ResourceTemplate,
+	type RegisteredResource,
+	type ToolCallback,
+} from '@modelcontextprotocol/sdk/server/mcp.js';
+export { SamplingMessageSchema } from '@modelcontextprotocol/sdk/types.js';
+
+export {
 	isGutenbergEditor,
 	isElementorEditor,
 	isElementorAIActive,

@@ -37,18 +37,34 @@ type StopSyncConfirmationDialogProps = {
 export type ClassManagerPanelEmbeddedProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+	isActive?: boolean;
 };
 
-export function ClassManagerPanelEmbedded( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelEmbeddedProps ) {
-	return <ClassManagerPanelContent onRequestClose={ onRequestClose } onExposeCloseAttempt={ onExposeCloseAttempt } />;
+export function ClassManagerPanelEmbedded( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive,
+}: ClassManagerPanelEmbeddedProps ) {
+	return (
+		<ClassManagerPanelContent
+			onRequestClose={ onRequestClose }
+			onExposeCloseAttempt={ onExposeCloseAttempt }
+			isActive={ isActive }
+		/>
+	);
 }
 
 type ClassManagerPanelContentProps = {
 	onRequestClose: () => void | Promise< void >;
 	onExposeCloseAttempt?: ( attemptClose: ( () => void ) | null ) => void;
+	isActive?: boolean;
 };
 
-function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: ClassManagerPanelContentProps ) {
+function ClassManagerPanelContent( {
+	onRequestClose,
+	onExposeCloseAttempt,
+	isActive = true,
+}: ClassManagerPanelContentProps ) {
 	const isDirty = useDirtyState();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const [ stopSyncConfirmation, setStopSyncConfirmation ] = useState< string | null >( null );
@@ -192,7 +208,7 @@ function ClassManagerPanelContent( { onRequestClose, onExposeCloseAttempt }: Cla
 					</Stack>
 				</SearchAndFilterProvider>
 			</ErrorBoundary>
-			<ClassManagerIntroduction />
+			{ isActive && <ClassManagerIntroduction /> }
 			{ startSyncConfirmation && (
 				<StartSyncToV3Modal
 					externalOpen

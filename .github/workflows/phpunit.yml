@@ -8,15 +8,6 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
-      - 'tests/playwright/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -33,7 +24,7 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check PHP files diff
         id: php_diff_files
         uses: technote-space/get-diff-action@v6
@@ -69,7 +60,7 @@ jobs:
     name: PHPUnit - Test Results
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check stable test status
         run: echo "Stable Test status is - ${{ needs.test_pr_group.result }}"
       - name: Check nightly test status

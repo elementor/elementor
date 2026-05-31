@@ -1,7 +1,6 @@
 import { AngieMessageEvenetType as MessageEventType, getAngieIframe } from '@elementor/editor-mcp';
-import { callWpApi } from '@elementor/elementor-mcp-common';
+import { callWpApi, McpServer } from '@elementor/elementor-mcp-common';
 import { z } from '@elementor/schema';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { addCapabilitiesDescriptionResource, CAPABILITIES_DESCRIPTION_URI } from './mcp-description-resource';
 import { addPagesListResource, PAGES_LIST_RESOURCE_URI } from './pages-list-resource';

@@ -4,6 +4,8 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
+use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 use WP_Post;
 
@@ -47,20 +49,20 @@ class Global_Class_Post {
 		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
-	public static function find_by_class_id( string $class_id, bool $is_preview = false ): ?self {
-		$posts = get_posts( [
-			'post_type' => Global_Class_Post_Type::CPT,
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'meta_key' => self::META_KEY_ID,
-			'meta_value' => $class_id,
-		] );
+	public static function find_by_class_id( string $class_id, bool $is_preview = false, ?Kit $kit = null ): ?self {
+		$kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( empty( $posts ) ) {
+		if ( ! $kit ) {
 			return null;
 		}
 
-		return ( new self( $posts[0] ) )->set_preview( $is_preview );
+		$post_id = Global_Classes_Post_IDs::make( $kit )->get_post_id( $class_id );
+
+		if ( ! $post_id ) {
+			return null;
+		}
+
+		return self::from_post_id( $post_id, $is_preview );
 	}
 
 	public function get_post_id(): int {
@@ -79,10 +81,6 @@ class Global_Class_Post {
 
 	public function get_label(): string {
 		return $this->post->post_title;
-	}
-
-	public function get_order(): int {
-		return (int) $this->post->menu_order;
 	}
 
 	public function get_data( bool $skip_migration = false ): array {
@@ -224,14 +222,13 @@ class Global_Class_Post {
 		string $class_id,
 		string $label,
 		array $data,
-		int $order = 0,
+		?Kit $kit = null,
 		string $version = ELEMENTOR_VERSION
 	): ?self {
 		$post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_title' => $label,
 			'post_status' => 'publish',
-			'menu_order' => $order,
 		] );
 
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
@@ -243,6 +240,12 @@ class Global_Class_Post {
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
 		update_post_meta( $post_id, self::META_KEY_DATA, $normalized_data );
 		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
+
+		$kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			Global_Classes_Post_IDs::make( $kit )->set( $class_id, (int) $post_id );
+		}
 
 		$instance = self::from_post_id( $post_id );
 

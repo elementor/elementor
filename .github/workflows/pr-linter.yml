@@ -2,14 +2,6 @@ name: PR Linter
 on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -22,15 +14,15 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith( github.repository, 'elementor/' )
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
 
       - name: Cache Node Modules
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.npm
           key: ${{ runner.os }}-pr-name-linter-12
@@ -41,7 +33,7 @@ jobs:
 
       - name: Run PR name linter
         if: ${{ github.event.pull_request.title != null }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { execFileSync } = require('node:child_process');
