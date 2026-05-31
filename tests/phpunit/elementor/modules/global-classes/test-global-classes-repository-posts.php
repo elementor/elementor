@@ -223,6 +223,105 @@ class Test_Global_Classes_Repository_Posts extends Elementor_Test_Base {
 		$this->assertSame( [ 'gl-1' => 'Label-One' ], Global_Classes_Repository::make()->all_labels() );
 	}
 
+	public function test_apply_changes__preview_then_frontend_create_keeps_single_post() {
+		// Arrange
+		$class_id = 'pf-1';
+		$item = [
+			'id' => $class_id,
+			'label' => 'preview-then-frontend',
+			'type' => 'class',
+			'variants' => [],
+		];
+
+		// Act - simulate draft save (preview), then publish (frontend) for a brand-new class.
+		Global_Classes_Repository::make( $this->kit )
+			->set_preview( true )
+			->apply_changes(
+				[ $class_id => $item ],
+				[ 'added' => [ $class_id ], 'deleted' => [], 'modified' => [], 'order' => true ],
+				[ $class_id ]
+			);
+
+		Global_Classes_Repository::make( $this->kit )
+			->set_preview( false )
+			->apply_changes(
+				[ $class_id => $item ],
+				[ 'added' => [ $class_id ], 'deleted' => [], 'modified' => [], 'order' => true ],
+				[ $class_id ]
+			);
+
+		// Assert - exactly one CPT post for the class id, no orphans.
+		$posts = get_posts( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_status' => 'publish',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'meta_query' => [
+				[
+					'key' => Global_Class_Post::META_KEY_ID,
+					'value' => $class_id,
+					'compare' => '=',
+				],
+			],
+		] );
+
+		$this->assertCount( 1, $posts );
+		$this->created_post_ids[] = $posts[0];
+	}
+
+	public function test_apply_changes__frontend_publish_clears_stale_preview_label_for_touched_ids() {
+		// Arrange - class exists in both contexts with different labels (draft renamed in preview).
+		$class_id = 'pl-1';
+		$post = Global_Class_Post::create( 'pl-1', 'draft-label', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ $class_id ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ $class_id => 'frontend-label' ] );
+		Global_Classes_Labels::make( $this->kit )->set_preview( true )->set_labels( [ $class_id => 'draft-label' ] );
+
+		// Act - publish a new label to frontend.
+		Global_Classes_Repository::make( $this->kit )->apply_changes(
+			[ $class_id => [ 'id' => $class_id, 'label' => 'published-label', 'type' => 'class', 'variants' => [] ] ],
+			[ 'added' => [], 'deleted' => [], 'modified' => [ $class_id ], 'order' => false ],
+			[ $class_id ]
+		);
+
+		// Assert - preview labels map no longer overrides; preview reads fall back to frontend.
+		$preview_labels_map = Global_Classes_Labels::make( $this->kit )->set_preview( true )->get_labels();
+		$this->assertArrayNotHasKey( $class_id, $preview_labels_map );
+
+		$preview_resolved = Global_Classes_Repository::make( $this->kit )->set_preview( true )->all_labels();
+		$this->assertSame( [ $class_id => 'published-label' ], $preview_resolved );
+	}
+
+	public function test_apply_changes__preview_save_does_not_mutate_class_post_title() {
+		// Arrange - class published with a stable label.
+		$class_id = 'pt-1';
+		$post = Global_Class_Post::create( $class_id, 'published-label', [ 'type' => 'class', 'variants' => [] ] );
+		$this->created_post_ids[] = $post->get_post_id();
+
+		Global_Classes_Order::make( $this->kit )->set_order( [ $class_id ] );
+		Global_Classes_Labels::make( $this->kit )->set_labels( [ $class_id => 'published-label' ] );
+
+		// Act - draft-rename via preview save (editor "Save", not "Publish").
+		Global_Classes_Repository::make( $this->kit )->set_preview( true )->apply_changes(
+			[ $class_id => [ 'id' => $class_id, 'label' => 'draft-renamed', 'type' => 'class', 'variants' => [] ] ],
+			[ 'added' => [], 'deleted' => [], 'modified' => [ $class_id ], 'order' => false ],
+			[ $class_id ]
+		);
+
+		// Assert - shared post_title untouched (so frontend CSS selector stays stable).
+		$reloaded = Global_Class_Post::find_by_class_id( $class_id );
+		$this->assertSame( 'published-label', $reloaded->get_label() );
+
+		// Draft override lives only in the kit's preview labels meta.
+		$preview_labels = Global_Classes_Labels::make( $this->kit )->set_preview( true )->get_labels();
+		$this->assertSame( [ $class_id => 'draft-renamed' ], $preview_labels );
+
+		$frontend_labels = Global_Classes_Labels::make( $this->kit )->get_labels();
+		$this->assertSame( [ $class_id => 'published-label' ], $frontend_labels );
+	}
+
 	public function test_apply_changes__replaces_set_and_syncs_label_meta() {
 		$p1 = Global_Class_Post::create( 'ac-1', 'A', [ 'type' => 'class', 'variants' => [] ] );
 		$this->created_post_ids[] = $p1->get_post_id();

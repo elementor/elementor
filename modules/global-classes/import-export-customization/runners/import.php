@@ -50,10 +50,10 @@ class Import extends Import_Runner_Base {
 		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ] );
 	}
 
-	private function is_legacy_import_format( array $data ): bool {
+	protected function is_legacy_import_format( array $data ): bool {
 		$manifest = $data['manifest'];
 		$elementor_version = $manifest['elementor_version'];
 
-		return version_compare( $elementor_version, '4.1.0', '<' );
+		return version_compare( $elementor_version, '4.1.0-beta1', '<' );
 	}
 }

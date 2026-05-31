@@ -85,6 +85,7 @@ const entry = {
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'announcements-app': path.resolve( __dirname, '../modules/announcements/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
+	'vendors-redux': path.resolve( __dirname, '../core/common/assets/js/vendors-redux.js' ),
 	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
@@ -185,11 +186,21 @@ const externals = [
 		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
-	function ( { request }, callback ) {
+	function ( { request, context, contextInfo }, callback ) {
 		const matches = request.match( /^@elementor\/(ui|icons)\/(.+)$/ );
 
 		if ( matches?.length ) {
 			return callback( null, `elementorV2.${ matches[ 1 ] }['${ matches[ 2 ] }']` );
+		}
+
+		if ( '@reduxjs/toolkit' === request ) {
+			const issuer = contextInfo?.issuer || context;
+
+			if ( issuer.includes( 'vendors-redux.js' ) ) {
+				return callback();
+			}
+
+			return callback( null, 'elementorVendors.reduxToolkit' );
 		}
 
 		callback();

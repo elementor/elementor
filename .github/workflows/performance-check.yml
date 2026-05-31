@@ -17,8 +17,10 @@ on:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: Performance build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Performance build artifact
 
   compare-v4-to-v3:
     name: Compare V4 to V3
@@ -29,18 +31,18 @@ jobs:
     steps:
 
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Remove package.json
         run: rm -f package*.json
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./elementor
@@ -84,7 +86,7 @@ jobs:
             performance
 
       - name: Check if score meets the threshold
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
           MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
@@ -105,14 +107,14 @@ jobs:
       - name: Upload reports
         id: upload-reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: compare-v4-to-v3
           path: ${{ steps.run-performance-check.outputs.reports-path }}
           retention-days: 1
 
       - name: Send Slack notification
-        uses: slackapi/slack-github-action@v2.0.0
+        uses: slackapi/slack-github-action@v3
         if: ${{ failure() && steps.run-performance-check.outputs.v3-performance-median-score > 0 && steps.run-performance-check.outputs.mixed-performance-median-score > 0 }}
         env:
           RUN_ID: ${{ github.run_id }}

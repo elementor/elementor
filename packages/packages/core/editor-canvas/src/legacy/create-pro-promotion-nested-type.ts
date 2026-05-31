@@ -57,7 +57,7 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 			} );
 		}
 
-		_renderChildren() {}
+		async _renderChildren() {}
 
 		behaviors() {
 			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];

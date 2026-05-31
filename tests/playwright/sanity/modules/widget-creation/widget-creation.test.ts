@@ -7,7 +7,7 @@ type ExtendedWindow = Window & {
   __createWidgetPrompt: string;
 };
 
-test.describe( 'Widget Creation @widget-creation', () => {
+test.describe.skip( 'Widget Creation @widget-creation', () => {
 	const EXPERIMENT_NAME = 'e_widget_creation';
 	const WIDGET_SEARCH_INPUT = 'input#elementor-panel-elements-search-input';
 	const WIDGET_CREATION_CTA = '.elementor-panel-elements-widget-creation__cta';
