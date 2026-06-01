@@ -28,7 +28,7 @@ class Base_Styles_Reset {
 		'e-div-block' => 'padding: 0; min-width: auto;',
 		'e-heading' => '',
 		'e-paragraph' => '',
-		'e-button' => 'align-self: flex-start; text-align: left; padding-block-start: 0; padding-block-end: 0; padding-inline-start: 0; padding-inline-end: 0; border-radius: 0; background-color: transparent;',
+		'e-button' => 'text-align: left; padding-block-start: 0; padding-block-end: 0; padding-inline-start: 0; padding-inline-end: 0; border-radius: 0; background-color: transparent;',
 		'e-image' => '',
 	];
 
