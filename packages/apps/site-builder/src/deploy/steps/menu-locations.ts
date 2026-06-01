@@ -43,7 +43,7 @@ export function resolveMenuLocation(
 		}
 	}
 
-	return availableSlugs[ 0 ];
+	return undefined;
 }
 
 export function isInvalidMenuLocationError( error: unknown ): boolean {
