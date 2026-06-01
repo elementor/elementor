@@ -4,9 +4,11 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dir
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
 const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
-const TerserPlugin = require('terser-webpack-plugin');
+const TerserPlugin = require( 'terser-webpack-plugin' );
 
-const packages = getLocalRepoPackagesEntries();
+// source-map-loader and the babel-loader dist exclude only match packages built from packages/packages/{core,libs} and packages/apps. Extend this if new first-party roots ship prebuilt dist next to sources.
+
+const packagesDistPattern = /[\\/]packages[\\/](?:packages[\\/](?:core|libs)|apps)[\\/][^\\/]+[\\/]dist[\\/]/;
 
 const REGEXES = {
 	// @elementor/ui/SvgIcon — used inside @elementor/icons.
@@ -21,137 +23,189 @@ const REGEXES = {
 	wordpressPackages: /^@wordpress\/(.+)$/,
 };
 
-const common = {
-	name: 'packages',
-	entry: Object.fromEntries(
-		packages.map( ( { name, path } ) => [ name, path ] )
-	),
-	module: {
-		rules: [
-			{
-				test: /\.[jt]sx?$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'babel-loader',
-					options: {
-						presets: [
-							'@babel/preset-typescript',
-							'@babel/preset-react',
-						],
+const filesystemCache = {
+	type: 'filesystem',
+	cacheDirectory: path.resolve( __dirname, '../node_modules/.cache/webpack-packages' ),
+	buildDependencies: {
+		config: [ __filename ],
+	},
+};
+
+function createCommonConfig( entrySource ) {
+	const packages = getLocalRepoPackagesEntries( entrySource );
+
+	return {
+		name: 'packages',
+		entry: Object.fromEntries(
+			packages.map( ( { name, path: entryPath } ) => [ name, entryPath ] )
+		),
+		module: {
+			rules: [
+				{
+					enforce: 'pre',
+					test: /\.m?js$/,
+					include: packagesDistPattern,
+					use: [ 'source-map-loader' ],
+				},
+				{
+					test: /\.[jt]sx?$/,
+					exclude: [
+						/node_modules/,
+						packagesDistPattern,
+					],
+					use: {
+						loader: 'babel-loader',
+						options: {
+							sourceMaps: true,
+							presets: [
+								'@babel/preset-typescript',
+								'@babel/preset-react',
+							],
+						},
 					},
 				},
-			},
+			],
+		},
+		resolve: {
+			extensions: [ '.tsx', '.ts', '.js', '.jsx', '.mjs' ],
+		},
+		ignoreWarnings: [
+			// Many upstream maps are incomplete; surfacing every parse failure is noise without improving the bundle.
+			/Failed to parse source map/,
 		],
-	},
-	resolve: {
-		extensions: [ '.tsx', '.ts', '.js', '.jsx' ],
-	},
-	plugins: [
-		new GenerateWordPressAssetFileWebpackPlugin( {
-			handle: ( entryName ) => `elementor-v2-${entryName}`,
-			map: [
-				{ request: REGEXES.elementorPathImports, handle: 'elementor-v2-$1' },
-				{ request: REGEXES.elementorPackages, handle: 'elementor-v2-$1' },
-				{ request: REGEXES.wordpressPackages, handle: 'wp-$1' },
-				{ request: 'react', handle: 'react' },
-				{ request: 'react-dom', handle: 'react-dom' },
-			]
-		} ),
-		new ExternalizeWordPressAssetsWebpackPlugin( {
-			global: ( entryName ) => [ 'elementorV2', entryName ],
-			map: [
-				{ request: REGEXES.elementorPathImports, global: [ 'elementorV2', '$1', '$2' ] },
-				{ request: REGEXES.elementorPackages, global: [ 'elementorV2', '$1' ] },
-				{ request: REGEXES.wordpressPackages, global: [ 'wp', '$1' ] },
-				{ request: 'react', global: 'React' },
-				{ request: 'react-dom', global: 'ReactDOM' },
-			]
-		} ),
-		new EntryInitializationWebpackPlugin( {
-			initializer: ( { entryName } ) => {
-				return `window.elementorV2.${ entryName }?.init?.();`;
-			},
-		} ),
-	],
-	output: {
-		path: path.resolve( __dirname, '../assets/js/packages/' ),
-	},
-	performance: {
-		hints: false,
-	},
+		cache: filesystemCache,
+		plugins: [
+			new GenerateWordPressAssetFileWebpackPlugin( {
+				handle: ( entryName ) => `elementor-v2-${entryName}`,
+				map: [
+					{ request: REGEXES.elementorPathImports, handle: 'elementor-v2-$1' },
+					{ request: REGEXES.elementorPackages, handle: 'elementor-v2-$1' },
+					{ request: REGEXES.wordpressPackages, handle: 'wp-$1' },
+					{ request: 'react', handle: 'react' },
+					{ request: 'react-dom', handle: 'react-dom' },
+					{ request: '@reduxjs/toolkit', handle: 'elementor-vendors-redux' },
+					{ request: 'react-redux', handle: 'elementor-vendors-redux' },
+				]
+			} ),
+			new ExternalizeWordPressAssetsWebpackPlugin( {
+				global: ( entryName ) => [ 'elementorV2', entryName ],
+				map: [
+					{ request: REGEXES.elementorPathImports, global: [ 'elementorV2', '$1', '$2' ] },
+					{ request: REGEXES.elementorPackages, global: [ 'elementorV2', '$1' ] },
+					{ request: REGEXES.wordpressPackages, global: [ 'wp', '$1' ] },
+					{ request: 'react', global: 'React' },
+					{ request: 'react-dom', global: 'ReactDOM' },
+					{ request: '@reduxjs/toolkit', global: [ 'elementorVendors', 'reduxToolkit' ] },
+					{ request: 'react-redux', global: [ 'elementorVendors', 'reactRedux' ] },
+				]
+			} ),
+			new EntryInitializationWebpackPlugin( {
+				initializer: ( { entryName } ) => {
+					return `window.elementorV2.${ entryName }?.init?.();`;
+				},
+			} ),
+		],
+		output: {
+			path: path.resolve( __dirname, '../assets/js/packages/' ),
+		},
+		performance: {
+			hints: false,
+		},
+	};
 }
 
+const devCommon = createCommonConfig( 'src' );
+const prodCommon = createCommonConfig( 'dist' );
+
 const devConfig = {
-	...common,
+	...devCommon,
 	mode: 'development',
 	devtool: 'source-map',
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	optimization: {
-		...( common.optimization || {} ),
-		// Intentionally minimizing the dev assets to reduce the bundle size.
+		// Faster rebuilds and stacks that line up with TypeScript; output is larger than the previous minimized dev bundles.
+		minimize: false,
+	},
+	output: {
+		...( devCommon.output || {} ),
+		filename: '[name]/[name].js',
+	},
+};
+
+const prodConfig = {
+	...prodCommon,
+	mode: 'production',
+	// Keep prod free of emitted source maps without depending on webpack default behavior across upgrades.
+	devtool: false,
+	optimization: {
 		minimize: true,
 		minimizer: [
-			new TerserPlugin({
+			new TerserPlugin( {
 				terserOptions: {
 					keep_classnames: true,
 					keep_fnames: true,
-				}
-			})
-		]
-	},
-	output: {
-		...( common.output || {} ),
-		filename: '[name]/[name].js',
-	},
-}
-
-const prodConfig = {
-	...common,
-	mode: 'production',
-	devtool: false, // TODO: Need to check what to do with source maps.
-	optimization: {
-		...( common.optimization || {} ),
-		minimize: true,
+				},
+			} ),
+		],
 	},
 	plugins: [
-		...( common.plugins || [] ),
+		...( prodCommon.plugins || [] ),
 		new ExtractI18nWordpressExpressionsWebpackPlugin( {
 			pattern: ( entryPath ) => path.resolve( entryPath, '../../src/**/*.{ts,tsx,js,jsx}' ),
 		} ),
 	],
 	output: {
-		...( common.output || {} ),
+		...( prodCommon.output || {} ),
 		filename: '[name]/[name].min.js',
-	}
-}
+	},
+};
 
 module.exports = {
 	dev: devConfig,
 	prod: prodConfig,
 };
 
-function getLocalRepoPackagesEntries() {
+function getLocalRepoPackagesEntries( entrySource ) {
 	const repoPath = path.resolve( __dirname, '../packages' );
-	const relevantDirs = [ 'packages/core', 'packages/libs', 'apps' ]
+	const relevantDirs = [ 'packages/core', 'packages/libs', 'apps' ];
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )
 			.map( ( name ) => ( {
 				name,
-				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
+				path: getPackageEntryPath( path.resolve( repoPath, dir, name ), entrySource ),
 			} ) )
-			.filter( ( { path } ) => fs.existsSync( path ) )
+			.filter( ( { path: entryPath } ) => fs.existsSync( entryPath ) )
 	);
 
 	packages.push( {
 		name: 'ui',
-		path: './node_modules/@elementor/ui/index.js'
+		path: './node_modules/@elementor/ui/index.js',
 	} );
 
 	packages.push( {
 		name: 'icons',
-		path: './node_modules/@elementor/icons/index.js'
+		path: './node_modules/@elementor/icons/index.js',
 	} );
 
 	return packages;
+}
+
+function getPackageEntryPath( packageDir, entrySource ) {
+	const srcTs = path.join( packageDir, 'src/index.ts' );
+
+	if ( 'src' === entrySource ) {
+		return srcTs;
+	}
+
+	const distJs = path.join( packageDir, 'dist/index.js' );
+
+	if ( fs.existsSync( distJs ) ) {
+		return distJs;
+	}
+
+	// Production asked for dist but it is missing; falling back to src would ship a mixed graph without this signal.
+	console.warn( '[webpack.packages] Production build is using TypeScript instead of missing dist:', distJs );
+
+	return srcTs;
 }

@@ -138,12 +138,18 @@ function getAtomicFormFields( form ) {
 	return fields;
 }
 
+function getGroupedFieldId( name, inputs, checkedInputs ) {
+	const primaryInput = checkedInputs[ 0 ] ?? inputs[ 0 ];
+
+	return primaryInput?.dataset.interactionId ?? name;
+}
+
 function getGroupedFields( name, inputs, type, form ) {
 	const checkedInputs = inputs.filter( ( input ) => input.checked );
 	const value = getAtomicFormFieldValue( checkedInputs, type );
 	const options = getAtomicFieldOptions( inputs, type, form );
 	return {
-		id: name,
+		id: getGroupedFieldId( name, inputs, checkedInputs ),
 		type,
 		label: name,
 		value,

@@ -1,4 +1,4 @@
-import { BREAKPOINTS_SCHEMA_URI, STYLE_SCHEMA_URI } from '@elementor/editor-canvas';
+import { BREAKPOINTS_SCHEMA_FULL_URI, STYLE_SCHEMA_FULL_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type Props, Schema } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
@@ -8,6 +8,7 @@ import { type Utils as IUtils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+import { loadExistingClasses } from '../load-existing-classes';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
@@ -23,21 +24,39 @@ const schema = {
 	globalClassName: z.string().optional().describe( 'Global class name (required for create)' ),
 	props: z.object( {
 		default: z
-			.record( z.any() )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
 			.describe(
-				'key-value of style-schema PropValues. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
+				'An object record containing style property names and their new values. MUST contain at least one property — empty objects are rejected.'
 			),
 		hover: z
-			.record( z.any() )
-			.describe( 'key-value of style-schema PropValues, for :hover css state. optional' )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :hover css state. optional'
+			)
 			.optional(),
 		focus: z
-			.record( z.any() )
-			.describe( 'key-value of style-schema PropValues, for :focus css state. optional' )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :focus css state. optional'
+			)
 			.optional(),
 		active: z
-			.record( z.any() )
-			.describe( 'key-value of style-schema PropValues, for :active css state. optional' )
+			.record(
+				z.string().describe( 'The style property name' ),
+				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
+			)
+			.describe(
+				'An object record containing style property names and their new values to be set on the element. for :active css state. optional'
+			)
 			.optional(),
 	} ),
 	breakpoint: z
@@ -105,13 +124,25 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		} );
 	} );
 
+	if ( action !== 'delete' ) {
+		const hasAnyProps = Object.values( propsWithStates ).some(
+			( stateProps ) => Object.keys( stateProps ).length > 0
+		);
+		if ( ! hasAnyProps ) {
+			throw new Error(
+				`Props must not be empty. Each prop must be a PropValue object from the style schema.\n\nExample: { "display": { "$$type": "string", "value": "flex" }, "flex-direction": { "$$type": "string", "value": "column" } }\n\n${ STYLE_SCHEMA_FULL_URI } to get the allowed values (look at the "value" enum in the schema response), then construct { "$$type": "string", "value": "<chosen value>" } for each property.\nAvailable Properties: ${ validProps.join(
+					', '
+				) }`
+			);
+		}
+	}
+
 	if ( errors.length > 0 ) {
-		return {
-			status: 'error',
-			message: `Validation errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
+		throw new Error(
+			`Validation errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
 				', '
-			) }\nUpdate your input and try again.`,
-		};
+			) }\nUpdate your input and try again.`
+		);
 	}
 
 	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
@@ -133,6 +164,17 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	} as { status: 'error' | 'ok'; message?: string; classId?: string };
 
 	try {
+		if ( action === 'delete' ) {
+			const deleted = await attemptDelete( {
+				classId,
+				stylesProvider: globalClassesStylesProvider,
+			} );
+			if ( deleted ) {
+				return { status: 'ok', message: `deleted global class with ID ${ classId }` };
+			}
+			throw new Error( 'error deleting class' );
+		}
+
 		let currentAction = action;
 		for await ( const [ state, props ] of Object.entries( propsWithStates ) ) {
 			switch ( currentAction ) {
@@ -148,16 +190,13 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 						// NOTE: for multiple iterations as the state changes, the next execution would be update an existing class
 						currentAction = 'modify';
 						classId = newClassId;
+						result = {
+							status: 'ok',
+							message: `created global class with ID ${ newClassId }`,
+						};
+					} else {
+						throw new Error( 'error creating class' );
 					}
-					result = newClassId
-						? {
-								status: 'ok',
-								message: `created global class with ID ${ newClassId }`,
-						  }
-						: {
-								status: 'error',
-								message: 'error creating class',
-						  };
 					break;
 				case 'modify':
 					const updated = await attemptUpdate( {
@@ -167,24 +206,11 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 						breakpoint: breakpointValue as BreakpointId,
 						state: state as StyleDefinitionState,
 					} );
-					result = updated
-						? { status: 'ok', classId }
-						: {
-								status: 'error',
-								message: 'error modifying class',
-						  };
-					break;
-				case 'delete':
-					const deleted = await attemptDelete( {
-						classId,
-						stylesProvider: globalClassesStylesProvider,
-					} );
-					result = deleted
-						? { status: 'ok', message: `deleted global class with ID ${ classId }` }
-						: {
-								status: 'error',
-								message: 'error deleting class',
-						  };
+					if ( updated ) {
+						result = { status: 'ok', classId };
+					} else {
+						throw new Error( 'error modifying class' );
+					}
 					break;
 				default:
 					throw new Error( `Unsupported action ${ action }` );
@@ -206,10 +232,21 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 		name: 'manage-global-classes',
 		requiredResources: [
 			{ uri: GLOBAL_CLASSES_URI, description: 'Global classes list' },
-			{ uri: STYLE_SCHEMA_URI, description: 'Style schema resources' },
-			{ uri: BREAKPOINTS_SCHEMA_URI, description: 'Breakpoints list' },
+			{ uri: STYLE_SCHEMA_FULL_URI, description: 'Style schema resources' },
+			{ uri: BREAKPOINTS_SCHEMA_FULL_URI, description: 'Breakpoints list' },
 		],
-		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE compositions. Do NOT create classes for one-off styles or layout-specific properties.`,
+		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE applying them. Do NOT create classes for one-off styles.
+
+IMPORTANT: props must contain actual CSS property values — never pass empty objects.
+Fetch ${ STYLE_SCHEMA_FULL_URI } to get the allowed values for each property, then use them to build the props object.
+
+Example — creating a flex column class:
+props.default = {
+  "display": { "$$type": "string", "value": "flex" },
+  "flex-direction": { "$$type": "string", "value": "column" }
+}
+
+The style schema returns a JSON Schema. Extract the "value" enum to pick the right value, then construct { "$$type": "string", "value": "<picked value>" }.`,
 		schema,
 		outputSchema,
 		handler,
@@ -249,7 +286,7 @@ async function attemptCreate( opts: Opts ) {
 		return newClassId;
 	} catch {
 		deleteClass( newClassId );
-		return null;
+		throw new Error( 'error creating class' );
 	}
 }
 
@@ -262,6 +299,7 @@ async function attemptUpdate( opts: Opts ) {
 	if ( ! updateProps || ! update ) {
 		throw new Error( 'User is unable to update global classes' );
 	}
+	await loadExistingClasses( [ classId ] );
 	const snapshot = structuredClone( stylesProvider.actions.all() );
 	try {
 		updateProps( {
@@ -269,7 +307,7 @@ async function attemptUpdate( opts: Opts ) {
 			props,
 			meta: {
 				breakpoint,
-				state,
+				state: ( state as string ) === 'default' ? null : state,
 			},
 		} );
 		await saveGlobalClasses( { context: 'frontend' } );
@@ -282,7 +320,7 @@ async function attemptUpdate( opts: Opts ) {
 			} );
 		} );
 		await saveGlobalClasses( { context: 'frontend' } );
-		return false;
+		throw new Error( 'error updating class' );
 	}
 }
 
@@ -300,11 +338,7 @@ async function attemptDelete( opts: Pick< Opts, 'classId' | 'stylesProvider' > )
 	if ( ! targetClass ) {
 		throw new Error( `Class with ID "${ classId }" not found` );
 	}
-	try {
-		deleteClass( classId );
-		await saveGlobalClasses( { context: 'frontend' } );
-		return true;
-	} catch {
-		return false;
-	}
+	deleteClass( classId );
+	await saveGlobalClasses( { context: 'frontend' } );
+	return true;
 }

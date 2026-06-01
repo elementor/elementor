@@ -203,7 +203,7 @@ class Container extends Element_Base {
 			return;
 		}
 
-		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+		$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 		$this->add_render_attribute(
 			'background-video-container',
@@ -217,7 +217,7 @@ class Container extends Element_Base {
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
-			<?php if ( $video_properties ) : ?>
+			<?php if ( $is_embed_video ) : ?>
 				<div class="elementor-background-video-embed" role="presentation"></div>
 				<?php
 			else :

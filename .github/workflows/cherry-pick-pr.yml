@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.base.ref }}

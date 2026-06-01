@@ -6,7 +6,7 @@ export const LibraryDialog = ( props ) => {
 	const isApplyingTemplate = useRef( false );
 
 	useEffect( () => {
-		const onLibraryHide = ( ) => {
+		const onLibraryHide = () => {
 			if ( isApplyingTemplate.current ) {
 				return;
 			}
