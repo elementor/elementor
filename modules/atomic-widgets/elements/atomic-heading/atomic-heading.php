@@ -71,6 +71,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
+			->set_id( 'content' )
 			->set_items( [
 				Inline_Editing_Control::bind_to( 'title' )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) )
