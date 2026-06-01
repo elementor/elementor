@@ -128,6 +128,12 @@ class Atomic_Global_Styles {
 		$document_ids = [];
 		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 
+		if ( ! empty( $changes['affected_post_ids'] ) ) {
+			foreach ( $changes['affected_post_ids'] as $post_id ) {
+				$document_ids[ (int) $post_id ] = true;
+			}
+		}
+
 		foreach ( $affected as $class_id ) {
 			foreach ( $this->relations->set_preview( $is_preview )->get_posts_by_style( $class_id ) as $doc_id ) {
 				$document_ids[ $doc_id ] = true;

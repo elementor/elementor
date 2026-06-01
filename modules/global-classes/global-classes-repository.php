@@ -168,6 +168,7 @@ class Global_Classes_Repository {
 			'deleted' => $to_delete,
 			'modified' => $to_update,
 			'order' => $order_changed,
+			'affected_post_ids' => $affected_post_ids,
 		] );
 
 		if ( ! empty( $to_delete ) && ! $is_preview ) {
@@ -222,6 +223,8 @@ class Global_Classes_Repository {
 		$this->put_to_posts( $items, $order, $current_ids );
 
 		$this->cache = null;
+
+		$changes['affected_post_ids'] = $affected_post_ids;
 
 		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
 
