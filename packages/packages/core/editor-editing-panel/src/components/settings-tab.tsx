@@ -6,6 +6,7 @@ import { SessionStorageProvider } from '@elementor/session';
 import { useElement } from '../contexts/element-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
+import { BoundSettingsSection } from './bound-settings-section';
 import { renderSectionItems } from './render-section-items';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
@@ -30,6 +31,20 @@ export const SettingsTab = () => {
 					const { type, value } = control;
 
 					if ( type === 'section' ) {
+						if ( value.bind ) {
+							return (
+								<BoundSettingsSection
+									key={ type + '.' + index }
+									bind={ value.bind }
+									label={ value.label }
+									id={ value.id }
+									items={ value.items }
+									element={ element }
+									defaultExpanded={ isDefaultExpanded( value.id ) }
+								/>
+							);
+						}
+
 						const sectionItems = renderSettingsSectionItems( {
 							items: value.items,
 							element,
@@ -86,7 +101,6 @@ function renderSettingsSectionItems( {
 		items,
 		renderItem: ( item ) => {
 			if ( ! isControl( item ) ) {
-				// TODO: Handle 2nd level sections
 				return null;
 			}
 
