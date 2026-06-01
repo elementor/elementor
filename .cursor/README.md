@@ -9,6 +9,9 @@ This directory contains AI agent configuration for test generation and code assi
   - Code quality, test reliability, browser/environment rules
   - Applies only to test files (`globs: *test*`)
 
+### Skills (`/skills/`)
+- **`atomic-widgets/SKILL.md`** - Rules, templates, and checklists for creating or extending Elementor V4 atomic widgets and container elements
+
 ### System Prompts (`/system-prompts/`)
 - **`test-gen/`** - Test generation specific prompts
   - `agent-rules.md` - High-level testing process and strategy

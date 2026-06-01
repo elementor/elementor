@@ -45,8 +45,14 @@ coverage/
 .npmrc
 
 # Code agents
-.cursor/
+.cursor/*
 !.cursor/rules/
+!.cursor/rules/**
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/README.md
+!.cursor/system-prompts/
+!.cursor/system-prompts/**
 .claude/
 
 # PHPunit and PHPlint cache files
