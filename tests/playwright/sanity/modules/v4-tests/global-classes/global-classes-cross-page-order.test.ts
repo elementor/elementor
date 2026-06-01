@@ -100,6 +100,31 @@ async function getApiOrderLabels( apiRequests: ApiRequests, request: APIRequestC
 	return list.map( ( e ) => e.label );
 }
 
+async function expectGlobalClassesOrder(
+	apiRequests: ApiRequests,
+	request: APIRequestContext,
+	context: 'preview' | 'frontend',
+	expectedOrder: string[],
+): Promise< void > {
+	const labels = await getApiOrderLabels( apiRequests, request, context );
+	expect( labels, `${ context } registry order` ).toEqual( expectedOrder );
+}
+
+async function waitForGlobalClassesOrder(
+	apiRequests: ApiRequests,
+	request: APIRequestContext,
+	context: 'preview' | 'frontend',
+	expectedOrder: string[],
+): Promise< void > {
+	await expect
+		.poll( () => getApiOrderLabels( apiRequests, request, context ), {
+			timeout: timeouts.longAction,
+			intervals: [ 200, 500, 1000 ],
+			message: `Timed out waiting for ${ context } registry order ${ JSON.stringify( expectedOrder ) }`,
+		} )
+		.toEqual( expectedOrder );
+}
+
 async function renameClassInClassManager( page: Page, oldLabel: string, newLabel: string ): Promise< void > {
 	const item = page.locator( 'li[role="listitem"]' ).filter( { hasText: oldLabel } );
 
@@ -128,6 +153,7 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 	let pageBId: number;
 	let widgetAId: string;
 	let widgetBId: string;
+	let widgetEOnlyId: string;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		page = await browser.newPage();
@@ -135,16 +161,13 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		await wpAdmin.setExperiments( EXPERIMENTS );
 	} );
 
-	test.afterAll( async () => {
+	test.afterAll( async ( { apiRequests, request } ) => {
+		await deleteAllGlobalClasses( apiRequests, request );
 		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
-	test.afterEach( async ( { apiRequests } ) => {
-		await deleteAllGlobalClasses( apiRequests, page.context().request );
-	} );
-
-	test( 'Both pages share one identical class order, and deleting the winning class on one page gracefully updates the other page on the frontend', async ( { apiRequests } ) => {
+	test( 'Both pages share one identical class order, and deleting the winning class on one page gracefully updates the other page on the frontend', async ( { apiRequests, request } ) => {
 		await test.step( 'Page A: add a widget with class-a then class-b (class-b wins on top)', async () => {
 			editor = await wpAdmin.openNewPage();
 			pageAId = Number( await editor.getPageId() );
@@ -172,13 +195,8 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		await test.step( 'Preview registry order is [class-c, class-b, class-a] — same on both pages', async () => {
 			const expectedOrder = [ CLASS_C, CLASS_B, CLASS_A ];
 
-			await expect
-				.poll( () => getApiOrderLabels( apiRequests, page.context().request, 'preview' ), { timeout: timeouts.heavyAction } )
-				.toEqual( expectedOrder );
-
-			await expect
-				.poll( () => getApiOrderLabels( apiRequests, page.context().request, 'frontend' ), { timeout: timeouts.heavyAction } )
-				.toEqual( expectedOrder );
+			await expectGlobalClassesOrder( apiRequests, request, 'preview', expectedOrder );
+			await expectGlobalClassesOrder( apiRequests, request, 'frontend', expectedOrder );
 		} );
 
 		await test.step( 'Open Class Manager on Page A to delete class-c', async () => {
@@ -192,11 +210,12 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		} );
 
 		await test.step( 'Page B published output is not broken and gracefully falls back to class-b', async () => {
+			await waitForGlobalClassesOrder( apiRequests, request, 'frontend', [ CLASS_B, CLASS_A ] );
 			await assertPublishedWidgetBackground( page, pageBId, widgetBId, COLOR.b.rgb );
 		} );
 	} );
 
-	test( 'Moving a class to the lowest priority from a different page updates the affected page on the frontend', async ( { apiRequests } ) => {
+	test( 'Moving a class to the lowest priority from a different page updates the affected page on the frontend', async ( { apiRequests, request } ) => {
 		await test.step( 'Affected page (B): apply a new class-d that wins on top', async () => {
 			await openExistingPageEditor( page, editor, pageBId );
 			await editor.selectElement( widgetBId );
@@ -218,11 +237,10 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		} );
 
 		await test.step( 'API order is now [class-b, class-a, class-d] on both contexts', async () => {
-			const previewOrder = await getApiOrderLabels( apiRequests, page.context().request, 'preview' );
-			const frontendOrder = await getApiOrderLabels( apiRequests, page.context().request, 'frontend' );
+			const expectedOrder = [ CLASS_B, CLASS_A, CLASS_D ];
 
-			expect( previewOrder ).toEqual( [ CLASS_B, CLASS_A, CLASS_D ] );
-			expect( frontendOrder ).toEqual( [ CLASS_B, CLASS_A, CLASS_D ] );
+			await waitForGlobalClassesOrder( apiRequests, request, 'preview', expectedOrder );
+			await waitForGlobalClassesOrder( apiRequests, request, 'frontend', expectedOrder );
 		} );
 
 		await test.step( 'Affected page (B) now shows class-b after class-d dropped to the lowest priority', async () => {
@@ -230,15 +248,19 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Renaming, reordering and deleting classes on one page keeps both published pages correct', async ( { apiRequests } ) => {
-		await test.step( 'Page B: apply a new class-e that wins on top', async () => {
+	test( 'Renaming, reordering and deleting classes on one page keeps both published pages correct', async ( { apiRequests, request } ) => {
+		await test.step( 'Page B: add class-e on the stacked widget and on a second widget with only class-e', async () => {
 			await openExistingPageEditor( page, editor, pageBId );
 			await editor.selectElement( widgetBId );
 			await editor.v4Panel.openTab( 'style' );
 
 			await createAndApplyStyledClass( page, editor, CLASS_E, COLOR.e.hex );
-
 			await assertCanvasWidgetBackground( editor, widgetBId, COLOR.e.rgb );
+
+			widgetEOnlyId = await addDivBlockWithStyleTab( editor );
+			await applyExistingClass( page, editor, CLASS_E );
+			await assertCanvasWidgetBackground( editor, widgetEOnlyId, COLOR.e.rgb );
+
 			await publishAndWaitForClassesSave( editor, page );
 		} );
 
@@ -258,21 +280,20 @@ test.describe.serial( 'Global Classes - Cross Page Order @v4-tests', () => {
 		await test.step( 'API order is [class-b, class-d, cross-renamed] on both contexts after save', async () => {
 			const expectedOrder = [ CLASS_B, CLASS_D, CLASS_E_RENAMED ];
 
-			await expect
-				.poll( () => getApiOrderLabels( apiRequests, page.context().request, 'preview' ), { timeout: timeouts.heavyAction } )
-				.toEqual( expectedOrder );
-
-			await expect
-				.poll( () => getApiOrderLabels( apiRequests, page.context().request, 'frontend' ), { timeout: timeouts.heavyAction } )
-				.toEqual( expectedOrder );
+			await waitForGlobalClassesOrder( apiRequests, request, 'preview', expectedOrder );
+			await waitForGlobalClassesOrder( apiRequests, request, 'frontend', expectedOrder );
 		} );
 
 		await test.step( 'Page A published widget falls back to class-b after class-a deletion', async () => {
 			await assertPublishedWidgetBackground( page, pageAId, widgetAId, COLOR.b.rgb );
 		} );
 
-		await test.step( 'Page B published widget still resolves to class-b (highest remaining priority)', async () => {
+		await test.step( 'Page B stacked widget resolves to class-b after renamed class-e moved to lowest priority', async () => {
 			await assertPublishedWidgetBackground( page, pageBId, widgetBId, COLOR.b.rgb );
+		} );
+
+		await test.step( 'Page B E-only widget keeps class-e color after rename without republishing Page B', async () => {
+			await assertPublishedWidgetBackground( page, pageBId, widgetEOnlyId, COLOR.e.rgb );
 		} );
 	} );
 } );
