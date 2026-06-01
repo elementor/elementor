@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { type GridTracks } from '../../hooks/use-grid-tracks';
-import { computeOutlineGeometry, snapToHalfPixel } from '../../utils/grid-outline-utils';
-import { GridOutlineLine } from './grid-outline-line';
+import { computeCellRects, snapToHalfPixel } from '../../utils/grid-outline-utils';
+import { GridOutlineCell } from './grid-outline-cell';
 
 type Props = {
 	tracks: GridTracks;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function GridOutline( { tracks, width, height }: Props ) {
-	const { vertical, horizontal, top, bottom, left, right } = computeOutlineGeometry( tracks, width, height );
+	const cells = computeCellRects( tracks, width, height );
 
 	return (
 		<svg
@@ -20,23 +20,13 @@ export function GridOutline( { tracks, width, height }: Props ) {
 			style={ { position: 'absolute', inset: 0, overflow: 'visible' } }
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			{ vertical.map( ( x, i ) => (
-				<GridOutlineLine
-					key={ `v-${ i }` }
-					x1={ snapToHalfPixel( x ) }
-					x2={ snapToHalfPixel( x ) }
-					y1={ top }
-					y2={ bottom }
-					color={ tracks.borderColor }
-				/>
-			) ) }
-			{ horizontal.map( ( y, i ) => (
-				<GridOutlineLine
-					key={ `h-${ i }` }
-					x1={ left }
-					x2={ right }
-					y1={ snapToHalfPixel( y ) }
-					y2={ snapToHalfPixel( y ) }
+			{ cells.map( ( cell, i ) => (
+				<GridOutlineCell
+					key={ i }
+					x={ snapToHalfPixel( cell.x ) }
+					y={ snapToHalfPixel( cell.y ) }
+					width={ Math.round( cell.width ) }
+					height={ Math.round( cell.height ) }
 					color={ tracks.borderColor }
 				/>
 			) ) }

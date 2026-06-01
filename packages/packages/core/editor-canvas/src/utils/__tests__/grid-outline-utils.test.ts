@@ -1,5 +1,5 @@
 import { type GridTracks } from '../../hooks/use-grid-tracks';
-import { computeOutlineGeometry, parseTrackList, snapToHalfPixel, toPx } from '../grid-outline-utils';
+import { computeCellRects, parseTrackList, snapToHalfPixel, toGridTracks, toPx } from '../grid-outline-utils';
 
 function makeTracks( partial: Partial< GridTracks > = {} ): GridTracks {
 	return {
@@ -13,74 +13,77 @@ function makeTracks( partial: Partial< GridTracks > = {} ): GridTracks {
 	};
 }
 
-describe( 'computeOutlineGeometry', () => {
-	it( 'returns empty boundary lists when there are no tracks', () => {
-		const geometry = computeOutlineGeometry( makeTracks(), 100, 100 );
-
-		expect( geometry.vertical ).toEqual( [] );
-		expect( geometry.horizontal ).toEqual( [] );
+describe( 'computeCellRects', () => {
+	it( 'returns no cells when there are no tracks on either axis', () => {
+		expect( computeCellRects( makeTracks(), 100, 100 ) ).toEqual( [] );
 	} );
 
-	it( 'shifts boundaries by the padding offset on each axis', () => {
+	it( 'produces one rect per cell offset by the padding', () => {
 		const tracks = makeTracks( {
 			columns: [ 100, 100 ],
 			rows: [ 80, 80 ],
 			padding: { top: 5, right: 0, bottom: 0, left: 20 },
 		} );
 
-		const geometry = computeOutlineGeometry( tracks, 300, 300 );
-
-		expect( geometry.vertical ).toEqual( [ 20, 120, 220 ] );
-		expect( geometry.horizontal ).toEqual( [ 5, 85, 165 ] );
+		expect( computeCellRects( tracks, 300, 300 ) ).toEqual( [
+			{ x: 20, y: 5, width: 100, height: 80 },
+			{ x: 120, y: 5, width: 100, height: 80 },
+			{ x: 20, y: 85, width: 100, height: 80 },
+			{ x: 120, y: 85, width: 100, height: 80 },
+		] );
 	} );
 
-	it( 'emits both edges of every gap between tracks', () => {
+	it( 'separates cells by the gap so the gap stays empty', () => {
 		const tracks = makeTracks( {
 			columns: [ 100, 100, 100 ],
+			rows: [ 80 ],
 			columnGap: 10,
 		} );
 
-		const geometry = computeOutlineGeometry( tracks, 400, 100 );
-
-		// 0 — 100 [gap 10] 110 — 210 [gap 10] 220 — 320
-		expect( geometry.vertical ).toEqual( [ 0, 100, 110, 210, 220, 320 ] );
-	} );
-
-	it( 'collapses gap boundaries when the gap is zero', () => {
-		const tracks = makeTracks( {
-			rows: [ 50, 50, 50 ],
-			rowGap: 0,
-		} );
-
-		const geometry = computeOutlineGeometry( tracks, 100, 200 );
-
-		expect( geometry.horizontal ).toEqual( [ 0, 50, 100, 150 ] );
+		expect( computeCellRects( tracks, 400, 100 ) ).toEqual( [
+			{ x: 0, y: 0, width: 100, height: 80 },
+			{ x: 110, y: 0, width: 100, height: 80 },
+			{ x: 220, y: 0, width: 100, height: 80 },
+		] );
 	} );
 
 	it( 'handles uneven track sizes', () => {
 		const tracks = makeTracks( {
 			columns: [ 100, 200, 100 ],
+			rows: [ 50 ],
 			columnGap: 5,
 			padding: { top: 0, right: 0, bottom: 0, left: 10 },
 		} );
 
-		const geometry = computeOutlineGeometry( tracks, 500, 100 );
-
-		// 10 — 110 [5] 115 — 315 [5] 320 — 420
-		expect( geometry.vertical ).toEqual( [ 10, 110, 115, 315, 320, 420 ] );
+		expect( computeCellRects( tracks, 500, 100 ) ).toEqual( [
+			{ x: 10, y: 0, width: 100, height: 50 },
+			{ x: 115, y: 0, width: 200, height: 50 },
+			{ x: 320, y: 0, width: 100, height: 50 },
+		] );
 	} );
 
-	it( 'derives the content rect from element size and padding', () => {
+	it( 'spans a single full-width cell per row when only rows are defined', () => {
 		const tracks = makeTracks( {
+			rows: [ 50, 50 ],
+			padding: { top: 8, right: 12, bottom: 6, left: 4 },
+		} );
+
+		expect( computeCellRects( tracks, 300, 120 ) ).toEqual( [
+			{ x: 4, y: 8, width: 284, height: 50 },
+			{ x: 4, y: 58, width: 284, height: 50 },
+		] );
+	} );
+
+	it( 'spans a single full-height cell per column when only columns are defined', () => {
+		const tracks = makeTracks( {
+			columns: [ 100, 100 ],
 			padding: { top: 5, right: 8, bottom: 12, left: 20 },
 		} );
 
-		const geometry = computeOutlineGeometry( tracks, 300, 200 );
-
-		expect( geometry.top ).toBe( 5 );
-		expect( geometry.left ).toBe( 20 );
-		expect( geometry.right ).toBe( 292 );
-		expect( geometry.bottom ).toBe( 188 );
+		expect( computeCellRects( tracks, 300, 200 ) ).toEqual( [
+			{ x: 20, y: 5, width: 100, height: 183 },
+			{ x: 120, y: 5, width: 100, height: 183 },
+		] );
 	} );
 } );
 
@@ -138,5 +141,92 @@ describe( 'toPx', () => {
 		[ 'auto', 0 ],
 	] )( 'parses %p as %p', ( input, expected ) => {
 		expect( toPx( input ) ).toBe( expected );
+	} );
+} );
+
+type ComputedStyleParts = {
+	gridTemplateColumns: string;
+	gridTemplateRows: string;
+	columnGap: string;
+	rowGap: string;
+	paddingTop: string;
+	paddingRight: string;
+	paddingBottom: string;
+	paddingLeft: string;
+	borderColor: string;
+};
+
+function mockComputedStyle( parts: Partial< ComputedStyleParts > = {} ): CSSStyleDeclaration {
+	const resolved: ComputedStyleParts = {
+		gridTemplateColumns: 'none',
+		gridTemplateRows: 'none',
+		columnGap: 'normal',
+		rowGap: 'normal',
+		paddingTop: '0px',
+		paddingRight: '0px',
+		paddingBottom: '0px',
+		paddingLeft: '0px',
+		borderColor: '',
+		...parts,
+	};
+
+	return {
+		gridTemplateColumns: resolved.gridTemplateColumns,
+		gridTemplateRows: resolved.gridTemplateRows,
+		columnGap: resolved.columnGap,
+		rowGap: resolved.rowGap,
+		paddingTop: resolved.paddingTop,
+		paddingRight: resolved.paddingRight,
+		paddingBottom: resolved.paddingBottom,
+		paddingLeft: resolved.paddingLeft,
+		getPropertyValue: ( name: string ) => ( name === '--e-a-border-color-bold' ? resolved.borderColor : '' ),
+	} as unknown as CSSStyleDeclaration;
+}
+
+describe( 'toGridTracks', () => {
+	it( 'parses resolved track lists, gaps, and padding from computed style', () => {
+		const tracks = toGridTracks(
+			mockComputedStyle( {
+				gridTemplateColumns: '100px 100px 100px',
+				gridTemplateRows: '80px 80px',
+				columnGap: '10px',
+				rowGap: '8px',
+				paddingTop: '5px',
+				paddingRight: '6px',
+				paddingBottom: '7px',
+				paddingLeft: '8px',
+			} )
+		);
+
+		expect( tracks ).toEqual( {
+			columns: [ 100, 100, 100 ],
+			rows: [ 80, 80 ],
+			columnGap: 10,
+			rowGap: 8,
+			padding: { top: 5, right: 6, bottom: 7, left: 8 },
+			borderColor: '',
+		} );
+	} );
+
+	it( 'returns empty track lists when the template is "none"', () => {
+		const tracks = toGridTracks( mockComputedStyle() );
+
+		expect( tracks.columns ).toEqual( [] );
+		expect( tracks.rows ).toEqual( [] );
+	} );
+
+	it( 'reports gap as 0 when computed style returns "normal"', () => {
+		const tracks = toGridTracks(
+			mockComputedStyle( { gridTemplateColumns: '100px 100px', columnGap: 'normal', rowGap: 'normal' } )
+		);
+
+		expect( tracks.columnGap ).toBe( 0 );
+		expect( tracks.rowGap ).toBe( 0 );
+	} );
+
+	it( 'trims the --e-a-border-color-bold CSS variable', () => {
+		const tracks = toGridTracks( mockComputedStyle( { borderColor: '  #d5d8dc  ' } ) );
+
+		expect( tracks.borderColor ).toBe( '#d5d8dc' );
 	} );
 } );

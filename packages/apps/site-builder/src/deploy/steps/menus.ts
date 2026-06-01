@@ -1,22 +1,52 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import type { DeployMenuItem, DeployPayload, WpMenu } from '../types';
+import type { CreatedMenus, DeployMenuItem, DeployPayload, WpMenu } from '../types';
+import { fetchMenuLocationSlugs, isInvalidMenuLocationError, resolveMenuLocation } from './menu-locations';
 
-async function createMenu(
-	name: string,
-	items: DeployMenuItem[],
-	pageIdMap: Record< string, number >,
-	location: string
-) {
-	const menu = await apiFetch< WpMenu >( {
+type CreateMenuData = {
+	name: string;
+	auto_add: boolean;
+	locations?: string[];
+};
+
+type CreateMenuArgs = {
+	name: string;
+	items: DeployMenuItem[];
+	pageIdMap: Record< string, number >;
+	locationCandidates: string[];
+	fallbackPattern?: RegExp;
+};
+
+async function postMenu( data: CreateMenuData ): Promise< WpMenu > {
+	return apiFetch< WpMenu >( {
 		path: '/wp/v2/menus',
 		method: 'POST',
-		data: {
-			name,
-			auto_add: false,
-			locations: [ location ],
-		},
+		data,
 	} );
+}
+
+async function createMenu( args: CreateMenuArgs ): Promise< WpMenu > {
+	const { name, items, pageIdMap, locationCandidates, fallbackPattern } = args;
+
+	const availableSlugs = await fetchMenuLocationSlugs();
+	const location = resolveMenuLocation( availableSlugs, locationCandidates, fallbackPattern );
+
+	const baseData: CreateMenuData = {
+		name,
+		auto_add: false,
+	};
+
+	let menu: WpMenu;
+
+	try {
+		menu = await postMenu( location ? { ...baseData, locations: [ location ] } : baseData );
+	} catch ( error ) {
+		if ( ! location || ! isInvalidMenuLocationError( error ) ) {
+			throw error;
+		}
+
+		menu = await postMenu( baseData );
+	}
 
 	const menuItemPromises = items.map( ( item, index ) => {
 		const objectId = pageIdMap[ item.pageId ];
@@ -42,14 +72,35 @@ async function createMenu(
 	} );
 
 	await Promise.all( menuItemPromises );
+
+	return menu;
 }
 
-export async function createMenus( menus: DeployPayload[ 'menus' ], pageIdMap: Record< string, number > ) {
+export async function createMenus(
+	menus: DeployPayload[ 'menus' ],
+	pageIdMap: Record< string, number >
+): Promise< CreatedMenus > {
+	const created: CreatedMenus = {};
+
 	if ( menus.header?.length ) {
-		await createMenu( `Header-${ Date.now() }`, menus.header, pageIdMap, 'primary' );
+		created.header = await createMenu( {
+			name: `Header-${ Date.now() }`,
+			items: menus.header,
+			pageIdMap,
+			locationCandidates: [ 'header', 'menu-1', 'main', 'navigation' ],
+			fallbackPattern: /header|main|navigation/i,
+		} );
 	}
 
 	if ( menus.footer?.length ) {
-		await createMenu( `Footer-${ Date.now() }`, menus.footer, pageIdMap, 'footer' );
+		created.footer = await createMenu( {
+			name: `Footer-${ Date.now() }`,
+			items: menus.footer,
+			pageIdMap,
+			locationCandidates: [ 'footer', 'footer-menu', 'secondary' ],
+			fallbackPattern: /footer/i,
+		} );
 	}
+
+	return created;
 }
