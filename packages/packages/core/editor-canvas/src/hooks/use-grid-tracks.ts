@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
-import { parseTrackList, toPx } from '../utils/grid-outline-utils';
+import { toGridTracks } from '../utils/grid-outline-utils';
 
 export type GridTracks = {
 	columns: number[];
@@ -20,33 +22,32 @@ const EMPTY: GridTracks = {
 	borderColor: '',
 };
 
+const DEVICE_MODE_CHANGE_EVENT = 'elementor/device-mode/change';
+
 export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): GridTracks {
-	return useMemo( () => {
-		if ( ! element ) {
-			return EMPTY;
+	const [ tracks, setTracks ] = useState< GridTracks >( EMPTY );
+
+	const trigger = useListenTo(
+		[ windowEvent( ELEMENT_STYLE_CHANGE_EVENT ), windowEvent( DEVICE_MODE_CHANGE_EVENT ) ],
+		() => ( {} )
+	);
+
+	useEffect( () => {
+		const previewWindow = element?.ownerDocument?.defaultView;
+
+		if ( ! element || ! previewWindow ) {
+			setTracks( EMPTY );
+			return;
 		}
 
-		const previewWindow = element.ownerDocument?.defaultView;
+		const frame = previewWindow.requestAnimationFrame( () => {
+			setTracks( toGridTracks( previewWindow.getComputedStyle( element ) ) );
+		} );
 
-		if ( ! previewWindow ) {
-			return EMPTY;
-		}
-
-		const computedStyle = previewWindow.getComputedStyle( element );
-
-		return {
-			columns: parseTrackList( computedStyle.gridTemplateColumns ),
-			rows: parseTrackList( computedStyle.gridTemplateRows ),
-			columnGap: toPx( computedStyle.columnGap ),
-			rowGap: toPx( computedStyle.rowGap ),
-			padding: {
-				top: toPx( computedStyle.paddingTop ),
-				right: toPx( computedStyle.paddingRight ),
-				bottom: toPx( computedStyle.paddingBottom ),
-				left: toPx( computedStyle.paddingLeft ),
-			},
-			borderColor: computedStyle.getPropertyValue( '--e-a-border-color-bold' ).trim(),
+		return () => {
+			previewWindow.cancelAnimationFrame( frame );
 		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ element, rect.width, rect.height ] );
+	}, [ element, rect.width, rect.height, trigger ] );
+
+	return tracks;
 }

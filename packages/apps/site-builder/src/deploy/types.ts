@@ -1,15 +1,22 @@
 export const DEPLOY_DESIGN_SYSTEM_PATH = '/elementor/v1/site-builder/deploy-design-system';
 
+export type ElementorContentNode = {
+	elType?: string;
+	widgetType?: string;
+	settings?: Record< string, unknown >;
+	elements?: ElementorContentNode[];
+};
+
 export interface DeployPage {
 	id: string;
 	title: string;
-	content: object[];
+	content: ElementorContentNode[];
 }
 
 export interface DeployThemePart {
 	title: string;
 	type: 'header' | 'footer' | 'error-404' | 'single-post';
-	content: object[];
+	content: ElementorContentNode[];
 	themeBuilderCondition?: string;
 }
 
@@ -70,10 +77,22 @@ export interface DeployResult {
 
 export interface WpPost {
 	id: number;
+	link?: string;
+}
+
+export interface CreatePagesResult {
+	pageIdMap: Record< string, number >;
+	pageUrlMap: Record< string, string >;
 }
 
 export interface WpMenu {
 	id: number;
+	slug: string;
+}
+
+export interface CreatedMenus {
+	header?: WpMenu;
+	footer?: WpMenu;
 }
 
 export interface ElementorSettingResponse {

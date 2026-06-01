@@ -122,7 +122,7 @@ describe( '<SettingsTab />', () => {
 
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
 			defaultSectionsExpanded: {
-				settings: [ 'Section 1', 'Section 2' ],
+				settings: [ 'section' ],
 			},
 			defaultTab: 'settings',
 		} );
@@ -361,6 +361,13 @@ describe( '<SettingsTab />', () => {
 			},
 		} );
 
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'section' ],
+			},
+			defaultTab: 'settings',
+		} );
+
 		// Act.
 		renderWithTheme( <SettingsTab /> );
 
@@ -388,7 +395,7 @@ describe( '<SettingsTab />', () => {
 		} );
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
 			defaultSectionsExpanded: {
-				settings: [ 'Element Control Section' ],
+				settings: [ 'section' ],
 			},
 			defaultTab: 'settings',
 		} );
@@ -403,12 +410,14 @@ describe( '<SettingsTab />', () => {
 } );
 
 export const mockSection = ( {
+	id = 'section',
 	label = 'Section',
 	description = 'Section description',
 	items = [],
 }: Partial< ControlsSection[ 'value' ] > ): ControlsSection => ( {
 	type: 'section',
 	value: {
+		id,
 		label,
 		description,
 		items,
