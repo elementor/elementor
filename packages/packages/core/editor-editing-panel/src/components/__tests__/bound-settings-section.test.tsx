@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createMockElementType, createMockPropType, mockHistoryManager, renderWithTheme } from 'test-utils';
 import { createControl, useBoundProp } from '@elementor/editor-controls';
+import { updateElementSettings } from '@elementor/editor-elements';
 import { type Control, type ObjectPropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';
@@ -84,13 +85,7 @@ function renderBoundSection( settings: Record< string, PropValue > = {} ) {
 
 	return renderWithTheme(
 		<ElementProvider element={ element } elementType={ elementType } settings={ settings }>
-			<BoundSettingsSection
-				bind={ QUERY_BIND }
-				label={ SECTION_LABEL }
-				items={ sectionItems }
-				element={ element }
-				defaultExpanded
-			/>
+			<BoundSettingsSection bind={ QUERY_BIND } label={ SECTION_LABEL } items={ sectionItems } defaultExpanded />
 		</ElementProvider>
 	);
 }
@@ -130,6 +125,36 @@ describe( '<BoundSettingsSection />', () => {
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 	} );
 
+	it( 'persists nested control edits to element settings', async () => {
+		renderBoundSection( {
+			[ QUERY_BIND ]: {
+				$$type: 'loop-query',
+				value: {
+					source: { $$type: 'string', value: 'post' },
+					title: { $$type: 'string', value: 'My title' },
+				},
+			},
+		} );
+		expandSection();
+
+		fireEvent.change( screen.getByLabelText( 'Title' ), { target: { value: 'Updated title' } } );
+
+		await waitFor( () => {
+			expect( updateElementSettings ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					props: expect.objectContaining( {
+						query: expect.objectContaining( {
+							$$type: 'loop-query',
+							value: expect.objectContaining( {
+								title: { $$type: 'string', value: 'Updated title' },
+							} ),
+						} ),
+					} ),
+				} )
+			);
+		} );
+	} );
+
 	it( 'hides a child whose dependency triggers a hide effect', () => {
 		renderBoundSection( {
 			[ QUERY_BIND ]: {
@@ -144,5 +169,4 @@ describe( '<BoundSettingsSection />', () => {
 		expect( screen.getByText( 'Source' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Title' ) ).not.toBeInTheDocument();
 	} );
-
 } );

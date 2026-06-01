@@ -37,9 +37,7 @@ export const SettingsTab = () => {
 									key={ type + '.' + index }
 									bind={ value.bind }
 									label={ value.label }
-									id={ value.id }
 									items={ value.items }
-									element={ element }
 									defaultExpanded={ isDefaultExpanded( value.id ) }
 								/>
 							);

@@ -17,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -57,13 +58,12 @@ trait Has_Atomic_Base {
 					}
 
 					$bound_prop = $schema[ $section_bind ];
+					$section_schema = $this->resolve_section_bind_schema( $bound_prop );
 
-					if ( ! ( $bound_prop instanceof Object_Prop_Type ) ) {
+					if ( null === $section_schema ) {
 						Utils::safe_throw( "Section bind `{$section_bind}` must be an object prop in `{$this->get_name()}`." );
 						continue;
 					}
-
-					$section_schema = $bound_prop->get_shape();
 				}
 
 				$cloned_section->set_items(
@@ -92,6 +92,24 @@ trait Has_Atomic_Base {
 		}
 
 		return $valid_controls;
+	}
+
+	private function resolve_section_bind_schema( Prop_Type $bound_prop ): ?array {
+		if ( $bound_prop instanceof Object_Prop_Type ) {
+			return $bound_prop->get_shape();
+		}
+
+		if ( ! ( $bound_prop instanceof Union_Prop_Type ) ) {
+			return null;
+		}
+
+		foreach ( $bound_prop->get_prop_types() as $variant ) {
+			if ( $variant instanceof Object_Prop_Type ) {
+				return $variant->get_shape();
+			}
+		}
+
+		return null;
 	}
 
 	private static function validate_schema( array $schema ) {
@@ -269,7 +287,7 @@ trait Has_Atomic_Base {
 		);
 		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
-		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props, $this );
+		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props, [ 'element' => $this ] );
 
 		return $this->transform_link_for_render( $parsed );
 	}
@@ -311,7 +329,7 @@ trait Has_Atomic_Base {
 		$single_schema = [ $key => $schema[ $key ] ];
 		$single_props = [ $key => $prop_value ];
 
-		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props, $this );
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props, [ 'element' => $this ] );
 
 		return $resolved[ $key ] ?? null;
 	}

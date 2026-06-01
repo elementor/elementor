@@ -6,9 +6,11 @@ import {
 	isDependencyMet,
 	isOverridable,
 	isTransformable,
+	type ObjectPropType,
 	type Props,
 	type PropsSchema,
 	type PropType,
+	type PropValue,
 	rewrapOverridableValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
@@ -164,40 +166,41 @@ function getDependencyEvaluationSettings(
 	};
 }
 
-function resolveObjectShape(
-	propsSchema: PropsSchema,
-	elementValues: Values,
-	path: string[]
-): PropsSchema | null {
-	const propType = getPropType( propsSchema, elementValues, path );
-
-	if ( ! propType ) {
-		return null;
-	}
-
-	if ( propType.kind === 'object' && propType.shape ) {
-		return propType.shape;
+export function resolveObjectPropType( propType: PropType, value?: PropValue | null ): ObjectPropType | null {
+	if ( propType.kind === 'object' ) {
+		return propType;
 	}
 
 	if ( propType.kind !== 'union' ) {
 		return null;
 	}
 
-	const propValue = extractValue( path, elementValues, [], { unwrapOverridableLeaf: false } );
-	const typeKey = propValue && isTransformable( propValue ) ? propValue.$$type : null;
-	const resolvedPropType = typeKey ? propType.prop_types[ typeKey ] : undefined;
+	if ( value && isTransformable( value ) ) {
+		const activeVariant = propType.prop_types[ value.$$type ];
 
-	if ( resolvedPropType?.kind === 'object' && resolvedPropType.shape ) {
-		return resolvedPropType.shape;
+		if ( activeVariant?.kind === 'object' ) {
+			return activeVariant;
+		}
+
+		return null;
 	}
 
 	const objectVariant = Object.values( propType.prop_types ).find( ( candidate ) => candidate.kind === 'object' );
 
-	if ( objectVariant?.kind === 'object' && objectVariant.shape ) {
-		return objectVariant.shape;
+	return objectVariant?.kind === 'object' ? objectVariant : null;
+}
+
+function resolveObjectShape( propsSchema: PropsSchema, elementValues: Values, path: string[] ): PropsSchema | null {
+	const propType = getPropType( propsSchema, elementValues, path );
+
+	if ( ! propType ) {
+		return null;
 	}
 
-	return null;
+	const propValue = extractValue( path, elementValues, [], { unwrapOverridableLeaf: false } );
+	const objectPropType = resolveObjectPropType( propType, propValue );
+
+	return objectPropType?.shape ?? null;
 }
 
 function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ): PropType | null {

@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +15,7 @@ class Props_Resolver_Context {
 
 	private bool $disabled = false;
 
-	private ?Element_Base $element = null;
+	private array $options = [];
 
 	public static function make(): self {
 		return new static();
@@ -40,8 +39,8 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
-	public function set_element( ?Element_Base $element ): self {
-		$this->element = $element;
+	public function set_options( array $options ): self {
+		$this->options = $options;
 
 		return $this;
 	}
@@ -58,7 +57,7 @@ class Props_Resolver_Context {
 		return $this->prop_type;
 	}
 
-	public function get_element(): ?Element_Base {
-		return $this->element;
+	public function get_options(): array {
+		return $this->options;
 	}
 }

@@ -1,58 +1,49 @@
 import * as React from 'react';
 import { usePropContext } from '@elementor/editor-controls';
-import { type ControlItem, type Element } from '@elementor/editor-elements';
-import { type Props, type PropsSchema } from '@elementor/editor-props';
+import { type Control, type ControlItem } from '@elementor/editor-elements';
+import { type Props, type PropsSchema, type PropValue } from '@elementor/editor-props';
 
+import { useElement } from '../contexts/element-context';
 import { SettingsField } from '../controls-registry/settings-field';
-import { getObjectSettingsWithDefaults } from '../utils/prop-dependency-utils';
-import { NestedSettingsControl } from './nested-settings-control';
+import { getObjectSettingsWithDefaults, resolveObjectPropType } from '../utils/prop-dependency-utils';
 import { renderSectionItems } from './render-section-items';
 import { Section } from './section';
+import { SettingsControl } from './settings-control';
 import { TransformableObjectBridge } from './transformable-object-bridge';
 
 type BoundSettingsSectionProps = {
 	bind: string;
 	label: string;
-	id?: string | null;
 	items?: ControlItem[];
-	element: Element;
 	defaultExpanded?: boolean;
 };
 
-export const BoundSettingsSection = ( {
-	bind,
-	label,
-	id,
-	items,
-	element,
-	defaultExpanded,
-}: BoundSettingsSectionProps ) => {
+export const BoundSettingsSection = ( { bind, label, items, defaultExpanded }: BoundSettingsSectionProps ) => {
 	return (
 		<SettingsField bind={ bind } propDisplayName={ label }>
 			<TransformableObjectBridge>
-				<BoundSectionContent
-					label={ label }
-					id={ id }
-					items={ items }
-					element={ element }
-					defaultExpanded={ defaultExpanded }
-				/>
+				<BoundSectionBody label={ label } items={ items } defaultExpanded={ defaultExpanded } />
 			</TransformableObjectBridge>
 		</SettingsField>
 	);
 };
 
-type BoundSectionContentProps = {
+type BoundSectionBodyProps = {
 	label: string;
-	id?: string | null;
 	items?: ControlItem[];
-	element: Element;
 	defaultExpanded?: boolean;
 };
 
-const BoundSectionContent = ( { label, id, items, element, defaultExpanded }: BoundSectionContentProps ) => {
+const BoundSectionBody = ( { label, items, defaultExpanded }: BoundSectionBodyProps ) => {
+	const { element } = useElement();
 	const { propType, value } = usePropContext();
-	const shape = ( propType.shape ?? {} ) as PropsSchema;
+	const objectPropType = resolveObjectPropType( propType, value as PropValue );
+
+	if ( ! objectPropType ) {
+		return null;
+	}
+
+	const shape = ( objectPropType.shape ?? {} ) as PropsSchema;
 	const settings = getObjectSettingsWithDefaults( shape, value as Props );
 
 	const sectionItems = renderSectionItems( {
@@ -63,11 +54,10 @@ const BoundSectionContent = ( { label, id, items, element, defaultExpanded }: Bo
 			}
 
 			return (
-				<NestedSettingsControl
+				<SettingsControl
 					key={ item.value.bind + '.' + element.id }
-					control={ item }
-					shape={ shape }
-					settings={ settings }
+					control={ item as Control }
+					dependencyScope={ { shape, settings } }
 				/>
 			);
 		},

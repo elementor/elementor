@@ -2,12 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Plugin;
 use Exception;
 
@@ -34,7 +30,7 @@ class Render_Props_Resolver extends Props_Resolver {
 		return static::instance( self::CONTEXT_SETTINGS );
 	}
 
-	public function resolve( array $schema, array $props, ?Element_Base $element = null ): array {
+	public function resolve( array $schema, array $props, array $options = [] ): array {
 		$resolved = [];
 
 		foreach ( $schema as $key => $prop_type ) {
@@ -49,7 +45,7 @@ class Render_Props_Resolver extends Props_Resolver {
 				$actual_value,
 				$key,
 				$prop_type,
-				$element
+				$options
 			);
 
 			if ( Multi_Props::is( $transformed ) ) {
@@ -64,7 +60,7 @@ class Render_Props_Resolver extends Props_Resolver {
 		return $resolved;
 	}
 
-	protected function resolve_item( $value, $key, Prop_Type $prop_type, ?Element_Base $element = null, int $depth = 0 ) {
+	protected function resolve_item( $value, $key, Prop_Type $prop_type, array $options = [], int $depth = 0 ) {
 		if ( null === $value ) {
 			return null;
 		}
@@ -81,9 +77,9 @@ class Render_Props_Resolver extends Props_Resolver {
 			return null;
 		}
 
-		$transformed = $this->transform( $value, $key, $prop_type, $element );
+		$transformed = $this->transform( $value, $key, $prop_type, $options );
 
-		return $this->resolve_item( $transformed, $key, $prop_type, $element, $depth + 1 );
+		return $this->resolve_item( $transformed, $key, $prop_type, $options, $depth + 1 );
 	}
 
 	private function get_validated_value( Prop_Type $prop_type, $prop_value ) {
