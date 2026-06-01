@@ -74,7 +74,6 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_id( 'content' )
 				->set_items( [
 					Text_Control::bind_to( 'source' )
 						->set_placeholder( esc_html__( 'Type or paste your URL', 'elementor' ) )
