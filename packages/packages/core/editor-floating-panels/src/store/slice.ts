@@ -5,12 +5,14 @@ import { type FloatingPanelDefaults, type FloatingPanelState, type LogicalPositi
 type SliceState = {
 	byId: Record< string, FloatingPanelState >;
 	minSizeById: Record< string, LogicalSize >;
+	titlesById: Record< string, string >;
 	topZIndex: number;
 };
 
 const initialState: SliceState = {
 	byId: {},
 	minSizeById: {},
+	titlesById: {},
 	topZIndex: 0,
 };
 
@@ -20,11 +22,20 @@ export const slice = __createSlice( {
 	reducers: {
 		register(
 			state,
-			action: PayloadAction< { id: string; defaults: FloatingPanelDefaults; persisted?: FloatingPanelState } >
+			action: PayloadAction< {
+				id: string;
+				defaults: FloatingPanelDefaults;
+				title?: string;
+				persisted?: FloatingPanelState;
+			} >
 		) {
-			const { id, defaults, persisted } = action.payload;
+			const { id, defaults, title, persisted } = action.payload;
 
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
+
+			if ( title !== undefined ) {
+				state.titlesById[ id ] = title;
+			}
 
 			if ( state.byId[ id ] ) {
 				return;

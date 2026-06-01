@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ReactNode, useEffect, useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import { useEditMode } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
@@ -18,24 +18,6 @@ export default function FloatingPanelsHost() {
 	const declarationById = useMemo( () => {
 		return Object.fromEntries( injections.map( ( inj ) => [ inj.id, inj ] ) );
 	}, [ injections ] );
-
-	useEffect( () => {
-		function onKeyDown( event: KeyboardEvent ) {
-			if ( event.key !== 'Escape' ) {
-				return;
-			}
-
-			const focusedId = openIds[ openIds.length - 1 ];
-
-			if ( focusedId ) {
-				dispatch( slice.actions.close( focusedId ) );
-			}
-		}
-
-		document.addEventListener( 'keydown', onKeyDown );
-
-		return () => document.removeEventListener( 'keydown', onKeyDown );
-	}, [ openIds, dispatch ] );
 
 	return (
 		<>

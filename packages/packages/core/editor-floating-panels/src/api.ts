@@ -12,6 +12,7 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 		slice.actions.register( {
 			id: declaration.id,
 			defaults: declaration.defaults,
+			title: declaration.title,
 			persisted: getPersistedState( declaration.id ),
 		} )
 	);

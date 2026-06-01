@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
 import { useFloatingPanelStatus } from '../../hooks/use-floating-panel-status';
+import { type GlobalState, selectPanelTitle } from '../../store/selectors';
 
 const FADE_ENTER_MS = 225;
 const FADE_EXIT_MS = 195;
@@ -16,6 +18,7 @@ type Props = {
 
 export default function PanelWindow( { panelId, zIndex, visible, onFocus, children }: Props ) {
 	const { position, size } = useFloatingPanelStatus( panelId );
+	const title = useSelector( ( state: GlobalState ) => selectPanelTitle( state, panelId ) );
 
 	if ( ! position || ! size ) {
 		return null;
@@ -33,10 +36,10 @@ export default function PanelWindow( { panelId, zIndex, visible, onFocus, childr
 	return (
 		<Fade in={ visible } timeout={ { enter: FADE_ENTER_MS, exit: FADE_EXIT_MS } }>
 			<Paper
+				component="aside"
 				data-floating-panel={ panelId }
 				elevation={ 0 }
-				role="dialog"
-				aria-label={ panelId }
+				aria-label={ title || panelId }
 				aria-hidden={ ! visible }
 				onMouseDown={ onFocus }
 				sx={ {

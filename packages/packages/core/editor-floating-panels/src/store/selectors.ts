@@ -24,6 +24,10 @@ export function selectMinSize( state: GlobalState, id: string ) {
 	return state.floatingPanels.minSizeById[ id ];
 }
 
+export function selectPanelTitle( state: GlobalState, id: string ): string | undefined {
+	return state.floatingPanels.titlesById[ id ];
+}
+
 export function selectTopZIndex( state: GlobalState ): number {
 	return state.floatingPanels.topZIndex;
 }
