@@ -19,26 +19,27 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 	return (
 		<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
 			<Box
-				sx={ { display: 'flex', alignItems: 'center', gap: 1, py: 1, px: 1.5, cursor: 'pointer' } }
+				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' } }
 				onClick={ () => setExpanded( ( v ) => ! v ) }
 			>
-				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ descriptor.title }
-				</Typography>
-				<Typography variant="caption" color="text.secondary">
-					{ violations.length }
-				</Typography>
 				<IconButton
 					size="small"
 					aria-label={ expanded ? __( 'Collapse', 'elementor' ) : __( 'Expand', 'elementor' ) }
 				>
 					<ChevronDownIcon
+						fontSize="small"
 						sx={ {
 							transform: expanded ? 'rotate(180deg)' : undefined,
 							transition: 'transform .2s',
 						} }
 					/>
 				</IconButton>
+				<Typography variant="body2" sx={ { flex: 1 } }>
+					{ descriptor.title }
+				</Typography>
+				<Typography variant="caption" color="text.secondary">
+					{ violations.length }
+				</Typography>
 			</Box>
 			<Collapse in={ expanded }>
 				<Box sx={ { px: 2, py: 1, color: 'text.secondary' } }>
