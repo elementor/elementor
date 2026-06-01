@@ -18,11 +18,7 @@ describe( '@elementor/site-builder/deploy/wire-menu-widgets', () => {
 				elType: 'widget',
 				widgetType: 'mega-menu',
 				settings: {
-					menu_items: [
-						{ item_title: 'Home' },
-						{ item_title: 'About' },
-						{ item_title: 'Unmapped' },
-					],
+					menu_items: [ { item_title: 'Home' }, { item_title: 'About' }, { item_title: 'Unmapped' } ],
 				},
 			},
 		];
@@ -47,9 +43,7 @@ describe( '@elementor/site-builder/deploy/wire-menu-widgets', () => {
 		const content = [
 			{
 				elType: 'section',
-				elements: [
-					{ elType: 'widget', widgetType: 'nav-menu', settings: { menu: 'old-slug' } },
-				],
+				elements: [ { elType: 'widget', widgetType: 'nav-menu', settings: { menu: 'old-slug' } } ],
 			},
 		];
 
@@ -60,9 +54,7 @@ describe( '@elementor/site-builder/deploy/wire-menu-widgets', () => {
 	} );
 
 	it( 'leaves nav-menu untouched when no menu slug is provided', () => {
-		const content = [
-			{ elType: 'widget', widgetType: 'nav-menu', settings: { menu: 'old-slug' } },
-		];
+		const content = [ { elType: 'widget', widgetType: 'nav-menu', settings: { menu: 'old-slug' } } ];
 
 		wireMenuWidgets( content, { items, pageUrlMap } );
 

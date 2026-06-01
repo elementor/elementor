@@ -1,13 +1,7 @@
-import type { DeployMenuItem } from '../types';
+import type { DeployMenuItem, ElementorContentNode } from '../types';
 
 const MEGA_MENU_WIDGET_TYPE = 'mega-menu';
 const NAV_MENU_WIDGET_TYPE = 'nav-menu';
-
-type ElementNode = {
-	widgetType?: string;
-	settings?: Record< string, unknown >;
-	elements?: ElementNode[];
-};
 
 type MenuItemLink = {
 	url: string;
@@ -26,9 +20,9 @@ function buildItemLink( url: string ): MenuItemLink {
 }
 
 function wireMegaMenu(
-	node: ElementNode,
+	node: ElementorContentNode,
 	items: DeployMenuItem[],
-	pageUrlMap: Record< string, string >,
+	pageUrlMap: Record< string, string >
 ): number {
 	const menuItems = node.settings?.menu_items;
 	if ( ! Array.isArray( menuItems ) ) {
@@ -54,7 +48,7 @@ function wireMegaMenu(
 	return patched;
 }
 
-function wireNavMenu( node: ElementNode, menuSlug?: string ): number {
+function wireNavMenu( node: ElementorContentNode, menuSlug?: string ): number {
 	if ( ! menuSlug || ! node.settings ) {
 		return 0;
 	}
@@ -63,8 +57,8 @@ function wireNavMenu( node: ElementNode, menuSlug?: string ): number {
 	return 1;
 }
 
-export function wireMenuWidgets( content: object[], options: WireMenuWidgetsOptions ): void {
-	const walk = ( nodes: ElementNode[] ) => {
+export function wireMenuWidgets( content: ElementorContentNode[], options: WireMenuWidgetsOptions ): void {
+	const walk = ( nodes: ElementorContentNode[] ) => {
 		for ( const node of nodes ) {
 			if ( node.widgetType === MEGA_MENU_WIDGET_TYPE ) {
 				wireMegaMenu( node, options.items, options.pageUrlMap );
@@ -78,5 +72,5 @@ export function wireMenuWidgets( content: object[], options: WireMenuWidgetsOpti
 		}
 	};
 
-	walk( content as ElementNode[] );
+	walk( content );
 }

@@ -1,11 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 
 import type { CreatedMenus, DeployMenuItem, DeployPayload, WpMenu } from '../types';
-import {
-	fetchMenuLocationSlugs,
-	isInvalidMenuLocationError,
-	resolveMenuLocation,
-} from './menu-locations';
+import { fetchMenuLocationSlugs, isInvalidMenuLocationError, resolveMenuLocation } from './menu-locations';
 
 type CreateMenuData = {
 	name: string;
@@ -82,7 +78,7 @@ async function createMenu( args: CreateMenuArgs ): Promise< WpMenu > {
 
 export async function createMenus(
 	menus: DeployPayload[ 'menus' ],
-	pageIdMap: Record< string, number >,
+	pageIdMap: Record< string, number >
 ): Promise< CreatedMenus > {
 	const created: CreatedMenus = {};
 

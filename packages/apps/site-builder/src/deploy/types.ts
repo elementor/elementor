@@ -1,15 +1,22 @@
 export const DEPLOY_DESIGN_SYSTEM_PATH = '/elementor/v1/site-builder/deploy-design-system';
 
+export type ElementorContentNode = {
+	elType?: string;
+	widgetType?: string;
+	settings?: Record< string, unknown >;
+	elements?: ElementorContentNode[];
+};
+
 export interface DeployPage {
 	id: string;
 	title: string;
-	content: object[];
+	content: ElementorContentNode[];
 }
 
 export interface DeployThemePart {
 	title: string;
 	type: 'header' | 'footer' | 'error-404' | 'single-post';
-	content: object[];
+	content: ElementorContentNode[];
 	themeBuilderCondition?: string;
 }
 

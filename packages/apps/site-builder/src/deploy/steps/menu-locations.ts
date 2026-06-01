@@ -6,9 +6,7 @@ export type WpMenuLocation = {
 };
 
 export async function fetchMenuLocationSlugs(): Promise< string[] > {
-	const locations = await apiFetch<
-		Record< string, WpMenuLocation > | WpMenuLocation[]
-	>( {
+	const locations = await apiFetch< Record< string, WpMenuLocation > | WpMenuLocation[] >( {
 		path: '/wp/v2/menu-locations',
 	} );
 
@@ -35,9 +33,7 @@ export function resolveMenuLocation(
 	}
 
 	if ( fallbackPattern ) {
-		const matched = availableSlugs.find( ( slug ) =>
-			fallbackPattern.test( slug )
-		);
+		const matched = availableSlugs.find( ( slug ) => fallbackPattern.test( slug ) );
 		if ( matched ) {
 			return matched;
 		}
@@ -55,10 +51,7 @@ export function isInvalidMenuLocationError( error: unknown ): boolean {
 		code?: string;
 		data?: { details?: { locations?: { code?: string } } };
 	};
-	if (
-		err.code === 'rest_invalid_param' &&
-		err.data?.details?.locations?.code === 'rest_invalid_menu_location'
-	) {
+	if ( err.code === 'rest_invalid_param' && err.data?.details?.locations?.code === 'rest_invalid_menu_location' ) {
 		return true;
 	}
 

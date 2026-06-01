@@ -121,7 +121,7 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		}
 	}
 
-	const result = {
+	const result: DeployResult = {
 		status: errors.length ? 'error' : 'success',
 		homeUrl: window.location.origin,
 		homePageId: pageIdMap.home || 0,
