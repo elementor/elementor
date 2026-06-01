@@ -27,6 +27,41 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		Render_Props_Resolver::reset();
 	}
 
+	/**
+	 * @dataProvider font_family_css_quoting_data_provider
+	 */
+	public function test_render__font_family_css_quoting( string $font_family, string $expected_css ) {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-family' => $font_family,
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( $expected_css, $css );
+	}
+
+	public function font_family_css_quoting_data_provider() {
+		return [
+			'multi-word with digit' => [ 'My Font 3', 'font-family:"My Font 3";' ],
+			'multi-word without digit' => [ 'Open Sans', 'font-family:"Open Sans";' ],
+			'single-word' => [ 'Arial', 'font-family:"Arial";' ],
+		];
+	}
+
 	public function test_render__basic_style() {
 		// Arrange.
 		$styles = [

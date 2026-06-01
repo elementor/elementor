@@ -147,7 +147,9 @@ class Styles_Renderer {
 					call_user_func( $this->on_prop_transform, $prop, $value );
 				}
 
-				return $prop . ':' . $value . ';';
+				$css_value = 'font-family' === $prop ? '"' . $value . '"' : $value;
+
+			return $prop . ':' . $css_value . ';';
 			} )
 			->implode( '' );
 	}

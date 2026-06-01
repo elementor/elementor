@@ -146,7 +146,9 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 				return acc;
 			}
 
-			acc.push( propName + ':' + propValue + ';' );
+			const cssValue = propName === 'font-family' ? `"${ propValue }"` : propValue;
+
+			acc.push( propName + ':' + cssValue + ';' );
 
 			return acc;
 		}, [] )

@@ -79,6 +79,36 @@ describe( 'renderStyles', () => {
 		expect( resolve ).toHaveBeenNthCalledWith( 5, { props: { 'font-size': '50px' } } );
 	} );
 
+	it.each( [
+		[ 'My Font 3', 'font-family:"My Font 3";' ],
+		[ 'Open Sans', 'font-family:"Open Sans";' ],
+		[ 'Arial', 'font-family:"Arial";' ],
+	] )( 'should always quote font-family "%s" in CSS output', async ( fontFamily, expected ) => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: { 'font-family': fontFamily },
+					custom_css: null,
+				},
+			],
+		};
+
+		const resolve = jest.fn( ( { props } ) => props );
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve } );
+
+		// Act.
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).toContain( expected );
+	} );
+
 	it( 'should add selector prefix to the output', async () => {
 		// Arrange.
 		const styleDef: RendererStyleDefinition = {
