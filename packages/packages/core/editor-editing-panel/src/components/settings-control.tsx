@@ -1,21 +1,23 @@
 import * as React from 'react';
 import { type Control, type ElementControl } from '@elementor/editor-elements';
 
-import { ControlLayout, populateChildControlProps } from '../controls-registry/control-layout';
-import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
+import { ControlLayout } from '../controls-registry/control-layout';
+import { resolveControlPresentation } from '../controls-registry/resolve-control-presentation';
 import { SettingsField } from '../controls-registry/settings-field';
 
 export const SettingsControl = ( { control: { value, type } }: { control: Control | ElementControl } ) => {
-	if ( ! controlsRegistry.get( value.type as ControlType ) ) {
+	const presentation = resolveControlPresentation( {
+		type: value.type,
+		label: value.label,
+		props: value.props,
+		meta: value.meta,
+	} );
+
+	if ( ! presentation ) {
 		return null;
 	}
 
-	const layout = value.meta?.layout || controlsRegistry.getLayout( value.type as ControlType );
-	const controlProps = populateChildControlProps( value.props );
-
-	if ( layout === 'custom' ) {
-		controlProps.label = value.label;
-	}
+	const { layout, controlProps } = presentation;
 
 	if ( type === 'element-control' ) {
 		return <ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />;

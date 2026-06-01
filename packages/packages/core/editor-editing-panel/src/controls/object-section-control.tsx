@@ -10,10 +10,11 @@ import {
 	type UnionPropType,
 } from '@elementor/editor-props';
 
+import { renderSectionItems } from '../components/render-section-items';
 import { Section } from '../components/section';
-import { ControlLayout, populateChildControlProps } from '../controls-registry/control-layout';
-import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
+import { ControlLayout } from '../controls-registry/control-layout';
 import { ObjectPropField } from '../controls-registry/object-prop-field';
+import { resolveControlPresentation } from '../controls-registry/resolve-control-presentation';
 import { extractDependencyEffect, getObjectSettingsWithDefaults } from '../utils/prop-dependency-utils';
 
 type SerializedItem = {
@@ -56,14 +57,27 @@ export const ObjectSectionControl = createControl( ( { label, items }: ObjectSec
 			setValue={ setInnerValue }
 			isDisabled={ isNestedFieldDisabled }
 		>
-			<Section title={ label }>
-				{ items.map( ( item ) => (
-					<ObjectSectionItem key={ item.bind } item={ item } shape={ shape } settings={ settings } />
-				) ) }
-			</Section>
+			<Section title={ label }>{ renderObjectSectionItems( { items, shape, settings } ) }</Section>
 		</PropProvider>
 	);
 } );
+
+function renderObjectSectionItems( {
+	items,
+	shape,
+	settings,
+}: {
+	items: SerializedItem[];
+	shape: PropsSchema;
+	settings: Props;
+} ) {
+	return renderSectionItems( {
+		items,
+		renderItem: ( item ) => (
+			<ObjectSectionItem key={ item.bind } item={ item } shape={ shape } settings={ settings } />
+		),
+	} );
+}
 
 type ObjectSectionItemProps = {
 	item: SerializedItem;
@@ -72,16 +86,18 @@ type ObjectSectionItemProps = {
 };
 
 const ObjectSectionItem = ( { item, shape, settings }: ObjectSectionItemProps ) => {
-	if ( ! controlsRegistry.get( item.type as ControlType ) ) {
+	const presentation = resolveControlPresentation( {
+		type: item.type,
+		label: item.label,
+		props: item.props,
+		meta: item.meta,
+	} );
+
+	if ( ! presentation ) {
 		return null;
 	}
 
-	const layout = item.meta?.layout ?? controlsRegistry.getLayout( item.type as ControlType );
-	const controlProps = populateChildControlProps( item.props ?? {} );
-
-	if ( layout === 'custom' ) {
-		controlProps.label = item.label;
-	}
+	const { layout, controlProps } = presentation;
 
 	return (
 		<ObjectPropField bind={ item.bind } shape={ shape } settings={ settings }>
