@@ -72,7 +72,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_id( 'content' )
 				->set_items( [
 					Inline_Editing_Control::bind_to( 'paragraph' )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
