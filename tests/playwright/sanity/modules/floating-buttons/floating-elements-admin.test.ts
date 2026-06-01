@@ -137,7 +137,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		await floatingElPage.goToFloatingButtonsPage();
 
-		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
+		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"]' ).first();
 
 		await test.step( 'Check that button exists', async () => {
 			await expect( addNewButton ).toBeVisible();
