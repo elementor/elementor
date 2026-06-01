@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
@@ -46,9 +47,27 @@ trait Has_Atomic_Base {
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
 				$cloned_section = clone $control;
+				$section_schema   = $schema;
+				$section_bind     = $control->get_bind();
+
+				if ( $section_bind ) {
+					if ( ! array_key_exists( $section_bind, $schema ) ) {
+						Utils::safe_throw( "Prop `{$section_bind}` is not defined in the schema of `{$this->get_name()}`." );
+						continue;
+					}
+
+					$bound_prop = $schema[ $section_bind ];
+
+					if ( ! ( $bound_prop instanceof Object_Prop_Type ) ) {
+						Utils::safe_throw( "Section bind `{$section_bind}` must be an object prop in `{$this->get_name()}`." );
+						continue;
+					}
+
+					$section_schema = $bound_prop->get_shape();
+				}
 
 				$cloned_section->set_items(
-					$this->get_valid_controls( $schema, $control->get_items() )
+					$this->get_valid_controls( $section_schema, $control->get_items() )
 				);
 
 				$valid_controls[] = $cloned_section;

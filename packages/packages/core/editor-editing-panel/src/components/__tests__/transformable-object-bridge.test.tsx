@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { createMockPropType } from 'test-utils';
-import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, usePropContext } from '@elementor/editor-controls';
 import { type ObjectPropType, type PropValue } from '@elementor/editor-props';
 import { renderHook } from '@testing-library/react';
 
-import { useTransformableObjectProp } from '../use-transformable-object-prop';
+import { TransformableObjectBridge } from '../transformable-object-bridge';
 
 const QUERY_BIND = 'query';
 
@@ -38,15 +38,16 @@ function createWrapper( {
 	return function Wrapper( { children }: { children: React.ReactNode } ) {
 		return (
 			<PropProvider propType={ outerPropType } value={ parentValue } setValue={ setValue }>
-				<PropKeyProvider bind={ QUERY_BIND }>{ children }</PropKeyProvider>
+				<PropKeyProvider bind={ QUERY_BIND }>
+					<TransformableObjectBridge>{ children }</TransformableObjectBridge>
+				</PropKeyProvider>
 			</PropProvider>
 		);
 	};
 }
 
-describe( 'useTransformableObjectProp', () => {
+describe( 'TransformableObjectBridge', () => {
 	it( 'unwraps a transformable object envelope into inner field bag', () => {
-		// Arrange.
 		const wrapper = createWrapper( {
 			parentPropType: loopQueryPropType,
 			parentValue: {
@@ -54,17 +55,13 @@ describe( 'useTransformableObjectProp', () => {
 			},
 		} );
 
-		// Act.
-		const { result } = renderHook( () => useTransformableObjectProp(), { wrapper } );
+		const { result } = renderHook( () => usePropContext(), { wrapper } );
 
-		// Assert.
 		expect( result.current.propType ).toBe( loopQueryPropType );
 		expect( result.current.value ).toEqual( innerBag );
-		expect( result.current.envelopeTypeKey ).toBe( 'loop-query' );
 	} );
 
 	it( 're-wraps inner bag edits as a transformable object envelope', () => {
-		// Arrange.
 		const setValue = jest.fn();
 		const wrapper = createWrapper( {
 			parentPropType: loopQueryPropType,
@@ -73,12 +70,10 @@ describe( 'useTransformableObjectProp', () => {
 			},
 			setValue,
 		} );
-		const { result } = renderHook( () => useTransformableObjectProp(), { wrapper } );
+		const { result } = renderHook( () => usePropContext(), { wrapper } );
 
-		// Act.
 		result.current.setValue( { source: { $$type: 'string', value: 'page' } } );
 
-		// Assert.
 		expect( setValue ).toHaveBeenCalledWith(
 			{
 				[ QUERY_BIND ]: {
@@ -92,7 +87,6 @@ describe( 'useTransformableObjectProp', () => {
 	} );
 
 	it( 'resolves object variant from a union parent prop type', () => {
-		// Arrange.
 		const unionPropType = createMockPropType( {
 			kind: 'union',
 			prop_types: { 'loop-query': loopQueryPropType },
@@ -104,10 +98,8 @@ describe( 'useTransformableObjectProp', () => {
 			},
 		} );
 
-		// Act.
-		const { result } = renderHook( () => useTransformableObjectProp(), { wrapper } );
+		const { result } = renderHook( () => usePropContext(), { wrapper } );
 
-		// Assert.
 		expect( result.current.propType ).toBe( loopQueryPropType );
 		expect( result.current.value ).toEqual( innerBag );
 	} );
