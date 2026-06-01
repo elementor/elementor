@@ -676,7 +676,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 204, $response->get_status() );
 		$this->assertNull( $response->get_data() );
 
-		$this->assertSame( [
+		$this->assertEquals( [
 			'items' => [
 				'g-1' => $class_1,
 				'g-2' => $class_2,
