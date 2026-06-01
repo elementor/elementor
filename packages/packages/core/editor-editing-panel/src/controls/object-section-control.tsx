@@ -1,20 +1,13 @@
 import * as React from 'react';
-import { createControl, PropProvider, type SetValue, useBoundProp } from '@elementor/editor-controls';
-import {
-	isTransformable,
-	type ObjectPropType,
-	type ObjectPropValue,
-	type Props,
-	type PropsSchema,
-	type PropType,
-	type UnionPropType,
-} from '@elementor/editor-props';
+import { createControl, PropProvider } from '@elementor/editor-controls';
+import { type Props, type PropsSchema } from '@elementor/editor-props';
 
 import { renderSectionItems } from '../components/render-section-items';
 import { Section } from '../components/section';
 import { ControlLayout, populateChildControlProps } from '../controls-registry/control-layout';
 import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
 import { ObjectPropField } from '../controls-registry/object-prop-field';
+import { useTransformableObjectProp } from '../hooks/use-transformable-object-prop';
 import { extractDependencyEffect, getObjectSettingsWithDefaults } from '../utils/prop-dependency-utils';
 
 type SerializedItem = {
@@ -34,29 +27,13 @@ type ObjectSectionControlProps = {
 };
 
 export const ObjectSectionControl = createControl( ( { label, items }: ObjectSectionControlProps ) => {
-	const propContext = useBoundProp< ObjectPropValue, ObjectPropType >();
-	const { propType: parentPropType, value, setValue } = propContext;
-
-	const rawValue = isTransformable( value ) ? ( value as ObjectPropValue ) : null;
-	const objectPropType = resolveObjectPropType( parentPropType, rawValue?.$$type ?? '' );
-	const typeKey = rawValue?.$$type ?? objectPropType.key;
-	const shape = ( objectPropType.shape ?? {} ) as PropsSchema;
-	const innerValue = ( rawValue?.value ?? {} ) as Props;
-
-	const setInnerValue: SetValue< Props > = ( next, options, meta ) => {
-		setValue( { $$type: typeKey, value: next as ObjectPropValue[ 'value' ] }, options, meta );
-	};
-
-	const settings = getObjectSettingsWithDefaults( shape, innerValue );
+	const { propType, value, setValue } = useTransformableObjectProp();
+	const shape = ( propType.shape ?? {} ) as PropsSchema;
+	const settings = getObjectSettingsWithDefaults( shape, value );
 	const { isDisabled: isNestedFieldDisabled } = extractDependencyEffect( 'template_type', shape, settings );
 
 	return (
-		<PropProvider
-			propType={ objectPropType }
-			value={ innerValue }
-			setValue={ setInnerValue }
-			isDisabled={ isNestedFieldDisabled }
-		>
+		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isNestedFieldDisabled }>
 			<Section title={ label }>{ renderObjectSectionItems( { items, shape, settings } ) }</Section>
 		</PropProvider>
 	);
@@ -107,24 +84,3 @@ const ObjectSectionItem = ( { item, shape, settings }: ObjectSectionItemProps ) 
 		</ObjectPropField>
 	);
 };
-
-function resolveObjectPropType( propType: PropType, typeKey: string ): ObjectPropType {
-	if ( propType.kind === 'object' ) {
-		return propType;
-	}
-
-	if ( propType.kind !== 'union' ) {
-		throw new Error( `Object section control requires an object parent prop type, received "${ propType.kind }".` );
-	}
-
-	const unionPropType = propType as UnionPropType;
-	const resolvedPropType =
-		unionPropType.prop_types[ typeKey ] ??
-		Object.values( unionPropType.prop_types ).find( ( candidate ) => candidate.kind === 'object' );
-
-	if ( resolvedPropType?.kind !== 'object' ) {
-		throw new Error( `Object section control could not resolve an object prop type for "${ typeKey }".` );
-	}
-
-	return resolvedPropType;
-}
