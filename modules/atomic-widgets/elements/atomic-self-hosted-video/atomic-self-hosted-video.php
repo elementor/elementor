@@ -132,7 +132,6 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_id( 'content' )
 				->set_items([
 					Video_Control::bind_to( 'source' )
 						->set_label( esc_html__( 'Video', 'elementor' ) ),

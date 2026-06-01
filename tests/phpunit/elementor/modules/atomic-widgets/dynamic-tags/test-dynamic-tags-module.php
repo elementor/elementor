@@ -111,13 +111,12 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [
-				[
-					'type' => 'section',
-					'value' => [
-						'id' => null,
-						'label' => 'Settings',
-						'description' => null,
-						'items' => [
+					[
+						'type' => 'section',
+						'value' => [
+							'label' => 'Settings',
+							'description' => null,
+							'items' => [
 								[
 									'type' => 'control',
 									'value' => [
