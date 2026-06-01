@@ -12,11 +12,14 @@ export type McpToolResult = {
 
 export interface ElementorContainer {
 	id: string;
+	label?: string;
+	type?: string;
 	model: {
 		id: string;
 		attributes?: Record< string, unknown >;
 		editor_settings?: { title?: string };
 		get?: ( key: string ) => unknown;
+		widgetType?: string;
 	};
 	settings: {
 		attributes?: Record< string, unknown >;
