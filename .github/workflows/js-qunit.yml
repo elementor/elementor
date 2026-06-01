@@ -31,7 +31,5 @@ jobs:
           cache: npm
       - name: Install Dependencies
         run: npm run install:ci
-      - name: "Build Scripts"
-        run: npm run build:ci
       - name: "Run Qunit"
-        run: npx grunt karma:unit
+        run: npx grunt test
