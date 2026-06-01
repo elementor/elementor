@@ -1,6 +1,7 @@
 import { type McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { loadDocumentSchema, loadDocumentSettings } from './context';
+import { getCurrentEditorSelection } from './get-current-editor-selection';
 import type { ElementorControls } from './types';
 import { encodeToolJson, getElementor } from './utils';
 
@@ -12,6 +13,9 @@ export const RESOURCE_URI_WIDGET_CONFIG_TEMPLATE = 'elementor://editor/widget-co
 
 export const RESOURCE_NAME_PAGE_SETTINGS = 'elementor-page-settings';
 export const RESOURCE_URI_PAGE_SETTINGS = 'elementor://editor/page-settings';
+
+export const RESOURCE_NAME_CURRENT_CONTEXT = 'elementor-current-context';
+export const RESOURCE_URI_CURRENT_CONTEXT = 'elementor://context/current-page';
 
 export function decodeResourceVariable( value: string ): string {
 	try {
@@ -149,6 +153,34 @@ export function addElementorResources( server: McpServer ): void {
 						uri: uri.toString(),
 						mimeType: 'text/plain',
 						text: result.content[ 0 ].text,
+					},
+				],
+			};
+		}
+	);
+
+	server.resource(
+		RESOURCE_NAME_CURRENT_CONTEXT,
+		RESOURCE_URI_CURRENT_CONTEXT,
+		{
+			description:
+				'Current Elementor editor focus: which page the user is working on and which element (if any) is ' +
+				'selected. Returns displayName formatted as "<PageTitle>" or "<PageTitle> > <ElementName>", plus ' +
+				'documentId, selectedElementId, selectedParentId, selectedWidgetType, and selectedElementType.',
+		},
+		async ( uri ) => {
+			const snapshot = getCurrentEditorSelection();
+
+			if ( 'error' in snapshot ) {
+				throw new Error( snapshot.error );
+			}
+
+			return {
+				contents: [
+					{
+						uri: uri.toString(),
+						mimeType: 'application/json',
+						text: JSON.stringify( snapshot ),
 					},
 				],
 			};
