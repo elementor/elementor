@@ -1,4 +1,4 @@
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { __privateOpenRoute as openRoute, __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 import { type AuditViolation } from '../types';
 
@@ -28,7 +28,7 @@ export function useViolationFocus() {
 			}
 
 			if ( violation.targetHint === 'page-settings' ) {
-				runCommand( 'panel/page-settings/settings' );
+				openRoute( 'panel/page-settings/settings' );
 				return;
 			}
 
