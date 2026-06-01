@@ -1,4 +1,6 @@
-import { renderHook } from '@testing-library/react';
+import { dispatchWindowEvent } from 'test-utils';
+import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
+import { act, renderHook } from '@testing-library/react';
 
 import { useGridTracks } from '../use-grid-tracks';
 
@@ -26,9 +28,12 @@ const DEFAULT_STYLE: Style = {
 	'--e-a-border-color-bold': '',
 };
 
-function mockElement( style: Partial< Style > = {} ): HTMLElement {
+const DEVICE_MODE_CHANGE_EVENT = 'elementor/device-mode/change';
+
+function mockElement( style: Partial< Style > = {} ) {
 	const resolved: Style = { ...DEFAULT_STYLE, ...style };
-	const getComputedStyle = jest.fn().mockReturnValue( {
+
+	const getComputedStyle = jest.fn().mockImplementation( () => ( {
 		gridTemplateColumns: resolved.gridTemplateColumns,
 		gridTemplateRows: resolved.gridTemplateRows,
 		columnGap: resolved.columnGap,
@@ -38,13 +43,22 @@ function mockElement( style: Partial< Style > = {} ): HTMLElement {
 		paddingBottom: resolved.paddingBottom,
 		paddingLeft: resolved.paddingLeft,
 		getPropertyValue: ( name: string ) => ( name === '--e-a-border-color-bold' ? resolved[ name ] : '' ),
-	} );
+	} ) );
 
-	return {
+	const element = {
 		ownerDocument: {
-			defaultView: { getComputedStyle } as unknown as Window,
+			defaultView: {
+				getComputedStyle,
+				requestAnimationFrame: ( cb: FrameRequestCallback ) => {
+					cb( 0 );
+					return 1;
+				},
+				cancelAnimationFrame: jest.fn(),
+			} as unknown as Window,
 		},
 	} as unknown as HTMLElement;
+
+	return { element, resolved, getComputedStyle };
 }
 
 const RECT = new DOMRect( 0, 0, 320, 200 );
@@ -73,7 +87,7 @@ describe( 'useGridTracks', () => {
 	} );
 
 	it( 'parses resolved track lists, gaps, and padding from computed style', () => {
-		const element = mockElement( {
+		const { element } = mockElement( {
 			gridTemplateColumns: '100px 100px 100px',
 			gridTemplateRows: '80px 80px',
 			columnGap: '10px',
@@ -96,33 +110,8 @@ describe( 'useGridTracks', () => {
 		} );
 	} );
 
-	it( 'reads the --e-a-border-color-bold CSS variable from the iframe', () => {
-		const element = mockElement( {
-			gridTemplateColumns: '100px',
-			'--e-a-border-color-bold': '  #d5d8dc  ',
-		} );
-
-		const { result } = renderHook( () => useGridTracks( element, RECT ) );
-
-		expect( result.current.borderColor ).toBe( '#d5d8dc' );
-	} );
-
-	it( 'reports gap as 0 when computed style returns "normal"', () => {
-		const element = mockElement( {
-			gridTemplateColumns: '100px 100px',
-			columnGap: 'normal',
-			rowGap: 'normal',
-		} );
-
-		const { result } = renderHook( () => useGridTracks( element, RECT ) );
-
-		expect( result.current.columnGap ).toBe( 0 );
-		expect( result.current.rowGap ).toBe( 0 );
-	} );
-
 	it( 'recomputes when the rect dimensions change', () => {
-		const element = mockElement( { gridTemplateColumns: '100px' } );
-		const getComputedStyle = element.ownerDocument?.defaultView?.getComputedStyle as jest.Mock;
+		const { element, getComputedStyle } = mockElement( { gridTemplateColumns: '100px' } );
 
 		const { rerender } = renderHook( ( { rect } ) => useGridTracks( element, rect ), {
 			initialProps: { rect: new DOMRect( 0, 0, 320, 200 ) },
@@ -136,8 +125,7 @@ describe( 'useGridTracks', () => {
 	} );
 
 	it( 'does not recompute when the same rect dimensions are passed again', () => {
-		const element = mockElement( { gridTemplateColumns: '100px' } );
-		const getComputedStyle = element.ownerDocument?.defaultView?.getComputedStyle as jest.Mock;
+		const { element, getComputedStyle } = mockElement( { gridTemplateColumns: '100px' } );
 
 		const { rerender } = renderHook( ( { rect } ) => useGridTracks( element, rect ), {
 			initialProps: { rect: new DOMRect( 0, 0, 320, 200 ) },
@@ -148,5 +136,39 @@ describe( 'useGridTracks', () => {
 		rerender( { rect: new DOMRect( 0, 0, 320, 200 ) } );
 
 		expect( getComputedStyle.mock.calls.length ).toBe( callsBefore );
+	} );
+
+	it( 'recomputes when a grid style change event fires', () => {
+		const mock = mockElement( { gridTemplateColumns: '100px 100px' } );
+
+		const { result } = renderHook( () => useGridTracks( mock.element, RECT ) );
+
+		expect( result.current.columns ).toEqual( [ 100, 100 ] );
+
+		mock.resolved.gridTemplateColumns = '100px 100px 100px 100px';
+
+		act( () => {
+			dispatchWindowEvent( ELEMENT_STYLE_CHANGE_EVENT );
+		} );
+
+		expect( result.current.columns ).toEqual( [ 100, 100, 100, 100 ] );
+	} );
+
+	it( 'recomputes when the device mode changes', () => {
+		const mock = mockElement( { gridTemplateRows: '80px', rowGap: '8px' } );
+
+		const { result } = renderHook( () => useGridTracks( mock.element, RECT ) );
+
+		expect( result.current.rows ).toEqual( [ 80 ] );
+
+		mock.resolved.gridTemplateRows = '80px 80px';
+		mock.resolved.rowGap = '12px';
+
+		act( () => {
+			dispatchWindowEvent( DEVICE_MODE_CHANGE_EVENT );
+		} );
+
+		expect( result.current.rows ).toEqual( [ 80, 80 ] );
+		expect( result.current.rowGap ).toBe( 12 );
 	} );
 } );

@@ -136,6 +136,8 @@ class Global_Classes_Repository {
 			}
 		}
 
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $to_delete );
+
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
 		$classes_order = Global_Classes_Order::make( $this->get_kit() );
@@ -162,6 +164,14 @@ class Global_Classes_Repository {
 			'modified' => $to_update,
 			'order' => $order_changed,
 		] );
+
+		if ( ! empty( $to_delete ) && ! $is_preview ) {
+			do_action(
+				'elementor/global_classes/cleanup',
+				$to_delete,
+				$affected_post_ids
+			);
+		}
 	}
 
 	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {
@@ -180,23 +190,55 @@ class Global_Classes_Repository {
 
 	public function put( array $items, array $order ) {
 		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
-
 		$new_ids = array_keys( $items );
-
 		$current_order_string = implode( ';', $current_ids );
+		$deleted_class_ids = array_values( array_diff( $current_ids, $new_ids ) );
 
 		$changes = [
 			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
-			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
+			'deleted' => $deleted_class_ids,
 			'modified' => array_values( array_intersect( $new_ids, $current_ids ) ),
 			'order' => implode( ';', $order ) !== $current_order_string,
 		];
+
+		/**
+		 * We collect all affected ids before the put_to_posts execution
+		 * as the update mechanism would handle the Global_Classes_Relations as it iterates over the update batches
+		 * So once we get to the cleanup phase - we would no longer have the relevant relations
+		 *
+		 * On top of that - by collecting all affected posts in advance, means we would iterate over each document's elements only once
+		 * (as the alternative would be to trigger the cleanup per removed class, but that means we may end up iterating over the same document N times, if all N styles are used in it)
+		 */
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $deleted_class_ids );
 
 		$this->put_to_posts( $items, $order, $current_ids );
 
 		$this->cache = null;
 
 		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
+
+		if ( ! empty( $deleted_class_ids ) && ! $this->is_preview() ) {
+			do_action(
+				'elementor/global_classes/cleanup',
+				$deleted_class_ids,
+				$affected_post_ids
+			);
+		}
+	}
+
+	private function get_posts_affected_by_deletion( array $deleted_class_ids ): array {
+		if ( empty( $deleted_class_ids ) ) {
+			return [];
+		}
+
+		$relations = new Global_Classes_Relations();
+		$post_ids = [];
+
+		foreach ( $deleted_class_ids as $class_id ) {
+			$post_ids[] = $relations->get_posts_by_style( $class_id );
+		}
+
+		return array_values( array_unique( array_merge( ...$post_ids ) ) );
 	}
 
 	private function all_from_posts(): Global_Classes {
