@@ -16,8 +16,8 @@ export const SettingsTab = () => {
 	const settingsDefault = useDefaultPanelSettings();
 	const currentSettings = settings as Props;
 
-	const isDefaultExpanded = ( sectionId: string ) =>
-		settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
+	const isDefaultExpanded = ( sectionId: string | null | undefined ) =>
+		!! sectionId && settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
 
 	return (
 		<SessionStorageProvider prefix={ element.id }>
@@ -45,7 +45,7 @@ export const SettingsTab = () => {
 							<Section
 								title={ value.label }
 								key={ type + '.' + index }
-								defaultExpanded={ isDefaultExpanded( value.label ) }
+								defaultExpanded={ isDefaultExpanded( value.id ) }
 							>
 								{ sectionItems }
 							</Section>
