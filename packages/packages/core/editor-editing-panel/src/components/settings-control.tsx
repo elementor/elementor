@@ -1,22 +1,20 @@
 import * as React from 'react';
-import { PropKeyProvider } from '@elementor/editor-controls';
-import { type Control, type ElementControl } from '@elementor/editor-elements';
-import { type Props, type PropsSchema } from '@elementor/editor-props';
+import { ControlAdornmentsProvider } from '@elementor/editor-controls';
+import { type Control, type ControlLayout, type ElementControl } from '@elementor/editor-elements';
+import { Divider, styled } from '@elementor/ui';
 
-import { ControlLayout, populateChildControlProps } from '../controls-registry/control-layout';
+import { Control as BaseControl } from '../controls-registry/control';
+import { ControlTypeContainer } from '../controls-registry/control-type-container';
 import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
 import { SettingsField } from '../controls-registry/settings-field';
-import { extractDependencyEffect } from '../utils/prop-dependency-utils';
+import { getFieldIndicators } from '../field-indicators-registry';
+import { ControlLabel } from './control-label';
 
-type SettingsControlProps = {
-	control: Control | ElementControl;
-	dependencyScope?: {
-		shape: PropsSchema;
-		settings: Props;
-	};
-};
+const Wrapper = styled( 'span' )`
+	display: contents;
+`;
 
-export const SettingsControl = ( { control: { value, type }, dependencyScope }: SettingsControlProps ) => {
+export const SettingsControl = ( { control: { value, type } }: { control: Control | ElementControl } ) => {
 	if ( ! controlsRegistry.get( value.type as ControlType ) ) {
 		return null;
 	}
@@ -32,27 +30,49 @@ export const SettingsControl = ( { control: { value, type }, dependencyScope }: 
 		return <ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />;
 	}
 
-	if ( dependencyScope ) {
-		const { isHidden } = extractDependencyEffect(
-			value.bind,
-			dependencyScope.shape,
-			dependencyScope.settings
-		);
-
-		if ( isHidden ) {
-			return null;
-		}
-
-		return (
-			<PropKeyProvider bind={ value.bind }>
-				<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
-			</PropKeyProvider>
-		);
-	}
-
 	return (
 		<SettingsField bind={ value.bind } propDisplayName={ value.label || value.bind }>
 			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
 		</SettingsField>
 	);
 };
+
+const ControlLayout = ( {
+	control,
+	layout,
+	controlProps,
+}: {
+	control: Control[ 'value' ] | ElementControl[ 'value' ];
+	layout: ControlLayout;
+	controlProps: Record< string, unknown >;
+} ) => {
+	const controlType = control.type as ControlType;
+	return (
+		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
+			{ control.meta?.topDivider && <Divider /> }
+			<Wrapper data-type="settings-field">
+				<ControlTypeContainer layout={ layout }>
+					{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
+					<BaseControl type={ controlType } props={ controlProps } />
+				</ControlTypeContainer>
+			</Wrapper>
+		</ControlAdornmentsProvider>
+	);
+};
+
+function populateChildControlProps( props: Record< string, unknown > ) {
+	if ( props.childControlType ) {
+		const childComponent = controlsRegistry.get( props.childControlType as ControlType );
+		const childPropType = controlsRegistry.getPropTypeUtil( props.childControlType as ControlType );
+		props = {
+			...props,
+			childControlConfig: {
+				component: childComponent,
+				props: props.childControlProps || {},
+				propTypeUtil: childPropType,
+			},
+		};
+	}
+
+	return props;
+}

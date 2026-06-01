@@ -6,8 +6,6 @@ import { SessionStorageProvider } from '@elementor/session';
 import { useElement } from '../contexts/element-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
-import { BoundSettingsSection } from './bound-settings-section';
-import { renderSectionItems } from './render-section-items';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 import { SettingsControl } from './settings-control';
@@ -31,19 +29,7 @@ export const SettingsTab = () => {
 					const { type, value } = control;
 
 					if ( type === 'section' ) {
-						if ( value.bind ) {
-							return (
-								<BoundSettingsSection
-									key={ type + '.' + index }
-									bind={ value.bind }
-									label={ value.label }
-									items={ value.items }
-									defaultExpanded={ isDefaultExpanded( value.id ) }
-								/>
-							);
-						}
-
-						const sectionItems = renderSettingsSectionItems( {
+						const sectionItems = renderSectionItems( {
 							items: value.items,
 							element,
 							propsSchema: elementType.propsSchema,
@@ -84,7 +70,7 @@ function isControl( control: ControlItem ): control is Control | ElementControl 
 	return control.type === 'control' || control.type === 'element-control';
 }
 
-function renderSettingsSectionItems( {
+function renderSectionItems( {
 	items,
 	element,
 	propsSchema,
@@ -95,20 +81,20 @@ function renderSettingsSectionItems( {
 	propsSchema: PropsSchema;
 	settings: Props;
 } ) {
-	return renderSectionItems( {
-		items,
-		renderItem: ( item ) => {
+	return (
+		items?.flatMap( ( item ) => {
 			if ( ! isControl( item ) ) {
-				return null;
+				// TODO: Handle 2nd level sections
+				return [];
 			}
 
 			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings ) ) {
-				return null;
+				return [];
 			}
 
-			return <SettingsControl key={ getKey( item, element ) } control={ item } />;
-		},
-	} );
+			return [ <SettingsControl key={ getKey( item, element ) } control={ item } /> ];
+		} ) ?? []
+	);
 }
 
 function isControlHiddenByDependencies( control: Control, propsSchema: PropsSchema, settings: Props ) {

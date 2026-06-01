@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Section implements JsonSerializable {
 	private ?string $id = null;
-	private ?string $bind = null;
 	private $label = null;
 	private $description = null;
 	private array $items = [];
@@ -26,16 +25,6 @@ class Section implements JsonSerializable {
 
 	public function get_id() {
 		return $this->id;
-	}
-
-	public function bind( string $prop_name ): self {
-		$this->bind = $prop_name;
-
-		return $this;
-	}
-
-	public function get_bind(): ?string {
-		return $this->bind;
 	}
 
 	public function set_label( string $label ): self {
@@ -71,20 +60,14 @@ class Section implements JsonSerializable {
 	}
 
 	public function jsonSerialize(): array {
-		$value = [
-			'id'          => $this->id,
-			'label'       => $this->label,
-			'description' => $this->description,
-			'items'       => $this->items,
-		];
-
-		if ( null !== $this->bind ) {
-			$value['bind'] = $this->bind;
-		}
-
 		return [
 			'type' => 'section',
-			'value' => $value,
+			'value' => [
+				'id'          => $this->id,
+				'label'       => $this->label,
+				'description' => $this->description,
+				'items'       => $this->items,
+			],
 		];
 	}
 }

@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
-import { createPropUtils, type PropValue } from '@elementor/editor-props';
-import { z } from '@elementor/schema';
 import { type Control, type ControlsSection, type ElementControl, getElementLabel } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
@@ -409,57 +407,6 @@ describe( '<SettingsTab />', () => {
 		expect( screen.getByText( 'Element Control Section' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Element Control' ) ).toBeInTheDocument();
 	} );
-
-	it( 'should render a bound section with nested controls', () => {
-		createPropUtils( 'loop-query', z.record( z.string(), z.unknown() ) );
-
-		const queryPropType = createMockPropType( {
-			kind: 'object',
-			key: 'loop-query',
-			shape: {
-				title: createMockPropType( { kind: 'plain', key: 'string' } ),
-			},
-		} );
-
-		const elementType = createMockElementType( {
-			propsSchema: { query: queryPropType },
-			controls: [
-				mockSection( {
-					id: 'Query',
-					label: 'Query',
-					bind: 'query',
-					items: [ mockTextAreaControl( { label: 'Nested Query Control', bind: 'title' } ) ],
-				} ),
-			],
-		} );
-
-		const settings: Record< string, PropValue > = {
-			query: {
-				$$type: 'loop-query',
-				value: {
-					title: { $$type: 'string', value: 'Hello' },
-				},
-			},
-		};
-
-		jest.mocked( useElement ).mockReturnValue( {
-			element: { type: 'mock-type', id: 'mock-id' },
-			elementType,
-			settings,
-		} );
-
-		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
-			defaultSectionsExpanded: {
-				settings: [ 'Query' ],
-			},
-			defaultTab: 'settings',
-		} );
-
-		renderWithTheme( <SettingsTab /> );
-
-		expect( screen.getByText( 'Query' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Nested Query Control' ) ).toBeInTheDocument();
-	} );
 } );
 
 export const mockSection = ( {
@@ -467,7 +414,6 @@ export const mockSection = ( {
 	label = 'Section',
 	description = 'Section description',
 	items = [],
-	bind,
 }: Partial< ControlsSection[ 'value' ] > ): ControlsSection => ( {
 	type: 'section',
 	value: {
@@ -475,7 +421,6 @@ export const mockSection = ( {
 		label,
 		description,
 		items,
-		...( bind !== undefined && { bind } ),
 	},
 } );
 
