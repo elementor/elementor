@@ -1,4 +1,4 @@
-export type AuditCategory = 'health' | 'seo' | 'accessibility' | 'performance' | 'best-practices';
+export type AuditCategory = 'health' | 'seo' | 'accessibility' | 'performance';
 
 export type AuditSeverity = 'error' | 'warning' | 'info';
 
