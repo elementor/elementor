@@ -146,13 +146,17 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 				return acc;
 			}
 
-			const cssValue = propName === 'font-family' ? `"${ propValue }"` : propValue;
+			const cssValue = shouldQuoteFontFamily( propName, propValue ) ? `"${ propValue }"` : propValue;
 
 			acc.push( propName + ':' + cssValue + ';' );
 
 			return acc;
 		}, [] )
 		.join( '' );
+}
+
+function shouldQuoteFontFamily( propName: string, value: unknown ): boolean {
+	return propName === 'font-family' && typeof value === 'string' && ! value.trim().startsWith( 'var(' );
 }
 
 function customCssToString( customCss: CustomCss | null ): string {

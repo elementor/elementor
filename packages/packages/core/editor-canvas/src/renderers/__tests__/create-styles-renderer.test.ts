@@ -83,7 +83,8 @@ describe( 'renderStyles', () => {
 		[ 'My Font 3', 'font-family:"My Font 3";' ],
 		[ 'Open Sans', 'font-family:"Open Sans";' ],
 		[ 'Arial', 'font-family:"Arial";' ],
-	] )( 'should always quote font-family "%s" in CSS output', async ( fontFamily, expected ) => {
+		[ 'var(--primary-font)', 'font-family:var(--primary-font);' ],
+	] )( 'should format font-family "%s" correctly in CSS output', async ( fontFamily, expected ) => {
 		// Arrange.
 		const styleDef: RendererStyleDefinition = {
 			id: 'test',

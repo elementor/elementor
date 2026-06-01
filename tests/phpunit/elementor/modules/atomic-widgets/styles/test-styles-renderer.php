@@ -59,6 +59,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			'multi-word with digit' => [ 'My Font 3', 'font-family:"My Font 3";' ],
 			'multi-word without digit' => [ 'Open Sans', 'font-family:"Open Sans";' ],
 			'single-word' => [ 'Arial', 'font-family:"Arial";' ],
+			'css variable stays unquoted' => [ 'var(--primary-font)', 'font-family:var(--primary-font);' ],
 		];
 	}
 
