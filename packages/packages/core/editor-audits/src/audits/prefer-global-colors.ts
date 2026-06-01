@@ -10,7 +10,7 @@ export const descriptor: AuditDescriptor = {
 	title: __( 'Prefer global colors over hard-coded values', 'elementor' ),
 	description: __( 'Global colors make the design consistent and easy to update site-wide.', 'elementor' ),
 	fixHint: __( "Replace the hard-coded color with one of your kit's global colors.", 'elementor' ),
-	categories: [ 'health', 'best-practices' ],
+	categories: [ 'health' ],
 	severity: 'info',
 	weight: 3,
 };

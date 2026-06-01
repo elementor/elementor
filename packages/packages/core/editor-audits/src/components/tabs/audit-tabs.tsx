@@ -18,7 +18,6 @@ const TAB_LABELS: Record< AuditCategory, string > = {
 	seo: __( 'SEO', 'elementor' ),
 	accessibility: __( 'Accessibility', 'elementor' ),
 	performance: __( 'Performance', 'elementor' ),
-	'best-practices': __( 'Best Practices', 'elementor' ),
 };
 
 export default function AuditTabs( { report }: Props ) {

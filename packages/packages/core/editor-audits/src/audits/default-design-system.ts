@@ -10,7 +10,7 @@ export const descriptor: AuditDescriptor = {
 		'elementor'
 	),
 	fixHint: __( 'Open Site Settings and customize your kit (colors, fonts, layout).', 'elementor' ),
-	categories: [ 'health', 'best-practices' ],
+	categories: [ 'health' ],
 	severity: 'info',
 	weight: 3,
 };
