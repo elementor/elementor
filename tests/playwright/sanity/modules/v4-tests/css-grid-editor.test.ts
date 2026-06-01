@@ -103,60 +103,47 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Layout' );
 
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 
-		const countLines = async () =>
-			gridOutline.locator( 'svg line' ).evaluateAll( ( lines ) => {
-				let vertical = 0;
-				let horizontal = 0;
+		const cells = gridOutline.locator( 'svg rect' );
+		const countCells = async () => cells.count();
 
-				for ( const line of lines ) {
-					if ( line.getAttribute( 'x1' ) === line.getAttribute( 'x2' ) ) {
-						vertical++;
-					} else if ( line.getAttribute( 'y1' ) === line.getAttribute( 'y2' ) ) {
-						horizontal++;
-					}
-				}
-
-				return { vertical, horizontal };
-			} );
+		await expect.poll( countCells ).toBeGreaterThan( 0 );
 
 		// Act & Assert
-		await test.step( 'Column count change updates vertical lines without reload', async () => {
-			const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
-
-			await editor.v4Panel.style.changeSizeControl( columnsControl, 2 );
-			await expect.poll( async () => ( await countLines() ).vertical ).toBeGreaterThan( 0 );
-			const twoColumns = ( await countLines() ).vertical;
+		await test.step( 'Column count change updates the outline without reload', async () => {
+			const baseline = await countCells();
 
 			await editor.v4Panel.style.changeSizeControl( columnsControl, 5 );
-			await expect.poll( async () => ( await countLines() ).vertical ).toBeGreaterThan( twoColumns );
+			await expect.poll( countCells ).toBeGreaterThan( baseline );
 		} );
 
-		await test.step( 'Row count change updates horizontal lines without reload', async () => {
-			const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
-
-			await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
-			await expect.poll( async () => ( await countLines() ).horizontal ).toBeGreaterThan( 0 );
-			const twoRows = ( await countLines() ).horizontal;
+		await test.step( 'Row count change updates the outline without reload', async () => {
+			const baseline = await countCells();
 
 			await editor.v4Panel.style.changeSizeControl( rowsControl, 4 );
-			await expect.poll( async () => ( await countLines() ).horizontal ).toBeGreaterThan( twoRows );
+			await expect.poll( countCells ).toBeGreaterThan( baseline );
 		} );
 
 		await test.step( 'Per-breakpoint columns update the outline in the matching device mode', async () => {
-			const desktopVertical = ( await countLines() ).vertical;
+			const desktopCells = await countCells();
 
 			await editor.changeResponsiveView( 'tablet' );
 			await expect( gridOutline ).toBeVisible();
 
 			const tabletColumns = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
 			await editor.v4Panel.style.changeSizeControl( tabletColumns, 3 );
-			await expect.poll( async () => ( await countLines() ).vertical ).not.toBe( desktopVertical );
+			await expect.poll( countCells ).not.toBe( desktopCells );
 
 			await editor.changeResponsiveView( 'desktop' );
-			await expect.poll( async () => ( await countLines() ).vertical ).toBe( desktopVertical );
+			await expect.poll( countCells ).toBe( desktopCells );
 		} );
 	} );
 
