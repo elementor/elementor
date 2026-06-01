@@ -8,7 +8,6 @@ export default function FloatingPanelBody( props: BoxProps ) {
 			sx={ {
 				flex: 1,
 				overflowY: 'auto',
-				padding: 2,
 				...( props.sx ?? {} ),
 			} }
 		/>
