@@ -147,15 +147,11 @@ class Styles_Renderer {
 					call_user_func( $this->on_prop_transform, $prop, $value );
 				}
 
-				$css_value = self::should_quote_font_family( $prop, $value ) ? '"' . $value . '"' : $value;
+				$css_value = 'font-family' === $prop && is_string( $value ) && ! str_starts_with( trim( $value ), 'var(' ) ? '"' . $value . '"' : $value;
 
 				return $prop . ':' . $css_value . ';';
 			} )
 			->implode( '' );
-	}
-
-	private static function should_quote_font_family( string $prop, $value ): bool {
-		return 'font-family' === $prop && is_string( $value ) && ! str_starts_with( trim( $value ), 'var(' );
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
