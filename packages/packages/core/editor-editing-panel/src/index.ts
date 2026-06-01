@@ -1,6 +1,7 @@
 export { type ValidationEvent, type ValidationResult } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
+export { ControlLabel } from './components/control-label';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
 export { EditingPanelTabs } from './components/editing-panel-tabs';

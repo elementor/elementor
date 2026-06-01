@@ -248,3 +248,184 @@ describe( 'getUpdatedValues — overridable shape mismatch on restore', () => {
 		expect( removeSessionStorageItem ).toHaveBeenCalledWith( `${ STORAGE_PREFIX }:tag` );
 	} );
 } );
+
+describe( 'getUpdatedValues — nested object relative dependencies', () => {
+	const ELEMENT_ID = 'el-1';
+
+	const objectProp = ( shape: PropsSchema, key = 'loop-query' ) => ( {
+		kind: 'object' as const,
+		key,
+		shape,
+		default: null,
+		settings: {},
+		meta: {},
+		dependencies: undefined,
+		initial_value: null,
+	} );
+
+	const queryShape = {
+		template_type: {
+			...plain( { default: str( 'post' ) } ),
+			key: 'template_type',
+		},
+		source: {
+			...plain( { default: str( 'post' ) } ),
+			key: 'source',
+			dependencies: {
+				relation: 'and',
+				terms: [ { path: [ 'template_type' ], operator: 'eq', value: 'post' } ],
+			},
+		},
+	};
+
+	it( 'preserves nested prop value when dependency uses relative path within parent object', () => {
+		// Arrange
+		const propsSchema: PropsSchema = {
+			query: objectProp( queryShape ),
+		};
+
+		const dependencies = [ 'query.source' ];
+		const elementValues = { query: null };
+		const newValues = {
+			query: {
+				$$type: 'loop-query' as const,
+				value: {
+					source: str( 'product' ),
+				},
+			},
+		};
+
+		// Act
+		const result = getUpdatedValues( newValues, dependencies, propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.query ).toEqual( newValues.query );
+	} );
+
+	it( 'preserves nested prop value when parent is a union prop type', () => {
+		// Arrange
+		const loopQueryObject = objectProp( queryShape );
+		const propsSchema: PropsSchema = {
+			query: {
+				kind: 'union' as const,
+				key: 'query',
+				prop_types: {
+					'loop-query': loopQueryObject,
+				},
+				default: null,
+				settings: {},
+				meta: {},
+				dependencies: undefined,
+				initial_value: null,
+			},
+		};
+
+		const dependencies = [ 'query.source' ];
+		const elementValues = { query: null };
+		const newValues = {
+			query: {
+				$$type: 'loop-query' as const,
+				value: {
+					source: str( 'product' ),
+				},
+			},
+		};
+
+		// Act
+		const result = getUpdatedValues( newValues, dependencies, propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.query ).toEqual( newValues.query );
+	} );
+
+	it( 'still nulls nested prop when relative dependency is genuinely unmet', () => {
+		// Arrange
+		const propsSchema: PropsSchema = {
+			query: objectProp( {
+				template_type: {
+					...plain( { default: str( 'post' ) } ),
+					key: 'template_type',
+				},
+				selection: {
+					...plain( { default: null } ),
+					key: 'selection',
+					dependencies: {
+						relation: 'and',
+						terms: [ { path: [ 'source' ], operator: 'eq', value: 'manual' } ],
+					},
+				},
+			} ),
+		};
+
+		const dependencies = [ 'query.selection' ];
+		const elementValues = { query: null };
+		const newValues = {
+			query: {
+				$$type: 'loop-query' as const,
+				value: {
+					source: str( 'product' ),
+				},
+			},
+		};
+
+		// Act
+		const result = getUpdatedValues( newValues, dependencies, propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.query ).toEqual( {
+			$$type: 'loop-query',
+			value: {
+				source: str( 'product' ),
+				selection: null,
+			},
+		} );
+	} );
+
+	it( 'still evaluates absolute element-level dependency paths for nested props', () => {
+		// Arrange
+		const propsSchema: PropsSchema = {
+			'source-control': { ...plain(), key: 'source-control' },
+			'nested-object': objectProp( {
+				child: {
+					...plain( { default: str( 'child-value' ) } ),
+					key: 'child',
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
+					},
+				},
+			}, 'object' ),
+		};
+
+		const dependencies = [ 'nested-object.child' ];
+		const elementValues = {
+			'source-control': str( 'disable-trigger' ),
+			'nested-object': {
+				$$type: 'object' as const,
+				value: {
+					child: str( 'child-value' ),
+				},
+			},
+		};
+		const newValues = {
+			'source-control': str( 'disable-trigger' ),
+			'nested-object': {
+				$$type: 'object' as const,
+				value: {
+					child: str( 'child-value' ),
+				},
+			},
+		};
+
+		// Act
+		const result = getUpdatedValues( newValues, dependencies, propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result[ 'nested-object' ] ).toEqual( {
+			$$type: 'object',
+			value: {
+				child: null,
+			},
+		} );
+	} );
+} );

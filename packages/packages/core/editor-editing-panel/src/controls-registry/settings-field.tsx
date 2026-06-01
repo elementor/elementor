@@ -53,6 +53,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 		const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, currentElementSettings );
 		const settings = getUpdatedValues( newValue, dependents, propsSchema, settingsWithDefaults, elementId );
+
 		if ( withHistory ) {
 			undoableUpdateElementProp( settings );
 		} else {
