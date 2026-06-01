@@ -27,7 +27,6 @@ export type ControlsSection = {
 	type: 'section';
 	value: {
 		id?: string | null;
-		bind?: string;
 		description?: string;
 		label: string;
 		items: ControlItem[];

@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
@@ -17,7 +16,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -48,26 +46,9 @@ trait Has_Atomic_Base {
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {
 				$cloned_section = clone $control;
-				$section_schema   = $schema;
-				$section_bind     = $control->get_bind();
-
-				if ( $section_bind ) {
-					if ( ! array_key_exists( $section_bind, $schema ) ) {
-						Utils::safe_throw( "Prop `{$section_bind}` is not defined in the schema of `{$this->get_name()}`." );
-						continue;
-					}
-
-					$bound_prop = $schema[ $section_bind ];
-					$section_schema = $this->resolve_section_bind_schema( $bound_prop );
-
-					if ( null === $section_schema ) {
-						Utils::safe_throw( "Section bind `{$section_bind}` must be an object prop in `{$this->get_name()}`." );
-						continue;
-					}
-				}
 
 				$cloned_section->set_items(
-					$this->get_valid_controls( $section_schema, $control->get_items() )
+					$this->get_valid_controls( $schema, $control->get_items() )
 				);
 
 				$valid_controls[] = $cloned_section;
@@ -92,24 +73,6 @@ trait Has_Atomic_Base {
 		}
 
 		return $valid_controls;
-	}
-
-	private function resolve_section_bind_schema( Prop_Type $bound_prop ): ?array {
-		if ( $bound_prop instanceof Object_Prop_Type ) {
-			return $bound_prop->get_shape();
-		}
-
-		if ( ! ( $bound_prop instanceof Union_Prop_Type ) ) {
-			return null;
-		}
-
-		foreach ( $bound_prop->get_prop_types() as $variant ) {
-			if ( $variant instanceof Object_Prop_Type ) {
-				return $variant->get_shape();
-			}
-		}
-
-		return null;
 	}
 
 	private static function validate_schema( array $schema ) {
