@@ -8,7 +8,7 @@ import {
 import { initLlmDialect, type PropType, type TransformablePropValue } from '@elementor/editor-props';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
-import { doUpdateElementProperty } from '../../mcp/utils/do-update-element-property';
+import { doUpdateElementProperty as doUpdateElementPropertyUtil } from '../../mcp/utils/do-update-element-property';
 import { resetValidateInputWidgetsSchemaCache } from '../../mcp/utils/validate-input';
 import { CompositionBuilder } from '../composition-builder';
 
@@ -122,7 +122,7 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 		// Arrange
 		const partialContainer = createMockPartialContainer( GENERATED_ELEMENT_ID );
 		const deleteElement = jest.fn();
-		const doUpdateElementProperty = jest.fn();
+		const _doUpdateElementProperty = jest.fn();
 		const createElement = jest.fn().mockImplementation( () => {
 			throw new Error( 'create failed' );
 		} );
@@ -135,7 +135,7 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 			getContainer,
 			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
 			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
-			doUpdateElementProperty,
+			doUpdateElementProperty: _doUpdateElementProperty,
 		} );
 		builder.setElementConfig( createElementConfigPayload() );
 
@@ -146,7 +146,7 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 		expect( getContainer ).toHaveBeenCalledWith( GENERATED_ELEMENT_ID );
 		expect( deleteElement ).toHaveBeenCalledTimes( 1 );
 		expect( deleteElement ).toHaveBeenCalledWith( { container: partialContainer } );
-		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
+		expect( _doUpdateElementProperty ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not call deleteElement when createElement fails and getContainer returns undefined', async () => {
@@ -344,10 +344,8 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 			dynamicTags: {
 				'post-featured-image': {
 					name: 'post-featured-image',
-					categories: [ 'image', 'media' ],
 					label: 'Featured Image',
 					group: 'post',
-					meta: {},
 				},
 			},
 		} );
@@ -367,17 +365,14 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 			.fn()
 			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
 		jest.mocked( getWidgetsCache ).mockReturnValue( createWidgetsCacheWithImageProp() );
-		const builder = CompositionBuilder.fromXMLString(
-			`<e-image configuration-id="${ imageConfigId }" />`,
-			{
-				createElement,
-				deleteElement: jest.fn(),
-				getContainer,
-				generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
-				getWidgetsCache: jest.fn().mockReturnValue( createWidgetsCacheWithImageProp() ),
-				doUpdateElementProperty,
-			}
-		);
+		const builder = CompositionBuilder.fromXMLString( `<e-image configuration-id="${ imageConfigId }" />`, {
+			createElement,
+			deleteElement: jest.fn(),
+			getContainer,
+			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+			getWidgetsCache: jest.fn().mockReturnValue( createWidgetsCacheWithImageProp() ),
+			doUpdateElementProperty: doUpdateElementPropertyUtil,
+		} );
 		builder.setElementConfig( {
 			[ imageConfigId ]: {
 				image: LLM_IMAGE_VALUE,
@@ -389,10 +384,8 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 
 		// Assert
 		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
-		const persistedImage = jest.mocked( updateElementSettings ).mock.calls[ 0 ][ 0 ].props.image as TransformablePropValue<
-			'image',
-			Record< string, unknown >
-		>;
+		const persistedImage = jest.mocked( updateElementSettings ).mock.calls[ 0 ][ 0 ].props
+			.image as TransformablePropValue< 'image', Record< string, unknown > >;
 		expect( ( persistedImage.value.src as { $$type: string } ).$$type ).toBe( 'dynamic' );
 		expect( __privateRunCommandSync ).toHaveBeenCalled();
 	} );

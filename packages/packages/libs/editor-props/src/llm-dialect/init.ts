@@ -1,7 +1,7 @@
 import {
+	type LlmDynamicTagMetadata,
 	registerLlmDialectDynamicTags,
 	setLlmDialectDynamicTagsResolver,
-	type LlmDynamicTagMetadata,
 } from './dynamic-tag-metadata-registry';
 import { ensureBuiltInLlmDialectAdapters } from './register-built-in-adapters';
 

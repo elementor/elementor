@@ -1,4 +1,4 @@
-import { type AnyTransformable, type PropType } from '../../types';
+import { type AnyTransformable, type PropType, type TransformablePropType } from '../../types';
 import { htmlV3LlmDialectAdapter } from '../adapters/html-v3';
 
 const TITLE_UNION_PROP_TYPE = {
@@ -296,7 +296,7 @@ describe( 'llm-dialect-html-v3-adapter', () => {
 	} );
 
 	describe( 'toDialectSchema', () => {
-		const HTML_V3_PARENT_PROP_TYPE = { kind: 'object', key: 'html-v3' } as unknown as PropType;
+		const HTML_V3_PARENT_PROP_TYPE = { kind: 'object', key: 'html-v3' } as unknown as TransformablePropType;
 		const contentSchemaWithBind = {
 			type: 'string',
 			allowBind: true,

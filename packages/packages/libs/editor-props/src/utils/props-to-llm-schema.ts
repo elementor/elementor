@@ -1,4 +1,8 @@
-import { LLMDialectAdapter, type DialectPropAdapter, type SchemaGenerationContext } from '../llm-dialect/llm-prop-schema';
+import {
+	type DialectPropAdapter,
+	LLMDialectAdapter,
+	type SchemaGenerationContext,
+} from '../llm-dialect/llm-prop-schema';
 import { isLlmDialectSkip } from '../llm-dialect/skip';
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';

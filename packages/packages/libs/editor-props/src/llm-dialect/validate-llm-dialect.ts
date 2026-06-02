@@ -2,8 +2,8 @@ import { validate } from 'jsonschema';
 
 import { type PropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
-import { ensureLlmDialect } from './init';
 import { propTypeToLlmJsonSchema } from '../utils/props-to-llm-schema';
+import { ensureLlmDialect } from './init';
 
 export type LlmDialectValidationResult = {
 	valid: boolean;

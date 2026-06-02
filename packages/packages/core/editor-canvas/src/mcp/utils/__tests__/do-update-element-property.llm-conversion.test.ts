@@ -1,6 +1,5 @@
 import { getWidgetsCache, updateElementSettings } from '@elementor/editor-elements';
-import { initLlmDialect, Schema, type PropType, type TransformablePropValue } from '@elementor/editor-props';
-import { getVariantByMeta } from '@elementor/editor-styles';
+import { initLlmDialect, type PropType, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
 import { doUpdateElementProperty, resolvePropValue } from '../do-update-element-property';
@@ -98,10 +97,8 @@ describe( 'doUpdateElementProperty LLM conversion', () => {
 			dynamicTags: {
 				'post-featured-image': {
 					name: 'post-featured-image',
-					categories: [ 'image', 'media' ],
 					label: 'Featured Image',
 					group: 'post',
-					meta: {},
 				},
 			},
 		} );
@@ -123,7 +120,7 @@ describe( 'doUpdateElementProperty LLM conversion', () => {
 
 	it( 'resolvePropValue converts dialect bindTo on image src to canonical dynamic', () => {
 		// Act
-		const canonical = resolvePropValue( LLM_IMAGE_VALUE, IMAGE_PROP_TYPE, 'image' ) as TransformablePropValue<
+		const canonical = resolvePropValue( LLM_IMAGE_VALUE, IMAGE_PROP_TYPE ) as TransformablePropValue<
 			'image',
 			Record< string, unknown >
 		>;
@@ -150,10 +147,9 @@ describe( 'doUpdateElementProperty LLM conversion', () => {
 
 		// Assert
 		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
-		const persistedImage = jest.mocked( updateElementSettings ).mock.calls[ 0 ][ 0 ].props[ PROPERTY_NAME ] as TransformablePropValue<
-			'image',
-			Record< string, unknown >
-		>;
+		const persistedImage = jest.mocked( updateElementSettings ).mock.calls[ 0 ][ 0 ].props[
+			PROPERTY_NAME
+		] as TransformablePropValue< 'image', Record< string, unknown > >;
 		expect( ( persistedImage.value.src as { $$type: string } ).$$type ).toBe( 'dynamic' );
 		expect( persistedImage.value.src ).not.toHaveProperty( 'bindTo' );
 		expect( __privateRunCommandSync ).toHaveBeenCalled();

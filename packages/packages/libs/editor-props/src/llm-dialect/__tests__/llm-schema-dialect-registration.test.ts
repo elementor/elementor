@@ -28,7 +28,6 @@ const SIZE_PROP_TYPE = {
 	meta: {},
 } as unknown as PropType;
 
-
 describe( 'LLM schema dialect registration', () => {
 	beforeAll( () => {
 		initLlmDialect();

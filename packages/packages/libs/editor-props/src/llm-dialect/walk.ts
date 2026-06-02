@@ -1,8 +1,8 @@
-import { type PropType, type PropValue, type TransformablePropValue } from '../types';
+import { type ObjectPropType, type PropType, type PropValue, type TransformablePropValue } from '../types';
 import { isTransformable } from '../utils/is-transformable';
+import { getArrayItemPropType, resolveUnionBranch } from './prop-type-nav';
 import { applyLlmDialectPropValue } from './registry';
 import { isLlmDialectSkip } from './skip';
-import { getArrayItemPropType, resolveUnionBranch } from './prop-type-nav';
 
 type WalkContext = {
 	suppressNestedBindTo: boolean;
@@ -14,7 +14,7 @@ const defaultWalkContext: WalkContext = {
 	suppressNestedBindTo: false,
 };
 
-const resolveDescentPropType = ( propType: PropType, value: TransformablePropValue< string, unknown > ): PropType => {
+const resolveDescentPropType = ( propType: PropType, value: { $$type: string } ): PropType => {
 	if ( propType.kind !== 'union' ) {
 		return propType;
 	}
@@ -48,7 +48,7 @@ const stripNestedBindToMarkers = ( value: PropValue ): PropValue => {
 
 const walkObjectChildren = (
 	value: TransformablePropValue< string, Record< string, PropValue > >,
-	propType: PropType,
+	propType: ObjectPropType,
 	direction: WalkDirection,
 	walkContext: WalkContext
 ): TransformablePropValue< string, Record< string, PropValue > > => {
