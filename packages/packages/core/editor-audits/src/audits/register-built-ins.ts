@@ -1,13 +1,5 @@
 import { registerAudit } from '../registry';
 import {
-	descriptor as missingAccessibilityPolicyDescriptor,
-	evaluator as missingAccessibilityPolicyEvaluator,
-} from './missing-accessibility-policy';
-import {
-	descriptor as missingCookiePolicyDescriptor,
-	evaluator as missingCookiePolicyEvaluator,
-} from './missing-cookie-policy';
-import {
 	descriptor as defaultDesignSystemDescriptor,
 	evaluator as defaultDesignSystemEvaluator,
 } from './default-design-system';
@@ -22,6 +14,14 @@ import {
 } from './image-carousel-default-name';
 import { descriptor as imagesMissingAltDescriptor, evaluator as imagesMissingAltEvaluator } from './images-missing-alt';
 import { descriptor as imagesTooLargeDescriptor, evaluator as imagesTooLargeEvaluator } from './images-too-large';
+import {
+	descriptor as missingAccessibilityPolicyDescriptor,
+	evaluator as missingAccessibilityPolicyEvaluator,
+} from './missing-accessibility-policy';
+import {
+	descriptor as missingCookiePolicyDescriptor,
+	evaluator as missingCookiePolicyEvaluator,
+} from './missing-cookie-policy';
 import { descriptor as missingExcerptDescriptor, evaluator as missingExcerptEvaluator } from './missing-excerpt';
 import {
 	descriptor as missingFeaturedImageDescriptor,

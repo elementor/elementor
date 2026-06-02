@@ -3,9 +3,9 @@ import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {
 	it( 'passes when ally plugin is active', async () => {
-		expect(
-			await evaluator( makeContext( { pageContext: { ally_plugin_active: true } } ) )
-		).toEqual( { status: 'pass' } );
+		expect( await evaluator( makeContext( { pageContext: { ally_plugin_active: true } } ) ) ).toEqual( {
+			status: 'pass',
+		} );
 	} );
 
 	it( 'fails when ally plugin is not active and includes externalUrl pointing to plugin install page', async () => {

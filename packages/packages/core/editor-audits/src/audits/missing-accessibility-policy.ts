@@ -5,7 +5,10 @@ import { type AuditDescriptor, type AuditEvaluator } from '../types';
 export const descriptor: AuditDescriptor = {
 	id: 'audits/missing-accessibility-policy',
 	title: __( 'Missing accessibility policy', 'elementor' ),
-	description: __( 'An accessibility policy demonstrates your commitment to digital inclusion and may be legally required in some regions.', 'elementor' ),
+	description: __(
+		'An accessibility policy demonstrates your commitment to digital inclusion and may be legally required in some regions.',
+		'elementor'
+	),
 	fixHint: __( 'Install the Ally plugin to add an accessibility policy to your website.', 'elementor' ),
 	categories: [ 'compliance' ],
 	severity: 'info',
