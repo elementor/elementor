@@ -124,6 +124,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'test', [
+		'webpack:qunit',
 		'karma:unit',
 	] );
 
