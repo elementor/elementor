@@ -1,7 +1,4 @@
-import { type AuditDescriptor } from '../types';
-
 type WindowConfig = {
-	audits: AuditDescriptor[];
 	restNamespace: string;
 	nonce: string;
 };
@@ -16,7 +13,7 @@ export function getWindowConfig(): WindowConfig {
 	const config = window.elementorAudits;
 
 	if ( ! config ) {
-		return { audits: [], restNamespace: 'elementor/v1', nonce: '' };
+		return { restNamespace: 'elementor/v1', nonce: '' };
 	}
 
 	return config;
