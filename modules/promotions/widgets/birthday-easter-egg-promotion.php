@@ -4,7 +4,6 @@ namespace Elementor\Modules\Promotions\Widgets;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Assets_Config_Provider;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Utils;
@@ -45,7 +44,7 @@ class Birthday_Easter_Egg_Promotion {
 
 	private function ajax_set_cta_visited( array $data ): array {
 		if ( ! current_user_can( 'edit_posts' ) ) {
-			throw new \Exception( 'forbidden', Exceptions::FORBIDDEN );
+			wp_send_json_error( 'Insufficient permissions', 403 );
 		}
 
 		$visited = filter_var( $data[ self::VISITED_PARAM ] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ?? true;
@@ -123,14 +122,14 @@ class Birthday_Easter_Egg_Promotion {
 
 	private function get_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/10th-bday/v1/10th-bday.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.dev.builder.elementor.red/10th-bday/v1/10th-bday.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_10th_bday_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => '10th-bday',
 		];
 	}
 
 	private function has_valid_assets(): bool {
-		return $this->data && 
+		return $this->data &&
 			isset( $this->data['header'] ) &&
 			isset( $this->data['content'] ) &&
 			isset( $this->data['hero'] ) &&
@@ -142,7 +141,7 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function get_lottie_data(): ?array {
-		if ( ! $this->data['lottie'] ) {
+		if ( ! isset( $this->data['lottie'] ) ) {
 			return null;
 		}
 
@@ -186,7 +185,7 @@ class Birthday_Easter_Egg_Promotion {
 		if ( ! $this->has_valid_assets() ) {
 			return false;
 		}
-	
+
 		try {
 			$utc = new \DateTimeZone( 'UTC' );
 			$start = ( new \DateTimeImmutable( $this->data['time_frame']['start'], $utc ) )->getTimestamp();
@@ -194,7 +193,7 @@ class Birthday_Easter_Egg_Promotion {
 		} catch ( \Exception $e ) {
 			return false;
 		}
-	
+
 		$now = time();
 
 		return $now >= $start && $now <= $end;

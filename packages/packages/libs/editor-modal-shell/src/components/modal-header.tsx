@@ -5,13 +5,12 @@ import { Stack, Typography } from '@elementor/ui';
 type ModalHeaderProps = {
 	title: string;
 	content: ReactNode;
-	maxTitleWidth?: number;
 };
 
-export const ModalHeader = ( { title, content, maxTitleWidth = 310 }: ModalHeaderProps ) => {
+export const ModalHeader = ( { title, content }: ModalHeaderProps ) => {
 	return (
 		<Stack gap={ 0.75 }>
-			<Typography variant="h4" color="text.primary" maxWidth={ maxTitleWidth }>
+			<Typography variant="h4" color="text.primary">
 				{ title }
 			</Typography>
 			<Typography variant="subtitle2" color="text.primary">

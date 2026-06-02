@@ -27,6 +27,11 @@ export const useModalShell = (): ModalShellContextValue => {
 	return ctx;
 };
 
+const EXIT_TRANSITION_MS = 225;
+
+const prefersReducedMotion = (): boolean =>
+	typeof window !== 'undefined' && Boolean( window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches );
+
 export type ModalShellProps = {
 	children: ReactNode;
 	onClose?: () => void;
@@ -38,6 +43,7 @@ export type ModalShellProps = {
 	closeOnOutsideClick?: boolean;
 	backdrop?: boolean;
 	backdropSx?: SxProps< Theme >;
+	hideCloseButton?: boolean;
 };
 
 export const ModalShell = ( {
@@ -51,9 +57,11 @@ export const ModalShell = ( {
 	closeOnOutsideClick = true,
 	backdrop = true,
 	backdropSx = {},
+	hideCloseButton = false,
 }: ModalShellProps ) => {
 	const portalTarget = container ?? ( typeof document !== 'undefined' ? document.body : undefined );
-	const consumerOwnsEnter = revealDuration === 0;
+	const reducedMotion = prefersReducedMotion();
+	const consumerOwnsEnter = revealDuration === 0 || reducedMotion;
 	const [ open, setOpen ] = useState( true );
 
 	const startClose = useCallback( () => setOpen( false ), [] );
@@ -71,6 +79,11 @@ export const ModalShell = ( {
 
 		startClose();
 	};
+
+	const transitionTimeouts = useMemo(
+		() => ( { enter: 0, exit: reducedMotion ? 0 : EXIT_TRANSITION_MS } ),
+		[ reducedMotion ]
+	);
 
 	const animationProps = useMemo(
 		() =>
@@ -94,16 +107,8 @@ export const ModalShell = ( {
 			container={ portalTarget }
 			disableEscapeKeyDown={ ! closeOnEsc }
 			hideBackdrop={ ! backdrop }
-			TransitionProps={ {
-				onExited: onClose,
-				...( consumerOwnsEnter && { timeout: { enter: 0 } } ),
-			} }
-			slotProps={ {
-				backdrop: {
-					...( consumerOwnsEnter && { transitionDuration: { enter: 0 } } ),
-					sx: backdropSx,
-				},
-			} }
+			TransitionProps={ { onExited: onClose, timeout: transitionTimeouts } }
+			slotProps={ { backdrop: { transitionDuration: transitionTimeouts, sx: backdropSx } } }
 			PaperProps={ {
 				sx: {
 					width: DEFAULT_WIDTH,
@@ -111,9 +116,6 @@ export const ModalShell = ( {
 					maxWidth: '100%',
 					overflow: 'hidden',
 					...animationProps,
-					'@media (prefers-reduced-motion: reduce)': {
-						animation: 'none',
-					},
 					...sx,
 				},
 			} }
@@ -124,15 +126,17 @@ export const ModalShell = ( {
 			<ModalShellContext.Provider value={ contextValue }>
 				<Box sx={ { display: 'contents' } }>
 					{ children }
-					<CloseButton
-						onClick={ startClose }
-						sx={ {
-							position: 'absolute',
-							right: 16,
-							top: 16,
-							zIndex: 3,
-						} }
-					/>
+					{ ! hideCloseButton && (
+						<CloseButton
+							onClick={ startClose }
+							sx={ {
+								position: 'absolute',
+								right: 16,
+								top: 16,
+								zIndex: 3,
+							} }
+						/>
+					) }
 				</Box>
 			</ModalShellContext.Provider>
 		</Dialog>
