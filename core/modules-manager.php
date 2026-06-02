@@ -142,6 +142,7 @@ class Modules_Manager {
 			'editor-one',
 			'markdown-render',
 			'elementor-capabilities-mcp',
+			'assets-manager',
 		];
 	}
 
