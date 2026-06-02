@@ -1,4 +1,4 @@
-import { type PropType, type PropValue, type TransformablePropValue } from '../../types';
+import { type PropType, type PropValue, type TransformablePropType, type TransformablePropValue } from '../../types';
 import { isTransformable } from '../../utils/is-transformable';
 import { type JsonSchema7 } from '../../utils/prop-json-schema';
 import { getLlmDialectDynamicTag } from '../dynamic-tag-metadata-registry';
@@ -89,7 +89,7 @@ const mergeStaticUnionSchema = ( schema: JsonSchema7, categories: string ): Json
 	};
 };
 
-const createEmptyStaticValue = ( staticBranch: PropType ): PropValue => {
+const createEmptyStaticValue = ( staticBranch: TransformablePropType ): PropValue => {
 	if ( staticBranch.kind === 'string' ) {
 		return { $$type: staticBranch.key ?? 'string', value: '' };
 	}
@@ -227,7 +227,7 @@ const reconcileFallbackToProp = ( value: DynamicPropValue ): DynamicPropValue =>
 	return withFallback( value, toStringFallback( fallback ) );
 };
 
-const reconcileFallbackToDialect = ( value: DynamicPropValue, staticBranch: PropType ): PropValue => {
+const reconcileFallbackToDialect = ( value: DynamicPropValue, staticBranch: TransformablePropType ): PropValue => {
 	const controlType = getFallbackControlType( value.value.name );
 	const fallback = value.value.settings?.fallback;
 

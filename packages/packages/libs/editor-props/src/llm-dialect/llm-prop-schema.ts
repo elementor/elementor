@@ -1,4 +1,4 @@
-import { type PropType } from '../types';
+import { type PropType, type TransformablePropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { ensureBuiltInLlmDialectAdapters } from './register-built-in-adapters';
 import {
@@ -11,7 +11,7 @@ import {
 import { isLlmDialectSkip } from './skip';
 
 export type SchemaGenerationContext = {
-	readonly parentPropType?: PropType;
+	readonly parentPropType?: TransformablePropType;
 	readonly shapeKey?: string;
 };
 

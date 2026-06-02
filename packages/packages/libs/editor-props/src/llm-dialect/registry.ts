@@ -1,11 +1,11 @@
-import { type AnyTransformable, type PropType, type PropValue } from '../types';
+import { type AnyTransformable, type PropValue, type TransformablePropType, type UnionPropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { isLlmDialectSkip, LLM_DIALECT_SKIP, type LlmDialectSkip } from './skip';
 
 export type PropDialectContext = {
-	readonly propType: PropType;
+	readonly propType: TransformablePropType | UnionPropType;
 	readonly schema?: JsonSchema7;
-	readonly parentPropType?: PropType;
+	readonly parentPropType?: TransformablePropType;
 	readonly shapeKey?: string;
 };
 
@@ -75,7 +75,7 @@ export const applyLlmDialectPropValue = (
 			continue;
 		}
 
-		const next = hook( result, ctx );
+		const next = hook( result as AnyTransformable, ctx );
 		if ( isLlmDialectSkip( next ) ) {
 			return LLM_DIALECT_SKIP;
 		}

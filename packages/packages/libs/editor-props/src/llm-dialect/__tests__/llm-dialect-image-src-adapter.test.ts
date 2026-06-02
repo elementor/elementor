@@ -1,4 +1,4 @@
-import { type AnyTransformable, type PropType } from '../../types';
+import { type AnyTransformable, type PropType, type TransformablePropType, type UnionPropType } from '../../types';
 import { imageSrcLlmDialectAdapter } from '../adapters/image-src';
 
 const DEFAULT_IMAGE_SRC = {
@@ -20,16 +20,16 @@ const IMAGE_SRC_UNION_PROP_TYPE = {
 	},
 	settings: {},
 	meta: {},
-} as unknown as PropType;
+} as unknown as UnionPropType;
 
-const IMAGE_SRC_OBJECT_PROP_TYPE = {
+const IMAGE_SRC_OBJECT_PROP_TYPE: TransformablePropType = {
 	kind: 'object',
 	key: 'image-src',
 	shape: {},
 	default: DEFAULT_IMAGE_SRC,
 	settings: {},
 	meta: {},
-} as unknown as PropType;
+};
 
 const STRING_PROP_TYPE = {
 	kind: 'string',
@@ -38,7 +38,7 @@ const STRING_PROP_TYPE = {
 	meta: {},
 } as unknown as PropType;
 
-const ctx = ( propType: PropType ) => ( { propType } );
+const ctx = < T = TransformablePropType | UnionPropType >( propType: T ) => ( { propType } );
 
 describe( 'llm-dialect-image-src-adapter', () => {
 	it( 'should replace value with prop-type default when url is empty and id is absent', () => {
@@ -159,7 +159,7 @@ describe( 'llm-dialect-image-src-adapter', () => {
 
 	it( 'should strip dynamic binding from image-src nested url/id schema', () => {
 		// Arrange
-		const imageSrcParent = { kind: 'object', key: 'image-src' } as unknown as PropType;
+		const imageSrcParent = { kind: 'object', key: 'image-src' } as unknown as TransformablePropType;
 		const urlSchemaWithBind = {
 			type: 'string',
 			allowBind: true,
@@ -174,7 +174,7 @@ describe( 'llm-dialect-image-src-adapter', () => {
 		} );
 		const untouched = imageSrcLlmDialectAdapter.toDialectSchema?.( urlSchemaWithBind, {
 			propType: STRING_PROP_TYPE,
-			parentPropType: { kind: 'object', key: 'image' } as unknown as PropType,
+			parentPropType: { kind: 'object', key: 'image' } as unknown as TransformablePropType,
 			shapeKey: 'size',
 		} );
 

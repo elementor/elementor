@@ -12,7 +12,6 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';

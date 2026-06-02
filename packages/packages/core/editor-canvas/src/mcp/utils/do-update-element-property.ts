@@ -67,7 +67,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 						) }\nExpected Schema: ${ JSON.stringify( jsonSchema ) }`
 					);
 				}
-				return [ key, resolvePropValue( val, styleSchema[ key ], propKey ) ];
+				return [ key, resolvePropValue( val, styleSchema[ key ] ) ];
 			} )
 		);
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );

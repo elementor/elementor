@@ -1,4 +1,4 @@
-import { type PropType, type PropValue } from '../../types';
+import { type AnyTransformable, type PropType, type PropValue } from '../../types';
 import { isTransformable } from '../../utils/is-transformable';
 import { type PropDialectAdapter } from '../registry';
 import { stripDynamicBinding } from '../strip-dynamic-binding';
@@ -192,7 +192,7 @@ const findDynamicChildField = (
 	return null;
 };
 
-const hoistImageSrcDynamicChild = ( child: PropValue, field: BindableImageSrcField ): PropValue => {
+const hoistImageSrcDynamicChild = ( child: AnyTransformable, field: BindableImageSrcField ): PropValue => {
 	const dynamicValue = child.value as { settings?: Record< string, unknown > };
 	const boundFallback = dynamicValue.settings?.fallback as PropValue | undefined;
 
@@ -240,8 +240,8 @@ export const imageSrcLlmDialectAdapter: PropDialectAdapter = {
 			if ( typeof value.value === 'object' && value.value !== null ) {
 				const dynamicChild = findDynamicChildField( value.value as Record< string, unknown > );
 
-				if ( dynamicChild ) {
-					return hoistImageSrcDynamicChild( dynamicChild.child, dynamicChild.field );
+				if ( dynamicChild && isTransformable( dynamicChild.child ) ) {
+					return hoistImageSrcDynamicChild( dynamicChild.child as AnyTransformable, dynamicChild.field );
 				}
 			}
 
