@@ -35,23 +35,22 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 	);
 
 	return (
-		<Box>
+		<>
 			<Box
 				sx={ {
 					display: 'flex',
 					alignItems: 'center',
 					gap: 0.5,
-					px: 1,
-					py: 0.5,
-					borderBottom: 1,
-					borderColor: 'divider',
+					p: 1,
 				} }
 			>
-				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
+				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back to all issues', 'elementor' ) }>
 					<ArrowLeftIcon fontSize="small" />
 				</IconButton>
 				<Icon fontSize="small" color="action" />
-				<Typography variant="subtitle2">{ CATEGORY_LABELS[ category ] }</Typography>
+				<Typography variant="subtitle2" fontWeight="bold">
+					{ CATEGORY_LABELS[ category ] }
+				</Typography>
 			</Box>
 			<Box sx={ { p: 1 } }>
 				<StatusSection label={ __( 'Failed audits', 'elementor' ) } count={ totalViolations } defaultExpanded>
@@ -65,15 +64,29 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				</StatusSection>
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length }>
 					{ passed.map( ( r ) => (
-						<Box key={ r.descriptor.id } sx={ { py: 0.5, px: 1.5 } }>
-							<Typography variant="caption">{ r.descriptor.title }</Typography>
+						<Box
+							key={ r.descriptor.id }
+							sx={ {
+								borderBottom: 1,
+								borderColor: 'divider',
+								paddingBlock: 1,
+							} }
+						>
+							<Typography variant="body2">{ r.descriptor.title }</Typography>
 						</Box>
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Skipped audits', 'elementor' ) } count={ skipped.length }>
 					{ skipped.map( ( r ) => (
-						<Box key={ r.descriptor.id } sx={ { py: 0.5, px: 1.5 } }>
-							<Typography variant="caption">
+						<Box
+							key={ r.descriptor.id }
+							sx={ {
+								borderBottom: 1,
+								borderColor: 'divider',
+								paddingBlock: 1,
+							} }
+						>
+							<Typography variant="body2">
 								{ r.result.status === 'skipped' && r.result.reason
 									? `${ r.descriptor.title } — ${ r.result.reason }`
 									: r.descriptor.title }
@@ -82,6 +95,6 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 					) ) }
 				</StatusSection>
 			</Box>
-		</Box>
+		</>
 	);
 }

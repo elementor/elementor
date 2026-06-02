@@ -18,11 +18,18 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 	const { focus } = useViolationFocus();
 
 	return (
-		<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
+		<Box sx={ { borderBottom: 1, borderColor: 'divider', paddingBlock: 0.5 } }>
 			<Box
 				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' } }
 				onClick={ () => setExpanded( ( v ) => ! v ) }
 			>
+				<Typography variant="body2" sx={ { flex: 1 } }>
+					{ descriptor.title }
+				</Typography>
+				<Typography variant="caption" color="text.secondary" fontWeight="bold">
+					{ violations.length }
+				</Typography>
+				<SeverityIcon severity={ descriptor.severity } />
 				<IconButton
 					size="small"
 					aria-label={ expanded ? __( 'Collapse', 'elementor' ) : __( 'Expand', 'elementor' ) }
@@ -35,18 +42,9 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 						} }
 					/>
 				</IconButton>
-				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ descriptor.title }
-				</Typography>
-				<Typography variant="caption" color="text.secondary">
-					{ violations.length }
-				</Typography>
-				<SeverityIcon severity={ descriptor.severity } />
 			</Box>
 			<Collapse in={ expanded }>
-				<Box
-					sx={ { paddingInlineStart: 4, paddingBlock: 1, display: 'flex', flexDirection: 'column', gap: 1 } }
-				>
+				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1, paddingBlock: 1 } }>
 					<Box sx={ { bgcolor: 'action.hover', borderRadius: 1, p: 1 } }>
 						<Typography variant="caption" component="p" fontWeight="bold">
 							{ __( "What's the issue", 'elementor' ) }
@@ -55,7 +53,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 							{ descriptor.description }
 						</Typography>
 					</Box>
-					<Box sx={ { bgcolor: 'action.hover', borderRadius: 1, p: 1 } }>
+					<Box sx={ { bgcolor: '#EFF5FE', borderRadius: 1, p: 1 } }>
 						<Typography variant="caption" component="p" fontWeight="bold">
 							{ __( 'How to resolve', 'elementor' ) }
 						</Typography>
@@ -64,7 +62,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 						</Typography>
 					</Box>
 				</Box>
-				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 4 } }>
+				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
 					{ violations.map( ( violation, idx ) => (
 						<Box
 							key={ idx }

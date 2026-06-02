@@ -51,7 +51,7 @@ export default function OverviewPage( { report, onCategoryClick }: Props ) {
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
 
 	return (
-		<Box sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 3 } }>
+		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 3, p: 2 } }>
 			<Box sx={ { display: 'flex', alignItems: 'center', gap: 2 } }>
 				<Typography variant="h2" component="span" sx={ { lineHeight: 1, fontWeight: 700 } }>
 					{ report.overall }

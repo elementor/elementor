@@ -25,7 +25,7 @@ export default function IssuesPage( { report, onCategoryClick }: Props ) {
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
 
 	return (
-		<Box sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 1.5 } }>
+		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1.5, p: 2 } }>
 			<Typography variant="subtitle1" component="h2">
 				{ __( 'All issues', 'elementor' ) }
 			</Typography>

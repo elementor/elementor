@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { ChevronDownIcon } from '@elementor/icons';
-import { Box, Chip, Collapse, IconButton, Typography } from '@elementor/ui';
+import { Box, Chip, Collapse, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
@@ -19,9 +19,9 @@ export default function StatusSection( { label, count, defaultExpanded = false, 
 	}
 
 	return (
-		<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
+		<Box sx={ { paddingBlock: 1 } }>
 			<Box
-				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', py: 0.5 } }
+				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' } }
 				onClick={ () => setExpanded( ( v ) => ! v ) }
 			>
 				<IconButton
@@ -36,13 +36,10 @@ export default function StatusSection( { label, count, defaultExpanded = false, 
 						} }
 					/>
 				</IconButton>
-				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ label }
-				</Typography>
-				<Chip label={ count } size="small" />
+				<Chip label={ `${ label } (${ count })` } size="small" />
 			</Box>
 			<Collapse in={ expanded }>
-				<Box sx={ { paddingInlineStart: 3 } }>{ children }</Box>
+				<Box sx={ { paddingInlineStart: 4.25, paddingBlock: 2 } }>{ children }</Box>
 			</Collapse>
 		</Box>
 	);
