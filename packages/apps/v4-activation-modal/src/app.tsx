@@ -5,17 +5,19 @@ import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@element
 import { AppContent } from './components';
 
 export function App() {
-	const [ isOpen, setIsOpen ] = useState( true );
+	const [ isMounted, setIsMounted ] = useState( true );
 
-	const handleClose = useCallback( () => {
-		setIsOpen( false );
-	}, [] );
+	const handleDisposed = useCallback( () => setIsMounted( false ), [] );
+
+	if ( ! isMounted ) {
+		return null;
+	}
 
 	return (
 		<DirectionProvider rtl={ document.dir === 'rtl' }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme="light" palette="unstable">
-					{ isOpen && <AppContent onClose={ handleClose } /> }
+					<AppContent onClose={ handleDisposed } />
 				</ThemeProvider>
 			</LocalizationProvider>
 		</DirectionProvider>

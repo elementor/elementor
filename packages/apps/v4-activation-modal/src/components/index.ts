@@ -1,5 +1,4 @@
-export { V4ActivationModal } from './v4-activation-modal';
+export { ModalHeader, ModalFooter } from '@elementor/editor-modal-shell';
 export { AppContent } from './app-content';
-export { ModalHeader } from './modal-header';
-export { ModalFooter } from './modal-footer';
+export { CelebrationLottie } from './celebration-lottie';
 export { FeatureItem } from './feature-item';
