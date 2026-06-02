@@ -24,6 +24,10 @@ class Image_Carousel_Default_Name extends Audit_Descriptor {
 		return esc_html__( 'Set a meaningful accessible name based on what the carousel actually contains.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_ACCESSIBILITY, self::CATEGORY_SEO ];
 	}

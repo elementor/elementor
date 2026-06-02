@@ -24,6 +24,10 @@ class Nested_Boxed_Containers extends Audit_Descriptor {
 		return esc_html__( 'Change the inner container\'s content width to Full Width.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_PERFORMANCE, self::CATEGORY_HEALTH ];
 	}
