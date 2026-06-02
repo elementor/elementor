@@ -24,6 +24,10 @@ class Uses_Sections_Or_Columns extends Audit_Descriptor {
 		return esc_html__( 'Use the Container Converter to replace each section/column with a container.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_HEALTH, self::CATEGORY_PERFORMANCE ];
 	}

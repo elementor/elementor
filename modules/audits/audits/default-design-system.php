@@ -24,6 +24,10 @@ class Default_Design_System extends Audit_Descriptor {
 		return esc_html__( 'Open Site Settings and customize your kit (colors, fonts, layout).', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [ self::FIX_PLUGIN_ANGIE ];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_HEALTH ];
 	}

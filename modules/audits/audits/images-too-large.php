@@ -24,6 +24,10 @@ class Images_Too_Large extends Audit_Descriptor {
 		return esc_html__( 'Replace the image with a smaller version or enable image optimization.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [ self::FIX_PLUGIN_IMAGE_OPTIMIZER ];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_PERFORMANCE ];
 	}

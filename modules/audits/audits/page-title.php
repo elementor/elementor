@@ -24,6 +24,10 @@ class Page_Title extends Audit_Descriptor {
 		return esc_html__( 'Open Page Settings and add a title.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_SEO, self::CATEGORY_ACCESSIBILITY ];
 	}

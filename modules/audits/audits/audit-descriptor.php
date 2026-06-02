@@ -17,6 +17,17 @@ abstract class Audit_Descriptor {
 	const CATEGORY_ACCESSIBILITY = 'accessibility';
 	const CATEGORY_PERFORMANCE = 'performance';
 
+	const FIX_PLUGIN_ALLY = 'pojo-accessibility';
+	const FIX_PLUGIN_IMAGE_OPTIMIZER = 'image-optimization';
+	const FIX_PLUGIN_COOKIEZ = 'cookiez';
+	const FIX_PLUGIN_ANGIE = 'angie';
+
+	public array $fix_plugins = [];
+
+	public static function get_fix_plugin() {
+		return self::$fix_plugins;
+	}
+
 	abstract public function get_id(): string;
 
 	abstract public function get_title(): string;
@@ -24,6 +35,8 @@ abstract class Audit_Descriptor {
 	abstract public function get_description(): string;
 
 	abstract public function get_fix_hint(): string;
+
+	abstract public function get_fix_plugins(): array;
 
 	/**
 	 * @return string[] One or more category constants from CATEGORY_*.

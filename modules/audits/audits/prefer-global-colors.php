@@ -24,6 +24,10 @@ class Prefer_Global_Colors extends Audit_Descriptor {
 		return esc_html__( 'Replace the hard-coded color with one of your kit\'s global colors.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [ self::FIX_PLUGIN_ANGIE ];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_HEALTH ];
 	}

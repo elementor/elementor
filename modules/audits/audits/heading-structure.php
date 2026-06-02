@@ -24,6 +24,10 @@ class Heading_Structure extends Audit_Descriptor {
 		return esc_html__( 'Ensure your page has one H1 and that heading levels do not skip (no H2 → H4).', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [ self::FIX_PLUGIN_ALLY ];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_SEO, self::CATEGORY_ACCESSIBILITY ];
 	}

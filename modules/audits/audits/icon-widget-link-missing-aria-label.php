@@ -24,6 +24,10 @@ class Icon_Widget_Link_Missing_Aria_Label extends Audit_Descriptor {
 		return esc_html__( 'Add an aria-label custom attribute to the icon widget describing the link\'s destination.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_ACCESSIBILITY ];
 	}

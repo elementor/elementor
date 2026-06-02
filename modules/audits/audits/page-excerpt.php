@@ -24,6 +24,10 @@ class Page_Excerpt extends Audit_Descriptor {
 		return esc_html__( 'Open Page Settings and write a short excerpt.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_SEO, self::CATEGORY_ACCESSIBILITY ];
 	}

@@ -24,6 +24,10 @@ class Images_Missing_Alt extends Audit_Descriptor {
 		return esc_html__( 'Open the image\'s settings and add an Alt Text describing the image.', 'elementor' );
 	}
 
+	public function get_fix_plugins(): array {
+		return [ self::FIX_PLUGIN_ALLY ];
+	}
+
 	public function get_categories(): array {
 		return [ self::CATEGORY_SEO, self::CATEGORY_ACCESSIBILITY ];
 	}
