@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/no-node-access */
 import { act, renderHook } from '@testing-library/react';
 
-import { useGridChildrenSignal } from '../use-grid-children-signal';
+import { useGridChildren } from '../use-grid-children';
 
 type ResizeCallback = ( entries: unknown[] ) => void;
 
@@ -43,7 +43,7 @@ function createGridWithChildren( count: number ): HTMLElement {
 	return grid;
 }
 
-describe( 'useGridChildrenSignal', () => {
+describe( 'useGridChildren', () => {
 	const originalResizeObserver = globalThis.ResizeObserver;
 
 	beforeEach( () => {
@@ -57,7 +57,7 @@ describe( 'useGridChildrenSignal', () => {
 	} );
 
 	it( 'returns 0 for a null element', () => {
-		const { result } = renderHook( () => useGridChildrenSignal( null ) );
+		const { result } = renderHook( () => useGridChildren( null ) );
 
 		expect( result.current ).toBe( 0 );
 		expect( MockResizeObserver.instances ).toHaveLength( 0 );
@@ -66,7 +66,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'observes existing children on mount', () => {
 		const grid = createGridWithChildren( 2 );
 
-		renderHook( () => useGridChildrenSignal( grid ) );
+		renderHook( () => useGridChildren( grid ) );
 
 		expect( MockResizeObserver.instances ).toHaveLength( 1 );
 		expect( MockResizeObserver.instances[ 0 ].observed ).toHaveLength( 2 );
@@ -75,7 +75,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'increments when a child is appended', async () => {
 		const grid = createGridWithChildren( 1 );
 
-		const { result } = renderHook( () => useGridChildrenSignal( grid ) );
+		const { result } = renderHook( () => useGridChildren( grid ) );
 		const before = result.current;
 
 		await act( async () => {
@@ -90,7 +90,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'increments when a child is removed', async () => {
 		const grid = createGridWithChildren( 2 );
 
-		const { result } = renderHook( () => useGridChildrenSignal( grid ) );
+		const { result } = renderHook( () => useGridChildren( grid ) );
 		const before = result.current;
 
 		await act( async () => {
@@ -105,7 +105,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'increments when children are reordered', async () => {
 		const grid = createGridWithChildren( 3 );
 
-		const { result } = renderHook( () => useGridChildrenSignal( grid ) );
+		const { result } = renderHook( () => useGridChildren( grid ) );
 		const before = result.current;
 
 		await act( async () => {
@@ -119,7 +119,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'increments when a child resizes', () => {
 		const grid = createGridWithChildren( 1 );
 
-		const { result } = renderHook( () => useGridChildrenSignal( grid ) );
+		const { result } = renderHook( () => useGridChildren( grid ) );
 		const before = result.current;
 
 		act( () => {
@@ -132,7 +132,7 @@ describe( 'useGridChildrenSignal', () => {
 	it( 'disconnects observers on unmount', () => {
 		const grid = createGridWithChildren( 2 );
 
-		const { unmount } = renderHook( () => useGridChildrenSignal( grid ) );
+		const { unmount } = renderHook( () => useGridChildren( grid ) );
 
 		unmount();
 
@@ -143,7 +143,7 @@ describe( 'useGridChildrenSignal', () => {
 		const first = createGridWithChildren( 1 );
 		const second = createGridWithChildren( 2 );
 
-		const { rerender } = renderHook( ( { element } ) => useGridChildrenSignal( element ), {
+		const { rerender } = renderHook( ( { element } ) => useGridChildren( element ), {
 			initialProps: { element: first as HTMLElement | null },
 		} );
 

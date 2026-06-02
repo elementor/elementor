@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function useGridChildrenSignal( element: HTMLElement | null ): number {
+export function useGridChildren( element: HTMLElement | null ): number {
 	const [ signal, setSignal ] = useState( 0 );
 
 	useEffect( () => {
