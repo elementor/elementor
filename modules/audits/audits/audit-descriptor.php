@@ -16,6 +16,7 @@ abstract class Audit_Descriptor {
 	const CATEGORY_SEO = 'seo';
 	const CATEGORY_ACCESSIBILITY = 'accessibility';
 	const CATEGORY_PERFORMANCE = 'performance';
+	const CATEGORY_COMPLIANCE = 'compliance';
 
 	const FIX_PLUGIN_ALLY = 'pojo-accessibility';
 	const FIX_PLUGIN_IMAGE_OPTIMIZER = 'image-optimization';

@@ -11,13 +11,14 @@ type Props = {
 	report: PageAuditReport;
 };
 
-const TAB_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance' ];
+const TAB_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 const TAB_LABELS: Record< AuditCategory, string > = {
 	health: __( 'Health', 'elementor' ),
 	seo: __( 'SEO', 'elementor' ),
 	accessibility: __( 'Accessibility', 'elementor' ),
 	performance: __( 'Performance', 'elementor' ),
+	compliance: __( 'Compliance', 'elementor' ),
 };
 
 export default function AuditTabs( { report }: Props ) {

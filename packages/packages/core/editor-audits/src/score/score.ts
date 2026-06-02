@@ -1,6 +1,6 @@
 import { type AuditCategory, type AuditDescriptor, type AuditResult, type PageAuditReport } from '../types';
 
-const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance' ];
+const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 type Input = Array< { descriptor: AuditDescriptor; result: AuditResult } >;
 

@@ -15,9 +15,10 @@ const CATEGORY_LABELS: Record< AuditCategory, string > = {
 	seo: __( 'SEO', 'elementor' ),
 	accessibility: __( 'Accessibility', 'elementor' ),
 	performance: __( 'Performance', 'elementor' ),
+	compliance: __( 'Compliance', 'elementor' ),
 };
 
-const TAB_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance' ];
+const TAB_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 const OVERALL_GAUGE_SIZE = 128;
 
