@@ -155,6 +155,7 @@ const entry = {
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
 	'design-system-sync': path.resolve( __dirname, '../modules/design-system-sync/assets/js/design-system-sync-handler.js' ),
+	'assets-manager': path.resolve( __dirname, '../modules/assets-manager/assets/js/assets-manager.js' ),
 };
 
 const frontendEntries = {
