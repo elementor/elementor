@@ -3,6 +3,7 @@ import { ELEMENT_STYLE_CHANGE_EVENT } from '@elementor/editor-elements';
 import { __privateUseListenTo as useListenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
 import { toGridTracks } from '../utils/grid-outline-utils';
+import { useGridChildren } from './use-grid-children';
 
 export type GridTracks = {
 	columns: number[];
@@ -31,6 +32,7 @@ export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): Gri
 		[ windowEvent( ELEMENT_STYLE_CHANGE_EVENT ), windowEvent( DEVICE_MODE_CHANGE_EVENT ) ],
 		() => ( {} )
 	);
+	const childrenTrigger = useGridChildren( element );
 
 	useEffect( () => {
 		const previewWindow = element?.ownerDocument?.defaultView;
@@ -47,7 +49,7 @@ export function useGridTracks( element: HTMLElement | null, rect: DOMRect ): Gri
 		return () => {
 			previewWindow.cancelAnimationFrame( frame );
 		};
-	}, [ element, rect.width, rect.height, trigger ] );
+	}, [ element, rect.width, rect.height, trigger, childrenTrigger ] );
 
 	return tracks;
 }
