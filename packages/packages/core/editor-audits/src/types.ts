@@ -44,6 +44,10 @@ export type PageContextResponse = {
 	kit_is_default_unchanged: boolean;
 	privacy_policy_url: string | null;
 	privacy_settings_url: string;
+	ally_plugin_active: boolean;
+	ally_plugin_url: string;
+	cookiez_plugin_active: boolean;
+	cookiez_plugin_url: string;
 };
 
 export type ElementSnapshotNode = {

@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Audits\Data\Endpoints;
 
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
+use Elementor\Core\Utils\Hints;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,6 +35,10 @@ class Page_Context extends Endpoint_Base {
 			'kit_is_default_unchanged' => $this->is_default_kit_unchanged(),
 			'privacy_policy_url' => get_privacy_policy_url() ?: null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
+			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
+			'ally_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=pojo-accessibility' ),
+			'cookiez_plugin_active' => Hints::is_plugin_active( 'cookiez/cookiez.php' ),
+			'cookiez_plugin_url' => admin_url( 'plugin-install.php?tab=plugin-information&plugin=cookiez' ),
 		];
 	}
 

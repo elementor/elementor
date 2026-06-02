@@ -1,5 +1,13 @@
 import { registerAudit } from '../registry';
 import {
+	descriptor as missingAccessibilityPolicyDescriptor,
+	evaluator as missingAccessibilityPolicyEvaluator,
+} from './missing-accessibility-policy';
+import {
+	descriptor as missingCookiePolicyDescriptor,
+	evaluator as missingCookiePolicyEvaluator,
+} from './missing-cookie-policy';
+import {
 	descriptor as defaultDesignSystemDescriptor,
 	evaluator as defaultDesignSystemEvaluator,
 } from './default-design-system';
@@ -45,4 +53,6 @@ export function registerBuiltInAudits(): void {
 	registerAudit( nestedBoxedDescriptor, nestedBoxedEvaluator );
 	registerAudit( iconLinkDescriptor, iconLinkEvaluator );
 	registerAudit( missingPrivacyPolicyDescriptor, missingPrivacyPolicyEvaluator );
+	registerAudit( missingAccessibilityPolicyDescriptor, missingAccessibilityPolicyEvaluator );
+	registerAudit( missingCookiePolicyDescriptor, missingCookiePolicyEvaluator );
 }
