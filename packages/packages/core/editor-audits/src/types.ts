@@ -16,6 +16,7 @@ export type AuditViolation = {
 	auditId: string;
 	elementId?: string;
 	targetHint?: 'page-settings' | 'site-settings' | 'element-settings';
+	externalUrl?: string;
 	label: string;
 	detail?: string;
 };
@@ -41,6 +42,8 @@ export type PageContextResponse = {
 	>;
 	kit_id: number;
 	kit_is_default_unchanged: boolean;
+	privacy_policy_url: string | null;
+	privacy_settings_url: string;
 };
 
 export type ElementSnapshotNode = {

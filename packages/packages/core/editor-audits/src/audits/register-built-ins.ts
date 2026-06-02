@@ -20,6 +20,10 @@ import {
 	evaluator as missingFeaturedImageEvaluator,
 } from './missing-featured-image';
 import { descriptor as missingPageTitleDescriptor, evaluator as missingPageTitleEvaluator } from './missing-page-title';
+import {
+	descriptor as missingPrivacyPolicyDescriptor,
+	evaluator as missingPrivacyPolicyEvaluator,
+} from './missing-privacy-policy';
 import { descriptor as nestedBoxedDescriptor, evaluator as nestedBoxedEvaluator } from './nested-boxed-containers';
 import {
 	descriptor as preferGlobalColorsDescriptor,
@@ -40,4 +44,5 @@ export function registerBuiltInAudits(): void {
 	registerAudit( carouselNameDescriptor, carouselNameEvaluator );
 	registerAudit( nestedBoxedDescriptor, nestedBoxedEvaluator );
 	registerAudit( iconLinkDescriptor, iconLinkEvaluator );
+	registerAudit( missingPrivacyPolicyDescriptor, missingPrivacyPolicyEvaluator );
 }

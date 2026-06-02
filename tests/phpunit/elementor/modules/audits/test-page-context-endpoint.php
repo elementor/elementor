@@ -98,6 +98,56 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertSame( [], $response['image_sizes'] );
 	}
 
+	public function test_privacy_policy_url_is_null_when_not_configured() {
+		// Arrange.
+		update_option( 'wp_page_for_privacy_policy', 0 );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNull( $response['privacy_policy_url'] );
+	}
+
+	public function test_privacy_policy_url_is_returned_when_published_page_is_set() {
+		// Arrange.
+		$privacy_page_id = $this->factory()->post->create( [
+			'post_title'  => 'Privacy Policy',
+			'post_status' => 'publish',
+			'post_type'   => 'page',
+		] );
+		update_option( 'wp_page_for_privacy_policy', $privacy_page_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertNotNull( $response['privacy_policy_url'] );
+		$this->assertStringContainsString( get_permalink( $privacy_page_id ), $response['privacy_policy_url'] );
+
+		// Cleanup.
+		wp_delete_post( $privacy_page_id, true );
+		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_privacy_settings_url_always_points_to_options_privacy_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'privacy_settings_url', $response );
+		$this->assertStringContainsString( 'options-privacy.php', $response['privacy_settings_url'] );
+	}
+
 	private function build_controller() {
 		return new \Elementor\Modules\Audits\Data\Controller();
 	}

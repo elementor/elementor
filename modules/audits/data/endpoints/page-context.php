@@ -32,6 +32,8 @@ class Page_Context extends Endpoint_Base {
 			'image_sizes' => $this->collect_image_sizes( $attachment_ids ),
 			'kit_id' => (int) get_option( 'elementor_active_kit' ),
 			'kit_is_default_unchanged' => $this->is_default_kit_unchanged(),
+			'privacy_policy_url' => get_privacy_policy_url() ?: null,
+			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 		];
 	}
 

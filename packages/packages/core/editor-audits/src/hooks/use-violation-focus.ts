@@ -13,6 +13,11 @@ declare global {
 export function useViolationFocus() {
 	return {
 		focus( violation: AuditViolation ): void {
+			if ( violation.externalUrl ) {
+				window.open( violation.externalUrl, '_blank' );
+				return;
+			}
+
 			if ( violation.elementId ) {
 				const container = window.elementor?.getContainer?.( violation.elementId );
 

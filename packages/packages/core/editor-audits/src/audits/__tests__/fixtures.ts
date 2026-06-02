@@ -7,6 +7,8 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	image_sizes: {},
 	kit_id: 1,
 	kit_is_default_unchanged: false,
+	privacy_policy_url: 'https://example.com/privacy-policy',
+	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 };
 
 const DEFAULT_KIT: KitSnapshot = {
