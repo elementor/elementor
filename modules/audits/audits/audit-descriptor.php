@@ -16,7 +16,6 @@ abstract class Audit_Descriptor {
 	const CATEGORY_SEO = 'seo';
 	const CATEGORY_ACCESSIBILITY = 'accessibility';
 	const CATEGORY_PERFORMANCE = 'performance';
-	const CATEGORY_BEST_PRACTICES = 'best-practices';
 
 	abstract public function get_id(): string;
 

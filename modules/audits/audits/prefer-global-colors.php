@@ -25,7 +25,7 @@ class Prefer_Global_Colors extends Audit_Descriptor {
 	}
 
 	public function get_categories(): array {
-		return [ self::CATEGORY_HEALTH, self::CATEGORY_BEST_PRACTICES ];
+		return [ self::CATEGORY_HEALTH ];
 	}
 
 	public function get_severity(): string {
