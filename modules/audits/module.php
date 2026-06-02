@@ -7,12 +7,10 @@ use Elementor\Modules\Audits\Data\Controller;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Module extends BaseModule {
-
-	const FILTER_AUDITS = 'elementor/audits/audits';
 
 	const REST_NAMESPACE = 'elementor/v1';
 
@@ -24,12 +22,9 @@ class Module extends BaseModule {
 		'editor-audits',
 	];
 
-	private Audits_Manager $audits_manager;
-
 	public function __construct() {
 		parent::__construct();
 
-		$this->audits_manager = new Audits_Manager();
 		$this->register_data_controller();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
@@ -52,7 +47,6 @@ class Module extends BaseModule {
 		wp_add_inline_script(
 			'elementor-v2-editor-audits',
 			'window.elementorAudits = ' . wp_json_encode( [
-				'audits' => $this->audits_manager->get_descriptors(),
 				'restNamespace' => self::REST_NAMESPACE,
 				'nonce' => wp_create_nonce( 'wp_rest' ),
 			] ) . ';',
