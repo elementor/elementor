@@ -4,10 +4,10 @@ Dev-only bridge between the Elementor editor and an external Interactions app ru
 
 ## How it works
 
-1. Right-click an element (canvas or structure panel) → **Open Interactions Editor**
+1. Click the **Interactions Editor** button in the top bar
 2. Editor opens a fullscreen iframe → `http://localhost:5173/`
 3. App and editor talk via `postMessage`
-4. On save, editor writes `interactions` onto the element settings and closes the iframe
+4. On save, editor acknowledges and closes the iframe (document write is not implemented yet)
 
 ## Setup
 
@@ -50,12 +50,23 @@ Transport: `window.postMessage` with `'*'` target origin (POC only).
 ### Flow
 
 ```
-App loads  →  { type: 'ready' }
-Editor     →  { type: 'init', element: { ... } }
-User saves →  { type: 'save', elementId, interactions }
-Editor     →  { type: 'saved', ok: true }  + closes iframe
-User cancel→  { type: 'close' }            + closes iframe (no save)
+Iframe load →  Editor sends { type: 'init', page: { html, elementIds } }
+App loads   →  { type: 'ready' } (optional) → Editor may send init again
+User saves  →  { type: 'save', ... }
+Editor      →  { type: 'saved', ok: true }  + closes iframe (no document write yet)
+User cancel →  { type: 'close' } or Close button / Escape → closes iframe (no save)
 ```
+
+The editor sends `init` as soon as the iframe fires `load`, so the app does not need to send `ready` first. Sending `ready` is still supported and triggers another `init` (your app should handle duplicate inits).
+
+Press **Close** (top-right), **Escape**, or post `{ type: 'close' }` to dismiss the overlay.
+
+### Troubleshooting white screen
+
+1. **Vite must allow embedding** — add `Content-Security-Policy: frame-ancestors *` in `vite.config.js` (see Setup below). Without it the iframe stays blank.
+2. **Mixed content** — if the editor is HTTPS (`https://test.local`) but the app is `http://localhost:5173`, the browser may block the iframe. Use HTTP for local WP or serve the Vite app over HTTPS.
+3. **App must listen for `init`** — on `message`, read `event.data.page.html` and `event.data.page.elementIds`. If the app only waits for the old `element` shape, update it.
+4. **Large HTML** — `page.html` is the full preview document; very large pages can slow the app. Trim or parse incrementally in the app if needed.
 
 ### App → Editor
 
@@ -69,18 +80,13 @@ Sent once when the app is mounted.
 
 #### `save`
 
-Sent when the user confirms changes.
+Sent when the user confirms changes. Payload shape is TBD (multi-element write contract).
 
 ```json
 {
-  "type": "save",
-  "elementId": "a1b2c3d",
-  "interactions": {}
+  "type": "save"
 }
 ```
-
-- `interactions` — opaque JSON; the app owns the schema
-- `elementId` — must match the element from `init`
 
 #### `close`
 
@@ -99,23 +105,21 @@ Sent in response to `ready`.
 ```json
 {
   "type": "init",
-  "element": {
-    "id": "a1b2c3d",
-    "widgetType": "heading",
-    "interactions": null
+  "page": {
+    "html": "<html>...</html>",
+    "elementIds": ["a1b2c3d", "e4f5g6h"]
   }
 }
 ```
 
 | Field | Description |
 |---|---|
-| `id` | Elementor element ID |
-| `widgetType` | Widget type or `elType` for non-widgets |
-| `interactions` | Previously saved data, or `null` |
+| `html` | Full rendered HTML from the preview iframe (`document.documentElement.outerHTML`) |
+| `elementIds` | Flat array of all Elementor element ids on the page (`[data-id]` in DOM order) |
 
 #### `saved`
 
-Sent after the editor successfully applies settings.
+Sent after the editor acknowledges save (currently closes iframe only; no settings write).
 
 ```json
 { "type": "saved", "ok": true }
@@ -123,16 +127,7 @@ Sent after the editor successfully applies settings.
 
 ## Editor: applying the save response
 
-On `save`, the editor runs:
-
-```js
-$e.run( 'document/elements/settings', {
-  container,
-  settings: { interactions: event.data.interactions },
-} );
-```
-
-Data is stored under the **`interactions`** setting key on the element. Re-opening the editor for the same element returns it in `init.element.interactions`.
+Save is currently a no-op on the Elementor side: the editor posts `{ type: 'saved', ok: true }` and closes the iframe. A follow-up is needed to define whether the app returns per-element `interactions` keyed by id (batched `document/elements/settings`) or a page-level bulk payload.
 
 ## App-side minimal example
 
@@ -141,17 +136,13 @@ window.parent.postMessage({ type: 'ready' }, '*');
 
 window.addEventListener('message', (event) => {
   if (event.data?.type === 'init') {
-    window.__element = event.data.element;
-    // render UI with event.data.element.interactions
+    window.__page = event.data.page;
+    // render UI with event.data.page.html and event.data.page.elementIds
   }
 });
 
-function saveInteractions(interactions) {
-  window.parent.postMessage({
-    type: 'save',
-    elementId: window.__element.id,
-    interactions,
-  }, '*');
+function saveInteractions() {
+  window.parent.postMessage({ type: 'save' }, '*');
 }
 
 function closeEditor() {
@@ -164,4 +155,4 @@ function closeEditor() {
 | File | Role |
 |---|---|
 | `module.php` | Enqueues editor script |
-| `assets/js/editor.js` | Context menu, iframe, postMessage handler, settings write |
+| `assets/js/editor.js` | Top bar button, iframe, postMessage handler |

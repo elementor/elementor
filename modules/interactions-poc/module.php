@@ -23,8 +23,13 @@ class Module extends BaseModule {
 	public function enqueue_editor_scripts() {
 		wp_enqueue_script(
 			'elementor-interactions-poc-editor',
-			plugins_url( 'assets/js/editor.js', __FILE__ ),
-			[ 'elementor-editor' ],
+			$this->get_js_assets_url( 'interactions-poc-editor' ),
+			[
+				'elementor-editor',
+				'elementor-common',
+				'elementor-v2-editor-app-bar',
+				'elementor-v2-icons',
+			],
 			ELEMENTOR_VERSION,
 			true
 		);
