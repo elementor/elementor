@@ -1,50 +1,76 @@
 import { type GridTracks } from '../hooks/use-grid-tracks';
 
-export type OutlineGeometry = {
-	vertical: number[];
-	horizontal: number[];
-	top: number;
-	bottom: number;
-	left: number;
-	right: number;
+export type CellRect = {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
 };
 
-export function computeOutlineGeometry( tracks: GridTracks, width: number, height: number ): OutlineGeometry {
-	const { columns, rows, columnGap, rowGap, padding } = tracks;
+type TrackSegment = {
+	start: number;
+	size: number;
+};
 
+export function toGridTracks( computedStyle: CSSStyleDeclaration ): GridTracks {
 	return {
-		vertical: computeBoundaries( columns, columnGap, padding.left ),
-		horizontal: computeBoundaries( rows, rowGap, padding.top ),
-		top: padding.top,
-		bottom: height - padding.bottom,
-		left: padding.left,
-		right: width - padding.right,
+		columns: parseTrackList( computedStyle.gridTemplateColumns ),
+		rows: parseTrackList( computedStyle.gridTemplateRows ),
+		columnGap: toPx( computedStyle.columnGap ),
+		rowGap: toPx( computedStyle.rowGap ),
+		padding: {
+			top: toPx( computedStyle.paddingTop ),
+			right: toPx( computedStyle.paddingRight ),
+			bottom: toPx( computedStyle.paddingBottom ),
+			left: toPx( computedStyle.paddingLeft ),
+		},
+		borderColor: computedStyle.getPropertyValue( '--e-a-border-color-bold' ).trim(),
 	};
 }
 
-function computeBoundaries( sizes: number[], gap: number, offset: number ): number[] {
-	if ( sizes.length === 0 ) {
+export function computeCellRects( tracks: GridTracks, width: number, height: number ): CellRect[] {
+	const { columns, rows, columnGap, rowGap, padding } = tracks;
+
+	const hasColumns = columns.length > 0;
+	const hasRows = rows.length > 0;
+
+	if ( ! hasColumns && ! hasRows ) {
 		return [];
 	}
 
-	const boundaries: number[] = [];
-	let cursor = offset;
+	const columnSegments = hasColumns
+		? computeTrackSegments( columns, columnGap, padding.left )
+		: [ { start: padding.left, size: width - padding.left - padding.right } ];
 
-	for ( let i = 0; i < sizes.length; i++ ) {
-		if ( i === 0 ) {
-			boundaries.push( cursor );
-		}
+	const rowSegments = hasRows
+		? computeTrackSegments( rows, rowGap, padding.top )
+		: [ { start: padding.top, size: height - padding.top - padding.bottom } ];
 
-		cursor += sizes[ i ];
-		boundaries.push( cursor );
+	const cells: CellRect[] = [];
 
-		if ( i < sizes.length - 1 && gap > 0 ) {
-			cursor += gap;
-			boundaries.push( cursor );
+	for ( const row of rowSegments ) {
+		for ( const column of columnSegments ) {
+			cells.push( { x: column.start, y: row.start, width: column.size, height: row.size } );
 		}
 	}
 
-	return boundaries;
+	return cells;
+}
+
+function computeTrackSegments( sizes: number[], gap: number, offset: number ): TrackSegment[] {
+	const segments: TrackSegment[] = [];
+	let cursor = offset;
+
+	for ( let i = 0; i < sizes.length; i++ ) {
+		segments.push( { start: cursor, size: sizes[ i ] } );
+		cursor += sizes[ i ];
+
+		if ( i < sizes.length - 1 ) {
+			cursor += gap;
+		}
+	}
+
+	return segments;
 }
 
 export function snapToHalfPixel( value: number ): number {
