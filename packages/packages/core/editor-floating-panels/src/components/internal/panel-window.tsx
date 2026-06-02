@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
@@ -52,7 +53,9 @@ export default function PanelWindow( { panelId, zIndex, visible, onFocus, childr
 					boxShadow: `0 2px 20px 0 rgba(0, 0, 0, 0.1)`,
 				} }
 			>
-				<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
+				<ThemeProvider>
+					<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
+				</ThemeProvider>
 			</Paper>
 		</Fade>
 	);
