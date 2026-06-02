@@ -4,6 +4,7 @@ import { Box, Divider, Tab, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory, type PageAuditReport } from '../../types';
+import { CATEGORY_ICONS } from '../category-icons';
 import CategoryTab from './category-tab';
 import ScoreTab from './score-tab';
 
@@ -38,9 +39,18 @@ export default function AuditTabs( { report }: Props ) {
 				size="small"
 			>
 				<Tab value="score" label={ __( 'Score', 'elementor' ) } />
-				{ availableCategories.map( ( category ) => (
-					<Tab key={ category } value={ category } label={ TAB_LABELS[ category ] } />
-				) ) }
+				{ availableCategories.map( ( category ) => {
+					const Icon = CATEGORY_ICONS[ category ];
+					return (
+						<Tab
+							key={ category }
+							value={ category }
+							label={ TAB_LABELS[ category ] }
+							icon={ <Icon fontSize="small" /> }
+							iconPosition="start"
+						/>
+					);
+				} ) }
 			</Tabs>
 			<Divider sx={ { mb: 1, borderColor: 'var(--e-a-border-color)' } } />
 			{ activeTab === 'score' ? (

@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useViolationFocus } from '../../hooks/use-violation-focus';
 import { type AuditDescriptor, type AuditViolation } from '../../types';
+import SeverityIcon from '../severity-icons';
 
 type Props = {
 	descriptor: AuditDescriptor;
@@ -40,9 +41,10 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				<Typography variant="caption" color="text.secondary">
 					{ violations.length }
 				</Typography>
+				<SeverityIcon severity={ descriptor.severity } />
 			</Box>
 			<Collapse in={ expanded }>
-				<Box sx={ { px: 2, py: 1, color: 'text.secondary' } }>
+				<Box sx={ { paddingInlineStart: 4, paddingBlock: 1, color: 'text.secondary' } }>
 					<Typography variant="caption" component="p">
 						{ descriptor.description }
 					</Typography>
@@ -50,7 +52,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 						{ descriptor.fixHint }
 					</Typography>
 				</Box>
-				<Box role="list" sx={ { pb: 1 } }>
+				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 4, paddingInlineEnd: 2 } }>
 					{ violations.map( ( violation, idx ) => (
 						<Box
 							key={ idx }
@@ -63,8 +65,8 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 								}
 							} }
 							sx={ {
-								px: 2,
-								py: 0.5,
+								paddingBlock: 0.5,
+								paddingInline: 2,
 								cursor: 'pointer',
 								'&:hover': { bgcolor: 'action.hover' },
 							} }
