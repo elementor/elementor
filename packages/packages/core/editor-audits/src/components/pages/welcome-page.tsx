@@ -14,7 +14,7 @@ type ElementorCommonWindow = Window & {
 	};
 };
 
-export default function EmptyState() {
+export default function WelcomePage() {
 	const assetsUrl = ( window as ElementorCommonWindow ).elementorCommon?.config?.urls?.assets ?? '';
 
 	return (

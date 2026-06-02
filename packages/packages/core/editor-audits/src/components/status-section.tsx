@@ -21,7 +21,7 @@ export default function StatusSection( { label, count, defaultExpanded = false, 
 	return (
 		<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
 			<Box
-				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' } }
+				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer', py: 0.5 } }
 				onClick={ () => setExpanded( ( v ) => ! v ) }
 			>
 				<IconButton
@@ -37,8 +37,9 @@ export default function StatusSection( { label, count, defaultExpanded = false, 
 					/>
 				</IconButton>
 				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ label } ({ count })
+					{ label }
 				</Typography>
+				<Chip label={ count } size="small" />
 			</Box>
 			<Collapse in={ expanded }>
 				<Box sx={ { paddingInlineStart: 3 } }>{ children }</Box>

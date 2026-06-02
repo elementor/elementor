@@ -4,9 +4,9 @@ import { ChevronDownIcon } from '@elementor/icons';
 import { Box, Collapse, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useViolationFocus } from '../../hooks/use-violation-focus';
-import { type AuditDescriptor, type AuditViolation } from '../../types';
-import SeverityIcon from '../severity-icons';
+import { useViolationFocus } from '../hooks/use-violation-focus';
+import { type AuditDescriptor, type AuditViolation } from '../types';
+import SeverityIcon from './severity-icons';
 
 type Props = {
 	descriptor: AuditDescriptor;
@@ -44,15 +44,27 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				<SeverityIcon severity={ descriptor.severity } />
 			</Box>
 			<Collapse in={ expanded }>
-				<Box sx={ { paddingInlineStart: 4, paddingBlock: 1, color: 'text.secondary' } }>
-					<Typography variant="caption" component="p">
-						{ descriptor.description }
-					</Typography>
-					<Typography variant="caption" component="p" sx={ { mt: 0.5 } }>
-						{ descriptor.fixHint }
-					</Typography>
+				<Box
+					sx={ { paddingInlineStart: 4, paddingBlock: 1, display: 'flex', flexDirection: 'column', gap: 1 } }
+				>
+					<Box sx={ { bgcolor: 'action.hover', borderRadius: 1, p: 1 } }>
+						<Typography variant="caption" component="p" fontWeight="bold">
+							{ __( "What's the issue", 'elementor' ) }
+						</Typography>
+						<Typography variant="caption" component="p" color="text.secondary">
+							{ descriptor.description }
+						</Typography>
+					</Box>
+					<Box sx={ { bgcolor: 'action.hover', borderRadius: 1, p: 1 } }>
+						<Typography variant="caption" component="p" fontWeight="bold">
+							{ __( 'How to resolve', 'elementor' ) }
+						</Typography>
+						<Typography variant="caption" component="p" color="text.secondary">
+							{ descriptor.fixHint }
+						</Typography>
+					</Box>
 				</Box>
-				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 4, paddingInlineEnd: 2 } }>
+				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 4 } }>
 					{ violations.map( ( violation, idx ) => (
 						<Box
 							key={ idx }
@@ -67,6 +79,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 							sx={ {
 								paddingBlock: 0.5,
 								paddingInline: 2,
+								borderRadius: 1,
 								cursor: 'pointer',
 								'&:hover': { bgcolor: 'action.hover' },
 							} }

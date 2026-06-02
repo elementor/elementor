@@ -4,10 +4,10 @@ import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useAuditReport } from '../hooks/use-audit-report';
-import EmptyState from './states/empty-state';
-import ErrorState from './states/error-state';
-import LoadingState from './states/loading-state';
-import AuditTabs from './tabs/audit-tabs';
+import ErrorPage from './pages/error-page';
+import LoadingPage from './pages/loading-page';
+import ReportShell from './report-shell';
+import WelcomePage from './pages/welcome-page';
 
 declare global {
 	interface Window {
@@ -30,10 +30,10 @@ export default function AuditPanel() {
 		<>
 			<FloatingPanelHeader panelId="audit-panel" title={ __( 'Audit', 'elementor' ) } />
 			<FloatingPanelBody>
-				{ status === 'idle' && <EmptyState /> }
-				{ status === 'loading' && <LoadingState /> }
-				{ status === 'error' && <ErrorState message={ error ?? '' } onRetry={ onRun } /> }
-				{ status === 'ready' && report && <AuditTabs report={ report } /> }
+				{ status === 'idle' && <WelcomePage /> }
+				{ status === 'loading' && <LoadingPage /> }
+				{ status === 'error' && <ErrorPage message={ error ?? '' } onRetry={ onRun } /> }
+				{ status === 'ready' && report && <ReportShell report={ report } /> }
 			</FloatingPanelBody>
 			<FloatingPanelFooter panelId="audit-panel">
 				{ lastScanLabel ? (
