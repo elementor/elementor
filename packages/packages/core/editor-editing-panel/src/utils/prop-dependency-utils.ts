@@ -6,11 +6,9 @@ import {
 	isDependencyMet,
 	isOverridable,
 	isTransformable,
-	type ObjectPropType,
 	type Props,
 	type PropsSchema,
 	type PropType,
-	type PropValue,
 	rewrapOverridableValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
@@ -34,18 +32,6 @@ export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elemen
 	} );
 
 	return elementSettingsWithDefaults as Values;
-}
-
-export function getObjectSettingsWithDefaults( shape: PropsSchema, settings: Props ): Values {
-	const normalizedSettings: Props = { ...settings };
-
-	Object.keys( shape ).forEach( ( key ) => {
-		if ( ! ( key in normalizedSettings ) ) {
-			normalizedSettings[ key ] = null;
-		}
-	} );
-
-	return getElementSettingsWithDefaults( shape, normalizedSettings );
 }
 
 export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
@@ -131,30 +117,6 @@ export function getUpdatedValues(
 		},
 		{ ...values }
 	);
-}
-
-export function resolveObjectPropType( propType: PropType, value?: PropValue | null ): ObjectPropType | null {
-	if ( propType.kind === 'object' ) {
-		return propType;
-	}
-
-	if ( propType.kind !== 'union' ) {
-		return null;
-	}
-
-	if ( value && isTransformable( value ) ) {
-		const activeVariant = propType.prop_types[ value.$$type ];
-
-		if ( activeVariant?.kind === 'object' ) {
-			return activeVariant;
-		}
-
-		return null;
-	}
-
-	const objectVariant = Object.values( propType.prop_types ).find( ( candidate ) => candidate.kind === 'object' );
-
-	return objectVariant?.kind === 'object' ? objectVariant : null;
 }
 
 function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ): PropType | null {
