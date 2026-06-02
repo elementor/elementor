@@ -51,7 +51,7 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 				{ errorCount > 0 && (
 					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
 						<SeverityIcon severity="error" />
-						<Typography variant="caption" color="error">
+						<Typography variant="caption" color="text.primary">
 							{ errorCount }
 						</Typography>
 					</Box>
@@ -59,7 +59,7 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 				{ warningCount > 0 && (
 					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
 						<SeverityIcon severity="warning" />
-						<Typography variant="caption" color="warning.main">
+						<Typography variant="caption" color="text.primary">
 							{ warningCount }
 						</Typography>
 					</Box>
@@ -67,7 +67,7 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 				{ infoCount > 0 && (
 					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
 						<SeverityIcon severity="info" />
-						<Typography variant="caption" color="info.main">
+						<Typography variant="caption" color="text.primary">
 							{ infoCount }
 						</Typography>
 					</Box>

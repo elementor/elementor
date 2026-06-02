@@ -54,7 +54,7 @@ export default function ReportShell( { report }: Props ) {
 				<Tab value="overview" label={ __( 'Overview', 'elementor' ) } />
 				<Tab value="issues" label={ __( 'Issues', 'elementor' ) } />
 			</Tabs>
-			<Divider sx={ { borderColor: 'var(--e-a-border-color)' } } />
+			<Divider />
 			{ activePage === 'overview' && <OverviewPage report={ report } onCategoryClick={ openCategory } /> }
 			{ activePage === 'issues' && <IssuesPage report={ report } onCategoryClick={ openCategory } /> }
 			{ typeof activePage === 'object' && (

@@ -53,7 +53,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 				color={ colorFor( score ) }
 				sx={ { flex: 1, height: 8, borderRadius: 4 } }
 			/>
-			<Typography variant="body2" sx={ { minWidth: 24, textAlign: 'right' } }>
+			<Typography variant="body2" color="text.primary" sx={ { minWidth: 24, textAlign: 'right', fontWeight: 900 } }>
 				{ score }
 			</Typography>
 			{ onClick && <ChevronRightIcon fontSize="small" color="action" /> }
