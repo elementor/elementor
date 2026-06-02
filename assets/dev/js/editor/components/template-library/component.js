@@ -27,7 +27,14 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		return {
+		const tabs = {
+			'templates/components': {
+				title: __( 'Components', 'elementor' ),
+				filter: {
+					source: 'local-components',
+					type: 'component',
+				},
+			},
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -51,6 +58,17 @@ export default class Component extends ComponentModalBase {
 				} ),
 			},
 		};
+
+		/**
+		 * Template library tabs.
+		 *
+		 * Filters the tabs registered in the editor's template library popup.
+		 * Use this filter to add/remove tabs from external code (e.g. Pro modules)
+		 * without having to subclass or replace the library component.
+		 *
+		 * @param object tabs The current tabs map (key => { title, filter|getFilter }).
+		 */
+		return elementor.hooks.applyFilters( 'elementor/template-library/tabs', tabs );
 	}
 
 	defaultRoutes() {
@@ -185,6 +203,32 @@ export default class Component extends ComponentModalBase {
 
 	// TODO: Move function to 'insert-template' command.
 	insertTemplate( args ) {
+		/**
+		 * Template library insert handler.
+		 *
+		 * Filters the function used to insert a template from the library popup.
+		 * External modules (e.g. Pro) can return a custom handler to branch on
+		 * specific template types (e.g. `type === 'component'`) without
+		 * subclassing the library component.
+		 *
+		 * @param function|null customHandler Custom handler `( args, defaultHandler ) => void`, or `null` to use the default.
+		 * @param object        args         The original `insertTemplate` args (incl. `model`).
+		 */
+		const customHandler = elementor.hooks.applyFilters(
+			'elementor/template-library/insert',
+			null,
+			args,
+		);
+
+		if ( 'function' === typeof customHandler ) {
+			customHandler( args, ( fallbackArgs ) => this.defaultInsertTemplate( fallbackArgs ?? args ) );
+			return;
+		}
+
+		this.defaultInsertTemplate( args );
+	}
+
+	defaultInsertTemplate( args ) {
 		this.downloadTemplate( args, ( data, callbackParams ) => {
 			const model = callbackParams.model;
 			const source = model.get( 'source' ) ?? 'local';
