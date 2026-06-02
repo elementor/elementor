@@ -57,7 +57,10 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 						],
 						'props' => [
 							'color' => 'red',
-							'font-family' => 'Poppins',
+							'font-family' => [
+								'$$type' => 'font-family',
+								'value' => 'Poppins',
+							],
 						],
 					],
 					[

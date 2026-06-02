@@ -1,5 +1,5 @@
 import { createMockPropType } from 'test-utils';
-import { stringPropTypeUtil } from '@elementor/editor-props';
+import { fontFamilyPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { enqueueFont } from '@elementor/editor-v1-adapters';
 import { act, renderHook } from '@testing-library/react';
@@ -47,5 +47,28 @@ describe( 'useStylePropResolver', () => {
 
 		// Assert.
 		expect( enqueueFont ).toHaveBeenCalledWith( 'arial' );
+	} );
+
+	it( 'should strip quotes from font-family before enqueuing when using font-family prop type', async () => {
+		// Arrange.
+		initStyleTransformers();
+
+		jest.mocked( getStylesSchema ).mockReturnValue( {
+			'font-family': createMockPropType( { key: 'font-family', kind: 'plain' } ),
+		} );
+
+		const { result } = renderHook( useStylePropResolver );
+
+		// Act.
+		await act( () =>
+			result.current( {
+				props: {
+					'font-family': fontFamilyPropTypeUtil.create( 'Open Sans' ),
+				},
+			} )
+		);
+
+		// Assert.
+		expect( enqueueFont ).toHaveBeenCalledWith( 'Open Sans' );
 	} );
 } );

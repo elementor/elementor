@@ -142,14 +142,14 @@ class Styles_Renderer {
 
 		return Collection::make( Render_Props_Resolver::for_styles()->resolve( $schema, $props ) )
 			->filter()
-			->map( function ( $value, $prop ) {
+			->map( function ( $value, $prop ) use ( $props ) {
 				if ( $this->on_prop_transform ) {
-					call_user_func( $this->on_prop_transform, $prop, $value );
+					$raw_prop = $props[ $prop ] ?? null;
+					$raw_value = is_array( $raw_prop ) && isset( $raw_prop['value'] ) ? $raw_prop['value'] : $value;
+					call_user_func( $this->on_prop_transform, $prop, $value, $raw_value );
 				}
 
-				$css_value = 'font-family' === $prop && is_string( $value ) && ! str_starts_with( trim( $value ), 'var(' ) ? '"' . $value . '"' : $value;
-
-				return $prop . ':' . $css_value . ';';
+				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
 	}

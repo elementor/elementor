@@ -154,12 +154,12 @@ class Atomic_Styles_Manager {
 
 		return Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
+		)->on_prop_transform( function( $key, $value, $raw_value ) use ( $style_fonts ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
 
-			$style_fonts->add( $value );
+			$style_fonts->add( $raw_value );
 		} )->render( $styles );
 	}
 

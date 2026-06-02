@@ -80,11 +80,10 @@ describe( 'renderStyles', () => {
 	} );
 
 	it.each( [
-		[ 'My Font 3', 'font-family:"My Font 3";' ],
-		[ 'Open Sans', 'font-family:"Open Sans";' ],
-		[ 'Arial', 'font-family:"Arial";' ],
+		[ '"Open Sans"', 'font-family:"Open Sans";' ],
+		[ 'Arial', 'font-family:Arial;' ],
 		[ 'var(--primary-font)', 'font-family:var(--primary-font);' ],
-	] )( 'should format font-family "%s" correctly in CSS output', async ( fontFamily, expected ) => {
+	] )( 'should pass through font-family "%s" as-is in CSS output', async ( fontFamily, expected ) => {
 		// Arrange.
 		const styleDef: RendererStyleDefinition = {
 			id: 'test',

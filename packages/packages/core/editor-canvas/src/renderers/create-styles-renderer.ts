@@ -146,12 +146,7 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 				return acc;
 			}
 
-			const cssValue =
-				propName === 'font-family' && typeof propValue === 'string' && ! propValue.trim().startsWith( 'var(' )
-					? `"${ propValue }"`
-					: propValue;
-
-			acc.push( propName + ':' + cssValue + ';' );
+			acc.push( propName + ':' + propValue + ';' );
 
 			return acc;
 		}, [] )

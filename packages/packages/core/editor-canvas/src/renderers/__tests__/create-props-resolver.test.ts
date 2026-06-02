@@ -287,8 +287,8 @@ describe( 'createPropsResolver', () => {
 
 		// Assert.
 		expect( onResolve ).toHaveBeenCalledTimes( 2 );
-		expect( onResolve ).toHaveBeenNthCalledWith( 1, { key: 'int', value: 2 } );
-		expect( onResolve ).toHaveBeenNthCalledWith( 2, { key: 'int2', value: 4 } );
+		expect( onResolve ).toHaveBeenNthCalledWith( 1, { key: 'int', value: 2, rawValue: 1 } );
+		expect( onResolve ).toHaveBeenNthCalledWith( 2, { key: 'int2', value: 4, rawValue: 3 } );
 	} );
 
 	it( 'should pass renderContext to transformers', async () => {

@@ -10,12 +10,12 @@ export function useStylePropResolver() {
 		return createPropsResolver( {
 			transformers: styleTransformersRegistry,
 			schema: getStylesSchema(),
-			onPropResolve: ( { key, value } ) => {
-				if ( key !== 'font-family' || typeof value !== 'string' ) {
+			onPropResolve: ( { key, rawValue } ) => {
+				if ( key !== 'font-family' || typeof rawValue !== 'string' ) {
 					return;
 				}
 
-				enqueueFont( value );
+				enqueueFont( rawValue );
 			},
 		} );
 	}, [] );
