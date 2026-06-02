@@ -92,6 +92,61 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await expect( gridOutline ).toHaveCount( 0 );
 	} );
 
+	test( 'Grid outline updates live when columns, rows, and breakpoint change', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+
+		const cells = gridOutline.locator( 'svg rect' );
+		const countCells = async () => cells.count();
+
+		await expect.poll( countCells ).toBeGreaterThan( 0 );
+
+		// Act & Assert
+		await test.step( 'Column count change updates the outline without reload', async () => {
+			const baseline = await countCells();
+
+			await editor.v4Panel.style.changeSizeControl( columnsControl, 5 );
+			await expect.poll( countCells ).toBeGreaterThan( baseline );
+		} );
+
+		await test.step( 'Row count change updates the outline without reload', async () => {
+			const baseline = await countCells();
+
+			await editor.v4Panel.style.changeSizeControl( rowsControl, 4 );
+			await expect.poll( countCells ).toBeGreaterThan( baseline );
+		} );
+
+		await test.step( 'Per-breakpoint columns update the outline in the matching device mode', async () => {
+			const desktopCells = await countCells();
+
+			await editor.changeResponsiveView( 'tablet' );
+			await expect( gridOutline ).toBeVisible();
+
+			const tabletColumns = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+			await editor.v4Panel.style.changeSizeControl( tabletColumns, 3 );
+			await expect.poll( countCells ).not.toBe( desktopCells );
+
+			await editor.changeResponsiveView( 'desktop' );
+			await expect.poll( countCells ).toBe( desktopCells );
+		} );
+	} );
+
 	test( 'Grid layout with content renders in editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
