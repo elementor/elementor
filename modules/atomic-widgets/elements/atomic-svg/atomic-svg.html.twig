@@ -2,12 +2,11 @@
 {%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
 {%- set content_classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
 {%- if has_link -%}
-	<{{ settings.link.tag | default('a') | e('html_tag') }}{{ m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
 	><span class="{{ content_classes }}"
-		{{- m.render_custom_attributes(settings) -%}
-	>{{ settings.svg.html | raw }}</span></{{ settings.link.tag | default('a') | e('html_tag') }}>
+		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</span></{{ settings.link.tag | default('a') | e('html_tag') }}>
 {%- else -%}
 	<div class="{{ content_classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) -%}
-	>{{ settings.svg.html | raw }}</div>
+		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</div>
 {%- endif -%}
