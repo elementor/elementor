@@ -36,7 +36,7 @@ describe( '<GridOutline />', () => {
 		expect( svg ).toHaveAttribute( 'height', '200' );
 	} );
 
-	it( 'draws one rect per cell for an N×M grid', () => {
+	it( 'draws one line per unique boundary for an N×M grid with no gap', () => {
 		const { container } = renderWithTheme(
 			<GridOutline
 				tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
@@ -45,10 +45,11 @@ describe( '<GridOutline />', () => {
 			/>
 		);
 
-		expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 3 * 2 );
+		const lines = container.querySelectorAll( 'line' );
+		expect( lines ).toHaveLength( 4 + 3 );
 	} );
 
-	it( 'keeps the cell count stable with a gap and offsets cells past the gap', () => {
+	it( 'splits inner boundaries into two parallel lines when a gap is set', () => {
 		const { container } = renderWithTheme(
 			<GridOutline
 				tracks={ makeTracks( {
@@ -62,16 +63,20 @@ describe( '<GridOutline />', () => {
 			/>
 		);
 
-		const rects = Array.from( container.querySelectorAll( 'rect' ) );
-		expect( rects ).toHaveLength( 3 * 2 );
+		const lines = Array.from( container.querySelectorAll( 'line' ) );
 
-		const xs = rects.map( ( rect ) => rect.getAttribute( 'x' ) );
-		expect( xs ).toContain( '0.5' );
-		expect( xs ).toContain( '110.5' );
-		expect( xs ).toContain( '220.5' );
+		const verticalXs = lines
+			.filter( ( line ) => line.getAttribute( 'x1' ) === line.getAttribute( 'x2' ) )
+			.map( ( line ) => line.getAttribute( 'x1' ) );
+		expect( verticalXs ).toEqual( [ '0.5', '100.5', '110.5', '210.5', '220.5', '320.5' ] );
+
+		const horizontalYs = lines
+			.filter( ( line ) => line.getAttribute( 'y1' ) === line.getAttribute( 'y2' ) )
+			.map( ( line ) => line.getAttribute( 'y1' ) );
+		expect( horizontalYs ).toEqual( [ '0.5', '80.5', '88.5', '168.5' ] );
 	} );
 
-	it( 'snaps cell coordinates to half pixels for crisp 1px strokes', () => {
+	it( 'snaps line coordinates to half pixels for crisp 1px strokes', () => {
 		const { container } = renderWithTheme(
 			<GridOutline
 				tracks={ makeTracks( {
@@ -84,11 +89,13 @@ describe( '<GridOutline />', () => {
 			/>
 		);
 
-		const xs = Array.from( container.querySelectorAll( 'rect' ) ).map( ( rect ) => rect.getAttribute( 'x' ) );
-		expect( xs ).toEqual( [ '10.5', '110.5' ] );
+		const verticalXs = Array.from( container.querySelectorAll( 'line' ) )
+			.filter( ( line ) => line.getAttribute( 'x1' ) === line.getAttribute( 'x2' ) )
+			.map( ( line ) => line.getAttribute( 'x1' ) );
+		expect( verticalXs ).toEqual( [ '10.5', '110.5', '210.5' ] );
 	} );
 
-	it( 'spans a single full-width cell per row when only rows are defined', () => {
+	it( 'spans a single full-width band per row when only rows are defined', () => {
 		const { container } = renderWithTheme(
 			<GridOutline
 				tracks={ makeTracks( {
@@ -100,15 +107,16 @@ describe( '<GridOutline />', () => {
 			/>
 		);
 
-		const rects = Array.from( container.querySelectorAll( 'rect' ) );
-		expect( rects ).toHaveLength( 2 );
-		for ( const rect of rects ) {
-			expect( rect ).toHaveAttribute( 'x', '4.5' );
-			expect( rect ).toHaveAttribute( 'width', '284' );
+		const lines = Array.from( container.querySelectorAll( 'line' ) );
+		const horizontals = lines.filter( ( line ) => line.getAttribute( 'y1' ) === line.getAttribute( 'y2' ) );
+		expect( horizontals ).toHaveLength( 3 );
+		for ( const line of horizontals ) {
+			expect( line ).toHaveAttribute( 'x1', '4' );
+			expect( line ).toHaveAttribute( 'x2', '288' );
 		}
 	} );
 
-	it( 'passes the resolved iframe border color through to each cell', () => {
+	it( 'passes the resolved iframe border color through to each line', () => {
 		const { container } = renderWithTheme(
 			<GridOutline
 				tracks={ makeTracks( { columns: [ 100 ], rows: [ 100 ], borderColor: '#abcdef' } ) }
@@ -117,16 +125,16 @@ describe( '<GridOutline />', () => {
 			/>
 		);
 
-		const rects = container.querySelectorAll( 'rect' );
-		expect( rects.length ).toBeGreaterThan( 0 );
-		rects.forEach( ( rect ) => {
-			expect( rect ).toHaveAttribute( 'stroke', '#abcdef' );
+		const lines = container.querySelectorAll( 'line' );
+		expect( lines.length ).toBeGreaterThan( 0 );
+		lines.forEach( ( line ) => {
+			expect( line ).toHaveAttribute( 'stroke', '#abcdef' );
 		} );
 	} );
 
-	it( 'renders no cells when there are no tracks on either axis', () => {
+	it( 'renders no lines when there are no tracks on either axis', () => {
 		const { container } = renderWithTheme( <GridOutline tracks={ makeTracks() } width={ 100 } height={ 100 } /> );
 
-		expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 0 );
+		expect( container.querySelectorAll( 'line' ) ).toHaveLength( 0 );
 	} );
 } );

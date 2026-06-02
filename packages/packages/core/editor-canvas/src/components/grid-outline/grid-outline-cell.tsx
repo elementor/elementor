@@ -4,21 +4,20 @@ const FALLBACK_COLOR = 'rgba(0, 0, 0, 0.12)';
 export const DASH = '2 2';
 
 type Props = {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
 	color?: string;
 };
 
-export function GridOutlineCell( { x, y, width, height, color }: Props ) {
+export function GridOutlineLine( { x1, y1, x2, y2, color }: Props ) {
 	return (
-		<rect
-			x={ x }
-			y={ y }
-			width={ width }
-			height={ height }
-			fill="none"
+		<line
+			x1={ x1 }
+			y1={ y1 }
+			x2={ x2 }
+			y2={ y2 }
 			stroke={ color || FALLBACK_COLOR }
 			strokeWidth={ 1 }
 			strokeDasharray={ DASH }

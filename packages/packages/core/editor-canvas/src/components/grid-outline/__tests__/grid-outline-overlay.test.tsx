@@ -122,7 +122,7 @@ describe( '<GridOutlineOverlay />', () => {
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'renders one <rect> per grid cell', () => {
+	it( 'renders boundary lines for the grid tracks', () => {
 		mockGridOutlineSetting( null );
 		jest.mocked( useGridTracks ).mockReturnValue( {
 			...NON_EMPTY_TRACKS,
@@ -136,7 +136,7 @@ describe( '<GridOutlineOverlay />', () => {
 
 		const overlay = screen.getByRole( 'presentation' );
 		// eslint-disable-next-line testing-library/no-node-access
-		expect( overlay.querySelectorAll( 'rect' ) ).toHaveLength( 3 * 2 );
+		expect( overlay.querySelectorAll( 'line' ).length ).toBeGreaterThan( 0 );
 	} );
 
 	it( 'mounts inside the canvas wrapper portal', () => {

@@ -112,7 +112,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 
-		const cells = gridOutline.locator( 'svg rect' );
+		const cells = gridOutline.locator( 'svg line' );
 		const countCells = async () => cells.count();
 
 		await expect.poll( countCells ).toBeGreaterThan( 0 );
@@ -165,7 +165,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 
-		const cells = gridOutline.locator( 'svg rect' );
+		const cells = gridOutline.locator( 'svg line' );
 		const countCells = async () => cells.count();
 
 		await expect.poll( countCells ).toBeGreaterThan( 0 );
@@ -202,11 +202,11 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.selectElement( gridId );
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
-		const cell = gridOutline.locator( 'svg rect' ).last();
-		const readHeight = async () => Number( await cell.getAttribute( 'height' ) );
+		const bottomLine = gridOutline.locator( 'svg line' ).last();
+		const readBottomY = async () => Number( await bottomLine.getAttribute( 'y1' ) );
 
-		await expect.poll( readHeight ).toBeGreaterThan( 0 );
-		const initialHeight = await readHeight();
+		await expect.poll( readBottomY ).toBeGreaterThan( 0 );
+		const initialBottomY = await readBottomY();
 
 		await editor.selectElement( childId );
 		await editor.v4Panel.openTab( 'style' );
@@ -214,7 +214,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.v4Panel.style.setSizeSectionValue( 'Height', 240, 'px' );
 
 		await editor.selectElement( gridId );
-		await expect.poll( readHeight ).toBeGreaterThan( initialHeight );
+		await expect.poll( readBottomY ).toBeGreaterThan( initialBottomY );
 	} );
 
 	test( 'Grid layout with content renders in editor', async ( { page, apiRequests }, testInfo ) => {
