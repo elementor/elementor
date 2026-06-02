@@ -77,7 +77,7 @@ function ContentPanel( { config }: { config: BirthdayEasterEggModalConfig } ) {
 	const setCtaVisited = useCallback( () => {
 		const ajax = ( window as ExtendedWindow ).elementorCommon?.ajax;
 
-		ajax?.addRequest( SET_CTA_VISITED_ACTION, { data: { visited: true } }, true );
+		ajax?.addRequest( SET_CTA_VISITED_ACTION, { data: { visited: false } }, true );
 	}, [] );
 
 	const onCtaVisit = useCallback( () => {

@@ -122,7 +122,7 @@ class Birthday_Easter_Egg_Promotion {
 
 	private function get_api_config(): array {
 		return [
-			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.dev.builder.elementor.red/10th-bday/v1/10th-bday.json',
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/10th-bday/v1/10th-bday.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_10th_bday_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => '10th-bday',
 		];

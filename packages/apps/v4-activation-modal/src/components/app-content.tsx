@@ -1,9 +1,15 @@
 import * as React from 'react';
-import { ModalFooter, ModalHeader, ModalShell, useAutoplayCarousel } from '@elementor/editor-modal-shell';
+import {
+	BackgroundLottie,
+	ModalFooter,
+	ModalHeader,
+	ModalShell,
+	useAutoplayCarousel,
+} from '@elementor/editor-modal-shell';
 import { Box, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { CelebrationLottie } from './celebration-lottie';
+import * as celebrationData from '../assets/celebration.json';
 import { FeatureItem } from './feature-item';
 import { ModalImage } from './modal-image';
 
@@ -51,7 +57,7 @@ export function AppContent( { onClose }: { onClose: () => void } ) {
 
 	return (
 		<>
-			<CelebrationLottie />
+			<BackgroundLottie animationData={ celebrationData } />
 			<ModalShell
 				onClose={ onClose }
 				revealDelay={ CONTENT_DELAY_MS }
