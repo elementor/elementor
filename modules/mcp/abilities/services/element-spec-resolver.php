@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Services;
 
+use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Utils;
 
@@ -166,6 +167,15 @@ class Element_Spec_Resolver {
 		$css = self::normalize_css( $node['css'] ?? null );
 		if ( null !== $css ) {
 			$built['css'] = $css;
+		}
+
+		$states = self::normalize_states( $node['states'] ?? null );
+		foreach ( $states['warnings'] as $warning ) {
+			$warning['path'] = $path;
+			$this->warnings[] = $warning;
+		}
+		if ( ! empty( $states['states'] ) ) {
+			$built['states'] = $states['states'];
 		}
 
 		if ( $is_container && isset( $node['children'] ) && is_array( $node['children'] ) ) {
@@ -462,6 +472,67 @@ class Element_Spec_Resolver {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Normalize a friendly `states` map (pseudo-state name → CSS) into a canonical
+	 * map keyed by the state value the variant `meta.state` expects.
+	 *
+	 * Each value accepts the same shapes as `css` (declaration string OR property map)
+	 * and is run through {@see self::normalize_css()}. Keys are canonicalized
+	 * (lower-cased/trimmed; the friendly alias `selected` maps to the class-state
+	 * `e--selected`) and validated against {@see Style_States::is_valid_state()}.
+	 * `null` is rejected as a key — the base (state-less) styling is the `css` field.
+	 *
+	 * @return array{states: array<string, string>, warnings: array<int, array>} Canonical
+	 *               state→css map plus any soft warnings for unsupported state keys.
+	 */
+	public static function normalize_states( $raw ): array {
+		if ( ! is_array( $raw ) ) {
+			return [ 'states' => [], 'warnings' => [] ];
+		}
+
+		$states = [];
+		$invalid_keys = [];
+
+		foreach ( $raw as $state_key => $value ) {
+			if ( ! is_string( $state_key ) ) {
+				$invalid_keys[] = $state_key;
+				continue;
+			}
+
+			$state = strtolower( trim( $state_key ) );
+
+			if ( 'selected' === $state ) {
+				$state = Style_States::SELECTED;
+			}
+
+			if ( '' === $state || ! Style_States::is_valid_state( $state ) ) {
+				$invalid_keys[] = $state_key;
+				continue;
+			}
+
+			$css = self::normalize_css( $value );
+			if ( null === $css ) {
+				continue;
+			}
+
+			$states[ $state ] = $css;
+		}
+
+		$warnings = [];
+		if ( ! empty( $invalid_keys ) ) {
+			$warnings[] = [
+				'reason' => 'invalid_state',
+				'keys' => array_values( array_unique( array_filter( $invalid_keys, 'is_string' ) ) ),
+				'hint' => 'Unsupported pseudo-state key(s) ignored. Supported: hover, active, focus, focus-visible, checked, selected.',
+			];
+		}
+
+		return [
+			'states' => $states,
+			'warnings' => $warnings,
+		];
 	}
 
 	/**

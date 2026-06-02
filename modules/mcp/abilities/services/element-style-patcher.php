@@ -16,8 +16,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * service is used by `Element_Mutation_Operation` to merge a per-prop change
  * without losing sibling props on the same variant.
  *
- * Variant targeted: `{ breakpoint: 'desktop', state: null }` (the only variant
- * the manage-post ability writes to currently).
+ * Variant targeted: `{ breakpoint: 'desktop', state: $state }` — the state-less
+ * default (`state: null`) or a pseudo-state (`hover` / `focus` / …). A patch for a
+ * state that has no existing variant appends a fresh one.
  *
  * Custom CSS handling: the new `custom_css` from the converter REPLACES the
  * existing variant's `custom_css`. Concatenation would double-apply on re-send
@@ -36,7 +37,7 @@ class Element_Style_Patcher {
 	 *                                                                    unconverted declarations,
 	 *                                                                    or `[]` if all converted.
 	 */
-	public static function merge_into_local( array &$node, string $css ): array {
+	public static function merge_into_local( array &$node, string $css, ?string $state = null ): array {
 		$id = isset( $node['id'] ) && is_string( $node['id'] ) && '' !== $node['id'] ? $node['id'] : '';
 		if ( '' === $id ) {
 			return [];
@@ -56,7 +57,8 @@ class Element_Style_Patcher {
 			$styles[ $style_id ] ?? null,
 			$style_id,
 			$new_props,
-			$new_custom
+			$new_custom,
+			$state
 		);
 
 		$node['styles'] = $styles;
@@ -75,13 +77,13 @@ class Element_Style_Patcher {
 		return [];
 	}
 
-	private static function merge_into_style_entry( $existing_entry, string $style_id, array $new_props, string $new_custom ): array {
+	private static function merge_into_style_entry( $existing_entry, string $style_id, array $new_props, string $new_custom, ?string $state = null ): array {
 		if ( ! is_array( $existing_entry ) || ! isset( $existing_entry['variants'] ) || ! is_array( $existing_entry['variants'] ) ) {
 			return [
 				'id' => $style_id,
 				'type' => 'class',
 				'label' => 'local',
-				'variants' => [ self::build_variant( $new_props, $new_custom ) ],
+				'variants' => [ self::build_variant( $new_props, $new_custom, $state ) ],
 			];
 		}
 
@@ -90,10 +92,10 @@ class Element_Style_Patcher {
 		$entry['type'] = $entry['type'] ?? 'class';
 		$entry['label'] = $entry['label'] ?? 'local';
 
-		$variant_index = self::find_desktop_variant_index( $entry['variants'] );
+		$variant_index = self::find_variant_index( $entry['variants'], $state );
 
 		if ( null === $variant_index ) {
-			$entry['variants'][] = self::build_variant( $new_props, $new_custom );
+			$entry['variants'][] = self::build_variant( $new_props, $new_custom, $state );
 			return $entry;
 		}
 
@@ -110,13 +112,13 @@ class Element_Style_Patcher {
 		return $entry;
 	}
 
-	private static function find_desktop_variant_index( array $variants ): ?int {
+	private static function find_variant_index( array $variants, ?string $state ): ?int {
 		foreach ( $variants as $i => $variant ) {
 			$meta = is_array( $variant['meta'] ?? null ) ? $variant['meta'] : [];
 			$breakpoint = $meta['breakpoint'] ?? null;
-			$state = $meta['state'] ?? null;
+			$variant_state = $meta['state'] ?? null;
 
-			if ( 'desktop' === $breakpoint && null === $state ) {
+			if ( 'desktop' === $breakpoint && $state === $variant_state ) {
 				return (int) $i;
 			}
 		}
@@ -124,11 +126,11 @@ class Element_Style_Patcher {
 		return null;
 	}
 
-	private static function build_variant( array $props, string $custom ): array {
+	private static function build_variant( array $props, string $custom, ?string $state = null ): array {
 		$variant = [
 			'meta' => [
 				'breakpoint' => 'desktop',
-				'state' => null,
+				'state' => $state,
 			],
 			'props' => $props,
 		];

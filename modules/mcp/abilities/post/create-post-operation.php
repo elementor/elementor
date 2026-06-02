@@ -89,6 +89,10 @@ class Create_Post_Operation extends Post_Operation {
 
 		$envelope = Post_Response::with_normalized( $envelope, $normalizations );
 
+		if ( null !== $elements ) {
+			$envelope = Post_Response::with_element_index( $envelope, $elements );
+		}
+
 		return Post_Response::with_warnings( $envelope, $warnings );
 	}
 

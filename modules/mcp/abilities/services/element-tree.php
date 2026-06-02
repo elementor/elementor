@@ -46,6 +46,41 @@ class Element_Tree {
 	}
 
 	/**
+	 * Flatten a tree into a `path => element id` map, depth-first.
+	 *
+	 * Lets create / append / replace responses hand back the ids of the nodes they
+	 * just wrote — including any wrapper containers inserted by normalization — so an
+	 * agent can target update_element without a follow-up get-post. Paths describe the
+	 * saved `elements` structure: `elements[0]`, `elements[0].elements[1]`, …
+	 *
+	 * @param array  $tree   The element tree (resolved + transformed nodes).
+	 * @param string $prefix Path prefix for this level (defaults to the field name).
+	 *
+	 * @return array<string, string> Map of structural path to element id.
+	 */
+	public static function index( array $tree, string $prefix = 'elements' ): array {
+		$map = [];
+
+		foreach ( $tree as $i => $node ) {
+			if ( ! is_array( $node ) ) {
+				continue;
+			}
+
+			$path = $prefix . '[' . $i . ']';
+
+			if ( isset( $node['id'] ) && is_string( $node['id'] ) && '' !== $node['id'] ) {
+				$map[ $path ] = $node['id'];
+			}
+
+			if ( ! empty( $node['elements'] ) && is_array( $node['elements'] ) ) {
+				$map += self::index( $node['elements'], $path . '.elements' );
+			}
+		}
+
+		return $map;
+	}
+
+	/**
 	 * Return a new tree with the node at the given path replaced.
 	 *
 	 * @param array      $tree     The element tree.

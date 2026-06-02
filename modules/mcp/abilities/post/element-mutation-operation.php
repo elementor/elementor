@@ -185,6 +185,25 @@ class Element_Mutation_Operation extends Post_Operation {
 			}
 		}
 
+		$states_input = $patch['states'] ?? null;
+		if ( null !== $states_input ) {
+			$normalized_states = Element_Spec_Resolver::normalize_states( $states_input );
+
+			foreach ( $normalized_states['warnings'] as $warning ) {
+				$warning['path'] = 'patch.states';
+				$this->patch_warnings[] = $warning;
+			}
+
+			foreach ( $normalized_states['states'] as $state => $state_css ) {
+				$state_unconverted = Element_Style_Patcher::merge_into_local( $node, $state_css, $state );
+				$unconverted_css = array_merge( $unconverted_css, $state_unconverted );
+				$style_id = 'e-' . $node['id'] . '-s';
+				if ( ! in_array( 'classes', $changed_settings_keys, true ) ) {
+					$changed_settings_keys[] = 'classes';
+				}
+			}
+		}
+
 		$deltas = [
 			'changed_settings_keys' => array_values( array_unique( $changed_settings_keys ) ),
 		];

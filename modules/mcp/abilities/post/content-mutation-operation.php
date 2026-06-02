@@ -79,6 +79,8 @@ class Content_Mutation_Operation extends Post_Operation {
 
 		$response = Post_Response::with_normalized( $response, $normalizations );
 
+		$response = Post_Response::with_element_index( $response, $incoming );
+
 		return Post_Response::with_warnings( $response, $warnings );
 	}
 

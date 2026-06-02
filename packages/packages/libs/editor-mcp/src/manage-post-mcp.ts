@@ -36,6 +36,7 @@ const INSTRUCTIONS = `Build, update, and write content for Elementor v4 pages vi
 - widgets: container | div | flexbox | heading | paragraph | button | image | svg
 - svg nodes: svg_id (attachment id, validated to be an image/svg+xml file) | svg_url | svg_markup (inline <svg>…</svg>, sanitized + uploaded to the media library on save, deduplicated by content hash); optional link_url / link_target_blank. update_element accepts the same svg_* / link_* patch keys
 - dry_run is honored only for create/replace_content/append_content (inline svg_markup is uploaded only on a real save, not on dry_run)
+- create / replace_content / append_content return element_index: a { path: id } map of the saved nodes (incl. auto-inserted wrappers) — use those ids with update_element directly, no follow-up get-post
 - element-scoped ops (update_element / add_classes / remove_classes) take element_id + small payload; when the targeted post is the one currently open in the editor, the canvas updates surgically with no document reload
 `;
 

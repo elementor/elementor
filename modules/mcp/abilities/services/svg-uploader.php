@@ -4,6 +4,7 @@ namespace Elementor\Modules\Mcp\Abilities\Services;
 
 use Elementor\Core\Files\File_Types\Svg;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -58,7 +59,12 @@ class Svg_Uploader {
 
 		$filename = $this->build_filename( $sanitized, $title );
 
+		add_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
 		$upload = wp_upload_bits( $filename, null, $sanitized );
+		Plugin::$instance->uploads_manager->set_elementor_upload_state( false );
+		remove_filter( 'elementor/files/allow_unfiltered_upload', '__return_true' );
+
 		if ( ! empty( $upload['error'] ) || empty( $upload['file'] ) ) {
 			return null;
 		}

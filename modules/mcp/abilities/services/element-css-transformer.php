@@ -57,13 +57,14 @@ class Element_Css_Transformer {
 		}
 
 		$css = isset( $element['css'] ) && is_string( $element['css'] ) ? trim( $element['css'] ) : '';
+		$states = isset( $element['states'] ) && is_array( $element['states'] ) ? $element['states'] : [];
 
-		unset( $element['css'] );
+		unset( $element['css'], $element['states'] );
 
 		$el_type = $this->resolve_element_type_for_css( $element );
 		$needs_base_reset = Base_Styles_Reset::has_resets_for( $el_type );
 
-		if ( '' === $css && ! $needs_base_reset ) {
+		if ( '' === $css && empty( $states ) && ! $needs_base_reset ) {
 			return $element;
 		}
 
@@ -72,33 +73,39 @@ class Element_Css_Transformer {
 			: Atomic_Utils::generate_id();
 		$element['id'] = $id;
 
+		$variants = [];
+
 		$converted = '' !== $css
 			? self::convert_node_css( $css )
 			: [ 'props' => [], 'custom_css' => '', 'unconverted' => [] ];
 
-		$merged_props = Base_Styles_Reset::apply( $converted['props'], $el_type );
+		// Base-style resets only apply to the default (state-less) variant.
+		$base_props = Base_Styles_Reset::apply( $converted['props'], $el_type );
 
-		if ( empty( $merged_props ) && '' === $converted['custom_css'] ) {
+		if ( ! empty( $base_props ) || '' !== $converted['custom_css'] ) {
+			$variants[] = $this->build_variant( $base_props, $converted['custom_css'], null );
+		}
+
+		$this->record_unconverted( $id, $converted['unconverted'] );
+
+		foreach ( $states as $state => $state_css ) {
+			if ( ! is_string( $state ) || ! is_string( $state_css ) || '' === trim( $state_css ) ) {
+				continue;
+			}
+
+			$state_converted = self::convert_node_css( $state_css );
+
+			if ( empty( $state_converted['props'] ) && '' === $state_converted['custom_css'] ) {
+				continue;
+			}
+
+			$variants[] = $this->build_variant( $state_converted['props'], $state_converted['custom_css'], $state );
+
+			$this->record_unconverted( $id, $state_converted['unconverted'] );
+		}
+
+		if ( empty( $variants ) ) {
 			return $element;
-		}
-
-		$variant = [
-			'meta' => [
-				'breakpoint' => 'desktop',
-				'state' => null,
-			],
-			'props' => $merged_props,
-		];
-
-		if ( '' !== $converted['custom_css'] ) {
-			$variant['custom_css'] = [ 'raw' => $converted['custom_css'] ];
-		}
-
-		if ( ! empty( $converted['unconverted'] ) ) {
-			$this->unconverted_per_element[] = [
-				'element_id' => $id,
-				'declarations' => $converted['unconverted'],
-			];
 		}
 
 		$style_id = 'e-' . $id . '-s';
@@ -108,7 +115,7 @@ class Element_Css_Transformer {
 			'id' => $style_id,
 			'type' => 'class',
 			'label' => 'local',
-			'variants' => [ $variant ],
+			'variants' => $variants,
 		];
 		$element['styles'] = $existing_styles;
 
@@ -125,6 +132,33 @@ class Element_Css_Transformer {
 		];
 
 		return $element;
+	}
+
+	private function build_variant( array $props, string $custom_css, ?string $state ): array {
+		$variant = [
+			'meta' => [
+				'breakpoint' => 'desktop',
+				'state' => $state,
+			],
+			'props' => $props,
+		];
+
+		if ( '' !== $custom_css ) {
+			$variant['custom_css'] = [ 'raw' => $custom_css ];
+		}
+
+		return $variant;
+	}
+
+	private function record_unconverted( string $id, array $unconverted ): void {
+		if ( empty( $unconverted ) ) {
+			return;
+		}
+
+		$this->unconverted_per_element[] = [
+			'element_id' => $id,
+			'declarations' => $unconverted,
+		];
 	}
 
 	private function resolve_element_type_for_css( array $element ): string {

@@ -67,6 +67,16 @@ class Post_Response {
 		return $response;
 	}
 
+	public static function with_element_index( array $response, array $elements ): array {
+		$index = Element_Tree::index( $elements );
+
+		if ( ! empty( $index ) ) {
+			$response['element_index'] = $index;
+		}
+
+		return $response;
+	}
+
 	public static function with_warnings( array $response, array $warnings ): array {
 		if ( ! empty( $warnings ) ) {
 			$response['warnings'] = $warnings;
