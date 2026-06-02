@@ -6,7 +6,10 @@ export const descriptor: AuditDescriptor = {
 	id: 'audits/missing-privacy-policy',
 	title: __( 'Missing privacy policy', 'elementor' ),
 	description: __( 'A privacy policy page is required by privacy regulations such as GDPR and CCPA.', 'elementor' ),
-	fixHint: __( 'Go to Settings > Privacy in the WordPress admin and assign a published privacy policy page.', 'elementor' ),
+	fixHint: __(
+		'Go to Settings > Privacy in the WordPress admin and assign a published privacy policy page.',
+		'elementor'
+	),
 	categories: [ 'compliance' ],
 	severity: 'warning',
 	weight: 5,

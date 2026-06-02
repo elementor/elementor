@@ -4,7 +4,9 @@ import { makeContext } from './fixtures';
 describe( descriptor.id, () => {
 	it( 'passes when privacy policy url is set', async () => {
 		expect(
-			await evaluator( makeContext( { pageContext: { privacy_policy_url: 'https://example.com/privacy-policy' } } ) )
+			await evaluator(
+				makeContext( { pageContext: { privacy_policy_url: 'https://example.com/privacy-policy' } } )
+			)
 		).toEqual( { status: 'pass' } );
 	} );
 

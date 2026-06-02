@@ -2,8 +2,8 @@ import {
 	ElementorAccessibilityIcon,
 	FilterIcon,
 	HeartHandShakeIcon,
-	ShieldHalfFilledIcon,
 	Settings2Icon,
+	ShieldHalfFilledIcon,
 } from '@elementor/icons';
 
 import type { AuditCategory } from '../types';

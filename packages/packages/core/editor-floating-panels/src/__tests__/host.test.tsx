@@ -97,6 +97,6 @@ describe( 'FloatingPanelsHost', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Panel A body', { hidden: true } ) ).toBeInTheDocument();
-		expect( document.querySelector( '[data-floating-panel="a"]' ) ).toHaveAttribute( 'aria-hidden', 'true' );
+		expect( screen.getByRole( 'complementary', { hidden: true } ) ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );

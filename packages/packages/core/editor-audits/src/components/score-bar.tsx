@@ -29,7 +29,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 			role={ onClick ? 'button' : undefined }
 			tabIndex={ onClick ? 0 : undefined }
 			onClick={ onClick }
-			onKeyDown={ ( event ) => {
+			onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
 				if ( onClick && ( event.key === 'Enter' || event.key === ' ' ) ) {
 					onClick();
 				}
@@ -53,7 +53,11 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 				color={ colorFor( score ) }
 				sx={ { flex: 1, height: 8, borderRadius: 4 } }
 			/>
-			<Typography variant="body2" color="text.primary" sx={ { minWidth: 24, textAlign: 'right', fontWeight: 900 } }>
+			<Typography
+				variant="body2"
+				color="text.primary"
+				sx={ { minWidth: 24, textAlign: 'right', fontWeight: 900 } }
+			>
 				{ score }
 			</Typography>
 			{ onClick && <ChevronRightIcon fontSize="small" color="action" /> }

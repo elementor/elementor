@@ -6,8 +6,8 @@ import { __ } from '@wordpress/i18n';
 import { useAuditReport } from '../hooks/use-audit-report';
 import ErrorPage from './pages/error-page';
 import LoadingPage from './pages/loading-page';
-import ReportShell from './report-shell';
 import WelcomePage from './pages/welcome-page';
+import ReportShell from './report-shell';
 
 declare global {
 	interface Window {
