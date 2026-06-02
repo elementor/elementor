@@ -64,16 +64,7 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				</StatusSection>
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length }>
 					{ passed.map( ( r ) => (
-						<Box
-							key={ r.descriptor.id }
-							sx={ {
-								borderBottom: 1,
-								borderColor: 'divider',
-								paddingBlock: 1,
-							} }
-						>
-							<Typography variant="body2">{ r.descriptor.title }</Typography>
-						</Box>
+						<ViolationRow key={ r.descriptor.id } descriptor={ r.descriptor } />
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Skipped audits', 'elementor' ) } count={ skipped.length }>

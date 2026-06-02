@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { ChevronDownIcon } from '@elementor/icons';
+import { CheckIcon, ChevronDownIcon } from '@elementor/icons';
 import { Box, Collapse, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -10,7 +10,7 @@ import SeverityIcon from './severity-icons';
 
 type Props = {
 	descriptor: AuditDescriptor;
-	violations: AuditViolation[];
+	violations?: AuditViolation[];
 };
 
 export default function ViolationRow( { descriptor, violations }: Props ) {
@@ -26,10 +26,16 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				<Typography variant="body2" sx={ { flex: 1 } }>
 					{ descriptor.title }
 				</Typography>
-				<Typography variant="caption" color="text.secondary" fontWeight="bold">
-					{ violations.length }
-				</Typography>
-				<SeverityIcon severity={ descriptor.severity } />
+				{ violations ? (
+					<>
+						<Typography variant="caption" color="text.secondary" fontWeight="bold">
+							{ violations.length }
+						</Typography>
+						<SeverityIcon severity={ descriptor.severity } />
+					</>
+				) : (
+					<CheckIcon fontSize="small" color="success" />
+				) }
 				<IconButton
 					size="small"
 					aria-label={ expanded ? __( 'Collapse', 'elementor' ) : __( 'Expand', 'elementor' ) }
@@ -62,30 +68,32 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 						</Typography>
 					</Box>
 				</Box>
-				<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
-					{ violations.map( ( violation, idx ) => (
-						<Box
-							key={ idx }
-							role="button"
-							tabIndex={ 0 }
-							onClick={ () => focus( violation ) }
-							onKeyDown={ ( event ) => {
-								if ( event.key === 'Enter' || event.key === ' ' ) {
-									focus( violation );
-								}
-							} }
-							sx={ {
-								paddingBlock: 0.5,
-								paddingInline: 2,
-								borderRadius: 1,
-								cursor: 'pointer',
-								'&:hover': { bgcolor: 'action.hover' },
-							} }
-						>
-							<Typography variant="caption">{ violation.label }</Typography>
-						</Box>
-					) ) }
-				</Box>
+				{ violations && violations.length > 0 && (
+					<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
+						{ violations.map( ( violation, idx ) => (
+							<Box
+								key={ idx }
+								role="button"
+								tabIndex={ 0 }
+								onClick={ () => focus( violation ) }
+								onKeyDown={ ( event ) => {
+									if ( event.key === 'Enter' || event.key === ' ' ) {
+										focus( violation );
+									}
+								} }
+								sx={ {
+									paddingBlock: 0.5,
+									paddingInline: 2,
+									borderRadius: 1,
+									cursor: 'pointer',
+									'&:hover': { bgcolor: 'action.hover' },
+								} }
+							>
+								<Typography variant="caption">{ violation.label }</Typography>
+							</Box>
+						) ) }
+					</Box>
+				) }
 			</Collapse>
 		</Box>
 	);
