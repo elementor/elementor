@@ -1,5 +1,12 @@
 import { type GridTracks } from '../../hooks/use-grid-tracks';
-import { computeCellRects, parseTrackList, snapToHalfPixel, toGridTracks, toPx } from '../grid-outline-utils';
+import {
+	computeCellRects,
+	computeGridLines,
+	parseTrackList,
+	snapToHalfPixel,
+	toGridTracks,
+	toPx,
+} from '../grid-outline-utils';
 
 function makeTracks( partial: Partial< GridTracks > = {} ): GridTracks {
 	return {
@@ -84,6 +91,70 @@ describe( 'computeCellRects', () => {
 			{ x: 20, y: 5, width: 100, height: 183 },
 			{ x: 120, y: 5, width: 100, height: 183 },
 		] );
+	} );
+} );
+
+describe( 'computeGridLines', () => {
+	it( 'returns no lines when there are no tracks', () => {
+		expect( computeGridLines( makeTracks(), 100, 100 ) ).toEqual( { vertical: [], horizontal: [] } );
+	} );
+
+	it( 'collapses shared boundaries into a single line when there is no gap', () => {
+		const tracks = makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } );
+
+		const lines = computeGridLines( tracks, 300, 160 );
+
+		expect( lines.vertical.map( ( l ) => l.x1 ) ).toEqual( [ 0, 100, 200, 300 ] );
+		expect( lines.horizontal.map( ( l ) => l.y1 ) ).toEqual( [ 0, 80, 160 ] );
+	} );
+
+	it( 'splits the inner boundary into two parallel lines when a gap is set', () => {
+		const tracks = makeTracks( {
+			columns: [ 100, 100, 100 ],
+			rows: [ 80, 80 ],
+			columnGap: 10,
+			rowGap: 8,
+		} );
+
+		const lines = computeGridLines( tracks, 320, 176 );
+
+		expect( lines.vertical.map( ( l ) => l.x1 ) ).toEqual( [ 0, 100, 110, 210, 220, 320 ] );
+		expect( lines.horizontal.map( ( l ) => l.y1 ) ).toEqual( [ 0, 80, 88, 168 ] );
+	} );
+
+	it( 'extends vertical lines from the top to the bottom of the row span', () => {
+		const tracks = makeTracks( { columns: [ 100, 100 ], rows: [ 50, 60 ], rowGap: 5 } );
+
+		const lines = computeGridLines( tracks, 200, 115 );
+
+		for ( const line of lines.vertical ) {
+			expect( line.y1 ).toBe( 0 );
+			expect( line.y2 ).toBe( 115 );
+		}
+	} );
+
+	it( 'extends horizontal lines from the left to the right of the column span', () => {
+		const tracks = makeTracks( { columns: [ 100, 100 ], rows: [ 50, 50 ], columnGap: 10 } );
+
+		const lines = computeGridLines( tracks, 210, 100 );
+
+		for ( const line of lines.horizontal ) {
+			expect( line.x1 ).toBe( 0 );
+			expect( line.x2 ).toBe( 210 );
+		}
+	} );
+
+	it( 'offsets the lines by the grid padding', () => {
+		const tracks = makeTracks( {
+			columns: [ 100 ],
+			rows: [ 80 ],
+			padding: { top: 5, right: 4, bottom: 3, left: 20 },
+		} );
+
+		const lines = computeGridLines( tracks, 200, 100 );
+
+		expect( lines.vertical.map( ( l ) => l.x1 ) ).toEqual( [ 20, 120 ] );
+		expect( lines.horizontal.map( ( l ) => l.y1 ) ).toEqual( [ 5, 85 ] );
 	} );
 } );
 
