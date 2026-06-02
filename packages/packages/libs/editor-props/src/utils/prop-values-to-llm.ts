@@ -1,9 +1,12 @@
-import { type PropValue } from '../types';
-import { applyDialectFromTree, ensureLlmDialect, type PropToLlmOptions } from './prop-values-llm-tree';
+import { ensureLlmDialect } from '../llm-dialect/init';
+import { walkPropValueWithPropType } from '../llm-dialect/walk';
+import { type PropType, type PropValue } from '../types';
 
-export type { PropToLlmOptions };
+export type PropToLlmOptions = {
+	propType: PropType;
+};
 
-export const propValuesToLlm = ( value: Readonly< PropValue >, options: PropToLlmOptions = {} ): PropValue => {
+export const propValuesToLlm = ( value: Readonly< PropValue >, options: PropToLlmOptions ): PropValue => {
 	ensureLlmDialect();
-	return applyDialectFromTree( value, options ) as PropValue;
+	return walkPropValueWithPropType( structuredClone( value ), options.propType, 'toDialect' );
 };

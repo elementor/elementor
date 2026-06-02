@@ -1,15 +1,26 @@
 import {
 	type CreateElementParams,
 	getWidgetsCache,
+	updateElementSettings,
 	type V1Element,
 	type V1ElementConfig,
 } from '@elementor/editor-elements';
+import { initLlmDialect, type PropType, type TransformablePropValue } from '@elementor/editor-props';
+import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
+import { doUpdateElementProperty } from '../../mcp/utils/do-update-element-property';
+import { resetValidateInputWidgetsSchemaCache } from '../../mcp/utils/validate-input';
 import { CompositionBuilder } from '../composition-builder';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	getWidgetsCache: jest.fn(),
+	updateElementSettings: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	__privateRunCommandSync: jest.fn(),
 } ) );
 
 const ROOT_CHILD_TAG = 'column';
@@ -197,6 +208,76 @@ describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 	} );
 } );
 
+const IMAGE_SRC_UNION_PROP_TYPE = {
+	kind: 'union',
+	prop_types: {
+		'image-src': {
+			kind: 'object',
+			key: 'image-src',
+			shape: {
+				url: {
+					kind: 'union',
+					prop_types: {
+						url: { kind: 'string', key: 'url', settings: {}, meta: {} },
+						dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'url' ] } },
+					},
+					settings: {},
+					meta: {},
+				},
+			},
+			settings: {},
+			meta: {},
+		},
+		dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'image' ] } },
+	},
+	settings: {},
+	meta: {},
+} as unknown as PropType;
+
+const E_IMAGE_PROP_TYPE = {
+	kind: 'object',
+	key: 'image',
+	shape: {
+		src: IMAGE_SRC_UNION_PROP_TYPE,
+		size: { kind: 'string', key: 'string', settings: { enum: [ 'full' ] }, meta: {} },
+	},
+	settings: {},
+	meta: {},
+} as unknown as PropType;
+
+const LLM_IMAGE_VALUE = {
+	$$type: 'image',
+	value: {
+		src: {
+			$$type: 'image-src',
+			value: {
+				url: {
+					$$type: 'url',
+					value: '',
+					bindTo: 'post-featured-image',
+				},
+			},
+			bindTo: 'post-featured-image',
+		},
+		size: {
+			$$type: 'string',
+			value: 'full',
+		},
+	},
+};
+
+const createWidgetsCacheWithImageProp = (): Record< string, V1ElementConfig > =>
+	( {
+		'e-image': {
+			title: 'Image',
+			controls: {},
+			elType: 'widget',
+			atomic_props_schema: {
+				image: E_IMAGE_PROP_TYPE,
+			},
+		},
+	} ) as unknown as Record< string, V1ElementConfig >;
+
 describe( 'CompositionBuilder.build applyProperties after create', () => {
 	it( 'calls doUpdateElementProperty when create succeeds with element config', async () => {
 		// Arrange
@@ -254,6 +335,66 @@ describe( 'CompositionBuilder.build applyProperties after create', () => {
 		// Assert
 		expect( deleteElement ).not.toHaveBeenCalled();
 		expect( doUpdateElementProperty ).not.toHaveBeenCalled();
+	} );
+
+	it( 'persists canonical image prop when elementConfig uses dialect bindTo on src', async () => {
+		// Arrange
+		resetValidateInputWidgetsSchemaCache();
+		initLlmDialect( {
+			dynamicTags: {
+				'post-featured-image': {
+					name: 'post-featured-image',
+					categories: [ 'image', 'media' ],
+					label: 'Featured Image',
+					group: 'post',
+					meta: {},
+				},
+			},
+		} );
+		Object.assign( window, {
+			elementorV2: {
+				editorVariables: {
+					Utils: {
+						globalVariablesLLMResolvers: {},
+					},
+				},
+			},
+		} );
+		const imageConfigId = 'hero-image';
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const createElement = jest.fn().mockReturnValue( createdElement );
+		const getContainer = jest
+			.fn()
+			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
+		jest.mocked( getWidgetsCache ).mockReturnValue( createWidgetsCacheWithImageProp() );
+		const builder = CompositionBuilder.fromXMLString(
+			`<e-image configuration-id="${ imageConfigId }" />`,
+			{
+				createElement,
+				deleteElement: jest.fn(),
+				getContainer,
+				generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+				getWidgetsCache: jest.fn().mockReturnValue( createWidgetsCacheWithImageProp() ),
+				doUpdateElementProperty,
+			}
+		);
+		builder.setElementConfig( {
+			[ imageConfigId ]: {
+				image: LLM_IMAGE_VALUE,
+			},
+		} );
+
+		// Act
+		await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
+		const persistedImage = jest.mocked( updateElementSettings ).mock.calls[ 0 ][ 0 ].props.image as TransformablePropValue<
+			'image',
+			Record< string, unknown >
+		>;
+		expect( ( persistedImage.value.src as { $$type: string } ).$$type ).toBe( 'dynamic' );
+		expect( __privateRunCommandSync ).toHaveBeenCalled();
 	} );
 } );
 

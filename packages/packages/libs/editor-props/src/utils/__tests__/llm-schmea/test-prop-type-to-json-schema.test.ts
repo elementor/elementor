@@ -1,5 +1,5 @@
+import { initLlmDialect } from '../../../llm-dialect/init';
 import { LLMDialectAdapter } from '../../../llm-dialect/llm-prop-schema';
-import { registerDynamicPropTypeLLMDialectAdapter } from '../../../llm-dialect/register-dynamic-prop-type-llm-dialect-adapter';
 import type * as Types from '../../../types';
 import { propTypeToJsonSchema } from '../../props-to-llm-schema';
 import { STUBS } from '../../test-utils/stubs';
@@ -47,7 +47,7 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 			const dynamicPropType = STUBS.dynamicString;
 
 			beforeAll( () => {
-				registerDynamicPropTypeLLMDialectAdapter();
+				initLlmDialect();
 			} );
 
 			describe( 'should convert dynamic string to LLM Dialect', () => {
@@ -58,19 +58,16 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 				} );
 
 				it( 'Schema structure', () => {
-					const testedValue = jsonSchema.anyOf?.[ 0 ];
 					expect( jsonSchema.description ).toStrictEqual( dynamicPropType.meta.description );
-					expect( Array.isArray( jsonSchema.anyOf ) ).toBeTruthy();
-					expect( jsonSchema.anyOf ).toHaveLength( 1 );
-					expect( testedValue ).toBeInstanceOf( Object );
-					expect( testedValue ).toHaveProperty( 'type', 'object' );
-					expect( testedValue?.properties?.value ).toEqual( {
+					expect( jsonSchema.anyOf ).toBeUndefined();
+					expect( jsonSchema ).toHaveProperty( 'type', 'object' );
+					expect( jsonSchema.properties?.value ).toEqual( {
 						type: 'string',
 					} );
-					expect( testedValue?.properties?.bindTo ).toHaveProperty( 'type', 'string' );
-					expect( testedValue?.properties?.bindTo ).toHaveProperty( 'description' );
+					expect( jsonSchema.properties?.bindTo ).toHaveProperty( 'type', 'string' );
+					expect( jsonSchema.properties?.bindTo ).toHaveProperty( 'description' );
 					expect( jsonSchema?.allowBind ).toBe( true );
-					expect( testedValue?.properties ).toHaveProperty( '$$type', {
+					expect( jsonSchema.properties ).toHaveProperty( '$$type', {
 						type: 'string',
 						const: 'string',
 					} );
@@ -79,8 +76,7 @@ describe( 'PropType to LLM JSON Schema conversion', () => {
 				// @ts-ignore
 				dynamicPropType.prop_types.dynamic.settings.categories.forEach( ( category ) =>
 					it( `should have bindTo tag name for category ${ category }`, () => {
-						const testedValue = jsonSchema.anyOf?.[ 0 ];
-						const enumValues = testedValue?.properties?.bindTo?.description as string | undefined;
+						const enumValues = jsonSchema.properties?.bindTo?.description as string | undefined;
 						expect( enumValues ).toBeDefined();
 						expect( enumValues?.includes( category ) );
 					} )

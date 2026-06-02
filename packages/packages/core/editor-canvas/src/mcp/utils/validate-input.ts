@@ -6,6 +6,10 @@ import { STYLE_SCHEMA_URI } from '../resources/widgets-schema-resource';
 
 let _widgetsSchema: Record< string, PropsSchema > | null = null;
 
+export const resetValidateInputWidgetsSchemaCache = (): void => {
+	_widgetsSchema = null;
+};
+
 type ValidationResult = {
 	valid: boolean;
 	errors?: string[];

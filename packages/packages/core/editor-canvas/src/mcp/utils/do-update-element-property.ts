@@ -5,7 +5,13 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
+import {
+	getPropSchemaFromCache,
+	type PropType,
+	type PropValue,
+	Schema,
+	type TransformablePropValue,
+} from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type Utils as IUtils } from '@elementor/editor-variables';
@@ -28,12 +34,12 @@ type OwnParams = {
 	customCssWriteMode?: CustomCssWriteMode;
 };
 
-export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+export function resolvePropValue( value: unknown, propType: PropType ): PropValue {
 	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
 		.Utils as typeof IUtils;
 	return Schema.propFromLlm( value as PropValue, {
-		forceKey,
+		propType,
 		transformers: Utils.globalVariablesLLMResolvers,
 	} );
 }
@@ -61,7 +67,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 						) }\nExpected Schema: ${ JSON.stringify( jsonSchema ) }`
 					);
 				}
-				return [ key, resolvePropValue( val, propKey ) ];
+				return [ key, resolvePropValue( val, styleSchema[ key ], propKey ) ];
 			} )
 		);
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
@@ -160,7 +166,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			) }\nExpected Schema: ${ JSON.stringify( jsonSchema ) }`
 		);
 	}
-	const value = resolvePropValue( propertyValue, propKey );
+	const value = resolvePropValue( propertyValue, propSchema );
 	updateElementSettings( {
 		id: elementId,
 		props: {

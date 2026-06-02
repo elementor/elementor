@@ -1142,6 +1142,7 @@ export const TAGS = {
 			categories: [ 'text' ],
 			label: 'Post Date',
 			group: 'post',
+			atomic_controls: [ { type: 'control', value: { bind: 'fallback', type: 'text' } } ],
 			meta: {
 				origin: 'elementor',
 				required_license: 'dynamic-tags',
@@ -1162,6 +1163,7 @@ export const TAGS = {
 			categories: [ 'image', 'media' ],
 			label: 'Featured Image',
 			group: 'post',
+			atomic_controls: [ { type: 'control', value: { bind: 'fallback', type: 'image' } } ],
 			meta: {
 				origin: 'elementor',
 				required_license: 'dynamic-tags',
@@ -1202,6 +1204,7 @@ export const TAGS = {
 			categories: [ 'text' ],
 			label: 'Post Title',
 			group: 'post',
+			atomic_controls: [ { type: 'control', value: { bind: 'fallback', type: 'text' } } ],
 			meta: {
 				origin: 'elementor',
 				required_license: 'dynamic-tags',

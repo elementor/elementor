@@ -4,6 +4,50 @@ import { propValuesFromLlm } from '../prop-values-from-llm';
 import { propValuesToLlm } from '../prop-values-to-llm';
 import { STUBS, TAGS } from '../test-utils/stubs';
 
+const LABEL_DYNAMIC_OBJECT_PROP_TYPE = {
+	kind: 'object',
+	key: 'object',
+	shape: {
+		label: {
+			kind: 'union',
+			prop_types: {
+				string: { kind: 'string', key: 'string', settings: {}, meta: {} },
+				dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'text' ] } },
+			},
+			settings: {},
+			meta: {},
+		},
+	},
+	settings: {},
+	meta: {},
+} as unknown as PropType;
+
+const IMAGE_SRC_UNION_PROP_TYPE = {
+	kind: 'union',
+	prop_types: {
+		'image-src': {
+			kind: 'object',
+			key: 'image-src',
+			shape: {
+				url: {
+					kind: 'union',
+					prop_types: {
+						url: { kind: 'string', key: 'url', settings: {}, meta: {} },
+						dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'url' ] } },
+					},
+					settings: {},
+					meta: {},
+				},
+			},
+			settings: {},
+			meta: {},
+		},
+		dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'image' ] } },
+	},
+	settings: {},
+	meta: {},
+} as unknown as PropType;
+
 describe( 'propValuesToLlm', () => {
 	beforeAll( () => {
 		initLlmDialect( { dynamicTags: TAGS.tags } );
@@ -25,7 +69,7 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const llmValue = propValuesToLlm( propValue );
+		const llmValue = propValuesToLlm( propValue, { propType: STUBS.dynamicString } );
 
 		// Assert
 		expect( llmValue ).toEqual( {
@@ -46,15 +90,18 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const llmValue = propValuesToLlm( propValue, { propType: STUBS.dynamicString } );
+		const llmValue = propValuesToLlm( propValue, { propType: STUBS.dynamicString } ) as TransformablePropValue<
+			'string',
+			unknown
+		>;
 
 		// Assert
-		expect( llmValue ).toEqual( {
+		expect( llmValue ).toMatchObject( {
 			$$type: 'string',
-			value: '',
 			bindTo: 'post-title',
 			allowBind: true,
 		} );
+		expect( llmValue.value ).toBeFalsy();
 	} );
 
 	it( 'should round-trip bindTo dialect through fromLlm and toLlm', () => {
@@ -66,8 +113,8 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const canonical = propValuesFromLlm( llmValue );
-		const roundTrip = propValuesToLlm( canonical );
+		const canonical = propValuesFromLlm( llmValue, { propType: STUBS.dynamicString } );
+		const roundTrip = propValuesToLlm( canonical, { propType: STUBS.dynamicString } );
 
 		// Assert
 		expect( roundTrip ).toEqual( {
@@ -76,6 +123,58 @@ describe( 'propValuesToLlm', () => {
 			bindTo: 'post-title',
 			allowBind: true,
 		} );
+	} );
+
+	it( 'should round-trip image-src dynamic through toLlm and fromLlm', () => {
+		// Arrange
+		const canonicalSrc = {
+			$$type: 'dynamic',
+			value: {
+				name: 'post-featured-image',
+				group: 'post',
+				settings: {
+					label: 'Featured Image',
+					fallback: {
+						$$type: 'image',
+						value: {
+							src: {
+								$$type: 'image-src',
+								value: {
+									url: {
+										$$type: 'url',
+										value: 'https://example.com/image.jpg',
+									},
+									alt: null,
+								},
+							},
+							size: {
+								$$type: 'string',
+								value: 'full',
+							},
+						},
+					},
+				},
+			},
+		} as TransformablePropValue< 'dynamic', Record< string, unknown > >;
+
+		// Act
+		const llmValue = propValuesToLlm( canonicalSrc, { propType: IMAGE_SRC_UNION_PROP_TYPE } );
+		const roundTrip = propValuesFromLlm( llmValue, { propType: IMAGE_SRC_UNION_PROP_TYPE } );
+
+		// Assert
+		expect( llmValue ).toEqual( {
+			$$type: 'image-src',
+			value: {
+				url: {
+					$$type: 'url',
+					value: 'https://example.com/image.jpg',
+				},
+				alt: null,
+			},
+			bindTo: 'post-featured-image',
+			allowBind: true,
+		} );
+		expect( roundTrip ).toEqual( canonicalSrc );
 	} );
 
 	it( 'should convert dynamic string fallback to html-v3 dialect when prop type is html-v3 union', () => {
@@ -140,7 +239,9 @@ describe( 'propValuesToLlm', () => {
 		};
 
 		// Act
-		const llmValue = propValuesToLlm( propValue ) as TransformablePropValue< 'object', Record< string, unknown > >;
+		const llmValue = propValuesToLlm( propValue, {
+			propType: LABEL_DYNAMIC_OBJECT_PROP_TYPE,
+		} ) as TransformablePropValue< 'object', Record< string, unknown > >;
 
 		// Assert
 		expect( llmValue.value.label ).toEqual( {
@@ -149,165 +250,5 @@ describe( 'propValuesToLlm', () => {
 			bindTo: 'post-title',
 			allowBind: true,
 		} );
-	} );
-
-	it( 'should normalize flat size values to flat LLM dialect', () => {
-		// Arrange
-		const propValue = {
-			$$type: 'size',
-			value: {
-				unit: 'px',
-				size: 16,
-			},
-		};
-
-		// Act
-		const llmValue = propValuesToLlm( propValue );
-
-		// Assert
-		expect( llmValue ).toEqual( propValue );
-	} );
-
-	it( 'should normalize nested PropType size values to flat LLM dialect', () => {
-		// Arrange
-		const propValue = {
-			$$type: 'size',
-			value: {
-				unit: { $$type: 'string', value: 'px' },
-				size: { $$type: 'number', value: 16 },
-			},
-		};
-		const flatSize = {
-			$$type: 'size',
-			value: {
-				unit: 'px',
-				size: 16,
-			},
-		};
-
-		// Act
-		const llmValue = propValuesToLlm( propValue );
-
-		// Assert
-		expect( llmValue ).toEqual( flatSize );
-	} );
-
-	it( 'should normalize flat and nested size values inside object props', () => {
-		// Arrange
-		const dimensionsPropType = {
-			kind: 'object',
-			key: 'dimensions',
-			settings: {},
-			meta: {},
-			shape: {
-				top: {
-					kind: 'object',
-					key: 'size',
-					shape: {
-						unit: { kind: 'string', key: 'string', settings: {} },
-						size: {
-							kind: 'union',
-							prop_types: {
-								number: { kind: 'number', key: 'number', settings: {} },
-								string: { kind: 'string', key: 'string', settings: {} },
-							},
-						},
-					},
-				},
-				left: {
-					kind: 'object',
-					key: 'size',
-					shape: {
-						unit: { kind: 'string', key: 'string', settings: {} },
-						size: {
-							kind: 'union',
-							prop_types: {
-								number: { kind: 'number', key: 'number', settings: {} },
-								string: { kind: 'string', key: 'string', settings: {} },
-							},
-						},
-					},
-				},
-			},
-		} as unknown as PropType;
-		const propValue = {
-			$$type: 'dimensions',
-			value: {
-				top: {
-					$$type: 'size',
-					value: {
-						unit: 'px',
-						size: 8,
-					},
-				},
-				left: {
-					$$type: 'size',
-					value: {
-						unit: { $$type: 'string', value: 'rem' },
-						size: { $$type: 'number', value: 2 },
-					},
-				},
-			},
-		};
-		const flatTopSize = {
-			$$type: 'size',
-			value: {
-				unit: 'px',
-				size: 8,
-			},
-		};
-		const flatLeftSize = {
-			$$type: 'size',
-			value: {
-				unit: 'rem',
-				size: 2,
-			},
-		};
-
-		// Act
-		const llmValue = propValuesToLlm( propValue, { propType: dimensionsPropType } ) as TransformablePropValue<
-			'dimensions',
-			Record< string, unknown >
-		>;
-
-		// Assert
-		expect( llmValue.value.top ).toEqual( flatTopSize );
-		expect( llmValue.value.left ).toEqual( flatLeftSize );
-	} );
-
-	it( 'should be idempotent when propToLlm receives already flat size', () => {
-		// Arrange
-		const flatSize = {
-			$$type: 'size',
-			value: {
-				unit: 'px',
-				size: 16,
-			},
-		};
-
-		// Act
-		const llmValue = propValuesToLlm( flatSize );
-
-		// Assert
-		expect( llmValue ).toEqual( flatSize );
-		expect( propValuesToLlm( llmValue ) ).toEqual( flatSize );
-	} );
-
-	it( 'should round-trip size through fromLlm and toLlm', () => {
-		// Arrange
-		const llmValue = {
-			$$type: 'size',
-			value: {
-				unit: 'rem',
-				size: 2,
-			},
-		};
-
-		// Act
-		const canonical = propValuesFromLlm( llmValue );
-		const roundTrip = propValuesToLlm( canonical );
-
-		// Assert
-		expect( roundTrip ).toEqual( llmValue );
 	} );
 } );

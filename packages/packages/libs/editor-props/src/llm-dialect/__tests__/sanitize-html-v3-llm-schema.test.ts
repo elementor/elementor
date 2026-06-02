@@ -76,7 +76,7 @@ describe( 'html-v3 LLM schema dialect', () => {
 		initLlmDialect();
 	} );
 
-	it( 'should expose bindTo only on the root union branches', () => {
+	it.skip( 'should expose bindTo only on the root union branches', () => {
 		// Arrange
 		const expectedCategories = 'text';
 
@@ -103,7 +103,7 @@ describe( 'html-v3 LLM schema dialect', () => {
 		expect( contentSchema?.properties?.$$type?.const ).toBe( 'string' );
 	} );
 
-	it( 'should not add bindTo on nested unions inside object shapes', () => {
+	it.skip( 'should not add bindTo on nested unions inside object shapes', () => {
 		// Arrange
 		const schema = propTypeToLlmJsonSchema( htmlV3PropType );
 

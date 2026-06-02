@@ -1,17 +1,20 @@
-import { LLMDialectAdapter } from '../llm-dialect/llm-prop-schema';
-import { type PropValue } from '../types';
-import { adjustLlmPropValueSchema } from './adjust-llm-prop-value-schema';
-import { ensureLlmDialect } from './prop-values-llm-tree';
+import { ensureLlmDialect } from '../llm-dialect/init';
+import { walkPropValueWithPropType } from '../llm-dialect/walk';
+import { type PropType, type PropValue } from '../types';
+import { applyGlobalVariableResolvers, stripIntentionFromPropValue } from './adjust-llm-prop-value-schema';
 
 type PropConverter = ( value: unknown ) => PropValue;
 
 export type PropFromLlmOptions = {
-	forceKey?: string;
+	propType: PropType;
 	transformers?: Record< string, PropConverter >;
 };
 
-export const propValuesFromLlm = ( value: Readonly< PropValue >, options: PropFromLlmOptions = {} ): PropValue => {
+export const propValuesFromLlm = ( value: Readonly< PropValue >, options: PropFromLlmOptions ): PropValue => {
 	ensureLlmDialect();
-	const dialectConverted = LLMDialectAdapter.toPropValue( structuredClone( value ) ) as PropValue;
-	return adjustLlmPropValueSchema( dialectConverted, options );
+
+	const walked = walkPropValueWithPropType( structuredClone( value ), options.propType, 'toProp' );
+	const withoutIntention = stripIntentionFromPropValue( walked );
+
+	return applyGlobalVariableResolvers( withoutIntention, options.transformers );
 };

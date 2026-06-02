@@ -129,6 +129,10 @@ describe( 'doUpdateElementProperty', () => {
 
 		// Assert
 		expect( Schema.validateLlmJson ).toHaveBeenCalledWith( PROP_SCHEMA_ENTRY, propertyValue );
+		expect( Schema.propFromLlm ).toHaveBeenCalledWith( propertyValue, {
+			propType: PROP_SCHEMA_ENTRY,
+			transformers: [],
+		} );
 		expect( updateElementSettings ).toHaveBeenCalledTimes( 1 );
 		expect( updateElementSettings ).toHaveBeenCalledWith( {
 			id: ELEMENT_ID,

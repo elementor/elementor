@@ -41,13 +41,13 @@ describe( 'validateLlmJson', () => {
 		initLlmDialect();
 	} );
 
-	it( 'accepts flat LLM size values', () => {
+	it( 'accepts nested LLM size values', () => {
 		// Arrange
 		const value = {
 			$$type: 'size',
 			value: {
-				unit: 'px',
-				size: 16,
+				unit: { $$type: 'string', value: 'px' },
+				size: { $$type: 'number', value: 16 },
 			},
 		};
 

@@ -28,57 +28,51 @@ const SIZE_PROP_TYPE = {
 	meta: {},
 } as unknown as PropType;
 
-const FLAT_SIZE_INNER_SCHEMA = {
-	type: 'object',
-	properties: {
-		unit: { type: 'string', enum: [ 'px', 'rem', 'em' ] },
-		size: {
-			oneOf: [ { type: 'number' }, { type: 'string' } ],
-		},
-	},
-	required: [ 'unit', 'size' ],
-	additionalProperties: false,
-};
 
 describe( 'LLM schema dialect registration', () => {
 	beforeAll( () => {
 		initLlmDialect();
 	} );
 
-	it( 'should throw when registering duplicate schema dialect ids', () => {
+	it( 'should throw when registering duplicate dialect ids', () => {
 		// Arrange
 		const duplicateRegistration = () =>
-			LLMDialectAdapter.registerSchemaDialect( {
+			LLMDialectAdapter.register( {
 				id: 'size',
 				matches: () => true,
-				toDialectSchema: ( schema ) => schema,
 			} );
 
 		// Act
 		// Assert
-		expect( duplicateRegistration ).toThrow( 'Duplicate LLM schema dialect registration: "size".' );
+		expect( duplicateRegistration ).toThrow( 'Duplicate LLM dialect registration: "size".' );
 	} );
 
-	it( 'should throw when registering duplicate schema cleanup', () => {
+	it( 'should throw when registering duplicate schema finalize', () => {
 		// Arrange
-		const duplicateRegistration = () => LLMDialectAdapter.registerSchemaCleanup( ( schema ) => schema );
+		const duplicateRegistration = () => LLMDialectAdapter.registerFinalizeSchema( ( schema ) => schema );
 
 		// Act
 		// Assert
-		expect( duplicateRegistration ).toThrow( 'Duplicate LLM schema cleanup registration.' );
+		expect( duplicateRegistration ).toThrow( 'Duplicate LLM schema finalize registration.' );
 	} );
 
-	it( 'should run schema cleanup after dialect adapters registered later', () => {
+	it( 'should run schema finalize after dialect adapters registered later', () => {
 		// Arrange
-		LLMDialectAdapter.registerSchemaDialect( {
+		LLMDialectAdapter.register( {
 			id: 'test-single-anyof-wrapper',
-			matches: ( propType ) => propType.kind === 'string' && 'key' in propType && propType.key === 'string',
+			matches: ( { propType } ) =>
+				propType.kind === 'string' && 'key' in propType && propType.key === 'test-late-string-only',
 			toDialectSchema: ( schema ) => ( {
 				description: 'Late dialect description',
 				anyOf: [ schema ],
 			} ),
 		} );
-		const stringPropType = { kind: 'string', key: 'string', settings: {}, meta: {} } as unknown as PropType;
+		const stringPropType = {
+			kind: 'string',
+			key: 'test-late-string-only',
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
 
 		// Act
 		const schema = propTypeToLlmJsonSchema( stringPropType );
@@ -86,10 +80,10 @@ describe( 'LLM schema dialect registration', () => {
 		// Assert
 		expect( schema.anyOf ).toBeUndefined();
 		expect( schema.description ).toBe( 'Late dialect description' );
-		expect( schema.properties?.$$type?.const ).toBe( 'string' );
+		expect( schema.properties?.$$type?.const ).toBe( 'test-late-string-only' );
 	} );
 
-	it( 'should flatten size inner schema for size and grid-track-size prop types', () => {
+	it( 'should keep nested size inner schema for size and grid-track-size prop types', () => {
 		// Arrange
 		const gridTrackSizePropType = {
 			...SIZE_PROP_TYPE,
@@ -101,11 +95,17 @@ describe( 'LLM schema dialect registration', () => {
 		const gridTrackSchema = propTypeToLlmJsonSchema( gridTrackSizePropType );
 
 		// Assert
-		expect( sizeSchema.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
-		expect( gridTrackSchema.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
+		expect( sizeSchema.properties?.value?.properties?.unit?.properties?.value ).toEqual( {
+			type: 'string',
+			enum: [ 'px', 'rem', 'em', '%' ],
+		} );
+		expect( gridTrackSchema.properties?.value?.properties?.unit?.properties?.value ).toEqual( {
+			type: 'string',
+			enum: [ 'px', 'rem', 'em', '%' ],
+		} );
 	} );
 
-	it( 'should flatten nested size fields inside object prop types', () => {
+	it( 'should keep nested size fields inside object prop types', () => {
 		// Arrange
 		const dimensionsPropType = {
 			kind: 'object',
@@ -121,7 +121,8 @@ describe( 'LLM schema dialect registration', () => {
 		const schema = propTypeToLlmJsonSchema( dimensionsPropType );
 
 		// Assert
-		expect( schema.properties?.value?.properties?.top?.properties?.value ).toEqual( FLAT_SIZE_INNER_SCHEMA );
+		expect( schema.properties?.value?.properties?.top?.properties?.value?.properties?.unit ).toBeDefined();
+		expect( schema.properties?.value?.properties?.top?.properties?.value?.properties?.size ).toBeDefined();
 	} );
 
 	it( 'should add bindTo only for unions that include dynamic', () => {
@@ -157,6 +158,46 @@ describe( 'LLM schema dialect registration', () => {
 		expect( sizeUnionSchema.allowBind ).toBeUndefined();
 		expect( sizeUnionSchema.anyOf ).toHaveLength( 2 );
 		expect( sizeUnionSchema.anyOf?.[ 0 ]?.properties?.bindTo ).toBeUndefined();
+	} );
+
+	it( 'should add bindTo for nested dynamic unions inside object prop types', () => {
+		// Arrange
+		const imageSrcUnionPropType = {
+			kind: 'union',
+			prop_types: {
+				'image-src': {
+					kind: 'object',
+					key: 'image-src',
+					shape: {
+						url: { kind: 'string', key: 'url', settings: {}, meta: {} },
+					},
+					settings: {},
+					meta: {},
+				},
+				dynamic: { kind: 'plain', key: 'dynamic', settings: { categories: [ 'image' ] } },
+			},
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
+		const imagePropType = {
+			kind: 'object',
+			key: 'image',
+			shape: {
+				src: imageSrcUnionPropType,
+				size: { kind: 'string', key: 'string', settings: { enum: [ 'large', 'full' ] }, meta: {} },
+			},
+			settings: {},
+			meta: {},
+		} as unknown as PropType;
+
+		// Act
+		const schema = propTypeToLlmJsonSchema( imagePropType );
+		const srcSchema = schema.properties?.value?.properties?.src;
+
+		// Assert
+		expect( srcSchema?.allowBind ).toBe( true );
+		expect( srcSchema?.properties?.bindTo ).toBeDefined();
+		expect( srcSchema?.properties?.$$type?.const ).toBe( 'image-src' );
 	} );
 
 	it( 'should not flatten non-size object prop types', () => {

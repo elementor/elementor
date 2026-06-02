@@ -152,8 +152,10 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		.Utils as typeof IUtils;
 	Object.values( propsWithStates ).forEach( ( props ) => {
 		Object.keys( props ).forEach( ( key ) => {
+			const propType = stylesSchema[ key ];
 			props[ key ] = Schema.propFromLlm( props[ key ], {
 				transformers: Utils.globalVariablesLLMResolvers,
+				propType,
 			} );
 		} );
 	} );

@@ -1,73 +1,37 @@
 import { type JsonSchema7 } from '../utils/prop-json-schema';
-import { LLMDialectAdapter } from './llm-prop-schema';
 
-const isJsonSchemaObject = ( value: unknown ): value is JsonSchema7 =>
-	typeof value === 'object' && value !== null && ! Array.isArray( value );
+const mergeDescriptions = ( parentDescription?: string, branchDescription?: string ): string | undefined => {
+	const descriptions = [ parentDescription, branchDescription ].filter( Boolean );
 
-const mergeDescriptions = ( parentDescription: unknown, branchDescription: unknown ): string | undefined => {
-	const parent = typeof parentDescription === 'string' ? parentDescription : undefined;
-	const branch = typeof branchDescription === 'string' ? branchDescription : undefined;
-
-	if ( ! parent ) {
-		return branch;
+	if ( descriptions.length === 0 ) {
+		return undefined;
 	}
 
-	if ( ! branch ) {
-		return parent;
-	}
-
-	if ( parent === branch ) {
-		return parent;
-	}
-
-	return `${ parent } ${ branch }`;
+	return descriptions.join( ' ' );
 };
 
-const unwrapSingleCombinator = ( schema: JsonSchema7 ): JsonSchema7 | null => {
-	const branches = schema.oneOf ?? schema.anyOf;
+const unwrapSingleBranch = ( schema: JsonSchema7, branchKey: 'anyOf' | 'oneOf' ): JsonSchema7 => {
+	const branches = schema[ branchKey ];
 
 	if ( ! Array.isArray( branches ) || branches.length !== 1 ) {
-		return null;
+		return schema;
 	}
 
-	const branch = structuredClone( branches[ 0 ] );
-	const mergedDescription = mergeDescriptions( schema.description, branch.description );
+	const [ singleBranch ] = branches;
+	const { [ branchKey ]: _branchKey, description, allowBind, ...rest } = schema;
 
-	if ( mergedDescription === undefined ) {
-		delete branch.description;
-	} else {
-		branch.description = mergedDescription;
-	}
-
-	return branch;
+	return {
+		...singleBranch,
+		...rest,
+		...( mergeDescriptions( description, singleBranch.description )
+			? { description: mergeDescriptions( description, singleBranch.description ) }
+			: {} ),
+		allowBind: allowBind ?? singleBranch.allowBind,
+	};
 };
 
-const cleanupLlmJsonSchemaNode = ( schema: JsonSchema7 ): JsonSchema7 => {
-	const result = structuredClone( schema );
-
-	if ( result.properties ) {
-		result.properties = Object.fromEntries(
-			Object.entries( result.properties ).map( ( [ key, value ] ) => [ key, cleanupLlmJsonSchema( value ) ] )
-		);
-	}
-
-	if ( isJsonSchemaObject( result.items ) ) {
-		result.items = cleanupLlmJsonSchema( result.items );
-	}
-
-	if ( Array.isArray( result.oneOf ) ) {
-		result.oneOf = result.oneOf.map( cleanupLlmJsonSchema );
-	}
-
-	if ( Array.isArray( result.anyOf ) ) {
-		result.anyOf = result.anyOf.map( cleanupLlmJsonSchema );
-	}
-
-	return unwrapSingleCombinator( result ) ?? result;
+export const cleanupLlmJsonSchema = ( schema: JsonSchema7 ): JsonSchema7 => {
+	let cleaned = unwrapSingleBranch( schema, 'anyOf' );
+	cleaned = unwrapSingleBranch( cleaned, 'oneOf' );
+	return cleaned;
 };
-
-export const cleanupLlmJsonSchema = ( schema: JsonSchema7 ): JsonSchema7 => cleanupLlmJsonSchemaNode( schema );
-
-export function registerSchemaCleanupLlmDialectAdapter() {
-	LLMDialectAdapter.registerSchemaCleanup( cleanupLlmJsonSchema );
-}

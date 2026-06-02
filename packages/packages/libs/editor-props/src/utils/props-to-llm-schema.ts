@@ -1,30 +1,16 @@
-import {
-	type DialectPropAdapter,
-	LLMDialectAdapter,
-	type LlmDialectSchemaContext,
-} from '../llm-dialect/llm-prop-schema';
+import { LLMDialectAdapter, type DialectPropAdapter, type SchemaGenerationContext } from '../llm-dialect/llm-prop-schema';
+import { isLlmDialectSkip } from '../llm-dialect/skip';
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
-const nestedLlmSchemaContext = ( context?: LlmDialectSchemaContext ): LlmDialectSchemaContext | undefined => {
-	if ( ! context || context.allowBindTo === false ) {
-		return context;
-	}
-
-	return { allowBindTo: false };
-};
-
-export function propTypeToLlmJsonSchema(
-	propType: PropType,
-	context: LlmDialectSchemaContext = { allowBindTo: true }
-): JsonSchema7 {
-	return propTypeToJsonSchema( propType, LLMDialectAdapter, context );
+export function propTypeToLlmJsonSchema( propType: PropType ): JsonSchema7 {
+	return LLMDialectAdapter.finalizeLlmSchema( propTypeToJsonSchema( propType, LLMDialectAdapter ) );
 }
 
 export function propTypeToJsonSchema(
 	propType: PropType,
 	dialect?: DialectPropAdapter,
-	context?: LlmDialectSchemaContext
+	schemaContext: SchemaGenerationContext = {}
 ): JsonSchema7 {
 	const description = propType.meta?.description;
 
@@ -34,22 +20,26 @@ export function propTypeToJsonSchema(
 		schema.description = description;
 	}
 
-	// Add example from initial_value if it exists
 	if ( propType.initial_value !== null && propType.initial_value !== undefined ) {
 		schema.examples = [ propType.initial_value ];
 	}
 
-	// Handle different kinds of prop types
 	switch ( propType.kind ) {
 		case 'union':
-			return convertUnionPropType( propType, schema, dialect, context );
+			return convertUnionPropType( propType, schema, dialect, schemaContext );
 		case 'object':
-			return convertObjectPropType( propType, schema, dialect, context );
+			return convertObjectPropType( propType, schema, dialect, schemaContext );
 		case 'array':
-			return convertArrayPropType( propType, schema, dialect, context );
-		default:
+			return convertArrayPropType( propType, schema, dialect, schemaContext );
+		default: {
 			const result = convertPlainPropType( propType, schema );
-			return dialect ? dialect.toDialectSchema( result, propType, context ) : result;
+			if ( ! dialect ) {
+				return result;
+			}
+
+			const dialectSchema = dialect.toDialectSchema( result, propType, schemaContext );
+			return isLlmDialectSkip( dialectSchema ) ? result : dialectSchema;
+		}
 	}
 }
 
@@ -59,7 +49,6 @@ function convertPlainPropType(
 ): JsonSchema7 {
 	const schema = { ...baseSchema };
 
-	// This could happen when data is malformed due to a bug, added this as a safeguard.
 	if ( ! Object.hasOwn( propType, 'kind' ) ) {
 		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key ?? '[unknown key]' }` );
 	}
@@ -97,19 +86,11 @@ function convertPlainPropType(
 	}
 }
 
-/**
- * Converts a union prop type to JSON Schema ( электричество anyOf)
- *
- * @param propType   The union prop type to convert
- * @param baseSchema Base schema to extend
- * @param dialect
- * @param context
- */
 function convertUnionPropType(
 	propType: PropType & { kind: 'union' },
 	baseSchema: JsonSchema7,
 	dialect?: DialectPropAdapter,
-	context?: LlmDialectSchemaContext
+	schemaContext: SchemaGenerationContext = {}
 ): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
@@ -120,8 +101,7 @@ function convertUnionPropType(
 		if ( typeKey === 'overridable' || ( typeKey === 'dynamic' && dialect ) ) {
 			continue;
 		}
-		const subSchema = convertPropTypeToJsonSchema( subPropType, dialect, context );
-		schemas.push( subSchema );
+		schemas.push( convertPropTypeToJsonSchema( subPropType, dialect, schemaContext ) );
 	}
 
 	if ( schemas.length > 0 ) {
@@ -132,14 +112,19 @@ function convertUnionPropType(
 	if ( propTypeDescription ) {
 		schema.description = propTypeDescription;
 	}
-	return dialect ? dialect.toDialectSchema( schema, propType, context ) : schema;
+	if ( ! dialect ) {
+		return schema;
+	}
+
+	const dialectSchema = dialect.toDialectSchema( schema, propType, schemaContext );
+	return isLlmDialectSkip( dialectSchema ) ? schema : dialectSchema;
 }
 
 function convertObjectPropType(
 	propType: PropType & { kind: 'object' },
 	baseSchema: JsonSchema7,
 	dialect?: DialectPropAdapter,
-	context?: LlmDialectSchemaContext
+	schemaContext: SchemaGenerationContext = {}
 ): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
@@ -167,10 +152,12 @@ function convertObjectPropType(
 	const valueRequired: string[] = [];
 
 	const shape = propType.shape || {};
-	const nestedContext = nestedLlmSchemaContext( context );
 
 	for ( const [ key, subPropType ] of Object.entries( shape ) ) {
-		const propSchema = propTypeToJsonSchema( subPropType, dialect, nestedContext );
+		const propSchema = propTypeToJsonSchema( subPropType, dialect, {
+			parentPropType: propType,
+			shapeKey: key,
+		} );
 
 		if ( subPropType.settings?.required === true ) {
 			valueRequired.push( key );
@@ -191,14 +178,19 @@ function convertObjectPropType(
 		properties: internalStructure.properties,
 	};
 
-	return dialect ? dialect.toDialectSchema( mergedSchema, propType, context ) : mergedSchema;
+	if ( ! dialect ) {
+		return mergedSchema;
+	}
+
+	const dialectSchema = dialect.toDialectSchema( mergedSchema, propType, schemaContext );
+	return isLlmDialectSkip( dialectSchema ) ? mergedSchema : dialectSchema;
 }
 
 function convertArrayPropType(
 	propType: PropType & { kind: 'array' },
 	baseSchema: JsonSchema7,
 	dialect?: DialectPropAdapter,
-	context?: LlmDialectSchemaContext
+	schemaContext: SchemaGenerationContext = {}
 ): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
@@ -208,7 +200,7 @@ function convertArrayPropType(
 	const itemPropType = propType.item_prop_type;
 
 	if ( itemPropType ) {
-		items = convertPropTypeToJsonSchema( itemPropType, dialect, nestedLlmSchemaContext( context ) );
+		items = convertPropTypeToJsonSchema( itemPropType, dialect, schemaContext );
 	}
 
 	schema.properties = {
@@ -221,15 +213,20 @@ function convertArrayPropType(
 			...( items ? { items } : {} ),
 		} as JsonSchema7,
 	};
-	return dialect ? dialect.toDialectSchema( schema, propType, context ) : schema;
+	if ( ! dialect ) {
+		return schema;
+	}
+
+	const dialectSchema = dialect.toDialectSchema( schema, propType, schemaContext );
+	return isLlmDialectSkip( dialectSchema ) ? schema : dialectSchema;
 }
 
 function convertPropTypeToJsonSchema(
 	propType: PropType,
 	dialect?: DialectPropAdapter,
-	context?: LlmDialectSchemaContext
+	schemaContext: SchemaGenerationContext = {}
 ): JsonSchema7 {
-	return propTypeToJsonSchema( propType, dialect, context );
+	return propTypeToJsonSchema( propType, dialect, schemaContext );
 }
 
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
