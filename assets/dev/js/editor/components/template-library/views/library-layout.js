@@ -146,7 +146,27 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const shouldRestoreFocus = prevView && prevView._restoreFocusToSourceFilter;
 		const isInitialOpen = ! prevView;
 
-		this.modalContent.show( new TemplateLibraryCollectionView( {
+		const tabId = $e.components.get( 'library' )?.currentTab;
+
+		/**
+		 * Template library screen view.
+		 *
+		 * Filters the Marionette view used to render the active tab's content
+		 * area inside the template library popup. External modules (e.g. Pro)
+		 * can return a different view class to render their tab in React or
+		 * any other framework, while the popup chrome (header, tabs) stays
+		 * shared.
+		 *
+		 * @param function defaultViewClass The default `TemplateLibraryCollectionView`.
+		 * @param object   context          `{ tabId, collection }` for the active screen.
+		 */
+		const ViewClass = elementor.hooks.applyFilters(
+			'elementor/template-library/screen-view',
+			TemplateLibraryCollectionView,
+			{ tabId, collection: templatesCollection },
+		);
+
+		this.modalContent.show( new ViewClass( {
 			collection: templatesCollection,
 		} ) );
 

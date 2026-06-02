@@ -121,7 +121,10 @@ export default class Component extends ComponentModalBase {
 	}
 
 	onDocumentLoaded( document ) {
-		this.setDefaultRoute( document.config.remoteLibrary.default_route );
+		// Demo: force the Components tab as the default landing route in the
+		// template library popup. Restore `document.config.remoteLibrary.default_route`
+		// here when the demo is done.
+		this.setDefaultRoute( 'templates/components' );
 
 		this.maybeOpenLibrary();
 	}
