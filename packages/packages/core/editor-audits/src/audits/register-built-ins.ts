@@ -1,6 +1,7 @@
 import { registerAudit } from '../registry';
 import { type AuditDescriptor, type AuditEvaluator } from '../types';
 import * as defaultDesignSystem from './default-design-system';
+import * as deprecatedWidgets from './deprecated-widgets';
 import * as headingStructure from './heading-structure';
 import * as iconWidgetLinkMissingAriaLabel from './icon-widget-link-missing-aria-label';
 import * as imageCarouselDefaultName from './image-carousel-default-name';
@@ -21,6 +22,7 @@ const AUDITS_LIST: Array< { descriptor: AuditDescriptor; evaluator: AuditEvaluat
 	missingExcerpt,
 	missingFeaturedImage,
 	usesSectionsOrColumns,
+	deprecatedWidgets,
 	defaultDesignSystem,
 	headingStructure,
 	imagesMissingAlt,
