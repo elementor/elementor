@@ -92,6 +92,39 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await expect( gridOutline ).toHaveCount( 0 );
 	} );
 
+	test( 'Grid outline renders dashed cell perimeters when a gap is applied', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 4 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 3 );
+
+		const columnGapInput = page.locator( 'input[aria-label="Column gap"]' ).first();
+		await columnGapInput.fill( '20' );
+		await columnGapInput.blur();
+
+		await editor.publishPage();
+		await page.reload();
+		await editor.waitForPanelToLoad();
+
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+		await expect( gridOutline.locator( 'svg rect' ).first() ).toBeVisible();
+		await expect( gridOutline.locator( 'svg line' ) ).toHaveCount( 0 );
+		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3-with-gap.png' );
+	} );
+
 	test( 'Grid outline updates live when columns, rows, and breakpoint change', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
