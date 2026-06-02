@@ -249,7 +249,7 @@ describe( 'getUpdatedValues — overridable shape mismatch on restore', () => {
 	} );
 } );
 
-describe( 'getUpdatedValues — nested object relative dependencies', () => {
+describe( 'getUpdatedValues — nested object dependencies', () => {
 	const ELEMENT_ID = 'el-1';
 
 	const objectProp = ( shape: PropsSchema, key = 'loop-query' ) => ( {
@@ -273,23 +273,31 @@ describe( 'getUpdatedValues — nested object relative dependencies', () => {
 			key: 'source',
 			dependencies: {
 				relation: 'and',
-				terms: [ { path: [ 'template_type' ], operator: 'eq', value: 'post' } ],
+				terms: [ { path: [ 'query', 'template_type' ], operator: 'eq', value: 'post' } ],
 			},
 		},
 	};
 
-	it( 'preserves nested prop value when dependency uses relative path within parent object', () => {
+	it( 'preserves nested prop value when dependency uses element-level path', () => {
 		// Arrange
 		const propsSchema: PropsSchema = {
 			query: objectProp( queryShape ),
 		};
 
 		const dependencies = [ 'query.source' ];
-		const elementValues = { query: null };
+		const queryWithTemplateType = {
+			$$type: 'loop-query' as const,
+			value: {
+				template_type: str( 'post' ),
+				source: str( 'post' ),
+			},
+		};
+		const elementValues = { query: queryWithTemplateType };
 		const newValues = {
 			query: {
 				$$type: 'loop-query' as const,
 				value: {
+					template_type: str( 'post' ),
 					source: str( 'product' ),
 				},
 			},
@@ -321,11 +329,19 @@ describe( 'getUpdatedValues — nested object relative dependencies', () => {
 		};
 
 		const dependencies = [ 'query.source' ];
-		const elementValues = { query: null };
+		const queryWithTemplateType = {
+			$$type: 'loop-query' as const,
+			value: {
+				template_type: str( 'post' ),
+				source: str( 'post' ),
+			},
+		};
+		const elementValues = { query: queryWithTemplateType };
 		const newValues = {
 			query: {
 				$$type: 'loop-query' as const,
 				value: {
+					template_type: str( 'post' ),
 					source: str( 'product' ),
 				},
 			},
@@ -338,7 +354,7 @@ describe( 'getUpdatedValues — nested object relative dependencies', () => {
 		expect( result.query ).toEqual( newValues.query );
 	} );
 
-	it( 'still nulls nested prop when relative dependency is genuinely unmet', () => {
+	it( 'still nulls nested prop when element-level dependency is genuinely unmet', () => {
 		// Arrange
 		const propsSchema: PropsSchema = {
 			query: objectProp( {
@@ -351,7 +367,7 @@ describe( 'getUpdatedValues — nested object relative dependencies', () => {
 					key: 'selection',
 					dependencies: {
 						relation: 'and',
-						terms: [ { path: [ 'source' ], operator: 'eq', value: 'manual' } ],
+						terms: [ { path: [ 'query', 'source' ], operator: 'eq', value: 'manual' } ],
 					},
 				},
 			} ),

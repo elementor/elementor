@@ -89,12 +89,9 @@ export function getUpdatedValues(
 				return newValues;
 			}
 
-			const previousDependencySettings = getDependencyEvaluationSettings( propsSchema, elementValues, path );
-			const dependencySettings = getDependencyEvaluationSettings( propsSchema, combinedValues, path );
-
 			const testDependencies = {
-				previousValues: isDependencyMet( propType.dependencies, previousDependencySettings ),
-				newValues: isDependencyMet( propType.dependencies, dependencySettings ),
+				previousValues: isDependencyMet( propType.dependencies, elementValues ),
+				newValues: isDependencyMet( propType.dependencies, combinedValues ),
 			};
 
 			if ( ! testDependencies.newValues.isMet ) {
@@ -136,36 +133,6 @@ export function getUpdatedValues(
 	);
 }
 
-function getDependencyEvaluationSettings(
-	propsSchema: PropsSchema,
-	elementValues: Values,
-	propPath: string[]
-): Values {
-	if ( propPath.length <= 1 ) {
-		return elementValues;
-	}
-
-	const parentPath = propPath.slice( 0, -1 );
-	const parentObjectShape = resolveObjectShape( propsSchema, elementValues, parentPath );
-
-	if ( ! parentObjectShape ) {
-		return elementValues;
-	}
-
-	const parentPropValue = extractValue( parentPath, elementValues, [], { unwrapOverridableLeaf: false } );
-	const innerProps =
-		parentPropValue && isTransformable( parentPropValue ) && typeof parentPropValue.value === 'object'
-			? ( parentPropValue.value as Props )
-			: {};
-
-	const innerWithDefaults = getObjectSettingsWithDefaults( parentObjectShape, innerProps );
-
-	return {
-		...elementValues,
-		...innerWithDefaults,
-	};
-}
-
 export function resolveObjectPropType( propType: PropType, value?: PropValue | null ): ObjectPropType | null {
 	if ( propType.kind === 'object' ) {
 		return propType;
@@ -188,19 +155,6 @@ export function resolveObjectPropType( propType: PropType, value?: PropValue | n
 	const objectVariant = Object.values( propType.prop_types ).find( ( candidate ) => candidate.kind === 'object' );
 
 	return objectVariant?.kind === 'object' ? objectVariant : null;
-}
-
-function resolveObjectShape( propsSchema: PropsSchema, elementValues: Values, path: string[] ): PropsSchema | null {
-	const propType = getPropType( propsSchema, elementValues, path );
-
-	if ( ! propType ) {
-		return null;
-	}
-
-	const propValue = extractValue( path, elementValues, [], { unwrapOverridableLeaf: false } );
-	const objectPropType = resolveObjectPropType( propType, propValue );
-
-	return objectPropType?.shape ?? null;
 }
 
 function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ): PropType | null {
