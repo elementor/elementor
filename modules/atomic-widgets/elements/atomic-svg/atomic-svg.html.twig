@@ -1,9 +1,13 @@
 {% import 'elementor/macros' as m %}
-{%- set classes = settings.classes | merge([base_styles.base]) | join(' ') -%}
-{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
-	<{{ settings.link.tag | default('a') | e('html_tag') }}{{ m.render_link_attributes(settings.link) }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- set content_classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
+{%- if has_link -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}{{ m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
+	><span class="{{ content_classes }}"
+		{{- m.render_custom_attributes(settings) -%}
+	>{{ settings.svg.html | raw }}</span></{{ settings.link.tag | default('a') | e('html_tag') }}>
 {%- else -%}
-	<div class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
-		{{- m.render_custom_attributes(settings) }}>{{ settings.svg.html | raw }}</div>
+	<div class="{{ content_classes }}" data-interaction-id="{{ interaction_id }}"
+		{{- m.render_custom_attributes(settings) -%}
+	>{{ settings.svg.html | raw }}</div>
 {%- endif -%}

@@ -25,6 +25,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	use Has_Template;
 
 	const BASE_STYLE_KEY = 'base';
+	const LINK_BASE_STYLE_KEY = 'link-base';
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
 	const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
@@ -92,6 +93,14 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		] );
 
 		return [
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'display', 'inherit' )
+						->add_prop( 'width', 'fit-content' )
+						->add_prop( 'cursor', 'pointer' )
+				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
