@@ -43,6 +43,7 @@ class Test_Module extends TestCase {
 		$inline = wp_scripts()->get_data( 'elementor-v2-editor-audits', 'data' );
 		$this->assertIsString( $inline );
 		$this->assertStringContainsString( 'window.elementorAudits', $inline );
-		$this->assertStringContainsString( '"audits"', $inline );
+		$this->assertStringContainsString( '"restNamespace"', $inline );
+		$this->assertStringNotContainsString( '"audits"', $inline );
 	}
 }
