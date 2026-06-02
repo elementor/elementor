@@ -147,6 +147,76 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		} );
 	} );
 
+	test( 'Grid outline grows when a child creates a new implicit row', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 2 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 1 );
+
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+
+		const cells = gridOutline.locator( 'svg rect' );
+		const countCells = async () => cells.count();
+
+		await expect.poll( countCells ).toBeGreaterThan( 0 );
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+
+		await editor.selectElement( gridId );
+		const baseline = await countCells();
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+		await editor.selectElement( gridId );
+
+		await expect.poll( countCells ).toBeGreaterThan( baseline );
+	} );
+
+	test( 'Grid outline updates when a child resizes a row track', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 1 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 1 );
+
+		const childId = await editor.addElement( { elType: 'e-div-block' }, gridId );
+
+		await editor.selectElement( gridId );
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+		const cell = gridOutline.locator( 'svg rect' ).last();
+		const readHeight = async () => Number( await cell.getAttribute( 'height' ) );
+
+		await expect.poll( readHeight ).toBeGreaterThan( 0 );
+		const initialHeight = await readHeight();
+
+		await editor.selectElement( childId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Size' );
+		await editor.v4Panel.style.setSizeSectionValue( 'Height', 240, 'px' );
+
+		await editor.selectElement( gridId );
+		await expect.poll( readHeight ).toBeGreaterThan( initialHeight );
+	} );
+
 	test( 'Grid layout with content renders in editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
