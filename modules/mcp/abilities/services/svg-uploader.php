@@ -21,8 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Returns the new attachment id, or null when sanitization fails / the SVG
  * sanitizer is unavailable. Never throws — callers fall back to the placeholder.
+ *
+ * Uploads are deduplicated by a content hash of the sanitized markup (stored in
+ * the {@see self::HASH_META_KEY} post meta): re-saving the same SVG returns the
+ * existing attachment instead of spamming the media library.
  */
 class Svg_Uploader {
+
+	const HASH_META_KEY = '_elementor_mcp_svg_hash';
 
 	public static function make(): self {
 		return new self();
@@ -41,6 +47,13 @@ class Svg_Uploader {
 		$sanitized = ( new Svg_Sanitizer() )->sanitize( $markup );
 		if ( false === $sanitized || '' === trim( $sanitized ) ) {
 			return null;
+		}
+
+		$hash = md5( $sanitized );
+
+		$existing = $this->find_existing_by_hash( $hash );
+		if ( null !== $existing ) {
+			return $existing;
 		}
 
 		$filename = $this->build_filename( $sanitized, $title );
@@ -75,8 +88,33 @@ class Svg_Uploader {
 		}
 
 		update_post_meta( $attachment_id, Svg::META_KEY, $sanitized );
+		update_post_meta( $attachment_id, self::HASH_META_KEY, $hash );
 
 		return $attachment_id;
+	}
+
+	private function find_existing_by_hash( string $hash ): ?int {
+		$ids = get_posts(
+			[
+				'post_type' => 'attachment',
+				'post_status' => 'inherit',
+				'post_mime_type' => 'image/svg+xml',
+				'posts_per_page' => 1,
+				'fields' => 'ids',
+				'no_found_rows' => true,
+				'meta_key' => self::HASH_META_KEY,
+				'meta_value' => $hash,
+			]
+		);
+
+		if ( empty( $ids ) ) {
+			return null;
+		}
+
+		$id = (int) $ids[0];
+		$path = get_attached_file( $id );
+
+		return ( $path && file_exists( $path ) ) ? $id : null;
 	}
 
 	private function build_filename( string $sanitized, string $title ): string {

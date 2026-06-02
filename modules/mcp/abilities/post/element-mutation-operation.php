@@ -7,7 +7,7 @@ use Elementor\Modules\Mcp\Abilities\Services\Element_Style_Patcher;
 use Elementor\Modules\Mcp\Abilities\Services\Element_Tree;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Context;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Response;
-use Elementor\Modules\Mcp\Abilities\Services\Svg_Uploader;
+use Elementor\Modules\Mcp\Abilities\Services\Svg_Source_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,6 +36,8 @@ class Element_Mutation_Operation extends Post_Operation {
 	private const VALID_MODES = [ 'update', 'add_classes', 'remove_classes' ];
 
 	private string $mode;
+
+	private array $patch_warnings = [];
 
 	public function __construct( string $mode ) {
 		if ( ! in_array( $mode, self::VALID_MODES, true ) ) {
@@ -92,7 +94,7 @@ class Element_Mutation_Operation extends Post_Operation {
 			return $result;
 		}
 
-		[ $patched_node, $unconverted_css, $deltas ] = $result;
+		[ $patched_node, $unconverted_css, $deltas, $warnings ] = $result;
 
 		$new_tree = Element_Tree::replace_at_path( $tree, $path, $patched_node );
 
@@ -115,7 +117,9 @@ class Element_Mutation_Operation extends Post_Operation {
 
 		$envelope = Post_Response::with_patched_element( $envelope, $authoritative_node );
 
-		return Post_Response::with_unconverted_css( $envelope, $unconverted_css );
+		$envelope = Post_Response::with_unconverted_css( $envelope, $unconverted_css );
+
+		return Post_Response::with_warnings( $envelope, $warnings );
 	}
 
 	private function operation_name(): string {
@@ -146,7 +150,7 @@ class Element_Mutation_Operation extends Post_Operation {
 	}
 
 	/**
-	 * @return array{0: array, 1: array, 2: array}|\WP_Error [ patched_node, unconverted_css, deltas ]
+	 * @return array{0: array, 1: array, 2: array, 3: array}|\WP_Error [ patched_node, unconverted_css, deltas, warnings ]
 	 */
 	private function apply_update( array $node, array $input ) {
 		$patch = isset( $input['patch'] ) && is_array( $input['patch'] ) ? $input['patch'] : null;
@@ -158,6 +162,8 @@ class Element_Mutation_Operation extends Post_Operation {
 				[ 'status' => \WP_Http::BAD_REQUEST ]
 			);
 		}
+
+		$this->patch_warnings = [];
 
 		$widget_type = $this->resolve_widget_type( $node );
 
@@ -187,7 +193,7 @@ class Element_Mutation_Operation extends Post_Operation {
 			$deltas['style_id'] = $style_id;
 		}
 
-		return [ $node, $unconverted_css, $deltas ];
+		return [ $node, $unconverted_css, $deltas, $this->patch_warnings ];
 	}
 
 	/**
@@ -276,7 +282,11 @@ class Element_Mutation_Operation extends Post_Operation {
 				break;
 
 			case 'e-svg':
-				$svg_value = $this->build_svg_patch_value( $patch );
+				$svg_resolver = Svg_Source_Resolver::make();
+				$svg_value = $svg_resolver->resolve( $patch, 'patch' );
+				foreach ( $svg_resolver->get_warnings() as $warning ) {
+					$this->patch_warnings[] = $warning;
+				}
 				if ( null !== $svg_value ) {
 					$node['settings']['svg'] = [
 						'$$type' => 'svg-src',
@@ -284,6 +294,7 @@ class Element_Mutation_Operation extends Post_Operation {
 					];
 					$changed[] = 'svg';
 				}
+				$this->warn_legacy_link_keys_in_patch( $patch );
 				if ( array_key_exists( 'link_url', $patch ) ) {
 					$url = Element_Spec_Resolver::sanitize_button_url( $patch['link_url'] );
 					if ( null !== $url ) {
@@ -321,41 +332,33 @@ class Element_Mutation_Operation extends Post_Operation {
 	}
 
 	/**
-	 * Build a `svg-src` value from patch fields, or null when no source key is present
-	 * (so the existing source is left untouched). Precedence mirrors the create path:
-	 * svg_id → svg_url → svg_markup (sanitized + sideloaded into the media library).
-	 *
-	 * @return array{id: ?array, url: ?array}|null
+	 * On an svg patch, the link is set via link_url / link_target_blank; the legacy
+	 * url / target_blank keys (still accepted on button patches) are ignored. Mirror
+	 * the create-path warning so agents are told to rename.
 	 */
-	private function build_svg_patch_value( array $patch ): ?array {
-		if ( isset( $patch['svg_id'] ) && is_numeric( $patch['svg_id'] ) && (int) $patch['svg_id'] > 0 ) {
-			return [
-				'id' => [ '$$type' => 'image-attachment-id', 'value' => (int) $patch['svg_id'] ],
-				'url' => null,
-			];
+	private function warn_legacy_link_keys_in_patch( array $patch ): void {
+		$legacy = [];
+		if ( array_key_exists( 'url', $patch ) ) {
+			$legacy['url'] = 'link_url';
+		}
+		if ( array_key_exists( 'target_blank', $patch ) ) {
+			$legacy['target_blank'] = 'link_target_blank';
+		}
+		if ( empty( $legacy ) ) {
+			return;
 		}
 
-		if ( isset( $patch['svg_url'] ) && is_string( $patch['svg_url'] ) ) {
-			$url = esc_url_raw( trim( $patch['svg_url'] ), [ 'http', 'https' ] );
-			if ( '' !== $url ) {
-				return [
-					'id' => null,
-					'url' => [ '$$type' => 'url', 'value' => $url ],
-				];
-			}
+		$renames = [];
+		foreach ( $legacy as $old => $new ) {
+			$renames[] = $old . ' → ' . $new;
 		}
 
-		if ( isset( $patch['svg_markup'] ) && is_string( $patch['svg_markup'] ) && '' !== trim( $patch['svg_markup'] ) ) {
-			$attachment_id = Svg_Uploader::make()->upload_inline( $patch['svg_markup'] );
-			if ( null !== $attachment_id ) {
-				return [
-					'id' => [ '$$type' => 'image-attachment-id', 'value' => $attachment_id ],
-					'url' => null,
-				];
-			}
-		}
-
-		return null;
+		$this->patch_warnings[] = [
+			'reason' => 'legacy_link_keys_ignored',
+			'path' => 'patch',
+			'keys' => array_keys( $legacy ),
+			'hint' => 'Rename: ' . implode( ', ', $renames ) . '. On an svg element use link_url / link_target_blank; the legacy url / target_blank fields were ignored.',
+		];
 	}
 
 	private function resolve_widget_type( array $node ): string {
@@ -369,7 +372,7 @@ class Element_Mutation_Operation extends Post_Operation {
 	}
 
 	/**
-	 * @return array{0: array, 1: array, 2: array}|\WP_Error
+	 * @return array{0: array, 1: array, 2: array, 3: array}|\WP_Error
 	 */
 	private function apply_add_classes( array $node, array $input ) {
 		$new = $this->require_classes_input( $input );
@@ -382,11 +385,11 @@ class Element_Mutation_Operation extends Post_Operation {
 
 		$this->write_classes( $node, $result );
 
-		return [ $node, [], [ 'classes' => $result ] ];
+		return [ $node, [], [ 'classes' => $result ], [] ];
 	}
 
 	/**
-	 * @return array{0: array, 1: array, 2: array}|\WP_Error
+	 * @return array{0: array, 1: array, 2: array, 3: array}|\WP_Error
 	 */
 	private function apply_remove_classes( array $node, array $input ) {
 		$to_remove = $this->require_classes_input( $input );
@@ -411,7 +414,7 @@ class Element_Mutation_Operation extends Post_Operation {
 
 		$this->write_classes( $node, $result );
 
-		return [ $node, [], [ 'classes' => $result ] ];
+		return [ $node, [], [ 'classes' => $result ], [] ];
 	}
 
 	/**
