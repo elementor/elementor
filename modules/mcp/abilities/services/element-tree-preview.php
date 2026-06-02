@@ -100,6 +100,14 @@ class Element_Tree_Preview {
 					$parts[] = '→ ' . self::truncate( $url, self::URL_LIMIT );
 				}
 				break;
+
+			case 'e-svg':
+				$parts[] = self::svg_summary( $settings['svg'] ?? null );
+				$url = self::link_destination( $settings['link'] ?? null );
+				if ( '' !== $url ) {
+					$parts[] = '→ ' . self::truncate( $url, self::URL_LIMIT );
+				}
+				break;
 		}
 
 		$classes = self::classes_summary( $settings['classes'] ?? null );
@@ -182,6 +190,25 @@ class Element_Tree_Preview {
 		}
 
 		return empty( $bits ) ? '(no src)' : implode( ' ', $bits );
+	}
+
+	private static function svg_summary( $envelope ): string {
+		if ( ! is_array( $envelope ) || ! isset( $envelope['value'] ) ) {
+			return '(no src)';
+		}
+
+		$value = $envelope['value'];
+		$id_value = $value['id']['value'] ?? null;
+		if ( is_numeric( $id_value ) && (int) $id_value > 0 ) {
+			return '#' . (int) $id_value;
+		}
+
+		$url_value = $value['url']['value'] ?? null;
+		if ( is_string( $url_value ) && '' !== $url_value ) {
+			return self::truncate( $url_value, self::URL_LIMIT );
+		}
+
+		return '(no src)';
 	}
 
 	private static function classes_summary( $envelope ): string {

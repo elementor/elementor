@@ -30,6 +30,7 @@ class Base_Styles_Reset {
 		'e-paragraph' => '',
 		'e-button' => 'text-align: left; padding-block-start: 0; padding-block-end: 0; padding-inline-start: 0; padding-inline-end: 0; border-radius: 0; background-color: transparent;',
 		'e-image' => '',
+		'e-svg' => '',
 	];
 
 	public static function has_resets_for( string $el_type ): bool {

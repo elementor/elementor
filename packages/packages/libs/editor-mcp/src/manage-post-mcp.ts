@@ -33,7 +33,9 @@ const ELEMENT_SCOPED_OPS = new Set< string >( [ 'update_element', 'add_classes',
 const INSTRUCTIONS = `Build, update, and write content for Elementor v4 pages via the manage-post ability.
 - create | update | replace_content | append_content | update_element | add_classes | remove_classes | trash | restore | delete
 - elements: plain JSON nodes ({ widget, text?, tag?, url?, css?, classes?, children? })
-- dry_run is honored only for create/replace_content/append_content
+- widgets: container | div | flexbox | heading | paragraph | button | image | svg
+- svg nodes: svg_id (attachment id) | svg_url | svg_markup (inline <svg>…</svg>, sanitized + uploaded to the media library on save); optional link_url / link_target_blank
+- dry_run is honored only for create/replace_content/append_content (inline svg_markup is uploaded only on a real save, not on dry_run)
 - element-scoped ops (update_element / add_classes / remove_classes) take element_id + small payload; when the targeted post is the one currently open in the editor, the canvas updates surgically with no document reload
 `;
 

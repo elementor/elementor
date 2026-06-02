@@ -54,7 +54,12 @@ class Element_Spec_Resolver {
 		'image' => 'e-image',
 		'img' => 'e-image',
 		'e-image' => 'e-image',
+		'svg' => 'e-svg',
+		'e-svg' => 'e-svg',
+		'icon' => 'e-svg',
 	];
+
+	private const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . 'images/default-svg.svg';
 
 	private const CONTAINER_TYPES = [ 'e-flexbox', 'e-div-block' ];
 
@@ -64,8 +69,20 @@ class Element_Spec_Resolver {
 
 	private array $warnings = [];
 
-	public static function make(): self {
-		return new self();
+	private bool $dry_run;
+
+	public function __construct( bool $dry_run = false ) {
+		$this->dry_run = $dry_run;
+	}
+
+	/**
+	 * @param bool $dry_run When true, side-effectful resolution (e.g. sideloading
+	 *                      inline SVG markup into the media library) is skipped so a
+	 *                      dry-run never writes attachments. A warning is emitted in
+	 *                      its place.
+	 */
+	public static function make( bool $dry_run = false ): self {
+		return new self( $dry_run );
 	}
 
 	public function resolve( array $elements, string $path = 'elements' ): array {
@@ -237,6 +254,19 @@ class Element_Spec_Resolver {
 					$built['settings']['link'] = $link;
 				}
 				break;
+
+			case 'e-svg':
+				$built['settings']['svg'] = [
+					'$$type' => 'svg-src',
+					'value' => $this->build_svg_src( $node, $path ),
+				];
+
+				$this->warn_legacy_link_keys( $node, $path );
+				$link = self::build_link( $node );
+				if ( null !== $link ) {
+					$built['settings']['link'] = $link;
+				}
+				break;
 		}
 	}
 
@@ -368,6 +398,109 @@ class Element_Spec_Resolver {
 				'value' => Placeholder_Image::get_placeholder_image(),
 			],
 			'alt' => $alt_envelope,
+		];
+	}
+
+	private const SVG_ID_ALIASES = [ 'svg_id', 'attachment_id', 'media_id' ];
+	private const SVG_URL_ALIASES = [ 'svg_url', 'src' ];
+	private const SVG_MARKUP_ALIASES = [ 'svg_markup', 'svg_content', 'svg_inline' ];
+
+	/**
+	 * Resolve an e-svg node's source to a `svg-src` value envelope.
+	 *
+	 * Precedence: svg_id (+ aliases) → svg_url (+ aliases) → svg_markup (inline
+	 * markup, sanitized and sideloaded into the media library). The prop type
+	 * requires at least one of id / url, so an unresolved source falls back to
+	 * Elementor's default SVG and emits a `svg_source_unresolved` warning.
+	 *
+	 * Inline upload is skipped on dry runs (it would write an attachment); a
+	 * `svg_inline_upload_skipped_dry_run` warning is returned instead so the agent
+	 * knows the markup will be uploaded on a real save.
+	 */
+	private function build_svg_src( array $node, string $path ): array {
+		$source_keys_seen = [];
+
+		foreach ( self::SVG_ID_ALIASES as $key ) {
+			if ( ! isset( $node[ $key ] ) ) {
+				continue;
+			}
+			$source_keys_seen[] = $key;
+			if ( is_numeric( $node[ $key ] ) && (int) $node[ $key ] > 0 ) {
+				return self::svg_src_from_id( (int) $node[ $key ] );
+			}
+		}
+
+		foreach ( self::SVG_URL_ALIASES as $key ) {
+			if ( ! isset( $node[ $key ] ) ) {
+				continue;
+			}
+			$source_keys_seen[] = $key;
+			$url = self::sanitize_image_url( $node[ $key ] );
+			if ( null !== $url ) {
+				return self::svg_src_from_url( $url );
+			}
+		}
+
+		foreach ( self::SVG_MARKUP_ALIASES as $key ) {
+			if ( ! isset( $node[ $key ] ) || ! is_string( $node[ $key ] ) || '' === trim( $node[ $key ] ) ) {
+				continue;
+			}
+			$source_keys_seen[] = $key;
+
+			if ( $this->dry_run ) {
+				$this->warnings[] = [
+					'reason' => 'svg_inline_upload_skipped_dry_run',
+					'path' => $path,
+					'keys' => [ $key ],
+					'hint' => 'Inline SVG markup is sideloaded into the media library only on a real save; the default SVG is shown in this dry-run preview. Re-run without dry_run to upload.',
+				];
+				return self::svg_src_from_url( self::DEFAULT_SVG_URL );
+			}
+
+			$title = isset( $node['alt'] ) && is_string( $node['alt'] ) ? trim( $node['alt'] ) : '';
+			$attachment_id = Svg_Uploader::make()->upload_inline( $node[ $key ], $title );
+			if ( null !== $attachment_id ) {
+				return self::svg_src_from_id( $attachment_id );
+			}
+
+			$this->warnings[] = [
+				'reason' => 'svg_inline_upload_failed',
+				'path' => $path,
+				'keys' => [ $key ],
+				'hint' => 'Inline SVG markup could not be sanitized or uploaded (it may contain disallowed content, or the server lacks DOMDocument/SimpleXMLElement); the default SVG was used. Provide svg_id or svg_url instead.',
+			];
+			return self::svg_src_from_url( self::DEFAULT_SVG_URL );
+		}
+
+		if ( ! empty( $source_keys_seen ) ) {
+			$this->warnings[] = [
+				'reason' => 'svg_source_unresolved',
+				'path' => $path,
+				'keys' => array_values( array_unique( $source_keys_seen ) ),
+				'hint' => 'SVG source keys were present but none resolved; the default SVG was used. Use svg_id (positive integer attachment id), svg_url (http/https to an .svg), or svg_markup (inline <svg>…</svg> to upload). Aliases: attachment_id, media_id (for id); src (for url); svg_content, svg_inline (for markup).',
+			];
+		}
+
+		return self::svg_src_from_url( self::DEFAULT_SVG_URL );
+	}
+
+	private static function svg_src_from_id( int $attachment_id ): array {
+		return [
+			'id' => [
+				'$$type' => 'image-attachment-id',
+				'value' => $attachment_id,
+			],
+			'url' => null,
+		];
+	}
+
+	private static function svg_src_from_url( string $url ): array {
+		return [
+			'id' => null,
+			'url' => [
+				'$$type' => 'url',
+				'value' => $url,
+			],
 		];
 	}
 

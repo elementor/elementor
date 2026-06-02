@@ -40,7 +40,7 @@ class Create_Post_Operation extends Post_Operation {
 		$warnings = [];
 
 		if ( $transformer ) {
-			$resolver = Element_Spec_Resolver::make();
+			$resolver = Element_Spec_Resolver::make( ! empty( $input['dry_run'] ) );
 			$resolved = $resolver->resolve( $input['elements'] );
 			$unresolved_error = Post_Response::unresolved_error( $resolver->get_unresolved() );
 			if ( $unresolved_error ) {

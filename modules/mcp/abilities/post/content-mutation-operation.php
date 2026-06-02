@@ -45,7 +45,7 @@ class Content_Mutation_Operation extends Post_Operation {
 		}
 
 		$transformer = Element_Css_Transformer::make();
-		$resolver = Element_Spec_Resolver::make();
+		$resolver = Element_Spec_Resolver::make( ! empty( $input['dry_run'] ) );
 		$resolved = $resolver->resolve( $input['elements'] );
 		$unresolved_error = Post_Response::unresolved_error( $resolver->get_unresolved() );
 		if ( $unresolved_error ) {

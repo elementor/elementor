@@ -101,7 +101,7 @@ class Post_Response {
 			'unresolved_elements',
 			sprintf(
 				/* translators: 1: list of unresolved element problems, 2: supported widget names. */
-				__( 'Could not resolve %1$d element(s): %2$s. Use one of: container | div | flex | heading | paragraph | button | image (or the e- prefixed equivalents: e-div-block | e-flexbox | e-heading | e-paragraph | e-button | e-image).', 'elementor' ),
+				__( 'Could not resolve %1$d element(s): %2$s. Use one of: container | div | flex | heading | paragraph | button | image | svg (or the e- prefixed equivalents: e-div-block | e-flexbox | e-heading | e-paragraph | e-button | e-image | e-svg).', 'elementor' ),
 				count( $unresolved ),
 				implode( '; ', $details )
 			),

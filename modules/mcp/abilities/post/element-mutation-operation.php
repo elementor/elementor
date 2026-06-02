@@ -7,6 +7,7 @@ use Elementor\Modules\Mcp\Abilities\Services\Element_Style_Patcher;
 use Elementor\Modules\Mcp\Abilities\Services\Element_Tree;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Context;
 use Elementor\Modules\Mcp\Abilities\Services\Post_Response;
+use Elementor\Modules\Mcp\Abilities\Services\Svg_Uploader;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -274,6 +275,36 @@ class Element_Mutation_Operation extends Post_Operation {
 				}
 				break;
 
+			case 'e-svg':
+				$svg_value = $this->build_svg_patch_value( $patch );
+				if ( null !== $svg_value ) {
+					$node['settings']['svg'] = [
+						'$$type' => 'svg-src',
+						'value' => $svg_value,
+					];
+					$changed[] = 'svg';
+				}
+				if ( array_key_exists( 'link_url', $patch ) ) {
+					$url = Element_Spec_Resolver::sanitize_button_url( $patch['link_url'] );
+					if ( null !== $url ) {
+						$node['settings']['link'] = [
+							'$$type' => 'link',
+							'value' => [
+								'destination' => [
+									'$$type' => 'url',
+									'value' => $url,
+								],
+								'isTargetBlank' => [
+									'$$type' => 'boolean',
+									'value' => ! empty( $patch['link_target_blank'] ),
+								],
+							],
+						];
+						$changed[] = 'link';
+					}
+				}
+				break;
+
 			default:
 				// Containers and unknown widget types: only `tag` is applied.
 				if ( is_string( $tag ) && '' !== $tag ) {
@@ -287,6 +318,44 @@ class Element_Mutation_Operation extends Post_Operation {
 		}
 
 		return $changed;
+	}
+
+	/**
+	 * Build a `svg-src` value from patch fields, or null when no source key is present
+	 * (so the existing source is left untouched). Precedence mirrors the create path:
+	 * svg_id → svg_url → svg_markup (sanitized + sideloaded into the media library).
+	 *
+	 * @return array{id: ?array, url: ?array}|null
+	 */
+	private function build_svg_patch_value( array $patch ): ?array {
+		if ( isset( $patch['svg_id'] ) && is_numeric( $patch['svg_id'] ) && (int) $patch['svg_id'] > 0 ) {
+			return [
+				'id' => [ '$$type' => 'image-attachment-id', 'value' => (int) $patch['svg_id'] ],
+				'url' => null,
+			];
+		}
+
+		if ( isset( $patch['svg_url'] ) && is_string( $patch['svg_url'] ) ) {
+			$url = esc_url_raw( trim( $patch['svg_url'] ), [ 'http', 'https' ] );
+			if ( '' !== $url ) {
+				return [
+					'id' => null,
+					'url' => [ '$$type' => 'url', 'value' => $url ],
+				];
+			}
+		}
+
+		if ( isset( $patch['svg_markup'] ) && is_string( $patch['svg_markup'] ) && '' !== trim( $patch['svg_markup'] ) ) {
+			$attachment_id = Svg_Uploader::make()->upload_inline( $patch['svg_markup'] );
+			if ( null !== $attachment_id ) {
+				return [
+					'id' => [ '$$type' => 'image-attachment-id', 'value' => $attachment_id ],
+					'url' => null,
+				];
+			}
+		}
+
+		return null;
 	}
 
 	private function resolve_widget_type( array $node ): string {
