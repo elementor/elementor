@@ -5,7 +5,14 @@ import { type AuditViolation } from '../types';
 declare global {
 	interface Window {
 		elementor?: {
-			getContainer?: ( id: string ) => unknown;
+			getContainer?: ( id: string ) => {
+				view?: {
+					getDomElement?: () => unknown;
+				};
+			} | null;
+			helpers?: {
+				scrollToView?: ( element: unknown, timeout?: number ) => void;
+			};
 		};
 	}
 }
@@ -23,6 +30,12 @@ export function useViolationFocus() {
 
 				if ( container ) {
 					runCommand( 'document/elements/select', { container } );
+
+					const domElement = container.view?.getDomElement?.();
+
+					if ( domElement ) {
+						window.elementor?.helpers?.scrollToView?.( domElement, 200 );
+					}
 				}
 
 				if ( violation.targetHint === 'element-settings' ) {
