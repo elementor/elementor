@@ -53,7 +53,12 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				</Typography>
 			</Box>
 			<Box sx={ { p: 1 } }>
-				<StatusSection label={ __( 'Failed audits', 'elementor' ) } count={ totalViolations } defaultExpanded>
+				<StatusSection
+					label={ __( 'Failed audits', 'elementor' ) }
+					count={ totalViolations }
+					color="error"
+					defaultExpanded
+				>
 					{ failed.map( ( r ) => (
 						<ViolationRow
 							key={ r.descriptor.id }
@@ -62,7 +67,7 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 						/>
 					) ) }
 				</StatusSection>
-				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length }>
+				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">
 					{ passed.map( ( r ) => (
 						<ViolationRow key={ r.descriptor.id } descriptor={ r.descriptor } />
 					) ) }
