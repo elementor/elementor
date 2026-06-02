@@ -37,9 +37,8 @@ export default function StatusSection( { label, count, defaultExpanded = false, 
 					/>
 				</IconButton>
 				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ label }
+					{ label } ({ count })
 				</Typography>
-				<Chip size="small" label={ count } />
 			</Box>
 			<Collapse in={ expanded }>
 				<Box sx={ { paddingInlineStart: 3 } }>{ children }</Box>
