@@ -29,6 +29,68 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$this->assets_config_provider = $assets_config_provider;
 	}
 
+	private function scripts_source_map() {
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
+
+		return [
+			'ace' => [
+				'src' => 'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
+				'deps' => [],
+				'ver' => '1.43.2',
+			],
+
+			'ace-language-tools' => [
+				'src' => 'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
+				'deps' => [ 'ace' ],
+				'ver' => '1.43.2',
+			],
+
+			'pickr' => [
+				'src' => "{$assets_url}lib/pickr/pickr.min.js",
+				'deps' => [],
+				'ver' => '1.8.2',
+			],
+
+			'flatpickr' => [
+				'src' => "{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
+				'deps' => [ 'jquery' ],
+				'ver' => '4.6.13',
+			],
+		];
+	}
+
+	private function styles_source_map() {
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
+
+		return [
+			'font-awesome' => [
+				'src' => "{$assets_url}lib/font-awesome/css/font-awesome{$min_suffix}.css",
+				'deps' => [],
+				'ver' => '4.7.0',
+			],
+
+			'elementor-select2' => [
+				'src' => "{$assets_url}lib/e-select2/css/e-select2{$min_suffix}.css",
+				'deps' => [],
+				'ver' => '4.0.6-rc.1',
+			],
+
+			'pickr' => [
+				'src' => "{$assets_url}lib/pickr/themes/monolith.min.css",
+				'deps' => [],
+				'ver' => '1.8.2',
+			],
+
+			'flatpickr' => [
+				'src' => "{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.css",
+				'deps' => [],
+				'ver' => '4.6.13',
+			],
+		];
+	}
+
 	/**
 	 * @return void
 	 */
@@ -93,30 +155,6 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		);
 
 		wp_register_script(
-			'flatpickr',
-			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.js",
-			[ 'jquery' ],
-			'4.6.13',
-			true
-		);
-
-		wp_register_script(
-			'ace',
-			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ace.min.js',
-			[],
-			'1.43.2',
-			true
-		);
-
-		wp_register_script(
-			'ace-language-tools',
-			'https://cdn.jsdelivr.net/npm/ace-builds@1.43.2/src-min-noconflict/ext-language_tools.js',
-			[ 'ace' ],
-			'1.43.2',
-			true
-		);
-
-		wp_register_script(
 			'jquery-hover-intent',
 			"{$assets_url}lib/jquery-hover-intent/jquery-hover-intent{$min_suffix}.js",
 			[],
@@ -132,13 +170,28 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			true
 		);
 
-		wp_register_script(
-			'pickr',
-			"{$assets_url}lib/pickr/pickr.min.js",
-			[],
-			'1.8.2',
-			true
-		);
+		$source_map = $this->scripts_source_map();
+
+		foreach ( $source_map as $handle => $script ) {
+			wp_register_script(
+				$handle,
+				$script['src'],
+				$script['deps'],
+				$script['ver'],
+				true
+			);
+		}
+
+		add_action( 'elementor/assets-manager/register_scripts', function( $assets ) use ( $source_map ) {
+			foreach ( $source_map as $handle => $script ) {
+				$assets->append(
+					$handle,
+					$script['src'],
+					$script['deps'],
+					$script['ver']
+				);
+			}
+		} );
 
 		wp_register_script(
 			'elementor-editor',
@@ -198,39 +251,33 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		$direction_suffix = $this->config->get( 'direction_suffix' );
 
 		wp_register_style(
-			'font-awesome',
-			"{$assets_url}lib/font-awesome/css/font-awesome{$min_suffix}.css",
-			[],
-			'4.7.0'
-		);
-
-		wp_register_style(
-			'elementor-select2',
-			"{$assets_url}lib/e-select2/css/e-select2{$min_suffix}.css",
-			[],
-			'4.0.6-rc.1'
-		);
-
-		wp_register_style(
 			'google-font-roboto',
 			'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
 			[],
 			ELEMENTOR_VERSION
 		);
 
-		wp_register_style(
-			'flatpickr',
-			"{$assets_url}lib/flatpickr/flatpickr{$min_suffix}.css",
-			[],
-			'4.6.13'
-		);
+		$source_map = $this->styles_source_map();
 
-		wp_register_style(
-			'pickr',
-			"{$assets_url}lib/pickr/themes/monolith.min.css",
-			[],
-			'1.8.2'
-		);
+		foreach ( $source_map as $handle => $style ) {
+			wp_register_style(
+				$handle,
+				$style['src'],
+				$style['deps'],
+				$style['ver']
+			);
+		}
+
+		add_action( 'elementor/assets-manager/register_styles', function( $assets ) use ( $source_map ) {
+			foreach ( $source_map as $handle => $style ) {
+				$assets->append(
+					$handle,
+					$style['src'],
+					$style['deps'],
+					$style['ver']
+				);
+			}
+		} );
 
 		wp_register_style(
 			'elementor-editor',
