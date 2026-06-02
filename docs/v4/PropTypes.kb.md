@@ -5,7 +5,7 @@ domain: elementor-v4
 audience: agents
 scope: [PHP modules/atomic-widgets, packages/libs/editor-props, editor-editing-panel/dynamics, editor-canvas/mcp]
 related_rules: [.cursor/rules/core-development.mdc, .cursor/rules/graphify.mdc]
-last_reviewed: 2026-05-28
+last_reviewed: 2026-06-02
 annotations:
   - "prop-types" here means Elementor atomic $$type/value props — NOT the React npm package "prop-types".
   - Dynamic prop values = live/context data via Elementor dynamic tags (post title, featured image URL, etc.), not literals or globals.
@@ -31,16 +31,14 @@ annotations:
 
 ```
 PropType
-  → propTypeToLlmJsonSchema()        # base schema + LLM schema dialect adapters + cleanup
+  → propTypeToLlmJsonSchema()        # tree walk; adapter toDialectSchema + final cleanup
   → [styles resource only] enrichWithIntention()   # adds required $intention string; NOT in converter
 
 LLM wire payload
   → validateLlmJson(propType, wire)  # jsonschema against LLM schema
   → validateLlmSemantic()            # stub today (always valid)
-  → propValuesFromLlm() / Schema.propFromLlm
-        → LLMDialectAdapter.toPropValue()   # bindTo, size flatten, …
-        → adjustLlmPropValueSchema()        # transitional: forceKey, globals transformers, strip $intention
-  → persist PropValue
+  → propFromLlm() / propValuesFromLlm()   # tree walk; adapter toPropValue
+  → persist canonical PropValue
 ```
 
 **Important:** MCP gates (`validate-input.ts`, `do-update-element-property.ts`, global-classes MCP) validate **LLM wire** with `validateLlmJson`. They do **not** call `validatePropValue` on agent input before conversion.
@@ -49,8 +47,7 @@ LLM wire payload
 
 ```
 stored PropValue
-  → propValuesToLlm() / Schema.propToLlm
-  → LLMDialectAdapter.toDialectValue() tree walk (flat size, bindTo expansion, …)
+  → propToLlm() / propValuesToLlm()   # tree walk; adapter toDialectValue
 ```
 
 ---
@@ -119,80 +116,28 @@ Tag catalog for LLM bindTo resolution: `atomicDynamicTags.tags` — wired into d
 
 ---
 
-## LLM dialect (`llm-dialect/` + `props-to-llm-schema.ts`)
+## LLM dialect (`llm-dialect/`)
 
-### Entry points
+**Purpose:** bridge the complex canonical PropType/PropValue model with a simple, LLM-friendly JSON shape. The dialect is a synchronous, bidirectional, pure tree walk over the PropType. Each concern is one **adapter** that can optionally:
 
-| API | Role |
-|-----|------|
-| `propTypeToJsonSchema(propType)` | Canonical PropValue JSON Schema; used by `validatePropValue` |
-| `propTypeToLlmJsonSchema(propType, context?)` | Same walk + `LLMDialectAdapter.toDialectSchema` + schema cleanup |
-| `initLlmDialect()` | Registers adapters once; called from editor-canvas init + `ensureLlmDialect()` on demand |
+- `toDialectSchema` — reshape the JSON schema the agent sees.
+- `toPropValue` — convert inbound LLM JSON → canonical PropValue.
+- `toDialectValue` — convert stored PropValue → LLM JSON.
 
-Base conversion still **skips** `dynamic` and `overridable` union members when a dialect adapter is active (`convertUnionPropType` in `props-to-llm-schema.ts`).
+**Entry point:** `initLlmDialect()` (`llm-dialect/init.ts`) registers the built-in adapters once (called from editor-canvas init; `ensureLlmDialect()` on demand). Public surface is the `Schema.*` facade in `editor-props/src/index.ts` — `propTypeToLlmJsonSchema`, `propFromLlm`, `propToLlm`, `validateLlmJson`.
 
-### Registry design (`llm-prop-schema.ts`)
+Adapters live under `llm-dialect/adapters/` (one per concern: dynamic, html-v3, image-src, overridable, size), each gated by a `matches(ctx)` predicate on the PropType. They run in registration order, then a final cleanup pass simplifies the schema. **To add or change behavior, add/extend an adapter** — do not special-case the walk or callers.
 
-Two extension mechanisms:
-
-1. **Schema dialect adapters** — `registerSchemaDialect({ id, matches(propType), toDialectSchema })`
-   - Matched by **predicate** on `PropType`, not only `$$type` key.
-   - Composed in registration order; **`registerSchemaCleanup` runs last** (unwrap single-branch `oneOf`/`anyOf`, merge descriptions only).
-
-2. **Value adapters**
-   - **Global chain** — `registerGlobalValueAdapter` (e.g. `bindTo` ↔ `dynamic`).
-   - **Per-`$$type` chain** — `register('size', …)`.
-
-Init order (`llm-dialect/init.ts`): **dynamic → html-v3 → size → cleanup**.
-
-### Registered dialects (current)
-
-| ID | Trigger | Schema effect | Value effect |
-|----|---------|---------------|--------------|
-| `union-dynamic` | Union includes `dynamic` | Adds optional `bindTo` on static `anyOf` branches when `allowBindTo: true` (root only; nested unions pass `allowBindTo: false`) | Global: `bindTo` string → `$$type: dynamic` with fallback; `dynamic` → dialect with `bindTo` |
-| `html-v3` | `propType.key === 'html-v3'` | Strips `dynamic` from nested `content` union; no `bindTo` on nested unions | Fallback shape helpers in `html-v3-dynamic-fallback.ts` (used from dynamic adapter) |
-| `size` | `key` is `size` or `grid-track-size` | Flattens inner `value` to `{ unit, size }` (flat primitives in schema) | `canonicalizeSizePropValue`: flat LLM ↔ nested canonical storage |
-| *(cleanup)* | Always last | Unwraps single-branch combinators | — |
-
-### `bindTo` (Idea C)
-
-Agent wire:
-
-```json
-{ "$$type": "string", "value": "Hello", "bindTo": "post-title" }
-```
-
-→ `toPropValue` → stored `{ "$$type": "dynamic", "value": { "name", "group", "settings": { "fallback": … } } }`.
-
-Outbound `propToLlm` expands `dynamic` back to static branch + `bindTo`.
-
-### Size shape mismatch (intentional)
-
-- **Canonical PropValue** (storage): nested transformables inside `value.unit` / `value.size`.
-- **LLM dialect**: flat `{ unit: "px", size: 16 }` inside `value`.
-- Adapters + `size-canonical-shape.ts` convert at the boundary. Do not validate LLM flat size with canonical schema.
+Agent-facing shapes (see checklist): bindable props use `bindTo` on the static branch (converted to `$$type: dynamic` on write, expanded back on read); `size` is flat `{ unit, size }`.
 
 ### `enrichWithIntention` / `$intention` (styles only)
 
-- **`enrichWithIntention(schema, text)`** — caller-only; used on **per-category styles MCP resource** after `propTypeToLlmJsonSchema`. Adds required top-level `$intention` string (“Desired CSS in format property: value;”).
-- **Not** part of `propTypeToLlmJsonSchema` or widget schemas.
-- **`$intention` is not a stored prop.** Stripped in `adjustLlmPropValueSchema` before persist.
-- **Build-compositions recovery:** if style props fail `validateLlmJson` but `$intention` is present, `CompositionBuilder` merges `$intention` CSS with explicit `customCSS` param and writes once as `custom_css`. **`configure-element` and other explicit `custom_css` writes replace stored CSS** (default `customCssWriteMode: 'replace'` in `doUpdateElementProperty`).
-
-### `adjustLlmPropValueSchema` — transitional (still called)
-
-Runs **after** `LLMDialectAdapter.toPropValue` inside `propValuesFromLlm`. Still handles:
-
-- Strip `$intention`
-- `forceKey` disambiguation
-- Global variable transformers (`globalVariablesLLMResolvers`)
-- Residual size/html-v3 paths overlapping dialect adapters
-
-**Do not add new behavior here** — register schema/value adapters instead. Remove when MCP paths no longer depend on it.
+- **`enrichWithIntention(schema, text)`** — caller-only; used on the **per-category styles MCP resource** after `propTypeToLlmJsonSchema`. Adds a required top-level `$intention` string. Not part of the dialect or widget schemas, and not a stored prop.
+- **Build-compositions recovery:** if style props fail `validateLlmJson` but `$intention` is present, `CompositionBuilder` merges `$intention` CSS with the explicit `customCSS` param and writes once as `custom_css`. Explicit `custom_css` writes replace stored CSS (default `customCssWriteMode: 'replace'` in `doUpdateElementProperty`).
 
 ### `validateLlmSemantic`
 
-Exported and wired in API; **implementation is a stub** (always `{ valid: true }`). Reserved for post-JSON checks (e.g. bindTo tag exists, semantic CSS).
+Exported and wired in the API; **implementation is a stub** (always `{ valid: true }`). Reserved for post-JSON checks (e.g. bindTo tag exists, semantic CSS).
 
 ---
 
@@ -266,7 +211,7 @@ stored PropValue → propToLlm → MCP response / get-element-config
 4. **Validate agent input** with `validateLlmJson` + LLM schema resources — **not** `validatePropValue` on wire payloads.
 5. **Size / html-v3:** use dialect shapes from MCP schema; expect conversion on `propFromLlm`.
 6. **Styles `$intention`:** describe fallback CSS when structured props may fail; may land in `custom_css` after build-compositions recovery.
-7. **New dialect features:** `registerSchemaDialect` / `register` / `registerGlobalValueAdapter` in `llm-dialect/` — not union-loop hacks or `adjust`.
+7. **New dialect features:** add or extend an adapter under `llm-dialect/adapters/` (registered in `register-built-in-adapters.ts`) — not union-loop hacks or walk/caller special-casing.
 8. **Tests:** `packages/packages/libs/editor-props/src/llm-dialect/__tests__/`; editor-canvas MCP utils tests.
 
 ---
@@ -276,21 +221,18 @@ stored PropValue → propToLlm → MCP response / get-element-config
 ```
 packages/packages/libs/editor-props/src/
   utils/props-to-llm-schema.ts       # propTypeToJsonSchema / propTypeToLlmJsonSchema, enrichWithIntention
-  utils/prop-values-from-llm.ts      # propValuesFromLlm
-  utils/prop-values-to-llm.ts        # propValuesToLlm
-  utils/adjust-llm-prop-value-schema.ts   # transitional post-conversion
+  utils/prop-values-from-llm.ts      # propValuesFromLlm (toProp tree walk)
+  utils/prop-values-to-llm.ts        # propValuesToLlm (toDialect tree walk)
   utils/validate-prop-value.ts       # canonical validation (not LLM wire)
   llm-dialect/
-    llm-prop-schema.ts               # LLMDialectAdapter registry
-    init.ts                          # initLlmDialect registration order
+    init.ts                          # initLlmDialect — entry point
+    register-built-in-adapters.ts    # registration order
+    registry.ts                      # PropDialectAdapter contract + apply/finalize
+    walk.ts                          # PropType tree walk (both directions)
     validate-llm-dialect.ts          # validateLlmJson, validateLlmSemantic (stub)
-    register-dynamic-prop-type-llm-dialect-adapter.ts
-    register-html-v3-llm-dialect-adapter.ts
-    register-size-llm-dialect-adapter.ts
-    cleanup-llm-json-schema.ts
-    size-canonical-shape.ts
-    html-v3-dynamic-fallback.ts
-    dynamic-tag-metadata-registry.ts
+    cleanup-llm-json-schema.ts       # final schema simplify pass
+    dynamic-tag-metadata-registry.ts # bindTo tag catalog
+    adapters/                        # dynamic, html-v3, image-src, overridable, size
 
 packages/packages/core/editor-canvas/src/
   init.tsx                           # initLlmDialect + MCP
