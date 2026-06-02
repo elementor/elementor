@@ -76,7 +76,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 								role="button"
 								tabIndex={ 0 }
 								onClick={ () => focus( violation ) }
-								onKeyDown={ ( event ) => {
+								onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
 									if ( event.key === 'Enter' || event.key === ' ' ) {
 										focus( violation );
 									}

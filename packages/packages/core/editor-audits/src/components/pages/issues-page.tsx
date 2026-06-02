@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
 import { countSeveritiesForCategory } from '../../lib/severity-counts';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import IssuesCategoryRow from '../issues-category-row';
@@ -10,16 +11,6 @@ type Props = {
 	report: PageAuditReport;
 	onCategoryClick: ( category: AuditCategory ) => void;
 };
-
-const CATEGORY_LABELS: Record< AuditCategory, string > = {
-	health: __( 'Health', 'elementor' ),
-	seo: __( 'SEO', 'elementor' ),
-	accessibility: __( 'Accessibility', 'elementor' ),
-	performance: __( 'Performance', 'elementor' ),
-	compliance: __( 'Compliance', 'elementor' ),
-};
-
-const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 export default function IssuesPage( { report, onCategoryClick }: Props ) {
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );

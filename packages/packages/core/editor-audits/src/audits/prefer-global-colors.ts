@@ -17,7 +17,7 @@ export const descriptor: AuditDescriptor = {
 
 export const evaluator: AuditEvaluator = ( ctx ) => {
 	if ( ctx.kit.globals.colors.length === 0 ) {
-		return { status: 'skipped', reason: 'no-kit-globals' };
+		return { status: 'skipped', reason: 'no globals' };
 	}
 
 	const violations: AuditViolation[] = [];

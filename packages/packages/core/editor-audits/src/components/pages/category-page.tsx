@@ -3,6 +3,7 @@ import { ArrowLeftIcon } from '@elementor/icons';
 import { Box, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CATEGORY_LABELS } from '../../constants';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import { CATEGORY_ICONS } from '../category-icons';
 import StatusSection from '../status-section';
@@ -12,14 +13,6 @@ type Props = {
 	category: AuditCategory;
 	report: PageAuditReport;
 	onBack: () => void;
-};
-
-const CATEGORY_LABELS: Record< AuditCategory, string > = {
-	health: __( 'Health', 'elementor' ),
-	seo: __( 'SEO', 'elementor' ),
-	accessibility: __( 'Accessibility', 'elementor' ),
-	performance: __( 'Performance', 'elementor' ),
-	compliance: __( 'Compliance', 'elementor' ),
 };
 
 export default function CategoryPage( { category, report, onBack }: Props ) {

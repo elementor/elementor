@@ -5,14 +5,7 @@ import { extractAttachmentIds } from './lib/attachment-ids';
 import { buildSnapshotTree } from './lib/v1-snapshot';
 import { getRegistered } from './registry';
 import { computeReport } from './score/score';
-import {
-	type AuditContext,
-	type AuditDescriptor,
-	type AuditResult,
-	type ElementsModelSnapshot,
-	type KitSnapshot,
-	type PageAuditReport,
-} from './types';
+import { type AuditContext, type ElementsModelSnapshot, type KitSnapshot, type PageAuditReport } from './types';
 
 export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
 	const tree = buildSnapshotTree( getElements() );
@@ -25,19 +18,17 @@ export async function runPageAudit( documentId: number ): Promise< PageAuditRepo
 	const ctx: AuditContext = { documentId, elements, pageContext, kit };
 	const registered = getRegistered();
 
-	const auditResults: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [];
-
-	for ( const { descriptor, evaluator } of registered ) {
-		try {
-			const result = await Promise.resolve( evaluator( ctx ) );
-			auditResults.push( { descriptor, result } );
-		} catch ( error ) {
-			auditResults.push( {
-				descriptor,
-				result: { status: 'skipped', reason: error instanceof Error ? error.message : 'unknown-error' },
-			} );
-		}
-	}
+	const auditResults = await Promise.all(
+		registered.map( async ( { descriptor, evaluator } ) => {
+			try {
+				const result = await Promise.resolve( evaluator( ctx ) );
+				return { descriptor, result };
+			} catch ( error ) {
+				const reason = error instanceof Error ? error.message : 'unknown-error';
+				return { descriptor, result: { status: 'skipped' as const, reason } };
+			}
+		} )
+	);
 
 	return computeReport( documentId, auditResults );
 }

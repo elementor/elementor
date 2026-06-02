@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import ScoreBar from '../score-bar';
 
@@ -12,16 +13,6 @@ type Props = {
 
 const GOOD_THRESHOLD = 90;
 const OK_THRESHOLD = 50;
-
-const CATEGORY_LABELS: Record< AuditCategory, string > = {
-	health: __( 'Health', 'elementor' ),
-	seo: __( 'SEO', 'elementor' ),
-	accessibility: __( 'Accessibility', 'elementor' ),
-	performance: __( 'Performance', 'elementor' ),
-	compliance: __( 'Compliance', 'elementor' ),
-};
-
-const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 function overallStatusLabel( score: number ): string {
 	if ( score >= GOOD_THRESHOLD ) {

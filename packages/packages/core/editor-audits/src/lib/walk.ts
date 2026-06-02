@@ -1,14 +1,17 @@
 import { type ElementSnapshotNode } from '../types';
 
-export type WalkVisitor = ( node: ElementSnapshotNode, parents: ElementSnapshotNode[] ) => void;
+export type WalkVisitor = ( node: ElementSnapshotNode, parents: readonly ElementSnapshotNode[] ) => void;
 
 export function walkElements( tree: ElementSnapshotNode[], visit: WalkVisitor ): void {
-	recurse( tree, [], visit );
+	const parents: ElementSnapshotNode[] = [];
+	recurse( tree, parents, visit );
 }
 
 function recurse( nodes: ElementSnapshotNode[], parents: ElementSnapshotNode[], visit: WalkVisitor ): void {
 	for ( const node of nodes ) {
 		visit( node, parents );
-		recurse( node.elements, [ ...parents, node ], visit );
+		parents.push( node );
+		recurse( node.elements, parents, visit );
+		parents.pop();
 	}
 }
