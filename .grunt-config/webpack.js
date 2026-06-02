@@ -124,6 +124,7 @@ const entry = {
 	'interactions-shared-utils': path.resolve( __dirname, '../modules/interactions/assets/js/interactions-shared-utils.js' ),
 	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
 	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
+	'interactions-poc-editor': path.resolve( __dirname, '../modules/interactions-poc/assets/js/editor.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/loader/v1/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-loader-v2.js' ),
