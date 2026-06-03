@@ -13,12 +13,10 @@ class Birthday_Promotion_Actions {
 	const SET_CTA_VISITED_AJAX_ACTION = 'birthday_easter_egg_set_cta_visited';
 	const VISITED_PARAM = 'visited';
 
-	public function __construct() {
-		add_action( 'elementor/ajax/register_actions', fn( Ajax $ajax ) => $this->register_ajax_actions( $ajax ) );
-	}
-
-	private function register_ajax_actions( Ajax $ajax ): void {
-		$ajax->register_ajax_action( self::SET_CTA_VISITED_AJAX_ACTION, fn( $data ) => $this->ajax_set_cta_visited( $data ) );
+	public function register_ajax_actions(): void {
+		add_action( 'elementor/ajax/register_actions', function( Ajax $ajax ) {
+			$ajax->register_ajax_action( self::SET_CTA_VISITED_AJAX_ACTION, fn( $data ) => $this->ajax_set_cta_visited( $data ) );
+	 } );
 	}
 
 	

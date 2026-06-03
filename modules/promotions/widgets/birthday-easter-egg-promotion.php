@@ -26,6 +26,10 @@ class Birthday_Easter_Egg_Promotion {
 	public function __construct( $force_request_assets = false ) {
 		$this->init_data( $force_request_assets );
 		$this->birthday_promotion_actions = new Birthday_Promotion_Actions();
+
+		if ( $this->should_show_promotion() ) {
+			$this->birthday_promotion_actions->register_ajax_actions();
+		}
 	}
 
 	public function register(): void {
