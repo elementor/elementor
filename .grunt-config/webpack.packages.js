@@ -126,6 +126,26 @@ const devConfig = {
 		// Faster rebuilds and stacks that line up with TypeScript; output is larger than the previous minimized dev bundles.
 		minimize: false,
 	},
+	module: {
+		...devCommon.module,
+		rules: devCommon.module.rules.map( ( rule ) => {
+			if ( rule.use?.loader !== 'babel-loader' ) {
+				return rule;
+			}
+			return {
+				...rule,
+				use: {
+					...rule.use,
+					options: {
+						...rule.use.options,
+						plugins: [
+							[ '@emotion/babel-plugin', { autoLabel: 'dev-only', labelFormat: '[local]' } ],
+						],
+					},
+				},
+			};
+		} ),
+	},
 	output: {
 		...( devCommon.output || {} ),
 		filename: '[name]/[name].js',

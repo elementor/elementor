@@ -176,6 +176,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( $content_controls ),
 			...$email_controls,
 			Section::make()

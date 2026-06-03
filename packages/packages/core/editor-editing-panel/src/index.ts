@@ -1,5 +1,6 @@
 export { type ValidationEvent, type ValidationResult } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
+export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
@@ -27,6 +28,7 @@ export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
+export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';

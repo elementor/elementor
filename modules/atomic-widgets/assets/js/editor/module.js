@@ -21,12 +21,20 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicElements() {
-		elementor.elementsManager.registerElementType( createDivBlockType() );
-		elementor.elementsManager.registerElementType( createFlexboxType() );
+		this.registerAtomicElementTypeIfAbsent( createDivBlockType() );
+		this.registerAtomicElementTypeIfAbsent( createFlexboxType() );
 
 		if ( elementorCommon.config.experimentalFeatures?.e_css_grid ) {
-			elementor.elementsManager.registerElementType( createGridType() );
+			this.registerAtomicElementTypeIfAbsent( createGridType() );
 		}
+	}
+
+	registerAtomicElementTypeIfAbsent( elementType ) {
+		if ( elementor.elementsManager.getElementTypeClass( elementType.getType() ) ) {
+			return;
+		}
+
+		elementor.elementsManager.registerElementType( elementType );
 	}
 }
 
