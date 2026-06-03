@@ -3,11 +3,11 @@ import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		new BlockBirthdayEasterEggDrop().register();
-
 		if ( ! this.hasPromotionWidgets() && ! this.hasIntegrationWidgets() ) {
 			return;
 		}
+
+		new BlockBirthdayEasterEggDrop().register();
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
