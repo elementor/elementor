@@ -81,6 +81,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			setCurrentTab( tab );
 			persistDesignSystemTab( tab );
 			notifyDesignSystemTabChange( tab );
+			trackDesignSystemTabOpened( tab );
 		};
 
 		window.addEventListener( EVENT_SET_TAB, handler as EventListener );
