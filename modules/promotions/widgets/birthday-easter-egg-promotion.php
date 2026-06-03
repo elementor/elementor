@@ -33,15 +33,15 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	public function register(): void {
+		if ( ! $this->should_show_promotion() ) {
+			return;
+		}
+
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_promotion_data( $settings ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn() => $this->maybe_enqueue_app() );
 	}
 
 	private function add_promotion_data( array $settings ): array {
-		if ( ! $this->should_show_promotion() ) {
-			return $settings;
-		}
-
 		$settings['birthdayEasterEggWidgets'] = $this->get_widgets();
 		$settings['birthdayEasterEggModal'] = $this->get_modal_config();
 
@@ -49,10 +49,6 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function maybe_enqueue_app(): void {
-		if ( ! $this->should_show_promotion() ) {
-			return;
-		}
-
 		$this->register_package();
 		wp_enqueue_script( self::SCRIPT_HANDLE );
 		wp_set_script_translations( self::SCRIPT_HANDLE, 'elementor' );
@@ -179,10 +175,6 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function is_promotion_time(): bool {
-		if ( ! $this->has_valid_assets() ) {
-			return false;
-		}
-
 		try {
 			$utc = new \DateTimeZone( 'UTC' );
 			$start = ( new \DateTimeImmutable( $this->data['time_frame']['start'], $utc ) )->getTimestamp();
