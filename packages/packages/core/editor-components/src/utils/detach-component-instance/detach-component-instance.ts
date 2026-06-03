@@ -1,4 +1,11 @@
-import { getContainer, replaceElement, type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
+import { doAfterRender } from '@elementor/editor-canvas';
+import {
+	getContainer,
+	replaceElement,
+	selectElement,
+	type V1Element,
+	type V1ElementModelProps,
+} from '@elementor/editor-elements';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -82,6 +89,8 @@ export async function detachComponentInstance( {
 
 				const actionId = new Date().getTime();
 
+				// We should fire the event *before* replacing the element, so it will happen before delete event is fired.
+				// As we do overridable props cleanup for both events.
 				window.dispatchEvent(
 					new CustomEvent( DETACH_EVENT, {
 						detail: {
@@ -96,6 +105,8 @@ export async function detachComponentInstance( {
 					newElement: detachedInstanceElementData,
 					withHistory: false,
 				} );
+
+				selectElement( detachedElement.id );
 
 				const componentUid = selectComponent( getState(), componentId )?.uid;
 				trackComponentEvent( {
@@ -131,6 +142,11 @@ export async function detachComponentInstance( {
 					} )
 				);
 
+				// Wait for the instance to be restored
+				doAfterRender( [ restoredInstance.id ], () => {
+					selectElement( restoredInstance.id );
+				} );
+
 				return restoredInstance;
 			},
 			redo: ( _: undefined, doReturn: DoReturn, restoredInstance: V1Element ) => {
@@ -150,6 +166,8 @@ export async function detachComponentInstance( {
 						} as RedoDetachEventData,
 					} )
 				);
+
+				selectElement( detachedElement.id );
 
 				return {
 					...doReturn,
