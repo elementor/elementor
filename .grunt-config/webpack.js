@@ -75,6 +75,17 @@ const frontendRulesPresets = [ [
 
 const frontendModuleRules = getModuleRules( frontendRulesPresets );
 
+const qunitEntries = {
+	'vendors-redux': path.resolve( __dirname, '../core/common/assets/js/vendors-redux.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
+	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
+	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
+	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
+	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
+	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+};
+
 const entry = {
 	'editor': [
 		path.resolve( __dirname, '../assets/dev/js/editor/utils/jquery-serialize-object.js' ),
@@ -98,7 +109,6 @@ const entry = {
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'admin-modules': path.resolve( __dirname, '../assets/dev/js/admin/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
-	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'checklist': path.resolve( __dirname, '../modules/checklist/assets/js/editor.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
@@ -145,6 +155,7 @@ const entry = {
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
 	'design-system-sync': path.resolve( __dirname, '../modules/design-system-sync/assets/js/design-system-sync-handler.js' ),
+	'assets-manager': path.resolve( __dirname, '../modules/assets-manager/assets/js/assets-manager.js' ),
 };
 
 const frontendEntries = {
@@ -394,11 +405,27 @@ const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
 	return { ...config, watch: true };
 } );
 
+const webpackQunitConfig = {
+	...devSharedConfig,
+	watch: false,
+	output: {
+		...devSharedConfig.output,
+		uniqueName: baseOutputUniqueName,
+	},
+	module: moduleRules,
+	plugins: [
+		...plugins,
+	],
+	name: 'qunit',
+	entry: qunitEntries,
+};
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
+	qunit: webpackQunitConfig,
 };
 
 module.exports = gruntWebpackConfig;
