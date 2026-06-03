@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
+import { loadExistingClasses } from '../../load-existing-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 import { useSearchAndFilters } from '../search-and-filter/context';
@@ -133,7 +134,7 @@ export const GlobalClassesList = ( {
 									<ClassItem
 										id={ cssClass.id }
 										label={ cssClass.label }
-										renameClass={ ( newLabel: string ) => {
+										renameClass={ async ( newLabel: string ) => {
 											trackGlobalClasses( {
 												event: 'classRenamed',
 												classId: cssClass.id,
@@ -141,6 +142,7 @@ export const GlobalClassesList = ( {
 												newValue: newLabel,
 												source: 'class-manager',
 											} );
+											await loadExistingClasses( [ cssClass.id ] );
 											dispatch(
 												slice.actions.update( {
 													style: {
