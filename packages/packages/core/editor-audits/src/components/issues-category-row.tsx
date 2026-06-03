@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
-import { Box, Typography } from '@elementor/ui';
+import { Box, Rotate, Typography, useTheme } from '@elementor/ui';
 
 import { type AuditCategory } from '../types';
 import { CATEGORY_ICONS } from './category-icons';
@@ -16,6 +16,7 @@ type Props = {
 };
 
 export default function IssuesCategoryRow( { category, label, errorCount, warningCount, infoCount, onClick }: Props ) {
+	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
 
 	return (
@@ -73,7 +74,9 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 					</Box>
 				) }
 			</Box>
-			<ChevronRightIcon fontSize="small" color="action" />
+			<Rotate in={ isRtl }>
+				<ChevronRightIcon fontSize="small" color="action" />
+			</Rotate>
 		</Box>
 	);
 }

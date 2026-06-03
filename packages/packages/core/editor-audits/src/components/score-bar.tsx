@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
-import { Box, LinearProgress, Typography } from '@elementor/ui';
+import { Box, LinearProgress, Rotate, Typography, useTheme } from '@elementor/ui';
 
 type Props = {
 	label: string;
@@ -24,6 +24,8 @@ function colorFor( score: number ): 'success' | 'warning' | 'error' {
 }
 
 export default function ScoreBar( { label, score, onClick }: Props ) {
+	const isRtl = 'rtl' === useTheme().direction;
+
 	return (
 		<Box
 			role={ onClick ? 'button' : undefined }
@@ -60,7 +62,11 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 			>
 				{ score }
 			</Typography>
-			{ onClick && <ChevronRightIcon fontSize="small" color="action" /> }
+			{ onClick && (
+				<Rotate in={ isRtl }>
+					<ChevronRightIcon fontSize="small" color="action" />
+				</Rotate>
+			) }
 		</Box>
 	);
 }

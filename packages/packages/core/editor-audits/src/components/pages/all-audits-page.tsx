@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowLeftIcon } from '@elementor/icons';
-import { Box, IconButton, Typography } from '@elementor/ui';
+import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type PageAuditReport } from '../../types';
@@ -13,6 +13,7 @@ type Props = {
 };
 
 export default function AllAuditsPage( { report, onBack }: Props ) {
+	const isRtl = 'rtl' === useTheme().direction;
 	const failed = report.auditResults.filter( ( r ) => r.result.status === 'fail' );
 	const passed = report.auditResults.filter( ( r ) => r.result.status === 'pass' );
 	const skipped = report.auditResults.filter( ( r ) => r.result.status === 'skipped' );
@@ -33,7 +34,9 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 				} }
 			>
 				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back to all issues', 'elementor' ) }>
-					<ArrowLeftIcon fontSize="small" />
+					<Rotate in={ isRtl }>
+						<ArrowLeftIcon fontSize="small" />
+					</Rotate>
 				</IconButton>
 				<Typography variant="subtitle2" fontWeight="bold">
 					{ __( 'All audits', 'elementor' ) }

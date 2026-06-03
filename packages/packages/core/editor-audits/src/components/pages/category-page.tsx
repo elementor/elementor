@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ArrowLeftIcon } from '@elementor/icons';
-import { Box, IconButton, Typography } from '@elementor/ui';
+import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { CATEGORY_LABELS } from '../../constants';
@@ -16,6 +16,7 @@ type Props = {
 };
 
 export default function CategoryPage( { category, report, onBack }: Props ) {
+	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
 	const inCategory = report.auditResults.filter( ( r ) => r.descriptor.categories.includes( category ) );
 	const failed = inCategory.filter( ( r ) => r.result.status === 'fail' );
@@ -38,7 +39,9 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				} }
 			>
 				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back to all issues', 'elementor' ) }>
-					<ArrowLeftIcon fontSize="small" />
+					<Rotate in={ isRtl }>
+						<ArrowLeftIcon fontSize="small" />
+					</Rotate>
 				</IconButton>
 				<Icon fontSize="small" color="action" />
 				<Typography variant="subtitle2" fontWeight="bold">
