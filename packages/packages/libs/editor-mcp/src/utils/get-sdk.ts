@@ -12,5 +12,6 @@ export const getSDK = () => {
 	if ( ! sdk ) {
 		sdk = new AngieMcpSdk();
 	}
+
 	return sdk;
 };

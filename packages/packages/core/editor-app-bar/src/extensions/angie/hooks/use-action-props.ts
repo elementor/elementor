@@ -23,7 +23,7 @@ export function useActionProps() {
 	}, [ visible ] );
 
 	return {
-		title: __( 'Angie', 'elementor' ),
+		title: __( 'Angie - TEST', 'elementor' ),
 		icon: AngieIcon,
 		onClick: () => {
 			window.dispatchEvent( new CustomEvent( ANGIE_GUIDE_TOGGLE_EVENT ) );
