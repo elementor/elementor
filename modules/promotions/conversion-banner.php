@@ -24,23 +24,31 @@ class Conversion_Banner {
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 
+	private array $placement = [];
+
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
 
 		add_filter( self::HELLO_THEME_CONFIG_FILTER, [ $this, 'suppress_hello_theme_banner' ] );
 
-		add_action( 'current_screen', function () {
-			$placement = $this->get_active_placement();
+		add_action( 'current_screen', [ $this, 'maybe_register_banner_hooks' ] );
+	}
 
-			if ( empty( $placement ) ) {
-				return;
-			}
+	public function maybe_register_banner_hooks(): void {
+		$placement = $this->get_active_placement();
 
-			add_action( 'in_admin_header', [ $this, 'render_banner_container' ], 11 );
-			add_action( 'admin_enqueue_scripts', function () use ( $placement ) {
-				$this->enqueue_assets( $placement );
-			} );
-		} );
+		if ( empty( $placement ) ) {
+			return;
+		}
+
+		$this->placement = $placement;
+
+		add_action( 'in_admin_header', [ $this, 'render_banner_container' ], 11 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_banner_assets' ] );
+	}
+
+	public function enqueue_banner_assets(): void {
+		$this->enqueue_assets( $this->placement );
 	}
 
 	public function render_banner_container(): void {
@@ -52,7 +60,7 @@ class Conversion_Banner {
 	}
 
 	public function suppress_hello_theme_banner( $config ) {
-		if ( ! is_array( $config ) || ! isset( $config['welcome'] ) ) {
+		if ( ! ( is_array( $config ) && isset( $config['welcome'] ) ) ) {
 			return $config;
 		}
 
@@ -66,15 +74,20 @@ class Conversion_Banner {
 	}
 
 	public function ajax_dismiss_banner(): void {
-		check_ajax_referer( self::NONCE_ACTION, 'nonce' );
+		try {
+			check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-		if ( ! $this->is_user_allowed() ) {
-			wp_send_json_error( 'Permission denied', 403 );
+			if ( ! $this->is_user_allowed() ) {
+				wp_send_json_error( 'Permission denied', 403 );
+			}
+
+			User::set_introduction_viewed( [ 'introductionKey' => self::DISMISS_KEY ] );
+
+			wp_send_json_success();
+
+		} catch ( \Exception $e ) {
+			wp_send_json_error( 'Failed to dismiss banner', 500 );
 		}
-
-		User::set_introduction_viewed( [ 'introductionKey' => self::DISMISS_KEY ] );
-
-		wp_send_json_success();
 	}
 
 	private function enqueue_assets( array $placement ): void {
@@ -187,7 +200,7 @@ class Conversion_Banner {
 	}
 
 	private function get_active_placement(): array {
-		if ( ! $this->is_user_allowed() || ! $this->should_display() ) {
+		if ( ! ( $this->is_user_allowed() && $this->should_display() ) ) {
 			return [];
 		}
 
