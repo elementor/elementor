@@ -2,10 +2,10 @@
 
 namespace Elementor\Modules\Promotions\Widgets;
 
-use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Promotions\Data\Birthday_Promotion_Actions;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,42 +16,21 @@ class Birthday_Easter_Egg_Promotion {
 	const WIDGET_NAME = 'e-birthday-easter-egg';
 	const PACKAGE_NAME = 'birthday-easter-egg-modal';
 	const SCRIPT_HANDLE = 'elementor-v2-birthday-easter-egg-modal';
-	const CTA_VISITED_KEY = '_elementor_10th_bday_cta_visited';
-	const SET_CTA_VISITED_AJAX_ACTION = 'birthday_easter_egg_set_cta_visited';
-	const VISITED_PARAM = 'visited';
+	const LOTTIE_DATA_TRANSIENT_KEY = '_elementor_10th_bday_lottie_data';
 
 	private EditorAssetsAPI $editor_assets_api;
+	private Birthday_Promotion_Actions $birthday_promotion_actions;
 	private array $data = [];
 	private ?array $lottie_data = null;
 
 	public function __construct( $force_request_assets = false ) {
 		$this->init_data( $force_request_assets );
+		$this->birthday_promotion_actions = new Birthday_Promotion_Actions();
 	}
 
 	public function register(): void {
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_promotion_data( $settings ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn() => $this->maybe_enqueue_app() );
-		add_action( 'elementor/ajax/register_actions', fn( Ajax $ajax ) => $this->register_ajax_actions( $ajax ) );
-	}
-
-	private function register_ajax_actions( Ajax $ajax ): void {
-		if ( ! $this->should_show_promotion() ) {
-			return;
-		}
-
-		$ajax->register_ajax_action( self::SET_CTA_VISITED_AJAX_ACTION, fn( $data ) => $this->ajax_set_cta_visited( $data ) );
-	}
-
-	private function ajax_set_cta_visited( array $data ): array {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_send_json_error( 'Insufficient permissions', 403 );
-		}
-
-		$visited = filter_var( $data[ self::VISITED_PARAM ] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ?? true;
-
-		update_user_meta( get_current_user_id(), self::CTA_VISITED_KEY, $visited ? 1 : 0 );
-
-		return [ self::VISITED_PARAM => $visited ];
 	}
 
 	private function add_promotion_data( array $settings ): array {
@@ -141,12 +120,18 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function get_lottie_data(): ?array {
-		if ( ! isset( $this->data['lottie'] ) ) {
-			return null;
-		}
-
 		if ( $this->lottie_data ) {
 			return $this->lottie_data;
+		}
+
+		$cached = get_transient( self::LOTTIE_DATA_TRANSIENT_KEY );
+
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		if ( ! isset( $this->data['lottie'] ) ) {
+			return null;
 		}
 
 		try {
@@ -156,7 +141,15 @@ class Birthday_Easter_Egg_Promotion {
 				return null;
 			}
 
-			return json_decode( wp_remote_retrieve_body( $response ), true );
+			$data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( ! is_array( $data ) ) {
+				return null;
+			}
+
+			$this->set_lottie_data_transient( $data );
+
+			return $data;
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -172,7 +165,7 @@ class Birthday_Easter_Egg_Promotion {
 		return (
 			$this->has_valid_assets() &&
 			self::is_v4_active() &&
-			! $this->has_visited_cta() &&
+			! $this->birthday_promotion_actions->has_visited_cta() &&
 			$this->is_promotion_time()
 		);
 	}
@@ -199,7 +192,7 @@ class Birthday_Easter_Egg_Promotion {
 		return $now >= $start && $now <= $end;
 	}
 
-	private function has_visited_cta(): bool {
-		return get_user_meta( get_current_user_id(), self::CTA_VISITED_KEY, true ) === '1';
+	private function set_lottie_data_transient( array $value ): bool {
+		return set_transient( self::LOTTIE_DATA_TRANSIENT_KEY, $value, HOUR_IN_SECONDS );
 	}
 }

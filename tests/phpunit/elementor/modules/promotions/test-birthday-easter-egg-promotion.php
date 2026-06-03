@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions;
 
+use Elementor\Modules\Promotions\Data\Birthday_Promotion_Actions;
 use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -27,6 +28,15 @@ class Testable_Birthday_Easter_Egg_Promotion extends Birthday_Easter_Egg_Promoti
 
 	public function call_private( string $method, array $args = [] ) {
 		$reflection = new \ReflectionMethod( Birthday_Easter_Egg_Promotion::class, $method );
+		$reflection->setAccessible( true );
+
+		return $reflection->invokeArgs( $this, $args );
+	}
+}
+
+class Testable_Birthday_Promotion_Actions extends Birthday_Promotion_Actions {
+	public function call_private( string $method, array $args = [] ) {
+		$reflection = new \ReflectionMethod( Birthday_Promotion_Actions::class, $method );
 		$reflection->setAccessible( true );
 
 		return $reflection->invokeArgs( $this, $args );
@@ -87,67 +97,15 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		$this->assertFalse( $promotion->call_private( 'has_valid_assets' ) );
 	}
 
-	public function test_has_visited_cta__returns_true_only_for_strict_string_one() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
+	public function test_get_lottie_data__returns_cached_transient_without_fetch() {
+		$lottie = [ 'v' => '5.7.0', 'fr' => 30 ];
+		set_transient( Birthday_Easter_Egg_Promotion::LOTTIE_DATA_TRANSIENT_KEY, $lottie, HOUR_IN_SECONDS );
 
-		$promotion = new Testable_Birthday_Easter_Egg_Promotion();
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion( self::VALID_DATA, null );
 
-		update_user_meta( $user_id, Birthday_Easter_Egg_Promotion::CTA_VISITED_KEY, 1 );
-		$this->assertTrue( $promotion->call_private( 'has_visited_cta' ) );
+		$this->assertSame( $lottie, $promotion->call_private( 'get_lottie_data' ) );
 
-		update_user_meta( $user_id, Birthday_Easter_Egg_Promotion::CTA_VISITED_KEY, 0 );
-		$this->assertFalse( $promotion->call_private( 'has_visited_cta' ) );
-
-		delete_user_meta( $user_id, Birthday_Easter_Egg_Promotion::CTA_VISITED_KEY );
-		$this->assertFalse( $promotion->call_private( 'has_visited_cta' ) );
-	}
-
-	public function test_ajax_set_cta_visited__persists_true_as_one() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
-		$promotion = new Testable_Birthday_Easter_Egg_Promotion();
-		$response = $promotion->call_private(
-			'ajax_set_cta_visited',
-			[ [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => true ] ]
-		);
-
-		$this->assertSame( [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => true ], $response );
-		$this->assertSame( '1', get_user_meta( $user_id, Birthday_Easter_Egg_Promotion::CTA_VISITED_KEY, true ) );
-	}
-
-	public function test_ajax_set_cta_visited__persists_false_as_zero() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
-		$promotion = new Testable_Birthday_Easter_Egg_Promotion();
-		$response = $promotion->call_private(
-			'ajax_set_cta_visited',
-			[ [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => false ] ]
-		);
-
-		$this->assertSame( [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => false ], $response );
-		$this->assertSame( '0', get_user_meta( $user_id, Birthday_Easter_Egg_Promotion::CTA_VISITED_KEY, true ) );
-	}
-
-	public function test_ajax_set_cta_visited__coerces_string_booleans() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
-		$promotion = new Testable_Birthday_Easter_Egg_Promotion();
-
-		$response = $promotion->call_private(
-			'ajax_set_cta_visited',
-			[ [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => 'true' ] ]
-		);
-		$this->assertTrue( $response[ Birthday_Easter_Egg_Promotion::VISITED_PARAM ] );
-
-		$response = $promotion->call_private(
-			'ajax_set_cta_visited',
-			[ [ Birthday_Easter_Egg_Promotion::VISITED_PARAM => '0' ] ]
-		);
-		$this->assertFalse( $response[ Birthday_Easter_Egg_Promotion::VISITED_PARAM ] );
+		delete_transient( Birthday_Easter_Egg_Promotion::LOTTIE_DATA_TRANSIENT_KEY );
 	}
 
 	public function test_get_modal_config__returns_empty_array_when_assets_invalid() {
@@ -166,5 +124,79 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		$this->assertSame( self::VALID_DATA['hero'], $config['hero'] );
 		$this->assertSame( self::VALID_DATA['cta'], $config['cta'] );
 		$this->assertSame( self::VALID_LOTTIE, $config['lottie'] );
+	}
+
+	public function test_has_visited_cta__returns_true_only_for_strict_string_one() {
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+
+		$actions = new Birthday_Promotion_Actions();
+
+		update_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, 1 );
+		$this->assertTrue( $actions->has_visited_cta() );
+
+		update_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, 0 );
+		$this->assertFalse( $actions->has_visited_cta() );
+
+		delete_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY );
+		$this->assertFalse( $actions->has_visited_cta() );
+	}
+
+	public function test_ajax_set_cta_visited__persists_true_as_one() {
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+		$response = $actions->call_private(
+			'ajax_set_cta_visited',
+			[ [ Birthday_Promotion_Actions::VISITED_PARAM => true ] ]
+		);
+
+		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => true ], $response );
+		$this->assertSame( '1', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+	}
+
+	public function test_ajax_set_cta_visited__persists_false_as_zero() {
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+		$response = $actions->call_private(
+			'ajax_set_cta_visited',
+			[ [ Birthday_Promotion_Actions::VISITED_PARAM => false ] ]
+		);
+
+		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => false ], $response );
+		$this->assertSame( '0', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+	}
+
+	public function test_ajax_set_cta_visited__defaults_to_true_when_param_missing() {
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+		$response = $actions->call_private( 'ajax_set_cta_visited', [ [] ] );
+
+		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => true ], $response );
+		$this->assertSame( '1', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+	}
+
+	public function test_ajax_set_cta_visited__coerces_string_booleans() {
+		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $user_id );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+
+		$response = $actions->call_private(
+			'ajax_set_cta_visited',
+			[ [ Birthday_Promotion_Actions::VISITED_PARAM => 'true' ] ]
+		);
+		$this->assertTrue( $response[ Birthday_Promotion_Actions::VISITED_PARAM ] );
+
+		$response = $actions->call_private(
+			'ajax_set_cta_visited',
+			[ [ Birthday_Promotion_Actions::VISITED_PARAM => '0' ] ]
+		);
+		$this->assertFalse( $response[ Birthday_Promotion_Actions::VISITED_PARAM ] );
 	}
 }
