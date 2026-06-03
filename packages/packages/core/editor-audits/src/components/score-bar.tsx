@@ -53,7 +53,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 				variant="determinate"
 				value={ score }
 				color={ colorFor( score ) }
-				sx={ { flex: 1, height: 8, borderRadius: 4 } }
+				sx={ { flex: 1, height: 6, borderRadius: 4, bgcolor: 'action.disabledBackground' } }
 			/>
 			<Typography
 				variant="body2"

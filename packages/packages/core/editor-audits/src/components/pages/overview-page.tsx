@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Typography } from '@elementor/ui';
+import { Box, Chip, type ChipProps, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
@@ -26,34 +26,41 @@ function overallStatusLabel( score: number ): string {
 	return __( 'At risk', 'elementor' );
 }
 
-function overallStatusColor( score: number ): string {
+function overallStatusColor( score: number ): ChipProps[ 'color' ] {
 	if ( score >= GOOD_THRESHOLD ) {
-		return 'success.main';
+		return 'success';
 	}
 
 	if ( score >= OK_THRESHOLD ) {
-		return 'warning.main';
+		return 'warning';
 	}
 
-	return 'error.main';
+	return 'error';
 }
 
 export default function OverviewPage( { report, onCategoryClick }: Props ) {
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
 
 	return (
-		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 3, p: 2 } }>
-			<Box sx={ { display: 'flex', alignItems: 'center', gap: 2 } }>
-				<Typography variant="h2" component="span" sx={ { lineHeight: 1, fontWeight: 700 } }>
+		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 4, p: 2 } }>
+			<Box sx={ { display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 1 } }>
+				<Typography
+					variant="h2"
+					component="span"
+					color="text.primary"
+					sx={ { lineHeight: 1, fontWeight: 700 } }
+				>
 					{ report.overall }
 				</Typography>
-				<Box>
-					<Typography variant="body2" sx={ { color: overallStatusColor( report.overall ), fontWeight: 600 } }>
-						{ overallStatusLabel( report.overall ) }
-					</Typography>
-				</Box>
+				<Chip
+					label={ overallStatusLabel( report.overall ) }
+					color={ overallStatusColor( report.overall ) }
+					variant="standard"
+					size="small"
+					sx={ { fontWeight: 600 } }
+				/>
 			</Box>
-			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 2 } }>
 				{ populatedCategories.map( ( category ) => (
 					<ScoreBar
 						key={ category }
