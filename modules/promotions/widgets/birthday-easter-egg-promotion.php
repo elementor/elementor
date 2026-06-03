@@ -93,7 +93,11 @@ class Birthday_Easter_Egg_Promotion {
 		return $this->has_valid_assets() ? [
 			'header' => $this->data['header'],
 			'content' => $this->data['content'],
-			'hero' => $this->data['hero'],
+			'hero' => esc_url( $this->data['hero'] ),
+			'cta' => [
+				'label' => $this->data['cta']['label'],
+				'url' => esc_url( $this->data['cta']['url'] ),
+			],
 			'cta' => $this->data['cta'],
 			'lottie' => $this->lottie_data,
 		] : [];
