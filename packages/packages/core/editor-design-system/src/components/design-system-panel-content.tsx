@@ -31,12 +31,14 @@ export type DesignSystemPanelContentProps = {
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 
 const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
-	if ( tab === 'classes' ) {
-		trackGlobalClasses( { event: 'classManagerOpened', source: 'system-panel' } );
-		return;
+	switch ( tab ) {
+		case 'classes':
+			trackGlobalClasses( { event: 'classManagerOpened', source: 'system-panel' } );
+			break;
+		case 'variables':
+			trackVariablesManagerEvent( { action: 'openManager', source: 'system-panel' } );
+			break;
 	}
-
-	trackVariablesManagerEvent( { action: 'openManager', source: 'system-panel' } );
 };
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {

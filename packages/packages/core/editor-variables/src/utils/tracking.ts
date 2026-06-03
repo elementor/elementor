@@ -45,7 +45,7 @@ export const trackVariablesManagerEvent = ( { action, source, varType, controlPa
 		action_type: name,
 	};
 
-	if ( action === 'openManager' && source ) {
+	if ( source ) {
 		eventData.source = source;
 	}
 
