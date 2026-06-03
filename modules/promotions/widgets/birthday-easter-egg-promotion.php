@@ -26,10 +26,6 @@ class Birthday_Easter_Egg_Promotion {
 	public function __construct( $force_request_assets = false ) {
 		$this->init_data( $force_request_assets );
 		$this->birthday_promotion_actions = new Birthday_Promotion_Actions();
-
-		if ( $this->should_show_promotion() ) {
-			$this->birthday_promotion_actions->register_ajax_actions();
-		}
 	}
 
 	public function register(): void {
@@ -39,6 +35,7 @@ class Birthday_Easter_Egg_Promotion {
 
 		add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_promotion_data( $settings ) );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn() => $this->maybe_enqueue_app() );
+		$this->birthday_promotion_actions->register_ajax_actions();
 	}
 
 	private function add_promotion_data( array $settings ): array {
@@ -112,22 +109,20 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function has_valid_assets(): bool {
-		return $this->data &&
-			isset( $this->data['header'] ) &&
+		if ( empty( $this->data ) || ! is_array( $this->lottie_data)) {
+			return false;
+		}
+
+		return isset( $this->data['header'] ) &&
 			isset( $this->data['content'] ) &&
 			isset( $this->data['hero'] ) &&
 			isset( $this->data['cta']['label'] ) &&
 			isset( $this->data['cta']['url'] ) &&
 			isset( $this->data['time_frame']['start'] ) &&
-			isset( $this->data['time_frame']['end'] ) &&
-			$this->lottie_data;
+			isset( $this->data['time_frame']['end'] );
 	}
 
 	private function get_lottie_data(): ?array {
-		if ( $this->lottie_data ) {
-			return $this->lottie_data;
-		}
-
 		$cached = get_transient( self::LOTTIE_DATA_TRANSIENT_KEY );
 
 		if ( is_array( $cached ) ) {
@@ -138,25 +133,15 @@ class Birthday_Easter_Egg_Promotion {
 			return null;
 		}
 
-		try {
-			$response = wp_remote_get( $this->data['lottie'] );
+		$data = EditorAssetsAPI::do_safe_get_request( $this->data['lottie'] );
 
-			if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
-				return null;
-			}
-
-			$data = json_decode( wp_remote_retrieve_body( $response ), true );
-
-			if ( ! is_array( $data ) ) {
-				return null;
-			}
-
-			$this->set_lottie_data_transient( $data );
-
-			return $data;
-		} catch ( \Exception $e ) {
+		if ( ! is_array( $data ) ) {
 			return null;
 		}
+
+		$this->set_lottie_data_transient( $data );
+
+		return $data;
 	}
 
 	private function init_data( $force_request_assets = false ): void {

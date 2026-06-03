@@ -79,12 +79,18 @@ function ContentPanel( { config }: { config: BirthdayEasterEggModalConfig } ) {
 
 		try {
 			ajax?.addRequest( SET_CTA_VISITED_ACTION, { data: { visited: true } }, true );
-		} catch {}
+
+			return true;
+		} catch {
+			return false;
+		}
 	}, [] );
 
 	const onCtaVisit = useCallback( () => {
-		hidePromotion();
-		setCtaVisited();
+		if ( setCtaVisited() ) {
+			hidePromotion();
+		}
+
 		close();
 	}, [ hidePromotion, close, setCtaVisited ] );
 

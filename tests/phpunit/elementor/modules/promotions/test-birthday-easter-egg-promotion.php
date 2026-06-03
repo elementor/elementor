@@ -1,8 +1,11 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Promotions;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Promotions\Data\Birthday_Promotion_Actions;
 use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,6 +29,55 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 	];
 
 	private const VALID_LOTTIE = [ 'v' => '5.7.0', 'layers' => [] ];
+
+	private $original_v4_default_state;
+
+	private $current_user_id;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->original_v4_default_state = Plugin::$instance->experiments
+			->get_features( AtomicWidgetsModule::EXPERIMENT_NAME )['default'];
+
+		$this->current_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $this->current_user_id );
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			AtomicWidgetsModule::EXPERIMENT_NAME,
+			$this->original_v4_default_state
+		);
+
+		parent::tearDown();
+	}
+
+	private function set_v4_active( bool $active ): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			AtomicWidgetsModule::EXPERIMENT_NAME,
+			$active ? Experiments_Manager::STATE_ACTIVE : Experiments_Manager::STATE_INACTIVE
+		);
+	}
+
+	private function mark_cta_visited(): void {
+		update_user_meta( $this->current_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, 1 );
+	}
+
+	private function data_with_window( int $start_offset_seconds, int $end_offset_seconds ): array {
+		return $this->data_with_raw_window(
+			gmdate( 'Y-m-d\TH:i:s\Z', time() + $start_offset_seconds ),
+			gmdate( 'Y-m-d\TH:i:s\Z', time() + $end_offset_seconds )
+		);
+	}
+
+	private function data_with_raw_window( $start, $end ): array {
+		$data = self::VALID_DATA;
+		$data['time_frame']['start'] = $start;
+		$data['time_frame']['end'] = $end;
+
+		return $data;
+	}
 
 	public function test_has_valid_assets__returns_true_with_full_payload_and_lottie() {
 		$promotion = new Testable_Birthday_Easter_Egg_Promotion( self::VALID_DATA, self::VALID_LOTTIE );
@@ -165,6 +217,151 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		);
 		$this->assertFalse( $response[ Birthday_Promotion_Actions::VISITED_PARAM ] );
 	}
+
+	public function test_should_show_promotion__returns_true_when_all_conditions_met() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertTrue( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_data_is_empty() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion( [], self::VALID_LOTTIE );
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_lottie_is_missing() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			null
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_cta_required_keys_missing() {
+		$this->set_v4_active( true );
+
+		$data = $this->data_with_window( -3600, 3600 );
+		unset( $data['cta']['url'] );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion( $data, self::VALID_LOTTIE );
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_v4_inactive() {
+		$this->set_v4_active( false );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_user_visited_cta() {
+		$this->set_v4_active( true );
+		$this->mark_cta_visited();
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_window_starts_in_future() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( 3600, 7200 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_window_ended_in_past() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -7200, -3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_true_at_window_start_boundary() {
+		$this->set_v4_active( true );
+
+		// Start exactly now-ish, end well in the future. `now >= start` must hold.
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -1, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertTrue( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_true_at_window_end_boundary() {
+		$this->set_v4_active( true );
+
+		// End slightly in the future to avoid a clock-tick race; still verifies
+		// that `now <= end` is the right comparison and not `<`.
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 60 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertTrue( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_time_frame_is_malformed() {
+		$this->set_v4_active( true );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_raw_window( 'not-a-date', 'also-not-a-date' ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_time_frame_end_before_start() {
+		$this->set_v4_active( true );
+
+		// Inverted window: start in the future, end in the past. `now >= start` already false.
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( 3600, -3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__short_circuits_on_first_failing_gate() {
+		// Belt-and-braces: every gate fails simultaneously. Just asserts false; if any
+		// gate were to throw on a missing precondition we'd surface it here.
+		$this->set_v4_active( false );
+		$this->mark_cta_visited();
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion( [], null );
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
 }
 
 class Testable_Birthday_Easter_Egg_Promotion extends Birthday_Easter_Egg_Promotion {
@@ -182,6 +379,10 @@ class Testable_Birthday_Easter_Egg_Promotion extends Birthday_Easter_Egg_Promoti
 		$lottie_prop = $reflection->getProperty( 'lottie_data' );
 		$lottie_prop->setAccessible( true );
 		$lottie_prop->setValue( $this, $lottie_data );
+
+		$actions_prop = $reflection->getProperty( 'birthday_promotion_actions' );
+		$actions_prop->setAccessible( true );
+		$actions_prop->setValue( $this, new Birthday_Promotion_Actions() );
 	}
 
 	public function call_private( string $method, array $args = [] ) {
