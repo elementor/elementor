@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { CheckIcon, ChevronDownIcon } from '@elementor/icons';
+import { getElementIcon, getElementTitle } from '@elementor/editor-elements';
+import { CheckIcon, ChevronDownIcon, EyeIcon, FileSettingsIcon, SettingsIcon } from '@elementor/icons';
 import { Box, Collapse, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -70,7 +71,10 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				</Box>
 				{ violations && violations.length > 0 && (
 					<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
-						{ violations.map( ( violation, idx ) => (
+					{ violations.map( ( violation, idx ) => {
+						const widgetIcon = violation.elementId ? getElementIcon( violation.elementId ) : null;
+
+						return (
 							<Box
 								key={ idx }
 								role="button"
@@ -82,16 +86,38 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 									}
 								} }
 								sx={ {
+									display: 'flex',
+									alignItems: 'center',
+									gap: 1,
 									paddingBlock: 0.5,
 									paddingInline: 2,
 									borderRadius: 1,
 									cursor: 'pointer',
+									'& .violation-hover-icon': { opacity: 0, transition: 'opacity .15s' },
 									'&:hover': { bgcolor: 'action.hover' },
+									'&:hover .violation-hover-icon, &:focus-visible .violation-hover-icon': { opacity: 1 },
 								} }
 							>
-								<Typography variant="caption">{ violation.label }</Typography>
+								{ widgetIcon ? (
+									<Box
+										component="i"
+										className={ widgetIcon }
+										aria-hidden={ true }
+										sx={ { fontSize: 'inherit', width: '1em', textAlign: 'center' } }
+									/>
+								) : violation.targetHint === 'page-settings' ? (
+									<FileSettingsIcon fontSize="inherit" aria-hidden={ true } />
+								) : violation.targetHint === 'site-settings' ? (
+									<SettingsIcon fontSize="inherit" aria-hidden={ true } />
+								) : null }
+								<Typography variant="caption" sx={ { flex: 1 } }>
+									{ ( violation.elementId ? getElementTitle( violation.elementId ) : null ) ??
+										violation.label }
+								</Typography>
+								<EyeIcon className="violation-hover-icon" fontSize="tiny" aria-hidden={ true } />
 							</Box>
-						) ) }
+						);
+					} ) }
 					</Box>
 				) }
 			</Collapse>
