@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../missing-excerpt';
+import { descriptor, evaluator } from '../page-excerpt';
 import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

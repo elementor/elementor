@@ -8,9 +8,9 @@ const DEPRECATION_CONTROL_NAME = 'deprecation_message';
 
 export const descriptor: AuditDescriptor = {
 	id: 'audits/deprecated-widgets',
-	title: __( 'Uses deprecated widgets', 'elementor' ),
+	title: __( 'Deprecated widgets', 'elementor' ),
 	description: __(
-		'Deprecated widgets receive no new features and may be removed. Use the recommended replacement for better capabilities and performance.',
+		'Deprecated widgets should not be used. For better capabilities use the recommended replacement.',
 		'elementor'
 	),
 	fixHint: __( 'Replace each deprecated widget with the recommended new widget shown in its panel.', 'elementor' ),

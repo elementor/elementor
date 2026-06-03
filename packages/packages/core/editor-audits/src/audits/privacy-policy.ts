@@ -3,9 +3,9 @@ import { __ } from '@wordpress/i18n';
 import { type AuditDescriptor, type AuditEvaluator } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/missing-privacy-policy',
-	title: __( 'Missing privacy policy', 'elementor' ),
-	description: __( 'A privacy policy page is required by privacy regulations such as GDPR and CCPA.', 'elementor' ),
+	id: 'audits/privacy-policy',
+	title: __( 'Privacy policy', 'elementor' ),
+	description: __( 'A privacy policy page is required by privacy regulations such as GDPR (EU) and CCPA (US).', 'elementor' ),
 	fixHint: __(
 		'Go to Settings > Privacy in the WordPress admin and assign a published privacy policy page.',
 		'elementor'

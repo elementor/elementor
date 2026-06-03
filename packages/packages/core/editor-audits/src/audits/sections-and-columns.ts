@@ -4,8 +4,8 @@ import { walkElements } from '../lib/walk';
 import { type AuditDescriptor, type AuditEvaluator, type AuditViolation } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/uses-sections-or-columns',
-	title: __( 'Uses outdated sections or columns', 'elementor' ),
+	id: 'audits/sections-and-columns',
+	title: __( 'Sections and columns', 'elementor' ),
 	description: __(
 		'Sections and columns are legacy elements. Containers render fewer DOM nodes and are more flexible.',
 		'elementor'

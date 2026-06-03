@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { type AuditDescriptor, type AuditEvaluator } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/missing-accessibility-policy',
-	title: __( 'Missing accessibility policy', 'elementor' ),
+	id: 'audits/accessibility-policy',
+	title: __( 'Accessibility policy', 'elementor' ),
 	description: __(
 		'An accessibility policy demonstrates your commitment to digital inclusion and may be legally required in some regions.',
 		'elementor'

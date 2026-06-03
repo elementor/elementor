@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../images-missing-alt';
+import { descriptor, evaluator } from '../images-alt-text';
 import { makeContext, makeWidget } from './fixtures';
 
 describe( descriptor.id, () => {

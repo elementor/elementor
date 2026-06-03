@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { type AuditDescriptor, type AuditEvaluator } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/missing-excerpt',
-	title: __( 'Missing page excerpt', 'elementor' ),
+	id: 'audits/page-excerpt',
+	title: __( 'Page excerpt', 'elementor' ),
 	description: __( 'A descriptive excerpt helps search engines and previews summarize the page.', 'elementor' ),
 	fixHint: __( 'Open Page Settings and write a short excerpt.', 'elementor' ),
 	categories: [ 'seo', 'accessibility' ],

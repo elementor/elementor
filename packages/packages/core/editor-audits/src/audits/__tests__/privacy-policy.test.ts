@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../missing-privacy-policy';
+import { descriptor, evaluator } from '../privacy-policy';
 import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

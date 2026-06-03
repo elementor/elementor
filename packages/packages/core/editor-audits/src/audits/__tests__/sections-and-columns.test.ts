@@ -1,5 +1,5 @@
 import { type ElementSnapshotNode } from '../../types';
-import { descriptor, evaluator } from '../uses-sections-or-columns';
+import { descriptor, evaluator } from '../sections-and-columns';
 import { makeContainer, makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

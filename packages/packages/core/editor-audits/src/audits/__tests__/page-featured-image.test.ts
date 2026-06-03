@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../missing-featured-image';
+import { descriptor, evaluator } from '../page-featured-image';
 import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../missing-cookie-policy';
+import { descriptor, evaluator } from '../cookie-policy';
 import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

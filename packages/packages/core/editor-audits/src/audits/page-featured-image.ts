@@ -3,8 +3,8 @@ import { __ } from '@wordpress/i18n';
 import { type AuditDescriptor, type AuditEvaluator } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/missing-featured-image',
-	title: __( 'Missing featured image', 'elementor' ),
+	id: 'audits/page-featured-image',
+	title: __( 'Page featured image', 'elementor' ),
 	description: __( 'Featured images are used by social shares and many themes for hero visuals.', 'elementor' ),
 	fixHint: __( 'Open Page Settings and set a featured image.', 'elementor' ),
 	categories: [ 'seo' ],

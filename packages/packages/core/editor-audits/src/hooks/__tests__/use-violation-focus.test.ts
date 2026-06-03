@@ -25,7 +25,7 @@ describe( 'useViolationFocus', () => {
 
 		// Act.
 		focus( {
-			auditId: 'audits/missing-featured-image',
+			auditId: 'audits/page-featured-image',
 			label: 'No featured image set.',
 			targetHint: 'page-settings',
 		} );
@@ -43,7 +43,7 @@ describe( 'useViolationFocus', () => {
 
 		// Act.
 		focus( {
-			auditId: 'audits/missing-privacy-policy',
+			auditId: 'audits/privacy-policy',
 			label: 'No privacy policy page is set.',
 			externalUrl: url,
 		} );

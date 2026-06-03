@@ -4,9 +4,9 @@ import { type AuditDescriptor, type AuditEvaluator } from '../types';
 
 export const descriptor: AuditDescriptor = {
 	id: 'audits/default-design-system',
-	title: __( 'Default website kit is in use', 'elementor' ),
+	title: __( 'Default website kit', 'elementor' ),
 	description: __(
-		'Your site is using the default design system colors and fonts. Custom branding makes the site feel uniquely yours.',
+		'Your website is using the default design system colors and fonts. Custom branding makes the website feel uniquely yours.',
 		'elementor'
 	),
 	fixHint: __( 'Open Site Settings and customize your kit (colors, fonts, layout).', 'elementor' ),

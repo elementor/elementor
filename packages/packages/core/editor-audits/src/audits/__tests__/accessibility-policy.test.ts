@@ -1,4 +1,4 @@
-import { descriptor, evaluator } from '../missing-accessibility-policy';
+import { descriptor, evaluator } from '../accessibility-policy';
 import { makeContext } from './fixtures';
 
 describe( descriptor.id, () => {

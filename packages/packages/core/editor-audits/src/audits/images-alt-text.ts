@@ -4,8 +4,8 @@ import { walkElements } from '../lib/walk';
 import { type AuditDescriptor, type AuditEvaluator, type AuditViolation } from '../types';
 
 export const descriptor: AuditDescriptor = {
-	id: 'audits/images-missing-alt',
-	title: __( 'Images missing alt text', 'elementor' ),
+	id: 'audits/images-alt-text',
+	title: __( 'Images alt text', 'elementor' ),
 	description: __( 'Every image needs a meaningful alt attribute for screen readers and image-search.', 'elementor' ),
 	fixHint: __( "Open the image's settings and add an Alt Text describing the image.", 'elementor' ),
 	categories: [ 'seo', 'accessibility' ],
