@@ -16,10 +16,9 @@ class Birthday_Promotion_Actions {
 	public function register_ajax_actions(): void {
 		add_action( 'elementor/ajax/register_actions', function( Ajax $ajax ) {
 			$ajax->register_ajax_action( self::SET_CTA_VISITED_AJAX_ACTION, fn( $data ) => $this->ajax_set_cta_visited( $data ) );
-	 } );
+		} );
 	}
 
-	
 	private function ajax_set_cta_visited( array $data ): array {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( 'Insufficient permissions', 403 );
