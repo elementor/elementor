@@ -32,12 +32,7 @@ type VariablesManagerEventData = {
 	controlPath?: string;
 };
 
-export const trackVariablesManagerEvent = ( {
-	action,
-	source,
-	varType,
-	controlPath,
-}: VariablesManagerEventData ) => {
+export const trackVariablesManagerEvent = ( { action, source, varType, controlPath }: VariablesManagerEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
