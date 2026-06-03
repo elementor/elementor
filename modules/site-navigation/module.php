@@ -33,15 +33,17 @@ class Module extends Module_Base {
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
+		add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
+			$env['@elementor/editor-site-navigation'] = [
+				'is_pages_panel_active' => Plugin::$instance->experiments->is_feature_active(
+					self::PAGES_PANEL_EXPERIMENT_NAME
+				),
+			];
+
+			return $env;
+		} );
+
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
-			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
-				$env['@elementor/editor-site-navigation'] = [
-					'is_pages_panel_active' => true,
-				];
-
-				return $env;
-			} );
-
 			$this->register_rest_fields();
 		}
 	}
