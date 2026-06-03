@@ -4,11 +4,12 @@ import { Box, Divider, Tab, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory, type PageAuditReport } from '../types';
+import AllAuditsPage from './pages/all-audits-page';
 import CategoryPage from './pages/category-page';
 import IssuesPage from './pages/issues-page';
 import OverviewPage from './pages/overview-page';
 
-type ActivePage = 'overview' | 'issues' | { category: AuditCategory };
+type ActivePage = 'overview' | 'issues' | 'all-audits' | { category: AuditCategory };
 
 type Props = {
 	report: PageAuditReport;
@@ -35,6 +36,10 @@ export default function ReportShell( { report }: Props ) {
 		setActivePage( { category } );
 	};
 
+	const openAllAudits = () => {
+		setActivePage( 'all-audits' );
+	};
+
 	const backToIssues = () => {
 		setActivePage( 'issues' );
 	};
@@ -56,7 +61,10 @@ export default function ReportShell( { report }: Props ) {
 			</Tabs>
 			<Divider />
 			{ activePage === 'overview' && <OverviewPage report={ report } onCategoryClick={ openCategory } /> }
-			{ activePage === 'issues' && <IssuesPage report={ report } onCategoryClick={ openCategory } /> }
+			{ activePage === 'issues' && (
+				<IssuesPage report={ report } onCategoryClick={ openCategory } onAllAuditsClick={ openAllAudits } />
+			) }
+			{ activePage === 'all-audits' && <AllAuditsPage report={ report } onBack={ backToIssues } /> }
 			{ typeof activePage === 'object' && (
 				<CategoryPage category={ activePage.category } report={ report } onBack={ backToIssues } />
 			) }
