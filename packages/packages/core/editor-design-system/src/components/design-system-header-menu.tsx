@@ -59,7 +59,7 @@ export const DesignSystemHeaderMenu = () => {
 	const handleExport = () => {
 		popupState.close();
 		trackDesignSystem( { event: 'export' } );
-		runExport();
+		void runExport();
 	};
 
 	const triggerLabel = __( 'Design system actions', 'elementor' );
