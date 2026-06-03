@@ -58,6 +58,7 @@ export const DesignSystemHeaderMenu = () => {
 
 	const handleExport = () => {
 		popupState.close();
+		trackDesignSystem( { event: 'export' } );
 		void runExport();
 	};
 
