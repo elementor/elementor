@@ -245,6 +245,8 @@ const eventsConfig = {
 			confirmed: 'design_system_import_confirmed',
 			imported: 'design_system_imported',
 			importFailed: 'design_system_import_failed',
+			export: 'design_system_export',
+			opened: 'design_system_opened',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
