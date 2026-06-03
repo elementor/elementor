@@ -2,6 +2,9 @@ import apiFetch from '@wordpress/api-fetch';
 
 import type { CreatePagesResult, DeployPage, WpPost } from '../types';
 
+// Matches PageTemplatesModule::TEMPLATE_CANVAS. Maps to the `_wp_page_template` meta.
+const ELEMENTOR_CANVAS_PAGE_TEMPLATE = 'elementor_canvas';
+
 export async function createPages( pages: DeployPage[] ): Promise< CreatePagesResult > {
 	const pageIdMap: Record< string, number > = {};
 	const pageUrlMap: Record< string, string > = {};
@@ -13,6 +16,7 @@ export async function createPages( pages: DeployPage[] ): Promise< CreatePagesRe
 			data: {
 				title: page.title,
 				status: 'publish',
+				template: ELEMENTOR_CANVAS_PAGE_TEMPLATE,
 				meta: {
 					_elementor_edit_mode: 'builder',
 					_elementor_template_type: 'wp-page',
