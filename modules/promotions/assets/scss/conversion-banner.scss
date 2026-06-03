@@ -81,7 +81,7 @@ $banner-gap: 24px;
 
 .e-conversion-banner__image {
 	flex: 1;
-	max-width: 450px;
+	max-width: min(50%, 600px);
 	height: auto;
 }
 

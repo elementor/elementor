@@ -170,17 +170,17 @@ class Conversion_Banner {
 
 	private function get_birthday_banner_config(): array {
 		return [
-			'title' => esc_html__( 'Celebrate 10 years of Elementor with up to 30% off', 'elementor' ),
-			'text' => esc_html__( 'Unlock more capabilities for less with limited-time savings on selected plans. Offer ends June 17.', 'elementor' ),
+			'title' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
+			'text' => esc_html__( 'Upgrade your workflow with more capabilities for less. Offer ends June 17.', 'elementor' ),
 			'buttons' => [
 				[
-					'text' => esc_html__( 'Claim discount', 'elementor' ),
+					'text' => esc_html__( 'Get Discounts', 'elementor' ),
 					'link' => self::BIRTHDAY_PROMOTION_URL,
 					'target' => '_blank',
 				],
 			],
 			'image' => [
-				'src' => '',
+				'src' => ELEMENTOR_ASSETS_URL . 'images/decade-birthday.png',
 				'alt' => esc_html__( 'Celebrate 10 years of Elementor', 'elementor' ),
 			],
 		];
