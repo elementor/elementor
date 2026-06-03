@@ -272,10 +272,11 @@ class Module extends Base_Module {
 					2
 				);
 			}
+
+			( new Birthday_Easter_Egg_Promotion() )->register();
 		} );
 
 		( new Atomic_Form_Widget_Promotion() )->register();
-		( new Birthday_Easter_Egg_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {

@@ -109,7 +109,7 @@ class Birthday_Easter_Egg_Promotion {
 	}
 
 	private function has_valid_assets(): bool {
-		if ( empty( $this->data ) || ! is_array( $this->lottie_data)) {
+		if ( empty( $this->data ) || ! is_array( $this->lottie_data ) ) {
 			return false;
 		}
 
