@@ -9,40 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Testable_Birthday_Easter_Egg_Promotion extends Birthday_Easter_Egg_Promotion {
-	public function __construct( array $data = [], ?array $lottie_data = null ) {
-		$this->set_test_state( $data, $lottie_data );
-	}
-
-	public function set_test_state( array $data, ?array $lottie_data ): void {
-		$reflection = new \ReflectionClass( Birthday_Easter_Egg_Promotion::class );
-
-		$data_prop = $reflection->getProperty( 'data' );
-		$data_prop->setAccessible( true );
-		$data_prop->setValue( $this, $data );
-
-		$lottie_prop = $reflection->getProperty( 'lottie_data' );
-		$lottie_prop->setAccessible( true );
-		$lottie_prop->setValue( $this, $lottie_data );
-	}
-
-	public function call_private( string $method, array $args = [] ) {
-		$reflection = new \ReflectionMethod( Birthday_Easter_Egg_Promotion::class, $method );
-		$reflection->setAccessible( true );
-
-		return $reflection->invokeArgs( $this, $args );
-	}
-}
-
-class Testable_Birthday_Promotion_Actions extends Birthday_Promotion_Actions {
-	public function call_private( string $method, array $args = [] ) {
-		$reflection = new \ReflectionMethod( Birthday_Promotion_Actions::class, $method );
-		$reflection->setAccessible( true );
-
-		return $reflection->invokeArgs( $this, $args );
-	}
-}
-
 class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 	private const VALID_DATA = [
 		'header' => 'Happy Birthday',
@@ -198,5 +164,39 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 			[ [ Birthday_Promotion_Actions::VISITED_PARAM => '0' ] ]
 		);
 		$this->assertFalse( $response[ Birthday_Promotion_Actions::VISITED_PARAM ] );
+	}
+}
+
+class Testable_Birthday_Easter_Egg_Promotion extends Birthday_Easter_Egg_Promotion {
+	public function __construct( array $data = [], ?array $lottie_data = null ) {
+		$this->set_test_state( $data, $lottie_data );
+	}
+
+	public function set_test_state( array $data, ?array $lottie_data ): void {
+		$reflection = new \ReflectionClass( Birthday_Easter_Egg_Promotion::class );
+
+		$data_prop = $reflection->getProperty( 'data' );
+		$data_prop->setAccessible( true );
+		$data_prop->setValue( $this, $data );
+
+		$lottie_prop = $reflection->getProperty( 'lottie_data' );
+		$lottie_prop->setAccessible( true );
+		$lottie_prop->setValue( $this, $lottie_data );
+	}
+
+	public function call_private( string $method, array $args = [] ) {
+		$reflection = new \ReflectionMethod( Birthday_Easter_Egg_Promotion::class, $method );
+		$reflection->setAccessible( true );
+
+		return $reflection->invokeArgs( $this, $args );
+	}
+}
+
+class Testable_Birthday_Promotion_Actions extends Birthday_Promotion_Actions {
+	public function call_private( string $method, array $args = [] ) {
+		$reflection = new \ReflectionMethod( Birthday_Promotion_Actions::class, $method );
+		$reflection->setAccessible( true );
+
+		return $reflection->invokeArgs( $this, $args );
 	}
 }

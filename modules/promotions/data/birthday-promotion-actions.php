@@ -25,7 +25,9 @@ class Birthday_Promotion_Actions {
 			wp_send_json_error( 'Insufficient permissions', 403 );
 		}
 
-		$visited = filter_var( $data[ self::VISITED_PARAM ] ?? null, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ?? true;
+		$visited = array_key_exists( self::VISITED_PARAM, $data )
+			? ( filter_var( $data[ self::VISITED_PARAM ], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE ) ?? true )
+			: true;
 
 		update_user_meta( get_current_user_id(), self::CTA_VISITED_KEY, $visited ? 1 : 0 );
 
