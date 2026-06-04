@@ -30,6 +30,14 @@ export type FloatingPanelDefaults = {
 	initialPosition?: LogicalPosition;
 };
 
+export type FloatingPanelHeaderAction = {
+	id: string;
+	icon: ComponentType;
+	label: string;
+	onClick?: () => void;
+	disabled?: boolean;
+};
+
 export type FloatingPanelDeclaration = {
 	id: string;
 	title: string;

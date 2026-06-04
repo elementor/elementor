@@ -6,6 +6,7 @@ export { init } from './init';
 export type {
 	FloatingPanelDeclaration,
 	FloatingPanelDefaults,
+	FloatingPanelHeaderAction,
 	FloatingPanelState,
 	LogicalPosition,
 	LogicalSize,
