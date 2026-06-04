@@ -128,7 +128,7 @@ class Module extends Base_Module {
 
 		foreach ( $submenu[ $parent_slug ] as &$item ) {
 			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
-				$item[0] = esc_html__( 'Upgrade & Save', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
 			}
 		}
