@@ -5,10 +5,7 @@ const DEFAULT_IMAGE_SRC = {
 	$$type: 'image-src',
 	value: {
 		id: null,
-		url: {
-			$$type: 'url',
-			value: 'https://example.com/placeholder.svg',
-		},
+		url: urlValue( 'https://example.com/placeholder.svg' ),
 	},
 };
 
@@ -22,36 +19,15 @@ const IMAGE_SRC_UNION_PROP_TYPE = {
 	meta: {},
 } as unknown as UnionPropType;
 
-const IMAGE_SRC_OBJECT_PROP_TYPE: TransformablePropType = {
-	kind: 'object',
-	key: 'image-src',
-	shape: {},
-	default: DEFAULT_IMAGE_SRC,
-	settings: {},
-	meta: {},
-};
-
-const STRING_PROP_TYPE = {
-	kind: 'string',
-	key: 'string',
-	settings: {},
-	meta: {},
-} as unknown as PropType;
-
 const ctx = < T = TransformablePropType | UnionPropType >( propType: T ) => ( { propType } );
 
 describe( 'llm-dialect-image-src-adapter', () => {
 	it( 'should replace value with prop-type default when url is empty and id is absent', () => {
 		// Arrange
-		const value = {
-			$$type: 'image-src',
-			value: {
-				url: { $$type: 'url', value: '' },
-			},
-		} as AnyTransformable;
+		const value = { $$type: 'image-src', value: { url: urlValue( '' ) } } as AnyTransformable;
 
 		// Act
-		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( IMAGE_SRC_OBJECT_PROP_TYPE ) );
+		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( imageSrcObjectPropType() ) );
 
 		// Assert
 		expect( migrated ).toEqual( DEFAULT_IMAGE_SRC );
@@ -62,14 +38,11 @@ describe( 'llm-dialect-image-src-adapter', () => {
 		// Arrange
 		const value = {
 			$$type: 'image-src',
-			value: {
-				url: { $$type: 'url', value: 'https://example.com/image.jpg' },
-				alt: null,
-			},
+			value: { url: urlValue( 'https://example.com/image.jpg' ), alt: null },
 		} as AnyTransformable;
 
 		// Act
-		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( IMAGE_SRC_OBJECT_PROP_TYPE ) );
+		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( imageSrcObjectPropType() ) );
 
 		// Assert
 		expect( migrated ).toBe( value );
@@ -79,36 +52,25 @@ describe( 'llm-dialect-image-src-adapter', () => {
 		// Arrange
 		const value = {
 			$$type: 'image-src',
-			value: {
-				url: { $$type: 'url', value: 'https://example.com/image.jpg' },
-			},
+			value: { url: urlValue( 'https://example.com/image.jpg' ) },
 		} as AnyTransformable;
 
 		// Act
-		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( IMAGE_SRC_OBJECT_PROP_TYPE ) );
+		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( imageSrcObjectPropType() ) );
 
 		// Assert
 		expect( migrated ).toEqual( {
 			$$type: 'image-src',
-			value: {
-				url: { $$type: 'url', value: 'https://example.com/image.jpg' },
-				alt: null,
-			},
+			value: { url: urlValue( 'https://example.com/image.jpg' ), alt: null },
 		} );
 	} );
 
 	it( 'should replace value with prop-type default when id and url are null', () => {
 		// Arrange
-		const value = {
-			$$type: 'image-src',
-			value: {
-				id: null,
-				url: null,
-			},
-		} as AnyTransformable;
+		const value = { $$type: 'image-src', value: { id: null, url: null } } as AnyTransformable;
 
 		// Act
-		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( IMAGE_SRC_OBJECT_PROP_TYPE ) );
+		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( imageSrcObjectPropType() ) );
 
 		// Assert
 		expect( migrated ).toEqual( DEFAULT_IMAGE_SRC );
@@ -121,14 +83,7 @@ describe( 'llm-dialect-image-src-adapter', () => {
 			$$type: 'dynamic',
 			value: {
 				name: 'post-featured-image',
-				settings: {
-					fallback: {
-						$$type: 'image-src',
-						value: {
-							url: { $$type: 'url', value: '' },
-						},
-					},
-				},
+				settings: { fallback: { $$type: 'image-src', value: { url: urlValue( '' ) } } },
 			},
 		} as AnyTransformable;
 
@@ -168,12 +123,12 @@ describe( 'llm-dialect-image-src-adapter', () => {
 
 		// Act
 		const stripped = imageSrcLlmDialectAdapter.toDialectSchema?.( urlSchemaWithBind, {
-			propType: STRING_PROP_TYPE,
+			propType: stringPropType(),
 			parentPropType: imageSrcParent,
 			shapeKey: 'url',
 		} );
 		const untouched = imageSrcLlmDialectAdapter.toDialectSchema?.( urlSchemaWithBind, {
-			propType: STRING_PROP_TYPE,
+			propType: stringPropType(),
 			parentPropType: { kind: 'object', key: 'image' } as unknown as TransformablePropType,
 			shapeKey: 'size',
 		} );
@@ -188,9 +143,28 @@ describe( 'llm-dialect-image-src-adapter', () => {
 		const value = { $$type: 'string', value: 'x' } as AnyTransformable;
 
 		// Act
-		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( STRING_PROP_TYPE ) );
+		const migrated = imageSrcLlmDialectAdapter.toPropValue?.( value, ctx( stringPropType() ) );
 
 		// Assert
 		expect( migrated ).toBe( value );
 	} );
 } );
+
+function imageSrcObjectPropType(): TransformablePropType {
+	return {
+		kind: 'object',
+		key: 'image-src',
+		shape: {},
+		default: DEFAULT_IMAGE_SRC,
+		settings: {},
+		meta: {},
+	};
+}
+
+function stringPropType(): PropType {
+	return { kind: 'string', key: 'string', settings: {}, meta: {} } as unknown as PropType;
+}
+
+function urlValue( value: string ) {
+	return { $$type: 'url', value };
+}

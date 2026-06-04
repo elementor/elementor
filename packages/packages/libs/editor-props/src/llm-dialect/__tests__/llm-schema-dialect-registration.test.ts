@@ -3,31 +3,6 @@ import { propTypeToLlmJsonSchema } from '../../utils/props-to-llm-schema';
 import { initLlmDialect } from '../init';
 import { LLMDialectAdapter } from '../llm-prop-schema';
 
-const SIZE_PROP_TYPE = {
-	kind: 'object',
-	key: 'size',
-	settings: {
-		available_units: [ 'px', 'rem', 'em' ],
-	},
-	shape: {
-		unit: {
-			kind: 'string',
-			key: 'string',
-			settings: {
-				enum: [ 'px', 'rem', 'em', '%' ],
-			},
-		},
-		size: {
-			kind: 'union',
-			prop_types: {
-				number: { kind: 'number', key: 'number', settings: {} },
-				string: { kind: 'string', key: 'string', settings: {} },
-			},
-		},
-	},
-	meta: {},
-} as unknown as PropType;
-
 describe( 'LLM schema dialect registration', () => {
 	beforeAll( () => {
 		initLlmDialect();
@@ -85,12 +60,12 @@ describe( 'LLM schema dialect registration', () => {
 	it( 'should keep nested size inner schema for size and grid-track-size prop types', () => {
 		// Arrange
 		const gridTrackSizePropType = {
-			...SIZE_PROP_TYPE,
+			...sizePropType(),
 			key: 'grid-track-size',
 		} as unknown as PropType;
 
 		// Act
-		const sizeSchema = propTypeToLlmJsonSchema( SIZE_PROP_TYPE );
+		const sizeSchema = propTypeToLlmJsonSchema( sizePropType() );
 		const gridTrackSchema = propTypeToLlmJsonSchema( gridTrackSizePropType );
 
 		// Assert
@@ -111,7 +86,7 @@ describe( 'LLM schema dialect registration', () => {
 			key: 'dimensions',
 			settings: {},
 			shape: {
-				top: SIZE_PROP_TYPE,
+				top: sizePropType(),
 			},
 			meta: {},
 		} as unknown as PropType;
@@ -138,7 +113,7 @@ describe( 'LLM schema dialect registration', () => {
 		const sizeUnionPropType = {
 			kind: 'union',
 			prop_types: {
-				size: SIZE_PROP_TYPE,
+				size: sizePropType(),
 				'global-size-variable': { kind: 'string', key: 'global-size-variable', settings: {} },
 			},
 			settings: {},
@@ -216,3 +191,30 @@ describe( 'LLM schema dialect registration', () => {
 		expect( schema.properties?.value?.properties?.unit ).toBeUndefined();
 	} );
 } );
+
+function sizePropType(): PropType {
+	return {
+		kind: 'object',
+		key: 'size',
+		settings: {
+			available_units: [ 'px', 'rem', 'em' ],
+		},
+		shape: {
+			unit: {
+				kind: 'string',
+				key: 'string',
+				settings: {
+					enum: [ 'px', 'rem', 'em', '%' ],
+				},
+			},
+			size: {
+				kind: 'union',
+				prop_types: {
+					number: { kind: 'number', key: 'number', settings: {} },
+					string: { kind: 'string', key: 'string', settings: {} },
+				},
+			},
+		},
+		meta: {},
+	} as unknown as PropType;
+}
