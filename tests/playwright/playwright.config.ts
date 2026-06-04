@@ -1,30 +1,26 @@
-import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
-import { config as _config } from 'dotenv';
+import { config, cfHeaders } from './config/env';
 import { timeouts as timeoutsConfig } from './config/timeouts';
 
-const isCI = Boolean( process.env.CI );
 const fullBrowserCompat = 'true' === process.env.FULL_BROWSER_COMPAT;
-const localDevServer = 'http://127.0.0.1:9400';
-const localTestServer = 'http://127.0.0.1:9400';
-const ciDevServer = 'http://localhost:8888';
-const ciTestServer = 'http://localhost:8889';
 
-process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
-process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
+// Expose resolved URLs to parallelTest.ts worker fixtures via process.env
+process.env.DEV_SERVER = config.wp.baseURL;
+process.env.TEST_SERVER = config.wp.testServerURL;
 
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
-const timeouts = isCI ? timeoutsConfig : Object.entries( timeoutsConfig ).reduce( ( acc, [ key, value ] ) => {
-	acc[ key ] = value * 2;
-	return acc;
-}, {} as typeof timeoutsConfig );
 
-_config( {
-	path: resolve( __dirname, '../../.env' ),
-} );
+const timeouts = config.isCI
+	? timeoutsConfig
+	: Object.entries( timeoutsConfig ).reduce( ( acc, [ key, value ] ) => {
+		acc[ key ] = value * 2;
+		return acc;
+	}, {} as typeof timeoutsConfig );
 
 export default defineConfig( {
 	testDir: './sanity',
+	globalSetup: './global-setup',
+	globalTeardown: './global-teardown',
 	snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}-{platform}{ext}',
 	timeout: timeouts.singleTest,
 	globalTimeout: timeouts.global,
@@ -34,11 +30,11 @@ export default defineConfig( {
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
-	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 3 : 0,
-	workers: process.env.CI ? 2 : 1,
+	forbidOnly: !! config.isCI,
+	retries: config.isCI ? 3 : 0,
+	workers: config.isCI ? 2 : 1,
 	fullyParallel: false,
-	reporter: process.env.CI
+	reporter: config.isCI
 		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
 		: [ [ 'list' ] ],
 	use: {
@@ -50,13 +46,12 @@ export default defineConfig( {
 		actionTimeout: timeouts.action,
 		navigationTimeout: timeouts.navigation,
 		trace: 'retain-on-failure',
-		video: process.env.CI ? 'retain-on-failure' : 'off',
-		baseURL: process.env.BASE_URL ||
-			( ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) )
-				? process.env.TEST_SERVER
-				: process.env.DEV_SERVER ),
+		video: config.isCI ? 'retain-on-failure' : 'off',
+		baseURL: config.wp.baseURL,
 		viewport: { width: 1920, height: 1080 },
 		storageState: `./storageState-${ process.env.TEST_PARALLEL_INDEX }.json`,
+		// Inject CF Access headers for all browser requests when ENV=stg/prod
+		extraHTTPHeaders: cfHeaders,
 	},
 	...( fullBrowserCompat ? {
 		projects: [

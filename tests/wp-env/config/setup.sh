@@ -13,6 +13,29 @@ set -eox pipefail
 wp plugin activate elementor
 wp theme activate hello-elementor
 
+# ── STG environment setup ────────────────────────────────────────────────────
+# When ENV=stg the test runner needs to talk to the Elementor staging backend.
+# Activate STG-only plugins and configure Cloudflare Access credentials so that
+# outbound WordPress requests from the plugin are authenticated.
+#
+# STG_PLUGINS_LIST  – space-separated list of plugin slugs to activate
+# CF_ACCESS_CLIENT_ID / CF_ACCESS_CLIENT_SECRET – CF Zero Trust service tokens
+if [ "${ENV:-local}" = "stg" ]; then
+  echo "STG environment detected – activating staging plugins"
+
+  for plugin in ${STG_PLUGINS_LIST:-}; do
+    wp plugin activate "$plugin" --skip-plugins || echo "Plugin not found: $plugin"
+  done
+
+  if [ -n "${CF_ACCESS_CLIENT_ID:-}" ]; then
+    wp option update apps_dev_tools_stg_enabled 1 || true
+    wp option update apps_dev_tools_stg_cf_client_id "${CF_ACCESS_CLIENT_ID}" || true
+    wp option update apps_dev_tools_stg_cf_client_secret "${CF_ACCESS_CLIENT_SECRET}" || true
+    echo "CF Access credentials stored in wp_options"
+  fi
+fi
+# ─────────────────────────────────────────────────────────────────────────────
+
 # Remove Akismet as it is pre-installed in the Docker image (ignore errors if not found)
 wp plugin uninstall akismet --deactivate || echo "Akismet plugin not found or already removed"
 

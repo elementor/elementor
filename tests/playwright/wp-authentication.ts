@@ -1,8 +1,17 @@
 import { APIRequest, APIRequestContext, Page, chromium, APIResponse } from '@playwright/test';
 
-export async function login( apiRequest: APIRequest, user: string, password: string, baseUrl: string ) {
+export async function login(
+	apiRequest: APIRequest,
+	user: string,
+	password: string,
+	baseUrl: string,
+	extraHeaders: Record<string, string> = {},
+) {
 	// Important: make sure we authenticate in a clean environment by unsetting storage state.
-	const context = await apiRequest.newContext( { storageState: undefined } );
+	const context = await apiRequest.newContext( {
+		storageState: undefined,
+		extraHTTPHeaders: extraHeaders,
+	} );
 	await context.post( `${ baseUrl }/wp-login.php`, {
 		form: {
 			log: user,
