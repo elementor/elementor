@@ -3,7 +3,7 @@ import { getQueryClient } from '@elementor/query';
 import media from './media';
 import normalize from './normalize';
 
-async function fetchWpMediaAttachment( id: number ) {
+export async function fetchAttachmentFromWP( id: number ) {
 	const model = media().attachment( id );
 	const wpAttachment = model.toJSON();
 
@@ -29,6 +29,6 @@ export async function getMediaAttachment( { id }: { id: number | null } ) {
 
 	return queryClient.ensureQueryData( {
 		queryKey: [ 'wp-attachment', id ],
-		queryFn: () => fetchWpMediaAttachment( id ),
+		queryFn: () => fetchAttachmentFromWP( id ),
 	} );
 }
