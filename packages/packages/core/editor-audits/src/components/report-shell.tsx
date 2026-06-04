@@ -3,24 +3,43 @@ import { useState } from 'react';
 import { Box, Divider, Tab, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { type AuditStatusGroup } from '../lib/audit-status-summary';
 import { type AuditCategory, type PageAuditReport } from '../types';
 import AllAuditsPage from './pages/all-audits-page';
 import CategoryPage from './pages/category-page';
 import IssuesPage from './pages/issues-page';
 import OverviewPage from './pages/overview-page';
 
-type ActivePage = 'overview' | 'issues' | 'all-audits' | { category: AuditCategory };
+type TabId = 'overview' | 'issues';
+
+type ActivePage =
+	| 'overview'
+	| 'issues'
+	| { backTo: TabId; category: AuditCategory }
+	| { backTo: TabId; expand?: AuditStatusGroup; page: 'all-audits' };
 
 type Props = {
 	report: PageAuditReport;
 };
 
-function activeTab( page: ActivePage ): 'overview' | 'issues' {
+function activeTab( page: ActivePage ): TabId {
 	if ( page === 'overview' ) {
 		return 'overview';
 	}
 
-	return 'issues';
+	if ( page === 'issues' ) {
+		return 'issues';
+	}
+
+	return page.backTo;
+}
+
+function isAllAuditsPage( page: ActivePage ): page is { backTo: TabId; expand?: AuditStatusGroup; page: 'all-audits' } {
+	return typeof page === 'object' && 'page' in page && page.page === 'all-audits';
+}
+
+function isCategoryPage( page: ActivePage ): page is { backTo: TabId; category: AuditCategory } {
+	return typeof page === 'object' && 'category' in page;
 }
 
 export default function ReportShell( { report }: Props ) {
@@ -28,20 +47,22 @@ export default function ReportShell( { report }: Props ) {
 
 	const currentTab = activeTab( activePage );
 
-	const handleTabChange = ( _: React.SyntheticEvent, value: 'overview' | 'issues' ) => {
+	const handleTabChange = ( _: React.SyntheticEvent, value: TabId ) => {
 		setActivePage( value );
 	};
 
-	const openCategory = ( category: AuditCategory ) => {
-		setActivePage( { category } );
+	const openCategory = ( category: AuditCategory, backTo: TabId ) => {
+		setActivePage( { category, backTo } );
 	};
 
-	const openAllAudits = () => {
-		setActivePage( 'all-audits' );
+	const openAllAudits = ( expand?: AuditStatusGroup, backTo: TabId = 'issues' ) => {
+		setActivePage( { page: 'all-audits', expand, backTo } );
 	};
 
-	const backToIssues = () => {
-		setActivePage( 'issues' );
+	const backFromSubPage = () => {
+		if ( isAllAuditsPage( activePage ) || isCategoryPage( activePage ) ) {
+			setActivePage( activePage.backTo );
+		}
 	};
 
 	return (
@@ -60,13 +81,29 @@ export default function ReportShell( { report }: Props ) {
 				<Tab value="issues" label={ __( 'Issues', 'elementor' ) } />
 			</Tabs>
 			<Divider />
-			{ activePage === 'overview' && <OverviewPage report={ report } onCategoryClick={ openCategory } /> }
-			{ activePage === 'issues' && (
-				<IssuesPage report={ report } onCategoryClick={ openCategory } onAllAuditsClick={ openAllAudits } />
+			{ activePage === 'overview' && (
+				<OverviewPage
+					report={ report }
+					onCategoryClick={ ( category ) => openCategory( category, 'overview' ) }
+					onStatusClick={ ( status ) => openAllAudits( status, 'overview' ) }
+				/>
 			) }
-			{ activePage === 'all-audits' && <AllAuditsPage report={ report } onBack={ backToIssues } /> }
-			{ typeof activePage === 'object' && (
-				<CategoryPage category={ activePage.category } report={ report } onBack={ backToIssues } />
+			{ activePage === 'issues' && (
+				<IssuesPage
+					report={ report }
+					onCategoryClick={ ( category ) => openCategory( category, 'issues' ) }
+					onAllAuditsClick={ () => openAllAudits() }
+				/>
+			) }
+			{ isAllAuditsPage( activePage ) && (
+				<AllAuditsPage
+					report={ report }
+					initialExpandedStatus={ activePage.expand }
+					onBack={ backFromSubPage }
+				/>
+			) }
+			{ isCategoryPage( activePage ) && (
+				<CategoryPage category={ activePage.category } report={ report } onBack={ backFromSubPage } />
 			) }
 		</Box>
 	);

@@ -2,26 +2,13 @@ import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, LinearProgress, Rotate, Typography, useTheme } from '@elementor/ui';
 
+import { scoreColor } from '../lib/score-thresholds';
+
 type Props = {
 	label: string;
 	score: number;
 	onClick?: () => void;
 };
-
-const GOOD_THRESHOLD = 90;
-const OK_THRESHOLD = 50;
-
-function colorFor( score: number ): 'success' | 'warning' | 'error' {
-	if ( score >= GOOD_THRESHOLD ) {
-		return 'success';
-	}
-
-	if ( score >= OK_THRESHOLD ) {
-		return 'warning';
-	}
-
-	return 'error';
-}
 
 export default function ScoreBar( { label, score, onClick }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
@@ -52,7 +39,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 			<LinearProgress
 				variant="determinate"
 				value={ score }
-				color={ colorFor( score ) }
+				color={ scoreColor( score ) }
 				sx={ { flex: 1, height: 6, borderRadius: 4, bgcolor: 'action.disabledBackground' } }
 			/>
 			<Typography

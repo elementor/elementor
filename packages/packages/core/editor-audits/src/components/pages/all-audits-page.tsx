@@ -3,29 +3,31 @@ import { ArrowLeftIcon } from '@elementor/icons';
 import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { sortFailedAuditResults } from '../../lib/sort-failed-audits';
+import {
+	auditStatusColor,
+	type AuditStatusGroup,
+	auditStatusLabel,
+	partitionAuditResults,
+} from '../../lib/audit-status-summary';
 import { type PageAuditReport } from '../../types';
 import StatusSection from '../status-section';
 import ViolationRow from '../violation-row';
 
 type Props = {
-	report: PageAuditReport;
+	initialExpandedStatus?: AuditStatusGroup;
 	onBack: () => void;
+	report: PageAuditReport;
 };
 
-export default function AllAuditsPage( { report, onBack }: Props ) {
+export default function AllAuditsPage( { initialExpandedStatus, onBack, report }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
-	const failed = sortFailedAuditResults( report.auditResults.filter( ( r ) => r.result.status === 'fail' ) );
-	const passed = report.auditResults.filter( ( r ) => r.result.status === 'pass' );
-	const skipped = report.auditResults.filter( ( r ) => r.result.status === 'skipped' );
-
-	const totalViolations = failed.reduce(
-		( n, r ) => n + ( r.result.status === 'fail' ? r.result.violations.length : 0 ),
-		0
-	);
+	const { failed, passed, skipped, totalViolations } = partitionAuditResults( report );
+	const expandFail = ! initialExpandedStatus || initialExpandedStatus === 'fail';
+	const expandPass = initialExpandedStatus === 'pass';
+	const expandSkipped = initialExpandedStatus === 'skipped';
 
 	return (
-		<>
+		<Box key={ initialExpandedStatus ?? 'default' }>
 			<Box
 				sx={ {
 					display: 'flex',
@@ -34,7 +36,7 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 					p: 1,
 				} }
 			>
-				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back to all issues', 'elementor' ) }>
+				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
 					<Rotate in={ isRtl }>
 						<ArrowLeftIcon fontSize="small" />
 					</Rotate>
@@ -45,10 +47,10 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 			</Box>
 			<Box sx={ { p: 1 } }>
 				<StatusSection
-					label={ __( 'Failed audits', 'elementor' ) }
+					label={ auditStatusLabel( 'fail' ) }
 					count={ totalViolations }
-					color="error"
-					defaultExpanded
+					color={ auditStatusColor( 'fail' ) }
+					defaultExpanded={ expandFail }
 				>
 					{ failed.map( ( r ) => (
 						<ViolationRow
@@ -58,12 +60,22 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 						/>
 					) ) }
 				</StatusSection>
-				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">
+				<StatusSection
+					label={ auditStatusLabel( 'pass' ) }
+					count={ passed.length }
+					color={ auditStatusColor( 'pass' ) }
+					defaultExpanded={ expandPass }
+				>
 					{ passed.map( ( r ) => (
 						<ViolationRow key={ r.audit.id } audit={ r.audit } />
 					) ) }
 				</StatusSection>
-				<StatusSection label={ __( 'Skipped audits', 'elementor' ) } count={ skipped.length }>
+				<StatusSection
+					label={ auditStatusLabel( 'skipped' ) }
+					count={ skipped.length }
+					color={ auditStatusColor( 'skipped' ) }
+					defaultExpanded={ expandSkipped }
+				>
 					{ skipped.map( ( r ) => (
 						<Box
 							key={ r.audit.id }
@@ -82,6 +94,6 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 					) ) }
 				</StatusSection>
 			</Box>
-		</>
+		</Box>
 	);
 }
