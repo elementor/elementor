@@ -22,7 +22,6 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 	const inCategory = report.auditResults.filter( ( r ) => r.descriptor.categories.includes( category ) );
 	const failed = sortFailedAuditResults( inCategory.filter( ( r ) => r.result.status === 'fail' ) );
 	const passed = inCategory.filter( ( r ) => r.result.status === 'pass' );
-	const skipped = inCategory.filter( ( r ) => r.result.status === 'skipped' );
 
 	const totalViolations = failed.reduce(
 		( n, r ) => n + ( r.result.status === 'fail' ? r.result.violations.length : 0 ),
@@ -67,24 +66,6 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">
 					{ passed.map( ( r ) => (
 						<ViolationRow key={ r.descriptor.id } descriptor={ r.descriptor } />
-					) ) }
-				</StatusSection>
-				<StatusSection label={ __( 'Skipped audits', 'elementor' ) } count={ skipped.length }>
-					{ skipped.map( ( r ) => (
-						<Box
-							key={ r.descriptor.id }
-							sx={ {
-								borderBottom: 1,
-								borderColor: 'divider',
-								paddingBlock: 1,
-							} }
-						>
-							<Typography variant="body2">
-								{ r.result.status === 'skipped' && r.result.reason
-									? `${ r.descriptor.title } — ${ r.result.reason }`
-									: r.descriptor.title }
-							</Typography>
-						</Box>
 					) ) }
 				</StatusSection>
 			</Box>
