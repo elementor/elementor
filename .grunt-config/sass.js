@@ -1,5 +1,6 @@
 const sassImplementation = require('sass');
 
+
 const sass = {
 	options: {
 		implementation: sassImplementation,
