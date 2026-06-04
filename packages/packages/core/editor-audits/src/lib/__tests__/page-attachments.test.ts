@@ -1,5 +1,5 @@
 import { type ElementSnapshotNode } from '../../types';
-import { extractAttachmentIds } from '../attachment-ids';
+import { extractAttachmentIds } from '../page-attachments';
 
 const tree: ElementSnapshotNode[] = [
 	{
@@ -45,5 +45,23 @@ describe( 'extractAttachmentIds', () => {
 
 	it( 'ignores widgets without attachment IDs', () => {
 		expect( extractAttachmentIds( [ tree[ 2 ] ] ) ).toEqual( [] );
+	} );
+
+	it( 'collects attachment IDs from image-gallery wp_gallery', () => {
+		const galleryTree: ElementSnapshotNode[] = [
+			{
+				id: 'g',
+				elType: 'widget',
+				widgetType: 'image-gallery',
+				settings: {
+					wp_gallery: [
+						{ id: 20, url: 'http://example.test/1.jpg' },
+						{ id: 21, url: 'http://example.test/2.jpg' },
+					],
+				},
+				elements: [],
+			},
+		];
+		expect( extractAttachmentIds( galleryTree ) ).toEqual( [ 20, 21 ] );
 	} );
 } );

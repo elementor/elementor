@@ -106,6 +106,21 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->assertArrayHasKey( 'filesize_bytes', $response['image_sizes'][ $this->attachment_id ] );
 	}
 
+	public function test_image_sizes_includes_alt_from_attachment_meta() {
+		// Arrange.
+		update_post_meta( $this->attachment_id, '_wp_attachment_image_alt', 'Sample alt text' );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+		$request->set_param( 'attachment_ids', [ $this->attachment_id ] );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'alt', $response['image_sizes'][ $this->attachment_id ] );
+		$this->assertSame( 'Sample alt text', $response['image_sizes'][ $this->attachment_id ]['alt'] );
+	}
+
 	public function test_image_sizes_empty_when_no_attachment_ids_passed() {
 		// Arrange.
 		$request = new \WP_REST_Request( 'GET', '' );

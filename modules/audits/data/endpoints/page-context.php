@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Audits\Data\Endpoints;
 
+use Elementor\Control_Media;
 use Elementor\Data\V2\Base\Endpoint as Endpoint_Base;
 use Elementor\Core\Utils\Hints;
 
@@ -75,6 +76,7 @@ class Page_Context extends Endpoint_Base {
 				'filesize_bytes' => $file_path && file_exists( $file_path ) ? (int) filesize( $file_path ) : 0,
 				'mime' => $mime ? $mime : '',
 				'src' => $src ? $src : '',
+				'alt' => Control_Media::get_image_alt( [ 'id' => $attachment_id ] ),
 			];
 		}
 

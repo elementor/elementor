@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import { walkElements } from '../lib/walk';
+import { hasMeaningfulAlt, isImageSourcePresent } from '../lib/image-alt';
+import { walkImageLikeSources } from '../lib/image-like-sources';
 import { type Audit, type AuditViolation } from '../types';
 
 export const audit: Audit = {
@@ -13,20 +14,20 @@ export const audit: Audit = {
 	weight: 10,
 	evaluate: ( ctx ) => {
 		const violations: AuditViolation[] = [];
+		const failedWidgetIds = new Set< string >();
 
-		walkElements( ctx.elements.tree, ( node ) => {
-			if ( node.elType !== 'widget' || node.widgetType !== 'image' ) {
+		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
+			if ( ! isImageSourcePresent( media ) || hasMeaningfulAlt( media, ctx.pageContext ) ) {
 				return;
 			}
 
-			const image = node.settings.image as { alt?: string } | undefined;
-
-			if ( ! image?.alt ) {
+			if ( ! failedWidgetIds.has( node.id ) ) {
+				failedWidgetIds.add( node.id );
 				violations.push( {
 					auditId: audit.id,
 					elementId: node.id,
 					targetHint: 'element-settings',
-					label: __( 'Image is missing alt text.', 'elementor' ),
+					label: __( 'One or more images are missing alt text.', 'elementor' ),
 				} );
 			}
 		} );

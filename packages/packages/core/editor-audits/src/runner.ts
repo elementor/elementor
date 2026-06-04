@@ -1,7 +1,7 @@
 import { getElements } from '@elementor/editor-elements';
 
 import { fetchPageContext } from './api/page-context-client';
-import { extractAttachmentIds } from './lib/attachment-ids';
+import { extractAttachmentIds } from './lib/page-attachments';
 import { buildSnapshotTree } from './lib/v1-snapshot';
 import { getRegisteredAudits } from './registry';
 import { computeReport } from './score/score';

@@ -46,6 +46,7 @@ export type PageContextResponse = {
 			filesize_bytes: number;
 			mime: string;
 			src: string;
+			alt: string;
 		}
 	>;
 	kit_id: number;
