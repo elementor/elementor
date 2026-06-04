@@ -1,12 +1,22 @@
 import { type AuditContext, type ElementSnapshotNode, type KitSnapshot, type PageContextResponse } from '../../types';
 
 const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
+	site_identity: {
+		site_name_set: true,
+		site_description_set: true,
+		site_logo_set: true,
+		site_favicon_set: true,
+	},
+
+	kit_id: 1,
+	kit_is_default_unchanged: false,
+
 	post_title: 'Hello',
 	post_excerpt: 'A short summary',
 	featured_image_id: 99,
+
 	image_sizes: {},
-	kit_id: 1,
-	kit_is_default_unchanged: false,
+
 	privacy_policy_url: 'https://example.com/privacy-policy',
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: true,

@@ -14,9 +14,18 @@ class Test_Page_Context_Endpoint extends TestCase {
 	private $post_id;
 	private $attachment_id;
 	private $admin_user_id;
+	private $saved_blogname;
+	private $saved_blogdescription;
+	private $saved_custom_logo;
+	private $saved_site_icon;
 
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->saved_blogname = get_option( 'blogname' );
+		$this->saved_blogdescription = get_option( 'blogdescription' );
+		$this->saved_custom_logo = get_theme_mod( 'custom_logo' );
+		$this->saved_site_icon = get_option( 'site_icon' );
 
 		$this->admin_user_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $this->admin_user_id );
@@ -33,6 +42,17 @@ class Test_Page_Context_Endpoint extends TestCase {
 	}
 
 	public function tearDown(): void {
+		update_option( 'blogname', $this->saved_blogname );
+		update_option( 'blogdescription', $this->saved_blogdescription );
+
+		if ( $this->saved_custom_logo ) {
+			set_theme_mod( 'custom_logo', $this->saved_custom_logo );
+		} else {
+			remove_theme_mod( 'custom_logo' );
+		}
+
+		update_option( 'site_icon', $this->saved_site_icon );
+
 		wp_delete_post( $this->post_id, true );
 		wp_delete_attachment( $this->attachment_id, true );
 		wp_delete_user( $this->admin_user_id );
@@ -133,6 +153,82 @@ class Test_Page_Context_Endpoint extends TestCase {
 		// Cleanup.
 		wp_delete_post( $privacy_page_id, true );
 		update_option( 'wp_page_for_privacy_policy', 0 );
+	}
+
+	public function test_site_identity_all_set_when_configured() {
+		// Arrange.
+		update_option( 'blogname', 'My Studio' );
+		update_option( 'blogdescription', 'We build things.' );
+		set_theme_mod( 'custom_logo', $this->attachment_id );
+		update_option( 'site_icon', $this->attachment_id );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['site_identity']['site_name_set'] );
+		$this->assertTrue( $response['site_identity']['site_description_set'] );
+		$this->assertTrue( $response['site_identity']['site_logo_set'] );
+		$this->assertTrue( $response['site_identity']['site_favicon_set'] );
+	}
+
+	public function test_site_identity_name_fails_for_default_wordpress() {
+		// Arrange.
+		update_option( 'blogname', 'WordPress' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_name_set'] );
+	}
+
+	public function test_site_identity_description_fails_for_default_tagline() {
+		// Arrange.
+		update_option( 'blogdescription', 'Just another WordPress site' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_description_set'] );
+	}
+
+	public function test_site_identity_logo_false_without_custom_logo() {
+		// Arrange.
+		remove_theme_mod( 'custom_logo' );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_logo_set'] );
+	}
+
+	public function test_site_identity_favicon_false_without_site_icon() {
+		// Arrange.
+		update_option( 'site_icon', 0 );
+
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['site_identity']['site_favicon_set'] );
 	}
 
 	public function test_privacy_settings_url_always_points_to_options_privacy_page() {

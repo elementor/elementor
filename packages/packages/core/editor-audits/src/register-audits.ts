@@ -1,5 +1,3 @@
-import { registerAudit } from './registry';
-import { type Audit } from './types';
 import * as accessibilityPolicy from './audits/accessibility-policy';
 import * as cookiePolicy from './audits/cookie-policy';
 import * as deepNesting from './audits/deep-nesting';
@@ -19,7 +17,10 @@ import * as preferGlobalColors from './audits/prefer-global-colors';
 import * as preferGlobalFonts from './audits/prefer-global-fonts';
 import * as privacyPolicy from './audits/privacy-policy';
 import * as sectionsAndColumns from './audits/sections-and-columns';
+import * as siteIdentity from './audits/site-identity';
 import * as tooManyWidgets from './audits/too-many-widgets';
+import { registerAudit } from './registry';
+import { type Audit } from './types';
 
 const AUDITS: Audit[] = [
 	pageTitle.audit,
@@ -38,6 +39,7 @@ const AUDITS: Audit[] = [
 	nestedBoxedContainers.audit,
 
 	defaultDesignSystem.audit,
+	siteIdentity.audit,
 	preferGlobalColors.audit,
 	preferGlobalFonts.audit,
 

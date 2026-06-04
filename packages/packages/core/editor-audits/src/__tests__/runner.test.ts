@@ -21,6 +21,18 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	image_sizes: {},
 	kit_id: 0,
 	kit_is_default_unchanged: false,
+	privacy_policy_url: null,
+	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
+	ally_plugin_active: false,
+	ally_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
+	cookiez_plugin_active: false,
+	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
+	site_identity: {
+		site_name_set: true,
+		site_description_set: true,
+		site_logo_set: true,
+		site_favicon_set: true,
+	},
 };
 
 const passAudit = ( id: string, weight = 10 ): Audit => ( {

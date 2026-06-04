@@ -52,6 +52,13 @@ export function useViolationFocus() {
 
 			if ( violation.targetHint === 'site-settings' ) {
 				runCommand( 'panel/global/open' );
+				return;
+			}
+
+			if ( violation.targetHint === 'site-identity-settings' ) {
+				void runCommand( 'panel/global/open' ).then( () => {
+					openRoute( 'panel/global/settings-site-identity' );
+				} );
 			}
 		},
 	};

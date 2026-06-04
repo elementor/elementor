@@ -36,6 +36,27 @@ describe( 'useViolationFocus', () => {
 		expect( runCommand ).not.toHaveBeenCalled();
 	} );
 
+	it( 'should open site identity settings after opening global panel', async () => {
+		// Arrange.
+		jest.mocked( runCommand ).mockResolvedValue( undefined );
+		const { focus } = useViolationFocus();
+
+		// Act.
+		focus( {
+			auditId: 'audits/site-identity',
+			label: 'Site logo is not set.',
+			targetHint: 'site-identity-settings',
+		} );
+
+		await Promise.resolve();
+
+		// Assert.
+		expect( runCommand ).toHaveBeenCalledTimes( 1 );
+		expect( runCommand ).toHaveBeenCalledWith( 'panel/global/open' );
+		expect( openRoute ).toHaveBeenCalledTimes( 1 );
+		expect( openRoute ).toHaveBeenCalledWith( 'panel/global/settings-site-identity' );
+	} );
+
 	it( 'should open the external url in a new tab when externalUrl is set', () => {
 		// Arrange.
 		const { focus } = useViolationFocus();

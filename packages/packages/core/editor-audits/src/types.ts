@@ -28,7 +28,7 @@ export type AuditResult =
 export type AuditViolation = {
 	auditId: string;
 	elementId?: string;
-	targetHint?: 'page-settings' | 'site-settings' | 'element-settings';
+	targetHint?: 'page-settings' | 'site-settings' | 'site-identity-settings' | 'element-settings';
 	externalUrl?: string;
 	label: string;
 	detail?: string;
@@ -56,6 +56,12 @@ export type PageContextResponse = {
 	ally_plugin_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
+	site_identity: {
+		site_name_set: boolean;
+		site_description_set: boolean;
+		site_logo_set: boolean;
+		site_favicon_set: boolean;
+	};
 };
 
 export type ElementSnapshotNode = {

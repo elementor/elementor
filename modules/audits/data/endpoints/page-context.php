@@ -27,12 +27,21 @@ class Page_Context extends Endpoint_Base {
 		$thumbnail_id = $post ? (int) get_post_thumbnail_id( $post ) : 0;
 
 		return [
+			'site_identity' => [
+				'site_name_set' => $this->is_site_name_set(),
+				'site_description_set' => $this->is_site_description_set(),
+				'site_logo_set' => has_custom_logo(),
+				'site_favicon_set' => $this->is_site_favicon_set(),
+			],
+			'kit_id' => (int) get_option( 'elementor_active_kit' ),
+			'kit_is_default_unchanged' => $this->is_default_kit_unchanged(),
+
 			'post_title' => $post && '' !== $post->post_title ? $post->post_title : null,
 			'post_excerpt' => $post && '' !== $post->post_excerpt ? $post->post_excerpt : null,
 			'featured_image_id' => $thumbnail_id > 0 ? $thumbnail_id : null,
+
 			'image_sizes' => $this->collect_image_sizes( $attachment_ids ),
-			'kit_id' => (int) get_option( 'elementor_active_kit' ),
-			'kit_is_default_unchanged' => $this->is_default_kit_unchanged(),
+
 			'privacy_policy_url' => get_privacy_policy_url() ?: null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
@@ -86,5 +95,46 @@ class Page_Context extends Endpoint_Base {
 		}
 
 		return $kit_post->post_date_gmt === $kit_post->post_modified_gmt;
+	}
+
+	private function is_site_name_set(): bool {
+		return $this->is_non_default_string(
+			(string) get_option( 'blogname' ),
+			[ 'WordPress' ]
+		);
+	}
+
+	private function is_site_description_set(): bool {
+		return $this->is_non_default_string(
+			(string) get_option( 'blogdescription' ),
+			[ 'Just another WordPress site' ]
+		);
+	}
+
+	private function is_site_favicon_set(): bool {
+		$site_icon_id = (int) get_option( 'site_icon' );
+
+		if ( $site_icon_id <= 0 ) {
+			return false;
+		}
+
+		return wp_attachment_is_image( $site_icon_id );
+	}
+
+	private function is_non_default_string( string $value, array $blocked ): bool {
+		$normalized = strtolower( trim( $value ) );
+
+		if ( '' === $normalized ) {
+			return false;
+		}
+
+		$blocked_normalized = array_map(
+			static function ( $blocked_value ) {
+				return strtolower( trim( (string) $blocked_value ) );
+			},
+			$blocked
+		);
+
+		return ! in_array( $normalized, $blocked_normalized, true );
 	}
 }

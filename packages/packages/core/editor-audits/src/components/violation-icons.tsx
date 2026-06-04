@@ -25,7 +25,7 @@ export default function ViolationIcon( { violation, widgetIcon }: Props ) {
 		return <FileSettingsIcon fontSize="inherit" aria-hidden={ true } />;
 	}
 
-	if ( violation.targetHint === 'site-settings' ) {
+	if ( violation.targetHint === 'site-settings' || violation.targetHint === 'site-identity-settings' ) {
 		return <SettingsIcon fontSize="inherit" aria-hidden={ true } />;
 	}
 
