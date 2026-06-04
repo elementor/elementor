@@ -1,13 +1,16 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type APIRequestContext, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
+import type ApiRequests from '../../../../assets/api-requests';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
-import { deleteAllGlobalClasses } from './utils';
+import DesignSystemPage from '../design-system/design-system-page';
+import { deleteAllGlobalClasses, getGlobalClasses } from './utils';
 
 const BACKGROUND_COLOR = '#4a90d9';
 const BACKGROUND_COLOR_RGB = 'rgb(74, 144, 217)';
 const EXPERIMENTS = { e_atomic_elements: 'active', e_classes: 'active' } as const;
+const DESIGN_SYSTEM_TAB_STORAGE_KEY = 'elementor_editor_design_system_active_tab';
 
 async function addDivBlockWithGlobalClass( editor: EditorPage, className: string ): Promise< string > {
 	const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
@@ -20,34 +23,33 @@ async function addDivBlockWithGlobalClass( editor: EditorPage, className: string
 	return divBlockId;
 }
 
-async function openDesignSystemClassesTab( page: Page ): Promise< void > {
-	const designSystemButton = page.getByRole( 'button', { name: 'Design System', exact: true } );
-	const isInToolbar = await designSystemButton.isVisible( { timeout: 2_000 } ).catch( () => false );
-
-	if ( isInToolbar ) {
-		await designSystemButton.click();
-	} else {
-		await page.getByRole( 'button', { name: 'More', exact: true } ).click();
-		await page.getByRole( 'menuitem', { name: 'Design System', exact: true } ).click();
-	}
-
-	const saveAndContinue = page.getByRole( 'button', { name: 'Save & Continue' } );
-	if ( await saveAndContinue.isVisible( { timeout: 2_000 } ).catch( () => false ) ) {
-		await saveAndContinue.click();
-	}
-
-	const introDialog = page.getByRole( 'dialog' ).filter( { hasText: "Don't show this again" } );
-	await introDialog.getByRole( 'button', { name: 'Got it introduction' } ).click( { timeout: 2_000, force: true } ).catch( () => {} );
-
-	const classesTab = page.locator( '#elementor-panel' ).getByRole( 'tab', { name: 'Classes' } );
-	await classesTab.click();
-	await expect( classesTab ).toHaveAttribute( 'aria-selected', 'true' );
+async function waitForGlobalClassesCount(
+	apiRequests: ApiRequests,
+	request: APIRequestContext,
+	expectedCount: number,
+): Promise< void > {
+	await expect.poll( async () => {
+		const { order } = await getGlobalClasses( apiRequests, request );
+		return order.length;
+	}, { timeout: timeouts.heavyAction } ).toBeGreaterThanOrEqual( expectedCount );
 }
 
-async function renameClassInClassManager( page: Page, currentName: string, newName: string ): Promise< void > {
-	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: currentName } );
+async function savePageAndReloadEditor( editor: EditorPage ): Promise< void > {
+	await editor.publishPage();
+	await editor.page.reload();
+	await editor.waitForPanelToLoad();
+}
+
+async function renameClassInClassManager(
+	designSystem: DesignSystemPage,
+	page: Page,
+	currentName: string,
+	newName: string,
+): Promise< void > {
+	const classItem = designSystem.getClassItem( currentName );
+	await expect( classItem ).toBeVisible( { timeout: timeouts.expect } );
 	await classItem.hover();
-	await classItem.locator( '[aria-label="More actions"]' ).click();
+	await classItem.getByRole( 'button', { name: 'More actions' } ).click();
 	await page.getByRole( 'menuitem', { name: 'Rename' } ).click();
 
 	const editableField = page.locator( '[contenteditable="true"][role="textbox"]' );
@@ -61,8 +63,15 @@ async function saveClassManagerChanges( page: Page ): Promise< void > {
 
 	const saveButton = page.getByRole( 'button', { name: 'Save changes' } );
 	await expect( saveButton ).toBeEnabled( { timeout: timeouts.heavyAction } );
+
+	const saveResponse = page.waitForResponse(
+		( response ) => response.url().includes( '/global-classes' ) && 'GET' !== response.request().method(),
+		{ timeout: timeouts.heavyAction },
+	);
+
 	await saveButton.click( { force: true } );
-	await saveButton.waitFor( { state: 'hidden', timeout: timeouts.expect } ).catch( () => {} );
+	await saveResponse;
+	await expect( saveButton ).toBeDisabled();
 }
 
 async function getComputedBackground( page: Page, elementId: string ): Promise< string > {
@@ -95,10 +104,9 @@ test.describe( 'Global Classes - Rename from Design System Panel @v4-tests', () 
 			const RENAMED_CLASS_A = `rnm-a-${ suffix }`;
 			const RENAMED_CLASS_B = `rnm-b-${ suffix }`;
 
-			// ── Page 1: create widget, apply two global classes, save ──────────────────
-
 			let editor = await wpAdmin.openNewPage();
 			let divBlockId = '';
+			const designSystem = new DesignSystemPage( page );
 
 			await test.step( 'Page 1 — add a widget and apply two global classes with background color', async () => {
 				divBlockId = await addDivBlockWithGlobalClass( editor, CLASS_A );
@@ -112,32 +120,36 @@ test.describe( 'Global Classes - Rename from Design System Panel @v4-tests', () 
 			} );
 
 			const page1Id = await test.step( 'Page 1 — save (not publish) to persist the page', async () => {
-				await editor.saveAndReloadPage();
-				await editor.waitForPanelToLoad();
+				await savePageAndReloadEditor( editor );
+				await waitForGlobalClassesCount( apiRequests, request, 2 );
 				return editor.getPageId();
 			} );
 
-			// ── Page 2: open design system, rename all classes, save via class manager ─
-
 			await test.step( 'Page 2 — open a new page (classes are not fetched for it yet)', async () => {
+				await page.evaluate( ( storageKey ) => {
+					window.localStorage.removeItem( storageKey );
+				}, DESIGN_SYSTEM_TAB_STORAGE_KEY );
+
 				editor = await wpAdmin.openNewPage();
 			} );
 
 			await test.step( 'Page 2 — open Design System panel and switch to Classes tab', async () => {
-				await openDesignSystemClassesTab( page );
+				await designSystem.openFromToolbar();
+				await designSystem.switchToClassesTab();
+				await expect( designSystem.getClassItem( CLASS_A ) ).toBeVisible( { timeout: timeouts.heavyAction } );
+				await expect( designSystem.getClassItem( CLASS_B ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 			} );
 
 			await test.step( 'Page 2 — rename CLASS_A and CLASS_B', async () => {
-				await renameClassInClassManager( page, CLASS_A, RENAMED_CLASS_A );
-				await renameClassInClassManager( page, CLASS_B, RENAMED_CLASS_B );
+				await renameClassInClassManager( designSystem, page, CLASS_A, RENAMED_CLASS_A );
+				await renameClassInClassManager( designSystem, page, CLASS_B, RENAMED_CLASS_B );
 			} );
 
 			await test.step( 'Page 2 — both renamed labels appear in the class list', async () => {
-				const panel = page.locator( '#elementor-panel' );
-				await expect( panel.locator( 'li[role="listitem"]' ).filter( { hasText: RENAMED_CLASS_A } ) ).toBeVisible( {
+				await expect( designSystem.getClassItem( RENAMED_CLASS_A ) ).toBeVisible( {
 					timeout: timeouts.expect,
 				} );
-				await expect( panel.locator( 'li[role="listitem"]' ).filter( { hasText: RENAMED_CLASS_B } ) ).toBeVisible( {
+				await expect( designSystem.getClassItem( RENAMED_CLASS_B ) ).toBeVisible( {
 					timeout: timeouts.expect,
 				} );
 			} );
@@ -146,9 +158,8 @@ test.describe( 'Global Classes - Rename from Design System Panel @v4-tests', () 
 				await saveClassManagerChanges( page );
 			} );
 
-			// ── Go back to Page 1: verify styles still apply ───────────────────────────
-
 			await test.step( 'Navigate back to Page 1 in the editor', async () => {
+				await designSystem.closePanel();
 				await page.goto( `/wp-admin/post.php?post=${ page1Id }&action=elementor` );
 				await editor.waitForPanelToLoad();
 			} );
@@ -173,8 +184,6 @@ test.describe( 'Global Classes - Rename from Design System Panel @v4-tests', () 
 					timeout: timeouts.expect,
 				} );
 			} );
-
-			// ── Publish Page 1 and verify on the frontend ──────────────────────────────
 
 			await test.step( 'Page 1 — publish the page', async () => {
 				await editor.publishPage();
