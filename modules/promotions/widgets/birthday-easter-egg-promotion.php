@@ -148,6 +148,7 @@ class Birthday_Easter_Egg_Promotion {
 
 	private function should_show_promotion(): bool {
 		return (
+			$this->does_have_permissions() &&
 			$this->has_valid_assets() &&
 			self::is_v4_active() &&
 			! $this->birthday_promotion_actions->has_visited_cta() &&
@@ -171,6 +172,10 @@ class Birthday_Easter_Egg_Promotion {
 		$now = time();
 
 		return $now >= $start && $now <= $end;
+	}
+
+	private function does_have_permissions(): bool {
+		return current_user_can( 'manage_options' );
 	}
 
 	private function set_lottie_data_transient( array $value ): bool {
