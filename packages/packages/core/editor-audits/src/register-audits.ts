@@ -5,8 +5,6 @@ import * as defaultDesignSystem from './audits/default-design-system';
 import * as deprecatedWidgets from './audits/deprecated-widgets';
 import * as headingStructure from './audits/heading-structure';
 import * as hiddenElements from './audits/hidden-elements';
-import * as iconWidgetLinkMissingAriaLabel from './audits/icon-widget-link-missing-aria-label';
-import * as imageCarouselDefaultName from './audits/image-carousel-default-name';
 import * as imagesAltText from './audits/images-alt-text';
 import * as imagesTooLarge from './audits/images-too-large';
 import * as nestedBoxedContainers from './audits/nested-boxed-containers';
@@ -46,9 +44,6 @@ const AUDITS: Audit[] = [
 	headingStructure.audit,
 	imagesAltText.audit,
 	imagesTooLarge.audit,
-
-	imageCarouselDefaultName.audit,
-	iconWidgetLinkMissingAriaLabel.audit,
 ];
 
 export function registerAllAudits(): void {
