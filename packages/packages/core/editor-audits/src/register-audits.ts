@@ -14,6 +14,7 @@ import * as pageTitle from './audits/page-title';
 import * as preferGlobalColors from './audits/prefer-global-colors';
 import * as preferGlobalFonts from './audits/prefer-global-fonts';
 import * as privacyPolicy from './audits/privacy-policy';
+import * as robotsNoindex from './audits/robots-noindex';
 import * as sectionsAndColumns from './audits/sections-and-columns';
 import * as siteIdentity from './audits/site-identity';
 import * as tooManyWidgets from './audits/too-many-widgets';
@@ -24,10 +25,6 @@ const AUDITS: Audit[] = [
 	pageTitle.audit,
 	pageExcerpt.audit,
 	pageFeaturedImage.audit,
-
-	privacyPolicy.audit,
-	accessibilityPolicy.audit,
-	cookiePolicy.audit,
 
 	hiddenElements.audit,
 	deprecatedWidgets.audit,
@@ -44,6 +41,12 @@ const AUDITS: Audit[] = [
 	headingStructure.audit,
 	imagesAltText.audit,
 	imagesTooLarge.audit,
+
+	robotsNoindex.audit,
+
+	privacyPolicy.audit,
+	accessibilityPolicy.audit,
+	cookiePolicy.audit,
 ];
 
 export function registerAllAudits(): void {

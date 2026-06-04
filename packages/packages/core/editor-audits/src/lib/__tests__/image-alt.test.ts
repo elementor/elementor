@@ -23,6 +23,8 @@ const PAGE_CONTEXT: PageContextResponse = {
 			alt: 'From library',
 		},
 	},
+	is_noindex: false,
+	reading_settings_url: 'https://example.com/wp-admin/options-reading.php',
 	privacy_policy_url: null,
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: false,

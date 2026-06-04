@@ -18,6 +18,7 @@ class Test_Page_Context_Endpoint extends TestCase {
 	private $saved_blogdescription;
 	private $saved_custom_logo;
 	private $saved_site_icon;
+	private $saved_blog_public;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -26,6 +27,7 @@ class Test_Page_Context_Endpoint extends TestCase {
 		$this->saved_blogdescription = get_option( 'blogdescription' );
 		$this->saved_custom_logo = get_theme_mod( 'custom_logo' );
 		$this->saved_site_icon = get_option( 'site_icon' );
+		$this->saved_blog_public = get_option( 'blog_public' );
 
 		$this->admin_user_id = $this->factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $this->admin_user_id );
@@ -52,6 +54,7 @@ class Test_Page_Context_Endpoint extends TestCase {
 		}
 
 		update_option( 'site_icon', $this->saved_site_icon );
+		update_option( 'blog_public', $this->saved_blog_public );
 
 		wp_delete_post( $this->post_id, true );
 		wp_delete_attachment( $this->attachment_id, true );
@@ -244,6 +247,45 @@ class Test_Page_Context_Endpoint extends TestCase {
 
 		// Assert.
 		$this->assertFalse( $response['site_identity']['site_favicon_set'] );
+	}
+
+	public function test_is_noindex_true_when_blog_public_is_zero() {
+		// Arrange.
+		update_option( 'blog_public', '0' );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertTrue( $response['is_noindex'] );
+	}
+
+	public function test_is_noindex_false_when_blog_public_is_one() {
+		// Arrange.
+		update_option( 'blog_public', '1' );
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertFalse( $response['is_noindex'] );
+	}
+
+	public function test_reading_settings_url_always_points_to_options_reading_page() {
+		// Arrange.
+		$request = new \WP_REST_Request( 'GET', '' );
+		$request->set_param( 'document_id', $this->post_id );
+
+		// Act.
+		$response = ( new Page_Context( $this->build_controller() ) )->get_items( $request );
+
+		// Assert.
+		$this->assertArrayHasKey( 'reading_settings_url', $response );
+		$this->assertStringContainsString( 'options-reading.php', $response['reading_settings_url'] );
 	}
 
 	public function test_privacy_settings_url_always_points_to_options_privacy_page() {

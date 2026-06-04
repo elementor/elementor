@@ -51,6 +51,8 @@ export type PageContextResponse = {
 	>;
 	kit_id: number;
 	kit_is_default_unchanged: boolean;
+	is_noindex: boolean;
+	reading_settings_url: string;
 	privacy_policy_url: string | null;
 	privacy_settings_url: string;
 	ally_plugin_active: boolean;

@@ -21,6 +21,8 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	image_sizes: {},
 	kit_id: 0,
 	kit_is_default_unchanged: false,
+	is_noindex: false,
+	reading_settings_url: 'https://example.com/wp-admin/options-reading.php',
 	privacy_policy_url: null,
 	privacy_settings_url: 'https://example.com/wp-admin/options-privacy.php',
 	ally_plugin_active: false,

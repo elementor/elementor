@@ -43,6 +43,9 @@ class Page_Context extends Endpoint_Base {
 
 			'image_sizes' => $this->collect_image_sizes( $attachment_ids ),
 
+			'is_noindex' => ! (bool) get_option( 'blog_public' ),
+			'reading_settings_url' => admin_url( 'options-reading.php' ),
+
 			'privacy_policy_url' => get_privacy_policy_url() ?: null,
 			'privacy_settings_url' => admin_url( 'options-privacy.php' ),
 			'ally_plugin_active' => Hints::is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ),
