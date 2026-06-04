@@ -1,6 +1,6 @@
 import { waitFor } from '@testing-library/react';
 
-import { getMediaAttachment } from '../../get-media-attachment';
+import { clearMediaAttachmentCache, getMediaAttachment } from '../../get-media-attachment';
 import media from '../../media';
 import { type Attachment } from '../../types/attachment';
 import { type WpAttachmentJSON } from '../../types/wp-media';
@@ -13,6 +13,11 @@ jest.mock( '../../media', () => ( {
 } ) );
 
 describe( 'getMediaAttachment', () => {
+	beforeEach( () => {
+		clearMediaAttachmentCache();
+		jest.clearAllMocks();
+	} );
+
 	it( 'should return null when there is no attachment id', async () => {
 		// Act.
 		const result = await getMediaAttachment( { id: null } );
@@ -140,6 +145,71 @@ describe( 'getMediaAttachment', () => {
 		await waitFor( () => {
 			expect( result ).toEqual( expected );
 		} );
+	} );
+
+	it( 'should call fetch only once for parallel requests with the same id', async () => {
+		const fetch = jest.fn().mockResolvedValue( {
+			id: 123,
+			url: 'url',
+			alt: 'alt',
+			height: 0,
+			width: 0,
+			filename: 'filename',
+			title: 'title',
+			mime: 'mime',
+			sizes: {},
+			type: 'type',
+			subtype: 'subtype',
+			uploadedTo: 2,
+			filesizeInBytes: 3,
+			filesizeHumanReadable: 'filesizeHumanReadable',
+			author: '4',
+			authorName: 'authorName',
+		} );
+
+		jest.mocked( media().attachment ).mockImplementation( ( id ) => ( {
+			toJSON: () => ( { id } ),
+			fetch,
+		} ) );
+
+		const [ first, second ] = await Promise.all( [
+			getMediaAttachment( { id: 123 } ),
+			getMediaAttachment( { id: 123 } ),
+		] );
+
+		expect( fetch ).toHaveBeenCalledTimes( 1 );
+		expect( first ).toEqual( second );
+	} );
+
+	it( 'should return cached attachment without calling fetch again', async () => {
+		const fetch = jest.fn().mockResolvedValue( {
+			id: 123,
+			url: 'url',
+			alt: 'alt',
+			height: 0,
+			width: 0,
+			filename: 'filename',
+			title: 'title',
+			mime: 'mime',
+			sizes: {},
+			type: 'type',
+			subtype: 'subtype',
+			uploadedTo: 2,
+			filesizeInBytes: 3,
+			filesizeHumanReadable: 'filesizeHumanReadable',
+			author: '4',
+			authorName: 'authorName',
+		} );
+
+		jest.mocked( media().attachment ).mockImplementation( ( id ) => ( {
+			toJSON: () => ( { id } ),
+			fetch,
+		} ) );
+
+		await getMediaAttachment( { id: 123 } );
+		await getMediaAttachment( { id: 123 } );
+
+		expect( fetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( "should return null when the attachment can't be fetched", async () => {
