@@ -64,6 +64,21 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		update_user_meta( $this->current_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, 1 );
 	}
 
+	/**
+	 * `wp_send_json_error` calls bare `die` outside an ajax context, killing the
+	 * test runner before output can be captured. Forcing the ajax path + swapping
+	 * the ajax `wp_die` handler for a throwing one turns the rejection into a
+	 * catchable exception. WP_UnitTestCase restores filters between tests.
+	 */
+	private function capture_wp_send_json_die(): void {
+		add_filter( 'wp_doing_ajax', '__return_true' );
+		add_filter( 'wp_die_ajax_handler', function () {
+			return function ( $message ) {
+				throw new \WPDieException( is_string( $message ) ? $message : '' );
+			};
+		} );
+	}
+
 	private function data_with_window( int $start_offset_seconds, int $end_offset_seconds ): array {
 		return $this->data_with_raw_window(
 			gmdate( 'Y-m-d\TH:i:s\Z', time() + $start_offset_seconds ),
@@ -209,9 +224,11 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 	public function test_ajax_set_cta_visited__rejects_user_without_manage_options() {
 		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
 		wp_set_current_user( $editor_user_id );
+		$this->capture_wp_send_json_die();
 
 		$actions = new Testable_Birthday_Promotion_Actions();
 
+		$this->expectOutputRegex( '/"success":false.*"Insufficient permissions"/' );
 		$this->expectException( \WPDieException::class );
 
 		try {
@@ -226,9 +243,11 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 
 	public function test_ajax_set_cta_visited__rejects_logged_out_user() {
 		wp_set_current_user( 0 );
+		$this->capture_wp_send_json_die();
 
 		$actions = new Testable_Birthday_Promotion_Actions();
 
+		$this->expectOutputRegex( '/"success":false.*"Insufficient permissions"/' );
 		$this->expectException( \WPDieException::class );
 
 		$actions->call_private(
