@@ -330,6 +330,27 @@
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
+		const VOID_PLACEHOLDER_TAGS = new Set( [
+			'AREA',
+			'BASE',
+			'BR',
+			'COL',
+			'EMBED',
+			'HR',
+			'IMG',
+			'INPUT',
+			'LINK',
+			'META',
+			'PARAM',
+			'SOURCE',
+			'TRACK',
+			'WKB',
+		] );
+
+		const isVoidPlaceholderTarget = function( element ) {
+			return !! element && VOID_PLACEHOLDER_TAGS.has( element.tagName );
+		};
+
 		const insertGridRowPlaceholder = function() {
 			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
 
@@ -356,13 +377,28 @@
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer, isFlexRowContainer } = placeholderContext;
+			const insertTarget = placeholderTarget || currentElement;
 
-			if ( hasLogicalWrapper || isAtomicContainer ) {
+			if ( hasLogicalWrapper && isFlexRowContainer && insertTarget ) {
+				insertPlaceholderOutsideElement( insertTarget );
+
+				return;
+			}
+
+			const useOutsideInsert = hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget );
+
+			if ( ( hasLogicalWrapper || isAtomicContainer ) && ! ( hasLogicalWrapper && isFlexRowContainer ) ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
-			insertPlaceholderInsideElement( placeholderTarget );
+			if ( useOutsideInsert ) {
+				insertPlaceholderOutsideElement( insertTarget );
+
+				return;
+			}
+
+			insertPlaceholderInsideElement( insertTarget );
 		};
 
 		const addLogicalAttributesToPlaceholder = function() {
