@@ -13,6 +13,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
+use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
@@ -76,6 +77,10 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
+		if ( Conversion_Banner::should_display_banner() ) {
+			new Conversion_Banner();
+		}
+
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		if ( Utils::has_pro() ) {
@@ -128,7 +133,7 @@ class Module extends Base_Module {
 
 		foreach ( $submenu[ $parent_slug ] as &$item ) {
 			if ( isset( $item[2] ) && $upgrade_slug === $item[2] ) {
-				$item[0] = esc_html__( 'Upgrade & Save', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				$item[0] = esc_html__( 'Sale!', 'elementor' ) . '<br />' . esc_html__( 'Upgrade Now', 'elementor' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
 			}
 		}

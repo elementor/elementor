@@ -115,6 +115,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/promotions/assets/scss',
+				src: 'conversion-banner.scss',
+				dest: 'assets/css/modules/promotions',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'admin-bar.scss',
 				dest: 'assets/css',

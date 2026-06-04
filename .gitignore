@@ -17,6 +17,8 @@ http-playground/
 data/languages
 tests/data
 
+graphify-out/
+
 # build outputs
 build/
 assets/css/
