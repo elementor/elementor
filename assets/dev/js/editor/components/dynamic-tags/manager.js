@@ -8,26 +8,35 @@ module.exports = elementorModules.Module.extend( {
 
 	cache: {},
 
+	batchCache: {},
+
 	cacheRequests: {},
+
+	batchCacheRequests: {},
 
 	cacheCallbacks: [],
 
-	addCacheRequest( tag ) {
-		const postId = this.getTagRenderPostId( tag );
-		const cacheKey = this.createCacheKey( tag );
+	batchCacheCallbacks: [],
 
-		if ( ! this.cacheRequests[ postId ] ) {
-			this.cacheRequests[ postId ] = {};
-		}
+	flushCallbacks: [],
 
-		this.cacheRequests[ postId ][ cacheKey ] = true;
+	isBatchPostContext( postId ) {
+		return Number( postId ) !== Number( elementor.config.document.id );
+	},
+
+	getCacheStore( postId ) {
+		return this.isBatchPostContext( postId ) ? this.batchCache : this.cache;
 	},
 
 	getTagRenderPostId( tag ) {
 		return tag.editorRenderPostId ?? elementor.config.document.id;
 	},
 
-	createCacheKey( tag ) {
+	createLegacyCacheKey( tag ) {
+		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
+	},
+
+	createBatchCacheKey( tag ) {
 		return this.buildCacheKeyFor(
 			tag.getOption( 'name' ),
 			tag.model,
@@ -35,22 +44,81 @@ module.exports = elementorModules.Module.extend( {
 		);
 	},
 
+	getCacheKeyForTag( tag ) {
+		const postId = this.getTagRenderPostId( tag );
+
+		if ( this.isBatchPostContext( postId ) ) {
+			return this.createBatchCacheKey( tag );
+		}
+
+		return this.createLegacyCacheKey( tag );
+	},
+
+	createCacheKey( tag ) {
+		return this.getCacheKeyForTag( tag );
+	},
+
 	buildCacheKeyFor( tagName, tagSettings, postId ) {
 		return btoa( tagName ) + '-' + btoa( encodeURIComponent( JSON.stringify( tagSettings ) ) ) + '-' + postId;
 	},
 
-	loadTagDataFromCache( tag ) {
-		var cacheKey = this.createCacheKey( tag );
+	addCacheRequest( tag ) {
+		const postId = this.getTagRenderPostId( tag );
+		const cacheKey = this.getCacheKeyForTag( tag );
 
-		if ( undefined !== this.cache[ cacheKey ] ) {
-			return this.cache[ cacheKey ];
+		if ( this.isBatchPostContext( postId ) ) {
+			if ( ! this.batchCacheRequests[ postId ] ) {
+				this.batchCacheRequests[ postId ] = {};
+			}
+
+			this.batchCacheRequests[ postId ][ cacheKey ] = true;
+
+			return;
 		}
 
-		const postId = this.getTagRenderPostId( tag );
+		this.cacheRequests[ cacheKey ] = true;
+	},
 
-		if ( ! this.cacheRequests[ postId ] || ! this.cacheRequests[ postId ][ cacheKey ] ) {
+	loadTagDataFromCache( tag ) {
+		const postId = this.getTagRenderPostId( tag );
+		const cacheKey = this.getCacheKeyForTag( tag );
+		const cacheStore = this.getCacheStore( postId );
+
+		if ( undefined !== cacheStore[ cacheKey ] ) {
+			return cacheStore[ cacheKey ];
+		}
+
+		if ( this.isBatchPostContext( postId ) ) {
+			if ( ! this.batchCacheRequests[ postId ] || ! this.batchCacheRequests[ postId ][ cacheKey ] ) {
+				this.addCacheRequest( tag );
+			}
+
+			return;
+		}
+
+		if ( ! this.cacheRequests[ cacheKey ] ) {
 			this.addCacheRequest( tag );
 		}
+	},
+
+	hasPendingLegacyCacheRequests() {
+		return Object.keys( this.cacheRequests ).some(
+			( cacheKey ) => undefined === this.cache[ cacheKey ],
+		);
+	},
+
+	hasPendingBatchCacheRequests() {
+		return Object.keys( this.batchCacheRequests ).some( ( postId ) => {
+			return Object.keys( this.batchCacheRequests[ postId ] ).some(
+				( cacheKey ) => undefined === this.batchCache[ cacheKey ],
+			);
+		} );
+	},
+
+	runCacheCallbacks( callbacks ) {
+		callbacks.forEach( ( entry ) => {
+			entry.callback();
+		} );
 	},
 
 	loadCacheRequests() {
@@ -61,17 +129,59 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		var groups = Object.keys( cacheRequests )
+		var tags = Object.keys( cacheRequests ).filter( ( cacheKey ) => undefined === this.cache[ cacheKey ] );
+
+		if ( 0 === tags.length ) {
+			this.runCacheCallbacks( cacheCallbacks );
+
+			return;
+		}
+
+		var ajaxOptions = {
+			data: {
+				post_id: elementor.config.document.id,
+				tags,
+			},
+			success: ( data ) => {
+				this.cache = {
+					...this.cache,
+					...data,
+				};
+
+				this.runCacheCallbacks( cacheCallbacks );
+			},
+		};
+
+		var disableCache = cacheCallbacks.some( ( entry ) => {
+			return entry.disableCache;
+		} );
+
+		if ( disableCache ) {
+			ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
+		}
+
+		elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
+	},
+
+	loadBatchCacheRequests() {
+		var batchCacheRequests = this.batchCacheRequests,
+			batchCacheCallbacks = this.batchCacheCallbacks;
+
+		this.batchCacheRequests = {};
+
+		this.batchCacheCallbacks = [];
+
+		var groups = Object.keys( batchCacheRequests )
 			.map( ( postId ) => ( {
 				post_id: Number( postId ),
-				tags: Object.keys( cacheRequests[ postId ] ).filter( ( cacheKey ) => undefined === this.cache[ cacheKey ] ),
+				tags: Object.keys( batchCacheRequests[ postId ] ).filter(
+					( cacheKey ) => undefined === this.batchCache[ cacheKey ],
+				),
 			} ) )
 			.filter( ( group ) => group.tags.length > 0 );
 
 		if ( 0 === groups.length ) {
-			cacheCallbacks.forEach( ( entry ) => {
-				entry.callback();
-			} );
+			this.runCacheCallbacks( batchCacheCallbacks );
 
 			return;
 		}
@@ -81,18 +191,16 @@ module.exports = elementorModules.Module.extend( {
 				groups,
 			},
 			success: ( data ) => {
-				this.cache = {
-					...this.cache,
+				this.batchCache = {
+					...this.batchCache,
 					...data,
 				};
 
-				cacheCallbacks.forEach( ( entry ) => {
-					entry.callback();
-				} );
+				this.runCacheCallbacks( batchCacheCallbacks );
 			},
 		};
 
-		var disableCache = cacheCallbacks.some( ( entry ) => {
+		var disableCache = batchCacheCallbacks.some( ( entry ) => {
 			return entry.disableCache;
 		} );
 
@@ -103,37 +211,82 @@ module.exports = elementorModules.Module.extend( {
 		elementorCommon.ajax.addRequest( 'render_tags_batch', ajaxOptions );
 	},
 
+	flushCacheRequests() {
+		const flushCallbacks = this.flushCallbacks;
+		const disableCache = flushCallbacks.some( ( entry ) => entry.disableCache );
+
+		this.flushCallbacks = [];
+
+		let pendingPaths = 0;
+
+		const completeFlush = () => {
+			pendingPaths--;
+
+			if ( pendingPaths > 0 ) {
+				return;
+			}
+
+			this.runCacheCallbacks( flushCallbacks );
+		};
+
+		if ( this.hasPendingLegacyCacheRequests() ) {
+			pendingPaths++;
+
+			this.cacheCallbacks.push( {
+				callback: completeFlush,
+				disableCache,
+			} );
+
+			this.loadCacheRequestsImmediate();
+		}
+
+		if ( this.hasPendingBatchCacheRequests() ) {
+			pendingPaths++;
+
+			this.batchCacheCallbacks.push( {
+				callback: completeFlush,
+				disableCache,
+			} );
+
+			this.loadBatchCacheRequestsImmediate();
+		}
+
+		if ( 0 === pendingPaths ) {
+			this.runCacheCallbacks( flushCallbacks );
+		}
+	},
+
 	prefetchTags( tagsByPostId ) {
 		var self = this;
 
 		Object.keys( tagsByPostId ).forEach( ( postId ) => {
-			if ( ! self.cacheRequests[ postId ] ) {
-				self.cacheRequests[ postId ] = {};
+			if ( ! self.batchCacheRequests[ postId ] ) {
+				self.batchCacheRequests[ postId ] = {};
 			}
 
 			tagsByPostId[ postId ].forEach( ( cacheKey ) => {
-				if ( undefined === self.cache[ cacheKey ] ) {
-					self.cacheRequests[ postId ][ cacheKey ] = true;
+				if ( undefined === self.batchCache[ cacheKey ] ) {
+					self.batchCacheRequests[ postId ][ cacheKey ] = true;
 				}
 			} );
 		} );
 
 		return new Promise( ( resolve ) => {
-			self.cacheCallbacks.push( {
+			self.batchCacheCallbacks.push( {
 				callback: resolve,
 			} );
 
-			self.loadCacheRequestsImmediate();
+			self.loadBatchCacheRequestsImmediate();
 		} );
 	},
 
 	refreshCacheFromServer( callback, options ) {
-		this.cacheCallbacks.push( {
+		this.flushCallbacks.push( {
 			callback,
 			disableCache: options?.disableCache,
 		} );
 
-		this.loadCacheRequests();
+		this.flushCacheRequests();
 	},
 
 	getConfig( key ) {
@@ -223,10 +376,19 @@ module.exports = elementorModules.Module.extend( {
 
 	cleanCache() {
 		this.cache = {};
+		this.batchCache = {};
+		this.cacheRequests = {};
+		this.batchCacheRequests = {};
 	},
 
 	onInit() {
 		this.loadCacheRequestsImmediate = this.loadCacheRequests.bind( this );
 		this.loadCacheRequests = _.debounce( this.loadCacheRequestsImmediate, 300 );
+
+		this.loadBatchCacheRequestsImmediate = this.loadBatchCacheRequests.bind( this );
+		this.loadBatchCacheRequests = _.debounce( this.loadBatchCacheRequestsImmediate, 300 );
+
+		this.flushCacheRequestsImmediate = this.flushCacheRequests.bind( this );
+		this.flushCacheRequests = _.debounce( this.flushCacheRequestsImmediate, 300 );
 	},
 } );
