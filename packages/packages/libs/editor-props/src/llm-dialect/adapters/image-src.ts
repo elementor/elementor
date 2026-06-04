@@ -1,5 +1,6 @@
 import { type AnyTransformable, type PropType, type PropValue } from '../../types';
 import { isTransformable } from '../../utils/is-transformable';
+import { stripFallbackSetting } from '../dialect-markers';
 import { type PropDialectAdapter } from '../registry';
 import { stripDynamicBinding } from '../strip-dynamic-binding';
 
@@ -34,21 +35,6 @@ const isEmptyImageSrc = ( value: PropValue ): boolean => {
 	const hasUrl = Object.hasOwn( inner, 'url' ) && hasActualValue( inner.url );
 
 	return ! hasId && ! hasUrl;
-};
-
-const withoutDynamicFallback = (
-	value: PropValue,
-	dynamicValue: { settings?: Record< string, unknown > }
-): PropValue => {
-	const { fallback: _fallback, ...restSettings } = dynamicValue.settings ?? {};
-
-	return {
-		...( value as object ),
-		value: {
-			...dynamicValue,
-			settings: restSettings,
-		},
-	} as PropValue;
 };
 
 const extractImageSrcForDialect = ( value: PropValue ): PropValue => {
@@ -197,7 +183,7 @@ const hoistImageSrcDynamicChild = ( child: AnyTransformable, field: BindableImag
 	const boundFallback = dynamicValue.settings?.fallback as PropValue | undefined;
 
 	if ( ! boundFallback || ! hasActualValue( boundFallback ) ) {
-		return withoutDynamicFallback( child, dynamicValue );
+		return stripFallbackSetting( child );
 	}
 
 	const imageSrc = {
@@ -261,7 +247,7 @@ export const imageSrcLlmDialectAdapter: PropDialectAdapter = {
 		const migrated = migrateImageSrc( fallback, ctx.propType );
 
 		if ( isEmptyImageSrc( migrated ) ) {
-			return withoutDynamicFallback( value, dynamicValue );
+			return stripFallbackSetting( value );
 		}
 
 		return {

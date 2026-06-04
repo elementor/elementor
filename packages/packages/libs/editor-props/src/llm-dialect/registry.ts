@@ -1,6 +1,11 @@
 import { type AnyTransformable, type PropValue, type TransformablePropType, type UnionPropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
-import { isLlmDialectSkip, LLM_DIALECT_SKIP, type LlmDialectSkip } from './skip';
+
+export const LLM_DIALECT_SKIP = Symbol( 'llm-dialect-skip' );
+
+export type LlmDialectSkip = typeof LLM_DIALECT_SKIP;
+
+export const isLlmDialectSkip = ( value: unknown ): value is LlmDialectSkip => value === LLM_DIALECT_SKIP;
 
 export type PropDialectContext = {
 	readonly propType: TransformablePropType | UnionPropType;
@@ -37,8 +42,6 @@ export const registerLlmDialectSchemaFinalize = ( hook: SchemaFinalizeHook ): vo
 
 	schemaFinalizeHook = hook;
 };
-
-export const getLlmDialectAdapters = (): readonly PropDialectAdapter[] => adapters;
 
 export const getMatchingLlmDialectAdapters = ( ctx: PropDialectContext ): PropDialectAdapter[] =>
 	adapters.filter( ( adapter ) => adapter.matches( ctx ) );

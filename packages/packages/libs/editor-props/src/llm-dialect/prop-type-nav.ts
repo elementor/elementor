@@ -24,14 +24,6 @@ export const getStaticUnionBranch = ( propType: PropType ): TransformablePropTyp
 export const isUnionWithDynamic = ( propType: PropType ): propType is UnionPropType =>
 	propType.kind === 'union' && Object.hasOwn( propType.prop_types, 'dynamic' );
 
-export const getShapeChildPropType = ( propType: PropType, key: string ): PropType | undefined => {
-	if ( propType.kind !== 'object' ) {
-		return undefined;
-	}
-
-	return propType.shape[ key ];
-};
-
 export const getArrayItemPropType = ( propType: PropType ): PropType | undefined => {
 	if ( propType.kind !== 'array' ) {
 		return undefined;

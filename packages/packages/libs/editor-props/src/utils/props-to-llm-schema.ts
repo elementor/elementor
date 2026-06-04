@@ -3,7 +3,7 @@ import {
 	LLMDialectAdapter,
 	type SchemaGenerationContext,
 } from '../llm-dialect/llm-prop-schema';
-import { isLlmDialectSkip } from '../llm-dialect/skip';
+import { isLlmDialectSkip } from '../llm-dialect/registry';
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
@@ -105,7 +105,7 @@ function convertUnionPropType(
 		if ( typeKey === 'overridable' || ( typeKey === 'dynamic' && dialect ) ) {
 			continue;
 		}
-		schemas.push( convertPropTypeToJsonSchema( subPropType, dialect, schemaContext ) );
+		schemas.push( propTypeToJsonSchema( subPropType, dialect, schemaContext ) );
 	}
 
 	if ( schemas.length > 0 ) {
@@ -204,7 +204,7 @@ function convertArrayPropType(
 	const itemPropType = propType.item_prop_type;
 
 	if ( itemPropType ) {
-		items = convertPropTypeToJsonSchema( itemPropType, dialect, schemaContext );
+		items = propTypeToJsonSchema( itemPropType, dialect, schemaContext );
 	}
 
 	schema.properties = {
@@ -223,14 +223,6 @@ function convertArrayPropType(
 
 	const dialectSchema = dialect.toDialectSchema( schema, propType, schemaContext );
 	return isLlmDialectSkip( dialectSchema ) ? schema : dialectSchema;
-}
-
-function convertPropTypeToJsonSchema(
-	propType: PropType,
-	dialect?: DialectPropAdapter,
-	schemaContext: SchemaGenerationContext = {}
-): JsonSchema7 {
-	return propTypeToJsonSchema( propType, dialect, schemaContext );
 }
 
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];

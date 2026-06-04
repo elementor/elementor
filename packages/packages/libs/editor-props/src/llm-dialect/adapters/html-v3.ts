@@ -1,6 +1,7 @@
 import { stringPropTypeUtil, type StringPropValue } from '../../prop-types';
 import { type PropType, type PropValue, type TransformablePropValue } from '../../types';
 import { isTransformable } from '../../utils/is-transformable';
+import { hasBindTo } from '../dialect-markers';
 import { type PropDialectAdapter } from '../registry';
 import { stripDynamicBinding } from '../strip-dynamic-binding';
 
@@ -32,9 +33,6 @@ const flattenHtmlV3ToString = ( value?: unknown ): StringPropValue | null => {
 function generateEmptyStringPT(): StringPropValue {
 	return stringPropTypeUtil.create( null );
 }
-
-const hasBindTo = ( value: PropValue ) =>
-	isTransformable( value ) && typeof ( value as Record< string, unknown > ).bindTo === 'string';
 
 const stringBindToToHtmlV3Wire = ( value: PropValue ): PropValue | null => {
 	if ( ! isTransformable( value ) || value.$$type !== 'string' || ! hasBindTo( value ) ) {

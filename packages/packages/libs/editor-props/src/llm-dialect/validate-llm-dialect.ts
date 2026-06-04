@@ -3,7 +3,7 @@ import { validate } from 'jsonschema';
 import { type PropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
 import { propTypeToLlmJsonSchema } from '../utils/props-to-llm-schema';
-import { ensureLlmDialect } from './init';
+import { initLlmDialect as ensureLlmDialect } from './init';
 
 export type LlmDialectValidationResult = {
 	valid: boolean;
@@ -32,10 +32,4 @@ export const validateLlmJson = ( propType: PropType, value: unknown ): LlmDialec
 		errors: formatValidationErrors( result.errors ),
 		jsonSchema,
 	};
-};
-
-export const validateLlmSemantic = ( propType: PropType, value: unknown ): LlmDialectValidationResult => {
-	void propType;
-	void value;
-	return { valid: true };
 };

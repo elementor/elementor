@@ -1,35 +1,17 @@
-type DynamicTagSource = {
-	name: string;
-	label: string;
-	group: string;
-	categories: string[];
-};
-
 type DynamicTagsConfig = {
-	tags?: Record< string, DynamicTagSource >;
+	tags?: Record<
+		string,
+		{
+			name: string;
+			label: string;
+			group: string;
+			categories: string[];
+		}
+	>;
 	groups?: Record< string, { title: string } >;
 };
 
-export type DynamicTagResourceEntry = {
-	name: string;
-	label: string;
-	group: string;
-	categories: string[];
-};
-
-export type DynamicTagsResourcePayload = {
-	groups: Record< string, { title: string } >;
-	tags: Record< string, DynamicTagResourceEntry >;
-	by_category: Record< string, string[] >;
-};
-
-export type DynamicTagsByCategoryPayload = {
-	category: string;
-	tag_names: string[];
-	tags: Record< string, DynamicTagResourceEntry >;
-};
-
-const indexTagsByCategory = ( tags: Record< string, DynamicTagResourceEntry > ): Record< string, string[] > => {
+const indexTagsByCategory = ( tags: NonNullable< DynamicTagsConfig[ 'tags' ] > ): Record< string, string[] > => {
 	const byCategory: Record< string, Set< string > > = {};
 
 	for ( const tag of Object.values( tags ) ) {
@@ -46,9 +28,7 @@ const indexTagsByCategory = ( tags: Record< string, DynamicTagResourceEntry > ):
 	);
 };
 
-export const buildDynamicTagsResourcePayload = (
-	atomicDynamicTags: DynamicTagsConfig | null | undefined
-): DynamicTagsResourcePayload => {
+export const buildDynamicTagsResourcePayload = ( atomicDynamicTags: DynamicTagsConfig | null | undefined ) => {
 	if ( ! atomicDynamicTags?.tags ) {
 		return {
 			groups: {},
@@ -79,7 +59,7 @@ export const buildDynamicTagsResourcePayload = (
 export const buildDynamicTagsByCategoryPayload = (
 	atomicDynamicTags: DynamicTagsConfig | null | undefined,
 	category: string
-): DynamicTagsByCategoryPayload => {
+) => {
 	const fullPayload = buildDynamicTagsResourcePayload( atomicDynamicTags );
 	const tagNames = fullPayload.by_category[ category ] ?? [];
 	const tags = Object.fromEntries(

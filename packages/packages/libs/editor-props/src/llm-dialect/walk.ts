@@ -1,8 +1,8 @@
 import { type ObjectPropType, type PropType, type PropValue, type TransformablePropValue } from '../types';
 import { isTransformable } from '../utils/is-transformable';
+import { hasBindTo, stripDialectMarkers } from './dialect-markers';
 import { getArrayItemPropType, resolveUnionBranch } from './prop-type-nav';
-import { applyLlmDialectPropValue } from './registry';
-import { isLlmDialectSkip } from './skip';
+import { applyLlmDialectPropValue, isLlmDialectSkip } from './registry';
 
 type WalkContext = {
 	suppressNestedBindTo: boolean;
@@ -22,28 +22,26 @@ const resolveDescentPropType = ( propType: PropType, value: { $$type: string } )
 	return resolveUnionBranch( propType, value.$$type ) ?? propType;
 };
 
-const hasDirectBindTo = ( value: PropValue ): boolean =>
-	isTransformable( value ) && typeof ( value as Record< string, unknown > ).bindTo === 'string';
-
 const stripNestedBindToMarkers = ( value: PropValue ): PropValue => {
 	if ( ! isTransformable( value ) ) {
 		return value;
 	}
 
-	const nextValue = { ...( value as Record< string, unknown > ) };
-	delete nextValue.bindTo;
-	delete nextValue.allowBind;
+	const stripped = stripDialectMarkers( value );
 
 	if ( typeof value.value === 'object' && value.value !== null && ! Array.isArray( value.value ) ) {
-		nextValue.value = Object.fromEntries(
-			Object.entries( value.value as Record< string, PropValue > ).map( ( [ key, childValue ] ) => [
-				key,
-				stripNestedBindToMarkers( childValue ),
-			] )
-		);
+		return {
+			...( stripped as TransformablePropValue< string, unknown > ),
+			value: Object.fromEntries(
+				Object.entries( value.value as Record< string, PropValue > ).map( ( [ key, childValue ] ) => [
+					key,
+					stripNestedBindToMarkers( childValue ),
+				] )
+			),
+		} as PropValue;
 	}
 
-	return nextValue as PropValue;
+	return stripped;
 };
 
 const walkObjectChildren = (
@@ -54,7 +52,7 @@ const walkObjectChildren = (
 ): TransformablePropValue< string, Record< string, PropValue > > => {
 	const shape = propType.shape ?? {};
 	const nextValue = { ...value.value };
-	const childSuppressNestedBindTo = walkContext.suppressNestedBindTo || hasDirectBindTo( value );
+	const childSuppressNestedBindTo = walkContext.suppressNestedBindTo || hasBindTo( value );
 
 	for ( const [ key, childPropType ] of Object.entries( shape ) ) {
 		if ( ! Object.hasOwn( nextValue, key ) ) {
@@ -103,7 +101,7 @@ const applyNodeAdapters = (
 	direction: WalkDirection,
 	walkContext: WalkContext
 ): PropValue => {
-	if ( direction === 'toProp' && hasDirectBindTo( value ) && walkContext.suppressNestedBindTo ) {
+	if ( direction === 'toProp' && hasBindTo( value ) && walkContext.suppressNestedBindTo ) {
 		return stripNestedBindToMarkers( value );
 	}
 

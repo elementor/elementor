@@ -1,12 +1,18 @@
 import { type PropType, type PropValue, type TransformablePropType, type TransformablePropValue } from '../../types';
 import { isTransformable } from '../../utils/is-transformable';
 import { type JsonSchema7 } from '../../utils/prop-json-schema';
+import {
+	ALLOW_BIND_KEY,
+	BIND_TO_KEY,
+	type DialectWireValue,
+	hasBindTo,
+	stripDialectMarkers,
+	stripFallbackSetting,
+} from '../dialect-markers';
 import { getLlmDialectDynamicTag } from '../dynamic-tag-metadata-registry';
 import { getStaticUnionBranch, isUnionWithDynamic } from '../prop-type-nav';
 import { type PropDialectAdapter } from '../registry';
 
-const BIND_TO_KEY = 'bindTo';
-const ALLOW_BIND_KEY = 'allowBind';
 const FALLBACK_KEY = 'fallback';
 
 type DynamicPropValue = TransformablePropValue<
@@ -22,25 +28,8 @@ type DynamicPropValue = TransformablePropValue<
 	}
 >;
 
-type DialectWireValue = TransformablePropValue< string, unknown > & {
-	[ BIND_TO_KEY ]?: string;
-	[ ALLOW_BIND_KEY ]?: boolean;
-};
-
 const isDynamicPropValue = ( value: PropValue ): value is DynamicPropValue =>
 	isTransformable( value ) && value.$$type === 'dynamic';
-
-const hasDirectBindTo = ( value: PropValue ): value is DialectWireValue =>
-	isTransformable( value ) && typeof ( value as DialectWireValue )[ BIND_TO_KEY ] === 'string';
-
-const stripDialectMarkers = ( value: PropValue ): PropValue => {
-	if ( ! isTransformable( value ) ) {
-		return value;
-	}
-
-	const { [ BIND_TO_KEY ]: _bindTo, [ ALLOW_BIND_KEY ]: _allowBind, ...rest } = value as DialectWireValue;
-	return rest as PropValue;
-};
 
 const getDynamicCategories = ( propType: PropType ): string => {
 	if ( ! isUnionWithDynamic( propType ) ) {
@@ -189,29 +178,11 @@ const withFallback = ( value: DynamicPropValue, fallback: PropValue ): DynamicPr
 	},
 } );
 
-const withoutFallback = ( value: DynamicPropValue ): DynamicPropValue => {
-	const settings = value.value.settings;
-
-	if ( ! settings || ! Object.hasOwn( settings, 'fallback' ) ) {
-		return value;
-	}
-
-	const { fallback: _fallback, ...rest } = settings;
-
-	return {
-		...value,
-		value: {
-			...value.value,
-			settings: rest,
-		},
-	};
-};
-
 const reconcileFallbackToProp = ( value: DynamicPropValue ): DynamicPropValue => {
 	const controlType = getFallbackControlType( value.value.name );
 
 	if ( controlType === null ) {
-		return withoutFallback( value );
+		return stripFallbackSetting( value );
 	}
 
 	if ( controlType !== 'text' ) {
@@ -251,7 +222,7 @@ export const dynamicLlmDialectAdapter: PropDialectAdapter = {
 		return mergeStaticUnionSchema( schema, getDynamicCategories( ctx.propType ) );
 	},
 	toPropValue: ( value ) => {
-		if ( isDynamicPropValue( value ) || ! hasDirectBindTo( value ) ) {
+		if ( isDynamicPropValue( value ) || ! hasBindTo( value ) ) {
 			return value;
 		}
 

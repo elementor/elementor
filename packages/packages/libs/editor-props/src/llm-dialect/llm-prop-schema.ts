@@ -1,27 +1,17 @@
-import { type PropType, type TransformablePropType } from '../types';
+import { type PropType } from '../types';
 import { type JsonSchema7 } from '../utils/prop-json-schema';
-import { ensureBuiltInLlmDialectAdapters } from './register-built-in-adapters';
+import { ensureBuiltInLlmDialectAdapters } from './init';
 import {
 	applyLlmDialectSchema,
 	finalizeLlmDialectSchema,
+	isLlmDialectSkip,
 	type PropDialectAdapter,
+	type PropDialectContext,
 	registerLlmDialectAdapter,
 	registerLlmDialectSchemaFinalize,
 } from './registry';
-import { isLlmDialectSkip } from './skip';
 
-export type SchemaGenerationContext = {
-	readonly parentPropType?: TransformablePropType;
-	readonly shapeKey?: string;
-};
-
-export type LlmDialectContext = {
-	readonly propType: PropType;
-	readonly schema?: JsonSchema7;
-	readonly parentPropType?: PropType;
-	readonly shapeKey?: string;
-};
-
+export type SchemaGenerationContext = Pick< PropDialectContext, 'parentPropType' | 'shapeKey' >;
 export type DialectPropAdapter = {
 	toDialectSchema: (
 		schema: JsonSchema7,
@@ -30,24 +20,11 @@ export type DialectPropAdapter = {
 	) => JsonSchema7;
 };
 
-const dialectPropAdapter: DialectPropAdapter = {
-	toDialectSchema( schema, propType, schemaContext = {} ) {
-		const result = applyLlmDialectSchema( schema, {
-			propType,
-			parentPropType: schemaContext.parentPropType,
-			shapeKey: schemaContext.shapeKey,
-		} );
-		const resolved = isLlmDialectSkip( result ) ? schema : result;
-		return finalizeLlmDialectSchema( resolved );
-	},
-};
-
 export const LLMDialectAdapter: DialectPropAdapter & {
 	register: ( adapter: PropDialectAdapter ) => void;
 	registerFinalizeSchema: ( hook: ( schema: JsonSchema7 ) => JsonSchema7 ) => void;
 	finalizeLlmSchema: ( schema: JsonSchema7 ) => JsonSchema7;
 } = {
-	...dialectPropAdapter,
 	register( adapter ) {
 		ensureBuiltInLlmDialectAdapters();
 		registerLlmDialectAdapter( adapter );
@@ -62,6 +39,12 @@ export const LLMDialectAdapter: DialectPropAdapter & {
 	},
 	toDialectSchema( schema, propType, schemaContext = {} ) {
 		ensureBuiltInLlmDialectAdapters();
-		return dialectPropAdapter.toDialectSchema( schema, propType, schemaContext );
+		const result = applyLlmDialectSchema( schema, {
+			propType,
+			parentPropType: schemaContext.parentPropType,
+			shapeKey: schemaContext.shapeKey,
+		} );
+		const resolved = isLlmDialectSkip( result ) ? schema : result;
+		return finalizeLlmDialectSchema( resolved );
 	},
 };

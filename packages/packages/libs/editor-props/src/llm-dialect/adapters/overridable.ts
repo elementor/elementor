@@ -1,5 +1,4 @@
-import { type PropDialectAdapter } from '../registry';
-import { LLM_DIALECT_SKIP } from '../skip';
+import { LLM_DIALECT_SKIP, type PropDialectAdapter } from '../registry';
 
 export const overridableLlmDialectAdapter: PropDialectAdapter = {
 	id: 'overridable',
