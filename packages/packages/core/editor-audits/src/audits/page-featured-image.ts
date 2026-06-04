@@ -8,7 +8,7 @@ export const audit: Audit = {
 	description: __( 'Featured images are used by social shares and many themes for hero visuals.', 'elementor' ),
 	fixHint: __( 'Open Page Settings and set a featured image.', 'elementor' ),
 	categories: [ 'seo' ],
-	severity: 'warning',
+	severity: 'info',
 	weight: 5,
 	evaluate: ( ctx ) => {
 		if ( ctx.pageContext.featured_image_id ) {

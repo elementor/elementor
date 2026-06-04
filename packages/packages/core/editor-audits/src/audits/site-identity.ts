@@ -10,9 +10,9 @@ export const audit: Audit = {
 		'elementor'
 	),
 	fixHint: __( 'Open Site Settings → Site Identity and complete all the missing fields.', 'elementor' ),
-	categories: [ 'seo', 'best-practices' ],
-	severity: 'warning',
-	weight: 5,
+	categories: [ 'best-practices', 'seo' ],
+	severity: 'info',
+	weight: 7,
 	evaluate: ( ctx ) => {
 		const { site_identity: identity } = ctx.pageContext;
 		const violations: AuditViolation[] = [];

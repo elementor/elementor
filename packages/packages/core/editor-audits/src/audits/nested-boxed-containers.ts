@@ -12,8 +12,8 @@ export const audit: Audit = {
 	title: __( 'Boxed container nested inside a boxed parent', 'elementor' ),
 	description: __( 'An inner container does not need to be boxed when its parent already is.', 'elementor' ),
 	fixHint: __( "Change the inner container's content width to Full Width.", 'elementor' ),
-	categories: [ 'performance', 'best-practices' ],
-	severity: 'warning',
+	categories: [ 'best-practices', 'performance' ],
+	severity: 'info',
 	weight: 5,
 	evaluate: ( ctx ) => {
 		const violations: AuditViolation[] = [];

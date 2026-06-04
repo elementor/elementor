@@ -14,8 +14,8 @@ export const audit: Audit = {
 		'elementor'
 	),
 	categories: [ 'compliance' ],
-	severity: 'warning',
-	weight: 5,
+	severity: 'info',
+	weight: 1,
 	evaluate: ( ctx ) => {
 		if ( ctx.pageContext.privacy_policy_url ) {
 			return { status: 'pass' };

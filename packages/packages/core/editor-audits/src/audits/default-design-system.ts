@@ -12,7 +12,7 @@ export const audit: Audit = {
 	fixHint: __( 'Open Site Settings and customize your kit (colors, fonts, layout).', 'elementor' ),
 	categories: [ 'best-practices' ],
 	severity: 'info',
-	weight: 3,
+	weight: 1,
 	evaluate: ( ctx ) => {
 		if ( ! ctx.pageContext.kit_is_default_unchanged ) {
 			return { status: 'pass' };

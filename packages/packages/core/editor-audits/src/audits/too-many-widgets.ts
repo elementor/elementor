@@ -10,9 +10,9 @@ export const audit: Audit = {
 	title: __( 'Too many widgets', 'elementor' ),
 	description: __( 'Excessive DOM size caused by too many widgets degrades rendering performance.', 'elementor' ),
 	fixHint: __( 'Reduce the number of widgets on the page by removing or combining elements.', 'elementor' ),
-	categories: [ 'performance', 'best-practices' ],
-	severity: 'info',
-	weight: 3,
+	categories: [ 'best-practices', 'performance' ],
+	severity: 'warning',
+	weight: 5,
 	evaluate: ( ctx ) => {
 		let widgetCount = 0;
 

@@ -15,7 +15,7 @@ export const audit: Audit = {
 		'elementor'
 	),
 	fixHint: __( 'Remove the element or make it visible on at least one device breakpoint.', 'elementor' ),
-	categories: [ 'best-practices' ],
+	categories: [ 'best-practices', 'performance' ],
 	severity: 'info',
 	weight: 3,
 	evaluate: ( ctx ) => {
