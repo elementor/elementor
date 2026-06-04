@@ -113,8 +113,6 @@ export async function openClassManager( page: Page, editor: EditorPage, divBlock
 	}
 
 	await dismissClassManagerIntro( page );
-
-	// Await page.locator( 'li[role="listitem"]' ).first().waitFor( { state: 'visible', timeout: timeouts.expect } );
 }
 
 export async function dismissClassManagerIntro( page: Page ): Promise<void> {

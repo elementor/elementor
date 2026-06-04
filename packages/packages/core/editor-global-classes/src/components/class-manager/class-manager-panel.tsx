@@ -291,9 +291,7 @@ const usePreventUnload = () => {
 
 const usePublish = () => {
 	return useMutation( {
-		mutationFn: async () => {
-			await saveGlobalClasses( { context: 'frontend' } );
-		},
+		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
 		onSuccess: async () => {
 			setDocumentModifiedStatus( false );
 
