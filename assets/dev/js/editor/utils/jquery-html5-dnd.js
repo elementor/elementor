@@ -342,7 +342,14 @@
 		};
 
 		const insertFlexRowPlaceholder = function() {
-			const { $currentElement, isInnerContainer } = placeholderContext;
+			const { $currentElement, isInnerContainer, hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			if ( hasLogicalWrapper && placeholderTarget ) {
+				insertPlaceholderOutsideElement( placeholderTarget );
+
+				return;
+			}
+
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			insertPlaceholderOutsideElement( $target[ 0 ] );
