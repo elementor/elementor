@@ -7,7 +7,7 @@ export const audit: Audit = {
 	title: __( 'Page excerpt', 'elementor' ),
 	description: __( 'A descriptive excerpt helps search engines and previews summarize the page.', 'elementor' ),
 	fixHint: __( 'Open Page Settings and write a short excerpt.', 'elementor' ),
-	categories: [ 'seo', 'accessibility' ],
+	categories: [ 'seo' ],
 	severity: 'warning',
 	weight: 5,
 	evaluate: ( ctx ) => {

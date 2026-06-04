@@ -9,7 +9,7 @@ export const audit: Audit = {
 	title: __( 'Page title', 'elementor' ),
 	description: __( 'Pages need a clear title for SEO and screen-reader navigation.', 'elementor' ),
 	fixHint: __( 'Open Page Settings and add a title.', 'elementor' ),
-	categories: [ 'seo', 'accessibility' ],
+	categories: [ 'seo' ],
 	severity: 'error',
 	weight: 10,
 	evaluate: ( ctx ) => {
