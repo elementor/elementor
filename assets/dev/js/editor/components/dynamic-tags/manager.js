@@ -13,11 +13,30 @@ module.exports = elementorModules.Module.extend( {
 	cacheCallbacks: [],
 
 	addCacheRequest( tag ) {
-		this.cacheRequests[ this.createCacheKey( tag ) ] = true;
+		const postId = this.getTagRenderPostId( tag );
+		const cacheKey = this.createCacheKey( tag );
+
+		if ( ! this.cacheRequests[ postId ] ) {
+			this.cacheRequests[ postId ] = {};
+		}
+
+		this.cacheRequests[ postId ][ cacheKey ] = true;
+	},
+
+	getTagRenderPostId( tag ) {
+		return tag.editorRenderPostId ?? elementor.config.document.id;
 	},
 
 	createCacheKey( tag ) {
-		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
+		return this.buildCacheKeyFor(
+			tag.getOption( 'name' ),
+			tag.model,
+			this.getTagRenderPostId( tag ),
+		);
+	},
+
+	buildCacheKeyFor( tagName, tagSettings, postId ) {
+		return btoa( tagName ) + '-' + btoa( encodeURIComponent( JSON.stringify( tagSettings ) ) ) + '-' + postId;
 	},
 
 	loadTagDataFromCache( tag ) {
@@ -27,7 +46,9 @@ module.exports = elementorModules.Module.extend( {
 			return this.cache[ cacheKey ];
 		}
 
-		if ( ! this.cacheRequests[ cacheKey ] ) {
+		const postId = this.getTagRenderPostId( tag );
+
+		if ( ! this.cacheRequests[ postId ] || ! this.cacheRequests[ postId ][ cacheKey ] ) {
 			this.addCacheRequest( tag );
 		}
 	},
@@ -40,10 +61,24 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
+		var groups = Object.keys( cacheRequests )
+			.map( ( postId ) => ( {
+				post_id: Number( postId ),
+				tags: Object.keys( cacheRequests[ postId ] ).filter( ( cacheKey ) => undefined === this.cache[ cacheKey ] ),
+			} ) )
+			.filter( ( group ) => group.tags.length > 0 );
+
+		if ( 0 === groups.length ) {
+			cacheCallbacks.forEach( ( entry ) => {
+				entry.callback();
+			} );
+
+			return;
+		}
+
 		var ajaxOptions = {
 			data: {
-				post_id: elementor.config.document.id,
-				tags: Object.keys( cacheRequests ),
+				groups,
 			},
 			success: ( data ) => {
 				this.cache = {
@@ -51,21 +86,45 @@ module.exports = elementorModules.Module.extend( {
 					...data,
 				};
 
-				cacheCallbacks.forEach( function( entry ) {
+				cacheCallbacks.forEach( ( entry ) => {
 					entry.callback();
 				} );
 			},
 		};
 
-		var disableCache = cacheCallbacks.some( function( entry ) {
+		var disableCache = cacheCallbacks.some( ( entry ) => {
 			return entry.disableCache;
 		} );
 
 		if ( disableCache ) {
-			ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
+			ajaxOptions.unique_id = `render_tags_batch-${ elementorCommon.helpers.getUniqueId() }`;
 		}
 
-		elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
+		elementorCommon.ajax.addRequest( 'render_tags_batch', ajaxOptions );
+	},
+
+	prefetchTags( tagsByPostId ) {
+		var self = this;
+
+		Object.keys( tagsByPostId ).forEach( ( postId ) => {
+			if ( ! self.cacheRequests[ postId ] ) {
+				self.cacheRequests[ postId ] = {};
+			}
+
+			tagsByPostId[ postId ].forEach( ( cacheKey ) => {
+				if ( undefined === self.cache[ cacheKey ] ) {
+					self.cacheRequests[ postId ][ cacheKey ] = true;
+				}
+			} );
+		} );
+
+		return new Promise( ( resolve ) => {
+			self.cacheCallbacks.push( {
+				callback: resolve,
+			} );
+
+			self.loadCacheRequestsImmediate();
+		} );
 	},
 
 	refreshCacheFromServer( callback, options ) {
@@ -167,6 +226,7 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	onInit() {
-		this.loadCacheRequests = _.debounce( this.loadCacheRequests, 300 );
+		this.loadCacheRequestsImmediate = this.loadCacheRequests.bind( this );
+		this.loadCacheRequests = _.debounce( this.loadCacheRequestsImmediate, 300 );
 	},
 } );

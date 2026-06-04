@@ -459,19 +459,7 @@ class Manager {
 		 */
 		do_action( 'elementor/dynamic_tags/before_render' );
 
-		$tags_data = [];
-
-		foreach ( $data['tags'] as $tag_key ) {
-			$tag_key_parts = explode( '-', $tag_key );
-
-			$tag_name = base64_decode( $tag_key_parts[0] );
-
-			$tag_settings = json_decode( urldecode( base64_decode( $tag_key_parts[1] ) ), true );
-
-			$tag = $this->create_tag( null, $tag_name, $tag_settings );
-
-			$tags_data[ $tag_key ] = $tag->get_content();
-		}
+		$tags_data = $this->resolve_tag_keys( $data['tags'] );
 
 		/**
 		 * After dynamic tags rendered.
@@ -481,6 +469,86 @@ class Manager {
 		 * @since 2.0.0
 		 */
 		do_action( 'elementor/dynamic_tags/after_render' );
+
+		return $tags_data;
+	}
+
+	/**
+	 * @since 3.35.0
+	 * @access public
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function ajax_render_tags_batch( $data ) {
+		if ( empty( $data['groups'] ) || ! is_array( $data['groups'] ) ) {
+			return [];
+		}
+
+		$tags_data = [];
+
+		foreach ( $data['groups'] as $group ) {
+			if ( empty( $group['post_id'] ) || empty( $group['tags'] ) || ! is_array( $group['tags'] ) ) {
+				continue;
+			}
+
+			$post_id = (int) $group['post_id'];
+
+			if ( ! User::is_current_user_can_edit( $post_id ) ) {
+				continue;
+			}
+
+			Plugin::$instance->db->switch_to_post( $post_id );
+
+			/**
+			 * Before dynamic tags rendered.
+			 *
+			 * Fires before Elementor renders the dynamic tags.
+			 *
+			 * @since 2.0.0
+			 */
+			do_action( 'elementor/dynamic_tags/before_render' );
+
+			$tags_data = array_merge( $tags_data, $this->resolve_tag_keys( $group['tags'] ) );
+
+			/**
+			 * After dynamic tags rendered.
+			 *
+			 * Fires after Elementor renders the dynamic tags.
+			 *
+			 * @since 2.0.0
+			 */
+			do_action( 'elementor/dynamic_tags/after_render' );
+		}
+
+		return $tags_data;
+	}
+
+	/**
+	 * @since 3.35.0
+	 * @access private
+	 *
+	 * @param array $tag_keys
+	 * @return array
+	 */
+	private function resolve_tag_keys( array $tag_keys ) {
+		$tags_data = [];
+
+		foreach ( $tag_keys as $tag_key ) {
+			$tag_key_parts = explode( '-', $tag_key );
+
+			$tag_name = base64_decode( $tag_key_parts[0] );
+
+			$tag_settings = json_decode( urldecode( base64_decode( $tag_key_parts[1] ) ), true );
+
+			$tag = $this->create_tag( null, $tag_name, $tag_settings );
+
+			if ( ! $tag ) {
+				continue;
+			}
+
+			$tags_data[ $tag_key ] = $tag->get_content();
+		}
 
 		return $tags_data;
 	}
@@ -524,6 +592,7 @@ class Manager {
 	 */
 	public function register_ajax_actions( Ajax $ajax ) {
 		$ajax->register_ajax_action( 'render_tags', [ $this, 'ajax_render_tags' ] );
+		$ajax->register_ajax_action( 'render_tags_batch', [ $this, 'ajax_render_tags_batch' ] );
 	}
 
 	/**
