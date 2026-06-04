@@ -161,9 +161,6 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 	}
 
 	public function test_ajax_set_cta_visited__persists_true_as_one() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
 		$actions = new Testable_Birthday_Promotion_Actions();
 		$response = $actions->call_private(
 			'ajax_set_cta_visited',
@@ -171,13 +168,10 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		);
 
 		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => true ], $response );
-		$this->assertSame( '1', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+		$this->assertSame( '1', get_user_meta( $this->current_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
 	}
 
 	public function test_ajax_set_cta_visited__persists_false_as_zero() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
 		$actions = new Testable_Birthday_Promotion_Actions();
 		$response = $actions->call_private(
 			'ajax_set_cta_visited',
@@ -185,24 +179,18 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		);
 
 		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => false ], $response );
-		$this->assertSame( '0', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+		$this->assertSame( '0', get_user_meta( $this->current_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
 	}
 
 	public function test_ajax_set_cta_visited__defaults_to_true_when_param_missing() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
 		$actions = new Testable_Birthday_Promotion_Actions();
 		$response = $actions->call_private( 'ajax_set_cta_visited', [ [] ] );
 
 		$this->assertSame( [ Birthday_Promotion_Actions::VISITED_PARAM => true ], $response );
-		$this->assertSame( '1', get_user_meta( $user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+		$this->assertSame( '1', get_user_meta( $this->current_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
 	}
 
 	public function test_ajax_set_cta_visited__coerces_string_booleans() {
-		$user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
-		wp_set_current_user( $user_id );
-
 		$actions = new Testable_Birthday_Promotion_Actions();
 
 		$response = $actions->call_private(
@@ -216,6 +204,37 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 			[ [ Birthday_Promotion_Actions::VISITED_PARAM => '0' ] ]
 		);
 		$this->assertFalse( $response[ Birthday_Promotion_Actions::VISITED_PARAM ] );
+	}
+
+	public function test_ajax_set_cta_visited__rejects_user_without_manage_options() {
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+
+		$this->expectException( \WPDieException::class );
+
+		try {
+			$actions->call_private(
+				'ajax_set_cta_visited',
+				[ [ Birthday_Promotion_Actions::VISITED_PARAM => true ] ]
+			);
+		} finally {
+			$this->assertSame( '', get_user_meta( $editor_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, true ) );
+		}
+	}
+
+	public function test_ajax_set_cta_visited__rejects_logged_out_user() {
+		wp_set_current_user( 0 );
+
+		$actions = new Testable_Birthday_Promotion_Actions();
+
+		$this->expectException( \WPDieException::class );
+
+		$actions->call_private(
+			'ajax_set_cta_visited',
+			[ [ Birthday_Promotion_Actions::VISITED_PARAM => true ] ]
+		);
 	}
 
 	public function test_should_show_promotion__returns_true_when_all_conditions_met() {
