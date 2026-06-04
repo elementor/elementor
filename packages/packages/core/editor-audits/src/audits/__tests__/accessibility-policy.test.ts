@@ -1,15 +1,15 @@
-import { descriptor, evaluator } from '../accessibility-policy';
+import { audit } from '../accessibility-policy';
 import { makeContext } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes when ally plugin is active', async () => {
-		expect( await evaluator( makeContext( { pageContext: { ally_plugin_active: true } } ) ) ).toEqual( {
+		expect( await audit.evaluate( makeContext( { pageContext: { ally_plugin_active: true } } ) ) ).toEqual( {
 			status: 'pass',
 		} );
 	} );
 
 	it( 'fails when ally plugin is not active and includes externalUrl pointing to plugin install page', async () => {
-		const result = await evaluator( makeContext( { pageContext: { ally_plugin_active: false } } ) );
+		const result = await audit.evaluate( makeContext( { pageContext: { ally_plugin_active: false } } ) );
 
 		expect( result.status ).toBe( 'fail' );
 

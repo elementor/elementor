@@ -1,6 +1,6 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
 
-import { descriptor, evaluator } from '../deprecated-widgets';
+import { audit } from '../deprecated-widgets';
 import { makeContext, makeWidget } from './fixtures';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -36,14 +36,14 @@ afterEach( () => {
 	jest.clearAllMocks();
 } );
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes when no deprecated widgets are on the page', async () => {
 		// Arrange.
 		mockGetWidgetsCache.mockReturnValue( WIDGETS_CACHE_WITH_DEPRECATED );
 		const tree = [ makeWidget( 'w1', 'heading' ) ];
 
 		// Act.
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		// Assert.
 		expect( result ).toEqual( { status: 'pass' } );
@@ -55,7 +55,7 @@ describe( descriptor.id, () => {
 		const tree = [ makeWidget( 'w1', 'accordion' ) ];
 
 		// Act.
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		// Assert.
 		expect( result.status ).toBe( 'fail' );
@@ -74,7 +74,7 @@ describe( descriptor.id, () => {
 		const tree = [ makeWidget( 'w1', 'accordion' ), makeWidget( 'w2', 'heading' ), makeWidget( 'w3', 'tabs' ) ];
 
 		// Act.
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		// Assert.
 		expect( result.status ).toBe( 'fail' );
@@ -92,7 +92,7 @@ describe( descriptor.id, () => {
 		const tree = [ makeWidget( 'w1', 'unknown-orphaned-widget' ) ];
 
 		// Act.
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		// Assert.
 		expect( result ).toEqual( { status: 'pass' } );
@@ -103,7 +103,7 @@ describe( descriptor.id, () => {
 		mockGetWidgetsCache.mockReturnValue( null );
 
 		// Act.
-		const result = await evaluator( makeContext() );
+		const result = await audit.evaluate( makeContext() );
 
 		// Assert.
 		expect( result ).toEqual( { status: 'skipped', reason: 'widgets-cache-unavailable' } );

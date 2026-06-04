@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/default-design-system',
 	title: __( 'Default website kit', 'elementor' ),
 	description: __(
@@ -13,21 +13,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'best-practices' ],
 	severity: 'info',
 	weight: 3,
-};
+	evaluate: ( ctx ) => {
+		if ( ! ctx.pageContext.kit_is_default_unchanged ) {
+			return { status: 'pass' };
+		}
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	if ( ! ctx.pageContext.kit_is_default_unchanged ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'Kit appears unchanged from default.', 'elementor' ),
-				targetHint: 'site-settings',
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'Kit appears unchanged from default.', 'elementor' ),
+					targetHint: 'site-settings',
+				},
+			],
+		};
+	},
 };

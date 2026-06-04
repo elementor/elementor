@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/privacy-policy',
 	title: __( 'Privacy policy', 'elementor' ),
 	description: __(
@@ -16,21 +16,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'compliance' ],
 	severity: 'warning',
 	weight: 5,
-};
+	evaluate: ( ctx ) => {
+		if ( ctx.pageContext.privacy_policy_url ) {
+			return { status: 'pass' };
+		}
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	if ( ctx.pageContext.privacy_policy_url ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'No privacy policy page is set.', 'elementor' ),
-				externalUrl: ctx.pageContext.privacy_settings_url,
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'No privacy policy page is set.', 'elementor' ),
+					externalUrl: ctx.pageContext.privacy_settings_url,
+				},
+			],
+		};
+	},
 };

@@ -1,13 +1,13 @@
 import { __ } from '@wordpress/i18n';
 
 import { walkElements } from '../lib/walk';
-import { type AuditDescriptor, type AuditEvaluator, type AuditViolation } from '../types';
+import { type Audit, type AuditViolation } from '../types';
 
 function isHiddenOnAllDevices( settings: Record< string, unknown > ): boolean {
 	return Boolean( settings.hide_desktop ) && Boolean( settings.hide_tablet ) && Boolean( settings.hide_mobile );
 }
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/hidden-elements',
 	title: __( 'Hidden elements', 'elementor' ),
 	description: __(
@@ -18,21 +18,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'best-practices' ],
 	severity: 'info',
 	weight: 3,
-};
+	evaluate: ( ctx ) => {
+		const violations: AuditViolation[] = [];
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	const violations: AuditViolation[] = [];
+		walkElements( ctx.elements.tree, ( node ) => {
+			if ( isHiddenOnAllDevices( node.settings ) ) {
+				violations.push( {
+					auditId: audit.id,
+					elementId: node.id,
+					targetHint: 'element-settings',
+					label: __( 'Element is hidden on all devices.', 'elementor' ),
+				} );
+			}
+		} );
 
-	walkElements( ctx.elements.tree, ( node ) => {
-		if ( isHiddenOnAllDevices( node.settings ) ) {
-			violations.push( {
-				auditId: descriptor.id,
-				elementId: node.id,
-				targetHint: 'element-settings',
-				label: __( 'Element is hidden on all devices.', 'elementor' ),
-			} );
-		}
-	} );
-
-	return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+		return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+	},
 };

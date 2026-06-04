@@ -1,17 +1,17 @@
-import { descriptor, evaluator } from '../privacy-policy';
+import { audit } from '../privacy-policy';
 import { makeContext } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes when privacy policy url is set', async () => {
 		expect(
-			await evaluator(
+			await audit.evaluate(
 				makeContext( { pageContext: { privacy_policy_url: 'https://example.com/privacy-policy' } } )
 			)
 		).toEqual( { status: 'pass' } );
 	} );
 
 	it( 'fails when privacy policy url is null and includes externalUrl pointing to wp privacy settings', async () => {
-		const result = await evaluator( makeContext( { pageContext: { privacy_policy_url: null } } ) );
+		const result = await audit.evaluate( makeContext( { pageContext: { privacy_policy_url: null } } ) );
 
 		expect( result.status ).toBe( 'fail' );
 

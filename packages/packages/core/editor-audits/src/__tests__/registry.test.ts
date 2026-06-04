@@ -1,7 +1,7 @@
-import { clearRegistry, getRegistered, hasEvaluator, registerAudit } from '../registry';
-import { type AuditDescriptor } from '../types';
+import { clearAuditRegistry, getRegisteredAudits, hasAudit, registerAudit } from '../registry';
+import { type Audit } from '../types';
 
-const descriptor: AuditDescriptor = {
+const testAudit: Audit = {
 	id: 'audits/test',
 	title: 'Test',
 	description: 'A test audit',
@@ -9,22 +9,23 @@ const descriptor: AuditDescriptor = {
 	categories: [ 'seo' ],
 	severity: 'warning',
 	weight: 5,
+	evaluate: async () => ( { status: 'pass' } ),
 };
 
 describe( 'audits registry', () => {
-	beforeEach( () => clearRegistry() );
+	beforeEach( () => clearAuditRegistry() );
 
 	it( 'registers an audit and exposes it', () => {
 		// Act.
-		registerAudit( descriptor, async () => ( { status: 'pass' } ) );
+		registerAudit( testAudit );
 
 		// Assert.
-		expect( getRegistered().map( ( r ) => r.descriptor.id ) ).toContain( 'audits/test' );
-		expect( hasEvaluator( 'audits/test' ) ).toBe( true );
+		expect( getRegisteredAudits().map( ( audit ) => audit.id ) ).toContain( 'audits/test' );
+		expect( hasAudit( 'audits/test' ) ).toBe( true );
 	} );
 
-	it( 'reports missing evaluator', () => {
-		expect( hasEvaluator( 'audits/missing' ) ).toBe( false );
+	it( 'reports missing audit', () => {
+		expect( hasAudit( 'audits/missing' ) ).toBe( false );
 	} );
 
 	it( 'overwrites a previously registered audit with the same id', () => {
@@ -32,11 +33,11 @@ describe( 'audits registry', () => {
 		const first = jest.fn< Promise< { status: 'pass' } >, [] >().mockResolvedValue( { status: 'pass' } );
 		const second = jest.fn< Promise< { status: 'pass' } >, [] >().mockResolvedValue( { status: 'pass' } );
 
-		registerAudit( descriptor, first );
-		registerAudit( descriptor, second );
+		registerAudit( { ...testAudit, evaluate: first } );
+		registerAudit( { ...testAudit, evaluate: second } );
 
-		const registered = getRegistered();
-		expect( registered ).toHaveLength( 1 );
-		expect( registered[ 0 ].evaluator ).toBe( second );
+		const audits = getRegisteredAudits();
+		expect( audits ).toHaveLength( 1 );
+		expect( audits[ 0 ].evaluate ).toBe( second );
 	} );
 } );

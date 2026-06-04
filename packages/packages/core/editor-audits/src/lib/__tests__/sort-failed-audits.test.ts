@@ -1,10 +1,10 @@
-import { type AuditDescriptor, type AuditSeverity } from '../../types';
+import { type AuditMeta, type AuditSeverity } from '../../types';
 import { sortFailedAuditResults } from '../sort-failed-audits';
 
 function stubResult( severity: AuditSeverity, title: string ) {
-	const descriptor = { id: title, severity, title } as AuditDescriptor;
+	const audit = { id: title, severity, title } as AuditMeta;
 
-	return { descriptor, result: { status: 'fail' as const, violations: [] } };
+	return { audit, result: { status: 'fail' as const, violations: [] } };
 }
 
 describe( 'sortFailedAuditResults', () => {
@@ -20,7 +20,7 @@ describe( 'sortFailedAuditResults', () => {
 		const sorted = sortFailedAuditResults( input );
 
 		// Assert.
-		expect( sorted.map( ( r ) => r.descriptor.severity ) ).toEqual( [ 'error', 'warning', 'info' ] );
+		expect( sorted.map( ( r ) => r.audit.severity ) ).toEqual( [ 'error', 'warning', 'info' ] );
 	} );
 
 	it( 'sorts same severity by title', () => {
@@ -31,18 +31,18 @@ describe( 'sortFailedAuditResults', () => {
 		const sorted = sortFailedAuditResults( input );
 
 		// Assert.
-		expect( sorted.map( ( r ) => r.descriptor.title ) ).toEqual( [ 'Alpha', 'Zebra' ] );
+		expect( sorted.map( ( r ) => r.audit.title ) ).toEqual( [ 'Alpha', 'Zebra' ] );
 	} );
 
 	it( 'does not mutate the input array', () => {
 		// Arrange.
 		const input = [ stubResult( 'info', 'B' ), stubResult( 'error', 'A' ) ];
-		const originalOrder = input.map( ( r ) => r.descriptor.id );
+		const originalOrder = input.map( ( r ) => r.audit.id );
 
 		// Act.
 		sortFailedAuditResults( input );
 
 		// Assert.
-		expect( input.map( ( r ) => r.descriptor.id ) ).toEqual( originalOrder );
+		expect( input.map( ( r ) => r.audit.id ) ).toEqual( originalOrder );
 	} );
 } );

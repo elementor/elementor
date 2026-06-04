@@ -1,27 +1,25 @@
 import { ALL_CATEGORIES } from '../constants';
-import { type AuditDescriptor, type AuditResult, type PageAuditReport } from '../types';
-
-type Input = Array< { descriptor: AuditDescriptor; result: AuditResult } >;
+import { type AuditRun, type PageAuditReport } from '../types';
 
 type CategoryAccumulator = { totalWeight: number; passedWeight: number; total: number; failed: number };
 
-export function computeReport( documentId: number, results: Input ): PageAuditReport {
+export function computeReport( documentId: number, results: AuditRun[] ): PageAuditReport {
 	const accumulators = Object.fromEntries(
 		ALL_CATEGORIES.map( ( c ) => [ c, { totalWeight: 0, passedWeight: 0, total: 0, failed: 0 } ] )
 	) as Record< string, CategoryAccumulator >;
 
-	for ( const { descriptor, result } of results ) {
+	for ( const { audit, result } of results ) {
 		if ( result.status === 'skipped' ) {
 			continue;
 		}
 
-		for ( const category of descriptor.categories ) {
+		for ( const category of audit.categories ) {
 			const acc = accumulators[ category ];
 			acc.total++;
-			acc.totalWeight += descriptor.weight;
+			acc.totalWeight += audit.weight;
 
 			if ( result.status === 'pass' ) {
-				acc.passedWeight += descriptor.weight;
+				acc.passedWeight += audit.weight;
 			} else {
 				acc.failed++;
 			}

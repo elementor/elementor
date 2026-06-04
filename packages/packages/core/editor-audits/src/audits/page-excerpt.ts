@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/page-excerpt',
 	title: __( 'Page excerpt', 'elementor' ),
 	description: __( 'A descriptive excerpt helps search engines and previews summarize the page.', 'elementor' ),
@@ -10,21 +10,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'seo', 'accessibility' ],
 	severity: 'warning',
 	weight: 5,
-};
+	evaluate: ( ctx ) => {
+		if ( ctx.pageContext.post_excerpt ) {
+			return { status: 'pass' };
+		}
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	if ( ctx.pageContext.post_excerpt ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'Page has no excerpt.', 'elementor' ),
-				targetHint: 'page-settings',
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'Page has no excerpt.', 'elementor' ),
+					targetHint: 'page-settings',
+				},
+			],
+		};
+	},
 };

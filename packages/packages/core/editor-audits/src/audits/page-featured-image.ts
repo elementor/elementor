@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/page-featured-image',
 	title: __( 'Page featured image', 'elementor' ),
 	description: __( 'Featured images are used by social shares and many themes for hero visuals.', 'elementor' ),
@@ -10,21 +10,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'seo' ],
 	severity: 'warning',
 	weight: 5,
-};
+	evaluate: ( ctx ) => {
+		if ( ctx.pageContext.featured_image_id ) {
+			return { status: 'pass' };
+		}
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	if ( ctx.pageContext.featured_image_id ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'No featured image set.', 'elementor' ),
-				targetHint: 'page-settings',
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'No featured image set.', 'elementor' ),
+					targetHint: 'page-settings',
+				},
+			],
+		};
+	},
 };

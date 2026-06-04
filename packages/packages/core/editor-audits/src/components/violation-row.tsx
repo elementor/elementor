@@ -6,16 +6,16 @@ import { Alert, AlertTitle, Box, Collapse, IconButton, Typography } from '@eleme
 import { __ } from '@wordpress/i18n';
 
 import { useViolationFocus } from '../hooks/use-violation-focus';
-import { type AuditDescriptor, type AuditViolation } from '../types';
+import { type AuditMeta, type AuditViolation } from '../types';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
 
 type Props = {
-	descriptor: AuditDescriptor;
+	audit: AuditMeta;
 	violations?: AuditViolation[];
 };
 
-export default function ViolationRow( { descriptor, violations }: Props ) {
+export default function ViolationRow( { audit, violations }: Props ) {
 	const [ expanded, setExpanded ] = useState( false );
 	const { focus } = useViolationFocus();
 
@@ -26,14 +26,14 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 				onClick={ () => setExpanded( ( v ) => ! v ) }
 			>
 				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ descriptor.title }
+					{ audit.title }
 				</Typography>
 				{ violations ? (
 					<>
 						<Typography variant="caption" color="text.secondary" fontWeight="bold">
 							{ violations.length }
 						</Typography>
-						<SeverityIcon severity={ descriptor.severity } />
+						<SeverityIcon severity={ audit.severity } />
 					</>
 				) : (
 					<CheckIcon fontSize="small" color="success" />
@@ -64,7 +64,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 							</Typography>
 						</AlertTitle>
 						<Typography variant="caption" component="p" color="text.secondary">
-							{ descriptor.description }
+							{ audit.description }
 						</Typography>
 					</Alert>
 					<Alert
@@ -78,7 +78,7 @@ export default function ViolationRow( { descriptor, violations }: Props ) {
 							</Typography>
 						</AlertTitle>
 						<Typography variant="caption" component="p" color="text.secondary">
-							{ descriptor.fixHint }
+							{ audit.fixHint }
 						</Typography>
 					</Alert>
 				</Box>

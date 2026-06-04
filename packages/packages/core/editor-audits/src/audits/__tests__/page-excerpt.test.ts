@@ -1,15 +1,15 @@
-import { descriptor, evaluator } from '../page-excerpt';
+import { audit } from '../page-excerpt';
 import { makeContext } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes when excerpt is non-empty', async () => {
-		expect( await evaluator( makeContext( { pageContext: { post_excerpt: 'A summary' } } ) ) ).toEqual( {
+		expect( await audit.evaluate( makeContext( { pageContext: { post_excerpt: 'A summary' } } ) ) ).toEqual( {
 			status: 'pass',
 		} );
 	} );
 
 	it( 'fails when excerpt is null', async () => {
-		const result = await evaluator( makeContext( { pageContext: { post_excerpt: null } } ) );
+		const result = await audit.evaluate( makeContext( { pageContext: { post_excerpt: null } } ) );
 		expect( result.status ).toBe( 'fail' );
 	} );
 } );

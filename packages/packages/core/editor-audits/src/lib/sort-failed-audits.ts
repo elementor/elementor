@@ -1,4 +1,4 @@
-import { type AuditDescriptor, type AuditSeverity } from '../types';
+import { type AuditMeta, type AuditSeverity } from '../types';
 
 const SEVERITY_SORTING_RANK: Record< AuditSeverity, number > = {
 	error: 0,
@@ -6,14 +6,14 @@ const SEVERITY_SORTING_RANK: Record< AuditSeverity, number > = {
 	info: 2,
 };
 
-export function sortFailedAuditResults< T extends { descriptor: AuditDescriptor } >( results: T[] ): T[] {
+export function sortFailedAuditResults< T extends { audit: AuditMeta } >( results: T[] ): T[] {
 	return [ ...results ].sort( ( a, b ) => {
-		const rankDiff = SEVERITY_SORTING_RANK[ a.descriptor.severity ] - SEVERITY_SORTING_RANK[ b.descriptor.severity ];
+		const rankDiff = SEVERITY_SORTING_RANK[ a.audit.severity ] - SEVERITY_SORTING_RANK[ b.audit.severity ];
 
 		if ( rankDiff !== 0 ) {
 			return rankDiff;
 		}
 
-		return a.descriptor.title.localeCompare( b.descriptor.title );
+		return a.audit.title.localeCompare( b.audit.title );
 	} );
 }

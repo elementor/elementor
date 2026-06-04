@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n';
 
 import { walkElements } from '../lib/walk';
-import { type AuditDescriptor, type AuditEvaluator, type AuditViolation } from '../types';
+import { type Audit, type AuditViolation } from '../types';
 
 const MAX_NESTING_DEPTH = 6;
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/deep-nesting',
 	title: __( 'Deep container nesting', 'elementor' ),
 	description: __(
@@ -16,27 +16,26 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'performance', 'best-practices' ],
 	severity: 'warning',
 	weight: 5,
-};
+	evaluate: ( ctx ) => {
+		const violations: AuditViolation[] = [];
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	const violations: AuditViolation[] = [];
+		walkElements( ctx.elements.tree, ( node, parents ) => {
+			if ( node.elType !== 'container' ) {
+				return;
+			}
 
-	walkElements( ctx.elements.tree, ( node, parents ) => {
-		if ( node.elType !== 'container' ) {
-			return;
-		}
+			const depth = parents.length + 1;
 
-		const depth = parents.length + 1;
+			if ( depth > MAX_NESTING_DEPTH ) {
+				violations.push( {
+					auditId: audit.id,
+					elementId: node.id,
+					targetHint: 'element-settings',
+					label: __( 'Container nesting is too deep.', 'elementor' ),
+				} );
+			}
+		} );
 
-		if ( depth > MAX_NESTING_DEPTH ) {
-			violations.push( {
-				auditId: descriptor.id,
-				elementId: node.id,
-				targetHint: 'element-settings',
-				label: __( 'Container nesting is too deep.', 'elementor' ),
-			} );
-		}
-	} );
-
-	return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+		return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+	},
 };

@@ -1,7 +1,7 @@
-import { type AuditDescriptor, type AuditResult } from '../../types';
+import { type AuditMeta, type AuditResult, type AuditRun } from '../../types';
 import { computeReport } from '../score';
 
-function descriptor( id: string, categories: AuditDescriptor[ 'categories' ], weight = 10 ): AuditDescriptor {
+function auditMeta( id: string, categories: AuditMeta[ 'categories' ], weight = 10 ): AuditMeta {
 	return {
 		id,
 		title: id,
@@ -13,12 +13,16 @@ function descriptor( id: string, categories: AuditDescriptor[ 'categories' ], we
 	};
 }
 
+function auditRun( meta: AuditMeta, result: AuditResult ): AuditRun {
+	return { audit: meta, result };
+}
+
 describe( 'computeReport', () => {
 	it( 'per-category score = passed weight / total weight × 100', () => {
 		// Arrange.
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'seo' ], 10 ), result: { status: 'pass' } },
-			{ descriptor: descriptor( 'b', [ 'seo' ], 10 ), result: { status: 'fail', violations: [] } },
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'seo' ], 10 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'b', [ 'seo' ], 10 ), { status: 'fail', violations: [] } ),
 		];
 
 		// Act.
@@ -32,9 +36,9 @@ describe( 'computeReport', () => {
 
 	it( 'overall = mean of populated category scores', () => {
 		// Arrange.
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'seo' ], 10 ), result: { status: 'pass' } },
-			{ descriptor: descriptor( 'b', [ 'performance' ], 10 ), result: { status: 'fail', violations: [] } },
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'seo' ], 10 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'b', [ 'performance' ], 10 ), { status: 'fail', violations: [] } ),
 		];
 
 		// Act.
@@ -46,12 +50,9 @@ describe( 'computeReport', () => {
 
 	it( 'skipped audits are excluded from totals', () => {
 		// Arrange.
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'seo' ], 10 ), result: { status: 'pass' } },
-			{
-				descriptor: descriptor( 'b', [ 'seo' ], 10 ),
-				result: { status: 'skipped', reason: 'evaluator-not-registered' },
-			},
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'seo' ], 10 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'b', [ 'seo' ], 10 ), { status: 'skipped', reason: 'evaluator-not-registered' } ),
 		];
 
 		// Act.
@@ -63,23 +64,21 @@ describe( 'computeReport', () => {
 	} );
 
 	it( 'returns 100 for a category with all passes', () => {
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'accessibility' ], 5 ), result: { status: 'pass' } },
-		];
+		const results: AuditRun[] = [ auditRun( auditMeta( 'a', [ 'accessibility' ], 5 ), { status: 'pass' } ) ];
 		expect( computeReport( 1, results ).categories.accessibility.score ).toBe( 100 );
 	} );
 
 	it( 'returns 0 for a category with all fails', () => {
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'accessibility' ], 5 ), result: { status: 'fail', violations: [] } },
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'accessibility' ], 5 ), { status: 'fail', violations: [] } ),
 		];
 		expect( computeReport( 1, results ).categories.accessibility.score ).toBe( 0 );
 	} );
 
 	it( 'audit weight matters in score', () => {
-		const results: Array< { descriptor: AuditDescriptor; result: AuditResult } > = [
-			{ descriptor: descriptor( 'a', [ 'seo' ], 9 ), result: { status: 'pass' } },
-			{ descriptor: descriptor( 'b', [ 'seo' ], 1 ), result: { status: 'fail', violations: [] } },
+		const results: AuditRun[] = [
+			auditRun( auditMeta( 'a', [ 'seo' ], 9 ), { status: 'pass' } ),
+			auditRun( auditMeta( 'b', [ 'seo' ], 1 ), { status: 'fail', violations: [] } ),
 		];
 
 		expect( computeReport( 1, results ).categories.seo.score ).toBe( 90 );

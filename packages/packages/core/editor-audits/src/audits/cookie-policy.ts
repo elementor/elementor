@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/cookie-policy',
 	title: __( 'Cookie policy', 'elementor' ),
 	description: __(
@@ -13,21 +13,20 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'compliance' ],
 	severity: 'info',
 	weight: 1,
-};
+	evaluate: ( ctx ) => {
+		if ( ctx.pageContext.cookiez_plugin_active ) {
+			return { status: 'pass' };
+		}
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	if ( ctx.pageContext.cookiez_plugin_active ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'Cookiez plugin is not installed or active.', 'elementor' ),
-				externalUrl: ctx.pageContext.cookiez_plugin_url,
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'Cookiez plugin is not installed or active.', 'elementor' ),
+					externalUrl: ctx.pageContext.cookiez_plugin_url,
+				},
+			],
+		};
+	},
 };

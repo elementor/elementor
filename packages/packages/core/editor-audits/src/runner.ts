@@ -3,9 +3,21 @@ import { getElements } from '@elementor/editor-elements';
 import { fetchPageContext } from './api/page-context-client';
 import { extractAttachmentIds } from './lib/attachment-ids';
 import { buildSnapshotTree } from './lib/v1-snapshot';
-import { getRegistered } from './registry';
+import { getRegisteredAudits } from './registry';
 import { computeReport } from './score/score';
-import { type AuditContext, type ElementsModelSnapshot, type KitSnapshot, type PageAuditReport } from './types';
+import {
+	type Audit,
+	type AuditContext,
+	type AuditMeta,
+	type AuditRun,
+	type ElementsModelSnapshot,
+	type KitSnapshot,
+	type PageAuditReport,
+} from './types';
+
+function toAuditMeta( { evaluate: _evaluate, ...meta }: Audit ): AuditMeta {
+	return meta;
+}
 
 export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
 	const tree = buildSnapshotTree( getElements() );
@@ -16,16 +28,17 @@ export async function runPageAudit( documentId: number ): Promise< PageAuditRepo
 	const kit: KitSnapshot = readKitFromGlobals( pageContext.kit_id );
 
 	const ctx: AuditContext = { documentId, elements, pageContext, kit };
-	const registered = getRegistered();
+	const registered = getRegisteredAudits();
 
-	const auditResults = await Promise.all(
-		registered.map( async ( { descriptor, evaluator } ) => {
+	const auditResults: AuditRun[] = await Promise.all(
+		registered.map( async ( audit ) => {
+			const meta = toAuditMeta( audit );
 			try {
-				const result = await Promise.resolve( evaluator( ctx ) );
-				return { descriptor, result };
+				const result = await Promise.resolve( audit.evaluate( ctx ) );
+				return { audit: meta, result };
 			} catch ( error ) {
 				const reason = error instanceof Error ? error.message : 'unknown-error';
-				return { descriptor, result: { status: 'skipped' as const, reason } };
+				return { audit: meta, result: { status: 'skipped' as const, reason } };
 			}
 		} )
 	);

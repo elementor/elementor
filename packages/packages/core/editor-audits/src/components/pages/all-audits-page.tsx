@@ -52,21 +52,21 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 				>
 					{ failed.map( ( r ) => (
 						<ViolationRow
-							key={ r.descriptor.id }
-							descriptor={ r.descriptor }
+							key={ r.audit.id }
+							audit={ r.audit }
 							violations={ r.result.status === 'fail' ? r.result.violations : [] }
 						/>
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">
 					{ passed.map( ( r ) => (
-						<ViolationRow key={ r.descriptor.id } descriptor={ r.descriptor } />
+						<ViolationRow key={ r.audit.id } audit={ r.audit } />
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Skipped audits', 'elementor' ) } count={ skipped.length }>
 					{ skipped.map( ( r ) => (
 						<Box
-							key={ r.descriptor.id }
+							key={ r.audit.id }
 							sx={ {
 								borderBottom: 1,
 								borderColor: 'divider',
@@ -75,8 +75,8 @@ export default function AllAuditsPage( { report, onBack }: Props ) {
 						>
 							<Typography variant="body2">
 								{ r.result.status === 'skipped' && r.result.reason
-									? `${ r.descriptor.title } — ${ r.result.reason }`
-									: r.descriptor.title }
+									? `${ r.audit.title } — ${ r.result.reason }`
+									: r.audit.title }
 							</Typography>
 						</Box>
 					) ) }

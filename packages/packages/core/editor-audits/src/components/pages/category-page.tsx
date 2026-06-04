@@ -19,7 +19,7 @@ type Props = {
 export default function CategoryPage( { category, report, onBack }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
-	const inCategory = report.auditResults.filter( ( r ) => r.descriptor.categories.includes( category ) );
+	const inCategory = report.auditResults.filter( ( r ) => r.audit.categories.includes( category ) );
 	const failed = sortFailedAuditResults( inCategory.filter( ( r ) => r.result.status === 'fail' ) );
 	const passed = inCategory.filter( ( r ) => r.result.status === 'pass' );
 
@@ -57,15 +57,15 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 				>
 					{ failed.map( ( r ) => (
 						<ViolationRow
-							key={ r.descriptor.id }
-							descriptor={ r.descriptor }
+							key={ r.audit.id }
+							audit={ r.audit }
 							violations={ r.result.status === 'fail' ? r.result.violations : [] }
 						/>
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">
 					{ passed.map( ( r ) => (
-						<ViolationRow key={ r.descriptor.id } descriptor={ r.descriptor } />
+						<ViolationRow key={ r.audit.id } audit={ r.audit } />
 					) ) }
 				</StatusSection>
 			</Box>

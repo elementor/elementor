@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n';
 
 import { walkElements } from '../lib/walk';
-import { type AuditDescriptor, type AuditEvaluator } from '../types';
+import { type Audit } from '../types';
 
 const WIDGET_COUNT_THRESHOLD = 100;
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/too-many-widgets',
 	title: __( 'Too many widgets', 'elementor' ),
 	description: __( 'Excessive DOM size caused by too many widgets degrades rendering performance.', 'elementor' ),
@@ -13,28 +13,27 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'performance', 'best-practices' ],
 	severity: 'info',
 	weight: 3,
-};
+	evaluate: ( ctx ) => {
+		let widgetCount = 0;
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	let widgetCount = 0;
+		walkElements( ctx.elements.tree, ( node ) => {
+			if ( node.elType === 'widget' ) {
+				widgetCount++;
+			}
+		} );
 
-	walkElements( ctx.elements.tree, ( node ) => {
-		if ( node.elType === 'widget' ) {
-			widgetCount++;
+		if ( widgetCount <= WIDGET_COUNT_THRESHOLD ) {
+			return { status: 'pass' };
 		}
-	} );
 
-	if ( widgetCount <= WIDGET_COUNT_THRESHOLD ) {
-		return { status: 'pass' };
-	}
-
-	return {
-		status: 'fail',
-		violations: [
-			{
-				auditId: descriptor.id,
-				label: __( 'Page has too many widgets.', 'elementor' ),
-			},
-		],
-	};
+		return {
+			status: 'fail',
+			violations: [
+				{
+					auditId: audit.id,
+					label: __( 'Page has too many widgets.', 'elementor' ),
+				},
+			],
+		};
+	},
 };

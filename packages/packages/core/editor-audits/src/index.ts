@@ -1,13 +1,13 @@
-export { Audit } from './audit';
 export { init } from './init';
 export { registerAudit } from './registry';
 export { runPageAudit } from './runner';
 export type {
+	Audit,
 	AuditCategory,
 	AuditContext,
-	AuditDescriptor,
-	AuditEvaluator,
+	AuditMeta,
 	AuditResult,
+	AuditRun,
 	AuditSeverity,
 	AuditViolation,
 	PageAuditReport,

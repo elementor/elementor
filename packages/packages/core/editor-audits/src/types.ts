@@ -1,8 +1,4 @@
-export type AuditCategory = 'best-practices' | 'seo' | 'accessibility' | 'performance' | 'compliance';
-
-export type AuditSeverity = 'error' | 'warning' | 'info';
-
-export type AuditDescriptor = {
+export type Audit = {
 	id: string;
 	title: string;
 	description: string;
@@ -10,7 +6,24 @@ export type AuditDescriptor = {
 	categories: AuditCategory[];
 	severity: AuditSeverity;
 	weight: number;
+	evaluate: ( ctx: AuditContext ) => AuditResult | Promise< AuditResult >;
 };
+
+export type AuditCategory = 'best-practices' | 'seo' | 'accessibility' | 'performance' | 'compliance';
+
+export type AuditSeverity = 'error' | 'warning' | 'info';
+
+export type AuditMeta = Omit< Audit, 'evaluate' >;
+
+export type AuditRun = {
+	audit: AuditMeta;
+	result: AuditResult;
+};
+
+export type AuditResult =
+	| { status: 'pass' }
+	| { status: 'fail'; violations: AuditViolation[] }
+	| { status: 'skipped'; reason: string };
 
 export type AuditViolation = {
 	auditId: string;
@@ -20,11 +33,6 @@ export type AuditViolation = {
 	label: string;
 	detail?: string;
 };
-
-export type AuditResult =
-	| { status: 'pass' }
-	| { status: 'fail'; violations: AuditViolation[] }
-	| { status: 'skipped'; reason: string };
 
 export type PageContextResponse = {
 	post_title: string | null;
@@ -78,12 +86,10 @@ export type AuditContext = {
 	kit: KitSnapshot;
 };
 
-export type AuditEvaluator = ( ctx: AuditContext ) => AuditResult | Promise< AuditResult >;
-
 export type PageAuditReport = {
 	documentId: number;
 	runAt: number;
 	overall: number;
 	categories: Record< AuditCategory, { score: number; failed: number; total: number } >;
-	auditResults: Array< { descriptor: AuditDescriptor; result: AuditResult } >;
+	auditResults: AuditRun[];
 };

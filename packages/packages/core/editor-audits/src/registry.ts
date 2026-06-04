@@ -1,24 +1,19 @@
-import { type AuditDescriptor, type AuditEvaluator } from './types';
+import { type Audit } from './types';
 
-type RegisteredAudit = {
-	descriptor: AuditDescriptor;
-	evaluator: AuditEvaluator;
-};
+const registry = new Map< string, Audit >();
 
-const registry = new Map< string, RegisteredAudit >();
-
-export function registerAudit( descriptor: AuditDescriptor, evaluator: AuditEvaluator ): void {
-	registry.set( descriptor.id, { descriptor, evaluator } );
+export function registerAudit( audit: Audit ): void {
+	registry.set( audit.id, audit );
 }
 
-export function getRegistered(): RegisteredAudit[] {
+export function getRegisteredAudits(): Audit[] {
 	return Array.from( registry.values() );
 }
 
-export function hasEvaluator( id: string ): boolean {
+export function hasAudit( id: string ): boolean {
 	return registry.has( id );
 }
 
-export function clearRegistry(): void {
+export function clearAuditRegistry(): void {
 	registry.clear();
 }

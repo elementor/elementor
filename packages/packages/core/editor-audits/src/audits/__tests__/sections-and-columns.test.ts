@@ -1,16 +1,16 @@
 import { type ElementSnapshotNode } from '../../types';
-import { descriptor, evaluator } from '../sections-and-columns';
+import { audit } from '../sections-and-columns';
 import { makeContainer, makeContext } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes for a tree of only containers and widgets', async () => {
 		const tree: ElementSnapshotNode[] = [ makeContainer( 'c1', {} ) ];
-		expect( await evaluator( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
+		expect( await audit.evaluate( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
 	} );
 
 	it( 'fails when a section is present', async () => {
 		const tree: ElementSnapshotNode[] = [ { id: 's1', elType: 'section', settings: {}, elements: [] } ];
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );
 
@@ -24,7 +24,7 @@ describe( descriptor.id, () => {
 			{ id: 'col-a', elType: 'column', settings: {}, elements: [] },
 			{ id: 'col-b', elType: 'column', settings: {}, elements: [] },
 		];
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );
 

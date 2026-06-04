@@ -1,16 +1,16 @@
-import { descriptor, evaluator } from '../prefer-global-colors';
+import { audit } from '../prefer-global-colors';
 import { makeContext, makeWidget } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'is skipped when the kit has no global colors', async () => {
-		const result = await evaluator( makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } ) );
+		const result = await audit.evaluate( makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } ) );
 
 		expect( result.status ).toBe( 'skipped' );
 	} );
 
 	it( 'fails for a widget with a hex color value', async () => {
 		const tree = [ makeWidget( 'b1', 'button', { background_color: '#ff0000' } ) ];
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );
 
@@ -21,6 +21,6 @@ describe( descriptor.id, () => {
 
 	it( 'passes when no hex values are in widget settings', async () => {
 		const tree = [ makeWidget( 'b1', 'button', { background_color: 'globals/colors/primary' } ) ];
-		expect( await evaluator( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
+		expect( await audit.evaluate( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
 	} );
 } );

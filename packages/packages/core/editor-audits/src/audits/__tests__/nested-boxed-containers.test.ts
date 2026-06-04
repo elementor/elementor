@@ -1,7 +1,7 @@
-import { descriptor, evaluator } from '../nested-boxed-containers';
+import { audit } from '../nested-boxed-containers';
 import { makeContainer, makeContext } from './fixtures';
 
-describe( descriptor.id, () => {
+describe( audit.id, () => {
 	it( 'passes for a boxed container with a full-width child', async () => {
 		const tree = [
 			makeContainer( 'outer', { content_width: 'boxed' }, [
@@ -9,7 +9,7 @@ describe( descriptor.id, () => {
 			] ),
 		];
 
-		expect( await evaluator( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
+		expect( await audit.evaluate( makeContext( { tree } ) ) ).toEqual( { status: 'pass' } );
 	} );
 
 	it( 'fails when a boxed container is nested inside a boxed parent', async () => {
@@ -18,7 +18,7 @@ describe( descriptor.id, () => {
 				makeContainer( 'inner', { content_width: 'boxed' } ),
 			] ),
 		];
-		const result = await evaluator( makeContext( { tree } ) );
+		const result = await audit.evaluate( makeContext( { tree } ) );
 
 		expect( result.status ).toBe( 'fail' );
 

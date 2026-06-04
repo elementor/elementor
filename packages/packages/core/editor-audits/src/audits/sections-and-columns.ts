@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 
 import { walkElements } from '../lib/walk';
-import { type AuditDescriptor, type AuditEvaluator, type AuditViolation } from '../types';
+import { type Audit, type AuditViolation } from '../types';
 
-export const descriptor: AuditDescriptor = {
+export const audit: Audit = {
 	id: 'audits/sections-and-columns',
 	title: __( 'Sections and columns', 'elementor' ),
 	description: __(
@@ -14,23 +14,22 @@ export const descriptor: AuditDescriptor = {
 	categories: [ 'best-practices', 'performance' ],
 	severity: 'warning',
 	weight: 7,
-};
+	evaluate: ( ctx ) => {
+		const violations: AuditViolation[] = [];
 
-export const evaluator: AuditEvaluator = ( ctx ) => {
-	const violations: AuditViolation[] = [];
+		walkElements( ctx.elements.tree, ( node ) => {
+			if ( node.elType === 'section' || node.elType === 'column' ) {
+				violations.push( {
+					auditId: audit.id,
+					elementId: node.id,
+					label:
+						node.elType === 'section'
+							? __( 'Section element', 'elementor' )
+							: __( 'Column element', 'elementor' ),
+				} );
+			}
+		} );
 
-	walkElements( ctx.elements.tree, ( node ) => {
-		if ( node.elType === 'section' || node.elType === 'column' ) {
-			violations.push( {
-				auditId: descriptor.id,
-				elementId: node.id,
-				label:
-					node.elType === 'section'
-						? __( 'Section element', 'elementor' )
-						: __( 'Column element', 'elementor' ),
-			} );
-		}
-	} );
-
-	return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+		return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+	},
 };
