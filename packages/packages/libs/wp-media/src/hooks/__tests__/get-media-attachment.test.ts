@@ -193,7 +193,7 @@ describe( 'getMediaAttachment', () => {
 			authorName: 'author',
 		};
 
-		let resolveFetch: ( value: WpAttachmentJSON ) => void;
+		let resolveFetch: ( value: WpAttachmentJSON ) => void = () => undefined;
 		const fetchPromise = new Promise< WpAttachmentJSON >( ( resolve ) => {
 			resolveFetch = resolve;
 		} );
@@ -208,7 +208,7 @@ describe( 'getMediaAttachment', () => {
 		const first = getMediaAttachment( { id: 123 } );
 		const second = getMediaAttachment( { id: 123 } );
 
-		resolveFetch!( wpAttachment );
+		resolveFetch( wpAttachment );
 
 		const [ firstResult, secondResult ] = await Promise.all( [ first, second ] );
 
