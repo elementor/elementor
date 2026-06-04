@@ -8,7 +8,8 @@ import { createSamplePosts } from './steps/sample-posts';
 import { setSiteMetadata } from './steps/site-metadata';
 import type { ThemePartEntry } from './steps/theme-parts';
 import { createThemeParts } from './steps/theme-parts';
-import type { DeployPayload, DeployResult } from './types';
+import { wireMenuWidgets } from './steps/wire-menu-widgets';
+import type { CreatedMenus, DeployPayload, DeployResult } from './types';
 
 export type { DeployPayload, DeployResult };
 
@@ -19,7 +20,7 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 	if ( mode === 'incremental' ) {
 		let pageIdMap: Record< string, number > = {};
 		try {
-			pageIdMap = await createPages( payload.pages );
+			( { pageIdMap } = await createPages( payload.pages ) );
 		} catch ( e ) {
 			errors.push( `pages: ${ ( e as Error ).message }` );
 		}
@@ -73,8 +74,9 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 	}
 
 	let pageIdMap: Record< string, number > = {};
+	let pageUrlMap: Record< string, string > = {};
 	try {
-		pageIdMap = await createPages( payload.pages );
+		( { pageIdMap, pageUrlMap } = await createPages( payload.pages ) );
 	} catch ( e ) {
 		errors.push( `pages: ${ ( e as Error ).message }` );
 	}
@@ -86,6 +88,28 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		} catch ( e ) {
 			errors.push( `home_page: ${ ( e as Error ).message }` );
 		}
+	}
+
+	let createdMenus: CreatedMenus = {};
+	try {
+		createdMenus = await createMenus( payload.menus, pageIdMap );
+	} catch ( e ) {
+		errors.push( `menus: ${ ( e as Error ).message }` );
+	}
+
+	if ( payload.header ) {
+		wireMenuWidgets( payload.header.content, {
+			items: payload.menus?.header ?? [],
+			pageUrlMap,
+			menuSlug: createdMenus.header?.slug,
+		} );
+	}
+	if ( payload.footer ) {
+		wireMenuWidgets( payload.footer.content, {
+			items: payload.menus?.footer ?? [],
+			pageUrlMap,
+			menuSlug: createdMenus.footer?.slug,
+		} );
 	}
 
 	const themeParts: ThemePartEntry[] = [];
@@ -118,21 +142,15 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		}
 	}
 
-	if ( payload.menus ) {
-		try {
-			await createMenus( payload.menus, pageIdMap );
-		} catch ( e ) {
-			errors.push( `menus: ${ ( e as Error ).message }` );
-		}
-	}
-
-	return {
+	const result: DeployResult = {
 		status: errors.length ? 'error' : 'success',
 		homeUrl: window.location.origin,
 		homePageId: homeWpId || 0,
 		pageIdMap,
 		...( errors.length ? { errors, error: errors[ 0 ] } : {} ),
 	};
+
+	return result;
 }
 
 function resolveHomePageId( pages: DeployPayload[ 'pages' ], pageIdMap: Record< string, number > ): number | undefined {

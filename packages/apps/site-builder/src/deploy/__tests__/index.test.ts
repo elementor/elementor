@@ -38,14 +38,14 @@ const buildFullPayload = (): DeployPayload => ( {
 
 describe( '@elementor/site-builder/deploy/index', () => {
 	beforeEach( () => {
-		jest.mocked( createPages ).mockResolvedValue( {} );
+		jest.mocked( createPages ).mockResolvedValue( { pageIdMap: {}, pageUrlMap: {} } );
 		jest.mocked( setHomePage ).mockResolvedValue( undefined as never );
 		jest.mocked( setSiteMetadata ).mockResolvedValue( undefined as never );
 		jest.mocked( updateKitSettings ).mockResolvedValue( undefined as never );
 		jest.mocked( deployGlobalClasses ).mockResolvedValue( undefined as never );
 		jest.mocked( deployGlobalVariables ).mockResolvedValue( undefined as never );
 		jest.mocked( uploadLogo ).mockResolvedValue( undefined as never );
-		jest.mocked( createMenus ).mockResolvedValue( undefined as never );
+		jest.mocked( createMenus ).mockResolvedValue( {} );
 		jest.mocked( createSamplePosts ).mockResolvedValue( undefined as never );
 		jest.mocked( createThemeParts ).mockResolvedValue( undefined as never );
 	} );
@@ -56,7 +56,10 @@ describe( '@elementor/site-builder/deploy/index', () => {
 
 	describe( 'incremental mode', () => {
 		it( 'only creates pages and skips site-wide steps', async () => {
-			jest.mocked( createPages ).mockResolvedValue( { 'planner-uuid-1': 42 } );
+			jest.mocked( createPages ).mockResolvedValue( {
+				pageIdMap: { 'planner-uuid-1': 42 },
+				pageUrlMap: {},
+			} );
 
 			const result = await deployWebsite( buildIncrementalPayload() );
 
@@ -84,8 +87,11 @@ describe( '@elementor/site-builder/deploy/index', () => {
 	describe( 'full mode', () => {
 		it( 'runs every deploy step and returns pageIdMap with homePageId derived from first page', async () => {
 			jest.mocked( createPages ).mockResolvedValue( {
-				'planner-uuid-home': 1001,
-				'planner-uuid-about': 1002,
+				pageIdMap: {
+					'planner-uuid-home': 1001,
+					'planner-uuid-about': 1002,
+				},
+				pageUrlMap: {},
 			} );
 
 			const result = await deployWebsite( buildFullPayload() );
