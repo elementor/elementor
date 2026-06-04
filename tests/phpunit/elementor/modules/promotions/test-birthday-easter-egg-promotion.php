@@ -40,7 +40,7 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		$this->original_v4_default_state = Plugin::$instance->experiments
 			->get_features( AtomicWidgetsModule::EXPERIMENT_NAME )['default'];
 
-		$this->current_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		$this->current_user_id = self::factory()->user->create( [ 'role' => 'administrator' ] );
 		wp_set_current_user( $this->current_user_id );
 	}
 
@@ -259,6 +259,33 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
 	}
 
+	public function test_should_show_promotion__returns_false_when_user_lacks_manage_options() {
+		$this->set_v4_active( true );
+
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
+	public function test_should_show_promotion__returns_false_when_user_logged_out() {
+		$this->set_v4_active( true );
+
+		wp_set_current_user( 0 );
+
+		$promotion = new Testable_Birthday_Easter_Egg_Promotion(
+			$this->data_with_window( -3600, 3600 ),
+			self::VALID_LOTTIE
+		);
+
+		$this->assertFalse( $promotion->call_private( 'should_show_promotion' ) );
+	}
+
 	public function test_should_show_promotion__returns_false_when_v4_inactive() {
 		$this->set_v4_active( false );
 
@@ -355,8 +382,10 @@ class Test_Birthday_Easter_Egg_Promotion extends Elementor_Test_Base {
 	public function test_should_show_promotion__short_circuits_on_first_failing_gate() {
 		// Belt-and-braces: every gate fails simultaneously. Just asserts false; if any
 		// gate were to throw on a missing precondition we'd surface it here.
+		$editor_user_id = self::factory()->user->create( [ 'role' => 'editor' ] );
+		wp_set_current_user( $editor_user_id );
+		update_user_meta( $editor_user_id, Birthday_Promotion_Actions::CTA_VISITED_KEY, 1 );
 		$this->set_v4_active( false );
-		$this->mark_cta_visited();
 
 		$promotion = new Testable_Birthday_Easter_Egg_Promotion( [], null );
 
