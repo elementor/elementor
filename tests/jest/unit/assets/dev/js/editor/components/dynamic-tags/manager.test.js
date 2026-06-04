@@ -74,6 +74,8 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 		jest.clearAllMocks();
 	} );
 
+	const DOCUMENT_POST_ID = 100;
+
 	function createTagStub( postId ) {
 		return {
 			getOption: ( key ) => ( 'name' === key ? 'test-tag' : null ),
@@ -82,19 +84,20 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 		};
 	}
 
-	it( 'addCacheRequest queues document post tags in flat cacheRequests', () => {
+	it( 'addCacheRequest routes document-post tag to legacy flat cacheRequests', () => {
 		// Arrange.
-		const documentTag = createTagStub( 100 );
+		const tag = createTagStub( DOCUMENT_POST_ID );
+		const legacyKey = manager.createCacheKey( tag );
 
 		// Act.
-		manager.addCacheRequest( documentTag );
+		manager.addCacheRequest( tag );
 
 		// Assert.
-		expect( Object.keys( manager.cacheRequests ).length ).toBe( 1 );
-		expect( manager.batchCacheRequests[ 100 ] ).toBeUndefined();
+		expect( manager.cacheRequests[ legacyKey ] ).toBe( true );
+		expect( manager.batchCacheRequests ).toEqual( {} );
 	} );
 
-	it( 'addCacheRequest buckets alternate post tags in batchCacheRequests', () => {
+	it( 'addCacheRequest routes alternate-post tags into batchCacheRequests bucketed by post id', () => {
 		// Arrange.
 		const tagOne = createTagStub( 1 );
 		const tagTwo = createTagStub( 2 );
@@ -111,16 +114,15 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 		expect( Object.keys( manager.batchCacheRequests[ 2 ] ).length ).toBe( 1 );
 	} );
 
-	it( 'loadCacheRequests sends render_tags for document post and writes to cache only', () => {
+	it( 'loadCacheRequests sends a render_tags request for the document post and writes to cache', () => {
 		// Arrange.
-		const documentTag = createTagStub( 100 );
-		const callback = jest.fn();
+		const tag = createTagStub( DOCUMENT_POST_ID );
+		const legacyKey = manager.createCacheKey( tag );
 
-		manager.addCacheRequest( documentTag );
-		manager.cacheCallbacks.push( { callback } );
+		manager.addCacheRequest( tag );
 
 		ajaxAddRequest.mockImplementation( ( action, options ) => {
-			options.success( { [ manager.createLegacyCacheKey( documentTag ) ]: 'legacy-resolved' } );
+			options.success( { [ legacyKey ]: 'legacy-value' } );
 		} );
 
 		// Act.
@@ -131,30 +133,29 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 			'render_tags',
 			expect.objectContaining( {
 				data: {
-					post_id: 100,
-					tags: expect.any( Array ),
+					post_id: DOCUMENT_POST_ID,
+					tags: [ legacyKey ],
 				},
 			} ),
 		);
-		expect( manager.cache[ manager.createLegacyCacheKey( documentTag ) ] ).toBe( 'legacy-resolved' );
+		expect( manager.cache[ legacyKey ] ).toBe( 'legacy-value' );
 		expect( manager.batchCache ).toEqual( {} );
-		expect( callback ).toHaveBeenCalled();
 	} );
 
-	it( 'loadBatchCacheRequests sends render_tags_batch and writes to batchCache only', () => {
+	it( 'loadBatchCacheRequests sends a single render_tags_batch request with grouped tags and writes to batchCache', () => {
 		// Arrange.
 		const tagOne = createTagStub( 1 );
 		const tagTwo = createTagStub( 2 );
-		const callback = jest.fn();
+		const batchKeyOne = manager.createBatchCacheKey( tagOne );
+		const batchKeyTwo = manager.createBatchCacheKey( tagTwo );
 
 		manager.addCacheRequest( tagOne );
 		manager.addCacheRequest( tagTwo );
-		manager.batchCacheCallbacks.push( { callback } );
 
 		ajaxAddRequest.mockImplementation( ( action, options ) => {
 			options.success( {
-				[ manager.createBatchCacheKey( tagOne ) ]: 'batch-one',
-				[ manager.createBatchCacheKey( tagTwo ) ]: 'batch-two',
+				[ batchKeyOne ]: 'value-one',
+				[ batchKeyTwo ]: 'value-two',
 			} );
 		} );
 
@@ -173,27 +174,39 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 				},
 			} ),
 		);
-		expect( manager.batchCache[ manager.createBatchCacheKey( tagOne ) ] ).toBe( 'batch-one' );
+		expect( manager.batchCache[ batchKeyOne ] ).toBe( 'value-one' );
+		expect( manager.batchCache[ batchKeyTwo ] ).toBe( 'value-two' );
 		expect( manager.cache ).toEqual( {} );
-		expect( callback ).toHaveBeenCalled();
 	} );
 
-	it( 'loadTagDataFromCache reads alternate post values from batchCache', () => {
+	it( 'loadTagDataFromCache reads batchCache for alternate post context', () => {
 		// Arrange.
-		const alternatePostTag = createTagStub( 42 );
-		const batchCacheKey = manager.createBatchCacheKey( alternatePostTag );
-
-		manager.batchCache[ batchCacheKey ] = 'from-batch-cache';
+		const tag = createTagStub( 7 );
+		const batchKey = manager.createBatchCacheKey( tag );
+		manager.batchCache[ batchKey ] = 'batch-value';
+		manager.cache[ batchKey ] = 'legacy-value';
 
 		// Act.
-		const value = manager.loadTagDataFromCache( alternatePostTag );
+		const result = manager.loadTagDataFromCache( tag );
 
 		// Assert.
-		expect( value ).toBe( 'from-batch-cache' );
-		expect( manager.cache[ batchCacheKey ] ).toBeUndefined();
+		expect( result ).toBe( 'batch-value' );
 	} );
 
-	it( 'prefetchTags resolves after batch request succeeds into batchCache', async () => {
+	it( 'loadTagDataFromCache reads legacy cache for document post context', () => {
+		// Arrange.
+		const tag = createTagStub( DOCUMENT_POST_ID );
+		const legacyKey = manager.createCacheKey( tag );
+		manager.cache[ legacyKey ] = 'legacy-value';
+
+		// Act.
+		const result = manager.loadTagDataFromCache( tag );
+
+		// Assert.
+		expect( result ).toBe( 'legacy-value' );
+	} );
+
+	it( 'prefetchTags resolves after batch request succeeds and writes to batchCache only', async () => {
 		// Arrange.
 		const cacheKey = manager.buildCacheKeyFor( 'test-tag', {}, 42 );
 
@@ -211,12 +224,10 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 		expect( ajaxAddRequest ).toHaveBeenCalledWith( 'render_tags_batch', expect.any( Object ) );
 	} );
 
-	it( 'cleanCache clears cache and batchCache', () => {
+	it( 'cleanCache empties both legacy cache and batchCache', () => {
 		// Arrange.
-		manager.cache = { legacy: 'value' };
-		manager.batchCache = { batch: 'value' };
-		manager.cacheRequests = { pending: true };
-		manager.batchCacheRequests = { 1: { pending: true } };
+		manager.cache[ 'legacy-key' ] = 'legacy-value';
+		manager.batchCache[ 'batch-key' ] = 'batch-value';
 
 		// Act.
 		manager.cleanCache();
@@ -224,7 +235,5 @@ describe( 'assets/dev/js/editor/components/dynamic-tags/manager.js', () => {
 		// Assert.
 		expect( manager.cache ).toEqual( {} );
 		expect( manager.batchCache ).toEqual( {} );
-		expect( manager.cacheRequests ).toEqual( {} );
-		expect( manager.batchCacheRequests ).toEqual( {} );
 	} );
 } );

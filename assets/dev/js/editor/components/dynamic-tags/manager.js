@@ -8,31 +8,25 @@ module.exports = elementorModules.Module.extend( {
 
 	cache: {},
 
-	batchCache: {},
-
 	cacheRequests: {},
-
-	batchCacheRequests: {},
 
 	cacheCallbacks: [],
 
+	batchCache: {},
+
+	batchCacheRequests: {},
+
 	batchCacheCallbacks: [],
-
-	flushCallbacks: [],
-
-	isBatchPostContext( postId ) {
-		return Number( postId ) !== Number( elementor.config.document.id );
-	},
-
-	getCacheStore( postId ) {
-		return this.isBatchPostContext( postId ) ? this.batchCache : this.cache;
-	},
 
 	getTagRenderPostId( tag ) {
 		return tag.editorRenderPostId ?? elementor.config.document.id;
 	},
 
-	createLegacyCacheKey( tag ) {
+	isBatchPostContext( postId ) {
+		return Number( postId ) !== Number( elementor.config.document.id );
+	},
+
+	createCacheKey( tag ) {
 		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
 	},
 
@@ -44,56 +38,48 @@ module.exports = elementorModules.Module.extend( {
 		);
 	},
 
-	getCacheKeyForTag( tag ) {
-		const postId = this.getTagRenderPostId( tag );
-
-		if ( this.isBatchPostContext( postId ) ) {
-			return this.createBatchCacheKey( tag );
-		}
-
-		return this.createLegacyCacheKey( tag );
-	},
-
-	createCacheKey( tag ) {
-		return this.getCacheKeyForTag( tag );
-	},
-
 	buildCacheKeyFor( tagName, tagSettings, postId ) {
 		return btoa( tagName ) + '-' + btoa( encodeURIComponent( JSON.stringify( tagSettings ) ) ) + '-' + postId;
 	},
 
 	addCacheRequest( tag ) {
 		const postId = this.getTagRenderPostId( tag );
-		const cacheKey = this.getCacheKeyForTag( tag );
 
 		if ( this.isBatchPostContext( postId ) ) {
+			const batchCacheKey = this.createBatchCacheKey( tag );
+
 			if ( ! this.batchCacheRequests[ postId ] ) {
 				this.batchCacheRequests[ postId ] = {};
 			}
 
-			this.batchCacheRequests[ postId ][ cacheKey ] = true;
-
+			this.batchCacheRequests[ postId ][ batchCacheKey ] = true;
 			return;
 		}
 
-		this.cacheRequests[ cacheKey ] = true;
+		this.cacheRequests[ this.createCacheKey( tag ) ] = true;
 	},
 
 	loadTagDataFromCache( tag ) {
 		const postId = this.getTagRenderPostId( tag );
-		const cacheKey = this.getCacheKeyForTag( tag );
-		const cacheStore = this.getCacheStore( postId );
-
-		if ( undefined !== cacheStore[ cacheKey ] ) {
-			return cacheStore[ cacheKey ];
-		}
 
 		if ( this.isBatchPostContext( postId ) ) {
-			if ( ! this.batchCacheRequests[ postId ] || ! this.batchCacheRequests[ postId ][ cacheKey ] ) {
+			const batchCacheKey = this.createBatchCacheKey( tag );
+
+			if ( undefined !== this.batchCache[ batchCacheKey ] ) {
+				return this.batchCache[ batchCacheKey ];
+			}
+
+			if ( ! this.batchCacheRequests[ postId ] || ! this.batchCacheRequests[ postId ][ batchCacheKey ] ) {
 				this.addCacheRequest( tag );
 			}
 
 			return;
+		}
+
+		const cacheKey = this.createCacheKey( tag );
+
+		if ( undefined !== this.cache[ cacheKey ] ) {
+			return this.cache[ cacheKey ];
 		}
 
 		if ( ! this.cacheRequests[ cacheKey ] ) {
@@ -101,38 +87,17 @@ module.exports = elementorModules.Module.extend( {
 		}
 	},
 
-	hasPendingLegacyCacheRequests() {
-		return Object.keys( this.cacheRequests ).some(
-			( cacheKey ) => undefined === this.cache[ cacheKey ],
-		);
-	},
-
-	hasPendingBatchCacheRequests() {
-		return Object.keys( this.batchCacheRequests ).some( ( postId ) => {
-			return Object.keys( this.batchCacheRequests[ postId ] ).some(
-				( cacheKey ) => undefined === this.batchCache[ cacheKey ],
-			);
-		} );
-	},
-
-	runCacheCallbacks( callbacks ) {
-		callbacks.forEach( ( entry ) => {
-			entry.callback();
-		} );
-	},
-
 	loadCacheRequests() {
 		var cacheRequests = this.cacheRequests,
 			cacheCallbacks = this.cacheCallbacks;
 
 		this.cacheRequests = {};
-
 		this.cacheCallbacks = [];
 
-		var tags = Object.keys( cacheRequests ).filter( ( cacheKey ) => undefined === this.cache[ cacheKey ] );
-
-		if ( 0 === tags.length ) {
-			this.runCacheCallbacks( cacheCallbacks );
+		if ( 0 === Object.keys( cacheRequests ).length ) {
+			cacheCallbacks.forEach( ( entry ) => {
+				entry.callback();
+			} );
 
 			return;
 		}
@@ -140,7 +105,7 @@ module.exports = elementorModules.Module.extend( {
 		var ajaxOptions = {
 			data: {
 				post_id: elementor.config.document.id,
-				tags,
+				tags: Object.keys( cacheRequests ),
 			},
 			success: ( data ) => {
 				this.cache = {
@@ -148,7 +113,9 @@ module.exports = elementorModules.Module.extend( {
 					...data,
 				};
 
-				this.runCacheCallbacks( cacheCallbacks );
+				cacheCallbacks.forEach( ( entry ) => {
+					entry.callback();
+				} );
 			},
 		};
 
@@ -168,20 +135,19 @@ module.exports = elementorModules.Module.extend( {
 			batchCacheCallbacks = this.batchCacheCallbacks;
 
 		this.batchCacheRequests = {};
-
 		this.batchCacheCallbacks = [];
 
 		var groups = Object.keys( batchCacheRequests )
 			.map( ( postId ) => ( {
 				post_id: Number( postId ),
-				tags: Object.keys( batchCacheRequests[ postId ] ).filter(
-					( cacheKey ) => undefined === this.batchCache[ cacheKey ],
-				),
+				tags: Object.keys( batchCacheRequests[ postId ] ).filter( ( cacheKey ) => undefined === this.batchCache[ cacheKey ] ),
 			} ) )
 			.filter( ( group ) => group.tags.length > 0 );
 
 		if ( 0 === groups.length ) {
-			this.runCacheCallbacks( batchCacheCallbacks );
+			batchCacheCallbacks.forEach( ( entry ) => {
+				entry.callback();
+			} );
 
 			return;
 		}
@@ -196,7 +162,9 @@ module.exports = elementorModules.Module.extend( {
 					...data,
 				};
 
-				this.runCacheCallbacks( batchCacheCallbacks );
+				batchCacheCallbacks.forEach( ( entry ) => {
+					entry.callback();
+				} );
 			},
 		};
 
@@ -209,51 +177,6 @@ module.exports = elementorModules.Module.extend( {
 		}
 
 		elementorCommon.ajax.addRequest( 'render_tags_batch', ajaxOptions );
-	},
-
-	flushCacheRequests() {
-		const flushCallbacks = this.flushCallbacks;
-		const disableCache = flushCallbacks.some( ( entry ) => entry.disableCache );
-
-		this.flushCallbacks = [];
-
-		let pendingPaths = 0;
-
-		const completeFlush = () => {
-			pendingPaths--;
-
-			if ( pendingPaths > 0 ) {
-				return;
-			}
-
-			this.runCacheCallbacks( flushCallbacks );
-		};
-
-		if ( this.hasPendingLegacyCacheRequests() ) {
-			pendingPaths++;
-
-			this.cacheCallbacks.push( {
-				callback: completeFlush,
-				disableCache,
-			} );
-
-			this.loadCacheRequestsImmediate();
-		}
-
-		if ( this.hasPendingBatchCacheRequests() ) {
-			pendingPaths++;
-
-			this.batchCacheCallbacks.push( {
-				callback: completeFlush,
-				disableCache,
-			} );
-
-			this.loadBatchCacheRequestsImmediate();
-		}
-
-		if ( 0 === pendingPaths ) {
-			this.runCacheCallbacks( flushCallbacks );
-		}
 	},
 
 	prefetchTags( tagsByPostId ) {
@@ -281,12 +204,19 @@ module.exports = elementorModules.Module.extend( {
 	},
 
 	refreshCacheFromServer( callback, options ) {
-		this.flushCallbacks.push( {
+		const entry = {
 			callback,
 			disableCache: options?.disableCache,
-		} );
+		};
 
-		this.flushCacheRequests();
+		if ( Object.keys( this.batchCacheRequests ).length > 0 ) {
+			this.batchCacheCallbacks.push( entry );
+			this.loadBatchCacheRequests();
+			return;
+		}
+
+		this.cacheCallbacks.push( entry );
+		this.loadCacheRequests();
 	},
 
 	getConfig( key ) {
@@ -377,8 +307,6 @@ module.exports = elementorModules.Module.extend( {
 	cleanCache() {
 		this.cache = {};
 		this.batchCache = {};
-		this.cacheRequests = {};
-		this.batchCacheRequests = {};
 	},
 
 	onInit() {
@@ -387,8 +315,5 @@ module.exports = elementorModules.Module.extend( {
 
 		this.loadBatchCacheRequestsImmediate = this.loadBatchCacheRequests.bind( this );
 		this.loadBatchCacheRequests = _.debounce( this.loadBatchCacheRequestsImmediate, 300 );
-
-		this.flushCacheRequestsImmediate = this.flushCacheRequests.bind( this );
-		this.flushCacheRequests = _.debounce( this.flushCacheRequestsImmediate, 300 );
 	},
 } );
