@@ -23,13 +23,16 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 	} );
 };
 
+export type VariablesManagerOpenSource = 'vars-popover' | 'system-panel';
+
 type VariablesManagerEventData = {
 	action: 'openManager' | 'add' | 'saveChanges' | 'delete' | 'duplicate';
+	source?: VariablesManagerOpenSource;
 	varType?: string;
 	controlPath?: string;
 };
 
-export const trackVariablesManagerEvent = ( { action, varType, controlPath }: VariablesManagerEventData ) => {
+export const trackVariablesManagerEvent = ( { action, source, varType, controlPath }: VariablesManagerEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
@@ -41,6 +44,10 @@ export const trackVariablesManagerEvent = ( { action, varType, controlPath }: Va
 		trigger: config?.triggers?.click || '',
 		action_type: name,
 	};
+
+	if ( source ) {
+		eventData.source = source;
+	}
 
 	if ( varType ) {
 		eventData.var_type = varType;

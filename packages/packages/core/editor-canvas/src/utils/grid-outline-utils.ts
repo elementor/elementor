@@ -1,50 +1,124 @@
 import { type GridTracks } from '../hooks/use-grid-tracks';
 
-export type OutlineGeometry = {
-	vertical: number[];
-	horizontal: number[];
-	top: number;
-	bottom: number;
-	left: number;
-	right: number;
+export type CellRect = {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
 };
 
-export function computeOutlineGeometry( tracks: GridTracks, width: number, height: number ): OutlineGeometry {
-	const { columns, rows, columnGap, rowGap, padding } = tracks;
+export type GridLine = {
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+};
 
+export type GridLines = {
+	vertical: GridLine[];
+	horizontal: GridLine[];
+};
+
+type TrackSegment = {
+	start: number;
+	size: number;
+};
+
+export function toGridTracks( computedStyle: CSSStyleDeclaration ): GridTracks {
 	return {
-		vertical: computeBoundaries( columns, columnGap, padding.left ),
-		horizontal: computeBoundaries( rows, rowGap, padding.top ),
-		top: padding.top,
-		bottom: height - padding.bottom,
-		left: padding.left,
-		right: width - padding.right,
+		columns: parseTrackList( computedStyle.gridTemplateColumns ),
+		rows: parseTrackList( computedStyle.gridTemplateRows ),
+		columnGap: toPx( computedStyle.columnGap ),
+		rowGap: toPx( computedStyle.rowGap ),
+		padding: {
+			top: toPx( computedStyle.paddingTop ),
+			right: toPx( computedStyle.paddingRight ),
+			bottom: toPx( computedStyle.paddingBottom ),
+			left: toPx( computedStyle.paddingLeft ),
+		},
+		borderColor: computedStyle.getPropertyValue( '--e-a-border-color-bold' ).trim(),
 	};
 }
 
-function computeBoundaries( sizes: number[], gap: number, offset: number ): number[] {
-	if ( sizes.length === 0 ) {
+export function computeCellRects( tracks: GridTracks, width: number, height: number ): CellRect[] {
+	const { columns, rows, columnGap, rowGap, padding } = tracks;
+
+	const hasColumns = columns.length > 0;
+	const hasRows = rows.length > 0;
+
+	if ( ! hasColumns && ! hasRows ) {
 		return [];
 	}
 
-	const boundaries: number[] = [];
-	let cursor = offset;
+	const columnSegments = hasColumns
+		? computeTrackSegments( columns, columnGap, padding.left )
+		: [ { start: padding.left, size: width - padding.left - padding.right } ];
 
-	for ( let i = 0; i < sizes.length; i++ ) {
-		if ( i === 0 ) {
-			boundaries.push( cursor );
-		}
+	const rowSegments = hasRows
+		? computeTrackSegments( rows, rowGap, padding.top )
+		: [ { start: padding.top, size: height - padding.top - padding.bottom } ];
 
-		cursor += sizes[ i ];
-		boundaries.push( cursor );
+	const cells: CellRect[] = [];
 
-		if ( i < sizes.length - 1 && gap > 0 ) {
-			cursor += gap;
-			boundaries.push( cursor );
+	for ( const row of rowSegments ) {
+		for ( const column of columnSegments ) {
+			cells.push( { x: column.start, y: row.start, width: column.size, height: row.size } );
 		}
 	}
 
-	return boundaries;
+	return cells;
+}
+
+export function computeGridLines( tracks: GridTracks, width: number, height: number ): GridLines {
+	const { columns, rows, columnGap, rowGap, padding } = tracks;
+
+	const hasColumns = columns.length > 0;
+	const hasRows = rows.length > 0;
+
+	if ( ! hasColumns && ! hasRows ) {
+		return { vertical: [], horizontal: [] };
+	}
+
+	const columnSegments = hasColumns
+		? computeTrackSegments( columns, columnGap, padding.left )
+		: [ { start: padding.left, size: width - padding.left - padding.right } ];
+
+	const rowSegments = hasRows
+		? computeTrackSegments( rows, rowGap, padding.top )
+		: [ { start: padding.top, size: height - padding.top - padding.bottom } ];
+
+	const xs = uniqueSorted( columnSegments.flatMap( ( s ) => [ s.start, s.start + s.size ] ) );
+	const ys = uniqueSorted( rowSegments.flatMap( ( s ) => [ s.start, s.start + s.size ] ) );
+
+	const yTop = ys[ 0 ];
+	const yBottom = ys[ ys.length - 1 ];
+	const xLeft = xs[ 0 ];
+	const xRight = xs[ xs.length - 1 ];
+
+	return {
+		vertical: xs.map( ( x ) => ( { x1: x, y1: yTop, x2: x, y2: yBottom } ) ),
+		horizontal: ys.map( ( y ) => ( { x1: xLeft, y1: y, x2: xRight, y2: y } ) ),
+	};
+}
+
+function uniqueSorted( values: number[] ): number[] {
+	return Array.from( new Set( values ) ).sort( ( a, b ) => a - b );
+}
+
+function computeTrackSegments( sizes: number[], gap: number, offset: number ): TrackSegment[] {
+	const segments: TrackSegment[] = [];
+	let cursor = offset;
+
+	for ( let i = 0; i < sizes.length; i++ ) {
+		segments.push( { start: cursor, size: sizes[ i ] } );
+		cursor += sizes[ i ];
+
+		if ( i < sizes.length - 1 ) {
+			cursor += gap;
+		}
+	}
+
+	return segments;
 }
 
 export function snapToHalfPixel( value: number ): number {
