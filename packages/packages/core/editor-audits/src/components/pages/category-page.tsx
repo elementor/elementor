@@ -4,6 +4,7 @@ import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { CATEGORY_LABELS } from '../../constants';
+import { sortFailedAuditResults } from '../../lib/sort-failed-audits';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import { CATEGORY_ICONS } from '../category-icons';
 import StatusSection from '../status-section';
@@ -19,7 +20,7 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
 	const inCategory = report.auditResults.filter( ( r ) => r.descriptor.categories.includes( category ) );
-	const failed = inCategory.filter( ( r ) => r.result.status === 'fail' );
+	const failed = sortFailedAuditResults( inCategory.filter( ( r ) => r.result.status === 'fail' ) );
 	const passed = inCategory.filter( ( r ) => r.result.status === 'pass' );
 	const skipped = inCategory.filter( ( r ) => r.result.status === 'skipped' );
 

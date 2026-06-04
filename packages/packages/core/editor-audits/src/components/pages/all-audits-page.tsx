@@ -3,6 +3,7 @@ import { ArrowLeftIcon } from '@elementor/icons';
 import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { sortFailedAuditResults } from '../../lib/sort-failed-audits';
 import { type PageAuditReport } from '../../types';
 import StatusSection from '../status-section';
 import ViolationRow from '../violation-row';
@@ -14,7 +15,7 @@ type Props = {
 
 export default function AllAuditsPage( { report, onBack }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
-	const failed = report.auditResults.filter( ( r ) => r.result.status === 'fail' );
+	const failed = sortFailedAuditResults( report.auditResults.filter( ( r ) => r.result.status === 'fail' ) );
 	const passed = report.auditResults.filter( ( r ) => r.result.status === 'pass' );
 	const skipped = report.auditResults.filter( ( r ) => r.result.status === 'skipped' );
 
