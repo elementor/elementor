@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { ClassManagerPanelEmbedded } from '@elementor/editor-global-classes';
+import { ClassManagerPanelEmbedded, trackGlobalClasses } from '@elementor/editor-global-classes';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
+import { trackVariablesManagerEvent, VariablesManagerPanelEmbedded } from '@elementor/editor-variables';
 import { ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import { Box, CloseButton, Divider, Stack, Tab, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -29,6 +29,17 @@ export type DesignSystemPanelContentProps = {
 };
 
 const EVENT_SET_TAB = 'elementor/design-system/set-tab';
+
+const trackDesignSystemTabOpened = ( tab: DesignSystemTab ) => {
+	switch ( tab ) {
+		case 'classes':
+			trackGlobalClasses( { event: 'classManagerOpened', source: 'system-panel' } );
+			break;
+		case 'variables':
+			trackVariablesManagerEvent( { action: 'openManager', source: 'system-panel' } );
+			break;
+	}
+};
 
 export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelContentProps ) {
 	const [ currentTab, setCurrentTab ] = useState( () => getInitialDesignSystemTab() );
@@ -72,6 +83,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 			setCurrentTab( tab );
 			persistDesignSystemTab( tab );
 			notifyDesignSystemTabChange( tab );
+			trackDesignSystemTabOpened( tab );
 		};
 
 		window.addEventListener( EVENT_SET_TAB, handler as EventListener );
@@ -132,6 +144,7 @@ export function DesignSystemPanelContent( { onRequestClose }: DesignSystemPanelC
 									setCurrentTab( newValue );
 									persistDesignSystemTab( newValue );
 									notifyDesignSystemTabChange( newValue );
+									trackDesignSystemTabOpened( newValue );
 								} }
 							>
 								<Tab
