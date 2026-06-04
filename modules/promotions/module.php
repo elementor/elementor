@@ -77,7 +77,9 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
-		new Conversion_Banner();
+		if ( Conversion_Banner::should_display_banner() ) {
+			new Conversion_Banner();
+		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 

@@ -24,8 +24,6 @@ class Conversion_Banner {
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
 
-	private array $placement = [];
-
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
 
@@ -41,14 +39,10 @@ class Conversion_Banner {
 			return;
 		}
 
-		$this->placement = $placement;
-
 		add_action( 'in_admin_header', [ $this, 'render_banner_container' ], 11 );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_banner_assets' ] );
-	}
-
-	public function enqueue_banner_assets(): void {
-		$this->enqueue_assets( $this->placement );
+		add_action( 'admin_enqueue_scripts', function () use ( $placement ) {
+			$this->enqueue_assets( $placement );
+		} );
 	}
 
 	public function render_banner_container(): void {
@@ -199,11 +193,11 @@ class Conversion_Banner {
 		];
 	}
 
-	private function get_active_placement(): array {
-		if ( ! ( $this->is_user_allowed() && $this->should_display() ) ) {
-			return [];
-		}
+	public static function should_display_banner(): bool {
+		return self::is_user_allowed() && self::should_display();
+	}
 
+	private function get_active_placement(): array {
 		$current_screen = get_current_screen();
 
 		if ( ! $current_screen ) {
@@ -215,15 +209,15 @@ class Conversion_Banner {
 		return $allowed_pages[ $current_screen->id ] ?? [];
 	}
 
-	private function should_display(): bool {
-		return ! Utils::has_pro() && ! $this->is_dismissed();
+	private static function should_display(): bool {
+		return ! Utils::has_pro() && ! self::is_dismissed();
 	}
 
-	private function is_user_allowed(): bool {
+	private static function is_user_allowed(): bool {
 		return current_user_can( 'manage_options' );
 	}
 
-	private function is_dismissed(): bool {
+	private static function is_dismissed(): bool {
 		return (bool) User::get_introduction_meta( self::DISMISS_KEY );
 	}
 
