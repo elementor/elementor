@@ -14,7 +14,7 @@ export const descriptor: AuditDescriptor = {
 		'elementor'
 	),
 	fixHint: __( 'Replace each deprecated widget with the recommended new widget shown in its panel.', 'elementor' ),
-	categories: [ 'health', 'performance' ],
+	categories: [ 'best-practices', 'performance' ],
 	severity: 'warning',
 	weight: 7,
 };

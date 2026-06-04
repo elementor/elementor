@@ -13,7 +13,7 @@ export const descriptor: AuditDescriptor = {
 		'elementor'
 	),
 	fixHint: __( 'Flatten the layout by removing unnecessary wrapper containers.', 'elementor' ),
-	categories: [ 'performance', 'health' ],
+	categories: [ 'performance', 'best-practices' ],
 	severity: 'warning',
 	weight: 5,
 };

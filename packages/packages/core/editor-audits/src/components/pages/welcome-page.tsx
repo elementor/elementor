@@ -39,7 +39,7 @@ export default function WelcomePage() {
 			</Typography>
 			<Typography variant="caption" textAlign="center">
 				{ __(
-					'Check SEO, accessibility, performance, and health issues. Click "Run page audit" to begin.',
+					'Check SEO, accessibility, performance, and best practices. Click "Run page audit" to begin.',
 					'elementor'
 				) }
 			</Typography>

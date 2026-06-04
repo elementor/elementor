@@ -8,7 +8,7 @@ export const descriptor: AuditDescriptor = {
 	title: __( 'Boxed container nested inside a boxed parent', 'elementor' ),
 	description: __( 'An inner container does not need to be boxed when its parent already is.', 'elementor' ),
 	fixHint: __( "Change the inner container's content width to Full Width.", 'elementor' ),
-	categories: [ 'performance', 'health' ],
+	categories: [ 'performance', 'best-practices' ],
 	severity: 'warning',
 	weight: 5,
 };

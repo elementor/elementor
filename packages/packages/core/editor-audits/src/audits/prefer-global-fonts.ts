@@ -14,7 +14,7 @@ export const descriptor: AuditDescriptor = {
 	title: __( 'Prefer global fonts over hard-coded values', 'elementor' ),
 	description: __( 'Global fonts make the design consistent and easy to update site-wide.', 'elementor' ),
 	fixHint: __( "Replace the hard-coded font with one of your kit's global fonts.", 'elementor' ),
-	categories: [ 'health', 'performance' ],
+	categories: [ 'best-practices', 'performance' ],
 	severity: 'info',
 	weight: 3,
 };

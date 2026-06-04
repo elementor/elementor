@@ -11,7 +11,7 @@ export const descriptor: AuditDescriptor = {
 		'elementor'
 	),
 	fixHint: __( 'Use the Container Converter to replace each section/column with a container.', 'elementor' ),
-	categories: [ 'health', 'performance' ],
+	categories: [ 'best-practices', 'performance' ],
 	severity: 'warning',
 	weight: 7,
 };

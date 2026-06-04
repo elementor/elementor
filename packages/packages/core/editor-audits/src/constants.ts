@@ -2,10 +2,10 @@ import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory } from './types';
 
-export const ALL_CATEGORIES: AuditCategory[] = [ 'health', 'seo', 'accessibility', 'performance', 'compliance' ];
+export const ALL_CATEGORIES: AuditCategory[] = [ 'best-practices', 'seo', 'accessibility', 'performance', 'compliance' ];
 
 export const CATEGORY_LABELS: Record< AuditCategory, string > = {
-	health: __( 'Health', 'elementor' ),
+	'best-practices': __( 'Best Practices', 'elementor' ),
 	seo: __( 'SEO', 'elementor' ),
 	accessibility: __( 'Accessibility', 'elementor' ),
 	performance: __( 'Performance', 'elementor' ),

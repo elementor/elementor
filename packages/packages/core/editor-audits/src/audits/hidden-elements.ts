@@ -15,7 +15,7 @@ export const descriptor: AuditDescriptor = {
 		'elementor'
 	),
 	fixHint: __( 'Remove the element or make it visible on at least one device breakpoint.', 'elementor' ),
-	categories: [ 'health' ],
+	categories: [ 'best-practices' ],
 	severity: 'info',
 	weight: 3,
 };

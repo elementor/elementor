@@ -10,7 +10,7 @@ export const descriptor: AuditDescriptor = {
 	title: __( 'Too many widgets', 'elementor' ),
 	description: __( 'Excessive DOM size caused by too many widgets degrades rendering performance.', 'elementor' ),
 	fixHint: __( 'Reduce the number of widgets on the page by removing or combining elements.', 'elementor' ),
-	categories: [ 'performance', 'health' ],
+	categories: [ 'performance', 'best-practices' ],
 	severity: 'info',
 	weight: 3,
 };
