@@ -62,3 +62,6 @@ tests/playwright/blob-report
 playwright-test-results
 **/.env
 docker-output/
+
+# MCPs cache files
+.playwright-mcp

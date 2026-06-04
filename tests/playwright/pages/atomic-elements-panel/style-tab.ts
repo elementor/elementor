@@ -348,7 +348,7 @@ export default class StyleTab extends BasePage {
 		const menuTrigger = classChip.locator( '[aria-label="Open CSS Class Menu"]' );
 		const menuItem = this.page.locator( 'li[role="menuitem"]', { hasText: stateRegex } );
 
-		await menuTrigger.click();
+		await menuTrigger.click( { force: true } );
 		await menuItem.waitFor( { state: 'visible' } );
 		await menuItem.click();
 	}
