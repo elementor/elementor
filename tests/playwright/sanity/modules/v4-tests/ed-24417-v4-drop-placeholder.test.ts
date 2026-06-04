@@ -3,9 +3,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 
-const ROW_BAR_MAX_WIDTH_PX = 20;
-const ANIMATION_SETTLE_MS = 300;
-
 test.describe( 'V4 row flexbox drop placeholder (ED-24417) @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
