@@ -82,7 +82,7 @@ export async function createMenus(
 ): Promise< CreatedMenus > {
 	const created: CreatedMenus = {};
 
-	if ( menus.header?.length ) {
+	if ( menus?.header?.length ) {
 		created.header = await createMenu( {
 			name: `Header-${ Date.now() }`,
 			items: menus.header,
@@ -92,7 +92,7 @@ export async function createMenus(
 		} );
 	}
 
-	if ( menus.footer?.length ) {
+	if ( menus?.footer?.length ) {
 		created.footer = await createMenu( {
 			name: `Footer-${ Date.now() }`,
 			items: menus.footer,

@@ -15,11 +15,30 @@ export type { DeployPayload, DeployResult };
 
 export async function deployWebsite( payload: DeployPayload ): Promise< DeployResult > {
 	const errors: string[] = [];
+	const mode = payload.mode === 'incremental' ? 'incremental' : 'full';
 
-	try {
-		await setSiteMetadata( payload.siteMeta );
-	} catch ( e ) {
-		errors.push( `site_metadata: ${ ( e as Error ).message }` );
+	if ( mode === 'incremental' ) {
+		let pageIdMap: Record< string, number > = {};
+		try {
+			( { pageIdMap } = await createPages( payload.pages ) );
+		} catch ( e ) {
+			errors.push( `pages: ${ ( e as Error ).message }` );
+		}
+
+		return {
+			status: errors.length ? 'error' : 'success',
+			homeUrl: window.location.origin,
+			pageIdMap,
+			...( errors.length ? { errors, error: errors[ 0 ] } : {} ),
+		};
+	}
+
+	if ( payload.siteMeta ) {
+		try {
+			await setSiteMetadata( payload.siteMeta );
+		} catch ( e ) {
+			errors.push( `site_metadata: ${ ( e as Error ).message }` );
+		}
 	}
 
 	if ( payload.logo ) {
@@ -30,10 +49,12 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		}
 	}
 
-	try {
-		await updateKitSettings( payload.kitSettings );
-	} catch ( e ) {
-		errors.push( `kit_settings: ${ ( e as Error ).message }` );
+	if ( payload.kitSettings ) {
+		try {
+			await updateKitSettings( payload.kitSettings );
+		} catch ( e ) {
+			errors.push( `kit_settings: ${ ( e as Error ).message }` );
+		}
 	}
 
 	if ( payload.globalVariables ) {
@@ -60,7 +81,7 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		errors.push( `pages: ${ ( e as Error ).message }` );
 	}
 
-	const homeWpId = pageIdMap.home;
+	const homeWpId = resolveHomePageId( payload.pages, pageIdMap );
 	if ( homeWpId ) {
 		try {
 			await setHomePage( homeWpId );
@@ -78,14 +99,14 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 
 	if ( payload.header ) {
 		wireMenuWidgets( payload.header.content, {
-			items: payload.menus.header,
+			items: payload.menus?.header ?? [],
 			pageUrlMap,
 			menuSlug: createdMenus.header?.slug,
 		} );
 	}
 	if ( payload.footer ) {
 		wireMenuWidgets( payload.footer.content, {
-			items: payload.menus.footer,
+			items: payload.menus?.footer ?? [],
 			pageUrlMap,
 			menuSlug: createdMenus.footer?.slug,
 		} );
@@ -124,9 +145,21 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 	const result: DeployResult = {
 		status: errors.length ? 'error' : 'success',
 		homeUrl: window.location.origin,
-		homePageId: pageIdMap.home || 0,
+		homePageId: homeWpId || 0,
+		pageIdMap,
 		...( errors.length ? { errors, error: errors[ 0 ] } : {} ),
 	};
 
 	return result;
+}
+
+function resolveHomePageId( pages: DeployPayload[ 'pages' ], pageIdMap: Record< string, number > ): number | undefined {
+	if ( pageIdMap.home ) {
+		return pageIdMap.home;
+	}
+	const homePage = pages[ 0 ];
+	if ( homePage && pageIdMap[ homePage.id ] ) {
+		return pageIdMap[ homePage.id ];
+	}
+	return undefined;
 }
