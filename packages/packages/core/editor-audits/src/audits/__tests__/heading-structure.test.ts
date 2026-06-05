@@ -2,6 +2,13 @@ import { audit } from '../heading-structure';
 import { makeContext, makeWidget } from './fixtures';
 
 describe( audit.id, () => {
+	it( 'is skipped with an empty tree', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No elements',
+		} );
+	} );
+
 	it( 'passes with one H1 and consecutive levels', async () => {
 		const tree = [
 			makeWidget( 'h1', 'heading', { header_size: 'h1' } ),
