@@ -4,10 +4,10 @@ import { makeContext, makeWidget } from './fixtures';
 const ONE_MB = 1024 * 1024;
 const SMALL_KB = 100 * 1024;
 
-const imageSize = ( filesize_bytes: number ) => ( {
+const imageSize = ( filesizeBytes: number ) => ( {
 	width: 1,
 	height: 1,
-	filesize_bytes,
+	filesize_bytes: filesizeBytes,
 	mime: 'image/jpeg',
 	src: '',
 	alt: '',

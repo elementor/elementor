@@ -34,7 +34,9 @@ type AuditWindow = Window & {
 	};
 	$e?: {
 		data?: {
-			get: ( command: string ) => Promise< { data?: Record< string, GlobalColorApiItem | GlobalTypographyApiItem > } >;
+			get: (
+				command: string
+			) => Promise< { data?: Record< string, GlobalColorApiItem | GlobalTypographyApiItem > } >;
 		};
 	};
 };

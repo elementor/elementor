@@ -1,5 +1,5 @@
-import { hasMeaningfulAlt } from '../image-alt';
 import { type PageContextResponse } from '../../types';
+import { hasMeaningfulAlt } from '../image-alt';
 
 const PAGE_CONTEXT: PageContextResponse = {
 	site_identity: {

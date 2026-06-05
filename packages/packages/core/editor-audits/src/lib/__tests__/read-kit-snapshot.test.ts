@@ -8,7 +8,9 @@ type AuditWindow = Window & {
 	};
 	$e?: {
 		data?: {
-			get: ( command: string ) => Promise< { data?: Record< string, { id: string; title?: string; value?: string } > } >;
+			get: (
+				command: string
+			) => Promise< { data?: Record< string, { id: string; title?: string; value?: string } > } >;
 		};
 	};
 };
@@ -48,9 +50,7 @@ describe( 'readKitSnapshot', () => {
 
 		const snapshot = await readKitSnapshot( KIT_ID );
 
-		expect( snapshot.globals.colors ).toEqual( [
-			{ id: 'primary', value: '#6EC1E4', title: 'Primary' },
-		] );
+		expect( snapshot.globals.colors ).toEqual( [ { id: 'primary', value: '#6EC1E4', title: 'Primary' } ] );
 	} );
 
 	it( 'falls back to the kit document when the API returns no colors', async () => {
@@ -78,9 +78,7 @@ describe( 'readKitSnapshot', () => {
 
 		const snapshot = await readKitSnapshot( KIT_ID );
 
-		expect( snapshot.globals.colors ).toEqual( [
-			{ id: 'primary', value: '#111111', title: 'Primary' },
-		] );
+		expect( snapshot.globals.colors ).toEqual( [ { id: 'primary', value: '#111111', title: 'Primary' } ] );
 	} );
 
 	it( 'returns empty globals when no API and no kit document exist', async () => {

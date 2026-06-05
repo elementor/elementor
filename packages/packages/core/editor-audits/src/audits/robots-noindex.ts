@@ -26,10 +26,7 @@ export const audit: Audit = {
 			violations: [
 				{
 					auditId: audit.id,
-					label: __(
-						'Search engines are discouraged from indexing this website.',
-						'elementor'
-					),
+					label: __( 'Search engines are discouraged from indexing this website.', 'elementor' ),
 					externalUrl: ctx.pageContext.reading_settings_url,
 				},
 			],

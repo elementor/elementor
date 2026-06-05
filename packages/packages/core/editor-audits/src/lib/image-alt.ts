@@ -1,5 +1,5 @@
-import { type ImageLikeMedia } from './image-like-sources';
 import { type PageContextResponse } from '../types';
+import { type ImageLikeMedia } from './image-like-sources';
 
 export function hasMeaningfulAlt( media: ImageLikeMedia, pageContext: PageContextResponse ): boolean {
 	if ( ! media.id && ! media.url ) {
