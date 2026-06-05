@@ -77,20 +77,11 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandSkipped }
 				>
 					{ skipped.map( ( r ) => (
-						<Box
+						<ViolationRow
 							key={ r.audit.id }
-							sx={ {
-								borderBottom: 1,
-								borderColor: 'divider',
-								paddingBlock: 1,
-							} }
-						>
-							<Typography variant="body2">
-								{ r.result.status === 'skipped' && r.result.reason
-									? `${ r.audit.title } — ${ r.result.reason }`
-									: r.audit.title }
-							</Typography>
-						</Box>
+							audit={ r.audit }
+							skipReason={ r.result.status === 'skipped' ? r.result.reason : undefined }
+						/>
 					) ) }
 				</StatusSection>
 			</Box>

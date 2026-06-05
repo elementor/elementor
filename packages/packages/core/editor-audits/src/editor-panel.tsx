@@ -1,8 +1,7 @@
 import { createFloatingPanel } from '@elementor/editor-floating-panels';
 
 import AuditPanel from './components/audit-panel';
-
-export const AUDIT_PANEL_ID = 'audit-panel';
+import { AUDIT_PANEL_ID } from './constants';
 
 const DEFAULT_WIDTH = 360;
 const DEFAULT_HEIGHT = 600;

@@ -1,46 +1,102 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { getElementIcon, getElementTitle } from '@elementor/editor-elements';
-import { AlertCircleIcon, BulbIcon, CheckIcon, ChevronDownIcon, EyeIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, Collapse, IconButton, Typography } from '@elementor/ui';
+import { AlertCircleIcon, BulbIcon, CheckIcon, ChevronDownIcon, EyeIcon, HelpIcon } from '@elementor/icons';
+import { __useSelector as useSelector } from '@elementor/store';
+import { Alert, AlertTitle, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { AUDIT_PANEL_ID } from '../constants';
 import { useViolationFocus } from '../hooks/use-violation-focus';
 import { type AuditMeta, type AuditViolation } from '../types';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
 
+const PANEL_Z_INDEX_BASE = 1000;
+
+type FloatingPanelsState = {
+	floatingPanels: {
+		byId: Record< string, { zIndex: number } | undefined >;
+	};
+};
+
 type Props = {
 	audit: AuditMeta;
+	skipReason?: string;
 	violations?: AuditViolation[];
 };
 
-export default function ViolationRow( { audit, violations }: Props ) {
+function useAuditPanelTooltipZIndex(): number {
+	const panelZIndex = useSelector(
+		( state: FloatingPanelsState ) => state.floatingPanels.byId[ AUDIT_PANEL_ID ]?.zIndex ?? 0
+	);
+
+	return PANEL_Z_INDEX_BASE + panelZIndex + 1;
+}
+
+function SkipReasonTooltip( { reason }: { reason: string } ) {
+	const tooltipZIndex = useAuditPanelTooltipZIndex();
+
+	return (
+		<Tooltip
+			title={ reason }
+			placement="top"
+			PopperProps={ {
+				sx: { zIndex: tooltipZIndex },
+			} }
+		>
+			<Box aria-label={ reason } component="span" sx={ { display: 'inline-flex', alignItems: 'center' } }>
+				<HelpIcon fontSize="small" color="action" />
+			</Box>
+		</Tooltip>
+	);
+}
+
+function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violations' > ) {
+	if ( violations ) {
+		return (
+			<>
+				<Typography variant="caption" color="text.secondary" fontWeight="bold">
+					{ violations.length }
+				</Typography>
+				<SeverityIcon severity={ audit.severity } />
+			</>
+		);
+	}
+
+	return <CheckIcon fontSize="small" color="success" />;
+}
+
+export default function ViolationRow( { audit, skipReason, violations }: Props ) {
 	const [ expanded, setExpanded ] = useState( false );
 	const { focus } = useViolationFocus();
 
+	const toggleExpanded = () => setExpanded( ( value ) => ! value );
+
 	return (
 		<Box sx={ { borderBottom: 1, borderColor: 'divider', paddingBlock: 0.5 } }>
-			<Box
-				sx={ { display: 'flex', alignItems: 'center', gap: 0.5, cursor: 'pointer' } }
-				onClick={ () => setExpanded( ( v ) => ! v ) }
-			>
-				<Typography variant="body2" sx={ { flex: 1 } }>
-					{ audit.title }
-				</Typography>
-				{ violations ? (
-					<>
-						<Typography variant="caption" color="text.secondary" fontWeight="bold">
-							{ violations.length }
-						</Typography>
-						<SeverityIcon severity={ audit.severity } />
-					</>
-				) : (
-					<CheckIcon fontSize="small" color="success" />
-				) }
+			<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+				<Box
+					sx={ {
+						alignItems: 'center',
+						cursor: 'pointer',
+						display: 'flex',
+						flex: 1,
+						gap: 0.5,
+						minWidth: 0,
+					} }
+					onClick={ toggleExpanded }
+				>
+					<Typography variant="body2" sx={ { flex: 1 } }>
+						{ audit.title }
+					</Typography>
+					{ ! skipReason && <StatusIndicator audit={ audit } violations={ violations } /> }
+				</Box>
+				{ skipReason && <SkipReasonTooltip reason={ skipReason } /> }
 				<IconButton
 					size="small"
 					aria-label={ expanded ? __( 'Collapse', 'elementor' ) : __( 'Expand', 'elementor' ) }
+					onClick={ toggleExpanded }
 				>
 					<ChevronDownIcon
 						fontSize="small"

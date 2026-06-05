@@ -2,6 +2,8 @@ import { __ } from '@wordpress/i18n';
 
 import { type AuditCategory } from './types';
 
+export const AUDIT_PANEL_ID = 'audit-panel';
+
 export const ALL_CATEGORIES: AuditCategory[] = [
 	'best-practices',
 	'seo',
