@@ -61,9 +61,12 @@ test.describe( 'Atomic flexbox drag and drop @v4-tests', () => {
 		expect( targetBox ).toBeTruthy();
 
 		const dropX = targetBox!.x + DROP_TARGET_EDGE_OFFSET_PX;
-		const dropY = targetBox!.y + targetBox!.height / 2;
+		const dropY = targetBox!.y + ( targetBox!.height / 2 );
 
-		await page.mouse.move( panelBox!.x + panelBox!.width / 2, panelBox!.y + panelBox!.height / 2 );
+		await page.mouse.move(
+			panelBox!.x + ( panelBox!.width / 2 ),
+			panelBox!.y + ( panelBox!.height / 2 ),
+		);
 		await page.mouse.down();
 
 		for ( let step = 0; step <= MOUSE_DRAG_STEPS; step++ ) {
