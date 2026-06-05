@@ -5,7 +5,7 @@ import { extractAttachmentIds } from './lib/page-attachments';
 import { readKitSnapshot } from './lib/read-kit-snapshot';
 import { buildSnapshotTree } from './lib/v1-snapshot';
 import { getRegisteredAudits } from './registry';
-import { computeReport } from './score/score';
+import { computeReport } from './lib/compute-report';
 import {
 	type Audit,
 	type AuditContext,

@@ -1,4 +1,3 @@
-import { type ChipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export const GOOD_THRESHOLD = 90;
@@ -18,7 +17,7 @@ export function scoreColor( score: number ): ScoreColor {
 	return 'error';
 }
 
-export function scoreStatusLabel( score: number ): string {
+export function scoreLabel( score: number ): string {
 	if ( score >= GOOD_THRESHOLD ) {
 		return __( 'Good', 'elementor' );
 	}
@@ -28,8 +27,4 @@ export function scoreStatusLabel( score: number ): string {
 	}
 
 	return __( 'At risk', 'elementor' );
-}
-
-export function scoreStatusColor( score: number ): ChipProps[ 'color' ] {
-	return scoreColor( score );
 }

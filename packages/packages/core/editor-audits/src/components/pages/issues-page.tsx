@@ -3,7 +3,7 @@ import { Box, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
-import { countSeveritiesForCategory } from '../../lib/severity-counts';
+import { countSeverities } from '../../lib/severity-counts';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import IssuesCategoryRow from '../issues-category-row';
 
@@ -30,21 +30,15 @@ export default function IssuesPage( { report, onCategoryClick, onAllAuditsClick 
 				</Typography>
 			</Link>
 			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
-				{ populatedCategories.map( ( category ) => {
-					const counts = countSeveritiesForCategory( report, category );
-
-					return (
-						<IssuesCategoryRow
-							key={ category }
-							category={ category }
-							label={ CATEGORY_LABELS[ category ] }
-							errorCount={ counts.error }
-							warningCount={ counts.warning }
-							infoCount={ counts.info }
-							onClick={ () => onCategoryClick( category ) }
-						/>
-					);
-				} ) }
+				{ populatedCategories.map( ( category ) => (
+					<IssuesCategoryRow
+						key={ category }
+						category={ category }
+						label={ CATEGORY_LABELS[ category ] }
+						counts={ countSeverities( report, category ) }
+						onClick={ () => onCategoryClick( category ) }
+					/>
+				) ) }
 			</Box>
 		</Box>
 	);

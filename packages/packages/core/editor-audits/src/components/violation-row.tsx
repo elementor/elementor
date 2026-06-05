@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 
 import { AUDIT_PANEL_ID } from '../constants';
 import { useViolationFocus } from '../hooks/use-violation-focus';
+import { onKeyboardClick } from '../lib/keyboard-click';
 import { type AuditMeta, type AuditViolation } from '../types';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
@@ -153,11 +154,7 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									role="button"
 									tabIndex={ 0 }
 									onClick={ () => focus( violation ) }
-									onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-										if ( event.key === 'Enter' || event.key === ' ' ) {
-											focus( violation );
-										}
-									} }
+									onKeyDown={ onKeyboardClick( () => focus( violation ) ) }
 									sx={ {
 										display: 'flex',
 										alignItems: 'center',

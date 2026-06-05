@@ -1,5 +1,5 @@
 import { type AuditMeta, type AuditResult, type AuditRun } from '../../types';
-import { computeReport } from '../score';
+import { computeReport } from '../compute-report';
 
 function auditMeta( id: string, categories: AuditMeta[ 'categories' ], weight = 10 ): AuditMeta {
 	return {

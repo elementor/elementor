@@ -3,8 +3,13 @@ import { Box, Chip, Divider, Typography } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
-import { auditStatusDisplayCounts, type AuditStatusGroup } from '../../lib/audit-status-summary';
-import { scoreStatusColor, scoreStatusLabel } from '../../lib/score-thresholds';
+import {
+	auditStatusColor,
+	auditStatusDisplayCounts,
+	type AuditStatusGroup,
+	auditStatusLabel,
+} from '../../lib/audit-status-summary';
+import { scoreColor, scoreLabel } from '../../lib/score-thresholds';
 import {
 	ALL_SEVERITIES,
 	countSeverities,
@@ -12,7 +17,7 @@ import {
 	severityRemainingCountLabel,
 } from '../../lib/severity-counts';
 import { type AuditCategory, type PageAuditReport } from '../../types';
-import AuditStatusCircle from '../audit-status-circle';
+import CountSummaryCircle from '../count-summary-circle';
 import ScoreBar from '../score-bar';
 import ScoreCircle from '../score-circle';
 import SeverityIcon from '../severity-icons';
@@ -44,7 +49,7 @@ const STATUS_ARIA_LABELS: Record< AuditStatusGroup, ( count: number ) => string 
 		),
 };
 
-const STATUS_GROUPS: AuditStatusGroup[] = [ 'fail', 'pass', 'skipped' ];
+const STATUS_GROUPS = [ 'fail', 'pass', 'skipped' ] as const;
 
 export default function OverviewPage( { onCategoryClick, onStatusClick, report }: Props ) {
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
@@ -57,8 +62,8 @@ export default function OverviewPage( { onCategoryClick, onStatusClick, report }
 				<ScoreCircle score={ report.overall } />
 				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 					<Chip
-						label={ scoreStatusLabel( report.overall ) }
-						color={ scoreStatusColor( report.overall ) }
+						label={ scoreLabel( report.overall ) }
+						color={ scoreColor( report.overall ) }
 						variant="standard"
 						size="small"
 						sx={ { fontWeight: 600, alignSelf: 'flex-start' } }
@@ -82,20 +87,15 @@ export default function OverviewPage( { onCategoryClick, onStatusClick, report }
 			<Typography variant="subtitle1" fontWeight="bold">
 				{ __( 'Audit statuses', 'elementor' ) }
 			</Typography>
-			<Box
-				sx={ {
-					display: 'flex',
-					justifyContent: 'space-around',
-					gap: 2,
-				} }
-			>
+			<Box sx={ { display: 'flex', justifyContent: 'space-around', gap: 2 } }>
 				{ STATUS_GROUPS.map( ( status ) => (
-					<AuditStatusCircle
+					<CountSummaryCircle
 						key={ status }
 						ariaLabel={ STATUS_ARIA_LABELS[ status ]( statusCounts[ status ] ) }
+						color={ auditStatusColor( status ) }
 						count={ statusCounts[ status ] }
+						label={ auditStatusLabel( status ) }
 						onClick={ () => onStatusClick( status ) }
-						status={ status }
 					/>
 				) ) }
 			</Box>
@@ -122,11 +122,7 @@ export default function OverviewPage( { onCategoryClick, onStatusClick, report }
 							aria-label={ severityRemainingCountLabel( severity, count ) }
 							component="li"
 							key={ severity }
-							sx={ {
-								alignItems: 'center',
-								display: 'flex',
-								gap: 0.5,
-							} }
+							sx={ { alignItems: 'center', display: 'flex', gap: 0.5 } }
 						>
 							<SeverityIcon severity={ severity } />
 							<Typography variant="body2" fontWeight="bold">

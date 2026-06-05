@@ -2,6 +2,8 @@ import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, Rotate, Typography, useTheme } from '@elementor/ui';
 
+import { onKeyboardClick } from '../lib/keyboard-click';
+import { ALL_SEVERITIES, type SeverityCounts } from '../lib/severity-counts';
 import { type AuditCategory } from '../types';
 import { CATEGORY_ICONS } from './category-icons';
 import SeverityIcon from './severity-icons';
@@ -9,13 +11,11 @@ import SeverityIcon from './severity-icons';
 type Props = {
 	category: AuditCategory;
 	label: string;
-	errorCount: number;
-	warningCount: number;
-	infoCount: number;
+	counts: SeverityCounts;
 	onClick: () => void;
 };
 
-export default function IssuesCategoryRow( { category, label, errorCount, warningCount, infoCount, onClick }: Props ) {
+export default function IssuesCategoryRow( { category, label, counts, onClick }: Props ) {
 	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
 
@@ -24,11 +24,7 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 			role="button"
 			tabIndex={ 0 }
 			onClick={ onClick }
-			onKeyDown={ ( event ) => {
-				if ( event.key === 'Enter' || event.key === ' ' ) {
-					onClick();
-				}
-			} }
+			onKeyDown={ onKeyboardClick( onClick ) }
 			sx={ {
 				display: 'flex',
 				alignItems: 'center',
@@ -49,30 +45,14 @@ export default function IssuesCategoryRow( { category, label, errorCount, warnin
 				{ label }
 			</Typography>
 			<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-				{ errorCount > 0 && (
-					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
-						<SeverityIcon severity="error" />
+				{ ALL_SEVERITIES.filter( ( s ) => counts[ s ] > 0 ).map( ( severity ) => (
+					<Box key={ severity } sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
+						<SeverityIcon severity={ severity } />
 						<Typography variant="caption" color="text.primary" fontWeight="bold">
-							{ errorCount }
+							{ counts[ severity ] }
 						</Typography>
 					</Box>
-				) }
-				{ warningCount > 0 && (
-					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
-						<SeverityIcon severity="warning" />
-						<Typography variant="caption" color="text.primary" fontWeight="bold">
-							{ warningCount }
-						</Typography>
-					</Box>
-				) }
-				{ infoCount > 0 && (
-					<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.25 } }>
-						<SeverityIcon severity="info" />
-						<Typography variant="caption" color="text.primary" fontWeight="bold">
-							{ infoCount }
-						</Typography>
-					</Box>
-				) }
+				) ) }
 			</Box>
 			<Rotate in={ isRtl }>
 				<ChevronRightIcon fontSize="small" color="action" />

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ArrowLeftIcon } from '@elementor/icons';
-import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { CATEGORY_LABELS } from '../../constants';
@@ -8,6 +7,7 @@ import { sortFailedAuditResults } from '../../lib/sort-failed-audits';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import { CATEGORY_ICONS } from '../category-icons';
 import StatusSection from '../status-section';
+import SubpageHeader from '../subpage-header';
 import ViolationRow from '../violation-row';
 
 type Props = {
@@ -17,7 +17,6 @@ type Props = {
 };
 
 export default function CategoryPage( { category, report, onBack }: Props ) {
-	const isRtl = 'rtl' === useTheme().direction;
 	const Icon = CATEGORY_ICONS[ category ];
 	const inCategory = report.auditResults.filter( ( r ) => r.audit.categories.includes( category ) );
 	const failed = sortFailedAuditResults( inCategory.filter( ( r ) => r.result.status === 'fail' ) );
@@ -30,24 +29,12 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 
 	return (
 		<>
-			<Box
-				sx={ {
-					display: 'flex',
-					alignItems: 'center',
-					gap: 0.5,
-					p: 1,
-				} }
-			>
-				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back to all issues', 'elementor' ) }>
-					<Rotate in={ isRtl }>
-						<ArrowLeftIcon fontSize="small" />
-					</Rotate>
-				</IconButton>
-				<Icon fontSize="small" color="action" />
-				<Typography variant="subtitle2" fontWeight="bold">
-					{ CATEGORY_LABELS[ category ] }
-				</Typography>
-			</Box>
+			<SubpageHeader
+				title={ CATEGORY_LABELS[ category ] }
+				onBack={ onBack }
+				backLabel={ __( 'Back to all issues', 'elementor' ) }
+				icon={ <Icon fontSize="small" color="action" /> }
+			/>
 			<Box sx={ { p: 1 } }>
 				<StatusSection
 					label={ __( 'Failed audits', 'elementor' ) }

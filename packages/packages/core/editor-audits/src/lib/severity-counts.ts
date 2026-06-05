@@ -4,9 +4,9 @@ import { type AuditCategory, type AuditSeverity, type PageAuditReport } from '..
 
 export type SeverityCounts = Record< AuditSeverity, number >;
 
-export const ALL_SEVERITIES: AuditSeverity[] = [ 'error', 'warning', 'info' ];
+export const ALL_SEVERITIES = [ 'error', 'warning', 'info' ] as const;
 
-function countFailedViolations( report: PageAuditReport, category?: AuditCategory ): SeverityCounts {
+export function countSeverities( report: PageAuditReport, category?: AuditCategory ): SeverityCounts {
 	const counts: SeverityCounts = { error: 0, warning: 0, info: 0 };
 
 	for ( const { audit, result } of report.auditResults ) {
@@ -22,14 +22,6 @@ function countFailedViolations( report: PageAuditReport, category?: AuditCategor
 	}
 
 	return counts;
-}
-
-export function countSeverities( report: PageAuditReport ): SeverityCounts {
-	return countFailedViolations( report );
-}
-
-export function countSeveritiesForCategory( report: PageAuditReport, category: AuditCategory ): SeverityCounts {
-	return countFailedViolations( report, category );
 }
 
 export function severityPluralLabel( severity: AuditSeverity ): string {

@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ArrowLeftIcon } from '@elementor/icons';
-import { Box, IconButton, Rotate, Typography, useTheme } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -11,6 +10,7 @@ import {
 } from '../../lib/audit-status-summary';
 import { type PageAuditReport } from '../../types';
 import StatusSection from '../status-section';
+import SubpageHeader from '../subpage-header';
 import ViolationRow from '../violation-row';
 
 type Props = {
@@ -20,7 +20,6 @@ type Props = {
 };
 
 export default function AllAuditsPage( { initialExpandedStatus, onBack, report }: Props ) {
-	const isRtl = 'rtl' === useTheme().direction;
 	const { failed, passed, skipped, totalViolations } = partitionAuditResults( report );
 	const expandFail = ! initialExpandedStatus || initialExpandedStatus === 'fail';
 	const expandPass = initialExpandedStatus === 'pass';
@@ -28,23 +27,7 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 
 	return (
 		<Box key={ initialExpandedStatus ?? 'default' }>
-			<Box
-				sx={ {
-					display: 'flex',
-					alignItems: 'center',
-					gap: 0.5,
-					p: 1,
-				} }
-			>
-				<IconButton size="small" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
-					<Rotate in={ isRtl }>
-						<ArrowLeftIcon fontSize="small" />
-					</Rotate>
-				</IconButton>
-				<Typography variant="subtitle2" fontWeight="bold">
-					{ __( 'All audits', 'elementor' ) }
-				</Typography>
-			</Box>
+			<SubpageHeader title={ __( 'All audits', 'elementor' ) } onBack={ onBack } />
 			<Box sx={ { p: 1 } }>
 				<StatusSection
 					label={ auditStatusLabel( 'fail' ) }

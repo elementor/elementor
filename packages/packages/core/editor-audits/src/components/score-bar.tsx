@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, LinearProgress, Rotate, Typography, useTheme } from '@elementor/ui';
 
+import { onKeyboardClick } from '../lib/keyboard-click';
 import { scoreColor } from '../lib/score-thresholds';
 
 type Props = {
@@ -18,11 +19,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 			role={ onClick ? 'button' : undefined }
 			tabIndex={ onClick ? 0 : undefined }
 			onClick={ onClick }
-			onKeyDown={ ( event: React.KeyboardEvent< HTMLDivElement > ) => {
-				if ( onClick && ( event.key === 'Enter' || event.key === ' ' ) ) {
-					onClick();
-				}
-			} }
+			onKeyDown={ onClick ? onKeyboardClick( onClick ) : undefined }
 			sx={ {
 				display: 'flex',
 				alignItems: 'center',
