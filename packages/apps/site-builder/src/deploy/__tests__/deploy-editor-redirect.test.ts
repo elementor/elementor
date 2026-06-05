@@ -1,7 +1,7 @@
 import {
 	clearPendingEditorRedirect,
-	completeEditorRedirectOnDeployAck,
-	EDITOR_REDIRECT_ACK_FALLBACK_MS,
+	completeEditorRedirectOnDeployAcknowledge,
+	EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS,
 	scheduleEditorRedirectAfterDeploy,
 } from '../deploy-editor-redirect';
 
@@ -15,34 +15,34 @@ describe( 'deploy-editor-redirect', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'redirects on ack before the fallback timer fires', () => {
+	it( 'redirects on acknowledge before the fallback timer fires', () => {
 		const navigate = jest.fn();
 		const pending = scheduleEditorRedirectAfterDeploy( '/editor', { navigate } );
 
-		completeEditorRedirectOnDeployAck( pending, navigate );
+		completeEditorRedirectOnDeployAcknowledge( pending, navigate );
 
 		expect( navigate ).toHaveBeenCalledWith( '/editor' );
-		jest.advanceTimersByTime( EDITOR_REDIRECT_ACK_FALLBACK_MS );
+		jest.advanceTimersByTime( EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS );
 		expect( navigate ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'redirects via fallback when ack is never received', () => {
+	it( 'redirects via fallback when acknowledge is never received', () => {
 		const navigate = jest.fn();
 		scheduleEditorRedirectAfterDeploy( '/editor', { navigate } );
 
-		jest.advanceTimersByTime( EDITOR_REDIRECT_ACK_FALLBACK_MS );
+		jest.advanceTimersByTime( EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS );
 
 		expect( navigate ).toHaveBeenCalledWith( '/editor' );
 	} );
 
-	it( 'clears the fallback timer when ack is received', () => {
+	it( 'clears the fallback timer when acknowledge is received', () => {
 		const navigate = jest.fn();
 		const pending = scheduleEditorRedirectAfterDeploy( '/editor', { navigate } );
 
-		completeEditorRedirectOnDeployAck( pending, navigate );
+		completeEditorRedirectOnDeployAcknowledge( pending, navigate );
 		clearPendingEditorRedirect( pending );
 
-		jest.advanceTimersByTime( EDITOR_REDIRECT_ACK_FALLBACK_MS );
+		jest.advanceTimersByTime( EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS );
 
 		expect( navigate ).toHaveBeenCalledTimes( 1 );
 	} );

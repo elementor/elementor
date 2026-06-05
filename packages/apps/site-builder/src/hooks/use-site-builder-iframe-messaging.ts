@@ -6,7 +6,7 @@ import { deployWebsite } from '../deploy';
 import { resolveEditorRedirectPageId } from '../deploy/can-redirect-after-deploy';
 import {
 	clearPendingEditorRedirect,
-	completeEditorRedirectOnDeployAck,
+	completeEditorRedirectOnDeployAcknowledge,
 	type PendingEditorRedirect,
 	scheduleEditorRedirectAfterDeploy,
 } from '../deploy/deploy-editor-redirect';
@@ -166,8 +166,8 @@ export function useSiteBuilderIframeMessaging( {
 				return;
 			}
 
-			if ( type === 'site-planner/deploy-website/ack' ) {
-				completeEditorRedirectOnDeployAck( pendingRedirectRef.current );
+			if ( type === 'site-planner/deploy-website/acknowledge' ) {
+				completeEditorRedirectOnDeployAcknowledge( pendingRedirectRef.current );
 				pendingRedirectRef.current = null;
 				return;
 			}

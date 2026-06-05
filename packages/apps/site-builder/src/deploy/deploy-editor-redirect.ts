@@ -1,4 +1,4 @@
-export const EDITOR_REDIRECT_ACK_FALLBACK_MS = 3000;
+export const EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS = 3000;
 
 export type PendingEditorRedirect = {
 	redirectUrl: string | null;
@@ -12,7 +12,7 @@ export function scheduleEditorRedirectAfterDeploy(
 		navigate?: ( url: string ) => void;
 	} = {}
 ): PendingEditorRedirect {
-	const fallbackMs = options.fallbackMs ?? EDITOR_REDIRECT_ACK_FALLBACK_MS;
+	const fallbackMs = options.fallbackMs ?? EDITOR_REDIRECT_ACKNOWLEDGE_FALLBACK_MS;
 	const navigate =
 		options.navigate ??
 		( ( url: string ) => {
@@ -50,7 +50,7 @@ export function clearPendingEditorRedirect( pending: PendingEditorRedirect | nul
 	pending.redirectUrl = null;
 }
 
-export function completeEditorRedirectOnDeployAck(
+export function completeEditorRedirectOnDeployAcknowledge(
 	pending: PendingEditorRedirect | null,
 	navigate: ( url: string ) => void = ( url: string ) => {
 		window.location.href = url;
