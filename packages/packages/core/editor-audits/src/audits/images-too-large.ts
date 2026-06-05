@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-import { walkImageLikeSources } from '../lib/image-like-sources';
+import { hasPageImages, walkImageLikeSources } from '../lib/image-like-sources';
 import { type Audit, type AuditViolation } from '../types';
 
 const SIZE_THRESHOLD_BYTES = 500 * 1024;
@@ -15,6 +15,10 @@ export const audit: Audit = {
 	severity: 'warning',
 	weight: 7,
 	evaluate: ( ctx ) => {
+		if ( ! hasPageImages( ctx.elements.tree ) ) {
+			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
+		}
+
 		const widgetMaxKb = new Map< string, number >();
 
 		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {

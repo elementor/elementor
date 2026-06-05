@@ -3,9 +3,12 @@ import { makeContext, makeWidget } from './fixtures';
 
 describe( audit.id, () => {
 	it( 'is skipped when the kit has no global colors', async () => {
-		const result = await audit.evaluate( makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } ) );
-
-		expect( result.status ).toBe( 'skipped' );
+		expect(
+			await audit.evaluate( makeContext( { kit: { id: 1, globals: { colors: [], fonts: [] } } } ) )
+		).toEqual( {
+			status: 'skipped',
+			reason: 'No global colors',
+		} );
 	} );
 
 	it( 'fails for a widget with a hex color value', async () => {

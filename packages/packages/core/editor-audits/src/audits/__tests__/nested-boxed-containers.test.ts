@@ -2,6 +2,13 @@ import { audit } from '../nested-boxed-containers';
 import { makeContainer, makeContext } from './fixtures';
 
 describe( audit.id, () => {
+	it( 'is skipped with an empty tree', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No elements',
+		} );
+	} );
+
 	it( 'passes for a boxed container with a full-width child', async () => {
 		const tree = [
 			makeContainer( 'outer', { content_width: 'boxed' }, [

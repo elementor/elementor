@@ -11,8 +11,11 @@ function makeNestedContainers( depth: number ): ElementSnapshotNode {
 }
 
 describe( audit.id, () => {
-	it( 'passes with an empty tree', async () => {
-		expect( await audit.evaluate( makeContext() ) ).toEqual( { status: 'pass' } );
+	it( 'is skipped with an empty tree', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No elements',
+		} );
 	} );
 
 	it( 'passes at exactly 6 levels of nesting', async () => {

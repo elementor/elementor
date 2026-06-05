@@ -7,7 +7,7 @@ const HEX_RE = /^#[0-9a-f]{3,8}$/i;
 
 export const audit: Audit = {
 	id: 'audits/prefer-global-colors',
-	title: __( 'Prefer global colors over hard-coded values', 'elementor' ),
+	title: __( 'Prefer global colors', 'elementor' ),
 	description: __( 'Global colors make the design consistent and easy to update site-wide.', 'elementor' ),
 	fixHint: __( "Replace the hard-coded color with one of your kit's global colors.", 'elementor' ),
 	categories: [ 'best-practices' ],
@@ -15,7 +15,7 @@ export const audit: Audit = {
 	weight: 3,
 	evaluate: ( ctx ) => {
 		if ( ctx.kit.globals.colors.length === 0 ) {
-			return { status: 'skipped', reason: 'no globals' };
+			return { status: 'skipped', reason: __( 'No global colors', 'elementor' ) };
 		}
 
 		const violations: AuditViolation[] = [];

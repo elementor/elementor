@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import { hasMeaningfulAlt, isImageSourcePresent } from '../lib/image-alt';
-import { walkImageLikeSources } from '../lib/image-like-sources';
+import { hasPageImages, walkImageLikeSources } from '../lib/image-like-sources';
 import { type Audit, type AuditViolation } from '../types';
 
 export const audit: Audit = {
@@ -13,6 +13,10 @@ export const audit: Audit = {
 	severity: 'error',
 	weight: 10,
 	evaluate: ( ctx ) => {
+		if ( ! hasPageImages( ctx.elements.tree ) ) {
+			return { status: 'skipped', reason: __( 'No images', 'elementor' ) };
+		}
+
 		const violations: AuditViolation[] = [];
 		const failedWidgetIds = new Set< string >();
 

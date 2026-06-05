@@ -15,6 +15,10 @@ export const audit: Audit = {
 	severity: 'warning',
 	weight: 7,
 	evaluate: ( ctx ) => {
+		if ( ctx.elements.tree.length === 0 ) {
+			return { status: 'skipped', reason: __( 'No elements', 'elementor' ) };
+		}
+
 		const violations: AuditViolation[] = [];
 
 		walkElements( ctx.elements.tree, ( node ) => {

@@ -11,6 +11,13 @@ const imageSizeWithAlt = ( id: number, alt: string ) => ( {
 } );
 
 describe( audit.id, () => {
+	it( 'is skipped when the page has no images', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No images',
+		} );
+	} );
+
 	it( 'passes when every image has alt text from page context', async () => {
 		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
 		const pageContext = { image_sizes: { 1: imageSizeWithAlt( 1, 'Cat' ) } };

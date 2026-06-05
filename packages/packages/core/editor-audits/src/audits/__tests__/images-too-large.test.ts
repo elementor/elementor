@@ -14,6 +14,13 @@ const imageSize = ( filesize_bytes: number ) => ( {
 } );
 
 describe( audit.id, () => {
+	it( 'is skipped when the page has no images', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No images',
+		} );
+	} );
+
 	it( 'passes when all images are under the threshold', async () => {
 		const tree = [ makeWidget( 'i1', 'image', { image: { id: 1 } } ) ];
 		const pageContext = { image_sizes: { 1: imageSize( SMALL_KB ) } };

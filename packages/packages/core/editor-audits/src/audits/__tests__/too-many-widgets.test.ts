@@ -4,8 +4,11 @@ import { makeContext, makeWidget } from './fixtures';
 const makeWidgets = ( count: number ) => Array.from( { length: count }, ( _, i ) => makeWidget( `w${ i }`, 'text' ) );
 
 describe( audit.id, () => {
-	it( 'passes with an empty tree', async () => {
-		expect( await audit.evaluate( makeContext() ) ).toEqual( { status: 'pass' } );
+	it( 'is skipped with an empty tree', async () => {
+		expect( await audit.evaluate( makeContext() ) ).toEqual( {
+			status: 'skipped',
+			reason: 'No elements',
+		} );
 	} );
 
 	it( 'passes at exactly 100 widgets', async () => {

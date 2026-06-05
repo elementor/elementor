@@ -11,7 +11,7 @@ function isHardCodedFont( value: unknown ): value is string {
 
 export const audit: Audit = {
 	id: 'audits/prefer-global-fonts',
-	title: __( 'Prefer global fonts over hard-coded values', 'elementor' ),
+	title: __( 'Prefer global fonts', 'elementor' ),
 	description: __( 'Global fonts make the design consistent and easy to update site-wide.', 'elementor' ),
 	fixHint: __( "Replace the hard-coded font with one of your kit's global fonts.", 'elementor' ),
 	categories: [ 'best-practices', 'performance' ],
@@ -19,7 +19,7 @@ export const audit: Audit = {
 	weight: 3,
 	evaluate: ( ctx ) => {
 		if ( ctx.kit.globals.fonts.length === 0 ) {
-			return { status: 'skipped', reason: 'no globals' };
+			return { status: 'skipped', reason: __( 'No global fonts', 'elementor' ) };
 		}
 
 		const violations: AuditViolation[] = [];
