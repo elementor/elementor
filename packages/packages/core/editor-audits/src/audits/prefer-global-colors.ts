@@ -1,19 +1,23 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
+import { collectHardcodedColors } from '../lib/collect-hardcoded-colors';
+import { findMatchingGlobalColor } from '../lib/match-global-color';
 import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
-
-const HEX_RE = /^#[0-9a-f]{3,8}$/i;
 
 export const audit: Audit = {
 	id: 'audits/prefer-global-colors',
 	title: __( 'Prefer global colors', 'elementor' ),
 	description: __( 'Global colors make the design consistent and easy to update site-wide.', 'elementor' ),
-	fixHint: __( "Replace the hard-coded color with one of your kit's global colors.", 'elementor' ),
+	fixHint: __( 'Replace the hard-coded value with the matching global color.', 'elementor' ),
 	categories: [ 'best-practices' ],
 	severity: 'info',
 	weight: 3,
 	evaluate: ( ctx ) => {
+		if ( ctx.elements.tree.length === 0 ) {
+			return { status: 'skipped', reason: __( 'No elements', 'elementor' ) };
+		}
+
 		if ( ctx.kit.globals.colors.length === 0 ) {
 			return { status: 'skipped', reason: __( 'No global colors', 'elementor' ) };
 		}
@@ -21,19 +25,24 @@ export const audit: Audit = {
 		const violations: AuditViolation[] = [];
 
 		walkElements( ctx.elements.tree, ( node ) => {
-			if ( node.elType !== 'widget' ) {
-				return;
-			}
+			for ( const { value } of collectHardcodedColors( node.settings ) ) {
+				const global = findMatchingGlobalColor( value, ctx.kit.globals.colors );
 
-			for ( const [ key, value ] of Object.entries( node.settings ) ) {
-				if ( typeof value === 'string' && HEX_RE.test( value ) ) {
-					violations.push( {
-						auditId: audit.id,
-						elementId: node.id,
-						targetHint: 'element-settings',
-						label: `${ key }: ${ value }`,
-					} );
+				if ( ! global ) {
+					continue;
 				}
+
+				violations.push( {
+					auditId: audit.id,
+					elementId: node.id,
+					targetHint: 'element-settings',
+					label: sprintf(
+						/* translators: 1: hard-coded color value, 2: global color title. */
+						__( 'replace "%1$s" with "%2$s" global color', 'elementor' ),
+						value,
+						global.title
+					),
+				} );
 			}
 		} );
 

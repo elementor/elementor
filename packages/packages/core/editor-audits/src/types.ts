@@ -83,8 +83,8 @@ export type ElementsModelSnapshot = {
 export type KitSnapshot = {
 	id: number;
 	globals: {
-		colors: Array< { id: string; value: string } >;
-		fonts: Array< { id: string; value: string } >;
+		colors: Array< { id: string; value: string; title: string } >;
+		fonts: Array< { id: string; value: string; title: string } >;
 	};
 };
 

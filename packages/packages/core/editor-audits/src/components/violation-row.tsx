@@ -142,6 +142,10 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 					<Box role="list" sx={ { paddingBlockEnd: 1, paddingInlineStart: 2 } }>
 						{ violations.map( ( violation, idx ) => {
 							const widgetIcon = violation.elementId ? getElementIcon( violation.elementId ) : null;
+							const elementTitle = violation.elementId ? getElementTitle( violation.elementId ) : null;
+							const rowLabel = elementTitle
+								? `${ elementTitle } - ${ violation.label }`
+								: violation.label;
 
 							return (
 								<Box
@@ -170,10 +174,14 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									} }
 								>
 									<ViolationIcon violation={ violation } widgetIcon={ widgetIcon } />
-									<Typography variant="caption" sx={ { flex: 1 } }>
-										{ ( violation.elementId ? getElementTitle( violation.elementId ) : null ) ??
-											violation.label }
-									</Typography>
+									<Box sx={ { flex: 1 } }>
+										<Typography variant="caption">{ rowLabel }</Typography>
+										{ violation.detail && (
+											<Typography variant="caption" color="text.secondary">
+												{ violation.detail }
+											</Typography>
+										) }
+									</Box>
 									<EyeIcon className="violation-hover-icon" fontSize="tiny" aria-hidden={ true } />
 								</Box>
 							);

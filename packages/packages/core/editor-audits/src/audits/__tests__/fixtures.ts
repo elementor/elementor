@@ -31,8 +31,8 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 const DEFAULT_KIT: KitSnapshot = {
 	id: 1,
 	globals: {
-		colors: [ { id: 'primary', value: '#000000' } ],
-		fonts: [ { id: 'body', value: 'Inter' } ],
+		colors: [ { id: 'primary', value: '#000000', title: 'Primary' } ],
+		fonts: [ { id: 'body', value: 'Inter', title: 'Body' } ],
 	},
 };
 
