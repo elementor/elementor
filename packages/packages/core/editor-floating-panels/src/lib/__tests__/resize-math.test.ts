@@ -1,4 +1,10 @@
-import { applyBlockEndResize, applyBlockStartResize, applyInlineEndResize, applyInlineStartResize, type ResizeBounds } from '../resize-math';
+import {
+	applyBlockEndResize,
+	applyBlockStartResize,
+	applyInlineEndResize,
+	applyInlineStartResize,
+	type ResizeBounds,
+} from '../resize-math';
 
 const bounds: ResizeBounds = {
 	minInlineSize: 240,
