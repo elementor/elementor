@@ -10,7 +10,7 @@ import {
 	type ResizeBounds,
 	type ResizeEdge,
 } from '../lib/resize-math';
-import { getSidePanelInlineSize } from '../lib/viewport-bounds';
+import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type GlobalState, selectMinSize } from '../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../types';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
@@ -33,6 +33,7 @@ function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): Res
 		minBlockSize: minSize.blockSize,
 		maxBlockSize: window.innerHeight - position.insetBlockStart,
 		minInlineStart: getSidePanelInlineSize(),
+		minBlockStart: APP_BAR_HEIGHT_PX,
 	};
 }
 

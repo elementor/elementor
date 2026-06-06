@@ -1,4 +1,4 @@
-import { applyBlockEndResize, applyInlineEndResize, applyInlineStartResize, type ResizeBounds } from '../resize-math';
+import { applyBlockEndResize, applyBlockStartResize, applyInlineEndResize, applyInlineStartResize, type ResizeBounds } from '../resize-math';
 
 const bounds: ResizeBounds = {
 	minInlineSize: 240,
@@ -6,6 +6,7 @@ const bounds: ResizeBounds = {
 	minBlockSize: 320,
 	maxBlockSize: 600,
 	minInlineStart: 300,
+	minBlockStart: 80,
 };
 
 describe( 'applyInlineEndResize', () => {
@@ -104,5 +105,47 @@ describe( 'applyInlineStartResize', () => {
 		// Assert.
 		expect( next.position.insetInlineStart ).toBe( 580 );
 		expect( next.size.inlineSize ).toBe( 240 );
+	} );
+} );
+
+describe( 'applyBlockStartResize', () => {
+	it( 'moves block-start upward and grows height while anchoring block-end', () => {
+		// Arrange — block-start at 200, height 480 => block-end anchored at 680.
+		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const size = { inlineSize: 320, blockSize: 480 };
+
+		// Act — drag 50px upward (negative block delta).
+		const next = applyBlockStartResize( position, size, -50, bounds );
+
+		// Assert.
+		expect( next.position.insetBlockStart ).toBe( 150 );
+		expect( next.size.blockSize ).toBe( 530 );
+		expect( next.position.insetBlockStart + next.size.blockSize ).toBe( 680 );
+	} );
+
+	it( 'clamps block-start to minBlockStart (app bar)', () => {
+		// Arrange — block-end anchored at 680.
+		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const size = { inlineSize: 320, blockSize: 480 };
+
+		// Act — drag far above the app bar.
+		const next = applyBlockStartResize( position, size, -1000, bounds );
+
+		// Assert.
+		expect( next.position.insetBlockStart ).toBe( 80 );
+		expect( next.size.blockSize ).toBe( 600 );
+	} );
+
+	it( 'clamps height to minBlockSize when shrinking', () => {
+		// Arrange — block-end anchored at 680, min height 320 => max block-start 360.
+		const position = { insetInlineStart: 500, insetBlockStart: 200 };
+		const size = { inlineSize: 320, blockSize: 480 };
+
+		// Act — drag downward (positive block delta).
+		const next = applyBlockStartResize( position, size, 1000, bounds );
+
+		// Assert.
+		expect( next.position.insetBlockStart ).toBe( 360 );
+		expect( next.size.blockSize ).toBe( 320 );
 	} );
 } );
