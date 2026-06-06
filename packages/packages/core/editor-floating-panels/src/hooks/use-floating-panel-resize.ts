@@ -8,7 +8,7 @@ import {
 	applyInlineEndResize,
 	applyInlineStartResize,
 	type ResizeBounds,
-	type ResizeEdge,
+	type ResizeDirection,
 } from '../lib/resize-math';
 import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type GlobalState, selectMinSize } from '../store/selectors';
@@ -37,7 +37,7 @@ function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): Res
 	};
 }
 
-export function useFloatingPanelResize( id: string, edge: ResizeEdge ) {
+export function useFloatingPanelResize( id: string, edge: ResizeDirection ) {
 	const sessionRef = useRef< ResizeSession | null >( null );
 	const { position, size } = useFloatingPanelStatus( id );
 	const minSize = useSelector( ( state: GlobalState ) => selectMinSize( state, id ) );
