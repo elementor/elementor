@@ -1,10 +1,6 @@
 import { getElements } from '@elementor/editor-elements';
 
 import { fetchPageContext } from './api/page-context-client';
-import { computeReport } from './lib/compute-report';
-import { extractAttachmentIds } from './lib/page-attachments';
-import { readKitSnapshot } from './lib/read-kit-snapshot';
-import { buildSnapshotTree } from './lib/v1-snapshot';
 import { getRegisteredAudits } from './registry';
 import {
 	type Audit,
@@ -15,6 +11,10 @@ import {
 	type KitSnapshot,
 	type PageAuditReport,
 } from './types';
+import { computeReport } from './utils/compute-report';
+import { extractAttachmentIds } from './utils/page-attachments';
+import { readKitSnapshot } from './utils/read-kit-snapshot';
+import { buildSnapshotTree } from './utils/v1-snapshot';
 
 function toAuditMeta( { evaluate: _evaluate, ...meta }: Audit ): AuditMeta {
 	return meta;

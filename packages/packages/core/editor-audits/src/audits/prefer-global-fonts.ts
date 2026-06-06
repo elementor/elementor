@@ -1,9 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-import { collectHardcodedFonts } from '../lib/collect-hardcoded-fonts';
-import { findMatchingGlobalFont } from '../lib/match-global-font';
-import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
+import { collectHardcodedFonts } from '../utils/collect-hardcoded-fonts';
+import { findMatchingGlobalFont } from '../utils/match-global-font';
+import { walkElements } from '../utils/walk';
 
 export const audit: Audit = {
 	id: 'audits/prefer-global-fonts',

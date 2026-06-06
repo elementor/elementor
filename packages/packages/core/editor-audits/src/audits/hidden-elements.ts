@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
+import { walkElements } from '../utils/walk';
 
 function isHiddenOnAllDevices( settings: Record< string, unknown > ): boolean {
 	return Boolean( settings.hide_desktop ) && Boolean( settings.hide_tablet ) && Boolean( settings.hide_mobile );

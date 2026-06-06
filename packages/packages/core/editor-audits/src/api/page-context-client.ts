@@ -1,7 +1,7 @@
 import { httpService } from '@elementor/http-client';
 
-import { getWindowConfig } from '../lib/window-config';
 import { type PageContextResponse } from '../types';
+import { getWindowConfig } from '../utils/window-config';
 
 export async function fetchPageContext( documentId: number, attachmentIds: number[] ): Promise< PageContextResponse > {
 	const { restNamespace, nonce } = getWindowConfig();

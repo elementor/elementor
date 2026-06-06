@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import { walkElements } from '../lib/walk';
 import { type Audit } from '../types';
+import { walkElements } from '../utils/walk';
 
 const WIDGET_COUNT_THRESHOLD = 100;
 

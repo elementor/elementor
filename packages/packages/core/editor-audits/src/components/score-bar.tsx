@@ -2,8 +2,8 @@ import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, LinearProgress, Rotate, Typography, useTheme } from '@elementor/ui';
 
-import { onKeyboardClick } from '../lib/keyboard-click';
-import { scoreColor } from '../lib/score-thresholds';
+import { onKeyboardClick } from '../utils/keyboard-click';
+import { scoreColor } from '../utils/score-thresholds';
 
 type Props = {
 	label: string;

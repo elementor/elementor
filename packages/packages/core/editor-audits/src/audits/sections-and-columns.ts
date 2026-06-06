@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
+import { walkElements } from '../utils/walk';
 
 export const audit: Audit = {
 	id: 'audits/sections-and-columns',

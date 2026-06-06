@@ -3,8 +3,8 @@ import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { CATEGORY_LABELS } from '../../constants';
-import { sortFailedAuditResults } from '../../lib/sort-failed-audits';
 import { type AuditCategory, type PageAuditReport } from '../../types';
+import { sortFailedAuditResults } from '../../utils/sort-failed-audits';
 import { CATEGORY_ICONS } from '../category-icons';
 import StatusSection from '../status-section';
 import SubpageHeader from '../subpage-header';

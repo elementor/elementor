@@ -2,9 +2,9 @@ import * as React from 'react';
 import { ChevronRightIcon } from '@elementor/icons';
 import { Box, Rotate, Typography, useTheme } from '@elementor/ui';
 
-import { onKeyboardClick } from '../lib/keyboard-click';
-import { ALL_SEVERITIES, type SeverityCounts } from '../lib/severity-counts';
 import { type AuditCategory } from '../types';
+import { onKeyboardClick } from '../utils/keyboard-click';
+import { ALL_SEVERITIES, type SeverityCounts } from '../utils/severity-counts';
 import { CATEGORY_ICONS } from './category-icons';
 import SeverityIcon from './severity-icons';
 

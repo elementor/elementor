@@ -2,13 +2,13 @@ import * as React from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { type PageAuditReport } from '../../types';
 import {
 	auditStatusColor,
 	type AuditStatusGroup,
 	auditStatusLabel,
 	partitionAuditResults,
-} from '../../lib/audit-status-summary';
-import { type PageAuditReport } from '../../types';
+} from '../../utils/audit-status-summary';
 import StatusSection from '../status-section';
 import SubpageHeader from '../subpage-header';
 import ViolationRow from '../violation-row';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, CircularProgress, Typography } from '@elementor/ui';
 
-import { scoreColor } from '../lib/score-thresholds';
+import { scoreColor } from '../utils/score-thresholds';
 
 type Props = {
 	score: number;

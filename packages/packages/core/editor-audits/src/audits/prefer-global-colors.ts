@@ -1,9 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-import { collectHardcodedColors } from '../lib/collect-hardcoded-colors';
-import { findMatchingGlobalColor } from '../lib/match-global-color';
-import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
+import { collectHardcodedColors } from '../utils/collect-hardcoded-colors';
+import { findMatchingGlobalColor } from '../utils/match-global-color';
+import { walkElements } from '../utils/walk';
 
 export const audit: Audit = {
 	id: 'audits/prefer-global-colors',

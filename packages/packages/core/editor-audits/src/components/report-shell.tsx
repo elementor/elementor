@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Box, Divider, Tab, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type AuditStatusGroup } from '../lib/audit-status-summary';
 import { type AuditCategory, type PageAuditReport } from '../types';
+import { type AuditStatusGroup } from '../utils/audit-status-summary';
 import AllAuditsPage from './pages/all-audits-page';
 import CategoryPage from './pages/category-page';
 import IssuesPage from './pages/issues-page';

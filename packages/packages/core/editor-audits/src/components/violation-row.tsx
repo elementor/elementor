@@ -8,8 +8,8 @@ import { __ } from '@wordpress/i18n';
 
 import { AUDIT_PANEL_ID } from '../constants';
 import { useViolationFocus } from '../hooks/use-violation-focus';
-import { onKeyboardClick } from '../lib/keyboard-click';
 import { type AuditMeta, type AuditViolation } from '../types';
+import { onKeyboardClick } from '../utils/keyboard-click';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
 

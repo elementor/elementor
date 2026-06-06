@@ -1,7 +1,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 
-import { hasPageImages, walkImageLikeSources } from '../lib/image-like-sources';
 import { type Audit, type AuditViolation } from '../types';
+import { hasPageImages, walkImageLikeSources } from '../utils/image-like-sources';
 
 const SIZE_THRESHOLD_BYTES = 500 * 1024;
 const BYTES_PER_KB = 1024;

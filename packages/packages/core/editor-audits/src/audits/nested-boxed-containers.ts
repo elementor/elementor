@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
-import { walkElements } from '../lib/walk';
 import { type Audit, type AuditViolation } from '../types';
+import { walkElements } from '../utils/walk';
 
 function isBoxed( settings: Record< string, unknown > ): boolean {
 	return settings.content_width === 'boxed';

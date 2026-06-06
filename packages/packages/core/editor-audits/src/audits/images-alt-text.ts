@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 
-import { hasMeaningfulAlt, isImageSourcePresent } from '../lib/image-alt';
-import { hasPageImages, walkImageLikeSources } from '../lib/image-like-sources';
 import { type Audit, type AuditViolation } from '../types';
+import { hasMeaningfulAlt, isImageSourcePresent } from '../utils/image-alt';
+import { hasPageImages, walkImageLikeSources } from '../utils/image-like-sources';
 
 export const audit: Audit = {
 	id: 'audits/images-alt-text',

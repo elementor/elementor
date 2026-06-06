@@ -3,8 +3,8 @@ import { Box, Link, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
-import { countSeverities } from '../../lib/severity-counts';
 import { type AuditCategory, type PageAuditReport } from '../../types';
+import { countSeverities } from '../../utils/severity-counts';
 import IssuesCategoryRow from '../issues-category-row';
 
 type Props = {

@@ -3,20 +3,20 @@ import { Box, Chip, Divider, Typography } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
+import { type AuditCategory, type PageAuditReport } from '../../types';
 import {
 	auditStatusColor,
 	auditStatusDisplayCounts,
 	type AuditStatusGroup,
 	auditStatusLabel,
-} from '../../lib/audit-status-summary';
-import { scoreColor, scoreLabel } from '../../lib/score-thresholds';
+} from '../../utils/audit-status-summary';
+import { scoreColor, scoreLabel } from '../../utils/score-thresholds';
 import {
 	ALL_SEVERITIES,
 	countSeverities,
 	severityPluralLabel,
 	severityRemainingCountLabel,
-} from '../../lib/severity-counts';
-import { type AuditCategory, type PageAuditReport } from '../../types';
+} from '../../utils/severity-counts';
 import CountSummaryCircle from '../count-summary-circle';
 import ScoreBar from '../score-bar';
 import ScoreCircle from '../score-circle';
