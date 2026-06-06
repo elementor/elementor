@@ -47,7 +47,7 @@ export default function AuditPanel() {
 				{ status === 'error' && <ErrorPage message={ error ?? '' } onRetry={ onRun } /> }
 				{ status === 'ready' && report && <ReportShell report={ report } /> }
 			</FloatingPanelBody>
-			<FloatingPanelFooter panelId="audit-panel">
+			<FloatingPanelFooter>
 				{ lastScanLabel ? (
 					<Typography variant="caption" sx={ { flex: 1 } }>
 						{ __( 'Last scan:', 'elementor' ) } { lastScanLabel }
