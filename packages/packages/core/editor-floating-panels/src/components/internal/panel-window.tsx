@@ -5,6 +5,8 @@ import { Box, Fade, Paper } from '@elementor/ui';
 
 import { useFloatingPanelStatus } from '../../hooks/use-floating-panel-status';
 import { type GlobalState, selectPanelTitle } from '../../store/selectors';
+import CornerResizeHandle from './corner-resize-handle';
+import ResizeHandle from './resize-handle';
 
 const FADE_ENTER_MS = 225;
 const FADE_EXIT_MS = 195;
@@ -56,6 +58,14 @@ export default function PanelWindow( { panelId, zIndex, visible, onFocus, childr
 				<ThemeProvider>
 					<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
 				</ThemeProvider>
+				<ResizeHandle panelId={ panelId } edge="inline-start" />
+				<ResizeHandle panelId={ panelId } edge="inline-end" />
+				<ResizeHandle panelId={ panelId } edge="block-start" />
+				<ResizeHandle panelId={ panelId } edge="block-end" />
+				<CornerResizeHandle panelId={ panelId } corner="block-start-inline-start" />
+				<CornerResizeHandle panelId={ panelId } corner="block-start-inline-end" />
+				<CornerResizeHandle panelId={ panelId } corner="block-end-inline-start" />
+				<CornerResizeHandle panelId={ panelId } corner="block-end-inline-end" />
 			</Paper>
 		</Fade>
 	);
