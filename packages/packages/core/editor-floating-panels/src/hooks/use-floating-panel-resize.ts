@@ -5,6 +5,7 @@ import { isRtl } from '../lib/direction';
 import { physicalToLogicalDelta } from '../lib/drag-math';
 import {
 	applyBlockEndResize,
+	applyBlockStartResize,
 	applyInlineEndResize,
 	applyInlineStartResize,
 	type ResizeBounds,
@@ -37,7 +38,48 @@ function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): Res
 	};
 }
 
-export function useFloatingPanelResize( id: string, edge: ResizeDirection ) {
+function applyResize(
+	direction: ResizeDirection,
+	position: LogicalPosition,
+	size: LogicalSize,
+	inlineDelta: number,
+	blockDelta: number,
+	bounds: ResizeBounds
+): { position: LogicalPosition; size: LogicalSize } {
+	if ( direction === 'inline-end' ) {
+		return { position, size: applyInlineEndResize( size, inlineDelta, bounds ) };
+	}
+
+	if ( direction === 'block-end' ) {
+		return { position, size: applyBlockEndResize( size, blockDelta, bounds ) };
+	}
+
+	if ( direction === 'inline-start' ) {
+		return applyInlineStartResize( position, size, inlineDelta, bounds );
+	}
+
+	if ( direction === 'block-start' ) {
+		return applyBlockStartResize( position, size, blockDelta, bounds );
+	}
+
+	let next = { position, size };
+
+	if ( direction.includes( 'inline-start' ) ) {
+		next = applyInlineStartResize( next.position, next.size, inlineDelta, bounds );
+	} else {
+		next = { position: next.position, size: applyInlineEndResize( next.size, inlineDelta, bounds ) };
+	}
+
+	if ( direction.includes( 'block-start' ) ) {
+		next = applyBlockStartResize( next.position, next.size, blockDelta, bounds );
+	} else {
+		next = { position: next.position, size: applyBlockEndResize( next.size, blockDelta, bounds ) };
+	}
+
+	return next;
+}
+
+export function useFloatingPanelResize( id: string, direction: ResizeDirection ) {
 	const sessionRef = useRef< ResizeSession | null >( null );
 	const { position, size } = useFloatingPanelStatus( id );
 	const minSize = useSelector( ( state: GlobalState ) => selectMinSize( state, id ) );
@@ -74,27 +116,26 @@ export function useFloatingPanelResize( id: string, edge: ResizeDirection ) {
 			const logical = physicalToLogicalDelta( physical, isRtl() );
 			const resizeBounds = getResizeBounds( session.startPosition, minSize ?? FALLBACK_MIN_SIZE );
 
-			if ( edge === 'inline-end' ) {
-				setSize( applyInlineEndResize( session.startSize, logical.inlineDelta, resizeBounds ) );
-				return;
-			}
-
-			if ( edge === 'block-end' ) {
-				setSize( applyBlockEndResize( session.startSize, logical.blockDelta, resizeBounds ) );
-				return;
-			}
-
-			const next = applyInlineStartResize(
+			const next = applyResize(
+				direction,
 				session.startPosition,
 				session.startSize,
 				logical.inlineDelta,
+				logical.blockDelta,
 				resizeBounds
 			);
 
-			setPosition( next.position );
+			const positionChanged =
+				next.position.insetInlineStart !== session.startPosition.insetInlineStart ||
+				next.position.insetBlockStart !== session.startPosition.insetBlockStart;
+
+			if ( positionChanged ) {
+				setPosition( next.position );
+			}
+
 			setSize( next.size );
 		},
-		[ edge, minSize, setPosition, setSize ]
+		[ direction, minSize, setPosition, setSize ]
 	);
 
 	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
