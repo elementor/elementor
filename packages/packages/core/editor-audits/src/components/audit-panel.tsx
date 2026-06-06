@@ -31,7 +31,7 @@ export default function AuditPanel() {
 		<>
 			<FloatingPanelHeader
 				panelId="audit-panel"
-				title={ __( 'Audit 1', 'elementor' ) }
+				title={ __( 'Audit', 'elementor' ) }
 				actions={ [
 					{
 						id: 'ai',
