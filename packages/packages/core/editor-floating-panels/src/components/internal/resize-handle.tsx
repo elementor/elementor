@@ -21,6 +21,13 @@ const EDGE_SX: Record< ResizeEdge, object > = {
 		inlineSize: `${ HANDLE_THICKNESS_PX }px`,
 		cursor: 'ew-resize',
 	},
+	'block-start': {
+		insetInlineStart: 0,
+		insetInlineEnd: 0,
+		insetBlockStart: 0,
+		blockSize: `${ HANDLE_THICKNESS_PX }px`,
+		cursor: 'ns-resize',
+	},
 	'block-end': {
 		insetInlineStart: 0,
 		insetInlineEnd: 0,
