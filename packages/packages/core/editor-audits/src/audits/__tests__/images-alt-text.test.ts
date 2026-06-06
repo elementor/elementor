@@ -33,6 +33,10 @@ describe( audit.id, () => {
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].elementId ).toBe( 'i1' );
+			expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+			expect( result.violations[ 0 ].externalUrl ).toBe(
+				'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility'
+			);
 		}
 	} );
 
@@ -64,6 +68,36 @@ describe( audit.id, () => {
 		if ( result.status === 'fail' ) {
 			expect( result.violations ).toHaveLength( 1 );
 			expect( result.violations[ 0 ].elementId ).toBe( 'carousel' );
+			expect( result.metadata?.missingAltImageCount ).toBe( 1 );
+		}
+	} );
+
+	it( 'counts missing alt images across multiple widgets', async () => {
+		const tree = [
+			makeWidget( 'i1', 'image', { image: { id: 1 } } ),
+			makeWidget( 'i2', 'image', { image: { id: 2 } } ),
+			makeWidget( 'carousel', 'image-carousel', {
+				carousel: [
+					{ id: 10, url: 'http://example.test/a.jpg' },
+					{ id: 11, url: 'http://example.test/b.jpg' },
+				],
+			} ),
+		];
+		const pageContext = {
+			image_sizes: {
+				1: imageSizeWithAlt( 1, '' ),
+				2: imageSizeWithAlt( 2, '' ),
+				10: imageSizeWithAlt( 10, '' ),
+				11: imageSizeWithAlt( 11, '' ),
+			},
+		};
+		const result = await audit.evaluate( makeContext( { tree, pageContext } ) );
+
+		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations ).toHaveLength( 3 );
+			expect( result.metadata?.missingAltImageCount ).toBe( 4 );
 		}
 	} );
 

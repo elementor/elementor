@@ -31,6 +31,8 @@ const PAGE_CONTEXT: PageContextResponse = {
 	ally_plugin_url: '',
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: '',
+	image_optimization_plugin_active: false,
+	image_optimization_plugin_url: '',
 };
 
 describe( 'hasMeaningfulAlt', () => {

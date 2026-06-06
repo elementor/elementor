@@ -6,6 +6,7 @@ import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
 import { type AuditCategory, type PageAuditReport } from '../../types';
 import { countSeverities } from '../../utils/severity-counts';
 import IssuesCategoryRow from '../issues-category-row';
+import Promotions from '../promotions';
 
 type Props = {
 	report: PageAuditReport;
@@ -40,6 +41,7 @@ export default function IssuesPage( { report, onCategoryClick, onAllAuditsClick 
 					/>
 				) ) }
 			</Box>
+			<Promotions report={ report } />
 		</Box>
 	);
 }

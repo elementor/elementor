@@ -19,11 +19,14 @@ export const audit: Audit = {
 
 		const violations: AuditViolation[] = [];
 		const failedWidgetIds = new Set< string >();
+		let missingAltImageCount = 0;
 
 		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
 			if ( ! isImageSourcePresent( media ) || hasMeaningfulAlt( media, ctx.pageContext ) ) {
 				return;
 			}
+
+			missingAltImageCount++;
 
 			if ( ! failedWidgetIds.has( node.id ) ) {
 				failedWidgetIds.add( node.id );
@@ -32,10 +35,13 @@ export const audit: Audit = {
 					elementId: node.id,
 					targetHint: 'element-settings',
 					label: __( 'One or more images are missing alt text.', 'elementor' ),
+					externalUrl: ctx.pageContext.ally_plugin_url,
 				} );
 			}
 		} );
 
-		return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+		return violations.length === 0
+			? { status: 'pass' }
+			: { status: 'fail', violations, metadata: { missingAltImageCount } };
 	},
 };

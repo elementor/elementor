@@ -20,6 +20,7 @@ export const audit: Audit = {
 		}
 
 		const widgetMaxKb = new Map< string, number >();
+		let oversizedImageCount = 0;
 
 		walkImageLikeSources( ctx.elements.tree, ( { node, media } ) => {
 			const id = media.id;
@@ -33,6 +34,8 @@ export const audit: Audit = {
 			if ( ! size || size.filesize_bytes <= SIZE_THRESHOLD_BYTES ) {
 				return;
 			}
+
+			oversizedImageCount++;
 
 			const kb = Math.round( size.filesize_bytes / BYTES_PER_KB );
 			const currentMax = widgetMaxKb.get( node.id ) ?? 0;
@@ -48,8 +51,11 @@ export const audit: Audit = {
 				__( 'Image is %d KB (over 500 KB).', 'elementor' ),
 				kb
 			),
+			externalUrl: ctx.pageContext.image_optimization_plugin_url,
 		} ) );
 
-		return violations.length === 0 ? { status: 'pass' } : { status: 'fail', violations };
+		return violations.length === 0
+			? { status: 'pass' }
+			: { status: 'fail', violations, metadata: { oversizedImageCount } };
 	},
 };

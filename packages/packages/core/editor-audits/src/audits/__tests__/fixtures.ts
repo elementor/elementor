@@ -26,6 +26,9 @@ const DEFAULT_PAGE_CONTEXT: PageContextResponse = {
 	ally_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility',
 	cookiez_plugin_active: true,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=cookiez',
+	image_optimization_plugin_active: true,
+	image_optimization_plugin_url:
+		'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
 };
 
 const DEFAULT_KIT: KitSnapshot = {

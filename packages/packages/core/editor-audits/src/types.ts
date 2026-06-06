@@ -20,9 +20,14 @@ export type AuditRun = {
 	result: AuditResult;
 };
 
+export type AuditFailMetadata = {
+	missingAltImageCount?: number;
+	oversizedImageCount?: number;
+};
+
 export type AuditResult =
 	| { status: 'pass' }
-	| { status: 'fail'; violations: AuditViolation[] }
+	| { status: 'fail'; violations: AuditViolation[]; metadata?: AuditFailMetadata }
 	| { status: 'skipped'; reason: string };
 
 export type AuditViolation = {
@@ -59,6 +64,8 @@ export type PageContextResponse = {
 	ally_plugin_url: string;
 	cookiez_plugin_active: boolean;
 	cookiez_plugin_url: string;
+	image_optimization_plugin_active: boolean;
+	image_optimization_plugin_url: string;
 	site_identity: {
 		site_name_set: boolean;
 		site_description_set: boolean;
