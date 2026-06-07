@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
-import { AIIcon } from '@elementor/icons';
+import { AngieIcon } from '@elementor/icons';
 import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -35,7 +35,7 @@ export default function AuditPanel() {
 				actions={ [
 					{
 						id: 'ai',
-						icon: AIIcon,
+						icon: AngieIcon,
 						label: __( 'Coming soon', 'elementor' ),
 						disabled: true,
 					},
