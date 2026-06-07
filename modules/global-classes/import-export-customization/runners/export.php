@@ -92,7 +92,7 @@ class Export extends Export_Runner_Base {
 	}
 
 	private function build_order_entries( $kit, array $labels_by_id ): array {
-		$repository_order = Global_Classes_Order::make( $kit )->get_order();
+		$repository_order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 		$sanitized_order = Global_Classes_Parser::sanitize_order( $labels_by_id, $repository_order );
 
 		return array_map(
