@@ -44,7 +44,6 @@ export default function Promotions( { report }: Props ) {
 
 	return (
 		<>
-			<Divider />
 			<Typography variant="subtitle1" fontWeight="bold">
 				{ __( 'Quick wins', 'elementor' ) }
 			</Typography>

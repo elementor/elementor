@@ -18,7 +18,7 @@ export default function IssuesPage( { report, onCategoryClick, onAllAuditsClick 
 	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
 
 	return (
-		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1.5, p: 2 } }>
+		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 4, p: 2 } }>
 			<Link
 				component="button"
 				underline="none"
