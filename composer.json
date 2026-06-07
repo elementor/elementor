@@ -8,6 +8,7 @@
         "php": ">=7.4",
         "elementor/wp-one-package": "1.0.63"
     },
+	
     "repositories": [
         {
             "type": "composer",
