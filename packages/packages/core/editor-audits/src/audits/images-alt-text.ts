@@ -34,7 +34,7 @@ export const audit: Audit = {
 					auditId: audit.id,
 					elementId: node.id,
 					targetHint: 'element-settings',
-					label: __( 'One or more images are missing alt text.', 'elementor' ),
+					label: __( 'Image is missing alt text.', 'elementor' ),
 					externalUrl: ctx.pageContext.ally_plugin_url,
 				} );
 			}
