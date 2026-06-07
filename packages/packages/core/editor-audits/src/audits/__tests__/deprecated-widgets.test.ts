@@ -9,21 +9,17 @@ jest.mock( '@elementor/editor-elements', () => ( {
 
 const mockGetWidgetsCache = jest.mocked( getWidgetsCache );
 
-const ACCORDION_DEPRECATION_CONTENT = 'You are currently editing an Accordion Widget in its old version.';
-
-const TABS_DEPRECATION_CONTENT = 'You are currently editing a Tabs Widget in its old version.';
-
 const WIDGETS_CACHE_WITH_DEPRECATED = {
 	accordion: {
 		title: 'Accordion',
 		controls: {
-			deprecation_message: { type: 'alert', alert_type: 'info', content: ACCORDION_DEPRECATION_CONTENT },
+			deprecation_message: { type: 'alert' },
 		},
 	},
 	tabs: {
 		title: 'Tabs',
 		controls: {
-			deprecation_message: { type: 'alert', alert_type: 'info', content: TABS_DEPRECATION_CONTENT },
+			deprecation_message: { type: 'alert' },
 		},
 	},
 	heading: {
@@ -63,8 +59,8 @@ describe( audit.id, () => {
 		if ( result.status === 'fail' ) {
 			expect( result.violations ).toHaveLength( 1 );
 			expect( result.violations[ 0 ].elementId ).toBe( 'w1' );
-			expect( result.violations[ 0 ].label ).toContain( 'Accordion' );
-			expect( result.violations[ 0 ].detail ).toBe( ACCORDION_DEPRECATION_CONTENT );
+			expect( result.violations[ 0 ].label ).toBe( 'Using deprecated widget.' );
+			expect( result.violations[ 0 ].detail ).toBeUndefined();
 		}
 	} );
 

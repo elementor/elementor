@@ -6,20 +6,6 @@ import { walkElements } from '../utils/walk';
 
 const DEPRECATION_CONTROL_NAME = 'deprecation_message';
 
-type DeprecationControl = {
-	content?: string;
-};
-
-function getDeprecationControl( controls: object ): DeprecationControl | null {
-	const control = ( controls as Record< string, unknown > )[ DEPRECATION_CONTROL_NAME ];
-
-	if ( ! control || typeof control !== 'object' ) {
-		return null;
-	}
-
-	return control as DeprecationControl;
-}
-
 export const audit: Audit = {
 	id: 'audits/deprecated-widgets',
 	title: __( 'Deprecated widgets', 'elementor' ),
@@ -51,20 +37,18 @@ export const audit: Audit = {
 				return;
 			}
 
-			const deprecationControl = getDeprecationControl( config.controls );
+			const controls = config.controls as Record< string, unknown >;
+			const deprecationControl = controls[ DEPRECATION_CONTROL_NAME ];
 
-			if ( ! deprecationControl ) {
+			if ( ! deprecationControl || typeof deprecationControl !== 'object' ) {
 				return;
 			}
-
-			const widgetTitle = config.title ?? node.widgetType ?? '';
 
 			violations.push( {
 				auditId: audit.id,
 				elementId: node.id,
 				targetHint: 'element-settings',
-				label: widgetTitle + ' ' + __( 'is deprecated', 'elementor' ),
-				detail: deprecationControl.content ?? '',
+				label: __( 'Using deprecated widget.', 'elementor' ),
 			} );
 		} );
 
