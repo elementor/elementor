@@ -1,6 +1,7 @@
 import { mockLegacyElementor } from 'test-utils';
 import { getWidgetsCache } from '@elementor/editor-elements';
 
+import { createTemplatedElementType } from '../create-templated-element-type';
 import { initLegacyViews, registerElementType } from '../init-legacy-views';
 import type { LegacyWindow } from '../types';
 
@@ -27,37 +28,39 @@ const createMockAtomicWidget = () => ( {
 	base_styles_dictionary: {},
 } );
 
+const createMockElementsManager = () => ( {
+	getElementTypeClass: jest.fn().mockReturnValue( null ),
+	registerElementType: jest.fn(),
+	elementTypes: {} as Record< string, unknown >,
+} );
+
+const attachMockElementsManager = ( elementsManager: ReturnType< typeof createMockElementsManager > ) => {
+	const legacyWindow = window as unknown as LegacyWindow;
+	legacyWindow.elementor.elementsManager =
+		elementsManager as unknown as LegacyWindow[ 'elementor' ][ 'elementsManager' ];
+};
+
 describe( 'initLegacyViews', () => {
 	beforeEach( () => {
 		mockLegacyElementor();
 	} );
 
-	it( 'should register element type retroactively when called after v1Ready', async () => {
+	it( 'should register a late element type via the legacy manager without leaking state', () => {
 		// Arrange
-		const mockElementsManager = {
-			getElementTypeClass: jest.fn().mockReturnValue( null ),
-			registerElementType: jest.fn(),
-			elementTypes: {},
-		};
+		const elementsManager = createMockElementsManager();
+		attachMockElementsManager( elementsManager );
 
-		const legacyWindow = window as unknown as LegacyWindow;
-		legacyWindow.elementor.elementsManager =
-			mockElementsManager as unknown as LegacyWindow[ 'elementor' ][ 'elementsManager' ];
-
-		jest.mocked( getWidgetsCache )
-			.mockReturnValueOnce( {} )
-			.mockReturnValue( { [ MOCK_TYPE ]: createMockAtomicWidget() } );
+		jest.mocked( getWidgetsCache ).mockReturnValue( { [ MOCK_TYPE ]: createMockAtomicWidget() } );
 
 		initLegacyViews();
-		await Promise.resolve();
+		elementsManager.registerElementType.mockClear();
 
-		// Act — simulate late Pro registration after v1Ready has already fired
-		const { createTemplatedElementType } = jest.requireActual( '../create-templated-element-type' );
+		// Act
 		registerElementType( MOCK_TYPE, ( options ) => createTemplatedElementType( options ) );
 
 		// Assert
-		expect( mockElementsManager.registerElementType ).toHaveBeenCalledTimes( 1 );
-		const [ registeredInstance ] = mockElementsManager.registerElementType.mock.calls[ 0 ];
+		expect( elementsManager.registerElementType ).toHaveBeenCalledTimes( 1 );
+		const [ registeredInstance ] = elementsManager.registerElementType.mock.calls[ 0 ];
 		expect( registeredInstance.getType() ).toBe( MOCK_TYPE );
 	} );
 } );

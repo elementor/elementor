@@ -1,5 +1,5 @@
 import { getWidgetsCache, type V1ElementConfig } from '@elementor/editor-elements';
-import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { __privateIsReady as isV1Ready, __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer, type DomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
@@ -21,8 +21,6 @@ export const elementsLegacyTypes: ElementLegacyType = {};
 
 const modelExtensionsRegistry: Record< string, ModelExtensions > = {};
 
-let postInitRenderer: DomRenderer | null = null;
-
 export function registerModelExtensions( type: string, extensions: ModelExtensions ) {
 	modelExtensionsRegistry[ type ] = extensions;
 }
@@ -33,8 +31,8 @@ export function registerElementType(
 ) {
 	elementsLegacyTypes[ type ] = elementTypeGenerator;
 
-	if ( postInitRenderer ) {
-		registerElementInLegacyManager( type, postInitRenderer );
+	if ( isV1Ready() ) {
+		registerElementInLegacyManager( type, createDomRenderer() );
 	}
 }
 
@@ -48,8 +46,6 @@ export function initLegacyViews() {
 		Object.keys( widgetsCache ).forEach( ( type ) => {
 			registerElementInLegacyManager( type, renderer );
 		} );
-
-		postInitRenderer = renderer;
 	} );
 }
 

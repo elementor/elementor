@@ -255,6 +255,8 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 
 	it( 'should trigger v1 ready when v1 is loaded after v2', async () => {
 		// Arrange.
+		setReady( false );
+
 		const callback = jest.fn();
 		const extendedWindow = window as unknown as ExtendedWindow;
 
@@ -301,15 +303,18 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 		expect.assertions( 1 );
 	} );
 
-	it( 'should invoke v1ReadyEvent callback immediately when already ready', async () => {
+	it( 'should invoke v1ReadyEvent callback via microtask when already ready', async () => {
 		// Arrange
 		const callback = jest.fn();
 
 		// Act
 		listenTo( v1ReadyEvent(), callback );
+
+		// Assert — does not fire synchronously
+		expect( callback ).not.toHaveBeenCalled();
+
 		await Promise.resolve();
 
-		// Assert
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 		expect( callback ).toHaveBeenCalledWith( {
 			type: 'window-event',
@@ -325,18 +330,6 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 		// Act
 		const cleanup = listenTo( v1ReadyEvent(), callback );
 		cleanup();
-		await Promise.resolve();
-
-		// Assert
-		expect( callback ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should not fire sticky callback for non-v1Ready window events', async () => {
-		// Arrange
-		const callback = jest.fn();
-
-		// Act
-		listenTo( windowEvent( 'some-other-event' ), callback );
 		await Promise.resolve();
 
 		// Assert

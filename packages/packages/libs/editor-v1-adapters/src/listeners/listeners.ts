@@ -88,7 +88,7 @@ function registerWindowEventListener( event: WindowEventDescriptor[ 'name' ], ca
 	callbacksByEvent.get( event )?.push( callback );
 
 	if ( event === V1_READY_EVENT_NAME && isReady() ) {
-		queueMicrotask( () => {
+		Promise.resolve().then( () => {
 			const stillRegistered = callbacksByEvent.get( event )?.includes( callback );
 
 			if ( stillRegistered ) {
