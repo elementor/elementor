@@ -74,6 +74,8 @@ function registerRouteListener(
 	} );
 }
 
+const V1_READY_EVENT_NAME = 'elementor/initialized';
+
 function registerWindowEventListener( event: WindowEventDescriptor[ 'name' ], callback: ListenerCallback ) {
 	const isFirstListener = ! callbacksByEvent.has( event );
 
@@ -84,6 +86,20 @@ function registerWindowEventListener( event: WindowEventDescriptor[ 'name' ], ca
 	}
 
 	callbacksByEvent.get( event )?.push( callback );
+
+	if ( event === V1_READY_EVENT_NAME && isReady() ) {
+		queueMicrotask( () => {
+			const stillRegistered = callbacksByEvent.get( event )?.includes( callback );
+
+			if ( stillRegistered ) {
+				callback( {
+					type: 'window-event',
+					event,
+					originalEvent: new CustomEvent( event ),
+				} );
+			}
+		} );
+	}
 
 	return () => {
 		const callbacks = callbacksByEvent.get( event );

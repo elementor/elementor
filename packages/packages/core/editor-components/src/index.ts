@@ -1,6 +1,7 @@
 export { init } from './init';
 
 export { apiClient } from './api';
+export { componentInstanceTransformer } from './component-instance-transformer';
 
 export { ComponentSearch } from './components/components-tab/component-search';
 export { ComponentItem, ComponentName } from './components/components-tab/components-item';
@@ -83,6 +84,7 @@ export type {
 } from './types';
 
 export { filterValidOverridableProps } from './utils/filter-valid-overridable-props';
+export { formatComponentElementsId } from './utils/format-component-elements-id';
 export { getContainerByOriginId } from './utils/get-container-by-origin-id';
 export { getOverridableProp } from './utils/get-overridable-prop';
 export { getPropTypeForComponentOverride } from './utils/get-prop-type-for-component-override';

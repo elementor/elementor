@@ -21,6 +21,8 @@ export const elementsLegacyTypes: ElementLegacyType = {};
 
 const modelExtensionsRegistry: Record< string, ModelExtensions > = {};
 
+let postInitRenderer: DomRenderer | null = null;
+
 export function registerModelExtensions( type: string, extensions: ModelExtensions ) {
 	modelExtensionsRegistry[ type ] = extensions;
 }
@@ -30,26 +32,38 @@ export function registerElementType(
 	elementTypeGenerator: ElementLegacyType[ keyof ElementLegacyType ]
 ) {
 	elementsLegacyTypes[ type ] = elementTypeGenerator;
+
+	if ( postInitRenderer ) {
+		registerElementInLegacyManager( type, postInitRenderer );
+	}
 }
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
 		const widgetsCache = getWidgetsCache() ?? {};
-		const legacyWindow = window as unknown as LegacyWindow;
 		const renderer = createDomRenderer();
 
 		registerProPromotionTypes( widgetsCache );
 
-		Object.entries( widgetsCache ).forEach( ( [ type, element ] ) => {
-			if ( ! element.atomic ) {
-				return;
-			}
-
-			const ResolvedElementType = resolveElementType( type, renderer, element );
-
-			tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
+		Object.keys( widgetsCache ).forEach( ( type ) => {
+			registerElementInLegacyManager( type, renderer );
 		} );
+
+		postInitRenderer = renderer;
 	} );
+}
+
+function registerElementInLegacyManager( type: string, renderer: DomRenderer ) {
+	const element = ( getWidgetsCache() ?? {} )[ type ];
+
+	if ( ! element?.atomic ) {
+		return;
+	}
+
+	const legacyWindow = window as unknown as LegacyWindow;
+	const ResolvedElementType = resolveElementType( type, renderer, element );
+
+	tryRegisterElement( legacyWindow, type, element, ResolvedElementType );
 }
 
 function registerProPromotionTypes( widgetsCache: Record< string, V1ElementConfig > ) {
