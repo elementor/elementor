@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
+use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,8 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Classes_Order {
 	use Has_Kit_Dependency;
+	use Has_Preview_Context;
 
 	const META_KEY = '_elementor_global_classes_order';
+	const META_KEY_PREVIEW = '_elementor_global_classes_order_preview';
+
+	protected array $context_keys = [
+		'order' => [
+			'frontend' => self::META_KEY,
+			'preview' => self::META_KEY_PREVIEW,
+		],
+	];
 
 	private ?array $cache = null;
 
@@ -40,7 +50,7 @@ class Global_Classes_Order {
 			'order' => array_values( $ids ),
 		];
 
-		$result = $kit->update_meta( self::META_KEY, $payload );
+		$result = $kit->update_meta( $this->get_context_key( 'order' ), $payload );
 		$this->cache = null;
 
 		return false !== $result;
@@ -69,7 +79,12 @@ class Global_Classes_Order {
 			return [];
 		}
 
-		$payload = $kit->get_meta( self::META_KEY );
+		$payload = $kit->get_meta( $this->get_context_key( 'order' ) );
+
+		if ( $this->is_preview() && empty( $payload ) ) {
+			$payload = self::make( $this->get_kit() )->set_preview( false )->read_kit_meta_payload();
+		}
+
 		$this->cache = is_array( $payload ) ? $payload : [];
 
 		return $this->cache;
