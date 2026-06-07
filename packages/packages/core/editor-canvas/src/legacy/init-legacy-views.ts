@@ -33,6 +33,10 @@ export function registerElementType(
 ) {
 	elementsLegacyTypes[ type ] = elementTypeGenerator;
 
+	/* eslint-disable no-console -- temporary debugging */
+	console.log( '*** registerElementType type', type );
+	console.log( '*** registerElementType elementTypeGenerator', elementTypeGenerator );
+	/* eslint-enable no-console */
 	if ( postInitRenderer ) {
 		registerElementInLegacyManager( type, postInitRenderer );
 	}
@@ -55,6 +59,12 @@ export function initLegacyViews() {
 
 function registerElementInLegacyManager( type: string, renderer: DomRenderer ) {
 	const element = ( getWidgetsCache() ?? {} )[ type ];
+
+	/* eslint-disable no-console -- temporary debugging */
+	console.log( '*** registerElementInLegacyManager type', type );
+	console.log( '*** registerElementInLegacyManager element', element );
+	console.log( '*** registerElementInLegacyManager getWidgetsCache', getWidgetsCache() );
+	/* eslint-enable no-console */
 
 	if ( ! element?.atomic ) {
 		return;
@@ -102,6 +112,10 @@ function tryRegisterElement(
 ) {
 	const shouldBeRegistered = canBeTemplated( element ) || canBeNestedTemplated( element );
 
+	/* eslint-disable no-console -- temporary debugging */
+	console.log( '*** tryRegisterElement shouldBeRegistered', shouldBeRegistered );
+	/* eslint-enable no-console */
+
 	if ( ! shouldBeRegistered ) {
 		return;
 	}
@@ -111,8 +125,19 @@ function tryRegisterElement(
 
 	try {
 		elementsManager.registerElementType( new ResolvedElementType() );
-	} catch {
+	} catch( error ) {
+		/* eslint-disable no-console -- temporary debugging */
+		console.log( '*** tryRegisterElement error', error );
+		/* eslint-enable no-console */
+
 		const canOverrideExisting = canBeNestedTemplated( element ) && isAlreadyRegistered;
+
+		/* eslint-disable no-console -- temporary debugging */
+		console.log( '*** tryRegisterElement canOverrideExisting', canOverrideExisting );
+		console.log( '*** tryRegisterElement elementsManager.elementTypes', elementsManager.elementTypes );
+		console.log( '*** tryRegisterElement elementsManager.elementTypes[ type ]', elementsManager.elementTypes[ type ] );
+		console.log( '*** tryRegisterElement type', type );
+		/* eslint-enable no-console */
 
 		if ( canOverrideExisting ) {
 			elementsManager.elementTypes[ type ] = new ResolvedElementType();
