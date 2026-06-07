@@ -39,7 +39,7 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 
 		// Assert.
 		await expect( link ).toBeVisible();
-		
+
 		// Act.
 		await link.hover();
 
@@ -55,13 +55,13 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 		await expect( link ).toBeVisible();
 
 		const normalBg = await link.evaluate(
-			( el ) => getComputedStyle( el ).backgroundColor
+			( el ) => getComputedStyle( el ).backgroundColor,
 		);
 
 		await link.hover();
 
 		const hoverBg = await link.evaluate(
-			( el ) => getComputedStyle( el ).backgroundColor
+			( el ) => getComputedStyle( el ).backgroundColor,
 		);
 
 		// Assert.
