@@ -339,7 +339,7 @@ export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinit
 	state[ SLICE_NAME ].data.items[ id ] ?? null;
 
 export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
-	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
+	Object.values( items ).filter( ( cssClass ) => ( cssClass.variants?.length ?? 0 ) === 0 )
 );
 
 export const selectIsClassFetched = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>

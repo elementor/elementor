@@ -14,6 +14,12 @@ class EditorAssetsAPI {
 
 	const DEFAULT_EXPIRATION_TIME = '+1 hour';
 
+	const PRODUCTION_URL = 'https://assets.elementor.com';
+	const STAGING_URL = 'https://assets.stg.elementor.red';
+	const DEV_URL = 'https://assets.dev.builder.elementor.red';
+
+	private static ?array $allowed_hosts = null;
+
 	public function __construct( array $config ) {
 		$this->config = $config;
 	}
@@ -40,13 +46,8 @@ class EditorAssetsAPI {
 	}
 
 	private function fetch_data(): array {
-		$response = wp_remote_get( $this->config( static::ASSETS_DATA_URL ) );
-
-		if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
-			return [];
-		}
-
-		$data = json_decode( wp_remote_retrieve_body( $response ), true );
+		$url = $this->config( static::ASSETS_DATA_URL );
+		$data = self::do_safe_get_request( $url );
 
 		if ( ! $this->has_valid_data( $data ) ) {
 			return [];
@@ -115,5 +116,47 @@ class EditorAssetsAPI {
 
 	private static function is_non_empty_array( $value ): bool {
 		return is_array( $value ) && ! empty( $value );
+	}
+
+	private static function get_allowed_hosts(): array {
+		if ( null !== self::$allowed_hosts ) {
+			return self::$allowed_hosts;
+		}
+
+		self::$allowed_hosts = array_values( array_filter( array_map(
+			fn( $url ) => wp_parse_url( $url, PHP_URL_HOST ),
+			[ self::PRODUCTION_URL, self::STAGING_URL, self::DEV_URL ]
+		) ) );
+
+		return self::$allowed_hosts;
+	}
+
+	public static function is_allowed_url( $url ): bool {
+		if ( ! is_string( $url ) || ! wp_http_validate_url( $url ) ) {
+			return false;
+		}
+
+		if ( 'https' !== wp_parse_url( $url, PHP_URL_SCHEME ) ) {
+			return false;
+		}
+
+		return in_array( wp_parse_url( $url, PHP_URL_HOST ), self::get_allowed_hosts(), true );
+	}
+
+	public static function do_safe_get_request( $url ) {
+		if ( ! self::is_allowed_url( $url ) ) {
+			return null;
+		}
+
+		$response = wp_safe_remote_get( $url, [
+			'timeout' => 5,
+			'limit_response_size' => 512 * KB_IN_BYTES,
+		] );
+
+		if ( is_wp_error( $response ) || \WP_Http::OK !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return null;
+		}
+
+		return json_decode( wp_remote_retrieve_body( $response ), true );
 	}
 }
