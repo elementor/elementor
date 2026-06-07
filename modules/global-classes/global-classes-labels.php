@@ -50,7 +50,7 @@ class Global_Classes_Labels {
 	}
 
 	public function get_ordered_labels(): array {
-		$order = Global_Classes_Order::make( $this->get_kit() )->get_order();
+		$order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() )->get_order();
 		$map = $this->get_labels();
 
 		if ( $this->is_preview() ) {
