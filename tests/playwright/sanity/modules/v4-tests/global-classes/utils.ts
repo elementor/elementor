@@ -1,4 +1,4 @@
-import { Page, type APIRequestContext } from '@playwright/test';
+import { expect, Page, type APIRequestContext } from '@playwright/test';
 import type ApiRequests from '../../../../assets/api-requests';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
@@ -123,30 +123,63 @@ export async function dismissClassManagerIntro( page: Page ): Promise<void> {
 }
 
 export async function saveAndCloseClassManager( page: Page ): Promise<void> {
-	const toast = page.locator( '#elementor-toast' );
-	await toast.waitFor( { state: 'hidden', timeout: 10000 } ).catch( () => {} );
+	const deleteDialog = page.getByRole( 'dialog', { name: 'Delete this class?' } );
+	if ( await deleteDialog.isVisible().catch( () => false ) ) {
+		throw new Error( 'Delete confirmation dialog is still open — confirm deletion before saving.' );
+	}
 
 	const saveButton = page.getByRole( 'button', { name: 'Save changes' } );
 
 	if ( await saveButton.isEnabled( { timeout: 5000 } ).catch( () => false ) ) {
-		await saveButton.click( { force: true } );
-		await saveButton.waitFor( { state: 'hidden', timeout: timeouts.expect } ).catch( () => {} );
+		const [ response ] = await Promise.all( [
+			page.waitForResponse(
+				( res ) => res.url().includes( 'global-classes' ) && 'PUT' === res.request().method(),
+				{ timeout: timeouts.longAction },
+			),
+			saveButton.click(),
+		] );
+
+		if ( ! response.ok() ) {
+			throw new Error( `Global classes save failed: ${ response.status() } ${ await response.text() }` );
+		}
+
+		await expect( saveButton ).toBeDisabled( { timeout: timeouts.expect } );
 	}
 
 	await page.getByRole( 'button', { name: 'Close' } ).click();
-	await page.waitForTimeout( 500 );
+
+	const unsavedDialog = page.getByRole( 'dialog', { name: 'You have unsaved changes' } );
+	if ( await unsavedDialog.isVisible( { timeout: 2000 } ).catch( () => false ) ) {
+		const [ response ] = await Promise.all( [
+			page.waitForResponse(
+				( res ) => res.url().includes( 'global-classes' ) && 'PUT' === res.request().method(),
+				{ timeout: timeouts.longAction },
+			),
+			unsavedDialog.getByRole( 'button', { name: 'Save & Continue' } ).click(),
+		] );
+
+		if ( ! response.ok() ) {
+			throw new Error( `Global classes save failed: ${ response.status() } ${ await response.text() }` );
+		}
+	}
 }
 
 export async function deleteClassFromClassManager( page: Page, className: string ): Promise<void> {
-	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+	const classItem = classManagerListItem( page, className );
+	await classItem.scrollIntoViewIfNeeded();
 	await classItem.hover();
 	await classItem.locator( '[aria-label="More actions"]' ).click();
 	await page.getByRole( 'menuitem', { name: 'Delete' } ).click();
-	await page.getByRole( 'button', { name: 'Delete' } ).click();
+
+	const deleteDialog = page.getByRole( 'dialog', { name: 'Delete this class?' } );
+	await expect( deleteDialog ).toBeVisible( { timeout: timeouts.expect } );
+	await deleteDialog.getByRole( 'button', { name: 'Delete' } ).click();
+	await expect( deleteDialog ).toBeHidden( { timeout: timeouts.expect } );
+	await expect( classItem ).toBeHidden( { timeout: timeouts.expect } );
 }
 
 export async function startSyncToV3( page: Page, className: string ): Promise<void> {
-	const classItem = page.locator( 'li[role="listitem"]' ).filter( { hasText: className } );
+	const classItem = classManagerListItem( page, className );
 	await classItem.hover();
 	await classItem.locator( 'button[aria-label="More actions"]' ).click();
 
@@ -159,18 +192,30 @@ export async function saveAndCloseClassManagerViaDialog( page: Page ): Promise<v
 	await page.getByRole( 'dialog', { name: 'You have unsaved changes' } ).getByRole( 'button', { name: 'Save & Continue' } ).click();
 }
 
+function classManagerListItem( page: Page, className: string ) {
+	return page
+		.locator( 'li[role="listitem"]' )
+		.filter( { has: page.getByText( className, { exact: true } ) } );
+}
+
 export async function reorderClassInClassManager(
 	page: Page,
 	sourceClassName: string,
 	targetClassName: string,
 ): Promise<void> {
-	const listItems = page.locator( 'li[role="listitem"]' );
+	const sourceItem = classManagerListItem( page, sourceClassName );
+	const targetItem = classManagerListItem( page, targetClassName );
+	const sourceDragHandle = sourceItem.locator( '.class-item-sortable-trigger' );
 
-	const sourceItem = listItems.filter( { hasText: sourceClassName } );
-	const targetItem = listItems.filter( { hasText: targetClassName } );
+	await expect( sourceItem ).toBeVisible( { timeout: timeouts.expect } );
+	await expect( targetItem ).toBeVisible( { timeout: timeouts.expect } );
 
-	const sourceDragHandle = sourceItem.getByRole( 'button', { name: 'sort', exact: true } );
+	await sourceItem.scrollIntoViewIfNeeded();
+	await targetItem.scrollIntoViewIfNeeded();
 
 	await sourceItem.hover();
+	await expect( sourceDragHandle ).toBeVisible( { timeout: timeouts.expect } );
 	await sourceDragHandle.dragTo( targetItem );
+
+	await expect( page.getByRole( 'button', { name: 'Save changes' } ) ).toBeEnabled( { timeout: timeouts.expect } );
 }

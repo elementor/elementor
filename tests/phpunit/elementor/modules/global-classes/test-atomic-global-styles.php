@@ -351,6 +351,42 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		) );
 	}
 
+	public function test_cache_invalidation_when_repository_deletes_class_used_on_document() {
+		// Arrange.
+		$relations = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+		$cache_validity = new Cache_Validity();
+		$deleted_class_id = 'g-4-123';
+		$document_post_id = $this->factory()->post->create();
+		$cache_path = [ Atomic_Global_Styles::STYLES_KEY, $document_post_id, Global_Classes_Repository::CONTEXT_FRONTEND ];
+
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order']
+		);
+
+		$relations->set_styles_for_post( $document_post_id, [ $deleted_class_id, 'g-4-124' ] );
+		$cache_validity->validate( $cache_path );
+
+		$this->assertTrue( $cache_validity->is_valid( $cache_path ) );
+
+		$remaining_items = array_filter(
+			$this->mock_global_classes['items'],
+			fn( $item ) => $deleted_class_id !== $item['id']
+		);
+		$remaining_order = array_values( array_filter(
+			$this->mock_global_classes['order'],
+			fn( $id ) => $deleted_class_id !== $id
+		) );
+
+		// Act.
+		Global_Classes_Repository::make()->put( $remaining_items, $remaining_order );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( $cache_path ) );
+	}
+
 	public function test_cache_invalidation_on_global_cache_clear() {
 		// Arrange.
 		$global_classes = $this->create_atomic_global_styles();

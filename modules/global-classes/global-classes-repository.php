@@ -71,11 +71,13 @@ class Global_Classes_Repository {
 	}
 
 	public function get_order(): array {
-		return Global_Classes_Order::make( $this->get_kit() )->get_order();
+		return Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() )->get_order();
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
-		Global_Classes_Order::make( $this->get_kit() )->set_order( $order );
+		Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->set_order( $order );
 
 		$labels = $this->labels();
 		$existing_labels = $labels->get_labels();
@@ -85,6 +87,14 @@ class Global_Classes_Repository {
 		}
 
 		$labels->set_labels( $existing_labels );
+
+		if ( ! $this->is_preview() ) {
+			Global_Classes_Order::make( $this->get_kit() )
+				->set_preview( true )
+				->set_order( $order );
+
+			$this->clear_preview_labels_for_ids( array_keys( $new_labels ) );
+		}
 
 		$this->cache = null;
 	}
@@ -138,12 +148,15 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 		$labels->set_labels( $final_label_map );
 
 		if ( ! $is_preview ) {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
+			Global_Classes_Order::make( $this->get_kit() )
+				->set_preview( true )
+				->set_order( $order );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
 			$this->clear_preview_labels_for_ids( array_merge(
@@ -161,6 +174,7 @@ class Global_Classes_Repository {
 			'deleted' => $to_delete,
 			'modified' => $to_update,
 			'order' => $order_changed,
+			'affected_post_ids' => $affected_post_ids,
 		] );
 	}
 
@@ -179,7 +193,13 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
+<<<<<<< HEAD
 		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
+=======
+		$current_ids = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
+>>>>>>> 9e8bd748b8 (Internal: Global classes order to have preview context [ED-24345] (#36066))
 
 		$new_ids = array_keys( $items );
 
@@ -196,12 +216,15 @@ class Global_Classes_Repository {
 
 		$this->cache = null;
 
+		$changes['affected_post_ids'] = $affected_post_ids;
+
 		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
 	}
 
 	private function all_from_posts(): Global_Classes {
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
-		$order = $classes_order->get_order();
+		$order = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
 
 		if ( empty( $order ) ) {
 			return Global_Classes::make( [], [] );
@@ -229,7 +252,7 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 
 		$label_map = [];
