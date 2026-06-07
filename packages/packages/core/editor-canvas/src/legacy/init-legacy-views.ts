@@ -111,7 +111,7 @@ function tryRegisterElement(
 
 	try {
 		elementsManager.registerElementType( new ResolvedElementType() );
-	} catch( error ) {
+	} catch {
 		const canOverrideExisting = canBeNestedTemplated( element ) && isAlreadyRegistered;
 
 		if ( canOverrideExisting ) {
