@@ -1,7 +1,6 @@
 import eventsConfig from './events-config';
 import mixpanel, { Mixpanel } from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
-import { configureSessionRecording, handleSessionRecording } from './session-recording';
 
 /** @type {Mixpanel | null} */
 let mixpanelInstance = null;
@@ -17,7 +16,6 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		configureSessionRecording( elementorCommon.config.editor_events?.session_recording_events );
 		this.initializeMixpanel( () => this.enableTracking() );
 	}
 
@@ -34,7 +32,7 @@ export default class extends elementorModules.Module {
 					flags: true,
 					api_host: 'https://api-eu.mixpanel.com',
 					loaded: onLoaded,
-					record_sessions_percent: 1,
+					record_sessions_percent: elementorCommon.config.editor_events?.session_recording_percent ?? 0,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
 					record_min_ms: 5 * 1000, // 5 Seconds
 					record_mask_text_selector: '',
@@ -96,11 +94,6 @@ export default class extends elementorModules.Module {
 		};
 
 		mixpanelInstance.track( name, eventData, options );
-
-		const recordingDecision = handleSessionRecording( name, mixpanelInstance );
-		if ( recordingDecision ) {
-			mixpanelInstance.track( recordingDecision, eventData );
-		}
 	}
 
 	async featureFlagIsActive( flagName ) {
