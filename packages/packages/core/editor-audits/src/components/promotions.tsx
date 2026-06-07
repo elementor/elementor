@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Divider, Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PROMOTIONS } from '../register-promotions';

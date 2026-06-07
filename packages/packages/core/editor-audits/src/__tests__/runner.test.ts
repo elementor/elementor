@@ -30,7 +30,7 @@ const FAKE_PAGE_CONTEXT: PageContextResponse = {
 	cookiez_plugin_active: false,
 	cookiez_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	image_optimization_plugin_active: false,
-	image_optimization_plugin_url: 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=image-optimization',
+	image_optimization_plugin_url: 'https://example.com/wp-admin/plugin-install.php',
 	site_identity: {
 		site_name_set: true,
 		site_description_set: true,
