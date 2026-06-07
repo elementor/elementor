@@ -189,13 +189,13 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 
 	private function sync_order_and_labels( $kit, array $items, array $order ): void {
 		$aggregated_ids = array_keys( $items );
-		$current_order = Global_Classes_Order::make( $kit )->get_order();
-		$merged_order = array_values( array_unique( array_merge( $order, array_diff( $current_order, $aggregated_ids ) ) ) );
+		$frontend_order = Global_Classes_Order::make( $kit )->set_preview( false );
+		$merged_order = array_values( array_unique( array_merge( $order, array_diff( $frontend_order->get_order(), $aggregated_ids ) ) ) );
 
-		Global_Classes_Order::make( $kit )->set_order( $merged_order );
+		$frontend_order->set_order( $merged_order );
 
-		$labels = Global_Classes_Labels::make( $kit );
-		$label_map = $labels->get_labels();
+		$frontend_labels = Global_Classes_Labels::make( $kit )->set_preview( false );
+		$label_map = $frontend_labels->get_labels();
 		$label_to_id = array_flip( $label_map );
 
 		foreach ( $merged_order as $id ) {
@@ -230,6 +230,6 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 			$label_to_id[ $candidate ] = $id;
 		}
 
-		$labels->set_labels( $label_map );
+		$frontend_labels->set_labels( $label_map );
 	}
 }

@@ -27,14 +27,21 @@ function resetGlobalClassesState( globalOrder: StyleDefinitionID[], classLabels:
 }
 
 export async function loadCurrentDocumentClasses() {
-	const previewIndexRes = await apiClient.all( 'preview' );
+	const [ previewIndexRes, frontendIndexRes ] = await Promise.all( [
+		apiClient.all( 'preview' ),
+		apiClient.all( 'frontend' ),
+	] );
+
 	const previewIndex = previewIndexRes.data.data;
+	const frontendIndex = frontendIndexRes.data.data;
+
 	const classLabels = createLabelsForClasses( previewIndex );
-	const globalOrder = previewIndex.map( ( e ) => e.id );
+	const previewOrder = previewIndex.map( ( e ) => e.id );
+	const frontendOrder = frontendIndex.map( ( e ) => e.id );
 
 	// This is intended to establish the baseline with current labels and order
 	// without it we won't be able to properly resolve the styles' class names
-	resetGlobalClassesState( globalOrder, classLabels );
+	resetGlobalClassesState( previewOrder, classLabels );
 
 	const postId = getCurrentDocument()?.id;
 	if ( ! postId ) {
@@ -51,8 +58,8 @@ export async function loadCurrentDocumentClasses() {
 
 	dispatch(
 		slice.actions.load( {
-			preview: { items: previewItems, order: globalOrder },
-			frontend: { items: frontendItems, order: globalOrder },
+			preview: { items: previewItems, order: previewOrder },
+			frontend: { items: frontendItems, order: frontendOrder },
 			classLabels,
 		} )
 	);
