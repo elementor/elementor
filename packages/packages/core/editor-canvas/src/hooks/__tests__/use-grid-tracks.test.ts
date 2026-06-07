@@ -45,8 +45,9 @@ function mockElement( style: Partial< Style > = {} ) {
 		getPropertyValue: ( name: string ) => ( name === '--e-a-border-color-bold' ? resolved[ name ] : '' ),
 	} ) );
 
-	const element = {
-		ownerDocument: {
+	const element = document.createElement( 'div' );
+	Object.defineProperty( element, 'ownerDocument', {
+		value: {
 			defaultView: {
 				getComputedStyle,
 				requestAnimationFrame: ( cb: FrameRequestCallback ) => {
@@ -56,7 +57,8 @@ function mockElement( style: Partial< Style > = {} ) {
 				cancelAnimationFrame: jest.fn(),
 			} as unknown as Window,
 		},
-	} as unknown as HTMLElement;
+		configurable: true,
+	} );
 
 	return { element, resolved, getComputedStyle };
 }
@@ -78,7 +80,11 @@ describe( 'useGridTracks', () => {
 	} );
 
 	it( 'returns the empty snapshot when the element has no owner window', () => {
-		const element = { ownerDocument: { defaultView: null } } as unknown as HTMLElement;
+		const element = document.createElement( 'div' );
+		Object.defineProperty( element, 'ownerDocument', {
+			value: { defaultView: null },
+			configurable: true,
+		} );
 
 		const { result } = renderHook( () => useGridTracks( element, RECT ) );
 
@@ -152,6 +158,54 @@ describe( 'useGridTracks', () => {
 		} );
 
 		expect( result.current.columns ).toEqual( [ 100, 100, 100, 100 ] );
+	} );
+
+	it( 'recomputes when children are added to the grid', async () => {
+		const grid = document.createElement( 'div' );
+		grid.appendChild( document.createElement( 'div' ) );
+		document.body.appendChild( grid );
+
+		const resolved: Style = { ...DEFAULT_STYLE, gridTemplateRows: '80px' };
+		const getComputedStyle = jest.fn().mockImplementation( () => ( {
+			gridTemplateColumns: resolved.gridTemplateColumns,
+			gridTemplateRows: resolved.gridTemplateRows,
+			columnGap: resolved.columnGap,
+			rowGap: resolved.rowGap,
+			paddingTop: resolved.paddingTop,
+			paddingRight: resolved.paddingRight,
+			paddingBottom: resolved.paddingBottom,
+			paddingLeft: resolved.paddingLeft,
+			getPropertyValue: ( name: string ) => ( name === '--e-a-border-color-bold' ? resolved[ name ] : '' ),
+		} ) );
+
+		Object.defineProperty( grid, 'ownerDocument', {
+			value: {
+				defaultView: {
+					getComputedStyle,
+					requestAnimationFrame: ( cb: FrameRequestCallback ) => {
+						cb( 0 );
+						return 1;
+					},
+					cancelAnimationFrame: jest.fn(),
+				},
+			},
+			configurable: true,
+		} );
+
+		const { result } = renderHook( () => useGridTracks( grid, RECT ) );
+
+		expect( result.current.rows ).toEqual( [ 80 ] );
+
+		resolved.gridTemplateRows = '80px 80px';
+
+		await act( async () => {
+			grid.appendChild( document.createElement( 'div' ) );
+			await Promise.resolve();
+		} );
+
+		expect( result.current.rows ).toEqual( [ 80, 80 ] );
+
+		document.body.removeChild( grid );
 	} );
 
 	it( 'recomputes when the device mode changes', () => {

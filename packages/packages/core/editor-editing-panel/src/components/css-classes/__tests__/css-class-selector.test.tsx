@@ -843,6 +843,60 @@ describe( '<CssClassSelector />', () => {
 		expect( within( focusItem ).queryByLabelText( 'Has style' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should not show a style indicator for states with empty variants', () => {
+		// Arrange.
+		const localStyleWithEmptyHoverVariant = createMockStyleDefinitionWithVariants( {
+			id: 'local',
+			label: 'Local',
+			variants: [
+				{
+					meta: {
+						breakpoint: 'mobile',
+						state: null,
+					},
+					props: {
+						'text-align': 'left',
+					},
+					custom_css: null,
+				},
+				{
+					meta: {
+						breakpoint: 'mobile',
+						state: 'hover',
+					},
+					props: {},
+					custom_css: null,
+				},
+			],
+		} );
+		jest.mocked( stylesRepository.all ).mockReturnValue( [
+			localStyleWithEmptyHoverVariant,
+			provider1MockStyleA,
+			provider1MockStyleB,
+			provider2MockStyleA,
+		] );
+
+		// Act.
+		renderComponent( { active: 'local', appliedClasses: [ 'local' ] } );
+		const localChipMenu = within( screen.getAllByRole( 'group' )[ 0 ] ).getByLabelText(
+			__( 'Open CSS Class Menu', 'elementor' )
+		);
+		fireEvent.click( localChipMenu );
+
+		const menu = screen.getByRole( 'menu' );
+		const menuItems = within( menu ).getAllByRole( 'menuitem' );
+		const normalItem = menuItems.find( ( el ) => within( el ).queryByText( 'normal' ) );
+		const hoverItem = menuItems.find( ( el ) => within( el ).queryByText( 'hover' ) );
+
+		// Assert.
+		if ( ! normalItem || ! hoverItem ) {
+			throw new Error( 'missing state items' );
+		}
+
+		expect( within( normalItem ).getByLabelText( 'Has style' ) ).toBeInTheDocument();
+		expect( within( hoverItem ).queryByLabelText( 'Has style' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'should show element custom states and set the clicked one active', () => {
 		// Arrange.
 		const setActive = jest.fn();

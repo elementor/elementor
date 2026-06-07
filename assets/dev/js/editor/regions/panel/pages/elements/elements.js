@@ -117,6 +117,18 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		jQuery.each( elementor.config.birthdayEasterEggWidgets || [], ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				widgetType: widget.name,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+				birthdayEasterEgg: true,
+			} );
+		} );
+
 		if ( elementor.config.integrationWidgets ) {
 			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
 
