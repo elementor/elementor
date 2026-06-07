@@ -29,15 +29,16 @@ export default class extends elementorModules.Module {
 				elementorCommon.config.editor_events?.token,
 				{
 					persistence: 'localStorage',
+					debug: elementorCommon.config.editor_events?.debug ?? false,
 					autocapture: false,
 					flags: true,
 					api_host: 'https://api-eu.mixpanel.com',
 					loaded: onLoaded,
-					record_sessions_percent: 0,
+					record_sessions_percent: 1,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
 					record_min_ms: 5 * 1000, // 5 Seconds
-					record_max_ms: 30 * 1000, // 30 Seconds
 					record_mask_text_selector: '',
+					remote_settings_mode: 'strict',
 				},
 				'elementor-editor',
 			);

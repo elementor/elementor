@@ -33,6 +33,7 @@ class Module extends BaseModule {
 
 		$is_flags_enabled = false;
 		$session_recording_events = [];
+		$debug = ( defined( 'ELEMENTOR_EDITOR_EVENTS_DEBUG' ) && ELEMENTOR_EDITOR_EVENTS_DEBUG ) ?? false;
 
 		if ( $can_send_events ) {
 			$mixpanel_config = self::get_remote_mixpanel_config();
@@ -62,6 +63,7 @@ class Module extends BaseModule {
 
 		$settings = [
 			'can_send_events' => $can_send_events,
+			'debug' => $debug,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'site_url' => hash( 'sha256', get_site_url() ),
 			'wp_version' => get_bloginfo( 'version' ),
