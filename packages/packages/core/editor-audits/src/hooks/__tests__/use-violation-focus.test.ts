@@ -57,6 +57,43 @@ describe( 'useViolationFocus', () => {
 		expect( openRoute ).toHaveBeenCalledWith( 'panel/global/settings-site-identity' );
 	} );
 
+	it( 'should focus the element when both elementId and externalUrl are set', () => {
+		// Arrange.
+		const domElement = document.createElement( 'div' );
+		const container = {
+			view: {
+				getDomElement: () => domElement,
+			},
+		};
+		const scrollToView = jest.fn();
+		const originalElementor = window.elementor;
+
+		window.elementor = {
+			getContainer: jest.fn().mockReturnValue( container ),
+			helpers: { scrollToView },
+		};
+
+		const { focus } = useViolationFocus();
+		const url = 'https://example.com/wp-admin/plugin-install.php?tab=plugin-information&plugin=pojo-accessibility';
+
+		// Act.
+		focus( {
+			auditId: 'audits/images-alt-text',
+			elementId: 'i1',
+			targetHint: 'element-settings',
+			label: 'One or more images are missing alt text.',
+			externalUrl: url,
+		} );
+
+		// Assert.
+		expect( runCommand ).toHaveBeenCalledWith( 'document/elements/select', { container } );
+		expect( scrollToView ).toHaveBeenCalledWith( domElement, 200 );
+		expect( runCommand ).toHaveBeenCalledWith( 'panel/editor/open' );
+		expect( window.open ).not.toHaveBeenCalled();
+
+		window.elementor = originalElementor;
+	} );
+
 	it( 'should open the external url in a new tab when externalUrl is set', () => {
 		// Arrange.
 		const { focus } = useViolationFocus();
