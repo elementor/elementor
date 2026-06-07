@@ -193,13 +193,9 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-<<<<<<< HEAD
-		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
-=======
 		$current_ids = Global_Classes_Order::make( $this->get_kit() )
 			->set_preview( $this->is_preview() )
 			->get_order();
->>>>>>> 9e8bd748b8 (Internal: Global classes order to have preview context [ED-24345] (#36066))
 
 		$new_ids = array_keys( $items );
 
