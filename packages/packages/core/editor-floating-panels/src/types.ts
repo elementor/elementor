@@ -43,6 +43,7 @@ export type FloatingPanelDeclaration = {
 	title: string;
 	icon: ComponentType;
 	component: ComponentType;
+	isDraggable?: boolean;
 	defaults: FloatingPanelDefaults;
 };
 

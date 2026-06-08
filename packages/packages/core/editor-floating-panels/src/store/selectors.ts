@@ -24,6 +24,10 @@ export function selectMinSize( state: GlobalState, id: string ) {
 	return state.floatingPanels.minSizeById[ id ];
 }
 
+export function selectIsDraggable( state: GlobalState, id: string ): boolean {
+	return state.floatingPanels.isDraggableById[ id ] ?? false;
+}
+
 export function selectPanelTitle( state: GlobalState, id: string ): string | undefined {
 	return state.floatingPanels.titlesById[ id ];
 }

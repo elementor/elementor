@@ -1,6 +1,7 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
 import {
+	selectIsDraggable,
 	selectIsOpen,
 	selectMinSize,
 	selectPanelState,
@@ -102,6 +103,22 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectSize( __getState(), 'a' ) ).toEqual( { inlineSize: 600, blockSize: 700 } );
+	} );
+
+	it( 'stores isDraggable as false by default', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+
+		// Assert.
+		expect( selectIsDraggable( __getState(), 'a' ) ).toBe( false );
+	} );
+
+	it( 'stores isDraggable as true when provided', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults, isDraggable: true } ) );
+
+		// Assert.
+		expect( selectIsDraggable( __getState(), 'a' ) ).toBe( true );
 	} );
 
 	it( 'bringToFront raises zIndex above all others', () => {
