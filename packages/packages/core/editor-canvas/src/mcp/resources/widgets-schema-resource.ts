@@ -9,7 +9,6 @@ import {
 	type TransformablePropType,
 	type UnionPropType,
 } from '@elementor/editor-props';
-import { getStylesSchema } from '@elementor/editor-styles';
 
 import { getRequiredDefaultChildTypes } from '../../composition-builder/utils/required-default-child-tags';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
@@ -83,51 +82,13 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
-When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
-The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
+Styling is provided as raw CSS. The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
 
 ** CRITICAL - VARIABLES **
 When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
 Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 
 `,
-					},
-				],
-			};
-		}
-	);
-
-	resource(
-		'styles-schema',
-		new ResourceTemplate( STYLE_SCHEMA_URI, {
-			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ) ].filter( ( category ) => category !== 'all' );
-				return {
-					resources: categories.map( ( category ) => ( {
-						uri: `elementor://styles/schema/${ category }`,
-						name: 'Style schema for ' + category,
-					} ) ),
-				};
-			},
-		} ),
-		{
-			description: 'Common styles schema for the specified category (applicable for V4 elements only)',
-		},
-		async ( uri, variables ) => {
-			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			const stylesSchema = getStylesSchema()[ category ];
-			if ( ! stylesSchema ) {
-				throw new Error( `No styles schema found for category: ${ category }` );
-			}
-			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
-			return {
-				contents: [
-					{
-						uri: uri.toString(),
-						mimeType: 'application/json',
-						text: JSON.stringify(
-							Schema.enrichWithIntention( asJson, 'Desired CSS in format "property: value;"' )
-						),
 					},
 				],
 			};

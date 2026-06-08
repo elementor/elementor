@@ -1,7 +1,8 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
@@ -30,10 +31,9 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 		outputSchema,
 		requiredResources: [
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
-			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Configure element guide', uri: CONFIGURE_ELEMENT_GUIDE_URI },
 		],
-		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
+		handler: async ( { elementId, propertiesToChange, elementType, style } ) => {
 			const widgetData = getWidgetsCache()?.[ elementType ];
 			if ( ! widgetData ) {
 				throw new Error(
@@ -47,17 +47,8 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			}
 			const toUpdate = Object.entries( propertiesToChange );
 			const { valid, errors } = validateInput.validatePropSchema( elementType, propertiesToChange );
-			const { valid: stylesValid, errors: stylesErrors } = validateInput.validateStyles(
-				stylePropertiesToChange || {}
-			);
 			if ( ! valid ) {
 				const errorMessage = `Failed to configure element "${ elementId }" due to invalid properties: ${ errors?.join(
-					'\n- '
-				) }`;
-				throw new Error( errorMessage );
-			}
-			if ( ! stylesValid ) {
-				const errorMessage = `Failed to configure element "${ elementId }" due to invalid style properties: ${ stylesErrors?.join(
 					'\n- '
 				) }`;
 				throw new Error( errorMessage );
@@ -81,33 +72,46 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 					throw new Error( errorMessage );
 				}
 			}
-			for ( const [ stylePropertyName, stylePropertyValue ] of Object.entries( stylePropertiesToChange || {} ) ) {
-				try {
-					doUpdateElementProperty( {
-						elementId,
-						elementType,
-						propertyName: '_styles',
-						propertyValue: {
-							[ stylePropertyName ]: stylePropertyValue,
-						},
-					} );
-				} catch ( error ) {
-					const errorMessage = createUpdateErrorMessage( {
-						propertyName: `(style) ${ stylePropertyName }`,
-						elementId,
-						elementType,
-						propertyType: 'style',
-						error: error as Error,
-					} );
-					throw new Error( errorMessage );
-				}
-			}
+			await applyStyleFromCss( { elementId, elementType, style } );
 			return {
 				success: true,
 			};
 		},
 	} );
 };
+
+async function applyStyleFromCss( opts: { elementId: string; elementType: string; style: Record< string, string > } ) {
+	const { elementId, elementType, style } = opts;
+	if ( ! style || Object.keys( style ).length === 0 ) {
+		return;
+	}
+	const { props, customCss } = await convertCssToAtomic( style );
+	const styleValue: Record< string, unknown > = { ...props };
+	if ( customCss ) {
+		styleValue.custom_css = customCss;
+	}
+	if ( Object.keys( styleValue ).length === 0 ) {
+		return;
+	}
+	try {
+		doUpdateElementProperty( {
+			elementId,
+			elementType,
+			propertyName: '_styles',
+			propertyValue: styleValue,
+		} );
+	} catch ( error ) {
+		throw new Error(
+			createUpdateErrorMessage( {
+				propertyName: '(style)',
+				elementId,
+				elementType,
+				propertyType: 'style',
+				error: error as Error,
+			} )
+		);
+	}
+}
 
 function createUpdateErrorMessage( opts: {
 	propertyName: string;
@@ -127,11 +131,7 @@ Check the element's PropType schema at the resource [${ WIDGET_SCHEMA_URI.replac
 		  ) }] for type "${ elementType }" to ensure the property exists and the value matches the expected PropType.
 Now that you have this information, ensure you have the schema and try again.`
 		: `
-Check the styles schema at the resource [${ STYLE_SCHEMA_URI.replace(
-				'{category}',
-				propertyName
-		  ) }] at editor-canvas__elementor://styles/schema/{category} to ensure the style property exists and the value matches the expected PropType.
-`
+Provide styling as raw CSS via the "style" parameter (a flat map of CSS property → value). Declarations that cannot be converted are stored as the element custom CSS.`
 };
 }`;
 }
