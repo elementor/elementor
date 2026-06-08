@@ -18,7 +18,7 @@ class Test_Converter_Registry_Factory extends TestCase {
 		$registry = Converter_Registry_Factory::create();
 
 		// Assert.
-		$this->assertCount( count( Converter_Registry_Factory::COVERED_PROPERTIES ), $registry->all() );
+		$this->assertCount( count( Converter_Registry_Factory::covered_properties() ), $registry->all() );
 	}
 
 	public function test_create__every_covered_property_is_claimed_by_exactly_one_converter() {
@@ -26,7 +26,7 @@ class Test_Converter_Registry_Factory extends TestCase {
 		$registry = Converter_Registry_Factory::create();
 
 		// Act & Assert.
-		foreach ( Converter_Registry_Factory::COVERED_PROPERTIES as $property ) {
+		foreach ( Converter_Registry_Factory::covered_properties() as $property ) {
 			$claims = array_filter(
 				$registry->all(),
 				fn( $converter ) => $converter->is_supported( [ 'property' => $property, 'value' => 'x' ] )
@@ -38,7 +38,7 @@ class Test_Converter_Registry_Factory extends TestCase {
 
 	public function test_covered_properties__has_no_duplicates() {
 		// Act.
-		$properties = Converter_Registry_Factory::COVERED_PROPERTIES;
+		$properties = Converter_Registry_Factory::covered_properties();
 
 		// Assert.
 		$this->assertSame( array_values( array_unique( $properties ) ), $properties );
