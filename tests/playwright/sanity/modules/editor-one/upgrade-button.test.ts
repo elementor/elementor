@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
-
 test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 	const UPGRADE_LINK_SELECTOR =
 		'#toplevel_page_elementor-home .wp-submenu a[href*="elementor-one-upgrade"]';
