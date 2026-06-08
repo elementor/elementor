@@ -10,9 +10,9 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { BEST_PRACTICES_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertStyleBlocksToAtomic } from '../../utils/convert-css-to-atomic';
-import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';

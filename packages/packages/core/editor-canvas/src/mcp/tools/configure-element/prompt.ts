@@ -1,7 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
+import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 

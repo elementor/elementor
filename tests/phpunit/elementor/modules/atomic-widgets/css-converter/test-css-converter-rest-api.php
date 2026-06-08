@@ -73,7 +73,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 	public function test_post__requires_authentication() {
 		// Arrange.
-		$this->act_as_guest();
+		wp_set_current_user( 0 );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [ 'el-1' => 'color: red;' ] );

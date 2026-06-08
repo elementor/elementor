@@ -1,9 +1,9 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
-import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
