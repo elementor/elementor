@@ -16,10 +16,6 @@ export function setCurrentDocumentId( id: number | null ): void {
 	currentDocumentId = id;
 }
 
-function isCurrentDocument( postId: number ): boolean {
-	return currentDocumentId !== null && postId === currentDocumentId;
-}
-
 /**
  * Adds post IDs to the manager. Any ID not yet loaded will be fetched;
  * already-loaded posts are skipped without notifying listeners.
@@ -27,7 +23,9 @@ function isCurrentDocument( postId: number ): boolean {
  * @param {number[]} ids Post IDs to load.
  */
 export function addPosts( ids: number[] ): void {
-	const newIds = ids.filter( ( id ) => ! pendingIds.has( id ) && ! loadedPosts.has( id ) );
+	const newIds = ids.filter(
+		( id ) => ! isCurrentDocument( id ) && ! pendingIds.has( id ) && ! loadedPosts.has( id )
+	);
 
 	newIds.forEach( ( id ) => pendingIds.add( id ) );
 
@@ -39,13 +37,36 @@ export function addPosts( ids: number[] ): void {
 }
 
 /**
+ * Registers a related post that was already fetched. Does not notify listeners
+ * when the post is the current document.
+ *
+ * @param {number}   postId The document / post ID.
+ * @param {Document} data   The document data to deliver.
+ */
+export function setPost( postId: number, data: Document ): void {
+	if ( isCurrentDocument( postId ) ) {
+		return;
+	}
+
+	const isNew = ! loadedPosts.has( postId );
+
+	loadedPosts.set( postId, data );
+
+	if ( isNew ) {
+		notifyRelatedListeners( postId, data );
+	} else {
+		addPostStyles( postId, data );
+	}
+}
+
+/**
  * Registers a callback that is invoked whenever a related (non-current) post
  * finishes loading. Already-loaded related posts are delivered to the callback
  * asynchronously on subscribe. Returns an unsubscribe function.
  *
  * @param {RelatedPostLoadCallback} callback Function called with (postId, data) on each load.
  */
-export function onRelatedPostLoad( callback: RelatedPostLoadCallback ): () => void {
+export function onPostLoad( callback: RelatedPostLoadCallback ): () => void {
 	listeners.add( callback );
 
 	void Promise.resolve().then( () => {
@@ -65,39 +86,14 @@ export function onRelatedPostLoad( callback: RelatedPostLoadCallback ): () => vo
 	};
 }
 
-/**
- * Resets transient state (pending queue, loaded post cache, and styles) before
- * a new preview cycle. Permanent listeners registered via onRelatedPostLoad are
- * preserved so consumers registered at init() time survive across
- * attach-preview calls.
- */
 export function reset(): void {
 	pendingIds.clear();
 	loadedPosts.clear();
 	clearStyles();
 }
 
-/**
- * Registers a related post that was already fetched. Does not notify listeners
- * when the post is the current document.
- *
- * @param {number}   postId The document / post ID.
- * @param {Document} data   The document data to deliver.
- */
-export function announcePost( postId: number, data: Document ): void {
-	if ( isCurrentDocument( postId ) ) {
-		return;
-	}
-
-	const isNew = ! loadedPosts.has( postId );
-
-	loadedPosts.set( postId, data );
-
-	if ( isNew ) {
-		notifyRelatedListeners( postId, data );
-	} else {
-		addPostStyles( postId, data );
-	}
+function isCurrentDocument( postId: number ): boolean {
+	return currentDocumentId !== null && postId === currentDocumentId;
 }
 
 async function fetchAndNotify( ids: number[] ): Promise< void > {

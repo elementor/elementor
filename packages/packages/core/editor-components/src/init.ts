@@ -4,11 +4,11 @@ import {
 	registerElementType,
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
-import { type Document, getV1CurrentDocument } from '@elementor/editor-documents';
+import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
-import { onRelatedPostLoad } from '@elementor/editor-related-posts-manager';
+import { onPostLoad } from '@elementor/editor-related-posts-manager';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -63,10 +63,10 @@ export function init() {
 			removeComponentStyles( id );
 		}
 
-		void loadComponentsAssets( config?.elements as V1ElementData[] ?? [] );
+		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	onRelatedPostLoad( ( _postId, data ) => {
+	onPostLoad( ( _postId, data ) => {
 		void loadComponentsAssets( data.elements ?? [] );
 	} );
 

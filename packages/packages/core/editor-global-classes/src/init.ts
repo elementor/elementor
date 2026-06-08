@@ -5,7 +5,7 @@ import {
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { getMCPByDomain } from '@elementor/editor-mcp';
-import { onRelatedPostLoad } from '@elementor/editor-related-posts-manager';
+import { onPostLoad } from '@elementor/editor-related-posts-manager';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
@@ -23,7 +23,7 @@ import { SyncWithDocumentSave } from './sync-with-document';
 export function init() {
 	registerSlice( slice );
 
-	onRelatedPostLoad( ( postId ) => {
+	onPostLoad( ( postId ) => {
 		void addDocumentClasses( postId );
 	} );
 
