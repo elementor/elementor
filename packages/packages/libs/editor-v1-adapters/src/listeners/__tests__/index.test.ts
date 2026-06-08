@@ -255,6 +255,8 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 
 	it( 'should trigger v1 ready when v1 is loaded after v2', async () => {
 		// Arrange.
+		setReady( false );
+
 		const callback = jest.fn();
 		const extendedWindow = window as unknown as ExtendedWindow;
 
@@ -299,5 +301,38 @@ describe( '@elementor/editor-v1-adapters/listeners', () => {
 		}
 
 		expect.assertions( 1 );
+	} );
+
+	it( 'should invoke v1ReadyEvent callback via microtask when already ready', async () => {
+		// Arrange
+		const callback = jest.fn();
+
+		// Act
+		listenTo( v1ReadyEvent(), callback );
+
+		// Assert — does not fire synchronously
+		expect( callback ).not.toHaveBeenCalled();
+
+		await Promise.resolve();
+
+		expect( callback ).toHaveBeenCalledTimes( 1 );
+		expect( callback ).toHaveBeenCalledWith( {
+			type: 'window-event',
+			event: 'elementor/initialized',
+			originalEvent: expect.any( CustomEvent ),
+		} );
+	} );
+
+	it( 'should not invoke v1ReadyEvent callback if cleaned up before microtask runs', async () => {
+		// Arrange
+		const callback = jest.fn();
+
+		// Act
+		const cleanup = listenTo( v1ReadyEvent(), callback );
+		cleanup();
+		await Promise.resolve();
+
+		// Assert
+		expect( callback ).not.toHaveBeenCalled();
 	} );
 } );
