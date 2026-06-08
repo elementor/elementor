@@ -38,7 +38,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'color: red; z-index: 5;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'red', 'z-index' => '5' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -56,8 +56,8 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
-			'el-1' => 'color: red;',
-			'el-2' => 'gap: 4px;',
+			'el-1' => [ 'color' => 'red' ],
+			'el-2' => [ 'gap' => '4px' ],
 		] );
 
 		// Act.
@@ -76,7 +76,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'font-weight: 700;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'font-weight' => '700' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -93,7 +93,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'font-weight: 950;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'font-weight' => '950' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -110,7 +110,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'display: flex; position: nonsense;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'display' => 'flex', 'position' => 'nonsense' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -127,7 +127,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'aspect-ratio: 16 / 9;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'aspect-ratio' => '16 / 9' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -139,12 +139,58 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__null_value_is_emitted_as_a_null_reset_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'font-weight' => null ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [ 'font-weight' => null ], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__null_reset_coexists_with_converted_and_custom_css_declarations() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => [
+				'font-weight' => '700',
+				'color' => null,
+				'z-index' => '5',
+			],
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'font-weight' => [ '$$type' => 'string', 'value' => '700' ],
+				'color' => null,
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'z-index: 5;', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__requires_authentication() {
 		// Arrange.
 		wp_set_current_user( 0 );
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'color: red;' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'red' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -158,7 +204,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => 'behavior: url(x.htc); color: expression(alert(1));' ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'behavior' => 'url(x.htc)', 'color' => 'expression(alert(1))' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );

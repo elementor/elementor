@@ -13,7 +13,7 @@ const mockPost = ( responseData: unknown ) => {
 };
 
 describe( 'convertCssToAtomic', () => {
-	it( 'posts a single named block and unwraps its result', async () => {
+	it( 'posts a single named block as a declaration map and unwraps its result', async () => {
 		// Arrange.
 		const post = mockPost( {
 			default: { props: { color: { $$type: 'color', value: 'red' } }, customCss: 'gap: 4px;' },
@@ -24,17 +24,33 @@ describe( 'convertCssToAtomic', () => {
 
 		// Assert.
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/css-to-atomic', {
-			blocks: { default: 'color: red; gap: 4px;' },
+			blocks: { default: { color: 'red', gap: '4px' } },
 		} );
 		expect( result ).toEqual( {
 			props: { color: { $$type: 'color', value: 'red' } },
 			customCss: 'gap: 4px;',
 		} );
 	} );
+
+	it( 'forwards null declarations untouched so the server can emit reset props', async () => {
+		// Arrange.
+		const post = mockPost( {
+			default: { props: { color: null }, customCss: '' },
+		} );
+
+		// Act.
+		const result = await convertCssToAtomic( { color: null } );
+
+		// Assert.
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/css-to-atomic', {
+			blocks: { default: { color: null } },
+		} );
+		expect( result ).toEqual( { props: { color: null }, customCss: '' } );
+	} );
 } );
 
 describe( 'convertStyleBlocksToAtomic', () => {
-	it( 'serializes every named style block and returns the named results map', async () => {
+	it( 'posts every named declaration map and returns the named results map', async () => {
 		// Arrange.
 		const post = mockPost( {
 			'el-1': { props: {}, customCss: 'color: red;' },
@@ -49,7 +65,7 @@ describe( 'convertStyleBlocksToAtomic', () => {
 
 		// Assert.
 		expect( post ).toHaveBeenCalledWith( 'elementor/v1/css-to-atomic', {
-			blocks: { 'el-1': 'color: red;', 'el-2': 'gap: 4px;' },
+			blocks: { 'el-1': { color: 'red' }, 'el-2': { gap: '4px' } },
 		} );
 		expect( results ).toEqual( {
 			'el-1': { props: {}, customCss: 'color: red;' },

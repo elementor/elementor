@@ -40,7 +40,7 @@ class Css_Converter_REST_API {
 		if ( ! is_array( $blocks ) ) {
 			return Error_Builder::make( 'invalid_blocks' )
 				->set_status( 400 )
-				->set_message( __( 'The "blocks" parameter must be an object of named CSS strings.', 'elementor' ) )
+				->set_message( __( 'The "blocks" parameter must be an object of named declaration maps.', 'elementor' ) )
 				->build();
 		}
 
@@ -48,16 +48,41 @@ class Css_Converter_REST_API {
 
 		$results = [];
 
-		foreach ( $blocks as $name => $css ) {
-			$result = $converter->convert( (string) $css );
-
-			$results[ $name ] = [
-				'props' => (object) $result['props'],
-				'customCss' => $result['customCss'],
-			];
+		foreach ( $blocks as $name => $declarations ) {
+			$results[ $name ] = $this->convert_block( $converter, (array) $declarations );
 		}
 
 		return Response_Builder::make( $results )->build();
+	}
+
+	/**
+	 * A block is a property->value map. A null value is an explicit reset: it bypasses CSS conversion
+	 * and is emitted as a null prop so the editor restores the property to its default. Every non-null
+	 * value is serialized back into a CSS declaration for the converter.
+	 *
+	 * @param Css_Converter              $converter    The shared CSS converter.
+	 * @param array<string, string|null> $declarations The block's property->value map.
+	 * @return array{props: object, customCss: string}
+	 */
+	private function convert_block( Css_Converter $converter, array $declarations ): array {
+		$resets = [];
+		$css_declarations = [];
+
+		foreach ( $declarations as $property => $value ) {
+			if ( null === $value ) {
+				$resets[ $property ] = null;
+				continue;
+			}
+
+			$css_declarations[] = $property . ': ' . $value . ';';
+		}
+
+		$result = $converter->convert( implode( ' ', $css_declarations ) );
+
+		return [
+			'props' => (object) array_merge( $result['props'], $resets ),
+			'customCss' => $result['customCss'],
+		];
 	}
 
 	private function route_wrapper( callable $cb ) {

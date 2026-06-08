@@ -85,7 +85,7 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 
 	configureElementToolPrompt.parameter(
 		'style',
-		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "20px", "color": "red" }. OPTIONAL.'
+		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "20px", "color": "red" }. Set a value to null to reset that property to its default. OPTIONAL.'
 	);
 
 	configureElementToolPrompt.example( `

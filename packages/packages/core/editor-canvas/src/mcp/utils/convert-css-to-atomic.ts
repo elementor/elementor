@@ -4,18 +4,19 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 const CSS_TO_ATOMIC_URL = 'elementor/v1/css-to-atomic';
 const SINGLE_BLOCK_KEY = 'default';
 
+/**
+ * A flat CSS property→value map. A null value is an explicit reset: the server emits it as a null
+ * prop so the editor restores the property to its default.
+ */
+export type StyleDeclarations = Record< string, string | null >;
+
 export type CssConversionResult = {
-	props: Record< string, PropValue >;
+	props: Record< string, PropValue | null >;
 	customCss: string;
 };
 
-const styleRecordToCssText = ( style: Record< string, string > ): string =>
-	Object.entries( style )
-		.map( ( [ property, value ] ) => `${ property }: ${ value };` )
-		.join( ' ' );
-
-const convertCssBlocks = async (
-	blocks: Record< string, string >
+const convertBlocks = async (
+	blocks: Record< string, StyleDeclarations >
 ): Promise< Record< string, CssConversionResult > > => {
 	const { data } = await httpService().post< HttpResponse< Record< string, CssConversionResult > > >(
 		CSS_TO_ATOMIC_URL,
@@ -26,16 +27,10 @@ const convertCssBlocks = async (
 };
 
 export const convertStyleBlocksToAtomic = async (
-	styleByName: Record< string, Record< string, string > >
-): Promise< Record< string, CssConversionResult > > => {
-	const blocks = Object.fromEntries(
-		Object.entries( styleByName ).map( ( [ name, style ] ) => [ name, styleRecordToCssText( style ) ] )
-	);
+	styleByName: Record< string, StyleDeclarations >
+): Promise< Record< string, CssConversionResult > > => convertBlocks( styleByName );
 
-	return convertCssBlocks( blocks );
-};
-
-export const convertCssToAtomic = async ( style: Record< string, string > ): Promise< CssConversionResult > => {
+export const convertCssToAtomic = async ( style: StyleDeclarations ): Promise< CssConversionResult > => {
 	const results = await convertStyleBlocksToAtomic( { [ SINGLE_BLOCK_KEY ]: style } );
 
 	return results[ SINGLE_BLOCK_KEY ];
