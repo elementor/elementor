@@ -344,7 +344,7 @@
 			'PARAM',
 			'SOURCE',
 			'TRACK',
-			'WKB',
+			'WBR',
 		] );
 
 		const isVoidPlaceholderTarget = function( element ) {
@@ -377,22 +377,15 @@
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer, isFlexRowContainer } = placeholderContext;
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
 			const insertTarget = placeholderTarget || currentElement;
+			const insertOutside = hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget );
 
-			if ( hasLogicalWrapper && isFlexRowContainer && insertTarget ) {
-				insertPlaceholderOutsideElement( insertTarget );
-
-				return;
-			}
-
-			const useOutsideInsert = hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget );
-
-			if ( ( hasLogicalWrapper || isAtomicContainer ) && ! ( hasLogicalWrapper && isFlexRowContainer ) ) {
+			if ( hasLogicalWrapper || isAtomicContainer ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
-			if ( useOutsideInsert ) {
+			if ( insertOutside ) {
 				insertPlaceholderOutsideElement( insertTarget );
 
 				return;
