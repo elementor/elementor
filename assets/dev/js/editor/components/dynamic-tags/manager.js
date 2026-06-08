@@ -12,12 +12,25 @@ module.exports = elementorModules.Module.extend( {
 
 	cacheCallbacks: [],
 
+	getTagRenderPostId( tag ) {
+		return tag.editorRenderPostId ?? elementor.config.document.id;
+	},
+
 	addCacheRequest( tag ) {
-		this.cacheRequests[ this.createCacheKey( tag ) ] = true;
+		const postId = this.getTagRenderPostId( tag );
+		const cacheKey = this.createCacheKey( tag );
+
+		if ( ! this.cacheRequests[ postId ] ) {
+			this.cacheRequests[ postId ] = {};
+		}
+
+		this.cacheRequests[ postId ][ cacheKey ] = true;
 	},
 
 	createCacheKey( tag ) {
-		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
+		const postId = this.getTagRenderPostId( tag );
+
+		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) ) + '-' + postId;
 	},
 
 	loadTagDataFromCache( tag ) {
@@ -27,7 +40,9 @@ module.exports = elementorModules.Module.extend( {
 			return this.cache[ cacheKey ];
 		}
 
-		if ( ! this.cacheRequests[ cacheKey ] ) {
+		const postId = this.getTagRenderPostId( tag );
+
+		if ( ! this.cacheRequests[ postId ] || ! this.cacheRequests[ postId ][ cacheKey ] ) {
 			this.addCacheRequest( tag );
 		}
 	},
@@ -40,32 +55,54 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		var ajaxOptions = {
-			data: {
-				post_id: elementor.config.document.id,
-				tags: Object.keys( cacheRequests ),
-			},
-			success: ( data ) => {
-				this.cache = {
-					...this.cache,
-					...data,
-				};
+		var postIds = Object.keys( cacheRequests );
 
-				cacheCallbacks.forEach( function( entry ) {
-					entry.callback();
-				} );
-			},
-		};
+		if ( 0 === postIds.length ) {
+			cacheCallbacks.forEach( function( entry ) {
+				entry.callback();
+			} );
+
+			return;
+		}
 
 		var disableCache = cacheCallbacks.some( function( entry ) {
 			return entry.disableCache;
 		} );
 
-		if ( disableCache ) {
-			ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
-		}
+		var pendingRequests = postIds.length;
 
-		elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
+		var onRequestComplete = () => {
+			pendingRequests -= 1;
+
+			if ( 0 === pendingRequests ) {
+				cacheCallbacks.forEach( function( entry ) {
+					entry.callback();
+				} );
+			}
+		};
+
+		postIds.forEach( ( postId ) => {
+			var ajaxOptions = {
+				data: {
+					post_id: Number( postId ),
+					tags: Object.keys( cacheRequests[ postId ] ),
+				},
+				success: ( data ) => {
+					this.cache = {
+						...this.cache,
+						...data,
+					};
+
+					onRequestComplete();
+				},
+			};
+
+			if ( disableCache ) {
+				ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
+			}
+
+			elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
+		} );
 	},
 
 	refreshCacheFromServer( callback, options ) {
