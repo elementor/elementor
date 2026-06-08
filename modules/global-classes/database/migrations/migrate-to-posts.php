@@ -89,7 +89,7 @@ class Migrate_To_Posts extends Base_Migration {
 			return;
 		}
 
-		$valid_class_ids = Global_Classes_Order::make( $kit )->get_order();
+		$valid_class_ids = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
 		if ( empty( $valid_class_ids ) ) {
 			return;

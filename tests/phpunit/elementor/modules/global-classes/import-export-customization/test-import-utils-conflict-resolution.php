@@ -270,4 +270,25 @@ class Test_Import_Utils_Conflict_Resolution extends Elementor_Test_Base {
 		$this->assertEmpty( $result['renamed'] );
 		$this->assertEmpty( $result['failed'] );
 	}
+
+	public function test_skip__syncs_preview_order_after_import_when_preview_order_is_empty() {
+		// Arrange - simulate cleanup that clears preview order without frontend fallback
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		Global_Classes_Order::make( $kit )->set_order( [] );
+		Global_Classes_Order::make( $kit )->set_preview( true )->set_order( [] );
+
+		// Act
+		Import_Utils::import_classes( $this->mock_dir, [ 'conflict_resolution' => 'skip' ] );
+
+		// Assert
+		$frontend_order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
+		$preview_order = Global_Classes_Order::make( $kit )->set_preview( true )->get_order();
+
+		$this->assertNotEmpty( $frontend_order );
+		$this->assertEquals( $frontend_order, $preview_order );
+
+		$preview_labels = Global_Classes_Repository::make( $kit )->set_preview( true )->all_labels();
+		$this->assertContains( 'Test1', array_values( $preview_labels ) );
+		$this->assertContains( 'Test2', array_values( $preview_labels ) );
+	}
 }

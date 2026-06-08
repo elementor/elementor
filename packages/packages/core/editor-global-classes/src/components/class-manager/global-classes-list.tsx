@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
+import { loadExistingClasses } from '../../load-existing-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 import { useSearchAndFilters } from '../search-and-filter/context';
@@ -20,6 +21,8 @@ import { SortableItem, SortableProvider } from './sortable';
 
 const ROW_HEIGHT = 40;
 const OVERSCAN = 6;
+
+type LoadingClassesMap = Record< StyleDefinitionID, boolean >;
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
@@ -41,6 +44,17 @@ export const GlobalClassesList = ( {
 	const dispatch = useDispatch();
 	const filters = useFilters();
 	const [ draggedItemId, setDraggedItemId ] = useState< StyleDefinitionID | null >( null );
+	const [ loading, setLoading ] = useState< LoadingClassesMap >( {} );
+
+	const addLoadingClass = ( classId: StyleDefinitionID ) =>
+		setLoading( ( prev ) => ( { ...prev, [ classId ]: true } ) );
+
+	const removeLoadingClass = ( classId: StyleDefinitionID ) =>
+		setLoading( ( prev ) => {
+			const { [ classId ]: _, ...rest } = prev;
+			return rest;
+		} );
+
 	const draggedItemLabel = cssClasses.find( ( cssClass ) => cssClass.id === draggedItemId )?.label ?? '';
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
@@ -133,25 +147,34 @@ export const GlobalClassesList = ( {
 									<ClassItem
 										id={ cssClass.id }
 										label={ cssClass.label }
-										renameClass={ ( newLabel: string ) => {
-											trackGlobalClasses( {
-												event: 'classRenamed',
-												classId: cssClass.id,
-												oldValue: cssClass.label,
-												newValue: newLabel,
-												source: 'class-manager',
-											} );
-											dispatch(
-												slice.actions.update( {
-													style: {
-														id: cssClass.id,
-														label: newLabel,
-													},
-												} )
-											);
+										renameClass={ async ( newLabel: string ) => {
+											addLoadingClass( cssClass.id );
+
+											try {
+												trackGlobalClasses( {
+													event: 'classRenamed',
+													classId: cssClass.id,
+													oldValue: cssClass.label,
+													newValue: newLabel,
+													source: 'class-manager',
+												} );
+
+												void ( await loadExistingClasses( [ cssClass.id ] ) );
+
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id: cssClass.id,
+															label: newLabel,
+														},
+													} )
+												);
+											} finally {
+												removeLoadingClass( cssClass.id );
+											}
 										} }
 										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
+										disabled={ disabled || isDragPlaceholder || loading[ cssClass.id ] }
 										sortableTriggerProps={ {
 											...triggerProps,
 											style: triggerStyle,
