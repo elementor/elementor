@@ -41,6 +41,7 @@ describe( 'FloatingPanelHeader', () => {
 		__dispatch(
 			slice.actions.register( {
 				id: PANEL_ID,
+				isDraggable: true,
 				defaults: {
 					width: 320,
 					height: 480,
@@ -128,5 +129,33 @@ describe( 'FloatingPanelHeader', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Run action' } ) );
 
 		expect( onClick ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'renders drag handle when isDraggable is true', () => {
+		renderHeader();
+
+		expect( screen.getByTestId( 'drag-handle' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not render drag handle when isDraggable is false', () => {
+		__deleteStore();
+		__registerSlice( slice );
+		__createStore();
+		__dispatch(
+			slice.actions.register( {
+				id: PANEL_ID,
+				isDraggable: false,
+				defaults: {
+					width: 320,
+					height: 480,
+					minWidth: 240,
+					minHeight: 320,
+				},
+			} )
+		);
+
+		renderHeader();
+
+		expect( screen.queryByTestId( 'drag-handle' ) ).not.toBeInTheDocument();
 	} );
 } );

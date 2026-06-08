@@ -5,7 +5,7 @@ import { Box, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFloatingPanelActions } from '../../hooks/use-floating-panel-actions';
-import { type GlobalState, selectPanelState } from '../../store/selectors';
+import { type GlobalState, selectIsDraggable, selectPanelState } from '../../store/selectors';
 import { type FloatingPanelHeaderAction } from '../../types';
 import DragHandle from '../internal/drag-handle';
 
@@ -54,7 +54,17 @@ function HeaderAction( {
 
 export default function FloatingPanelHeader( { panelId, title, icon: Icon, actions }: Props ) {
 	const { close } = useFloatingPanelActions( panelId );
+	const isDraggable = useSelector( ( state: GlobalState ) => selectIsDraggable( state, panelId ) );
 	const hasActions = Boolean( actions?.length );
+
+	const titleContent = (
+		<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' } }>
+			{ Icon ? <Icon /> : null }
+			<Typography component="h2" sx={ { textAlign: 'center', fontSize: '13px', fontWeight: 400 } }>
+				{ title }
+			</Typography>
+		</Box>
+	);
 
 	return (
 		<Box
@@ -73,14 +83,11 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 					) ) }
 				</Stack>
 			) : null }
-			<DragHandle panelId={ panelId }>
-				<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' } }>
-					{ Icon ? <Icon /> : null }
-					<Typography component="h2" sx={ { textAlign: 'center', fontSize: '13px', fontWeight: 400 } }>
-						{ title }
-					</Typography>
-				</Box>
-			</DragHandle>
+			{ isDraggable ? (
+				<DragHandle panelId={ panelId }>{ titleContent }</DragHandle>
+			) : (
+				<Box sx={ { flex: 1 } }>{ titleContent }</Box>
+			) }
 			<IconButton
 				size="small"
 				color="inherit"

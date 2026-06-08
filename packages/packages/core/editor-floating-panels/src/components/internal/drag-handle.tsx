@@ -13,6 +13,7 @@ export default function DragHandle( { panelId, children }: Props ) {
 
 	return (
 		<Box
+			data-testid="drag-handle"
 			onPointerDown={ onPointerDown }
 			onPointerMove={ onPointerMove }
 			onPointerUp={ onPointerUp }
