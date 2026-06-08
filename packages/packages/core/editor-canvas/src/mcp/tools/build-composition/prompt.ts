@@ -1,6 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
 import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 
 export const BUILD_COMPOSITIONS_GUIDE_URI = 'elementor://canvas/tools/build-compositions-guide';
 
@@ -39,6 +40,13 @@ Some elements have internal tree structures (nesting). When using these elements
 - All PropValues require \`$$type\` matching schema
 - NO LINKS in configuration
 - Retry on errors up to 10x
+
+# DYNAMIC TAGS
+- A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).
+- Put the dynamic object EXACTLY at that node, in place of the static variant. The variant's \`name\` lists the allowed tags; read [${ DYNAMIC_TAGS_URI }] for each tag's settings schema.
+- Provide at that node: \`{ "$$type": "dynamic", "value": { "name": "<allowed tag>", "settings": { ... } } }\`
+- Example (image): \`{ "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }\`
+- Do NOT send \`group\` (it is resolved automatically). Populate \`settings\` strictly per the tag's schema; use \`{}\` only when it has none.
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 

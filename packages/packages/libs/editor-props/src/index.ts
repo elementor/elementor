@@ -7,6 +7,7 @@ import {
 	nonConfigurablePropKeys,
 	propTypeToJsonSchema,
 	removeIntention,
+	setDynamicTagNamesResolver,
 } from './utils/props-to-llm-schema';
 import { validatePropValue } from './utils/validate-prop-value';
 
@@ -44,4 +45,5 @@ export const Schema = {
 	validatePropValue,
 	enrichWithIntention,
 	removeIntention,
+	setDynamicTagNamesResolver,
 };
