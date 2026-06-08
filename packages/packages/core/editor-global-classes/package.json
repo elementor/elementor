@@ -42,6 +42,7 @@
     "@elementor/editor": "4.2.0",
     "@elementor/editor-current-user": "4.2.0",
     "@elementor/editor-documents": "4.2.0",
+    "@elementor/editor-related-posts-manager": "4.2.0",
     "@elementor/editor-editing-panel": "4.2.0",
     "@elementor/editor-mcp": "4.2.0",
     "@elementor/editor-panels": "4.2.0",

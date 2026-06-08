@@ -1,17 +1,32 @@
-import { isDocumentDirty, setDocumentModifiedStatus } from '@elementor/editor-documents';
+import {
+	type Document,
+	getV1CurrentDocument,
+	isDocumentDirty,
+	setDocumentModifiedStatus,
+} from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
+import { announcePost } from '@elementor/editor-related-posts-manager';
 
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsOverridableProps } from './load-components-overridable-props';
-import { loadComponentsStyles } from './load-components-styles';
+
+export async function loadComponentsFromDocument( data: Document ) {
+	return loadComponentsAssets( ( data.elements as V1ElementData[] ) ?? [] );
+}
 
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const documents = await getComponentDocuments( elements );
 
 	updateDocumentState( documents );
-	loadComponentsStyles( documents );
+	registerComponentDocuments( documents );
 
 	await loadComponentsOverridableProps( [ ...documents.keys() ] );
+}
+
+function registerComponentDocuments( documents: ComponentDocumentsMap ) {
+	for ( const [ id, document ] of documents ) {
+		announcePost( id, document );
+	}
 }
 
 function updateDocumentState( documents: ComponentDocumentsMap ) {
