@@ -134,7 +134,7 @@ describe( 'FloatingPanelHeader', () => {
 	it( 'renders drag handle when isDraggable is true', () => {
 		renderHeader();
 
-		expect( screen.getByTestId( 'drag-handle' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'toolbar', { name: /drag to reposition/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'does not render drag handle when isDraggable is false', () => {
@@ -156,6 +156,6 @@ describe( 'FloatingPanelHeader', () => {
 
 		renderHeader();
 
-		expect( screen.queryByTestId( 'drag-handle' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'toolbar', { name: /drag to reposition/i } ) ).not.toBeInTheDocument();
 	} );
 } );
