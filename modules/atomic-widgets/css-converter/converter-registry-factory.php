@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -39,27 +41,44 @@ class Converter_Registry_Factory {
 		'outline-offset',
 		'opacity',
 		'gap',
+		'grid-auto-rows',
+		'grid-auto-columns',
 	];
 
 	/**
-	 * Hardcoded Style_Schema properties with no real converter yet (colors, numbers, objects, unions,
-	 * shorthands). They still get a Noop_Converter so they keep routing to custom_css. Combined with the
-	 * real-converter families via covered_properties() to form the exhaustive covered set. Intentionally
-	 * NOT derived from Style_Schema: a coverage test diffs the live schema against the covered set so
-	 * adding a schema property without coverage fails CI until it is added here.
+	 * Every Style_Schema property backed by a Number_Prop_Type. Handled uniformly by
+	 * Number_Property_Converter (strict numeric, no units/functions).
+	 */
+	const NUMBER_PROPERTIES = [
+		'z-index',
+		'column-count',
+		'order',
+	];
+
+	/**
+	 * Every Style_Schema property backed by a plain Color_Prop_Type. Handled uniformly by
+	 * Color_Property_Converter (raw passthrough; any non-empty value is a valid color).
+	 */
+	const COLOR_PROPERTIES = [
+		'color',
+		'border-color',
+		'outline-color',
+	];
+
+	/**
+	 * Hardcoded Style_Schema properties with no real converter yet (objects, unions, shorthands). They
+	 * still get a Noop_Converter so they keep routing to custom_css. Combined with the real-converter
+	 * families via covered_properties() to form the exhaustive covered set. Intentionally NOT derived
+	 * from Style_Schema: a coverage test diffs the live schema against the covered set so adding a schema
+	 * property without coverage fails CI until it is added here.
 	 */
 	const NOOP_PROPERTIES = [
 		'object-position',
-		'z-index',
-		'color',
-		'column-count',
 		'stroke',
 		'padding',
 		'margin',
 		'border-radius',
 		'border-width',
-		'border-color',
-		'outline-color',
 		'background',
 		'box-shadow',
 		'filter',
@@ -69,11 +88,8 @@ class Converter_Registry_Factory {
 		'flex',
 		'grid-template-columns',
 		'grid-template-rows',
-		'grid-auto-rows',
-		'grid-auto-columns',
 		'grid-column',
 		'grid-row',
-		'order',
 	];
 
 	/**
@@ -119,7 +135,13 @@ class Converter_Registry_Factory {
 	 * @return string[]
 	 */
 	public static function covered_properties(): array {
-		return array_merge( self::STRING_PROPERTIES, self::SIZE_PROPERTIES, self::NOOP_PROPERTIES );
+		return array_merge(
+			self::STRING_PROPERTIES,
+			self::SIZE_PROPERTIES,
+			self::NUMBER_PROPERTIES,
+			self::COLOR_PROPERTIES,
+			self::NOOP_PROPERTIES
+		);
 	}
 
 	public static function create(): Converter_Registry {
@@ -159,6 +181,14 @@ class Converter_Registry_Factory {
 
 		foreach ( self::SIZE_PROPERTIES as $property ) {
 			$converters[ $property ] = new Size_Property_Converter( $property );
+		}
+
+		foreach ( self::NUMBER_PROPERTIES as $property ) {
+			$converters[ $property ] = new Number_Property_Converter( $property );
+		}
+
+		foreach ( self::COLOR_PROPERTIES as $property ) {
+			$converters[ $property ] = new Color_Property_Converter( $property );
 		}
 
 		return $converters;

@@ -38,7 +38,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'red', 'z-index' => '5' ] ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'padding' => '10px', 'margin' => '5px' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -47,7 +47,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
-		$this->assertSame( 'color: red; z-index: 5;', $data['el-1']['customCss'] );
+		$this->assertSame( 'padding: 10px; margin: 5px;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__returns_one_named_result_per_input_block() {
@@ -56,7 +56,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
-			'el-1' => [ 'color' => 'red' ],
+			'el-1' => [ 'margin' => '8px' ],
 			'el-2' => [ 'padding' => '4px' ],
 		] );
 
@@ -67,7 +67,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
-		$this->assertSame( 'color: red;', $data['el-1']['customCss'] );
+		$this->assertSame( 'margin: 8px;', $data['el-1']['customCss'] );
 		$this->assertSame( 'padding: 4px;', $data['el-2']['customCss'] );
 	}
 
@@ -176,6 +176,83 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'width: banana;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_grid_auto_track_fraction_into_a_size_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'grid-auto-rows' => '1fr' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'grid-auto-rows' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'fr' ] ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_number_prop_into_a_canonical_prop_value() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'z-index' => '5' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [ 'z-index' => [ '$$type' => 'number', 'value' => 5 ] ], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__routes_non_numeric_number_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'z-index' => 'calc(1 + 1)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'z-index: calc(1 + 1);', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_color_prop_including_named_colors_as_raw_passthrough() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'whitesmoke', 'border-color' => '#2d2a26' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'color' => [ '$$type' => 'color', 'value' => 'whitesmoke' ],
+				'border-color' => [ '$$type' => 'color', 'value' => '#2d2a26' ],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__null_value_is_emitted_as_a_null_reset_prop() {
 		// Arrange.
 		$this->act_as_admin();
@@ -202,7 +279,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			'el-1' => [
 				'font-weight' => '700',
 				'color' => null,
-				'z-index' => '5',
+				'padding' => '10px',
 			],
 		] );
 
@@ -219,7 +296,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']
 		);
-		$this->assertSame( 'z-index: 5;', $data['el-1']['customCss'] );
+		$this->assertSame( 'padding: 10px;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__requires_authentication() {
