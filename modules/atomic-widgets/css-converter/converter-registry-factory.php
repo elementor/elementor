@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
@@ -12,49 +13,59 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Converter_Registry_Factory {
 	/**
-	 * Hardcoded Style_Schema properties that are NOT plain strings (sizes, colors, objects, unions).
-	 * Combined with STRING_PROPERTIES via covered_properties() to form the exhaustive covered set.
-	 * Intentionally NOT derived from Style_Schema: a coverage test diffs the live schema against the
-	 * covered set so adding a schema property without coverage fails CI until it is added here.
+	 * Every Style_Schema property whose value is a single Size leaf (the schema prop is a Size_Prop_Type,
+	 * or a Union with a Size member like `gap` — a size PropValue validates against the union). All are
+	 * handled uniformly by Size_Property_Converter + Size_Value_Parser; per-property unit sets are not
+	 * enforced here because Size_Prop_Type::validate accepts any all_supported_units() unit.
 	 */
-	const NON_STRING_PROPERTIES = [
+	const SIZE_PROPERTIES = [
 		'width',
 		'height',
 		'min-width',
 		'min-height',
 		'max-width',
 		'max-height',
-		'object-position',
 		'inset-block-start',
 		'inset-inline-end',
 		'inset-block-end',
 		'inset-inline-start',
-		'z-index',
 		'scroll-margin-top',
 		'font-size',
-		'color',
 		'letter-spacing',
 		'word-spacing',
-		'column-count',
 		'column-gap',
 		'line-height',
+		'outline-width',
+		'outline-offset',
+		'opacity',
+		'gap',
+	];
+
+	/**
+	 * Hardcoded Style_Schema properties with no real converter yet (colors, numbers, objects, unions,
+	 * shorthands). They still get a Noop_Converter so they keep routing to custom_css. Combined with the
+	 * real-converter families via covered_properties() to form the exhaustive covered set. Intentionally
+	 * NOT derived from Style_Schema: a coverage test diffs the live schema against the covered set so
+	 * adding a schema property without coverage fails CI until it is added here.
+	 */
+	const NOOP_PROPERTIES = [
+		'object-position',
+		'z-index',
+		'color',
+		'column-count',
 		'stroke',
 		'padding',
 		'margin',
 		'border-radius',
 		'border-width',
 		'border-color',
-		'outline-width',
 		'outline-color',
-		'outline-offset',
 		'background',
 		'box-shadow',
-		'opacity',
 		'filter',
 		'backdrop-filter',
 		'transform',
 		'transition',
-		'gap',
 		'flex',
 		'grid-template-columns',
 		'grid-template-rows',
@@ -102,13 +113,13 @@ class Converter_Registry_Factory {
 	];
 
 	/**
-	 * The exhaustive covered set: string props plus every non-string prop. Single source of truth
-	 * for the coverage test, with no property listed twice.
+	 * The exhaustive covered set: every family with a real converter plus the remaining no-ops. Single
+	 * source of truth for the coverage test, with no property listed twice.
 	 *
 	 * @return string[]
 	 */
 	public static function covered_properties(): array {
-		return array_merge( self::STRING_PROPERTIES, self::NON_STRING_PROPERTIES );
+		return array_merge( self::STRING_PROPERTIES, self::SIZE_PROPERTIES, self::NOOP_PROPERTIES );
 	}
 
 	public static function create(): Converter_Registry {
@@ -144,6 +155,10 @@ class Converter_Registry_Factory {
 
 		foreach ( self::STRING_PROPERTIES as $property ) {
 			$converters[ $property ] = new String_Property_Converter( $property, $schema[ $property ]->get_enum() );
+		}
+
+		foreach ( self::SIZE_PROPERTIES as $property ) {
+			$converters[ $property ] = new Size_Property_Converter( $property );
 		}
 
 		return $converters;

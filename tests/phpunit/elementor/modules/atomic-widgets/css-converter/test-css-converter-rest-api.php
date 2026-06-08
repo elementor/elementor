@@ -57,7 +57,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
 			'el-1' => [ 'color' => 'red' ],
-			'el-2' => [ 'gap' => '4px' ],
+			'el-2' => [ 'padding' => '4px' ],
 		] );
 
 		// Act.
@@ -68,7 +68,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
 		$this->assertSame( 'color: red;', $data['el-1']['customCss'] );
-		$this->assertSame( 'gap: 4px;', $data['el-2']['customCss'] );
+		$this->assertSame( 'padding: 4px;', $data['el-2']['customCss'] );
 	}
 
 	public function test_post__converts_font_weight_into_a_canonical_prop_value() {
@@ -137,6 +137,43 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [ 'aspect-ratio' => [ '$$type' => 'string', 'value' => '16 / 9' ] ], $data['el-1']['props'] );
 		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_size_prop_into_a_canonical_prop_value() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'width' => '10px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'width' => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__routes_unrepresentable_size_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'width' => 'banana' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'width: banana;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__null_value_is_emitted_as_a_null_reset_prop() {

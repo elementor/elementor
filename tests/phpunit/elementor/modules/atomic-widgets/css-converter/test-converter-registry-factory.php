@@ -44,15 +44,15 @@ class Test_Converter_Registry_Factory extends TestCase {
 		$this->assertSame( array_values( array_unique( $properties ) ), $properties );
 	}
 
-	public function test_noop_registry__routes_every_declaration_to_custom_css() {
+	public function test_noop_property__routes_its_declaration_to_custom_css() {
 		// Arrange.
 		$converter = new Css_Converter( Converter_Registry_Factory::create(), new Null_Failure_Reporter() );
 
 		// Act.
-		$result = $converter->convert( 'color: red; width: 10px;' );
+		$result = $converter->convert( 'color: red; padding: 10px;' );
 
 		// Assert.
 		$this->assertSame( [], $result['props'] );
-		$this->assertSame( 'color: red; width: 10px;', $result['customCss'] );
+		$this->assertSame( 'color: red; padding: 10px;', $result['customCss'] );
 	}
 }
