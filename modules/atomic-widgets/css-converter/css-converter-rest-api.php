@@ -23,7 +23,7 @@ class Css_Converter_REST_API {
 			[
 				'methods' => 'POST',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->convert( $request ) ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
 					'blocks' => [
 						'type' => 'object',
