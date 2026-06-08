@@ -24,7 +24,7 @@ import { LoadTemplateComponents } from './components/load-template-components';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
-import { loadComponentsFromDocument } from './store/actions/load-components-assets';
+import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
@@ -63,14 +63,11 @@ export function init() {
 			removeComponentStyles( id );
 		}
 
-		loadComponentsFromDocument( {
-			id,
-			elements: ( config?.elements as V1ElementData[] ) ?? [],
-		} as Document );
+		void loadComponentsAssets( config?.elements as V1ElementData[] ?? [] );
 	} );
 
 	onRelatedPostLoad( ( _postId, data ) => {
-		void loadComponentsFromDocument( data );
+		void loadComponentsAssets( data.elements ?? [] );
 	} );
 
 	injectIntoLogic( {

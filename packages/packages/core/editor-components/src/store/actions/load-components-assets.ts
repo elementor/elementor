@@ -5,10 +5,6 @@ import { announcePost } from '@elementor/editor-related-posts-manager';
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsOverridableProps } from './load-components-overridable-props';
 
-export async function loadComponentsFromDocument( data: Document ) {
-	return loadComponentsAssets( ( data.elements as V1ElementData[] ) ?? [] );
-}
-
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const documents = await getComponentDocuments( elements );
 
