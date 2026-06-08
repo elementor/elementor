@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Conve
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
@@ -66,6 +67,15 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Every Style_Schema property backed by a Span_Prop_Type (grid placement). Handled uniformly by
+	 * Span_Property_Converter, with the validation regex sourced from the live schema.
+	 */
+	const SPAN_PROPERTIES = [
+		'grid-column',
+		'grid-row',
+	];
+
+	/**
 	 * Hardcoded Style_Schema properties with no real converter yet (objects, unions, shorthands). They
 	 * still get a Noop_Converter so they keep routing to custom_css. Combined with the real-converter
 	 * families via covered_properties() to form the exhaustive covered set. Intentionally NOT derived
@@ -88,8 +98,6 @@ class Converter_Registry_Factory {
 		'flex',
 		'grid-template-columns',
 		'grid-template-rows',
-		'grid-column',
-		'grid-row',
 	];
 
 	/**
@@ -140,6 +148,7 @@ class Converter_Registry_Factory {
 			self::SIZE_PROPERTIES,
 			self::NUMBER_PROPERTIES,
 			self::COLOR_PROPERTIES,
+			self::SPAN_PROPERTIES,
 			self::NOOP_PROPERTIES
 		);
 	}
@@ -189,6 +198,10 @@ class Converter_Registry_Factory {
 
 		foreach ( self::COLOR_PROPERTIES as $property ) {
 			$converters[ $property ] = new Color_Property_Converter( $property );
+		}
+
+		foreach ( self::SPAN_PROPERTIES as $property ) {
+			$converters[ $property ] = new Span_Property_Converter( $property, $schema[ $property ]->get_regex() );
 		}
 
 		return $converters;

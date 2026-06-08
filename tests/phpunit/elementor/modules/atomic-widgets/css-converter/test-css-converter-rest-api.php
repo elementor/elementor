@@ -176,6 +176,23 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'width: banana;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_grid_span_into_a_canonical_prop_value() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'grid-column' => 'span 2' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [ 'grid-column' => [ '$$type' => 'span', 'value' => 'span 2' ] ], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_grid_auto_track_fraction_into_a_size_prop() {
 		// Arrange.
 		$this->act_as_admin();
