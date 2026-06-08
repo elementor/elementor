@@ -12,6 +12,7 @@ import { CompositionBuilder } from '../../../composition-builder/composition-bui
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { BEST_PRACTICES_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertStyleBlocksToAtomic } from '../../utils/convert-css-to-atomic';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
@@ -45,6 +46,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 		],
 		outputSchema,
 		handler: async ( rawParams ) => {

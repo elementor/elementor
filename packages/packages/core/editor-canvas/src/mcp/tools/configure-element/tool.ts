@@ -3,6 +3,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
@@ -32,6 +33,7 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 		requiredResources: [
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Configure element guide', uri: CONFIGURE_ELEMENT_GUIDE_URI },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 		],
 		handler: async ( { elementId, propertiesToChange, elementType, style } ) => {
 			const widgetData = getWidgetsCache()?.[ elementType ];

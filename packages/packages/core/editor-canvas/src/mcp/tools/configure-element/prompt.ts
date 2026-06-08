@@ -1,6 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
@@ -53,6 +54,21 @@ For styling, use the "style" parameter with raw CSS declarations (property → v
 For all non-primitive property types, provide the key property as defined in the schema as $$type in the generated object, as it is MANDATORY for parsing.
 
 Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property from the original configuration for every property you are changing.
+
+# Dynamic tags
+A value can be made dynamic wherever its schema exposes a variant with "$$type": "dynamic". This may be the property root OR a NESTED field: for example an image is made dynamic on its "src" (the root stays "image"), NOT on the whole "image" value.
+Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" variant, in place of the static variant. The variant's "name" enumerates the tags allowed at that node.
+1. Read the [${ DYNAMIC_TAGS_URI }] resource for each allowed tag's settings schema.
+2. Provide, at that node:
+{
+  "$$type": "dynamic",
+  "value": {
+    "name": "<allowed tag name>",
+    "settings": { /* strictly per the tag's settings schema */ }
+  }
+}
+Image example: { "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }
+Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only when the tag has no settings.
 ` );
 
 	configureElementToolPrompt.parameter( 'elementId', 'The ID of the element to configure. MANDATORY.' );
