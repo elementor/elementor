@@ -1,16 +1,6 @@
 # Editor Floating Panels
 
-> [!WARNING]
-> This package is under development and not ready for production use.
-
-A generic floating React panel framework for the Elementor editor. It provides
-the primitives used by feature packages (for example, the editor audit feature)
-to render panels that float over the canvas and can be dragged freely within the
-viewport, independent of any specific feature concern.
-
-See the design spec at
-[`docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md`](../../../../docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md)
-for the motivation, requirements, and intended consumers.
+A generic floating panel framework for the Elementor editor. It provides the primitives used by feature packages to render panels that float over the canvas and can be dragged freely within the viewport, independent of any specific feature concern.
 
 ## Usage
 
@@ -27,6 +17,7 @@ const myPanel = createFloatingPanel( {
 	title: 'My Panel',
 	icon: MyIcon,
 	component: MyPanelComponent,
+	isDraggable: true,
 	defaults: {
 		width: 320,
 		height: 480,
@@ -47,6 +38,12 @@ function MyPanelComponent() {
 }
 ```
 
+### `isDraggable`
+
+When `isDraggable` is `true`, the panel header acts as a drag handle — the user can reposition the panel freely. When `false` (the default), the header renders without drag interaction and the panel stays at its `initialPosition`.
+
+Programmatic positioning via `setPosition` from `useFloatingPanelActions` works regardless of `isDraggable`.
+
 Call `init()` once during editor bootstrap to register the slice, sync persisted state, and mount the host into the editor's top location.
 
 ## Persistence
@@ -55,6 +52,3 @@ Panel state (open/closed, position, size, z-index) is persisted via a
 `PanelStateStorage` adapter. The default implementation uses `localStorage`, so
 state survives reloads on the same browser. Pass a custom adapter to `sync()`
 to swap in a server-side store.
-
-See `docs/superpowers/specs/2026-05-28-editor-audit-panel-design.md` §6 for the
-design.

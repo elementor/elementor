@@ -13,6 +13,7 @@ export const auditPanel = createFloatingPanel( {
 	title: 'Audit',
 	icon: () => null,
 	component: AuditPanel,
+	isDraggable: true,
 	defaults: {
 		width: DEFAULT_WIDTH,
 		height: DEFAULT_HEIGHT,
