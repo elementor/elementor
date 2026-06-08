@@ -1,7 +1,25 @@
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
-export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
+const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
+const OVERRIDABLE_PROP_TYPE_KEY = 'overridable';
+
+type DynamicTagNamesResolver = ( categories: string[] ) => string[];
+
+// Host (editor-canvas) injects a resolver that maps a prop's accepted categories to the names of the
+// dynamic tags allowed for it. Keeping it injectable preserves this lib's purity: without a host the
+// `name` field stays an open string instead of an enum.
+let dynamicTagNamesResolver: DynamicTagNamesResolver | null = null;
+
+export function setDynamicTagNamesResolver( resolver: DynamicTagNamesResolver | null ): void {
+	dynamicTagNamesResolver = resolver;
+}
+
+// A dynamic value replaces the value of the exact node it is attached to, which may be a nested
+// field (e.g. an image's `src`) rather than the property root. It is advertised once per branch, at
+// the outermost prop type that supports it, and suppressed for descendants of that node to avoid
+// offering the same dynamic option twice on a single branch.
+export function propTypeToJsonSchema( propType: PropType, suppressDynamic: boolean = false ): JsonSchema7 {
 	const description = propType.meta?.description;
 
 	const schema: JsonSchema7 = {};
@@ -18,11 +36,11 @@ export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 	// Handle different kinds of prop types
 	switch ( propType.kind ) {
 		case 'union':
-			return convertUnionPropType( propType, schema );
+			return convertUnionPropType( propType, schema, suppressDynamic );
 		case 'object':
-			return convertObjectPropType( propType, schema );
+			return convertObjectPropType( propType, schema, suppressDynamic );
 		case 'array':
-			return convertArrayPropType( propType, schema );
+			return convertArrayPropType( propType, schema, suppressDynamic );
 		default:
 			return convertPlainPropType( propType, schema );
 	}
@@ -73,24 +91,36 @@ function convertPlainPropType(
 }
 
 /**
- * Converts a union prop type to JSON Schema ( электричество anyOf)
+ * Converts a union prop type to JSON Schema (anyOf).
  *
- * @param propType   The union prop type to convert
- * @param baseSchema Base schema to extend
+ * @param propType        The union prop type to convert
+ * @param baseSchema      Base schema to extend
+ * @param suppressDynamic When true, an ancestor already offered the dynamic option for this branch
  */
-function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchema: JsonSchema7 ): JsonSchema7 {
+function convertUnionPropType(
+	propType: PropType & { kind: 'union' },
+	baseSchema: JsonSchema7,
+	suppressDynamic: boolean
+): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
 	const propTypes = propType.prop_types || {};
+	const offersDynamic = ! suppressDynamic && Boolean( propTypes[ DYNAMIC_PROP_TYPE_KEY ] );
+	const suppressNestedDynamic = suppressDynamic || offersDynamic;
 	const schemas: JsonSchema7[] = [];
 
 	// Convert each prop type in the union
 	for ( const [ typeKey, subPropType ] of Object.entries( propTypes ) ) {
-		if ( typeKey === 'dynamic' || typeKey === 'overridable' ) {
+		if ( typeKey === OVERRIDABLE_PROP_TYPE_KEY ) {
 			continue;
 		}
-		const subSchema = convertPropTypeToJsonSchema( subPropType );
-		schemas.push( subSchema );
+		if ( typeKey === DYNAMIC_PROP_TYPE_KEY ) {
+			if ( offersDynamic ) {
+				schemas.push( convertDynamicPropType( subPropType ) );
+			}
+			continue;
+		}
+		schemas.push( propTypeToJsonSchema( subPropType, suppressNestedDynamic ) );
 	}
 
 	if ( schemas.length > 0 ) {
@@ -104,7 +134,50 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 	return schema;
 }
 
-function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSchema: JsonSchema7 ): JsonSchema7 {
+// Emits a compact representation of the `dynamic` union member. It is offered as one option of THIS
+// node's value (e.g. a property root, or a nested field such as an image's `src`): put the dynamic
+// object exactly here, in place of the sibling static variant. Only `name` is required from the LLM
+// (constrained to the tags allowed here); `group` is filled by the host resolver, and `settings` are
+// described per-tag in the dynamic-tags resource, so the full tag catalog is never inlined.
+function convertDynamicPropType( propType: PropType ): JsonSchema7 {
+	const categories = Array.isArray( propType.settings?.categories )
+		? ( propType.settings.categories as string[] )
+		: [];
+	const allowedTagNames = dynamicTagNamesResolver?.( categories ) ?? [];
+
+	return {
+		type: 'object',
+		description:
+			'Bind THIS value to a dynamic tag instead of a static value (this may be a nested field, ' +
+			'e.g. an image\'s "src"). Look up the chosen tag in the "elementor://dynamic-tags" resource ' +
+			'and populate "settings" exactly as its schema requires.',
+		properties: {
+			$$type: { type: 'string', const: DYNAMIC_PROP_TYPE_KEY },
+			value: {
+				type: 'object',
+				properties: {
+					name: {
+						type: 'string',
+						description: 'Dynamic tag name from "elementor://dynamic-tags".',
+						...( allowedTagNames.length ? { enum: allowedTagNames } : {} ),
+					},
+					settings: {
+						type: 'object',
+						description: "Tag settings matching the chosen tag's schema in the resource.",
+					},
+				},
+				required: [ 'name' ],
+			},
+		},
+		required: [ '$$type', 'value' ],
+	};
+}
+
+function convertObjectPropType(
+	propType: PropType & { kind: 'object' },
+	baseSchema: JsonSchema7,
+	suppressDynamic: boolean
+): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
 	schema.type = 'object';
@@ -134,7 +207,7 @@ function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSch
 
 	// Convert each property in the object shape
 	for ( const [ key, subPropType ] of Object.entries( shape ) ) {
-		const propSchema = propTypeToJsonSchema( subPropType );
+		const propSchema = propTypeToJsonSchema( subPropType, suppressDynamic );
 
 		// Check if this property is required
 		if ( subPropType.settings?.required === true ) {
@@ -157,7 +230,11 @@ function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSch
 	};
 }
 
-function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchema: JsonSchema7 ): JsonSchema7 {
+function convertArrayPropType(
+	propType: PropType & { kind: 'array' },
+	baseSchema: JsonSchema7,
+	suppressDynamic: boolean
+): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
 	schema.type = 'object';
@@ -166,7 +243,7 @@ function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchem
 	const itemPropType = propType.item_prop_type;
 
 	if ( itemPropType ) {
-		items = convertPropTypeToJsonSchema( itemPropType );
+		items = propTypeToJsonSchema( itemPropType, suppressDynamic );
 	}
 
 	schema.properties = {
@@ -180,10 +257,6 @@ function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchem
 		} as JsonSchema7,
 	};
 	return schema;
-}
-
-function convertPropTypeToJsonSchema( propType: PropType ): JsonSchema7 {
-	return propTypeToJsonSchema( propType );
 }
 
 export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
