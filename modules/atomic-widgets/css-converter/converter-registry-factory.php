@@ -76,6 +76,18 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Union props whose string member accepts a raw value (e.g. Union(String | Grid_Track_Size)). A
+	 * free-string String_Property_Converter emits a `string` PropValue that validates against the union's
+	 * String member, covering `1fr 1fr`, `repeat(3, 1fr)`, `minmax(...)`, named lines, etc. The structured
+	 * member is intentionally not produced (raw passthrough, mirroring color). NOT wired via
+	 * STRING_PROPERTIES because the schema entry is a Union and has no get_enum().
+	 */
+	const STRING_PASSTHROUGH_PROPERTIES = [
+		'grid-template-columns',
+		'grid-template-rows',
+	];
+
+	/**
 	 * Hardcoded Style_Schema properties with no real converter yet (objects, unions, shorthands). They
 	 * still get a Noop_Converter so they keep routing to custom_css. Combined with the real-converter
 	 * families via covered_properties() to form the exhaustive covered set. Intentionally NOT derived
@@ -96,8 +108,6 @@ class Converter_Registry_Factory {
 		'transform',
 		'transition',
 		'flex',
-		'grid-template-columns',
-		'grid-template-rows',
 	];
 
 	/**
@@ -149,6 +159,7 @@ class Converter_Registry_Factory {
 			self::NUMBER_PROPERTIES,
 			self::COLOR_PROPERTIES,
 			self::SPAN_PROPERTIES,
+			self::STRING_PASSTHROUGH_PROPERTIES,
 			self::NOOP_PROPERTIES
 		);
 	}
@@ -202,6 +213,10 @@ class Converter_Registry_Factory {
 
 		foreach ( self::SPAN_PROPERTIES as $property ) {
 			$converters[ $property ] = new Span_Property_Converter( $property, $schema[ $property ]->get_regex() );
+		}
+
+		foreach ( self::STRING_PASSTHROUGH_PROPERTIES as $property ) {
+			$converters[ $property ] = new String_Property_Converter( $property );
 		}
 
 		return $converters;

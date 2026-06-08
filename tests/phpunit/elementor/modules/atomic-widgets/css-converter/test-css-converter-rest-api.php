@@ -193,6 +193,36 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_grid_template_as_string_passthrough() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'grid-template-columns' => 'repeat(3, 1fr)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'grid-template-columns' => [ '$$type' => 'string', 'value' => 'repeat(3, 1fr)' ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_grid_template_string_prop_value_validates_against_the_union_schema() {
+		// Arrange.
+		$schema = Style_Schema::get_style_schema();
+		$prop_value = [ '$$type' => 'string', 'value' => 'repeat(3, 1fr)' ];
+
+		// Act & Assert.
+		$this->assertTrue( $schema['grid-template-columns']->validate( $prop_value ) );
+		$this->assertTrue( $schema['grid-template-rows']->validate( $prop_value ) );
+	}
+
 	public function test_post__converts_grid_auto_track_fraction_into_a_size_prop() {
 		// Arrange.
 		$this->act_as_admin();
