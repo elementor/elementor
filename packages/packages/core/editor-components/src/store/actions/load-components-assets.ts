@@ -1,9 +1,4 @@
-import {
-	type Document,
-	getV1CurrentDocument,
-	isDocumentDirty,
-	setDocumentModifiedStatus,
-} from '@elementor/editor-documents';
+import { type Document, isDocumentDirty, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { announcePost } from '@elementor/editor-related-posts-manager';
 
