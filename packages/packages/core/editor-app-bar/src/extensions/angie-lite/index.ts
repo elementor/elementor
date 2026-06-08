@@ -31,9 +31,25 @@ function useActionProps() {
                 },
             },
             widgetConfig: {
+                // featuredMcpServer: "demo-help-center",
                 promptLibrary: { enabled: false },
                 fileUpload: { enabled: false },
                 modeSwitcher: { enabled: false, default: 'ask' },
+                // localServers: { skipLoading: true },
+                "title": "Ask Angie",
+                "subtitle": "Ask questions, learn how features work, and get help with Elementor.",
+                "suggestions": {
+                  "items": [
+                    {
+                      "label": "How to use Atomic tabs",
+                      "value": "How to use Atomic tabs?"
+                    },
+                    {
+                      "label": "How to create design system",
+                      "value": "How to style my site using v4 design system - global classes and variables?"
+                    }
+                  ]
+                },
             }
         } );
     }, [] );
