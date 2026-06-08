@@ -223,24 +223,24 @@ class Atomic_Global_Styles {
 			$cache_validity->validate( [
 				$this->get_cache_root_key( self::RELATED_KEY ),
 				$parent,
-				$context
+				$context,
 			], $children );
 		}
 
 		// Write the reverse map.
 		foreach ( $reverse as $child => $parents ) {
-			$existing_parents = $cache_validity->get_meta( [ 
-				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ), 
-				$child, 
-				$context
+			$existing_parents = $cache_validity->get_meta( [
+				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ),
+				$child,
+				$context,
 			] ) ?? [];
 
 			$merged = array_values( array_unique( array_merge( (array) $existing_parents, $parents ) ) );
 
-			$cache_validity->validate( [ 
-				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ), 
-				$child, 
-				$context 
+			$cache_validity->validate( [
+				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ),
+				$child,
+				$context,
 			], $merged );
 		}
 	}
@@ -257,7 +257,7 @@ class Atomic_Global_Styles {
 		$parents = $cache_validity->get_meta( [
 			$this->get_cache_root_key( self::RELATED_REVERSE_KEY ),
 			$child_post_id,
-			$context
+			$context,
 		] );
 
 		if ( ! is_array( $parents ) ) {
@@ -315,7 +315,7 @@ class Atomic_Global_Styles {
 	private function on_document_save( $document ): void {
 		$post_id = (int) $document->get_main_id();
 		$context = $this->get_context();
-		
+
 		// Invalidate the forward relation entry for this post so it is rebuilt
 		// on the next render.
 		$cache_validity = new Cache_Validity();
