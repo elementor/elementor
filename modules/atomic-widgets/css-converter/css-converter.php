@@ -31,7 +31,7 @@ class Css_Converter {
 
 		foreach ( $rules as $rule ) {
 			if ( ! $this->try_convert( $context, $rule ) ) {
-				$leftover[] = $this->render_rule( $rule );
+				$leftover[] = $rule['declaration'];
 			}
 		}
 
@@ -98,6 +98,7 @@ class Css_Converter {
 			$rules[] = [
 				'property' => $property,
 				'value' => $value,
+				'declaration' => $declaration,
 			];
 		}
 
@@ -118,12 +119,5 @@ class Css_Converter {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @param array{property: string, value: string} $rule
-	 */
-	private function render_rule( array $rule ): string {
-		return $rule['property'] . ': ' . $rule['value'] . ';';
 	}
 }
