@@ -415,8 +415,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$global_classes = new Atomic_Global_Styles( $relations );
 		$global_classes->register_hooks();
 
-		$parent_id = $this->factory()->documents->create_and_get()->get_main_id();
-		$child_id  = $this->factory()->documents->create_and_get()->get_main_id();
+		$parent_id = $this->factory()->post->create();
+		$child_id  = $this->factory()->post->create();
 		$context   = Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		// Parent uses g-4-124, child uses g-4-123.
@@ -583,16 +583,67 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// Populate the relation map.
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $parent_id, $child_id ] );
 
-		// Seed a valid parent cache entry.
-		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, $parent_id ] );
+		$context = Global_Classes_Repository::CONTEXT_FRONTEND;
+		$cache_path = [ Atomic_Global_Styles::STYLES_KEY, $parent_id, $context ];
+
+		// Seed a valid parent cache entry (must match the context used at registration time).
+		$cache_validity->validate( $cache_path );
 
 		// Act: the child document is saved.
 		do_action( 'elementor/document/after_save', $child_doc, [] );
 
 		// Assert: parent cache is now invalid.
 		$this->assertFalse(
-			$cache_validity->is_valid( [ Atomic_Global_Styles::STYLES_KEY, $parent_id ] ),
+			$cache_validity->is_valid( $cache_path ),
 			'Parent cache must be invalidated when an embedded child document is saved.'
+		);
+
+		remove_all_filters( 'elementor/document/related_posts' );
+	}
+
+	public function test_on_document_save__invalidates_grandparent_cache() {
+		// Arrange.
+		$relations      = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+		$cache_validity = new Cache_Validity();
+
+		$grandparent_id = $this->factory()->post->create();
+		$parent_id      = $this->factory()->post->create();
+		$child_doc      = $this->factory()->documents->create_and_get();
+		$child_id       = $child_doc->get_main_id();
+		$context        = Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		add_filter( 'elementor/document/related_posts', function( $related, $post_id ) use ( $grandparent_id, $parent_id, $child_id ) {
+			if ( (int) $post_id === $grandparent_id ) {
+				$related[] = $parent_id;
+			}
+
+			if ( (int) $post_id === $parent_id ) {
+				$related[] = $child_id;
+			}
+
+			return $related;
+		}, 10, 2 );
+
+		$this->mock_atomic_styles_manager->method( 'register' )->willReturn( null );
+
+		do_action(
+			'elementor/atomic-widgets/styles/register',
+			$this->mock_atomic_styles_manager,
+			[ $grandparent_id, $parent_id, $child_id ]
+		);
+
+		$grandparent_cache_path = [ Atomic_Global_Styles::STYLES_KEY, $grandparent_id, $context ];
+		$cache_validity->validate( $grandparent_cache_path );
+
+		// Act.
+		do_action( 'elementor/document/after_save', $child_doc, [] );
+
+		// Assert.
+		$this->assertFalse(
+			$cache_validity->is_valid( $grandparent_cache_path ),
+			'Grandparent cache must be invalidated when a deeply embedded child document is saved.'
 		);
 
 		remove_all_filters( 'elementor/document/related_posts' );

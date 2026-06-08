@@ -267,6 +267,35 @@ class Atomic_Global_Styles {
 		return array_values( array_unique( array_map( 'intval', $parents ) ) );
 	}
 
+	/**
+	 * Walk the reverse relation map transitively to collect every ancestor
+	 * post that embeds $post_id (direct parent, grandparent, etc.).
+	 *
+	 * @param int $post_id
+	 * @return int[]
+	 */
+	private function get_ancestor_post_ids( int $post_id, string $context ): array {
+		$ancestors = [];
+		$visited = [];
+		$queue = [ $post_id ];
+
+		while ( ! empty( $queue ) ) {
+			$current = array_shift( $queue );
+
+			foreach ( $this->get_parent_post_ids( $current, $context ) as $parent_id ) {
+				if ( isset( $visited[ $parent_id ] ) ) {
+					continue;
+				}
+
+				$visited[ $parent_id ] = true;
+				$ancestors[] = $parent_id;
+				$queue[] = $parent_id;
+			}
+		}
+
+		return array_values( array_unique( array_map( 'intval', $ancestors ) ) );
+	}
+
 	private function on_kit_delete( $post_id ) {
 		if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
 			return;
@@ -292,12 +321,12 @@ class Atomic_Global_Styles {
 		$cache_validity = new Cache_Validity();
 		$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ), $post_id, $context ] );
 
-		// Propagate to parents.
-		foreach ( $this->get_parent_post_ids( $post_id, $context ) as $parent_id ) {
-			$this->invalidate_document_cache( $parent_id, $context );
+		// Propagate to every ancestor that aggregates this post's global styles.
+		foreach ( $this->get_ancestor_post_ids( $post_id, $context ) as $ancestor_id ) {
+			$this->invalidate_document_cache( $ancestor_id, $context );
 
-			// Also clear the parent's forward-map entry so it is rebuilt.
-			$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ), $parent_id, $context ] );
+			// Also clear the ancestor's forward-map entry so it is rebuilt.
+			$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ), $ancestor_id, $context ] );
 		}
 	}
 
@@ -337,12 +366,12 @@ class Atomic_Global_Styles {
 			return;
 		}
 
-		// Also include parent posts of the directly-affected documents so that
-		// aggregated CSS bundles are regenerated when a child class changes.
+		// Also include ancestor posts of the directly-affected documents so that
+		// aggregated CSS bundles are regenerated when a descendant class changes.
 		$with_parents = $document_ids;
 		foreach ( array_keys( $document_ids ) as $doc_id ) {
-			foreach ( $this->get_parent_post_ids( (int) $doc_id, $context ) as $parent_id ) {
-				$with_parents[ $parent_id ] = true;
+			foreach ( $this->get_ancestor_post_ids( (int) $doc_id, $context ) as $ancestor_id ) {
+				$with_parents[ $ancestor_id ] = true;
 			}
 		}
 
@@ -354,13 +383,12 @@ class Atomic_Global_Styles {
 	private function invalidate_document_cache( int $post_id, ?string $context = null ) {
 		if ( empty( $context ) ) {
 			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key(), $post_id ] );
-		} else {
-			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key(), $post_id, $context ] );
-		}
-
-		if ( empty( $context )  || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
 			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key( self::RELATED_KEY ), $post_id ] );
 			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ), $post_id ] );
+		} else {
+			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key(), $post_id, $context ] );
+			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key( self::RELATED_KEY ), $post_id, $context ] );
+			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ), $post_id, $context ] );
 		}
 	}
 
