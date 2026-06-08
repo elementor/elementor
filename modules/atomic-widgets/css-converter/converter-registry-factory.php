@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
@@ -47,6 +49,15 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Size properties that also accept a unitless number (a multiplier, e.g. `line-height: 1.1`). The
+	 * value is kept verbatim as a `custom` unit so it renders without a unit; every other size property
+	 * declines a unitless non-zero value to custom_css.
+	 */
+	const UNITLESS_SIZE_PROPERTIES = [
+		'line-height',
+	];
+
+	/**
 	 * Every Style_Schema property backed by a Number_Prop_Type. Handled uniformly by
 	 * Number_Property_Converter (strict numeric, no units/functions).
 	 */
@@ -88,6 +99,25 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Box shorthands backed by Union(Dimensions | Size). Handled uniformly by
+	 * Dimensions_Property_Converter (single value -> Size; 2-4 values -> logical Dimensions).
+	 */
+	const DIMENSIONS_PROPERTIES = [
+		'padding',
+		'margin',
+	];
+
+	/**
+	 * Filter-function lists backed by Array(Css_Filter_Func) (filter, backdrop-filter). Handled
+	 * uniformly by Filter_Property_Converter + Filter_Value_Parser; the two share inner items and
+	 * differ only by the wrapping $$type, which is sourced from the live schema.
+	 */
+	const FILTER_PROPERTIES = [
+		'filter',
+		'backdrop-filter',
+	];
+
+	/**
 	 * Hardcoded Style_Schema properties with no real converter yet (objects, unions, shorthands). They
 	 * still get a Noop_Converter so they keep routing to custom_css. Combined with the real-converter
 	 * families via covered_properties() to form the exhaustive covered set. Intentionally NOT derived
@@ -97,14 +127,10 @@ class Converter_Registry_Factory {
 	const NOOP_PROPERTIES = [
 		'object-position',
 		'stroke',
-		'padding',
-		'margin',
 		'border-radius',
 		'border-width',
 		'background',
 		'box-shadow',
-		'filter',
-		'backdrop-filter',
 		'transform',
 		'transition',
 		'flex',
@@ -160,6 +186,8 @@ class Converter_Registry_Factory {
 			self::COLOR_PROPERTIES,
 			self::SPAN_PROPERTIES,
 			self::STRING_PASSTHROUGH_PROPERTIES,
+			self::DIMENSIONS_PROPERTIES,
+			self::FILTER_PROPERTIES,
 			self::NOOP_PROPERTIES
 		);
 	}
@@ -200,7 +228,8 @@ class Converter_Registry_Factory {
 		}
 
 		foreach ( self::SIZE_PROPERTIES as $property ) {
-			$converters[ $property ] = new Size_Property_Converter( $property );
+			$allow_unitless = in_array( $property, self::UNITLESS_SIZE_PROPERTIES, true );
+			$converters[ $property ] = new Size_Property_Converter( $property, $allow_unitless );
 		}
 
 		foreach ( self::NUMBER_PROPERTIES as $property ) {
@@ -217,6 +246,14 @@ class Converter_Registry_Factory {
 
 		foreach ( self::STRING_PASSTHROUGH_PROPERTIES as $property ) {
 			$converters[ $property ] = new String_Property_Converter( $property );
+		}
+
+		foreach ( self::DIMENSIONS_PROPERTIES as $property ) {
+			$converters[ $property ] = new Dimensions_Property_Converter( $property );
+		}
+
+		foreach ( self::FILTER_PROPERTIES as $property ) {
+			$converters[ $property ] = new Filter_Property_Converter( $property, $schema[ $property ]->get_key() );
 		}
 
 		return $converters;

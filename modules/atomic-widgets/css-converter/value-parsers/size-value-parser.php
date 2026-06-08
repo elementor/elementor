@@ -17,16 +17,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  * - calc()/clamp()/min()/max()/var()/env() -> { size: '<raw>', unit: 'custom' } (kept verbatim)
  * - "<number><unit>" (unit in all_supported_units) -> { size: <number>, unit: <unit> }
  * - unitless "0"                    -> { size: 0, unit: 'px' }
- * - anything else (unitless non-zero, unknown unit, multi-value) -> null
+ * - unitless non-zero, $allow_unitless on -> { size: '<raw>', unit: 'custom' } (e.g. line-height: 1.1)
+ * - anything else (unitless non-zero with $allow_unitless off, unknown unit, multi-value) -> null
  */
 class Size_Value_Parser {
 	const NUMBER_WITH_UNIT_PATTERN = '/^(-?\d*\.?\d+)([a-z%]*)$/i';
 	const DYNAMIC_FUNCTION_PATTERN = '/(?:calc|clamp|min|max|var|env)\(/i';
 
 	/**
+	 * @param string $value          The raw CSS value.
+	 * @param bool   $allow_unitless When true, a unitless non-zero number (e.g. a line-height multiplier)
+	 *                               is kept verbatim as a `custom` unit instead of declining.
+	 *
 	 * @return array{size: mixed, unit: string}|null
 	 */
-	public static function parse( string $value ): ?array {
+	public static function parse( string $value, bool $allow_unitless = false ): ?array {
 		$value = trim( $value );
 
 		if ( '' === $value ) {
@@ -47,13 +52,13 @@ class Size_Value_Parser {
 			];
 		}
 
-		return self::parse_number_with_unit( $value );
+		return self::parse_number_with_unit( $value, $allow_unitless );
 	}
 
 	/**
 	 * @return array{size: mixed, unit: string}|null
 	 */
-	private static function parse_number_with_unit( string $value ): ?array {
+	private static function parse_number_with_unit( string $value, bool $allow_unitless ): ?array {
 		if ( ! preg_match( self::NUMBER_WITH_UNIT_PATTERN, $value, $matches ) ) {
 			return null;
 		}
@@ -62,10 +67,17 @@ class Size_Value_Parser {
 		$unit = strtolower( $matches[2] );
 
 		if ( '' === $unit ) {
-			return 0.0 === (float) $size
-				? [
+			if ( 0.0 === (float) $size ) {
+				return [
 					'size' => $size,
 					'unit' => Size_Constants::DEFAULT_UNIT,
+				];
+			}
+
+			return $allow_unitless
+				? [
+					'size' => $matches[1],
+					'unit' => Size_Constants::UNIT_CUSTOM,
 				]
 				: null;
 		}

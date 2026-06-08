@@ -47,6 +47,26 @@ class Test_Size_Value_Parser extends TestCase {
 		$this->assertSame( [ 'size' => null, 'unit' => 'auto' ], Size_Value_Parser::parse( 'auto' ) );
 	}
 
+	public function test_parse__unitless_non_zero_declines_by_default() {
+		// Act & Assert.
+		$this->assertNull( Size_Value_Parser::parse( '1.1' ) );
+	}
+
+	public function test_parse__unitless_non_zero_is_kept_as_custom_when_allowed() {
+		// Act & Assert: the raw token is preserved verbatim so it renders without a unit.
+		$this->assertSame( [ 'size' => '1.1', 'unit' => 'custom' ], Size_Value_Parser::parse( '1.1', true ) );
+	}
+
+	public function test_parse__unitless_zero_stays_pixels_even_when_unitless_allowed() {
+		// Act & Assert.
+		$this->assertSame( [ 'size' => 0, 'unit' => 'px' ], Size_Value_Parser::parse( '0', true ) );
+	}
+
+	public function test_parse__value_with_unit_ignores_unitless_flag() {
+		// Act & Assert.
+		$this->assertSame( [ 'size' => 24, 'unit' => 'px' ], Size_Value_Parser::parse( '24px', true ) );
+	}
+
 	/**
 	 * @dataProvider dynamic_values
 	 */

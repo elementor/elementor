@@ -64,6 +64,35 @@ class Test_Size_Property_Converter extends TestCase {
 		$this->assertTrue( Size_Prop_Type::make()->validate( $prop_value ) );
 	}
 
+	public function test_convert__keeps_unitless_line_height_as_custom_when_allowed() {
+		// Arrange.
+		$converter = new Size_Property_Converter( 'line-height', true );
+		$context = new Conversion_Context();
+
+		// Act.
+		$converted = $converter->convert( $context, [ 'property' => 'line-height', 'value' => '1.1' ] );
+
+		// Assert.
+		$prop_value = $context->get_prop( 'line-height' );
+
+		$this->assertTrue( $converted );
+		$this->assertSame( [ '$$type' => 'size', 'value' => [ 'size' => '1.1', 'unit' => 'custom' ] ], $prop_value );
+		$this->assertTrue( Size_Prop_Type::make()->validate( $prop_value ) );
+	}
+
+	public function test_convert__declines_unitless_value_without_the_flag() {
+		// Arrange.
+		$converter = new Size_Property_Converter( 'width' );
+		$context = new Conversion_Context();
+
+		// Act.
+		$converted = $converter->convert( $context, [ 'property' => 'width', 'value' => '1.1' ] );
+
+		// Assert.
+		$this->assertFalse( $converted );
+		$this->assertFalse( $context->has_prop( 'width' ) );
+	}
+
 	public function test_convert__declines_unrepresentable_value() {
 		// Arrange.
 		$converter = new Size_Property_Converter( 'width' );
