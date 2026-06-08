@@ -36,97 +36,120 @@ describe( '<GridOutline />', () => {
 		expect( svg ).toHaveAttribute( 'height', '200' );
 	} );
 
-	it( 'draws one rect per cell for an N×M grid', () => {
-		const { container } = renderWithTheme(
-			<GridOutline
-				tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
-				width={ 300 }
-				height={ 160 }
-			/>
-		);
+	describe( 'no gap', () => {
+		it( 'draws one line per unique boundary for an N×M grid', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
+					width={ 300 }
+					height={ 160 }
+				/>
+			);
 
-		expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 3 * 2 );
-	} );
+			expect( container.querySelectorAll( 'line' ) ).toHaveLength( 4 + 3 );
+			expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 0 );
+		} );
 
-	it( 'keeps the cell count stable with a gap and offsets cells past the gap', () => {
-		const { container } = renderWithTheme(
-			<GridOutline
-				tracks={ makeTracks( {
-					columns: [ 100, 100, 100 ],
-					rows: [ 80, 80 ],
-					columnGap: 10,
-					rowGap: 8,
-				} ) }
-				width={ 320 }
-				height={ 176 }
-			/>
-		);
+		it( 'snaps line coordinates to half pixels for crisp 1px strokes', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( {
+						columns: [ 100, 100 ],
+						rows: [ 80 ],
+						padding: { top: 10, right: 10, bottom: 10, left: 10 },
+					} ) }
+					width={ 220 }
+					height={ 100 }
+				/>
+			);
 
-		const rects = Array.from( container.querySelectorAll( 'rect' ) );
-		expect( rects ).toHaveLength( 3 * 2 );
+			const verticalXs = Array.from( container.querySelectorAll( 'line' ) )
+				.filter( ( line ) => line.getAttribute( 'x1' ) === line.getAttribute( 'x2' ) )
+				.map( ( line ) => line.getAttribute( 'x1' ) );
+			expect( verticalXs ).toEqual( [ '10.5', '110.5', '210.5' ] );
+		} );
 
-		const xs = rects.map( ( rect ) => rect.getAttribute( 'x' ) );
-		expect( xs ).toContain( '0.5' );
-		expect( xs ).toContain( '110.5' );
-		expect( xs ).toContain( '220.5' );
-	} );
+		it( 'passes the resolved iframe border color through to each line', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( { columns: [ 100 ], rows: [ 100 ], borderColor: '#abcdef' } ) }
+					width={ 100 }
+					height={ 100 }
+				/>
+			);
 
-	it( 'snaps cell coordinates to half pixels for crisp 1px strokes', () => {
-		const { container } = renderWithTheme(
-			<GridOutline
-				tracks={ makeTracks( {
-					columns: [ 100, 100 ],
-					rows: [ 80 ],
-					padding: { top: 10, right: 10, bottom: 10, left: 10 },
-				} ) }
-				width={ 220 }
-				height={ 100 }
-			/>
-		);
+			const lines = container.querySelectorAll( 'line' );
+			expect( lines.length ).toBeGreaterThan( 0 );
+			lines.forEach( ( line ) => {
+				expect( line ).toHaveAttribute( 'stroke', '#abcdef' );
+			} );
+		} );
 
-		const xs = Array.from( container.querySelectorAll( 'rect' ) ).map( ( rect ) => rect.getAttribute( 'x' ) );
-		expect( xs ).toEqual( [ '10.5', '110.5' ] );
-	} );
+		it( 'renders nothing when there are no tracks on either axis', () => {
+			const { container } = renderWithTheme(
+				<GridOutline tracks={ makeTracks() } width={ 100 } height={ 100 } />
+			);
 
-	it( 'spans a single full-width cell per row when only rows are defined', () => {
-		const { container } = renderWithTheme(
-			<GridOutline
-				tracks={ makeTracks( {
-					rows: [ 50, 50 ],
-					padding: { top: 8, right: 12, bottom: 6, left: 4 },
-				} ) }
-				width={ 300 }
-				height={ 120 }
-			/>
-		);
-
-		const rects = Array.from( container.querySelectorAll( 'rect' ) );
-		expect( rects ).toHaveLength( 2 );
-		for ( const rect of rects ) {
-			expect( rect ).toHaveAttribute( 'x', '4.5' );
-			expect( rect ).toHaveAttribute( 'width', '284' );
-		}
-	} );
-
-	it( 'passes the resolved iframe border color through to each cell', () => {
-		const { container } = renderWithTheme(
-			<GridOutline
-				tracks={ makeTracks( { columns: [ 100 ], rows: [ 100 ], borderColor: '#abcdef' } ) }
-				width={ 100 }
-				height={ 100 }
-			/>
-		);
-
-		const rects = container.querySelectorAll( 'rect' );
-		expect( rects.length ).toBeGreaterThan( 0 );
-		rects.forEach( ( rect ) => {
-			expect( rect ).toHaveAttribute( 'stroke', '#abcdef' );
+			expect( container.querySelectorAll( 'line' ) ).toHaveLength( 0 );
+			expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 0 );
 		} );
 	} );
 
-	it( 'renders no cells when there are no tracks on either axis', () => {
-		const { container } = renderWithTheme( <GridOutline tracks={ makeTracks() } width={ 100 } height={ 100 } /> );
+	describe( 'with a gap', () => {
+		it( 'draws one rect per cell so each cell has its own framed perimeter', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( {
+						columns: [ 100, 100, 100 ],
+						rows: [ 80, 80 ],
+						columnGap: 10,
+						rowGap: 8,
+					} ) }
+					width={ 320 }
+					height={ 176 }
+				/>
+			);
 
-		expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 0 );
+			expect( container.querySelectorAll( 'rect' ) ).toHaveLength( 3 * 2 );
+			expect( container.querySelectorAll( 'line' ) ).toHaveLength( 0 );
+		} );
+
+		it( 'offsets cells past the gap', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( {
+						columns: [ 100, 100, 100 ],
+						rows: [ 80 ],
+						columnGap: 10,
+					} ) }
+					width={ 320 }
+					height={ 80 }
+				/>
+			);
+
+			const xs = Array.from( container.querySelectorAll( 'rect' ) ).map( ( rect ) => rect.getAttribute( 'x' ) );
+			expect( xs ).toEqual( [ '0.5', '110.5', '220.5' ] );
+		} );
+
+		it( 'passes the resolved iframe border color through to each cell', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					tracks={ makeTracks( {
+						columns: [ 100, 100 ],
+						rows: [ 100 ],
+						columnGap: 10,
+						borderColor: '#abcdef',
+					} ) }
+					width={ 210 }
+					height={ 100 }
+				/>
+			);
+
+			const rects = container.querySelectorAll( 'rect' );
+			expect( rects.length ).toBeGreaterThan( 0 );
+			rects.forEach( ( rect ) => {
+				expect( rect ).toHaveAttribute( 'stroke', '#abcdef' );
+			} );
+		} );
 	} );
 } );

@@ -108,7 +108,7 @@ class Site_Settings extends Export_Runner_Base {
 			return 0;
 		}
 
-		return count( \Elementor\Modules\GlobalClasses\Global_Classes_Order::make( $kit )->get_order() );
+		return count( \Elementor\Modules\GlobalClasses\Global_Classes_Order::make( $kit )->set_preview( false )->get_order() );
 	}
 
 	public function get_variables_count(): int {

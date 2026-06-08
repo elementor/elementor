@@ -1,6 +1,7 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
@@ -32,6 +33,7 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Configure element guide', uri: CONFIGURE_ELEMENT_GUIDE_URI },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 		],
 		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
 			const widgetData = getWidgetsCache()?.[ elementType ];
