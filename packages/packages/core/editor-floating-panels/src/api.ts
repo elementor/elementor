@@ -13,6 +13,7 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 			id: declaration.id,
 			defaults: declaration.defaults,
 			title: declaration.title,
+			isDraggable: declaration.isDraggable,
 			persisted: getPersistedState( declaration.id ),
 		} )
 	);
