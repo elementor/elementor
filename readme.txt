@@ -263,7 +263,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.5 or greater
+* WordPress 6.8 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
