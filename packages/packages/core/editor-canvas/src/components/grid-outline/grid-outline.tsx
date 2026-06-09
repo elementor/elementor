@@ -61,14 +61,16 @@ export function GridOutline( { element, tracks, width, height }: Props ) {
 		firstEmpty && tracks.columns.length > 0 ? cells[ firstEmpty.row * tracks.columns.length + firstEmpty.col ] : null;
 
 	return (
-		<svg
-			width={ width }
-			height={ height }
-			style={ { position: 'absolute', inset: 0, overflow: 'visible' } }
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			{ hasGap ? renderCells( cells, tracks.borderColor ) : renderLines( tracks, width, height ) }
-			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } /> }
-		</svg>
+		<>
+			<svg
+				width={ width }
+				height={ height }
+				style={ { position: 'absolute', inset: 0, overflow: 'visible' } }
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				{ hasGap ? renderCells( cells, tracks.borderColor ) : renderLines( tracks, width, height ) }
+			</svg>
+			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } /> }
+		</>
 	);
 }
