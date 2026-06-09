@@ -288,6 +288,10 @@
 	}
 }
 
+.e-grid-base > .elementor-empty-view > .elementor-first-add {
+	opacity: 0;
+}
+
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
 body.rtl {
 

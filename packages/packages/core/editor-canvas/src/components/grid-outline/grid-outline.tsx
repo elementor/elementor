@@ -1,25 +1,28 @@
 import * as React from 'react';
 
+import { findFirstEmptyCell } from '../../utils/find-first-empty-cell';
+import { type CellRect, computeCellRects, computeGridLines, snapToHalfPixel } from '../../utils/grid-outline-utils';
 import { type GridTracks } from '../../hooks/use-grid-tracks';
-import { computeCellRects, computeGridLines, snapToHalfPixel } from '../../utils/grid-outline-utils';
 import { Cell } from './cell';
+import { FirstEmptyCell } from './first-empty-cell';
 import { Line } from './line';
 
 type Props = {
+	element: HTMLElement | null;
 	tracks: GridTracks;
 	width: number;
 	height: number;
 };
 
-const renderCells = ( tracks: GridTracks, width: number, height: number ) =>
-	computeCellRects( tracks, width, height ).map( ( cell, i ) => (
+const renderCells = ( cells: CellRect[], color: string ) =>
+	cells.map( ( cell, i ) => (
 		<Cell
 			key={ i }
 			x={ snapToHalfPixel( cell.x ) }
 			y={ snapToHalfPixel( cell.y ) }
 			width={ Math.round( cell.width ) }
 			height={ Math.round( cell.height ) }
-			color={ tracks.borderColor }
+			color={ color }
 		/>
 	) );
 
@@ -50,8 +53,12 @@ const renderLines = ( tracks: GridTracks, width: number, height: number ) => {
 	];
 };
 
-export function GridOutline( { tracks, width, height }: Props ) {
+export function GridOutline( { element, tracks, width, height }: Props ) {
+	const cells = computeCellRects( tracks, width, height );
 	const hasGap = tracks.columnGap > 0 || tracks.rowGap > 0;
+	const firstEmpty = findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length );
+	const emptyCellRect =
+		firstEmpty && tracks.columns.length > 0 ? cells[ firstEmpty.row * tracks.columns.length + firstEmpty.col ] : null;
 
 	return (
 		<svg
@@ -60,7 +67,8 @@ export function GridOutline( { tracks, width, height }: Props ) {
 			style={ { position: 'absolute', inset: 0, overflow: 'visible' } }
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			{ hasGap ? renderCells( tracks, width, height ) : renderLines( tracks, width, height ) }
+			{ hasGap ? renderCells( cells, tracks.borderColor ) : renderLines( tracks, width, height ) }
+			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } /> }
 		</svg>
 	);
 }
