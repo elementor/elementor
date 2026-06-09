@@ -74,9 +74,9 @@ class Atomic_Global_Styles {
 		$resolve = null;
 		$resolve = function( int $pid ) use ( &$parent_to_embedded, &$visited, &$resolve ): array {
 			if ( isset( $visited[ $pid ] ) ) {
-			if ( isset( $visited[ $pid ] ) ) {
-				return $parent_to_embedded[ $pid ] ?? [];
-			}
+				if ( isset( $visited[ $pid ] ) ) {
+					return $parent_to_embedded[ $pid ] ?? [];
+				}
 			}
 
 			$visited[ $pid ] = true;
