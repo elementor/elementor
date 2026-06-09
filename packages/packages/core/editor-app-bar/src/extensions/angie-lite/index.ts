@@ -31,22 +31,19 @@ function useActionProps() {
                 },
             },
             widgetConfig: {
-                // featuredMcpServer: "demo-help-center",
                 promptLibrary: { enabled: false },
                 fileUpload: { enabled: false },
                 modeSwitcher: { enabled: false, default: 'ask' },
-                // localServers: { skipLoading: true },
-                "title": "Ask Angie",
-                "subtitle": "Ask questions, learn how features work, and get help with Elementor.",
-                "suggestions": {
-                  "items": [
+                title: "What would you like to know?",
+                suggestions: {
+                  items: [
                     {
-                      "label": "How to use Atomic tabs",
-                      "value": "How to use Atomic tabs?"
+                      label: "What can Angie do?",
+                      value: "What can Angie do?"
                     },
                     {
-                      "label": "How to create design system",
-                      "value": "How to style my site using v4 design system - global classes and variables?"
+                      label: "How to build with Atomic elements?",
+                      value: "How to build with Atomic elements?"
                     }
                   ]
                 },
