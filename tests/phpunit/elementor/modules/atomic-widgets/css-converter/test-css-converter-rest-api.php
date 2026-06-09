@@ -37,6 +37,38 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		return json_decode( wp_json_encode( $response->get_data() ), true );
 	}
 
+	public function test_post__converts_box_shadow_into_array_of_shadow_props() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'box-shadow' => 'inset 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px black',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['box-shadow'];
+		$this->assertSame( 'box-shadow', $prop['$$type'] );
+		$this->assertCount( 2, $prop['value'] );
+
+		$first = $prop['value'][0]['value'];
+		$this->assertSame( 'inset', $first['position']['value'] );
+		$this->assertEquals( 4, $first['vOffset']['value']['size'] );
+		$this->assertEquals( -1, $first['spread']['value']['size'] );
+		$this->assertSame( 'rgba(0,0,0,0.1)', $first['color']['value'] );
+
+		$second = $prop['value'][1]['value'];
+		$this->assertArrayNotHasKey( 'position', $second );
+		$this->assertSame( 'black', $second['color']['value'] );
+
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_transform_translate_to_move_prop() {
 		// Arrange.
 		$this->act_as_admin();
@@ -222,7 +254,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'matrix(1,0,0,1,0,0)', 'box-shadow' => '0 2px 4px black' ] ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'matrix(1,0,0,1,0,0)', 'stroke-width' => '2px' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -231,7 +263,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
-		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); box-shadow: 0 2px 4px black;', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); stroke-width: 2px;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__returns_one_named_result_per_input_block() {
@@ -241,7 +273,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
 			'el-1' => [ 'transform' => 'matrix(1,0,0,1,0,0)' ],
-			'el-2' => [ 'box-shadow' => '0 2px 4px black' ],
+			'el-2' => [ 'stroke-width' => '2px' ],
 		] );
 
 		// Act.
@@ -252,7 +284,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
 		$this->assertSame( 'transform: matrix(1,0,0,1,0,0);', $data['el-1']['customCss'] );
-		$this->assertSame( 'box-shadow: 0 2px 4px black;', $data['el-2']['customCss'] );
+		$this->assertSame( 'stroke-width: 2px;', $data['el-2']['customCss'] );
 	}
 
 	public function test_post__converts_font_weight_into_a_canonical_prop_value() {

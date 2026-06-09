@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Con
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Rejected_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Position_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Box_Shadow_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
@@ -144,6 +145,7 @@ class Converter_Registry_Factory {
 		'transition',
 		'transform',
 		'transform-origin',
+		'box-shadow',
 	];
 
 	/**
@@ -217,7 +219,6 @@ class Converter_Registry_Factory {
 		// (e.g. exotic syntax). The expander handles the common forms; this entry keeps the
 		// raw declaration in customCss when expansion fails.
 		'background',
-		'box-shadow',
 	];
 
 	/**
@@ -397,6 +398,7 @@ class Converter_Registry_Factory {
 		$converters['transition'] = new Transition_Property_Converter();
 		$converters['transform'] = new Transform_Property_Converter();
 		$converters['transform-origin'] = new Transform_Origin_Property_Converter();
+		$converters['box-shadow'] = new Box_Shadow_Property_Converter();
 
 		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
 			$is_radius = 'border-radius' === $target;

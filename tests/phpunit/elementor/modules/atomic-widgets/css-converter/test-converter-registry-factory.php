@@ -49,11 +49,11 @@ class Test_Converter_Registry_Factory extends TestCase {
 		$converter = new Css_Converter( Converter_Registry_Factory::create(), new Null_Failure_Reporter() );
 
 		// Act.
-		$result = $converter->convert( 'transform: matrix(1,0,0,1,0,0); box-shadow: 0 2px 4px black;' );
+		$result = $converter->convert( 'transform: matrix(1,0,0,1,0,0); stroke-width: 2px;' );
 
 		// Assert.
 		$this->assertSame( [], $result['props'] );
-		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); box-shadow: 0 2px 4px black;', $result['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); stroke-width: 2px;', $result['customCss'] );
 	}
 
 	/**
