@@ -42,15 +42,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<?php endif; ?>
 	<?php if ( ! $has_pro ) : ?>
-	<div id="elementor-panel-get-pro-elements-sticky">
-		<?php if ( ! Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ) : ?>
-			<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/unlock-sticky.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Upgrade', 'elementor' ); ?>"/>
-		<?php endif; ?>
-		<div class="elementor-get-pro-sticky-message">
-			<?php echo esc_html( $promotion_data_sticky['message'] ); ?>
-			<a target="_blank" href="<?php echo esc_url( $promotion_data_sticky['url'] ); ?>"><?php echo esc_html( $promotion_data_sticky['button_text'] ); ?></a>
-		</div>
-	</div>
+		<?php require __DIR__ . '/panel-elements-sticky-promotion.php'; ?>
+	<?php endif; ?>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-element-sticky-promotion">
+	<?php if ( ! $has_pro ) : ?>
+		<?php require __DIR__ . '/panel-elements-sticky-promotion.php'; ?>
 	<?php endif; ?>
 </script>
 

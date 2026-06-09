@@ -161,6 +161,20 @@
 	}
 }
 
+// On search results the sticky promotion is appended as the last child of the
+// elements page (after the widget creation area), so the page must fill the
+// available height to keep the promotion pinned to the bottom without adding
+// extra scroll space when the content is short.
+#elementor-panel-page-elements:has( > #elementor-panel-get-pro-elements-sticky ) {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+
+	> #elementor-panel-get-pro-elements-sticky {
+		margin-block-start: auto;
+	}
+}
+
 #elementor-panel-get-pro-elements-sticky,
 .elementor-panel-editor-sticky-promotion {
 	font-size: 14px;
