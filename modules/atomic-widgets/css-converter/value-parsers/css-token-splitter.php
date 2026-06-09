@@ -13,6 +13,44 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Css_Token_Splitter {
 	/**
+	 * Split a CSS value on top-level commas (paren-aware), trimming each segment.
+	 *
+	 * @return string[]
+	 */
+	public static function split_by_comma( string $value ): array {
+		$tokens = [];
+		$current = '';
+		$depth = 0;
+		$length = strlen( $value );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$char = $value[ $i ];
+
+			if ( '(' === $char ) {
+				++$depth;
+			} elseif ( ')' === $char ) {
+				$depth = max( 0, $depth - 1 );
+			}
+
+			if ( 0 === $depth && ',' === $char ) {
+				$tokens[] = trim( $current );
+				$current = '';
+				continue;
+			}
+
+			$current .= $char;
+		}
+
+		$last = trim( $current );
+
+		if ( '' !== $last ) {
+			$tokens[] = $last;
+		}
+
+		return $tokens;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public static function split_by_whitespace( string $value ): array {

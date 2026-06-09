@@ -33,12 +33,16 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
+	private function decoded_data( \WP_REST_Response $response ): array {
+		return json_decode( wp_json_encode( $response->get_data() ), true );
+	}
+
 	public function test_post__returns_empty_props_and_all_input_as_custom_css_with_only_noops() {
 		// Arrange.
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => [ 'padding' => '10px', 'margin' => '5px' ] ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'rotate(45deg)', 'transition' => 'all 0.3s' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -47,7 +51,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
-		$this->assertSame( 'padding: 10px; margin: 5px;', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: rotate(45deg); transition: all 0.3s;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__returns_one_named_result_per_input_block() {
@@ -56,8 +60,8 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
-			'el-1' => [ 'margin' => '8px' ],
-			'el-2' => [ 'padding' => '4px' ],
+			'el-1' => [ 'transform' => 'rotate(45deg)' ],
+			'el-2' => [ 'transition' => 'all 0.3s' ],
 		] );
 
 		// Act.
@@ -67,8 +71,8 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
-		$this->assertSame( 'margin: 8px;', $data['el-1']['customCss'] );
-		$this->assertSame( 'padding: 4px;', $data['el-2']['customCss'] );
+		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
+		$this->assertSame( 'transition: all 0.3s;', $data['el-2']['customCss'] );
 	}
 
 	public function test_post__converts_font_weight_into_a_canonical_prop_value() {
@@ -690,6 +694,377 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'border-left-style: dashed; border-left-color: blue;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_background_color_into_the_background_object() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-color' => 'red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'background' => [
+					'$$type' => 'background',
+					'value' => [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__merges_background_color_and_clip_into_one_background_object() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-color' => 'red', 'background-clip' => 'text' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: both longhands accumulate into one background object that validates against the schema.
+		$this->assertSame( 200, $response->get_status() );
+
+		$prop_value = $data['el-1']['props']['background'];
+
+		$this->assertEquals(
+			[
+				'$$type' => 'background',
+				'value' => [
+					'color' => [ '$$type' => 'color', 'value' => 'red' ],
+					'clip' => [ '$$type' => 'string', 'value' => 'text' ],
+				],
+			],
+			$prop_value
+		);
+		$this->assertTrue( Style_Schema::get_style_schema()['background']->validate( $prop_value ) );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__routes_out_of_enum_background_clip_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-clip' => 'banana' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'background-clip: banana;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_shorthand_color_only_sets_background_color_field() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: expander splits shorthand -> background-color converter sets background.color.
+		$this->assertSame( 200, $response->get_status() );
+
+		$bg = $data['el-1']['props']['background'];
+		$this->assertSame( 'background', $bg['$$type'] );
+		$this->assertSame( [ '$$type' => 'color', 'value' => 'red' ], $bg['value']['color'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_shorthand_url_and_repeat_sets_image_layer_and_repeat() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'url(https://example.com/img.jpg) no-repeat' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$bg = $data['el-1']['props']['background'];
+		$layer = $bg['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'background-image-overlay', $layer['$$type'] );
+		$this->assertSame( 'https://example.com/img.jpg', $layer['value']['image']['value']['src']['value']['url']['value'] );
+		$this->assertSame( 'no-repeat', $layer['value']['repeat']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_shorthand_with_position_and_size() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'url(https://example.com/img.jpg) center center / cover' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$layer = $data['el-1']['props']['background']['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'center center', $layer['value']['position']['value'] );
+		$this->assertSame( 'cover', $layer['value']['size']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_shorthand_gradient_image_creates_gradient_overlay() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'linear-gradient(135deg, #fff 0%, #000 100%)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: expander emits background-image: ...; gradient converter creates overlay.
+		$this->assertSame( 200, $response->get_status() );
+
+		$overlay = $data['el-1']['props']['background']['value']['background-overlay']['value'][0];
+		$this->assertSame( 'background-gradient-overlay', $overlay['$$type'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_background_image_url_into_image_overlay_layer() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-image' => 'url(https://example.com/foo.jpg)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$bg = $data['el-1']['props']['background'];
+
+		$this->assertSame( 'background', $bg['$$type'] );
+		$this->assertCount( 1, $bg['value']['background-overlay']['value'] );
+
+		$layer = $bg['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'background-image-overlay', $layer['$$type'] );
+		$this->assertSame( 'https://example.com/foo.jpg', $layer['value']['image']['value']['src']['value']['url']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_image_with_repeat_and_size_populates_layer_fields() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => [
+				'background-image' => 'url(https://example.com/foo.jpg)',
+				'background-repeat' => 'no-repeat',
+				'background-size' => 'cover',
+			],
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$layer = $data['el-1']['props']['background']['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'no-repeat', $layer['value']['repeat']['value'] );
+		$this->assertSame( 'cover', $layer['value']['size']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__multiple_background_image_layers_with_per_layer_repeat() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => [
+				'background-image' => 'url(https://example.com/a.jpg), url(https://example.com/b.jpg)',
+				'background-repeat' => 'no-repeat, repeat-x',
+			],
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$layers = $data['el-1']['props']['background']['value']['background-overlay']['value'];
+
+		$this->assertCount( 2, $layers );
+		$this->assertSame( 'no-repeat', $layers[0]['value']['repeat']['value'] );
+		$this->assertSame( 'repeat-x', $layers[1]['value']['repeat']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_image_none_creates_no_layers() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-image' => 'none' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$overlay = $data['el-1']['props']['background']['value']['background-overlay'];
+		$this->assertCount( 0, $overlay['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_image_linear_gradient_creates_gradient_overlay() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-image' => 'linear-gradient(135deg, #ffffff 0%, #00FFD5 50%, #FF3CAC 100%)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$overlay = $data['el-1']['props']['background']['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'background-gradient-overlay', $overlay['$$type'] );
+		$this->assertSame( 'linear', $overlay['value']['type']['value'] );
+		$this->assertEquals( 135, $overlay['value']['angle']['value'] );
+		$this->assertCount( 3, $overlay['value']['stops']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_image_radial_gradient_with_percentage_position_creates_gradient_overlay() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-image' => 'radial-gradient(circle at 20% 30%, rgba(0, 255, 213, 0.3) 0%, transparent 50%)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$overlay = $data['el-1']['props']['background']['value']['background-overlay']['value'][0];
+
+		$this->assertSame( 'background-gradient-overlay', $overlay['$$type'] );
+		$this->assertSame( 'radial', $overlay['value']['type']['value'] );
+		$this->assertSame( '20% 30%', $overlay['value']['positions']['value'] );
+		$this->assertCount( 2, $overlay['value']['stops']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_repeat_without_image_routes_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background-repeat' => 'no-repeat' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: no image layer to attach to.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'background-repeat: no-repeat;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_size_pair_creates_scale_object() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => [
+				'background-image' => 'url(https://example.com/foo.jpg)',
+				'background-size' => '50% 100%',
+			],
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$size = $data['el-1']['props']['background']['value']['background-overlay']['value'][0]['value']['size'];
+
+		$this->assertSame( 'background-image-size-scale', $size['$$type'] );
+		$this->assertSame( 50, $size['value']['width']['value']['size'] );
+		$this->assertSame( 100, $size['value']['height']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__background_position_offset_creates_offset_object() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => [
+				'background-image' => 'url(https://example.com/foo.jpg)',
+				'background-position' => '10px 20px',
+			],
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+
+		$pos = $data['el-1']['props']['background']['value']['background-overlay']['value'][0]['value']['position'];
+
+		$this->assertSame( 'background-image-position-offset', $pos['$$type'] );
+		$this->assertSame( 10, $pos['value']['x']['value']['size'] );
+		$this->assertSame( 20, $pos['value']['y']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_filter_into_a_canonical_prop_value() {
 		// Arrange.
 		$this->act_as_admin();
@@ -699,7 +1074,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
@@ -717,7 +1092,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );

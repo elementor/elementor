@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Background_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Border_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
@@ -17,6 +18,7 @@ class Expander_Registry_Factory {
 		$style_enum = $schema['border-style']->get_enum();
 
 		$registry = ( new Expander_Registry() )
+			->register( new Background_Shorthand_Expander() )
 			->register( new Border_Shorthand_Expander( 'border', self::border_longhands( '' ), $style_enum ) );
 
 		foreach ( self::BORDER_SIDES as $side ) {

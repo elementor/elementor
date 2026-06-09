@@ -7,13 +7,22 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Conve
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Field_Merge_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Position_Offset_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scale_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -128,6 +137,35 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Scalar background longhands that each fill one field of the aggregate `background` object. Not
+	 * Style_Schema properties (the schema only has the `background` aggregate); they are accumulated into
+	 * it by Object_Field_Merge_Converter, wired explicitly in real_converters() so each field's leaf prop
+	 * type / enum is sourced from the live schema. The overlay array (image/gradient layers) is separate.
+	 */
+	const BACKGROUND_FIELD_PROPERTIES = [
+		'background-color',
+		'background-clip',
+	];
+
+	/**
+	 * Background overlay longhands that are not Style_Schema properties. `background-image` creates the
+	 * image layer array in the aggregate; the rest update fields on existing layers via
+	 * Background_Layer_Field_Converter. Enums are hardcoded to match the background-image-overlay shape
+	 * without needing to instantiate the prop type (which would require WP for image sizes).
+	 */
+	const BACKGROUND_LAYER_PROPERTIES = [
+		'background-image',
+		'background-repeat',
+		'background-attachment',
+		'background-size',
+		'background-position',
+	];
+
+	const BACKGROUND_REPEAT_ENUM = [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ];
+	const BACKGROUND_ATTACHMENT_ENUM = [ 'fixed', 'scroll' ];
+	const BACKGROUND_SIZE_ENUM = [ 'auto', 'cover', 'contain' ];
+
+	/**
 	 * Logical side keys of the Border_Width object, and corner keys of the Border_Radius object, in the
 	 * order used to seed every side/corner from a single Size (e.g. a prior `border-width: 1px`).
 	 */
@@ -215,6 +253,8 @@ class Converter_Registry_Factory {
 			self::FILTER_PROPERTIES,
 			self::OTHER_PROPERTIES,
 			array_keys( self::border_side_specs() ),
+			self::BACKGROUND_FIELD_PROPERTIES,
+			self::BACKGROUND_LAYER_PROPERTIES,
 			self::NOOP_PROPERTIES
 		);
 	}
@@ -320,6 +360,59 @@ class Converter_Registry_Factory {
 		foreach ( self::FILTER_PROPERTIES as $property ) {
 			$converters[ $property ] = new Filter_Property_Converter( $property, $schema[ $property ]->get_key() );
 		}
+
+		$background_key = Background_Prop_Type::get_key();
+
+		$converters['background-color'] = new Object_Field_Merge_Converter(
+			'background-color',
+			$background_key,
+			$background_key,
+			'color',
+			Color_Prop_Type::class,
+			Background_Prop_Type::class,
+			null,
+			true
+		);
+
+		$converters['background-clip'] = new Object_Field_Merge_Converter(
+			'background-clip',
+			$background_key,
+			$background_key,
+			'clip',
+			String_Prop_Type::class,
+			Background_Prop_Type::class,
+			$schema[ $background_key ]->get_shape_field( 'clip' )->get_enum()
+		);
+
+		$converters['background-image'] = new Background_Image_Converter();
+
+		$converters['background-repeat'] = new Background_Layer_Field_Converter(
+			'background-repeat',
+			'repeat',
+			self::BACKGROUND_REPEAT_ENUM
+		);
+
+		$converters['background-attachment'] = new Background_Layer_Field_Converter(
+			'background-attachment',
+			'attachment',
+			self::BACKGROUND_ATTACHMENT_ENUM
+		);
+
+		$converters['background-size'] = new Background_Layer_Field_Converter(
+			'background-size',
+			'size',
+			self::BACKGROUND_SIZE_ENUM,
+			Background_Image_Overlay_Size_Scale_Prop_Type::class,
+			[ 'width', 'height' ]
+		);
+
+		$converters['background-position'] = new Background_Layer_Field_Converter(
+			'background-position',
+			'position',
+			Position_Prop_Type::get_position_enum_values(),
+			Background_Image_Position_Offset_Prop_Type::class,
+			[ 'x', 'y' ]
+		);
 
 		return $converters;
 	}
