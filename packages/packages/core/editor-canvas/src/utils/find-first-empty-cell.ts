@@ -34,11 +34,7 @@ export function findFirstEmptyCell(
 	const autoPlaced: Array< { colSpan: number; rowSpan: number } > = [];
 
 	for ( const child of Array.from( element.children ) ) {
-		if ( ! ( child instanceof HTMLElement ) ) {
-			continue;
-		}
-
-		if ( child.classList.contains( 'elementor-empty-view' ) ) {
+		if ( ! child.classList.contains( 'elementor-element' ) ) {
 			continue;
 		}
 

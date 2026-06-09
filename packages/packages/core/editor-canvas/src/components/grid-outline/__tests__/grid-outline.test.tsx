@@ -121,7 +121,9 @@ describe( '<GridOutline />', () => {
 			const element = document.createElement( 'div' );
 
 			for ( let i = 0; i < 6; i++ ) {
-				element.appendChild( document.createElement( 'div' ) );
+				const child = document.createElement( 'div' );
+				child.classList.add( 'elementor-element' );
+				element.appendChild( child );
 			}
 
 			document.body.appendChild( element );

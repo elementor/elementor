@@ -17,6 +17,7 @@ function makeGrid( {
 
 	for ( const spec of children ) {
 		const child = document.createElement( 'div' );
+		child.classList.add( 'elementor-element' );
 
 		if ( spec.gridColumnStart ) {
 			child.style.gridColumnStart = spec.gridColumnStart;
@@ -113,5 +114,19 @@ describe( 'findFirstEmptyCell', () => {
 			children: [ { display: 'none' } ],
 		} );
 		expect( findFirstEmptyCell( element, 2, 1 ) ).toEqual( { row: 0, col: 0 } );
+	} );
+
+	it( 'ignores scaffolding children that are not .elementor-element', () => {
+		const element = makeGrid( { children: [ {} ] } );
+
+		const overlay = document.createElement( 'div' );
+		overlay.classList.add( 'elementor-element-overlay' );
+		element.insertBefore( overlay, element.firstChild );
+
+		const emptyView = document.createElement( 'div' );
+		emptyView.classList.add( 'elementor-empty-view' );
+		element.appendChild( emptyView );
+
+		expect( findFirstEmptyCell( element, 3, 1 ) ).toEqual( { row: 0, col: 1 } );
 	} );
 } );
