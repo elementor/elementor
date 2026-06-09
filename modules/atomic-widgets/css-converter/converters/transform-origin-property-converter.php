@@ -35,10 +35,21 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 	const XY_UNITS = [ '%', 'px', 'em', 'rem' ];
 	const Z_UNITS  = [ 'px', 'em', 'rem' ];
 
-	const X_KEYWORDS = [ 'left' => 0, 'center' => 50, 'right' => 100 ];
-	const Y_KEYWORDS = [ 'top' => 0, 'center' => 50, 'bottom' => 100 ];
+	const X_KEYWORDS = [
+		'left' => 0,
+		'center' => 50,
+		'right' => 100,
+	];
+	const Y_KEYWORDS = [
+		'top' => 0,
+		'center' => 50,
+		'bottom' => 100,
+	];
 
-	const CENTER = [ 'size' => 50, 'unit' => '%' ];
+	const CENTER = [
+		'size' => 50,
+		'unit' => '%',
+	];
 
 	protected function get_supported_properties(): array {
 		return [ 'transform-origin' ];
@@ -78,13 +89,20 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 			return null;
 		}
 
-		$z = 3 === $count ? $this->parse_z( $tokens[2] ) : [ 'size' => 0, 'unit' => 'px' ];
+		$z = 3 === $count ? $this->parse_z( $tokens[2] ) : [
+			'size' => 0,
+			'unit' => 'px',
+		];
 
 		if ( null === $z ) {
 			return null;
 		}
 
-		return [ 'x' => $x, 'y' => $y, 'z' => $z ];
+		return [
+			'x' => $x,
+			'y' => $y,
+			'z' => $z,
+		];
 	}
 
 	private function parse_xy( array $tokens ): array {
@@ -145,7 +163,10 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 	}
 
 	private function keyword_size( int $percent ): array {
-		return [ 'size' => $percent, 'unit' => '%' ];
+		return [
+			'size' => $percent,
+			'unit' => '%',
+		];
 	}
 
 	private function current_fields( $existing ): array {

@@ -27,8 +27,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Declines to custom_css for any unrecognised syntax.
  */
 class Flex_Property_Converter extends Property_Converter_Base {
-	const AUTO_BASIS = [ 'size' => 'auto', 'unit' => 'custom' ];
-	const ZERO_BASIS = [ 'size' => 0, 'unit' => 'px' ];
+	const AUTO_BASIS = [
+		'size' => 'auto',
+		'unit' => 'custom',
+	];
+	const ZERO_BASIS = [
+		'size' => 0,
+		'unit' => 'px',
+	];
 
 	protected function get_supported_properties(): array {
 		return [ 'flex' ];

@@ -43,7 +43,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Box_Shadow_Property_Converter extends Property_Converter_Base {
 	const INSET_KEYWORD = 'inset';
 	const DEFAULT_COLOR = 'currentColor';
-	const ZERO_SIZE     = [ 'size' => 0, 'unit' => 'px' ];
+	const ZERO_SIZE     = [
+		'size' => 0,
+		'unit' => 'px',
+	];
 
 	protected function get_supported_properties(): array {
 		return [ 'box-shadow' ];

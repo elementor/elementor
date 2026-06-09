@@ -51,8 +51,14 @@ class Transform_Property_Converter extends Property_Converter_Base {
 	const MOVE_UNITS   = [ '%', 'px', 'em', 'rem', 'vw', 'custom' ];
 	const ROTATE_UNITS = [ 'deg', 'rad', 'grad', 'turn', 'custom' ];
 
-	const ZERO_MOVE   = [ 'size' => 0, 'unit' => 'px' ];
-	const ZERO_ROTATE = [ 'size' => 0, 'unit' => 'deg' ];
+	const ZERO_MOVE   = [
+		'size' => 0,
+		'unit' => 'px',
+	];
+	const ZERO_ROTATE = [
+		'size' => 0,
+		'unit' => 'deg',
+	];
 	const ONE_SCALE   = 1.0;
 
 	protected function get_supported_properties(): array {
@@ -110,21 +116,21 @@ class Transform_Property_Converter extends Property_Converter_Base {
 			$char = $value[ $i ];
 
 			if ( '(' === $char ) {
-				$depth++;
+				++$depth;
 			} elseif ( ')' === $char ) {
-				$depth--;
+				--$depth;
 
 				if ( 0 === $depth ) {
 					$current .= $char;
 					$functions[] = trim( $current );
 					$current = '';
-					$i++;
+					++$i;
 
 					while ( $i < $len && ' ' === $value[ $i ] ) {
-						$i++;
+						++$i;
 					}
 
-					$i--;
+					--$i;
 					continue;
 				}
 			}
