@@ -6,7 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isBirthdayEasterEgg() ) {
+		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isCollectionLoopPromotion() && ! this.isBirthdayEasterEgg() ) {
 			className += ' elementor-element--promotion';
 		}
 
@@ -56,6 +56,10 @@ module.exports = Marionette.ItemView.extend( {
 
 	isAtomicFormPromotion() {
 		return !! this.model.get( 'atomicFormPromotion' );
+	},
+
+	isCollectionLoopPromotion() {
+		return !! this.model.get( 'collectionLoopPromotion' );
 	},
 
 	isBirthdayEasterEgg() {
@@ -126,6 +130,14 @@ module.exports = Marionette.ItemView.extend( {
 		if ( this.isAtomicFormPromotion() ) {
 			event.stopPropagation();
 			document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:open', {
+				detail: { target: this.el },
+			} ) );
+			return;
+		}
+
+		if ( this.isCollectionLoopPromotion() ) {
+			event.stopPropagation();
+			document.dispatchEvent( new CustomEvent( 'collection-loop-promotion:open', {
 				detail: { target: this.el },
 			} ) );
 			return;

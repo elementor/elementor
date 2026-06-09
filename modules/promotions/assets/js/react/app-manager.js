@@ -5,9 +5,11 @@ export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
 		this.atomicFormPromotionWrapper = null;
+		this.collectionLoopPromotionWrapper = null;
 		this.onRoute = () => {};
 
 		this.attachAtomicFormListeners();
+		this.attachCollectionLoopListeners();
 	}
 
 	getPromotionData( promotionType ) {
@@ -16,6 +18,10 @@ export class AppManager {
 
 	getAtomicFormPromotionData() {
 		return elementor?.config?.atomicFormPromotion || {};
+	}
+
+	getCollectionLoopPromotionData() {
+		return elementor?.config?.collectionLoopPromotion || {};
 	}
 
 	mount( targetNode, selectors ) {
@@ -82,6 +88,40 @@ export class AppManager {
 		} );
 	}
 
+	mountCollectionLoopPromotion( targetEl, ctaUrl ) {
+		this.unmount();
+
+		this.collectionLoopPromotionWrapper = document.createElement( 'span' );
+		this.collectionLoopPromotionWrapper.className = 'e-collection-loop-promotion-wrapper';
+		targetEl.appendChild( this.collectionLoopPromotionWrapper );
+
+		this.attachEditorEventListeners();
+
+		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
+		const isRTL = elementorCommon.config.isRTL;
+		const promotionData = this.getCollectionLoopPromotionData();
+
+		this.promotionInfoTip = createRoot( this.collectionLoopPromotionWrapper );
+		this.promotionInfoTip.render(
+			<App
+				colorScheme={ colorScheme }
+				isRTL={ isRTL }
+				cardType="atomicForm"
+				promotionData={ promotionData }
+				ctaUrl={ ctaUrl }
+				doClose={ () => this.unmount() }
+			/>,
+		);
+	}
+
+	attachCollectionLoopListeners() {
+		document.addEventListener( 'collection-loop-promotion:open', ( event ) => {
+			const promotionData = this.getCollectionLoopPromotionData();
+
+			this.mountCollectionLoopPromotion( event.detail.target, promotionData.widgetCtaUrl );
+		} );
+	}
+
 	unmount() {
 		if ( this.promotionInfoTip ) {
 			this.detachEditorEventListeners();
@@ -92,8 +132,13 @@ export class AppManager {
 			this.atomicFormPromotionWrapper.parentNode.removeChild( this.atomicFormPromotionWrapper );
 		}
 
+		if ( this.collectionLoopPromotionWrapper && this.collectionLoopPromotionWrapper.parentNode ) {
+			this.collectionLoopPromotionWrapper.parentNode.removeChild( this.collectionLoopPromotionWrapper );
+		}
+
 		this.promotionInfoTip = null;
 		this.atomicFormPromotionWrapper = null;
+		this.collectionLoopPromotionWrapper = null;
 	}
 
 	attachEditorEventListeners() {

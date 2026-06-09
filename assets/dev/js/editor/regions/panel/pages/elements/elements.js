@@ -117,6 +117,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		jQuery.each( elementor.config.collectionLoopPromotionWidgets || [], ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+				collectionLoopPromotion: true,
+			} );
+		} );
+
 		jQuery.each( elementor.config.birthdayEasterEggWidgets || [], ( index, widget ) => {
 			elementsCollection.add( {
 				name: widget.name,
