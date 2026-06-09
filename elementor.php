@@ -28,7 +28,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
 define( 'ELEMENTOR_VERSION', '4.1.0' );
 define( 'ELEMENTOR_MINIMUM_WP_VERSION', '6.8' );
 
