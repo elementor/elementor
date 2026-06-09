@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { type GridTracks } from '../../hooks/use-grid-tracks';
 import { findFirstEmptyCell } from '../../utils/find-first-empty-cell';
 import { type CellRect, computeCellRects, computeGridLines, snapToHalfPixel } from '../../utils/grid-outline-utils';
-import { type GridTracks } from '../../hooks/use-grid-tracks';
 import { Cell } from './cell';
 import { FirstEmptyCell } from './first-empty-cell';
 import { Line } from './line';
@@ -58,7 +58,9 @@ export function GridOutline( { element, tracks, width, height }: Props ) {
 	const hasGap = tracks.columnGap > 0 || tracks.rowGap > 0;
 	const firstEmpty = findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length );
 	const emptyCellRect =
-		firstEmpty && tracks.columns.length > 0 ? cells[ firstEmpty.row * tracks.columns.length + firstEmpty.col ] : null;
+		firstEmpty && tracks.columns.length > 0
+			? cells[ firstEmpty.row * tracks.columns.length + firstEmpty.col ]
+			: null;
 
 	return (
 		<>
