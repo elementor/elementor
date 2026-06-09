@@ -138,11 +138,12 @@ module.exports = Marionette.ItemView.extend( {
 			isIntegration = this.isIntegration(),
 			configPromotion = elementor.config.promotion;
 
-		let ctaUrl, title, content;
+		let ctaUrl, ctaText, title, content;
 
 		if ( isIntegration ) {
 			const integrationPromo = configPromotion?.integration?.[ widgetType ];
 			ctaUrl = integrationPromo.action_button.url.toString().replaceAll( '&amp;', '&' );
+			ctaText = integrationPromo.action_button.text;
 			// eslint-disable-next-line @wordpress/valid-sprintf
 			title = sprintf( integrationPromo.title, widgetTitle );
 			// eslint-disable-next-line @wordpress/valid-sprintf
@@ -157,6 +158,8 @@ module.exports = Marionette.ItemView.extend( {
 				title,
 				content,
 				ctaUrl,
+				ctaText,
+				hideProTag: isIntegration,
 			},
 		} ) );
 	},

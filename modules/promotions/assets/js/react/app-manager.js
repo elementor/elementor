@@ -30,15 +30,21 @@ export class AppManager {
 		const promotionData = key ? promotions[ key ] : null;
 		const elementsPromotion = elementor.config.promotion?.elements || {};
 		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', detail.widgetType || '' ) || '';
+		const fallbackCtaText = detail.ctaText || elementsPromotion.action_button?.text || '';
 		const widgetName = detail.widgetTitle || detail.title || '';
+		const hideProTag = detail.hideProTag || false;
 
 		return promotionData ? {
 			...promotionData,
 			ctaUrl: promotionData.ctaUrl || fallbackCtaUrl,
+			ctaText: promotionData.ctaText || fallbackCtaText,
+			hideProTag,
 		} : {
 			title: detail.title || elementsPromotion.title?.replace( '%s', widgetName ) || '',
 			content: detail.content || elementsPromotion.content?.replace( '%s', widgetName ) || '',
 			ctaUrl: fallbackCtaUrl,
+			ctaText: fallbackCtaText,
+			hideProTag,
 		};
 	}
 
