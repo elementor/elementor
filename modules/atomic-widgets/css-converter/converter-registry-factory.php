@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Rejected_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
@@ -202,6 +203,25 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Properties that are structurally incompatible with Elementor's inline style system.
+	 * They are explicitly rejected (not routed to customCss) so the client can surface a
+	 * hint to the LLM that these constructs are unsupported in element style definitions.
+	 *
+	 * `animation` and its longhands rely on @keyframes which cannot be declared inline.
+	 */
+	const REJECTED_PROPERTIES = [
+		'animation',
+		'animation-name',
+		'animation-duration',
+		'animation-timing-function',
+		'animation-delay',
+		'animation-iteration-count',
+		'animation-direction',
+		'animation-fill-mode',
+		'animation-play-state',
+	];
+
+	/**
 	 * Every Style_Schema property backed by a plain String_Prop_Type. Enum-backed and free-string
 	 * props are handled the same way: get_enum() returns the allowlist (enum props) or null
 	 * (free-string props), so the allowlist is always sourced from the schema, never duplicated.
@@ -257,7 +277,8 @@ class Converter_Registry_Factory {
 			array_keys( self::border_side_specs() ),
 			self::BACKGROUND_FIELD_PROPERTIES,
 			self::BACKGROUND_LAYER_PROPERTIES,
-			self::NOOP_PROPERTIES
+			self::NOOP_PROPERTIES,
+			self::REJECTED_PROPERTIES
 		);
 	}
 
@@ -291,8 +312,16 @@ class Converter_Registry_Factory {
 			$registry->register( $converter );
 		}
 
+		foreach ( self::REJECTED_PROPERTIES as $property ) {
+			$registry->register( new Rejected_Converter( $property ) );
+		}
+
 		foreach ( self::covered_properties() as $property ) {
 			if ( isset( $real_converters[ $property ] ) ) {
+				continue;
+			}
+
+			if ( in_array( $property, self::REJECTED_PROPERTIES, true ) ) {
 				continue;
 			}
 

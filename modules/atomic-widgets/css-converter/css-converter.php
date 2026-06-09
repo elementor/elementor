@@ -25,7 +25,7 @@ class Css_Converter {
 	}
 
 	/**
-	 * @return array{props: array, customCss: string}
+	 * @return array{props: array, customCss: string, rejected: string[]}
 	 */
 	public function convert( string $css ): array {
 		$rules = $this->expand_shorthands( $this->parse( $css ) );
@@ -39,8 +39,9 @@ class Css_Converter {
 		}
 
 		return [
-			'props' => $context->get_props(),
+			'props'     => $context->get_props(),
 			'customCss' => implode( ' ', $leftover ),
+			'rejected'  => $context->get_rejected(),
 		];
 	}
 

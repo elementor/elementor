@@ -37,6 +37,82 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		return json_decode( wp_json_encode( $response->get_data() ), true );
 	}
 
+	public function test_post__animation_property_is_rejected_not_in_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'animation' => 'spin 1s linear infinite' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: rejected, not leaked into customCss.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+		$this->assertSame( [ 'animation: spin 1s linear infinite;' ], $data['el-1']['rejected'] );
+	}
+
+	public function test_post__animation_longhands_are_rejected() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'animation-name'     => 'slide',
+			'animation-duration' => '0.5s',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertCount( 2, $data['el-1']['rejected'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__rejected_and_converted_props_coexist_in_one_block() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'color'     => 'red',
+			'animation' => 'spin 1s linear infinite',
+			'transform' => 'rotate(45deg)',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ], $data['el-1']['props'] );
+		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
+		$this->assertSame( [ 'animation: spin 1s linear infinite;' ], $data['el-1']['rejected'] );
+	}
+
+	public function test_post__non_rejected_block_has_empty_rejected_array() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'blue' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( [], $data['el-1']['rejected'] );
+	}
+
 	public function test_post__returns_empty_props_and_all_input_as_custom_css_with_only_noops() {
 		// Arrange.
 		$this->act_as_admin();

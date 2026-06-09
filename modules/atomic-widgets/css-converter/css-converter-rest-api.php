@@ -66,7 +66,7 @@ class Css_Converter_REST_API {
 	 *
 	 * @param Css_Converter              $converter    The shared CSS converter.
 	 * @param array<string, string|null> $declarations The block's property->value map.
-	 * @return array{props: object, customCss: string}
+	 * @return array{props: object, customCss: string, rejected: string[]}
 	 */
 	private function convert_block( Css_Converter $converter, array $declarations ): array {
 		$resets = [];
@@ -84,8 +84,9 @@ class Css_Converter_REST_API {
 		$result = $converter->convert( implode( ' ', $css_declarations ) );
 
 		return [
-			'props' => (object) array_merge( $result['props'], $resets ),
+			'props'     => (object) array_merge( $result['props'], $resets ),
 			'customCss' => $result['customCss'],
+			'rejected'  => $result['rejected'],
 		];
 	}
 
