@@ -1,13 +1,16 @@
 import App from './app';
 import { createRoot } from 'react-dom/client';
+import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
-		this.atomicFormPromotionWrapper = null;
+		this.promotionWrapper = null;
 		this.onRoute = () => {};
+		this.unbindIframeEvents = () => {};
 
 		this.attachAtomicFormListeners();
+		this.attachWidgetPromotionListeners();
 	}
 
 	getPromotionData( promotionType ) {
@@ -16,6 +19,27 @@ export class AppManager {
 
 	getAtomicFormPromotionData() {
 		return elementor?.config?.atomicFormPromotion || {};
+	}
+
+	resolveWidgetPromotionData( detail ) {
+		const promotions = elementor?.config?.v4Promotions || {};
+		const normalizedType = detail.widgetType.replace( /[-_]/g, '' ).toLowerCase();
+		const key = Object.keys( promotions ).find( ( promotionKey ) => {
+			return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
+		} );
+		const promotionData = key ? promotions[ key ] : null;
+		const elementsPromotion = elementor.config.promotion?.elements || {};
+		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', detail.widgetType || '' ) || '';
+		const widgetName = detail.widgetTitle || detail.title || '';
+
+		return promotionData ? {
+			...promotionData,
+			ctaUrl: promotionData.ctaUrl || fallbackCtaUrl,
+		} : {
+			title: detail.title || elementsPromotion.title?.replace( '%s', widgetName ) || '',
+			content: detail.content || elementsPromotion.content?.replace( '%s', widgetName ) || '',
+			ctaUrl: fallbackCtaUrl,
+		};
 	}
 
 	mount( targetNode, selectors ) {
@@ -48,28 +72,22 @@ export class AppManager {
 		);
 	}
 
-	mountAtomicFormPromotion( targetEl, ctaUrl ) {
+	mountCard( targetEl, wrapperClassName, appProps ) {
 		this.unmount();
 
-		this.atomicFormPromotionWrapper = document.createElement( 'span' );
-		this.atomicFormPromotionWrapper.className = 'e-atomic-form-promotion-wrapper';
-		targetEl.appendChild( this.atomicFormPromotionWrapper );
+		this.promotionWrapper = document.createElement( 'span' );
+		this.promotionWrapper.className = wrapperClassName;
+		document.body.appendChild( this.promotionWrapper );
 
 		this.attachEditorEventListeners();
-
-		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
-		const isRTL = elementorCommon.config.isRTL;
-		const promotionData = this.getAtomicFormPromotionData();
-
-		this.promotionInfoTip = createRoot( this.atomicFormPromotionWrapper );
+		this.promotionInfoTip = createRoot( this.promotionWrapper );
 		this.promotionInfoTip.render(
 			<App
-				colorScheme={ colorScheme }
-				isRTL={ isRTL }
-				cardType="atomicForm"
-				promotionData={ promotionData }
-				ctaUrl={ ctaUrl }
+				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+				isRTL={ elementorCommon.config.isRTL }
+				anchorTarget={ targetEl }
 				doClose={ () => this.unmount() }
+				{ ...appProps }
 			/>,
 		);
 	}
@@ -78,7 +96,20 @@ export class AppManager {
 		document.addEventListener( 'atomic-form-promotion:open', ( event ) => {
 			const promotionData = this.getAtomicFormPromotionData();
 
-			this.mountAtomicFormPromotion( event.detail.target, promotionData.widgetCtaUrl );
+			this.mountCard( event.detail.target, 'e-atomic-form-promotion-wrapper', {
+				cardType: 'atomicForm',
+				promotionData,
+				ctaUrl: promotionData.widgetCtaUrl,
+			} );
+		} );
+	}
+
+	attachWidgetPromotionListeners() {
+		document.addEventListener( 'widget-promotion:open', ( event ) => {
+			this.mountCard( event.detail.target, 'e-widget-promotion-wrapper', {
+				cardType: 'widgetPromotion',
+				promotionData: this.resolveWidgetPromotionData( event.detail ),
+			} );
 		} );
 	}
 
@@ -86,21 +117,23 @@ export class AppManager {
 		if ( this.promotionInfoTip ) {
 			this.detachEditorEventListeners();
 			this.promotionInfoTip.unmount();
+			this.unbindIframeEvents();
 		}
 
-		if ( this.atomicFormPromotionWrapper && this.atomicFormPromotionWrapper.parentNode ) {
-			this.atomicFormPromotionWrapper.parentNode.removeChild( this.atomicFormPromotionWrapper );
-		}
+		this.promotionWrapper?.parentNode?.removeChild( this.promotionWrapper );
 
 		this.promotionInfoTip = null;
-		this.atomicFormPromotionWrapper = null;
+		this.promotionWrapper = null;
 	}
 
 	attachEditorEventListeners() {
+		this.unbindIframeEvents = bindPreviewIframeEvents( () => this.unmount() );
+
 		this.onRoute = ( component, route ) => {
 			if ( route !== 'panel/elements/categories' && route !== 'panel/editor/content' ) {
 				return;
 			}
+
 			this.unmount();
 		};
 
