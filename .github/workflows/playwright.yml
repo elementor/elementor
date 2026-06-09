@@ -40,6 +40,14 @@ on:
           - chromium
           - firefox
           - webkit
+      environment:
+        type: choice
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        options:
+          - production
+          - staging
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -115,6 +123,17 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+          service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - name: Sync plugins from GCS
+        env:
+          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET || 'svitlanad-wp-plugins' }}
+        run: npm run wp:plugins:sync
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -141,6 +160,10 @@ jobs:
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp plugin activate stg-runner"
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
@@ -270,6 +293,17 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+          service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
+
+      - name: Sync plugins from GCS
+        env:
+          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET || 'svitlanad-wp-plugins' }}
+        run: npm run wp:plugins:sync
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -281,6 +315,10 @@ jobs:
           npm run start-local-server
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp plugin activate stg-runner"
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"

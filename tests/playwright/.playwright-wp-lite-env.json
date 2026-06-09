@@ -2,7 +2,9 @@
 	"core": "6.9",
 	"phpVersion": "8.1",
 	"plugins": {
-		"elementor": "./build"
+		"elementor": "./build",
+		"elementor-dev-tools-master": "./tests/wp-env/plugins/elementor-dev-tools-master",
+		"stg-runner": "./tests/wp-env/plugins/stg-runner"
 	},
 	"themes": {
 		"hello-elementor": "./hello-elementor"
