@@ -32,12 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		'button_text' => __( 'Upgrade Now', 'elementor' ),
 		'show_banner' => ! $has_pro,
 	] );
-	$promotion_data_sticky = [
-		'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
-		'message' => __( 'Access all Pro widgets.', 'elementor' ),
-		'button_text' => __( 'Upgrade Now', 'elementor' ),
-	];
-	$promotion_data_sticky = Filtered_Promotions_Manager::get_filtered_promotion_data( $promotion_data_sticky, 'elementor/editor/panel/get_pro_details-sticky', 'url' );
+	$promotion_data_sticky = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
 	?>
 	<?php if ( $get_pro_details['show_banner'] ) : ?>
 	<div id="elementor-panel-get-pro-elements" class="elementor-nerd-box">
