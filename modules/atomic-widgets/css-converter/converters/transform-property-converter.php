@@ -138,15 +138,15 @@ class Transform_Property_Converter extends Property_Converter_Base {
 			$current .= $char;
 		}
 
-		if ( '' !== trim( $current ) || $depth !== 0 ) {
+		if ( '' !== trim( $current ) || 0 !== $depth ) {
 			return null;
 		}
 
 		return $functions;
 	}
 
-	private function parse_function( string $fn ): ?array {
-		if ( ! preg_match( '/^([\w-]+)\s*\((.+)\)$/s', $fn, $m ) ) {
+	private function parse_function( string $callback ): ?array {
+		if ( ! preg_match( '/^([\w-]+)\s*\((.+)\)$/s', $callback, $m ) ) {
 			return null;
 		}
 
