@@ -37,6 +37,71 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		return json_decode( wp_json_encode( $response->get_data() ), true );
 	}
 
+	public function test_post__converts_transform_translate_to_move_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'translateX(50%) rotate(45deg)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['transform'];
+		$this->assertSame( 'transform', $prop['$$type'] );
+		$functions = $prop['value']['transform-functions']['value'];
+		$this->assertCount( 2, $functions );
+		$this->assertSame( 'transform-move', $functions[0]['$$type'] );
+		$this->assertSame( 'transform-rotate', $functions[1]['$$type'] );
+		$this->assertEquals( 45, $functions[1]['value']['z']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__transform_origin_merges_with_transform_functions() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'transform'        => 'scale(1.5)',
+			'transform-origin' => 'left top',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$transform = $data['el-1']['props']['transform'];
+		$this->assertSame( 'transform', $transform['$$type'] );
+		$this->assertArrayHasKey( 'transform-functions', $transform['value'] );
+		$origin = $transform['value']['transform-origin']['value'];
+		$this->assertSame( 0, $origin['x']['value']['size'] );
+		$this->assertSame( 0, $origin['y']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__transform_with_unsupported_function_routes_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'matrix(1,0,0,1,10,20)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertStringContainsString( 'transform:', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_transition_all_to_prop_value() {
 		// Arrange.
 		$this->act_as_admin();
@@ -122,7 +187,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$request->set_param( 'blocks', [ 'el-1' => [
 			'color'     => 'red',
 			'animation' => 'spin 1s linear infinite',
-			'transform' => 'rotate(45deg)',
+			'transform' => 'matrix(1,0,0,1,0,0)',
 		] ] );
 
 		// Act.
@@ -132,7 +197,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [ 'color' => [ '$$type' => 'color', 'value' => 'red' ] ], $data['el-1']['props'] );
-		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0);', $data['el-1']['customCss'] );
 		$this->assertSame( [ 'animation: spin 1s linear infinite;' ], $data['el-1']['rejected'] );
 	}
 
@@ -157,7 +222,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'rotate(45deg)', 'box-shadow' => '0 2px 4px black' ] ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'matrix(1,0,0,1,0,0)', 'box-shadow' => '0 2px 4px black' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -166,7 +231,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
-		$this->assertSame( 'transform: rotate(45deg); box-shadow: 0 2px 4px black;', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); box-shadow: 0 2px 4px black;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__returns_one_named_result_per_input_block() {
@@ -175,7 +240,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
-			'el-1' => [ 'transform' => 'rotate(45deg)' ],
+			'el-1' => [ 'transform' => 'matrix(1,0,0,1,0,0)' ],
 			'el-2' => [ 'box-shadow' => '0 2px 4px black' ],
 		] );
 
@@ -186,7 +251,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
-		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0);', $data['el-1']['customCss'] );
 		$this->assertSame( 'box-shadow: 0 2px 4px black;', $data['el-2']['customCss'] );
 	}
 
@@ -1428,7 +1493,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			'el-1' => [
 				'font-weight' => '700',
 				'color' => null,
-				'transform' => 'rotate(45deg)',
+				'transform' => 'matrix(1,0,0,1,0,0)',
 			],
 		] );
 
@@ -1445,7 +1510,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']
 		);
-		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: matrix(1,0,0,1,0,0);', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__requires_authentication() {

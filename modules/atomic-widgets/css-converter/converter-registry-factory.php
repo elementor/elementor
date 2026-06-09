@@ -10,6 +10,8 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Conve
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Flex_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Transform_Origin_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Transform_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Transition_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
@@ -141,6 +143,8 @@ class Converter_Registry_Factory {
 		'object-position',
 		'flex',
 		'transition',
+		'transform',
+		'transform-origin',
 	];
 
 	/**
@@ -200,7 +204,6 @@ class Converter_Registry_Factory {
 		'stroke',
 		'background',
 		'box-shadow',
-		'transform',
 	];
 
 	/**
@@ -378,6 +381,8 @@ class Converter_Registry_Factory {
 		$converters['object-position'] = new Object_Position_Property_Converter();
 		$converters['flex'] = new Flex_Property_Converter();
 		$converters['transition'] = new Transition_Property_Converter();
+		$converters['transform'] = new Transform_Property_Converter();
+		$converters['transform-origin'] = new Transform_Origin_Property_Converter();
 
 		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
 			$is_radius = 'border-radius' === $target;
