@@ -135,7 +135,7 @@ class Background_Layer_Field_Converter extends Property_Converter_Base {
 		return $overlay['value'] ?? [];
 	}
 
-	private function parse_token( string $token ): ?array {
+	protected function parse_token( string $token ): ?array {
 		$token = trim( $token );
 
 		if ( null !== $this->allowed_values && in_array( $token, $this->allowed_values, true ) ) {

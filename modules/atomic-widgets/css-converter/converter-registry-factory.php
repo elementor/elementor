@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Rejected_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Position_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
@@ -21,13 +22,11 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Co
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Position_Offset_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
@@ -446,13 +445,7 @@ class Converter_Registry_Factory {
 			[ 'width', 'height' ]
 		);
 
-		$converters['background-position'] = new Background_Layer_Field_Converter(
-			'background-position',
-			'position',
-			Position_Prop_Type::get_position_enum_values(),
-			Background_Image_Position_Offset_Prop_Type::class,
-			[ 'x', 'y' ]
-		);
+		$converters['background-position'] = new Background_Position_Property_Converter();
 
 		return $converters;
 	}
