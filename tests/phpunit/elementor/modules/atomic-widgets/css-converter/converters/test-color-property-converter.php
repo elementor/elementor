@@ -44,20 +44,34 @@ class Test_Color_Property_Converter extends TestCase {
 			'keyword' => [ 'transparent', 'transparent' ],
 			'variable' => [ 'var(--c)', 'var(--c)' ],
 			'trimmed' => [ '  red  ', 'red' ],
+			'space separated rgb stays one token' => [ 'rgb(255 0 0)', 'rgb(255 0 0)' ],
+			'color-mix stays one token' => [ 'color-mix(in srgb, red, blue)', 'color-mix(in srgb, red, blue)' ],
 		];
 	}
 
-	public function test_convert__declines_empty_value() {
+	/**
+	 * @dataProvider declined_values
+	 */
+	public function test_convert__declines_empty_or_multi_color_value( string $value ) {
 		// Arrange.
-		$converter = new Color_Property_Converter( 'color' );
+		$converter = new Color_Property_Converter( 'border-color' );
 		$context = new Conversion_Context();
 
 		// Act.
-		$converted = $converter->convert( $context, [ 'property' => 'color', 'value' => '   ' ] );
+		$converted = $converter->convert( $context, [ 'property' => 'border-color', 'value' => $value ] );
 
-		// Assert.
+		// Assert: the model holds a single color, so empty and multi-color values decline to custom_css.
 		$this->assertFalse( $converted );
-		$this->assertFalse( $context->has_prop( 'color' ) );
+		$this->assertFalse( $context->has_prop( 'border-color' ) );
+	}
+
+	public function declined_values(): array {
+		return [
+			'empty' => [ '   ' ],
+			'two named colors' => [ 'red green' ],
+			'four per-side colors' => [ 'red green blue yellow' ],
+			'mixed named and function' => [ 'red rgb(0, 0, 0)' ],
+		];
 	}
 
 	public function test_dispatcher__valid_value_lands_in_props() {

@@ -656,6 +656,23 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'border-left-color: red;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__multi_value_border_color_is_routed_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-color' => 'red green blue yellow' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: a single Color can't hold four sides, so the whole declaration is custom_css.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'border-color: red green blue yellow;', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__per_side_style_and_color_are_routed_to_custom_css() {
 		// Arrange.
 		$this->act_as_admin();
