@@ -125,14 +125,16 @@ jobs:
           unzip hello-elementor
 
       - name: Authenticate to GCP
+        if: ${{ inputs.environment == 'staging' }}
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
           service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
 
       - name: Sync plugins from GCS
+        if: ${{ inputs.environment == 'staging' }}
         env:
-          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET || 'svitlanad-wp-plugins' }}
+          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET }}
         run: npm run wp:plugins:sync
 
       - name: Update PHP version in config
@@ -295,14 +297,16 @@ jobs:
           unzip hello-elementor
 
       - name: Authenticate to GCP
+        if: ${{ inputs.environment == 'staging' }}
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: 'projects/${{ vars.ALLURE_REPORTS_GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
           service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
 
       - name: Sync plugins from GCS
+        if: ${{ inputs.environment == 'staging' }}
         env:
-          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET || 'svitlanad-wp-plugins' }}
+          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET }}
         run: npm run wp:plugins:sync
 
       - name: Update PHP version in config
