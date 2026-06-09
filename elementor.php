@@ -28,12 +28,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-<<<<<<< HEAD
+
 define( 'ELEMENTOR_VERSION', '4.1.0' );
-=======
-define( 'ELEMENTOR_VERSION', '4.2.0' );
 define( 'ELEMENTOR_MINIMUM_WP_VERSION', '6.8' );
->>>>>>> 0e95763636 (Tweak: Update Requires at least to WordPress 6.8 [ED-23932] (#36144))
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
