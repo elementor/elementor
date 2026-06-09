@@ -397,6 +397,282 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'border-radius: 10px / 20px;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_shorthand_border_width_into_logical_sides() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-width' => '1px 2px 3px 4px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [
+					'$$type' => 'border-width',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 3, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_single_border_width_into_a_size() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-width' => '2px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'border-width' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__expands_border_shorthand_into_longhand_props() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border' => '1px solid red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: the shorthand is split into the three schema longhands; no `border` prop exists.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+				'border-style' => [ '$$type' => 'string', 'value' => 'solid' ],
+				'border-color' => [ '$$type' => 'color', 'value' => 'red' ],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__border_width_keyword_degrades_to_custom_css_per_side() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border' => 'thin solid red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: style + color convert, the unparsable width falls to custom_css alone.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-style' => [ '$$type' => 'string', 'value' => 'solid' ],
+				'border-color' => [ '$$type' => 'color', 'value' => 'red' ],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'border-width: thin;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__ambiguous_border_shorthand_is_kept_as_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border' => '1px 2px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'border: 1px 2px;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__merges_per_side_width_longhands_into_border_width() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-top-width' => '2px', 'border-bottom-width' => '4px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: both sides accumulate into one (partial) border-width object.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [
+					'$$type' => 'border-width',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__per_side_width_seeds_from_prior_single_border_width() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-width' => '1px', 'border-top-width' => '2px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: the single seeds all sides, then top is overridden.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [
+					'$$type' => 'border-width',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__merges_per_corner_radius_into_border_radius() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-top-left-radius' => '10px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-radius' => [
+					'$$type' => 'border-radius',
+					'value' => [
+						'start-start' => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__per_side_shorthand_converts_width_and_routes_style_color_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-top' => '1px solid red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: only the width side is representable; per-side style/color fall to custom_css.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [
+					'$$type' => 'border-width',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'border-top-style: solid; border-top-color: red;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__mixed_border_shorthands_resolve_last_wins() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border' => '1px solid blue', 'border-left' => '4px red' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: left width (4px) wins over the seeded 1px; all-sides style/color stay props; the
+		// per-side color has no representation and lands in custom_css.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-width' => [
+					'$$type' => 'border-width',
+					'value' => [
+						'block-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'inline-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+				'border-style' => [ '$$type' => 'string', 'value' => 'solid' ],
+				'border-color' => [ '$$type' => 'color', 'value' => 'blue' ],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'border-left-color: red;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__per_side_style_and_color_are_routed_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-left-style' => 'dashed', 'border-left-color' => 'blue' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: no single-valued per-side representation exists for these.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'border-left-style: dashed; border-left-color: blue;', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_filter_into_a_canonical_prop_value() {
 		// Arrange.
 		$this->act_as_admin();
@@ -532,7 +808,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			'el-1' => [
 				'font-weight' => '700',
 				'color' => null,
-				'padding' => '10px',
+				'transform' => 'rotate(45deg)',
 			],
 		] );
 
@@ -549,7 +825,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']
 		);
-		$this->assertSame( 'padding: 10px;', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__requires_authentication() {

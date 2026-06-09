@@ -44,7 +44,11 @@ class Css_Converter_REST_API {
 				->build();
 		}
 
-		$converter = new Css_Converter( Converter_Registry_Factory::create(), new Null_Failure_Reporter() );
+		$converter = new Css_Converter(
+			Converter_Registry_Factory::create(),
+			new Null_Failure_Reporter(),
+			Expander_Registry_Factory::create()
+		);
 
 		$results = [];
 

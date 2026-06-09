@@ -8,9 +8,12 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Converter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -116,10 +119,20 @@ class Converter_Registry_Factory {
 	 *
 	 * - border-radius: Union(Border_Radius | Size); single value -> Size, 2-4 values -> logical
 	 *   Border_Radius. Elliptical "/" values decline to custom_css (no two-radii-per-corner shape).
+	 * - border-width: Union(Border_Width | Size); shares the four logical sides with the Dimensions
+	 *   shorthand, so it reuses Dimensions_Property_Converter with the Border_Width wrapper injected.
 	 */
 	const OTHER_PROPERTIES = [
 		'border-radius',
+		'border-width',
 	];
+
+	/**
+	 * Logical side keys of the Border_Width object, and corner keys of the Border_Radius object, in the
+	 * order used to seed every side/corner from a single Size (e.g. a prior `border-width: 1px`).
+	 */
+	const BORDER_WIDTH_SIDE_KEYS = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
+	const BORDER_RADIUS_CORNER_KEYS = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
 
 	/**
 	 * Filter-function lists backed by Array(Css_Filter_Func) (filter, backdrop-filter). Handled
@@ -141,7 +154,6 @@ class Converter_Registry_Factory {
 	const NOOP_PROPERTIES = [
 		'object-position',
 		'stroke',
-		'border-width',
 		'background',
 		'box-shadow',
 		'transform',
@@ -202,8 +214,31 @@ class Converter_Registry_Factory {
 			self::DIMENSIONS_PROPERTIES,
 			self::FILTER_PROPERTIES,
 			self::OTHER_PROPERTIES,
+			array_keys( self::border_side_specs() ),
 			self::NOOP_PROPERTIES
 		);
+	}
+
+	/**
+	 * Per-side/per-corner border longhands that each contribute one fragment to an aggregate object prop
+	 * (border-width / border-radius), keyed by input property -> [ target prop, object key ]. These are
+	 * not Style_Schema properties; they are accumulated into the schema aggregate by
+	 * Object_Side_Merge_Converter. Per-side style/color have no faithful single-valued representation, so
+	 * they are intentionally absent and route to custom_css.
+	 *
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	private static function border_side_specs(): array {
+		return [
+			'border-top-width' => [ 'border-width', 'block-start' ],
+			'border-right-width' => [ 'border-width', 'inline-end' ],
+			'border-bottom-width' => [ 'border-width', 'block-end' ],
+			'border-left-width' => [ 'border-width', 'inline-start' ],
+			'border-top-left-radius' => [ 'border-radius', 'start-start' ],
+			'border-top-right-radius' => [ 'border-radius', 'start-end' ],
+			'border-bottom-right-radius' => [ 'border-radius', 'end-end' ],
+			'border-bottom-left-radius' => [ 'border-radius', 'end-start' ],
+		];
 	}
 
 	public static function create(): Converter_Registry {
@@ -267,6 +302,20 @@ class Converter_Registry_Factory {
 		}
 
 		$converters['border-radius'] = new Border_Radius_Property_Converter( 'border-radius' );
+		$converters['border-width'] = new Dimensions_Property_Converter( 'border-width', Border_Width_Prop_Type::class );
+
+		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
+			$is_radius = 'border-radius' === $target;
+
+			$converters[ $property ] = new Object_Side_Merge_Converter(
+				$property,
+				$target,
+				$target,
+				$side_key,
+				$is_radius ? self::BORDER_RADIUS_CORNER_KEYS : self::BORDER_WIDTH_SIDE_KEYS,
+				$is_radius ? Border_Radius_Prop_Type::class : Border_Width_Prop_Type::class
+			);
+		}
 
 		foreach ( self::FILTER_PROPERTIES as $property ) {
 			$converters[ $property ] = new Filter_Property_Converter( $property, $schema[ $property ]->get_key() );

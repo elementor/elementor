@@ -26,7 +26,7 @@ class Box_Shorthand_Parser {
 	 * @return array{single: array}|array{sides: array<int, array>}|null
 	 */
 	public static function parse( string $value ): ?array {
-		$tokens = self::split_top_level( trim( $value ) );
+		$tokens = Css_Token_Splitter::split_by_whitespace( trim( $value ) );
 		$count = count( $tokens );
 
 		if ( $count < 1 || $count > self::MAX_SIDES ) {
@@ -68,45 +68,5 @@ class Box_Shorthand_Parser {
 			default:
 				return [ $sizes[0], $sizes[1], $sizes[2], $sizes[3] ];
 		}
-	}
-
-	/**
-	 * Split on whitespace runs that sit at parenthesis depth 0, so function values such as
-	 * "calc(50% - 10px)" stay intact as a single token.
-	 *
-	 * @return string[]
-	 */
-	private static function split_top_level( string $value ): array {
-		$tokens = [];
-		$current = '';
-		$depth = 0;
-		$length = strlen( $value );
-
-		for ( $i = 0; $i < $length; $i++ ) {
-			$char = $value[ $i ];
-
-			if ( '(' === $char ) {
-				++$depth;
-			} elseif ( ')' === $char ) {
-				$depth = max( 0, $depth - 1 );
-			}
-
-			if ( 0 === $depth && ( ' ' === $char || "\t" === $char || "\n" === $char ) ) {
-				if ( '' !== $current ) {
-					$tokens[] = $current;
-					$current = '';
-				}
-
-				continue;
-			}
-
-			$current .= $char;
-		}
-
-		if ( '' !== $current ) {
-			$tokens[] = $current;
-		}
-
-		return $tokens;
 	}
 }

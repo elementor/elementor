@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use PHPUnit\Framework\TestCase;
@@ -106,6 +107,48 @@ class Test_Dimensions_Property_Converter extends TestCase {
 				],
 			],
 			$context->get_prop( 'padding' )
+		);
+	}
+
+	public function test_convert__injected_wrapper_emits_border_width_object() {
+		// Arrange.
+		$converter = new Dimensions_Property_Converter( 'border-width', Border_Width_Prop_Type::class );
+		$context = new Conversion_Context();
+
+		// Act.
+		$converted = $converter->convert( $context, [ 'property' => 'border-width', 'value' => '1px 2px 3px 4px' ] );
+
+		// Assert: same side mapping as Dimensions, wrapped as border-width.
+		$prop_value = $context->get_prop( 'border-width' );
+
+		$this->assertTrue( $converted );
+		$this->assertSame(
+			[
+				'$$type' => 'border-width',
+				'value' => [
+					'block-start' => $this->px( '1px' ),
+					'inline-end' => $this->px( '2px' ),
+					'block-end' => $this->px( '3px' ),
+					'inline-start' => $this->px( '4px' ),
+				],
+			],
+			$prop_value
+		);
+		$this->assertTrue( Border_Width_Prop_Type::make()->validate( $prop_value ) );
+	}
+
+	public function test_convert__injected_wrapper_single_value_still_emits_a_size() {
+		// Arrange.
+		$converter = new Dimensions_Property_Converter( 'border-width', Border_Width_Prop_Type::class );
+		$context = new Conversion_Context();
+
+		// Act.
+		$converter->convert( $context, [ 'property' => 'border-width', 'value' => '2px' ] );
+
+		// Assert.
+		$this->assertSame(
+			[ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+			$context->get_prop( 'border-width' )
 		);
 	}
 

@@ -1,0 +1,115 @@
+<?php
+
+namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
+
+use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
+use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
+use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * Expands a `border` / `border-{side}` shorthand into its width / style / color longhands. There is no
+ * aggregate Border prop type; these are independent longhands, so this is a split, not a merge. The
+ * concrete longhand property names are injected, so the same logic serves the all-sides `border`
+ * (border-width/style/color) and each per-side shorthand (e.g. border-top-width/style/color).
+ *
+ * Each token is classified once: a border-style keyword (enum from the live schema) -> style; a length
+ * the Size parser accepts, or a width keyword (thin/medium/thick) -> width; anything else -> color (the
+ * catch-all, mirroring the raw-passthrough color converter). Only the parts present are emitted (omitted
+ * parts are not reset to CSS initials). A second token for an already filled role is ambiguous, so the
+ * whole expansion declines and the original shorthand is kept for custom_css. A produced longhand can
+ * still individually decline downstream (e.g. `border-{side}-style`, which has no converter), degrading
+ * to custom_css for that part only.
+ */
+class Border_Shorthand_Expander extends Shorthand_Expander_Base {
+	const WIDTH_KEYWORDS = [ 'thin', 'medium', 'thick' ];
+	const ROLE_WIDTH = 'width';
+	const ROLE_STYLE = 'style';
+	const ROLE_COLOR = 'color';
+
+	private string $property;
+
+	/**
+	 * @var array<string, string> Role (width|style|color) -> emitted longhand property name.
+	 */
+	private array $longhands;
+
+	/**
+	 * @var string[]
+	 */
+	private array $style_keywords;
+
+	/**
+	 * @param string                $property       The shorthand this expander owns (border, border-top, ...).
+	 * @param array<string, string> $longhands      Role -> longhand property name to emit.
+	 * @param string[]              $style_keywords The border-style enum, sourced from the live schema.
+	 */
+	public function __construct( string $property, array $longhands, array $style_keywords ) {
+		$this->property = $property;
+		$this->longhands = $longhands;
+		$this->style_keywords = $style_keywords;
+	}
+
+	protected function get_supported_properties(): array {
+		return [ $this->property ];
+	}
+
+	public function expand( array $rule ): array {
+		$tokens = Css_Token_Splitter::split_by_whitespace( trim( $rule['value'] ) );
+
+		if ( empty( $tokens ) ) {
+			return [];
+		}
+
+		$slots = [
+			self::ROLE_WIDTH => null,
+			self::ROLE_STYLE => null,
+			self::ROLE_COLOR => null,
+		];
+
+		foreach ( $tokens as $token ) {
+			$role = $this->classify( $token );
+
+			if ( null !== $slots[ $role ] ) {
+				return [];
+			}
+
+			$slots[ $role ] = $token;
+		}
+
+		$rules = [];
+
+		foreach ( $slots as $role => $value ) {
+			if ( null === $value ) {
+				continue;
+			}
+
+			$property = $this->longhands[ $role ];
+
+			$rules[] = [
+				'property' => $property,
+				'value' => $value,
+				'declaration' => $property . ': ' . $value,
+			];
+		}
+
+		return $rules;
+	}
+
+	private function classify( string $token ): string {
+		$lower = strtolower( $token );
+
+		if ( in_array( $lower, $this->style_keywords, true ) ) {
+			return self::ROLE_STYLE;
+		}
+
+		if ( in_array( $lower, self::WIDTH_KEYWORDS, true ) || null !== Size_Value_Parser::parse( $token ) ) {
+			return self::ROLE_WIDTH;
+		}
+
+		return self::ROLE_COLOR;
+	}
+}
