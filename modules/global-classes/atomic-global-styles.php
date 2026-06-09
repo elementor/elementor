@@ -207,44 +207,53 @@ class Atomic_Global_Styles {
 	 * routines can find parent posts when a child is saved or when a class
 	 * definition changes.
 	 *
+	 * The reverse map is kept in sync edge-by-edge from the forward map diff:
+	 * newly embedded children gain a parent entry; dropped children lose it.
+	 * This ensures stale parent references are pruned without losing entries
+	 * for children that appear in other parents not present in this batch.
+	 *
 	 * @param array<int,int[]> $parent_to_embedded Forward map: parent_id => child_ids[].
 	 */
 	private function persist_relation_maps( array $parent_to_embedded, string $context ): void {
 		$cache_validity = new Cache_Validity();
 
-		// Build reverse map: child_id => parent_ids[].
-		$reverse = [];
-		foreach ( $parent_to_embedded as $parent => $children ) {
-			foreach ( $children as $child ) {
-				$reverse[ $child ][] = $parent;
+		foreach ( $parent_to_embedded as $parent => $new_children ) {
+			$forward_path = [ $this->get_cache_root_key( self::RELATED_KEY ), $parent, $context ];
+
+			$old_children = array_map( 'intval', (array) ( $cache_validity->get_meta( $forward_path ) ?? [] ) );
+			$new_children = array_map( 'intval', $new_children );
+
+			$cache_validity->validate( $forward_path, $new_children );
+
+			foreach ( array_diff( $new_children, $old_children ) as $added_child ) {
+				$this->add_reverse_relation( $cache_validity, $added_child, $parent, $context );
+			}
+
+			foreach ( array_diff( $old_children, $new_children ) as $removed_child ) {
+				$this->remove_reverse_relation( $cache_validity, $removed_child, $parent, $context );
 			}
 		}
+	}
 
-		// Write the forward map.
-		foreach ( $parent_to_embedded as $parent => $children ) {
-			$cache_validity->validate( [
-				$this->get_cache_root_key( self::RELATED_KEY ),
-				$parent,
-				$context,
-			], $children );
+	private function add_reverse_relation( Cache_Validity $cache_validity, int $child, int $parent, string $context ): void {
+		$reverse_path = [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ), $child, $context ];
+
+		$existing = array_map( 'intval', (array) ( $cache_validity->get_meta( $reverse_path ) ?? [] ) );
+
+		if ( in_array( $parent, $existing, true ) ) {
+			return;
 		}
 
-		// Write the reverse map.
-		foreach ( $reverse as $child => $parents ) {
-			$existing_parents = $cache_validity->get_meta( [
-				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ),
-				$child,
-				$context,
-			] ) ?? [];
+		$cache_validity->validate( $reverse_path, array_values( array_merge( $existing, [ $parent ] ) ) );
+	}
 
-			$merged = array_values( array_unique( array_merge( (array) $existing_parents, $parents ) ) );
+	private function remove_reverse_relation( Cache_Validity $cache_validity, int $child, int $parent, string $context ): void {
+		$reverse_path = [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ), $child, $context ];
 
-			$cache_validity->validate( [
-				$this->get_cache_root_key( self::RELATED_REVERSE_KEY ),
-				$child,
-				$context,
-			], $merged );
-		}
+		$existing = array_map( 'intval', (array) ( $cache_validity->get_meta( $reverse_path ) ?? [] ) );
+		$pruned   = array_values( array_filter( $existing, fn( int $p ) => $p !== $parent ) );
+
+		$cache_validity->validate( $reverse_path, $pruned );
 	}
 
 	/**

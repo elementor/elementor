@@ -98,6 +98,8 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			wp_delete_post( $post_id, true );
 		}
 
+		remove_all_filters( 'elementor/document/related_posts' );
+
 		parent::tearDown();
 	}
 
@@ -417,7 +419,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		$parent_id = $this->factory()->post->create();
 		$child_id  = $this->factory()->post->create();
-		$context   = Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		// Parent uses g-4-124, child uses g-4-123.
 		$relations->set_styles_for_post( $parent_id, [ 'g-4-124' ] );
@@ -453,10 +454,13 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// The parent's CSS callback must contain classes from both parent and child.
 		$styles = $registered_callbacks[ $parent_id ]();
 		$labels = array_column( $styles, 'label' );
-		$this->assertContains( 'pinky', $labels, 'Child class should be merged into parent CSS.' );
-		$this->assertContains( 'bluey', $labels, 'Parent class should be present.' );
-
-		remove_all_filters( 'elementor/document/related_posts' );
+		$expected_labels = array_map(
+			fn( $id ) => $this->mock_global_classes['items'][ $id ]['label'],
+			array_reverse(
+				array_values( array_intersect( $this->mock_global_classes['order'], [ 'g-4-124', 'g-4-123' ] ) )
+			)
+		);
+		$this->assertSame( $expected_labels, $labels, 'Merged classes should follow kit order reversed.' );
 	}
 
 	public function test_register_styles__skips_embedded_post_from_producing_own_entry() {
@@ -495,8 +499,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 		// Assert: only one registration (the parent's aggregated entry).
 		$this->assertSame( 1, $register_call_count, 'Exactly one global CSS entry should be registered.' );
-
-		remove_all_filters( 'elementor/document/related_posts' );
 	}
 
 	public function test_invalidate_cache__also_invalidates_parent_when_child_class_changes() {
@@ -547,8 +549,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			$cache_validity->is_valid( [ Atomic_Global_Styles::STYLES_KEY, $parent_id, $context ] ),
 			'Parent cache must be invalidated when an embedded child\'s class changes.'
 		);
-
-		remove_all_filters( 'elementor/document/related_posts' );
 	}
 
 	public function test_on_document_save__invalidates_parent_cache() {
@@ -597,8 +597,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			$cache_validity->is_valid( $cache_path ),
 			'Parent cache must be invalidated when an embedded child document is saved.'
 		);
-
-		remove_all_filters( 'elementor/document/related_posts' );
 	}
 
 	public function test_on_document_save__invalidates_grandparent_cache() {
@@ -645,8 +643,58 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			$cache_validity->is_valid( $grandparent_cache_path ),
 			'Grandparent cache must be invalidated when a deeply embedded child document is saved.'
 		);
+	}
 
-		remove_all_filters( 'elementor/document/related_posts' );
+	public function test_stale_reverse_relation_is_pruned_after_embedding_is_removed() {
+		// Arrange.
+		$relations      = new Global_Classes_Relations();
+		$global_classes = new Atomic_Global_Styles( $relations );
+		$global_classes->register_hooks();
+		$cache_validity = new Cache_Validity();
+
+		$parent_doc = $this->factory()->documents->create_and_get();
+		$child_doc  = $this->factory()->documents->create_and_get();
+		$parent_id  = $parent_doc->get_main_id();
+		$child_id   = $child_doc->get_main_id();
+		$context    = Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$relations->set_styles_for_post( $parent_id, [ 'g-4-124' ] );
+		$relations->set_styles_for_post( $child_id, [ 'g-4-123' ] );
+
+		Global_Classes_Repository::make()->put(
+			$this->mock_global_classes['items'],
+			$this->mock_global_classes['order']
+		);
+
+		$embed_child = true;
+		add_filter( 'elementor/document/related_posts', function( $related, $post_id ) use ( $parent_id, $child_id, &$embed_child ) {
+			if ( (int) $post_id === $parent_id && $embed_child ) {
+				$related[] = $child_id;
+			}
+			return $related;
+		}, 10, 2 );
+
+		$this->mock_atomic_styles_manager->method( 'register' )->willReturn( null );
+
+		// First render: P embeds C → reverse map written C → [P].
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $parent_id, $child_id ] );
+
+		// Remove the embedding and re-render so the forward map is updated.
+		$embed_child = false;
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ $parent_id, $child_id ] );
+
+		// Seed a valid parent cache.
+		$parent_cache_path = [ Atomic_Global_Styles::STYLES_KEY, $parent_id, $context ];
+		$cache_validity->validate( $parent_cache_path );
+
+		// Act: save the child document (was previously embedded, but is no longer).
+		do_action( 'elementor/document/after_save', $child_doc, [] );
+
+		// Assert: parent cache must NOT be invalidated because the embedding was removed.
+		$this->assertTrue(
+			$cache_validity->is_valid( $parent_cache_path ),
+			'Parent cache must not be invalidated after its embedding of the child was removed.'
+		);
 	}
 
 	private function create_atomic_global_styles(): Atomic_Global_Styles {
