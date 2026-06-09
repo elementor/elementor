@@ -200,7 +200,22 @@ class Converter_Registry_Factory {
 	 * property without coverage fails CI until it is added here.
 	 */
 	const NOOP_PROPERTIES = [
+		// SVG-only family. The editor UI does not expose stroke controls, so there is no
+		// LLM-facing use case worth converting. All stroke-* longhands are listed explicitly
+		// (rather than relying on silent fallthrough) so the intent is "preserve verbatim in
+		// customCss by-design", not "forgot to wire". `stroke` itself is the only top-level
+		// Style_Schema entry; the longhands are not in the schema and only need coverage here.
 		'stroke',
+		'stroke-width',
+		'stroke-opacity',
+		'stroke-dasharray',
+		'stroke-dashoffset',
+		'stroke-linecap',
+		'stroke-linejoin',
+		'stroke-miterlimit',
+		// Last-resort fallback for `background` values the shorthand expander cannot decompose
+		// (e.g. exotic syntax). The expander handles the common forms; this entry keeps the
+		// raw declaration in customCss when expansion fails.
 		'background',
 		'box-shadow',
 	];

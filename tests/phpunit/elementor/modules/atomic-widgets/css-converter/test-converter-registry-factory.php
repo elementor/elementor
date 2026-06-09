@@ -55,4 +55,40 @@ class Test_Converter_Registry_Factory extends TestCase {
 		$this->assertSame( [], $result['props'] );
 		$this->assertSame( 'transform: matrix(1,0,0,1,0,0); box-shadow: 0 2px 4px black;', $result['customCss'] );
 	}
+
+	/**
+	 * @dataProvider stroke_family_provider
+	 *
+	 * Guards the by-design decision documented in Converter_Registry_Factory::NOOP_PROPERTIES:
+	 * SVG stroke-* longhands are intentionally preserved verbatim in customCss because the editor
+	 * UI does not expose stroke controls. If someone later wires a real converter for any of these,
+	 * this test will fail and force the author to remove the entry from the provider AND from the
+	 * NOOP_PROPERTIES list, ensuring the documented intent stays in sync with behaviour.
+	 */
+	public function test_stroke_family_falls_to_custom_css_by_design( string $property, string $value ) {
+		// Arrange.
+		$converter = new Css_Converter( Converter_Registry_Factory::create(), new Null_Failure_Reporter() );
+		$declaration = "{$property}: {$value};";
+
+		// Act.
+		$result = $converter->convert( $declaration );
+
+		// Assert.
+		$this->assertSame( [], $result['props'], "{$property} unexpectedly produced a converted prop." );
+		$this->assertSame( $declaration, $result['customCss'], "{$property} did not fall through to customCss verbatim." );
+		$this->assertSame( [], $result['rejected'] );
+	}
+
+	public static function stroke_family_provider(): array {
+		return [
+			'stroke'            => [ 'stroke', 'red' ],
+			'stroke-width'      => [ 'stroke-width', '2px' ],
+			'stroke-opacity'    => [ 'stroke-opacity', '0.5' ],
+			'stroke-dasharray'  => [ 'stroke-dasharray', '5 3' ],
+			'stroke-dashoffset' => [ 'stroke-dashoffset', '4px' ],
+			'stroke-linecap'    => [ 'stroke-linecap', 'round' ],
+			'stroke-linejoin'   => [ 'stroke-linejoin', 'miter' ],
+			'stroke-miterlimit' => [ 'stroke-miterlimit', '10' ],
+		];
+	}
 }
