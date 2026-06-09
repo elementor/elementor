@@ -125,7 +125,7 @@ describe( audit.id, () => {
 		expect( result.status ).toBe( 'fail' );
 
 		if ( result.status === 'fail' ) {
-			expect( result.violations.some( ( v ) => v.label.includes( 'Extra H1' ) ) ).toBe( true );
+			expect( result.violations.some( ( v ) => v.label.includes( 'More than one H1 on the page.' ) ) ).toBe( true );
 		}
 	} );
 } );
