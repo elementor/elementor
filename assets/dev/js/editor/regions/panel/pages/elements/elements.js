@@ -113,7 +113,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: widget.icon,
 				categories: JSON.parse( widget.categories ),
 				editable: false,
-				atomicFormPromotion: true,
+				promotionType: 'atomic-form',
 			} );
 		} );
 
@@ -124,7 +124,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				icon: widget.icon,
 				categories: JSON.parse( widget.categories ),
 				editable: false,
-				collectionLoopPromotion: true,
+				promotionType: 'collection-loop',
 			} );
 		} );
 

@@ -6,7 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isCollectionLoopPromotion() && ! this.isBirthdayEasterEgg() ) {
+		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() && ! this.isBirthdayEasterEgg() ) {
 			className += ' elementor-element--promotion';
 		}
 
@@ -54,12 +54,8 @@ module.exports = Marionette.ItemView.extend( {
 		return !! this.model.get( 'integration' );
 	},
 
-	isAtomicFormPromotion() {
-		return !! this.model.get( 'atomicFormPromotion' );
-	},
-
-	isCollectionLoopPromotion() {
-		return !! this.model.get( 'collectionLoopPromotion' );
+	isAtomicWidgetPromotion() {
+		return !! this.model.get( 'promotionType' );
 	},
 
 	isBirthdayEasterEgg() {
@@ -127,17 +123,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown( event ) {
-		if ( this.isAtomicFormPromotion() ) {
+		if ( this.isAtomicWidgetPromotion() ) {
 			event.stopPropagation();
-			document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:open', {
-				detail: { target: this.el },
-			} ) );
-			return;
-		}
-
-		if ( this.isCollectionLoopPromotion() ) {
-			event.stopPropagation();
-			document.dispatchEvent( new CustomEvent( 'collection-loop-promotion:open', {
+			const promotionType = this.model.get( 'promotionType' );
+			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
 				detail: { target: this.el },
 			} ) );
 			return;
