@@ -12,12 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Font_Family_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$prop_type = $context->get_prop_type();
-
-		if ( $prop_type instanceof Font_Family_Prop_Type ) {
-			return $prop_type->format_for_css( $value );
-		}
-
-		return $value;
+		return Font_Family_Prop_Type::make()->format_for_css( $value );
 	}
 }
