@@ -143,6 +143,89 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_object_position_named_keyword_to_string_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'object-position' => 'center center' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'object-position' => [ '$$type' => 'string', 'value' => 'center center' ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_object_position_size_pair_to_position_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'object-position' => '50% 30%' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['object-position'];
+		$this->assertSame( 'object-position', $prop['$$type'] );
+		$this->assertSame( '%', $prop['value']['x']['value']['unit'] );
+		$this->assertSame( '%', $prop['value']['y']['value']['unit'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_flex_none_to_flex_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'flex' => 'none' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['flex'];
+		$this->assertSame( 'flex', $prop['$$type'] );
+		$this->assertEquals( 0, $prop['value']['flexGrow']['value'] );
+		$this->assertEquals( 1, $prop['value']['flexShrink']['value'] );
+		$this->assertSame( 'auto', $prop['value']['flexBasis']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_flex_three_values_to_flex_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'flex' => '2 1 50%' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['flex'];
+		$this->assertSame( 'flex', $prop['$$type'] );
+		$this->assertEquals( 2, $prop['value']['flexGrow']['value'] );
+		$this->assertEquals( 1, $prop['value']['flexShrink']['value'] );
+		$this->assertEquals( 50, $prop['value']['flexBasis']['value']['size'] );
+		$this->assertSame( '%', $prop['value']['flexBasis']['value']['unit'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_physical_inset_properties_to_logical_equivalents() {
 		// Arrange.
 		$this->act_as_admin();

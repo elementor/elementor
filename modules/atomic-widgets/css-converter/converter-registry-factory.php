@@ -2,15 +2,17 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Flex_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Noop_Converter;
-use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Image_Converter;
-use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Background_Layer_Field_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Number_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Field_Merge_Converter;
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Position_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Side_Merge_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Size_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Span_Property_Converter;
@@ -134,6 +136,8 @@ class Converter_Registry_Factory {
 	const OTHER_PROPERTIES = [
 		'border-radius',
 		'border-width',
+		'object-position',
+		'flex',
 	];
 
 	/**
@@ -190,13 +194,11 @@ class Converter_Registry_Factory {
 	 * property without coverage fails CI until it is added here.
 	 */
 	const NOOP_PROPERTIES = [
-		'object-position',
 		'stroke',
 		'background',
 		'box-shadow',
 		'transform',
 		'transition',
-		'flex',
 	];
 
 	/**
@@ -343,6 +345,8 @@ class Converter_Registry_Factory {
 
 		$converters['border-radius'] = new Border_Radius_Property_Converter( 'border-radius' );
 		$converters['border-width'] = new Dimensions_Property_Converter( 'border-width', Border_Width_Prop_Type::class );
+		$converters['object-position'] = new Object_Position_Property_Converter();
+		$converters['flex'] = new Flex_Property_Converter();
 
 		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
 			$is_radius = 'border-radius' === $target;
