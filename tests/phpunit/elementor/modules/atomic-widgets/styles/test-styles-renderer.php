@@ -58,15 +58,15 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		return [
 			'multi-word with digit' => [
 				[ '$$type' => 'font-family', 'value' => 'My Font 3' ],
-				'font-family:"My Font 3";',
+				'font-family:My Font 3;',
 			],
 			'multi-word without digit' => [
 				[ '$$type' => 'font-family', 'value' => 'Open Sans' ],
-				'font-family:"Open Sans";',
+				'font-family:Open Sans;',
 			],
 			'single-word' => [
 				[ '$$type' => 'font-family', 'value' => 'Arial' ],
-				'font-family:"Arial";',
+				'font-family:Arial;',
 			],
 		];
 	}
