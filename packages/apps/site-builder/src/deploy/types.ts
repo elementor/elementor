@@ -40,19 +40,21 @@ export interface DeployGlobalVariables {
 }
 
 export interface DeployPayload {
+	mode?: 'full' | 'incremental';
+	homePageId?: string;
 	pages: DeployPage[];
 	header?: DeployThemePart;
 	footer?: DeployThemePart;
 	error404?: DeployThemePart;
 	singlePost?: DeployThemePart;
-	kitSettings: Record< string, unknown >;
+	kitSettings?: Record< string, unknown >;
 	globalClasses?: DeployGlobalClasses;
 	globalVariables?: DeployGlobalVariables;
-	menus: {
+	menus?: {
 		header: DeployMenuItem[];
 		footer: DeployMenuItem[];
 	};
-	siteMeta: {
+	siteMeta?: {
 		title: string;
 		tagline: string;
 	};
@@ -64,6 +66,7 @@ export interface DeployResult {
 	status: 'success' | 'error';
 	homeUrl?: string;
 	homePageId?: number;
+	pageIdMap?: Record< string, number >;
 	error?: string;
 	errors?: string[];
 }

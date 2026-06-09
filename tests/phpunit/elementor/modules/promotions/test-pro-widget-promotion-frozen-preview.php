@@ -98,6 +98,34 @@ class Test_Pro_Widget_Promotion_Frozen_Preview extends Elementor_Test_Base {
 		$this->assertStringNotContainsString( 'e-promotion-delete', $output );
 	}
 
+	public function test_render_frozen_frontend_strips_document_noise_from_rendered_html() {
+		$document_html = '<head><style>.wp-emoji{display:inline}</style></head>'
+			. '<body><script>var wc_order_attribution = {};</script>'
+			. '<div class="elementor-widget-animated-headline">Bold Style</div></body>';
+
+		$widget = new Pro_Widget_Promotion( [
+			'settings' => [
+				'__rendered_html' => $document_html,
+			],
+		], [
+			'widget_name' => 'animated-headline',
+			'widget_title' => 'Animated Headline',
+		] );
+
+		$reflection = new \ReflectionClass( $widget );
+		$method = $reflection->getMethod( 'render_frozen_frontend' );
+		$method->setAccessible( true );
+
+		ob_start();
+		$method->invoke( $widget );
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Bold Style', $output );
+		$this->assertStringNotContainsString( 'wp-emoji', $output );
+		$this->assertStringNotContainsString( 'wc_order_attribution', $output );
+		$this->assertStringNotContainsString( '<script>', $output );
+	}
+
 	public function test_render_sanitizes_html_output() {
 		$malicious_html = '<div>Safe content</div><script>alert("xss")</script>';
 		

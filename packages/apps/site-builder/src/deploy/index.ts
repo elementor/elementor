@@ -12,13 +12,29 @@ import type { DeployPayload, DeployResult } from './types';
 
 export type { DeployPayload, DeployResult };
 
+const resolveHomeWpPageId = (
+	payload: DeployPayload,
+	pageIdMap: Record< string, number >,
+): number | undefined => {
+	const plannerHomeId = payload.homePageId ?? payload.pages[ 0 ]?.id;
+
+	if ( ! plannerHomeId ) {
+		return undefined;
+	}
+
+	return pageIdMap[ plannerHomeId ];
+};
+
 export async function deployWebsite( payload: DeployPayload ): Promise< DeployResult > {
 	const errors: string[] = [];
+	const isIncrementalDeploy = payload.mode === 'incremental';
 
-	try {
-		await setSiteMetadata( payload.siteMeta );
-	} catch ( e ) {
-		errors.push( `site_metadata: ${ ( e as Error ).message }` );
+	if ( payload.siteMeta ) {
+		try {
+			await setSiteMetadata( payload.siteMeta );
+		} catch ( e ) {
+			errors.push( `site_metadata: ${ ( e as Error ).message }` );
+		}
 	}
 
 	if ( payload.logo ) {
@@ -29,10 +45,12 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		}
 	}
 
-	try {
-		await updateKitSettings( payload.kitSettings );
-	} catch ( e ) {
-		errors.push( `kit_settings: ${ ( e as Error ).message }` );
+	if ( payload.kitSettings ) {
+		try {
+			await updateKitSettings( payload.kitSettings );
+		} catch ( e ) {
+			errors.push( `kit_settings: ${ ( e as Error ).message }` );
+		}
 	}
 
 	if ( payload.globalVariables ) {
@@ -58,8 +76,8 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		errors.push( `pages: ${ ( e as Error ).message }` );
 	}
 
-	const homeWpId = pageIdMap.home;
-	if ( homeWpId ) {
+	const homeWpId = resolveHomeWpPageId( payload, pageIdMap );
+	if ( homeWpId && ! isIncrementalDeploy ) {
 		try {
 			await setHomePage( homeWpId );
 		} catch ( e ) {
@@ -97,16 +115,21 @@ export async function deployWebsite( payload: DeployPayload ): Promise< DeployRe
 		}
 	}
 
-	try {
-		await createMenus( payload.menus, pageIdMap );
-	} catch ( e ) {
-		errors.push( `menus: ${ ( e as Error ).message }` );
+	if ( payload.menus ) {
+		try {
+			await createMenus( payload.menus, pageIdMap );
+		} catch ( e ) {
+			errors.push( `menus: ${ ( e as Error ).message }` );
+		}
 	}
+
+	const editorPageId = isIncrementalDeploy ? undefined : homeWpId;
 
 	return {
 		status: errors.length ? 'error' : 'success',
 		homeUrl: window.location.origin,
-		homePageId: pageIdMap.home || 0,
+		homePageId: editorPageId || 0,
+		pageIdMap,
 		...( errors.length ? { errors, error: errors[ 0 ] } : {} ),
 	};
 }

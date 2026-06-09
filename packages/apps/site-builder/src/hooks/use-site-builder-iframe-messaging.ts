@@ -55,7 +55,7 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			origin
 		);
 
-		if ( result.status === 'success' && result.homePageId ) {
+		if ( result.homePageId ) {
 			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
 		}
 	} catch ( err ) {

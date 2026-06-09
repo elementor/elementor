@@ -3,6 +3,7 @@ namespace Elementor\Modules\Promotions\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\Promotions\Rendered_Html_Sanitizer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -62,11 +63,21 @@ class Pro_Widget_Promotion extends Widget_Base {
 	}
 
 	private function has_rendered_html(): bool {
-		return ! empty( $this->get_settings( '__rendered_html' ) );
+		return ! empty( $this->get_sanitized_rendered_html() );
+	}
+
+	private function get_sanitized_rendered_html(): string {
+		$rendered_html = $this->get_settings( '__rendered_html' );
+
+		if ( empty( $rendered_html ) ) {
+			return '';
+		}
+
+		return Rendered_Html_Sanitizer::sanitize( $rendered_html );
 	}
 
 	private function render_frozen_preview() {
-		$rendered_html = $this->get_settings( '__rendered_html' );
+		$rendered_html = $this->get_sanitized_rendered_html();
 		$promotion_url = esc_url( 'https://go.elementor.com/go-pro-element-pro/' );
 		?>
 		<div class="e-site-builder-frozen-preview">
@@ -85,7 +96,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 	}
 
 	private function render_frozen_frontend() {
-		$rendered_html = $this->get_settings( '__rendered_html' );
+		$rendered_html = $this->get_sanitized_rendered_html();
 		?>
 		<div class="e-site-builder-frozen-content">
 			<?php echo wp_kses_post( $rendered_html ); ?>
