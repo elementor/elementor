@@ -76,6 +76,7 @@ jobs:
     needs: [build-plugin, get-php-version]
     permissions:
       contents: read
+      id-token: write
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
