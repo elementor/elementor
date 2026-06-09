@@ -54,12 +54,6 @@ class Styles_Renderer {
 	 *
 	 * @return string Rendered CSS string.
 	 */
-	public function on_font_enqueue( callable $callback ): self {
-		$this->on_font_enqueue = $callback;
-
-		return $this;
-	}
-
 	public function render( array $styles ): string {
 		$css_style = [];
 
@@ -71,6 +65,11 @@ class Styles_Renderer {
 		return implode( '', $css_style );
 	}
 
+	public function on_font_enqueue( callable $callback ): self {
+		$this->on_font_enqueue = $callback;
+
+		return $this;
+	}
 	private function style_definition_to_css_string( array $style ): string {
 		$base_selector = $this->get_base_selector( $style );
 
