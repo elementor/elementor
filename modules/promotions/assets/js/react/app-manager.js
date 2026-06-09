@@ -23,12 +23,15 @@ export class AppManager {
 
 	resolveWidgetPromotionData( detail ) {
 		const promotions = elementor?.config?.v4Promotions || {};
+
 		const normalizedType = detail.widgetType.replace( /[-_]/g, '' ).toLowerCase();
 		const key = Object.keys( promotions ).find( ( promotionKey ) => {
 			return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
 		} );
+
 		const promotionData = key ? promotions[ key ] : null;
 		const elementsPromotion = elementor.config.promotion?.elements || {};
+
 		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', detail.widgetType || '' ) || '';
 		const fallbackCtaText = detail.ctaText || elementsPromotion.action_button?.text || '';
 		const widgetName = detail.widgetTitle || detail.title || '';
