@@ -66,49 +66,11 @@ class Atomic_Global_Styles {
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
 		$context = $this->get_context();
 
-		// Build parent→embedded map by applying the filter transitively for every
-		// requested post id.  We guard against cycles with a visited set.
 		$parent_to_embedded = [];
 		$visited = [];
 
-		$resolve = null;
-		$resolve = function( int $pid ) use ( &$parent_to_embedded, &$visited, &$resolve ): array {
-			if ( isset( $visited[ $pid ] ) ) {
-				if ( isset( $visited[ $pid ] ) ) {
-					return $parent_to_embedded[ $pid ] ?? [];
-				}
-			}
-
-			$visited[ $pid ] = true;
-
-			/**
-			 * Filter: elementor/document/related_posts
-			 *
-			 * Allows registering embedded post ids whose global classes should be
-			 * merged into the parent post's global CSS file instead of producing
-			 * a separate file per embedded post.
-			 *
-			 * @param int[]  $related_post_ids Accumulated child post ids (initially empty).
-			 * @param int    $post_id          Parent post id being inspected.
-			 * @return int[] Embedded post ids to merge into $post_id's global styles.
-			 */
-			$children = (array) apply_filters( 'elementor/document/related_posts', [], $pid );
-			$children = array_values( array_unique( array_map( 'intval', array_filter( $children, 'is_numeric' ) ) ) );
-
-			$all_descendants = $children;
-
-			foreach ( $children as $child ) {
-				$grandchildren = $resolve( $child );
-				$all_descendants = array_values( array_unique( array_merge( $all_descendants, $grandchildren ) ) );
-			}
-
-			$parent_to_embedded[ $pid ] = $all_descendants;
-
-			return $all_descendants;
-		};
-
 		foreach ( $post_ids as $post_id ) {
-			$resolve( (int) $post_id );
+			$this->resolve_embedded_post_descendants( (int) $post_id, $parent_to_embedded, $visited );
 		}
 
 		// Persist the relation maps so that invalidation can look them up later.
@@ -144,10 +106,40 @@ class Atomic_Global_Styles {
 	}
 
 	/**
-	 * Returns the merged, ordered global class styles for one or more post ids.
+	 * Recursively resolve embedded post descendants for a parent post id.
 	 *
-	 * Previously accepted a single int; now accepts an array so that a parent
-	 * post and all its embedded children can be aggregated into one CSS bundle.
+	 * Applies the `elementor/document/related_posts` filter transitively and
+	 * guards against cycles with the shared $visited set.
+	 *
+	 * @param int                $pid                 Parent post id being inspected.
+	 * @param array<int,int[]>   $parent_to_embedded  Accumulated forward map.
+	 * @param array<int,true>    $visited             Cycle guard.
+	 * @return int[] Embedded descendant post ids to merge into $pid's global styles.
+	 */
+	private function resolve_embedded_post_descendants( int $pid, array &$parent_to_embedded, array &$visited ): array {
+		if ( isset( $visited[ $pid ] ) ) {
+			return $parent_to_embedded[ $pid ] ?? [];
+		}
+
+		$visited[ $pid ] = true;
+
+		$related = (array) apply_filters( 'elementor/document/related_posts', [], $pid );
+		$related = array_values( array_unique( array_map( 'intval', array_filter( $related, 'is_numeric' ) ) ) );
+
+		$all_related = $related;
+
+		foreach ( $related as $related_post ) {
+			$further_related_posts = $this->resolve_embedded_post_descendants( $related_post, $parent_to_embedded, $visited );
+			$all_related = array_values( array_unique( array_merge( $all_related, $further_related_posts ) ) );
+		}
+
+		$parent_to_embedded[ $pid ] = $all_related;
+
+		return $all_related;
+	}
+
+	/**
+	 * Returns the merged, ordered global class styles for one or more post ids.
 	 *
 	 * @param int[]  $post_ids One or more post ids whose classes should be merged.
 	 * @param string $context  Frontend or preview context.
@@ -203,14 +195,7 @@ class Atomic_Global_Styles {
 	}
 
 	/**
-	 * Persist the forward and reverse relation maps so that invalidation
-	 * routines can find parent posts when a child is saved or when a class
-	 * definition changes.
-	 *
-	 * The reverse map is kept in sync edge-by-edge from the forward map diff:
-	 * newly embedded children gain a parent entry; dropped children lose it.
-	 * This ensures stale parent references are pruned without losing entries
-	 * for children that appear in other parents not present in this batch.
+	 * Persist the parent-to-child and child-to-parent relation maps.
 	 *
 	 * @param array<int,int[]> $parent_to_embedded Forward map: parent_id => child_ids[].
 	 */
@@ -220,17 +205,19 @@ class Atomic_Global_Styles {
 		foreach ( $parent_to_embedded as $parent => $new_children ) {
 			$forward_path = [ $this->get_cache_root_key( self::RELATED_KEY ), $parent, $context ];
 
-			$old_children = array_map( 'intval', (array) ( $cache_validity->get_meta( $forward_path ) ?? [] ) );
-			$new_children = array_map( 'intval', $new_children );
+			$old_related_posts = array_map( 'intval', (array) ( $cache_validity->get_meta( $forward_path ) ?? [] ) );
+			$new_related_posts = array_map( 'intval', $new_children );
 
-			$cache_validity->validate( $forward_path, $new_children );
+			$added_posts = array_diff( $new_related_posts, $old_related_posts );
+			$removed_posts = array_diff( $old_related_posts, $new_related_posts );
 
-			foreach ( array_diff( $new_children, $old_children ) as $added_child ) {
-				$this->add_reverse_relation( $cache_validity, $added_child, $parent, $context );
+			$cache_validity->validate( $forward_path, $new_related_posts );
+
+			foreach ( $added_posts as $added_post ) {
+				$this->add_reverse_relation( $cache_validity, $added_post, $parent, $context );
 			}
-
-			foreach ( array_diff( $old_children, $new_children ) as $removed_child ) {
-				$this->remove_reverse_relation( $cache_validity, $removed_child, $parent, $context );
+			foreach ( $removed_posts as $removed_post ) {
+				$this->remove_reverse_relation( $cache_validity, $removed_post, $parent, $context );
 			}
 		}
 	}
@@ -319,24 +306,17 @@ class Atomic_Global_Styles {
 	 * When an embedded post (component/template) is saved, its own CSS cache
 	 * is cleared by Global_Classes_Relations.  We additionally need to clear
 	 * the parent's global CSS so it is regenerated with the updated child content.
-	 *
-	 * We also clear the forward-map cache for the saved post so that the next
-	 * render re-asks the filter for fresh child ids.
 	 */
 	private function on_document_save( $document ): void {
 		$post_id = (int) $document->get_main_id();
 		$context = $this->get_context();
 
-		// Invalidate the forward relation entry for this post so it is rebuilt
-		// on the next render.
 		$cache_validity = new Cache_Validity();
 		$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ), $post_id, $context ] );
 
-		// Propagate to every ancestor that aggregates this post's global styles.
 		foreach ( $this->get_ancestor_post_ids( $post_id, $context ) as $ancestor_id ) {
 			$this->invalidate_document_cache( $ancestor_id, $context );
 
-			// Also clear the ancestor's forward-map entry so it is rebuilt.
 			$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ), $ancestor_id, $context ] );
 		}
 	}
