@@ -36,7 +36,7 @@ export default function AuditPanel() {
 					{
 						id: 'ai',
 						icon: AngieIcon,
-						label: __( 'Coming soon', 'elementor' ),
+						label: __( 'Fix with AI', 'elementor' ),
 						disabled: true,
 					},
 				] }

@@ -22,6 +22,7 @@ export const audit: Audit = {
 					auditId: audit.id,
 					label: __( 'Page has no excerpt.', 'elementor' ),
 					targetHint: 'page-settings',
+					angieFix: true,
 				},
 			],
 		};

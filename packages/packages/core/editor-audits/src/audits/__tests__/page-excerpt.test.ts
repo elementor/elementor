@@ -11,5 +11,9 @@ describe( audit.id, () => {
 	it( 'fails when excerpt is null', async () => {
 		const result = await audit.evaluate( makeContext( { pageContext: { post_excerpt: null } } ) );
 		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].angieFix ).toBe( true );
+		}
 	} );
 } );

@@ -72,6 +72,7 @@ describe( audit.id, () => {
 			expect( result.violations ).toHaveLength( 2 );
 			expect( result.violations[ 0 ].label ).toBe( 'replace "#6EC1E4" with "Primary" global color' );
 			expect( result.violations[ 1 ].label ).toBe( 'replace "#6EC1E4" with "Primary" global color' );
+			expect( result.violations.every( ( violation ) => violation.angieFix ) ).toBe( true );
 		}
 	} );
 

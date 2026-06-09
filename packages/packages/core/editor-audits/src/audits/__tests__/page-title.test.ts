@@ -20,6 +20,10 @@ describe( audit.id, () => {
 	it( 'fails when title is null', async () => {
 		const result = await audit.evaluate( makeContext( { pageContext: { post_title: null } } ) );
 		expect( result.status ).toBe( 'fail' );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].angieFix ).toBe( true );
+		}
 	} );
 
 	it( 'fails when title exceeds 60 characters', async () => {
@@ -28,6 +32,7 @@ describe( audit.id, () => {
 
 		if ( result.status === 'fail' ) {
 			expect( result.violations[ 0 ].label ).toContain( 'too long' );
+			expect( result.violations[ 0 ].angieFix ).toBe( true );
 		}
 	} );
 } );

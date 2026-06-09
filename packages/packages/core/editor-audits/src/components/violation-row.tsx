@@ -9,7 +9,9 @@ import { __ } from '@wordpress/i18n';
 import { AUDIT_PANEL_ID } from '../constants';
 import { useViolationFocus } from '../hooks/use-violation-focus';
 import { type AuditMeta, type AuditViolation } from '../types';
+import { buildAngiePrompt } from '../utils/build-angie-prompt';
 import { onKeyboardClick } from '../utils/keyboard-click';
+import FixViolationWithAngie from './fix-violation-with-angie';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
 
@@ -179,6 +181,9 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 											</Typography>
 										) }
 									</Box>
+									{ violation.angieFix && (
+										<FixViolationWithAngie prompt={ buildAngiePrompt( rowLabel ) } />
+									) }
 									<EyeIcon className="violation-hover-icon" fontSize="tiny" aria-hidden={ true } />
 								</Box>
 							);

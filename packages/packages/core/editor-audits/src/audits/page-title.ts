@@ -23,6 +23,7 @@ export const audit: Audit = {
 						auditId: audit.id,
 						label: __( 'Page has no title.', 'elementor' ),
 						targetHint: 'page-settings',
+						angieFix: true,
 					},
 				],
 			};
@@ -36,6 +37,7 @@ export const audit: Audit = {
 						auditId: audit.id,
 						label: __( 'Page title is too long.', 'elementor' ),
 						targetHint: 'page-settings',
+						angieFix: true,
 					},
 				],
 			};

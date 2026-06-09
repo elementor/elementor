@@ -36,6 +36,7 @@ export const audit: Audit = {
 					auditId: audit.id,
 					elementId: node.id,
 					targetHint: 'element-settings',
+					angieFix: true,
 					label: sprintf(
 						/* translators: 1: hard-coded color value, 2: global color title. */
 						__( 'replace "%1$s" with "%2$s" global color', 'elementor' ),

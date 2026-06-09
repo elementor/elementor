@@ -34,6 +34,10 @@ describe( audit.id, () => {
 				},
 			],
 		} );
+
+		if ( result.status === 'fail' ) {
+			expect( result.violations[ 0 ].angieFix ).toBeUndefined();
+		}
 	} );
 
 	it( 'fails with one violation when site description is not set', () => {
@@ -51,6 +55,7 @@ describe( audit.id, () => {
 			expect( result.violations ).toHaveLength( 1 );
 			expect( result.violations[ 0 ].label ).toBe( 'Site description is missing or still uses the default.' );
 			expect( result.violations[ 0 ].targetHint ).toBe( 'site-identity-settings' );
+			expect( result.violations[ 0 ].angieFix ).toBe( true );
 		}
 	} );
 
@@ -111,6 +116,9 @@ describe( audit.id, () => {
 				'Site favicon is not set.',
 			] );
 			expect( result.violations.every( ( v ) => v.targetHint === 'site-identity-settings' ) ).toBe( true );
+			expect( result.violations.filter( ( v ) => v.angieFix ).map( ( v ) => v.label ) ).toEqual( [
+				'Site description is missing or still uses the default.',
+			] );
 		}
 	} );
 } );

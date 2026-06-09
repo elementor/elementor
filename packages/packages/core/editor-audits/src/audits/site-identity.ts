@@ -30,6 +30,7 @@ export const audit: Audit = {
 				auditId: audit.id,
 				label: __( 'Site description is missing or still uses the default.', 'elementor' ),
 				targetHint: 'site-identity-settings',
+				angieFix: true,
 			} );
 		}
 

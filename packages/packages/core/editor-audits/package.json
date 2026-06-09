@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@elementor/editor": "4.2.0",
+    "@elementor/editor-mcp": "4.2.0",
     "@elementor/editor-app-bar": "4.2.0",
     "@elementor/editor-elements": "4.2.0",
     "@elementor/editor-floating-panels": "4.2.0",

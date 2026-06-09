@@ -37,6 +37,7 @@ export type AuditViolation = {
 	externalUrl?: string;
 	label: string;
 	detail?: string;
+	angieFix?: boolean;
 };
 
 export type PageContextResponse = {
