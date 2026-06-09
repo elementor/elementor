@@ -1499,6 +1499,30 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_plaintext_css_text_blocks_in_bulk() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'default' => 'display: flex;',
+			'hover' => 'color: red;',
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'default', $data );
+		$this->assertArrayHasKey( 'hover', $data );
+		$this->assertEquals( 'flex', $data['default']['props']->display['value'] );
+		$this->assertEquals( 'red', $data['hover']['props']->color['value'] );
+		$this->assertSame( '', $data['default']['customCss'] );
+		$this->assertSame( '', $data['hover']['customCss'] );
+	}
+
 	public function test_post__null_value_is_emitted_as_a_null_reset_prop() {
 		// Arrange.
 		$this->act_as_admin();

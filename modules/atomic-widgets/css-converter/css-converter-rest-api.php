@@ -40,7 +40,7 @@ class Css_Converter_REST_API {
 		if ( ! is_array( $blocks ) ) {
 			return Error_Builder::make( 'invalid_blocks' )
 				->set_status( 400 )
-				->set_message( __( 'The "blocks" parameter must be an object of named declaration maps.', 'elementor' ) )
+				->set_message( __( 'The "blocks" parameter must be an object of named CSS blocks.', 'elementor' ) )
 				->build();
 		}
 
@@ -52,11 +52,36 @@ class Css_Converter_REST_API {
 
 		$results = [];
 
-		foreach ( $blocks as $name => $declarations ) {
-			$results[ $name ] = $this->convert_block( $converter, (array) $declarations );
+		foreach ( $blocks as $name => $block ) {
+			if ( is_string( $block ) ) {
+				$results[ $name ] = $this->convert_css_text( $converter, $block );
+				continue;
+			}
+
+			if ( ! is_array( $block ) ) {
+				return Error_Builder::make( 'invalid_block' )
+					->set_status( 400 )
+					->set_message( __( 'Each block must be a CSS text string or a property declaration map.', 'elementor' ) )
+					->build();
+			}
+
+			$results[ $name ] = $this->convert_block( $converter, $block );
 		}
 
 		return Response_Builder::make( $results )->build();
+	}
+
+	/**
+	 * @return array{props: object, customCss: string, rejected: string[]}
+	 */
+	private function convert_css_text( Css_Converter $converter, string $css ): array {
+		$result = $converter->convert( $css );
+
+		return [
+			'props'     => (object) $result['props'],
+			'customCss' => $result['customCss'],
+			'rejected'  => $result['rejected'],
+		];
 	}
 
 	/**

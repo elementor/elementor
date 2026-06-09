@@ -60,7 +60,6 @@ export const CANVAS_SERVER_NAME = 'editor-canvas';
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const WIDGET_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ WIDGET_SCHEMA_URI }`;
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
-export const STYLE_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ STYLE_SCHEMA_URI }`;
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 export const BEST_PRACTICES_FULL_URI = `${ CANVAS_SERVER_NAME }_${ BEST_PRACTICES_URI }`;
 

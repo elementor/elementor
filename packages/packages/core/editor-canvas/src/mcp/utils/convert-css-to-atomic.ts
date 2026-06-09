@@ -10,13 +10,15 @@ const SINGLE_BLOCK_KEY = 'default';
  */
 export type StyleDeclarations = Record< string, string | null >;
 
+export type StyleBlock = StyleDeclarations | string;
+
 export type CssConversionResult = {
 	props: Record< string, PropValue | null >;
 	customCss: string;
 };
 
 const convertBlocks = async (
-	blocks: Record< string, StyleDeclarations >
+	blocks: Record< string, StyleBlock >
 ): Promise< Record< string, CssConversionResult > > => {
 	const { data } = await httpService().post< HttpResponse< Record< string, CssConversionResult > > >(
 		CSS_TO_ATOMIC_URL,
@@ -27,7 +29,7 @@ const convertBlocks = async (
 };
 
 export const convertStyleBlocksToAtomic = async (
-	styleByName: Record< string, StyleDeclarations >
+	styleByName: Record< string, StyleBlock >
 ): Promise< Record< string, CssConversionResult > > => convertBlocks( styleByName );
 
 export const convertCssToAtomic = async ( style: StyleDeclarations ): Promise< CssConversionResult > => {

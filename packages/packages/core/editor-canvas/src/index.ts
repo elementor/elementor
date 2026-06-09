@@ -1,5 +1,11 @@
 export { BREAKPOINTS_SCHEMA_URI, BREAKPOINTS_SCHEMA_FULL_URI } from './mcp/resources/breakpoints-resource';
-export { STYLE_SCHEMA_URI, STYLE_SCHEMA_FULL_URI } from './mcp/resources/widgets-schema-resource';
+export {
+	convertCssToAtomic,
+	convertStyleBlocksToAtomic,
+	type CssConversionResult,
+	type StyleBlock,
+	type StyleDeclarations,
+} from './mcp/utils/convert-css-to-atomic';
 
 export { init } from './init';
 export { isAtomicWidget } from './utils/command-utils';

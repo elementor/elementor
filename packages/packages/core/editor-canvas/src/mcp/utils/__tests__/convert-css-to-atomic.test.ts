@@ -73,6 +73,29 @@ describe( 'convertStyleBlocksToAtomic', () => {
 		} );
 	} );
 
+	it( 'posts plaintext css text blocks and returns the named results map', async () => {
+		// Arrange.
+		const post = mockPost( {
+			default: { props: { display: { $$type: 'string', value: 'flex' } }, customCss: '' },
+			hover: { props: { opacity: { $$type: 'string', value: '0.85' } }, customCss: '' },
+		} );
+
+		// Act.
+		const results = await convertStyleBlocksToAtomic( {
+			default: 'display: flex;',
+			hover: 'opacity: 0.85;',
+		} );
+
+		// Assert.
+		expect( post ).toHaveBeenCalledWith( 'elementor/v1/css-to-atomic', {
+			blocks: { default: 'display: flex;', hover: 'opacity: 0.85;' },
+		} );
+		expect( results ).toEqual( {
+			default: { props: { display: { $$type: 'string', value: 'flex' } }, customCss: '' },
+			hover: { props: { opacity: { $$type: 'string', value: '0.85' } }, customCss: '' },
+		} );
+	} );
+
 	it( 'posts an empty blocks map when given no style blocks', async () => {
 		// Arrange.
 		const post = mockPost( {} );
