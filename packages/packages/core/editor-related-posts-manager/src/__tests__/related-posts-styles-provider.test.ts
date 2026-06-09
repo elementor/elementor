@@ -29,7 +29,7 @@ jest.mock( '@elementor/editor-styles-repository', () => {
 	};
 } );
 
-const { __getProvider, stylesRepository } = require( '@elementor/editor-styles-repository' );
+const { __getProvider } = require( '@elementor/editor-styles-repository' );
 
 describe( 'styles-provider', () => {
 	afterEach( () => {
@@ -37,8 +37,7 @@ describe( 'styles-provider', () => {
 		reset();
 	} );
 
-	it( 'should register the styles provider with the styles repository on module load', () => {
-		expect( stylesRepository.register ).toHaveBeenCalledTimes( 1 );
+	it( 'should expose the static key', () => {
 		expect( __getProvider().getKey() ).toBe( 'related-posts-styles' );
 	} );
 

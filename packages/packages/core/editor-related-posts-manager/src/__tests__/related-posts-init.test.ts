@@ -33,6 +33,8 @@ jest.mock( '../api', () => ( {
 
 import { init } from '../init';
 
+const { stylesRepository } = require( '@elementor/editor-styles-repository' );
+
 const mockGetV1CurrentDocument = jest.mocked( getV1CurrentDocument );
 const mockRegisterDataHook = jest.mocked( registerDataHook );
 
@@ -49,6 +51,13 @@ describe( 'init', () => {
 		} );
 
 		init();
+	} );
+
+	it( 'should register the related posts styles provider', () => {
+		expect( stylesRepository.register ).toHaveBeenCalledTimes( 1 );
+		expect( stylesRepository.register ).toHaveBeenCalledWith(
+			expect.objectContaining( { getKey: expect.any( Function ) } )
+		);
 	} );
 
 	it( 'should register an attach-preview hook', () => {
