@@ -330,6 +330,73 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'padding: 10px 20px 30px 40px 50px;', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_shorthand_border_radius_into_logical_corners() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-radius' => '1px 2px 3px 4px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: TL->start-start, TR->start-end, BR->end-end, BL->end-start.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'border-radius' => [
+					'$$type' => 'border-radius',
+					'value' => [
+						'start-start' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'start-end' => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'end-end' => [ '$$type' => 'size', 'value' => [ 'size' => 3, 'unit' => 'px' ] ],
+						'end-start' => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_single_border_radius_into_a_size() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-radius' => '8px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'border-radius' => [ '$$type' => 'size', 'value' => [ 'size' => 8, 'unit' => 'px' ] ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__routes_elliptical_border_radius_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border-radius' => '10px / 20px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'border-radius: 10px / 20px;', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_filter_into_a_canonical_prop_value() {
 		// Arrange.
 		$this->act_as_admin();

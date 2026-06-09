@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Border_Radius_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Filter_Property_Converter;
@@ -108,6 +109,19 @@ class Converter_Registry_Factory {
 	];
 
 	/**
+	 * Props that each own a bespoke single-property converter (no shared family). Listed here for the
+	 * covered set; each is wired explicitly in real_converters() (unlike the family arrays above, the
+	 * members do not share a converter class, so there is no uniform loop). Distinct from
+	 * NOOP_PROPERTIES, which have no real converter yet.
+	 *
+	 * - border-radius: Union(Border_Radius | Size); single value -> Size, 2-4 values -> logical
+	 *   Border_Radius. Elliptical "/" values decline to custom_css (no two-radii-per-corner shape).
+	 */
+	const OTHER_PROPERTIES = [
+		'border-radius',
+	];
+
+	/**
 	 * Filter-function lists backed by Array(Css_Filter_Func) (filter, backdrop-filter). Handled
 	 * uniformly by Filter_Property_Converter + Filter_Value_Parser; the two share inner items and
 	 * differ only by the wrapping $$type, which is sourced from the live schema.
@@ -127,7 +141,6 @@ class Converter_Registry_Factory {
 	const NOOP_PROPERTIES = [
 		'object-position',
 		'stroke',
-		'border-radius',
 		'border-width',
 		'background',
 		'box-shadow',
@@ -188,6 +201,7 @@ class Converter_Registry_Factory {
 			self::STRING_PASSTHROUGH_PROPERTIES,
 			self::DIMENSIONS_PROPERTIES,
 			self::FILTER_PROPERTIES,
+			self::OTHER_PROPERTIES,
 			self::NOOP_PROPERTIES
 		);
 	}
@@ -251,6 +265,8 @@ class Converter_Registry_Factory {
 		foreach ( self::DIMENSIONS_PROPERTIES as $property ) {
 			$converters[ $property ] = new Dimensions_Property_Converter( $property );
 		}
+
+		$converters['border-radius'] = new Border_Radius_Property_Converter( 'border-radius' );
 
 		foreach ( self::FILTER_PROPERTIES as $property ) {
 			$converters[ $property ] = new Filter_Property_Converter( $property, $schema[ $property ]->get_key() );

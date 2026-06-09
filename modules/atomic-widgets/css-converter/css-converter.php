@@ -31,7 +31,7 @@ class Css_Converter {
 
 		foreach ( $rules as $rule ) {
 			if ( ! $this->try_convert( $context, $rule ) ) {
-				$leftover[] = $rule['declaration'];
+				$leftover[] = $rule['declaration'] . ';';
 			}
 		}
 
