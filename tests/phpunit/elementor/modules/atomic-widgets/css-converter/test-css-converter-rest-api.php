@@ -143,6 +143,36 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_physical_inset_properties_to_logical_equivalents() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'top'    => '10px',
+			'right'  => '20px',
+			'bottom' => '30px',
+			'left'   => '40px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: physical properties map to logical inset equivalents (LTR).
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'inset-block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ],
+				'inset-inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 20, 'unit' => 'px' ] ],
+				'inset-block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 30, 'unit' => 'px' ] ],
+				'inset-inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 40, 'unit' => 'px' ] ],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__converts_size_prop_into_a_canonical_prop_value() {
 		// Arrange.
 		$this->act_as_admin();
