@@ -263,7 +263,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.5 or greater
+* WordPress 6.8 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -354,6 +354,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 4.1.2 - 2026-06-08 =
+
+* Tweak: Improved Global Classes usage tracking for safer deletion - Atomic Editor
+* Fix: Image with Lightbox inherits default button styles - Atomic Editor
+* Fix: Image settings are not saved when using Insert from URL - Atomic Editor
+* Fix: Media attachments may be requested too many times in the Editor - Atomic Editor
+* Fix: Pages using Global Classes may fail to publish or show missing styles on the live site - Atomic Editor
+* Fix: Editor context may not sync correctly when navigating between documents
 
 = 4.1.1 - 2026-05-27 =
 

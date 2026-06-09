@@ -1,5 +1,14 @@
 == Changelog ==
 
+= 4.1.2 - 2026-06-08 =
+
+* Tweak: Improved Global Classes usage tracking for safer deletion - Atomic Editor
+* Fix: Image with Lightbox inherits default button styles - Atomic Editor
+* Fix: Image settings are not saved when using Insert from URL - Atomic Editor
+* Fix: Media attachments may be requested too many times in the Editor - Atomic Editor
+* Fix: Pages using Global Classes may fail to publish or show missing styles on the live site - Atomic Editor
+* Fix: Editor context may not sync correctly when navigating between documents
+
 = 4.1.1 - 2026-05-27 =
 
 * Security Fix: Improved code security enforcement in content handling
