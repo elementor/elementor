@@ -37,6 +37,45 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		return json_decode( wp_json_encode( $response->get_data() ), true );
 	}
 
+	public function test_post__converts_transition_all_to_prop_value() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transition' => 'all 300ms ease' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: easing dropped, property and duration preserved.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['transition'];
+		$this->assertSame( 'transition', $prop['$$type'] );
+		$this->assertCount( 1, $prop['value'] );
+		$this->assertSame( 'all', $prop['value'][0]['value']['selection']['value']['value']['value'] );
+		$this->assertEquals( 300, $prop['value'][0]['value']['size']['value']['size'] );
+		$this->assertSame( 'ms', $prop['value'][0]['value']['size']['value']['unit'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__transition_with_unsupported_property_routes_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transition' => 'border-left 300ms' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'transition: border-left 300ms;', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__animation_property_is_rejected_not_in_custom_css() {
 		// Arrange.
 		$this->act_as_admin();
@@ -118,7 +157,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
-		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'rotate(45deg)', 'transition' => 'all 0.3s' ] ] );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'transform' => 'rotate(45deg)', 'box-shadow' => '0 2px 4px black' ] ] );
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
@@ -127,7 +166,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
-		$this->assertSame( 'transform: rotate(45deg); transition: all 0.3s;', $data['el-1']['customCss'] );
+		$this->assertSame( 'transform: rotate(45deg); box-shadow: 0 2px 4px black;', $data['el-1']['customCss'] );
 	}
 
 	public function test_post__returns_one_named_result_per_input_block() {
@@ -137,7 +176,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
 		$request->set_param( 'blocks', [
 			'el-1' => [ 'transform' => 'rotate(45deg)' ],
-			'el-2' => [ 'transition' => 'all 0.3s' ],
+			'el-2' => [ 'box-shadow' => '0 2px 4px black' ],
 		] );
 
 		// Act.
@@ -148,7 +187,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertSame( [ 'el-1', 'el-2' ], array_keys( $data ) );
 		$this->assertSame( 'transform: rotate(45deg);', $data['el-1']['customCss'] );
-		$this->assertSame( 'transition: all 0.3s;', $data['el-2']['customCss'] );
+		$this->assertSame( 'box-shadow: 0 2px 4px black;', $data['el-2']['customCss'] );
 	}
 
 	public function test_post__converts_font_weight_into_a_canonical_prop_value() {
