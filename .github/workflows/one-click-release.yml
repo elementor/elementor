@@ -157,44 +157,72 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
-      - name: Prepare Slack release payload
+      - name: Prepare Slack release announcement
         if: github.event.inputs.dry_run == 'false'
-        id: prepare_slack_payload
+        id: prepare_slack_announcement
         env:
-          ACTOR: ${{ github.actor }}
           CHANNEL: ${{ env.CHANNEL }}
-          RELEASE_NAME: ${{ env.RELEASE_NAME }}
           RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}
-          SLACK_RELEASE_BETA_NOTE: ${{ vars.SLACK_RELEASE_BETA_NOTE }}
-          SLACK_RELEASE_GA_NOTE: ${{ vars.SLACK_RELEASE_GA_NOTE }}
-          SLACK_RELEASE_MESSAGE_TEMPLATE: ${{ vars.SLACK_RELEASE_MESSAGE_TEMPLATE }}
-          SLACK_RELEASE_PRODUCT_NAME: ${{ vars.SLACK_RELEASE_PRODUCT_NAME }}
+          RELEASE_VERSION: ${{ env.RELEASE_NAME }}
+          RELEASED_BY: ${{ github.actor }}
+          SLACK_RELEASE_ANNOUNCEMENT_COPY: ${{ vars.SLACK_RELEASE_ANNOUNCEMENT_COPY }}
         run: |
-          if [ -z "$SLACK_RELEASE_MESSAGE_TEMPLATE" ]; then
-            echo "SLACK_RELEASE_MESSAGE_TEMPLATE organization variable is not set."
+          if [ -z "$SLACK_RELEASE_ANNOUNCEMENT_COPY" ]; then
+            echo "SLACK_RELEASE_ANNOUNCEMENT_COPY organization variable is not set."
             exit 1
           fi
 
-          DELAY_NOTE=""
-          if [ "$CHANNEL" = "beta" ] && [ -n "$SLACK_RELEASE_BETA_NOTE" ]; then
-            DELAY_NOTE=$'\n\n'"$SLACK_RELEASE_BETA_NOTE"
-          elif [ "$CHANNEL" = "ga" ] && [ -n "$SLACK_RELEASE_GA_NOTE" ]; then
-            DELAY_NOTE=$'\n\n'"$SLACK_RELEASE_GA_NOTE"
-          fi
-
-          PAYLOAD=$(echo "$SLACK_RELEASE_MESSAGE_TEMPLATE" | jq -c \
-            --arg actor "$ACTOR" \
-            --arg delay_note "$DELAY_NOTE" \
-            --arg product_name "$SLACK_RELEASE_PRODUCT_NAME" \
-            --arg release_name "$RELEASE_NAME" \
+          PAYLOAD=$(echo "$SLACK_RELEASE_ANNOUNCEMENT_COPY" | jq -c \
+            --arg channel "$CHANNEL" \
             --arg release_url "$RELEASE_URL" \
-            'walk(if type == "string" then
-              gsub("\\{\\{actor\\}\\}"; $actor) |
-              gsub("\\{\\{delay_note\\}\\}"; $delay_note) |
-              gsub("\\{\\{product_name\\}\\}"; $product_name) |
-              gsub("\\{\\{release_name\\}\\}"; $release_name) |
-              gsub("\\{\\{release_url\\}\\}"; $release_url)
-            else . end)')
+            --arg released_by "$RELEASED_BY" \
+            --arg version "$RELEASE_VERSION" \
+            '
+            def apply_announcement_tokens($text; $product_display_name; $distribution_note):
+              $text
+              | gsub("\\{product_display_name\\}"; $product_display_name)
+              | gsub("\\{version\\}"; $version)
+              | gsub("\\{released_by\\}"; $released_by)
+              | gsub("\\{release_url\\}"; $release_url)
+              | gsub("\\{distribution_note\\}"; $distribution_note);
+
+            . as $copy |
+            ($copy.distribution_notes[$channel] // "") as $channel_note |
+            (if $channel_note == "" then "" else "\n\n" + $channel_note end) as $distribution_note |
+            {
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: (
+                      $copy.opening_line + "\n\n" +
+                      apply_announcement_tokens($copy.version_headline; $copy.product_display_name; $distribution_note)
+                    )
+                  }
+                },
+                { type: "divider" },
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: apply_announcement_tokens($copy.release_details; $copy.product_display_name; $distribution_note)
+                  },
+                  accessory: {
+                    type: "button",
+                    text: {
+                      type: "plain_text",
+                      text: $copy.action_button_label,
+                      emoji: true
+                    },
+                    value: "open-release",
+                    url: $release_url,
+                    action_id: "button-action"
+                  }
+                }
+              ]
+            }
+            ')
 
           {
             echo 'payload<<EOF'
@@ -208,7 +236,7 @@ jobs:
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-          PAYLOAD: ${{ steps.prepare_slack_payload.outputs.payload }}
+          PAYLOAD: ${{ steps.prepare_slack_announcement.outputs.payload }}
 
       - name: Determine Package Tag
         id: package-tag
