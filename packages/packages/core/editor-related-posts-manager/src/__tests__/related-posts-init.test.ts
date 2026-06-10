@@ -44,13 +44,10 @@ describe( 'init', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 
-		mockRegisterDataHook.mockImplementation( ( _position, command, callback ) => {
-			if ( command === 'editor/documents/attach-preview' ) {
-				attachPreviewHandler = callback as () => void;
-			}
-		} );
-
 		init();
+
+		const call = mockRegisterDataHook.mock.calls.find( ( [ , cmd ] ) => cmd === 'editor/documents/attach-preview' );
+		attachPreviewHandler = ( call?.[ 2 ] as () => void ) ?? ( () => {} );
 	} );
 
 	it( 'should register the related posts styles provider', () => {
@@ -73,7 +70,7 @@ describe( 'init', () => {
 		mockGetV1CurrentDocument.mockReturnValue( {
 			id: 42,
 			config: { elements: [] },
-		} as ReturnType< typeof getV1CurrentDocument > );
+		} as unknown as ReturnType< typeof getV1CurrentDocument > );
 
 		// Act.
 		attachPreviewHandler();
@@ -88,7 +85,7 @@ describe( 'init', () => {
 		mockGetV1CurrentDocument.mockReturnValue( {
 			id: undefined,
 			config: { elements: [] },
-		} as ReturnType< typeof getV1CurrentDocument > );
+		} as unknown as ReturnType< typeof getV1CurrentDocument > );
 
 		// Act.
 		attachPreviewHandler();
