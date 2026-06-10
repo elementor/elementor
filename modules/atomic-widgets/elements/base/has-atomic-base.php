@@ -111,7 +111,11 @@ trait Has_Atomic_Base {
 		string $validation_errors
 	): string {
 		$widget_id = $data['id'] ?? 'unknown';
-		$element_name = $this->get_title() ?: $this->get_name();
+		$element_name = $this->get_title();
+
+		if ( '' === $element_name ) {
+			$element_name = $this->get_name();
+		}
 		$structure_label = $this->get_editor_structure_label( $data );
 		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
 
