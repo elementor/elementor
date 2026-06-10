@@ -94,14 +94,58 @@ trait Has_Atomic_Base {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				$widget_id = $data['id'] ?? 'unknown';
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
+				throw new \Exception(
+					esc_html( $this->format_styles_validation_error_message( $style_id, $data, $style, $result->errors()->to_string() ) )
+				);
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
+	}
+
+	private function format_styles_validation_error_message(
+		string $style_id,
+		array $data,
+		array $style,
+		string $validation_errors
+	): string {
+		$widget_id = $data['id'] ?? 'unknown';
+		$structure_label = $this->get_editor_structure_label( $data );
+		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
+
+		$message_parts = [
+			"Styles validation failed for style `$style_id` (widget `$widget_id`)",
+		];
+
+		if ( $structure_label ) {
+			$message_parts[] = "Structure label: `$structure_label`";
+		} else {
+			$element_name = $this->get_title();
+
+			if ( '' === $element_name ) {
+				$element_name = $this->get_name();
+			}
+
+			$message_parts[] = "Element: `$element_name`";
+		}
+
+		if ( $style_label ) {
+			$message_parts[] = "Style label: `$style_label`";
+		}
+
+		return implode( '. ', $message_parts ) . '. ' . $validation_errors;
+	}
+
+	private function get_editor_structure_label( array $data ): ?string {
+		$title = $data['editor_settings']['title'] ?? $this->editor_settings['title'] ?? null;
+
+		if ( ! is_string( $title ) || '' === $title ) {
+			return null;
+		}
+
+		return $title;
 	}
 
 	private function parse_atomic_settings( array $settings ): array {
