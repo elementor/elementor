@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-node-access */
 import { act, renderHook } from '@testing-library/react';
 
 import { useGridChildren } from '../use-grid-children';
