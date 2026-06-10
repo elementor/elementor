@@ -180,7 +180,7 @@ jobs:
                           "type": "section",
                           "text": {
                             "type": "mrkdwn",
-                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}"
+                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}${{ env.CHANNEL == 'beta' && vars.SLACK_RELEASE_BETA_NOTE != '' && format('\n\n{0}', vars.SLACK_RELEASE_BETA_NOTE) || (env.CHANNEL == 'ga' && vars.SLACK_RELEASE_GA_NOTE != '' && format('\n\n{0}', vars.SLACK_RELEASE_GA_NOTE) || '') }}"
                           },
                           "accessory": {
                             "type": "button",
