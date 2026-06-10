@@ -3,9 +3,11 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,13 +43,18 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 	 */
 	private string $object_prop_type;
 
+	private ?Variables_Service $variables_service;
+
 	/**
-	 * @param string   $property         The input longhand this converter owns (e.g. border-top-width).
-	 * @param string   $target_property  The aggregate prop it contributes to (e.g. border-width).
-	 * @param string   $type_key         The aggregate object's $$type (e.g. border-width).
-	 * @param string   $side_key         The object key this longhand fills (e.g. block-start).
-	 * @param string[] $all_side_keys    Every key of the object, used to seed from a single Size.
-	 * @param string   $object_prop_type Object_Prop_Type class used to wrap the merged sides.
+	 * @param string               $property         The input longhand this converter owns (e.g. border-top-width).
+	 * @param string               $target_property  The aggregate prop it contributes to (e.g. border-width).
+	 * @param string               $type_key         The aggregate object's $$type (e.g. border-width).
+	 * @param string               $side_key         The object key this longhand fills (e.g. block-start).
+	 * @param string[]             $all_side_keys    Every key of the object, used to seed from a single Size.
+	 * @param string               $object_prop_type Object_Prop_Type class used to wrap the merged sides.
+	 * @param Variables_Service|null $variables_service When provided, a var-only value that resolves to a
+	 *                                                  known size variable is emitted as a variable PropValue
+	 *                                                  instead of a raw Size leaf.
 	 */
 	public function __construct(
 		string $property,
@@ -55,7 +62,8 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 		string $type_key,
 		string $side_key,
 		array $all_side_keys,
-		string $object_prop_type
+		string $object_prop_type,
+		?Variables_Service $variables_service = null
 	) {
 		$this->property = $property;
 		$this->target_property = $target_property;
@@ -63,6 +71,7 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 		$this->side_key = $side_key;
 		$this->all_side_keys = $all_side_keys;
 		$this->object_prop_type = $object_prop_type;
+		$this->variables_service = $variables_service;
 	}
 
 	protected function get_supported_properties(): array {
@@ -70,14 +79,18 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 	}
 
 	public function convert( Conversion_Context $context, array $rule ): bool {
-		$leaf = Size_Value_Parser::parse( trim( $rule['value'] ) );
+		$value = trim( $rule['value'] );
+		$leaf  = Size_Value_Parser::parse( $value );
 
 		if ( null === $leaf ) {
 			return false;
 		}
 
+		$side_value = Css_Var_Token_Resolver::resolve_size_var_prop_value( $this->variables_service, $value )
+			?? Size_Prop_Type::generate( $leaf );
+
 		$sides = $this->current_sides( $context->get_prop( $this->target_property ) );
-		$sides[ $this->side_key ] = Size_Prop_Type::generate( $leaf );
+		$sides[ $this->side_key ] = $side_value;
 
 		$context->set_prop( $this->target_property, ( $this->object_prop_type )::generate( $sides ) );
 

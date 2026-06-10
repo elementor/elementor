@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -314,6 +315,8 @@ class Variable_Prop_Value_Transformer {
 				'background-position',
 				'background-size',
 			],
+			'padding' => array_keys( Converter_Registry_Factory::DIMENSIONS_SIDE_SPECS ),
+			'margin'  => array_keys( Converter_Registry_Factory::DIMENSIONS_SIDE_SPECS ),
 		];
 
 		foreach ( $longhands_by_aggregate[ $property ] ?? [] as $longhand ) {

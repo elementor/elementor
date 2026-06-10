@@ -1937,6 +1937,447 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}
 
+	public function test_post__padding_shorthand_then_logical_var_and_physical_override_with_invalid() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-spacing' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'existing-size-var',
+					'value' => '1rem',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding'              => '2rem',
+			'padding-inline-start' => 'var(--existing-size-var)',
+			'padding-right'        => '1rem',
+			'padding-left'         => 'banana',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: shorthand seeds all 4 sides; logical inline-start overrides with promoted var;
+		// physical inline-end (right) overrides with 1rem; invalid left goes to customCss.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'padding' => [
+					'$$type' => 'dimensions',
+					'value'  => [
+						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'rem' ] ],
+						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'rem' ] ],
+						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'rem' ] ],
+						'inline-start' => [ '$$type' => Size_Variable_Prop_Type::get_key(), 'value' => 'e-gv-spacing' ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'padding-left: banana;', $data['el-1']['customCss'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__conflicting_physical_logical_and_var_last_wins_on_same_side() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-bottom' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'existing',
+					'value' => '8px',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => 'padding-bottom: invalid; padding-block-end: 1rem; padding-bottom: var(--existing);',
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: invalid goes to customCss; logical sets block-end; physical var overrides last.
+		// Only block-end survives — dimensions with one variable side.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			[
+				'$$type' => 'dimensions',
+				'value'  => [
+					'block-end' => [ '$$type' => Size_Variable_Prop_Type::get_key(), 'value' => 'e-gv-bottom' ],
+				],
+			],
+			$data['el-1']['props']['padding']
+		);
+		$this->assertSame( 'padding-bottom: invalid;', $data['el-1']['customCss'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__invalid_last_leaves_prior_converted_side_intact_and_adds_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => 'padding-block-end: 1rem; padding-bottom: invalid;',
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: invalid is declined (Size parser returns null), so the prior converted side
+		// remains in props; the invalid declaration still lands in customCss.
+		//
+		// INTENTIONAL BY DESIGN: a declined declaration never clears an already-converted prop.
+		// This means a single logical property can appear in both props (from a prior valid rule)
+		// and customCss (from a later invalid rule) simultaneously. Consumers should apply props
+		// first and customCss on top — the browser will ignore the invalid customCss value anyway.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'padding' => [
+					'$$type' => 'dimensions',
+					'value'  => [
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'rem' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( 'padding-bottom: invalid;', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__plain_size_after_var_wins_on_same_side() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-bottom' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'existing',
+					'value' => '8px',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [
+			'el-1' => 'padding-bottom: invalid; padding-bottom: var(--existing); padding-block-end: 1rem;',
+		] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: plain size (3rd) wins over the var (2nd); invalid (1st) goes to customCss.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			[
+				'$$type' => 'dimensions',
+				'value'  => [
+					'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'rem' ] ],
+				],
+			],
+			$data['el-1']['props']['padding']
+		);
+		$this->assertSame( 'padding-bottom: invalid;', $data['el-1']['customCss'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__padding_shorthand_after_longhand_collapses_to_single_size() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding-bottom' => '5px',
+			'padding'        => '10px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: shorthand wins, collapsing the accumulated dimensions back to a single Size.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [ 'padding' => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ] ],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__padding_longhand_after_multi_value_shorthand_overrides_one_side() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding'      => '10px 20px',
+			'padding-left' => '99px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: shorthand expands to 4 sides (10 10 10 20 by CSS 2-value rule), then left overrides inline-start.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['padding'];
+		$this->assertSame( 'dimensions', $prop['$$type'] );
+		$this->assertEquals( 10,  $prop['value']['block-start']['value']['size'] );
+		$this->assertEquals( 20,  $prop['value']['inline-end']['value']['size'] );
+		$this->assertEquals( 10,  $prop['value']['block-end']['value']['size'] );
+		$this->assertEquals( 99,  $prop['value']['inline-start']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__single_padding_shorthand_seeds_all_sides_when_longhand_follows() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding'       => '2rem',
+			'padding-right' => '1rem',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: 2rem seeds all 4 sides, then inline-end is overridden to 1rem.
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['padding'];
+		$this->assertSame( 'dimensions', $prop['$$type'] );
+		$this->assertEquals( 2, $prop['value']['block-start']['value']['size'] );
+		$this->assertEquals( 1, $prop['value']['inline-end']['value']['size'] );
+		$this->assertEquals( 2, $prop['value']['block-end']['value']['size'] );
+		$this->assertEquals( 2, $prop['value']['inline-start']['value']['size'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__lone_margin_longhand_produces_partial_dimensions_with_one_side() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'margin-bottom' => '5px' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: partial dimensions with only block-end; other sides absent (not seeded).
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'margin' => [
+					'$$type' => 'dimensions',
+					'value'  => [
+						'block-end' => [ '$$type' => 'size', 'value' => [ 'size' => 5, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__padding_and_margin_longhands_produce_independent_props() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding-bottom' => '5px',
+			'margin-bottom'  => '10px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: two independent props — padding only has block-end, margin only has block-end; no mixing.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 'dimensions', $data['el-1']['props']['padding']['$$type'] );
+		$this->assertSame( 'dimensions', $data['el-1']['props']['margin']['$$type'] );
+		$this->assertEquals( 5,  $data['el-1']['props']['padding']['value']['block-end']['value']['size'] );
+		$this->assertEquals( 10, $data['el-1']['props']['margin']['value']['block-end']['value']['size'] );
+		$this->assertArrayNotHasKey( 'block-start', $data['el-1']['props']['padding']['value'] );
+		$this->assertArrayNotHasKey( 'block-start', $data['el-1']['props']['margin']['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__unresolved_var_on_dimension_side_routes_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'padding-bottom' => 'var(--unknown)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: unknown var is stored as a raw custom size; the transformer then ejects the
+		// whole padding prop back to customCss because the var cannot be resolved.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertStringContainsString( 'padding-bottom:', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__wrong_type_var_on_dimension_side_routes_to_rejected() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-color' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'my-color',
+					'value' => '#ff0000',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'padding-bottom' => 'var(--my-color)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: color variable used where a size is expected — prop is ejected to `rejected` (not customCss)
+		// because the variable is known but the type is wrong. The client uses `rejected` to surface type errors.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+		$this->assertContains( 'padding-bottom: var(--my-color);', $data['el-1']['rejected'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__logical_and_physical_alias_on_same_side_last_wins() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding-inline-start' => '10px',
+			'padding-left'         => '20px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert: padding-left (physical, last) overrides padding-inline-start (logical, first).
+		$this->assertSame( 200, $response->get_status() );
+		$prop = $data['el-1']['props']['padding'];
+		$this->assertSame( 'dimensions', $prop['$$type'] );
+		$this->assertEquals( 20, $prop['value']['inline-start']['value']['size'] );
+		$this->assertCount( 1, $prop['value'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__all_logical_padding_longhands_map_to_correct_sides() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding-block-start'  => '1px',
+			'padding-block-end'    => '2px',
+			'padding-inline-start' => '3px',
+			'padding-inline-end'   => '4px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'padding' => [
+					'$$type' => 'dimensions',
+					'value'  => [
+						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 3, 'unit' => 'px' ] ],
+						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__all_logical_margin_longhands_map_to_correct_sides() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'margin-block-start'  => '1px',
+			'margin-block-end'    => '2px',
+			'margin-inline-start' => '3px',
+			'margin-inline-end'   => '4px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'margin' => [
+					'$$type' => 'dimensions',
+					'value'  => [
+						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 1, 'unit' => 'px' ] ],
+						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 2, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 3, 'unit' => 'px' ] ],
+						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 4, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_coverage__every_style_schema_property_is_hardcoded_as_covered() {
 		// Arrange.
 		$schema_properties = array_keys( Style_Schema::get_style_schema() );

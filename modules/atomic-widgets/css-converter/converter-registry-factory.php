@@ -31,6 +31,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -191,14 +192,22 @@ class Converter_Registry_Factory {
 	 * Object_Side_Merge_Converter (same pattern as border_side_specs()).
 	 */
 	const DIMENSIONS_SIDE_SPECS = [
-		'padding-top'    => [ 'padding', 'block-start' ],
-		'padding-right'  => [ 'padding', 'inline-end' ],
-		'padding-bottom' => [ 'padding', 'block-end' ],
-		'padding-left'   => [ 'padding', 'inline-start' ],
-		'margin-top'     => [ 'margin', 'block-start' ],
-		'margin-right'   => [ 'margin', 'inline-end' ],
-		'margin-bottom'  => [ 'margin', 'block-end' ],
-		'margin-left'    => [ 'margin', 'inline-start' ],
+		'padding-top'          => [ 'padding', 'block-start' ],
+		'padding-right'        => [ 'padding', 'inline-end' ],
+		'padding-bottom'       => [ 'padding', 'block-end' ],
+		'padding-left'         => [ 'padding', 'inline-start' ],
+		'padding-block-start'  => [ 'padding', 'block-start' ],
+		'padding-block-end'    => [ 'padding', 'block-end' ],
+		'padding-inline-start' => [ 'padding', 'inline-start' ],
+		'padding-inline-end'   => [ 'padding', 'inline-end' ],
+		'margin-top'           => [ 'margin', 'block-start' ],
+		'margin-right'         => [ 'margin', 'inline-end' ],
+		'margin-bottom'        => [ 'margin', 'block-end' ],
+		'margin-left'          => [ 'margin', 'inline-start' ],
+		'margin-block-start'   => [ 'margin', 'block-start' ],
+		'margin-block-end'     => [ 'margin', 'block-end' ],
+		'margin-inline-start'  => [ 'margin', 'inline-start' ],
+		'margin-inline-end'    => [ 'margin', 'inline-end' ],
 	];
 
 	/**
@@ -340,9 +349,9 @@ class Converter_Registry_Factory {
 		];
 	}
 
-	public static function create(): Converter_Registry {
+	public static function create( ?Variables_Service $variables_service = null ): Converter_Registry {
 		$registry = new Converter_Registry();
-		$real_converters = self::real_converters();
+		$real_converters = self::real_converters( $variables_service );
 
 		foreach ( $real_converters as $converter ) {
 			$registry->register( $converter );
@@ -375,7 +384,7 @@ class Converter_Registry_Factory {
 	 *
 	 * @return array<string, \Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter>
 	 */
-	private static function real_converters(): array {
+	private static function real_converters( ?Variables_Service $variables_service = null ): array {
 		$schema = Style_Schema::get_style_schema();
 		$converters = [];
 
@@ -424,7 +433,8 @@ class Converter_Registry_Factory {
 				Dimensions_Prop_Type::get_key(),
 				$side_key,
 				self::BORDER_WIDTH_SIDE_KEYS,
-				Dimensions_Prop_Type::class
+				Dimensions_Prop_Type::class,
+				$variables_service
 			);
 		}
 
@@ -437,7 +447,8 @@ class Converter_Registry_Factory {
 				$target,
 				$side_key,
 				$is_radius ? self::BORDER_RADIUS_CORNER_KEYS : self::BORDER_WIDTH_SIDE_KEYS,
-				$is_radius ? Border_Radius_Prop_Type::class : Border_Width_Prop_Type::class
+				$is_radius ? Border_Radius_Prop_Type::class : Border_Width_Prop_Type::class,
+				$variables_service
 			);
 		}
 

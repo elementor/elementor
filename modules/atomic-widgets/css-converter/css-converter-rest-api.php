@@ -124,7 +124,7 @@ class Css_Converter_REST_API {
 			: null;
 
 		return new Css_Converter(
-			Converter_Registry_Factory::create(),
+			Converter_Registry_Factory::create( $variables_service ),
 			new Null_Failure_Reporter(),
 			Expander_Registry_Factory::create( $variables_service ),
 			$variable_transformer
