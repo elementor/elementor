@@ -23,6 +23,7 @@ class Conversion_Banner {
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
+	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
 	const GO_PRO_TITLE_PREFIX = 'Go Pro';
 
 	public function __construct() {
@@ -55,11 +56,10 @@ class Conversion_Banner {
 	}
 
 	public function suppress_hello_theme_banner( $config ) {
-		if ( ! ( is_array( $config ) && isset( $config['welcome'] ) ) ) {
-			return $config;
-		}
-
-		if ( Utils::has_pro() ) {
+		if ( $this->is_request_from_theme_admin_page()
+			|| ! ( is_array( $config ) && isset( $config['welcome'] ) )
+			|| Utils::has_pro()
+		) {
 			return $config;
 		}
 
@@ -70,6 +70,18 @@ class Conversion_Banner {
 		}
 
 		return $config;
+	}
+
+	private function is_request_from_theme_admin_page(): bool {
+		$referer = wp_get_referer();
+
+		if ( ! $referer ) {
+			return false;
+		}
+
+		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
+
+		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
 	}
 
 	public function ajax_dismiss_banner(): void {
