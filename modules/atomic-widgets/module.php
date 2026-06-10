@@ -112,6 +112,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
@@ -324,6 +325,10 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Form_Error_Message() );
 		} elseif ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		}
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
 		}
 	}
 

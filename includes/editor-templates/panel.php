@@ -1,11 +1,16 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
+
+$show_editing_panel_sticky_promotion = ! Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' );
+$editing_panel_sticky_promotion = $show_editing_panel_sticky_promotion ? Filtered_Promotions_Manager::get_editor_panel_sticky_promotion() : [];
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
 	<div id="elementor-panel-state-loading">
@@ -196,6 +201,14 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<# } #>
 	</div>
 	<# } #>
+	<?php if ( $show_editing_panel_sticky_promotion ) : ?>
+	<div class="elementor-panel-editor-sticky-promotion">
+		<div class="elementor-get-pro-sticky-message">
+			<?php echo esc_html( $editing_panel_sticky_promotion['message'] ); ?>
+			<a target="_blank" href="<?php echo esc_url( $editing_panel_sticky_promotion['url'] ); ?>"><?php echo esc_html( $editing_panel_sticky_promotion['button_text'] ); ?></a>
+		</div>
+	</div>
+	<?php endif; ?>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">

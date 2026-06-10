@@ -7,7 +7,7 @@
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  * Requires PHP: 7.4
- * Requires at least: 6.6
+ * Requires at least: 6.8
  * Text Domain: elementor
  *
  * @package Elementor
@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 define( 'ELEMENTOR_VERSION', '4.2.0' );
+define( 'ELEMENTOR_MINIMUM_WP_VERSION', '6.8' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -66,7 +67,7 @@ if ( file_exists( $deprecation_func_file ) ) {
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
-} elseif ( ! version_compare( get_bloginfo( 'version' ), '6.5', '>=' ) ) {
+} elseif ( ! version_compare( get_bloginfo( 'version' ), ELEMENTOR_MINIMUM_WP_VERSION, '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_wp_version' );
 } else {
 	require ELEMENTOR_PATH . 'includes/plugin.php';
@@ -112,7 +113,7 @@ function elementor_fail_wp_version() {
 		sprintf(
 			/* translators: %s: WordPress version. */
 			esc_html__( 'Update to version %s and get back to creating!', 'elementor' ),
-			'6.5'
+			ELEMENTOR_MINIMUM_WP_VERSION
 		),
 		esc_html__( 'Show me how', 'elementor' )
 	);
