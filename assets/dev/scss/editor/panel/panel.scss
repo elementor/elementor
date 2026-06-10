@@ -129,16 +129,60 @@
 	}
 }
 
+#elementor-panel-content-wrapper:has(> #elementor-panel-page-editor) {
+	display: flex;
+	flex-direction: column;
+
+	#elementor-panel-page-editor {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		min-height: 0;
+	}
+
+	.elementor-panel-editor-sticky-promotion {
+		position: sticky;
+		inset-block-end: 0;
+		margin-block-start: auto;
+
+		.elementor-get-pro-sticky-message {
+			margin-block-start: 0;
+		}
+	}
+}
+
 #elementor-panel-get-pro-elements-sticky {
 	position: sticky;
 	inset-block-end: 0;
-	font-size: 14px;
-	font-weight: 400;
-	line-height: 1.6;
 	margin-block-end: -10px;
 
 	.elementor-get-pro-sticky-message {
 		margin-block-start: -14px;
+	}
+}
+
+// On search results the sticky promotion is appended as the last child of the
+// elements page (after the widget creation area), so the page must fill the
+// available height to keep the promotion pinned to the bottom without adding
+// extra scroll space when the content is short.
+#elementor-panel-page-elements:has( > #elementor-panel-get-pro-elements-sticky ) {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+
+	> #elementor-panel-get-pro-elements-sticky {
+		margin-block-start: auto;
+	}
+}
+
+#elementor-panel-get-pro-elements-sticky,
+.elementor-panel-editor-sticky-promotion {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+	background-color: var(--e-a-color-white);
+
+	.elementor-get-pro-sticky-message {
 		min-height: 40px;
 		display: block;
 		padding: 9px min(35px, 5%);
