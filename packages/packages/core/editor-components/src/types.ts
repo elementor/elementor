@@ -60,6 +60,7 @@ type BaseComponent = {
 	uid: string;
 	name: string;
 	overridableProps?: OverridableProps;
+	gotFromLibraryThisSession?: boolean;
 };
 
 export type DocumentStatus = 'publish' | 'draft';

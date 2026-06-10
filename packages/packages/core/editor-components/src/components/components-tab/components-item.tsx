@@ -53,6 +53,13 @@ export const ComponentItem = forwardRef< HTMLElement, ComponentItemProps >(
 					width: '100%',
 					alignItems: 'center',
 					gap: 1,
+					 ...( component.gotFromLibraryThisSession ? {
+						border: '2px solid #bf0db8 !important',
+						background: '#bf0db826',
+						'&:hover': {
+							backgroundColor: '#be56ba66',
+						},
+					} : {} )
 				} }
 				{ ...props }
 			>
