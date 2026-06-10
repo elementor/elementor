@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
 import { type GridTracks } from '../../hooks/use-grid-tracks';
 import { findFirstEmptyCell } from '../../utils/find-first-empty-cell';
@@ -56,7 +57,10 @@ const renderLines = ( tracks: GridTracks, width: number, height: number ) => {
 export function GridOutline( { element, tracks, width, height }: Props ) {
 	const cells = computeCellRects( tracks, width, height );
 	const hasGap = tracks.columnGap > 0 || tracks.rowGap > 0;
-	const firstEmpty = findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length );
+	const firstEmpty = useMemo(
+		() => findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length ),
+		[ element, tracks ]
+	);
 	const emptyCellRect =
 		firstEmpty && tracks.columns.length > 0
 			? cells[ firstEmpty.row * tracks.columns.length + firstEmpty.col ]
