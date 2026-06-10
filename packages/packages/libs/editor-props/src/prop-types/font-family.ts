@@ -1,7 +1,14 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../utils/create-prop-utils';
+import { formatFontFamilyForCss, getEnqueueFontFamily } from '../utils/font-family-value';
 
-export const fontFamilyPropTypeUtil = createPropUtils( 'font-family', z.string().nullable() );
+const baseUtil = createPropUtils( 'font-family', z.string().nullable() );
+
+export const fontFamilyPropTypeUtil = {
+	...baseUtil,
+	formatForCss: formatFontFamilyForCss,
+	getEnqueueFontFamily,
+};
 
 export type FontFamilyPropValue = z.infer< typeof fontFamilyPropTypeUtil.schema >;
