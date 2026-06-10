@@ -82,6 +82,20 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'email', $config['base_settings'] );
 	}
 
+	public function test_base_settings_keys_match_email_prop_schema_keys() {
+		$form = $this->make_atomic_form_instance();
+		$schema = Atomic_Form::get_props_schema();
+		$email_prop_keys = array_filter(
+			array_keys( $schema ),
+			static fn( $key ) => str_starts_with( $key, Atomic_Form::ACTION_EMAIL )
+		);
+
+		$this->assertSame(
+			array_values( $email_prop_keys ),
+			array_keys( $form->get_base_settings() )
+		);
+	}
+
 	private function find_control_by_bind( array $controls, string $bind ): ?Atomic_Control_Base {
 		foreach ( $controls as $control ) {
 			if ( $control instanceof Section ) {

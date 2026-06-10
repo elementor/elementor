@@ -40,8 +40,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - All PropValues require \`$$type\` matching schema
 - NO LINKS in configuration
 - Retry on errors up to 10x
-- Check \`llm_guidance.default_settings\` in widget schemas — omit those props from elementConfig unless the user explicitly asks to change them
-- For \`e-form\`: do NOT set \`email\` (or \`email_2\`) in elementConfig unless the user explicitly requests email routing changes
+- Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).

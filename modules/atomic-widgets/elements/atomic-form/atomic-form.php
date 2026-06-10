@@ -215,10 +215,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_base_settings(): array {
 		$settings = [];
-		$default_email = self::get_default_email_value();
 
-		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
-			$key = self::get_email_action_key( $i );
+		foreach ( self::build_email_action_defaults() as $key => $default_email ) {
 			$settings[ $key ] = Emails_Prop_Type::generate( $default_email );
 		}
 
@@ -415,11 +413,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	private static function get_emails_prop_settings(): array {
 		$props = [];
-		$default_value = self::get_default_email_value();
 
-		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
-			$key = self::get_email_action_key( $i );
-
+		foreach ( self::build_email_action_defaults() as $key => $default_value ) {
 			$props[ $key ] = Emails_Prop_Type::make()
 				->set_dependencies( self::make_action_dependency( $key ) )
 				->meta( Overridable_Prop_Type::ignore() )
@@ -471,6 +466,18 @@ class Atomic_Form extends Atomic_Element_Base {
 
 		// translators: %d is the index of the email action.
 		return sprintf( __( 'Email %d', 'elementor' ), $index + 1 );
+	}
+
+	private static function build_email_action_defaults(): array {
+		$defaults = [];
+		$default_email = self::get_default_email_value();
+
+		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
+			$key = self::get_email_action_key( $i );
+			$defaults[ $key ] = $default_email;
+		}
+
+		return $defaults;
 	}
 
 	private static function get_default_email_value(): array {
