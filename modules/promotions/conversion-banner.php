@@ -23,6 +23,7 @@ class Conversion_Banner {
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
+	const GO_PRO_TITLE_PREFIX = 'Go Pro';
 
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
@@ -62,7 +63,9 @@ class Conversion_Banner {
 			return $config;
 		}
 
-		if ( isset( $config['welcome']['title'] ) && substr( $config['welcome']['title'], 0, 6 ) === 'Go Pro' ) {
+		$title = $config['welcome']['title'] ?? '';
+
+		if ( is_string( $title ) && substr( $title, 0, strlen( self::GO_PRO_TITLE_PREFIX ) ) === self::GO_PRO_TITLE_PREFIX ) {
 			$config['welcome'] = [];
 		}
 
