@@ -59,6 +59,10 @@ export const getElementSelector = ( id: string ) => {
 	return `[data-id="${ id }"]`;
 };
 
+export const getAtomicWidgetDragHandleSelector = ( widgetId: string ) => {
+	return `${ getElementSelector( widgetId ) } > :not(.elementor-widget-placeholder)`;
+};
+
 /**
  * Capture the ID of the next element created via document/elements/create command.
  *
