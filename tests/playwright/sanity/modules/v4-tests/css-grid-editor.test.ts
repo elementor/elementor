@@ -107,10 +107,6 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.v4Panel.style.changeSizeControl( columnsControl, 4 );
 		await editor.v4Panel.style.changeSizeControl( rowsControl, 3 );
 
-		const columnGapInput = page.locator( 'input[aria-label="Column gap"]' ).first();
-		await columnGapInput.fill( '20' );
-		await columnGapInput.blur();
-
 		await editor.publishPage();
 		await page.reload();
 		await editor.waitForPanelToLoad();
@@ -145,7 +141,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 
-		const cells = gridOutline.locator( 'svg line' );
+		const cells = gridOutline.locator( 'svg rect' );
 		const countCells = async () => cells.count();
 
 		await expect.poll( countCells ).toBeGreaterThan( 0 );
@@ -198,7 +194,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
 
-		const cells = gridOutline.locator( 'svg line' );
+		const cells = gridOutline.locator( 'svg rect' );
 		const countCells = async () => cells.count();
 
 		await expect.poll( countCells ).toBeGreaterThan( 0 );
@@ -235,8 +231,9 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.selectElement( gridId );
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
-		const bottomLine = gridOutline.locator( 'svg line' ).last();
-		const readBottomY = async () => Number( await bottomLine.getAttribute( 'y1' ) );
+		const bottomCell = gridOutline.locator( 'svg rect' ).last();
+		const readBottomY = async () =>
+			Number( await bottomCell.getAttribute( 'y' ) ) + Number( await bottomCell.getAttribute( 'height' ) );
 
 		await expect.poll( readBottomY ).toBeGreaterThan( 0 );
 		const initialBottomY = await readBottomY();
