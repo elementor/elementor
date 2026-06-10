@@ -213,6 +213,18 @@ class Atomic_Form extends Atomic_Element_Base {
 		];
 	}
 
+	protected function define_base_settings(): array {
+		$settings = [];
+		$default_email = self::get_default_email_value();
+
+		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
+			$key = self::get_email_action_key( $i );
+			$settings[ $key ] = Emails_Prop_Type::generate( $default_email );
+		}
+
+		return $settings;
+	}
+
 	protected function define_base_styles(): array {
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
@@ -467,6 +479,7 @@ class Atomic_Form extends Atomic_Element_Base {
 				String_Prop_Type::generate( self::get_default_recipient_email() ),
 			] ),
 			'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+			'message' => String_Prop_Type::generate( '[all-fields]' ),
 		];
 	}
 

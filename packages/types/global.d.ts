@@ -1,6 +1,6 @@
 import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
-import type { PropsSchema } from '@elementor/editor-props';
+import type { PropsSchema, PropValue } from '@elementor/editor-props';
 import type { EnqueueFont } from '@elementor/editor-v1-adapters';
 import type { V4PromotionData, V4PromotionKey } from '@elementor/editor-controls';
 
@@ -128,6 +128,7 @@ declare global {
 				{
 					atomic_controls?: ControlItem[];
 					atomic_props_schema?: PropsSchema;
+					base_settings?: Record< string, PropValue >;
 					controls: object;
 					title: string;
 				}

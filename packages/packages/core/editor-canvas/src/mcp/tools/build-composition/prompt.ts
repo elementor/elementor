@@ -40,6 +40,8 @@ Some elements have internal tree structures (nesting). When using these elements
 - All PropValues require \`$$type\` matching schema
 - NO LINKS in configuration
 - Retry on errors up to 10x
+- Check \`llm_guidance.default_settings\` in widget schemas — omit those props from elementConfig unless the user explicitly asks to change them
+- For \`e-form\`: do NOT set \`email\` (or \`email_2\`) in elementConfig unless the user explicitly requests email routing changes
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).
@@ -118,7 +120,7 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables] (others throw errors)
 - Avoid SVG widgets unless assets are pre-uploaded
-- Check \`llm_guidance\` in widget schemas
+- Check \`llm_guidance\` in widget schemas (\`default_styles\`, \`default_settings\`, nesting, required children)
 
 # PARAMETERS
 - **xmlStructure**: Valid XML with configuration-id attributes

@@ -3,7 +3,6 @@ import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
 import {
 	type ArrayPropType,
 	type ObjectPropType,
-	type Props,
 	type PropType,
 	Schema,
 	type TransformablePropType,
@@ -11,7 +10,7 @@ import {
 } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
-import { getRequiredDefaultChildTypes } from '../../composition-builder/utils/required-default-child-tags';
+import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints } from './build-llm-guidance';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
 
 const V3_LAYOUT_CONTROL_TYPES = new Set( [ 'section', 'tab', 'tabs' ] );
@@ -183,55 +182,22 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 					],
 				};
 			}
-			const asJson = Object.fromEntries(
-				Object.entries( propSchema )
-					.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
-					.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType ) ] )
+			const baseSettingsKeys = Object.keys( widgetData?.base_settings ?? {} );
+
+			const asJson = enrichPropertiesWithBaseSettingsHints(
+				Object.fromEntries(
+					Object.entries( propSchema )
+						.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
+						.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType ) ] )
+				),
+				baseSettingsKeys
 			);
 
 			const description =
 				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
 
-			const defaultStyles: Record< string, Props > = {};
-			const baseStyleSchema = widgetData?.base_styles;
-			if ( baseStyleSchema ) {
-				Object.values( baseStyleSchema ).forEach( ( stylePropType ) => {
-					stylePropType.variants.forEach( ( variant ) => {
-						Object.assign( defaultStyles, variant.props );
-					} );
-				} );
-			}
-
-			// build llm instructions
-			const hasDefaultStyles = Object.keys( defaultStyles ).length > 0;
-			const llmGuidance: Record< string, unknown > = {
-				can_have_children: !! widgetData?.meta?.is_container,
-			};
-
-			if ( hasDefaultStyles ) {
-				llmGuidance.instructions =
-					'These are the default styles applied to the widget. Override only when necessary.';
-				llmGuidance.default_styles = defaultStyles;
-			}
-
-			const allowedChildTypes = widgetData.allowed_child_types;
-
 			const allWidgets = getWidgetsCache() || {};
-			const allowedParents = Object.entries( allWidgets )
-				.filter( ( [ , parentConfig ] ) => parentConfig.allowed_child_types?.includes( widgetType ) )
-				.map( ( [ parentType ] ) => parentType );
-
-			if ( allowedChildTypes?.length || allowedParents.length ) {
-				llmGuidance.nesting = {
-					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
-					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
-				};
-			}
-
-			const requiredDirectChildTags = getRequiredDefaultChildTypes( widgetData );
-			if ( requiredDirectChildTags.length ) {
-				llmGuidance.required_direct_children = requiredDirectChildTags;
-			}
+			const llmGuidance = buildLlmGuidance( widgetData, widgetType, allWidgets );
 
 			return {
 				contents: [

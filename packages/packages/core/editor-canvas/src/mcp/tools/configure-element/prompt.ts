@@ -29,6 +29,8 @@ When a user requires to change anything in an element, such as updating text, co
 This tool handles elements of type "widget".
 This tool handles styling elements, using the "stylePropertiesToChange" parameter.
 
+Properties listed in \`llm_guidance.default_settings\` use widget defaults when omitted. Change them here only when the user explicitly requests it (e.g. custom "Send to" email on \`e-form\`).
+
 To CLEAR a property (i.e., set it to default or none), provide null as a value.
 
 The element's schema must be known before using this tool.
