@@ -88,6 +88,10 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_get_notifications() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'Insufficient permissions' );
+		}
+
 		$notifications = API::get_notifications_by_conditions( true );
 
 		$installed = Options::get_notifications_installed();
@@ -101,6 +105,10 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_mark_notification_installed( $data ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new \Exception( 'Insufficient permissions' );
+		}
+
 		$notification_id = sanitize_text_field( $data['notification_id'] ?? '' );
 
 		if ( empty( $notification_id ) ) {
