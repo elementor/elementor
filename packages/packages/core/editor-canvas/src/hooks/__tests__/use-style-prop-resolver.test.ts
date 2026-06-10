@@ -1,5 +1,6 @@
 import { createMockPropType } from 'test-utils';
 import { fontFamilyPropTypeUtil } from '@elementor/editor-props';
+import { type BreakpointsMap } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { enqueueFont } from '@elementor/editor-v1-adapters';
 import { act, renderHook } from '@testing-library/react';
@@ -10,6 +11,7 @@ import { useStylePropResolver } from '../use-style-prop-resolver';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '@elementor/editor-styles', () => ( {
+	...jest.requireActual( '@elementor/editor-styles' ),
 	getStylesSchema: jest.fn(),
 } ) );
 
@@ -26,7 +28,7 @@ describe( 'useStylePropResolver', () => {
 		const { result } = renderHook( useStylePropResolver );
 		const renderStyles = createStylesRenderer( {
 			resolve: result.current,
-			breakpoints: {},
+			breakpoints: {} as BreakpointsMap,
 		} );
 
 		// Act.
@@ -37,6 +39,7 @@ describe( 'useStylePropResolver', () => {
 						id: 'test-style',
 						type: 'class',
 						cssName: 'test-style',
+						label: 'Test style',
 						variants: [
 							{
 								meta: { breakpoint: null, state: null },

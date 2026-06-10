@@ -5,10 +5,9 @@ import { formatFontFamilyForCss, getEnqueueFontFamily } from '../utils/font-fami
 
 const baseUtil = createPropUtils( 'font-family', z.string().nullable() );
 
-export const fontFamilyPropTypeUtil = {
-	...baseUtil,
+export const fontFamilyPropTypeUtil = Object.assign( baseUtil, {
 	formatForCss: formatFontFamilyForCss,
 	getEnqueueFontFamily,
-};
+} );
 
 export type FontFamilyPropValue = z.infer< typeof fontFamilyPropTypeUtil.schema >;
