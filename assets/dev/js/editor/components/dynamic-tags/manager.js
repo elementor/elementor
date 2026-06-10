@@ -77,8 +77,12 @@ module.exports = elementorModules.Module.extend( {
 			}
 		};
 
+		const needsUniqueIds = postIds.length > 1;
+		const batchId = needsUniqueIds ? elementorCommon.helpers.getUniqueId() : null;
+
 		postIds.forEach( ( postId ) => {
 			elementorCommon.ajax.addRequest( 'render_tags', {
+				...( needsUniqueIds ? { unique_id: `render_tags-${ postId }-${ batchId }` } : {} ),
 				data: {
 					post_id: Number( postId ),
 					tags: Object.keys( cacheRequests[ postId ] ),
