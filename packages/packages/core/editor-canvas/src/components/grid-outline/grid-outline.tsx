@@ -72,7 +72,7 @@ export function GridOutline( { element, tracks, width, height }: Props ) {
 			>
 				{ hasGap ? renderCells( cells, tracks.borderColor ) : renderLines( tracks, width, height ) }
 			</svg>
-			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } /> }
+			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } /> }
 		</>
 	);
 }
