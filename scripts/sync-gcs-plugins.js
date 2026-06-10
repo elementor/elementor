@@ -38,7 +38,7 @@ const GCS_BUCKET = process.env.GCS_BUCKET_NAME
 const GCS_PREFIX = process.env.GCS_PLUGINS_PREFIX || 'wp-plugins/'
 
 if ( ! GCS_BUCKET ) {
-  console.error( '❌  GCS_BUCKET_NAME is not set. Set it as an env var or GitHub Actions variable WP_PLUGINS_GCS_BUCKET.' )
+  console.error( 'GCS_BUCKET_NAME is not set. Set it as an env var or GitHub Actions variable WP_PLUGINS_GCS_BUCKET.' )
   process.exit( 1 )
 }
 
@@ -80,7 +80,7 @@ function normalizeSlug (slug) {
 
 function syncPlugins () {
   if (!hasGsutil()) {
-    console.error('❌  gsutil not found. Install Google Cloud SDK and run: gcloud auth login')
+    console.error('gsutil not found. Install Google Cloud SDK and run: gcloud auth login')
     process.exit(1)
   }
 
@@ -93,12 +93,17 @@ function syncPlugins () {
     const gsUri = `gs://${GCS_BUCKET}/${GCS_PREFIX}${zipFile}`
     const localZip = path.join(TEMP_DIR, zipFile)
 
-    console.log(`⬇️  ${zipFile}`)
+    console.log(`${zipFile}`)
 
     try {
       execSync(`gsutil -o "GSUtil:parallel_process_count=1" cp "${gsUri}" "${localZip}"`, { stdio: 'pipe' })
-    } catch {
-      console.error(`   ✗ Failed to download — skipping`)
+    } catch ( e ) {
+      const stderr = e.stderr?.toString() || ''
+      if ( stderr.includes( 'Reauthentication' ) || stderr.includes( 'credentials' ) ) {
+        console.error( `   ✗ GCS auth error — run: gcloud auth login` )
+        process.exit( 1 )
+      }
+      console.error( `   ✗ Failed to download ${zipFile} — skipping` )
       continue
     }
 
@@ -136,9 +141,9 @@ function syncPlugins () {
   try { fs.rmdirSync(TEMP_DIR) } catch { /* not empty */ }
 
   if (synced === GCS_PLUGINS.length) {
-    console.log(`\n✅  All ${synced} plugins synced`)
+    console.log(`\b All ${synced} plugins synced`)
   } else {
-    console.error(`\n❌  Synced ${synced}/${GCS_PLUGINS.length} — check bucket: gs://${GCS_BUCKET}/${GCS_PREFIX}`)
+    console.error(`\n Synced ${synced}/${GCS_PLUGINS.length} — check bucket: gs://${GCS_BUCKET}/${GCS_PREFIX}`)
     process.exit(1)
   }
 }
