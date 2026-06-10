@@ -31,7 +31,7 @@ const InstallPluginButton = ( { slug, notificationId, installLabel, activateLabe
 			if ( plugin ) {
 				await wp.apiFetch( {
 					path: `/wp/v2/plugins/${ encodeURIComponent( plugin.plugin ) }`,
-					method: 'PUT',
+					method: 'POST',
 					data: { status: 'active' },
 				} );
 			}
