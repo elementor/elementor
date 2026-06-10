@@ -110,11 +110,12 @@ trait Has_Atomic_Base {
 		array $style,
 		string $validation_errors
 	): string {
+		$widget_id = $data['id'] ?? 'unknown';
 		$structure_label = $this->get_editor_structure_label( $data );
 		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
 
 		$message_parts = [
-			"Styles validation failed for style `$style_id`",
+			"Styles validation failed for style `$style_id` (widget `$widget_id`)",
 		];
 
 		if ( $structure_label ) {
