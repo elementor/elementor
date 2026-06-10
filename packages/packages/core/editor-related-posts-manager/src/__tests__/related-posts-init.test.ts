@@ -1,9 +1,6 @@
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-const mockReset = jest.fn();
-const mockSetCurrentDocumentId = jest.fn();
-
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	createStylesProvider: jest.fn( () => ( {
 		getKey: () => 'related-posts-styles',
@@ -27,16 +24,19 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 } ) );
 
 jest.mock( '../api', () => ( {
-	reset: ( ...args: unknown[] ) => mockReset( ...args ),
-	setCurrentDocumentId: ( ...args: unknown[] ) => mockSetCurrentDocumentId( ...args ),
+	reset: jest.fn(),
+	setCurrentDocumentId: jest.fn(),
 } ) );
 
+import { reset, setCurrentDocumentId } from '../api';
 import { init } from '../init';
 
 const { stylesRepository } = require( '@elementor/editor-styles-repository' );
 
 const mockGetV1CurrentDocument = jest.mocked( getV1CurrentDocument );
 const mockRegisterDataHook = jest.mocked( registerDataHook );
+const mockReset = jest.mocked( reset );
+const mockSetCurrentDocumentId = jest.mocked( setCurrentDocumentId );
 
 describe( 'init', () => {
 	let attachPreviewHandler: () => void;
@@ -86,7 +86,7 @@ describe( 'init', () => {
 	it( 'should set a null current document id when attach-preview has no current document', () => {
 		// Arrange.
 		mockGetV1CurrentDocument.mockReturnValue( {
-			id: null,
+			id: undefined,
 			config: { elements: [] },
 		} as ReturnType< typeof getV1CurrentDocument > );
 
