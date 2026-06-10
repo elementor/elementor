@@ -55,7 +55,7 @@ const renderLines = ( tracks: GridTracks, width: number, height: number ) => {
 };
 
 export function GridOutline( { element, tracks, width, height }: Props ) {
-	const cells = computeCellRects( tracks, width, height );
+	const cells = useMemo( () => computeCellRects( tracks, width, height ), [ tracks, width, height ] );
 	const hasGap = tracks.columnGap > 0 || tracks.rowGap > 0;
 	const firstEmpty = useMemo(
 		() => findFirstEmptyCell( element, tracks.columns.length, tracks.rows.length ),
