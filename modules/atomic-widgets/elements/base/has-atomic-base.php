@@ -110,29 +110,28 @@ trait Has_Atomic_Base {
 		array $style,
 		string $validation_errors
 	): string {
-		$widget_id = $data['id'] ?? 'unknown';
-		$element_name = $this->get_title();
-
-		if ( '' === $element_name ) {
-			$element_name = $this->get_name();
-		}
 		$structure_label = $this->get_editor_structure_label( $data );
 		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
 
 		$message_parts = [
 			"Styles validation failed for style `$style_id`",
-			"Element: `$element_name`",
 		];
 
 		if ( $structure_label ) {
 			$message_parts[] = "Structure label: `$structure_label`";
+		} else {
+			$element_name = $this->get_title();
+
+			if ( '' === $element_name ) {
+				$element_name = $this->get_name();
+			}
+
+			$message_parts[] = "Element: `$element_name`";
 		}
 
 		if ( $style_label ) {
 			$message_parts[] = "Style label: `$style_label`";
 		}
-
-		$message_parts[] = "Widget ID: `$widget_id`";
 
 		return implode( '. ', $message_parts ) . '. ' . $validation_errors;
 	}
