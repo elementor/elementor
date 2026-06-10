@@ -8,17 +8,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
-
-	/**
-	 * Cache_Validity path prefix for forward (parent → children) relation map.
-	 * Stored as: ['global', 'related', $parent_post_id] => int[]
-	 */
 	const RELATED_KEY = 'related';
-
-	/**
-	 * Cache_Validity path prefix for reverse (child → parents) relation map.
-	 * Stored as: ['global', 'related-reverse', $child_post_id] => int[]
-	 */
 	const RELATED_REVERSE_KEY = 'related-reverse';
 
 	private Global_Classes_Relations $relations;
@@ -73,17 +63,14 @@ class Atomic_Global_Styles {
 			$this->resolve_embedded_post_descendants( (int) $post_id, $parent_to_embedded, $visited );
 		}
 
-		// Persist the relation maps so that invalidation can look them up later.
 		$this->persist_relation_maps( $parent_to_embedded, $context );
 
-		// Compute all embedded ids (union of all children sets).
 		$all_embedded = [];
 		foreach ( $parent_to_embedded as $children ) {
 			$all_embedded = array_merge( $all_embedded, $children );
 		}
 		$all_embedded = array_flip( array_unique( $all_embedded ) ); // use as set
 
-		// Register exactly one global CSS entry per "main" (non-embedded) post id.
 		foreach ( $post_ids as $post_id ) {
 			$post_id_int = (int) $post_id;
 
@@ -111,9 +98,9 @@ class Atomic_Global_Styles {
 	 * Applies the `elementor/document/related_posts` filter transitively and
 	 * guards against cycles with the shared $visited set.
 	 *
-	 * @param int                $pid                 Parent post id being inspected.
-	 * @param array<int,int[]>   $parent_to_embedded  Accumulated forward map.
-	 * @param array<int,true>    $visited             Cycle guard.
+	 * @param int              $pid                 Parent post id being inspected.
+	 * @param array<int,int[]> $parent_to_embedded  Accumulated forward map.
+	 * @param array<int,true>  $visited             Cycle guard.
 	 * @return int[] Embedded descendant post ids to merge into $pid's global styles.
 	 */
 	private function resolve_embedded_post_descendants( int $pid, array &$parent_to_embedded, array &$visited ): array {
@@ -148,7 +135,6 @@ class Atomic_Global_Styles {
 	private function get_document_global_styles( array $post_ids, string $context ): array {
 		$is_preview = Global_Classes_Repository::CONTEXT_PREVIEW === $context;
 
-		// Union of class ids used across all supplied posts.
 		$class_ids = [];
 		foreach ( $post_ids as $pid ) {
 			$ids = $this->relations->set_preview( $is_preview )->get_styles_by_post( (int) $pid );
