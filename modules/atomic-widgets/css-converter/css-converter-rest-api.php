@@ -5,6 +5,12 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Variables\Module as Variables_Module;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -44,11 +50,7 @@ class Css_Converter_REST_API {
 				->build();
 		}
 
-		$converter = new Css_Converter(
-			Converter_Registry_Factory::create(),
-			new Null_Failure_Reporter(),
-			Expander_Registry_Factory::create()
-		);
+		$converter = $this->create_converter();
 
 		$results = [];
 
@@ -113,6 +115,43 @@ class Css_Converter_REST_API {
 			'customCss' => $result['customCss'],
 			'rejected'  => $result['rejected'],
 		];
+	}
+
+	private function create_converter(): Css_Converter {
+		$variable_transformer = $this->create_variable_transformer();
+
+		return new Css_Converter(
+			Converter_Registry_Factory::create(),
+			new Null_Failure_Reporter(),
+			Expander_Registry_Factory::create(),
+			$variable_transformer
+		);
+	}
+
+	private function create_variable_transformer(): ?Variable_Prop_Value_Transformer {
+		if ( ! $this->is_variables_active() ) {
+			return null;
+		}
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return null;
+		}
+
+		$service = new Variables_Service(
+			new Variables_Repository( $kit ),
+			new Batch_Processor()
+		);
+
+		return new Variable_Prop_Value_Transformer( $service );
+	}
+
+	private function is_variables_active(): bool {
+		$experiments = Plugin::$instance->experiments;
+
+		return $experiments->is_feature_active( Variables_Module::EXPERIMENT_NAME )
+			&& $experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
 	private function route_wrapper( callable $cb ) {

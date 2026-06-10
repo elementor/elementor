@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Conversion_Failure_Reporter;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,10 +20,18 @@ class Css_Converter {
 
 	private Expander_Registry $expanders;
 
-	public function __construct( Converter_Registry $registry, Conversion_Failure_Reporter $failure_reporter, ?Expander_Registry $expanders = null ) {
+	private ?Variable_Prop_Value_Transformer $variable_transformer;
+
+	public function __construct(
+		Converter_Registry $registry,
+		Conversion_Failure_Reporter $failure_reporter,
+		?Expander_Registry $expanders = null,
+		?Variable_Prop_Value_Transformer $variable_transformer = null
+	) {
 		$this->registry = $registry;
 		$this->failure_reporter = $failure_reporter;
 		$this->expanders = $expanders ?? new Expander_Registry();
+		$this->variable_transformer = $variable_transformer;
 	}
 
 	/**
@@ -38,11 +48,41 @@ class Css_Converter {
 			}
 		}
 
+		$props = $context->get_props();
+		$rejected = $context->get_rejected();
+
+		if ( $this->variable_transformer ) {
+			$schema = $this->style_schema();
+			$props = $this->variable_transformer->transform( $props, $schema );
+
+			$ejected = $this->variable_transformer->eject_unresolved_var_props( $props, $schema, $rules );
+			$props = $ejected['props'];
+			$leftover = array_merge( $leftover, $ejected['custom_css'] );
+			$rejected = array_merge( $rejected, $ejected['rejected'] );
+			$props = $this->validate_props( $props, $schema );
+		}
+
 		return [
-			'props'     => $context->get_props(),
+			'props'     => $props,
 			'customCss' => implode( ' ', $leftover ),
-			'rejected'  => $context->get_rejected(),
+			'rejected'  => $rejected,
 		];
+	}
+
+	private function validate_props( array $props, array $schema ): array {
+		if ( empty( $props ) ) {
+			return [];
+		}
+
+		return Props_Parser::make( $schema )->validate( $props )->unwrap();
+	}
+
+	private function style_schema(): array {
+		if ( function_exists( 'apply_filters' ) ) {
+			return Style_Schema::get();
+		}
+
+		return Style_Schema::get_style_schema();
 	}
 
 	/**

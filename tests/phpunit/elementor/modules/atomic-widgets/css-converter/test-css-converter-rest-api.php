@@ -5,6 +5,10 @@ namespace Elementor\Testing\Modules\AtomicWidgets\CssConverter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1598,6 +1602,97 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals( (object) [], $data['el-1']['props'] );
 		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__promotes_known_color_var_to_global_color_variable_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'primary-text',
+					'value' => '#111111',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'var(--primary-text)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'color' => [
+					'$$type' => Color_Variable_Prop_Type::get_key(),
+					'value' => 'e-gv-1',
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertTrue( Style_Schema::get()['color']->validate( (array) $data['el-1']['props']['color'] ) );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__unknown_var_goes_to_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'color' => 'var(--external-var)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'color: var(--external-var);', $data['el-1']['customCss'] );
+		$this->assertSame( [], $data['el-1']['rejected'] );
+	}
+
+	public function test_post__wrong_variable_type_is_rejected() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-3' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'heading-font',
+					'value' => 'Roboto',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'font-size' => 'var(--heading-font)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
+		$this->assertSame( [ 'font-size: var(--heading-font);' ], $data['el-1']['rejected'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}
 
 	public function test_coverage__every_style_schema_property_is_hardcoded_as_covered() {
