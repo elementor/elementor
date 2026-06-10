@@ -10,6 +10,9 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Border_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -166,6 +169,116 @@ class Test_Border_Shorthand_Expander extends TestCase {
 		$this->assertSame( 'border: 1px 2px;', $result['customCss'] );
 	}
 
+	public function test_expand__known_color_var_routes_to_border_color() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'primary-border' )->willReturn( [
+			'id' => 'e-gv-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'primary-border',
+			'value' => '#112233',
+		] );
+
+		$rules = $this->make_expander( $service )->expand( [
+			'property' => 'border',
+			'value' => 'var(--primary-border)',
+		] );
+
+		$this->assertSame(
+			[
+				[
+					'property' => 'border-color',
+					'value' => 'var(--primary-border)',
+					'declaration' => 'border-color: var(--primary-border)',
+				],
+			],
+			$rules
+		);
+	}
+
+	public function test_expand__known_size_var_routes_to_border_width() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'border-width-token' )->willReturn( [
+			'id' => 'e-gv-2',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'label' => 'border-width-token',
+			'value' => '2px',
+		] );
+
+		$rules = $this->make_expander( $service )->expand( [
+			'property' => 'border',
+			'value' => 'var(--border-width-token)',
+		] );
+
+		$this->assertSame(
+			[
+				[
+					'property' => 'border-width',
+					'value' => 'var(--border-width-token)',
+					'declaration' => 'border-width: var(--border-width-token)',
+				],
+			],
+			$rules
+		);
+	}
+
+	public function test_expand__unknown_var_only_shorthand_declines() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->willReturn( null );
+
+		$rules = $this->make_expander( $service )->expand( [
+			'property' => 'border',
+			'value' => 'var(--external-border)',
+		] );
+
+		$this->assertSame( [], $rules );
+	}
+
+	public function test_expand__mixed_shorthand_with_known_color_var() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'primary-border' )->willReturn( [
+			'id' => 'e-gv-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'primary-border',
+			'value' => '#112233',
+		] );
+
+		$rules = $this->make_expander( $service )->expand( [
+			'property' => 'border',
+			'value' => '1px solid var(--primary-border)',
+		] );
+
+		$this->assertSame(
+			[
+				[ 'property' => 'border-width', 'value' => '1px', 'declaration' => 'border-width: 1px' ],
+				[ 'property' => 'border-style', 'value' => 'solid', 'declaration' => 'border-style: solid' ],
+				[
+					'property' => 'border-color',
+					'value' => 'var(--primary-border)',
+					'declaration' => 'border-color: var(--primary-border)',
+				],
+			],
+			$rules
+		);
+	}
+
+	public function test_dispatcher__known_color_var_expands_to_border_color_prop() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'primary-border' )->willReturn( [
+			'id' => 'e-gv-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'primary-border',
+			'value' => '#112233',
+		] );
+
+		$result = $this->make_dispatcher( $service )->convert( 'border: 1px solid var(--primary-border);' );
+
+		$this->assertSame( '', $result['customCss'] );
+		$this->assertSame(
+			[ '$$type' => 'color', 'value' => 'var(--primary-border)' ],
+			$result['props']['border-color']
+		);
+	}
+
 	public function test_expand__per_side_shorthand_emits_side_longhands() {
 		// Arrange: border-top maps roles to per-side property names.
 		$expander = new Border_Shorthand_Expander(
@@ -188,18 +301,23 @@ class Test_Border_Shorthand_Expander extends TestCase {
 		);
 	}
 
-	private function make_expander(): Border_Shorthand_Expander {
-		return new Border_Shorthand_Expander( 'border', self::ALL_SIDES_LONGHANDS, self::STYLE_KEYWORDS );
+	private function make_expander( ?Variables_Service $variables_service = null ): Border_Shorthand_Expander {
+		return new Border_Shorthand_Expander(
+			'border',
+			self::ALL_SIDES_LONGHANDS,
+			self::STYLE_KEYWORDS,
+			$variables_service
+		);
 	}
 
-	private function make_dispatcher(): Css_Converter {
+	private function make_dispatcher( ?Variables_Service $variables_service = null ): Css_Converter {
 		$registry = ( new Converter_Registry() )
 			->register( new Dimensions_Property_Converter( 'border-width' ) )
 			->register( new String_Property_Converter( 'border-style', self::STYLE_KEYWORDS ) )
 			->register( new Color_Property_Converter( 'border-color' ) );
 
 		$expanders = ( new Expander_Registry() )
-			->register( $this->make_expander() );
+			->register( $this->make_expander( $variables_service ) );
 
 		return new Css_Converter( $registry, new Null_Failure_Reporter(), $expanders );
 	}

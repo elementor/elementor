@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Constants as Variables_Constants;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -1686,6 +1687,82 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		);
 		$this->assertSame( '', $data['el-1']['customCss'] );
 		$this->assertSame( [], $data['el-1']['rejected'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__border_color_var_shorthand_promotes_to_border_color_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-border' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'primary-border',
+					'value' => '#112233',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'border' => '1px solid var(--primary-border)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			[
+				'$$type' => Color_Variable_Prop_Type::get_key(),
+				'value' => 'e-gv-border',
+			],
+			(array) $data['el-1']['props']['border-color']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__top_size_var_promotes_to_inset_block_start_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-offset' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'offset-md',
+					'value' => '16px',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'top' => 'var(--offset-md)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			[
+				'$$type' => Size_Variable_Prop_Type::get_key(),
+				'value' => 'e-gv-offset',
+			],
+			(array) $data['el-1']['props']['inset-block-start']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
 
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}

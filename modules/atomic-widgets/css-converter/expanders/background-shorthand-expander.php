@@ -2,12 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
 
-use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Reference;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -169,36 +168,14 @@ class Background_Shorthand_Expander extends Shorthand_Expander_Base {
 	}
 
 	private function is_var_only_layer( string $layer ): bool {
-		$layer = trim( $layer );
-
-		if ( null === Css_Var_Reference::parse( $layer ) ) {
-			return false;
-		}
-
-		return 1 === count( Css_Token_Splitter::split_by_whitespace( $layer ) );
+		return Css_Var_Token_Resolver::is_var_only_token( $layer );
 	}
 
 	/**
 	 * @return array{image:string|null,repeat:string|null,attachment:string|null,clip:string|null,position:string|null,size:string|null,color:string|null}|null
 	 */
 	private function parse_var_only_layer( string $layer ): ?array {
-		if ( null === $this->variables_service ) {
-			return null;
-		}
-
-		$reference = Css_Var_Reference::parse( $layer );
-
-		if ( null === $reference ) {
-			return null;
-		}
-
-		$variable = $this->variables_service->find_by_label_or_id( $reference );
-
-		if ( null === $variable ) {
-			return null;
-		}
-
-		$resolved_type = Variable_Type_Keys::get_resolved_type( $variable['type'] ?? '' );
+		$resolved_type = Css_Var_Token_Resolver::resolve_var_only_token_type( $this->variables_service, $layer );
 		$empty_layer = $this->empty_layer();
 
 		if ( 'color' === $resolved_type ) {

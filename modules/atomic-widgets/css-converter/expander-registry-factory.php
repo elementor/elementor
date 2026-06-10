@@ -22,11 +22,11 @@ class Expander_Registry_Factory {
 		$registry = ( new Expander_Registry() )
 			->register( new Physical_To_Logical_Expander() )
 			->register( new Background_Shorthand_Expander( $variables_service ) )
-			->register( new Border_Shorthand_Expander( 'border', self::border_longhands( '' ), $style_enum ) );
+			->register( new Border_Shorthand_Expander( 'border', self::border_longhands( '' ), $style_enum, $variables_service ) );
 
 		foreach ( self::BORDER_SIDES as $side ) {
 			$registry->register(
-				new Border_Shorthand_Expander( "border-$side", self::border_longhands( "$side-" ), $style_enum )
+				new Border_Shorthand_Expander( "border-$side", self::border_longhands( "$side-" ), $style_enum, $variables_service )
 			);
 		}
 
