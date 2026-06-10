@@ -26,6 +26,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Converters\String_Property_Conv
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Size_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -178,11 +179,27 @@ class Converter_Registry_Factory {
 	const BACKGROUND_SIZE_ENUM = [ 'auto', 'cover', 'contain' ];
 
 	/**
-	 * Logical side keys of the Border_Width object, and corner keys of the Border_Radius object, in the
-	 * order used to seed every side/corner from a single Size (e.g. a prior `border-width: 1px`).
+	 * Logical side keys of the Border_Width / Dimensions objects, and corner keys of the Border_Radius
+	 * object, in the order used to seed every side/corner from a single Size.
 	 */
 	const BORDER_WIDTH_SIDE_KEYS = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
 	const BORDER_RADIUS_CORNER_KEYS = [ 'start-start', 'start-end', 'end-end', 'end-start' ];
+
+	/**
+	 * Physical padding/margin longhands -> [ target schema prop, logical side key ].
+	 * Not Style_Schema properties themselves; accumulated into the schema aggregate by
+	 * Object_Side_Merge_Converter (same pattern as border_side_specs()).
+	 */
+	const DIMENSIONS_SIDE_SPECS = [
+		'padding-top'    => [ 'padding', 'block-start' ],
+		'padding-right'  => [ 'padding', 'inline-end' ],
+		'padding-bottom' => [ 'padding', 'block-end' ],
+		'padding-left'   => [ 'padding', 'inline-start' ],
+		'margin-top'     => [ 'margin', 'block-start' ],
+		'margin-right'   => [ 'margin', 'inline-end' ],
+		'margin-bottom'  => [ 'margin', 'block-end' ],
+		'margin-left'    => [ 'margin', 'inline-start' ],
+	];
 
 	/**
 	 * Filter-function lists backed by Array(Css_Filter_Func) (filter, backdrop-filter). Handled
@@ -399,6 +416,17 @@ class Converter_Registry_Factory {
 		$converters['transform'] = new Transform_Property_Converter();
 		$converters['transform-origin'] = new Transform_Origin_Property_Converter();
 		$converters['box-shadow'] = new Box_Shadow_Property_Converter();
+
+		foreach ( self::DIMENSIONS_SIDE_SPECS as $property => [ $target, $side_key ] ) {
+			$converters[ $property ] = new Object_Side_Merge_Converter(
+				$property,
+				$target,
+				Dimensions_Prop_Type::get_key(),
+				$side_key,
+				self::BORDER_WIDTH_SIDE_KEYS,
+				Dimensions_Prop_Type::class
+			);
+		}
 
 		foreach ( self::border_side_specs() as $property => [ $target, $side_key ] ) {
 			$is_radius = 'border-radius' === $target;

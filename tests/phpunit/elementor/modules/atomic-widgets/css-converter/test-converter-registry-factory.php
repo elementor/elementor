@@ -17,8 +17,11 @@ class Test_Converter_Registry_Factory extends TestCase {
 		// Act.
 		$registry = Converter_Registry_Factory::create();
 
+		$expected_count = count( Converter_Registry_Factory::covered_properties() )
+			+ count( Converter_Registry_Factory::DIMENSIONS_SIDE_SPECS );
+
 		// Assert.
-		$this->assertCount( count( Converter_Registry_Factory::covered_properties() ), $registry->all() );
+		$this->assertCount( $expected_count, $registry->all() );
 	}
 
 	public function test_create__every_covered_property_is_claimed_by_exactly_one_converter() {

@@ -678,6 +678,76 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( '', $data['el-1']['customCss'] );
 	}
 
+	public function test_post__converts_padding_longhands_into_logical_sides_of_padding_dimensions() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'padding-top'    => '10px',
+			'padding-right'  => '20px',
+			'padding-bottom' => '1.5rem',
+			'padding-left'   => '40px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert: physical longhands map to logical sides (top=block-start, right=inline-end, bottom=block-end, left=inline-start).
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'padding' => [
+					'$$type' => 'dimensions',
+					'value' => [
+						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 10,  'unit' => 'px'  ] ],
+						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 20,  'unit' => 'px'  ] ],
+						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 1.5, 'unit' => 'rem' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 40,  'unit' => 'px'  ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
+	public function test_post__converts_margin_longhands_into_logical_sides_of_margin_dimensions() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [
+			'margin-top'    => '5px',
+			'margin-right'  => '10px',
+			'margin-bottom' => '15px',
+			'margin-left'   => '20px',
+		] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'margin' => [
+					'$$type' => 'dimensions',
+					'value' => [
+						'block-start'  => [ '$$type' => 'size', 'value' => [ 'size' => 5,  'unit' => 'px' ] ],
+						'inline-end'   => [ '$$type' => 'size', 'value' => [ 'size' => 10, 'unit' => 'px' ] ],
+						'block-end'    => [ '$$type' => 'size', 'value' => [ 'size' => 15, 'unit' => 'px' ] ],
+						'inline-start' => [ '$$type' => 'size', 'value' => [ 'size' => 20, 'unit' => 'px' ] ],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+	}
+
 	public function test_post__routes_unrepresentable_padding_to_custom_css() {
 		// Arrange.
 		$this->act_as_admin();
