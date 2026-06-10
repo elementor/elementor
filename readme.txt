@@ -263,7 +263,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.5 or greater
+* WordPress 6.8 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
@@ -354,6 +354,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 4.1.3 - 2026-06-10 =
+
+* Fix: Cloud Library screenshot errors could prevent users from saving templates locally
 
 = 4.1.2 - 2026-06-08 =
 
