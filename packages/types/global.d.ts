@@ -121,6 +121,11 @@ declare global {
 					extended_units?: string[];
 				}
 				v4Promotions?: Record< V4PromotionKey, V4PromotionData >;
+				editingPanelStickyPromotion?: {
+					url: string;
+					message: string;
+					button_text: string;
+				};
 			};
 			dynamicTags?: DynamicTagsManager;
 			widgetsCache?: Record<

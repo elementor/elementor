@@ -270,6 +270,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			options = viewDetails.options || {};
 
 		viewDetails.region.show( new viewDetails.view( options ) );
+
+		if ( 'elements' === viewName ) {
+			this.appendStickyPromotion();
+		}
+	},
+
+	appendStickyPromotion() {
+		if ( this.$( '#elementor-panel-get-pro-elements-sticky' ).length ) {
+			return;
+		}
+
+		const html = Marionette.Renderer.render( '#tmpl-elementor-panel-element-sticky-promotion', {} ).trim();
+
+		if ( html ) {
+			this.$el.append( html );
+		}
 	},
 
 	clearSearchInput() {
