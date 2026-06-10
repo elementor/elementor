@@ -1,10 +1,9 @@
-import { type Props, type PropValue } from '@elementor/editor-props';
 import { type V1ElementConfig } from '@elementor/editor-elements';
+import { type Props, type PropValue } from '@elementor/editor-props';
 
 import { getRequiredDefaultChildTypes } from '../../composition-builder/utils/required-default-child-tags';
 
-const DEFAULT_STYLES_INSTRUCTION =
-	'These are the default styles applied to the widget. Override only when necessary.';
+const DEFAULT_STYLES_INSTRUCTION = 'These are the default styles applied to the widget. Override only when necessary.';
 
 const DEFAULT_SETTINGS_INSTRUCTION =
 	'These are the default settings applied to the widget. Omit them from elementConfig unless the user explicitly asks to change them.';

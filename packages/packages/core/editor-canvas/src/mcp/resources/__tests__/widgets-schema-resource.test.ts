@@ -1,10 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
-import {
-	buildLlmGuidance,
-	enrichPropertiesWithBaseSettingsHints,
-	mergeInstructions,
-} from '../build-llm-guidance';
+import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints, mergeInstructions } from '../build-llm-guidance';
 
 const mockEmailBaseSettings = {
 	email: {

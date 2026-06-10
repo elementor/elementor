@@ -10,8 +10,8 @@ import {
 } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
-import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints } from './build-llm-guidance';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
+import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints } from './build-llm-guidance';
 
 const V3_LAYOUT_CONTROL_TYPES = new Set( [ 'section', 'tab', 'tabs' ] );
 
