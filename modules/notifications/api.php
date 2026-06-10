@@ -13,7 +13,7 @@ class API {
 	 * Any `installPlugin` value not in this list is stripped before the notification
 	 * reaches the browser, protecting against a compromised CDN response.
 	 */
-	const ALLOWED_INSTALL_SLUGS = [];
+	const ALLOWED_INSTALL_SLUGS = [ 'angie' ];
 
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );

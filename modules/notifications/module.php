@@ -90,6 +90,11 @@ class Module extends BaseModule {
 	public function ajax_get_notifications() {
 		$notifications = API::get_notifications_by_conditions( true );
 
+		$installed = Options::get_notifications_installed();
+		$notifications = array_values( array_filter( $notifications, function( $n ) use ( $installed ) {
+			return ! in_array( $n['id'], $installed, true );
+		} ) );
+
 		Options::mark_notification_read( $notifications );
 
 		return $notifications;

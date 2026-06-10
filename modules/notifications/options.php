@@ -40,6 +40,18 @@ class Options {
 		return $notifications_dismissed;
 	}
 
+	public static function get_notifications_installed(): array {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return [];
+		}
+
+		$installed = get_user_meta( $current_user->ID, '_e_notifications_installed', true );
+
+		return is_array( $installed ) ? $installed : [];
+	}
+
 	public static function mark_notification_installed( string $notification_id ): bool {
 		$current_user = wp_get_current_user();
 
@@ -47,13 +59,13 @@ class Options {
 			return false;
 		}
 
-		$notifications_dismissed = static::get_notifications_dismissed();
+		$installed = static::get_notifications_installed();
 
-		if ( ! in_array( $notification_id, $notifications_dismissed, true ) ) {
-			$notifications_dismissed[] = $notification_id;
+		if ( ! in_array( $notification_id, $installed, true ) ) {
+			$installed[] = $notification_id;
 		}
 
-		update_user_meta( $current_user->ID, '_e_notifications_dismissed', $notifications_dismissed );
+		update_user_meta( $current_user->ID, '_e_notifications_installed', $installed );
 
 		delete_transient( "elementor_unread_notifications_{$current_user->ID}" );
 

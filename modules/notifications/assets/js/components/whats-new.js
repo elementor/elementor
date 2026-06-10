@@ -19,6 +19,7 @@ export const WhatsNew = ( props ) => {
 
 	useEffect( () => {
 		if ( ! isOpen ) {
+			queryClient.invalidateQueries( { queryKey: [ 'e-notifications' ] } );
 			return;
 		}
 
