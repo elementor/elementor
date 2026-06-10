@@ -355,6 +355,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 4.1.3 - 2026-06-10 =
+
+* Fix: Cloud Library screenshot errors could prevent users from saving templates locally
+
 = 4.1.2 - 2026-06-08 =
 
 * Tweak: Improved Global Classes usage tracking for safer deletion - Atomic Editor
