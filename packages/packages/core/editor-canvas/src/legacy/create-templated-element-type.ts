@@ -166,6 +166,7 @@ export function createTemplatedElementView( {
 						type,
 						settings,
 						base_styles: baseStylesDictionary,
+						...( this.getResolverRenderContext?.() ?? {} ),
 					};
 
 					return renderer.render( templateKey, context );
