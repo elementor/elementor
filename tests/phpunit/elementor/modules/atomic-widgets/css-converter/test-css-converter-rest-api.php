@@ -2,9 +2,13 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\CssConverter;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
+use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
@@ -18,8 +22,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
+	private string $original_atomic_widgets_experiment_state;
+
+	private string $original_variables_experiment_state;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_atomic_widgets_experiment_state = Plugin::$instance->experiments
+			->get_features( Atomic_Widgets_Module::EXPERIMENT_NAME )['default'];
+		$this->original_variables_experiment_state = Plugin::$instance->experiments
+			->get_features( Variables_Module::EXPERIMENT_NAME )['default'];
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			Variables_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
 
 		global $wp_rest_server;
 
@@ -31,6 +53,15 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			$this->original_atomic_widgets_experiment_state
+		);
+		Plugin::$instance->experiments->set_feature_default_state(
+			Variables_Module::EXPERIMENT_NAME,
+			$this->original_variables_experiment_state
+		);
+
 		global $wp_rest_server;
 
 		$wp_rest_server = null;
@@ -1627,12 +1658,12 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals(
-			(object) [
+			[
 				'color' => [
 					'$$type' => Color_Variable_Prop_Type::get_key(),
 					'value' => 'e-gv-1',
@@ -1640,7 +1671,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']
 		);
-		$this->assertTrue( Style_Schema::get()['color']->validate( (array) $data['el-1']['props']['color'] ) );
+		$this->assertTrue( Style_Schema::get()['color']->validate( $data['el-1']['props']['color'] ) );
 
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}
@@ -1667,12 +1698,12 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertEquals(
-			(object) [
+			[
 				'background' => [
 					'$$type' => 'background',
 					'value' => [
@@ -1713,7 +1744,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
@@ -1722,7 +1753,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 				'$$type' => Color_Variable_Prop_Type::get_key(),
 				'value' => 'e-gv-border',
 			],
-			(array) $data['el-1']['props']['border-color']
+			$data['el-1']['props']['border-color']
 		);
 		$this->assertSame( '', $data['el-1']['customCss'] );
 
@@ -1737,7 +1768,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
 			'data' => [
 				'e-gv-offset' => [
-					'type' => Size_Variable_Prop_Type::get_key(),
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
 					'label' => 'offset-md',
 					'value' => '16px',
 				],
@@ -1751,7 +1782,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Act.
 		$response = rest_get_server()->dispatch( $request );
-		$data = $response->get_data()['data'];
+		$data = $this->decoded_data( $response )['data'];
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
@@ -1760,7 +1791,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 				'$$type' => Size_Variable_Prop_Type::get_key(),
 				'value' => 'e-gv-offset',
 			],
-			(array) $data['el-1']['props']['inset-block-start']
+			$data['el-1']['props']['inset-block-start']
 		);
 		$this->assertSame( '', $data['el-1']['customCss'] );
 
@@ -1780,7 +1811,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( [], $data['el-1']['props'] );
 		$this->assertSame( 'background: var(--external-var);', $data['el-1']['customCss'] );
 		$this->assertSame( [], $data['el-1']['rejected'] );
 	}
@@ -1798,7 +1829,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( [], $data['el-1']['props'] );
 		$this->assertSame( 'color: var(--external-var);', $data['el-1']['customCss'] );
 		$this->assertSame( [], $data['el-1']['rejected'] );
 	}
@@ -1829,7 +1860,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 200, $response->get_status() );
-		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( [], $data['el-1']['props'] );
 		$this->assertSame( '', $data['el-1']['customCss'] );
 		$this->assertSame( [ 'font-size: var(--heading-font);' ], $data['el-1']['rejected'] );
 

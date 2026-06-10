@@ -177,7 +177,7 @@ class Background_Image_Value_Parser {
 		if ( preg_match( '/^circle\s+at\s+(.+)$/i', $first, $m ) ) {
 			$pos = trim( $m[1] );
 
-			if ( ! self::is_valid_radial_position( $pos ) ) {
+			if ( ! Position_Prop_Type::is_valid_radial_position( $pos ) ) {
 				return false;
 			}
 
@@ -203,17 +203,8 @@ class Background_Image_Value_Parser {
 		return Background_Gradient_Overlay_Prop_Type::generate( $value );
 	}
 
-	private static function is_valid_radial_position( string $pos ): bool {
-		if ( in_array( $pos, Position_Prop_Type::get_position_enum_values(), true ) ) {
-			return true;
-		}
-
-		$token_pattern = '(?:(?:top|bottom|left|right|center)|(?:-?\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh)))';
-
-		return (bool) preg_match( '/^' . $token_pattern . '(?:\s+' . $token_pattern . ')?$/i', $pos );
-	}
-
 	/**
+
 	 * @return array[]|null
 	 */
 	private static function parse_color_stops( array $tokens ): ?array {
