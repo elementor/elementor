@@ -7,8 +7,8 @@
  *   gcloud auth login
  *
  * Environment variables:
- *   GCS_BUCKET_NAME     — bucket name          (default: svitlanad-wp-plugins)
- *   GCS_PLUGINS_PREFIX  — prefix inside bucket  (default: wp-plugins/)
+ *   GCS_BUCKET_NAME     — bucket name (required)
+ *   GCS_PLUGINS_PREFIX  — prefix inside bucket (default: wp-plugins/)
  *
  * Usage:
  *   npm run wp:plugins:sync
@@ -18,12 +18,29 @@ const { execSync } = require('child_process')
 const path = require('path')
 const fs = require('fs')
 
+const envFile = path.resolve(__dirname, '../.env')
+if (fs.existsSync(envFile)) {
+  fs.readFileSync(envFile, 'utf-8')
+    .split('\n')
+    .forEach(line => {
+      const [key, ...rest] = line.split('=')
+      if (key && rest.length && !process.env[key.trim()]) {
+        process.env[key.trim()] = rest.join('=').trim()
+      }
+    })
+}
+
 const REPO_ROOT = path.resolve(__dirname, '..')
 const PLUGINS_DIR = path.join(REPO_ROOT, 'tests', 'wp-env', 'plugins')
 const TEMP_DIR = path.join(REPO_ROOT, 'tests', 'wp-env', '.gcs-temp')
 
-const GCS_BUCKET = process.env.GCS_BUCKET_NAME || 'svitlanad-wp-plugins'
+const GCS_BUCKET = process.env.GCS_BUCKET_NAME
 const GCS_PREFIX = process.env.GCS_PLUGINS_PREFIX || 'wp-plugins/'
+
+if ( ! GCS_BUCKET ) {
+  console.error( '❌  GCS_BUCKET_NAME is not set. Set it as an env var or GitHub Actions variable WP_PLUGINS_GCS_BUCKET.' )
+  process.exit( 1 )
+}
 
 const GCS_PLUGINS = [
   'elementor-dev-tools.zip',
