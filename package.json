@@ -217,7 +217,8 @@
     "date-fns": "^3.6.0",
     "scheduler": "^0.20.0",
     "form-data": "4.0.4",
-    "baseline-browser-mapping": "^2.9.19"
+    "baseline-browser-mapping": "^2.9.19",
+    "playwright-core": "1.54.2"
   },
   "lint-staged": {
     "packages/**/*.{js,jsx,ts,tsx}": [
