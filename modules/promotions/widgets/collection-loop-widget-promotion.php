@@ -23,8 +23,15 @@ class Collection_Loop_Widget_Promotion {
 			return $settings;
 		}
 
-		$settings['collectionLoopPromotionWidgets'] = $this->get_widgets();
-		$settings['collectionLoopPromotion'] = $this->get_promotion_content();
+		if ( ! isset( $settings['atomicWidgetPromotions'] ) ) {
+			$settings['atomicWidgetPromotions'] = [];
+		}
+
+		$settings['atomicWidgetPromotions'][] = [
+			'type' => 'collection-loop',
+			'widgets' => $this->get_widgets(),
+			'content' => $this->get_promotion_content(),
+		];
 
 		return $settings;
 	}

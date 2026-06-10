@@ -7,20 +7,11 @@ export class AppManager {
 		this.activePromotionWrapper = null;
 		this.onRoute = () => {};
 
-		this.attachAtomicFormListeners();
-		this.attachCollectionLoopListeners();
+		this.attachAtomicWidgetPromotionListeners();
 	}
 
 	getPromotionData( promotionType ) {
 		return elementorPromotionsData[ promotionType ] || {};
-	}
-
-	getAtomicFormPromotionData() {
-		return elementor?.config?.atomicFormPromotion || {};
-	}
-
-	getCollectionLoopPromotionData() {
-		return elementor?.config?.collectionLoopPromotion || {};
 	}
 
 	mount( targetNode, selectors ) {
@@ -78,17 +69,13 @@ export class AppManager {
 		);
 	}
 
-	attachAtomicFormListeners() {
-		document.addEventListener( 'atomic-form-promotion:open', ( event ) => {
-			const promotionData = this.getAtomicFormPromotionData();
-			this.mountCustomPromotion( event.detail.target, 'e-atomic-form-promotion-wrapper', promotionData, promotionData.widgetCtaUrl );
-		} );
-	}
+	attachAtomicWidgetPromotionListeners() {
+		const promotions = elementor?.config?.atomicWidgetPromotions || [];
 
-	attachCollectionLoopListeners() {
-		document.addEventListener( 'collection-loop-promotion:open', ( event ) => {
-			const promotionData = this.getCollectionLoopPromotionData();
-			this.mountCustomPromotion( event.detail.target, 'e-collection-loop-promotion-wrapper', promotionData, promotionData.widgetCtaUrl );
+		promotions.forEach( ( { type, content } ) => {
+			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
+				this.mountCustomPromotion( event.detail.target, `e-${ type }-promotion-wrapper`, content, content.widgetCtaUrl );
+			} );
 		} );
 	}
 

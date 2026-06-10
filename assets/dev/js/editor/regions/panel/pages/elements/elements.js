@@ -106,20 +106,15 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		const atomicWidgetPromotions = [
-			{ configKey: 'atomicFormPromotionWidgets', promotionType: 'atomic-form' },
-			{ configKey: 'collectionLoopPromotionWidgets', promotionType: 'collection-loop' },
-		];
-
-		atomicWidgetPromotions.forEach( ( { configKey, promotionType } ) => {
-			jQuery.each( elementor.config[ configKey ] || [], ( index, widget ) => {
+		( elementor.config.atomicWidgetPromotions || [] ).forEach( ( { type, widgets } ) => {
+			( widgets || [] ).forEach( ( widget ) => {
 				elementsCollection.add( {
 					name: widget.name,
 					title: widget.title,
 					icon: widget.icon,
 					categories: JSON.parse( widget.categories ),
 					editable: false,
-					promotionType,
+					promotionType: type,
 				} );
 			} );
 		} );
