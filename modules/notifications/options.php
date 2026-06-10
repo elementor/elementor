@@ -40,6 +40,26 @@ class Options {
 		return $notifications_dismissed;
 	}
 
+	public static function mark_notification_installed( string $notification_id ): bool {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return false;
+		}
+
+		$notifications_dismissed = static::get_notifications_dismissed();
+
+		if ( ! in_array( $notification_id, $notifications_dismissed, true ) ) {
+			$notifications_dismissed[] = $notification_id;
+		}
+
+		update_user_meta( $current_user->ID, '_e_notifications_dismissed', $notifications_dismissed );
+
+		delete_transient( "elementor_unread_notifications_{$current_user->ID}" );
+
+		return true;
+	}
+
 	public static function mark_notification_read( $notifications ): bool {
 		$current_user = wp_get_current_user();
 

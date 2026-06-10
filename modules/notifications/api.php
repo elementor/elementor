@@ -8,12 +8,21 @@ class API {
 
 	const NOTIFICATIONS_URL = 'https://assets.elementor.com/notifications/v1/notifications.json';
 
+	/**
+	 * Allowlist of WP.org plugin slugs that may be installed via the What's New panel.
+	 * Any `installPlugin` value not in this list is stripped before the notification
+	 * reaches the browser, protecting against a compromised CDN response.
+	 */
+	const ALLOWED_INSTALL_SLUGS = [];
+
 	public static function get_notifications_by_conditions( $force_request = false ) {
 		$notifications = static::get_notifications( $force_request );
 
 		$filtered_notifications = [];
 
 		foreach ( $notifications as $notification ) {
+			$notification = static::sanitize_install_fields( $notification );
+
 			if ( empty( $notification['conditions'] ) ) {
 				$filtered_notifications = static::add_to_array( $filtered_notifications, $notification );
 
@@ -63,6 +72,19 @@ class API {
 		}
 
 		return false;
+	}
+
+	private static function sanitize_install_fields( array $notification ): array {
+		if ( empty( $notification['installPlugin'] ) ) {
+			return $notification;
+		}
+
+		if ( ! in_array( $notification['installPlugin'], static::ALLOWED_INSTALL_SLUGS, true ) ) {
+			unset( $notification['installPlugin'] );
+			unset( $notification['ctaActivate'] );
+		}
+
+		return $notification;
 	}
 
 	private static function check_group( $group ) {

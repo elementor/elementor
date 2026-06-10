@@ -84,6 +84,7 @@ class Module extends BaseModule {
 
 	public function register_ajax_actions( $ajax ) {
 		$ajax->register_ajax_action( 'notifications_get', [ $this, 'ajax_get_notifications' ] );
+		$ajax->register_ajax_action( 'notifications_mark_installed', [ $this, 'ajax_mark_notification_installed' ] );
 	}
 
 	public function ajax_get_notifications() {
@@ -92,5 +93,17 @@ class Module extends BaseModule {
 		Options::mark_notification_read( $notifications );
 
 		return $notifications;
+	}
+
+	public function ajax_mark_notification_installed( $data ) {
+		$notification_id = sanitize_text_field( $data['notification_id'] ?? '' );
+
+		if ( empty( $notification_id ) ) {
+			throw new \Exception( 'Missing notification_id' );
+		}
+
+		Options::mark_notification_installed( $notification_id );
+
+		return true;
 	}
 }
