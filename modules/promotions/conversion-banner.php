@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-
 class Conversion_Banner {
 
 	const DEFAULT_SELECTOR = '.wrap h1, .wrap h2';
