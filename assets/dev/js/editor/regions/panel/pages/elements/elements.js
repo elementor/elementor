@@ -106,14 +106,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		jQuery.each( elementor.config.atomicFormPromotionWidgets || [], ( index, widget ) => {
-			elementsCollection.add( {
-				name: widget.name,
-				title: widget.title,
-				icon: widget.icon,
-				categories: JSON.parse( widget.categories ),
-				editable: false,
-				atomicFormPromotion: true,
+		( elementor.config.atomicWidgetPromotions || [] ).forEach( ( { type, widgets } ) => {
+			( widgets || [] ).forEach( ( widget ) => {
+				elementsCollection.add( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					promotionType: type,
+				} );
 			} );
 		} );
 
