@@ -1,7 +1,7 @@
 === Elementor Website Builder - more than just a page builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
+Requires at least: 6.8
 Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 3.34.2
@@ -263,7 +263,7 @@ Join a global community that helps each other achieve their goals.
 
 = Minimum Requirements =
 
-* WordPress 6.8 or greater
+* WordPress 6.5 or greater
 * PHP version 7.4 or greater
 * MySQL version 5.0 or greater
 
