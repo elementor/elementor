@@ -62,7 +62,9 @@ class Conversion_Banner {
 			return $config;
 		}
 
-		$config['welcome'] = [];
+		if ( isset( $config['welcome']['title'] ) && substr( $config['welcome']['title'], 0, 6 ) === 'Go Pro' ) {
+			$config['welcome'] = [];
+		}
 
 		return $config;
 	}
