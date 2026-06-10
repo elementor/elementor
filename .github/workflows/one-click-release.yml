@@ -157,45 +157,58 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
+      - name: Prepare Slack release payload
+        if: github.event.inputs.dry_run == 'false'
+        id: prepare_slack_payload
+        env:
+          ACTOR: ${{ github.actor }}
+          CHANNEL: ${{ env.CHANNEL }}
+          RELEASE_NAME: ${{ env.RELEASE_NAME }}
+          RELEASE_URL: https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}
+          SLACK_RELEASE_BETA_NOTE: ${{ vars.SLACK_RELEASE_BETA_NOTE }}
+          SLACK_RELEASE_GA_NOTE: ${{ vars.SLACK_RELEASE_GA_NOTE }}
+          SLACK_RELEASE_MESSAGE_TEMPLATE: ${{ vars.SLACK_RELEASE_MESSAGE_TEMPLATE }}
+          SLACK_RELEASE_PRODUCT_NAME: ${{ vars.SLACK_RELEASE_PRODUCT_NAME }}
+        run: |
+          if [ -z "$SLACK_RELEASE_MESSAGE_TEMPLATE" ]; then
+            echo "SLACK_RELEASE_MESSAGE_TEMPLATE organization variable is not set."
+            exit 1
+          fi
+
+          DELAY_NOTE=""
+          if [ "$CHANNEL" = "beta" ] && [ -n "$SLACK_RELEASE_BETA_NOTE" ]; then
+            DELAY_NOTE=$'\n\n'"$SLACK_RELEASE_BETA_NOTE"
+          elif [ "$CHANNEL" = "ga" ] && [ -n "$SLACK_RELEASE_GA_NOTE" ]; then
+            DELAY_NOTE=$'\n\n'"$SLACK_RELEASE_GA_NOTE"
+          fi
+
+          PAYLOAD=$(echo "$SLACK_RELEASE_MESSAGE_TEMPLATE" | jq -c \
+            --arg actor "$ACTOR" \
+            --arg delay_note "$DELAY_NOTE" \
+            --arg product_name "$SLACK_RELEASE_PRODUCT_NAME" \
+            --arg release_name "$RELEASE_NAME" \
+            --arg release_url "$RELEASE_URL" \
+            'walk(if type == "string" then
+              gsub("\\{\\{actor\\}\\}"; $actor) |
+              gsub("\\{\\{delay_note\\}\\}"; $delay_note) |
+              gsub("\\{\\{product_name\\}\\}"; $product_name) |
+              gsub("\\{\\{release_name\\}\\}"; $release_name) |
+              gsub("\\{\\{release_url\\}\\}"; $release_url)
+            else . end)')
+
+          {
+            echo 'payload<<EOF'
+            echo "$PAYLOAD"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Post To Slack Created Release
         if: github.event.inputs.dry_run == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.SLACK_CHANNEL_RELEASE }}
-          PAYLOAD: |
-                    {
-                      "blocks": [
-                        {
-                          "type": "section",
-                          "text": {
-                            "type": "mrkdwn",
-                            "text": "Hi All :smile:\n\nWe just released *Elementor*\n`${{ env.RELEASE_NAME }}`"
-                          }
-                        },
-                        {
-                          "type": "divider"
-                        },
-                        {
-                          "type": "section",
-                          "text": {
-                            "type": "mrkdwn",
-                            "text": "GitHub Release *${{ env.RELEASE_NAME }}* \nCreated by ${{ github.actor }}${{ env.CHANNEL == 'beta' && vars.SLACK_RELEASE_BETA_NOTE != '' && format('\n\n{0}', vars.SLACK_RELEASE_BETA_NOTE) || (env.CHANNEL == 'ga' && vars.SLACK_RELEASE_GA_NOTE != '' && format('\n\n{0}', vars.SLACK_RELEASE_GA_NOTE) || '') }}"
-                          },
-                          "accessory": {
-                            "type": "button",
-                            "text": {
-                              "type": "plain_text",
-                              "text": "Open :point_left:",
-                              "emoji": true
-                            },
-                            "value": "open-release",
-                            "url": "https://github.com/${{ github.repository }}/releases/tag/${{ env.RELEASE_NAME }}",
-                            "action_id": "button-action"
-                          }
-                        }
-                      ]
-                    }
+          PAYLOAD: ${{ steps.prepare_slack_payload.outputs.payload }}
 
       - name: Determine Package Tag
         id: package-tag
