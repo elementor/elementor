@@ -69,7 +69,7 @@ export default function OverviewPage( { onCategoryClick, onStatusClick, report }
 						sx={ { fontWeight: 600, alignSelf: 'flex-start' } }
 					/>
 					<Typography variant="body2" color="text.secondary">
-						{ __( 'Overall site score', 'elementor' ) }
+						{ __( 'Overall score', 'elementor' ) }
 					</Typography>
 				</Box>
 			</Box>
