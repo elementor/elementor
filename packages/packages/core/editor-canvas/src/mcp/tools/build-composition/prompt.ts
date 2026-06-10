@@ -119,7 +119,7 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables] (others throw errors)
 - Avoid SVG widgets unless assets are pre-uploaded
-- Check \`llm_guidance\` in widget schemas (\`default_styles\`, \`default_settings\`, nesting, required children)
+- Check \`llm_guidance\` in widget schemas (\`default_styles\`, nesting, required children)
 
 # PARAMETERS
 - **xmlStructure**: Valid XML with configuration-id attributes

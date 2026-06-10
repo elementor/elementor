@@ -29,8 +29,6 @@ When a user requires to change anything in an element, such as updating text, co
 This tool handles elements of type "widget".
 This tool handles styling elements, using the "stylePropertiesToChange" parameter.
 
-Properties listed in \`llm_guidance.default_settings\` use widget defaults when omitted. Change them here only when the user explicitly requests it (e.g. custom "Send to" email on \`e-form\`).
-
 To CLEAR a property (i.e., set it to default or none), provide null as a value.
 
 The element's schema must be known before using this tool.
@@ -62,6 +60,8 @@ For styleProperties, use the style schema provided, as it also uses the PropType
 For all non-primitive types, provide the key property as defined in the schema as $$type in the generated object, as it is MANDATORY for parsing.
 
 Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property from the original configuration for every property you are changing.
+
+Check \`llm_guidance.default_settings\` in the widget schema — include a key in \`propertiesToChange\` only when the user explicitly asks to change it.
 
 # Dynamic tags
 A value can be made dynamic wherever its schema exposes a variant with "$$type": "dynamic". This may be the property root OR a NESTED field: for example an image is made dynamic on its "src" (the root stays "image"), NOT on the whole "image" value.
