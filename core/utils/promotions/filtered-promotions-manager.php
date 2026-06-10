@@ -12,12 +12,6 @@ class Filtered_Promotions_Manager {
 
 	const EDITOR_PANEL_STICKY_FILTER = 'elementor/editor/panel/get_pro_details-sticky';
 
-	/**
-	 * The single source of truth for the sticky "Go Pro" promotion shown at the
-	 * bottom of the editor panels (elements list panel and each widget's editing panel).
-	 *
-	 * @return array
-	 */
 	public static function get_editor_panel_sticky_promotion(): array {
 		$promotion_data = [
 			'url' => 'https://go.elementor.com/go-pro-sticky-widget-panel/',
