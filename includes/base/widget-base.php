@@ -380,7 +380,7 @@ abstract class Widget_Base extends Element_Base {
 			'html_wrapper_class' => $this->get_html_wrapper_class(),
 			'show_in_panel' => $this->show_in_panel(),
 			'hide_on_search' => $this->hide_on_search(),
-			'upsale_data' => $this->get_upsale_data(),
+			'upsale_data' => Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ? null : $this->get_upsale_data(),
 			'is_dynamic_content' => $this->is_dynamic_content(),
 			'has_widget_inner_wrapper' => $this->has_widget_inner_wrapper(),
 		];

@@ -5,6 +5,7 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Base\Module as Base_Module;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
@@ -87,6 +88,8 @@ class Module extends Base_Module {
 		if ( Utils::has_pro() ) {
 			return;
 		}
+
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
 			$controls_manager->register( new Controls\Promotion_Control() );
@@ -215,6 +218,16 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
+	}
+
+	public function add_editing_panel_sticky_promotion( array $settings ): array {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ) {
+			return $settings;
+		}
+
+		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
+
+		return $settings;
 	}
 
 	public function add_v4_promotions_data( array $settings ): array {
