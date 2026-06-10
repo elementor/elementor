@@ -45,8 +45,8 @@ class Collection_Loop_Widget_Promotion {
 			'title' => __( 'Collection Loop', 'elementor' ),
 			'content' => __( 'Display dynamic content in a repeating layout with full query control.', 'elementor' ),
 			'ctaText' => __( 'Upgrade now', 'elementor' ),
-			'widgetCtaUrl' => 'https://go.elementor.com/go-pro-collection-loop-modal/',
-			'sectionCtaUrl' => 'https://go.elementor.com/go-pro-collection-loop-section/',
+			'widgetCtaUrl' => 'https://go.elementor.com/go-pro-loop-modal/',
+			'sectionCtaUrl' => 'https://go.elementor.com/go-pro-loop-section/',
 		];
 	}
 }
