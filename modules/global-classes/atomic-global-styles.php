@@ -373,9 +373,9 @@ class Atomic_Global_Styles {
 		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
 			do_action( 'elementor/atomic-widgets/styles/clear', [ $this->get_cache_root_key() ] );
 
-			// Also wipe the relation maps so they are rebuilt on next render.
-			( new Cache_Validity() )->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ) ] );
-			( new Cache_Validity() )->invalidate( [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ) ] );
+			$cache_validity = new Cache_Validity();
+			$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_KEY ) ] );
+			$cache_validity->invalidate( [ $this->get_cache_root_key( self::RELATED_REVERSE_KEY ) ] );
 
 			return;
 		}
