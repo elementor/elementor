@@ -65,10 +65,6 @@ module.exports = elementorModules.Module.extend( {
 			return;
 		}
 
-		var disableCache = cacheCallbacks.some( function( entry ) {
-			return entry.disableCache;
-		} );
-
 		var pendingRequests = postIds.length;
 
 		var onRequestComplete = () => {
@@ -82,7 +78,7 @@ module.exports = elementorModules.Module.extend( {
 		};
 
 		postIds.forEach( ( postId ) => {
-			var ajaxOptions = {
+			elementorCommon.ajax.addRequest( 'render_tags', {
 				data: {
 					post_id: Number( postId ),
 					tags: Object.keys( cacheRequests[ postId ] ),
@@ -95,21 +91,12 @@ module.exports = elementorModules.Module.extend( {
 
 					onRequestComplete();
 				},
-			};
-
-			if ( disableCache ) {
-				ajaxOptions.unique_id = `render_tags-${ elementorCommon.helpers.getUniqueId() }`;
-			}
-
-			elementorCommon.ajax.addRequest( 'render_tags', ajaxOptions );
+			} );
 		} );
 	},
 
-	refreshCacheFromServer( callback, options ) {
-		this.cacheCallbacks.push( {
-			callback,
-			disableCache: options?.disableCache,
-		} );
+	refreshCacheFromServer( callback ) {
+		this.cacheCallbacks.push( { callback } );
 
 		this.loadCacheRequests();
 	},

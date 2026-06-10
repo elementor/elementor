@@ -28,14 +28,10 @@ export type DynamicPropValue = TransformablePropValue<
 	{ name: string; settings?: Record< string, unknown > }
 >;
 
-export type RefreshCacheFromServerOptions = {
-	disableCache?: boolean;
-};
-
 export type DynamicTagsManager = {
 	createTag: ( id: string, name: string, settings: Record< string, unknown > ) => TagInstance;
 	loadTagDataFromCache: ( tag: TagInstance ) => unknown;
-	refreshCacheFromServer: ( callback: () => void, options?: RefreshCacheFromServerOptions ) => void;
+	refreshCacheFromServer: ( callback: () => void ) => void;
 };
 
 export type TagInstance = {
