@@ -53,7 +53,7 @@ class Variable_Prop_Value_Transformer {
 
 			unset( $props[ $key ] );
 
-			$declaration = $this->declaration_for_property( $rules, $key );
+			$declaration = $this->declaration_for_ejected_prop( $rules, $key );
 
 			if ( null === $declaration ) {
 				continue;
@@ -292,6 +292,39 @@ class Variable_Prop_Value_Transformer {
 		$resolved_type = Variable_Type_Keys::get_resolved_type( $variable_type );
 
 		return null !== $resolved_type && $resolved_type === $prop_type::get_key();
+	}
+
+	/**
+	 * @param array<int, array{property: string, value: string, declaration: string}> $rules
+	 */
+	private function declaration_for_ejected_prop( array $rules, string $property ): ?string {
+		$declaration = $this->declaration_for_property( $rules, $property );
+
+		if ( null !== $declaration ) {
+			return $declaration;
+		}
+
+		$longhands_by_aggregate = [
+			'background' => [
+				'background-color',
+				'background-clip',
+				'background-image',
+				'background-repeat',
+				'background-attachment',
+				'background-position',
+				'background-size',
+			],
+		];
+
+		foreach ( $longhands_by_aggregate[ $property ] ?? [] as $longhand ) {
+			$declaration = $this->declaration_for_property( $rules, $longhand );
+
+			if ( null !== $declaration ) {
+				return $declaration;
+			}
+		}
+
+		return null;
 	}
 
 	/**

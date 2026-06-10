@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Background_Shorthand_
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Border_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Physical_To_Logical_Expander;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Expander_Registry_Factory {
 	const BORDER_SIDES = [ 'top', 'right', 'bottom', 'left' ];
 
-	public static function create(): Expander_Registry {
+	public static function create( ?Variables_Service $variables_service = null ): Expander_Registry {
 		$schema = Style_Schema::get_style_schema();
 		$style_enum = $schema['border-style']->get_enum();
 
 		$registry = ( new Expander_Registry() )
 			->register( new Physical_To_Logical_Expander() )
-			->register( new Background_Shorthand_Expander() )
+			->register( new Background_Shorthand_Expander( $variables_service ) )
 			->register( new Border_Shorthand_Expander( 'border', self::border_longhands( '' ), $style_enum ) );
 
 		foreach ( self::BORDER_SIDES as $side ) {

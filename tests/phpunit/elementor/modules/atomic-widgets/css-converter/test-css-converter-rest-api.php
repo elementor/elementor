@@ -1644,6 +1644,70 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}
 
+	public function test_post__background_color_var_shorthand_promotes_to_background_prop() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$kit->update_json_meta( Variables_Constants::VARIABLES_META_KEY, [
+			'data' => [
+				'e-gv-f32253d' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'var-id',
+					'value' => '#112233',
+				],
+			],
+			'watermark' => 1,
+			'version' => 1,
+		] );
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'var(--var-id)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $response->get_data()['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals(
+			(object) [
+				'background' => [
+					'$$type' => 'background',
+					'value' => [
+						'color' => [
+							'$$type' => Color_Variable_Prop_Type::get_key(),
+							'value' => 'e-gv-f32253d',
+						],
+					],
+				],
+			],
+			$data['el-1']['props']
+		);
+		$this->assertSame( '', $data['el-1']['customCss'] );
+		$this->assertSame( [], $data['el-1']['rejected'] );
+
+		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
+	}
+
+	public function test_post__background_unknown_var_stays_in_custom_css() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/css-to-atomic' );
+		$request->set_param( 'blocks', [ 'el-1' => [ 'background' => 'var(--external-var)' ] ] );
+
+		// Act.
+		$response = rest_get_server()->dispatch( $request );
+		$data = $this->decoded_data( $response )['data'];
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( (object) [], $data['el-1']['props'] );
+		$this->assertSame( 'background: var(--external-var);', $data['el-1']['customCss'] );
+		$this->assertSame( [], $data['el-1']['rejected'] );
+	}
+
 	public function test_post__unknown_var_goes_to_custom_css() {
 		// Arrange.
 		$this->act_as_admin();

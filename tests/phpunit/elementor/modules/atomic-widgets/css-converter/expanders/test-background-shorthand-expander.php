@@ -3,6 +3,9 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\CssConverter\Expanders;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Background_Shorthand_Expander;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,8 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Background_Shorthand_Expander extends TestCase {
-	private function expand( string $value ): array {
-		return ( new Background_Shorthand_Expander() )->expand( [ 'property' => 'background', 'value' => $value ] );
+	private function expand( string $value, ?Variables_Service $variables_service = null ): array {
+		return ( new Background_Shorthand_Expander( $variables_service ) )->expand( [
+			'property' => 'background',
+			'value' => $value,
+		] );
 	}
 
 	private function properties( array $rules ): array {
@@ -142,6 +148,58 @@ class Test_Background_Shorthand_Expander extends TestCase {
 		// Assert: expander emits background-image; the converter will decline it later (no gradient support).
 		$this->assertSame( [ 'background-image' ], $this->properties( $rules ) );
 		$this->assertSame( 'linear-gradient(red, blue)', $rules[0]['value'] );
+	}
+
+	public function test_expand__unknown_var_only_layer_declines() {
+		// Act.
+		$rules = $this->expand( 'var(--missing)' );
+
+		// Assert.
+		$this->assertSame( [], $rules );
+	}
+
+	public function test_expand__var_only_layer_without_service_declines() {
+		// Act.
+		$rules = $this->expand( 'var(--var-id)' );
+
+		// Assert.
+		$this->assertSame( [], $rules );
+	}
+
+	public function test_expand__known_color_var_routes_to_background_color() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'var-id' )->willReturn( [
+			'id' => 'e-gv-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'var-id',
+			'value' => '#112233',
+		] );
+
+		// Act.
+		$rules = $this->expand( 'var(--var-id)', $service );
+
+		// Assert.
+		$this->assertSame( [ 'background-color' ], $this->properties( $rules ) );
+		$this->assertSame( [ 'var(--var-id)' ], $this->values( $rules ) );
+	}
+
+	public function test_expand__known_size_var_routes_to_position_and_size() {
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->with( 'spacing-md' )->willReturn( [
+			'id' => 'e-gv-2',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'label' => 'spacing-md',
+			'value' => '16px',
+		] );
+
+		// Act.
+		$rules = $this->expand( 'var(--spacing-md)', $service );
+
+		// Assert.
+		$this->assertEqualsCanonicalizing(
+			[ 'background-position', 'background-size' ],
+			$this->properties( $rules )
+		);
 	}
 
 	public function test_expand__size_without_position_declines() {

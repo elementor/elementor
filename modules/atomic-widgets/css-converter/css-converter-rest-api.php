@@ -118,17 +118,20 @@ class Css_Converter_REST_API {
 	}
 
 	private function create_converter(): Css_Converter {
-		$variable_transformer = $this->create_variable_transformer();
+		$variables_service = $this->create_variables_service();
+		$variable_transformer = $variables_service
+			? new Variable_Prop_Value_Transformer( $variables_service )
+			: null;
 
 		return new Css_Converter(
 			Converter_Registry_Factory::create(),
 			new Null_Failure_Reporter(),
-			Expander_Registry_Factory::create(),
+			Expander_Registry_Factory::create( $variables_service ),
 			$variable_transformer
 		);
 	}
 
-	private function create_variable_transformer(): ?Variable_Prop_Value_Transformer {
+	private function create_variables_service(): ?Variables_Service {
 		if ( ! $this->is_variables_active() ) {
 			return null;
 		}
@@ -139,12 +142,10 @@ class Css_Converter_REST_API {
 			return null;
 		}
 
-		$service = new Variables_Service(
+		return new Variables_Service(
 			new Variables_Repository( $kit ),
 			new Batch_Processor()
 		);
-
-		return new Variable_Prop_Value_Transformer( $service );
 	}
 
 	private function is_variables_active(): bool {

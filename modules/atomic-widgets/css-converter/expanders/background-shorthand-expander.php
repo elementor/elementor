@@ -2,9 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Expanders;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Reference;
 use Elementor\Modules\AtomicWidgets\CssConverter\Shorthand_Expander_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Utils\Variable_Type_Keys;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,11 +32,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * so the original declaration is kept and routed to custom_css.
  */
 class Background_Shorthand_Expander extends Shorthand_Expander_Base {
+	private ?Variables_Service $variables_service;
+
 	const REPEAT_ENUM = [ 'repeat', 'repeat-x', 'repeat-y', 'no-repeat' ];
 	const ATTACHMENT_ENUM = [ 'fixed', 'scroll' ];
 	const CLIP_ENUM = [ 'border-box', 'padding-box', 'content-box', 'text' ];
 	const POSITION_KEYWORDS = [ 'top', 'bottom', 'left', 'right', 'center' ];
 	const SIZE_KEYWORDS = [ 'cover', 'contain', 'auto' ];
+
+	public function __construct( ?Variables_Service $variables_service = null ) {
+		$this->variables_service = $variables_service;
+	}
 
 	protected function get_supported_properties(): array {
 		return [ 'background' ];
@@ -65,6 +74,10 @@ class Background_Shorthand_Expander extends Shorthand_Expander_Base {
 	 * @return array{image:string|null,repeat:string|null,attachment:string|null,clip:string|null,position:string|null,size:string|null,color:string|null}|null
 	 */
 	private function parse_layer( string $layer ): ?array {
+		if ( $this->is_var_only_layer( $layer ) ) {
+			return $this->parse_var_only_layer( $layer );
+		}
+
 		$tokens = Css_Token_Splitter::split_by_whitespace( $layer );
 
 		$image = null;
@@ -153,6 +166,70 @@ class Background_Shorthand_Expander extends Shorthand_Expander_Base {
 		$size = empty( $size_tokens ) ? null : implode( ' ', $size_tokens );
 
 		return compact( 'image', 'repeat', 'attachment', 'clip', 'color', 'position', 'size' );
+	}
+
+	private function is_var_only_layer( string $layer ): bool {
+		$layer = trim( $layer );
+
+		if ( null === Css_Var_Reference::parse( $layer ) ) {
+			return false;
+		}
+
+		return 1 === count( Css_Token_Splitter::split_by_whitespace( $layer ) );
+	}
+
+	/**
+	 * @return array{image:string|null,repeat:string|null,attachment:string|null,clip:string|null,position:string|null,size:string|null,color:string|null}|null
+	 */
+	private function parse_var_only_layer( string $layer ): ?array {
+		if ( null === $this->variables_service ) {
+			return null;
+		}
+
+		$reference = Css_Var_Reference::parse( $layer );
+
+		if ( null === $reference ) {
+			return null;
+		}
+
+		$variable = $this->variables_service->find_by_label_or_id( $reference );
+
+		if ( null === $variable ) {
+			return null;
+		}
+
+		$resolved_type = Variable_Type_Keys::get_resolved_type( $variable['type'] ?? '' );
+		$empty_layer = $this->empty_layer();
+
+		if ( 'color' === $resolved_type ) {
+			$empty_layer['color'] = $layer;
+
+			return $empty_layer;
+		}
+
+		if ( 'size' === $resolved_type ) {
+			$empty_layer['position'] = 'center center';
+			$empty_layer['size'] = $layer;
+
+			return $empty_layer;
+		}
+
+		return null;
+	}
+
+	/**
+	 * @return array{image:string|null,repeat:string|null,attachment:string|null,clip:string|null,position:string|null,size:string|null,color:string|null}
+	 */
+	private function empty_layer(): array {
+		return [
+			'image' => null,
+			'repeat' => null,
+			'attachment' => null,
+			'clip' => null,
+			'position' => null,
+			'size' => null,
+			'color' => null,
+		];
 	}
 
 	private function is_image_token( string $lower ): bool {
