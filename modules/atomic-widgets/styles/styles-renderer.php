@@ -154,7 +154,7 @@ class Styles_Renderer {
 	}
 
 	private function maybe_enqueue_font( array $schema, string $prop_key, $prop_value ): void {
-		if ( ! $this->on_font_enqueue || ! is_array( $prop_value ) || empty( $prop_value['value'] ) || ! empty( $prop_value['disabled'] ) ) {
+		if ( ! $this->on_font_enqueue || ! is_array( $prop_value ) || empty( $prop_value['value'] ) ) {
 			return;
 		}
 
