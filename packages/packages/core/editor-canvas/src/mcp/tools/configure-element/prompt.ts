@@ -24,7 +24,7 @@ When a user requires to change anything in an element, such as updating text, co
 This tool handles elements of type "widget".
 This tool handles styling elements, using the "style" parameter (raw CSS as a property → value map).
 
-To CLEAR a property (i.e., set it to default or none), provide null as a value.
+To CLEAR a property (i.e., set it to default or none), provide null as a value - example: \`background-color: null\`.
 
 The element's schema must be known before using this tool.
 
