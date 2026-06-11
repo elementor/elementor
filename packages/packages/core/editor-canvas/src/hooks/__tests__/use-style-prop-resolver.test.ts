@@ -3,7 +3,7 @@ import { fontFamilyPropTypeUtil } from '@elementor/editor-props';
 import { type BreakpointsMap } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { enqueueFont } from '@elementor/editor-v1-adapters';
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 
 import { initStyleTransformers } from '../../init-style-transformers';
 import { createStylesRenderer } from '../../renderers/create-styles-renderer';
@@ -26,33 +26,31 @@ describe( 'useStylePropResolver', () => {
 		} );
 
 		const { result } = renderHook( useStylePropResolver );
-		const renderStyles = createStylesRenderer( {
+		const stylesRenderer = createStylesRenderer( {
 			resolve: result.current,
 			breakpoints: {} as BreakpointsMap,
 		} );
 
 		// Act.
-		await act( () =>
-			renderStyles( {
-				styles: [
-					{
-						id: 'test-style',
-						type: 'class',
-						cssName: 'test-style',
-						label: 'Test style',
-						variants: [
-							{
-								meta: { breakpoint: null, state: null },
-								props: {
-									'font-family': fontFamilyPropTypeUtil.create( 'Open Sans' ),
-								},
-								custom_css: null,
+		await stylesRenderer( {
+			styles: [
+				{
+					id: 'test-style',
+					type: 'class',
+					cssName: 'test-style',
+					label: 'Test style',
+					variants: [
+						{
+							meta: { breakpoint: null, state: null },
+							props: {
+								'font-family': fontFamilyPropTypeUtil.create( 'Open Sans' ),
 							},
-						],
-					},
-				],
-			} )
-		);
+							custom_css: null,
+						},
+					],
+				},
+			],
+		} );
 
 		// Assert.
 		expect( enqueueFont ).toHaveBeenCalledWith( 'Open Sans' );

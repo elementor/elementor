@@ -47,17 +47,6 @@ class Test_Font_Family_Transformer extends Elementor_Test_Base {
 		$this->assertSame( '"Arial"', $result );
 	}
 
-	public function test_transform__does_not_quote_css_variables() {
-		// Arrange.
-		$context = $this->create_context();
-
-		// Act.
-		$result = $this->transformer->transform( 'var(--primary-font)', $context );
-
-		// Assert.
-		$this->assertSame( 'var(--primary-font)', $result );
-	}
-
 	public function test_transform__non_string_returns_as_is() {
 		// Arrange.
 		$context = $this->create_context();

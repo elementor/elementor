@@ -70,6 +70,7 @@ class Styles_Renderer {
 
 		return $this;
 	}
+
 	private function style_definition_to_css_string( array $style ): string {
 		$base_selector = $this->get_base_selector( $style );
 

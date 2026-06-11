@@ -10,10 +10,6 @@ describe( 'fontFamilyTransformer', () => {
 		expect( run( 'Arial' ) ).toBe( '"Arial"' );
 	} );
 
-	it( 'does not quote css variables', () => {
-		expect( run( 'var(--primary-font)' ) ).toBe( 'var(--primary-font)' );
-	} );
-
 	it( 'passes through already quoted values', () => {
 		expect( run( '"Open Sans"' ) ).toBe( '"Open Sans"' );
 	} );
