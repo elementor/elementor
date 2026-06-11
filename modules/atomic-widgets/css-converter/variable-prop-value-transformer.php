@@ -25,6 +25,8 @@ class Variable_Prop_Value_Transformer {
 	}
 
 	/**
+	 * @param array                                                                   $props
+	 * @param array                                                                   $schema
 	 * @param array<int, array{property: string, value: string, declaration: string}> $rules
 	 * @return array{props: array, custom_css: string[], rejected: string[]}
 	 */

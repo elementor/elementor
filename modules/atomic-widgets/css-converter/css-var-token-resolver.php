@@ -68,6 +68,9 @@ class Css_Var_Token_Resolver {
 			? Size_Variable_Prop_Type::get_key()
 			: ( $variable['type'] ?? '' );
 
-		return [ '$$type' => $prop_type_key, 'value' => $id ];
+		return [
+			'$$type' => $prop_type_key,
+			'value' => $id,
+		];
 	}
 }

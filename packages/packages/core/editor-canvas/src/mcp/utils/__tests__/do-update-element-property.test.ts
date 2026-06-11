@@ -232,6 +232,7 @@ describe( 'doUpdateElementProperty', () => {
 		jest.mocked( getVariantByMeta ).mockReturnValue( {
 			meta: { breakpoint: 'desktop', state: null },
 			props: {},
+			custom_css: null,
 		} );
 
 		// Act

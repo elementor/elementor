@@ -46,12 +46,12 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 	private ?Variables_Service $variables_service;
 
 	/**
-	 * @param string               $property         The input longhand this converter owns (e.g. border-top-width).
-	 * @param string               $target_property  The aggregate prop it contributes to (e.g. border-width).
-	 * @param string               $type_key         The aggregate object's $$type (e.g. border-width).
-	 * @param string               $side_key         The object key this longhand fills (e.g. block-start).
-	 * @param string[]             $all_side_keys    Every key of the object, used to seed from a single Size.
-	 * @param string               $object_prop_type Object_Prop_Type class used to wrap the merged sides.
+	 * @param string                 $property         The input longhand this converter owns (e.g. border-top-width).
+	 * @param string                 $target_property  The aggregate prop it contributes to (e.g. border-width).
+	 * @param string                 $type_key         The aggregate object's $$type (e.g. border-width).
+	 * @param string                 $side_key         The object key this longhand fills (e.g. block-start).
+	 * @param string[]               $all_side_keys    Every key of the object, used to seed from a single Size.
+	 * @param string                 $object_prop_type Object_Prop_Type class used to wrap the merged sides.
 	 * @param Variables_Service|null $variables_service When provided, a var-only value that resolves to a
 	 *                                                  known size variable is emitted as a variable PropValue
 	 *                                                  instead of a raw Size leaf.
