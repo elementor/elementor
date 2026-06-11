@@ -34,6 +34,44 @@ class Test_Post_Query extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_post_query_ignores_unauthorized_keys_conversion_map() {
+		// Arrange
+		$request = new \WP_REST_Request( 'GET', self::URL );
+		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'Hello' );
+		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, [
+			'ID' => 'id',
+			'post_title' => 'label',
+			'post_content' => 'body',
+			'post_password' => 'password',
+		] );
+		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+		$posts = $response->get_data()['data']['value'];
+
+		// Assert
+		$this->assertNotEmpty( $posts );
+		$this->assertArrayNotHasKey( 'body', $posts[0] );
+		$this->assertArrayNotHasKey( 'password', $posts[0] );
+		$this->assertArrayHasKey( 'id', $posts[0] );
+		$this->assertArrayHasKey( 'label', $posts[0] );
+	}
+
+	public function test_post_query_denies_users_without_edit_posts_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$request = new \WP_REST_Request( 'GET', self::URL );
+		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'Hello' );
+		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+	}
+
 	private function execute( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );

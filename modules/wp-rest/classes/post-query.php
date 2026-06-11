@@ -14,6 +14,11 @@ class Post_Query extends Base {
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
 	const SEARCH_IN_CONTENT_KEY = 'search_in_content';
+	const ALLOWED_KEYS_CONVERSION_MAP = [
+		'ID' => 'id',
+		'post_title' => 'label',
+		'post_type' => 'groupLabel',
+	];
 
 	/**
 	 * @param string    $search_term The original search query.
@@ -61,7 +66,10 @@ class Post_Query extends Base {
 			], 200 );
 		}
 
-		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
+		$keys_format_map = $this->filter_keys_conversion_map(
+			$params[ self::KEYS_CONVERSION_MAP_KEY ],
+			self::ALLOWED_KEYS_CONVERSION_MAP
+		);
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
 		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
@@ -103,14 +111,17 @@ class Post_Query extends Base {
 			'data' => [
 				'value' => $posts
 					->map( function ( $post ) use ( $keys_format_map, $post_type_labels ) {
-						$post_object = (array) $post;
+						$post_type_label = $post->post_type;
 
-						if ( isset( $post_object['post_type'] ) ) {
-							$pt_name = $post_object['post_type'];
-							if ( isset( $post_type_labels[ $pt_name ] ) ) {
-								$post_object['post_type'] = $post_type_labels[ $pt_name ];
-							}
+						if ( isset( $post_type_labels[ $post->post_type ] ) ) {
+							$post_type_label = $post_type_labels[ $post->post_type ];
 						}
+
+						$post_object = [
+							'ID' => $post->ID,
+							'post_title' => $post->post_title,
+							'post_type' => $post_type_label,
+						];
 
 						return $this->translate_keys( $post_object, $keys_format_map );
 					} )
@@ -137,6 +148,10 @@ class Post_Query extends Base {
 		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
 		remove_filter( 'posts_search', [ $this, 'customize_post_query' ], $priority, $accepted_args );
+	}
+
+	protected function permission_check( \WP_REST_Request $request ): bool {
+		return current_user_can( 'edit_posts' );
 	}
 
 	protected function get_endpoint_registration_args(): array {
