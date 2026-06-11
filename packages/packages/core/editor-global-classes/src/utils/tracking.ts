@@ -38,7 +38,7 @@ type EventMap = {
 		classType: 'global' | 'local';
 	};
 	classManagerOpened: {
-		source: 'style-panel';
+		source: 'style-panel' | 'system-panel';
 	};
 	classManagerSearched: Record< string, never >;
 	classManagerFiltersOpened: Record< string, never >;

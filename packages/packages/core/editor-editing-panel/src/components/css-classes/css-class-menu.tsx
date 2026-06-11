@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isEmpty } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import {
 	isElementsStylesProvider,
@@ -158,7 +159,11 @@ function useModifiedStates( styleId: string | null ): Partial< Record< StyleDefi
 
 	return Object.fromEntries(
 		styleDef?.variants
-			.filter( ( variant ) => meta.breakpoint === variant.meta.breakpoint )
+			.filter(
+				( variant ) =>
+					meta.breakpoint === variant.meta.breakpoint &&
+					( ! isEmpty( variant.props ) || Boolean( variant.custom_css?.raw?.trim() ) )
+			)
 			.map( ( variant ) => [ variant.meta.state ?? 'normal', true ] ) ?? []
 	);
 }

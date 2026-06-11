@@ -572,5 +572,69 @@ class Test_Variables_Service extends TestCase {
 		$this->assertArrayHasKey( 'deleted_at', $result['id-2'] );
 	}
 
+	public function test_find_by_label_or_id__finds_by_id() {
+		$service = $this->service_with_variables_list( [
+			'id-2' => [
+				'type' => 'global-color-var',
+				'label' => 'Secondary',
+				'value' => '#000000',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'id-2' );
+
+		$this->assertSame( 'id-2', $result['id'] );
+		$this->assertSame( 'Secondary', $result['label'] );
+	}
+
+	public function test_find_by_label_or_id__finds_by_label_case_insensitive() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__strips_leading_dashes() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( '--primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__returns_null_for_unknown() {
+		$service = $this->service_with_variables_list( [] );
+
+		$this->assertNull( $service->find_by_label_or_id( 'nope' ) );
+	}
+
+	private function service_with_variables_list( array $variables ): Variables_Service {
+		return new class( $this->repository, new Batch_Processor(), $variables ) extends Variables_Service {
+			private array $variables;
+
+			public function __construct( $repository, $batch_processor, array $variables ) {
+				parent::__construct( $repository, $batch_processor );
+				$this->variables = $variables;
+			}
+
+			public function get_variables_list(): array {
+				return $this->variables;
+			}
+		};
+	}
+
 }
 
