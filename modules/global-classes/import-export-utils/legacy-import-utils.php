@@ -17,6 +17,28 @@ class Legacy_Import_Utils {
 		$global_classes = ImportExportUtils::read_json_file( $global_classes_file );
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
+		// #region agent log
+		$log_payload = [
+			'sessionId'    => 'a2248d',
+			'location'     => 'legacy-import-utils.php:import_classes',
+			'message'      => 'Legacy_Import_Utils::import_classes entry',
+			'hypothesisId' => 'B',
+			'data'         => [
+				'global_classes_file' => $global_classes_file,
+				'file_exists'       => file_exists( $global_classes_file ),
+				'kit_id'            => $active_kit ? $active_kit->get_id() : null,
+				'conflict_resolution' => $conflict_resolution,
+				'classes_count'     => ! empty( $global_classes['items'] ) ? count( $global_classes['items'] ) : 0,
+			],
+			'timestamp'    => round( microtime( true ) * 1000 ),
+		];
+		file_put_contents(
+			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+			json_encode( $log_payload ) . "\n",
+			FILE_APPEND
+		);
+		// #endregion
+
 		if ( ! $active_kit || ! $global_classes ) {
 			return Import_Utils::EMPTY_RESULT;
 		}

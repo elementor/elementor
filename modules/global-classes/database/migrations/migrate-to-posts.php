@@ -22,7 +22,41 @@ class Migrate_To_Posts extends Base_Migration {
 	public function up() {
 		Global_Class_Post_Type::ensure_registered();
 
+		// #region agent log
+		$log_payload = [
+			'sessionId'    => 'a2248d',
+			'location'     => 'migrate-to-posts.php:up',
+			'message'      => 'Migrate_To_Posts::up called',
+			'hypothesisId' => 'D',
+			'data'         => [
+				'kit_id' => $this->get_kit() ? $this->get_kit()->get_id() : null,
+			],
+			'timestamp'    => round( microtime( true ) * 1000 ),
+		];
+		file_put_contents(
+			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+			json_encode( $log_payload ) . "\n",
+			FILE_APPEND
+		);
+		// #endregion
+
 		$migrated = $this->migrate_global_classes_to_posts();
+
+		// #region agent log
+		$after_payload = [
+			'sessionId'    => 'a2248d',
+			'location'     => 'migrate-to-posts.php:up:after',
+			'message'      => 'Migrate_To_Posts::up completed',
+			'hypothesisId' => 'D',
+			'data'         => [ 'migrated' => $migrated ],
+			'timestamp'    => round( microtime( true ) * 1000 ),
+		];
+		file_put_contents(
+			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+			json_encode( $after_payload ) . "\n",
+			FILE_APPEND
+		);
+		// #endregion
 
 		if ( ! $migrated ) {
 			return;
