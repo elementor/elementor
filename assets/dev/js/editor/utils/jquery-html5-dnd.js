@@ -253,7 +253,7 @@
 
 			return {
 				$currentElement,
-				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':scope > :not(.elementor-widget-placeholder)' ) : currentElement,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
@@ -330,6 +330,50 @@
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
+		const VOID_PLACEHOLDER_TAGS = new Set( [
+			'area',
+			'base',
+			'br',
+			'col',
+			'embed',
+			'hr',
+			'img',
+			'input',
+			'link',
+			'meta',
+			'param',
+			'source',
+			'track',
+			'wbr',
+		] );
+
+		const isVoidPlaceholderTarget = function( element ) {
+			return !! element?.tagName && VOID_PLACEHOLDER_TAGS.has( element.tagName.toLowerCase() );
+		};
+
+		const insertPlaceholderOutsideLogicalWrapperChild = function() {
+			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			if ( ! hasLogicalWrapper || ! placeholderTarget ) {
+				return false;
+			}
+
+			insertPlaceholderOutsideElement( placeholderTarget );
+
+			return true;
+		};
+
+		const getDefaultPlaceholderInsertPlan = function() {
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const insertTarget = placeholderTarget || currentElement;
+
+			return {
+				insertTarget,
+				insertOutside: hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget ),
+				useLogicalAttributes: hasLogicalWrapper || isAtomicContainer,
+			};
+		};
+
 		const insertGridRowPlaceholder = function() {
 			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
 
@@ -343,19 +387,30 @@
 
 		const insertFlexRowPlaceholder = function() {
 			const { $currentElement, isInnerContainer } = placeholderContext;
+
+			if ( insertPlaceholderOutsideLogicalWrapperChild() ) {
+				return;
+			}
+
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const { insertTarget, insertOutside, useLogicalAttributes } = getDefaultPlaceholderInsertPlan();
 
-			if ( hasLogicalWrapper || isAtomicContainer ) {
+			if ( useLogicalAttributes ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
-			insertPlaceholderInsideElement( placeholderTarget );
+			if ( insertOutside ) {
+				insertPlaceholderOutsideElement( insertTarget );
+
+				return;
+			}
+
+			insertPlaceholderInsideElement( insertTarget );
 		};
 
 		const addLogicalAttributesToPlaceholder = function() {

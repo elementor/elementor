@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { useParentElement } from '@elementor/editor-elements';
 import { type StringPropValue } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
@@ -38,7 +37,6 @@ export const LayoutSection = () => {
 		history: { propDisplayName: DISPLAY_LABEL },
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
-	const isGridExperimentActive = isExperimentActive( 'e_css_grid' );
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
 	const isDisplayGrid = 'grid' === ( display?.value ?? ( displayPlaceholder as StringPropValue )?.value );
 	const { element } = useElement();
@@ -64,8 +62,8 @@ export const LayoutSection = () => {
 			{ 'flex' === parentStyle?.display && (
 				<FlexChildFields parentStyleDirection={ getParentStyleDirection() } />
 			) }
-			{ isGridExperimentActive && isDisplayGrid && <GridFields /> }
-			{ isGridExperimentActive && 'grid' === parentStyle?.display && (
+			{ isDisplayGrid && <GridFields /> }
+			{ 'grid' === parentStyle?.display && (
 				<GridChildFields parentStyleDirection={ getParentStyleDirection() } />
 			) }
 		</SectionContent>

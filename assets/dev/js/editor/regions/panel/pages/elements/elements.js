@@ -106,14 +106,28 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
-		jQuery.each( elementor.config.atomicFormPromotionWidgets || [], ( index, widget ) => {
+		( elementor.config.atomicWidgetPromotions || [] ).forEach( ( { type, widgets } ) => {
+			( widgets || [] ).forEach( ( widget ) => {
+				elementsCollection.add( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					promotionType: type,
+				} );
+			} );
+		} );
+
+		jQuery.each( elementor.config.birthdayEasterEggWidgets || [], ( index, widget ) => {
 			elementsCollection.add( {
 				name: widget.name,
 				title: widget.title,
+				widgetType: widget.name,
 				icon: widget.icon,
 				categories: JSON.parse( widget.categories ),
 				editable: false,
-				atomicFormPromotion: true,
+				birthdayEasterEgg: true,
 			} );
 		} );
 
@@ -258,6 +272,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			options = viewDetails.options || {};
 
 		viewDetails.region.show( new viewDetails.view( options ) );
+
+		if ( 'elements' === viewName ) {
+			this.appendStickyPromotion();
+		}
+	},
+
+	appendStickyPromotion() {
+		if ( this.$( '#elementor-panel-get-pro-elements-sticky' ).length ) {
+			return;
+		}
+
+		const html = Marionette.Renderer.render( '#tmpl-elementor-panel-element-sticky-promotion', {} ).trim();
+
+		if ( html ) {
+			this.$el.append( html );
+		}
 	},
 
 	clearSearchInput() {

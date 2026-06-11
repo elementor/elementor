@@ -7,6 +7,18 @@ export type CellRect = {
 	height: number;
 };
 
+export type GridLine = {
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+};
+
+export type GridLines = {
+	vertical: GridLine[];
+	horizontal: GridLine[];
+};
+
 type TrackSegment = {
 	start: number;
 	size: number;
@@ -55,6 +67,42 @@ export function computeCellRects( tracks: GridTracks, width: number, height: num
 	}
 
 	return cells;
+}
+
+export function computeGridLines( tracks: GridTracks, width: number, height: number ): GridLines {
+	const { columns, rows, columnGap, rowGap, padding } = tracks;
+
+	const hasColumns = columns.length > 0;
+	const hasRows = rows.length > 0;
+
+	if ( ! hasColumns && ! hasRows ) {
+		return { vertical: [], horizontal: [] };
+	}
+
+	const columnSegments = hasColumns
+		? computeTrackSegments( columns, columnGap, padding.left )
+		: [ { start: padding.left, size: width - padding.left - padding.right } ];
+
+	const rowSegments = hasRows
+		? computeTrackSegments( rows, rowGap, padding.top )
+		: [ { start: padding.top, size: height - padding.top - padding.bottom } ];
+
+	const xs = uniqueSorted( columnSegments.flatMap( ( s ) => [ s.start, s.start + s.size ] ) );
+	const ys = uniqueSorted( rowSegments.flatMap( ( s ) => [ s.start, s.start + s.size ] ) );
+
+	const yTop = ys[ 0 ];
+	const yBottom = ys[ ys.length - 1 ];
+	const xLeft = xs[ 0 ];
+	const xRight = xs[ xs.length - 1 ];
+
+	return {
+		vertical: xs.map( ( x ) => ( { x1: x, y1: yTop, x2: x, y2: yBottom } ) ),
+		horizontal: ys.map( ( y ) => ( { x1: xLeft, y1: y, x2: xRight, y2: y } ) ),
+	};
+}
+
+function uniqueSorted( values: number[] ): number[] {
+	return Array.from( new Set( values ) ).sort( ( a, b ) => a - b );
 }
 
 function computeTrackSegments( sizes: number[], gap: number, offset: number ): TrackSegment[] {
