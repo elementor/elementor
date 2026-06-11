@@ -24,8 +24,15 @@ class Atomic_Form_Widget_Promotion {
 			return $settings;
 		}
 
-		$settings['atomicFormPromotionWidgets'] = $this->get_widgets();
-		$settings['atomicFormPromotion'] = $this->get_promotion_content();
+		if ( ! isset( $settings['atomicWidgetPromotions'] ) ) {
+			$settings['atomicWidgetPromotions'] = [];
+		}
+
+		$settings['atomicWidgetPromotions'][] = [
+			'type' => 'atomic-form',
+			'widgets' => $this->get_widgets(),
+			'content' => $this->get_promotion_content(),
+		];
 
 		return $settings;
 	}

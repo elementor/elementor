@@ -110,7 +110,8 @@
 		&,
 		& > .e-con-inner {
 
-			> .elementor-widget-placeholder {
+			> .elementor-widget-placeholder,
+			> .elementor-element[data-atomic] > .elementor-widget-placeholder {
 				position: relative;
 				z-index: $editor-layer; // To put it above the element overlay.
 				width: var( --size );
@@ -286,6 +287,10 @@
 	& > .elementor-empty-view.elementor-empty-view {
 		min-height: inherit;
 	}
+}
+
+.e-grid-base > .elementor-empty-view > .elementor-first-add {
+	opacity: 0;
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
