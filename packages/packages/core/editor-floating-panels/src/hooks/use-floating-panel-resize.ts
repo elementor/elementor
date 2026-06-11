@@ -1,12 +1,12 @@
 import { type PointerEvent as ReactPointerEvent, useCallback, useRef } from 'react';
 import { __useSelector as useSelector } from '@elementor/store';
 
-import { isRtl } from '../lib/direction';
-import { physicalToLogicalDelta } from '../lib/drag-math';
-import { applyResize, type ResizeBounds, type ResizeDirection } from '../lib/resize-math';
-import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type GlobalState, selectMinSize } from '../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../types';
+import { isRtl } from '../utils/direction';
+import { physicalToLogicalDelta } from '../utils/drag-math';
+import { applyResize, type ResizeBounds, type ResizeDirection } from '../utils/resize-math';
+import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
 

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box } from '@elementor/ui';
 
-import { type ResizeEdge } from '../../lib/resize-math';
+import { type ResizeEdge } from '../../utils/resize-math';
 
 const HANDLE_THICKNESS_PX = 8;
 

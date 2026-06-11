@@ -1,9 +1,9 @@
 import { type PointerEvent as ReactPointerEvent, useCallback, useRef } from 'react';
 
-import { isRtl } from '../lib/direction';
-import { applyDragDelta, type DragBounds, physicalToLogicalDelta } from '../lib/drag-math';
-import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type LogicalPosition, type LogicalSize } from '../types';
+import { isRtl } from '../utils/direction';
+import { applyDragDelta, type DragBounds, physicalToLogicalDelta } from '../utils/drag-math';
+import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../utils/viewport-bounds';
 import { useFloatingPanelActions } from './use-floating-panel-actions';
 import { useFloatingPanelStatus } from './use-floating-panel-status';
 

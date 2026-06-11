@@ -3,10 +3,10 @@ import { type ReactNode, useMemo } from 'react';
 import { useEditMode } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
-import { FLOATING_PANEL_Z_INDEX_BASE } from '../../lib/constants';
 import { useFloatingPanelsInjections } from '../../location';
 import { type GlobalState, selectOpenPanelIds, selectPanelState, selectPanelTitle } from '../../store/selectors';
 import { slice } from '../../store/slice';
+import { FLOATING_PANEL_Z_INDEX_BASE } from '../../utils/constants';
 import PanelWindow from './panel-window';
 
 export default function FloatingPanelsHost() {

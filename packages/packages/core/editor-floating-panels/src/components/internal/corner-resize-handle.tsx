@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Box } from '@elementor/ui';
 
-import { isRtl } from '../../lib/direction';
-import { type ResizeCorner } from '../../lib/resize-math';
+import { isRtl } from '../../utils/direction';
+import { type ResizeCorner } from '../../utils/resize-math';
 
 const HANDLE_SIZE_PX = 8;
 
