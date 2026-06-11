@@ -24,6 +24,30 @@ class Global_Classes_Parser {
 	public function parse( $data ): Parse_Result {
 		$result = Parse_Result::make();
 
+		// #region agent log
+		$log_payload = [
+			'sessionId'    => 'a2248d',
+			'location'     => 'global-classes-parser.php:parse',
+			'message'      => 'Parser::parse entry',
+			'hypothesisId' => 'C',
+			'data'         => [
+				'has_items'       => isset( $data['items'] ),
+				'has_order'       => isset( $data['order'] ),
+				'items_count'     => isset( $data['items'] ) && is_array( $data['items'] ) ? count( $data['items'] ) : null,
+				'order_count'     => isset( $data['order'] ) && is_array( $data['order'] ) ? count( $data['order'] ) : null,
+				'first_item_keys' => isset( $data['items'] ) && is_array( $data['items'] ) && ! empty( $data['items'] )
+					? array_keys( reset( $data['items'] ) )
+					: null,
+			],
+			'timestamp'    => round( microtime( true ) * 1000 ),
+		];
+		file_put_contents(
+			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+			json_encode( $log_payload ) . "\n",
+			FILE_APPEND
+		);
+		// #endregion
+
 		if ( ! isset( $data['items'] ) ) {
 			$result->errors()->add( 'items', 'missing' );
 
@@ -54,6 +78,21 @@ class Global_Classes_Parser {
 		$items_result = $this->parse_items( $items );
 
 		if ( ! $items_result->is_valid() ) {
+			// #region agent log
+			$log_payload = [
+				'sessionId'    => 'a2248d',
+				'location'     => 'global-classes-parser.php:parse:items_invalid',
+				'message'      => 'Parser::parse - items invalid',
+				'hypothesisId' => 'C',
+				'data'         => [ 'errors' => $items_result->errors()->to_string() ],
+				'timestamp'    => round( microtime( true ) * 1000 ),
+			];
+			file_put_contents(
+				'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+				json_encode( $log_payload ) . "\n",
+				FILE_APPEND
+			);
+			// #endregion
 			$result->errors()->merge( $items_result->errors(), 'items' );
 
 			return $result;
@@ -64,12 +103,46 @@ class Global_Classes_Parser {
 		$order_result = $this->parse_order( $order, array_keys( $sanitized_items ) );
 
 		if ( ! $order_result->is_valid() ) {
+			// #region agent log
+			$log_payload = [
+				'sessionId'    => 'a2248d',
+				'location'     => 'global-classes-parser.php:parse:order_invalid',
+				'message'      => 'Parser::parse - order invalid',
+				'hypothesisId' => 'C',
+				'data'         => [ 'errors' => $order_result->errors()->to_string() ],
+				'timestamp'    => round( microtime( true ) * 1000 ),
+			];
+			file_put_contents(
+				'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+				json_encode( $log_payload ) . "\n",
+				FILE_APPEND
+			);
+			// #endregion
 			$result->errors()->merge( $order_result->errors(), 'order' );
 
 			return $result;
 		}
 
 		$sanitized_order = $order_result->unwrap();
+
+		// #region agent log
+		$log_payload = [
+			'sessionId'    => 'a2248d',
+			'location'     => 'global-classes-parser.php:parse:success',
+			'message'      => 'Parser::parse - success',
+			'hypothesisId' => 'C',
+			'data'         => [
+				'items_count' => count( $sanitized_items ),
+				'order_count' => count( $sanitized_order ),
+			],
+			'timestamp'    => round( microtime( true ) * 1000 ),
+		];
+		file_put_contents(
+			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
+			json_encode( $log_payload ) . "\n",
+			FILE_APPEND
+		);
+		// #endregion
 
 		return $result->wrap( [
 			'items' => $sanitized_items,
