@@ -25,18 +25,18 @@ class Test_Font_Family_Transformer extends Elementor_Test_Base {
 		return Props_Resolver_Context::make()->set_prop_type( Font_Family_Prop_Type::make() );
 	}
 
-	public function test_transform__wraps_string_in_quotes() {
+	public function test_transform__wraps_multi_word_font_in_quotes() {
 		// Arrange.
 		$context = $this->create_context();
 
 		// Act.
-		$result = $this->transformer->transform( 'Open Sans', $context );
+		$result = $this->transformer->transform( ' Open Sans ', $context );
 
 		// Assert.
-		$this->assertSame( 'Open Sans', $result );
+		$this->assertSame( '"Open Sans"', $result );
 	}
 
-	public function test_transform__single_word_font() {
+	public function test_transform__wraps_single_word_font_in_quotes() {
 		// Arrange.
 		$context = $this->create_context();
 
@@ -44,7 +44,18 @@ class Test_Font_Family_Transformer extends Elementor_Test_Base {
 		$result = $this->transformer->transform( 'Arial', $context );
 
 		// Assert.
-		$this->assertSame( 'Arial', $result );
+		$this->assertSame( '"Arial"', $result );
+	}
+
+	public function test_transform__does_not_quote_css_variables() {
+		// Arrange.
+		$context = $this->create_context();
+
+		// Act.
+		$result = $this->transformer->transform( 'var(--primary-font)', $context );
+
+		// Assert.
+		$this->assertSame( 'var(--primary-font)', $result );
 	}
 
 	public function test_transform__non_string_returns_as_is() {

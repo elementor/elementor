@@ -15,20 +15,21 @@ class Font_Family_Prop_Type extends String_Prop_Type implements Font_Enqueueable
 	}
 
 	public function get_enqueue_font_family( $stored_value ): ?string {
-		return $this->normalize_stored_value( $stored_value );
-	}
-
-	public function format_for_css( $stored_value ): ?string {
-		return $this->normalize_stored_value( $stored_value );
-	}
-
-	private function normalize_stored_value( $stored_value ): ?string {
 		if ( ! is_string( $stored_value ) ) {
 			return null;
 		}
 
-		$normalized = trim( $stored_value );
+		$trimmed = trim( $stored_value );
 
-		return '' === $normalized ? null : $normalized;
+		$is_quoted = (
+			( str_starts_with( $trimmed, '"' ) && str_ends_with( $trimmed, '"' ) ) ||
+			( str_starts_with( $trimmed, "'" ) && str_ends_with( $trimmed, "'" ) )
+		);
+
+		if ( $is_quoted ) {
+			return trim( substr( $trimmed, 1, -1 ) );
+		}
+
+		return $trimmed;
 	}
 }

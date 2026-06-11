@@ -33,11 +33,6 @@ export {
 	isDependencyMet,
 } from './utils/prop-dependency-utils';
 export { parseHtmlChildren, type ParseResult } from './utils/parse-html-children';
-export {
-	formatFontFamilyForCss,
-	getEnqueueFontFamily,
-	normalizeFontFamilyValue,
-} from './utils/font-family-value';
 
 export const Schema = {
 	jsonSchemaToPropType,

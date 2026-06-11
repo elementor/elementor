@@ -23,7 +23,7 @@ class Test_Font_Family_Prop_Type extends Elementor_Test_Base {
 		$this->assertSame( 'Open Sans', $this->prop_type->get_enqueue_font_family( ' Open Sans ' ) );
 	}
 
-	public function test_format_for_css__returns_trimmed_stored_value() {
-		$this->assertSame( 'Open Sans', $this->prop_type->format_for_css( 'Open Sans' ) );
+	public function test_get_enqueue_font_family__strips_surrounding_quotes() {
+		$this->assertSame( 'Open Sans', $this->prop_type->get_enqueue_font_family( '"Open Sans"' ) );
 	}
 }
