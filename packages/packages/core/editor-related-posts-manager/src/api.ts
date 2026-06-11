@@ -99,14 +99,15 @@ function isCurrentDocument( postId: number ): boolean {
 async function fetchAndNotify( ids: number[] ): Promise< void > {
 	const results = await Promise.all( ids.map( fetchDocument ) );
 
-	results.forEach( ( result ) => {
+	results.forEach( ( result, index ) => {
+		const id = ids[ index ];
+		pendingIds.delete( id );
+
 		if ( ! result ) {
 			return;
 		}
 
-		const { id, data } = result;
-
-		pendingIds.delete( id );
+		const { data } = result;
 		loadedPosts.set( id, data );
 		notifyRelatedListeners( id, data );
 	} );
