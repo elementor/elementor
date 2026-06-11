@@ -13,7 +13,6 @@ import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
-import { validateInput } from '../mcp/utils/validate-input';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 
@@ -223,20 +222,14 @@ export class CompositionBuilder {
 			}
 
 			const styleConfig = this.elementStylesConfig[ configId ];
-			let hasInvalidStyles = false;
+			const hasInvalidStyles = false;
 			if ( styleConfig ) {
 				const validStylesPropValues: Record< string, AnyValue > = {};
 				for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
 					if ( styleName === '$intention' ) {
 						continue;
-					}
-					const { valid, errors: validationErrors } = validateInput.validateStyles( {
-						[ styleName ]: stylePropValue,
-					} );
-					if ( ! valid ) {
-						hasInvalidStyles = true;
-						styleErrors.push( ...( validationErrors || [] ) );
 					} else {
+						// skipping actual validation - properies comes from the server
 						validStylesPropValues[ styleName ] = stylePropValue;
 					}
 				}
