@@ -9,12 +9,14 @@ type Dynamic = {
 	settings?: Props;
 };
 
-export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType } ) => {
+export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType, renderContext } ) => {
 	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
 		return propType?.default ?? null;
 	}
 
-	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ) );
+	const renderPostId = ( renderContext as { currentPostId?: number } | undefined )?.currentPostId;
+
+	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ), renderPostId );
 } );
 
 // Temporary naive transformation until we'll have a `backendTransformer` that
@@ -29,7 +31,7 @@ function simpleTransform( props: Props ) {
 	return Object.fromEntries( transformed );
 }
 
-function getDynamicValue( name: string, settings: Record< string, unknown > ) {
+function getDynamicValue( name: string, settings: Record< string, unknown >, renderPostId?: number ) {
 	const { dynamicTags } = window.elementor ?? {};
 
 	if ( ! dynamicTags ) {
@@ -43,6 +45,10 @@ function getDynamicValue( name: string, settings: Record< string, unknown > ) {
 			return null;
 		}
 
+		if ( renderPostId ) {
+			tag.editorRenderPostId = renderPostId;
+		}
+
 		return dynamicTags.loadTagDataFromCache( tag ) ?? null;
 	};
 
@@ -53,11 +59,8 @@ function getDynamicValue( name: string, settings: Record< string, unknown > ) {
 	}
 
 	return new Promise( ( resolve ) => {
-		dynamicTags.refreshCacheFromServer(
-			() => {
-				resolve( getTagValue() );
-			},
-			{ disableCache: true }
-		);
+		dynamicTags.refreshCacheFromServer( () => {
+			resolve( getTagValue() );
+		} );
 	} );
 }

@@ -111,6 +111,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
@@ -140,7 +141,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
-	const EXPERIMENT_CSS_GRID = 'e_css_grid';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -242,15 +242,6 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::EXPERIMENT_CSS_GRID,
-			'title' => esc_html__( 'CSS Grid', 'elementor' ),
-			'description' => esc_html__( 'Enable CSS Grid layout for containers.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
 		// When a new feature affects settings or style schema, global class, interactions, variable, etc
 		// anything in need of addressing migration for BC purposes, add it here.
 		$migrations_affecting_features = [];
@@ -305,10 +296,7 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
-
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_CSS_GRID ) ) {
-			$elements_manager->register_element_type( new Grid() );
-		}
+		$elements_manager->register_element_type( new Grid() );
 
 		$elements_manager->register_element_type( new Atomic_Tabs() );
 		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
@@ -322,6 +310,10 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Form_Error_Message() );
 		} elseif ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		}
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
 		}
 	}
 
