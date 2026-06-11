@@ -6,7 +6,6 @@ import { wpCli } from '../../../assets/wp-cli';
 test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_css_grid' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
