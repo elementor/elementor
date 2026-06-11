@@ -1,11 +1,16 @@
-import { __useSelector as useSelector } from '@elementor/store';
+import { __createSelector, __useSelector as useSelector } from '@elementor/store';
 
 import { type GlobalState, selectIsOpen, selectPosition, selectSize } from '../store/selectors';
 
-export function useFloatingPanelStatus( id: string ) {
-	const isOpen = useSelector( ( state: GlobalState ) => selectIsOpen( state, id ) );
-	const position = useSelector( ( state: GlobalState ) => selectPosition( state, id ) );
-	const size = useSelector( ( state: GlobalState ) => selectSize( state, id ) );
+const selectStatus = __createSelector(
+	[
+		( state: GlobalState, id: string ) => selectIsOpen( state, id ),
+		( state: GlobalState, id: string ) => selectPosition( state, id ),
+		( state: GlobalState, id: string ) => selectSize( state, id ),
+	],
+	( isOpen, position, size ) => ( { isOpen, position, size } )
+);
 
-	return { isOpen, position, size };
+export function useFloatingPanelStatus( id: string ) {
+	return useSelector( ( state: GlobalState ) => selectStatus( state, id ) );
 }

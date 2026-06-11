@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Box } from '@elementor/ui';
 
-import { useFloatingPanelResize } from '../../hooks/use-floating-panel-resize';
 import { isRtl } from '../../lib/direction';
 import { type ResizeCorner } from '../../lib/resize-math';
 
@@ -31,12 +30,13 @@ const RTL_CURSORS: Record< ResizeCorner, string > = {
 };
 
 type Props = {
-	panelId: string;
 	corner: ResizeCorner;
+	onPointerDown: React.PointerEventHandler< HTMLElement >;
+	onPointerMove: React.PointerEventHandler< HTMLElement >;
+	onPointerUp: React.PointerEventHandler< HTMLElement >;
 };
 
-export default function CornerResizeHandle( { panelId, corner }: Props ) {
-	const { onPointerDown, onPointerMove, onPointerUp } = useFloatingPanelResize( panelId, corner );
+export default function CornerResizeHandle( { corner, onPointerDown, onPointerMove, onPointerUp }: Props ) {
 	const cursor = isRtl() ? RTL_CURSORS[ corner ] : LTR_CURSORS[ corner ];
 
 	return (

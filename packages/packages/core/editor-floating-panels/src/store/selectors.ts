@@ -8,6 +8,10 @@ export function selectPanelState( state: GlobalState, id: string ) {
 	return state.floatingPanels.byId[ id ];
 }
 
+export function selectPanelZIndex( state: GlobalState, id: string ): number {
+	return state.floatingPanels.byId[ id ]?.zIndex ?? 0;
+}
+
 export function selectIsOpen( state: GlobalState, id: string ): boolean {
 	return state.floatingPanels.byId[ id ]?.isOpen ?? false;
 }

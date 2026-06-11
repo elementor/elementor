@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Box } from '@elementor/ui';
 
-import { useFloatingPanelResize } from '../../hooks/use-floating-panel-resize';
 import { type ResizeEdge } from '../../lib/resize-math';
 
 const HANDLE_THICKNESS_PX = 8;
@@ -38,13 +37,13 @@ const EDGE_SX: Record< ResizeEdge, object > = {
 };
 
 type Props = {
-	panelId: string;
 	edge: ResizeEdge;
+	onPointerDown: React.PointerEventHandler< HTMLElement >;
+	onPointerMove: React.PointerEventHandler< HTMLElement >;
+	onPointerUp: React.PointerEventHandler< HTMLElement >;
 };
 
-export default function ResizeHandle( { panelId, edge }: Props ) {
-	const { onPointerDown, onPointerMove, onPointerUp } = useFloatingPanelResize( panelId, edge );
-
+export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPointerUp }: Props ) {
 	return (
 		<Box
 			data-resize-edge={ edge }

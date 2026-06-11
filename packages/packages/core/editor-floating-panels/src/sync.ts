@@ -1,7 +1,7 @@
-import { __getState, __getStore, __subscribe } from '@elementor/store';
+import { __getStore, __subscribeWithSelector } from '@elementor/store';
 
 import { decodePersistedState, encodePersistedState, PERSISTENCE_STORAGE_KEY } from './persistence';
-import { type FloatingPanelsSliceState } from './store/slice';
+import { type GlobalState } from './store/selectors';
 import { type FloatingPanelState } from './types';
 
 const PERSIST_DEBOUNCE_MS = 250;
@@ -46,17 +46,18 @@ function schedulePersistence( storage: PanelStateStorage ): void {
 	let timer: ReturnType< typeof setTimeout > | null = null;
 
 	const subscribe = () => {
-		__subscribe( () => {
-			if ( timer ) {
-				clearTimeout( timer );
+		__subscribeWithSelector(
+			( state: GlobalState ) => state.floatingPanels.byId,
+			( byId ) => {
+				if ( timer ) {
+					clearTimeout( timer );
+				}
+
+				timer = setTimeout( () => {
+					storage.write( encodePersistedState( byId ) );
+				}, PERSIST_DEBOUNCE_MS );
 			}
-
-			timer = setTimeout( () => {
-				const state = __getState() as { floatingPanels?: FloatingPanelsSliceState };
-
-				storage.write( encodePersistedState( state.floatingPanels?.byId ?? {} ) );
-			}, PERSIST_DEBOUNCE_MS );
-		} );
+		);
 	};
 
 	const waitForStore = () => {

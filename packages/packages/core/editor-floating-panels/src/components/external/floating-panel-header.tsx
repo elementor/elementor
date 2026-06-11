@@ -5,11 +5,10 @@ import { Box, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFloatingPanelActions } from '../../hooks/use-floating-panel-actions';
-import { type GlobalState, selectIsDraggable, selectPanelState } from '../../store/selectors';
+import { useFloatingPanelZIndex } from '../../hooks/use-floating-panel-z-index';
+import { type GlobalState, selectIsDraggable } from '../../store/selectors';
 import { type FloatingPanelHeaderAction } from '../../types';
 import DragHandle from '../internal/drag-handle';
-
-const PANEL_Z_INDEX_BASE = 1000;
 
 type Props = {
 	panelId: string;
@@ -19,21 +18,18 @@ type Props = {
 };
 
 function HeaderAction( {
-	panelId,
 	icon: Icon,
 	label,
 	onClick,
+	panelZIndex,
 	disabled = false,
-}: FloatingPanelHeaderAction & { panelId: string } ) {
-	const panelZIndex = useSelector( ( state: GlobalState ) => selectPanelState( state, panelId )?.zIndex ?? 0 );
-	const tooltipZIndex = PANEL_Z_INDEX_BASE + panelZIndex + 1;
-
+}: FloatingPanelHeaderAction & { panelZIndex: number } ) {
 	return (
 		<Tooltip
 			title={ label }
 			placement="top"
 			PopperProps={ {
-				sx: { zIndex: tooltipZIndex },
+				sx: { zIndex: panelZIndex },
 			} }
 		>
 			<Box component="span" aria-label={ undefined }>
@@ -45,7 +41,7 @@ function HeaderAction( {
 					onClick={ disabled ? undefined : onClick }
 					sx={ { borderRadius: 0, p: 1 } }
 				>
-					<Icon fontSize="small" />
+					<Icon />
 				</IconButton>
 			</Box>
 		</Tooltip>
@@ -56,6 +52,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 	const { close } = useFloatingPanelActions( panelId );
 	const isDraggable = useSelector( ( state: GlobalState ) => selectIsDraggable( state, panelId ) );
 	const hasActions = Boolean( actions?.length );
+	const panelZIndex = useFloatingPanelZIndex( panelId );
 
 	const titleContent = (
 		<Box sx={ { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, height: '100%' } }>
@@ -79,7 +76,7 @@ export default function FloatingPanelHeader( { panelId, title, icon: Icon, actio
 			{ hasActions ? (
 				<Stack direction="row" alignItems="center" sx={ { flexShrink: 0, overflow: 'visible' } }>
 					{ actions?.map( ( action ) => (
-						<HeaderAction key={ action.id } panelId={ panelId } { ...action } />
+						<HeaderAction key={ action.id } panelZIndex={ panelZIndex } { ...action } />
 					) ) }
 				</Stack>
 			) : null }

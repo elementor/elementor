@@ -3,14 +3,7 @@ import { __useSelector as useSelector } from '@elementor/store';
 
 import { isRtl } from '../lib/direction';
 import { physicalToLogicalDelta } from '../lib/drag-math';
-import {
-	applyBlockEndResize,
-	applyBlockStartResize,
-	applyInlineEndResize,
-	applyInlineStartResize,
-	type ResizeBounds,
-	type ResizeDirection,
-} from '../lib/resize-math';
+import { applyResize, type ResizeBounds, type ResizeDirection } from '../lib/resize-math';
 import { APP_BAR_HEIGHT_PX, getSidePanelInlineSize } from '../lib/viewport-bounds';
 import { type GlobalState, selectMinSize } from '../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../types';
@@ -19,6 +12,7 @@ import { useFloatingPanelStatus } from './use-floating-panel-status';
 
 type ResizeSession = {
 	pointerId: number;
+	direction: ResizeDirection;
 	startClientX: number;
 	startClientY: number;
 	startPosition: LogicalPosition;
@@ -38,63 +32,29 @@ function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): Res
 	};
 }
 
-function applyResize(
-	direction: ResizeDirection,
-	position: LogicalPosition,
-	size: LogicalSize,
-	inlineDelta: number,
-	blockDelta: number,
-	bounds: ResizeBounds
-): { position: LogicalPosition; size: LogicalSize } {
-	if ( direction === 'inline-end' ) {
-		return { position, size: applyInlineEndResize( size, inlineDelta, bounds ) };
-	}
+type ResizeHandlePointerHandlers = {
+	onPointerDown: ( event: ReactPointerEvent< HTMLElement > ) => void;
+	onPointerMove: ( event: ReactPointerEvent< HTMLElement > ) => void;
+	onPointerUp: ( event: ReactPointerEvent< HTMLElement > ) => void;
+};
 
-	if ( direction === 'block-end' ) {
-		return { position, size: applyBlockEndResize( size, blockDelta, bounds ) };
-	}
-
-	if ( direction === 'inline-start' ) {
-		return applyInlineStartResize( position, size, inlineDelta, bounds );
-	}
-
-	if ( direction === 'block-start' ) {
-		return applyBlockStartResize( position, size, blockDelta, bounds );
-	}
-
-	let next = { position, size };
-
-	if ( direction.includes( 'inline-start' ) ) {
-		next = applyInlineStartResize( next.position, next.size, inlineDelta, bounds );
-	} else {
-		next = { position: next.position, size: applyInlineEndResize( next.size, inlineDelta, bounds ) };
-	}
-
-	if ( direction.includes( 'block-start' ) ) {
-		next = applyBlockStartResize( next.position, next.size, blockDelta, bounds );
-	} else {
-		next = { position: next.position, size: applyBlockEndResize( next.size, blockDelta, bounds ) };
-	}
-
-	return next;
-}
-
-export function useFloatingPanelResize( id: string, direction: ResizeDirection ) {
+export function usePanelResizeInteraction( id: string ) {
 	const sessionRef = useRef< ResizeSession | null >( null );
 	const { position, size } = useFloatingPanelStatus( id );
 	const minSize = useSelector( ( state: GlobalState ) => selectMinSize( state, id ) );
 	const { setPosition, setSize } = useFloatingPanelActions( id );
 
 	const onPointerDown = useCallback(
-		( event: ReactPointerEvent< HTMLElement > ) => {
+		( direction: ResizeDirection, event: ReactPointerEvent< HTMLElement > ) => {
 			if ( ! position || ! size ) {
 				return;
 			}
 
-			( event.target as HTMLElement ).setPointerCapture( event.pointerId );
+			event.currentTarget.setPointerCapture( event.pointerId );
 
 			sessionRef.current = {
 				pointerId: event.pointerId,
+				direction,
 				startClientX: event.clientX,
 				startClientY: event.clientY,
 				startPosition: position,
@@ -117,7 +77,7 @@ export function useFloatingPanelResize( id: string, direction: ResizeDirection )
 			const resizeBounds = getResizeBounds( session.startPosition, minSize ?? FALLBACK_MIN_SIZE );
 
 			const next = applyResize(
-				direction,
+				session.direction,
 				session.startPosition,
 				session.startSize,
 				logical.inlineDelta,
@@ -135,7 +95,7 @@ export function useFloatingPanelResize( id: string, direction: ResizeDirection )
 
 			setSize( next.size );
 		},
-		[ direction, minSize, setPosition, setSize ]
+		[ minSize, setPosition, setSize ]
 	);
 
 	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
@@ -148,5 +108,22 @@ export function useFloatingPanelResize( id: string, direction: ResizeDirection )
 		sessionRef.current = null;
 	}, [] );
 
-	return { onPointerDown, onPointerMove, onPointerUp };
+	const getResizeHandleProps = useCallback(
+		( direction: ResizeDirection ): ResizeHandlePointerHandlers => {
+			return {
+				onPointerDown: ( event ) => onPointerDown( direction, event ),
+				onPointerMove,
+				onPointerUp,
+			};
+		},
+		[ onPointerDown, onPointerMove, onPointerUp ]
+	);
+
+	return { getResizeHandleProps };
+}
+
+export function useFloatingPanelResize( id: string, direction: ResizeDirection ) {
+	const { getResizeHandleProps } = usePanelResizeInteraction( id );
+
+	return getResizeHandleProps( direction );
 }

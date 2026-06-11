@@ -30,7 +30,7 @@ export function useFloatingPanelDrag( id: string ) {
 
 	const onPointerDown = useCallback(
 		( event: ReactPointerEvent< HTMLElement > ) => {
-			( event.target as HTMLElement ).setPointerCapture( event.pointerId );
+			event.currentTarget.setPointerCapture( event.pointerId );
 
 			sessionRef.current = {
 				pointerId: event.pointerId,

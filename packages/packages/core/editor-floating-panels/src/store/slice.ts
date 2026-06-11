@@ -10,6 +10,8 @@ type SliceState = {
 	topZIndex: number;
 };
 
+const DEFAULT_PANEL_POSITION: LogicalPosition = { insetInlineStart: 24, insetBlockStart: 80 };
+
 const initialState: SliceState = {
 	byId: {},
 	minSizeById: {},
@@ -47,7 +49,7 @@ export const slice = __createSlice( {
 
 			state.byId[ id ] = persisted ?? {
 				isOpen: false,
-				position: defaults.initialPosition ?? { insetInlineStart: 24, insetBlockStart: 80 },
+				position: defaults.initialPosition ?? DEFAULT_PANEL_POSITION,
 				size: { inlineSize: defaults.width, blockSize: defaults.height },
 				zIndex: 0,
 			};
@@ -77,7 +79,7 @@ export const slice = __createSlice( {
 				panel.position = action.payload.position;
 			}
 		},
-		setSize( state, action: PayloadAction< { id: string; size: { inlineSize: number; blockSize: number } } > ) {
+		setSize( state, action: PayloadAction< { id: string; size: LogicalSize } > ) {
 			const panel = state.byId[ action.payload.id ];
 
 			if ( panel ) {

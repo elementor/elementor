@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
-import { useFloatingPanelStatus } from '../../hooks/use-floating-panel-status';
-import { type GlobalState, selectPanelTitle } from '../../store/selectors';
+import { usePanelResizeInteraction } from '../../hooks/use-floating-panel-resize';
+import { type LogicalPosition, type LogicalSize } from '../../types';
 import CornerResizeHandle from './corner-resize-handle';
 import ResizeHandle from './resize-handle';
 
@@ -13,19 +12,17 @@ const FADE_EXIT_MS = 195;
 
 type Props = {
 	panelId: string;
+	position: LogicalPosition;
+	size: LogicalSize;
+	title?: string;
 	zIndex: number;
 	visible: boolean;
 	onFocus: () => void;
 	children: React.ReactNode;
 };
 
-export default function PanelWindow( { panelId, zIndex, visible, onFocus, children }: Props ) {
-	const { position, size } = useFloatingPanelStatus( panelId );
-	const title = useSelector( ( state: GlobalState ) => selectPanelTitle( state, panelId ) );
-
-	if ( ! position || ! size ) {
-		return null;
-	}
+export default function PanelWindow( { panelId, position, size, title, zIndex, visible, onFocus, children }: Props ) {
+	const { getResizeHandleProps } = usePanelResizeInteraction( panelId );
 
 	const floatingSx = {
 		position: 'fixed' as const,
@@ -58,14 +55,26 @@ export default function PanelWindow( { panelId, zIndex, visible, onFocus, childr
 				<ThemeProvider>
 					<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
 				</ThemeProvider>
-				<ResizeHandle panelId={ panelId } edge="inline-start" />
-				<ResizeHandle panelId={ panelId } edge="inline-end" />
-				<ResizeHandle panelId={ panelId } edge="block-start" />
-				<ResizeHandle panelId={ panelId } edge="block-end" />
-				<CornerResizeHandle panelId={ panelId } corner="block-start-inline-start" />
-				<CornerResizeHandle panelId={ panelId } corner="block-start-inline-end" />
-				<CornerResizeHandle panelId={ panelId } corner="block-end-inline-start" />
-				<CornerResizeHandle panelId={ panelId } corner="block-end-inline-end" />
+				<ResizeHandle edge="inline-start" { ...getResizeHandleProps( 'inline-start' ) } />
+				<ResizeHandle edge="inline-end" { ...getResizeHandleProps( 'inline-end' ) } />
+				<ResizeHandle edge="block-start" { ...getResizeHandleProps( 'block-start' ) } />
+				<ResizeHandle edge="block-end" { ...getResizeHandleProps( 'block-end' ) } />
+				<CornerResizeHandle
+					corner="block-start-inline-start"
+					{ ...getResizeHandleProps( 'block-start-inline-start' ) }
+				/>
+				<CornerResizeHandle
+					corner="block-start-inline-end"
+					{ ...getResizeHandleProps( 'block-start-inline-end' ) }
+				/>
+				<CornerResizeHandle
+					corner="block-end-inline-start"
+					{ ...getResizeHandleProps( 'block-end-inline-start' ) }
+				/>
+				<CornerResizeHandle
+					corner="block-end-inline-end"
+					{ ...getResizeHandleProps( 'block-end-inline-end' ) }
+				/>
 			</Paper>
 		</Fade>
 	);

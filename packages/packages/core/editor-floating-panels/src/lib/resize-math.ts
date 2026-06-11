@@ -67,3 +67,44 @@ export function applyBlockStartResize(
 		size: { ...size, blockSize: anchorBlockEnd - nextBlockStart },
 	};
 }
+
+export function applyResize(
+	direction: ResizeDirection,
+	position: LogicalPosition,
+	size: LogicalSize,
+	inlineDelta: number,
+	blockDelta: number,
+	bounds: ResizeBounds
+): { position: LogicalPosition; size: LogicalSize } {
+	if ( direction === 'inline-end' ) {
+		return { position, size: applyInlineEndResize( size, inlineDelta, bounds ) };
+	}
+
+	if ( direction === 'block-end' ) {
+		return { position, size: applyBlockEndResize( size, blockDelta, bounds ) };
+	}
+
+	if ( direction === 'inline-start' ) {
+		return applyInlineStartResize( position, size, inlineDelta, bounds );
+	}
+
+	if ( direction === 'block-start' ) {
+		return applyBlockStartResize( position, size, blockDelta, bounds );
+	}
+
+	let next = { position, size };
+
+	if ( direction.includes( 'inline-start' ) ) {
+		next = applyInlineStartResize( next.position, next.size, inlineDelta, bounds );
+	} else {
+		next = { position: next.position, size: applyInlineEndResize( next.size, inlineDelta, bounds ) };
+	}
+
+	if ( direction.includes( 'block-start' ) ) {
+		next = applyBlockStartResize( next.position, next.size, blockDelta, bounds );
+	} else {
+		next = { position: next.position, size: applyBlockEndResize( next.size, blockDelta, bounds ) };
+	}
+
+	return next;
+}
