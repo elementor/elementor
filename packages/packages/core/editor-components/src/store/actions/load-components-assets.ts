@@ -9,8 +9,8 @@ export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const documents = await getComponentDocuments( elements );
 
 	updateDocumentState( documents );
-	Object.entries( documents ).forEach( ( [ id, document ] ) => {
-		setPost( Number( id ), document );
+	documents.forEach( ( document, id ) => {
+		setPost( id, document );
 	} );
 
 	await loadComponentsOverridableProps( [ ...documents.keys() ] );
