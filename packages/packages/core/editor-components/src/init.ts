@@ -57,11 +57,13 @@ export function init() {
 	} );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', () => {
-		const { id, config } = getV1CurrentDocument();
+		const { id, config } = getV1CurrentDocument() ?? {};
 
-		if ( id ) {
-			removeComponentStyles( id );
+		if ( ! id ) {
+			return;
 		}
+
+		removeComponentStyles( id );
 
 		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );

@@ -31,10 +31,14 @@ export function addPostStyles( postId: number, document: Document ) {
 	const extracted = extractStylesFromDocument( document );
 
 	if ( ! extracted.length ) {
-		return;
+		if ( ! postStyles.has( postId ) ) {
+			return;
+		}
+		postStyles.delete( postId );
+	} else {
+		postStyles.set( postId, extracted );
 	}
 
-	postStyles.set( postId, extracted );
 	styles = [ ...postStyles.values() ].flat();
 	notifyStyleListeners();
 }

@@ -9,7 +9,7 @@ export function init() {
 	stylesRepository.register( relatedPostsStylesProvider );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', () => {
-		const { id } = getV1CurrentDocument();
+		const { id } = getV1CurrentDocument() ?? {};
 
 		setCurrentDocumentId( id ?? null );
 		reset();

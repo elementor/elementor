@@ -101,9 +101,14 @@ async function fetchAndNotify( ids: number[] ): Promise< void > {
 
 	results.forEach( ( result, index ) => {
 		const id = ids[ index ];
+
+		if ( ! pendingIds.has( id ) ) {
+			return;
+		}
+
 		pendingIds.delete( id );
 
-		if ( ! result ) {
+		if ( ! result || isCurrentDocument( id ) ) {
 			return;
 		}
 
