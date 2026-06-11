@@ -26,13 +26,14 @@ describe( 'useStylePropResolver', () => {
 		} );
 
 		const { result } = renderHook( useStylePropResolver );
-		const applyStyles = createStylesRenderer( {
+
+		const view = createStylesRenderer( {
 			resolve: result.current,
 			breakpoints: {} as BreakpointsMap,
 		} );
 
 		// Act.
-		await applyStyles( {
+		await view( {
 			styles: [
 				{
 					id: 'test-style',
