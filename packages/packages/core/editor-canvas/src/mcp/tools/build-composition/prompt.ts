@@ -18,7 +18,7 @@ export const generatePrompt = () => {
 This tool support v4 elements only
 
 # WORKFLOW
-1. Check/create global classes via "create-global-class" tool
+1. Check/create global classes via "manage-global-classes" tool
 2. Build composition (THIS TOOL) - minimal inline styles
 3. Apply classes via "apply-global-class" tool
 

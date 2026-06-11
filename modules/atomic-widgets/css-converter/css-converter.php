@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Conversion_Failure_Reporter;
+use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,29 +18,120 @@ class Css_Converter {
 
 	private Conversion_Failure_Reporter $failure_reporter;
 
-	public function __construct( Converter_Registry $registry, Conversion_Failure_Reporter $failure_reporter ) {
+	private Expander_Registry $expanders;
+
+	private ?Variable_Prop_Value_Transformer $variable_transformer;
+
+	public function __construct(
+		Converter_Registry $registry,
+		Conversion_Failure_Reporter $failure_reporter,
+		?Expander_Registry $expanders = null,
+		?Variable_Prop_Value_Transformer $variable_transformer = null
+	) {
 		$this->registry = $registry;
 		$this->failure_reporter = $failure_reporter;
+		$this->expanders = $expanders ?? new Expander_Registry();
+		$this->variable_transformer = $variable_transformer;
 	}
 
 	/**
-	 * @return array{props: array, customCss: string}
+	 * @return array{props: array, customCss: string, rejected: string[]}
 	 */
 	public function convert( string $css ): array {
-		$rules = $this->parse( $css );
+		$rules = $this->expand_shorthands( $this->parse( $css ) );
 		$context = new Conversion_Context( $rules );
 		$leftover = [];
 
 		foreach ( $rules as $rule ) {
 			if ( ! $this->try_convert( $context, $rule ) ) {
-				$leftover[] = $this->render_rule( $rule );
+				$leftover[] = $rule['declaration'] . ';';
 			}
 		}
 
+		$props = $context->get_props();
+		$rejected = $context->get_rejected();
+
+		if ( $this->variable_transformer ) {
+			$schema = $this->style_schema();
+			$props = $this->variable_transformer->transform( $props, $schema );
+
+			$ejected = $this->variable_transformer->eject_unresolved_var_props( $props, $schema, $rules );
+			$props = $ejected['props'];
+			$leftover = array_merge( $leftover, $ejected['custom_css'] );
+			$rejected = array_merge( $rejected, $ejected['rejected'] );
+			$props = $this->validate_props( $props, $schema );
+		}
+
 		return [
-			'props' => $context->get_props(),
+			'props'     => $props,
 			'customCss' => implode( ' ', $leftover ),
+			'rejected'  => $rejected,
 		];
+	}
+
+	private function validate_props( array $props, array $schema ): array {
+		if ( empty( $props ) ) {
+			return [];
+		}
+
+		return Props_Parser::make( $schema )->validate( $props )->unwrap();
+	}
+
+	private function style_schema(): array {
+		if ( function_exists( 'apply_filters' ) ) {
+			return Style_Schema::get();
+		}
+
+		return Style_Schema::get_style_schema();
+	}
+
+	/**
+	 * Pre-processing pass: rewrite shorthands (e.g. `border`) into the longhand declarations the
+	 * schema-bound converters understand, in place so the source cascade order is preserved. A rule
+	 * with no matching expander, or whose expander declines (empty result) or throws, is kept as-is so
+	 * it still reaches the converter loop (and custom_css fallback).
+	 *
+	 * @param array<int, array{property: string, value: string, declaration: string}> $rules
+	 * @return array<int, array{property: string, value: string, declaration: string}>
+	 */
+	private function expand_shorthands( array $rules ): array {
+		$expanded = [];
+
+		foreach ( $rules as $rule ) {
+			foreach ( $this->expand_rule( $rule ) as $result_rule ) {
+				$expanded[] = $result_rule;
+			}
+		}
+
+		return $expanded;
+	}
+
+	/**
+	 * @param array{property: string, value: string, declaration: string} $rule
+	 * @return array<int, array{property: string, value: string, declaration: string}>
+	 */
+	private function expand_rule( array $rule ): array {
+		foreach ( $this->expanders->all() as $expander ) {
+			if ( ! $expander->is_supported( $rule ) ) {
+				continue;
+			}
+
+			try {
+				$expanded = $expander->expand( $rule );
+			} catch ( \Throwable $error ) {
+				$this->failure_reporter->report(
+					$rule['property'],
+					Conversion_Failure_Reporter::CATEGORY_EXCEPTION,
+					[ 'message' => $error->getMessage() ]
+				);
+
+				return [ $rule ];
+			}
+
+			return empty( $expanded ) ? [ $rule ] : $expanded;
+		}
+
+		return [ $rule ];
 	}
 
 	/**
@@ -98,6 +191,7 @@ class Css_Converter {
 			$rules[] = [
 				'property' => $property,
 				'value' => $value,
+				'declaration' => $declaration,
 			];
 		}
 
@@ -118,12 +212,5 @@ class Css_Converter {
 		}
 
 		return false;
-	}
-
-	/**
-	 * @param array{property: string, value: string} $rule
-	 */
-	private function render_rule( array $rule ): string {
-		return $rule['property'] . ': ' . $rule['value'] . ';';
 	}
 }

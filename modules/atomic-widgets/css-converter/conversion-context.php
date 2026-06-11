@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Conversion_Context {
 	private array $props = [];
 
+	private array $rejected = [];
+
 	private array $rules;
 
 	private array $global_variables;
@@ -54,5 +56,13 @@ class Conversion_Context {
 	 */
 	public function set_prop( string $property, $value ): void {
 		$this->props[ $property ] = $value;
+	}
+
+	public function reject( string $declaration ): void {
+		$this->rejected[] = $declaration;
+	}
+
+	public function get_rejected(): array {
+		return $this->rejected;
 	}
 }

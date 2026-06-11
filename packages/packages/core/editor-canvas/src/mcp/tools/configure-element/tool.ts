@@ -82,7 +82,11 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 	} );
 };
 
-async function applyStyleFromCss( opts: { elementId: string; elementType: string; style: Record< string, string > } ) {
+async function applyStyleFromCss( opts: {
+	elementId: string;
+	elementType: string;
+	style: Record< string, string | null >;
+} ) {
 	const { elementId, elementType, style } = opts;
 	if ( ! style || Object.keys( style ).length === 0 ) {
 		return;
@@ -101,6 +105,7 @@ async function applyStyleFromCss( opts: { elementId: string; elementType: string
 			elementType,
 			propertyName: '_styles',
 			propertyValue: styleValue,
+			customCssWriteMode: 'merge-with-stored',
 		} );
 	} catch ( error ) {
 		throw new Error(

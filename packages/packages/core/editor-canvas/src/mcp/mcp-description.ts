@@ -89,7 +89,7 @@ At the response you will also find llm_instructions for you to do afterwards, re
 
 - **PropValue Types**: Arrays that accept union types are typed as mixed arrays
 - **Visual Sizing**: Widget sizes MUST be defined via the style parameter (raw CSS). Widget properties like image "size" control resolution, not visual appearance
-- **Global Variables**: Reference by ID in PropValues (e.g., \`{ "$$type": "global-color-variable", "value": "variable-id" }\`)
+- **Global Variables**: Reference by label/name: (e.g. var(--card-background-color)
 - **Naming Conventions**: Use meaningful, purpose-based names (e.g., "primary-button", "heading-large"), not value-based names (e.g., "blue-style", "20px-padding")
 
 ## Example: e-image PropValue Structure

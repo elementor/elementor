@@ -5,7 +5,7 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 import { Schema } from '@elementor/editor-props';
-import { getVariantByMeta } from '@elementor/editor-styles';
+import { getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
 import { doUpdateElementProperty } from '../do-update-element-property';
@@ -212,6 +212,43 @@ describe( 'doUpdateElementProperty', () => {
 				custom_css: {
 					raw: btoa( `${ EXISTING_CUSTOM_CSS }\n${ ADDITIONAL_CUSTOM_CSS }` ),
 				},
+			} )
+		);
+	} );
+
+	it( 'passes a null style value through unresolved so the editor resets the prop to default', () => {
+		// Arrange
+		jest.mocked( getStylesSchema ).mockReturnValue( {
+			color: { key: 'colorPropKey', kind: 'plain' },
+		} as never );
+		jest.mocked( getElementStyles ).mockReturnValue( {
+			[ LOCAL_STYLE_ID ]: {
+				id: LOCAL_STYLE_ID,
+				label: 'local',
+				type: 'class',
+				variants: [],
+			},
+		} );
+		jest.mocked( getVariantByMeta ).mockReturnValue( {
+			meta: { breakpoint: 'desktop', state: null },
+			props: {},
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: '_styles',
+			propertyValue: {
+				color: null,
+			},
+		} );
+
+		// Assert
+		expect( Schema.adjustLlmPropValueSchema ).not.toHaveBeenCalled();
+		expect( updateElementStyle ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				props: { color: null },
 			} )
 		);
 	} );
