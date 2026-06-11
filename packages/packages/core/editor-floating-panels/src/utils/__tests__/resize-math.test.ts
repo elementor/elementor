@@ -3,6 +3,7 @@ import {
 	applyBlockStartResize,
 	applyInlineEndResize,
 	applyInlineStartResize,
+	applyResize,
 	type ResizeBounds,
 } from '../resize-math';
 
@@ -153,5 +154,85 @@ describe( 'applyBlockStartResize', () => {
 		// Assert.
 		expect( next.position.insetBlockStart ).toBe( 360 );
 		expect( next.size.blockSize ).toBe( 320 );
+	} );
+} );
+
+describe( 'applyResize', () => {
+	const position = { insetInlineStart: 500, insetBlockStart: 200 };
+	const size = { inlineSize: 320, blockSize: 480 };
+
+	it( 'delegates inline-end resizing without moving the panel', () => {
+		// Act.
+		const next = applyResize( 'inline-end', position, size, 40, 0, bounds );
+
+		// Assert.
+		expect( next.position ).toEqual( position );
+		expect( next.size ).toEqual( { inlineSize: 360, blockSize: 480 } );
+	} );
+
+	it( 'delegates block-end resizing without moving the panel', () => {
+		// Act.
+		const next = applyResize( 'block-end', position, size, 0, 60, bounds );
+
+		// Assert.
+		expect( next.position ).toEqual( position );
+		expect( next.size ).toEqual( { inlineSize: 320, blockSize: 540 } );
+	} );
+
+	it( 'delegates inline-start resizing and updates position', () => {
+		// Act.
+		const next = applyResize( 'inline-start', position, size, -80, 0, bounds );
+
+		// Assert.
+		expect( next.position.insetInlineStart ).toBe( 420 );
+		expect( next.size.inlineSize ).toBe( 400 );
+	} );
+
+	it( 'delegates block-start resizing and updates position', () => {
+		// Act.
+		const next = applyResize( 'block-start', position, size, 0, -40, bounds );
+
+		// Assert.
+		expect( next.position.insetBlockStart ).toBe( 160 );
+		expect( next.size.blockSize ).toBe( 520 );
+	} );
+
+	it( 'resizes the block-end-inline-end corner', () => {
+		// Act.
+		const next = applyResize( 'block-end-inline-end', position, size, 30, 20, bounds );
+
+		// Assert.
+		expect( next.position ).toEqual( position );
+		expect( next.size ).toEqual( { inlineSize: 350, blockSize: 500 } );
+	} );
+
+	it( 'resizes the block-start-inline-start corner', () => {
+		// Act.
+		const next = applyResize( 'block-start-inline-start', position, size, -50, -30, bounds );
+
+		// Assert.
+		expect( next.position.insetInlineStart ).toBe( 450 );
+		expect( next.position.insetBlockStart ).toBe( 170 );
+		expect( next.size ).toEqual( { inlineSize: 370, blockSize: 510 } );
+	} );
+
+	it( 'resizes the block-end-inline-start corner', () => {
+		// Act.
+		const next = applyResize( 'block-end-inline-start', position, size, -40, 25, bounds );
+
+		// Assert.
+		expect( next.position.insetInlineStart ).toBe( 460 );
+		expect( next.position.insetBlockStart ).toBe( 200 );
+		expect( next.size ).toEqual( { inlineSize: 360, blockSize: 505 } );
+	} );
+
+	it( 'resizes the block-start-inline-end corner', () => {
+		// Act.
+		const next = applyResize( 'block-start-inline-end', position, size, 35, -20, bounds );
+
+		// Assert.
+		expect( next.position.insetInlineStart ).toBe( 500 );
+		expect( next.position.insetBlockStart ).toBe( 180 );
+		expect( next.size ).toEqual( { inlineSize: 355, blockSize: 500 } );
 	} );
 } );
