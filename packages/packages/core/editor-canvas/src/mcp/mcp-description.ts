@@ -74,9 +74,7 @@ Map each configuration-id to raw CSS declarations (property → value strings). 
 - Example:
 \`\`\`json
 {
-  "heading-1": {
-    "color": "#1a1a1a",
-    "font-size": "2rem"
+  "heading-1": "color: #1a1a1a; font-size: 2rem;"
   }
 }
 \`\`\`
