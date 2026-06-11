@@ -34,7 +34,7 @@ export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayP
 				data-grid-outline={ id }
 				role="presentation"
 			>
-				<GridOutline tracks={ tracks } width={ rect.width } height={ rect.height } />
+				<GridOutline element={ element } tracks={ tracks } width={ rect.width } height={ rect.height } />
 			</Box>
 		</FloatingPortal>
 	);
