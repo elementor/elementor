@@ -1,7 +1,7 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
@@ -12,54 +12,43 @@ export const generatePrompt = () => {
 Configure an existing element on the page.
 
 # **CRITICAL - REQUIRED INFORMATION (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
-   Required to understand which widgets are available, and what are their configuration schemas.
-   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply parameter values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
-   Use this resource to understand which style properties are available for each element, and how to structure the "stylePropertiesToChange" parameter.
-3. If not sure about the PropValues schema, you can use the "get-element-configuration-values" tool to retrieve the current PropValues configuration of the element.
+1. [${ WIDGET_SCHEMA_URI }] — **Widget properties** (\`propertiesToChange\`): each widgetType (e.g. e-heading, e-button) has its own PropType schema; values must be PropValues with \`$$type\`.
+2. [elementor://global-variables] — **Design tokens for styling**: use labels in CSS as \`var(--label)\` or \`var(--label, fallback)\`; only variables listed here are valid.
+3. **Styling** (\`style\` parameter): flat map of CSS property → value strings — **not** PropValues. The server converts to native styles; unconvertible declarations become custom CSS.
+4. **Current state**: \`get-element-configuration-values\` returns \`properties\` as PropValues and \`style\` in stored form; when writing, send raw CSS in \`style\`, not copied PropValues.
 
-Before using this tool, check the definitions of the elements PropTypes at the resource "widget-schema-by-type" at editor-canvas__elementor://widgets/schema/{widgetType}
-All widgets share a common _style property for styling, which uses the common styles schema.
-Retrieve and check the common styles schema at the resource list "styles-schema" at editor-canvas__elementor://styles/schema/{category}
+Before using this tool, read the widget PropType schema at editor-canvas__elementor://widgets/schema/{widgetType}
 
 # When to use this tool
 When a user requires to change anything in an element, such as updating text, colors, sizes, or other configurable properties.
 This tool handles elements of type "widget".
-This tool handles styling elements, using the "stylePropertiesToChange" parameter.
+This tool handles styling elements, using the "style" parameter (raw CSS as a property → value map).
 
-To CLEAR a property (i.e., set it to default or none), provide null as a value.
+To CLEAR a property (i.e., set it to default or none), provide null as a value - example: \`background-color: null\`.
 
 The element's schema must be known before using this tool.
-The style schema must be known before using this tool.
 
-Attached resource link describing how PropType schema should be parsed as PropValue for this tool.
-
-Read carefully the PropType Schema of the element and it's styles, then apply correct PropValue according to the schema.
-
-PropValue structure:
+**PropValue structure (for \`propertiesToChange\` only — not for \`style\`):**
 {
     "$$type": string, // MANDATORY as defined in the PropType schema under the "key" property
     value: unknown // The value according to the PropType schema for kinds of "array", use array with PropValues items inside. For "object", read the shape property of the PropType schema. For "plain", use strings.
 }
 
 <IMPORTANT>
-ALWAYS MAKE SURE you have the PropType schemas for the element you are configuring, and the common-styles schema for styling. If you are not sure, retrieve the schema from the resources mentioned above.
+ALWAYS MAKE SURE you have the PropType schemas for the element you are configuring. If you are not sure, retrieve the schema from the resources mentioned above.
 </IMPORTANT>
 
-You can use multiple property changes at once by providing multiple entries in the propertiesToChange object, including _style alongside non-style props.
+You can use multiple property changes at once by providing multiple entries in the propertiesToChange object.
 Some properties are nested, use the root property name, then objects with nested values inside, as the complete schema suggests.
 
 Make sure you have the "widget-schema-by-type" resource available to retrieve the PropType schema for the element type you are configuring.
-Make sure you have the "styles-schema" resources available to retrieve the common styles schema.
 
 # How to configure elements
-We use a dedicated PropType Schema for configuring elements, including styles. When you configure an element, you must use the EXACT PropType Value as defined in the schema.
-For styleProperties, use the style schema provided, as it also uses the PropType format.
-For all non-primitive types, provide the key property as defined in the schema as $$type in the generated object, as it is MANDATORY for parsing.
+We use a dedicated PropType Schema for configuring element properties (propertiesToChange). When you configure an element property, you must use the EXACT PropType Value as defined in the schema.
+For styling, use the "style" parameter with raw CSS declarations (property → value strings) - e.g. \`color: var(--primary-text, #000); height: 4rem;\`;
+For all non-primitive entries in \`propertiesToChange\`, provide the schema \`key\` as \`$$type\` in the generated object, as it is MANDATORY for parsing.
 
-Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property from the original configuration for every property you are changing.
+Use the EXACT PropType schema given, and ALWAYS include the \`key\` from the schema for every property you are changing in \`propertiesToChange\`.
 
 Check \`llm_guidance.default_settings\` in the widget schema — include a key in \`propertiesToChange\` only when the user explicitly asks to change it.
 
@@ -92,8 +81,8 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 	);
 
 	configureElementToolPrompt.parameter(
-		'stylePropertiesToChange',
-		'An object containing the style properties to change, with their new values. OPTIONAL.'
+		'style',
+		'A flat map of raw CSS declarations (property → value), e.g. { "line-height": "1.25rem", "color": "var(--primary-text, #000)" }. Set a value to null to reset that property to its default. OPTIONAL.'
 	);
 
 	configureElementToolPrompt.example( `
@@ -110,20 +99,9 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
       value: false
     },
   },
-  stylePropertiesToChange: {
-    'line-height': {
-      $$type: 'size',
-      value: {
-        size: {
-          $$type: 'number',
-          value: 20
-        },
-        unit: {
-          $$type: 'string',
-          value: 'px'
-        }
-      }
-    }
+  style: {
+    'line-height': '1.25rem',
+    'color': 'var(--primary-text, #000)'
   },
   elementId: 'element-id',
   elementType: 'element-type'
@@ -132,7 +110,7 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 ` );
 
 	configureElementToolPrompt.instruction(
-		'The $$type property is MANDATORY for every value; it is required to parse the value and apply application-level effects.'
+		'The $$type property is MANDATORY for every value in propertiesToChange; it is not used in the style parameter (raw CSS only).'
 	);
 
 	configureElementToolPrompt.instruction( `
