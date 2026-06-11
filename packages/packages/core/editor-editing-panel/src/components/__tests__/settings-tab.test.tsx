@@ -167,6 +167,7 @@ describe( '<SettingsTab />', () => {
 		const { container } = renderWithTheme( <SettingsTab /> );
 
 		// Assert.
+		// eslint-disable-next-line testing-library/no-node-access
 		expect( container.firstChild?.childNodes ).toHaveLength( 1 );
 		expect( screen.getByText( 'Select Control' ) ).toBeInTheDocument();
 	} );
@@ -202,7 +203,7 @@ describe( '<SettingsTab />', () => {
 		expect( screen.getByText( 'Select Control' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Textarea Control' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Unsupported Control' ) ).not.toBeInTheDocument();
-
+		// eslint-disable-next-line testing-library/no-node-access
 		expect( container.firstChild?.childNodes ).toHaveLength( 2 );
 	} );
 
