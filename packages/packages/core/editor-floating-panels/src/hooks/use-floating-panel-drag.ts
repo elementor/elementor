@@ -12,6 +12,7 @@ type DragSession = {
 	startClientX: number;
 	startClientY: number;
 	startPosition: LogicalPosition;
+	bounds: DragBounds;
 };
 
 function getDragBounds( size: LogicalSize | undefined ): DragBounds {
@@ -37,9 +38,10 @@ export function useFloatingPanelDrag( id: string ) {
 				startClientX: event.clientX,
 				startClientY: event.clientY,
 				startPosition: position ?? { insetInlineStart: 0, insetBlockStart: 0 },
+				bounds: getDragBounds( size ),
 			};
 		},
-		[ position ]
+		[ position, size ]
 	);
 
 	const onPointerMove = useCallback(
@@ -53,9 +55,9 @@ export function useFloatingPanelDrag( id: string ) {
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
 			const logical = physicalToLogicalDelta( physical, isRtl() );
 
-			setPosition( applyDragDelta( session.startPosition, logical, getDragBounds( size ) ) );
+			setPosition( applyDragDelta( session.startPosition, logical, session.bounds ) );
 		},
-		[ setPosition, size ]
+		[ setPosition ]
 	);
 
 	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {

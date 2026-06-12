@@ -150,6 +150,37 @@ describe( 'usePanelResizeInteraction', () => {
 		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( startSize );
 	} );
 
+	it( 'snapshots viewport bounds at pointer down', () => {
+		// Arrange.
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const sidePanel = document.getElementById( 'elementor-panel' );
+
+		if ( ! sidePanel ) {
+			throw new Error( 'Side panel is not mounted' );
+		}
+
+		const getBoundingClientRect = jest.spyOn( sidePanel, 'getBoundingClientRect' );
+		const target = createPointerTarget();
+		const { result } = renderHookWithStore( () => usePanelResizeInteraction( PANEL_ID ), store );
+		const handleProps = result.current.getResizeHandleProps( 'inline-end' );
+
+		// Act.
+		act( () => {
+			handleProps.onPointerDown( createPointerEvent( target, { clientX: 0, clientY: 0 } ) );
+			getBoundingClientRect.mockClear();
+			handleProps.onPointerMove( createPointerEvent( target, { clientX: 50, clientY: 0 } ) );
+			handleProps.onPointerMove( createPointerEvent( target, { clientX: 100, clientY: 0 } ) );
+		} );
+
+		// Assert.
+		expect( getBoundingClientRect ).not.toHaveBeenCalled();
+	} );
+
 	it( 'clears the resize session on pointer up', () => {
 		// Arrange.
 		const store = __getStore();

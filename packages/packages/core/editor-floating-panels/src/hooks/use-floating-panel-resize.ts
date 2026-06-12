@@ -17,6 +17,7 @@ type ResizeSession = {
 	startClientY: number;
 	startPosition: LogicalPosition;
 	startSize: LogicalSize;
+	bounds: ResizeBounds;
 };
 
 const FALLBACK_MIN_SIZE: LogicalSize = { inlineSize: 0, blockSize: 0 };
@@ -59,9 +60,10 @@ export function usePanelResizeInteraction( id: string ) {
 				startClientY: event.clientY,
 				startPosition: position,
 				startSize: size,
+				bounds: getResizeBounds( position, minSize ?? FALLBACK_MIN_SIZE ),
 			};
 		},
-		[ position, size ]
+		[ minSize, position, size ]
 	);
 
 	const onPointerMove = useCallback(
@@ -74,15 +76,13 @@ export function usePanelResizeInteraction( id: string ) {
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
 			const logical = physicalToLogicalDelta( physical, isRtl() );
-			const resizeBounds = getResizeBounds( session.startPosition, minSize ?? FALLBACK_MIN_SIZE );
-
 			const next = applyResize(
 				session.direction,
 				session.startPosition,
 				session.startSize,
 				logical.inlineDelta,
 				logical.blockDelta,
-				resizeBounds
+				session.bounds
 			);
 
 			const positionChanged =
@@ -95,7 +95,7 @@ export function usePanelResizeInteraction( id: string ) {
 
 			setSize( next.size );
 		},
-		[ minSize, setPosition, setSize ]
+		[ setPosition, setSize ]
 	);
 
 	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
