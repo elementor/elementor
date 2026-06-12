@@ -68,7 +68,7 @@ export const adjustLlmPropValueSchema = (
 			return {
 				$$type: 'html-v3',
 				value: {
-					content: rawHtmlV3PropValue.content,
+					...rawHtmlV3PropValue,
 					children: rawHtmlV3PropValue.children ?? [],
 				},
 			};

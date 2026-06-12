@@ -1,4 +1,4 @@
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
+import { WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
 const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
 
@@ -21,7 +21,6 @@ The \`$$type\` defines how Elementor interprets the value. Providing the correct
 - **Global Variables**: Reusable colors, sizes, and fonts (\`elementor://global-variables\`)
 - **Global Classes**: Reusable style sets that can be applied to elements (\`elementor://global-classes\`)
 - **Widget Schemas**: Configuration options for each widget type (\`${ WIDGET_SCHEMA_URI }\`)
-- **Style Schema**: Common styles shared across all widgets and containers (\`${ STYLE_SCHEMA_URI }\`)
 
 # Building Compositions with build_composition
 
@@ -70,28 +69,25 @@ Map each configuration-id to its widget properties using PropValues:
 }
 \`\`\`
 
-### 6. Create stylesConfig
-Map each configuration-id to style PropValues from \`${ STYLE_SCHEMA_URI }\`:
-- Use global variables for colors, sizes, and fonts
-- Example using global variable:
+### 6. Create style
+Map each configuration-id to raw CSS declarations (property → value strings). The server converts them to native styles and stores any unconvertible declarations as the element custom CSS.
+- Example:
 \`\`\`json
 {
-  "heading-1": {
-    "color": { "$$type": "global-color-variable", "value": "primary-color-id" },
-    "font-size": { "$$type": "size", "value": "2rem" }
+  "heading-1": "color: #1a1a1a; font-size: 2rem;"
   }
 }
 \`\`\`
 
 ### 7. Execute build_composition
-Call the tool with your XML structure, elementConfig, and stylesConfig. The response will contain the created element IDs.
+Call the tool with your XML structure, elementConfig, and style. The response will contain the created element IDs.
 At the response you will also find llm_instructions for you to do afterwards, read and follow them!
 
 ## Key Points
 
 - **PropValue Types**: Arrays that accept union types are typed as mixed arrays
-- **Visual Sizing**: Widget sizes MUST be defined in stylesConfig. Widget properties like image "size" control resolution, not visual appearance
-- **Global Variables**: Reference by ID in PropValues (e.g., \`{ "$$type": "global-color-variable", "value": "variable-id" }\`)
+- **Visual Sizing**: Widget sizes MUST be defined via the style parameter (raw CSS). Widget properties like image "size" control resolution, not visual appearance
+- **Global Variables**: Reference by label/name: (e.g. var(--card-background-color)
 - **Naming Conventions**: Use meaningful, purpose-based names (e.g., "primary-button", "heading-large"), not value-based names (e.g., "blue-style", "20px-padding")
 
 ## Example: e-image PropValue Structure
@@ -109,5 +105,5 @@ At the response you will also find llm_instructions for you to do afterwards, re
   }
 }
 \`\`\`
-Note: The "size" property controls image resolution/loading, not visual size. Set visual dimensions in stylesConfig.
+Note: The "size" property controls image resolution/loading, not visual size. Set visual dimensions via the style parameter (raw CSS).
 `;

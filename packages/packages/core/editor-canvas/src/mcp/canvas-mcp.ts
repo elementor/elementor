@@ -15,6 +15,9 @@ import { initGetElementConfigTool } from './tools/get-element-config/tool';
 import { getDynamicTagNamesByCategories } from './utils/resolve-dynamic-tag';
 
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
+	// TODO: Remove this comment once 4.2 released
+	// NOTE: Style schema removed in favor of css-to-schema functionality [ED-24441]
+	// Reference code can be found at any commit prior to `d338e816f0c97b90b52fe2f1ef0bfe2aad816ab0`
 	Schema.setDynamicTagNamesResolver( getDynamicTagNamesByCategories );
 	initWidgetsSchemaResource( reg );
 	initAvailableWidgetsResource( reg );

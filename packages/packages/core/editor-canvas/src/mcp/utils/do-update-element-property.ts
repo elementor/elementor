@@ -61,6 +61,9 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
 				}
+				if ( val === null ) {
+					return [ key, null ];
+				}
 				return [ key, resolvePropValue( val, propKey ) ];
 			} )
 		);

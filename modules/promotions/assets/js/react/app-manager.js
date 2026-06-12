@@ -4,18 +4,14 @@ import { createRoot } from 'react-dom/client';
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
-		this.atomicFormPromotionWrapper = null;
+		this.activePromotionWrapper = null;
 		this.onRoute = () => {};
 
-		this.attachAtomicFormListeners();
+		this.attachAtomicWidgetPromotionListeners();
 	}
 
 	getPromotionData( promotionType ) {
 		return elementorPromotionsData[ promotionType ] || {};
-	}
-
-	getAtomicFormPromotionData() {
-		return elementor?.config?.atomicFormPromotion || {};
 	}
 
 	mount( targetNode, selectors ) {
@@ -48,20 +44,19 @@ export class AppManager {
 		);
 	}
 
-	mountAtomicFormPromotion( targetEl, ctaUrl ) {
+	mountCustomPromotion( targetEl, wrapperClassName, promotionData, ctaUrl ) {
 		this.unmount();
 
-		this.atomicFormPromotionWrapper = document.createElement( 'span' );
-		this.atomicFormPromotionWrapper.className = 'e-atomic-form-promotion-wrapper';
-		targetEl.appendChild( this.atomicFormPromotionWrapper );
+		this.activePromotionWrapper = document.createElement( 'span' );
+		this.activePromotionWrapper.className = wrapperClassName;
+		targetEl.appendChild( this.activePromotionWrapper );
 
 		this.attachEditorEventListeners();
 
 		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
 		const isRTL = elementorCommon.config.isRTL;
-		const promotionData = this.getAtomicFormPromotionData();
 
-		this.promotionInfoTip = createRoot( this.atomicFormPromotionWrapper );
+		this.promotionInfoTip = createRoot( this.activePromotionWrapper );
 		this.promotionInfoTip.render(
 			<App
 				colorScheme={ colorScheme }
@@ -74,11 +69,13 @@ export class AppManager {
 		);
 	}
 
-	attachAtomicFormListeners() {
-		document.addEventListener( 'atomic-form-promotion:open', ( event ) => {
-			const promotionData = this.getAtomicFormPromotionData();
+	attachAtomicWidgetPromotionListeners() {
+		const promotions = elementor?.config?.atomicWidgetPromotions || [];
 
-			this.mountAtomicFormPromotion( event.detail.target, promotionData.widgetCtaUrl );
+		promotions.forEach( ( { type, content } ) => {
+			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
+				this.mountCustomPromotion( event.detail.target, `e-${ type }-promotion-wrapper`, content, content.widgetCtaUrl );
+			} );
 		} );
 	}
 
@@ -88,12 +85,12 @@ export class AppManager {
 			this.promotionInfoTip.unmount();
 		}
 
-		if ( this.atomicFormPromotionWrapper && this.atomicFormPromotionWrapper.parentNode ) {
-			this.atomicFormPromotionWrapper.parentNode.removeChild( this.atomicFormPromotionWrapper );
+		if ( this.activePromotionWrapper?.parentNode ) {
+			this.activePromotionWrapper.parentNode.removeChild( this.activePromotionWrapper );
 		}
 
 		this.promotionInfoTip = null;
-		this.atomicFormPromotionWrapper = null;
+		this.activePromotionWrapper = null;
 	}
 
 	attachEditorEventListeners() {

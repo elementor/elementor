@@ -17,6 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { ElementProvider } from '../contexts/element-context';
 import { getEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { EditorPanelErrorFallback } from './editing-panel-error-fallback';
+import { EditingPanelStickyPromotion } from './editing-panel-sticky-promotion';
 import { EditingPanelTabs } from './editing-panel-tabs';
 
 export const { Slot: PanelHeaderTopSlot, inject: injectIntoPanelHeaderTop } = createLocation();
@@ -43,9 +44,10 @@ export const EditingPanel = () => {
 				<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
 				<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
 			</PanelHeader>
-			<PanelBody>
+			<PanelBody sx={ { height: 'auto', flex: 1, minHeight: 0 } }>
 				<EditingPanelTabs />
 			</PanelBody>
+			<EditingPanelStickyPromotion />
 		</>
 	);
 
