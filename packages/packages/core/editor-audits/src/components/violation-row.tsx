@@ -2,11 +2,9 @@ import * as React from 'react';
 import { useState } from 'react';
 import { getElementIcon, getElementTitle } from '@elementor/editor-elements';
 import { AlertCircleIcon, BulbIcon, CheckIcon, ChevronDownIcon, EyeIcon, HelpIcon } from '@elementor/icons';
-import { __useSelector as useSelector } from '@elementor/store';
 import { Alert, AlertTitle, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { AUDIT_PANEL_ID } from '../constants';
 import { useViolationFocus } from '../hooks/use-violation-focus';
 import { type AuditMeta, type AuditViolation } from '../types';
 import { buildAngiePrompt } from '../utils/build-angie-prompt';
@@ -15,38 +13,17 @@ import FixViolationWithAngie from './fix-violation-with-angie';
 import SeverityIcon from './severity-icons';
 import ViolationIcon from './violation-icons';
 
-const PANEL_Z_INDEX_BASE = 1000;
-
-type FloatingPanelsState = {
-	floatingPanels: {
-		byId: Record< string, { zIndex: number } | undefined >;
-	};
-};
-
 type Props = {
 	audit: AuditMeta;
 	skipReason?: string;
 	violations?: AuditViolation[];
 };
 
-function useAuditPanelTooltipZIndex(): number {
-	const panelZIndex = useSelector(
-		( state: FloatingPanelsState ) => state.floatingPanels.byId[ AUDIT_PANEL_ID ]?.zIndex ?? 0
-	);
-
-	return PANEL_Z_INDEX_BASE + panelZIndex + 1;
-}
-
 function SkipReasonTooltip( { reason }: { reason: string } ) {
-	const tooltipZIndex = useAuditPanelTooltipZIndex();
-
 	return (
 		<Tooltip
 			title={ reason }
 			placement="top"
-			PopperProps={ {
-				sx: { zIndex: tooltipZIndex },
-			} }
 		>
 			<Box aria-label={ reason } component="span" sx={ { display: 'inline-flex', alignItems: 'center' } }>
 				<HelpIcon fontSize="small" color="action" />
