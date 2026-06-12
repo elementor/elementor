@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
-					<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+					<i class="eicon-upgrade-crown-full"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 				</a>
 			</span>
 		<# } #>
@@ -88,8 +88,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
+<<<<<<< HEAD
 		<# } else if ( false === obj.editable && !obj.atomicFormPromotion && !obj.birthdayEasterEgg ) { #>
 			<i class="eicon-lock"></i>
+=======
+		<# } else if ( false === obj.editable && !obj.promotionType && !obj.birthdayEasterEgg ) { #>
+			<i class="eicon-upgrade-crown-full"></i>
+>>>>>>> 31a6b8d9bf (Internal: Improve popup display rules [ED-24383] (#36148))
 		<# } #>
 		<# if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
