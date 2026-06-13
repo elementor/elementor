@@ -5,30 +5,22 @@ import { createRoot } from 'react-dom/client';
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
-<<<<<<< HEAD
-		this.atomicFormPromotionWrapper = null;
-=======
 		this.promotionWrapper = null;
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 		this.onRoute = () => {};
 		this.unbindIframeEvents = () => {};
 
-<<<<<<< HEAD
 		this.attachAtomicFormListeners();
-=======
-		this.attachAtomicWidgetPromotionListeners();
 		this.attachWidgetPromotionListeners();
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 	}
 
 	getPromotionData( promotionType ) {
 		return elementorPromotionsData[ promotionType ] || {};
 	}
 
-<<<<<<< HEAD
 	getAtomicFormPromotionData() {
 		return elementor?.config?.atomicFormPromotion || {};
-=======
+	}
+
 	resolveWidgetPromotionData( detail ) {
 		const promotions = elementor?.config?.v4Promotions || {};
 
@@ -57,7 +49,6 @@ export class AppManager {
 			ctaText: fallbackCtaText,
 			hideProTag,
 		};
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 	}
 
 	mount( targetNode, selectors ) {
@@ -90,22 +81,6 @@ export class AppManager {
 		);
 	}
 
-<<<<<<< HEAD
-	mountAtomicFormPromotion( targetEl, ctaUrl ) {
-		this.unmount();
-
-		this.atomicFormPromotionWrapper = document.createElement( 'span' );
-		this.atomicFormPromotionWrapper.className = 'e-atomic-form-promotion-wrapper';
-		targetEl.appendChild( this.atomicFormPromotionWrapper );
-
-		this.attachEditorEventListeners();
-
-		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
-		const isRTL = elementorCommon.config.isRTL;
-		const promotionData = this.getAtomicFormPromotionData();
-
-		this.promotionInfoTip = createRoot( this.atomicFormPromotionWrapper );
-=======
 	mountCard( targetEl, wrapperClassName, appProps ) {
 		this.unmount();
 
@@ -115,7 +90,6 @@ export class AppManager {
 
 		this.attachEditorEventListeners();
 		this.promotionInfoTip = createRoot( this.promotionWrapper );
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 		this.promotionInfoTip.render(
 			<App
 				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
@@ -131,16 +105,10 @@ export class AppManager {
 		document.addEventListener( 'atomic-form-promotion:open', ( event ) => {
 			const promotionData = this.getAtomicFormPromotionData();
 
-<<<<<<< HEAD
-			this.mountAtomicFormPromotion( event.detail.target, promotionData.widgetCtaUrl );
-=======
-		promotions.forEach( ( { type, content } ) => {
-			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
-				this.mountCard( event.detail.target, `e-${ type }-promotion-wrapper`, {
-					cardType: 'atomicForm',
-					promotionData: content,
-					ctaUrl: content.widgetCtaUrl,
-				} );
+			this.mountCard( event.detail.target, 'e-atomic-form-promotion-wrapper', {
+				cardType: 'atomicForm',
+				promotionData,
+				ctaUrl: promotionData.widgetCtaUrl,
 			} );
 		} );
 	}
@@ -151,7 +119,6 @@ export class AppManager {
 				cardType: 'widgetPromotion',
 				promotionData: this.resolveWidgetPromotionData( event.detail ),
 			} );
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 		} );
 	}
 
@@ -162,19 +129,10 @@ export class AppManager {
 			this.unbindIframeEvents();
 		}
 
-<<<<<<< HEAD
-		if ( this.atomicFormPromotionWrapper && this.atomicFormPromotionWrapper.parentNode ) {
-			this.atomicFormPromotionWrapper.parentNode.removeChild( this.atomicFormPromotionWrapper );
-		}
-
-		this.promotionInfoTip = null;
-		this.atomicFormPromotionWrapper = null;
-=======
 		this.promotionWrapper?.parentNode?.removeChild( this.promotionWrapper );
 
 		this.promotionInfoTip = null;
 		this.promotionWrapper = null;
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
 	}
 
 	attachEditorEventListeners() {

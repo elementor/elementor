@@ -123,17 +123,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown( event ) {
-<<<<<<< HEAD
-		if ( this.isAtomicFormPromotion() ) {
-			event.stopPropagation();
-			document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:open', {
-=======
 		event.stopPropagation();
 
-		if ( this.isAtomicWidgetPromotion() ) {
-			const promotionType = this.model.get( 'promotionType' );
-			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
->>>>>>> 9b3cf34022 (Internal: Improve popup display rules [ED-24383] (#36158))
+		if ( this.isAtomicFormPromotion() ) {
+			document.dispatchEvent( new CustomEvent( 'atomic-form-promotion:open', {
 				detail: { target: this.el },
 			} ) );
 			return;
