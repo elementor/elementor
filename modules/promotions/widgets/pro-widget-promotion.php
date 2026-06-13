@@ -73,7 +73,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 			return '';
 		}
 
-		return Rendered_Html_Sanitizer::sanitize( $rendered_html );
+		return Rendered_Html_Sanitizer::sanitize_for_display( $rendered_html );
 	}
 
 	private function render_frozen_preview() {
@@ -82,7 +82,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 		?>
 		<div class="e-site-builder-frozen-preview">
 			<div class="e-frozen-content">
-				<?php echo wp_kses_post( $rendered_html ); ?>
+				<?php echo $rendered_html; ?>
 			</div>
 			<div class="e-frozen-overlay">
 				<span class="e-badge"><i class="eicon-lock" aria-hidden="true"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>
@@ -99,7 +99,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 		$rendered_html = $this->get_sanitized_rendered_html();
 		?>
 		<div class="e-site-builder-frozen-content">
-			<?php echo wp_kses_post( $rendered_html ); ?>
+			<?php echo $rendered_html; ?>
 		</div>
 		<?php
 	}

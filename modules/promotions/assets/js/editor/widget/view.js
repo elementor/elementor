@@ -16,6 +16,18 @@ export default class View extends WidgetView {
 		return '';
 	}
 
+	hasFrozenRenderedHtml() {
+		return Boolean( this.getEditModel().getSetting( '__rendered_html' )?.trim() );
+	}
+
+	_renderChildren() {
+		if ( this.hasFrozenRenderedHtml() ) {
+			return;
+		}
+
+		return WidgetView.prototype._renderChildren.apply( this, arguments );
+	}
+
 	getContextMenuGroups() {
 		return super.getContextMenuGroups().filter(
 			( group ) => {

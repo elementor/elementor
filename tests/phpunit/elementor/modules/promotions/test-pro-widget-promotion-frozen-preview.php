@@ -99,7 +99,7 @@ class Test_Pro_Widget_Promotion_Frozen_Preview extends Elementor_Test_Base {
 	}
 
 	public function test_render_frozen_frontend_strips_document_noise_from_rendered_html() {
-		$document_html = '<head><style>.wp-emoji{display:inline}</style></head>'
+		$document_html = '<head><style>.headline{color:blue}</style></head>'
 			. '<body><script>var wc_order_attribution = {};</script>'
 			. '<div class="elementor-widget-animated-headline">Bold Style</div></body>';
 
@@ -121,7 +121,7 @@ class Test_Pro_Widget_Promotion_Frozen_Preview extends Elementor_Test_Base {
 		$output = ob_get_clean();
 
 		$this->assertStringContainsString( 'Bold Style', $output );
-		$this->assertStringNotContainsString( 'wp-emoji', $output );
+		$this->assertStringContainsString( '.headline{color:blue}', $output );
 		$this->assertStringNotContainsString( 'wc_order_attribution', $output );
 		$this->assertStringNotContainsString( '<script>', $output );
 	}

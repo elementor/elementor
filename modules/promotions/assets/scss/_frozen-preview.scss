@@ -10,6 +10,28 @@
 		max-height: 400px;
 		overflow: hidden;
 		position: relative;
+		isolation: isolate;
+
+		.swiper,
+		.e-n-carousel {
+			overflow: hidden;
+		}
+
+		.swiper-wrapper {
+			display: flex;
+			flex-wrap: nowrap;
+			transform: none !important;
+		}
+
+		.swiper-slide {
+			flex: 0 0 100%;
+			width: 100% !important;
+			height: auto !important;
+		}
+
+		.swiper-slide:not(:first-child) {
+			display: none;
+		}
 
 		&::after {
 			content: '';

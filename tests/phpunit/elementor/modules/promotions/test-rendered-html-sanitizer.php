@@ -21,13 +21,26 @@ class Test_Rendered_Html_Sanitizer extends Elementor_Test_Base {
 		$this->assertSame( $html, Rendered_Html_Sanitizer::sanitize( $html ) );
 	}
 
-	public function test_sanitize_strips_document_noise_from_preview_html() {
-		$html = '<head><style>.wp-emoji{display:inline}</style><meta charset="UTF-8"></head>'
-			. '<body><script>var wc_order_attribution = {};</script>'
+	public function test_sanitize_preserves_style_blocks_while_stripping_scripts_and_document_noise() {
+		$html = '<head><style>.head-style{color:red}</style><meta charset="UTF-8"></head>'
+			. '<body><style>.body-style{display:inline}</style>'
+			. '<script>var wc_order_attribution = {};</script>'
 			. '<div class="elementor-widget-animated-headline">Bold Style</div></body>';
 
 		$sanitized = Rendered_Html_Sanitizer::sanitize( $html );
 
-		$this->assertSame( '<div class="elementor-widget-animated-headline">Bold Style</div>', $sanitized );
+		$this->assertSame(
+			'<style>.head-style{color:red}</style><style>.body-style{display:inline}</style><div class="elementor-widget-animated-headline">Bold Style</div>',
+			$sanitized
+		);
+	}
+
+	public function test_sanitize_for_display_allows_style_tags() {
+		$html = '<style>.hero{color:red}</style><div class="hero">Content</div>';
+
+		$sanitized = Rendered_Html_Sanitizer::sanitize_for_display( $html );
+
+		$this->assertStringContainsString( '<style>.hero{color:red}</style>', $sanitized );
+		$this->assertStringContainsString( 'Content', $sanitized );
 	}
 }

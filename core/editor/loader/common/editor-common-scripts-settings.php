@@ -9,6 +9,7 @@ use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
 use Elementor\Core\Common\Modules\EventsManager\Module as EditorEventsModule;
 use Elementor\Modules\Home\Module as Home_Module;
+use Elementor\Modules\Promotions\Site_Builder_Promotion_Widgets;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Shapes;
@@ -183,11 +184,11 @@ class Editor_Common_Scripts_Settings {
 	}
 
 	private static function ensure_pro_widgets( array $client_env ) {
-		$pro_widgets = Api::get_promotion_widgets();
+		$pro_widgets = Site_Builder_Promotion_Widgets::merge_with_api_widgets( Api::get_promotion_widgets() );
 		if ( ! isset( $client_env['promotionWidgets'] ) ) {
 			$client_env['promotionWidgets'] = $pro_widgets;
 		} else {
-			$client_env['promotionWidgets'] = array_merge( $pro_widgets, $client_env['promotionWidgets'] );
+			$client_env['promotionWidgets'] = Site_Builder_Promotion_Widgets::merge_with_api_widgets( $client_env['promotionWidgets'] );
 		}
 		return $client_env;
 	}
