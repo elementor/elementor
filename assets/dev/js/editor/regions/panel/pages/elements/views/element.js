@@ -123,16 +123,15 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown( event ) {
+		event.stopPropagation();
+
 		if ( this.isAtomicWidgetPromotion() ) {
-			event.stopPropagation();
 			const promotionType = this.model.get( 'promotionType' );
 			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
 				detail: { target: this.el },
 			} ) );
 			return;
 		}
-
-		event.stopPropagation();
 
 		const widgetTitle = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
