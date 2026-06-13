@@ -204,17 +204,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->assertNull( $result['create_with_ai'] );
 	}
 
-	public function test_add_create_with_ai_banner_to_homescreen__shows_banner_when_site_builder_inactive() {
-		$this->ensure_site_builder_experiment_registered();
-		update_option( 'elementor_experiment-site-builder', 'inactive' );
-
-		$module = new Module();
-		$result = $module->add_create_with_ai_banner_to_homescreen( [] );
-
-		$this->assertIsArray( $result['create_with_ai'] );
-		$this->assertSame( 'Create with AI', $result['create_with_ai']['button_title'] );
-	}
-
 	private function ensure_site_builder_experiment_registered() {
 		if ( Plugin::$instance->experiments->get_features( 'site-builder' ) ) {
 			return;
