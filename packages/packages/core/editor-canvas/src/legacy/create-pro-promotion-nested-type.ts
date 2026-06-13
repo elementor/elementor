@@ -40,8 +40,8 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 		_afterRender() {
 			super._afterRender();
 
-			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
-			this.$el.on( 'click', '.e-form-placeholder__remove-btn', ( e: Event ) => {
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__remove-btn' );
+			this.$el.on( 'click', '.e-pro-promotion-placeholder__remove-btn', ( e: Event ) => {
 				e.preventDefault();
 				e.stopPropagation();
 
@@ -51,8 +51,8 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 				);
 			} );
 
-			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
-			this.$el.on( 'click', '.e-form-placeholder__unlock-btn', ( e: Event ) => {
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__unlock-btn' );
+			this.$el.on( 'click', '.e-pro-promotion-placeholder__unlock-btn', ( e: Event ) => {
 				e.stopPropagation();
 			} );
 		}
@@ -75,8 +75,8 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
-			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
-			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__remove-btn' );
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__unlock-btn' );
 		}
 	} as unknown as typeof ElementView;
 }
