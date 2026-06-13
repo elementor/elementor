@@ -20,8 +20,23 @@ const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
 	const normalizedStep = Number( step );
 	const configs = stepConfigs ?? {};
 	const initStep = plannerSteps?.INIT ?? 0;
-	const fallback = configs[ initStep ] ?? {};
-	return configs[ Number.isFinite( normalizedStep ) ? normalizedStep : initStep ] ?? fallback;
+	const deployedToPlugin = plannerSteps?.DEPLOYED_TO_PLUGIN ?? 6;
+	const initFallback = configs[ initStep ] ?? {};
+	const deployedFallback = configs[ deployedToPlugin ] ?? initFallback;
+
+	if ( ! Number.isFinite( normalizedStep ) ) {
+		return initFallback;
+	}
+
+	if ( configs[ normalizedStep ] ) {
+		return configs[ normalizedStep ];
+	}
+
+	if ( normalizedStep >= deployedToPlugin ) {
+		return deployedFallback;
+	}
+
+	return initFallback;
 };
 
 const SiteBuilder = ( { siteBuilderData } ) => {

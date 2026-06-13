@@ -50,11 +50,16 @@ const withDefaultSiteTypeSuggestions = ( value ) => {
 	return stored.length ? stored : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
 };
 
+const getDeployedToPluginStep = ( plannerSteps ) => plannerSteps?.DEPLOYED_TO_PLUGIN ?? 6;
+
 const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 	if ( ! snapshotEntry ) {
 		return false;
 	}
-	if ( null !== snapshotStep && snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN ) {
+	if ( null === snapshotStep ) {
+		return false;
+	}
+	if ( snapshotStep >= getDeployedToPluginStep( plannerSteps ) ) {
 		return Array.isArray( snapshotEntry.pageSuggestions ) && snapshotEntry.pageSuggestions.length > 0;
 	}
 	return true;

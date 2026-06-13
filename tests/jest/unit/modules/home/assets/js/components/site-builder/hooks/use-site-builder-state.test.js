@@ -225,7 +225,7 @@ describe( 'useSiteBuilderState', () => {
 		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
-	it( 'entry exists with null step — trusts the snapshot and skips the fetch', async () => {
+	it( 'entry exists with null step — refetches /home-screen to pick up post-deploy state', async () => {
 		const snapshot = {
 			'site-key-1': {
 				sessionId: null,
@@ -234,6 +234,14 @@ describe( 'useSiteBuilderState', () => {
 				siteTypeSuggestions: [ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
 			},
 		};
+		global.fetch
+			.mockResolvedValueOnce( createResponse( {
+				sessionId: 'session-id',
+				step: 6,
+				pageNameSuggestions: [ 'About', 'Services' ],
+				siteTypeSuggestions: [],
+			} ) )
+			.mockResolvedValueOnce( createResponse( { data: { value: true } } ) );
 
 		const { result } = renderHook( () => useSiteBuilderState( getSiteBuilderData( snapshot ) ) );
 
@@ -241,12 +249,10 @@ describe( 'useSiteBuilderState', () => {
 			expect( result.current.isLoading ).toBe( false );
 		} );
 
-		expect( result.current.sessionStep ).toBe( null );
-		expect( result.current.pageSuggestions ).toEqual( [] );
-		expect( result.current.siteTypeSuggestions ).toEqual(
-			[ 'Dental Practice', 'Medical Clinic', 'Health & Wellness' ],
-		);
-		expect( global.fetch ).toHaveBeenCalledTimes( 0 );
+		expect( result.current.sessionStep ).toBe( 6 );
+		expect( result.current.pageSuggestions ).toEqual( [ 'About', 'Services' ] );
+		expect( global.fetch ).toHaveBeenCalledTimes( 2 );
+		expect( global.fetch ).toHaveBeenNthCalledWith( 1, HOME_SCREEN_URL, expect.objectContaining( { method: 'GET' } ) );
 	} );
 
 	it( 'surfaces an error when /home-screen fails and exposes default siteTypeSuggestions', async () => {
