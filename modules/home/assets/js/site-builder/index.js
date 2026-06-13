@@ -4,6 +4,7 @@ import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { getStepAction, StepLoader } from './components/step-actions';
 import useSiteBuilderState, { clearHomeScreenSnapshot } from './hooks/use-site-builder-state';
+import { getStepConfig } from './utils/planner-step-utils';
 import {
 	PlannerRoot,
 	PlannerBackground,
@@ -15,29 +16,6 @@ import {
 } from './components/styled-components';
 
 const SITE_BUILDER_READY_TIMEOUT_MS = 30_000;
-
-const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
-	const normalizedStep = Number( step );
-	const configs = stepConfigs ?? {};
-	const initStep = plannerSteps?.INIT ?? 0;
-	const deployedToPlugin = plannerSteps?.DEPLOYED_TO_PLUGIN ?? 6;
-	const initFallback = configs[ initStep ] ?? {};
-	const deployedFallback = configs[ deployedToPlugin ] ?? initFallback;
-
-	if ( ! Number.isFinite( normalizedStep ) ) {
-		return initFallback;
-	}
-
-	if ( configs[ normalizedStep ] ) {
-		return configs[ normalizedStep ];
-	}
-
-	if ( normalizedStep >= deployedToPlugin ) {
-		return deployedFallback;
-	}
-
-	return initFallback;
-};
 
 const SiteBuilder = ( { siteBuilderData } ) => {
 	const { sessionStep, pageSuggestions, siteTypeSuggestions, isLoading } = useSiteBuilderState( siteBuilderData );

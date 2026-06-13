@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getDeployedToPluginStep } from '../utils/planner-step-utils';
 
 const SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 const HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
@@ -49,8 +50,6 @@ const withDefaultSiteTypeSuggestions = ( value ) => {
 	const stored = sanitizeSuggestions( value, { limit: 3 } );
 	return stored.length ? stored : [ ...DEFAULT_SITE_TYPE_SUGGESTIONS ];
 };
-
-const getDeployedToPluginStep = ( plannerSteps ) => plannerSteps?.DEPLOYED_TO_PLUGIN ?? 6;
 
 const hasCompleteSnapshot = ( snapshotStep, snapshotEntry, plannerSteps ) => {
 	if ( ! snapshotEntry ) {
