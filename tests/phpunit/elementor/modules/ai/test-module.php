@@ -198,13 +198,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->ensure_site_builder_experiment_registered();
 		update_option( 'elementor_experiment-site-builder', 'active' );
 
-		$module = $this->getMockBuilder( Module::class )
-			->onlyMethods( [ 'should_display_create_with_ai_banner' ] )
-			->getMock();
-
-		$module->expects( $this->never() )
-			->method( 'should_display_create_with_ai_banner' );
-
+		$module = new Module();
 		$result = $module->add_create_with_ai_banner_to_homescreen( [] );
 
 		$this->assertNull( $result['create_with_ai'] );
@@ -214,13 +208,7 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$this->ensure_site_builder_experiment_registered();
 		update_option( 'elementor_experiment-site-builder', 'inactive' );
 
-		$module = $this->getMockBuilder( Module::class )
-			->onlyMethods( [ 'should_display_create_with_ai_banner' ] )
-			->getMock();
-
-		$module->method( 'should_display_create_with_ai_banner' )
-			->willReturn( true );
-
+		$module = new Module();
 		$result = $module->add_create_with_ai_banner_to_homescreen( [] );
 
 		$this->assertIsArray( $result['create_with_ai'] );

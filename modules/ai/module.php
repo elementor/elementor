@@ -1586,7 +1586,7 @@ class Module extends BaseModule {
 	}
 
 	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
-		if ( Plugin::$instance->experiments->is_feature_active( 'site-builder' ) ) {
+		if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
 			$home_screen_data['create_with_ai'] = null;
 
 			return $home_screen_data;
