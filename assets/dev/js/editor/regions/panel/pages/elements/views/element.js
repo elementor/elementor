@@ -123,8 +123,9 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onMouseDown( event ) {
+		event.stopPropagation();
+
 		if ( this.isAtomicWidgetPromotion() ) {
-			event.stopPropagation();
 			const promotionType = this.model.get( 'promotionType' );
 			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
 				detail: { target: this.el },
@@ -132,36 +133,35 @@ module.exports = Marionette.ItemView.extend( {
 			return;
 		}
 
-		const title = this.model.get( 'title' ),
+		const widgetTitle = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
 			isIntegration = this.isIntegration(),
 			configPromotion = elementor.config.promotion;
 
-		let promotion = configPromotion.elements,
-			// eslint-disable-next-line @wordpress/valid-sprintf
-			url = sprintf( promotion.action_button.url.toString(), widgetType );
+		let ctaUrl, ctaText, title, content;
 
 		if ( isIntegration ) {
-			promotion = configPromotion?.integration?.[ widgetType ];
-			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' );
+			const integrationPromo = configPromotion?.integration?.[ widgetType ];
+			ctaUrl = integrationPromo.action_button.url.toString().replaceAll( '&amp;', '&' );
+			ctaText = integrationPromo.action_button.text;
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			title = sprintf( integrationPromo.title, widgetTitle );
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			content = sprintf( integrationPromo.content, widgetTitle );
 		}
 
-		elementor.promotion.showDialog( {
-			// eslint-disable-next-line @wordpress/valid-sprintf
-			title: sprintf( promotion.title, title ),
-			// eslint-disable-next-line @wordpress/valid-sprintf
-			content: sprintf( promotion.content, title ),
-			targetElement: this.el,
-			position: {
-				blockStart: '-7',
+		document.dispatchEvent( new CustomEvent( 'widget-promotion:open', {
+			detail: {
+				target: this.el,
+				widgetType,
+				widgetTitle,
+				title,
+				content,
+				ctaUrl,
+				ctaText,
+				hideProTag: isIntegration,
 			},
-			actionButton: {
-				url,
-				text: promotion.action_button.text,
-				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
-			},
-			hideProTag: isIntegration,
-		} );
+		} ) );
 	},
 
 	addToPage() {
