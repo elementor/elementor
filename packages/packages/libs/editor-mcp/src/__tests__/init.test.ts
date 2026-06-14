@@ -86,8 +86,7 @@ describe( 'startMCPServer', () => {
 		setModelContext( navigator, navigatorModelContext );
 
 		// Act.
-		startMCPServer();
-		await Promise.resolve();
+		await startMCPServer();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
@@ -102,8 +101,7 @@ describe( 'startMCPServer', () => {
 		setModelContext( navigator, navigatorModelContext );
 
 		// Act.
-		startMCPServer();
-		await Promise.resolve();
+		await startMCPServer();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
