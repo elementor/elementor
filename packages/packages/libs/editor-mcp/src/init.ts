@@ -15,8 +15,9 @@ export function startMCPServer() {
 		registerMcpAdapter( new AngieMcpAdapter( getSDK() ) );
 	}
 
-	activateAdapters();
-	signalMcpReady();
+	activateAdapters().then( () => {
+		signalMcpReady();
+	} );
 }
 
 if ( typeof document !== 'undefined' ) {
