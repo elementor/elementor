@@ -1,6 +1,6 @@
 import { createMockDocument, createMockStyleDefinition } from 'test-utils';
 
-import { onPostLoad, reset, setCurrentDocumentId, setPost } from '../api';
+import { onRelatedPostLoad, resetRelatedPosts, setCurrentDocumentId, setRelatedPost } from '../manager';
 
 jest.mock( '@elementor/editor-styles-repository', () => {
 	let capturedConfig: {
@@ -34,7 +34,7 @@ const { __getProvider } = require( '@elementor/editor-styles-repository' );
 describe( 'styles-provider', () => {
 	afterEach( () => {
 		setCurrentDocumentId( null );
-		reset();
+		resetRelatedPosts();
 	} );
 
 	it( 'should expose the static key', () => {
@@ -55,7 +55,7 @@ describe( 'styles-provider', () => {
 		const style2 = createMockStyleDefinition( { id: 's-2' } );
 
 		// Act.
-		setPost( 10, makeDocWithStyle( 10, 's-1', style1, 's-2', style2 ) );
+		setRelatedPost( 10, makeDocWithStyle( 10, 's-1', style1, 's-2', style2 ) );
 
 		// Assert.
 		expect( __getProvider().actions.all() ).toEqual( [ style1, style2 ] );
@@ -67,7 +67,7 @@ describe( 'styles-provider', () => {
 		const childStyle = createMockStyleDefinition( { id: 'child-style' } );
 
 		// Act.
-		setPost(
+		setRelatedPost(
 			11,
 			createMockDocument( {
 				id: 11,
@@ -101,7 +101,7 @@ describe( 'styles-provider', () => {
 		// Arrange.
 		const style1 = createMockStyleDefinition( { id: 's-1' } );
 		const style2 = createMockStyleDefinition( { id: 's-2' } );
-		setPost( 20, makeDocWithStyle( 20, 's-1', style1, 's-2', style2 ) );
+		setRelatedPost( 20, makeDocWithStyle( 20, 's-1', style1, 's-2', style2 ) );
 
 		// Act & Assert.
 		expect( __getProvider().actions.get( 's-1' ) ).toStrictEqual( style1 );
@@ -110,7 +110,7 @@ describe( 'styles-provider', () => {
 
 	it( 'should return null for an unknown style id', () => {
 		// Arrange.
-		setPost( 21, makeDocWithStyle( 21, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
+		setRelatedPost( 21, makeDocWithStyle( 21, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
 
 		// Act & Assert.
 		expect( __getProvider().actions.get( 'non-existent' ) ).toBeNull();
@@ -122,8 +122,8 @@ describe( 'styles-provider', () => {
 		const style2 = createMockStyleDefinition( { id: 's-2' } );
 
 		// Act.
-		setPost( 30, makeDocWithStyle( 30, 's-1', style1 ) );
-		setPost( 31, makeDocWithStyle( 31, 's-2', style2 ) );
+		setRelatedPost( 30, makeDocWithStyle( 30, 's-1', style1 ) );
+		setRelatedPost( 31, makeDocWithStyle( 31, 's-2', style2 ) );
 
 		// Assert.
 		expect( __getProvider().actions.all() ).toEqual( [ style1, style2 ] );
@@ -131,7 +131,7 @@ describe( 'styles-provider', () => {
 
 	it( 'should skip posts with no elements', () => {
 		// Act.
-		setPost( 40, createMockDocument( { id: 40 } ) );
+		setRelatedPost( 40, createMockDocument( { id: 40 } ) );
 
 		// Assert.
 		expect( __getProvider().actions.all() ).toEqual( [] );
@@ -143,7 +143,7 @@ describe( 'styles-provider', () => {
 		__getProvider().subscribe( callback );
 
 		// Act.
-		setPost( 50, makeDocWithStyle( 50, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
+		setRelatedPost( 50, makeDocWithStyle( 50, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -155,50 +155,50 @@ describe( 'styles-provider', () => {
 		__getProvider().subscribe( callback );
 
 		// Act.
-		setPost( 51, createMockDocument( { id: 51 } ) );
+		setRelatedPost( 51, createMockDocument( { id: 51 } ) );
 
 		// Assert.
 		expect( callback ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should clear all styles and notify subscribers on reset()', () => {
+	it( 'should clear all styles and notify subscribers on resetRelatedPosts()', () => {
 		// Arrange.
-		setPost( 70, makeDocWithStyle( 70, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
+		setRelatedPost( 70, makeDocWithStyle( 70, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
 
 		const callback = jest.fn();
 		__getProvider().subscribe( callback );
 
 		// Act.
-		reset();
+		resetRelatedPosts();
 
 		// Assert.
 		expect( __getProvider().actions.all() ).toEqual( [] );
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should not re-notify onPostLoad listeners when the same post is announced again', () => {
+	it( 'should not re-notify onRelatedPostLoad listeners when the same post is announced again', () => {
 		// Arrange.
 		const callback = jest.fn();
-		onPostLoad( callback );
+		onRelatedPostLoad( callback );
 
 		const doc = makeDocWithStyle( 80, 's-1', createMockStyleDefinition( { id: 's-1' } ) );
 
 		// Act.
-		setPost( 80, doc );
-		setPost( 80, doc );
+		setRelatedPost( 80, doc );
+		setRelatedPost( 80, doc );
 
 		// Assert.
 		expect( callback ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'should not notify onPostLoad listeners for the current document', () => {
+	it( 'should not notify onRelatedPostLoad listeners for the current document', () => {
 		// Arrange.
 		const callback = jest.fn();
 		setCurrentDocumentId( 90 );
-		onPostLoad( callback );
+		onRelatedPostLoad( callback );
 
 		// Act.
-		setPost( 90, makeDocWithStyle( 90, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
+		setRelatedPost( 90, makeDocWithStyle( 90, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
 
 		// Assert.
 		expect( callback ).not.toHaveBeenCalled();
@@ -212,7 +212,7 @@ describe( 'styles-provider', () => {
 
 		// Act.
 		unsubscribe();
-		setPost( 60, makeDocWithStyle( 60, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
+		setRelatedPost( 60, makeDocWithStyle( 60, 's-1', createMockStyleDefinition( { id: 's-1' } ) ) );
 
 		// Assert.
 		expect( callback ).not.toHaveBeenCalled();

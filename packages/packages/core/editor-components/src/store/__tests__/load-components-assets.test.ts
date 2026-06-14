@@ -1,6 +1,6 @@
 import { createMockDocument } from 'test-utils';
 import { type Document } from '@elementor/editor-documents';
-import { setPost } from '@elementor/editor-related-posts-manager';
+import { setRelatedPost } from '@elementor/editor-related-posts-manager';
 
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsAssets } from '../actions/load-components-assets';
@@ -12,7 +12,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 } ) );
 
 jest.mock( '@elementor/editor-related-posts-manager', () => ( {
-	setPost: jest.fn(),
+	setRelatedPost: jest.fn(),
 } ) );
 
 jest.mock( '../../utils/get-component-documents' );
@@ -21,7 +21,7 @@ jest.mock( '../actions/load-components-overridable-props', () => ( {
 	loadComponentsOverridableProps: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-const mockSetPost = jest.mocked( setPost );
+const mockSetRelatedPost = jest.mocked( setRelatedPost );
 const mockGetComponentDocuments = jest.mocked( getComponentDocuments );
 const mockLoadComponentsOverridableProps = jest.mocked( loadComponentsOverridableProps );
 
@@ -68,9 +68,9 @@ describe( 'loadComponentsAssets', () => {
 		await loadComponentsAssets( [] );
 
 		// Assert
-		expect( mockSetPost ).toHaveBeenCalledTimes( expectedSetPostCalls.length );
+		expect( mockSetRelatedPost ).toHaveBeenCalledTimes( expectedSetPostCalls.length );
 		expectedSetPostCalls.forEach( ( [ id, document ] ) => {
-			expect( mockSetPost ).toHaveBeenCalledWith( id, document );
+			expect( mockSetRelatedPost ).toHaveBeenCalledWith( id, document );
 		} );
 	} );
 
@@ -82,7 +82,7 @@ describe( 'loadComponentsAssets', () => {
 		await loadComponentsAssets( [] );
 
 		// Assert
-		expect( mockSetPost ).not.toHaveBeenCalled();
+		expect( mockSetRelatedPost ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should load overridable props for each component id', async () => {

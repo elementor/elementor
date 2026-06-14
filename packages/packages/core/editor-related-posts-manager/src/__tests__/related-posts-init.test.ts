@@ -28,14 +28,14 @@ jest.mock( '../api', () => ( {
 	setCurrentDocumentId: jest.fn(),
 } ) );
 
-import { reset, setCurrentDocumentId } from '../api';
 import { init } from '../init';
+import { resetRelatedPosts, setCurrentDocumentId } from '../manager';
 
 const { stylesRepository } = require( '@elementor/editor-styles-repository' );
 
 const mockGetV1CurrentDocument = jest.mocked( getV1CurrentDocument );
 const mockRegisterDataHook = jest.mocked( registerDataHook );
-const mockReset = jest.mocked( reset );
+const mockReset = jest.mocked( resetRelatedPosts );
 const mockSetCurrentDocumentId = jest.mocked( setCurrentDocumentId );
 
 describe( 'init', () => {

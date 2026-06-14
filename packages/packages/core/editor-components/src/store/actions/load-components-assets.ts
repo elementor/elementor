@@ -1,6 +1,6 @@
 import { isDocumentDirty, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
-import { setPost } from '@elementor/editor-related-posts-manager';
+import { setRelatedPost } from '@elementor/editor-related-posts-manager';
 
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsOverridableProps } from './load-components-overridable-props';
@@ -10,7 +10,7 @@ export async function loadComponentsAssets( elements: V1ElementData[] ) {
 
 	updateDocumentState( documents );
 	documents.forEach( ( document, id ) => {
-		setPost( id, document );
+		setRelatedPost( id, document );
 	} );
 
 	await loadComponentsOverridableProps( [ ...documents.keys() ] );

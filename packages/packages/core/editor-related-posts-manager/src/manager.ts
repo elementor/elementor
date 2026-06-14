@@ -1,7 +1,7 @@
 import { type Document } from '@elementor/editor-documents';
 import { ajax } from '@elementor/editor-v1-adapters';
 
-import { addPostStyles, clearStyles } from './styles-provider';
+import { addRelatedPostStyles, clearRelatedPostsStyles } from './styles-provider';
 
 export type RelatedPostLoadCallback = ( postId: number, data: Document ) => void;
 
@@ -22,7 +22,7 @@ export function setCurrentDocumentId( id: number | null ): void {
  *
  * @param {number[]} ids Post IDs to load.
  */
-export function addPosts( ids: number[] ): void {
+export function addRelatedPosts( ids: number[] ): void {
 	const newIds = ids.filter(
 		( id ) => ! isCurrentDocument( id ) && ! pendingIds.has( id ) && ! loadedPosts.has( id )
 	);
@@ -43,7 +43,7 @@ export function addPosts( ids: number[] ): void {
  * @param {number}   postId The document / post ID.
  * @param {Document} data   The document data to deliver.
  */
-export function setPost( postId: number, data: Document ): void {
+export function setRelatedPost( postId: number, data: Document ): void {
 	if ( isCurrentDocument( postId ) ) {
 		return;
 	}
@@ -55,7 +55,7 @@ export function setPost( postId: number, data: Document ): void {
 	if ( isNew ) {
 		notifyRelatedListeners( postId, data );
 	} else {
-		addPostStyles( postId, data );
+		addRelatedPostStyles( postId, data );
 	}
 }
 
@@ -66,7 +66,7 @@ export function setPost( postId: number, data: Document ): void {
  *
  * @param {RelatedPostLoadCallback} callback Function called with (postId, data) on each load.
  */
-export function onPostLoad( callback: RelatedPostLoadCallback ): () => void {
+export function onRelatedPostLoad( callback: RelatedPostLoadCallback ): () => void {
 	listeners.add( callback );
 
 	void Promise.resolve().then( () => {
@@ -86,10 +86,10 @@ export function onPostLoad( callback: RelatedPostLoadCallback ): () => void {
 	};
 }
 
-export function reset(): void {
+export function resetRelatedPosts(): void {
 	pendingIds.clear();
 	loadedPosts.clear();
-	clearStyles();
+	clearRelatedPostsStyles();
 }
 
 function isCurrentDocument( postId: number ): boolean {
@@ -141,5 +141,5 @@ function notifyRelatedListeners( postId: number, data: Document ): void {
 	}
 
 	listeners.forEach( ( cb ) => cb( postId, data ) );
-	addPostStyles( postId, data );
+	addRelatedPostStyles( postId, data );
 }

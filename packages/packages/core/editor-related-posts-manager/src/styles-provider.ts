@@ -27,7 +27,7 @@ function notifyStyleListeners() {
 	styleListeners.forEach( ( cb ) => cb() );
 }
 
-export function addPostStyles( postId: number, document: Document ) {
+export function addRelatedPostStyles( postId: number, document: Document ) {
 	const extracted = extractStylesFromDocument( document );
 
 	if ( ! extracted.length ) {
@@ -43,7 +43,7 @@ export function addPostStyles( postId: number, document: Document ) {
 	notifyStyleListeners();
 }
 
-export function clearStyles() {
+export function clearRelatedPostsStyles() {
 	postStyles = new Map();
 	styles = [];
 	notifyStyleListeners();

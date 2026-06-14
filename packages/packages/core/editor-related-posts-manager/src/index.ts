@@ -1,3 +1,3 @@
 export { init } from './init';
-export { addPosts, onPostLoad, reset, setPost } from './api';
-export type { RelatedPostLoadCallback } from './api';
+export { addRelatedPosts, onRelatedPostLoad, resetRelatedPosts, setRelatedPost } from './manager';
+export type { RelatedPostLoadCallback } from './manager';

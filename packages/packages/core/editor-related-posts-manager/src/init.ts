@@ -2,7 +2,7 @@ import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-import { reset, setCurrentDocumentId } from './api';
+import { resetRelatedPosts, setCurrentDocumentId } from './manager';
 import { relatedPostsStylesProvider } from './styles-provider';
 
 export function init() {
@@ -12,6 +12,6 @@ export function init() {
 		const { id } = getV1CurrentDocument() ?? {};
 
 		setCurrentDocumentId( id ?? null );
-		reset();
+		resetRelatedPosts();
 	} );
 }
