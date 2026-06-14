@@ -3,7 +3,7 @@ import { startMCPServer } from '../init';
 import { activateAdapters, registerMcpAdapter, signalMcpReady } from '../mcp-registry';
 
 jest.mock( '../mcp-registry', () => ( {
-	activateAdapters: jest.fn(),
+	activateAdapters: jest.fn( () => Promise.resolve() ),
 	registerMcpAdapter: jest.fn(),
 	signalMcpReady: jest.fn(),
 } ) );
@@ -51,7 +51,7 @@ describe( 'startMCPServer', () => {
 		deleteModelContext( navigator );
 	} );
 
-	it( 'prefers the document model context when it is available', () => {
+	it( 'prefers the document model context when it is available', async () => {
 		// Arrange.
 		const documentModelContext = createModelContext();
 		const navigatorModelContext = createModelContext();
@@ -61,6 +61,7 @@ describe( 'startMCPServer', () => {
 
 		// Act.
 		startMCPServer();
+		await Promise.resolve();
 
 		// Assert.
 		expect( registerMcpAdapter ).toHaveBeenCalledTimes( 1 );
@@ -69,7 +70,7 @@ describe( 'startMCPServer', () => {
 		expect( signalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'falls back to the navigator model context for older browser support', () => {
+	it( 'falls back to the navigator model context for older browser support', async () => {
 		// Arrange.
 		const navigatorModelContext = createModelContext();
 
@@ -77,6 +78,7 @@ describe( 'startMCPServer', () => {
 
 		// Act.
 		startMCPServer();
+		await Promise.resolve();
 
 		// Assert.
 		expect( registerMcpAdapter ).toHaveBeenCalledTimes( 1 );

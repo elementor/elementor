@@ -50,12 +50,13 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 
 export const signalMcpReady = (): void => resolveReady();
 
-export const activateAdapters = () => callAdapters( async ( adapter ) => adapter.activate() );
+export const activateAdapters = (): Promise< void > =>
+	callAdapters( ( adapter ) => Promise.resolve( adapter.activate() ) );
 
-async function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => Promise< void > ) {
-	for await ( const adapter of registrationAdapters ) {
+async function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void | Promise< void > ) {
+	for ( const adapter of registrationAdapters ) {
 		try {
-			await fn( adapter );
+			await Promise.resolve( fn( adapter ) );
 		} catch {
 			// adapter failed — exit quietly, continue to next
 		}
