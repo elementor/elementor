@@ -63,28 +63,6 @@ class Global_Classes_Repository {
 
 		$this->cache = $this->all_from_posts();
 
-		// #region agent log
-		$cached = $this->cache->get();
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'global-classes-repository.php:all',
-			'message'      => 'Repository::all called',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'kit_id'      => $this->get_kit()->get_id(),
-				'is_preview'  => $this->is_preview(),
-				'items_count' => count( $cached['items'] ?? [] ),
-				'order_count' => count( $cached['order'] ?? [] ),
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		return $this->cache;
 	}
 
@@ -151,28 +129,6 @@ class Global_Classes_Repository {
 	}
 
 	public function apply_changes( array $touched_items, array $changes, array $order ): void {
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'global-classes-repository.php:apply_changes',
-			'message'      => 'Repository::apply_changes called',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'kit_id'        => $this->get_kit()->get_id(),
-				'is_preview'    => $this->is_preview(),
-				'items_count'   => count( $touched_items ),
-				'order_count'   => count( $order ),
-				'changes'       => $changes,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		$labels = $this->labels();
 		$before = $labels->get_labels();
 		$is_preview = $this->is_preview();
@@ -247,27 +203,6 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'global-classes-repository.php:put',
-			'message'      => 'Repository::put called',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'kit_id'      => $this->get_kit()->get_id(),
-				'is_preview'  => $this->is_preview(),
-				'items_count' => count( $items ),
-				'order_count' => count( $order ),
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		$current_ids = Global_Classes_Order::make( $this->get_kit() )
 			->set_preview( $this->is_preview() )
 			->get_order();
