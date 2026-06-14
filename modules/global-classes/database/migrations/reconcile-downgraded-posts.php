@@ -36,24 +36,6 @@ class Reconcile_Downgraded_Posts extends Base_Migration {
 	private $should_overwrite = null;
 
 	public function up() {
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'reconcile-downgraded-posts.php:up',
-			'message'      => 'Reconcile_Downgraded_Posts::up called',
-			'hypothesisId' => 'D',
-			'data'         => [
-				'kit_id' => $this->get_kit() ? $this->get_kit()->get_id() : null,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		Global_Class_Post_Type::ensure_registered();
 
 		$kit = $this->get_kit();

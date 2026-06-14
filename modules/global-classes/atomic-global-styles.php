@@ -48,26 +48,6 @@ class Atomic_Global_Styles {
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
 		$context = $this->get_context();
 
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'atomic-global-styles.php:register_styles',
-			'message'      => 'Atomic_Global_Styles::register_styles called',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'context'    => $context,
-				'post_ids'   => $post_ids,
-				'post_count' => count( $post_ids ),
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->get_document_global_styles( $post_id, $context );
 
@@ -104,28 +84,6 @@ class Atomic_Global_Styles {
 
 		$styles = [];
 
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'atomic-global-styles.php:get_document_global_styles',
-			'message'      => 'Atomic_Global_Styles::get_document_global_styles',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'post_id'             => $post_id,
-				'context'             => $context,
-				'class_ids_count'     => count( $class_ids ),
-				'ordered_ids_count'   => count( $ordered_class_ids ),
-				'items_fetched_count' => count( $items ),
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		foreach ( $reversed_order as $class_id ) {
 			$item = $items[ $class_id ] ?? null;
 
@@ -151,25 +109,6 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache_for_updated_classes( string $context, array $changes ) {
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'atomic-global-styles.php:invalidate_cache_for_updated_classes',
-			'message'      => 'Atomic_Global_Styles::invalidate_cache_for_updated_classes',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'context' => $context,
-				'changes' => $changes,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		if ( isset( $changes['order'] ) && $changes['order'] ) {
 			$this->invalidate_all_cache( $context );
 
@@ -219,24 +158,6 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_all_cache( ?string $context = null ) {
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'atomic-global-styles.php:invalidate_all_cache',
-			'message'      => 'Atomic_Global_Styles::invalidate_all_cache',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'context' => $context,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
 			do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 

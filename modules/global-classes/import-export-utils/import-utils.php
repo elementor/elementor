@@ -40,29 +40,6 @@ class Import_Utils {
 		$order_file = rtrim( $classes_dir, '/' ) . '/' . self::ORDER_FILE;
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'import-utils.php:import_classes',
-			'message'      => 'Import_Utils::import_classes entry',
-			'hypothesisId' => 'B',
-			'data'         => [
-				'classes_dir'   => $classes_dir,
-				'order_file'    => $order_file,
-				'kit_id'        => $active_kit ? $active_kit->get_id() : null,
-				'dir_exists'    => is_dir( $classes_dir ),
-				'order_exists'  => file_exists( $order_file ),
-				'options'       => $options,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
-
 		if ( ! $active_kit || ! is_dir( $classes_dir ) || ! file_exists( $order_file ) ) {
 			return self::EMPTY_RESULT;
 		}
@@ -99,25 +76,6 @@ class Import_Utils {
 			}
 			do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_FRONTEND, $changes );
 		}
-
-		// #region agent log
-		$log_payload = [
-			'sessionId'    => 'a2248d',
-			'location'     => 'import-utils.php:import_classes:result',
-			'message'      => 'Import_Utils::import_classes completed',
-			'hypothesisId' => 'E',
-			'data'         => [
-				'changes' => $changes,
-				'result'  => $result,
-			],
-			'timestamp'    => round( microtime( true ) * 1000 ),
-		];
-		file_put_contents(
-			'/Users/ronros/Local Sites/multi-local-site-1/app/public/wp-content/plugins/.cursor/debug-a2248d.log',
-			json_encode( $log_payload ) . "\n",
-			FILE_APPEND
-		);
-		// #endregion
 
 		return $result;
 	}
