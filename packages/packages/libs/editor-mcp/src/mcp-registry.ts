@@ -12,6 +12,7 @@ import {
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getSDK } from './utils/get-sdk';
+import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
 
@@ -50,16 +51,12 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 };
 
 export const signalMcpReady = (): void => {
-export const signalMcpReady = (): void => {
 	if ( ! isAngieAvailable() ) {
 		resolveReady();
 		return;
 	}
 
 	getSDK()
-		.waitForReady()
-		.then( () => resolveReady() );
-};
 		.waitForReady()
 		.then( () => resolveReady() );
 };
