@@ -45,7 +45,7 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			doApplyClasses( elementId, [ ...appliedClasses, classId ] );
 			return {
 				llm_instructions:
-					'Please check the element-configuration, find DUPLICATES in the style schema that are in the class, and remove them',
+					'Please check the element configuration, find inline styles duplicated by the applied global class, and remove them',
 				result: `Class ${ classId } applied to element ${ elementId } successfully.`,
 			};
 		},
