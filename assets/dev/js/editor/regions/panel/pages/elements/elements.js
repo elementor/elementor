@@ -11,6 +11,7 @@ function elementorIsAngieIframeInDocument() {
 	return !! document.querySelector( 'iframe[src*="angie/"]' );
 }
 
+
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
 
