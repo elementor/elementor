@@ -4,6 +4,7 @@
  */
 
 import { init as initAngie } from './angie';
+import { init as initAngieLite } from './angie-lite';
 import { init as initConnect } from './connect';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
@@ -23,6 +24,7 @@ import { init as initWordpress } from './wordpress';
 
 export function init() {
 	initAngie();
+	initAngieLite();
 	initDocumentsPreview();
 	initDocumentsSave();
 	initDocumentsSettings();
