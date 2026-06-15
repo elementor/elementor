@@ -11,6 +11,7 @@ import {
 	createDefaultModelPreferences,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getSDK } from './utils/get-sdk';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
 
@@ -48,14 +49,18 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 	}
 };
 
-export const signalMcpReady = (): void => resolveReady();
+export const signalMcpReady = (): void => {
+	getSDK()
+		.waitForReady()
+		.then( () => resolveReady() );
+};
 
-export const activateAdapters = (): Promise< void > => callAdapters( ( adapter ) => adapter.activate() );
+export const activateAdapters = () => callAdapters( ( adapter ) => adapter.activate() );
 
-async function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void | Promise< void > ) {
+function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void | Promise< void > ) {
 	for ( const adapter of registrationAdapters ) {
 		try {
-			await Promise.resolve( fn( adapter ) );
+			fn( adapter );
 		} catch {
 			// adapter failed — exit quietly, continue to next
 		}
