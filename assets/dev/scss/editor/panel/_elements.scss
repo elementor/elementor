@@ -477,7 +477,7 @@
 	border: none;
 	background: none;
 	color: $e-pink-900;
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 500;
 	cursor: pointer;
 	font-family: var(--e-a-font-family);
@@ -485,5 +485,9 @@
 
 	&:hover {
 		opacity: 0.8;
+	}
+
+	i {
+		margin-right: 8px;
 	}
 }
