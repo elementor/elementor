@@ -50,7 +50,16 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 };
 
 export const signalMcpReady = (): void => {
+export const signalMcpReady = (): void => {
+	if ( ! isAngieAvailable() ) {
+		resolveReady();
+		return;
+	}
+
 	getSDK()
+		.waitForReady()
+		.then( () => resolveReady() );
+};
 		.waitForReady()
 		.then( () => resolveReady() );
 };
