@@ -353,7 +353,7 @@
 .elementor-panel-category-custom-widgets-empty {
 	grid-column: 1 / -1;
 	width: 100%;
-	padding: 0 16px 16px;
+	margin-bottom: 32px;
 
 	&__message {
 		margin: 0;
@@ -366,7 +366,6 @@
 .elementor-panel-custom-widgets-community-promo {
 	display: flex;
 	gap: 12px;
-	margin: 0 16px 16px;
 	padding: 8px;
 	padding-left: 104px;
 	border-radius: 7px;
