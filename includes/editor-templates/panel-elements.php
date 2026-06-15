@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
-					<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+					<i class="eicon-upgrade-crown-full"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 				</a>
 			</span>
 		<# } #>
@@ -84,7 +84,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
 		<# } else if ( false === obj.editable && !obj.promotionType && !obj.birthdayEasterEgg ) { #>
-			<i class="eicon-lock"></i>
+			<i class="eicon-upgrade-crown-full"></i>
 		<# } #>
 		<# if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
