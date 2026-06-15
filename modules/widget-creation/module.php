@@ -119,15 +119,15 @@ class Module extends BaseModule {
 		<div class="elementor-panel-category-custom-widgets-empty">
 			<p class="elementor-panel-category-custom-widgets-empty__message"><?php echo esc_html__( 'Create custom widgets by describing what you need.', 'elementor' ); ?></p>
 		</div>
-		<button class="elementor-panel-custom-widgets-community-promo" rel="noopener noreferrer">
+		<div class="elementor-panel-custom-widgets-community-promo">
 			<div class="elementor-panel-custom-widgets-community-promo__images">
-				<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-1.png' ); ?>" alt="<?php echo esc_attr__( 'Community widget example 1', 'elementor' ); ?>" loading="lazy" />
-				<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-2.png' ); ?>" alt="<?php echo esc_attr__( 'Community widget example 2', 'elementor' ); ?>" loading="lazy" />
-				<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-3.png' ); ?>" alt="<?php echo esc_attr__( 'Community widget example 3', 'elementor' ); ?>" loading="lazy" />
+				<div class="elementor-panel-custom-widgets-community-promo__images__image" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-1.png' ); ?>);"></div>
+				<div class="elementor-panel-custom-widgets-community-promo__images__image" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-2.png' ); ?>);"></div>
+				<div class="elementor-panel-custom-widgets-community-promo__images__image" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-3.png' ); ?>);"></div>
 			</div>
-			<p class="elementor-panel-custom-widgets-community-promo__text"><?php echo esc_html__( 'See what people are building', 'elementor' ); ?></p>
-			<i class="eicon-arrow-right elementor-panel-custom-widgets-community-promo__icon" aria-hidden="true"></i>
-		</button>
+			<button class="elementor-panel-custom-widgets-community-promo__button"><?php echo esc_html__( 'See what people are building', 'elementor' ); ?></button>
+			<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/arrow-up-right.svg' ); ?>" class="elementor-panel-custom-widgets-community-promo__icon" aria-hidden="true"></svg>
+		</div>
 		<# } #>
 		<?php
 	}
