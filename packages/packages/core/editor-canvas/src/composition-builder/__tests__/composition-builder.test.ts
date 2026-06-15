@@ -75,23 +75,6 @@ const createMockPartialContainer = ( id: string ): V1Element =>
 		children: [],
 	} ) as unknown as V1Element;
 
-const createMockPartialContainerWithView = ( id: string ) => {
-	const render = jest.fn();
-	const currentRenderPromise = Promise.resolve();
-	const container = {
-		id,
-		model: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
-		settings: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
-		children: [],
-		view: {
-			render,
-			_currentRenderPromise: currentRenderPromise,
-		},
-	} as unknown as V1Element;
-
-	return { container, render, currentRenderPromise };
-};
-
 describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 	it( 'calls deleteElement when createElement fails and getContainer returns a container', async () => {
 		// Arrange
@@ -323,10 +306,20 @@ describe( 'CompositionBuilder.build required children', () => {
 	} );
 } );
 
-describe( 'CompositionBuilder.build final root container render', () => {
-	it( 'calls view.render on root containers after applyProperties completes', async () => {
+describe( 'CompositionBuilder.build final composition built event', () => {
+	let dispatchEventSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
+	} );
+
+	it( 'dispatches elementor/composition/built event with root container IDs after applyProperties completes', async () => {
 		// Arrange
-		const { container: createdElement, render } = createMockPartialContainerWithView( GENERATED_ELEMENT_ID );
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
 		const doUpdateElementProperty = jest.fn();
 		const createElement = jest.fn().mockReturnValue( createdElement );
 		const getContainer = jest
@@ -347,26 +340,13 @@ describe( 'CompositionBuilder.build final root container render', () => {
 
 		// Assert
 		expect( doUpdateElementProperty ).toHaveBeenCalledTimes( 1 );
-		expect( render ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'calls view.render on root containers even when no element config is applied', async () => {
-		// Arrange
-		const { container: createdElement, render } = createMockPartialContainerWithView( GENERATED_ELEMENT_ID );
-		const createElement = jest.fn().mockReturnValue( createdElement );
-		const builder = CompositionBuilder.fromXMLString( `<${ ROOT_CHILD_TAG } />`, {
-			createElement,
-			deleteElement: jest.fn(),
-			getContainer: jest.fn(),
-			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
-			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
-			doUpdateElementProperty: jest.fn(),
-		} );
-
-		// Act
-		await builder.build( createMockRootContainer() );
-
-		// Assert
-		expect( render ).toHaveBeenCalledTimes( 1 );
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/composition/built',
+				detail: {
+					rootContainers: [ GENERATED_ELEMENT_ID ],
+				},
+			} )
+		);
 	} );
 } );

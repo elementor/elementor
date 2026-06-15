@@ -320,13 +320,13 @@ export class CompositionBuilder {
 
 		const { configErrors, styleErrors } = await this.applyProperties();
 
-		// Ensure all containers are rendered after applying properties
-		for ( const container of this.rootContainers ) {
-			const view = container.view as Record< string, unknown > | undefined;
-			if ( typeof view?.render === 'function' ) {
-				( view.render as () => void )();
-			}
-			await this.awaitViewRender( container );
+		if ( typeof window !== 'undefined' ) {
+			const targetWindow = window.top || window;
+			targetWindow.dispatchEvent(
+				new CustomEvent( 'elementor/composition/built', {
+					detail: { rootContainers: this.rootContainers.map( ( c ) => c.id ) },
+				} )
+			);
 		}
 
 		return {
