@@ -75,6 +75,23 @@ const createMockPartialContainer = ( id: string ): V1Element =>
 		children: [],
 	} ) as unknown as V1Element;
 
+const createMockPartialContainerWithView = ( id: string ) => {
+	const render = jest.fn();
+	const currentRenderPromise = Promise.resolve();
+	const container = {
+		id,
+		model: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
+		settings: { get: jest.fn(), set: jest.fn(), toJSON: jest.fn() },
+		children: [],
+		view: {
+			render,
+			_currentRenderPromise: currentRenderPromise,
+		},
+	} as unknown as V1Element;
+
+	return { container, render, currentRenderPromise };
+};
+
 describe( 'CompositionBuilder.build createElement failure cleanup', () => {
 	it( 'calls deleteElement when createElement fails and getContainer returns a container', async () => {
 		// Arrange
@@ -303,5 +320,53 @@ describe( 'CompositionBuilder.build required children', () => {
 		expect( childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length ).toBe( 1 );
 		expect( childElements.filter( ( child ) => child.elType === 'e-form-error-message' ).length ).toBe( 1 );
 		expect( childElements.some( ( child ) => child.widgetType === 'e-form-input' ) ).toBe( true );
+	} );
+} );
+
+describe( 'CompositionBuilder.build final root container render', () => {
+	it( 'calls view.render on root containers after applyProperties completes', async () => {
+		// Arrange
+		const { container: createdElement, render } = createMockPartialContainerWithView( GENERATED_ELEMENT_ID );
+		const doUpdateElementProperty = jest.fn();
+		const createElement = jest.fn().mockReturnValue( createdElement );
+		const getContainer = jest
+			.fn()
+			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
+		const builder = CompositionBuilder.fromXMLString( xmlStringWithConfiguration, {
+			createElement,
+			deleteElement: jest.fn(),
+			getContainer,
+			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
+			doUpdateElementProperty,
+		} );
+		builder.setElementConfig( createElementConfigPayload() );
+
+		// Act
+		await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( doUpdateElementProperty ).toHaveBeenCalledTimes( 1 );
+		expect( render ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'calls view.render on root containers even when no element config is applied', async () => {
+		// Arrange
+		const { container: createdElement, render } = createMockPartialContainerWithView( GENERATED_ELEMENT_ID );
+		const createElement = jest.fn().mockReturnValue( createdElement );
+		const builder = CompositionBuilder.fromXMLString( `<${ ROOT_CHILD_TAG } />`, {
+			createElement,
+			deleteElement: jest.fn(),
+			getContainer: jest.fn(),
+			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
+			doUpdateElementProperty: jest.fn(),
+		} );
+
+		// Act
+		await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( render ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

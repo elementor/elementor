@@ -320,6 +320,15 @@ export class CompositionBuilder {
 
 		const { configErrors, styleErrors } = await this.applyProperties();
 
+		// Ensure all containers are rendered after applying properties
+		for ( const container of this.rootContainers ) {
+			const view = container.view as Record< string, unknown > | undefined;
+			if ( typeof view?.render === 'function' ) {
+				( view.render as () => void )();
+			}
+			await this.awaitViewRender( container );
+		}
+
 		return {
 			configErrors,
 			styleErrors,
