@@ -23,10 +23,7 @@ class Module extends elementorModules.editor.utils.Module {
 	registerAtomicElements() {
 		this.registerAtomicElementTypeIfAbsent( createDivBlockType() );
 		this.registerAtomicElementTypeIfAbsent( createFlexboxType() );
-
-		if ( elementorCommon.config.experimentalFeatures?.e_css_grid ) {
-			this.registerAtomicElementTypeIfAbsent( createGridType() );
-		}
+		this.registerAtomicElementTypeIfAbsent( createGridType() );
 	}
 
 	registerAtomicElementTypeIfAbsent( elementType ) {

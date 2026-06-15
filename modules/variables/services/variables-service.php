@@ -24,6 +24,39 @@ class Variables_Service {
 		return $this->load()['data'];
 	}
 
+	public function find_by_label_or_id( string $needle ): ?array {
+		$needle = trim( $needle );
+		$needle = ltrim( $needle, '-' );
+
+		if ( '' === $needle ) {
+			return null;
+		}
+
+		$variables = $this->get_variables_list();
+
+		if ( isset( $variables[ $needle ] ) ) {
+			$variable = $variables[ $needle ];
+
+			if ( ! empty( $variable['deleted'] ) ) {
+				return null;
+			}
+
+			return array_merge( [ 'id' => $needle ], $variable );
+		}
+
+		foreach ( $variables as $id => $variable ) {
+			if ( ! empty( $variable['deleted'] ) ) {
+				continue;
+			}
+
+			if ( strcasecmp( $variable['label'] ?? '', $needle ) === 0 ) {
+				return array_merge( [ 'id' => $id ], $variable );
+			}
+		}
+
+		return null;
+	}
+
 	public function load() {
 		$collection = $this->repo->load()->serialize( true );
 		foreach ( $collection['data'] as $id => $variable ) {

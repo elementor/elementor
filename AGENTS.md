@@ -40,6 +40,18 @@ The image may ship a system Node under `/exec-daemon/node` that does not match `
 | Jest (main) | `npm run test:jest` |
 | Jest (packages) | `npm run test:packages` |
 | All Jest | `npm run test` |
+| Fast DB-less PHPUnit (single/few files) | `tests/phpunit/run-unit.sh <test-file.php> [<test-file.php> ...] [--filter <pattern>]` |
+
+### Fast DB-less PHPUnit for local dev
+
+`tests/phpunit/run-unit.sh` runs a small set of PHPUnit files **without WordPress or MySQL** for a quick inner loop. It uses `tests/phpunit/unit-bootstrap.php`, which only defines `ABSPATH` and registers an `Elementor\` autoloader (same name->path transform as `includes/autoloader.php`), and ignores the project `phpunit.xml`. Pass any number of `test-*.php` files (added to a generated testsuite, which sidesteps PHPUnit's `test-*.php` ↔ `Test_*` filename/classname assumption) plus optional pass-through args like `--filter`.
+
+```bash
+tests/phpunit/run-unit.sh tests/phpunit/elementor/modules/atomic-widgets/css-converter/test-css-converter.php
+tests/phpunit/run-unit.sh tests/phpunit/.../test-css-converter.php --filter test_convert
+```
+
+Only works for tests whose subjects don't touch WordPress at load/run time. Tests needing WordPress/MySQL (e.g. REST endpoints with `act_as_admin`/`WP_REST_Server`, or anything pulling `Style_Schema`) must use the full suite (`npm run test:setup:playwright` env, or the wp-lite-env setup below).
 
 ## wp-lite-env (Docker): full setup
 
