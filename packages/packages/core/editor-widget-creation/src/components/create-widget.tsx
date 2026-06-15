@@ -29,6 +29,7 @@ import { interpolateLinks } from '../interpolate-links';
 
 type ShowModalEventDetail = {
 	prompt?: string;
+	urlParams?: string;
 	entry_point: string;
 };
 
@@ -36,6 +37,7 @@ type InstallState = 'idle' | 'installing' | 'error';
 
 type CreateWidgetModalProps = {
 	prompt?: string;
+	urlParams?: string;
 	entryPoint: string;
 	onClose: () => void;
 };
@@ -47,7 +49,7 @@ const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started' as const;
 const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed' as const;
 const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned' as const;
 
-function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalProps ) {
+function CreateWidgetModal( { prompt, entryPoint, urlParams, onClose }: CreateWidgetModalProps ) {
 	const [ installState, setInstallState ] = useState< InstallState >( 'idle' );
 	const [ agreedToTerms, setAgreedToTerms ] = useState( false );
 
@@ -86,7 +88,7 @@ function CreateWidgetModal( { prompt, entryPoint, onClose }: CreateWidgetModalPr
 			trigger_source: entryPoint,
 		} );
 
-		redirectToAppAdmin( prompt );
+		redirectToAppAdmin( { prompt, urlParams } );
 	};
 
 	const handleFallbackInstall = () => {
@@ -242,6 +244,7 @@ export function CreateWidget() {
 	return (
 		<CreateWidgetModal
 			prompt={ modalData.prompt }
+			urlParams={ modalData.urlParams }
 			entryPoint={ modalData.entry_point }
 			onClose={ () => setModalData( null ) }
 		/>

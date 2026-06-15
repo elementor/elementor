@@ -17,6 +17,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
 		'click .elementor-panel-custom-widgets__cta': 'onCustomWidgetsCtaClick',
+		'click .elementor-panel-custom-widgets-community-promo__button': 'onCustomWidgetsCommunityPromoClick',
 		'click .elementor-panel-heading-promotion a': 'onPromotionLinkClick',
 	},
 
@@ -126,6 +127,20 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onPromotionLinkClick( event ) {
 		event.stopPropagation();
+	},
+
+	onCustomWidgetsCommunityPromoClick( event ) {
+		event.stopPropagation();
+
+		window.dispatchEvent(
+			new CustomEvent( 'elementor/editor/create-widget', {
+				detail: {
+					prompt: 'Community Library! TEST',
+					entry_point: 'widgets_panel',
+					urlParams: 'open_community_library=true',
+				},
+			} ),
+		);
 	},
 } );
 
