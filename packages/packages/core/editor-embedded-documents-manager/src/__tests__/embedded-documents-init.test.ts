@@ -3,7 +3,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	createStylesProvider: jest.fn( () => ( {
-		getKey: () => 'related-posts-styles',
+		getKey: () => 'embedded-documents-styles',
 		subscribe: jest.fn(),
 		actions: {
 			all: () => [],
@@ -23,19 +23,21 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	registerDataHook: jest.fn(),
 } ) );
 
-jest.mock( '../api', () => ( {
-	reset: jest.fn(),
+jest.mock( '../manager', () => ( {
+	embeddedDocumentsManager: {
+		reset: jest.fn(),
+	},
 	setCurrentDocumentId: jest.fn(),
 } ) );
 
 import { init } from '../init';
-import { resetRelatedPosts, setCurrentDocumentId } from '../manager';
+import { embeddedDocumentsManager, setCurrentDocumentId } from '../manager';
 
 const { stylesRepository } = require( '@elementor/editor-styles-repository' );
 
 const mockGetV1CurrentDocument = jest.mocked( getV1CurrentDocument );
 const mockRegisterDataHook = jest.mocked( registerDataHook );
-const mockReset = jest.mocked( resetRelatedPosts );
+const mockReset = jest.mocked( embeddedDocumentsManager.reset );
 const mockSetCurrentDocumentId = jest.mocked( setCurrentDocumentId );
 
 describe( 'init', () => {
@@ -50,7 +52,7 @@ describe( 'init', () => {
 		attachPreviewHandler = ( call?.[ 2 ] as () => void ) ?? ( () => {} );
 	} );
 
-	it( 'should register the related posts styles provider', () => {
+	it( 'should register the embedded documents styles provider', () => {
 		expect( stylesRepository.register ).toHaveBeenCalledTimes( 1 );
 		expect( stylesRepository.register ).toHaveBeenCalledWith(
 			expect.objectContaining( { getKey: expect.any( Function ) } )

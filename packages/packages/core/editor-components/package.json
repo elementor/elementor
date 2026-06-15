@@ -64,7 +64,7 @@
     "@wordpress/i18n": "^5.13.0",
     "@elementor/editor-notifications": "4.2.0",
     "@elementor/editor-current-user": "4.2.0",
-    "@elementor/editor-related-posts-manager": "4.2.0"
+    "@elementor/editor-embedded-documents-manager": "4.2.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

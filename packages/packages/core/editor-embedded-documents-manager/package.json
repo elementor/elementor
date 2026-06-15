@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/editor-related-posts-manager",
+  "name": "@elementor/editor-embedded-documents-manager",
   "description": "Shared related-posts registry for the Elementor editor",
   "version": "4.2.0",
   "private": false,
@@ -20,7 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elementor/elementor.git",
-    "directory": "packages/core/editor-related-posts-manager"
+    "directory": "packages/core/editor-embedded-documents-manager"
   },
   "bugs": {
     "url": "https://github.com/elementor/elementor/issues"

@@ -4,8 +4,8 @@ import {
 	injectIntoCssClassConvert,
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
+import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 import { getMCPByDomain } from '@elementor/editor-mcp';
-import { onRelatedPostLoad } from '@elementor/editor-related-posts-manager';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
@@ -23,8 +23,8 @@ import { SyncWithDocumentSave } from './sync-with-document';
 export function init() {
 	registerSlice( slice );
 
-	onRelatedPostLoad( ( postId ) => {
-		void addDocumentClasses( postId );
+	embeddedDocumentsManager.onDocumentLoad( ( documentId ) => {
+		void addDocumentClasses( documentId );
 	} );
 
 	stylesRepository.register( globalClassesStylesProvider );

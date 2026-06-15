@@ -4,11 +4,11 @@ import { type StyleDefinition } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 
 let styles: StyleDefinition[] = [];
-let postStyles = new Map< number, StyleDefinition[] >();
+let documentStyles = new Map< number, StyleDefinition[] >();
 const styleListeners = new Set< () => void >();
 
-export const relatedPostsStylesProvider = createStylesProvider( {
-	key: 'related-posts-styles',
+export const embeddedDocumentsStylesProvider = createStylesProvider( {
+	key: 'embedded-documents-styles',
 	priority: 75,
 	subscribe: ( cb ) => {
 		styleListeners.add( cb );
@@ -27,24 +27,24 @@ function notifyStyleListeners() {
 	styleListeners.forEach( ( cb ) => cb() );
 }
 
-export function addRelatedPostStyles( postId: number, document: Document ) {
+export function addEmbeddedDocumentStyles( documentId: number, document: Document ) {
 	const extracted = extractStylesFromDocument( document );
 
 	if ( ! extracted.length ) {
-		if ( ! postStyles.has( postId ) ) {
+		if ( ! documentStyles.has( documentId ) ) {
 			return;
 		}
-		postStyles.delete( postId );
+		documentStyles.delete( documentId );
 	} else {
-		postStyles.set( postId, extracted );
+		documentStyles.set( documentId, extracted );
 	}
 
-	styles = [ ...postStyles.values() ].flat();
+	styles = [ ...documentStyles.values() ].flat();
 	notifyStyleListeners();
 }
 
-export function clearRelatedPostsStyles() {
-	postStyles = new Map();
+export function clearEmbeddedDocumentsStyles() {
+	documentStyles = new Map();
 	styles = [];
 	notifyStyleListeners();
 }

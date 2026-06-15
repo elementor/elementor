@@ -40,7 +40,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'editor-current-user',
 		'editor-elements-panel-notice',
 		'elementor-mcp-common',
-		'editor-related-posts-manager',
+		'editor-embedded-documents-manager',
 	];
 
 	const EXTENSIONS = [

@@ -1,6 +1,6 @@
 import { createMockDocument } from 'test-utils';
 import { type Document } from '@elementor/editor-documents';
-import { setRelatedPost } from '@elementor/editor-related-posts-manager';
+import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsAssets } from '../actions/load-components-assets';
@@ -11,8 +11,10 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-related-posts-manager', () => ( {
-	setRelatedPost: jest.fn(),
+jest.mock( '@elementor/editor-embedded-documents-manager', () => ( {
+	embeddedDocumentsManager: {
+		setDocument: jest.fn(),
+	},
 } ) );
 
 jest.mock( '../../utils/get-component-documents' );
@@ -21,7 +23,7 @@ jest.mock( '../actions/load-components-overridable-props', () => ( {
 	loadComponentsOverridableProps: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-const mockSetRelatedPost = jest.mocked( setRelatedPost );
+const mockSetDocument = jest.mocked( embeddedDocumentsManager.setDocument );
 const mockGetComponentDocuments = jest.mocked( getComponentDocuments );
 const mockLoadComponentsOverridableProps = jest.mocked( loadComponentsOverridableProps );
 
@@ -47,7 +49,7 @@ describe( 'loadComponentsAssets', () => {
 		{
 			should: 'a single component document',
 			documents: createDocumentsMap( [ [ SINGLE_COMP_ID, SINGLE_COMP_DOCUMENT ] ] ),
-			expectedSetPostCalls: [ [ SINGLE_COMP_ID, SINGLE_COMP_DOCUMENT ] ],
+			expectedSetDocumentCalls: [ [ SINGLE_COMP_ID, SINGLE_COMP_DOCUMENT ] ],
 		},
 		{
 			should: 'multiple component documents',
@@ -55,12 +57,12 @@ describe( 'loadComponentsAssets', () => {
 				[ FIRST_COMP_ID, FIRST_COMP_DOCUMENT ],
 				[ SECOND_COMP_ID, SECOND_COMP_DOCUMENT ],
 			] ),
-			expectedSetPostCalls: [
+			expectedSetDocumentCalls: [
 				[ FIRST_COMP_ID, FIRST_COMP_DOCUMENT ],
 				[ SECOND_COMP_ID, SECOND_COMP_DOCUMENT ],
 			],
 		},
-	] )( 'should register $should via setPost', async ( { documents, expectedSetPostCalls } ) => {
+	] )( 'should register $should via setDocument', async ( { documents, expectedSetDocumentCalls } ) => {
 		// Arrange
 		mockGetComponentDocuments.mockResolvedValue( documents );
 
@@ -68,13 +70,13 @@ describe( 'loadComponentsAssets', () => {
 		await loadComponentsAssets( [] );
 
 		// Assert
-		expect( mockSetRelatedPost ).toHaveBeenCalledTimes( expectedSetPostCalls.length );
-		expectedSetPostCalls.forEach( ( [ id, document ] ) => {
-			expect( mockSetRelatedPost ).toHaveBeenCalledWith( id, document );
+		expect( mockSetDocument ).toHaveBeenCalledTimes( expectedSetDocumentCalls.length );
+		expectedSetDocumentCalls.forEach( ( [ id, document ] ) => {
+			expect( mockSetDocument ).toHaveBeenCalledWith( id, document );
 		} );
 	} );
 
-	it( 'should not call setPost when documents map is empty', async () => {
+	it( 'should not call setDocument when documents map is empty', async () => {
 		// Arrange
 		mockGetComponentDocuments.mockResolvedValue( createDocumentsMap( [] ) );
 
@@ -82,7 +84,7 @@ describe( 'loadComponentsAssets', () => {
 		await loadComponentsAssets( [] );
 
 		// Assert
-		expect( mockSetRelatedPost ).not.toHaveBeenCalled();
+		expect( mockSetDocument ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should load overridable props for each component id', async () => {

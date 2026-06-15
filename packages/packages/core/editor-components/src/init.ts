@@ -8,7 +8,7 @@ import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { registerEditingPanelReplacement } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
-import { onRelatedPostLoad } from '@elementor/editor-related-posts-manager';
+import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
@@ -68,7 +68,7 @@ export function init() {
 		void loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	onRelatedPostLoad( ( _postId, data ) => {
+	embeddedDocumentsManager.onDocumentLoad( ( _documentId, data ) => {
 		void loadComponentsAssets( data.elements ?? [] );
 	} );
 
