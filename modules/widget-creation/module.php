@@ -100,7 +100,7 @@ class Module extends BaseModule {
 
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
-		<div type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><i class="eicon-plus"></i><?php echo esc_html__( 'New', 'elementor' ); ?></div>
+		<button type="button" class="elementor-panel-custom-widgets__cta elementor-panel-custom-widgets__cta--heading"><i class="eicon-plus" aria-hidden="true"></i><?php echo esc_html__( 'New', 'elementor' ); ?></button>
 		<# } #>
 		<?php
 	}
@@ -125,8 +125,9 @@ class Module extends BaseModule {
 				<div class="elementor-panel-custom-widgets-community-promo__images__image" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-2.png' ); ?>);"></div>
 				<div class="elementor-panel-custom-widgets-community-promo__images__image" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/community-promotion-showcase-3.png' ); ?>);"></div>
 			</div>
-			<button class="elementor-panel-custom-widgets-community-promo__button"><?php echo esc_html__( 'See what people are building', 'elementor' ); ?></button>
-			<img src="<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/arrow-up-right.svg' ); ?>" class="elementor-panel-custom-widgets-community-promo__icon" aria-hidden="true"></svg>
+			
+			<button type="button" class="elementor-panel-custom-widgets-community-promo__button"><?php echo esc_html__( 'See what people are building', 'elementor' ); ?></button>
+			<div class="elementor-panel-custom-widgets-community-promo__icon" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/arrow-up-right.svg' ); ?>);"></div>
 		</div>
 		<# } #>
 		<?php

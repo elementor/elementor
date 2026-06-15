@@ -464,9 +464,11 @@
 		}
 	}
 
-	img.elementor-panel-custom-widgets-community-promo__icon {
+	&__icon {
 		width: 16px;
 		height: 16px;
+		background-repeat: no-repeat;
+		background-size: cover;
 	}
 }
 
