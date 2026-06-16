@@ -305,3 +305,48 @@ describe( 'CompositionBuilder.build required children', () => {
 		expect( childElements.some( ( child ) => child.widgetType === 'e-form-input' ) ).toBe( true );
 	} );
 } );
+
+describe( 'CompositionBuilder.build final composition built event', () => {
+	let dispatchEventSpy: jest.SpyInstance;
+
+	beforeEach( () => {
+		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' );
+	} );
+
+	afterEach( () => {
+		dispatchEventSpy.mockRestore();
+	} );
+
+	it( 'dispatches elementor/composition/built event with root container IDs after applyProperties completes', async () => {
+		// Arrange
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const doUpdateElementProperty = jest.fn();
+		const createElement = jest.fn().mockReturnValue( createdElement );
+		const getContainer = jest
+			.fn()
+			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
+		const builder = CompositionBuilder.fromXMLString( xmlStringWithConfiguration, {
+			createElement,
+			deleteElement: jest.fn(),
+			getContainer,
+			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
+			doUpdateElementProperty,
+		} );
+		builder.setElementConfig( createElementConfigPayload() );
+
+		// Act
+		await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( doUpdateElementProperty ).toHaveBeenCalledTimes( 1 );
+		expect( dispatchEventSpy ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				type: 'elementor/composition/built',
+				detail: {
+					rootContainers: [ GENERATED_ELEMENT_ID ],
+				},
+			} )
+		);
+	} );
+} );
