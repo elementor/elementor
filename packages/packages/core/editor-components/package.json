@@ -47,12 +47,10 @@
     "@elementor/editor-editing-panel": "4.2.0",
     "@elementor/editor-elements": "4.2.0",
     "@elementor/editor-elements-panel": "4.2.0",
-    "@elementor/editor-global-classes": "4.2.0",
     "@elementor/editor-mcp": "4.2.0",
     "@elementor/editor-templates": "4.2.0",
     "@elementor/editor-panels": "4.2.0",
     "@elementor/editor-props": "4.2.0",
-    "@elementor/editor-styles-repository": "4.2.0",
     "@elementor/editor-ui": "4.2.0",
     "@elementor/editor-v1-adapters": "4.2.0",
     "@elementor/http-client": "4.2.0",
@@ -65,7 +63,8 @@
     "@elementor/utils": "4.2.0",
     "@wordpress/i18n": "^5.13.0",
     "@elementor/editor-notifications": "4.2.0",
-    "@elementor/editor-current-user": "4.2.0"
+    "@elementor/editor-current-user": "4.2.0",
+    "@elementor/editor-embedded-documents-manager": "4.2.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",
