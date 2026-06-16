@@ -54,7 +54,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text displayed on the button.' ),
+				->description( 'The text displayed on the button.' )
+				->alias( 'content', 'label' ),
 
 			'link' => Link_Prop_Type::make(),
 
