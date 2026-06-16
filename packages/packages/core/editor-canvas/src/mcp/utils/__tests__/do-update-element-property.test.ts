@@ -149,6 +149,7 @@ describe( 'doUpdateElementProperty', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			[ ELEMENT_TYPE ]: {
 				atomic_props_schema: {
+					// @ts-ignore: Mock type
 					[ PROPERTY_NAME ]: {
 						...PROP_SCHEMA_ENTRY,
 						meta: { aliases: [ 'text' ] },
