@@ -3,7 +3,9 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { AngieMcpAdapter } from './adapters/angie-adapter';
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
+import { WebMCPAdapter } from './adapters/web-mcp-adapter';
 import {
 	ANGIE_MODEL_PREFERENCES,
 	ANGIE_REQUIRED_RESOURCES,
@@ -11,6 +13,7 @@ import {
 	createDefaultModelPreferences,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getModelContext } from './utils/get-model-context';
 import { getSDK } from './utils/get-sdk';
 import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
@@ -51,19 +54,25 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 };
 
 export const signalMcpReady = (): void => {
-	if ( ! isAngieAvailable() ) {
-		resolveReady();
-		return;
-	}
-
-	getSDK()
-		.waitForReady()
-		.then( () => resolveReady() );
+	resolveReady();
 };
 
-export const activateAdapters = () => callAdapters( ( adapter ) => adapter.activate() );
+export const createAndRegisterAdapters = () => {
+	const modelContext = getModelContext();
 
-function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void | Promise< void > ) {
+	if ( modelContext ) {
+		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
+	}
+
+	if ( isAngieAvailable() ) {
+		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers, toMCPTitle ) );
+	}
+
+	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
+};
+
+// utility function to run a callback on all MCP interfaces
+function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
 	for ( const adapter of registrationAdapters ) {
 		try {
 			fn( adapter );
