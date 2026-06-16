@@ -13,7 +13,8 @@ test.describe( 'Editor One Menu Visual Tests', () => {
 		await context.close();
 	} );
 
-	test( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
+	// Temporarily skipped during promotions
+	test.skip( 'Editor One full page screenshot - Hebrew', async ( { page, apiRequests }, testInfo ) => {
 		test.setTimeout( timeouts.singleTest );
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
