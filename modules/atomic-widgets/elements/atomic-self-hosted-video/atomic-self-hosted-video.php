@@ -96,7 +96,8 @@ class Atomic_Self_Hosted_Video extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'source' => Video_Src_Prop_Type::make(),
+			'source' => Video_Src_Prop_Type::make()
+				->alias( 'video', 'src' ),
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
 			'playsinline' => Boolean_Prop_Type::make()
 				->default( false )
