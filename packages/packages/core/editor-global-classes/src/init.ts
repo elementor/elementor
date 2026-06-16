@@ -4,6 +4,7 @@ import {
 	injectIntoCssClassConvert,
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
+import { embeddedDocumentsManager } from '@elementor/editor-embedded-documents-manager';
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -14,12 +15,17 @@ import { GlobalStylesImportListener } from './components/global-styles-import-li
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
 import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
+import { addDocumentClasses } from './load-document-classes';
 import { initMcpIntegration } from './mcp-integration';
 import { slice } from './store';
 import { SyncWithDocumentSave } from './sync-with-document';
 
 export function init() {
 	registerSlice( slice );
+
+	embeddedDocumentsManager.onDocumentLoad( ( documentId ) => {
+		void addDocumentClasses( documentId );
+	} );
 
 	stylesRepository.register( globalClassesStylesProvider );
 
