@@ -28,7 +28,8 @@ jest.mock( '../utils/is-angie-available', () => ( {
 	isAngieAvailable: jest.fn( () => false ),
 } ) );
 
-type InitModule = typeof import( '../init' );
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type InitModule = typeof import('../init');
 
 const loadStartMCPServer = (): InitModule[ 'startMCPServer' ] => {
 	jest.resetModules();
@@ -53,9 +54,9 @@ const deleteModelContext = ( target: object ): void => {
 };
 
 const getRegisteredWebMCPAdapterContext = (): ModelContext => {
-	const { WebMCPAdapter } = jest.requireActual< typeof import( '../adapters/web-mcp-adapter' ) >(
-		'../adapters/web-mcp-adapter'
-	);
+	const { WebMCPAdapter } =
+		// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+		jest.requireActual< typeof import('../adapters/web-mcp-adapter') >( '../adapters/web-mcp-adapter' );
 	const adapter = mockRegisterMcpAdapter.mock.calls[ 0 ][ 0 ];
 
 	expect( adapter ).toBeInstanceOf( WebMCPAdapter );
