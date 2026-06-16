@@ -40,7 +40,7 @@ class Collection_Loop_Widget_Promotion {
 		return [
 			[
 				'name' => 'e-collection-loop',
-				'title' => __( 'Collection Loop', 'elementor' ),
+				'title' => __( 'Loop', 'elementor' ),
 				'icon' => 'eicon-loop-builder',
 				'categories' => '["v4-elements"]',
 			],
@@ -49,7 +49,7 @@ class Collection_Loop_Widget_Promotion {
 
 	private function get_promotion_content(): array {
 		return [
-			'title' => __( 'Collection Loop', 'elementor' ),
+			'title' => __( 'Loop', 'elementor' ),
 			'content' => __( 'Display dynamic content in a repeating layout with full query control.', 'elementor' ),
 			'ctaText' => __( 'Upgrade now', 'elementor' ),
 			'widgetCtaUrl' => 'https://go.elementor.com/go-pro-loop-modal/',
