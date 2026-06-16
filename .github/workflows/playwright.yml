@@ -124,18 +124,71 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
-      - name: Authenticate to GCP
+      - name: Generate token for tests configuration repo
         if: ${{ inputs.environment == 'staging' }}
-        uses: google-github-actions/auth@v2
+        id: generate-tests-configuration-token
+        uses: actions/create-github-app-token@v3
         with:
-          workload_identity_provider: 'projects/${{ vars.REPLACE }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
-          service_account: 'github-actions-sa@${{ vars.REPLACE }}.iam.gserviceaccount.com'
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+          owner: elementor
 
-      - name: Sync plugins from GCS
+      - name: Checkout tests configuration repo (staging plugins)
         if: ${{ inputs.environment == 'staging' }}
-        env:
-          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET }}
-        run: npm run wp:plugins:sync
+        uses: actions/checkout@v6
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-tests-configuration-token.outputs.token }}
+          path: elementor-tests-configuration
+          persist-credentials: false
+          ref: add-plugins-for-stg-run
+
+      - name: Install staging plugins from tests configuration repo
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          set -euo pipefail
+
+          PLUGINS_DIR="tests/wp-env/plugins"
+          mkdir -p "$PLUGINS_DIR"
+
+          install_plugin_zip() {
+            local zip_path="$1"
+            local slug="$2"
+
+            if [ ! -f "$zip_path" ]; then
+              echo "Missing plugin zip: $zip_path"
+              exit 1
+            fi
+
+            local first_entry
+            first_entry="$(unzip -Z1 "$zip_path" | grep -v '^__MACOSX/' | head -n 1)"
+
+            if [ -z "$first_entry" ]; then
+              echo "Empty plugin zip: $zip_path"
+              exit 1
+            fi
+
+            local top_folder
+            top_folder="$(printf '%s' "$first_entry" | cut -d/ -f1)"
+
+            rm -rf "$PLUGINS_DIR/$slug"
+
+            unzip -q -o "$zip_path" -d "$PLUGINS_DIR"
+
+            if [ "$top_folder" != "$slug" ] && [ -d "$PLUGINS_DIR/$top_folder" ]; then
+              mv "$PLUGINS_DIR/$top_folder" "$PLUGINS_DIR/$slug"
+            fi
+
+            if [ ! -d "$PLUGINS_DIR/$slug" ]; then
+              mkdir -p "$PLUGINS_DIR/$slug"
+              unzip -q -o "$zip_path" -d "$PLUGINS_DIR/$slug"
+            fi
+
+            echo "Installed $slug from $zip_path"
+          }
+
+          install_plugin_zip "elementor-tests-configuration/stg-runner.zip" "stg-runner"
+          install_plugin_zip "elementor-tests-configuration/elementor-dev-tools-master.zip" "elementor-dev-tools-master"
 
       - name: Update PHP version in config
         run: |
@@ -296,18 +349,71 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
-      - name: Authenticate to GCP
+      - name: Generate token for tests configuration repo
         if: ${{ inputs.environment == 'staging' }}
-        uses: google-github-actions/auth@v2
+        id: generate-tests-configuration-token
+        uses: actions/create-github-app-token@v3
         with:
-          workload_identity_provider: 'projects/${{ vars.REPLACE }}/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
-          service_account: 'github-actions-sa@${{ vars.REPLACE }}.iam.gserviceaccount.com'
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+          owner: elementor
 
-      - name: Sync plugins from GCS
+      - name: Checkout tests configuration repo (staging plugins)
         if: ${{ inputs.environment == 'staging' }}
-        env:
-          GCS_BUCKET_NAME: ${{ vars.WP_PLUGINS_GCS_BUCKET }}
-        run: npm run wp:plugins:sync
+        uses: actions/checkout@v6
+        with:
+          repository: elementor/elementor-tests-configuration
+          token: ${{ steps.generate-tests-configuration-token.outputs.token }}
+          path: elementor-tests-configuration
+          persist-credentials: false
+          ref: add-plugins-for-stg-run
+
+      - name: Install staging plugins from tests configuration repo
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          set -euo pipefail
+
+          PLUGINS_DIR="tests/wp-env/plugins"
+          mkdir -p "$PLUGINS_DIR"
+
+          install_plugin_zip() {
+            local zip_path="$1"
+            local slug="$2"
+
+            if [ ! -f "$zip_path" ]; then
+              echo "Missing plugin zip: $zip_path"
+              exit 1
+            fi
+
+            local first_entry
+            first_entry="$(unzip -Z1 "$zip_path" | grep -v '^__MACOSX/' | head -n 1)"
+
+            if [ -z "$first_entry" ]; then
+              echo "Empty plugin zip: $zip_path"
+              exit 1
+            fi
+
+            local top_folder
+            top_folder="$(printf '%s' "$first_entry" | cut -d/ -f1)"
+
+            rm -rf "$PLUGINS_DIR/$slug"
+
+            unzip -q -o "$zip_path" -d "$PLUGINS_DIR"
+
+            if [ "$top_folder" != "$slug" ] && [ -d "$PLUGINS_DIR/$top_folder" ]; then
+              mv "$PLUGINS_DIR/$top_folder" "$PLUGINS_DIR/$slug"
+            fi
+
+            if [ ! -d "$PLUGINS_DIR/$slug" ]; then
+              mkdir -p "$PLUGINS_DIR/$slug"
+              unzip -q -o "$zip_path" -d "$PLUGINS_DIR/$slug"
+            fi
+
+            echo "Installed $slug from $zip_path"
+          }
+
+          install_plugin_zip "elementor-tests-configuration/stg-runner.zip" "stg-runner"
+          install_plugin_zip "elementor-tests-configuration/elementor-dev-tools-master.zip" "elementor-dev-tools-master"
 
       - name: Update PHP version in config
         run: |
