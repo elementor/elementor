@@ -83,10 +83,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
+<<<<<<< HEAD
 		<# } else if ( false === obj.editable && !obj.atomicFormPromotion && !obj.birthdayEasterEgg ) { #>
+=======
+		<# } else if ( false === obj.editable && !obj.birthdayEasterEgg ) { #>
+>>>>>>> f113fd881e (Internal: Improve popup display rules [ED-24537] (#36218))
 			<i class="eicon-upgrade-crown-full"></i>
-		<# } #>
-		<# if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
+		<# } else if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
