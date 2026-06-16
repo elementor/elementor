@@ -110,6 +110,9 @@ class Post_Query extends Base {
 			'success' => true,
 			'data' => [
 				'value' => $posts
+					->filter( function ( $post ) {
+						return current_user_can( 'read_post', $post->ID );
+					} )
 					->map( function ( $post ) use ( $keys_format_map, $post_type_labels ) {
 						$post_type_label = $post->post_type;
 

@@ -72,6 +72,40 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 	}
 
+	public function test_post_query_excludes_posts_contributor_cannot_read() {
+		// Arrange
+		$contributor_id = $this->factory()->user->create( [ 'role' => 'contributor' ] );
+		wp_set_current_user( $contributor_id );
+
+		$own_draft_id = $this->factory()->post->create( [
+			'post_author' => $contributor_id,
+			'post_status' => 'draft',
+			'post_title' => 'My Smart Draft',
+			'post_type' => 'post',
+		] );
+
+		$request = new \WP_REST_Request( 'GET', self::URL );
+		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'smart' );
+		$request->set_param( Post_Query::IS_PUBLIC_KEY, false );
+		$request->set_param( Post_Query::EXCLUDED_TYPE_KEY, [] );
+		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, [
+			'ID' => 'id',
+			'post_title' => 'label',
+		] );
+		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+		$posts = $response->get_data()['data']['value'];
+		$post_ids = wp_list_pluck( $posts, 'id' );
+
+		// Assert
+		$this->assertContains( $own_draft_id, $post_ids );
+		$this->assertNotContains( $this->posts[8]->ID, $post_ids );
+
+		wp_delete_post( $own_draft_id, true );
+	}
+
 	private function execute( $params, $expected ) {
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
