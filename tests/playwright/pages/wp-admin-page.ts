@@ -425,13 +425,6 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeAnnouncementsIfVisible(): Promise<void> {
-		const angieGuideCard = this.page.getByTestId( 'e-angie-guide-card' );
-		const closeAngieGuideCard = async () => {
-			await angieGuideCard.getByRole( 'button', { name: 'close' } ).click();
-		};
-
-		await this.page.addLocatorHandler( angieGuideCard, closeAngieGuideCard, { times: 1 } );
-
 		if ( await this.page.locator( '#e-announcements-root' ).count() > 0 ) {
 			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
 		}
