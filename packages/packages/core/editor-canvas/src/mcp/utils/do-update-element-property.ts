@@ -12,8 +12,8 @@ import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
 import { mergeCustomCssText, readStoredCustomCssText } from './merge-custom-css';
-import { DYNAMIC_PROP_TYPE_KEY, dynamicTagLLMResolver } from './resolve-dynamic-tag';
 import { resolveCanonicalPropName } from './resolve-canonical-prop-name';
+import { DYNAMIC_PROP_TYPE_KEY, dynamicTagLLMResolver } from './resolve-dynamic-tag';
 
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
