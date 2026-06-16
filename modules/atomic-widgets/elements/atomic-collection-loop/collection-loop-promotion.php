@@ -33,7 +33,7 @@ class Collection_Loop_Promotion extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Collection Loop', 'elementor' );
+		return esc_html__( 'Loop', 'elementor' );
 	}
 
 	public function get_icon() {
