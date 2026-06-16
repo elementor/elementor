@@ -96,7 +96,9 @@ describe( 'FloatingPanelsHost', () => {
 		);
 
 		// Assert.
-		expect( screen.getByText( 'Panel A body', { hidden: true } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'complementary', { hidden: true } ) ).toHaveAttribute( 'aria-hidden', 'true' );
+		const panel = screen.getByRole( 'complementary', { hidden: true } );
+
+		expect( panel ).toHaveTextContent( 'Panel A body' );
+		expect( panel ).toHaveAttribute( 'aria-hidden', 'true' );
 	} );
 } );

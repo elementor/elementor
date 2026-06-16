@@ -1,5 +1,5 @@
 import * as React from 'react';
-import renderHookWithStore from 'test-utils/render-hook-with-store';
+import { renderHookWithStore } from 'test-utils';
 import {
 	__createStore,
 	__deleteStore,
