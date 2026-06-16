@@ -50,6 +50,8 @@ For all non-primitive entries in \`propertiesToChange\`, provide the schema \`ke
 
 Use the EXACT PropType schema given, and ALWAYS include the \`key\` from the schema for every property you are changing in \`propertiesToChange\`.
 
+Check \`llm_guidance.default_settings\` in the widget schema — include a key in \`propertiesToChange\` only when the user explicitly asks to change it.
+
 # Dynamic tags
 A value can be made dynamic wherever its schema exposes a variant with "$$type": "dynamic". This may be the property root OR a NESTED field: for example an image is made dynamic on its "src" (the root stays "image"), NOT on the whole "image" value.
 Put the dynamic object EXACTLY at the node whose schema offers the "dynamic" variant, in place of the static variant. The variant's "name" enumerates the tags allowed at that node.
