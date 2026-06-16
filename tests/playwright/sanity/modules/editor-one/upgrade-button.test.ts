@@ -14,7 +14,8 @@ test.describe( 'WP Admin Elementor Upgrade button @upgrade-button', () => {
 		await page.waitForLoadState( 'domcontentloaded' );
 	} );
 
-	test( 'Upgrade button is visible in the Elementor WP Admin submenu', async ( { page } ) => {
+	// Temporarily skipped during promotions
+	test.skip( 'Upgrade button is visible in the Elementor WP Admin submenu', async ( { page } ) => {
 		// Arrange.
 		const link = page.locator( UPGRADE_LINK_SELECTOR );
 
