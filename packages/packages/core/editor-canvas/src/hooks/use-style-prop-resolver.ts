@@ -3,6 +3,7 @@ import { getStylesSchema } from '@elementor/editor-styles';
 import { enqueueFont } from '@elementor/editor-v1-adapters';
 
 import { createPropsResolver } from '../renderers/create-props-resolver';
+import { maybeEnqueueFontFromStyleProp } from '../renderers/enqueue-font-from-style-prop';
 import { styleTransformersRegistry } from '../style-transformers-registry';
 
 export function useStylePropResolver() {
@@ -10,12 +11,8 @@ export function useStylePropResolver() {
 		return createPropsResolver( {
 			transformers: styleTransformersRegistry,
 			schema: getStylesSchema(),
-			onPropResolve: ( { key, value } ) => {
-				if ( key !== 'font-family' || typeof value !== 'string' ) {
-					return;
-				}
-
-				enqueueFont( value );
+			onPropResolve: ( { propValue, propType } ) => {
+				maybeEnqueueFontFromStyleProp( propType, propValue, enqueueFont );
 			},
 		} );
 	}, [] );
