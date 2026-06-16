@@ -41,7 +41,7 @@ Always check existing resources before building:
 For each widget you'll use:
 - List \`${ WIDGET_SCHEMA_URI }\` to see available widgets
 - Retrieve configuration schema from \`${ ELEMENT_SCHEMA_URI }\` for each widget
-- Check the \`llm_guidance\` property to understand if a widget is a container (can have children)
+- Check the \`llm_guidance\` property for container nesting, \`default_styles\`, and \`default_settings\` (omit default_settings from elementConfig unless the user asks to change them)
 
 ### 4. Build XML Structure
 Create valid XML with configuration-ids:
