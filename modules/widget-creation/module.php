@@ -117,7 +117,7 @@ class Module extends BaseModule {
 		?>
 		<# if ( 'custom-widgets' === name ) { #>
 		<div class="elementor-panel-category-custom-widgets-empty">
-			<p class="elementor-panel-category-custom-widgets-empty__message"><?php echo esc_html__( 'Create custom widgets by describing what you need.', 'elementor' ); ?></p>
+			<p class="elementor-panel-category-custom-widgets-empty__message"><?php echo esc_html__( 'Create custom widgets with Angie by describing what you need.', 'elementor' ); ?></p>
 		</div>
 		<div class="elementor-panel-custom-widgets-community-promo">
 			<div class="elementor-panel-custom-widgets-community-promo__images">

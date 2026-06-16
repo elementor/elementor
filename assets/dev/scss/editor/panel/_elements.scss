@@ -311,7 +311,7 @@
 	&__title {
 		font-size: 14px;
 		font-weight: bold;
-		line-height: 1.4;
+		line-height: 20px;
 		color: var(--e-a-color-txt);
 	}
 
@@ -320,6 +320,7 @@
 		font-size: 13px;
 		line-height: 1.6;
 		color: var(--e-a-color-txt-muted);
+		letter-spacing: 0.5px;
 	}
 
 	&__cta {
@@ -375,6 +376,7 @@
 	grid-column: 1 / -1;
 	cursor: pointer;
 
+	// Gradient border
 	&::before {
 		content: '';
 		position: absolute;
@@ -432,7 +434,6 @@
 			transform: rotate(7.26deg) translateY(4px);
 			z-index: calc(inherit + 2);
 
-
 			background-position-x: -20.254px;
 			background-position-y: -1.064px;
 			background-size: 163.105% 103.748%;		
@@ -467,6 +468,7 @@
 	&__icon {
 		width: 16px;
 		height: 16px;
+		flex-shrink: 0;
 		background-repeat: no-repeat;
 		background-size: cover;
 	}
