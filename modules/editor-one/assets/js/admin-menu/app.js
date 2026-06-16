@@ -1,6 +1,7 @@
 import { FlyoutMenuRenderer } from './classes/flyout-menu-renderer';
 import { SidebarMenuHandler } from './classes/sidebar-menu-handler';
 import { FlyoutInteractionHandler } from './classes/flyout-interaction-handler';
+import { MenuEventsTracker } from './classes/menu-events-tracker';
 
 class EditorOneMenu {
 	constructor() {
@@ -8,6 +9,8 @@ class EditorOneMenu {
 	}
 
 	init() {
+		MenuEventsTracker.attach();
+
 		if ( this.isSidebarNavigationActive() ) {
 			new SidebarMenuHandler();
 			return;
