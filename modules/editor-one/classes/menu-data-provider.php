@@ -6,6 +6,7 @@ use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -292,7 +293,25 @@ class Menu_Data_Provider {
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
-		return $this->build_flyout_items( true );
+		$items = $this->build_flyout_items( true );
+
+		if ( ! Utils::has_pro() ) {
+			$items[] = $this->build_theme_builder_flyout_item();
+		}
+
+		return $items;
+	}
+
+	private function build_theme_builder_flyout_item(): array {
+		return [
+			'slug' => 'elementor-theme-builder',
+			'label' => esc_html__( 'Theme Builder', 'elementor' ),
+			'url' => $this->get_theme_builder_url(),
+			'icon' => 'theme-builder',
+			'group_id' => '',
+			'priority' => 50,
+			'has_divider_before' => false,
+		];
 	}
 
 	private function build_flyout_items( bool $expand_third_party ): array {
