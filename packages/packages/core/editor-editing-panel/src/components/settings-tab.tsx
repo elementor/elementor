@@ -5,6 +5,8 @@ import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { getSettingsSectionInjections } from '../section-injections/section-injections';
+import { SettingsSectionInjectionSlot } from '../section-injections/settings-section-injection-slot';
 import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
@@ -36,7 +38,9 @@ export const SettingsTab = () => {
 							settings: currentSettings,
 						} );
 
-						if ( ! sectionItems.length ) {
+						const hasInjections = !! value.id && hasSettingsInjections( element.type, value.id );
+
+						if ( ! sectionItems.length && ! hasInjections ) {
 							return null;
 						}
 
@@ -46,7 +50,13 @@ export const SettingsTab = () => {
 								key={ type + '.' + index }
 								defaultExpanded={ isDefaultExpanded( value.id ) }
 							>
+								{ value.id ? (
+									<SettingsSectionInjectionSlot sectionId={ value.id } position="before" />
+								) : null }
 								{ sectionItems }
+								{ value.id ? (
+									<SettingsSectionInjectionSlot sectionId={ value.id } position="after" />
+								) : null }
 							</Section>
 						);
 					}
@@ -64,6 +74,10 @@ function getKey( control: Control | ElementControl, element: Element ) {
 	}
 
 	return control.value.type + '.' + element.id;
+}
+
+function hasSettingsInjections( elementType: string, sectionId: string ) {
+	return getSettingsSectionInjections( elementType, sectionId ).length > 0;
 }
 
 function isControl( control: ControlItem ): control is Control | ElementControl {
