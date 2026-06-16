@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { Box, Button, Typography } from '@elementor/ui';
 
+import { type PromotionIcon } from '../register-promotions';
+
 type Props = {
 	ctaDisabled: boolean;
 	ctaLabel: string;
-	icon: React.ComponentType< { color?: 'action'; fontSize?: 'small' } >;
+	icon: PromotionIcon;
 	onCtaClick: () => void;
 	subtitle: string;
 	title: string;

@@ -3,7 +3,7 @@ import { ChevronRightIcon } from '@elementor/icons';
 import { Box, LinearProgress, Rotate, Typography, useTheme } from '@elementor/ui';
 
 import { onKeyboardClick } from '../utils/keyboard-click';
-import { scoreColor } from '../utils/score-thresholds';
+import { getScoreTier } from '../utils/score-thresholds';
 
 type Props = {
 	label: string;
@@ -36,7 +36,7 @@ export default function ScoreBar( { label, score, onClick }: Props ) {
 			<LinearProgress
 				variant="determinate"
 				value={ score }
-				color={ scoreColor( score ) }
+				color={ getScoreTier( score ).color }
 				sx={ { flex: 1, height: 6, borderRadius: 4, bgcolor: 'action.disabledBackground' } }
 			/>
 			<Typography

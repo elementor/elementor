@@ -1,4 +1,4 @@
-import { findMatchingGlobalColor } from '../match-global-color';
+import { findMatchingGlobalByValue } from '../match-global-by-value';
 
 const GLOBALS = [
 	{ id: 'primary', value: '#6EC1E4', title: 'Primary' },
@@ -6,9 +6,9 @@ const GLOBALS = [
 	{ id: 'accent', value: '#61CE70', title: 'Accent' },
 ];
 
-describe( 'findMatchingGlobalColor', () => {
+describe( 'findMatchingGlobalByValue', () => {
 	it( 'returns the first global on exact match', () => {
-		expect( findMatchingGlobalColor( '#6EC1E4', GLOBALS ) ).toEqual( {
+		expect( findMatchingGlobalByValue( '#6EC1E4', GLOBALS ) ).toEqual( {
 			id: 'primary',
 			value: '#6EC1E4',
 			title: 'Primary',
@@ -16,10 +16,10 @@ describe( 'findMatchingGlobalColor', () => {
 	} );
 
 	it( 'returns null when no global matches', () => {
-		expect( findMatchingGlobalColor( '#ff0000', GLOBALS ) ).toBeNull();
+		expect( findMatchingGlobalByValue( '#ff0000', GLOBALS ) ).toBeNull();
 	} );
 
 	it( 'matches after trimming whitespace in the setting value', () => {
-		expect( findMatchingGlobalColor( '  #61CE70  ', GLOBALS )?.title ).toBe( 'Accent' );
+		expect( findMatchingGlobalByValue( '  #61CE70  ', GLOBALS )?.title ).toBe( 'Accent' );
 	} );
 } );

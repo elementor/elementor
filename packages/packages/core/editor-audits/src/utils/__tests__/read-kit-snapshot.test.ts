@@ -1,5 +1,19 @@
 import { readKitSnapshot } from '../read-kit-snapshot';
 
+type GlobalColorApiItem = {
+	id: string;
+	title?: string;
+	value?: string;
+};
+
+type GlobalTypographyApiItem = {
+	id: string;
+	title?: string;
+	value?: {
+		typography_font_family?: string;
+	};
+};
+
 type AuditWindow = Window & {
 	elementor?: {
 		documents?: {
@@ -10,7 +24,7 @@ type AuditWindow = Window & {
 		data?: {
 			get: (
 				command: string
-			) => Promise< { data?: Record< string, { id: string; title?: string; value?: string } > } >;
+			) => Promise< { data?: Record< string, GlobalColorApiItem | GlobalTypographyApiItem > } >;
 		};
 	};
 };
@@ -42,7 +56,7 @@ describe( 'readKitSnapshot', () => {
 							};
 						}
 
-						return { data: {} };
+						return { data: {} as Record< string, GlobalColorApiItem | GlobalTypographyApiItem > };
 					} ),
 				},
 			},
@@ -57,7 +71,7 @@ describe( 'readKitSnapshot', () => {
 		setWindowMocks( {
 			$e: {
 				data: {
-					get: jest.fn( async () => ( { data: {} } ) ),
+					get: jest.fn( async () => ( { data: {} as Record< string, GlobalColorApiItem | GlobalTypographyApiItem > } ) ),
 				},
 			},
 			elementor: {

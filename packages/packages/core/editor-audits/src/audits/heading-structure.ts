@@ -14,7 +14,6 @@ type HeadingControlDescriptor = {
 		itemWhen?: Record< string, string | string[] >;
 		tagSource?: 'widget' | 'item';
 	};
-	dynamic?: true;
 };
 
 type HeadingControlsRegistry = Record< string, HeadingControlDescriptor[] >;
@@ -104,16 +103,15 @@ const HEADING_CONTROLS_REGISTRY: HeadingControlsRegistry = {
 			requiresNonEmpty: 'nothing_found_message_text',
 		},
 	],
-	// Pro — dynamic (single placeholder per widget)
-	posts: [ { control: 'title_tag', when: { show_title: 'yes' }, dynamic: true } ],
-	'archive-posts': [ { control: 'title_tag', when: { show_title: 'yes' }, dynamic: true } ],
-	portfolio: [ { control: 'title_tag', when: { show_title: 'yes' }, dynamic: true } ],
 	// Pro — theme / Woo
-	'theme-post-title': [ { control: 'header_size', dynamic: true } ],
-	'theme-page-title': [ { control: 'header_size', dynamic: true } ],
-	'theme-archive-title': [ { control: 'header_size', dynamic: true } ],
-	'theme-site-title': [ { control: 'header_size', dynamic: true } ],
-	'woocommerce-product-title': [ { control: 'header_size', dynamic: true } ],
+	posts: [ { control: 'title_tag', when: { show_title: 'yes' } } ],
+	'archive-posts': [ { control: 'title_tag', when: { show_title: 'yes' } } ],
+	portfolio: [ { control: 'title_tag', when: { show_title: 'yes' } } ],
+	'theme-post-title': [ { control: 'header_size' } ],
+	'theme-page-title': [ { control: 'header_size' } ],
+	'theme-archive-title': [ { control: 'header_size' } ],
+	'theme-site-title': [ { control: 'header_size' } ],
+	'woocommerce-product-title': [ { control: 'header_size' } ],
 };
 
 function isNonEmptyString( value: unknown ): boolean {
@@ -213,10 +211,6 @@ function extractHeadingsFromWidget( elementId: string, widgetType: string, setti
 				const raw = tagSource === 'item' ? row[ descriptor.control ] : settings[ descriptor.control ];
 
 				pushHeading( headings, elementId, raw );
-
-				if ( descriptor.dynamic ) {
-					break;
-				}
 			}
 		} else {
 			pushHeading( headings, elementId, settings[ descriptor.control ] );

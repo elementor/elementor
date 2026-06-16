@@ -2,7 +2,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation } from '../types';
 import { collectHardcodedColors } from '../utils/collect-hardcoded-colors';
-import { findMatchingGlobalColor } from '../utils/match-global-color';
+import { findMatchingGlobalByValue } from '../utils/match-global-by-value';
 import { walkElements } from '../utils/walk';
 
 export const audit: Audit = {
@@ -26,7 +26,7 @@ export const audit: Audit = {
 
 		walkElements( ctx.elements.tree, ( node ) => {
 			for ( const { value } of collectHardcodedColors( node.settings ) ) {
-				const global = findMatchingGlobalColor( value, ctx.kit.globals.colors );
+				const global = findMatchingGlobalByValue( value, ctx.kit.globals.colors );
 
 				if ( ! global ) {
 					continue;

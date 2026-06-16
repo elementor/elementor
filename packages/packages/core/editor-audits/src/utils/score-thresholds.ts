@@ -5,26 +5,19 @@ export const OK_THRESHOLD = 50;
 
 export type ScoreColor = 'success' | 'warning' | 'error';
 
-export function scoreColor( score: number ): ScoreColor {
+export type ScoreTier = {
+	color: ScoreColor;
+	label: string;
+};
+
+export function getScoreTier( score: number ): ScoreTier {
 	if ( score >= GOOD_THRESHOLD ) {
-		return 'success';
+		return { color: 'success', label: __( 'Good', 'elementor' ) };
 	}
 
 	if ( score >= OK_THRESHOLD ) {
-		return 'warning';
+		return { color: 'warning', label: __( 'Needs work', 'elementor' ) };
 	}
 
-	return 'error';
-}
-
-export function scoreLabel( score: number ): string {
-	if ( score >= GOOD_THRESHOLD ) {
-		return __( 'Good', 'elementor' );
-	}
-
-	if ( score >= OK_THRESHOLD ) {
-		return __( 'Needs work', 'elementor' );
-	}
-
-	return __( 'At risk', 'elementor' );
+	return { color: 'error', label: __( 'At risk', 'elementor' ) };
 }

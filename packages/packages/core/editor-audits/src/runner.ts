@@ -16,10 +16,6 @@ import { extractAttachmentIds } from './utils/page-attachments';
 import { readKitSnapshot } from './utils/read-kit-snapshot';
 import { buildSnapshotTree } from './utils/v1-snapshot';
 
-function toAuditMeta( { evaluate: _evaluate, ...meta }: Audit ): AuditMeta {
-	return meta;
-}
-
 export async function runPageAudit( documentId: number ): Promise< PageAuditReport > {
 	const tree = buildSnapshotTree( getElements() );
 	const attachmentIds = extractAttachmentIds( tree );
@@ -33,9 +29,9 @@ export async function runPageAudit( documentId: number ): Promise< PageAuditRepo
 
 	const auditResults: AuditRun[] = await Promise.all(
 		registered.map( async ( audit ) => {
-			const meta = toAuditMeta( audit );
+			const { evaluate: _evaluate, ...meta }: AuditMeta & Pick< Audit, 'evaluate' > = audit;
 			try {
-				const result = await Promise.resolve( audit.evaluate( ctx ) );
+				const result = await audit.evaluate( ctx );
 				return { audit: meta, result };
 			} catch ( error ) {
 				const reason = error instanceof Error ? error.message : 'unknown-error';

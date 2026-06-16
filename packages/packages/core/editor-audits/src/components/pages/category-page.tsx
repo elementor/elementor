@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { CATEGORY_LABELS } from '../../constants';
 import { type AuditCategory, type PageAuditReport } from '../../types';
-import { sortFailedAuditResults } from '../../utils/sort-failed-audits';
+import { partitionAuditResults } from '../../utils/audit-status-summary';
 import { CATEGORY_ICONS } from '../category-icons';
 import StatusSection from '../status-section';
 import SubpageHeader from '../subpage-header';
@@ -18,14 +18,7 @@ type Props = {
 
 export default function CategoryPage( { category, report, onBack }: Props ) {
 	const Icon = CATEGORY_ICONS[ category ];
-	const inCategory = report.auditResults.filter( ( r ) => r.audit.categories.includes( category ) );
-	const failed = sortFailedAuditResults( inCategory.filter( ( r ) => r.result.status === 'fail' ) );
-	const passed = inCategory.filter( ( r ) => r.result.status === 'pass' );
-
-	const totalViolations = failed.reduce(
-		( n, r ) => n + ( r.result.status === 'fail' ? r.result.violations.length : 0 ),
-		0
-	);
+	const { failed, passed, totalViolations } = partitionAuditResults( report, { category } );
 
 	return (
 		<>
@@ -43,11 +36,7 @@ export default function CategoryPage( { category, report, onBack }: Props ) {
 					defaultExpanded
 				>
 					{ failed.map( ( r ) => (
-						<ViolationRow
-							key={ r.audit.id }
-							audit={ r.audit }
-							violations={ r.result.status === 'fail' ? r.result.violations : [] }
-						/>
+						<ViolationRow key={ r.audit.id } audit={ r.audit } violations={ r.result.violations } />
 					) ) }
 				</StatusSection>
 				<StatusSection label={ __( 'Passed audits', 'elementor' ) } count={ passed.length } color="success">

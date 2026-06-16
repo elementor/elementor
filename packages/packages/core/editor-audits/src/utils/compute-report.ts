@@ -1,5 +1,6 @@
 import { ALL_CATEGORIES } from '../constants';
 import { type AuditRun, type PageAuditReport } from '../types';
+import { getPopulatedCategories } from './audit-status-summary';
 
 type CategoryAccumulator = { totalWeight: number; passedWeight: number; total: number; failed: number };
 
@@ -34,7 +35,7 @@ export function computeReport( documentId: number, results: AuditRun[] ): PageAu
 		} )
 	) as PageAuditReport[ 'categories' ];
 
-	const populated = ALL_CATEGORIES.filter( ( c ) => categories[ c ].total > 0 );
+	const populated = getPopulatedCategories( categories, ALL_CATEGORIES );
 	const overall =
 		populated.length === 0
 			? 0

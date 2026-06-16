@@ -2,7 +2,7 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../../constants/angie';
+import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../../constants';
 import FixViolationWithAngie from '../fix-violation-with-angie';
 
 const mockIsAngieAvailable = jest.fn();

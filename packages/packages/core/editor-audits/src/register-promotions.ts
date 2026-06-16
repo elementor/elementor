@@ -13,6 +13,10 @@ export type PromotionConfig = {
 	getCtaUrl: ( run: AuditRun ) => string | undefined;
 };
 
+function firstFailExternalUrl( run: AuditRun ): string | undefined {
+	return run.result.status === 'fail' ? run.result.violations[ 0 ]?.externalUrl : undefined;
+}
+
 export const PROMOTIONS: PromotionConfig[] = [
 	{
 		auditId: 'audits/images-alt-text',
@@ -35,7 +39,7 @@ export const PROMOTIONS: PromotionConfig[] = [
 				count
 			);
 		},
-		getCtaUrl: ( run ) => ( run.result.status === 'fail' ? run.result.violations[ 0 ]?.externalUrl : undefined ),
+		getCtaUrl: firstFailExternalUrl,
 	},
 	{
 		auditId: 'audits/cookie-policy',
@@ -43,7 +47,7 @@ export const PROMOTIONS: PromotionConfig[] = [
 		ctaLabel: __( 'Fix with Cookiez', 'elementor' ),
 		formatSubtitle: ( run ) =>
 			run.result.status === 'fail' ? __( 'Generate cookie policy', 'elementor' ) : null,
-		getCtaUrl: ( run ) => ( run.result.status === 'fail' ? run.result.violations[ 0 ]?.externalUrl : undefined ),
+		getCtaUrl: firstFailExternalUrl,
 	},
 	{
 		auditId: 'audits/images-too-large',
@@ -66,6 +70,6 @@ export const PROMOTIONS: PromotionConfig[] = [
 				count
 			);
 		},
-		getCtaUrl: ( run ) => ( run.result.status === 'fail' ? run.result.violations[ 0 ]?.externalUrl : undefined ),
+		getCtaUrl: firstFailExternalUrl,
 	},
 ];

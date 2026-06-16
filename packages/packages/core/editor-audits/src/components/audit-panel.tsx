@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
 import { AngieIcon } from '@elementor/icons';
 import { Box, Button, Typography } from '@elementor/ui';
@@ -10,20 +11,10 @@ import LoadingPage from './pages/loading-page';
 import WelcomePage from './pages/welcome-page';
 import ReportShell from './report-shell';
 
-declare global {
-	interface Window {
-		elementor?: {
-			documents?: {
-				getCurrent?: () => { id: number } | undefined;
-			};
-		};
-	}
-}
-
 export default function AuditPanel() {
 	const { status, report, error, run } = useAuditReport();
 
-	const currentDocumentId = window.elementor?.documents?.getCurrent?.()?.id ?? 0;
+	const currentDocumentId = getCurrentDocumentId() ?? 0;
 	const onRun = () => run( currentDocumentId );
 	const lastScanLabel = report ? new Date( report.runAt ).toLocaleTimeString() : null;
 

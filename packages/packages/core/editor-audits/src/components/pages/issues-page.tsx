@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { ALL_CATEGORIES, CATEGORY_LABELS } from '../../constants';
 import { type AuditCategory, type PageAuditReport } from '../../types';
+import { getPopulatedCategories } from '../../utils/audit-status-summary';
 import { countSeverities } from '../../utils/severity-counts';
 import IssuesCategoryRow from '../issues-category-row';
 import Promotions from '../promotions';
@@ -15,7 +16,7 @@ type Props = {
 };
 
 export default function IssuesPage( { report, onCategoryClick, onAllAuditsClick }: Props ) {
-	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
+	const populatedCategories = getPopulatedCategories( report.categories, ALL_CATEGORIES );
 
 	return (
 		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 4, p: 2 } }>

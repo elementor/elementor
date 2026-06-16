@@ -9,8 +9,9 @@ import {
 	auditStatusDisplayCounts,
 	type AuditStatusGroup,
 	auditStatusLabel,
+	getPopulatedCategories,
 } from '../../utils/audit-status-summary';
-import { scoreColor, scoreLabel } from '../../utils/score-thresholds';
+import { getScoreTier } from '../../utils/score-thresholds';
 import {
 	ALL_SEVERITIES,
 	countSeverities,
@@ -52,18 +53,19 @@ const STATUS_ARIA_LABELS: Record< AuditStatusGroup, ( count: number ) => string 
 const STATUS_GROUPS = [ 'fail', 'pass', 'skipped' ] as const;
 
 export default function OverviewPage( { onCategoryClick, onStatusClick, report }: Props ) {
-	const populatedCategories = ALL_CATEGORIES.filter( ( c ) => report.categories[ c ].total > 0 );
+	const populatedCategories = getPopulatedCategories( report.categories, ALL_CATEGORIES );
 	const severityCounts = countSeverities( report );
 	const statusCounts = auditStatusDisplayCounts( report );
+	const overallScore = getScoreTier( report.overall );
 
 	return (
 		<Box sx={ { display: 'flex', flexDirection: 'column', gap: 4, p: 2 } }>
 			<Box sx={ { display: 'flex', alignItems: 'center', gap: 2 } }>
-				<ScoreCircle score={ report.overall } />
+				<ScoreCircle color={ overallScore.color } score={ report.overall } />
 				<Box sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 					<Chip
-						label={ scoreLabel( report.overall ) }
-						color={ scoreColor( report.overall ) }
+						label={ overallScore.label }
+						color={ overallScore.color }
 						variant="standard"
 						size="small"
 						sx={ { fontWeight: 600, alignSelf: 'flex-start' } }

@@ -1,37 +1,84 @@
 import { type ChipProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type AuditRun, type PageAuditReport } from '../types';
+import { type AuditCategory, type AuditResult, type AuditRun, type PageAuditReport } from '../types';
 import { sortFailedAuditResults } from './sort-failed-audits';
 
 export type AuditStatusGroup = 'fail' | 'pass' | 'skipped';
 
 export type PartitionedAuditResults = {
-	failed: AuditRun[];
-	passed: AuditRun[];
-	skipped: AuditRun[];
+	failed: Array< AuditRun & { result: Extract< AuditResult, { status: 'fail' } > } >;
+	passed: Array< AuditRun & { result: Extract< AuditResult, { status: 'pass' } > } >;
+	skipped: Array< AuditRun & { result: Extract< AuditResult, { status: 'skipped' } > } >;
 	totalViolations: number;
 };
 
-export function partitionAuditResults( report: PageAuditReport ): PartitionedAuditResults {
-	const failed = sortFailedAuditResults( report.auditResults.filter( ( r ) => r.result.status === 'fail' ) );
-	const passed = report.auditResults.filter( ( r ) => r.result.status === 'pass' );
-	const skipped = report.auditResults.filter( ( r ) => r.result.status === 'skipped' );
-	const totalViolations = failed.reduce(
-		( n, r ) => n + ( r.result.status === 'fail' ? r.result.violations.length : 0 ),
-		0
-	);
+type PartitionOptions = {
+	category?: AuditCategory;
+	sortFailed?: boolean;
+};
 
-	return { failed, passed, skipped, totalViolations };
+export function partitionAuditResults(
+	report: PageAuditReport,
+	options: PartitionOptions = {}
+): PartitionedAuditResults {
+	const { category, sortFailed = true } = options;
+	const failed: PartitionedAuditResults[ 'failed' ] = [];
+	const passed: PartitionedAuditResults[ 'passed' ] = [];
+	const skipped: PartitionedAuditResults[ 'skipped' ] = [];
+
+	let totalViolations = 0;
+
+	for ( const run of report.auditResults ) {
+		if ( category && ! run.audit.categories.includes( category ) ) {
+			continue;
+		}
+
+		switch ( run.result.status ) {
+			case 'fail':
+				failed.push( { ...run, result: run.result } );
+				totalViolations += run.result.violations.length;
+				break;
+			case 'pass':
+				passed.push( { ...run, result: run.result } );
+				break;
+			case 'skipped':
+				skipped.push( { ...run, result: run.result } );
+				break;
+		}
+	}
+
+	return {
+		failed: sortFailed ? sortFailedAuditResults( failed ) : failed,
+		passed,
+		skipped,
+		totalViolations,
+	};
 }
 
 export function auditStatusDisplayCounts( report: PageAuditReport ): Record< AuditStatusGroup, number > {
-	const { passed, skipped, totalViolations } = partitionAuditResults( report );
+	let pass = 0;
+	let skipped = 0;
+	let totalViolations = 0;
+
+	for ( const { result } of report.auditResults ) {
+		switch ( result.status ) {
+			case 'fail':
+				totalViolations += result.violations.length;
+				break;
+			case 'pass':
+				pass++;
+				break;
+			case 'skipped':
+				skipped++;
+				break;
+		}
+	}
 
 	return {
 		fail: totalViolations,
-		pass: passed.length,
-		skipped: skipped.length,
+		pass,
+		skipped,
 	};
 }
 
@@ -55,4 +102,11 @@ export function auditStatusLabel( status: AuditStatusGroup ): string {
 		case 'skipped':
 			return __( 'Skipped audits', 'elementor' );
 	}
+}
+
+export function getPopulatedCategories(
+	categoryTotals: PageAuditReport[ 'categories' ],
+	categories: readonly AuditCategory[]
+): AuditCategory[] {
+	return categories.filter( ( category ) => categoryTotals[ category ].total > 0 );
 }

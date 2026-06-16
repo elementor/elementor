@@ -2,7 +2,7 @@ import { __, sprintf } from '@wordpress/i18n';
 
 import { type Audit, type AuditViolation } from '../types';
 import { collectHardcodedFonts } from '../utils/collect-hardcoded-fonts';
-import { findMatchingGlobalFont } from '../utils/match-global-font';
+import { findMatchingGlobalByValue } from '../utils/match-global-by-value';
 import { walkElements } from '../utils/walk';
 
 export const audit: Audit = {
@@ -26,7 +26,7 @@ export const audit: Audit = {
 
 		walkElements( ctx.elements.tree, ( node ) => {
 			for ( const { value } of collectHardcodedFonts( node.settings ) ) {
-				const global = findMatchingGlobalFont( value, ctx.kit.globals.fonts );
+				const global = findMatchingGlobalByValue( value, ctx.kit.globals.fonts );
 
 				if ( ! global ) {
 					continue;

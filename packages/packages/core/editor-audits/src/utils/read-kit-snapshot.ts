@@ -48,34 +48,32 @@ type KitDocumentSettings = {
 	custom_typography?: KitTypographyRow[];
 };
 
+type GlobalWithValue = { value: string };
+
+function hasNonEmptyGlobalValue< T extends GlobalWithValue >( item: T ): boolean {
+	return item.value.length > 0;
+}
+
 export async function readKitSnapshot( kitId: number ): Promise< KitSnapshot > {
-	const colors = await readKitColors( kitId );
-	const fonts = await readKitFonts( kitId );
+	const [ colorsFromApi, fontsFromApi ] = await Promise.all( [
+		readGlobalsFromApi( 'globals/colors', mapApiColor, hasNonEmptyGlobalValue ),
+		readGlobalsFromApi( 'globals/typography', mapApiTypography, hasNonEmptyGlobalValue ),
+	] );
+
+	const documentSettings =
+		colorsFromApi.length === 0 || fontsFromApi.length === 0 ? getKitDocumentSettings( kitId ) : null;
+
+	const colors = colorsFromApi.length > 0 ? colorsFromApi : readColorsFromKitDocumentSettings( documentSettings );
+	const fonts = fontsFromApi.length > 0 ? fontsFromApi : readFontsFromKitDocumentSettings( documentSettings );
 
 	return { id: kitId, globals: { colors, fonts } };
 }
 
-async function readKitColors( kitId: number ): Promise< KitSnapshot[ 'globals' ][ 'colors' ] > {
-	const fromApi = await readColorsFromGlobalsApi();
-
-	if ( fromApi.length > 0 ) {
-		return fromApi;
-	}
-
-	return readColorsFromKitDocument( kitId );
-}
-
-async function readKitFonts( kitId: number ): Promise< KitSnapshot[ 'globals' ][ 'fonts' ] > {
-	const fromApi = await readFontsFromGlobalsApi();
-
-	if ( fromApi.length > 0 ) {
-		return fromApi;
-	}
-
-	return readFontsFromKitDocument( kitId );
-}
-
-async function readColorsFromGlobalsApi(): Promise< KitSnapshot[ 'globals' ][ 'colors' ] > {
+async function readGlobalsFromApi< TApiItem, TGlobal extends GlobalWithValue >(
+	command: string,
+	mapItem: ( item: TApiItem ) => TGlobal,
+	hasValue: ( item: TGlobal ) => boolean
+): Promise< TGlobal[] > {
 	const $e = ( window as AuditWindow ).$e;
 
 	if ( ! $e?.data?.get ) {
@@ -83,31 +81,12 @@ async function readColorsFromGlobalsApi(): Promise< KitSnapshot[ 'globals' ][ 'c
 	}
 
 	try {
-		const result = await $e.data.get( 'globals/colors' );
+		const result = await $e.data.get( command );
 		const data = result?.data ?? {};
 
 		return Object.values( data )
-			.map( ( item ) => mapApiColor( item as GlobalColorApiItem ) )
-			.filter( ( color ) => color.value.length > 0 );
-	} catch {
-		return [];
-	}
-}
-
-async function readFontsFromGlobalsApi(): Promise< KitSnapshot[ 'globals' ][ 'fonts' ] > {
-	const $e = ( window as AuditWindow ).$e;
-
-	if ( ! $e?.data?.get ) {
-		return [];
-	}
-
-	try {
-		const result = await $e.data.get( 'globals/typography' );
-		const data = result?.data ?? {};
-
-		return Object.values( data )
-			.map( ( item ) => mapApiTypography( item as GlobalTypographyApiItem ) )
-			.filter( ( font ) => font.value.length > 0 );
+			.map( ( item ) => mapItem( item as TApiItem ) )
+			.filter( hasValue );
 	} catch {
 		return [];
 	}
@@ -129,9 +108,9 @@ function mapApiTypography( item: GlobalTypographyApiItem ): KitSnapshot[ 'global
 	};
 }
 
-function readColorsFromKitDocument( kitId: number ): KitSnapshot[ 'globals' ][ 'colors' ] {
-	const settings = getKitDocumentSettings( kitId );
-
+function readColorsFromKitDocumentSettings(
+	settings: KitDocumentSettings | null
+): KitSnapshot[ 'globals' ][ 'colors' ] {
 	if ( ! settings ) {
 		return [];
 	}
@@ -144,12 +123,10 @@ function readColorsFromKitDocument( kitId: number ): KitSnapshot[ 'globals' ][ '
 			value: row.color,
 			title: row.title ?? row._id,
 		} ) )
-		.filter( ( color ) => color.value.length > 0 );
+		.filter( hasNonEmptyGlobalValue );
 }
 
-function readFontsFromKitDocument( kitId: number ): KitSnapshot[ 'globals' ][ 'fonts' ] {
-	const settings = getKitDocumentSettings( kitId );
-
+function readFontsFromKitDocumentSettings( settings: KitDocumentSettings | null ): KitSnapshot[ 'globals' ][ 'fonts' ] {
 	if ( ! settings ) {
 		return [];
 	}
@@ -162,7 +139,7 @@ function readFontsFromKitDocument( kitId: number ): KitSnapshot[ 'globals' ][ 'f
 			value: row.typography_font_family ?? '',
 			title: row.title ?? row._id,
 		} ) )
-		.filter( ( font ) => font.value.length > 0 );
+		.filter( hasNonEmptyGlobalValue );
 }
 
 function getKitDocumentSettings( kitId: number ): KitDocumentSettings | null {

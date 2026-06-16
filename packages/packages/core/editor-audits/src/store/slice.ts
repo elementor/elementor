@@ -26,10 +26,6 @@ export const slice = __createSlice( {
 			state.status = 'error';
 			state.error = action.payload;
 		},
-		reset( state ) {
-			state.status = 'idle';
-			state.error = null;
-		},
 	},
 } );
 

@@ -9,14 +9,14 @@ const ALL_SET = {
 };
 
 describe( audit.id, () => {
-	it( 'passes when all site identity fields are set', () => {
-		expect( audit.evaluate( makeContext( { pageContext: { site_identity: ALL_SET } } ) ) ).toEqual( {
+	it( 'passes when all site identity fields are set', async () => {
+		expect( await audit.evaluate( makeContext( { pageContext: { site_identity: ALL_SET } } ) ) ).toEqual( {
 			status: 'pass',
 		} );
 	} );
 
-	it( 'fails with one violation when site name is not set', () => {
-		const result = audit.evaluate(
+	it( 'fails with one violation when site name is not set', async () => {
+		const result = await audit.evaluate(
 			makeContext( {
 				pageContext: {
 					site_identity: { ...ALL_SET, site_name_set: false },
@@ -40,8 +40,8 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails with one violation when site description is not set', () => {
-		const result = audit.evaluate(
+	it( 'fails with one violation when site description is not set', async () => {
+		const result = await audit.evaluate(
 			makeContext( {
 				pageContext: {
 					site_identity: { ...ALL_SET, site_description_set: false },
@@ -59,8 +59,8 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails with one violation when site logo is not set', () => {
-		const result = audit.evaluate(
+	it( 'fails with one violation when site logo is not set', async () => {
+		const result = await audit.evaluate(
 			makeContext( {
 				pageContext: {
 					site_identity: { ...ALL_SET, site_logo_set: false },
@@ -75,8 +75,8 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails with one violation when site favicon is not set', () => {
-		const result = audit.evaluate(
+	it( 'fails with one violation when site favicon is not set', async () => {
+		const result = await audit.evaluate(
 			makeContext( {
 				pageContext: {
 					site_identity: { ...ALL_SET, site_favicon_set: false },
@@ -91,8 +91,8 @@ describe( audit.id, () => {
 		}
 	} );
 
-	it( 'fails with four violations in name, description, logo, favicon order', () => {
-		const result = audit.evaluate(
+	it( 'fails with four violations in name, description, logo, favicon order', async () => {
+		const result = await audit.evaluate(
 			makeContext( {
 				pageContext: {
 					site_identity: {

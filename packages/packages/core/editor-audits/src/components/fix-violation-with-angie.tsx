@@ -4,7 +4,7 @@ import { AngieIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants/angie';
+import { ANGIE_FIX_ENTRY_POINT, CREATE_WIDGET_EVENT } from '../constants';
 
 type Props = {
 	prompt: string;

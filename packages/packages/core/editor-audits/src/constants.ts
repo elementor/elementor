@@ -4,6 +4,10 @@ import { type AuditCategory } from './types';
 
 export const AUDIT_PANEL_ID = 'audit-panel';
 
+export const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+
+export const ANGIE_FIX_ENTRY_POINT = 'audit_violation';
+
 export const ALL_CATEGORIES: AuditCategory[] = [
 	'best-practices',
 	'seo',

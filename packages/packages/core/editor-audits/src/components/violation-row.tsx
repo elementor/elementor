@@ -5,7 +5,7 @@ import { AlertCircleIcon, BulbIcon, CheckIcon, ChevronDownIcon, EyeIcon, HelpIco
 import { Alert, AlertTitle, Box, Collapse, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useViolationFocus } from '../hooks/use-violation-focus';
+import { focusViolation } from '../hooks/focus-violation';
 import { type AuditMeta, type AuditViolation } from '../types';
 import { buildAngiePrompt } from '../utils/build-angie-prompt';
 import { onKeyboardClick } from '../utils/keyboard-click';
@@ -21,10 +21,7 @@ type Props = {
 
 function SkipReasonTooltip( { reason }: { reason: string } ) {
 	return (
-		<Tooltip
-			title={ reason }
-			placement="top"
-		>
+		<Tooltip title={ reason } placement="top">
 			<Box aria-label={ reason } component="span" sx={ { display: 'inline-flex', alignItems: 'center' } }>
 				<HelpIcon fontSize="small" color="action" />
 			</Box>
@@ -49,7 +46,6 @@ function StatusIndicator( { audit, violations }: Pick< Props, 'audit' | 'violati
 
 export default function ViolationRow( { audit, skipReason, violations }: Props ) {
 	const [ expanded, setExpanded ] = useState( false );
-	const { focus } = useViolationFocus();
 
 	const toggleExpanded = () => setExpanded( ( value ) => ! value );
 
@@ -132,8 +128,8 @@ export default function ViolationRow( { audit, skipReason, violations }: Props )
 									key={ idx }
 									role="button"
 									tabIndex={ 0 }
-									onClick={ () => focus( violation ) }
-									onKeyDown={ onKeyboardClick( () => focus( violation ) ) }
+									onClick={ () => focusViolation( violation ) }
+									onKeyDown={ onKeyboardClick( () => focusViolation( violation ) ) }
 									sx={ {
 										display: 'flex',
 										alignItems: 'center',

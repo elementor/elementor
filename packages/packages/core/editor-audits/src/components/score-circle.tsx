@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { Box, CircularProgress, Typography } from '@elementor/ui';
 
-import { scoreColor } from '../utils/score-thresholds';
+import { getScoreTier, type ScoreColor } from '../utils/score-thresholds';
 
 type Props = {
+	color?: ScoreColor;
 	score: number;
 };
 
 const SCORE_CIRCLE_SIZE = 88;
 const SCORE_CIRCLE_THICKNESS = 3;
 
-export default function ScoreCircle( { score }: Props ) {
+export default function ScoreCircle( { color, score }: Props ) {
+	const progressColor = color ?? getScoreTier( score ).color;
+
 	return (
 		<Box
 			role="progressbar"
@@ -31,7 +34,7 @@ export default function ScoreCircle( { score }: Props ) {
 				value={ score }
 				size={ SCORE_CIRCLE_SIZE }
 				thickness={ SCORE_CIRCLE_THICKNESS }
-				color={ scoreColor( score ) }
+				color={ progressColor }
 				sx={ { position: 'absolute', left: 0 } }
 			/>
 			<Box

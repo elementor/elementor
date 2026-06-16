@@ -36,11 +36,7 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandFail }
 				>
 					{ failed.map( ( r ) => (
-						<ViolationRow
-							key={ r.audit.id }
-							audit={ r.audit }
-							violations={ r.result.status === 'fail' ? r.result.violations : [] }
-						/>
+						<ViolationRow key={ r.audit.id } audit={ r.audit } violations={ r.result.violations } />
 					) ) }
 				</StatusSection>
 				<StatusSection
@@ -60,11 +56,7 @@ export default function AllAuditsPage( { initialExpandedStatus, onBack, report }
 					defaultExpanded={ expandSkipped }
 				>
 					{ skipped.map( ( r ) => (
-						<ViolationRow
-							key={ r.audit.id }
-							audit={ r.audit }
-							skipReason={ r.result.status === 'skipped' ? r.result.reason : undefined }
-						/>
+						<ViolationRow key={ r.audit.id } audit={ r.audit } skipReason={ r.result.reason } />
 					) ) }
 				</StatusSection>
 			</Box>
