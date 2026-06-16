@@ -47,11 +47,13 @@ async function getComponentIds(
 					cache.set( componentId, getComponentDocumentData( componentId ) );
 				}
 
-				const doc = await cache.get( componentId );
-				childElements = doc?.elements;
+				if ( isRecursive ) {
+					const doc = await cache.get( componentId );
+					childElements = doc?.elements;
+				}
 			}
 
-			if ( isRecursive && childElements?.length ) {
+			if ( childElements?.length ) {
 				const childIds = await getComponentIds( childElements, cache, isRecursive );
 				ids.push( ...childIds );
 			}
