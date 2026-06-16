@@ -17,7 +17,12 @@ function getModelContext(): ModelContext | undefined {
 	return documentModelContext || navigatorModelContext;
 }
 
+let isInitialized = false;
 export function startMCPServer() {
+	if ( isInitialized ) {
+		return;
+	}
+	isInitialized = true;
 	const modelContext = getModelContext();
 
 	if ( modelContext ) {
