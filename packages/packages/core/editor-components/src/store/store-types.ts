@@ -1,6 +1,12 @@
 import { type V1Document } from '@elementor/editor-documents';
 
-import { type Component, type ComponentId, type PublishedComponent, type UnpublishedComponent } from '../types';
+import {
+	type Component,
+	type ComponentId,
+	type PublishedComponent,
+	type StylesDefinition,
+	type UnpublishedComponent,
+} from '../types';
 
 export type SanitizeAttributes = 'overridableProps';
 
@@ -8,6 +14,7 @@ export type ComponentsState = {
 	data: PublishedComponent[];
 	unpublishedData: UnpublishedComponent[];
 	loadStatus: 'idle' | 'pending' | 'error';
+	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
 	archivedThisSession: ComponentId[];
 	path: ComponentsPathItem[];
@@ -29,6 +36,7 @@ export const initialState: ComponentsState = {
 	data: [],
 	unpublishedData: [],
 	loadStatus: 'idle',
+	styles: {},
 	createdThisSession: [],
 	archivedThisSession: [],
 	path: [],

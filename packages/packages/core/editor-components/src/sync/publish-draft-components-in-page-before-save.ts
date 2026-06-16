@@ -22,7 +22,7 @@ export async function publishDraftComponentsInPageBeforeSave( { status, elements
 		return;
 	}
 
-	const documents = await getComponentDocuments( { elements } );
+	const documents = await getComponentDocuments( elements );
 
 	const draftIds = [ ...documents.values() ].filter( isDocumentDirty ).map( ( document ) => document.id );
 

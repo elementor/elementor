@@ -9,26 +9,16 @@ export type ComponentDocumentsMap = Map< number, Document >;
 
 type ProcessedCache = Map< number, Promise< Document | null > >;
 
-type GetterParams = {
-	elements: V1ElementData[];
-	cache?: ProcessedCache;
-	isRecursive?: boolean;
-};
-export async function getComponentDocuments( {
-	elements,
-	cache = new Map(),
-	isRecursive = true,
-}: GetterParams ): Promise< ComponentDocumentsMap > {
-	const componentIds = await getComponentIds( elements, cache, isRecursive );
+export async function getComponentDocuments(
+	elements: V1ElementData[],
+	cache: ProcessedCache = new Map()
+): Promise< ComponentDocumentsMap > {
+	const componentIds = await getComponentIds( elements, cache );
 
 	return getDocumentsMap( componentIds, cache );
 }
 
-async function getComponentIds(
-	elements: V1ElementData[],
-	cache: ProcessedCache,
-	isRecursive: boolean
-): Promise< number[] > {
+async function getComponentIds( elements: V1ElementData[], cache: ProcessedCache ): Promise< number[] > {
 	const results = await Promise.all(
 		elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 			const ids: number[] = [];
@@ -51,8 +41,8 @@ async function getComponentIds(
 				childElements = doc?.elements;
 			}
 
-			if ( isRecursive && childElements?.length ) {
-				const childIds = await getComponentIds( childElements, cache, isRecursive );
+			if ( childElements?.length ) {
+				const childIds = await getComponentIds( childElements, cache );
 				ids.push( ...childIds );
 			}
 
