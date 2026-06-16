@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { FloatingPanelBody, FloatingPanelFooter, FloatingPanelHeader } from '@elementor/editor-floating-panels';
-import { AngieIcon } from '@elementor/icons';
+import { ShieldCheckIcon } from '@elementor/icons';
 import { Box, Button, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -23,14 +23,14 @@ export default function AuditPanel() {
 			<FloatingPanelHeader
 				panelId="audit-panel"
 				title={ __( 'Audit', 'elementor' ) }
-				actions={ [
-					{
-						id: 'ai',
-						icon: AngieIcon,
-						label: __( 'Fix with AI', 'elementor' ),
-						disabled: true,
-					},
-				] }
+				// actions={ [
+				// 	{
+				// 		id: 'audit',
+				// 		icon: ShieldCheckIcon,
+				// 		label: __( 'Audit Page', 'elementor' ),
+				// 		disabled: true,
+				// 	},
+				// ] }
 			/>
 			<FloatingPanelBody>
 				{ status === 'idle' && <WelcomePage /> }
