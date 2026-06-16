@@ -1,9 +1,7 @@
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 
-import {
-	type getRegisteredMcpServers as _getRegisteredMcpServers,
-	type toMCPTitle as _toMCPTitle,
-} from '../mcp-registry';
+import { type getRegisteredMcpServers as _getRegisteredMcpServers } from '../mcp-registry';
+import { toMCPTitle } from '../utils/to-mcp-title';
 import { type IMcpRegistrationAdapter } from './types';
 
 const MAX_RETRIES = 3;
@@ -11,8 +9,7 @@ const MAX_RETRIES = 3;
 export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 	constructor(
 		private readonly sdk: AngieMcpSdk,
-		private readonly getRegisteredMcpServers: typeof _getRegisteredMcpServers,
-		private readonly toMCPTitle: typeof _toMCPTitle
+		private readonly getRegisteredMcpServers: typeof _getRegisteredMcpServers
 	) {}
 
 	async activate(): Promise< void > {
@@ -37,7 +34,7 @@ export class AngieMcpAdapter implements IMcpRegistrationAdapter {
 		for ( const [ key, mcpServer, description ] of entries ) {
 			try {
 				await this.sdk.registerLocalServer( {
-					title: this.toMCPTitle( key ),
+					title: toMCPTitle( key ),
 					name: `editor-${ key }`,
 					server: mcpServer,
 					version: '1.0.0',

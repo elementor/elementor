@@ -18,6 +18,7 @@ import { getSDK } from './utils/get-sdk';
 import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
+import { toMCPTitle } from './utils/to-mcp-title';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -65,7 +66,7 @@ export const createAndRegisterAdapters = () => {
 	}
 
 	if ( isAngieAvailable() ) {
-		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers, toMCPTitle ) );
+		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 
 	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
@@ -97,11 +98,6 @@ const isAlphabet = ( str: string ): string | never => {
 		throw new Error( 'Not alphabet' );
 	}
 	return str;
-};
-
-export const toMCPTitle = ( namespace: string ): string => {
-	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
-	return `Editor ${ capitalized }`;
 };
 
 /**
