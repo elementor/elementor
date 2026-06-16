@@ -13,6 +13,7 @@ import { type z } from '@elementor/schema';
 
 import { mergeCustomCssText, readStoredCustomCssText } from './merge-custom-css';
 import { DYNAMIC_PROP_TYPE_KEY, dynamicTagLLMResolver } from './resolve-dynamic-tag';
+import { resolveCanonicalPropName } from './resolve-canonical-prop-name';
 
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
@@ -47,7 +48,11 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
  * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
  */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
-	const { elementId, propertyName, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
+	const { elementId, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
+	const propertyName =
+		params.propertyName === '_styles'
+			? params.propertyName
+			: resolveCanonicalPropName( elementType, params.propertyName );
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;

@@ -60,7 +60,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text content of the heading.' ),
+				->description( 'The text content of the heading.' )
+				->alias( 'text', 'content', 'heading' ),
 
 			'link' => Link_Prop_Type::make(),
 
