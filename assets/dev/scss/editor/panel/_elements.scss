@@ -367,6 +367,7 @@
 .elementor-panel-custom-widgets-community-promo {
 	display: flex;
 	gap: 12px;
+	justify-content: space-between;
 	padding: 8px;
 	padding-left: 104px;
 	border-radius: 7px;
@@ -375,6 +376,7 @@
 	border: none;
 	grid-column: 1 / -1;
 	cursor: pointer;
+	min-height: 50px;
 
 	// Gradient border
 	&::before {
@@ -451,6 +453,7 @@
 		border: none;
 		text-decoration: none;
 		background: none;
+		align-self: center;
 
 		&::after {
 			content: '';
