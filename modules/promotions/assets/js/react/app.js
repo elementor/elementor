@@ -42,6 +42,7 @@ const App = ( { colorScheme, isRTL, anchorTarget, ...props } ) => (
 					disableHoverListener
 					PopperProps={ {
 						modifiers: [ OFFSET_MODIFIER ],
+						sx: { zIndex: ( theme ) => theme.zIndex.appBar - 1 },
 						...( anchorTarget && { anchorEl: anchorTarget } ),
 					} }
 				><span /></Infotip>
