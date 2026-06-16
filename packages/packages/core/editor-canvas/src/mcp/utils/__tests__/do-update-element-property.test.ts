@@ -143,6 +143,49 @@ describe( 'doUpdateElementProperty', () => {
 		);
 	} );
 
+	it( 'persists canonical prop key when an alias property name is used', () => {
+		// Arrange
+		const propertyValue = 'resolved-title';
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			[ ELEMENT_TYPE ]: {
+				atomic_props_schema: {
+					// @ts-ignore: Mock type
+					[ PROPERTY_NAME ]: {
+						...PROP_SCHEMA_ENTRY,
+						meta: { aliases: [ 'text' ] },
+					},
+				},
+			},
+		} );
+		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
+			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
+			valid: true,
+			errorMessages: [],
+			errors: [],
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: 'text',
+			propertyValue,
+		} );
+
+		// Assert
+		expect( Schema.validatePropValue ).toHaveBeenCalledWith(
+			expect.objectContaining( PROP_SCHEMA_ENTRY ),
+			propertyValue
+		);
+		expect( updateElementSettings ).toHaveBeenCalledWith( {
+			id: ELEMENT_ID,
+			props: {
+				[ PROPERTY_NAME ]: propertyValue,
+			},
+			withHistory: false,
+		} );
+	} );
+
 	it( 'replaces existing local style custom_css by default', () => {
 		// Arrange
 		jest.mocked( getElementStyles ).mockReturnValue( {
