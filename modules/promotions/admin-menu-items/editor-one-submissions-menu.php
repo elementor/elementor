@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Submissions_Menu extends Base_Promotion_Template implements Menu_Item_Third_Level_Interface {
 
 	public function get_position(): int {
-		return 50;
+		return 70;
 	}
 
 	public function get_slug(): string {
