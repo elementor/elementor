@@ -12,15 +12,16 @@ class RetriableAngieSDK extends AngieMcpSdk {
 				break;
 			} catch {
 				retryCount--;
-				await sleep();
+				await sleep( 10 );
 			}
 		}
+		return new Promise( () => {} ); // never resolves
 	}
 }
 
-const sleep = () =>
+const sleep = ( ms = 10_000 ) =>
 	new Promise( ( resolve ) => {
-		setTimeout( resolve, 10_000 );
+		setTimeout( resolve, ms );
 	} );
 
 export const getSDK = () => {
