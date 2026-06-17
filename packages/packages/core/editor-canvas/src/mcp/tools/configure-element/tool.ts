@@ -7,7 +7,6 @@ import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { resolveCanonicalPropKeys } from '../../utils/resolve-canonical-prop-name';
-import { validateInput } from '../../utils/validate-input';
 import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -61,13 +60,6 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			}
 			const propertiesToUpdate = resolveCanonicalPropKeys( elementType, propertiesToChange );
 			const toUpdate = Object.entries( propertiesToUpdate );
-			const { valid, errors } = validateInput.validatePropSchema( elementType, propertiesToUpdate );
-			if ( ! valid ) {
-				const errorMessage = `Failed to configure element "${ elementId }" due to invalid properties: ${ errors?.join(
-					'\n- '
-				) }`;
-				throw new Error( errorMessage );
-			}
 			for ( const [ propertyName, propertyValue ] of toUpdate as [ string, PropValue ][] ) {
 				try {
 					doUpdateElementProperty( {
