@@ -29,10 +29,6 @@ class Global_Classes_Repository {
 			'frontend' => self::CONTEXT_FRONTEND,
 			'preview' => self::CONTEXT_PREVIEW,
 		],
-		'meta_key' => [
-			'frontend' => self::META_KEY_FRONTEND,
-			'preview' => self::META_KEY_PREVIEW,
-		],
 	];
 
 	private ?Global_Classes $cache = null;
