@@ -226,11 +226,11 @@ To improve the user experience, Elementor may use the following 3rd party servic
 
 = 📧 Related Products by Elementor =
 
-**[Image Optimizer](https://go.elementor.com/wp-repo-description-tab-elementor-io/)**: Superior image compression for faster, high-quality website performance.
+**[Image Optimization](https://go.elementor.com/wp-repo-description-tab-elementor-io/)**: Superior image compression for faster, high-quality website performance.
 
-**[Site Mailer](https://go.elementor.com/wp-repo-description-tab-elementor-sm/)**: Reliable email management without SMTP plugins, keeping your communications streamlined and efficient.
+**[Email Deliverability](https://go.elementor.com/wp-repo-description-tab-elementor-sm/)**: Reliable email management without SMTP plugins, keeping your communications streamlined and efficient.
 
-**[Ally](http://go.elementor.com/editor-acc-wp-repo)**: Enhances website usability for individuals with disabilities. Ally is designed to help web creators make their websites more inclusive. It scans, detects, and remediate key accessibility violations, working seamlessly on all WordPress and Elementor websites.
+**[Web Accessibility](http://go.elementor.com/editor-acc-wp-repo)**: Enhances website usability for individuals with disabilities. Web Accessibility is designed to help web creators make their websites more inclusive. It scans, detects, and remediate key accessibility violations, working seamlessly on all WordPress and Elementor websites.
 
 = 📣 See What Our Users Have to Say =
 
