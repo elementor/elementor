@@ -161,7 +161,7 @@ jobs:
             fi
 
             local first_entry
-            first_entry="$(unzip -Z1 "$zip_path" | grep -v '^__MACOSX/' | head -n 1)"
+            first_entry="$(unzip -Z1 "$zip_path" | awk '!/^__MACOSX\\// { print; exit }')"
 
             if [ -z "$first_entry" ]; then
               echo "Empty plugin zip: $zip_path"
@@ -386,7 +386,7 @@ jobs:
             fi
 
             local first_entry
-            first_entry="$(unzip -Z1 "$zip_path" | grep -v '^__MACOSX/' | head -n 1)"
+            first_entry="$(unzip -Z1 "$zip_path" | awk '!/^__MACOSX\\// { print; exit }')"
 
             if [ -z "$first_entry" ]; then
               echo "Empty plugin zip: $zip_path"
