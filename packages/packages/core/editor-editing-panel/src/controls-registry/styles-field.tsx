@@ -6,7 +6,6 @@ import { getStylesSchema } from '@elementor/editor-styles';
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { useStylesField } from '../hooks/use-styles-field';
-import { StyleControlInjectionSlot } from '../section-injections/style-control-injection-slot';
 import { ConditionalField } from './conditional-field';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
@@ -134,7 +133,6 @@ export const StylesField = ( { bind, propDisplayName, children }: StylesFieldPro
 					<ConditionalField>{ children }</ConditionalField>
 				</PropKeyProvider>
 			</PropProvider>
-			<StyleControlInjectionSlot controlId={ bind } />
 		</ControlAdornmentsProvider>
 	);
 };

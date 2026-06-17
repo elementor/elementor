@@ -1,9 +1,7 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
 
-import { StyleSectionNameProvider } from '../contexts/style-section-name-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
-import { StyleSectionInjectionSlot } from '../section-injections/style-section-injection-slot';
 import { Section } from './section';
 import { getStylesInheritanceIndicators } from './style-tab-collapsible-content';
 
@@ -30,10 +28,7 @@ export const StyleTabSection = ( { section, fields = [], unmountOnExit = true }:
 			unmountOnExit={ unmountOnExit }
 			action={ action }
 		>
-			<StyleSectionInjectionSlot sectionName={ name } />
-			<StyleSectionNameProvider value={ name }>
-				<SectionComponent />
-			</StyleSectionNameProvider>
+			<SectionComponent />
 		</Section>
 	);
 };
