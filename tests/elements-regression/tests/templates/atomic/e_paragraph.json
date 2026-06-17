@@ -36,7 +36,7 @@
                   },
                   "props": {
                     "font-family": {
-                      "$$type": "string",
+                      "$$type": "font-family",
                       "value": "Times New Roman"
                     },
                     "font-weight": {

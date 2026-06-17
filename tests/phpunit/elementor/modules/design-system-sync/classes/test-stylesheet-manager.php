@@ -357,7 +357,7 @@ class Test_Stylesheet_Manager extends Elementor_Test_Base {
 					[
 						'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
 						'props' => [
-							'font-family' => [ '$$type' => 'string', 'value' => 'Roboto' ],
+							'font-family' => [ '$$type' => 'font-family', 'value' => 'Roboto' ],
 							'font-size' => [ '$$type' => 'size', 'value' => [ 'size' => 18, 'unit' => 'px' ] ],
 							'font-weight' => [ '$$type' => 'string', 'value' => '600' ],
 							'font-style' => [ '$$type' => 'string', 'value' => 'italic' ],
