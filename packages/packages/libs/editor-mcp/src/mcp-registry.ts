@@ -3,7 +3,9 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { AngieMcpAdapter } from './adapters/angie-adapter';
 import { type IMcpRegistrationAdapter, type McpResourceHandler, type McpResourceUriOrTemplate } from './adapters/types';
+import { WebMCPAdapter } from './adapters/web-mcp-adapter';
 import {
 	ANGIE_MODEL_PREFERENCES,
 	ANGIE_REQUIRED_RESOURCES,
@@ -11,8 +13,12 @@ import {
 	createDefaultModelPreferences,
 } from './angie-annotations';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getModelContext } from './utils/get-model-context';
+import { getSDK } from './utils/get-sdk';
+import { isAngieAvailable } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
+import { toMCPTitle } from './utils/to-mcp-title';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -48,11 +54,32 @@ export const registerMcpAdapter = ( adapter: IMcpRegistrationAdapter ): void => 
 	}
 };
 
-export const signalMcpReady = (): void => resolveReady();
+export const signalMcpReady = (): void => {
+	resolveReady();
+};
 
+<<<<<<< HEAD
 export const activateAdapters = (): void => callAdapters( ( adapter ) => adapter.activate() );
 
 function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void ): void {
+=======
+export const createAndRegisterAdapters = () => {
+	const modelContext = getModelContext();
+
+	if ( modelContext ) {
+		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
+	}
+
+	if ( isAngieAvailable() ) {
+		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
+	}
+
+	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
+};
+
+// utility function to run a callback on all MCP interfaces
+function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
+>>>>>>> d8bf871c01 (Internal: Added explicit await for angieSDK readiness [ED-24517] (#36207))
 	for ( const adapter of registrationAdapters ) {
 		try {
 			fn( adapter );
@@ -77,11 +104,6 @@ const isAlphabet = ( str: string ): string | never => {
 		throw new Error( 'Not alphabet' );
 	}
 	return str;
-};
-
-export const toMCPTitle = ( namespace: string ): string => {
-	const capitalized = namespace.charAt( 0 ).toUpperCase() + namespace.slice( 1 );
-	return `Editor ${ capitalized }`;
 };
 
 /**
