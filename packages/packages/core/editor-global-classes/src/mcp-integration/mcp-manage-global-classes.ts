@@ -139,6 +139,11 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 							status: 'ok',
 							message: `created global class with ID ${ newClassId }`,
 						};
+						globalClassesStylesProvider.actions.tracking?.( {
+							event: 'classCreated',
+							executedBy: 'mcp_tool',
+							classId: newClassId,
+						} );
 					} else {
 						throw new Error( 'error creating class' );
 					}
