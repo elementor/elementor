@@ -83,10 +83,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<button class="elementor-element" data-library-element-type="{{ elType === 'widget' ? widgetType : elType }}">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
-		<# } else if ( false === obj.editable && !obj.atomicFormPromotion && !obj.birthdayEasterEgg ) { #>
+		<# } else if ( false === obj.editable && !obj.birthdayEasterEgg ) { #>
 			<i class="eicon-upgrade-crown-full"></i>
-		<# } #>
-		<# if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
+		<# } else if ( !obj.birthdayEasterEgg && obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
