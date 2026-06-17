@@ -1,0 +1,73 @@
+name: Release Tag Creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+        description: 'Target branch to release from (e.g. main or 3.33)'
+        default: main
+      release_version:
+        required: true
+        type: string
+        description: 'Version to release (e.g. 4.1.0-beta1 or 4.0.11)'
+      dry_run:
+        required: false
+        type: boolean
+        default: true
+        description: Dry run — validate everything but do not push commits or create tag.
+
+env:
+  VERSION: ${{ inputs.release_version }}
+  DRY_RUN: ${{ inputs.dry_run }}
+
+jobs:
+  release-tag-creation:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.branch }}
+
+      - name: Config git user
+        run: |
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL }}"
+
+      - name: Get Configuration
+        id: configuration
+        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
+        with:
+          filename: "./.github/workflows/config.json"
+          prefix: config
+
+      - name: Test permissions
+        uses: ./.github/workflows/permissions   
+        with:
+            ENVIRONMENT: ${{ env.config_deployment_environment }}
+            DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+            DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+    
+      - name: Check if version already exists
+        run: |
+          if git tag -l | grep -q "^v${VERSION}$"; then
+            echo "Version ${VERSION} already exists as a GitHub Release."
+            exit 1
+          fi
+
+      - name: Env Vars Configure
+        id: env_vars_configure
+        uses: ./.github/workflows/env-vars-configure
+        with:
+          CHANNEL: ${{ env.CHANNEL }}
+          REF: ${{ github.ref }}
+
+      - name: Verify Release Version
+        id: bump_channel_version
+        run: |
+          if [[ "${VERSION}" != "${CLEAN_PACKAGE_VERSION}" ]]; then
+            echo "Manually added release version ${VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
+            exit 1
+          fi
