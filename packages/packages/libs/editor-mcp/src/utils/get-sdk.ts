@@ -9,10 +9,10 @@ class RetriableAngieSDK extends AngieMcpSdk {
 		while ( retryCount > 0 ) {
 			try {
 				await super.waitForReady();
-				break;
+				return;
 			} catch {
 				retryCount--;
-				await sleep( 10 );
+				await sleep();
 			}
 		}
 		return new Promise( () => {} ); // never resolves
