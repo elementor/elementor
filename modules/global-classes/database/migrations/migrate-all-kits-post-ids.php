@@ -138,6 +138,8 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 				}
 			}
 
+			// Persist reused CPT entries. Entries created via Global_Class_Post::create() are
+			// already written by that call, but set_many() is idempotent so it's safe to include them.
 			if ( ! empty( $resolved ) ) {
 				Global_Classes_Post_IDs::make( $kit )->set_many( $resolved );
 			}
@@ -159,6 +161,7 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 */
 	private function resolve_post_id_for_class(
 		string $class_id,
+		?Kit $kit,
 		array $aggregate_items,
 		array &$claimed
 	): ?int {
@@ -182,9 +185,7 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 
 		$label = $item['label'] ?? $class_id;
 
-		// Pass null as kit so Global_Class_Post::create does NOT write to the map
-		// (we want to batch that write ourselves via set_many for atomicity).
-		$created = Global_Class_Post::create( $class_id, $label, $data, null );
+		$created = Global_Class_Post::create( $class_id, $label, $data, $kit );
 
 		if ( ! $created ) {
 			return null;

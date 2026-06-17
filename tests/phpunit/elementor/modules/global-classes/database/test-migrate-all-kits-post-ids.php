@@ -68,10 +68,6 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	// -------------------------------------------------------------------------
-	// Helpers
-	// -------------------------------------------------------------------------
-
 	private function create_extra_kit( string $title = 'Extra Kit' ): Kit {
 		$kit_id = Plugin::$instance->kits_manager->create( [ 'post_title' => $title ] );
 		$this->extra_kit_ids[] = $kit_id;
@@ -125,11 +121,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		return $post_id;
 	}
 
-	// -------------------------------------------------------------------------
-	// Pass A: restructure unmigrated kits
-	// -------------------------------------------------------------------------
-
-	public function test_pass_a__migrates_non_active_kit_with_aggregate_and_no_order() {
+	public function test_migrate_all_kits__migrates_non_active_kit_with_aggregate_and_no_order() {
 		// Arrange — extra kit has old aggregate data but no order meta.
 		$extra_kit = $this->create_extra_kit();
 		$extra_kit->update_json_meta(
@@ -156,7 +148,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertSame( 'beta', $post2->get_label() );
 	}
 
-	public function test_pass_a__skips_kits_that_already_have_order_meta() {
+	public function test_migrate_all_kits__skips_kits_that_already_have_order_meta() {
 		// Arrange — active kit already has order meta (simulating previous migration).
 		$items = [ 'g-skip1' => $this->make_class_item( 'g-skip1', 'already-done' ) ];
 		Global_Classes_Repository::make( $this->active_kit )->put(
@@ -174,11 +166,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertSame( $post_id_before, $post_id_after );
 	}
 
-	// -------------------------------------------------------------------------
-	// Pass B: fill missing post-id map entries
-	// -------------------------------------------------------------------------
-
-	public function test_pass_b__fills_missing_map_entry_by_reusing_unclaimed_cpt_post() {
+	public function test_migrate_all_kits__fills_missing_map_entry_by_reusing_unclaimed_cpt_post() {
 		// Arrange — kit has order meta but its post-id map is missing one entry.
 		// There is an existing CPT post for that class not claimed by any kit.
 		$extra_kit = $this->create_extra_kit();
@@ -196,7 +184,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertSame( $orphan_post_id, $resolved );
 	}
 
-	public function test_pass_b__creates_fresh_post_when_all_cpt_candidates_are_claimed_by_other_kit() {
+	public function test_migrate_all_kits__creates_fresh_post_when_all_cpt_candidates_are_claimed_by_other_kit() {
 		// Arrange — kit A claims the only CPT for g-b2; kit B also needs g-b2 but must not reuse it.
 		$kit_a = $this->create_extra_kit( 'Kit A' );
 		$kit_b = $this->create_extra_kit( 'Kit B' );
@@ -224,7 +212,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertSame( $post_a->get_post_id(), $resolved_a, 'Kit A\'s mapping should be unchanged' );
 	}
 
-	public function test_pass_b__skips_class_when_no_cpt_and_no_aggregate_data() {
+	public function test_migrate_all_kits__skips_class_when_no_cpt_and_no_aggregate_data() {
 		// Arrange — kit has order meta referencing a class for which neither a CPT nor aggregate exists.
 		$extra_kit = $this->create_extra_kit();
 		Global_Classes_Order::make( $extra_kit )->set_preview( false )->set_order( [ 'g-ghost' ] );
@@ -237,11 +225,7 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertNull( $resolved );
 	}
 
-	// -------------------------------------------------------------------------
-	// Pass C: de-duplicate shared post IDs across kits
-	// -------------------------------------------------------------------------
-
-	public function test_pass_c__forks_shared_post_id_to_give_each_kit_exclusive_ownership() {
+	public function test_after_migration__forks_shared_post_id_to_give_each_kit_exclusive_ownership() {
 		// Arrange — two kits share the same CPT post for the same class_id
 		// (simulates the historical lazy-backfill cross-contamination).
 		$kit_owner = $this->create_extra_kit( 'Owner Kit' );
@@ -276,10 +260,6 @@ class Test_Migrate_All_Kits_Post_IDs extends Elementor_Test_Base {
 		$this->assertNotNull( $forked );
 		$this->assertSame( 'shared', $forked->get_label() );
 	}
-
-	// -------------------------------------------------------------------------
-	// Isolation guarantee
-	// -------------------------------------------------------------------------
 
 	public function test_after_migration__no_post_id_is_shared_across_kit_maps() {
 		// Arrange — two kits, one with aggregate only (unmigrated), one fully migrated but with
