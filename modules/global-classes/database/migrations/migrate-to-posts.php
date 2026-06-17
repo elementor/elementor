@@ -10,6 +10,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
+use Elementor\Modules\GlobalClasses\Utils\Kit_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,33 +23,26 @@ class Migrate_To_Posts extends Base_Migration {
 	public function up() {
 		Global_Class_Post_Type::ensure_registered();
 
-		$migrated = $this->migrate_global_classes_to_posts();
-
-		if ( ! $migrated ) {
+		// Guard: if any CPT posts already exist, this is not a fresh install — skip.
+		if ( ! empty( $this->get_existing_class_posts() ) ) {
 			return;
 		}
 
-		self::run_document_tracking( $this->get_kit() );
+		$active_kit = $this->get_kit();
 
-		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
-		// $this->cleanup_kit_meta();
+		foreach ( Kit_Utils::get_all_kit_documents() as $kit ) {
+			$migrated = $this->migrate_kit( $kit );
+
+			if ( $migrated && $active_kit && $kit->get_id() === $active_kit->get_id() ) {
+				self::run_document_tracking( $kit );
+			}
+		}
 	}
 
-	private function migrate_global_classes_to_posts(): bool {
-		$kit = $this->get_kit();
-		if ( ! $kit ) {
-			return false;
-		}
-
+	private function migrate_kit( Kit $kit ): bool {
 		$global_classes = self::get_aggregate_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {
-			return false;
-		}
-
-		$existing_posts = $this->get_existing_class_posts();
-
-		if ( ! empty( $existing_posts ) ) {
 			return false;
 		}
 
