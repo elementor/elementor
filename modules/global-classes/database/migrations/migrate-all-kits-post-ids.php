@@ -152,11 +152,13 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 *  2. Create a fresh CPT post from the kit's aggregate data.
 	 *  3. If no aggregate data exists, skip (returns null).
 	 *
-	 * @param array<int, true> $claimed  Passed by reference so the caller can mark reused ids.
+	 * @param string               $class_id
+	 * @param array<string, array> $aggregate_items
+	 * @param array<int, true>     $claimed  Passed by reference so the caller can mark reused ids.
+	 * @return int|null
 	 */
 	private function resolve_post_id_for_class(
 		string $class_id,
-		Kit $kit,
 		array $aggregate_items,
 		array &$claimed
 	): ?int {
