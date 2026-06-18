@@ -97,16 +97,40 @@ export class AppManager {
 		);
 	}
 
+	resolveAtomicWidgetPromotionCardProps( { cardType, content } ) {
+		if ( 'widgetPromotion' === cardType ) {
+			return {
+				cardType: 'widgetPromotion',
+				promotionData: {
+					title: content.title,
+					content: content.content,
+					ctaText: content.ctaText,
+					ctaUrl: content.widgetCtaUrl,
+					image: content.image,
+				},
+			};
+		}
+
+		return {
+			cardType: 'atomicForm',
+			promotionData: content,
+			ctaUrl: content.widgetCtaUrl,
+		};
+	}
+
 	attachAtomicWidgetPromotionListeners() {
 		const promotions = elementor?.config?.atomicWidgetPromotions || [];
 
-		promotions.forEach( ( { type, content } ) => {
+		promotions.forEach( ( { type, cardType, content } ) => {
 			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
-				this.mountCard( event.detail.target, `e-${ type }-promotion-wrapper`, {
-					cardType: 'atomicForm',
-					promotionData: content,
-					ctaUrl: content.widgetCtaUrl,
-				} );
+				this.mountCard(
+					event.detail.target,
+					`e-${ type }-promotion-wrapper`,
+					this.resolveAtomicWidgetPromotionCardProps( {
+						cardType: cardType || 'atomicForm',
+						content,
+					} ),
+				);
 			} );
 		} );
 	}

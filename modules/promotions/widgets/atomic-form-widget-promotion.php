@@ -30,6 +30,7 @@ class Atomic_Form_Widget_Promotion {
 
 		$settings['atomicWidgetPromotions'][] = [
 			'type' => 'atomic-form',
+			'cardType' => 'atomicForm',
 			'widgets' => $this->get_widgets(),
 			'content' => $this->get_promotion_content(),
 		];
