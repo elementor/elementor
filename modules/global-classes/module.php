@@ -90,8 +90,26 @@ class Module extends BaseModule {
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
 			Global_Classes_Sync_Map::META_KEY,
-			Global_Classes_Post_IDs::META_KEY,
 		] );
+	}
+
+	private function create_classes_for_new_kit( array $params ): void {
+		[ 'new_kit_id' => $new_kit_id, 'previous_kit_id' => $previous_kit_id ] = $params;
+		$global_classes_post_id_mapping_for_new_kit = [];
+		// duplicate all classes
+		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
+		if ( ! $previous_kit ) {
+			return;
+		}
+		$all_classes = Global_Classes_Repository::make( $previous_kit )->get_order();
+		foreach ( $all_classes as $class_id ) {
+			$prev_kit_class_post = Global_Class_Post::find_by_class_id( $class_id, false, $previous_kit );
+			if ( $prev_kit_class_post ) {
+				
+				$new_kit_class_post = Global_Class_Post::create( $class_id, $prev_kit_class_post->get_label(), $prev_kit_class_post->get_data(), $new_kit_id );
+				$global_classes_post_id_mapping_for_new_kit[ $class_id ] = $new_kit_class_post->get_post_id();
+			}
+		}
 	}
 
 	private function register_features() {
