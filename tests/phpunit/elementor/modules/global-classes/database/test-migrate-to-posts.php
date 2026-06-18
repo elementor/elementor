@@ -208,7 +208,7 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 		$this->assertEmpty( $posts );
 	}
 
-	public function test_migration__skips_when_posts_already_exist() {
+	public function test_migration__skips_when_kit_already_migrated() {
 		// Arrange
 		$global_classes = [
 			'items' => [
@@ -219,7 +219,8 @@ class Test_Migrate_To_Posts extends Elementor_Test_Base {
 
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $global_classes );
 
-		$existing_post = Global_Class_Post::create( 'g-existing', 'existing-class', [ 'type' => 'class', 'variants' => [] ] );
+		$existing_post = Global_Class_Post::create( 'g-1', 'test', [ 'type' => 'class', 'variants' => [] ] );
+		Global_Classes_Order::make( $this->kit )->set_order( [ 'g-1' ] );
 
 		// Act
 		$migration = new Migrate_To_Posts();
