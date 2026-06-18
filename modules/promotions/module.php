@@ -18,6 +18,7 @@ use Elementor\Modules\Promotions\Conversion_Banner;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
+use Elementor\Modules\Promotions\Theme_Builder_Promotion_Detections;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
 use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
@@ -61,6 +62,11 @@ class Module extends Base_Module {
 
 		add_action( 'admin_init', function () {
 			$this->handle_external_redirects();
+		} );
+
+		add_filter( 'elementor/documents/ajax_save/return_data', function( array $return_data ): array {
+			$return_data['config']['document']['themeBuilderPromotionDetections'] = Theme_Builder_Promotion_Detections::get();
+			return $return_data;
 		} );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
@@ -243,6 +249,7 @@ class Module extends Base_Module {
 		$promotion_data = new PromotionData( $editor_assets_api );
 
 		$settings['v4Promotions'] = $promotion_data->get_v4_promotions_data();
+		$settings['themeBuilderPromotionDetections'] = Theme_Builder_Promotion_Detections::get();
 
 		return $settings;
 	}
