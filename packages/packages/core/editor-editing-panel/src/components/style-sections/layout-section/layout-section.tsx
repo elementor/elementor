@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { useParentElement } from '@elementor/editor-elements';
 import { type StringPropValue } from '@elementor/editor-props';
+import { createLocation } from '@elementor/locations';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
@@ -31,6 +32,8 @@ import { WrapField } from './wrap-field';
 const DISPLAY_LABEL = __( 'Display', 'elementor' );
 const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
 const DEFAULT_PARENT_FLOW_DIRECTION = 'row';
+
+export const { Slot: GridFieldsSlot, inject: injectIntoGridFields } = createLocation();
 
 export const LayoutSection = () => {
 	const { value: display } = useStylesField< StringPropValue >( 'display', {
@@ -93,6 +96,7 @@ const GridFields = () => (
 		<GridOutlineField />
 		<GridSizeFields />
 		<GridAutoFlowField />
+		<GridFieldsSlot />
 		<StyleTabCollapsibleContent fields={ [ 'grid-auto-rows', 'grid-auto-columns' ] }>
 			<GridAutoTrackFields />
 		</StyleTabCollapsibleContent>

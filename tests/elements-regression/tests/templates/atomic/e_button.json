@@ -43,7 +43,7 @@
                       }
                     },
                     "font-family": {
-                      "$$type": "string",
+                      "$$type": "font-family",
                       "value": "Aldrich"
                     },
                     "padding": {
