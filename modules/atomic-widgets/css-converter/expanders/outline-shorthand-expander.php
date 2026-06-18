@@ -21,8 +21,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Outline_Shorthand_Expander extends Shorthand_Expander_Base {
 	const STYLE_KEYWORDS = [
-		'none', 'auto', 'dotted', 'dashed', 'solid', 'double',
-		'groove', 'ridge', 'inset', 'outset',
+		'none',
+		'auto',
+		'dotted',
+		'dashed',
+		'solid',
+		'double',
+		'groove',
+		'ridge',
+		'inset',
+		'outset',
 	];
 
 	const WIDTH_KEYWORDS = [ 'thin', 'medium', 'thick' ];
@@ -50,7 +58,11 @@ class Outline_Shorthand_Expander extends Shorthand_Expander_Base {
 			return [];
 		}
 
-		$slots = [ 'width' => null, 'style' => null, 'color' => null ];
+		$slots = [
+			'width' => null,
+			'style' => null,
+			'color' => null,
+		];
 
 		foreach ( $tokens as $token ) {
 			$role = $this->classify_token( $token );

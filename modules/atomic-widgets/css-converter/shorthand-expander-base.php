@@ -46,7 +46,11 @@ abstract class Shorthand_Expander_Base implements Shorthand_Expander {
 	 * @return array{property: string, value: null, declaration: string}
 	 */
 	protected function null_rule( string $property ): array {
-		return [ 'property' => $property, 'value' => null, 'declaration' => $property . ': ' ];
+		return [
+			'property' => $property,
+			'value' => null,
+			'declaration' => $property . ': ',
+		];
 	}
 
 	/**

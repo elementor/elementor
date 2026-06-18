@@ -137,7 +137,10 @@ class Css_Converter {
 		}
 
 		return isset( $value['$$type'] )
-			? [ '$$type' => $value['$$type'], 'value' => $cleaned ]
+			? [
+				'$$type' => $value['$$type'],
+				'value' => $cleaned,
+			]
 			: $cleaned;
 	}
 
