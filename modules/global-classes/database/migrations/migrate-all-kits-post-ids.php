@@ -46,8 +46,8 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 		$this->restructure_unmigrated_kits( $kits );
 
 		// Pass B: fill any gaps in the post-id map for each kit.
-		$claimed = $this->build_claimed_post_ids( $kits );
-		$this->fill_missing_post_ids( $kits, $claimed );
+		$claimed_post_ids = $this->build_claimed_post_ids( $kits );
+		$this->fill_missing_post_ids( $kits, $claimed_post_ids );
 
 		// Pass C: break any remaining sharing — one post_id must belong to exactly one kit.
 		$this->deduplicate_shared_post_ids( $kits );
@@ -94,24 +94,24 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 * @return array<int, true> post_id => true
 	 */
 	private function build_claimed_post_ids( array $kits ): array {
-		$claimed = [];
+		$claimed_post_ids = [];
 
 		foreach ( $kits as $kit ) {
 			$map = $this->read_post_ids_map( $kit );
 
 			foreach ( $map as $post_id ) {
-				$claimed[ (int) $post_id ] = true;
+				$claimed_post_ids[ (int) $post_id ] = true;
 			}
 		}
 
-		return $claimed;
+		return $claimed_post_ids;
 	}
 
 	/**
 	 * @param Kit[]            $kits
-	 * @param array<int, true> $claimed  Mutable — updated as we resolve entries.
+	 * @param array<int, true> $claimed_post_ids  Mutable — updated as we resolve entries.
 	 */
-	private function fill_missing_post_ids( array $kits, array &$claimed ): void {
+	private function fill_missing_post_ids( array $kits, array &$claimed_post_ids ): void {
 		foreach ( $kits as $kit ) {
 			$order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
@@ -130,11 +130,11 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 			$resolved        = [];
 
 			foreach ( $missing as $class_id ) {
-				$post_id = $this->resolve_post_id_for_class( $class_id, $kit, $aggregate_items, $claimed );
+				$post_id = $this->resolve_post_id_for_class( $class_id, $kit, $aggregate_items, $claimed_post_ids );
 
 				if ( null !== $post_id ) {
 					$resolved[ $class_id ] = $post_id;
-					$claimed[ $post_id ]   = true;
+					$claimed_post_ids[ $post_id ]   = true;
 				}
 			}
 
@@ -157,20 +157,20 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 * @param string               $class_id
 	 * @param ?Kit                 $kit
 	 * @param array<string, array> $aggregate_items
-	 * @param array<int, true>     $claimed  Passed by reference so the caller can mark reused ids.
+	 * @param array<int, true>     $claimed_post_ids  Passed by reference so the caller can mark reused ids.
 	 * @return int|null
 	 */
 	private function resolve_post_id_for_class(
 		string $class_id,
 		?Kit $kit,
 		array $aggregate_items,
-		array &$claimed
+		array &$claimed_post_ids
 	): ?int {
 		// Try to reuse an unclaimed CPT post for this class_id.
 		$candidates = $this->query_cpt_post_ids_for_class( $class_id );
 
 		foreach ( $candidates as $candidate_id ) {
-			if ( ! isset( $claimed[ $candidate_id ] ) ) {
+			if ( ! isset( $claimed_post_ids[ $candidate_id ] ) ) {
 				return $candidate_id;
 			}
 		}
