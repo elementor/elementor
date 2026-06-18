@@ -18,7 +18,7 @@ export const generatePrompt = () => {
 This tool support v4 elements only
 
 # WORKFLOW
-1. Check/create global classes via "create-global-class" tool
+1. Check/create global classes via "manage-global-classes" tool
 2. Build composition (THIS TOOL) - minimal inline styles
 3. Apply classes via "apply-global-class" tool
 
@@ -36,10 +36,12 @@ Some elements have internal tree structures (nesting). When using these elements
 - \`allowed_parents\` lists which element types this element can be placed inside
 
 # CONFIGURATION
-- Map configuration-id → elementConfig (props) + stylesConfig (layout only)
-- All PropValues require \`$$type\` matching schema
+- Map configuration-id → elementConfig (props) + style (raw CSS declarations)
+- elementConfig PropValues require \`$$type\` matching schema
+- style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
 - NO LINKS in configuration
 - Retry on errors up to 10x
+- Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).
@@ -118,13 +120,12 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables] (others throw errors)
 - Avoid SVG widgets unless assets are pre-uploaded
-- Check \`llm_guidance\` in widget schemas
+- Check \`llm_guidance\` in widget schemas (\`default_styles\`, nesting, required children)
 
 # PARAMETERS
 - **xmlStructure**: Valid XML with configuration-id attributes
 - **elementConfig**: configuration-id → widget PropValues
-- **stylesConfig**: configuration-id → style PropValues (layout only)
-- **customCSS**: configuration-id → CSS rules (no selectors, semicolon-separated)
+- **style**: configuration-id → raw CSS declarations (property → value strings; no selectors)
   ` );
 
 	buildCompositionsToolPrompt.example( `
@@ -134,13 +135,12 @@ Section with heading + button (NO explicit heights - content sizes naturally):
   elementConfig: {
     "section1": { "tag": { "$$type": "string", "value": "section" } }
   },
-  customCSS: {
-    "Section Title": "padding: 6rem 4rem; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%);"
-  },
-  stylesConfig: {
+  style: {
     "Section Title": {
-      "font-size": { "$$type": "size", "value": { "size": { "$$type": "number", "value": 3.5 }, "unit": { "$$type": "string", "value": "rem" } } },
-      "color": { "$$type": "color", "value": { "$$type": "string", "value": "#2d2a26" } }
+      "padding": "6rem 4rem",
+      "background": "linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%)",
+      "font-size": "3.5rem",
+      "color": "#2d2a26"
     }
   }
 }
@@ -155,8 +155,8 @@ Note: No height/width specified on any element - flexbox handles layout automati
 	buildCompositionsToolPrompt.parameter( 'elementConfig', `Record mapping configuration IDs to widget PropValues.` );
 
 	buildCompositionsToolPrompt.parameter(
-		'stylesConfig',
-		`Record mapping configuration IDs to style PropValues (layout/positioning only).`
+		'style',
+		`Record mapping configuration IDs to raw CSS declarations (property → value strings).`
 	);
 
 	buildCompositionsToolPrompt.instruction(

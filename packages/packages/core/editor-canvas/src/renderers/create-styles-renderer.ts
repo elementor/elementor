@@ -1,4 +1,4 @@
-import type { Props } from '@elementor/editor-props';
+import { type Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
 import {
 	type CustomCss,

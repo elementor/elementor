@@ -1,6 +1,6 @@
 import { z } from '@elementor/schema';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const inputSchema = {
 	xmlStructure: z.string().describe( 'The XML structure representing the composition to be built' ),
@@ -13,24 +13,17 @@ export const inputSchema = {
 			)
 		)
 		.describe( 'A record mapping element IDs to their configuration objects. REQUIRED' ),
-	stylesConfig: z
+	style: z
 		.record(
 			z.string().describe( 'The configuration id' ),
 			z.record(
-				z.string().describe( 'StyleSchema property name' ),
-				z.any().describe( `The PropValue for the style property. MANDATORY, refer to [${ STYLE_SCHEMA_URI }]` )
+				z.string().describe( 'A CSS property name, e.g. "color", "padding".' ),
+				z.string().describe( 'A CSS value, e.g. "6rem 4rem", "#2d2a26".' )
 			)
 		)
 		.describe(
-			`A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${ STYLE_SCHEMA_URI }].`
+			'A record mapping element configuration IDs to their raw CSS declarations (property→value). Converted to native styles server-side; any declaration that cannot be converted is stored as the element custom CSS.'
 		)
-		.default( {} ),
-	customCSS: z
-		.record(
-			z.string().describe( 'The configuration id' ),
-			z.string().describe( 'The custom CSS for the element. MANDATORY' )
-		)
-		.describe( 'A record mapping element IDs to their custom CSS.' )
 		.default( {} ),
 };
 

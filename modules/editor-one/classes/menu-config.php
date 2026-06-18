@@ -84,7 +84,7 @@ class Menu_Config {
 	public static function get_attribute_mapping(): array {
 		$default_mapping = [
 			'e-form-submissions' => [
-				'position' => 50,
+				'position' => 70,
 				'icon' => 'send',
 			],
 		];

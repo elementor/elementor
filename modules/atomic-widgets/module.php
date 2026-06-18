@@ -53,6 +53,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Font_Family_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
@@ -109,6 +110,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
@@ -130,6 +132,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
@@ -258,6 +261,7 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
+		( new Css_Converter_REST_API() )->register_hooks();
 	}
 
 	private function add_packages( $packages ) {
@@ -345,6 +349,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Font_Family_Prop_Type::get_key(), new Font_Family_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Grid_Track_Size_Prop_Type::get_key(), new Grid_Track_Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );

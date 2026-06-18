@@ -31,6 +31,7 @@ export class FlyoutMenuRenderer {
 
 			const li = document.createElement( 'li' );
 			li.setAttribute( 'data-group-id', item.group_id || '' );
+			li.setAttribute( 'data-slug', item.slug || '' );
 
 			const a = document.createElement( 'a' );
 			a.href = item.url;
