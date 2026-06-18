@@ -1134,12 +1134,12 @@ class Admin extends App {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );
 			} elseif ( ! $is_active ) {
-				$description = esc_html__( 'Image Optimizer is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
+				$description = esc_html__( 'Image Optimization is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
 				$button_text = esc_html__( 'Activate now', 'elementor' );
 				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
 			}
 		} else {
-			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimization.', 'elementor' );
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = Hints::get_plugin_install_url( $plugin_slug );
@@ -1151,7 +1151,7 @@ class Admin extends App {
 
 		$dismissible = 'image_optimizer_hint';
 
-		$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
+		$title = esc_html__( 'Speed up your website with Image Optimization', 'elementor' );
 		$content = sprintf(
 			"<strong>%1\$s</strong><br>%2\$s <a class='e-btn-1' href='%3\$s' target='_blank'>%4\$s</a>!",
 			$title,
