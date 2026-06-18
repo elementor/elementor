@@ -63,10 +63,8 @@ jobs:
           if git tag -l | grep -q "^v${VERSION}$"; then
             echo "Version ${VERSION} already exists as a GitHub Release."
             exit 1
-          fi else
-            echo "Version ${VERSION} does not exist as a GitHub Release."
-            exit 1
           fi
+          echo "Version ${VERSION} does not exist as a GitHub Release."
 
       - name: Extract channel from desired version
         run: |
