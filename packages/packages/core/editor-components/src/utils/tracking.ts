@@ -5,7 +5,7 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
-export type Source = 'user' | 'mcp_tool' | 'system';
+export type ExecutedBy = 'user' | 'mcp_tool' | 'system';
 
 type ComponentEventData = Record< string, unknown > & {
 	action:
@@ -19,13 +19,15 @@ type ComponentEventData = Record< string, unknown > & {
 		| 'propertiesPanelOpened'
 		| 'propertiesGroupCreated'
 		| 'detached';
-	source: Source;
+		// TODO: Remove `source` parameter in version 4.4.0
+	source?: ExecutedBy;
+	executedBy: ExecutedBy;
 };
 
 const FEATURE_NAME = 'Components';
 
-export const trackComponentEvent = ( { action, source, ...data }: ComponentEventData ) => {
-	if ( source === 'system' ) {
+export const trackComponentEvent = ( { action, source, executedBy, ...data }: ComponentEventData ) => {
+	if ( source === 'system' || executedBy === 'system' ) {
 		return;
 	}
 
@@ -35,9 +37,10 @@ export const trackComponentEvent = ( { action, source, ...data }: ComponentEvent
 	}
 
 	const name = config.names.components[ action ];
-	dispatchEvent?.( name, { ...data, source, 'Feature name': FEATURE_NAME } );
+	dispatchEvent?.( name, { ...data, executed_by: executedBy ?? source, 'Feature name': FEATURE_NAME } );
 };
 
+// TODO: Remove this function in version 4.4.0 - moved to pro
 export const onElementDrop = ( _args: unknown, element: V1Element ) => {
 	if ( ! ( element?.model?.get( 'widgetType' ) === 'e-component' ) ) {
 		return;
@@ -56,7 +59,7 @@ export const onElementDrop = ( _args: unknown, element: V1Element ) => {
 
 	trackComponentEvent( {
 		action: 'instanceAdded',
-		source: 'user',
+		executedBy: 'user',
 		instance_id: instanceId,
 		component_uid: componentUID,
 		component_name: componentName,
