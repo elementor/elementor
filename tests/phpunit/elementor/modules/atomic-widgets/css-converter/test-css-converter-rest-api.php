@@ -2012,7 +2012,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Act.
 		$data = $this->get_data( $request );
 
-		// Assert: invalid goes to customCss; logical sets block-end; physical var overrides last.
+		// Assert: invalid is superseded by the later var (dedupe, last wins) so never reaches customCss.
 		// Only block-end survives — dimensions with one variable side.
 		$this->assertEquals(
 			[
@@ -2023,7 +2023,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']['padding']
 		);
-		$this->assertSame( 'padding-bottom: invalid;', $data['el-1']['customCss'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
 
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}
@@ -2086,7 +2086,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 		// Act.
 		$data = $this->get_data( $request );
 
-		// Assert: plain size (3rd) wins over the var (2nd); invalid (1st) goes to customCss.
+		// Assert: plain size (3rd) wins over the var (2nd); invalid (1st) is superseded by dedupe — not in customCss.
 		$this->assertEquals(
 			[
 				'$$type' => 'dimensions',
@@ -2096,7 +2096,7 @@ class Test_Css_Converter_Rest_Api extends Elementor_Test_Base {
 			],
 			$data['el-1']['props']['padding']
 		);
-		$this->assertSame( 'padding-bottom: invalid;', $data['el-1']['customCss'] );
+		$this->assertSame( '', $data['el-1']['customCss'] );
 
 		$kit->delete_meta( Variables_Constants::VARIABLES_META_KEY );
 	}

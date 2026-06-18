@@ -3,7 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
-use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Merge_Converter_Base;
+use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
+
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * color must be one paren-aware token). A rejected value declines the declaration (-> custom_css) and
  * leaves the accumulated object untouched.
  */
-class Object_Field_Merge_Converter extends Object_Merge_Converter_Base {
+class Object_Field_Merge_Converter extends Property_Converter_Base {
 	private string $property;
 	private string $target_property;
 	private string $type_key;

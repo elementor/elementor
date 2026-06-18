@@ -3,8 +3,9 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
+use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
-use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Object_Merge_Converter_Base;
+
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -25,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * created. A value the Size parser rejects declines the declaration (-> custom_css) and leaves the
  * accumulated object untouched.
  */
-class Object_Side_Merge_Converter extends Object_Merge_Converter_Base {
+class Object_Side_Merge_Converter extends Property_Converter_Base {
 	const SIZE_TYPE = 'size';
 
 	private string $property;

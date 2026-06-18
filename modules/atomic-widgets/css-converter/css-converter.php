@@ -38,7 +38,7 @@ class Css_Converter {
 	 * @return array{props: array, customCss: string, rejected: string[]}
 	 */
 	public function convert( string $css ): array {
-		$rules = $this->expand_shorthands( $this->parse( $css ) );
+		$rules = $this->dedupe( $this->expand_shorthands( $this->parse( $css ) ) );
 		$context = new Conversion_Context( $rules );
 		$leftover = [];
 
@@ -172,6 +172,18 @@ class Css_Converter {
 	 * @param array<int, array{property: string, value: string, declaration: string}> $rules
 	 * @return array<int, array{property: string, value: string, declaration: string}>
 	 */
+	private function dedupe( array $rules ): array {
+		$last_index = [];
+
+		foreach ( $rules as $i => $rule ) {
+			$last_index[ $rule['property'] ] = $i;
+		}
+
+		return array_values(
+			array_filter( $rules, fn( $rule, $i ) => $last_index[ $rule['property'] ] === $i, ARRAY_FILTER_USE_BOTH )
+		);
+	}
+
 	private function expand_shorthands( array $rules ): array {
 		$expanded = [];
 
