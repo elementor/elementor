@@ -62,6 +62,8 @@ class Css_Converter {
 			$props = $this->validate_props( $props, $schema );
 		}
 
+		$props = $this->cleanup_props( $props );
+
 		return [
 			'props'     => $props,
 			'customCss' => implode( ' ', $leftover ),
@@ -74,7 +76,83 @@ class Css_Converter {
 			return [];
 		}
 
-		return Props_Parser::make( $schema )->validate( $props )->unwrap();
+		$null_resets = array_filter( $props, fn( $v ) => null === $v || $this->has_null_leaf( $v ) );
+		$value_props = array_filter( $props, fn( $v ) => null !== $v && ! $this->has_null_leaf( $v ) );
+
+		$validated = empty( $value_props )
+			? []
+			: Props_Parser::make( $schema )->validate( $value_props )->unwrap();
+
+		return array_merge( $validated, $null_resets );
+	}
+
+	private function has_null_leaf( $value ): bool {
+		if ( ! is_array( $value ) || ! is_array( $value['value'] ?? null ) ) {
+			return false;
+		}
+
+		foreach ( $value['value'] as $v ) {
+			if ( null === $v || $this->has_null_leaf( $v ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Recursively collapses prop values where all present sub-values are null or empty arrays into a
+	 * single null. This propagates null resets up the tree so the client receives a clean signal:
+	 * e.g. a Dimensions object where every side was set to null becomes just null at the prop level.
+	 */
+	private function cleanup_props( array $props ): array {
+		$result = [];
+
+		foreach ( $props as $key => $value ) {
+			$result[ $key ] = $this->cleanup_value( $value );
+		}
+
+		return $result;
+	}
+
+	private function cleanup_value( $value ) {
+		if ( null === $value || ! is_array( $value ) ) {
+			return $value;
+		}
+
+		$inner = $value['value'] ?? $value;
+
+		if ( ! is_array( $inner ) ) {
+			return $value;
+		}
+
+		$cleaned = [];
+
+		foreach ( $inner as $k => $v ) {
+			$cleaned[ $k ] = $this->cleanup_value( $v );
+		}
+
+		if ( $this->is_empty_or_all_null( $cleaned ) ) {
+			return null;
+		}
+
+		return isset( $value['$$type'] )
+			? [ '$$type' => $value['$$type'], 'value' => $cleaned ]
+			: $cleaned;
+	}
+
+	private function is_empty_or_all_null( array $arr ): bool {
+		if ( empty( $arr ) ) {
+			return false;
+		}
+
+		foreach ( $arr as $v ) {
+			if ( null !== $v ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private function style_schema(): array {
@@ -182,11 +260,13 @@ class Css_Converter {
 			}
 
 			$property = strtolower( trim( substr( $declaration, 0, $separator ) ) );
-			$value = trim( substr( $declaration, $separator + 1 ) );
+			$raw_value = trim( substr( $declaration, $separator + 1 ) );
 
-			if ( '' === $property || '' === $value || $this->is_blocked( $property, $value ) ) {
+			if ( '' === $property || '' === $raw_value || $this->is_blocked( $property, $raw_value ) ) {
 				continue;
 			}
+
+			$value = 'null' === $raw_value ? null : $raw_value;
 
 			$rules[] = [
 				'property' => $property,
