@@ -155,6 +155,7 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 *  3. If no aggregate data exists, skip (returns null).
 	 *
 	 * @param string               $class_id
+	 * @param ?Kit                 $kit
 	 * @param array<string, array> $aggregate_items
 	 * @param array<int, true>     $claimed  Passed by reference so the caller can mark reused ids.
 	 * @return int|null
