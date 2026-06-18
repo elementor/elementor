@@ -1,14 +1,12 @@
 import { getContainer, getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type PropValue } from '@elementor/editor-props';
-import { Schema } from '@elementor/schema';
+import { type PropValue, Schema } from '@elementor/editor-props';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { resolveCanonicalPropKeys } from '../../utils/resolve-canonical-prop-name';
-import { validateInput } from '../../utils/validate-input';
 import { CONFIGURE_ELEMENT_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -61,12 +59,11 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 				);
 			}
 			const propertiesToUpdate = resolveCanonicalPropKeys( elementType, propertiesToChange );
-			const { valid, errors } = validateInput.validateProps( widgetData.atomic_props_schema, propertiesToUpdate );
-			if ( ! valid && errors?.length ) {
-				throw new Error( 'Validation error!\n' + errors.join( '\n' ) );
-			}
 			const toUpdate = Object.entries( propertiesToUpdate );
 			for ( const [ propertyName, propertyValue ] of toUpdate as [ string, PropValue ][] ) {
+				if ( ! Schema.isPropKeyConfigurable( propertyName ) ) {
+					throw new Error( `Not allowed to update ${ propertyName }` );
+				}
 				try {
 					doUpdateElementProperty( {
 						elementId,
