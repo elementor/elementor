@@ -3,11 +3,12 @@ import { waitForElementorEditor } from '@elementor/elementor-mcp-common';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
 import { setupEditorSelectionListener } from './editor-selection-listener';
-import { addV3DescriptionResource, V3_DESCRIPTION } from './mcp-description-resource';
+import { addV3DescriptionResource } from './mcp-description-resource';
 import { addElementorResources } from './resources';
 import { addAiTool, addDynamicTool, addPageTool, addRoutesTool, addStylingTool, addUiTool } from './tools';
 
 const VERSION = '2.0.0';
+const SHORT_DESCRIPTION = `Controls the Elementor editor: page settings, UI, global styles, AI content, and custom CSS.`;
 
 export async function createElementorServer(): Promise< McpServer > {
 	await waitForElementorEditor();
@@ -19,7 +20,7 @@ export async function createElementorServer(): Promise< McpServer > {
 			title: 'Elementor',
 		},
 		{
-			instructions: `Controls the Elementor editor: page settings, UI, global styles, AI content, and custom CSS.`,
+			instructions: SHORT_DESCRIPTION,
 			capabilities: {
 				resources: {
 					subscribe: true,
@@ -42,7 +43,7 @@ export async function createElementorServer(): Promise< McpServer > {
 
 	const sdk = getAngieSdk();
 	await sdk.waitForReady();
-	sdk.registerLocalServer( { server, version: VERSION, description: V3_DESCRIPTION, name: 'Elementor' } );
+	sdk.registerLocalServer( { server, version: VERSION, description: SHORT_DESCRIPTION, name: 'Elementor' } );
 
 	return server;
 }

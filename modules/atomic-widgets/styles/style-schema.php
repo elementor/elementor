@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
@@ -132,7 +133,8 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-family' => String_Prop_Type::make()->description( 'The font family of the text content.' ),
+			'font-family' => Font_Family_Prop_Type::make()
+				->description( 'The font family of the text content.' ),
 			'font-weight' => String_Prop_Type::make()->enum( [
 				'100',
 				'200',

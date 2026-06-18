@@ -42,15 +42,8 @@ const App = ( { colorScheme, isRTL, anchorTarget, ...props } ) => (
 					disableHoverListener
 					PopperProps={ {
 						modifiers: [ OFFSET_MODIFIER ],
-						...( anchorTarget && {
-							anchorEl: {
-								getBoundingClientRect: () => {
-									const { left, right, top, height } = anchorTarget.getBoundingClientRect();
-
-									return new DOMRect( isRTL ? left : right, top, 0, height );
-								},
-							},
-						} ),
+						sx: { zIndex: ( theme ) => theme.zIndex.appBar - 1 },
+						...( anchorTarget && { anchorEl: anchorTarget } ),
 					} }
 				><span /></Infotip>
 			</ThemeProvider>
