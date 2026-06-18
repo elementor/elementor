@@ -71,7 +71,7 @@ jobs:
         run: |
           if [[ "${VERSION}" =~ -beta[0-9]+$ ]]; then
               CHANNEL=beta
-          else if [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          elif [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
               CHANNEL=stable
           fi
           echo "CHANNEL=${CHANNEL}"
