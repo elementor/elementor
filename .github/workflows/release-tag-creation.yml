@@ -44,44 +44,50 @@ jobs:
           prefix: config
 
       - name: Test permissions
-        uses: ./.github/workflows/permissions   
+        uses: ./.github/workflows/permissions
         with:
-            ENVIRONMENT: ${{ env.config_deployment_environment }}
-            DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
-            DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+          ENVIRONMENT: ${{ env.config_deployment_environment }}
+          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+
       - name: Validate version format
         run: |
           if ! [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
-            echo "Version '${VERSION}' is not in the correct format."
-            echo "Version format is not valid, expected: X.Y.Z or X.Y.Z-betaN (e.g. 4.1.0, 5.20.15, 4.1.0-beta1, 5.20.0-beta3)"
-            exit 1
+              echo "Version '${VERSION}' is not in the correct format."
+              echo "Version format is not valid, expected: X.Y.Z or X.Y.Z-betaN (e.g. 4.1.0, 5.20.15, 4.1.0-beta1, 5.20.0-beta3)"
+              exit 1
           fi
           echo "Version format is valid: ${VERSION}"
 
       - name: Check if version already exists
         run: |
           if git tag -l | grep -q "^v${VERSION}$"; then
-            echo "Version ${VERSION} already exists as a GitHub Release."
-            exit 1
+              echo "Version ${VERSION} already exists as a GitHub Release."
+              exit 1
           fi
           echo "Version ${VERSION} does not exist as a GitHub Release."
 
       - name: Extract channel from desired version
         run: |
-          CHANNEL=${VERSION##*-}
+          if [[ "${VERSION}" =~ -beta[0-9]+$ ]]; then
+              CHANNEL=beta
+          else if [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              CHANNEL=stable
+          fi
           echo "CHANNEL=${CHANNEL}"
           echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
-      - name: Env Vars Configure
-        id: env_vars_configure
-        uses: ./.github/workflows/env-vars-configure
-        with:
-          CHANNEL: ${{ env.CHANNEL }}
-          REF: ${{ github.ref }}
+
+      - name: Calculate next version
+        id: version
+        env:
+          CHANNEL: ${{ inputs.channel }}
+          BUMP_TYPE: ${{ inputs.bump_type }}
+        run: node ./.github/scripts/calculate-next-release-version.js
 
       - name: Verify Release Version
-        id: bump_channel_version
+        id: verify_release_version
         run: |
           if [[ "${VERSION}" != "${CLEAN_PACKAGE_VERSION}" ]]; then
-            echo "Manually added release version ${VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
-            exit 1
+              echo "Manually added release version ${VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
+              exit 1
           fi
