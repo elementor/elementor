@@ -98,23 +98,16 @@ export class AppManager {
 	}
 
 	resolveAtomicWidgetPromotionCardProps( { cardType, content } ) {
-		if ( 'widgetPromotion' === cardType ) {
-			return {
-				cardType: 'widgetPromotion',
-				promotionData: {
-					title: content.title,
-					content: content.content,
-					ctaText: content.ctaText,
-					ctaUrl: content.widgetCtaUrl,
-					image: content.image,
-				},
-			};
-		}
-
 		return {
-			cardType: 'atomicForm',
-			promotionData: content,
-			ctaUrl: content.widgetCtaUrl,
+			cardType,
+			promotionData: {
+				title: content.title,
+				content: content.content,
+				ctaText: content.ctaText,
+				ctaUrl: content.widgetCtaUrl,
+				image: content.image,
+				animation: content.animation,
+			},
 		};
 	}
 
@@ -126,10 +119,7 @@ export class AppManager {
 				this.mountCard(
 					event.detail.target,
 					`e-${ type }-promotion-wrapper`,
-					this.resolveAtomicWidgetPromotionCardProps( {
-						cardType: cardType || 'atomicForm',
-						content,
-					} ),
+					this.resolveAtomicWidgetPromotionCardProps( { cardType, content } ),
 				);
 			} );
 		} );

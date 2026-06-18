@@ -31,7 +31,7 @@ class Collection_Loop_Widget_Promotion {
 
 		$settings['atomicWidgetPromotions'][] = [
 			'type' => 'collection-loop',
-			'cardType' => 'widgetPromotion',
+			'cardType' => 'atomic',
 			'widgets' => $this->get_widgets(),
 			'content' => $this->get_promotion_content(),
 		];

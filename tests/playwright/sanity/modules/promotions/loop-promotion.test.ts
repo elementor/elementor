@@ -4,6 +4,7 @@ import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 
 const LOOP_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/Loop_grid_promotion.png';
+const LOOP_PROMOTION_CONTENT_PATTERN = /connect custom layouts directly to your site database/i;
 const categorySelector = '#elementor-panel-category-v4-elements';
 
 test.describe( 'Loop promotion test @promotions', () => {
@@ -46,7 +47,16 @@ test.describe( 'Loop promotion test @promotions', () => {
 		const popover = page.locator( '.MuiTooltip-tooltip > .MuiBox-root' );
 		await expect( popover ).toBeVisible();
 		await expect( popover.getByText( 'Loop' ) ).toBeVisible();
+		await expect( popover.getByText( LOOP_PROMOTION_CONTENT_PATTERN ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toHaveAttribute( 'href', /go-pro-loop-modal/ );
-		await expect( popover.locator( 'img' ) ).toHaveAttribute( 'src', LOOP_PROMOTION_IMAGE_URL );
+
+		const promotionImage = popover.locator( 'img' );
+		await expect( promotionImage ).toHaveAttribute( 'src', LOOP_PROMOTION_IMAGE_URL );
+		await expect.poll( async () => promotionImage.evaluate( ( image ) => {
+			return image instanceof HTMLImageElement && image.complete && image.naturalHeight > 0;
+		} ) ).toBe( true );
+		await expect( popover ).toHaveScreenshot( 'loop-promotion-popover.png', {
+			mask: [ promotionImage ],
+		} );
 	} );
 } );
