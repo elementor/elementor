@@ -69,7 +69,7 @@ export const adjustLlmPropValueSchema = (
 				$$type: 'html-v3',
 				value: {
 					...rawHtmlV3PropValue,
-					children: rawHtmlV3PropValue.children ?? [],
+					children: Array.isArray( rawHtmlV3PropValue.children ) ? rawHtmlV3PropValue.children : [],
 				},
 			};
 		}
