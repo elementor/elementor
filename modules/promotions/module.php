@@ -106,11 +106,43 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
+		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_theme_builder_promotion_modal' ] );
 
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
 
 		$this->register_atomic_promotions();
+	}
+
+	public function enqueue_theme_builder_promotion_modal(): void {
+		if ( Utils::has_pro() || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$package = 'theme-builder-promotion-modal';
+
+		$assets_config_provider = ( new \Elementor\Core\Utils\Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		$config = $assets_config_provider->load( $package )->get( $package );
+
+		if ( ! $config ) {
+			return;
+		}
+
+		wp_register_script(
+			$config['handle'],
+			ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$min_suffix}.js",
+			$config['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_enqueue_script( $config['handle'] );
+		wp_set_script_translations( $config['handle'], 'elementor' );
 	}
 
 	/**
