@@ -115,6 +115,42 @@ class Test_Common_App extends Elementor_Test_Base {
 		$this->assertEquals( 401, $result->get_error_code() );
 	}
 
+	public function test_http_request__returns_wp_error_on_connection_failure() {
+		// Arrange
+		$connection_error = new \WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 10000 milliseconds with 0 bytes received' );
+
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
+			->willReturn( $connection_error );
+
+		// Act
+		$result = $this->app_stub->proxy_http_request( 'GET', 'quota' );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( $connection_error, $result );
+	}
+
+	public function test_http_request__returns_wp_error_on_connection_failure_with_error_data() {
+		// Arrange
+		$connection_error = new \WP_Error( 'http_request_failed', 'cURL error 28: Operation timed out after 10000 milliseconds with 0 bytes received' );
+
+		$this->http_stub
+			->expects( $this->once() )
+			->method( 'request' )
+			->willReturn( $connection_error );
+
+		// Act
+		$result = $this->app_stub->proxy_http_request( 'GET', 'quota', [], [
+			'with_error_data' => true,
+		] );
+
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertSame( $connection_error, $result );
+	}
+
 	public function test_http_request__return_error_when_not_response_code() {
 		// Arrange
 		$this->http_stub
