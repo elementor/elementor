@@ -39,7 +39,7 @@ function parseEntry( entry ) {
 }
 
 function escapeVersionForRegex( version ) {
-	return version.replace( /\./g, '\\.' );
+	return version.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' );
 }
 
 function getVersionHeaderPattern( version ) {
