@@ -1,0 +1,139 @@
+name: Add Changelog Entry
+
+on:
+  workflow_dispatch:
+    inputs:
+      branches:
+        type: string
+        description: 'Comma-separated target branches (e.g. main, 4.01, 4.02)'
+        required: true
+      content:
+        type: string
+        description: 'Changelog block to insert (include version header and bullet lines)'
+        required: true
+      dry_run:
+        type: boolean
+        description: 'Preview changes without committing or opening PRs'
+        required: false
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  add-changelog-entry:
+    runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+      CHANGELOG_CONTENT: ${{ github.event.inputs.content }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          persist-credentials: true
+
+      - name: Configure git user
+        run: |
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME || 'GitHub Actions' }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL || 'github-actions@github.com' }}"
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Validate changelog content
+        id: validate
+        run: |
+          VERSION=$(node -e "
+            const entry = process.env.CHANGELOG_CONTENT.trim();
+            const match = entry.match(/^= ([\\d.]+) - [\\d-]+ =/m);
+            if (!match) {
+              console.error('Invalid changelog header. Expected: = X.Y.Z - YYYY-MM-DD =');
+              process.exit(1);
+            }
+            process.stdout.write(match[1]);
+          ")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Validated changelog version: $VERSION"
+
+      - name: Add changelog entry to branches
+        env:
+          BRANCHES_INPUT: ${{ github.event.inputs.branches }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          VERSION: ${{ steps.validate.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          git fetch --all --prune
+
+          IFS=',' read -ra BRANCHES <<< "$BRANCHES_INPUT"
+
+          for raw_branch in "${BRANCHES[@]}"; do
+            TARGET_BRANCH="$(echo "$raw_branch" | xargs)"
+
+            if [ -z "$TARGET_BRANCH" ]; then
+              continue
+            fi
+
+            if ! git show-ref --verify --quiet "refs/remotes/origin/$TARGET_BRANCH"; then
+              echo "::warning:: Branch origin/$TARGET_BRANCH does not exist - skipping"
+              continue
+            fi
+
+            TARGET_SAFE="${TARGET_BRANCH//./_}"
+            WORK_BRANCH="changelog/${VERSION}-to-${TARGET_SAFE}"
+
+            echo "::group::Processing $TARGET_BRANCH"
+            git checkout -B "$WORK_BRANCH" "origin/$TARGET_BRANCH"
+
+            node ./.github/scripts/add-changelog-entry.js
+
+            if [ -z "$(git status --porcelain changelog.txt readme.txt)" ]; then
+              echo "No changelog changes needed on $TARGET_BRANCH"
+              echo "::endgroup::"
+              continue
+            fi
+
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "Dry run - changelog diff for $TARGET_BRANCH:"
+              git --no-pager diff changelog.txt readme.txt
+              git checkout "$TARGET_BRANCH" 2>/dev/null || git checkout -f "origin/$TARGET_BRANCH"
+              git branch -D "$WORK_BRANCH" 2>/dev/null || true
+              echo "::endgroup::"
+              continue
+            fi
+
+            git add changelog.txt readme.txt
+            git commit -m "Internal: Add changelog entry for $VERSION"
+
+            git push --force-with-lease origin "$WORK_BRANCH"
+
+            if gh pr list --head "$WORK_BRANCH" --base "$TARGET_BRANCH" --state open | grep -q .; then
+              echo "Open PR already exists for $WORK_BRANCH -> $TARGET_BRANCH"
+              echo "::endgroup::"
+              continue
+            fi
+
+            PR_URL=$(gh pr create \
+              --base "$TARGET_BRANCH" \
+              --head "$WORK_BRANCH" \
+              --title "Internal: Add changelog for $VERSION" \
+              --body "$(cat <<EOF
+          Adds changelog entry for **$VERSION** to \`changelog.txt\` and \`readme.txt\`.
+
+          \`\`\`
+          $(printf '%s\n' "$CHANGELOG_CONTENT")
+          \`\`\`
+
+          **Target branch:** \`$TARGET_BRANCH\`
+          **Created by:** GitHub Actions workflow
+          EOF
+            )")
+
+            echo "Created PR: $PR_URL"
+            echo "::endgroup::"
+          done
