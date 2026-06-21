@@ -81,6 +81,8 @@ class Module extends BaseModule {
 				'elementor/kit/meta_to_preserve_on_kit_import',
 				[ $this, 'add_meta_to_preserve_on_kit_import' ]
 			);
+
+			add_action( 'elementor/kit/after_new_kit_created', [ $this, 'create_global_classes_posts_for_new_kit' ], 10, 1 );
 		}
 	}
 
@@ -93,23 +95,39 @@ class Module extends BaseModule {
 		] );
 	}
 
-	private function create_classes_for_new_kit( array $params ): void {
+	/**
+	 * Duplicates global classes posts from the previous kit to the new kit, after a new kit is created.
+	 * So each kit has its own, separate, global classes posts, and editing one kit's classes will not affect the other kits.
+	 *
+	 * @param array $params The parameters passed to the action - 'new_kit_id' and 'previous_kit_id'.
+	 * @return void
+	 */
+	private function create_global_classes_posts_for_new_kit( array $params ): void {
 		[ 'new_kit_id' => $new_kit_id, 'previous_kit_id' => $previous_kit_id ] = $params;
-		$global_classes_post_id_mapping_for_new_kit = [];
-		// duplicate all classes
+
 		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
-		if ( ! $previous_kit ) {
+		$new_kit = Plugin::$instance->kits_manager->get_kit( $new_kit_id );
+
+		if ( ! $previous_kit || ! $new_kit ) {
 			return;
 		}
+
+		$global_classes_post_id_mapping_for_new_kit = [];
 		$all_classes = Global_Classes_Repository::make( $previous_kit )->get_order();
+
 		foreach ( $all_classes as $class_id ) {
 			$prev_kit_class_post = Global_Class_Post::find_by_class_id( $class_id, false, $previous_kit );
+
 			if ( $prev_kit_class_post ) {
-				
-				$new_kit_class_post = Global_Class_Post::create( $class_id, $prev_kit_class_post->get_label(), $prev_kit_class_post->get_data(), $new_kit_id );
+				$prev_kit_class_data  = $prev_kit_class_post->get_data( true );
+				$prev_kit_class_label = $prev_kit_class_post->get_label();
+
+				$new_kit_class_post = Global_Class_Post::create( $class_id, $prev_kit_class_label, $prev_kit_class_data, $new_kit );
 				$global_classes_post_id_mapping_for_new_kit[ $class_id ] = $new_kit_class_post->get_post_id();
 			}
 		}
+
+		Global_Classes_Post_IDs::make( $new_kit )->set_many( $global_classes_post_id_mapping_for_new_kit );
 	}
 
 	private function register_features() {
