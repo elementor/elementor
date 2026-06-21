@@ -67,7 +67,7 @@ class Post_Query extends Base {
 		}
 
 		$keys_format_map = $this->filter_keys_conversion_map(
-			$params[ self::KEYS_CONVERSION_MAP_KEY ],
+			$params[ self::KEYS_CONVERSION_MAP_KEY ] ?? self::ALLOWED_KEYS_CONVERSION_MAP,
 			self::ALLOWED_KEYS_CONVERSION_MAP
 		);
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;

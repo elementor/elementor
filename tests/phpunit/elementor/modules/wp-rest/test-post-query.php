@@ -48,7 +48,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
-		$posts = $response->get_data()['data']['value'];
+		$posts = $this->get_response_posts( $response );
 
 		// Assert
 		$this->assertNotEmpty( $posts );
@@ -74,11 +74,10 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 	public function test_post_query_excludes_posts_contributor_cannot_read() {
 		// Arrange
-		$contributor_id = $this->factory()->user->create( [ 'role' => 'contributor' ] );
-		wp_set_current_user( $contributor_id );
+		$this->act_as( 'contributor' );
 
 		$own_draft_id = $this->factory()->post->create( [
-			'post_author' => $contributor_id,
+			'post_author' => get_current_user_id(),
 			'post_status' => 'draft',
 			'post_title' => 'My Smart Draft',
 			'post_type' => 'post',
@@ -87,7 +86,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'smart' );
 		$request->set_param( Post_Query::IS_PUBLIC_KEY, false );
-		$request->set_param( Post_Query::EXCLUDED_TYPE_KEY, [] );
 		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, [
 			'ID' => 'id',
 			'post_title' => 'label',
@@ -96,7 +94,7 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
-		$posts = $response->get_data()['data']['value'];
+		$posts = $this->get_response_posts( $response );
 		$post_ids = wp_list_pluck( $posts, 'id' );
 
 		// Assert
@@ -138,9 +136,15 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
-		$posts = $response->get_data()['data']['value'];
+		$posts = $this->get_response_posts( $response );
 
 		// Assert
 		$this->assertEqualSets( $expected, $posts );
+	}
+
+	private function get_response_posts( \WP_REST_Response $response ): array {
+		$this->assertEquals( 200, $response->get_status() );
+
+		return $response->get_data()['data']['value'];
 	}
 }

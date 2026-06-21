@@ -116,10 +116,6 @@ abstract class Query {
 				continue;
 			}
 
-			if ( $allowed_map[ $source_key ] !== $destination_key ) {
-				continue;
-			}
-
 			$sanitized_map[ $source_key ] = $destination_key;
 		}
 
