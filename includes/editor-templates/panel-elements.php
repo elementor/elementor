@@ -62,7 +62,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
 				<a href="{{{ promotion.url }}}" target="_blank">
-					<i class="eicon-upgrade-crown-full"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+					<i class="eicon-upgrade-crown-full"></i>{{{ promotion.text || <?php echo wp_json_encode( __( 'Upgrade', 'elementor' ) ); ?> }}}
 				</a>
 			</span>
 		<# } #>
