@@ -233,7 +233,14 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
-		if ( ! $has_pro ) {
+		$keep_promotion = $has_pro && apply_filters(
+			'elementor/document/panel_category_keep_promotion',
+			false,
+			$index,
+			$promotion
+		);
+
+		if ( ! $has_pro || $keep_promotion ) {
 			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$promotion,
 				'elementor/panel/' . $index . '/custom_promotion',
