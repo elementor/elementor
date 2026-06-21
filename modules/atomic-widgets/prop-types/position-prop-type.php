@@ -37,4 +37,18 @@ class Position_Prop_Type extends Object_Prop_Type {
 			'bottom right',
 		];
 	}
+
+	public static function get_radial_position_regex(): string {
+		$token_pattern = '(?:(?:top|bottom|left|right|center)|(?:-?\d+(?:\.\d+)?(?:%|px|em|rem|vw|vh)))';
+
+		return '/^' . $token_pattern . '(?:\s+' . $token_pattern . ')?$/i';
+	}
+
+	public static function is_valid_radial_position( string $pos ): bool {
+		if ( in_array( $pos, self::get_position_enum_values(), true ) ) {
+			return true;
+		}
+
+		return (bool) preg_match( self::get_radial_position_regex(), $pos );
+	}
 }

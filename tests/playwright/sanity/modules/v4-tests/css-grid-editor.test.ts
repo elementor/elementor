@@ -6,7 +6,6 @@ import { wpCli } from '../../../assets/wp-cli';
 test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_css_grid' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -288,5 +287,133 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 
 		// Assert - screenshot the grid layout in editor
 		await expect( container ).toHaveScreenshot( 'grid-layout-editor.png' );
+	} );
+
+	test( 'First-empty-cell indicator advances as children are added', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+
+		const columnGapInput = page.locator( 'input[aria-label="Column gap"]' ).first();
+		await columnGapInput.fill( '20' );
+		await columnGapInput.blur();
+
+		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
+		await expect( gridOutline ).toBeVisible();
+
+		const cells = gridOutline.locator( 'svg rect' );
+		await expect( cells ).toHaveCount( 6 );
+
+		const plus = gridOutline.locator( '.eicon-plus' );
+
+		const plusCenterInCell = async ( cellIndex: number ): Promise<boolean> => {
+			const plusBox = await plus.boundingBox();
+			const cellBox = await cells.nth( cellIndex ).boundingBox();
+			if ( ! plusBox || ! cellBox ) {
+				return false;
+			}
+			const px = plusBox.x + ( plusBox.width / 2 );
+			const py = plusBox.y + ( plusBox.height / 2 );
+			return (
+				px >= cellBox.x &&
+				px <= cellBox.x + cellBox.width &&
+				py >= cellBox.y &&
+				py <= cellBox.y + cellBox.height
+			);
+		};
+
+		await expect( plus ).toHaveCount( 1 );
+		await expect.poll( () => plusCenterInCell( 0 ) ).toBe( true );
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+		await editor.selectElement( gridId );
+		await expect( plus ).toHaveCount( 1 );
+		await expect.poll( () => plusCenterInCell( 1 ) ).toBe( true );
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+		await editor.selectElement( gridId );
+		await expect( plus ).toHaveCount( 1 );
+		await expect.poll( () => plusCenterInCell( 2 ) ).toBe( true );
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+		await editor.selectElement( gridId );
+		await expect( plus ).toHaveCount( 1 );
+		await expect.poll( () => plusCenterInCell( 3 ) ).toBe( true );
+	} );
+
+	test( 'Grid justify-items and align-items combinations render in editor', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 3 );
+
+		const columnGapInput = page.locator( 'input[aria-label="Column gap"]' ).first();
+		await columnGapInput.fill( '20' );
+		await columnGapInput.blur();
+
+		await editor.v4Panel.style.openSection( 'Size' );
+		await editor.v4Panel.style.setSizeSectionValue( 'Width', 600, 'px' );
+		await editor.v4Panel.style.setSizeSectionValue( 'Height', 600, 'px' );
+
+		const children: Array< { width: number; height: number; color: string } > = [
+			{ width: 80, height: 80, color: '#FF6B6B' },
+			{ width: 120, height: 60, color: '#4ECDC4' },
+			{ width: 60, height: 120, color: '#45B7D1' },
+			{ width: 100, height: 100, color: '#96CEB4' },
+		];
+
+		for ( const child of children ) {
+			const childId = await editor.addElement( { elType: 'e-div-block' }, gridId );
+			await editor.selectElement( childId );
+			await editor.v4Panel.openTab( 'style' );
+			await editor.v4Panel.style.openSection( 'Size' );
+			await editor.v4Panel.style.setSizeSectionValue( 'Width', child.width, 'px' );
+			await editor.v4Panel.style.setSizeSectionValue( 'Height', child.height, 'px' );
+			await editor.v4Panel.style.openSection( 'Background' );
+			await editor.v4Panel.style.setBackgroundColor( child.color );
+		}
+
+		await editor.selectElement( gridId );
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const combinations: Array< { justify: 'start' | 'center' | 'end'; align: 'start' | 'center' | 'end' } > = [
+			{ justify: 'start', align: 'center' },
+			{ justify: 'center', align: 'end' },
+			{ justify: 'end', align: 'end' },
+		];
+
+		const gridInPreview = editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` );
+
+		for ( const combo of combinations ) {
+			const justifyControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Justify items' );
+			await editor.v4Panel.style.changeButtonGroupControl( justifyControl, combo.justify );
+
+			const alignControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Align items' );
+			await editor.v4Panel.style.changeButtonGroupControl( alignControl, combo.align );
+
+			await expect.soft( gridInPreview ).toHaveScreenshot(
+				`grid-justify-${ combo.justify }-align-${ combo.align }.png`,
+			);
+		}
 	} );
 } );

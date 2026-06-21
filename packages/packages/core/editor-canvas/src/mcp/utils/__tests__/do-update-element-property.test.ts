@@ -5,7 +5,7 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 import { Schema } from '@elementor/editor-props';
-import { getVariantByMeta } from '@elementor/editor-styles';
+import { getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync } from '@elementor/editor-v1-adapters';
 
 import { doUpdateElementProperty } from '../do-update-element-property';
@@ -143,6 +143,49 @@ describe( 'doUpdateElementProperty', () => {
 		);
 	} );
 
+	it( 'persists canonical prop key when an alias property name is used', () => {
+		// Arrange
+		const propertyValue = 'resolved-title';
+		jest.mocked( getWidgetsCache ).mockReturnValue( {
+			[ ELEMENT_TYPE ]: {
+				atomic_props_schema: {
+					// @ts-ignore: Mock type
+					[ PROPERTY_NAME ]: {
+						...PROP_SCHEMA_ENTRY,
+						meta: { aliases: [ 'text' ] },
+					},
+				},
+			},
+		} );
+		jest.mocked( Schema.validatePropValue ).mockReturnValue( {
+			jsonSchema: EXPECTED_JSON_SCHEMA_SNIPPET,
+			valid: true,
+			errorMessages: [],
+			errors: [],
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: 'text',
+			propertyValue,
+		} );
+
+		// Assert
+		expect( Schema.validatePropValue ).toHaveBeenCalledWith(
+			expect.objectContaining( PROP_SCHEMA_ENTRY ),
+			propertyValue
+		);
+		expect( updateElementSettings ).toHaveBeenCalledWith( {
+			id: ELEMENT_ID,
+			props: {
+				[ PROPERTY_NAME ]: propertyValue,
+			},
+			withHistory: false,
+		} );
+	} );
+
 	it( 'replaces existing local style custom_css by default', () => {
 		// Arrange
 		jest.mocked( getElementStyles ).mockReturnValue( {
@@ -212,6 +255,44 @@ describe( 'doUpdateElementProperty', () => {
 				custom_css: {
 					raw: btoa( `${ EXISTING_CUSTOM_CSS }\n${ ADDITIONAL_CUSTOM_CSS }` ),
 				},
+			} )
+		);
+	} );
+
+	it( 'passes a null style value through unresolved so the editor resets the prop to default', () => {
+		// Arrange
+		jest.mocked( getStylesSchema ).mockReturnValue( {
+			color: { key: 'colorPropKey', kind: 'plain' },
+		} as never );
+		jest.mocked( getElementStyles ).mockReturnValue( {
+			[ LOCAL_STYLE_ID ]: {
+				id: LOCAL_STYLE_ID,
+				label: 'local',
+				type: 'class',
+				variants: [],
+			},
+		} );
+		jest.mocked( getVariantByMeta ).mockReturnValue( {
+			meta: { breakpoint: 'desktop', state: null },
+			props: {},
+			custom_css: null,
+		} );
+
+		// Act
+		doUpdateElementProperty( {
+			elementId: ELEMENT_ID,
+			elementType: ELEMENT_TYPE,
+			propertyName: '_styles',
+			propertyValue: {
+				color: null,
+			},
+		} );
+
+		// Assert
+		expect( Schema.adjustLlmPropValueSchema ).not.toHaveBeenCalled();
+		expect( updateElementStyle ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				props: { color: null },
 			} )
 		);
 	} );

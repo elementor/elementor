@@ -12,6 +12,7 @@ import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
 import { mergeCustomCssText, readStoredCustomCssText } from './merge-custom-css';
+import { resolveCanonicalPropName } from './resolve-canonical-prop-name';
 import { DYNAMIC_PROP_TYPE_KEY, dynamicTagLLMResolver } from './resolve-dynamic-tag';
 
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
@@ -47,7 +48,11 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
  * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
  */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
-	const { elementId, propertyName, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
+	const { elementId, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
+	const propertyName =
+		params.propertyName === '_styles'
+			? params.propertyName
+			: resolveCanonicalPropName( elementType, params.propertyName );
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;
@@ -60,6 +65,9 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				const { key: propKey, kind } = styleSchema?.[ key ] || {};
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
+				}
+				if ( val === null ) {
+					return [ key, null ];
 				}
 				return [ key, resolvePropValue( val, propKey ) ];
 			} )

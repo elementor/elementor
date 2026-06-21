@@ -47,6 +47,11 @@
       "fromType": "email",
       "toType": "emails",
       "path": "operations/email-to-emails.json"
+    },
+    "string-to-font-family": {
+      "fromType": "string",
+      "toType": "font-family",
+      "path": "operations/string-to-font-family.json"
     }
   }
 }

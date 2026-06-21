@@ -26,13 +26,14 @@ jobs:
   create-version-change:
     runs-on: ubuntu-22.04
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MAINTAIN_TOKEN }}
+          persist-credentials: true
 
       - name: Configure git user
         run: |
@@ -60,7 +61,7 @@ jobs:
         run: |
           CURRENT_VERSION="${{ steps.current-version.outputs.version }}"
           INPUT_VERSION="${{ github.event.inputs.version }}"
-          
+
           if [ -z "$INPUT_VERSION" ]; then
             MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
             MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
@@ -71,10 +72,10 @@ jobs:
             MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
             MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
           fi
-          
+
           BRANCH_NAME="${MAJOR}.$(printf '%02d' $MINOR)"
           DEV_BRANCH="version-${NEXT_VERSION}-to-main"
-          
+
           echo "next_version=$NEXT_VERSION" >> $GITHUB_OUTPUT
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "dev_branch=$DEV_BRANCH" >> $GITHUB_OUTPUT
@@ -86,18 +87,18 @@ jobs:
         id: build-args
         run: |
           ARGS=""
-          
+
           VERSION="${{ steps.calculate.outputs.next_version }}"
           ARGS="$ARGS $VERSION"
-          
+
           if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
-          
+
           if [ "${{ github.event.inputs.skip_branches }}" == "true" ]; then
             ARGS="$ARGS --skip-branches"
           fi
-          
+
           echo "args=$ARGS" >> $GITHUB_OUTPUT
           echo "Built arguments: $ARGS"
 
@@ -111,21 +112,21 @@ jobs:
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
-          
+
           if [ "$CURRENT_BRANCH" != "$DEV_BRANCH" ]; then
             echo "Not on dev branch $DEV_BRANCH, current branch: $CURRENT_BRANCH"
             echo "This might mean the branch already exists or script exited early"
             exit 0
           fi
-          
+
           if [ -z "$(git status --porcelain)" ]; then
             echo "No changes to commit"
             exit 0
           fi
-          
+
           git add -A
           git commit -m "Internal: Bump version to ${{ steps.calculate.outputs.next_version }}"
-          
+
           echo "Changes committed successfully"
 
       - name: Push branch
@@ -133,12 +134,12 @@ jobs:
         run: |
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
-          
+
           if [ "$CURRENT_BRANCH" != "$DEV_BRANCH" ]; then
             echo "Not on dev branch, skipping push"
             exit 0
           fi
-          
+
           git push origin "$DEV_BRANCH"
           echo "Branch $DEV_BRANCH pushed successfully"
 
@@ -147,12 +148,12 @@ jobs:
         run: |
           DEV_BRANCH="${{ steps.calculate.outputs.dev_branch }}"
           NEXT_VERSION="${{ steps.calculate.outputs.next_version }}"
-          
+
           if gh pr list --head "$DEV_BRANCH" --base main --state open | grep -q .; then
             echo "PR already exists for branch $DEV_BRANCH"
             exit 0
           fi
-          
+
           gh pr create \
             --base main \
             --head "$DEV_BRANCH" \
@@ -166,6 +167,6 @@ jobs:
 
           **Created by:** GitHub Actions workflow
           **Branch:** \`$DEV_BRANCH\`"
-          
+
           echo "PR created successfully for $DEV_BRANCH"
 
