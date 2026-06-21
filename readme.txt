@@ -360,6 +360,10 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.1.4 - 2026-06-21 =
+
+* Fix: Improved code security enforcement in query handling
+
 = 4.1.3 - 2026-06-10 =
 
 * Fix: Cloud Library screenshot errors could prevent users from saving templates locally
