@@ -147,9 +147,7 @@ function ModalContent( {
 			>
 				<Stack gap={ 2.5 } sx={ { justifyContent: 'center', flexGrow: 1 } }>
 					<Typography variant="h4" color="text.secondary" dangerouslySetInnerHTML={ { __html: title } } />
-					<Typography variant="body1" color="text.primary">
-						{ body }
-					</Typography>
+					<Typography variant="body1" color="text.primary" dangerouslySetInnerHTML={ { __html: body } } />
 				</Stack>
 
 				<Stack direction="row" justifyContent="flex-end" gap={ 1.5 }>

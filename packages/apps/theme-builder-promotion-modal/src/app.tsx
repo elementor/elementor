@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { TRIGGER_EVENT } from './constants';
-import { PromotionAlert } from './components/promotion-alert';
 import { PromotionModal } from './components/promotion-modal';
 import type { OpenEventDetail } from './types';
 
@@ -14,7 +13,7 @@ export function App( { container }: { container?: HTMLElement } ) {
 			const customEvent = event as CustomEvent<OpenEventDetail>;
 			const detail = customEvent?.detail;
 
-			if ( !detail?.scenario || !detail?.introductionKey || ! detail?.mode ) {
+			if ( !detail?.scenario || !detail?.introductionKey ) {
 				return;
 			}
 
@@ -34,17 +33,6 @@ export function App( { container }: { container?: HTMLElement } ) {
 		return null;
 	}
 
-	if ( 'alert' === openDetail.mode ) {
-		return <PromotionAlert scenario={ openDetail.scenario } onClose={ handleClose } />;
-	}
-
-	return (
-		<PromotionModal
-			container={ container }
-			scenario={ openDetail.scenario }
-			introductionKey={ openDetail.introductionKey }
-			onClose={ handleClose }
-		/>
-	);
+	return <PromotionModal container={ container } scenario={ openDetail.scenario } introductionKey={ openDetail.introductionKey } onClose={ handleClose } />;
 }
 

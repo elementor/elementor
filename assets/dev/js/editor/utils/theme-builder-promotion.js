@@ -24,33 +24,26 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		const mode = this.isViewed( introductionKey ) ? 'alert' : 'modal';
+		if ( this.isViewed( introductionKey ) ) {
+			return;
+		}
 
 		document.dispatchEvent(
 			new CustomEvent( 'theme-builder-promotion:open', {
 				detail: {
 					scenario,
 					introductionKey,
-					mode,
 				},
 			} ),
 		);
 	}
 
 	getIntroductionKey( scenario ) {
-		if ( 'single_post' === scenario ) {
-			return 'introduce_theme_builder_single_post_popup';
+		if ( ! scenario ) {
+			return null;
 		}
 
-		if ( 'single_product' === scenario ) {
-			return 'introduce_theme_builder_single_product_popup';
-		}
-
-		if ( 'header_footer' === scenario ) {
-			return 'introduce_theme_builder_header_footer_popup';
-		}
-
-		return null;
+		return `introduce_theme_builder_${ scenario }_popup`;
 	}
 
 	isViewed( introductionKey ) {

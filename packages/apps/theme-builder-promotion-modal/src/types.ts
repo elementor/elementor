@@ -1,11 +1,8 @@
 export type ThemeBuilderPromotionScenario = 'single_post' | 'single_product' | 'header_footer';
 
-export type PromotionDisplayMode = 'modal' | 'alert';
-
 export type OpenEventDetail = {
 	scenario: ThemeBuilderPromotionScenario;
 	introductionKey: string;
-	mode: PromotionDisplayMode;
 };
 
 type ElementorCommonAjax = {
