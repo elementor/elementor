@@ -1,7 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { wpCli } from '../../../assets/wp-cli';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorSelectors from '../../../selectors/editor-selectors';
+
 
 test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
@@ -415,5 +417,54 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 				`grid-justify-${ combo.justify }-align-${ combo.align }.png`,
 			);
 		}
+	} );
+
+	test.only( 'First-empty-cell drop placeholder is visible when dragging a widget into the grid', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		// Act - add a Grid element to the document
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+
+		await editor.openElementsPanel();
+
+		const panelHeading = page
+			.locator( EditorSelectors.panels.elements.v4elements )
+			.getByText( 'Heading', { exact: true } );
+
+		const gridFirstAdd = editor
+			.getPreviewFrame()
+			.locator( `[data-id="${ gridId }"] .elementor-empty-view > .elementor-first-add` )
+			.first();
+
+		await panelHeading.waitFor( { state: 'visible' } );
+		await gridFirstAdd.waitFor( { state: 'visible' } );
+
+		const panelBox = await panelHeading.boundingBox();
+		const targetBox = await gridFirstAdd.boundingBox();
+
+		expect( panelBox ).toBeTruthy();
+		expect( targetBox ).toBeTruthy();
+
+		await page.mouse.move(
+			panelBox!.x + ( panelBox!.width / 2 ),
+			panelBox!.y + ( panelBox!.height / 2 ),
+		);
+		await page.mouse.down();
+
+		await page.mouse.move(
+			targetBox!.x + ( targetBox!.width / 2 ),
+			targetBox!.y + ( targetBox!.height / 2 ),
+			{ steps: 10 },
+		);
+
+		const placeholder = editor.getPreviewFrame().locator( '.elementor-widget-placeholder' );
+		await expect( placeholder ).toBeVisible();
+
+		// Assert.
+		await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			'grid-drag-heading-placeholder.png',
+		);
 	} );
 } );

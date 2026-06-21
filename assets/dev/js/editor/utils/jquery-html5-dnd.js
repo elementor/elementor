@@ -85,15 +85,16 @@
 		init();
 	};
 
-	var Droppable = function( userSettings ) {
-		var self = this,
-			settings = {},
-			elementsCache = {},
-			currentElement,
-			currentSide,
-			isDroppingAllowedState = false,
-			placeholderContext = {},
-			defaultSettings = {
+		var Droppable = function( userSettings ) {
+			var self = this,
+				settings = {},
+				elementsCache = {},
+				currentElement,
+				currentSide,
+				isDroppingAllowedState = false,
+				originalCurrentElementOpacity = null,
+				placeholderContext = {},
+				defaultSettings = {
 				element: '',
 				items: '>',
 				horizontalThreshold: 0,
@@ -251,7 +252,7 @@
 
 			maybeAddFlexRowClass( container );
 
-			return {
+			const context = {
 				$currentElement,
 				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':scope > :not(.elementor-widget-placeholder)' ) : currentElement,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
@@ -265,6 +266,8 @@
 				hasLogicalWrapper,
 				isAtomicContainer: [ 'e-div-block', 'e-flexbox', 'e-grid' ].includes( currentElement.dataset.element_type ),
 			};
+
+			return context;
 		};
 
 		const maybeAddFlexRowClass = function( container ) {
@@ -540,6 +543,11 @@
 					return;
 				}
 
+				if ( currentElement?.classList?.contains( 'elementor-first-add' ) && currentElement.closest?.( '.e-grid-base' ) ) {
+					originalCurrentElementOpacity = currentElement.style.opacity || '';
+					currentElement.style.opacity = '1';
+				}
+
 				insertPlaceholder();
 
 				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
@@ -634,6 +642,11 @@
 			}
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
+
+			if ( null !== originalCurrentElementOpacity && currentElement?.style ) {
+				currentElement.style.opacity = originalCurrentElementOpacity;
+				originalCurrentElementOpacity = null;
+			}
 
 			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );
