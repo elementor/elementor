@@ -80,11 +80,13 @@ function calculateStable( tags, bumpType ) {
 		throw new Error( `Invalid BUMP_TYPE "${ bumpType }". Use patch or minor.` );
 	}
 
-	return { releaseVersion: next, latestTag: latest };
+	return { calculatedReleaseVersion: next, latestTag: latest };
 }
 
 function calculateBeta( tags, packageVersion ) {
-	const betaTags = getBetaTagsForBase( tags, packageVersion );
+	const betaBaseTags = getBetaTagsForBase( tags, packageVersion );
+	console.log( 'betaTags', betaTags );
+
 	const latest = betaTags[ betaTags.length - 1 ] || null;
 
 	console.log( 'latest', latest );
@@ -99,7 +101,7 @@ function calculateBeta( tags, packageVersion ) {
 		console.log( 'n', n );
 	}
 
-	return { releaseVersion: next, latestTag: latest };
+	return { calculatedReleaseVersion: next, latestTag: latest };
 }
 
 // --- main ---
@@ -121,22 +123,22 @@ function main() {
 		}
 		result = calculateStable( tags, BUMP_TYPE );
 	} else if ( CHANNEL === 'beta' ) {
-		result = calculateBeta( tags, packageVersion );
-	} else {
+		result = calculateBeta( tags, process.env.DESIRED_VERSION );
+	result = calculateBeta( tags, betaBase )	} else {
 		console.error( `Unknown CHANNEL "${ CHANNEL }". Use stable or beta.` );
 		process.exit( 1 );
 	}
 
-	const { releaseVersion, latestTag } = result;
-	const cleanVersion = releaseVersion.replace( /-beta[0-9]+$/, '' );
+	const { calculatedReleaseVersion, latestTag } = result;
+	const cleanVersion = calculatedReleaseVersion.replace( /-beta[0-9]+$/, '' );
 
 	console.log( `Channel:      ${ CHANNEL }` );
 	console.log( `Bump type:    ${ BUMP_TYPE || 'n/a' }` );
 	console.log( `Latest tag:   ${ latestTag || 'none' }` );
-	console.log( `Next version: ${ releaseVersion }` );
+	console.log( `Next version: ${ calculatedReleaseVersion }` );
 	console.log( 'packageVersion', packageVersion );
 
-	writeOutput( 'RELEASE_VERSION', releaseVersion );
+	writeOutput( 'CALCULATED_RELEASE_VERSION', calculatedReleaseVersion );
 	writeOutput( 'CLEAN_PACKAGE_VERSION', cleanVersion );
 	writeOutput( 'LATEST_TAG', latestTag || '' );
 }

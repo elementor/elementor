@@ -8,7 +8,7 @@ on:
         type: string
         description: 'Target branch to release from (e.g. main or 3.33)'
         default: main
-      release_version:
+      desired_version:
         required: true
         type: string
         description: 'Version to release (e.g. 4.1.0-beta1 or 4.0.11)'
@@ -19,7 +19,7 @@ on:
         description: Dry run — validate everything but do not push commits or create tag.
 
 env:
-  VERSION: ${{ inputs.release_version }}
+  DESIRED_VERSION: ${{ inputs.desired_version }}
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
@@ -53,29 +53,29 @@ jobs:
 
       - name: Validate version format
         run: |
-          if ! [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
-              echo "Version '${VERSION}' is not in the correct format."
+          if ! [[ "${DESIRED_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
+              echo "Version '${DESIRED_VERSION}' is not in the correct format."
               echo "Version format is not valid, expected: X.Y.Z or X.Y.Z-betaN (e.g. 4.1.0, 5.20.15, 4.1.0-beta1, 5.20.0-beta3)"
               exit 1
           fi
-          echo "Version format is valid: ${VERSION}"
+          echo "Version format is valid: ${DESIRED_VERSION}"
 
       - name: Check if version already exists
         run: |
-          if git tag -l | grep -q "^v${VERSION}$"; then
-              echo "Version ${VERSION} already exists as a GitHub Release."
+          if git tag -l | grep -q "^v${DESIRED_VERSION}$"; then
+              echo "Version ${DESIRED_VERSION} already exists as a GitHub Release."
               exit 1
           fi
-          echo "Version ${VERSION} does not exist as a GitHub Release."
+          echo "Version ${DESIRED_VERSION} does not exist as a GitHub Release."
 
       - name: Extract channel from desired version
         run: |
-          if [[ "${VERSION}" =~ -beta[0-9]+$ ]]; then
+          if [[ "${DESIRED_VERSION}" =~ -beta[0-9]+$ ]]; then
                 CHANNEL=beta
-            elif [[ "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            elif [[ "${DESIRED_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                 CHANNEL=stable
             else
-                echo "Could not determine channel from version: ${VERSION}"
+                echo "Could not determine channel from version: ${DESIRED_VERSION}"
                 exit 1
             fi
           echo "CHANNEL=${CHANNEL}"
@@ -97,8 +97,8 @@ jobs:
       - name: Verify Release Version
         id: verify_release_version
         run: |
-          if [[ "${VERSION}" != "${CLEAN_PACKAGE_VERSION}" ]]; then
-              echo "Manually added release version ${VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
+          if [[ "${DESIRED_VERSION}" != "${CLEAN_PACKAGE_VERSION}" ]]; then
+              echo "Manually added release version ${DESIRED_VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
               exit 1
           fi
-          echo "Release version ${VERSION} matches calculated version."
+          echo "Release version ${DESIRED_VERSION} matches calculated version."
