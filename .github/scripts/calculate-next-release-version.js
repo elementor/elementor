@@ -85,7 +85,7 @@ function calculateStable( tags, bumpType ) {
 
 function calculateBeta( tags, packageVersion ) {
 	const betaBaseTags = getBetaTagsForBase( tags, packageVersion );
-	console.log( 'betaTags', betaTags );
+	console.log( 'betaBaseTags', betaBaseTags );
 
 	const latest = betaTags[ betaTags.length - 1 ] || null;
 
