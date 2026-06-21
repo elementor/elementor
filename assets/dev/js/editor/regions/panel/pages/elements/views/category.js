@@ -17,6 +17,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
 		'click .elementor-panel-custom-widgets__cta': 'onCustomWidgetsCtaClick',
+		'click .elementor-panel-heading-promotion a': 'onPromotionLinkClick',
 	},
 
 	id() {
@@ -121,6 +122,10 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 				},
 			} ),
 		);
+	},
+
+	onPromotionLinkClick( event ) {
+		event.stopPropagation();
 	},
 } );
 
