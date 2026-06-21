@@ -4,7 +4,6 @@ import { wpCli } from '../../../assets/wp-cli';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
-
 test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
@@ -419,7 +418,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		}
 	} );
 
-	test.only( 'First-empty-cell drop placeholder is visible when dragging a widget into the grid', async ( { page, apiRequests }, testInfo ) => {
+	test( 'First-empty-cell drop placeholder is visible when dragging a widget into the grid', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();

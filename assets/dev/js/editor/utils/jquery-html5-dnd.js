@@ -85,16 +85,16 @@
 		init();
 	};
 
-		var Droppable = function( userSettings ) {
-			var self = this,
-				settings = {},
-				elementsCache = {},
-				currentElement,
-				currentSide,
-				isDroppingAllowedState = false,
-				originalCurrentElementOpacity = null,
-				placeholderContext = {},
-				defaultSettings = {
+	var Droppable = function( userSettings ) {
+		var self = this,
+			settings = {},
+			elementsCache = {},
+			currentElement,
+			currentSide,
+			isDroppingAllowedState = false,
+			originalCurrentElementOpacity = null,
+			placeholderContext = {},
+			defaultSettings = {
 				element: '',
 				items: '>',
 				horizontalThreshold: 0,
