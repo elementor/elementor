@@ -1,21 +1,14 @@
-import { AngieMcpAdapter } from './adapters/angie-adapter';
-import { type ModelContext, WebMCPAdapter } from './adapters/web-mcp-adapter';
-import { activateAdapters, registerMcpAdapter, signalMcpReady } from './mcp-registry';
-import { getSDK } from './utils/get-sdk';
-import { isAngieAvailable } from './utils/is-angie-available';
+import { createAndRegisterAdapters, signalMcpReady } from './mcp-registry';
 
+let isInitialized = false;
 export function startMCPServer() {
-	if ( typeof navigator !== 'undefined' && 'modelContext' in navigator ) {
-		registerMcpAdapter(
-			new WebMCPAdapter( ( navigator as unknown as { modelContext: ModelContext } ).modelContext )
-		);
+	if ( isInitialized ) {
+		return;
 	}
+	isInitialized = true;
 
-	if ( isAngieAvailable() ) {
-		registerMcpAdapter( new AngieMcpAdapter( getSDK() ) );
-	}
-
-	return activateAdapters().then( () => signalMcpReady() );
+	createAndRegisterAdapters();
+	signalMcpReady();
 }
 
 if ( typeof document !== 'undefined' ) {
