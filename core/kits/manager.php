@@ -162,16 +162,12 @@ class Manager {
 
 		$kit_meta_data = [];
 
-		foreach ( $meta_keys_to_preserve as $meta_key => $meta_key_value ) {
-			if ( isset( $meta_key_value ) ) {
-				$value = $meta_key_value;
-			} else {
-				$value = $current_kit->get_meta( $meta_key );
-			}
+		foreach ( $meta_keys_to_preserve as $meta_key ) {
+			$value = $current_kit->get_meta( $meta_key );
 
 			if ( ! empty( $value ) ) {
 				$kit_meta_data[ $meta_key ] = $value;
-			}	
+			}
 		}
 
 		return $kit_meta_data;
