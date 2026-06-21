@@ -115,6 +115,7 @@ function main() {
 	const tags = getTags();
 	const packageVersion = getPackageVersion();
 	let result;
+	console.log( 'CHANNEL', CHANNEL );
 
 	if ( CHANNEL === 'stable' ) {
 		if ( ! BUMP_TYPE ) {
@@ -126,7 +127,7 @@ function main() {
 		const betaBase = ( process.env.DESIRED_VERSION || packageVersion ).replace( /-beta[0-9]+$/, '' );
 		result = calculateBeta( tags, betaBase );	
 		console.log( 'result', result );
-		console.error( `Unknown CHANNEL "${ CHANNEL }". Use stable or beta.` );
+		// console.error( `Unknown CHANNEL "${ CHANNEL }". Use stable or beta.` );
 		process.exit( 1 );
 	}
 
