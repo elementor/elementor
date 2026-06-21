@@ -87,7 +87,7 @@ function calculateBeta( tags, packageVersion ) {
 	const betaBaseTags = getBetaTagsForBase( tags, packageVersion );
 	console.log( 'betaBaseTags', betaBaseTags );
 
-	const latest = betaTags[ betaTags.length - 1 ] || null;
+	const latest = betaBaseTags[ betaBaseTags.length - 1 ] || null;
 
 	console.log( 'latest', latest );
 
