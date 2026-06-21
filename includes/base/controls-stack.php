@@ -1185,6 +1185,13 @@ abstract class Controls_Stack extends Base_Object {
 		return self::get_items( $this->parsed_dynamic_settings, $setting );
 	}
 
+	public function reset_render_state(): void {
+		$this->active_settings = null;
+		$this->parsed_active_settings = null;
+		$this->parsed_dynamic_settings = null;
+		$this->render_attributes = [];
+	}
+
 	/**
 	 * Get active settings.
 	 *
