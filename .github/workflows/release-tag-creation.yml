@@ -109,3 +109,4 @@ jobs:
                 exit 1
             fi
           echo "Release version ${DESIRED_VERSION} matches calculated version."
+          fi
