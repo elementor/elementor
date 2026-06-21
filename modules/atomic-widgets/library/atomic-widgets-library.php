@@ -12,6 +12,7 @@ class Atomic_Widgets_Library {
 	public function register_documents() {
 		Plugin::$instance->documents
 			->register_document_type( 'e-div-block', Div_Block::get_class_full_name() )
-			->register_document_type( 'e-flexbox', Flexbox::get_class_full_name() );
+			->register_document_type( 'e-flexbox', Flexbox::get_class_full_name() )
+			->register_document_type( 'e-form', Atomic_Form::get_class_full_name() );
 	}
 }
