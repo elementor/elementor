@@ -118,22 +118,11 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$global_classes_post_id_mapping_for_new_kit = [];
 		$all_classes = Global_Classes_Repository::make( $previous_kit )->get_order();
 
 		foreach ( $all_classes as $class_id ) {
-			$prev_kit_class_post = Global_Class_Post::find_by_class_id( $class_id, false, $previous_kit );
-
-			if ( $prev_kit_class_post ) {
-				$new_kit_class_post = $prev_kit_class_post->clone( $new_kit );
-
-				if ( $new_kit_class_post ) {
-					$global_classes_post_id_mapping_for_new_kit[ $class_id ] = $new_kit_class_post->get_post_id();
-				}
-			}
+			Global_Class_Post::clone_to_other_kit( $class_id, $previous_kit, $new_kit );
 		}
-
-		Global_Classes_Post_IDs::make( $new_kit )->set_all( $global_classes_post_id_mapping_for_new_kit );
 	}
 
 	private function register_features() {

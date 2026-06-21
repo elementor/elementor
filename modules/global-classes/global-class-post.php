@@ -274,29 +274,50 @@ class Global_Class_Post {
 		return false !== $result;
 	}
 
-	public function clone( ?Kit $target_kit = null ): ?Global_Class_Post {
+	public static function clone_to_other_kit( string $style_id, Kit $source_kit, ?Kit $target_kit = null ): ?Global_Class_Post {
 		$target_kit = $target_kit ?? Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( ! $target_kit ) {
+		if ( ! $source_kit || ! $target_kit ) {
 			return null;
 		}
 
-		$new_post = wp_insert_post( [
+		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
+
+		if ( ! $source_post ) {
+			return null;
+		}
+
+		$new_post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
-			'post_title' => $this->get_label(),
+			'post_title' => $source_post->get_label(),
 			'post_status' => 'publish',
 		] );
 
-		if ( is_wp_error( $new_post ) || ! $new_post ) {
+		if ( is_wp_error( $new_post_id ) || ! $new_post_id ) {
 			return null;
 		}
 
-		update_post_meta( $new_post, self::META_KEY_ID, $this->get_class_id() );
-		update_post_meta( $new_post, self::META_KEY_DATA, $this->get_frontend_data() );
-		update_post_meta( $new_post, self::META_KEY_DATA_PREVIEW, $this->get_preview_data() );
-		update_post_meta( $new_post, self::META_KEY_VERSION, $this->get_version() );
-		update_post_meta( $new_post, self::META_KEY_EDITED, $this->get_last_edited_timestamp() );
+		update_post_meta( $new_post_id, self::META_KEY_ID, $style_id );
+		update_post_meta( $new_post_id, self::META_KEY_VERSION, $source_post->get_version() );
 
-		return self::from_post_id( $new_post );
+		$frontend_data = $source_post->get_frontend_data();
+		$preview_data = $source_post->get_preview_data();
+		$last_edited_timestamp = get_post_meta( $source_post->get_post_id(), self::META_KEY_EDITED, true );
+
+		if ( ! empty( $frontend_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA, $frontend_data );
+		}
+
+		if ( ! empty( $preview_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA_PREVIEW, $preview_data );
+		}
+
+		if ( $last_edited_timestamp ) {
+			update_post_meta( $new_post_id, self::META_KEY_EDITED, $last_edited_timestamp );
+		}
+
+		Global_Classes_Post_IDs::make( $target_kit )->set( $style_id, (int) $new_post_id );
+
+		return self::from_post_id( $new_post_id );
 	}
 }
