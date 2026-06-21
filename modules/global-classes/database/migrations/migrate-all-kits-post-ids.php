@@ -236,13 +236,7 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 			$source_label = $source_post->get_label();
 
 			foreach ( $losers as [ 'kit' => $loser_kit, 'class_id' => $class_id ] ) {
-				$forked = Global_Class_Post::create( $class_id, $source_label, $source_data, null );
-
-				if ( ! $forked ) {
-					continue;
-				}
-
-				Global_Classes_Post_IDs::make( $loser_kit )->set( $class_id, $forked->get_post_id() );
+				Global_Class_Post::create( $class_id, $source_label, $source_data, $loser_kit );
 			}
 		}
 	}
