@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,9 +47,6 @@ class Import_Utils {
 
 		$conflict_resolution = $options['conflict_resolution'] ?? self::DEFAULT_CONFLICT_RESOLUTION;
 
-		$classes_repository = Global_Classes_Repository::make( $active_kit );
-		$classes_repository->set_preview( false );
-
 		$imported_classes_order = json_decode( file_get_contents( $order_file ), true );
 
 		if ( ! is_array( $imported_classes_order ) ) {
@@ -81,7 +79,7 @@ class Import_Utils {
 	}
 
 	private static function do_import(
-		Global_Classes_Repository $classes_repository,
+		Kit $active_kit,
 		string $classes_dir,
 		array $imported_classes_order,
 		string $conflict_resolution
@@ -91,19 +89,29 @@ class Import_Utils {
 		$modified_classes = [];
 		$deleted_classes = [];
 
-		$previous_order = $classes_repository->get_order();
-		$order_set = array_flip( $previous_order );
+		$classes_repository_preview = Global_Classes_Repository::make( $active_kit )->set_preview( true );
+		$classes_repository_frontend = Global_Classes_Repository::make( $active_kit )->set_preview( false );
+
+		$previous_frontend_order = $classes_repository_frontend->get_order();
+		$previous_preview_order = $classes_repository_preview->get_order();
+		$order_set = array_flip( array_unique( array_merge( $previous_frontend_order, $previous_preview_order ) ) );
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 		$classes_dir = rtrim( $classes_dir, '/' );
 
 		if ( 'override-all' === $conflict_resolution ) {
-			$deleted_classes = $previous_order;
-			$classes_repository->delete_all();
-			$previous_order = [];
-			$order_set = [];
+			$deleted_classes = array_unique( array_merge( $previous_frontend_order, $previous_preview_order ) );
+			$classes_repository_preview->delete_all();
+			$classes_repository_frontend->delete_all();
+			$previous_frontend_order = [];
+			$previous_preview_order = [];
+			$order_set = [];	
 		}
 
-		$label_to_id_map = self::build_label_to_id_map_from_labels( $classes_repository->all_labels() );
+		$preview_labels = Global_Classes_Repository::make( $active_kit )->set_preview( true )->get_labels();
+		$frontend_labels = Global_Classes_Repository::make( $active_kit )->set_preview( false )->get_labels();
+		$all_labels = array_unique( array_merge( $preview_labels, $frontend_labels ) );
+	
+		$label_to_id_map = self::build_label_to_id_map_from_labels( $all_labels );
 
 		$result = self::EMPTY_RESULT;
 
@@ -216,8 +224,11 @@ class Import_Utils {
 		$has_changes = ! empty( $added_classes_order ) || ! empty( $modified_classes ) || ! empty( $deleted_classes );
 
 		if ( $has_changes ) {
-			$new_order = array_merge( $added_classes_order, $previous_order );
-			$classes_repository->update_order_and_labels( $new_order, $added_classes_labels );
+			$new_preview_order = array_merge( $added_classes_order, $previous_preview_order );
+			$new_frontend_order = array_merge( $added_classes_order, $previous_frontend_order );
+	
+			$classes_repository_preview->update_order_and_labels( $new_preview_order, $added_classes_labels );
+			$classes_repository_frontend->update_order_and_labels( $new_frontend_order, $added_classes_labels );
 
 			$changes = [
 				'added' => $added_classes_order,

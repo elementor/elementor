@@ -88,14 +88,6 @@ class Global_Classes_Repository {
 
 		$labels->set_labels( $existing_labels );
 
-		if ( ! $this->is_preview() ) {
-			Global_Classes_Order::make( $this->get_kit() )
-				->set_preview( true )
-				->set_order( $order );
-
-			$this->clear_preview_labels_for_ids( array_keys( $new_labels ) );
-		}
-
 		$this->cache = null;
 	}
 
