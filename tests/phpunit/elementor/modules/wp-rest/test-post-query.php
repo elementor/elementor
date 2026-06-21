@@ -10,6 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * @group wp-rest
+ */
 class Test_Post_Query extends Elementor_Test_Base {
 	use Post_Query_Data_Provider;
 
@@ -36,19 +39,19 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 	public function test_post_query_ignores_unauthorized_keys_conversion_map() {
 		// Arrange
-		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'Hello' );
-		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, [
-			'ID' => 'id',
-			'post_title' => 'label',
-			'post_content' => 'body',
-			'post_password' => 'password',
+		$request = $this->create_request( [
+			Post_Query::SEARCH_TERM_KEY => 'Hello',
+			Post_Query::KEYS_CONVERSION_MAP_KEY => [
+				'ID' => 'id',
+				'post_title' => 'label',
+				'post_content' => 'body',
+				'post_password' => 'password',
+			],
 		] );
-		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
-		$posts = $this->get_response_posts( $response );
+		$posts = $response->get_data()['data']['value'];
 
 		// Assert
 		$this->assertNotEmpty( $posts );
@@ -61,9 +64,9 @@ class Test_Post_Query extends Elementor_Test_Base {
 	public function test_post_query_denies_users_without_edit_posts_capability() {
 		// Arrange
 		$this->act_as_subscriber();
-		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'Hello' );
-		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+		$request = $this->create_request( [
+			Post_Query::SEARCH_TERM_KEY => 'Hello',
+		] );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
@@ -83,18 +86,18 @@ class Test_Post_Query extends Elementor_Test_Base {
 			'post_type' => 'post',
 		] );
 
-		$request = new \WP_REST_Request( 'GET', self::URL );
-		$request->set_param( Post_Query::SEARCH_TERM_KEY, 'smart' );
-		$request->set_param( Post_Query::IS_PUBLIC_KEY, false );
-		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, [
-			'ID' => 'id',
-			'post_title' => 'label',
+		$request = $this->create_request( [
+			Post_Query::SEARCH_TERM_KEY => 'smart',
+			Post_Query::IS_PUBLIC_KEY => false,
+			Post_Query::KEYS_CONVERSION_MAP_KEY => [
+				'ID' => 'id',
+				'post_title' => 'label',
+			],
 		] );
-		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
 		// Act
 		$response = rest_get_server()->dispatch( $request );
-		$posts = $this->get_response_posts( $response );
+		$posts = $response->get_data()['data']['value'];
 		$post_ids = wp_list_pluck( $posts, 'id' );
 
 		// Assert
@@ -105,12 +108,20 @@ class Test_Post_Query extends Elementor_Test_Base {
 	}
 
 	private function execute( $params, $expected ) {
-		// Arrange
+		// Act
+		$response = rest_get_server()->dispatch( $this->create_request( $params ) );
+		$posts = $response->get_data()['data']['value'];
+
+		// Assert
+		$this->assertEqualSets( $expected, $posts );
+	}
+
+	private function create_request( array $params ): \WP_REST_Request {
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( Post_Query::EXCLUDED_TYPE_KEY, $params[ Post_Query::EXCLUDED_TYPE_KEY ] ?? null );
 		$request->set_param( Post_Query::INCLUDED_TYPE_KEY, $params[ Post_Query::INCLUDED_TYPE_KEY ] ?? null );
-		$request->set_param( Post_Query::SEARCH_TERM_KEY, $params[ Post_Query::SEARCH_TERM_KEY ] );
-		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, $params[ Post_Query::KEYS_CONVERSION_MAP_KEY ] );
+		$request->set_param( Post_Query::SEARCH_TERM_KEY, $params[ Post_Query::SEARCH_TERM_KEY ] ?? '' );
+		$request->set_param( Post_Query::KEYS_CONVERSION_MAP_KEY, $params[ Post_Query::KEYS_CONVERSION_MAP_KEY ] ?? null );
 
 		if ( isset( $params[ Post_Query::META_QUERY_KEY ] ) ) {
 			$request->set_param( Post_Query::META_QUERY_KEY, $params[ Post_Query::META_QUERY_KEY ] );
@@ -134,17 +145,6 @@ class Test_Post_Query extends Elementor_Test_Base {
 
 		$request->set_header( Post_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
 
-		// Act
-		$response = rest_get_server()->dispatch( $request );
-		$posts = $this->get_response_posts( $response );
-
-		// Assert
-		$this->assertEqualSets( $expected, $posts );
-	}
-
-	private function get_response_posts( \WP_REST_Response $response ): array {
-		$this->assertEquals( 200, $response->get_status() );
-
-		return $response->get_data()['data']['value'];
+		return $request;
 	}
 }

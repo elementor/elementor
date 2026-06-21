@@ -74,7 +74,7 @@ class Post_Query extends Base {
 		$validated_count = max( $requested_count, 1 );
 		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
 		$is_public_only = $params[ self::IS_PUBLIC_KEY ] ?? true;
-		$post_types = $this->get_post_types_from_params( $params );
+		$post_types = $this->get_post_types_from_params( $request );
 
 		$query_args = [
 			'post_type'                    => array_keys( $post_types ),
@@ -249,9 +249,9 @@ class Post_Query extends Base {
 		];
 	}
 
-	private function get_post_types_from_params( $params ) {
-		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
+	private function get_post_types_from_params( \WP_REST_Request $request ) {
+		$included_types = $request->get_param( self::INCLUDED_TYPE_KEY );
+		$excluded_types = $request->get_param( self::EXCLUDED_TYPE_KEY );
 		$post_type_query_args = [
 			'public' => true,
 		];
