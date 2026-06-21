@@ -1,4 +1,5 @@
 import Lottie from 'lottie-react';
+import PropTypes from 'prop-types';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Box,
