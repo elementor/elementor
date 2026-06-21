@@ -13,7 +13,6 @@ export { initialState, SLICE_NAME } from './store-types';
 export const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
 export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
-const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
 const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
@@ -46,21 +45,6 @@ export const selectUnpublishedComponents = createSelector(
 );
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
-export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
-export const selectFlatStyles = createSelector(
-	selectStylesDefinitions,
-	( _state: ComponentsSlice, excludeComponentId: ComponentId | null = null ) => excludeComponentId,
-	( data, excludeComponentId ) => {
-		if ( excludeComponentId === null ) {
-			return Object.values( data ).flat();
-		}
-
-		return Object.entries( data )
-			.filter( ( [ id ] ) => id !== String( excludeComponentId ) )
-			.map( ( [ , styles ] ) => styles )
-			.flat();
-	}
-);
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession

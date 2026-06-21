@@ -240,12 +240,14 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertContains( 'third-party-child-one', $slugs );
 		$this->assertContains( 'third-party-child-two', $slugs );
 
-		$first_item = $data['items'][0];
-		$second_item = $data['items'][1];
+		$children = array_values( array_filter(
+			$data['items'],
+			fn( $item ) => in_array( $item['slug'], [ 'third-party-child-one', 'third-party-child-two' ], true )
+		) );
 
-		$this->assertTrue( $first_item['has_divider_before'] );
-		$this->assertFalse( $second_item['has_divider_before'] );
-		$this->assertSame( '', $first_item['group_id'] );
+		$this->assertTrue( $children[0]['has_divider_before'] );
+		$this->assertFalse( $children[1]['has_divider_before'] );
+		$this->assertSame( '', $children[0]['group_id'] );
 	}
 
 	public function test_get_theme_builder_url__adds_return_to_only_when_url_has_hash() {

@@ -77,7 +77,6 @@ export type {
 	OverridableProps,
 	OverridablePropsGroup,
 	PublishedComponent,
-	StylesDefinition,
 	UnpublishedComponent,
 	UpdatedComponentName,
 } from './types';
