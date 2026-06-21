@@ -158,8 +158,29 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 
 		// All candidates are claimed (or there are none) — create a fresh post.
 		if ( empty( $aggregate_items[ $class_id ] ) ) {
-			// Nothing to create from; skip.
-			return null;
+			if ( empty( $candidates ) ) {
+				// Nothing to create from; skip.
+				return null;
+			}
+
+			$source_post = Global_Class_Post::from_post_id( end( $candidates ), false );
+
+			if ( ! $source_post ) {
+				return null;
+			}
+
+			$created = Global_Class_Post::create(
+				$class_id,
+				$source_post->get_label(),
+				$source_post->get_data( true ),
+				$kit
+			);
+
+			if ( ! $created ) {
+				return null;
+			}
+
+			return $created->get_post_id();
 		}
 
 		$item = $aggregate_items[ $class_id ];
