@@ -139,38 +139,27 @@ class Test_Global_Classes_Post_IDs extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( $class_id, $map );
 	}
 
-	public function test_backfill__deduplicates_cpt_posts_with_same_class_id_and_keeps_oldest() {
-		// Arrange — simulate partial import: two CPT posts share the same class_id, no map entry
-		$class_id = 'g-dup-backfill-1';
-		$data = [ 'type' => 'class', 'variants' => [] ];
+	public function test_unmapped_class__returns_null_without_backfill() {
+		// Arrange — create a CPT post for the class but do NOT add it to the map.
+		$class_id = 'g-no-backfill-1';
+		$data     = [ 'type' => 'class', 'variants' => [] ];
 
-		$older_id = wp_insert_post( [
+		$post_id = wp_insert_post( [
 			'post_type'   => Global_Class_Post_Type::CPT,
-			'post_title'  => 'older',
+			'post_title'  => 'my-class',
 			'post_status' => 'publish',
 		] );
-		update_post_meta( $older_id, Global_Class_Post::META_KEY_ID, $class_id );
-		update_post_meta( $older_id, Global_Class_Post::META_KEY_DATA, $data );
+		update_post_meta( $post_id, Global_Class_Post::META_KEY_ID, $class_id );
+		update_post_meta( $post_id, Global_Class_Post::META_KEY_DATA, $data );
+		$this->created_post_ids[] = $post_id;
 
-		$newer_id = wp_insert_post( [
-			'post_type'   => Global_Class_Post_Type::CPT,
-			'post_title'  => 'newer',
-			'post_status' => 'publish',
-		] );
-		update_post_meta( $newer_id, Global_Class_Post::META_KEY_ID, $class_id );
-		update_post_meta( $newer_id, Global_Class_Post::META_KEY_DATA, $data );
+		// Act — the class exists as a CPT but is not in the kit's map.
+		$resolved = Global_Classes_Post_IDs::make( $this->kit )->get_post_id( $class_id );
 
-		$this->created_post_ids[] = $older_id;
-
-		// Act — backfill triggers because there is no map entry
-		$post_id = Global_Classes_Post_IDs::make( $this->kit )->get_post_id( $class_id );
-
-		// Assert — oldest post survives, duplicate is deleted, map points at the survivor
-		$this->assertSame( $older_id, $post_id );
-		$this->assertNull( get_post( $newer_id ) );
-
+		// Assert — no backfill: should return null and leave the map empty.
+		$this->assertNull( $resolved );
 		$map = $this->kit->get_meta( Global_Classes_Post_IDs::META_KEY );
-		$this->assertSame( $older_id, $map[ $class_id ] );
+		$this->assertEmpty( $map );
 	}
 
 	public function test_delete_hook__updates_non_active_kit_map() {
