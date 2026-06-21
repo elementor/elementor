@@ -87,12 +87,16 @@ function calculateBeta( tags, packageVersion ) {
 	const betaTags = getBetaTagsForBase( tags, packageVersion );
 	const latest = betaTags[ betaTags.length - 1 ] || null;
 
+	console.log( 'latest', latest );
+
 	let next;
 	if ( ! latest ) {
 		next = `${ packageVersion }-beta1`;                  // first beta for this base
 	} else {
 		const n = parseInt( latest.match( /-beta([0-9]+)$/ )[ 1 ], 10 );
-		next = `${ packageVersion }-beta${ n + 1 }`;         // 4.0.0-beta1 → 4.0.0-beta2
+		next = `${ packageVersion }-beta${ n + 1 }`;         // 4.0.0-be
+		console.log( 'next', next );
+		console.log( 'n', n );
 	}
 
 	return { releaseVersion: next, latestTag: latest };
