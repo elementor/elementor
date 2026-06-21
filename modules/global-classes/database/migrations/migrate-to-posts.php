@@ -38,7 +38,7 @@ class Migrate_To_Posts extends Base_Migration {
 		// $this->cleanup_kit_meta();
 	}
 
-	private function migrate_kit( Kit $kit ): bool {
+	public static function migrate_kit( Kit $kit ): bool {
 		$global_classes = self::get_aggregate_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {

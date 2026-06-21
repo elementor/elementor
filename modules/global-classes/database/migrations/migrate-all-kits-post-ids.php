@@ -62,24 +62,7 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 	 */
 	private function restructure_unmigrated_kits( array $kits ): void {
 		foreach ( $kits as $kit ) {
-			$order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
-
-			if ( ! empty( $order ) ) {
-				// Already migrated — skip.
-				continue;
-			}
-
-			$aggregate = Migrate_To_Posts::get_aggregate_global_classes( $kit );
-
-			if ( empty( $aggregate ) || empty( $aggregate['items'] ) ) {
-				continue;
-			}
-
-			$raw_items = $aggregate['items'];
-			$order     = $aggregate['order'] ?? array_keys( $raw_items );
-			$items     = Global_Class_Data_Normalizer::normalize_styles( $raw_items );
-
-			Global_Classes_Repository::make( $kit )->put( $items, $order );
+			Migrate_To_Posts::migrate_kit( $kit );
 		}
 	}
 
@@ -138,8 +121,6 @@ class Migrate_All_Kits_Post_IDs extends Base_Migration {
 				}
 			}
 
-			// Persist reused CPT entries. Entries created via Global_Class_Post::create() are
-			// already written by that call, but set_many() is idempotent so it's safe to include them.
 			if ( ! empty( $resolved ) ) {
 				Global_Classes_Post_IDs::make( $kit )->set_many( $resolved );
 			}
