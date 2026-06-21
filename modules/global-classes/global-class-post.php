@@ -274,13 +274,7 @@ class Global_Class_Post {
 		return false !== $result;
 	}
 
-	public static function clone_to_other_kit( string $style_id, Kit $source_kit, ?Kit $target_kit = null ): ?Global_Class_Post {
-		$target_kit = $target_kit ?? Plugin::$instance->kits_manager->get_active_kit();
-
-		if ( ! $source_kit || ! $target_kit ) {
-			return null;
-		}
-
+	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?Global_Class_Post {
 		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
 
 		if ( ! $source_post ) {
