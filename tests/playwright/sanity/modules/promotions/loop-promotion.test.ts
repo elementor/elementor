@@ -2,7 +2,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
-import { getPromotionWidgetWrapper, openPromotionPopover } from './promotion-popover-helper';
+import { getPromotionWidget, openPromotionPopover } from './promotion-popover-helper';
 
 const LOOP_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/Loop_grid_promotion.png';
 const LOOP_PROMOTION_CONTENT_PATTERN = /connect custom layouts directly to your site database/i;
@@ -29,9 +29,9 @@ test.describe( 'Loop promotion test @promotions', () => {
 		await category.locator( '.elementor-panel-category-title' ).click();
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
-		const loopWidgetWrapper = getPromotionWidgetWrapper( category, 'eicon-loop-widget' );
-		await expect( loopWidgetWrapper ).toBeVisible();
-		await expect( loopWidgetWrapper.locator( '.eicon-loop-widget' ) ).toBeVisible();
+		const loopWidget = getPromotionWidget( category, 'Loop' );
+		await expect( loopWidget ).toBeVisible();
+		await expect( loopWidget.locator( '.eicon-loop-widget' ) ).toBeVisible();
 	} );
 
 	test( 'Promotion popover shown on Loop widget click', async ( { page, apiRequests }, testInfo ) => {
@@ -42,10 +42,10 @@ test.describe( 'Loop promotion test @promotions', () => {
 		await category.locator( '.elementor-panel-category-title' ).click();
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
-		const loopWidgetWrapper = getPromotionWidgetWrapper( category, 'eicon-loop-widget' );
-		await expect( loopWidgetWrapper ).toBeVisible();
+		const loopWidget = getPromotionWidget( category, 'Loop' );
+		await expect( loopWidget ).toBeVisible();
 
-		const popover = await openPromotionPopover( loopWidgetWrapper );
+		const popover = await openPromotionPopover( loopWidget );
 		await expect( popover.getByText( 'Loop', { exact: true } ) ).toBeVisible();
 		await expect( popover.getByText( LOOP_PROMOTION_CONTENT_PATTERN ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toHaveAttribute( 'href', /go-pro-loop-modal/ );
