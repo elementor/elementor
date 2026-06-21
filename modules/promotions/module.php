@@ -169,6 +169,7 @@ class Module extends Base_Module {
 				'backbone-marionette',
 				'elementor-editor-modules',
 				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true
