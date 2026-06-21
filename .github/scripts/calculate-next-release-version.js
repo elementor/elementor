@@ -123,8 +123,9 @@ function main() {
 		}
 		result = calculateStable( tags, BUMP_TYPE );
 	} else if ( CHANNEL === 'beta' ) {
-		result = calculateBeta( tags, process.env.DESIRED_VERSION );
-	result = calculateBeta( tags, betaBase )	} else {
+		const betaBase = ( process.env.DESIRED_VERSION || packageVersion ).replace( /-beta[0-9]+$/, '' );
+		result = calculateBeta( tags, betaBase );	
+		console.log( 'result', result );
 		console.error( `Unknown CHANNEL "${ CHANNEL }". Use stable or beta.` );
 		process.exit( 1 );
 	}
