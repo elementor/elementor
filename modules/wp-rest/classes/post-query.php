@@ -13,15 +13,12 @@ class Post_Query extends Base {
 	const ENDPOINT = 'post';
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
-<<<<<<< HEAD
-=======
 	const SEARCH_IN_CONTENT_KEY = 'search_in_content';
 	const ALLOWED_KEYS_CONVERSION_MAP = [
 		'ID' => 'id',
 		'post_title' => 'label',
 		'post_type' => 'groupLabel',
 	];
->>>>>>> 3c668cd4e1 (Internal: Query API hardening [ED-24155] (#36264))
 
 	/**
 	 * @param string    $search_term The original search query.
