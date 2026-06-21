@@ -91,6 +91,12 @@ class Module extends BaseModule {
 			Global_Classes_Order::META_KEY,
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
+			Global_Classes_Relations::META_KEY_FRONTEND,
+			Global_Classes_Relations::META_KEY_PREVIEW,
+			Global_Classes_Relations::META_KEY_USAGE_INDEXED_FRONTEND,
+			Global_Classes_Relations::META_KEY_USAGE_INDEXED_PREVIEW,
+			Global_Classes_Relations::META_KEY_CLASS_RELATED_POSTS_FRONTEND,
+			Global_Classes_Relations::META_KEY_CLASS_RELATED_POSTS_PREVIEW,
 			Global_Classes_Sync_Map::META_KEY,
 		] );
 	}
@@ -102,7 +108,7 @@ class Module extends BaseModule {
 	 * @param array $params The parameters passed to the action - 'new_kit_id' and 'previous_kit_id'.
 	 * @return void
 	 */
-	private function create_global_classes_posts_for_new_kit( array $params ): void {
+	public function create_global_classes_posts_for_new_kit( array $params ): void {
 		[ 'new_kit_id' => $new_kit_id, 'previous_kit_id' => $previous_kit_id ] = $params;
 
 		$previous_kit = Plugin::$instance->kits_manager->get_kit( $previous_kit_id );
@@ -127,7 +133,7 @@ class Module extends BaseModule {
 			}
 		}
 
-		Global_Classes_Post_IDs::make( $new_kit )->set_many( $global_classes_post_id_mapping_for_new_kit );
+		Global_Classes_Post_IDs::make( $new_kit )->set_all( $global_classes_post_id_mapping_for_new_kit );
 	}
 
 	private function register_features() {

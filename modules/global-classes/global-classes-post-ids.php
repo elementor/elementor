@@ -144,6 +144,10 @@ class Global_Classes_Post_IDs {
 		}
 	}
 
+	public function set_all( array $class_id_to_post_id ): void {
+		$this->write_map( $class_id_to_post_id );
+	}
+
 	public function remove_class_id( string $class_id ): void {
 		$map = $this->read_map();
 
