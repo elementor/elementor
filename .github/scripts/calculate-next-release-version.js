@@ -110,13 +110,6 @@ function main() {
 	const packageVersion = getPackageVersion();
 	let result;
 
-	console.log(
-		'CHANNEL', CHANNEL,
-		'BUMP_TYPE', BUMP_TYPE,
-		'tags', tags,
-		'packageVersion', packageVersion
-	);
-
 	if ( CHANNEL === 'stable' ) {
 		if ( ! BUMP_TYPE ) {
 			console.error( 'BUMP_TYPE is required for stable (patch or minor).' );
@@ -137,6 +130,7 @@ function main() {
 	console.log( `Bump type:    ${ BUMP_TYPE || 'n/a' }` );
 	console.log( `Latest tag:   ${ latestTag || 'none' }` );
 	console.log( `Next version: ${ releaseVersion }` );
+	console.log( 'packageVersion', packageVersion );
 
 	writeOutput( 'RELEASE_VERSION', releaseVersion );
 	writeOutput( 'CLEAN_PACKAGE_VERSION', cleanVersion );
