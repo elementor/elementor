@@ -197,6 +197,18 @@ class Global_Class_Post {
 		return is_array( $data ) ? $data : [];
 	}
 
+	private function get_preview_data(): array {
+		$data = get_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW, true );
+
+		return is_array( $data ) ? $data : [];
+	}
+
+	private function get_version(): string {
+		$version = get_post_meta( $this->post->ID, self::META_KEY_VERSION, true );
+
+		return is_string( $version ) ? $version : '';
+	}
+
 	public function update_data(
 		array $data,
 		string $version = ELEMENTOR_VERSION
@@ -260,5 +272,31 @@ class Global_Class_Post {
 		$result = wp_delete_post( $this->post->ID, true );
 
 		return false !== $result;
+	}
+
+	public function clone( ?Kit $target_kit = null ): ?Global_Class_Post {
+		$target_kit = $target_kit ?? Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $target_kit ) {
+			return null;
+		}
+
+		$new_post = wp_insert_post( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_title' => $this->get_label(),
+			'post_status' => 'publish',
+		] );
+
+		if ( is_wp_error( $new_post ) || ! $new_post ) {
+			return null;
+		}
+
+		update_post_meta( $new_post, self::META_KEY_ID, $this->get_class_id() );
+		update_post_meta( $new_post, self::META_KEY_DATA, $this->get_frontend_data() );
+		update_post_meta( $new_post, self::META_KEY_DATA_PREVIEW, $this->get_preview_data() );
+		update_post_meta( $new_post, self::META_KEY_VERSION, $this->get_version() );
+		update_post_meta( $new_post, self::META_KEY_EDITED, $this->get_last_edited_timestamp() );
+
+		return self::from_post_id( $new_post );
 	}
 }

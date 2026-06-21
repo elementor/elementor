@@ -145,7 +145,17 @@ class Global_Classes_Post_IDs {
 	}
 
 	public function set_all( array $class_id_to_post_id ): void {
-		$this->write_map( $class_id_to_post_id );
+		$normalized = [];
+
+		foreach ( $class_id_to_post_id as $class_id => $post_id ) {
+			$post_id = (int) $post_id;
+			if ( ! is_string( $class_id ) || '' === $class_id || $post_id <= 0 ) {
+				continue;
+			}
+			$normalized[ $class_id ] = $post_id;
+		}
+
+		$this->write_map( $normalized );
 	}
 
 	public function remove_class_id( string $class_id ): void {

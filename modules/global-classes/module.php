@@ -125,11 +125,11 @@ class Module extends BaseModule {
 			$prev_kit_class_post = Global_Class_Post::find_by_class_id( $class_id, false, $previous_kit );
 
 			if ( $prev_kit_class_post ) {
-				$prev_kit_class_data  = $prev_kit_class_post->get_data( true );
-				$prev_kit_class_label = $prev_kit_class_post->get_label();
+				$new_kit_class_post = $prev_kit_class_post->clone( $new_kit );
 
-				$new_kit_class_post = Global_Class_Post::create( $class_id, $prev_kit_class_label, $prev_kit_class_data, $new_kit );
-				$global_classes_post_id_mapping_for_new_kit[ $class_id ] = $new_kit_class_post->get_post_id();
+				if ( $new_kit_class_post ) {
+					$global_classes_post_id_mapping_for_new_kit[ $class_id ] = $new_kit_class_post->get_post_id();
+				}
 			}
 		}
 
