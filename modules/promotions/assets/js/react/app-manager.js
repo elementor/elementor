@@ -1,4 +1,5 @@
 import App from './app';
+import { resolvePromotionAnimation } from './atomic-promotion-media';
 import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 import { createRoot } from 'react-dom/client';
 
@@ -106,7 +107,7 @@ export class AppManager {
 				ctaText: content.ctaText,
 				ctaUrl: content.widgetCtaUrl,
 				image: content.image,
-				animation: content.animation,
+				animationData: resolvePromotionAnimation( content.animation ),
 			},
 		};
 	}

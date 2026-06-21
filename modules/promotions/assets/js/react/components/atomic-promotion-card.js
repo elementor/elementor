@@ -1,4 +1,3 @@
-import Lottie from 'lottie-react';
 import PropTypes from 'prop-types';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
@@ -6,24 +5,16 @@ import {
 	Button,
 	ClickAwayListener,
 	CloseButton,
-	Image,
 	Stack,
 	Typography,
 } from '@elementor/ui';
 
-import * as atomicFormAnimationData from '../assets/atomic-form-animation.json';
+import { AtomicPromotionMedia } from '../atomic-promotion-media';
 
 const CARD_WIDTH = 296;
-const IMAGE_HEIGHT = 176;
-const ANIMATION_HEIGHT = 150;
-
-const PROMOTION_ANIMATIONS = {
-	'atomic-form': atomicFormAnimationData,
-};
 
 const AtomicPromotionCard = ( { doClose, promotionData } ) => {
-	const { title, content, ctaText, ctaUrl, image, animation } = promotionData ?? {};
-	const animationData = PROMOTION_ANIMATIONS[ animation ];
+	const { title, content, ctaText, ctaUrl, image, animationData } = promotionData ?? {};
 
 	return (
 		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
@@ -36,22 +27,7 @@ const AtomicPromotionCard = ( { doClose, promotionData } ) => {
 						},
 					} } onClick={ doClose } />
 				</Stack>
-				{ image && (
-					<Image src={ image } alt="" sx={ { width: CARD_WIDTH, height: IMAGE_HEIGHT } } />
-				) }
-				{ ! image && animationData && (
-					<Box sx={ { height: ANIMATION_HEIGHT, width: '100%', overflow: 'hidden' } }>
-						<Lottie
-							animationData={ animationData }
-							loop={ true }
-							autoplay={ true }
-							rendererSettings={ {
-								preserveAspectRatio: 'xMidYMid slice',
-							} }
-							style={ { width: '100%', height: '100%' } }
-						/>
-					</Box>
-				) }
+				<AtomicPromotionMedia image={ image } animationData={ animationData } />
 				<Stack px={ 2 }>
 					<Typography variant="body2" color="secondary" sx={ { pt: 1.5, pb: 1 } }>
 						{ content }
