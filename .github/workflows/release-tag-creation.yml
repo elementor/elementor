@@ -24,6 +24,8 @@ jobs:
       contents: write 
 
     steps:
+      - name: Checkout for local actions
+        uses: actions/checkout@v4
       - name: Handle version input
         id: handle-version-input
         uses: ./.github/workflows/handle-version-input
