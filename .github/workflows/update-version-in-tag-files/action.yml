@@ -8,10 +8,11 @@ inputs:
   CHANNEL:
     required: true
     description: 'The release channel: stable or beta.'
-  
   DRY_RUN:
-    required: true
-    description: 'Dry run — validate everything but do not push commits or create tag.'
+    required: false
+    default: 'true'
+    description: 'If true, skips the commit.'
+
 runs:
   using: "composite"
   steps:
@@ -30,15 +31,16 @@ runs:
       shell: bash
       run: |
         VERSION="${{ inputs.VERSION }}"
-        # Strip beta suffix for package.json semver compliance when needed,
-        # but keep it if npm supports the prerelease format.
-        node -e "
-          const fs = require('fs');
-          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-          pkg.version = '${VERSION}';
-          fs.writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
-        "
-        echo "package.json version: $(node -p \"require('./package.json').version\")"
+        
+        cat > /tmp/update-pkg.js << 'SCRIPT'
+        const fs = require('fs');
+        const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+        pkg.version = process.env.VERSION;
+        fs.writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
+        SCRIPT
+        node /tmp/update-pkg.js
+
+        echo "package.json version: $(node -p 'require("./package.json").version')"
 
     - name: Update Stable tag in readme.txt
       shell: bash
@@ -63,7 +65,12 @@ runs:
       shell: bash
       run: |
         VERSION="${{ inputs.VERSION }}"
-        DRY_RUN="${DRY_RUN:-false}"
+        DRY_RUN="${{ inputs.DRY_RUN }}"
+
+        if [[ "${DRY_RUN}" == "true" ]]; then
+          echo "Dry run — skipping commit."
+          exit 0
+        fi
 
         git add elementor.php package.json readme.txt
 
@@ -74,10 +81,3 @@ runs:
 
         git commit -m "Bump version to ${VERSION}"
         echo "Committed version bump to ${VERSION}."
-
-        if [[ "${DRY_RUN}" == "true" ]]; then
-          echo "Dry run — skipping push."
-        else
-          git push
-          echo "Pushed version bump commit."
-        fi
