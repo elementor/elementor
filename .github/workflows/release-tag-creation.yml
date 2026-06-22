@@ -26,6 +26,14 @@ jobs:
     steps:
       - name: Checkout for local actions
         uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
       - name: Handle version input
         id: handle-version-input
         uses: ./.github/workflows/handle-version-input
@@ -56,14 +64,6 @@ jobs:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          cache: npm
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
-
       - name: Update version in tag files
         uses: ./.github/workflows/update-version-in-tag-files
         with:
