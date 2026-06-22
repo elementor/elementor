@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { getInitialDesignSystemTab, notifyDesignSystemTabChange, persistDesignSystemTab } from '../../initial-tab';
+
+const EVENT_SET_TAB = 'elementor/design-system/set-tab';
 import { DesignSystemPanelContent } from '../design-system-panel-content';
 
 jest.mock( '../design-system-header-menu', () => ( {
@@ -55,6 +57,7 @@ const mockClassManagerPanelEmbedded = require( '@elementor/editor-global-classes
 	.ClassManagerPanelEmbedded as jest.Mock;
 
 jest.mock( '@elementor/ui', () => ( {
+	...jest.requireActual( '@elementor/ui' ),
 	useTabs: ( currentTab: string ) => ( {
 		getTabProps: ( tab: string ) => ( { value: tab } ),
 		getTabPanelProps: () => ( {} ),
@@ -78,15 +81,12 @@ jest.mock( '@elementor/ui', () => ( {
 			{ label }
 		</button>
 	),
-	Box: ( { children, role }: { children: React.ReactNode; role?: string } ) => <div role={ role }>{ children }</div>,
-	Stack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-	Divider: () => <hr />,
-	CloseButton: ( { onClick, 'aria-label': ariaLabel }: { onClick: () => void; 'aria-label'?: string } ) => (
-		<button onClick={ onClick } aria-label={ ariaLabel || 'Close' } />
+	Box: ( { children, role, sx }: { children: React.ReactNode; role?: string; sx?: { display?: string } } ) => (
+		<div role={ role } style={ sx?.display === 'none' ? { display: 'none' } : undefined }>
+			{ children }
+		</div>
 	),
 } ) );
-
-const SET_TAB_EVENT = 'elementor/design-system/set-tab';
 
 describe( 'DesignSystemPanelContent', () => {
 	const onRequestClose = jest.fn();
@@ -157,25 +157,32 @@ describe( 'DesignSystemPanelContent', () => {
 
 			expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeInTheDocument();
 		} );
+
+		it( 'should always mount both panels (inactive one hidden via display:none)', () => {
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			expect( mockVariablesManagerPanelEmbedded ).toHaveBeenCalled();
+			expect( mockClassManagerPanelEmbedded ).toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'initial tab (top-bar open behavior)', () => {
-		it( 'should show Variables content by default when no preference is stored', () => {
+		it( 'should show Variables content and hide Classes when no preference is stored', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'variables' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
-			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Classes Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
-		it( 'should show Classes content when classes was the last persisted tab', () => {
+		it( 'should show Classes content and hide Variables when classes was persisted', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
-			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Variables Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
 		it( 'should notify tab change on mount with the initial tab', () => {
@@ -188,24 +195,24 @@ describe( 'DesignSystemPanelContent', () => {
 	} );
 
 	describe( 'tab switching via UI click', () => {
-		it( 'should render class manager when Classes tab is clicked', () => {
+		it( 'should show class manager when Classes tab is clicked', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			fireEvent.click( screen.getByRole( 'tab', { name: 'Classes' } ) );
 
-			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Variables Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
-		it( 'should render variables manager when Variables tab is clicked after switching', () => {
+		it( 'should show variables manager when Variables tab is clicked after switching', () => {
 			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
 
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			fireEvent.click( screen.getByRole( 'tab', { name: 'Variables' } ) );
 
-			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Classes Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
 		it( 'should persist the selected tab when clicking Classes', () => {
@@ -231,14 +238,14 @@ describe( 'DesignSystemPanelContent', () => {
 
 			act( () => {
 				window.dispatchEvent(
-					new CustomEvent( SET_TAB_EVENT, {
+					new CustomEvent( EVENT_SET_TAB, {
 						detail: { tab: 'classes' },
 					} )
 				);
 			} );
 
-			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Variables Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
 		it( 'should switch back to Variables tab when set-tab event fires with "variables"', () => {
@@ -248,14 +255,14 @@ describe( 'DesignSystemPanelContent', () => {
 
 			act( () => {
 				window.dispatchEvent(
-					new CustomEvent( SET_TAB_EVENT, {
+					new CustomEvent( EVENT_SET_TAB, {
 						detail: { tab: 'variables' },
 					} )
 				);
 			} );
 
-			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeInTheDocument();
-			expect( screen.queryByRole( 'region', { name: 'Classes Manager' } ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
+			expect( screen.getByRole( 'region', { name: 'Classes Manager', hidden: true } ) ).not.toBeVisible();
 		} );
 
 		it( 'should persist tab when switching via custom event', () => {
@@ -263,7 +270,7 @@ describe( 'DesignSystemPanelContent', () => {
 
 			act( () => {
 				window.dispatchEvent(
-					new CustomEvent( SET_TAB_EVENT, {
+					new CustomEvent( EVENT_SET_TAB, {
 						detail: { tab: 'classes' },
 					} )
 				);
@@ -276,10 +283,10 @@ describe( 'DesignSystemPanelContent', () => {
 			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
 
 			act( () => {
-				window.dispatchEvent( new CustomEvent( SET_TAB_EVENT ) );
+				window.dispatchEvent( new CustomEvent( EVENT_SET_TAB ) );
 			} );
 
-			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'region', { name: 'Variables Manager' } ) ).toBeVisible();
 		} );
 
 		it( 'should clean up the set-tab event listener on unmount', () => {
@@ -289,7 +296,7 @@ describe( 'DesignSystemPanelContent', () => {
 
 			unmount();
 
-			expect( removeEventListenerSpy ).toHaveBeenCalledWith( SET_TAB_EVENT, expect.any( Function ) );
+			expect( removeEventListenerSpy ).toHaveBeenCalledWith( EVENT_SET_TAB, expect.any( Function ) );
 
 			removeEventListenerSpy.mockRestore();
 		} );
@@ -330,6 +337,15 @@ describe( 'DesignSystemPanelContent', () => {
 				}
 			);
 
+			mockClassManagerPanelEmbedded.mockImplementationOnce(
+				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
+					useEffect( () => {
+						onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Classes Manager" />;
+				}
+			);
+
 			const freshOnRequestClose = jest.fn();
 			render( <DesignSystemPanelContent onRequestClose={ freshOnRequestClose } /> );
 
@@ -346,7 +362,7 @@ describe( 'DesignSystemPanelContent', () => {
 
 			act( () => {
 				window.dispatchEvent(
-					new CustomEvent( SET_TAB_EVENT, {
+					new CustomEvent( EVENT_SET_TAB, {
 						detail: { tab: 'classes' },
 					} )
 				);
@@ -359,6 +375,152 @@ describe( 'DesignSystemPanelContent', () => {
 			expect( mockClassesCloseAttempt ).toHaveBeenCalled();
 			expect( mockVariablesCloseAttempt ).not.toHaveBeenCalled();
 			expect( onRequestClose ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'cross-tab close chaining', () => {
+		it( 'should chain variables onRequestClose through class manager close attempt', async () => {
+			let capturedOnRequestClose: ( () => void ) | undefined;
+
+			mockVariablesManagerPanelEmbedded.mockImplementation(
+				( {
+					onRequestClose: onReqClose,
+					onExposeCloseAttempt,
+				}: {
+					onRequestClose: () => void;
+					onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+				} ) => {
+					capturedOnRequestClose = onReqClose;
+					useEffect( () => {
+						onExposeCloseAttempt?.( mockVariablesCloseAttempt );
+						return () => onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Variables Manager" />;
+				}
+			);
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Variables Manager' } );
+
+			act( () => {
+				capturedOnRequestClose?.();
+			} );
+
+			expect( mockClassesCloseAttempt ).toHaveBeenCalled();
+			expect( onRequestClose ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should chain classes onRequestClose through variables close attempt', async () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
+
+			let capturedOnRequestClose: ( () => void ) | undefined;
+
+			mockClassManagerPanelEmbedded.mockImplementation(
+				( {
+					onRequestClose: onReqClose,
+					onExposeCloseAttempt,
+				}: {
+					onRequestClose: () => void;
+					onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+				} ) => {
+					capturedOnRequestClose = onReqClose;
+					useEffect( () => {
+						onExposeCloseAttempt?.( mockClassesCloseAttempt );
+						return () => onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Classes Manager" />;
+				}
+			);
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Classes Manager' } );
+
+			act( () => {
+				capturedOnRequestClose?.();
+			} );
+
+			expect( mockVariablesCloseAttempt ).toHaveBeenCalled();
+			expect( onRequestClose ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should fall back to onRequestClose when class manager close attempt is null', async () => {
+			mockClassManagerPanelEmbedded.mockImplementation(
+				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
+					useEffect( () => {
+						onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Classes Manager" />;
+				}
+			);
+
+			let capturedOnRequestClose: ( () => void ) | undefined;
+
+			mockVariablesManagerPanelEmbedded.mockImplementation(
+				( {
+					onRequestClose: onReqClose,
+					onExposeCloseAttempt,
+				}: {
+					onRequestClose: () => void;
+					onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+				} ) => {
+					capturedOnRequestClose = onReqClose;
+					useEffect( () => {
+						onExposeCloseAttempt?.( mockVariablesCloseAttempt );
+						return () => onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Variables Manager" />;
+				}
+			);
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Variables Manager' } );
+
+			act( () => {
+				capturedOnRequestClose?.();
+			} );
+
+			expect( onRequestClose ).toHaveBeenCalled();
+		} );
+
+		it( 'should fall back to onRequestClose when variables close attempt is null', async () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
+
+			mockVariablesManagerPanelEmbedded.mockImplementation(
+				( { onExposeCloseAttempt }: { onExposeCloseAttempt?: ( fn: null ) => void } ) => {
+					useEffect( () => {
+						onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Variables Manager" />;
+				}
+			);
+
+			let capturedOnRequestClose: ( () => void ) | undefined;
+
+			mockClassManagerPanelEmbedded.mockImplementation(
+				( {
+					onRequestClose: onReqClose,
+					onExposeCloseAttempt,
+				}: {
+					onRequestClose: () => void;
+					onExposeCloseAttempt?: ( fn: ( () => void ) | null ) => void;
+				} ) => {
+					capturedOnRequestClose = onReqClose;
+					useEffect( () => {
+						onExposeCloseAttempt?.( mockClassesCloseAttempt );
+						return () => onExposeCloseAttempt?.( null );
+					}, [ onExposeCloseAttempt ] );
+					return <div role="region" aria-label="Classes Manager" />;
+				}
+			);
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+			await screen.findByRole( 'region', { name: 'Classes Manager' } );
+
+			act( () => {
+				capturedOnRequestClose?.();
+			} );
+
+			expect( onRequestClose ).toHaveBeenCalled();
 		} );
 	} );
 } );

@@ -444,6 +444,9 @@ function VariablesManagerPanelRoot( {
 					</SaveChangesDialog.Title>
 					<SaveChangesDialog.Content>
 						<SaveChangesDialog.ContentText>
+							{ __( 'You have unsaved changes in the Variables Manager.', 'elementor' ) }
+						</SaveChangesDialog.ContentText>
+						<SaveChangesDialog.ContentText>
 							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
