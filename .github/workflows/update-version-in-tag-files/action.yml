@@ -27,21 +27,6 @@ runs:
         echo "elementor.php after version update:"
         grep -E "Version:|ELEMENTOR_VERSION" elementor.php
 
-    - name: Update version in package.json
-      shell: bash
-      run: |
-        VERSION="${{ inputs.VERSION }}"
-        
-        cat > /tmp/update-pkg.js << 'SCRIPT'
-        const fs = require('fs');
-        const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-        pkg.version = process.env.VERSION;
-        fs.writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
-        SCRIPT
-        node /tmp/update-pkg.js
-
-        echo "package.json version: $(node -p 'require("./package.json").version')"
-
     - name: Update Stable tag in readme.txt
       shell: bash
       if: inputs.CHANNEL == 'stable'

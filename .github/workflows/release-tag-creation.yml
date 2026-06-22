@@ -25,9 +25,12 @@ env:
 jobs:
   release-tag-creation:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write 
+
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
@@ -97,19 +100,12 @@ jobs:
       - name: Verify Release Version
         id: verify_release_version
         run: |
-          if [[ "${CHANNEL}" == "beta" ]]; then
-            if [[ "${DESIRED_VERSION}" != "${CALCULATED_RELEASE_VERSION}" ]]; then
-              echo "Manually added release version ${DESIRED_VERSION} does not match calculated version ${CALCULATED_RELEASE_VERSION}."
-              exit 1
-            fi
-            echo "Release version ${DESIRED_VERSION} matches calculated version."
-          else         
-            if [[ "${DESIRED_VERSION}" != "${CLEAN_PACKAGE_VERSION}" ]]; then
-                echo "Manually added release version ${DESIRED_VERSION} does not match calculated version ${CLEAN_PACKAGE_VERSION}."
-                exit 1
-            fi
-          echo "Release version ${DESIRED_VERSION} matches calculated version."
+          if [[ "${DESIRED_VERSION}" != "${CALCULATED_RELEASE_VERSION}" ]]; then
+            echo "Version mismatch: desired=${DESIRED_VERSION}, calculated=${CALCULATED_RELEASE_VERSION} (channel=${CHANNEL})"
+            exit 1
           fi
+          echo "Version verified: ${DESIRED_VERSION} matches calculated version (channel=${CHANNEL})."
+      
 
       - name: Updata version in tag files
         uses: ./.github/workflows/update-version-in-tag-files

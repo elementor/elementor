@@ -54,9 +54,6 @@ function writeOutput( key, value ) {
 	if ( process.env.GITHUB_OUTPUT ) {
 		fs.appendFileSync( process.env.GITHUB_OUTPUT, `${ key }=${ value }\n` );
 	}
-	if ( process.env.GITHUB_ENV ) {
-		fs.appendFileSync( process.env.GITHUB_ENV, `${ key }=${ value }\n` );
-	}
 }
 
 // --- calculation ---
