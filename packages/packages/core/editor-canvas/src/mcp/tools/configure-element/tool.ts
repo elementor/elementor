@@ -1,8 +1,8 @@
 import { getContainer, getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 
-import { dispatchMcpStylesAppliedEvent } from '../../../sync/mcp-styles-applied-event';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';

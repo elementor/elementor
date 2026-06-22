@@ -8,6 +8,7 @@ import {
 	type V1ElementData,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
 import { trackCanvasEvent } from '../../../utils/tracking';
@@ -95,6 +96,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					if ( elementData ) {
 						onElementAdded( elementData as V1ElementData );
 					}
+				} );
+
+				Object.values( stylesConfig ).forEach( ( styleValue ) => {
+					dispatchMcpStylesAppliedEvent( { styleValue } );
 				} );
 
 				if ( configErrors.length ) {

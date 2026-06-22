@@ -29,7 +29,6 @@ export { settingsTransformersRegistry } from './settings-transformers-registry';
 export { styleTransformersRegistry } from './style-transformers-registry';
 export { endDragElementFromPanel, startDragElementFromPanel } from './sync/drag-element-from-panel';
 export { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from './sync/global-styles-imported-event';
-export { MCP_STYLES_APPLIED_EVENT, type McpStylesAppliedPayload } from './sync/mcp-styles-applied-event';
 export { DOCUMENT_STRUCTURE_URI } from './mcp/resources/document-structure-resource';
 export { WIDGET_SCHEMA_URI, WIDGET_SCHEMA_FULL_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';

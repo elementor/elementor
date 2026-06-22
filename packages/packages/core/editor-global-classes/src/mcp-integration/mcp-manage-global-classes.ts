@@ -1,4 +1,5 @@
 import { BREAKPOINTS_SCHEMA_FULL_URI, convertStyleBlocksToAtomic, type StyleBlock } from '@elementor/editor-canvas';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
@@ -144,6 +145,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 							executedBy: 'mcp_tool',
 							classId: newClassId,
 						} );
+						dispatchMcpStylesAppliedEvent( { styleValue: props } );
 					} else {
 						throw new Error( 'error creating class' );
 					}
@@ -159,6 +161,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 					} );
 					if ( updated ) {
 						result = { status: 'ok', classId };
+						dispatchMcpStylesAppliedEvent( { styleValue: props } );
 					} else {
 						throw new Error( 'error modifying class' );
 					}
