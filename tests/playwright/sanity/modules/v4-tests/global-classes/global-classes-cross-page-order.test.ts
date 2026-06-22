@@ -8,6 +8,7 @@ import {
 	deleteAllGlobalClasses,
 	deleteClassFromClassManager,
 	openClassManager,
+	publishAndWaitForClassesSave,
 	reorderClassInClassManager,
 	saveAndCloseClassManager,
 } from './utils';
@@ -59,20 +60,6 @@ async function openExistingPageEditor( page: Page, editor: EditorPage, postId: n
 	await page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 	await page.waitForLoadState( 'load', { timeout: 20000 } );
 	await editor.waitForPanelToLoad();
-}
-
-async function publishAndWaitForClassesSave( editor: EditorPage, page: Page ): Promise< void > {
-	const [ response ] = await Promise.all( [
-		page.waitForResponse(
-			( res ) => res.url().includes( 'global-classes' ) && 'PUT' === res.request().method(),
-			{ timeout: timeouts.longAction },
-		),
-		editor.publishPage(),
-	] );
-
-	if ( ! response.ok() ) {
-		throw new Error( `Global classes save failed: ${ response.status() } ${ await response.text() }` );
-	}
 }
 
 async function assertCanvasWidgetBackground( editor: EditorPage, widgetId: string, expectedRgb: string ): Promise< void > {

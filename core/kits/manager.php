@@ -152,6 +152,11 @@ class Manager {
 			update_option( self::OPTION_ACTIVE, $id );
 		}
 
+		do_action( 'elementor/kit/after_new_kit_created', [
+			'new_kit_id' => $id,
+			'previous_kit_id' => $current_kit->get_post()->ID,
+		] );
+
 		return $id;
 	}
 
