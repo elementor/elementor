@@ -55,7 +55,7 @@ describe( '@elementor/site-builder/deploy/index', () => {
 	} );
 
 	describe( 'incremental mode', () => {
-		it( 'only creates pages and skips site-wide steps', async () => {
+		it( 'creates pages and skips other site-wide steps when globalVariables are absent', async () => {
 			jest.mocked( createPages ).mockResolvedValue( {
 				pageIdMap: { 'planner-uuid-1': 42 },
 				pageUrlMap: {},
@@ -64,6 +64,7 @@ describe( '@elementor/site-builder/deploy/index', () => {
 			const result = await deployWebsite( buildIncrementalPayload() );
 
 			expect( createPages ).toHaveBeenCalledTimes( 1 );
+			expect( deployGlobalVariables ).not.toHaveBeenCalled();
 			expect( setSiteMetadata ).not.toHaveBeenCalled();
 			expect( updateKitSettings ).not.toHaveBeenCalled();
 			expect( createMenus ).not.toHaveBeenCalled();
@@ -72,6 +73,34 @@ describe( '@elementor/site-builder/deploy/index', () => {
 			expect( result.status ).toBe( 'success' );
 			expect( result.pageIdMap ).toEqual( { 'planner-uuid-1': 42 } );
 			expect( result.homePageId ).toBeUndefined();
+		} );
+
+		it( 'deploys globalVariables before creating pages when present', async () => {
+			const globalVariables = {
+				data: {
+					'e-gv-brand': {
+						id: 'e-gv-brand',
+						type: 'global-color-variable',
+						label: 'brand-color',
+						value: { value: '#aa0000' },
+					},
+				},
+				watermark: 1,
+				version: 1,
+			};
+			jest.mocked( createPages ).mockResolvedValue( {
+				pageIdMap: { 'planner-uuid-1': 42 },
+				pageUrlMap: {},
+			} );
+
+			const result = await deployWebsite( {
+				...buildIncrementalPayload(),
+				globalVariables,
+			} );
+
+			expect( deployGlobalVariables ).toHaveBeenCalledWith( globalVariables );
+			expect( createPages ).toHaveBeenCalledTimes( 1 );
+			expect( result.status ).toBe( 'success' );
 		} );
 
 		it( 'returns error status when createPages fails', async () => {
