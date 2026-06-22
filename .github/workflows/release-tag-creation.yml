@@ -25,6 +25,7 @@ jobs:
 
     steps:
       - name: Handle version input
+        id: handle-version-input
         uses: ./.github/workflows/handle-version-input
         with:
           version: ${{ inputs.version }}
@@ -32,7 +33,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.branch }}
+          ref: ${{ outputs.handle-version-input.checkout_branch }}
           fetch-depth: 0
 
       - name: Config git user
