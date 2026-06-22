@@ -54,6 +54,14 @@ const renderLines = ( tracks: GridTracks, width: number, height: number ) => {
 	];
 };
 
+const isDragActiveFromDom = ( element: HTMLElement | null ): boolean  => {
+	return Boolean(
+		element?.querySelector(
+			'.e-dragging-over, .elementor-dragging-on-child, .elementor-draggable-over, .elementor-widget-placeholder, .elementor-sortable-placeholder'
+		)
+	);
+}
+
 export function GridOutline( { element, tracks, width, height }: Props ) {
 	const cells = useMemo( () => computeCellRects( tracks, width, height ), [ tracks, width, height ] );
 	const hasGap = tracks.columnGap > 0 || tracks.rowGap > 0;
@@ -76,7 +84,7 @@ export function GridOutline( { element, tracks, width, height }: Props ) {
 			>
 				{ hasGap ? renderCells( cells, tracks.borderColor ) : renderLines( tracks, width, height ) }
 			</svg>
-			{ emptyCellRect && <FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } /> }
+			{ emptyCellRect && ! isDragActiveFromDom( element ) && <FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } /> }
 		</>
 	);
 }

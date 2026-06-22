@@ -12,6 +12,7 @@ import { GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
+const E_GRID_TYPE = 'e-grid';
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -20,7 +21,8 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element, isSelected } ) => isSelected && element.dataset.eType === 'e-grid',
+		shouldRender: ( { element, isSelected } ) =>
+			isSelected && [ element.dataset.eType, element.dataset.element_type ].includes( E_GRID_TYPE ),
 	},
 ];
 
