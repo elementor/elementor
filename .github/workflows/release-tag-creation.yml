@@ -111,3 +111,22 @@ jobs:
           echo "Release version ${DESIRED_VERSION} matches calculated version."
           fi
 
+      - name: Updata version in tag files
+        uses: ./.github/workflows/update-version-in-tag-files
+        with:
+          VERSION: ${{ env.DESIRED_VERSION }}
+          CHANNEL: ${{ env.CHANNEL }}
+          DRY_RUN: ${{ env.DRY_RUN }}
+
+      - name: Create release tag
+        run: |
+          # Tag the local version-bump commit.
+          # Only the tag is pushed — the version-bump commit itself stays local
+          # so the source branch history remains unchanged.
+          git tag -a "v${DESIRED_VERSION}" -m "Release version ${DESIRED_VERSION}"
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            echo "Dry run — skipping tag push."
+          else
+            git push origin "v${DESIRED_VERSION}"
+            echo "Release tag v${DESIRED_VERSION} pushed successfully (branch unchanged)."
+          fi

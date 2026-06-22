@@ -1,0 +1,80 @@
+name: Update Version In Tag Files
+description: Updates the version string in elementor.php, package.json, and readme.txt before creating a release tag.
+
+inputs:
+  VERSION:
+    required: true
+    description: 'The full version string to set (e.g. 4.1.0 or 4.1.0-beta1).'
+  CHANNEL:
+    required: true
+    description: 'The release channel: stable or beta.'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Update version in elementor.php
+      shell: bash
+      run: |
+        VERSION="${{ inputs.VERSION }}"
+
+        sed -i -E "s/( \* Version: ).*/\1${VERSION}/" elementor.php
+        sed -i -E "s/(define\( 'ELEMENTOR_VERSION', ')[^']*'/\1${VERSION}'/" elementor.php
+
+        echo "elementor.php after version update:"
+        grep -E "Version:|ELEMENTOR_VERSION" elementor.php
+
+    - name: Update version in package.json
+      shell: bash
+      run: |
+        VERSION="${{ inputs.VERSION }}"
+        # Strip beta suffix for package.json semver compliance when needed,
+        # but keep it if npm supports the prerelease format.
+        node -e "
+          const fs = require('fs');
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          pkg.version = '${VERSION}';
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
+        "
+        echo "package.json version: $(node -p \"require('./package.json').version\")"
+
+    - name: Update Stable tag in readme.txt
+      shell: bash
+      if: inputs.CHANNEL == 'stable'
+      run: |
+        VERSION="${{ inputs.VERSION }}"
+        sed -i -E "s/Stable tag: .*/Stable tag: ${VERSION}/" readme.txt
+        echo "readme.txt stable tag updated:"
+        grep "Stable tag:" readme.txt
+
+    - name: Update Beta tag in readme.txt
+      shell: bash
+      if: inputs.CHANNEL == 'beta'
+      run: |
+        VERSION="${{ inputs.VERSION }}"
+        sed -i -E "s/Beta tag: .*/Beta tag: ${VERSION}/" readme.txt
+
+        echo "readme.txt beta tag updated:"
+        grep -E "Stable tag:|Beta tag:" readme.txt
+
+    - name: Commit version bump
+      shell: bash
+      run: |
+        VERSION="${{ inputs.VERSION }}"
+        DRY_RUN="${DRY_RUN:-false}"
+
+        git add elementor.php package.json readme.txt
+
+        if git diff --cached --quiet; then
+          echo "No changes to commit — version files already at ${VERSION}."
+          exit 0
+        fi
+
+        git commit -m "Bump version to ${VERSION}"
+        echo "Committed version bump to ${VERSION}."
+
+        if [[ "${DRY_RUN}" == "true" ]]; then
+          echo "Dry run — skipping push."
+        else
+          git push
+          echo "Pushed version bump commit."
+        fi
