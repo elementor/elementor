@@ -8,11 +8,14 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { GridOutlineOverlay } from './grid-outline';
+import { GridEmptyCellPositioner, GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 const E_GRID_TYPE = 'e-grid';
+
+const isGridElement = ( element: HTMLElement ): boolean =>
+	[ element.dataset.eType, element.dataset.element_type ].includes( E_GRID_TYPE );
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -20,9 +23,12 @@ const overlayRegistry: ElementOverlayConfig[] = [
 		shouldRender: () => true,
 	},
 	{
+		component: GridEmptyCellPositioner,
+		shouldRender: ( { element } ) => isGridElement( element ),
+	},
+	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element, isSelected } ) =>
-			isSelected && [ element.dataset.eType, element.dataset.element_type ].includes( E_GRID_TYPE ),
+		shouldRender: ( { element, isSelected } ) => isSelected && isGridElement( element ),
 	},
 ];
 

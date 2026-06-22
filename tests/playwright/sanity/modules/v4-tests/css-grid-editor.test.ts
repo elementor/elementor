@@ -466,4 +466,67 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			'grid-drag-heading-placeholder.png',
 		);
 	} );
+
+	test( 'First-empty-cell drop placeholder follows the first empty cell when the grid has children', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+
+		await editor.selectElement( gridId );
+		await editor.closeNavigatorIfOpen();
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Layout' );
+
+		const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+		const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+		await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
+		await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+
+		await editor.addElement( { elType: 'e-div-block' }, gridId );
+
+		await editor.openElementsPanel();
+
+		const panelHeading = page
+			.locator( EditorSelectors.panels.elements.v4elements )
+			.getByText( 'Heading', { exact: true } );
+
+		const gridFirstAdd = editor
+			.getPreviewFrame()
+			.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` );
+
+		await panelHeading.waitFor( { state: 'visible' } );
+		await expect( gridFirstAdd ).toHaveCount( 1 );
+
+		const gridChildrenSelector = `[data-id="${ gridId }"] > .elementor-element`;
+		const firstChild = editor.getPreviewFrame().locator( gridChildrenSelector ).first();
+
+		const firstChildBox = await firstChild.boundingBox();
+		const dropTargetBox = await gridFirstAdd.boundingBox();
+
+		expect( firstChildBox ).toBeTruthy();
+		expect( dropTargetBox ).toBeTruthy();
+		expect( dropTargetBox!.x ).toBeGreaterThan( firstChildBox!.x + ( firstChildBox!.width / 2 ) );
+
+		const panelBox = await panelHeading.boundingBox();
+		expect( panelBox ).toBeTruthy();
+
+		await page.mouse.move(
+			panelBox!.x + ( panelBox!.width / 2 ),
+			panelBox!.y + ( panelBox!.height / 2 ),
+		);
+		await page.mouse.down();
+
+		await page.mouse.move(
+			dropTargetBox!.x + ( dropTargetBox!.width / 2 ),
+			dropTargetBox!.y + ( dropTargetBox!.height / 2 ),
+			{ steps: 10 },
+		);
+
+		const placeholder = editor.getPreviewFrame().locator( '.elementor-widget-placeholder' );
+		await expect( placeholder ).toBeVisible();
+
+		await expect( gridFirstAdd ).toHaveClass( /elementor-html5dnd-current-element/ );
+	} );
 } );
