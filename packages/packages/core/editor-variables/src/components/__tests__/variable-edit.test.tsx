@@ -222,11 +222,15 @@ describe( 'ColorVariableEdit', () => {
 
 		// Assert - type should be the new type because it has changed
 		await waitFor( () => {
-			expect( usePropVariablesModule.updateVariable ).toHaveBeenCalledWith( 'e-gv-123', {
-				value: 'Arial',
-				label: 'new-label',
-				type: colorVariablePropTypeUtil.key,
-			} );
+			expect( usePropVariablesModule.updateVariable ).toHaveBeenCalledWith(
+				'e-gv-123',
+				{
+					value: 'Arial',
+					label: 'new-label',
+					type: colorVariablePropTypeUtil.key,
+				},
+				{ eventData: { controlPath: 'font' } }
+			);
 		} );
 	} );
 } );
