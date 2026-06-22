@@ -6,7 +6,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const semver = require( 'semver' );
 
-const { CHANNEL, BUMP_TYPE } = process.env;
+const { CHANNEL } = process.env;
 
 // --- helpers ---
 
@@ -58,7 +58,7 @@ function writeOutput( key, value ) {
 
 // --- calculation ---
 
-function calculateStable( tags, bumpType ) {
+function calculateStable( tags, desiredVersion ) {
 	const stableTags = getStableTags( tags );
 
 	if ( stableTags.length === 0 ) {
@@ -68,16 +68,19 @@ function calculateStable( tags, bumpType ) {
 	const latest = stableTags[ stableTags.length - 1 ];
 	const { major, minor, patch } = semver.parse( latest );
 
-	let next;
-	if ( bumpType === 'patch' ) {
-		next = `${ major }.${ minor }.${ patch + 1 }`;       // 4.1.3 → 4.1.4
-	} else if ( bumpType === 'minor' ) {
-		next = `${ major }.${ minor + 1 }.0`;                 // 3.4.2 → 3.5.0
-	} else {
-		throw new Error( `Invalid BUMP_TYPE "${ bumpType }". Use patch or minor.` );
+	const expectedPatch = `${ major }.${ minor }.${ patch + 1 }`;
+	const expectedMinor = `${ major }.${ minor + 1 }.0`;
+
+	if ( desiredVersion !== expectedPatch && desiredVersion !== expectedMinor ) {
+		throw new Error(
+			`Desired version "${ desiredVersion }" is not a valid next release.\n` +
+			`Latest stable tag is "${ latest }". Expected either:\n` +
+			`  patch → ${ expectedPatch }\n` +
+			`  minor → ${ expectedMinor }`
+		);
 	}
 
-	return { calculatedReleaseVersion: next, latestTag: latest };
+	return { calculatedReleaseVersion: desiredVersion, latestTag: latest };
 }
 
 function calculateBeta( tags, packageVersion ) {
@@ -115,11 +118,12 @@ function main() {
 	console.log( 'CHANNEL', CHANNEL );
 
 	if ( CHANNEL === 'stable' ) {
-		if ( ! BUMP_TYPE ) {
-			console.error( 'BUMP_TYPE is required for stable (patch or minor).' );
+		const desiredVersion = process.env.DESIRED_VERSION;
+		if ( ! desiredVersion ) {
+			console.error( 'DESIRED_VERSION env var is required for stable channel.' );
 			process.exit( 1 );
 		}
-		result = calculateStable( tags, BUMP_TYPE );
+		result = calculateStable( tags, desiredVersion );
 	} else if ( CHANNEL === 'beta' ) {
 		const betaBase = ( process.env.DESIRED_VERSION || packageVersion ).replace( /-beta[0-9]+$/, '' );
 		result = calculateBeta( tags, betaBase );	
@@ -131,7 +135,6 @@ function main() {
 	const cleanVersion = calculatedReleaseVersion.replace( /-beta[0-9]+$/, '' );
 
 	console.log( `Channel:      ${ CHANNEL }` );
-	console.log( `Bump type:    ${ BUMP_TYPE || 'n/a' }` );
 	console.log( `Latest tag:   ${ latestTag || 'none' }` );
 	console.log( `Next version: ${ calculatedReleaseVersion }` );
 	console.log( 'packageVersion', packageVersion );
