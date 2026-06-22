@@ -85,6 +85,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
+		$config['base_settings'] = $this->get_base_settings();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = $this->should_show_in_panel();
 		$config['categories'] = $this->define_panel_categories();

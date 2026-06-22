@@ -28,7 +28,7 @@ function getSvg( container: HTMLElement ): SVGSVGElement {
 describe( '<GridOutline />', () => {
 	it( 'sizes the svg to the element rect', () => {
 		const { container } = renderWithTheme(
-			<GridOutline tracks={ makeTracks( { columns: [ 100 ] } ) } width={ 320 } height={ 200 } />
+			<GridOutline element={ null } tracks={ makeTracks( { columns: [ 100 ] } ) } width={ 320 } height={ 200 } />
 		);
 
 		const svg = getSvg( container );
@@ -40,6 +40,7 @@ describe( '<GridOutline />', () => {
 		it( 'draws one line per unique boundary for an N×M grid', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
 					width={ 300 }
 					height={ 160 }
@@ -53,6 +54,7 @@ describe( '<GridOutline />', () => {
 		it( 'snaps line coordinates to half pixels for crisp 1px strokes', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( {
 						columns: [ 100, 100 ],
 						rows: [ 80 ],
@@ -72,6 +74,7 @@ describe( '<GridOutline />', () => {
 		it( 'passes the resolved iframe border color through to each line', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( { columns: [ 100 ], rows: [ 100 ], borderColor: '#abcdef' } ) }
 					width={ 100 }
 					height={ 100 }
@@ -87,7 +90,7 @@ describe( '<GridOutline />', () => {
 
 		it( 'renders nothing when there are no tracks on either axis', () => {
 			const { container } = renderWithTheme(
-				<GridOutline tracks={ makeTracks() } width={ 100 } height={ 100 } />
+				<GridOutline element={ null } tracks={ makeTracks() } width={ 100 } height={ 100 } />
 			);
 
 			expect( container.querySelectorAll( 'line' ) ).toHaveLength( 0 );
@@ -95,10 +98,65 @@ describe( '<GridOutline />', () => {
 		} );
 	} );
 
+	describe( 'first-empty-cell indicator', () => {
+		it( 'renders a + glyph in the first empty cell when one exists', () => {
+			const element = document.createElement( 'div' );
+			document.body.appendChild( element );
+
+			const { container } = renderWithTheme(
+				<GridOutline
+					element={ element }
+					tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
+					width={ 300 }
+					height={ 160 }
+				/>
+			);
+
+			expect( container.querySelector( '.eicon-plus' ) ).not.toBeNull();
+		} );
+
+		it( 'does not render the + glyph when the grid is fully occupied', () => {
+			const element = document.createElement( 'div' );
+
+			for ( let i = 0; i < 6; i++ ) {
+				const child = document.createElement( 'div' );
+				child.classList.add( 'elementor-element' );
+				element.appendChild( child );
+			}
+
+			document.body.appendChild( element );
+
+			const { container } = renderWithTheme(
+				<GridOutline
+					element={ element }
+					tracks={ makeTracks( { columns: [ 100, 100, 100 ], rows: [ 80, 80 ] } ) }
+					width={ 300 }
+					height={ 160 }
+				/>
+			);
+
+			expect( container.querySelector( '.eicon-plus' ) ).toBeNull();
+		} );
+
+		it( 'does not render the + glyph when no element is provided', () => {
+			const { container } = renderWithTheme(
+				<GridOutline
+					element={ null }
+					tracks={ makeTracks( { columns: [ 100 ], rows: [ 80 ] } ) }
+					width={ 100 }
+					height={ 80 }
+				/>
+			);
+
+			expect( container.querySelector( '.eicon-plus' ) ).toBeNull();
+		} );
+	} );
+
 	describe( 'with a gap', () => {
 		it( 'draws one rect per cell so each cell has its own framed perimeter', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( {
 						columns: [ 100, 100, 100 ],
 						rows: [ 80, 80 ],
@@ -117,6 +175,7 @@ describe( '<GridOutline />', () => {
 		it( 'offsets cells past the gap', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( {
 						columns: [ 100, 100, 100 ],
 						rows: [ 80 ],
@@ -134,6 +193,7 @@ describe( '<GridOutline />', () => {
 		it( 'passes the resolved iframe border color through to each cell', () => {
 			const { container } = renderWithTheme(
 				<GridOutline
+					element={ null }
 					tracks={ makeTracks( {
 						columns: [ 100, 100 ],
 						rows: [ 100 ],

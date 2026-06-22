@@ -85,6 +85,10 @@ class User_Query extends Base {
 		return $result;
 	}
 
+	protected function permission_check( \WP_REST_Request $request ): bool {
+		return current_user_can( 'list_users' );
+	}
+
 	protected function get_endpoint_registration_args(): array {
 		return [
 			self::SEARCH_TERM_KEY => [

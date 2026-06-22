@@ -49,6 +49,7 @@ coverage/
 # Code agents
 .cursor/
 !.cursor/rules/
+.cursor/rules/LOCAL_RULES.md
 .claude/
 
 # PHPunit and PHPlint cache files

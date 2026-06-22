@@ -23,6 +23,8 @@ class Conversion_Banner {
 	const BIRTHDAY_PROMOTION_URL = 'https://go.elementor.com/go-pro-wp-admin-upgrad-notice/';
 
 	const HELLO_THEME_CONFIG_FILTER = 'hello-plus-theme/rest/admin-config';
+	const THEME_SLUGS = [ 'hello-elementor', 'hello-biz', 'hello-commerce' ];
+	const GO_PRO_TITLE_PREFIX = 'Go Pro';
 
 	public function __construct() {
 		add_action( 'wp_ajax_' . self::AJAX_ACTION, [ $this, 'ajax_dismiss_banner' ] );
@@ -54,17 +56,32 @@ class Conversion_Banner {
 	}
 
 	public function suppress_hello_theme_banner( $config ) {
-		if ( ! ( is_array( $config ) && isset( $config['welcome'] ) ) ) {
+		if ( $this->is_request_from_theme_admin_page()
+			|| ! ( is_array( $config ) && isset( $config['welcome'] ) )
+			|| Utils::has_pro()
+		) {
 			return $config;
 		}
 
-		if ( Utils::has_pro() ) {
-			return $config;
-		}
+		$title = $config['welcome']['title'] ?? '';
 
-		$config['welcome'] = [];
+		if ( is_string( $title ) && substr( $title, 0, strlen( self::GO_PRO_TITLE_PREFIX ) ) === self::GO_PRO_TITLE_PREFIX ) {
+			$config['welcome'] = [];
+		}
 
 		return $config;
+	}
+
+	private function is_request_from_theme_admin_page(): bool {
+		$referer = wp_get_referer();
+
+		if ( ! $referer ) {
+			return false;
+		}
+
+		parse_str( (string) wp_parse_url( $referer, PHP_URL_QUERY ), $query_args );
+
+		return in_array( $query_args['page'] ?? '', self::THEME_SLUGS );
 	}
 
 	public function ajax_dismiss_banner(): void {
@@ -230,13 +247,6 @@ class Conversion_Banner {
 				'selector' => '#e-home-screen',
 				'before' => true,
 			],
-			'update-core' => $default,
-			'edit-post' => $default,
-			'edit-page' => $default,
-			'edit-category' => $default,
-			'edit-post_tag' => $default,
-			'upload' => $default,
-			'media' => $default,
 			'elementor_page_elementor-settings' => $default,
 			'elementor_page_elementor-tools' => $default,
 			'elementor_page_elementor-role-manager' => $default,
@@ -263,23 +273,6 @@ class Conversion_Banner {
 			'plugins' => $default,
 			'plugin-install' => $default,
 			'plugin-editor' => $default,
-			'users' => $default,
-			'user' => $default,
-			'profile' => $default,
-			'tools' => $default,
-			'import' => $default,
-			'export' => $default,
-			'site-health' => $default,
-			'export-personal-data' => $default,
-			'erase-personal-data' => $default,
-			'options-general' => $default,
-			'options-writing' => $default,
-			'options-reading' => $default,
-			'options-discussion' => $default,
-			'options-media' => $default,
-			'options-permalink' => $default,
-			'options-privacy' => $default,
-			'privacy-policy-guide' => $default,
 		];
 	}
 }

@@ -444,7 +444,7 @@ class Manager {
 			throw new \Exception( 'Missing post id.' );
 		}
 
-		if ( ! User::is_current_user_can_edit( $data['post_id'] ) ) {
+		if ( ! $this->can_current_user_render_tags_for_post( $data['post_id'] ) ) {
 			throw new \Exception( 'Access denied.' );
 		}
 
@@ -483,6 +483,26 @@ class Manager {
 		do_action( 'elementor/dynamic_tags/after_render' );
 
 		return $tags_data;
+	}
+
+	private function can_current_user_render_tags_for_post( $post_id ) {
+		if ( User::is_current_user_can_edit( $post_id ) ) {
+			return true;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( ! $post || 'trash' === get_post_status( $post->ID ) ) {
+			return false;
+		}
+
+		$post_type_object = get_post_type_object( $post->post_type );
+
+		if ( ! $post_type_object || ! isset( $post_type_object->cap->edit_post ) ) {
+			return false;
+		}
+
+		return current_user_can( $post_type_object->cap->edit_post, $post->ID );
 	}
 
 	/**

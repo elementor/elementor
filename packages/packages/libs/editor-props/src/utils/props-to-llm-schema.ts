@@ -78,6 +78,9 @@ function convertPlainPropType(
 				},
 				required: [ '$$type', 'value' ],
 			};
+		// @ts-expect-error: 'unknown' is a possible value at runtime - treat as "any"
+		case 'unknown':
+			return {};
 		default:
 			return {
 				...schema,

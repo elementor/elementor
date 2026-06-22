@@ -10,6 +10,7 @@ export { SettingsControl } from './components/settings-control';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab } from './components/style-tab';
+export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';

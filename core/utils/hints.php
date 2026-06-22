@@ -456,16 +456,16 @@ class Hints {
 	private static function get_all_widget_content( $step, $one_subscription = false ) {
 		if ( $one_subscription ) {
 			$steps = [
-				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Ally, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
-				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Ally. Activate it to place an accessibility widget on your site.', 'elementor' ),
-				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Web Accessibility, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Web Accessibility. Activate it to place an accessibility widget on your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
 				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
 			];
 		} else {
 			$steps = [
-				self::INSTALL => esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
-				self::ACTIVATE => esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' ),
-				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::INSTALL => esc_html__( 'Install Web Accessibility to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Activate the Web Accessibility plugin to turn its accessibility features on across your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
 				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
 			];
 		}
@@ -531,7 +531,7 @@ class Hints {
 		}
 
 		$data = [
-			'title' => __( 'Ally web accessibility', 'elementor' ),
+			'title' => __( 'Web accessibility', 'elementor' ),
 			'content' => self::get_all_widget_content( $step, $one_subscription ),
 			'action_button' => self::get_ally_cta_button( $step, $one_subscription ),
 		];
