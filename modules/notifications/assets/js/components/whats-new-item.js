@@ -30,9 +30,20 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 					{ item.title }
 				</Typography>
 			</WrapperWithLink>
-			{ item.imageSrc && (
+			{ item.youtubeEmbedId ? (
+				<Box sx={ { pb: 2 } }>
+					<Box
+						component="iframe"
+						src={ `https://www.youtube.com/embed/${ item.youtubeEmbedId }${ item.youtubeAutoplay ? '?autoplay=1&mute=1' : '' }` }
+						title={ item.title }
+						allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowFullScreen={ true }
+						sx={ { aspectRatio: '16/9', width: '100%', display: 'block', border: 'none' } }
+					/>
+				</Box>
+			) : ( item.gifSrc || item.imageSrc ) && (
 				<WhatsNewItemThumbnail
-					imageSrc={ item.imageSrc }
+					imageSrc={ item.gifSrc || item.imageSrc }
 					link={ item.link }
 					title={ item.title }
 				/>
