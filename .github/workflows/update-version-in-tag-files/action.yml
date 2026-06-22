@@ -8,7 +8,10 @@ inputs:
   CHANNEL:
     required: true
     description: 'The release channel: stable or beta.'
-
+  
+  DRY_RUN:
+    required: true
+    description: 'Dry run — validate everything but do not push commits or create tag.'
 runs:
   using: "composite"
   steps:
