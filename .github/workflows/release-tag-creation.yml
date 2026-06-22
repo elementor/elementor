@@ -53,37 +53,6 @@ jobs:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
-
-      - name: Validate version format
-        run: |
-          if ! [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
-              echo "Version '${version}' is not in the correct format."
-              echo "Version format is not valid, expected: X.Y.Z or X.Y.Z-betaN (e.g. 4.1.0, 5.20.15, 4.1.0-beta1, 5.20.0-beta3)"
-              exit 1
-          fi
-          echo "Version format is valid: ${version}"
-
-      - name: Check if version already exists
-        run: |
-          if git tag -l | grep -q "^v${version}$"; then
-              echo "Version ${version} already exists as a GitHub Release."
-              exit 1
-          fi
-          echo "Version ${version} does not exist as a GitHub Release."
-
-      - name: Extract channel from desired version
-        run: |
-          if [[ "${version}" =~ -beta[0-9]+$ ]]; then
-                CHANNEL=beta
-            elif [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                CHANNEL=stable
-            else
-                echo "Could not determine channel from version: ${version}"
-                exit 1
-            fi
-          echo "CHANNEL=${CHANNEL}"
-          echo "CHANNEL=${CHANNEL}" >> $GITHUB_ENV
-
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
