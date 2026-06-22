@@ -34,7 +34,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 				<Box sx={ { pb: 2 } }>
 					<Box
 						component="iframe"
-						src={ `https://www.youtube.com/embed/${ item.youtubeEmbedId }${ item.youtubeAutoplay ? '?autoplay=1&mute=1' : '' }` }
+						src={ `https://www.youtube.com/embed/${ item.youtubeEmbedId.split( '?' )[ 0 ] }${ item.youtubeAutoplay ? '?autoplay=1&mute=1' : '' }` }
 						title={ item.title }
 						allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 						allowFullScreen={ true }
