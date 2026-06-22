@@ -138,6 +138,10 @@ class Term_Query extends Base {
 		remove_filter( 'terms_clauses', [ $this, 'customize_terms_query' ], $priority, $accepted_args );
 	}
 
+	protected function permission_check( \WP_REST_Request $request ): bool {
+		return current_user_can( 'edit_posts' );
+	}
+
 	/**
 	 * @return array
 	 */

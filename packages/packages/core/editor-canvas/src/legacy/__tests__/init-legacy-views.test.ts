@@ -45,7 +45,7 @@ describe( 'initLegacyViews', () => {
 		mockLegacyElementor();
 	} );
 
-	it( 'should register a late element type via the legacy manager without leaking state', () => {
+	it( 'should register a late element type via the legacy manager without leaking the state', () => {
 		// Arrange
 		const elementsManager = createMockElementsManager();
 		attachMockElementsManager( elementsManager );

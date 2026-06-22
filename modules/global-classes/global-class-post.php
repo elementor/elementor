@@ -197,6 +197,18 @@ class Global_Class_Post {
 		return is_array( $data ) ? $data : [];
 	}
 
+	private function get_preview_data(): array {
+		$data = get_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW, true );
+
+		return is_array( $data ) ? $data : [];
+	}
+
+	private function get_version(): string {
+		$version = get_post_meta( $this->post->ID, self::META_KEY_VERSION, true );
+
+		return is_string( $version ) ? $version : '';
+	}
+
 	public function update_data(
 		array $data,
 		string $version = ELEMENTOR_VERSION
@@ -260,5 +272,46 @@ class Global_Class_Post {
 		$result = wp_delete_post( $this->post->ID, true );
 
 		return false !== $result;
+	}
+
+	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?Global_Class_Post {
+		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
+
+		if ( ! $source_post ) {
+			return null;
+		}
+
+		$new_post_id = wp_insert_post( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_title' => $source_post->get_label(),
+			'post_status' => 'publish',
+		] );
+
+		if ( is_wp_error( $new_post_id ) || ! $new_post_id ) {
+			return null;
+		}
+
+		update_post_meta( $new_post_id, self::META_KEY_ID, $style_id );
+		update_post_meta( $new_post_id, self::META_KEY_VERSION, $source_post->get_version() );
+
+		$frontend_data = $source_post->get_frontend_data();
+		$preview_data = $source_post->get_preview_data();
+		$last_edited_timestamp = get_post_meta( $source_post->get_post_id(), self::META_KEY_EDITED, true );
+
+		if ( ! empty( $frontend_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA, $frontend_data );
+		}
+
+		if ( ! empty( $preview_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA_PREVIEW, $preview_data );
+		}
+
+		if ( $last_edited_timestamp ) {
+			update_post_meta( $new_post_id, self::META_KEY_EDITED, $last_edited_timestamp );
+		}
+
+		Global_Classes_Post_IDs::make( $target_kit )->set( $style_id, (int) $new_post_id );
+
+		return self::from_post_id( $new_post_id );
 	}
 }
