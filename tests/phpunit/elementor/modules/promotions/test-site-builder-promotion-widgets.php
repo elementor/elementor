@@ -34,4 +34,16 @@ class Test_Site_Builder_Promotion_Widgets extends Elementor_Test_Base {
 		$this->assertCount( 1, $carousel_entries );
 		$this->assertSame( 'Remote Carousel', $carousel_entries[0]['title'] );
 	}
+
+	public function test_supplemental_widgets_expose_icon_and_json_categories() {
+		foreach ( Site_Builder_Promotion_Widgets::get_supplemental_widgets() as $widget ) {
+			$this->assertArrayHasKey( 'icon', $widget );
+			$this->assertNotEmpty( $widget['icon'] );
+
+			$this->assertArrayHasKey( 'categories', $widget );
+			$decoded = json_decode( $widget['categories'], true );
+			$this->assertIsArray( $decoded, "categories for {$widget['name']} must be a JSON-encoded array" );
+			$this->assertNotEmpty( $decoded );
+		}
+	}
 }

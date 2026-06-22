@@ -10,11 +10,11 @@ class Site_Builder_Promotion_Widgets {
 
 	public static function get_supplemental_widgets(): array {
 		return [
-			[ 'name' => 'nested-carousel', 'title' => 'Carousel' ],
-			[ 'name' => 'mega-menu', 'title' => 'Menu' ],
-			[ 'name' => 'loop-grid', 'title' => 'Loop Grid' ],
-			[ 'name' => 'loop-carousel', 'title' => 'Loop Carousel' ],
-			[ 'name' => 'taxonomy-filter', 'title' => 'Taxonomy Filter' ],
+			[ 'name' => 'nested-carousel', 'title' => 'Carousel', 'icon' => 'eicon-media-carousel', 'categories' => '["pro-elements"]' ],
+			[ 'name' => 'mega-menu', 'title' => 'Menu', 'icon' => 'eicon-menu-bar', 'categories' => '["pro-elements"]' ],
+			[ 'name' => 'loop-grid', 'title' => 'Loop Grid', 'icon' => 'eicon-loop-builder', 'categories' => '["pro-elements"]' ],
+			[ 'name' => 'loop-carousel', 'title' => 'Loop Carousel', 'icon' => 'eicon-media-carousel', 'categories' => '["pro-elements"]' ],
+			[ 'name' => 'taxonomy-filter', 'title' => 'Taxonomy Filter', 'icon' => 'eicon-filter', 'categories' => '["pro-elements"]' ],
 		];
 	}
 

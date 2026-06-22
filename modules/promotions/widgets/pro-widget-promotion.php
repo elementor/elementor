@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Promotions\Widgets;
 
+use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\Promotions\Rendered_Html_Sanitizer;
@@ -39,7 +40,45 @@ class Pro_Widget_Promotion extends Widget_Base {
 		return $element;
 	}
 
-	protected function register_controls() {}
+	protected function register_controls() {
+		$this->start_controls_section(
+			'section_promotion',
+			[
+				'label' => esc_html__( 'Upgrade', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'promotion_notice',
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => $this->get_promotion_notice_raw(),
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	private function get_promotion_notice_raw(): string {
+		return sprintf(
+			'<div class="elementor-nerd-box">
+				<img class="elementor-nerd-box-icon" src="%1$s" loading="lazy" alt="%2$s" />
+				<div class="elementor-nerd-box-title">%3$s</div>
+				<div class="elementor-nerd-box-message">%4$s</div>
+				<a class="elementor-button go-pro" href="%5$s" target="_blank">%6$s</a>
+			</div>',
+			esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			esc_attr__( 'Upgrade', 'elementor' ),
+			esc_html__( 'This is a Pro widget', 'elementor' ),
+			sprintf(
+				/* translators: %s: Widget title. */
+				esc_html__( 'The %s widget is part of Elementor Pro. Upgrade to edit and unlock it.', 'elementor' ),
+				esc_html( $this->get_title() )
+			),
+			esc_url( 'https://go.elementor.com/go-pro-element-pro/' ),
+			esc_html__( 'Upgrade Now', 'elementor' )
+		);
+	}
 
 	protected function render() {
 		if ( ! $this->is_editor_render() ) {
