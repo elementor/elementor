@@ -1,0 +1,25 @@
+name: Handle Version Input
+description: Validates version format, checks if the tag already exists, and extracts the release channel.
+
+inputs:
+  version:
+    required: true
+    description: 'The full version string (e.g. 4.1.0 or 4.1.0-beta1).'
+
+outputs:
+  checkout_branch:
+    description: 'The branch name derived from the version input.'
+    value: ${{ steps.run-script.outputs.checkout_branch }}
+  channel:
+    description: 'The release channel: stable or beta.'
+    value: ${{ steps.run-script.outputs.channel }}
+
+runs:
+  using: composite
+  steps:
+    - name: Run version validation script
+      id: run-script
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+      run: node "${{ github.action_path }}/index.mjs"

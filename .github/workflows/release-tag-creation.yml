@@ -3,12 +3,7 @@ name: Release Tag Creation
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        required: true
-        type: string
-        description: 'Target branch to release from (e.g. main or 3.33)'
-        default: main
-      desired_version:
+      version:
         required: true
         type: string
         description: 'Version to release (e.g. 4.1.0-beta1 or 4.0.11)'
@@ -19,7 +14,7 @@ on:
         description: Dry run — validate everything but do not push commits or create tag.
 
 env:
-  DESIRED_VERSION: ${{ inputs.desired_version }}
+  VERSION: ${{ inputs.version }}
   DRY_RUN: ${{ inputs.dry_run }}
 
 jobs:
@@ -29,6 +24,11 @@ jobs:
       contents: write 
 
     steps:
+      - name: Handle version input
+        uses: ./.github/workflows/handle-version-input
+        with:
+          version: ${{ inputs.version }}
+
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
@@ -56,29 +56,29 @@ jobs:
 
       - name: Validate version format
         run: |
-          if ! [[ "${DESIRED_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
-              echo "Version '${DESIRED_VERSION}' is not in the correct format."
+          if ! [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-beta[0-9]+)?$ ]]; then
+              echo "Version '${version}' is not in the correct format."
               echo "Version format is not valid, expected: X.Y.Z or X.Y.Z-betaN (e.g. 4.1.0, 5.20.15, 4.1.0-beta1, 5.20.0-beta3)"
               exit 1
           fi
-          echo "Version format is valid: ${DESIRED_VERSION}"
+          echo "Version format is valid: ${version}"
 
       - name: Check if version already exists
         run: |
-          if git tag -l | grep -q "^v${DESIRED_VERSION}$"; then
-              echo "Version ${DESIRED_VERSION} already exists as a GitHub Release."
+          if git tag -l | grep -q "^v${version}$"; then
+              echo "Version ${version} already exists as a GitHub Release."
               exit 1
           fi
-          echo "Version ${DESIRED_VERSION} does not exist as a GitHub Release."
+          echo "Version ${version} does not exist as a GitHub Release."
 
       - name: Extract channel from desired version
         run: |
-          if [[ "${DESIRED_VERSION}" =~ -beta[0-9]+$ ]]; then
+          if [[ "${version}" =~ -beta[0-9]+$ ]]; then
                 CHANNEL=beta
-            elif [[ "${DESIRED_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            elif [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
                 CHANNEL=stable
             else
-                echo "Could not determine channel from version: ${DESIRED_VERSION}"
+                echo "Could not determine channel from version: ${version}"
                 exit 1
             fi
           echo "CHANNEL=${CHANNEL}"
@@ -91,27 +91,11 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --ignore-scripts
-      - name: Calculate next version
-        id: version
-        env:
-          CHANNEL: ${{ env.CHANNEL }}
-        run: node ./.github/scripts/calculate-next-release-version.js
 
-      - name: Verify Release Version
-        id: verify_release_version
-        run: |
-          CALCULATED="${{ steps.version.outputs.CALCULATED_RELEASE_VERSION }}"
-          if [[ "${DESIRED_VERSION}" != "${CALCULATED}" ]]; then
-            echo "Version mismatch: desired=${DESIRED_VERSION}, calculated=${CALCULATED} (channel=${CHANNEL})"
-            exit 1
-          fi
-          echo "Version verified: ${DESIRED_VERSION} matches calculated version (channel=${CHANNEL})."
-      
-
-      - name: Updata version in tag files
+      - name: Update version in tag files
         uses: ./.github/workflows/update-version-in-tag-files
         with:
-          VERSION: ${{ env.DESIRED_VERSION }}
+          VERSION: ${{ env.version }}
           CHANNEL: ${{ env.CHANNEL }}
           DRY_RUN: ${{ env.DRY_RUN }}
 
@@ -120,10 +104,10 @@ jobs:
           # Tag the local version-bump commit.
           # Only the tag is pushed — the version-bump commit itself stays local
           # so the source branch history remains unchanged.
-          git tag -a "v${DESIRED_VERSION}" -m "Release version ${DESIRED_VERSION}"
+          git tag -a "v${version}" -m "Release version ${version}"
           if [[ "${DRY_RUN}" == "true" ]]; then
             echo "Dry run — skipping tag push."
           else
-            git push origin "v${DESIRED_VERSION}"
-            echo "Release tag v${DESIRED_VERSION} pushed successfully (branch unchanged)."
+            git push origin "v${version}"
+            echo "Release tag v${version} pushed successfully (branch unchanged)."
           fi
