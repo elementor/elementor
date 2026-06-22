@@ -64,10 +64,13 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_filter( 'elementor/documents/ajax_save/return_data', function( array $return_data ): array {
-			$return_data['config']['document']['themeBuilderPromotionDetections'] = Theme_Builder_Promotion_Detections::get();
+		add_filter( 'elementor/documents/ajax_save/return_data', function( array $return_data, $document ): array {
+			if ( $document instanceof \Elementor\Core\Base\Document ) {
+				$return_data['config']['document']['themeBuilderPromotion'] = Theme_Builder_Promotion_Detections::get_promotion_payload( $document );
+			}
+
 			return $return_data;
-		} );
+		}, 10, 2 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
@@ -281,7 +284,6 @@ class Module extends Base_Module {
 		$promotion_data = new PromotionData( $editor_assets_api );
 
 		$settings['v4Promotions'] = $promotion_data->get_v4_promotions_data();
-		$settings['themeBuilderPromotionDetections'] = Theme_Builder_Promotion_Detections::get();
 
 		return $settings;
 	}

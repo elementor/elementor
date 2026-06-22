@@ -13,12 +13,11 @@ export default class extends elementorModules.Module {
 
 	onTrigger( event ) {
 		const scenario = event?.detail?.scenario;
+		const introductionKey = event?.detail?.introductionKey;
 
 		if ( ! scenario ) {
 			return;
 		}
-
-		const introductionKey = this.getIntroductionKey( scenario );
 
 		if ( ! introductionKey ) {
 			return;
@@ -36,14 +35,6 @@ export default class extends elementorModules.Module {
 				},
 			} ),
 		);
-	}
-
-	getIntroductionKey( scenario ) {
-		if ( ! scenario ) {
-			return null;
-		}
-
-		return `introduce_theme_builder_${ scenario }_popup`;
 	}
 
 	isViewed( introductionKey ) {

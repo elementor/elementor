@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\Promotions;
 
+use Elementor\Core\Base\Document;
 use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +30,72 @@ class Theme_Builder_Promotion_Detections {
 			'contentCounts' => $content_counts,
 			'templatePresence' => $template_presence,
 		];
+	}
+
+	public static function get_promotion_payload( Document $document ): array {
+		$detections = self::get();
+		$scenario = self::get_scenario_for_document( $document );
+
+		if ( ! $scenario ) {
+			return [
+				'shouldShow' => false,
+				'scenario' => null,
+				'introductionKey' => null,
+			];
+		}
+
+		$introduction_key = self::get_introduction_key( $scenario );
+
+		return [
+			'shouldShow' => self::should_show_promotion( $scenario, $detections ),
+			'scenario' => $scenario,
+			'introductionKey' => $introduction_key,
+		];
+	}
+
+	private static function get_scenario_for_document( Document $document ): ?string {
+		$post_type = \get_post_type( $document->get_main_id() );
+
+		if ( ! $post_type || ! is_string( $post_type ) ) {
+			return null;
+		}
+
+		switch ( $post_type ) {
+			case 'post':
+				return 'single_post';
+			case 'product':
+				return 'single_product';
+			case 'page':
+				return 'header_footer';
+			default:
+				return null;
+		}
+	}
+
+	private static function get_introduction_key( string $scenario ): string {
+		return "introduce_theme_builder_{$scenario}_popup";
+	}
+
+	private static function should_show_promotion( string $scenario, array $detections ): bool {
+		$counts = $detections['contentCounts'] ?? [];
+		$templates = $detections['templatePresence'] ?? [];
+
+		if ( 'single_post' === $scenario ) {
+			return 2 === ( $counts['post'] ?? null ) && empty( $templates['single_post'] );
+		}
+
+		if ( 'single_product' === $scenario ) {
+			return 2 === ( $counts['product'] ?? null ) && empty( $templates['single_product'] );
+		}
+
+		if ( 'header_footer' === $scenario ) {
+			$has_header = ! empty( $templates['header'] );
+			$has_footer = ! empty( $templates['footer'] );
+
+			return 2 === ( $counts['page'] ?? null ) && ( ! $has_header || ! $has_footer );
+		}
+
+		return false;
 	}
 
 	private static function get_elementor_published_content_counts(): array {
