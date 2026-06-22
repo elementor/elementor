@@ -19,7 +19,8 @@ type ComponentEventData = Record< string, unknown > & {
 		| 'propertiesPanelOpened'
 		| 'propertiesGroupCreated'
 		| 'detached';
-		// TODO: Remove `source` parameter in version 4.4.0
+	// TODO: Remove `source` parameter in version 4.4.0 - it's replaced by `executedBy`, but pro's older versions will still send `source`
+	// so we keep both for backward compatibility
 	source?: ExecutedBy;
 	executedBy: ExecutedBy;
 };

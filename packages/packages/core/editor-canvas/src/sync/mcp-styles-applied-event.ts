@@ -5,7 +5,5 @@ export type McpStylesAppliedPayload = {
 };
 
 export function dispatchMcpStylesAppliedEvent( payload: McpStylesAppliedPayload ): void {
-	window.dispatchEvent(
-		new CustomEvent( MCP_STYLES_APPLIED_EVENT, { detail: payload } )
-	);
+	window.dispatchEvent( new CustomEvent( MCP_STYLES_APPLIED_EVENT, { detail: payload } ) );
 }

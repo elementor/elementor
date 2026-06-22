@@ -26,11 +26,7 @@ function tryExtractVariable( value: unknown ): { type: string; variableId: strin
 	return null;
 }
 
-function traverse(
-	value: unknown,
-	path: string[],
-	result: VariableInfo[]
-): void {
+function traverse( value: unknown, path: string[], result: VariableInfo[] ): void {
 	const extracted = tryExtractVariable( value );
 	if ( extracted ) {
 		result.push( {
@@ -52,9 +48,7 @@ function traverse(
 	}
 }
 
-export function extractVariablesFromStyleValue(
-	styleValue: Record< string, unknown >
-): VariableInfo[] {
+export function extractVariablesFromStyleValue( styleValue: Record< string, unknown > ): VariableInfo[] {
 	const result: VariableInfo[] = [];
 	traverse( styleValue, [], result );
 	return result;

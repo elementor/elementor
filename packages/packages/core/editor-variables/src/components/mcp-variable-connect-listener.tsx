@@ -1,8 +1,5 @@
 import { useEffect } from 'react';
-import {
-	MCP_STYLES_APPLIED_EVENT,
-	type McpStylesAppliedPayload,
-} from '@elementor/editor-canvas';
+import { MCP_STYLES_APPLIED_EVENT, type McpStylesAppliedPayload } from '@elementor/editor-canvas';
 
 import { extractVariablesFromStyleValue } from '../utils/extract-variables-from-style-value';
 import { trackVariableEvent } from '../utils/tracking';
@@ -23,16 +20,10 @@ export function McpVariableConnectListener() {
 			} );
 		};
 
-		window.addEventListener(
-			MCP_STYLES_APPLIED_EVENT,
-			handleMcpStylesApplied as EventListener
-		);
+		window.addEventListener( MCP_STYLES_APPLIED_EVENT, handleMcpStylesApplied as EventListener );
 
 		return () => {
-			window.removeEventListener(
-				MCP_STYLES_APPLIED_EVENT,
-				handleMcpStylesApplied as EventListener
-			);
+			window.removeEventListener( MCP_STYLES_APPLIED_EVENT, handleMcpStylesApplied as EventListener );
 		};
 	}, [] );
 

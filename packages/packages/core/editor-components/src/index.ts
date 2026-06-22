@@ -55,6 +55,7 @@ export {
 	registerComponentsReducer,
 	selectOverridableProps,
 	selectCreatedThisSession,
+	selectComponentByUid,
 	selectPath,
 	slice,
 	useCurrentComponent,

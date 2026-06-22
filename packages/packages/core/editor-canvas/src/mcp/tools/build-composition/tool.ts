@@ -4,9 +4,8 @@ import {
 	deleteElement,
 	getContainer,
 	getWidgetsCache,
-	V1ElementData,
-	V1ElementModelProps,
 	type V1Element,
+	type V1ElementData,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
@@ -91,8 +90,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
 				rootContainers.forEach( ( container ) => {
-					const model = container.model?.toJSON();
-					onElementAdded( model as V1ElementData );
+					const elementData = container.model?.toJSON();
+
+					if ( elementData ) {
+						onElementAdded( elementData as V1ElementData );
+					}
 				} );
 
 				if ( configErrors.length ) {
@@ -208,8 +210,8 @@ function onElementAdded( element: V1ElementData ) {
 	const elementName = elType === 'widget' ? widgetType : elType;
 
 	trackCanvasEvent( {
-		action: 'add_element',
-		executedBy: 'mcp_tool',
+		eventName: 'add_element',
+		executed_by: 'mcp_tool',
 		element_name: elementName,
 		element_type: elType,
 		widget_type: widgetType,
@@ -223,8 +225,8 @@ function onElementAdded( element: V1ElementData ) {
 	window.dispatchEvent( new CustomEvent( ELEMENT_ADDED_EVENT, { detail: event } ) );
 
 	if ( element.elements?.length ) {
-		element.elements?.forEach( ( element ) => {
-			onElementAdded( element );
+		element.elements?.forEach( ( childElement ) => {
+			onElementAdded( childElement );
 		} );
 	}
 }
