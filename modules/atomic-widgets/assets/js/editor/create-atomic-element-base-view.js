@@ -325,7 +325,7 @@ export default function createAtomicElementBaseView( type ) {
 			const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 			return {
-				axis: null,
+				axis: this.isAtomicGridContainer() ? 'vertical' : null,
 				items,
 				groups: [ 'elementor-element' ],
 				horizontalThreshold: 0,

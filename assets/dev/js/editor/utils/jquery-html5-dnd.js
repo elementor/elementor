@@ -221,6 +221,9 @@
 			const insertMode = getInsertMode();
 
 			switch ( insertMode ) {
+				case 'atomicGrid':
+					insertAtomicGridPlaceholder();
+					break;
 				case 'gridRow':
 					insertGridRowPlaceholder();
 					break;
@@ -259,6 +262,7 @@
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
 				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isAtomicGridContainer: 0 !== $currentElement.closest( '.e-grid-base' ).length,
 				isFlexContainer,
 				isRowDirection,
 				isFlexRowContainer: isFlexContainer && isRowDirection,
@@ -290,6 +294,10 @@
 				return 'default';
 			}
 
+			if ( placeholderContext.isAtomicGridContainer ) {
+				return 'atomicGrid';
+			}
+
 			if ( placeholderContext.isGridRowContainer ) {
 				return 'gridRow';
 			}
@@ -308,7 +316,7 @@
 		const clearPreviousPlaceholder = function() {
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
-			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
+			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right e-dragging-top e-dragging-bottom is-logical' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-bottom', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-inline-start', '' );
@@ -375,6 +383,14 @@
 				insertOutside: hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget ),
 				useLogicalAttributes: hasLogicalWrapper || isAtomicContainer,
 			};
+		};
+
+		const insertAtomicGridPlaceholder = function() {
+			const { placeholderTarget } = placeholderContext;
+
+			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+
+			insertPlaceholderInsideElement( placeholderTarget );
 		};
 
 		const insertGridRowPlaceholder = function() {
