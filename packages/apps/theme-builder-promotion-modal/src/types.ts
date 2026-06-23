@@ -6,13 +6,13 @@ export type OpenEventDetail = {
 };
 
 type ElementorCommonAjax = {
-	addRequest: ( action: string, options: { data?: Record<string, unknown> } ) => Promise<unknown>;
+	addRequest: ( action: string, options: { data?: Record< string, unknown > } ) => Promise< unknown >;
 };
 
 export type ElementorCommon = {
 	ajax?: ElementorCommonAjax;
 	eventsManager?: {
-		dispatchEvent?: ( name: string, payload: Record<string, unknown> ) => void;
+		dispatchEvent?: ( name: string, payload: Record< string, unknown > ) => void;
 	};
 	config?: {
 		home_url?: string;
@@ -28,7 +28,7 @@ export type ExtendedWindow = Window & {
 	elementor?: {
 		config?: {
 			user?: {
-				introduction?: Record<string, boolean>;
+				introduction?: Record< string, boolean >;
 			};
 		};
 	};
@@ -36,4 +36,3 @@ export type ExtendedWindow = Window & {
 		run?: ( command: string ) => unknown;
 	};
 };
-

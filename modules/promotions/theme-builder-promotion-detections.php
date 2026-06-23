@@ -92,7 +92,7 @@ class Theme_Builder_Promotion_Detections {
 			$has_header = ! empty( $templates['header'] );
 			$has_footer = ! empty( $templates['footer'] );
 
-			return ( $counts['page'] ?? 0 ) > 1 && ( ! $has_header || ! $has_footer );
+			return ( $counts['page'] ?? 0 ) > 4 && ( ! $has_header || ! $has_footer );
 		}
 
 		return false;
@@ -107,8 +107,6 @@ class Theme_Builder_Promotion_Detections {
 			return [];
 		}
 
-		$placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
-
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
@@ -117,9 +115,9 @@ class Theme_Builder_Promotion_Detections {
 				INNER JOIN {$wpdb->postmeta} pm
 					ON ( p.ID = pm.post_id AND pm.meta_key = %s AND pm.meta_value = %s )
 				WHERE p.post_status = %s
-					AND p.post_type IN ($placeholders)
+					AND p.post_type IN (" . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ')
 					AND p.post_type != %s
-				GROUP BY p.post_type",
+				GROUP BY p.post_type',
 				array_merge(
 					[
 						self::ELEMENTOR_EDIT_MODE_META_KEY,

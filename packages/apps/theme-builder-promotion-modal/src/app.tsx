@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { TRIGGER_EVENT } from './constants';
 import { PromotionModal } from './components/promotion-modal';
+import { TRIGGER_EVENT } from './constants';
 import type { OpenEventDetail } from './types';
 
 export function App( { container }: { container?: HTMLElement } ) {
-	const [ openDetail, setOpenDetail ] = useState<OpenEventDetail | null>( null );
+	const [ openDetail, setOpenDetail ] = useState< OpenEventDetail | null >( null );
 
 	useEffect( () => {
 		const onOpen = ( event: Event ) => {
-			const customEvent = event as CustomEvent<OpenEventDetail>;
+			const customEvent = event as CustomEvent< OpenEventDetail >;
 			const detail = customEvent?.detail;
 
-			if ( !detail?.scenario || !detail?.introductionKey ) {
+			if ( ! detail?.scenario || ! detail?.introductionKey ) {
 				return;
 			}
 
@@ -33,6 +33,12 @@ export function App( { container }: { container?: HTMLElement } ) {
 		return null;
 	}
 
-	return <PromotionModal container={ container } scenario={ openDetail.scenario } introductionKey={ openDetail.introductionKey } onClose={ handleClose } />;
+	return (
+		<PromotionModal
+			container={ container }
+			scenario={ openDetail.scenario }
+			introductionKey={ openDetail.introductionKey }
+			onClose={ handleClose }
+		/>
+	);
 }
-

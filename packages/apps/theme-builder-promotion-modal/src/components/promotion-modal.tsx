@@ -46,9 +46,12 @@ function ModalContent( {
 
 	const { title, body, imageUrl } = useMemo( () => getDialogContent( scenario ), [ scenario ] );
 
-	const track = useCallback( ( payload: Record<string, unknown> ) => {
+	const track = useCallback( ( payload: Record< string, unknown > ) => {
 		try {
-			( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.( 'theme_builder_promotion', payload );
+			( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.(
+				'theme_builder_promotion',
+				payload
+			);
 		} catch {
 			// Analytics should never break the user flow.
 		}
@@ -181,7 +184,12 @@ function getDialogContent( scenario: ThemeBuilderPromotionScenario ) {
 	if ( 'single_product' === scenario ) {
 		return {
 			title: __( 'Create a seamless shopping experience.', 'elementor' ),
-			body: __( 'Keep your store looking professional by using a unified, high-converting layout for all your products.' ) + '<br />' + __( 'Design it once, apply it everywhere.', 'elementor' ),
+			body:
+				__(
+					'Keep your store looking professional by using a unified, high-converting layout for all your products.'
+				) +
+				'<br />' +
+				__( 'Design it once, apply it everywhere.', 'elementor' ),
 			imageUrl: `${ assetBase }images/theme-builder-promotion/tb-product.png`,
 		};
 	}
@@ -189,15 +197,26 @@ function getDialogContent( scenario: ThemeBuilderPromotionScenario ) {
 	if ( 'header_footer' === scenario ) {
 		return {
 			title: __( 'Tie your whole website together', 'elementor' ),
-			body: __( 'Every great website needs consistent navigation.' ) + '<br />' + __( 'Build your Header and Footer in the Theme Builder and apply them globally in seconds.', 'elementor' ),
+			body:
+				__( 'Every great website needs consistent navigation.' ) +
+				'<br />' +
+				__(
+					'Build your Header and Footer in the Theme Builder and apply them globally in seconds.',
+					'elementor'
+				),
 			imageUrl: `${ assetBase }images/theme-builder-promotion/tb-header-footer.png`,
 		};
 	}
 
 	return {
 		title: __( 'Stop designing posts from scratch', 'elementor' ),
-		body: __( 'Why recreate your layout every time?' ) + '<br />' + __( 'Work smarter, not harder. Build a Single Post template to automatically apply to all future blog posts.', 'elementor' ),
+		body:
+			__( 'Why recreate your layout every time?' ) +
+			'<br />' +
+			__(
+				'Work smarter, not harder. Build a Single Post template to automatically apply to all future blog posts.',
+				'elementor'
+			),
 		imageUrl: `${ assetBase }images/theme-builder-promotion/tb-post.png`,
 	};
 }
-
