@@ -8,11 +8,10 @@ import { wpCli } from '../../../assets/wp-cli';
 const WIDGET_PLACEHOLDER_SELECTOR = '.elementor-widget-placeholder';
 const OCCUPIED_GRID_CELL_WIDGET_TYPE = 'e-heading';
 const MOUSE_DRAG_STEPS = 10;
-const MIN_EMPTY_GRID_WIDTH_PX = 200;
 const OCCUPIED_CELL_DROP_EDGE_OFFSET_PX = 5;
 const PLACEHOLDER_DRAG_TIMEOUT_MS = 5_000;
 
-test.describe.only( 'CSS Grid Editor @css-grid', () => {
+test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
@@ -58,7 +57,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 		await editor.v4Panel.style.changeButtonGroupControl( displayControl, 'grid' );
 
 		// Assert - screenshot the layout section with grid controls
-		await expect( layoutSection ).toHaveScreenshot( 'grid-controls-panel.png' );
+		await expect.soft( layoutSection ).toHaveScreenshot( 'grid-controls-panel.png' );
 	} );
 
 	test( 'Grid outline overlay renders for a selected V4 grid and toggles off', async ( { page, apiRequests }, testInfo ) => {
@@ -88,7 +87,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 		// Assert
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
-		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
+		await expect.soft( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
@@ -126,7 +125,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 		await expect( gridOutline ).toBeVisible();
 		await expect( gridOutline.locator( 'svg rect' ).first() ).toBeVisible();
 		await expect( gridOutline.locator( 'svg line' ) ).toHaveCount( 0 );
-		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3-with-gap.png' );
+		await expect.soft( gridOutline ).toHaveScreenshot( 'grid-outline-4x3-with-gap.png' );
 	} );
 
 	test( 'Grid outline updates live when columns, rows, and breakpoint change', async ( { page, apiRequests }, testInfo ) => {
@@ -295,7 +294,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 		const container = editor.getPreviewFrame().locator( `[data-id="${ containerId }"]` );
 
 		// Assert - screenshot the grid layout in editor
-		await expect( container ).toHaveScreenshot( 'grid-layout-editor.png' );
+		await expect.soft( container ).toHaveScreenshot( 'grid-layout-editor.png' );
 	} );
 
 	test( 'First-empty-cell indicator advances as children are added', async ( { page, apiRequests }, testInfo ) => {
@@ -420,7 +419,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			const alignControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Align items' );
 			await editor.v4Panel.style.changeButtonGroupControl( alignControl, combo.align );
 
-			await expect( gridInPreview ).toHaveScreenshot(
+			await expect.soft( gridInPreview ).toHaveScreenshot(
 				`grid-justify-${ combo.justify }-align-${ combo.align }.png`,
 			);
 		}
@@ -466,7 +465,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			await expect( placeholder ).toBeVisible();
 
 			// Assert.
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drag-heading-placeholder.png',
 			);
 		} );
@@ -527,7 +526,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			await expect( placeholder ).toBeVisible();
 
 			await expect( gridFirstAdd ).toHaveClass( /elementor-html5dnd-current-element/ );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drop-placeholder-first-empty-with-children.png',
 			);
 		} );
@@ -548,7 +547,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			expect( cssVars.row ).toBe( '1' );
 			expect( cssVars.col ).toBe( '2' );
 			expect( cssVars.visibility ).toBe( 'visible' );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-empty-view-css-vars-first-cell.png',
 			);
 		} );
@@ -570,7 +569,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			// Assert
 			expect( cssVars.visibility ).toBe( 'hidden' );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-empty-view-all-cells-occupied.png',
 			);
 		} );
@@ -614,7 +613,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			// Assert
 			await expect( plus ).toHaveCount( 0 );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-outline-plus-hidden-while-dragging.png',
 			);
 			await releasePanelWidgetDrag( page );
@@ -646,7 +645,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			// Assert
 			await assertOccupiedCellPlaceholder( editor, gridId, childId, /e-dragging-top/ );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-occupied-cell-top-placeholder.png',
 			);
 			await releasePanelWidgetDrag( page );
@@ -678,7 +677,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			// Assert
 			await assertOccupiedCellPlaceholder( editor, gridId, childId, /e-dragging-bottom/ );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-occupied-cell-bottom-placeholder.png',
 			);
 			await releasePanelWidgetDrag( page );
@@ -725,7 +724,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			expect( childIds[ 0 ] ).toBe( firstChildId );
 			expect( childIds[ 1 ] ).not.toBe( firstChildId );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drop-append-first-empty-cell.png',
 			);
 		} );
@@ -769,7 +768,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			expect( childIds[ 2 ] ).toBe( secondChildId );
 			expect( childIds[ 1 ] ).not.toBe( firstChildId );
 			expect( childIds[ 1 ] ).not.toBe( secondChildId );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drop-insert-before-occupied-cell.png',
 			);
 		} );
@@ -811,7 +810,7 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			expect( childIds[ 2 ] ).toBe( secondChildId );
 			expect( childIds[ 1 ] ).not.toBe( firstChildId );
 			expect( childIds[ 1 ] ).not.toBe( secondChildId );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
+			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drop-insert-after-occupied-cell.png',
 			);
 		} );
