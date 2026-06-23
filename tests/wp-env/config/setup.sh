@@ -13,13 +13,6 @@ set -eox pipefail
 wp plugin activate elementor
 wp theme activate hello-elementor
 
-# Activate optional plugins (if present in the environment)
-wp plugin activate elementor-dev-tools-master || echo "elementor-dev-tools not found"
-wp plugin activate stg-runner || echo "stg-runner not found"
-
-# Point elementor-dev-tools at staging (stg.elementor.red)
-wp option update elementor-dev-tools-env stg.elementor.red
-
 # Remove Akismet as it is pre-installed in the Docker image (ignore errors if not found)
 wp plugin uninstall akismet --deactivate || echo "Akismet plugin not found or already removed"
 

@@ -2,9 +2,7 @@
 	"core": null,
 	"phpVersion": "8.0",
 	"plugins": [
-		"./build",
-		"./tests/wp-env/plugins/elementor-dev-tools-master",
-		"./tests/wp-env/plugins/stg-runner"
+		"./build"
 	],
 	"themes": [
 		"https://downloads.wordpress.org/theme/hello-elementor.zip"

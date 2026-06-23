@@ -131,6 +131,11 @@ jobs:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -160,7 +165,11 @@ jobs:
       - name: Activate staging environment
         if: ${{ inputs.environment == 'staging' }}
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp plugin activate stg-runner"
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
@@ -297,6 +306,11 @@ jobs:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
 
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -311,7 +325,11 @@ jobs:
       - name: Activate staging environment
         if: ${{ inputs.environment == 'staging' }}
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp plugin activate stg-runner"
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
