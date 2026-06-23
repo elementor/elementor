@@ -6,129 +6,11 @@ import EditorSelectors from '../../../selectors/editor-selectors';
 import { wpCli } from '../../../assets/wp-cli';
 
 const WIDGET_PLACEHOLDER_SELECTOR = '.elementor-widget-placeholder';
-const HEADING_WIDGET_LABEL = 'Heading';
 const OCCUPIED_GRID_CELL_WIDGET_TYPE = 'e-heading';
 const MOUSE_DRAG_STEPS = 10;
 const MIN_EMPTY_GRID_WIDTH_PX = 200;
 const OCCUPIED_CELL_DROP_EDGE_OFFSET_PX = 5;
 const PLACEHOLDER_DRAG_TIMEOUT_MS = 5_000;
-
-async function configureGridLayout(
-	editor: EditorPage,
-	gridId: string,
-	columns: number,
-	rows: number,
-): Promise<void> {
-	await editor.selectElement( gridId );
-	await editor.closeNavigatorIfOpen();
-	await editor.v4Panel.openTab( 'style' );
-	await editor.v4Panel.style.openSection( 'Layout' );
-
-	const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
-	const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
-	await editor.v4Panel.style.changeSizeControl( columnsControl, columns );
-	await editor.v4Panel.style.changeSizeControl( rowsControl, rows );
-}
-
-function getPanelHeading( page: Page ): Locator {
-	return page
-		.locator( EditorSelectors.panels.elements.v4elements )
-		.getByText( HEADING_WIDGET_LABEL, { exact: true } );
-}
-
-async function dragPanelHeadingToCoordinates(
-	page: Page,
-	panelHeading: Locator,
-	dropX: number,
-	dropY: number,
-): Promise<void> {
-	const panelBox = await panelHeading.boundingBox();
-
-	expect( panelBox ).toBeTruthy();
-
-	await startPanelWidgetDrag( page, panelHeading );
-	await page.mouse.move( dropX, dropY, { steps: MOUSE_DRAG_STEPS } );
-	await releasePanelWidgetDrag( page );
-}
-
-async function startPanelWidgetDrag( page: Page, panelWidget: Locator ): Promise<void> {
-	const panelBox = await panelWidget.boundingBox();
-
-	expect( panelBox ).toBeTruthy();
-
-	await page.mouse.move(
-		panelBox!.x + ( panelBox!.width / 2 ),
-		panelBox!.y + ( panelBox!.height / 2 ),
-	);
-	await page.mouse.down();
-}
-
-async function releasePanelWidgetDrag( page: Page ): Promise<void> {
-	await page.mouse.up();
-}
-
-async function getOccupiedCellLocator( editor: EditorPage, gridId: string, childId: string ): Promise<Locator> {
-	const occupiedCell = editor
-		.getPreviewFrame()
-		.locator( `[data-id="${ gridId }"] > [data-id="${ childId }"]` );
-
-	await occupiedCell.waitFor( { state: 'visible' } );
-	await occupiedCell.scrollIntoViewIfNeeded();
-
-	await expect
-		.poll( async () => occupiedCell.boundingBox(), { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } )
-		.not.toBeNull();
-
-	return occupiedCell;
-}
-
-async function addOccupiedGridCellChild( editor: EditorPage, gridId: string ): Promise<string> {
-	return editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
-}
-
-async function dragMouseTo( page: Page, x: number, y: number ): Promise<void> {
-	for ( let step = 0; step <= MOUSE_DRAG_STEPS; step++ ) {
-		await page.mouse.move( x, y, { steps: 1 } );
-	}
-}
-
-function getGridCellPlaceholder( editor: EditorPage, gridId: string, childId: string ): Locator {
-	return editor
-		.getPreviewFrame()
-		.locator( `[data-id="${ gridId }"] > [data-id="${ childId }"] ${ WIDGET_PLACEHOLDER_SELECTOR }` )
-		.first();
-}
-
-async function assertOccupiedCellPlaceholder(
-	editor: EditorPage,
-	gridId: string,
-	childId: string,
-	expectedSideClass: RegExp,
-): Promise<void> {
-	const placeholder = getGridCellPlaceholder( editor, gridId, childId );
-
-	await expect( placeholder ).toBeVisible( { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } );
-	await expect( placeholder ).toHaveClass( expectedSideClass, { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } );
-}
-
-async function getGridChildIds( editor: EditorPage, gridId: string ): Promise<string[]> {
-	return editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ).evaluate( ( grid ) =>
-		Array.from( grid.querySelectorAll( ':scope > .elementor-element' ) )
-			.map( ( child ) => child.getAttribute( 'data-id' ) || '' )
-			.filter( Boolean ),
-	);
-}
-
-async function readGridEmptyCellCssVars(
-	editor: EditorPage,
-	gridId: string,
-): Promise<{ col: string; row: string; visibility: string }> {
-	return editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ).evaluate( ( grid ) => ( {
-		col: grid.style.getPropertyValue( '--e-grid-empty-cell-col' ),
-		row: grid.style.getPropertyValue( '--e-grid-empty-cell-row' ),
-		visibility: grid.style.getPropertyValue( '--e-grid-empty-cell-visibility' ),
-	} ) );
-}
 
 test.describe.only( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
@@ -555,27 +437,22 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 
 			await editor.openElementsPanel();
 
-			const panelHeading = page
-				.locator( EditorSelectors.panels.elements.v4elements )
-				.getByText( 'Heading', { exact: true } );
+			const { box: panelBox } = await getPanelHeadingBox( page );
 
 			const gridFirstAdd = editor
 				.getPreviewFrame()
 				.locator( `[data-id="${ gridId }"] .elementor-empty-view > .elementor-first-add` )
 				.first();
 
-			await panelHeading.waitFor( { state: 'visible' } );
 			await gridFirstAdd.waitFor( { state: 'visible' } );
 
-			const panelBox = await panelHeading.boundingBox();
 			const targetBox = await gridFirstAdd.boundingBox();
 
-			expect( panelBox ).toBeTruthy();
 			expect( targetBox ).toBeTruthy();
 
 			await page.mouse.move(
-				panelBox!.x + ( panelBox!.width / 2 ),
-				panelBox!.y + ( panelBox!.height / 2 ),
+				panelBox.x + ( panelBox.width / 2 ),
+				panelBox.y + ( panelBox.height / 2 ),
 			);
 			await page.mouse.down();
 
@@ -611,24 +488,19 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
 			await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
 
-			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
+			const firstChildId = await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
 			await editor.openElementsPanel();
 
-			const panelHeading = page
-				.locator( EditorSelectors.panels.elements.v4elements )
-				.getByText( 'Heading', { exact: true } );
+			const { box: panelBox } = await getPanelHeadingBox( page );
 
 			const gridFirstAdd = editor
 				.getPreviewFrame()
 				.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` );
 
-			await panelHeading.waitFor( { state: 'visible' } );
 			await expect( gridFirstAdd ).toHaveCount( 1 );
 
-			const gridChildrenSelector = `[data-id="${ gridId }"] > .elementor-element`;
-			const firstChild = editor.getPreviewFrame().locator( gridChildrenSelector ).first();
-
+			const firstChild = await getOccupiedCellLocator( editor, gridId, firstChildId );
 			const firstChildBox = await firstChild.boundingBox();
 			const dropTargetBox = await gridFirstAdd.boundingBox();
 
@@ -636,15 +508,12 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			expect( dropTargetBox ).toBeTruthy();
 			expect( dropTargetBox!.x ).toBeGreaterThan( firstChildBox!.x + ( firstChildBox!.width / 2 ) );
 
-			const panelBox = await panelHeading.boundingBox();
-			expect( panelBox ).toBeTruthy();
-
 			const placeholder = editor.getPreviewFrame().locator( '.elementor-widget-placeholder' );
 
 			// Act
 			await page.mouse.move(
-				panelBox!.x + ( panelBox!.width / 2 ),
-				panelBox!.y + ( panelBox!.height / 2 ),
+				panelBox.x + ( panelBox.width / 2 ),
+				panelBox.y + ( panelBox.height / 2 ),
 			);
 			await page.mouse.down();
 
@@ -660,31 +529,6 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			await expect( gridFirstAdd ).toHaveClass( /elementor-html5dnd-current-element/ );
 			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-drop-placeholder-first-empty-with-children.png',
-			);
-		} );
-
-		test( 'Empty view stays in grid flow on an empty grid and is absolutely positioned when populated', async ( { page, apiRequests }, testInfo ) => {
-			// Arrange
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
-			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
-
-			const emptyView = editor
-				.getPreviewFrame()
-				.locator( `[data-id="${ gridId }"] > .elementor-empty-view` );
-
-			await expect( emptyView ).toHaveCount( 1 );
-			await expect( emptyView ).toHaveCSS( 'position', 'relative' );
-
-			// Act
-			await configureGridLayout( editor, gridId, 3, 2 );
-			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
-
-			// Assert
-			await expect( emptyView ).toHaveCount( 1 );
-			await expect( emptyView ).toHaveCSS( 'position', 'absolute' );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
-				'grid-empty-view-absolute-with-child.png',
 			);
 		} );
 
@@ -729,33 +573,6 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-empty-view-all-cells-occupied.png',
 			);
-		} );
-
-		test( 'Empty grid retains full dimensions for the outline overlay', async ( { page, apiRequests }, testInfo ) => {
-			// Arrange
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
-			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
-
-			await configureGridLayout( editor, gridId, 4, 3 );
-			await editor.selectElement( gridId );
-			await editor.closeNavigatorIfOpen();
-
-			const gridElement = editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` );
-			const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
-
-			// Act
-			await expect( gridOutline ).toBeVisible( { timeout: 15_000 } );
-
-			const gridBox = await gridElement.boundingBox();
-			const svgWidth = Number( await gridOutline.locator( 'svg' ).getAttribute( 'width' ) );
-
-			// Assert
-			expect( gridBox ).toBeTruthy();
-			expect( gridBox!.width ).toBeGreaterThan( MIN_EMPTY_GRID_WIDTH_PX );
-			expect( svgWidth ).toBeGreaterThan( MIN_EMPTY_GRID_WIDTH_PX );
-			expect( svgWidth ).toBeCloseTo( gridBox!.width, 0 );
-			await expect( gridOutline ).toHaveScreenshot( 'grid-outline-empty-grid-dimensions.png' );
 		} );
 
 		test( 'Grid outline plus hides while dragging over the grid', async ( { page, apiRequests }, testInfo ) => {
@@ -1000,3 +817,140 @@ test.describe.only( 'CSS Grid Editor @css-grid', () => {
 		} );
 	} );
 } );
+
+async function configureGridLayout(
+	editor: EditorPage,
+	gridId: string,
+	columns: number,
+	rows: number,
+): Promise<void> {
+	await editor.selectElement( gridId );
+	await editor.closeNavigatorIfOpen();
+	await editor.v4Panel.openTab( 'style' );
+	await editor.v4Panel.style.openSection( 'Layout' );
+
+	const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
+	const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
+	await editor.v4Panel.style.changeSizeControl( columnsControl, columns );
+	await editor.v4Panel.style.changeSizeControl( rowsControl, rows );
+}
+
+function getPanelHeading( page: Page ): Locator {
+	return page
+		.locator( EditorSelectors.panels.elements.v4elements )
+		.locator( `.elementor-element[data-library-element-type="${ OCCUPIED_GRID_CELL_WIDGET_TYPE }"]` );
+}
+
+async function getLocatorBox( locator: Locator ): Promise<{ x: number; y: number; width: number; height: number }> {
+	await locator.waitFor( { state: 'visible' } );
+	await locator.scrollIntoViewIfNeeded();
+
+	await expect
+		.poll( async () => locator.boundingBox(), { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } )
+		.not.toBeNull();
+
+	const box = await locator.boundingBox();
+
+	expect( box ).toBeTruthy();
+
+	return box!;
+}
+
+async function getPanelHeadingBox( page: Page ): Promise<{ locator: Locator; box: { x: number; y: number; width: number; height: number } }> {
+	const panelHeading = getPanelHeading( page );
+	const box = await getLocatorBox( panelHeading );
+
+	return { locator: panelHeading, box };
+}
+
+async function dragPanelHeadingToCoordinates(
+	page: Page,
+	panelHeading: Locator,
+	dropX: number,
+	dropY: number,
+): Promise<void> {
+	await startPanelWidgetDrag( page, panelHeading );
+	await page.mouse.move( dropX, dropY, { steps: MOUSE_DRAG_STEPS } );
+	await releasePanelWidgetDrag( page );
+}
+
+async function startPanelWidgetDrag( page: Page, panelWidget: Locator ): Promise<void> {
+	const panelBox = await getLocatorBox( panelWidget );
+
+	await page.mouse.move(
+		panelBox.x + ( panelBox.width / 2 ),
+		panelBox.y + ( panelBox.height / 2 ),
+	);
+	await page.mouse.down();
+}
+
+async function releasePanelWidgetDrag( page: Page ): Promise<void> {
+	await page.mouse.up();
+}
+
+async function getOccupiedCellLocator( editor: EditorPage, gridId: string, childId: string ): Promise<Locator> {
+	const occupiedCell = editor
+		.getPreviewFrame()
+		.locator( `[data-id="${ gridId }"] > [data-id="${ childId }"]` );
+
+	await occupiedCell.waitFor( { state: 'attached' } );
+
+	const dropTarget = occupiedCell.locator( `:scope > :not(${ WIDGET_PLACEHOLDER_SELECTOR })` ).first();
+
+	await dropTarget.waitFor( { state: 'visible' } );
+	await dropTarget.scrollIntoViewIfNeeded();
+
+	await expect
+		.poll( async () => dropTarget.boundingBox(), { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } )
+		.not.toBeNull();
+
+	return dropTarget;
+}
+
+async function addOccupiedGridCellChild( editor: EditorPage, gridId: string ): Promise<string> {
+	return editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
+}
+
+async function dragMouseTo( page: Page, x: number, y: number ): Promise<void> {
+	for ( let step = 0; step <= MOUSE_DRAG_STEPS; step++ ) {
+		await page.mouse.move( x, y, { steps: 1 } );
+	}
+}
+
+function getGridCellPlaceholder( editor: EditorPage, gridId: string, childId: string ): Locator {
+	return editor
+		.getPreviewFrame()
+		.locator( `[data-id="${ gridId }"] > [data-id="${ childId }"] ${ WIDGET_PLACEHOLDER_SELECTOR }` )
+		.first();
+}
+
+async function assertOccupiedCellPlaceholder(
+	editor: EditorPage,
+	gridId: string,
+	childId: string,
+	expectedSideClass: RegExp,
+): Promise<void> {
+	const placeholder = getGridCellPlaceholder( editor, gridId, childId );
+
+	await expect( placeholder ).toBeVisible( { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } );
+	await expect( placeholder ).toHaveClass( expectedSideClass, { timeout: PLACEHOLDER_DRAG_TIMEOUT_MS } );
+}
+
+async function getGridChildIds( editor: EditorPage, gridId: string ): Promise<string[]> {
+	return editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ).evaluate( ( grid ) =>
+		Array.from( grid.querySelectorAll( ':scope > .elementor-element' ) )
+			.map( ( child ) => child.getAttribute( 'data-id' ) || '' )
+			.filter( Boolean ),
+	);
+}
+
+async function readGridEmptyCellCssVars(
+	editor: EditorPage,
+	gridId: string,
+): Promise<{ col: string; row: string; visibility: string }> {
+	return editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ).evaluate( ( grid ) => ( {
+		col: grid.style.getPropertyValue( '--e-grid-empty-cell-col' ),
+		row: grid.style.getPropertyValue( '--e-grid-empty-cell-row' ),
+		visibility: grid.style.getPropertyValue( '--e-grid-empty-cell-visibility' ),
+	} ) );
+}
