@@ -1267,6 +1267,8 @@ class Source_Local extends Source_Base {
 	 * @param string $redirect_to The redirect URL.
 	 * @param string $action      The action being taken.
 	 * @param array  $post_ids    The items to take the action on.
+	 *
+	 * @return string The redirect URL, unchanged when the action is not handled here.
 	 */
 	public function admin_export_multiple_templates( $redirect_to, $action, $post_ids ) {
 		if ( self::BULK_EXPORT_ACTION === $action ) {
@@ -1276,6 +1278,8 @@ class Source_Local extends Source_Base {
 			// PHPCS - Not user input.
 			wp_die( $result->get_error_message() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+
+		return $redirect_to;
 	}
 
 	/**
