@@ -72,17 +72,17 @@ async function readGridEmptyCellCssVars(
 }
 
 test.describe( 'CSS Grid Editor @css-grid', () => {
-	// test.beforeAll( async () => {
-	// 	await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-	// } );
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+	} );
 
-	// test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-	// 	const context = await browser.newContext();
-	// 	const page = await context.newPage();
-	// 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	// 	await wpAdmin.resetExperiments();
-	// 	await page.close();
-	// } );
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
+	} );
 
 	test( 'Grid widget can be added and renders in the editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
