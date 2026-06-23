@@ -47,7 +47,21 @@ class Background_Shorthand_Expander extends Shorthand_Expander_Base {
 		return [ 'background' ];
 	}
 
-	public function expand( array $rule ): array {
+	const ALL_LONGHANDS = [
+		'background-image',
+		'background-repeat',
+		'background-attachment',
+		'background-position',
+		'background-size',
+		'background-clip',
+		'background-color',
+	];
+
+	protected function expand_null( array $rule ): array {
+		return array_map( fn( $p ) => $this->null_rule( $p ), self::ALL_LONGHANDS );
+	}
+
+	protected function do_expand( array $rule ): array {
 		$layers = Css_Token_Splitter::split_by_comma( trim( $rule['value'] ) );
 
 		if ( empty( $layers ) ) {

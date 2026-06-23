@@ -65,7 +65,7 @@ class Transform_Property_Converter extends Property_Converter_Base {
 		return [ 'transform' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$functions = $this->parse_functions( trim( $rule['value'] ) );
 
 		if ( null === $functions ) {

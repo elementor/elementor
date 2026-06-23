@@ -2,6 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\CssConverter\Expanders;
 
+use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Color_Property_Converter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converters\Dimensions_Property_Converter;
@@ -94,6 +95,24 @@ class Test_Border_Shorthand_Expander extends TestCase {
 		// Assert: `thin` is a width keyword (the longhand converter may later reject it).
 		$this->assertSame( 'border-width', $rules[0]['property'] );
 		$this->assertSame( 'thin', $rules[0]['value'] );
+	}
+
+	public function test_expand__null_value_expands_to_all_longhands_with_null_values() {
+		// Arrange.
+		$expander = $this->make_expander();
+
+		// Act: PHP null value — parse() normalises the 'null' sentinel before expanders run.
+		$rules = $expander->expand( [ 'property' => 'border', 'value' => null ] );
+
+		// Assert.
+		$this->assertSame(
+			[
+				[ 'property' => 'border-width', 'value' => null, 'declaration' => 'border-width: ' ],
+				[ 'property' => 'border-style', 'value' => null, 'declaration' => 'border-style: ' ],
+				[ 'property' => 'border-color', 'value' => null, 'declaration' => 'border-color: ' ],
+			],
+			$rules
+		);
 	}
 
 	/**
@@ -279,26 +298,46 @@ class Test_Border_Shorthand_Expander extends TestCase {
 		);
 	}
 
-	public function test_expand__per_side_shorthand_emits_side_longhands() {
-		// Arrange: border-top maps roles to per-side property names.
-		$expander = new Border_Shorthand_Expander(
-			'border-top',
-			[ 'width' => 'border-top-width', 'style' => 'border-top-style', 'color' => 'border-top-color' ],
-			self::STYLE_KEYWORDS
-		);
+	/**
+	 * @dataProvider all_border_triggers
+	 */
+	public function test_expand__full_value_emits_all_three_longhands_for_every_trigger( string $property, string $infix ) {
+		// Arrange.
+		$longhands = Expander_Registry_Factory::border_longhands( $infix );
+		$expander  = new Border_Shorthand_Expander( $property, $longhands, self::STYLE_KEYWORDS );
 
 		// Act.
-		$rules = $expander->expand( [ 'property' => 'border-top', 'value' => '1px solid red' ] );
+		$rules = $expander->expand( [ 'property' => $property, 'value' => '1px solid red' ] );
 
-		// Assert.
-		$this->assertSame(
-			[
-				[ 'property' => 'border-top-width', 'value' => '1px', 'declaration' => 'border-top-width: 1px' ],
-				[ 'property' => 'border-top-style', 'value' => 'solid', 'declaration' => 'border-top-style: solid' ],
-				[ 'property' => 'border-top-color', 'value' => 'red', 'declaration' => 'border-top-color: red' ],
-			],
-			$rules
-		);
+		// Assert: all three roles are present.
+		$this->assertSame( array_values( $longhands ), array_column( $rules, 'property' ) );
+		$this->assertSame( [ '1px', 'solid', 'red' ], array_column( $rules, 'value' ) );
+	}
+
+	/**
+	 * @dataProvider all_border_triggers
+	 */
+	public function test_expand__null_value_emits_all_three_longhands_as_null_for_every_trigger( string $property, string $infix ) {
+		// Arrange.
+		$longhands = Expander_Registry_Factory::border_longhands( $infix );
+		$expander  = new Border_Shorthand_Expander( $property, $longhands, self::STYLE_KEYWORDS );
+
+		// Act.
+		$rules = $expander->expand( [ 'property' => $property, 'value' => null ] );
+
+		// Assert: all three longhands are reset.
+		$this->assertSame( array_values( $longhands ), array_column( $rules, 'property' ) );
+		$this->assertSame( array_fill( 0, 3, null ), array_column( $rules, 'value' ) );
+	}
+
+	public function all_border_triggers(): array {
+		$triggers = [ 'border' => [ 'border', '' ] ];
+
+		foreach ( Expander_Registry_Factory::BORDER_SIDES as $side ) {
+			$triggers[ "border-$side" ] = [ "border-$side", "$side-" ];
+		}
+
+		return $triggers;
 	}
 
 	private function make_expander( ?Variables_Service $variables_service = null ): Border_Shorthand_Expander {
