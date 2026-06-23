@@ -1,15 +1,10 @@
 import { request, test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import ApiRequests from './assets/api-requests';
-import { installElementorE2eFlag } from './e2e-init-script';
 import { fetchNonce, login } from './wp-authentication';
+import ApiRequests from './assets/api-requests';
 
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string, apiRequests: ApiRequests }>( {
-	page: async ( { page }, use ) => {
-		await page.addInitScript( installElementorE2eFlag );
-		await use( page );
-	},
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
 	workerBaseURL: [ async ( {}, use ) => {
