@@ -3,7 +3,7 @@
  * Plugin Name: Elementor
  * Description: The Elementor Website Builder has it all: drag and drop page builder, Atomic Editor, pixel perfect design, global and reusable style systems, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Version: 4.2.0
+ * Version: 4.3.0
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  * Requires PHP: 7.4
@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '4.2.0' );
+define( 'ELEMENTOR_VERSION', '4.3.0' );
 define( 'ELEMENTOR_MINIMUM_WP_VERSION', '6.8' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );

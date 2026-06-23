@@ -462,6 +462,14 @@ abstract class Element_Base extends Controls_Stack {
 		return $this;
 	}
 
+	public function reset_descendant_render_state(): void {
+		$this->reset_render_state();
+
+		foreach ( $this->get_children() as $child ) {
+			$child->reset_descendant_render_state();
+		}
+	}
+
 	/**
 	 * Print element.
 	 *

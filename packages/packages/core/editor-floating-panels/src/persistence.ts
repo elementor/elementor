@@ -43,12 +43,23 @@ function isPanelState( value: unknown ): value is FloatingPanelState {
 
 	const v = value as Record< string, unknown >;
 
+	if ( typeof v.size !== 'object' || v.size === null ) {
+		return false;
+	}
+
+	if ( typeof v.position !== 'object' || v.position === null ) {
+		return false;
+	}
+
+	const size = v.size as Record< string, unknown >;
+	const position = v.position as Record< string, unknown >;
+
 	return (
 		typeof v.isOpen === 'boolean' &&
-		typeof v.position === 'object' &&
-		v.position !== null &&
-		typeof v.size === 'object' &&
-		v.size !== null &&
-		typeof v.zIndex === 'number'
+		typeof v.zIndex === 'number' &&
+		typeof size.inlineSize === 'number' &&
+		typeof size.blockSize === 'number' &&
+		typeof position.insetInlineStart === 'number' &&
+		typeof position.insetBlockStart === 'number'
 	);
 }

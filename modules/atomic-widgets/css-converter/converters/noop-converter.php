@@ -24,7 +24,7 @@ class Noop_Converter extends Property_Converter_Base {
 		return [ $this->property ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		return false;
 	}
 }

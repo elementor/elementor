@@ -1,13 +1,6 @@
-import * as React from 'react';
+import type { PointerEvent } from 'react';
 import { renderHookWithStore } from 'test-utils';
-import {
-	__createStore,
-	__deleteStore,
-	__dispatch,
-	__getState,
-	__getStore,
-	__registerSlice,
-} from '@elementor/store';
+import { __createStore, __deleteStore, __dispatch, __getState, __getStore, __registerSlice } from '@elementor/store';
 import { act } from '@testing-library/react';
 
 import { selectPosition, selectSize } from '../../store/selectors';
@@ -31,6 +24,8 @@ const defaults: FloatingPanelDefaults = {
 const startPosition = { insetInlineStart: 400, insetBlockStart: 120 };
 const startSize = { inlineSize: 320, blockSize: 480 };
 
+let sidePanelElement: HTMLElement;
+
 function createPointerTarget() {
 	const target = document.createElement( 'div' );
 	target.setPointerCapture = jest.fn();
@@ -48,7 +43,7 @@ function createPointerEvent(
 		clientY: 0,
 		currentTarget: target,
 		...overrides,
-	} as unknown as React.PointerEvent< HTMLElement >;
+	} as unknown as PointerEvent< HTMLElement >;
 }
 
 function setupViewport() {
@@ -59,6 +54,7 @@ function setupViewport() {
 	sidePanel.id = 'elementor-panel';
 	jest.spyOn( sidePanel, 'getBoundingClientRect' ).mockReturnValue( { width: SIDE_PANEL_WIDTH_PX } as DOMRect );
 	document.body.appendChild( sidePanel );
+	sidePanelElement = sidePanel;
 }
 
 describe( 'usePanelResizeInteraction', () => {
@@ -180,13 +176,7 @@ describe( 'usePanelResizeInteraction', () => {
 			throw new Error( 'Store is not initialized' );
 		}
 
-		const sidePanel = document.getElementById( 'elementor-panel' );
-
-		if ( ! sidePanel ) {
-			throw new Error( 'Side panel is not mounted' );
-		}
-
-		const getBoundingClientRect = jest.spyOn( sidePanel, 'getBoundingClientRect' );
+		const getBoundingClientRect = jest.spyOn( sidePanelElement, 'getBoundingClientRect' );
 		const target = createPointerTarget();
 		const { result } = renderHookWithStore( () => usePanelResizeInteraction( PANEL_ID ), store );
 		const handleProps = result.current.getResizeHandleProps( 'inline-end' );

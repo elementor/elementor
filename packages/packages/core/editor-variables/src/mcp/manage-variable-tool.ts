@@ -47,6 +47,9 @@ function isFontAvailable( font: string ) {
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
+	const RUNTIME_ALLOWED_VARIABLE_TYPES = isProActive()
+		? ( [ VARIABLE_TYPES.COLOR, VARIABLE_TYPES.FONT, VARIABLE_TYPES.SIZE, VARIABLE_TYPES.CUSTOM_SIZE ] as const )
+		: ( [ VARIABLE_TYPES.COLOR, VARIABLE_TYPES.FONT ] as const );
 
 	resource(
 		'manage-global-variable-guide',
@@ -63,28 +66,21 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 
 	addTool( {
 		name: 'manage-global-variable',
-		description: 'Manage V4 global variables (color, font, size). Read the guide resource before use.',
+		description:
+			'Manage V4 global variables (color, font, size, custom-size). Read the guide resource before use. font = font-famliy, size = measured unit, custom-size = calculated values',
 		schema: {
-			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
+			action: z.enum( [ 'create', 'update', 'delete' ] ),
 			id: z
 				.string()
 				.optional()
 				.describe( 'Variable id — required for update/delete. Get from the global-variables resource.' ),
-			type: z
-				.string()
-				.optional()
-				.describe(
-					'Variable type — required for create. One of: "global-color-variable", "global-font-variable", "global-size-variable", "global-custom-size-variable" (size types require Elementor Pro). NEVER store px/rem values in a font variable.'
-				),
-			label: z
-				.string()
-				.optional()
-				.describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
+			type: z.enum( RUNTIME_ALLOWED_VARIABLE_TYPES ),
+			label: z.string().describe( 'Variable label (lowercase, dash-separated) — required for create/update.' ),
 			value: z
 				.string()
 				.optional()
 				.describe(
-					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only, never px/rem. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
+					'Plain CSS value — required for create/update. Color: hex/rgba/hsl. Font: family name only. Size: value with unit e.g. "16px", or "auto" (Pro). Do NOT pass JSON.'
 				),
 		},
 		outputSchema: {
@@ -132,7 +128,7 @@ function getServiceActions( svc: typeof service ) {
 			if ( valueError ) {
 				throw new Error( valueError );
 			}
-			return svc.create( { type, label, value } );
+			return svc.create( { type, label, value }, { eventData: { executedBy: 'mcp_tool' } } );
 		},
 		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
 			if ( ! id || ! label || ! value ) {
@@ -149,7 +145,7 @@ function getServiceActions( svc: typeof service ) {
 					throw new Error( valueError );
 				}
 			}
-			return svc.update( id, { label, value } );
+			return svc.update( id, { label, value }, { eventData: { executedBy: 'mcp_tool' } } );
 		},
 		delete( { id }: Opts< { id: string } > ) {
 			if ( ! id ) {
