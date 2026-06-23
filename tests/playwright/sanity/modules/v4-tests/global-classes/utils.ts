@@ -101,6 +101,20 @@ export async function createGlobalClasses(
 	}
 }
 
+export async function publishAndWaitForClassesSave( editor: EditorPage, page: Page ): Promise< void > {
+	const [ response ] = await Promise.all( [
+		page.waitForResponse(
+			( res ) => res.url().includes( 'global-classes' ) && 'PUT' === res.request().method(),
+			{ timeout: timeouts.longAction },
+		),
+		editor.publishPage(),
+	] );
+
+	if ( ! response.ok() ) {
+		throw new Error( `Global classes save failed: ${ response.status() } ${ await response.text() }` );
+	}
+}
+
 export async function openClassManager( page: Page, editor: EditorPage, divBlockId: string ): Promise<void> {
 	await editor.selectElement( divBlockId );
 	await editor.v4Panel.openTab( 'style' );

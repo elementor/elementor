@@ -28,7 +28,7 @@ class Editor_One_System_Menu implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_position(): int {
-		return 80;
+		return 90;
 	}
 
 	public function get_slug(): string {

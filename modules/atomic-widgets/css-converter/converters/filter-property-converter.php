@@ -29,7 +29,7 @@ class Filter_Property_Converter extends Property_Converter_Base {
 		return [ $this->property ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$items = Filter_Value_Parser::parse( $rule['value'] );
 
 		if ( null === $items ) {

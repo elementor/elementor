@@ -26,7 +26,7 @@ class Object_Position_Property_Converter extends Property_Converter_Base {
 		return [ 'object-position' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
 
 		if ( in_array( $value, Position_Prop_Type::get_position_enum_values(), true ) ) {

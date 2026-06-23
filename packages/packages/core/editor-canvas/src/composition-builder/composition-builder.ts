@@ -320,6 +320,15 @@ export class CompositionBuilder {
 
 		const { configErrors, styleErrors } = await this.applyProperties();
 
+		if ( typeof window !== 'undefined' ) {
+			const targetWindow = window.top || window;
+			targetWindow.dispatchEvent(
+				new CustomEvent( 'elementor/composition/built', {
+					detail: { rootContainers: this.rootContainers.map( ( c ) => c.id ) },
+				} )
+			);
+		}
+
 		return {
 			configErrors,
 			styleErrors,
