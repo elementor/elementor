@@ -158,41 +158,41 @@ jobs:
 
           ---
 
-## 📝 File Updates
+          ## 📝 File Updates
 
-### `elementor.php`
-| Field | New Value |
-|-------|-----------|
-| Plugin version header | `PHPVERSION_PLACEHOLDER` |
-| `ELEMENTOR_VERSION` constant | `PHPVERSION_PLACEHOLDER` |
+          ### `elementor.php`
+          | Field | New Value |
+          |-------|-----------|
+          | Plugin version header | `PHPVERSION_PLACEHOLDER` |
+          | `ELEMENTOR_VERSION` constant | `PHPVERSION_PLACEHOLDER` |
 
-### `readme.txt`
-| Tag | Value |
-|-----|-------|
-| **Stable tag** | `READMESTABLE_PLACEHOLDER` |
-| **Beta tag** | `READMEBETA_PLACEHOLDER` |
+          ### `readme.txt`
+          | Tag | Value |
+          |-----|-------|
+          | **Stable tag** | `READMESTABLE_PLACEHOLDER` |
+          | **Beta tag** | `READMEBETA_PLACEHOLDER` |
 
----
+          ---
 
-## 🚀 Release Tag
+          ## 🚀 Release Tag
 
-| | |
-|---|---|
-| **Tag name** | `vVERSION_PLACEHOLDER` |
-| **Push status** | TAGSTATUS_PLACEHOLDER |
+          | | |
+          |---|---|
+          | **Tag name** | `vVERSION_PLACEHOLDER` |
+          | **Push status** | TAGSTATUS_PLACEHOLDER |
 
----
+          ---
 
-## 🔍 Validation Checks
+          ## 🔍 Validation Checks
 
-| Check | Result |
-|-------|--------|
-| Version format (`X.Y.Z` or `X.Y.Z-betaN`) | ✅ Passed |
-| Tag `vVERSION_PLACEHOLDER` does not already exist | ✅ Passed |
-| Channel resolved | ✅ CHANNELBADGE_PLACEHOLDER |
-| Release branch resolved | ✅ `BRANCH_PLACEHOLDER` |
+          | Check | Result |
+          |-------|--------|
+          | Version format (X.Y.Z or X.Y.Z-betaN) | ✅ Passed |
+          | Tag vVERSION_PLACEHOLDER does not already exist | ✅ Passed |
+          | Channel resolved | ✅ CHANNELBADGE_PLACEHOLDER |
+          | Release branch resolved | ✅ BRANCH_PLACEHOLDER |
 
-SUMMARY
+          SUMMARY
 
           # Replace placeholders with real values (avoids heredoc variable expansion issues)
           sed -i \
