@@ -25,7 +25,7 @@ const AtomicFormPromotionCard = ( props ) => {
 						},
 					} } onClick={ props.doClose } />
 				</Stack>
-				<Box sx={ { height: 150, width: '100%', overflow: 'hidden' } }>
+				<Box sx={ { height: 150, width: '100%', overflow: 'hidden' } } data-testid="e-atomic-form-animation">
 					<Lottie
 						animationData={ animationData }
 						loop={ true }

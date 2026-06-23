@@ -47,6 +47,8 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 
-		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png' );
+		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png', {
+			mask: [ popover.getByTestId( 'e-atomic-form-animation' ) ],
+		} );
 	} );
 } );
