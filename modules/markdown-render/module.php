@@ -28,7 +28,7 @@ class Module extends BaseModule {
 				esc_html__( 'Serve your pages as Markdown files so AI agents can ingest and understand your content more efficiently.', 'elementor' ),
 				esc_html__( 'Learn more', 'elementor' )
 			),
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];
 	}
