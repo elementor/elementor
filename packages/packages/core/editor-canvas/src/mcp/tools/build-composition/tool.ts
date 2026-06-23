@@ -5,10 +5,13 @@ import {
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
+	type V1ElementData,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { trackCanvasEvent } from '../../../utils/tracking';
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { BEST_PRACTICES_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
@@ -18,6 +21,13 @@ import { getCompositionTargetContainer } from '../../utils/get-composition-targe
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 import { adaptLeafRootParams } from './xml-leaf-wrapper';
+
+export type ElementAddedEvent = {
+	element: V1ElementData;
+	executedBy: 'mcp_tool' | 'user';
+};
+
+export const ELEMENT_ADDED_EVENT = 'elementor/canvas/element-added';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
@@ -79,6 +89,18 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
+
+				rootContainers.forEach( ( container ) => {
+					const elementData = container.model?.toJSON();
+
+					if ( elementData ) {
+						onElementAdded( elementData as V1ElementData );
+					}
+				} );
+
+				Object.values( stylesConfig ).forEach( ( styleValue ) => {
+					dispatchMcpStylesAppliedEvent( { styleValue } );
+				} );
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
@@ -184,5 +206,32 @@ function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 		if ( ! isWidgetAvailableForLLM( widgetData ) || ! widgetData.atomic_props_schema ) {
 			throw new Error( `This tool does not support element type: ${ type }` );
 		}
+	}
+}
+
+function onElementAdded( element: V1ElementData ) {
+	const elType = element.elType ?? '';
+	const widgetType = element.widgetType ?? '';
+	const elementName = elType === 'widget' ? widgetType : elType;
+
+	trackCanvasEvent( {
+		eventName: 'add_element',
+		executed_by: 'mcp_tool',
+		element_name: elementName,
+		element_type: elType,
+		widget_type: widgetType,
+	} );
+
+	const event: ElementAddedEvent = {
+		element,
+		executedBy: 'mcp_tool',
+	};
+
+	window.dispatchEvent( new CustomEvent( ELEMENT_ADDED_EVENT, { detail: event } ) );
+
+	if ( element.elements?.length ) {
+		element.elements?.forEach( ( childElement ) => {
+			onElementAdded( childElement );
+		} );
 	}
 }

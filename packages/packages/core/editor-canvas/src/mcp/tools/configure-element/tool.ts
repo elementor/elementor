@@ -1,5 +1,6 @@
 import { getContainer, getWidgetsCache } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
@@ -115,6 +116,8 @@ async function applyStyleFromCss( opts: {
 			propertyValue: styleValue,
 			customCssWriteMode: 'merge-with-stored',
 		} );
+
+		dispatchMcpStylesAppliedEvent( { styleValue } );
 	} catch ( error ) {
 		throw new Error(
 			createUpdateErrorMessage( {

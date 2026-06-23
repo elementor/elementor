@@ -67,8 +67,14 @@ class Border_Shorthand_Expander extends Shorthand_Expander_Base {
 		return [ $this->property ];
 	}
 
-	public function expand( array $rule ): array {
-		$tokens = Css_Token_Splitter::split_by_whitespace( trim( $rule['value'] ) );
+	protected function expand_null( array $rule ): array {
+		return array_map( fn( $p ) => $this->null_rule( $p ), array_values( $this->longhands ) );
+	}
+
+	protected function do_expand( array $rule ): array {
+		$value = $rule['value'];
+
+		$tokens = Css_Token_Splitter::split_by_whitespace( trim( $value ) );
 
 		if ( empty( $tokens ) ) {
 			return [];
@@ -92,8 +98,8 @@ class Border_Shorthand_Expander extends Shorthand_Expander_Base {
 
 		$rules = [];
 
-		foreach ( $slots as $role => $value ) {
-			if ( null === $value ) {
+		foreach ( $slots as $role => $slot_value ) {
+			if ( null === $slot_value ) {
 				continue;
 			}
 
@@ -101,8 +107,8 @@ class Border_Shorthand_Expander extends Shorthand_Expander_Base {
 
 			$rules[] = [
 				'property' => $property,
-				'value' => $value,
-				'declaration' => $property . ': ' . $value,
+				'value' => $slot_value,
+				'declaration' => $property . ': ' . $slot_value,
 			];
 		}
 
