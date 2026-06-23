@@ -1,19 +1,16 @@
-import { BREAKPOINTS_SCHEMA_FULL_URI, STYLE_SCHEMA_FULL_URI } from '@elementor/editor-canvas';
+import { BREAKPOINTS_SCHEMA_FULL_URI, convertStyleBlocksToAtomic, type StyleBlock } from '@elementor/editor-canvas';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type Props, Schema } from '@elementor/editor-props';
+import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
-import { getStylesSchema, type StyleDefinitionState } from '@elementor/editor-styles';
+import { type CustomCss, type StyleDefinitionState } from '@elementor/editor-styles';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
-import { type Utils as IUtils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { loadExistingClasses } from '../load-existing-classes';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
-
-// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
-type XElementor = z.infer< z.ZodAny >;
 
 const schema = {
 	action: z.enum( [ 'create', 'modify', 'delete' ] ).describe( 'Operation to perform' ),
@@ -22,43 +19,18 @@ const schema = {
 		.optional()
 		.describe( 'Global class ID (required for modify). Get from elementor://global-classes resource.' ),
 	globalClassName: z.string().optional().describe( 'Global class name (required for create)' ),
-	props: z.object( {
-		default: z
-			.record(
-				z.string().describe( 'The style property name' ),
-				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
-			)
-			.describe(
-				'An object record containing style property names and their new values. MUST contain at least one property — empty objects are rejected.'
-			),
-		hover: z
-			.record(
-				z.string().describe( 'The style property name' ),
-				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
-			)
-			.describe(
-				'An object record containing style property names and their new values to be set on the element. for :hover css state. optional'
-			)
-			.optional(),
-		focus: z
-			.record(
-				z.string().describe( 'The style property name' ),
-				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
-			)
-			.describe(
-				'An object record containing style property names and their new values to be set on the element. for :focus css state. optional'
-			)
-			.optional(),
-		active: z
-			.record(
-				z.string().describe( 'The style property name' ),
-				z.any().describe( `The style PropValue, refer to [${ STYLE_SCHEMA_FULL_URI }] how to generate values` )
-			)
-			.describe(
-				'An object record containing style property names and their new values to be set on the element. for :active css state. optional'
-			)
-			.optional(),
-	} ),
+	style: z
+		.object( {
+			default: z
+				.string()
+				.describe( 'Plaintext CSS for the default state. MUST be non-empty — blank strings are rejected.' ),
+			hover: z.string().describe( 'Plaintext CSS for the :hover state. optional' ).optional(),
+			focus: z.string().describe( 'Plaintext CSS for the :focus state. optional' ).optional(),
+			active: z.string().describe( 'Plaintext CSS for the :active state. optional' ).optional(),
+		} )
+		.describe(
+			'Plaintext CSS per pseudo-state. All states are converted in one bulk request; unconvertible declarations are stored as custom CSS.'
+		),
 	breakpoint: z
 		.nullable( z.string().describe( 'Responsive breakpoint name for styles. Defaults to desktop (null).' ) )
 		.default( null )
@@ -74,9 +46,13 @@ const outputSchema = {
 type InputSchema = z.infer< ReturnType< typeof z.object< typeof schema > > >;
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
+type ConvertedStateStyle = {
+	props: Props;
+	customCss: CustomCss | null;
+};
+
 const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
-	const { action, classId: rawClassId, globalClassName, props: rawProps, breakpoint } = input;
-	const propsWithStates = rawProps as unknown as Record< NonNullable< StyleDefinitionState >, Props >;
+	const { action, classId: rawClassId, globalClassName, style: rawStyle, breakpoint } = input;
 	let classId = rawClassId;
 	if ( action === 'create' && ! globalClassName ) {
 		return {
@@ -107,54 +83,24 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
-	const errors: string[] = [];
-	const stylesSchema = getStylesSchema();
-	const validProps = Object.keys( stylesSchema );
-	Object.values( propsWithStates ).forEach( ( props ) => {
-		Object.keys( props ).forEach( ( key ) => {
-			const propType = stylesSchema[ key ];
-			if ( ! propType ) {
-				errors.push( `Property "${ key }" does not exist in styles schema.` );
-				return;
-			}
-			const { valid, jsonSchema } = Schema.validatePropValue( propType, props[ key ] );
-			if ( ! valid ) {
-				errors.push( `- Property "${ key }" has invalid value\n  Expected schema: ${ jsonSchema }\n` );
-			}
-		} );
-	} );
+	const styleBlocks = collectNonEmptyStyleBlocks( rawStyle );
 
-	if ( action !== 'delete' ) {
-		const hasAnyProps = Object.values( propsWithStates ).some(
-			( stateProps ) => Object.keys( stateProps ).length > 0
-		);
-		if ( ! hasAnyProps ) {
-			throw new Error(
-				`Props must not be empty. Each prop must be a PropValue object from the style schema.\n\nExample: { "display": { "$$type": "string", "value": "flex" }, "flex-direction": { "$$type": "string", "value": "column" } }\n\n${ STYLE_SCHEMA_FULL_URI } to get the allowed values (look at the "value" enum in the schema response), then construct { "$$type": "string", "value": "<chosen value>" } for each property.\nAvailable Properties: ${ validProps.join(
-					', '
-				) }`
-			);
-		}
-	}
-
-	if ( errors.length > 0 ) {
+	if ( action !== 'delete' && Object.keys( styleBlocks ).length === 0 ) {
 		throw new Error(
-			`Validation errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
-				', '
-			) }\nUpdate your input and try again.`
+			'Style must not be empty. Provide plaintext CSS per state.\n\nExample: style.default = "display: flex; flex-direction: column; gap: 1rem;"'
 		);
 	}
 
-	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
-	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
-		.Utils as typeof IUtils;
-	Object.values( propsWithStates ).forEach( ( props ) => {
-		Object.keys( props ).forEach( ( key ) => {
-			props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
-				transformers: Utils.globalVariablesLLMResolvers,
-			} );
-		} );
-	} );
+	let convertedByState: Record< string, ConvertedStateStyle > = {};
+	if ( action !== 'delete' ) {
+		const conversionResults = await convertStyleBlocksToAtomic( styleBlocks );
+		convertedByState = Object.fromEntries(
+			Object.entries( conversionResults ).map( ( [ state, { props, customCss } ] ) => [
+				state,
+				{ props: props as Props, customCss: toStoredCustomCss( customCss ) },
+			] )
+		);
+	}
 
 	const breakpointValue = breakpoint ?? 'desktop';
 	let result = {
@@ -176,24 +122,30 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		}
 
 		let currentAction = action;
-		for await ( const [ state, props ] of Object.entries( propsWithStates ) ) {
+		for await ( const [ state, { props, customCss } ] of Object.entries( convertedByState ) ) {
 			switch ( currentAction ) {
 				case 'create':
 					const newClassId = await attemptCreate( {
 						props,
+						customCss,
 						className: globalClassName,
 						stylesProvider: globalClassesStylesProvider,
 						breakpoint: breakpointValue as BreakpointId,
 						state: state as StyleDefinitionState,
 					} );
 					if ( newClassId && currentAction === 'create' ) {
-						// NOTE: for multiple iterations as the state changes, the next execution would be update an existing class
 						currentAction = 'modify';
 						classId = newClassId;
 						result = {
 							status: 'ok',
 							message: `created global class with ID ${ newClassId }`,
 						};
+						globalClassesStylesProvider.actions.tracking?.( {
+							event: 'classCreated',
+							executedBy: 'mcp_tool',
+							classId: newClassId,
+						} );
+						dispatchMcpStylesAppliedEvent( { styleValue: props } );
 					} else {
 						throw new Error( 'error creating class' );
 					}
@@ -202,12 +154,14 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 					const updated = await attemptUpdate( {
 						classId,
 						props,
+						customCss,
 						stylesProvider: globalClassesStylesProvider,
 						breakpoint: breakpointValue as BreakpointId,
 						state: state as StyleDefinitionState,
 					} );
 					if ( updated ) {
 						result = { status: 'ok', classId };
+						dispatchMcpStylesAppliedEvent( { styleValue: props } );
 					} else {
 						throw new Error( 'error modifying class' );
 					}
@@ -232,21 +186,18 @@ export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
 		name: 'manage-global-classes',
 		requiredResources: [
 			{ uri: GLOBAL_CLASSES_URI, description: 'Global classes list' },
-			{ uri: STYLE_SCHEMA_FULL_URI, description: 'Style schema resources' },
 			{ uri: BREAKPOINTS_SCHEMA_FULL_URI, description: 'Breakpoints list' },
 		],
 		description: `Create or modify global classes for reusable design-system styling. Class names must reflect purpose (e.g. heading-primary, button-cta). Create classes BEFORE applying them. Do NOT create classes for one-off styles.
 
-IMPORTANT: props must contain actual CSS property values — never pass empty objects.
-Fetch ${ STYLE_SCHEMA_FULL_URI } to get the allowed values for each property, then use them to build the props object.
+IMPORTANT: style must contain plaintext CSS rules per state — never pass empty strings.
+CSS is converted server-side in one bulk request; any declaration that cannot be converted is stored as the class custom CSS.
 
 Example — creating a flex column class:
-props.default = {
-  "display": { "$$type": "string", "value": "flex" },
-  "flex-direction": { "$$type": "string", "value": "column" }
-}
+style.default = "display: flex; flex-direction: column; gap: 1rem;"
 
-The style schema returns a JSON Schema. Extract the "value" enum to pick the right value, then construct { "$$type": "string", "value": "<picked value>" }.`,
+Example — hover state:
+style.hover = "opacity: 0.85;"`,
 		schema,
 		outputSchema,
 		handler,
@@ -259,11 +210,12 @@ type Opts = {
 	classId?: string;
 	breakpoint: BreakpointId;
 	props: Props;
+	customCss: CustomCss | null;
 	state: StyleDefinitionState;
 };
 
 async function attemptCreate( opts: Opts ) {
-	const { props, breakpoint, className, stylesProvider, state } = opts;
+	const { props, customCss, breakpoint, className, stylesProvider, state } = opts;
 	const { create, delete: deleteClass } = stylesProvider.actions;
 	if ( ! className ) {
 		throw new Error( 'Global class name is a required for creation' );
@@ -277,7 +229,7 @@ async function attemptCreate( opts: Opts ) {
 				breakpoint,
 				state: ( state as string ) === 'default' ? null : state,
 			},
-			custom_css: null,
+			custom_css: customCss,
 			props,
 		},
 	] );
@@ -291,7 +243,7 @@ async function attemptCreate( opts: Opts ) {
 }
 
 async function attemptUpdate( opts: Opts ) {
-	const { props, breakpoint, classId, stylesProvider, state } = opts;
+	const { props, customCss, breakpoint, classId, stylesProvider, state } = opts;
 	const { updateProps, update } = stylesProvider.actions;
 	if ( ! classId ) {
 		throw new Error( 'Class ID is required for modification' );
@@ -305,6 +257,7 @@ async function attemptUpdate( opts: Opts ) {
 		updateProps( {
 			id: classId,
 			props,
+			custom_css: customCss,
 			meta: {
 				breakpoint,
 				state: ( state as string ) === 'default' ? null : state,
@@ -341,4 +294,21 @@ async function attemptDelete( opts: Pick< Opts, 'classId' | 'stylesProvider' > )
 	deleteClass( classId );
 	await saveGlobalClasses( { context: 'frontend' } );
 	return true;
+}
+
+function collectNonEmptyStyleBlocks( style: InputSchema[ 'style' ] ): Record< string, StyleBlock > {
+	const blocks: Record< string, StyleBlock > = {};
+	Object.entries( style ).forEach( ( [ state, cssText ] ) => {
+		if ( cssText?.trim() ) {
+			blocks[ state ] = cssText.trim();
+		}
+	} );
+	return blocks;
+}
+
+function toStoredCustomCss( customCss: string ): CustomCss | null {
+	if ( ! customCss?.trim() ) {
+		return null;
+	}
+	return { raw: btoa( customCss ) };
 }

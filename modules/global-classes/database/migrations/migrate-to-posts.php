@@ -7,9 +7,11 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Kit_Dependency;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
 use Elementor\Modules\GlobalClasses\Global_Classes_Order;
+use Elementor\Modules\GlobalClasses\Global_Classes_Post_IDs;
 use Elementor\Modules\GlobalClasses\Global_Classes_Relations;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
+use Elementor\Modules\GlobalClasses\Utils\Kit_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,33 +24,30 @@ class Migrate_To_Posts extends Base_Migration {
 	public function up() {
 		Global_Class_Post_Type::ensure_registered();
 
-		$migrated = $this->migrate_global_classes_to_posts();
+		$active_kit = $this->get_kit();
 
-		if ( ! $migrated ) {
-			return;
+		foreach ( Kit_Utils::get_all_kit_documents() as $kit ) {
+			$migrated = $this->migrate_kit( $kit );
+
+			if ( $migrated && $active_kit && $kit->get_id() === $active_kit->get_id() ) {
+				self::run_document_tracking( $kit );
+			}
 		}
-
-		self::run_document_tracking( $this->get_kit() );
 
 		// We'll comment it out for now as we may prefer to avoid data restoration upon downgrading
 		// $this->cleanup_kit_meta();
 	}
 
-	private function migrate_global_classes_to_posts(): bool {
-		$kit = $this->get_kit();
-		if ( ! $kit ) {
-			return false;
-		}
-
+	public static function migrate_kit( Kit $kit ): bool {
 		$global_classes = self::get_aggregate_global_classes( $kit );
 
 		if ( empty( $global_classes ) || empty( $global_classes['items'] ) ) {
 			return false;
 		}
 
-		$existing_posts = $this->get_existing_class_posts();
+		$existing_order = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
-		if ( ! empty( $existing_posts ) ) {
+		if ( ! empty( $existing_order ) ) {
 			return false;
 		}
 
@@ -60,15 +59,6 @@ class Migrate_To_Posts extends Base_Migration {
 		Global_Classes_Repository::make( $kit )->put( $items, $order );
 
 		return true;
-	}
-
-	private function get_existing_class_posts(): array {
-		return get_posts( [
-			'post_type' => Global_Class_Post_Type::CPT,
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'fields' => 'ids',
-		] );
 	}
 
 	public static function get_aggregate_global_classes( ?Kit $kit = null ): array {
@@ -89,7 +79,7 @@ class Migrate_To_Posts extends Base_Migration {
 			return;
 		}
 
-		$valid_class_ids = Global_Classes_Order::make( $kit )->get_order();
+		$valid_class_ids = Global_Classes_Order::make( $kit )->set_preview( false )->get_order();
 
 		if ( empty( $valid_class_ids ) ) {
 			return;

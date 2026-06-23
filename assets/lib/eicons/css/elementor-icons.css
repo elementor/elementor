@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.49.0");
-  src: url("../fonts/eicons.eot?5.49.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.49.0") format("woff2"), url("../fonts/eicons.woff?5.49.0") format("woff"), url("../fonts/eicons.ttf?5.49.0") format("truetype"), url("../fonts/eicons.svg?5.49.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.52.0");
+  src: url("../fonts/eicons.eot?5.52.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.52.0") format("woff2"), url("../fonts/eicons.woff?5.52.0") format("woff"), url("../fonts/eicons.ttf?5.52.0") format("truetype"), url("../fonts/eicons.svg?5.52.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -2049,6 +2049,34 @@
 
 .eicon-atomic-date-picker:before {
   content: "\ebeb";
+}
+
+.eicon-upgrade-crown-full:before {
+  content: "\ef03";
+}
+
+.eicon-after:before {
+  content: "\ebfa";
+}
+
+.eicon-pagination-item:before {
+  content: "\ebfb";
+}
+
+.eicon-before:before {
+  content: "\ebfc";
+}
+
+.eicon-pagination:before {
+  content: "\ebfd";
+}
+
+.eicon-loop-item:before {
+  content: "\ec00";
+}
+
+.eicon-loop-widget:before {
+  content: "\ec01";
 }
 
 .eicon-eye:before {

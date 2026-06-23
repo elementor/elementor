@@ -386,7 +386,7 @@ class Tools extends Settings_Page {
 										esc_html__( 'Reinstall', 'elementor' ),
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
 									),
-									'desc' => $this->get_warning_span( esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) ),
+									'desc' => $this->get_warning_span( esc_html__( 'Warning: Please back up your database before making the rollback.', 'elementor' ) ),
 								],
 							],
 						],

@@ -29,10 +29,6 @@ class Global_Classes_Repository {
 			'frontend' => self::CONTEXT_FRONTEND,
 			'preview' => self::CONTEXT_PREVIEW,
 		],
-		'meta_key' => [
-			'frontend' => self::META_KEY_FRONTEND,
-			'preview' => self::META_KEY_PREVIEW,
-		],
 	];
 
 	private ?Global_Classes $cache = null;
@@ -71,11 +67,13 @@ class Global_Classes_Repository {
 	}
 
 	public function get_order(): array {
-		return Global_Classes_Order::make( $this->get_kit() )->get_order();
+		return Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() )->get_order();
 	}
 
 	public function update_order_and_labels( array $order, array $new_labels ): void {
-		Global_Classes_Order::make( $this->get_kit() )->set_order( $order );
+		Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->set_order( $order );
 
 		$labels = $this->labels();
 		$existing_labels = $labels->get_labels();
@@ -86,6 +84,14 @@ class Global_Classes_Repository {
 
 		$labels->set_labels( $existing_labels );
 
+		if ( ! $this->is_preview() ) {
+			Global_Classes_Order::make( $this->get_kit() )
+				->set_preview( true )
+				->set_order( $order );
+
+			$this->clear_preview_labels_for_ids( array_keys( $new_labels ) );
+		}
+
 		$this->cache = null;
 	}
 
@@ -94,7 +100,7 @@ class Global_Classes_Repository {
 	}
 
 	public function get( string $class_id ): ?array {
-		$post = Global_Class_Post::find_by_class_id( $class_id, $this->is_preview() );
+		$post = Global_Class_Post::find_by_class_id( $class_id, $this->is_preview(), $this->get_kit() );
 
 		return $post ? $post->to_array() : null;
 	}
@@ -136,14 +142,19 @@ class Global_Classes_Repository {
 			}
 		}
 
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $to_delete );
+
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $touched_items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 		$labels->set_labels( $final_label_map );
 
 		if ( ! $is_preview ) {
 			Global_Classes_Sync_Map::make( $this->get_kit() )->apply_changes( $touched_items, $to_delete );
+			Global_Classes_Order::make( $this->get_kit() )
+				->set_preview( true )
+				->set_order( $order );
 
 			$this->bulk_clear_preview_meta( array_values( $to_update ) );
 			$this->clear_preview_labels_for_ids( array_merge(
@@ -161,7 +172,16 @@ class Global_Classes_Repository {
 			'deleted' => $to_delete,
 			'modified' => $to_update,
 			'order' => $order_changed,
+			'affected_post_ids' => $affected_post_ids,
 		] );
+
+		if ( ! empty( $to_delete ) && ! $is_preview ) {
+			do_action(
+				'elementor/global_classes/cleanup',
+				$to_delete,
+				$affected_post_ids
+			);
+		}
 	}
 
 	public function each_item( callable $cb, bool $skip_migration = false, int $batch_size = self::READ_BATCH_SIZE ): void {
@@ -179,29 +199,67 @@ class Global_Classes_Repository {
 	}
 
 	public function put( array $items, array $order ) {
-		$current_ids = Global_Classes_Order::make( $this->get_kit() )->get_order();
+		$current_ids = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
 
 		$new_ids = array_keys( $items );
-
 		$current_order_string = implode( ';', $current_ids );
+		$deleted_class_ids = array_values( array_diff( $current_ids, $new_ids ) );
 
 		$changes = [
 			'added' => array_values( array_diff( $new_ids, $current_ids ) ),
-			'deleted' => array_values( array_diff( $current_ids, $new_ids ) ),
+			'deleted' => $deleted_class_ids,
 			'modified' => array_values( array_intersect( $new_ids, $current_ids ) ),
 			'order' => implode( ';', $order ) !== $current_order_string,
 		];
+
+		/**
+		 * We collect all affected ids before the put_to_posts execution
+		 * as the update mechanism would handle the Global_Classes_Relations as it iterates over the update batches
+		 * So once we get to the cleanup phase - we would no longer have the relevant relations
+		 *
+		 * On top of that - by collecting all affected posts in advance, means we would iterate over each document's elements only once
+		 * (as the alternative would be to trigger the cleanup per removed class, but that means we may end up iterating over the same document N times, if all N styles are used in it)
+		 */
+		$affected_post_ids = $this->get_posts_affected_by_deletion( $deleted_class_ids );
 
 		$this->put_to_posts( $items, $order, $current_ids );
 
 		$this->cache = null;
 
+		$changes['affected_post_ids'] = $affected_post_ids;
+
 		do_action( 'elementor/global_classes/update', $this->get_context_key( 'event' ), $changes );
+
+		if ( ! empty( $deleted_class_ids ) && ! $this->is_preview() ) {
+			do_action(
+				'elementor/global_classes/cleanup',
+				$deleted_class_ids,
+				$affected_post_ids
+			);
+		}
+	}
+
+	private function get_posts_affected_by_deletion( array $deleted_class_ids ): array {
+		if ( empty( $deleted_class_ids ) ) {
+			return [];
+		}
+
+		$relations = new Global_Classes_Relations();
+		$post_ids = [];
+
+		foreach ( $deleted_class_ids as $class_id ) {
+			$post_ids[] = $relations->get_posts_by_style( $class_id );
+		}
+
+		return array_values( array_unique( array_merge( ...$post_ids ) ) );
 	}
 
 	private function all_from_posts(): Global_Classes {
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
-		$order = $classes_order->get_order();
+		$order = Global_Classes_Order::make( $this->get_kit() )
+			->set_preview( $this->is_preview() )
+			->get_order();
 
 		if ( empty( $order ) ) {
 			return Global_Classes::make( [], [] );
@@ -229,7 +287,7 @@ class Global_Classes_Repository {
 
 		$this->persist_class_batch_mutations( $to_delete, $to_create, $to_update, $items, $is_preview );
 
-		$classes_order = Global_Classes_Order::make( $this->get_kit() );
+		$classes_order = Global_Classes_Order::make( $this->get_kit() )->set_preview( $this->is_preview() );
 		$classes_order->set_order( $order );
 
 		$label_map = [];
@@ -381,7 +439,7 @@ class Global_Classes_Repository {
 		$order = $this->get_order();
 
 		$this->each_class_id_batch( $order, function ( string $class_id ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id );
+			$post = Global_Class_Post::find_by_class_id( $class_id, false, $this->get_kit() );
 
 			if ( $post ) {
 				$post->delete();

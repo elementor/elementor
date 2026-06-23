@@ -1,8 +1,16 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type * as React from 'react';
 
 import type { ConnectAuth } from '../connect-auth-schema';
 import { deployWebsite } from '../deploy';
+import { resolveEditorRedirectPageId } from '../deploy/can-redirect-after-deploy';
+import {
+	clearPendingEditorRedirect,
+	completeEditorRedirectOnDeployAcknowledge,
+	type PendingEditorRedirect,
+	scheduleEditorRedirectAfterDeploy,
+} from '../deploy/deploy-editor-redirect';
+import type { DeployPayload } from '../deploy/types';
 import { getElementorAiCurrentContext, getSiteBuilderConfig } from '../site-builder-config';
 
 export type SiteBuilderParams = {
@@ -41,11 +49,27 @@ function sendReferrerInfo(
 	);
 }
 
-async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
+async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ): Promise< string | null > {
 	const origin = event.origin || '*';
+	const payload = event.data?.payload as DeployPayload | undefined;
+	const isIncremental = payload?.mode === 'incremental';
+
+	if ( ! payload ) {
+		iframe?.contentWindow?.postMessage(
+			{
+				type: 'site-planner/deploy-website/result',
+				payload: {
+					status: 'error',
+					error: 'Missing deploy payload',
+				},
+			},
+			origin
+		);
+		return null;
+	}
 
 	try {
-		const result = await deployWebsite( event.data.payload );
+		const result = await deployWebsite( payload );
 
 		iframe?.contentWindow?.postMessage(
 			{
@@ -55,9 +79,19 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			origin
 		);
 
-		if ( result.homePageId ) {
-			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
+		const editorPageId = resolveEditorRedirectPageId( {
+			isIncremental,
+			homePageId: result.homePageId,
+			pageIdMap: result.pageIdMap,
+			pages: payload.pages,
+			errors: result.errors,
+		} );
+
+		if ( editorPageId ) {
+			return `/wp-admin/post.php?post=${ editorPageId }&action=elementor`;
 		}
+
+		return null;
 	} catch ( err ) {
 		iframe?.contentWindow?.postMessage(
 			{
@@ -69,6 +103,8 @@ async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEve
 			},
 			origin
 		);
+
+		return null;
 	}
 }
 
@@ -85,6 +121,8 @@ export function useSiteBuilderIframeMessaging( {
 	siteBuilderParams,
 	connectAuth,
 }: UseSiteBuilderIframeMessagingArgs ): void {
+	const pendingRedirectRef = useRef< PendingEditorRedirect | null >( null );
+
 	const allowedOrigin = useMemo( () => {
 		try {
 			return new URL( iframeUrl ).origin;
@@ -118,7 +156,20 @@ export function useSiteBuilderIframeMessaging( {
 			}
 
 			if ( type === 'site-planner/deploy-website' ) {
-				await handleDeploy( iframeRef.current, event );
+				clearPendingEditorRedirect( pendingRedirectRef.current );
+				pendingRedirectRef.current = null;
+
+				const redirectUrl = await handleDeploy( iframeRef.current, event );
+				if ( redirectUrl ) {
+					pendingRedirectRef.current = scheduleEditorRedirectAfterDeploy( redirectUrl );
+				}
+				return;
+			}
+
+			if ( type === 'site-planner/deploy-website/acknowledge' ) {
+				completeEditorRedirectOnDeployAcknowledge( pendingRedirectRef.current );
+				pendingRedirectRef.current = null;
+				return;
 			}
 
 			if ( type === 'element-selector/close' ) {
@@ -135,4 +186,8 @@ export function useSiteBuilderIframeMessaging( {
 		window.addEventListener( 'message', handleMessage );
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
+
+	useEffect( () => {
+		return () => clearPendingEditorRedirect( pendingRedirectRef.current );
+	}, [] );
 }

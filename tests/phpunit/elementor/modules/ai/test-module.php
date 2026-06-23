@@ -193,4 +193,28 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 		$this->assertFalse( $module->is_ai_enabled() );
 	}
+
+	public function test_add_create_with_ai_banner_to_homescreen__returns_null_when_site_builder_experiment_active() {
+		$this->ensure_site_builder_experiment_registered();
+		update_option( 'elementor_experiment-site-builder', 'active' );
+
+		$module = new Module();
+		$result = $module->add_create_with_ai_banner_to_homescreen( [] );
+
+		$this->assertNull( $result['create_with_ai'] );
+	}
+
+	private function ensure_site_builder_experiment_registered() {
+		if ( Plugin::$instance->experiments->get_features( 'site-builder' ) ) {
+			return;
+		}
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'site-builder',
+			'title' => 'Site Builder',
+			'description' => 'Enable Site Builder.',
+			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_DEV,
+			'hidden' => true,
+		] );
+	}
 }

@@ -6,18 +6,28 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
-import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
+import { type CustomCss, getStylesSchema, getVariantByMeta } from '@elementor/editor-styles';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
+import { mergeCustomCssText, readStoredCustomCssText } from './merge-custom-css';
+import { resolveCanonicalPropName } from './resolve-canonical-prop-name';
+import { DYNAMIC_PROP_TYPE_KEY, dynamicTagLLMResolver } from './resolve-dynamic-tag';
+
 // TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
+const LOCAL_STYLE_META = {
+	breakpoint: 'desktop',
+	state: null,
+} as const;
+type CustomCssWriteMode = 'replace' | 'merge-with-stored';
 type OwnParams = {
 	elementId: string;
 	elementType: string;
 	propertyName: string;
 	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
+	customCssWriteMode?: CustomCssWriteMode;
 };
 
 export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
@@ -26,7 +36,10 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
 		.Utils as typeof IUtils;
 	return Schema.adjustLlmPropValueSchema( value as PropValue, {
 		forceKey,
-		transformers: Utils.globalVariablesLLMResolvers,
+		transformers: {
+			...Utils.globalVariablesLLMResolvers,
+			[ DYNAMIC_PROP_TYPE_KEY ]: dynamicTagLLMResolver,
+		},
 	} );
 }
 
@@ -35,7 +48,11 @@ export function resolvePropValue( value: unknown, forceKey?: string ): PropValue
  * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
  */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
-	const { elementId, propertyName, propertyValue, elementType } = params;
+	const { elementId, propertyValue, elementType, customCssWriteMode = 'replace' } = params;
+	const propertyName =
+		params.propertyName === '_styles'
+			? params.propertyName
+			: resolveCanonicalPropName( elementType, params.propertyName );
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;
@@ -49,9 +66,16 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
 				}
+				if ( val === null ) {
+					return [ key, null ];
+				}
 				return [ key, resolvePropValue( val, propKey ) ];
 			} )
 		);
+		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
+		const existingCustomCssText = localStyle
+			? readStoredCustomCssText( getVariantByMeta( localStyle, LOCAL_STYLE_META )?.custom_css?.raw )
+			: '';
 		let customCss: CustomCss | undefined;
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
@@ -63,9 +87,17 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				if ( ! customCssValue ) {
 					customCssValue = '';
 				}
-				customCss = {
-					raw: btoa( customCssValue as string ),
-				};
+				const customCssText =
+					customCssWriteMode === 'merge-with-stored'
+						? mergeCustomCssText( existingCustomCssText, customCssValue as string )
+						: String( customCssValue );
+				if ( customCssText ) {
+					customCss = {
+						raw: btoa( customCssText ),
+					};
+				} else {
+					customCss = { raw: btoa( '' ) };
+				}
 				return;
 			}
 			const isSupported = !! propertyRawSchema;
@@ -83,7 +115,6 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			}
 		} );
 		delete transformedStyleValues.custom_css;
-		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
 			createElementStyle( {
 				elementId,

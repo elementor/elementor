@@ -15,10 +15,16 @@ inputs:
 runs:
   using: "composite"
   steps:
+      - name: Prepare Slack payload
+        shell: bash
+        env:
+          PAYLOAD: ${{ inputs.PAYLOAD }}
+          SLACK_CHANNEL: ${{ inputs.SLACK_TAG_CHANNELS }}
+        run: |
+          echo "$PAYLOAD" | jq --arg channel "$SLACK_CHANNEL" '. + {channel: $channel}' > "${{ runner.temp }}/slack-payload.json"
       - name: Post to a Slack channel
         uses: slackapi/slack-github-action@v3
         with:
-          channel-id: ${{ inputs.SLACK_TAG_CHANNELS }}
-          payload: ${{ inputs.PAYLOAD }}
-        env:
-          SLACK_BOT_TOKEN: ${{ inputs.SLACK_BOT_TOKEN }}
+          method: chat.postMessage
+          token: ${{ inputs.SLACK_BOT_TOKEN }}
+          payload-file-path: ${{ runner.temp }}/slack-payload.json

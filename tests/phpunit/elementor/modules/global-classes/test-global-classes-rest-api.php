@@ -556,7 +556,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( [ 'items' ], array_keys( $response->get_data()['data']['params'] ) );
 	}
 
-	public function test_put__fails_when_order_contains_non_existing_id() {
+	public function test_put__strips_non_existing_ids_from_order() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -571,7 +571,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 			'order' => [ 'g-1', 'g-2' ],
 			'changes' => [
-				'added' => [ 'g-1', 'g-2' ],
+				'added' => [ 'g-1' ],
 				'deleted' => [],
 				'modified' => [],
 			]
@@ -580,8 +580,17 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+
+		$this->assertSame( [
+			'items' => [
+				'g-1' => $class,
+			],
+			'order' => [ 'g-1' ],
+		], $classes );
 	}
 
 	/**
@@ -636,7 +645,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	 * }
 	 */
 
-	public function test_put__fails_when_order_is_missing_ids() {
+	public function test_put__appends_missing_ids_to_order() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -662,8 +671,18 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert.
-		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
+		$classes = $this->get_repository_snapshot( Global_Classes_Repository::CONTEXT_FRONTEND );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+
+		$this->assertEquals( [
+			'items' => [
+				'g-1' => $class_1,
+				'g-2' => $class_2,
+			],
+			'order' => [ 'g-1', 'g-2' ],
+		], $classes );
 	}
 
 	public function test_put__skips_order_duplications() {

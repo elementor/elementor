@@ -1,63 +1,52 @@
 import apiFetch from '@wordpress/api-fetch';
 
-import type { DeployMenuItem, DeployPayload, WpMenu } from '../types';
+import type { CreatedMenus, DeployMenuItem, DeployPayload, WpMenu } from '../types';
+import { fetchMenuLocationSlugs, isInvalidMenuLocationError, resolveMenuLocation } from './menu-locations';
 
-type MenuLocationEntry = {
+type CreateMenuData = {
 	name: string;
-	description: string;
+	auto_add: boolean;
+	locations?: string[];
 };
 
-type MenuLocationsResponse = Record< string, MenuLocationEntry >;
-
-const matchLocation = ( entries: MenuLocationEntry[], pattern: RegExp ): string => {
-	const match = entries.find(
-		( entry ) => pattern.test( entry.name ) || pattern.test( entry.description )
-	);
-
-	return match?.name ?? '';
+type CreateMenuArgs = {
+	name: string;
+	items: DeployMenuItem[];
+	pageIdMap: Record< string, number >;
+	locationCandidates: string[];
+	fallbackPattern?: RegExp;
 };
 
-export const resolveMenuLocations = async (): Promise< { header: string; footer: string } > => {
-	try {
-		const locations = await apiFetch< MenuLocationsResponse >( {
-			path: '/wp/v2/menu-locations',
-		} );
-
-		const entries = Object.values( locations ?? {} );
-
-		if ( ! entries.length ) {
-			return { header: '', footer: '' };
-		}
-
-		const header =
-			matchLocation( entries, /header|primary|menu-1/i ) || entries[ 0 ]?.name || '';
-		const footer =
-			matchLocation( entries, /footer|secondary|menu-2/i ) ||
-			entries[ 1 ]?.name ||
-			entries[ 0 ]?.name ||
-			'';
-
-		return { header, footer };
-	} catch {
-		return { header: '', footer: '' };
-	}
-};
-
-async function createMenu(
-	name: string,
-	items: DeployMenuItem[],
-	pageIdMap: Record< string, number >,
-	location: string
-) {
-	const menu = await apiFetch< WpMenu >( {
+async function postMenu( data: CreateMenuData ): Promise< WpMenu > {
+	return apiFetch< WpMenu >( {
 		path: '/wp/v2/menus',
 		method: 'POST',
-		data: {
-			name,
-			auto_add: false,
-			...( location ? { locations: [ location ] } : {} ),
-		},
+		data,
 	} );
+}
+
+async function createMenu( args: CreateMenuArgs ): Promise< WpMenu > {
+	const { name, items, pageIdMap, locationCandidates, fallbackPattern } = args;
+
+	const availableSlugs = await fetchMenuLocationSlugs();
+	const location = resolveMenuLocation( availableSlugs, locationCandidates, fallbackPattern );
+
+	const baseData: CreateMenuData = {
+		name,
+		auto_add: false,
+	};
+
+	let menu: WpMenu;
+
+	try {
+		menu = await postMenu( location ? { ...baseData, locations: [ location ] } : baseData );
+	} catch ( error ) {
+		if ( ! location || ! isInvalidMenuLocationError( error ) ) {
+			throw error;
+		}
+
+		menu = await postMenu( baseData );
+	}
 
 	const menuItemPromises = items.map( ( item, index ) => {
 		const objectId = pageIdMap[ item.pageId ];
@@ -83,20 +72,35 @@ async function createMenu(
 	} );
 
 	await Promise.all( menuItemPromises );
+
+	return menu;
 }
 
-export async function createMenus( menus: DeployPayload[ 'menus' ], pageIdMap: Record< string, number > ) {
-	if ( ! menus ) {
-		return;
+export async function createMenus(
+	menus: DeployPayload[ 'menus' ],
+	pageIdMap: Record< string, number >
+): Promise< CreatedMenus > {
+	const created: CreatedMenus = {};
+
+	if ( menus?.header?.length ) {
+		created.header = await createMenu( {
+			name: `Header-${ Date.now() }`,
+			items: menus.header,
+			pageIdMap,
+			locationCandidates: [ 'header', 'menu-1', 'main', 'navigation' ],
+			fallbackPattern: /header|main|navigation/i,
+		} );
 	}
 
-	const { header: headerLocation, footer: footerLocation } = await resolveMenuLocations();
-
-	if ( menus.header?.length ) {
-		await createMenu( `Header-${ Date.now() }`, menus.header, pageIdMap, headerLocation );
+	if ( menus?.footer?.length ) {
+		created.footer = await createMenu( {
+			name: `Footer-${ Date.now() }`,
+			items: menus.footer,
+			pageIdMap,
+			locationCandidates: [ 'footer', 'footer-menu', 'secondary' ],
+			fallbackPattern: /footer/i,
+		} );
 	}
 
-	if ( menus.footer?.length ) {
-		await createMenu( `Footer-${ Date.now() }`, menus.footer, pageIdMap, footerLocation );
-	}
+	return created;
 }

@@ -363,6 +363,13 @@ class Global_Classes_REST_API {
 
 		$final_item_ids = array_keys( $this->merge_touched_with_existing_labels( $all_label_by_id, $touched_items, $deleted_ids ) );
 
+		$final_item_ids_set = array_flip( $final_item_ids );
+		$order_set = array_flip( $order );
+
+		$order = array_values( array_filter( $order, fn( $id ) => isset( $final_item_ids_set[ $id ] ) ) );
+		$missing_from_order = array_values( array_filter( $final_item_ids, fn( $id ) => ! isset( $order_set[ $id ] ) ) );
+		$order = array_merge( $order, $missing_from_order );
+
 		$order_result = $parser->parse_order( $order, $final_item_ids );
 
 		if ( ! $order_result->is_valid() ) {

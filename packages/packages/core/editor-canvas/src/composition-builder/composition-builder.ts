@@ -12,7 +12,7 @@ import {
 import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
-import { validateInput } from '../mcp/utils/validate-input';
+import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 
@@ -183,7 +183,6 @@ export class CompositionBuilder {
 	private async applyProperties() {
 		const configErrors: string[] = [];
 		const styleErrors: string[] = [];
-		const invalidStyles: Record< string, string[] > = {};
 
 		const allConfigIds = new Set( [
 			...Object.keys( this.elementConfig ),
@@ -223,19 +222,14 @@ export class CompositionBuilder {
 			}
 
 			const styleConfig = this.elementStylesConfig[ configId ];
+			const hasInvalidStyles = false;
 			if ( styleConfig ) {
 				const validStylesPropValues: Record< string, AnyValue > = {};
 				for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
-					const { valid, errors: validationErrors } = validateInput.validateStyles( {
-						[ styleName ]: stylePropValue,
-					} );
-					if ( ! valid ) {
-						if ( styleConfig.$intention ) {
-							invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
-							invalidStyles[ element.id ].push( styleName );
-						}
-						styleErrors.push( ...( validationErrors || [] ) );
+					if ( styleName === '$intention' ) {
+						continue;
 					} else {
+						// skipping actual validation - properies comes from the server
 						validStylesPropValues[ styleName ] = stylePropValue;
 					}
 				}
@@ -253,13 +247,15 @@ export class CompositionBuilder {
 				}
 			}
 
-			const customCSS = this.elementCustomCSS[ configId ];
-			if ( customCSS ) {
+			const intentionCss = typeof styleConfig?.$intention === 'string' ? styleConfig.$intention.trim() : '';
+			const fallbackCss = hasInvalidStyles && intentionCss ? intentionCss : '';
+			const mergedCustomCss = mergeCustomCssText( this.elementCustomCSS[ configId ], fallbackCss );
+			if ( mergedCustomCss ) {
 				try {
 					this.api.doUpdateElementProperty( {
 						elementId: element.id,
 						propertyName: '_styles',
-						propertyValue: { custom_css: customCSS },
+						propertyValue: { custom_css: mergedCustomCss },
 						elementType: node.tagName,
 					} );
 				} catch ( cssErr ) {
@@ -270,7 +266,7 @@ export class CompositionBuilder {
 			await this.awaitViewRender( element );
 		}
 
-		return { configErrors, styleErrors, invalidStyles };
+		return { configErrors, styleErrors };
 	}
 
 	async build( rootContainer: V1Element ) {
@@ -322,12 +318,20 @@ export class CompositionBuilder {
 			}
 		}
 
-		const { configErrors, styleErrors, invalidStyles } = await this.applyProperties();
+		const { configErrors, styleErrors } = await this.applyProperties();
+
+		if ( typeof window !== 'undefined' ) {
+			const targetWindow = window.top || window;
+			targetWindow.dispatchEvent(
+				new CustomEvent( 'elementor/composition/built', {
+					detail: { rootContainers: this.rootContainers.map( ( c ) => c.id ) },
+				} )
+			);
+		}
 
 		return {
 			configErrors,
 			styleErrors,
-			invalidStyles,
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}

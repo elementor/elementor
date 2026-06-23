@@ -1,6 +1,6 @@
 {
   "name": "@elementor/elementor-v3-mcp",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -42,9 +42,9 @@
     "tsup": "^8.3.5"
   },
   "dependencies": {
-    "@elementor/editor-mcp": "4.2.0",
-    "@elementor/elementor-mcp-common": "4.2.0",
-    "@elementor/schema": "4.2.0",
+    "@elementor/editor-mcp": "4.3.0",
+    "@elementor/elementor-mcp-common": "4.3.0",
+    "@elementor/schema": "4.3.0",
     "@modelcontextprotocol/sdk": "1.27.1"
   }
 }
