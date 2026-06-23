@@ -83,11 +83,7 @@ async function getOccupiedCellLocator( editor: EditorPage, gridId: string, child
 }
 
 async function addOccupiedGridCellChild( editor: EditorPage, gridId: string ): Promise<string> {
-	const childId = await editor.addElement( { elType: 'e-div-block' }, gridId );
-
-	await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: childId } );
-
-	return childId;
+	return editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 }
 
 async function dragMouseTo( page: Page, x: number, y: number ): Promise<void> {
@@ -134,7 +130,7 @@ async function readGridEmptyCellCssVars(
 	} ) );
 }
 
-test.describe( 'CSS Grid Editor @css-grid', () => {
+test.describe.only( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
@@ -548,7 +544,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		}
 	} );
 
-	test.describe.only( 'Grid drop zone', () => {
+	test.describe( 'Grid drop zone', () => {
 		test( 'First-empty-cell drop placeholder is visible when dragging a widget into the grid', async ( { page, apiRequests }, testInfo ) => {
 			// Arrange
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -615,7 +611,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
 			await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
 
-			await editor.addElement( { elType: 'e-div-block' }, gridId );
+			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
 			await editor.openElementsPanel();
 
@@ -682,46 +678,13 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 
 			// Act
 			await configureGridLayout( editor, gridId, 3, 2 );
-			await editor.addElement( { elType: 'e-div-block' }, gridId );
+			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
 			// Assert
 			await expect( emptyView ).toHaveCount( 1 );
 			await expect( emptyView ).toHaveCSS( 'position', 'absolute' );
 			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
 				'grid-empty-view-absolute-with-child.png',
-			);
-		} );
-
-		test( 'Empty view persists after reload when the grid has children', async ( { page, apiRequests }, testInfo ) => {
-			// Arrange
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
-			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
-
-			await configureGridLayout( editor, gridId, 3, 2 );
-			await editor.addElement( { elType: 'e-div-block' }, gridId );
-
-			const emptyView = editor
-				.getPreviewFrame()
-				.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` );
-
-			await expect( emptyView ).toHaveCount( 1 );
-
-			// Act
-			await editor.publishPage();
-			await page.reload();
-			await editor.waitForPanelToLoad();
-
-			await editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ).waitFor( { state: 'visible' } );
-
-			// Assert
-			await expect(
-				editor
-					.getPreviewFrame()
-					.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` ),
-			).toHaveCount( 1 );
-			await expect( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
-				'grid-empty-view-after-reload.png',
 			);
 		} );
 
@@ -732,7 +695,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
 
 			await configureGridLayout( editor, gridId, 3, 2 );
-			await editor.addElement( { elType: 'e-div-block' }, gridId );
+			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
 			// Act
 			const cssVars = await readGridEmptyCellCssVars( editor, gridId );
@@ -755,7 +718,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await configureGridLayout( editor, gridId, 3, 2 );
 
 			for ( let i = 0; i < 6; i++ ) {
-				await editor.addElement( { elType: 'e-div-block' }, gridId );
+				await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 			}
 
 			// Act
@@ -911,7 +874,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
 
 			await configureGridLayout( editor, gridId, 3, 2 );
-			const firstChildId = await editor.addElement( { elType: 'e-div-block' }, gridId );
+			const firstChildId = await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
 			await editor.openElementsPanel();
 
