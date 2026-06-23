@@ -24,8 +24,10 @@ jobs:
       contents: write 
 
     steps:
-      - name: Checkout for local actions
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install Node.js
         uses: actions/setup-node@v6
@@ -40,11 +42,8 @@ jobs:
         with:
           version: ${{ inputs.version }}
 
-      - name: Checkout branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.handle-version-input.outputs.checkout_branch }}
-          fetch-depth: 0
+      - name: Switch to release branch
+        run: git switch ${{ steps.handle-version-input.outputs.checkout_branch }}
 
       - name: Config git user
         run: |
