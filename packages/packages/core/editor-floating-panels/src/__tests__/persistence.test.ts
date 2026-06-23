@@ -47,4 +47,22 @@ describe( 'persistence', () => {
 		expect( decoded[ 'audit-panel' ] ).toBeUndefined();
 		expect( decoded[ 'valid-panel' ] ).toBeDefined();
 	} );
+
+	it( 'drops panel entries with shallow position or size objects', () => {
+		// Arrange.
+		const raw = JSON.stringify( {
+			'shallow-panel': {
+				isOpen: true,
+				zIndex: 1,
+				size: {},
+				position: {},
+			},
+		} );
+
+		// Act.
+		const decoded = decodePersistedState( raw );
+
+		// Assert.
+		expect( decoded[ 'shallow-panel' ] ).toBeUndefined();
+	} );
 } );
