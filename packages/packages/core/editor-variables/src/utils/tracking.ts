@@ -1,26 +1,44 @@
 import { getMixpanel } from '@elementor/events';
 
-type VariableEventData = {
+export type VariableEventData = {
 	varType: string;
-	controlPath: string;
-	action: 'open' | 'add' | 'connect' | 'save';
+	controlPath?: string;
+	action: 'open' | 'add' | 'connect' | 'save' | 'update';
+	executedBy?: 'mcp_tool' | 'user';
 };
 
-export const trackVariableEvent = ( { varType, controlPath, action }: VariableEventData ) => {
+export const trackVariableEvent = ( { varType, controlPath, action, executedBy }: VariableEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
 	}
 
 	const name = config.names.variables[ action ];
-	dispatchEvent?.( name, {
+
+	let eventData: Record< string, string > = {
+		var_type: varType,
+		action_type: name,
+	};
+
+	if ( executedBy ) {
+		eventData.executed_by = executedBy;
+	}
+
+	const defaultLocationInfo = {
 		location: config?.locations?.variables || '',
 		secondaryLocation: config?.secondaryLocations?.variablesPopover || '',
 		trigger: config?.triggers?.click || '',
-		var_type: varType,
-		control_path: controlPath,
-		action_type: name,
-	} );
+	};
+
+	if ( ! executedBy || executedBy !== 'mcp_tool' ) {
+		eventData = { ...defaultLocationInfo, ...eventData };
+	}
+
+	if ( controlPath ) {
+		eventData.control_path = controlPath;
+	}
+
+	dispatchEvent?.( name, eventData );
 };
 
 export type VariablesManagerOpenSource = 'vars-popover' | 'system-panel';
