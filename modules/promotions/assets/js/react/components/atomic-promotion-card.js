@@ -1,4 +1,4 @@
-import Lottie from 'lottie-react';
+import PropTypes from 'prop-types';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Box,
@@ -9,33 +9,25 @@ import {
 	Typography,
 } from '@elementor/ui';
 
-import * as animationData from '../assets/atomic-form-animation.json';
+import { AtomicPromotionMedia } from '../atomic-promotion-media';
 
-const AtomicFormPromotionCard = ( props ) => {
-	const { title, content, ctaText } = props.promotionData ?? {};
+const CARD_WIDTH = 296;
+
+const AtomicPromotionCard = ( { doClose, promotionData } ) => {
+	const { title, content, ctaText, ctaUrl, image, animationData } = promotionData ?? {};
 
 	return (
-		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ props.doClose }>
-			<Box sx={ { width: 296 } }>
+		<ClickAwayListener disableReactTree={ true } mouseEvent="onMouseDown" touchEvent="onTouchStart" onClickAway={ doClose }>
+			<Box sx={ { width: CARD_WIDTH } }>
 				<Stack direction="row" alignItems="center" py={ 1 } px={ 2 }>
 					<Typography variant="subtitle2">{ title }</Typography>
 					<CloseButton edge="end" sx={ { ml: 'auto' } } slotProps={ {
 						icon: {
 							fontSize: 'small',
 						},
-					} } onClick={ props.doClose } />
+					} } onClick={ doClose } />
 				</Stack>
-				<Box sx={ { height: 150, width: '100%', overflow: 'hidden' } }>
-					<Lottie
-						animationData={ animationData }
-						loop={ true }
-						autoplay={ true }
-						rendererSettings={ {
-							preserveAspectRatio: 'xMidYMid slice',
-						} }
-						style={ { width: '100%', height: '100%' } }
-					/>
-				</Box>
+				<AtomicPromotionMedia image={ image } animationData={ animationData } />
 				<Stack px={ 2 }>
 					<Typography variant="body2" color="secondary" sx={ { pt: 1.5, pb: 1 } }>
 						{ content }
@@ -47,7 +39,7 @@ const AtomicFormPromotionCard = ( props ) => {
 						size="small"
 						color="promotion"
 						startIcon={ <CrownFilledIcon /> }
-						href={ props.ctaUrl }
+						href={ ctaUrl }
 						target="_blank"
 						rel="noopener noreferrer"
 					>{ ctaText }</Button>
@@ -57,10 +49,9 @@ const AtomicFormPromotionCard = ( props ) => {
 	);
 };
 
-AtomicFormPromotionCard.propTypes = {
+AtomicPromotionCard.propTypes = {
 	doClose: PropTypes.func,
 	promotionData: PropTypes.object,
-	ctaUrl: PropTypes.string,
 };
 
-export default AtomicFormPromotionCard;
+export default AtomicPromotionCard;

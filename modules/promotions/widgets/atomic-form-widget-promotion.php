@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Promotions\Widgets;
 
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,6 +29,7 @@ class Atomic_Form_Widget_Promotion {
 
 		$settings['atomicWidgetPromotions'][] = [
 			'type' => 'atomic-form',
+			'cardType' => 'atomic',
 			'widgets' => $this->get_widgets(),
 			'content' => $this->get_promotion_content(),
 		];
@@ -83,6 +83,7 @@ class Atomic_Form_Widget_Promotion {
 			'title' => __( 'Atomic form', 'elementor' ),
 			'content' => __( 'Design fully customized forms to capture leads without compromising on style.', 'elementor' ),
 			'ctaText' => __( 'Upgrade now', 'elementor' ),
+			'animation' => 'atomic-form-animation',
 			'widgetCtaUrl' => 'https://go.elementor.com/go-pro-atomic-form-modal/',
 			'sectionCtaUrl' => 'https://go.elementor.com/go-pro-atomic-form-section/',
 		];
