@@ -182,4 +182,3 @@ class Theme_Builder_Promotion_Detections {
 		return ! empty( $query->posts );
 	}
 }
-
