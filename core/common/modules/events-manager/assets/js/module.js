@@ -75,25 +75,28 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		if ( ! this.trackingEnabled ) {
-			this.enableTracking();
+		try {
+			if ( ! this.trackingEnabled ) {
+				this.enableTracking();
+			}
+
+			const eventData = {
+				user_id: elementorCommon.config.editor_events?.user_id || null,
+				user_roles: elementorCommon.config.library_connect?.user_roles || [],
+				subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
+				user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
+				url: elementorCommon.config.editor_events?.site_url,
+				wp_version: elementorCommon.config.editor_events?.wp_version,
+				client_id: elementorCommon.config.editor_events?.site_key,
+				app_version: elementorCommon.config.editor_events?.elementor_version,
+				site_language: elementorCommon.config.editor_events?.site_language,
+				experiments: this.availableExperiments,
+				...data,
+			};
+
+			mixpanelInstance.track( name, eventData, options );
+		} catch {
 		}
-
-		const eventData = {
-			user_id: elementorCommon.config.editor_events?.user_id || null,
-			user_roles: elementorCommon.config.library_connect?.user_roles || [],
-			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
-			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
-			url: elementorCommon.config.editor_events?.site_url,
-			wp_version: elementorCommon.config.editor_events?.wp_version,
-			client_id: elementorCommon.config.editor_events?.site_key,
-			app_version: elementorCommon.config.editor_events?.elementor_version,
-			site_language: elementorCommon.config.editor_events?.site_language,
-			experiments: this.availableExperiments,
-			...data,
-		};
-
-		mixpanelInstance.track( name, eventData, options );
 	}
 
 	async featureFlagIsActive( flagName ) {
