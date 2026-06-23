@@ -12,15 +12,16 @@ export type Source = ExecutedBy;
 
 // TODO: Remove `source` parameter in version 4.4.0 - it's replaced by `executedBy`, but pro's older versions will still send `source`
 // so we keep both for backward compatibility
-type ExecutedByParam = 
-	{
-		executedBy: ExecutedBy;
-		source?: never;
-	} | {
-		/** @deprecated since 4.2.1 - use `executedBy` instead */
-		source: ExecutedBy;
-		executedBy?: never;
-	}
+type ExecutedByParam =
+	| {
+			executedBy: ExecutedBy;
+			source?: never;
+	  }
+	| {
+			/** @deprecated since 4.2.1 - use `executedBy` instead */
+			source: ExecutedBy;
+			executedBy?: never;
+	  };
 
 type ComponentEventData = Record< string, unknown > & {
 	action:
