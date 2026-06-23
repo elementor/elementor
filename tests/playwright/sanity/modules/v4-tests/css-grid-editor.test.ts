@@ -91,7 +91,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		// Assert
 		const gridOutline = page.locator( `[data-grid-outline="${ gridId }"]` );
 		await expect( gridOutline ).toBeVisible();
-		await expect.soft( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
+		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3.png' );
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
