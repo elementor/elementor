@@ -12,7 +12,7 @@ class Test_Module extends Elementor_Test_Base {
 
 		// Act & Assert
 		$this->assertEquals( 'markdown_rendering', $data['name'] );
-		$this->assertEquals( 'inactive', $data['default'] );
+		$this->assertEquals( 'active', $data['default'] );
 		$this->assertEquals( 'alpha', $data['release_status'] );
 	}
 
