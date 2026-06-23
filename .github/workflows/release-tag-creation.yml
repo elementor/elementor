@@ -12,11 +12,6 @@ on:
         type: boolean
         default: true
         description: Dry run — validate everything but do not push commits or create tag.
-
-env:
-  VERSION: ${{ inputs.version }}
-  DRY_RUN: ${{ inputs.dry_run }}
-
 jobs:
   release-tag-creation:
     runs-on: ubuntu-22.04
@@ -43,7 +38,12 @@ jobs:
           version: ${{ inputs.version }}
 
       - name: Switch to release branch
-        run: git switch ${{ steps.handle-version-input.outputs.checkout_branch }}
+        run: |
+          # Move HEAD to the release branch so version-bump commits land on it.
+          # --no-overlay keeps files from the current tree that don't exist on the
+          # release branch (e.g. .github/workflows/ actions used later in this job).
+          git checkout ${{ steps.handle-version-input.outputs.checkout_branch }}
+          git checkout ${{ github.sha }} -- .github/
 
       - name: Config git user
         run: |
@@ -66,19 +66,19 @@ jobs:
       - name: Update version in tag files
         uses: ./.github/workflows/update-version-in-tag-files
         with:
-          VERSION: ${{ env.version }}
+          VERSION: ${{ inputs.version }}
           CHANNEL: ${{ steps.handle-version-input.outputs.channel }}
-          DRY_RUN: ${{ env.DRY_RUN }}
+          DRY_RUN: ${{ inputs.DRY_RUN }}
 
       - name: Create release tag
         run: |
           # Tag the local version-bump commit.
           # Only the tag is pushed — the version-bump commit itself stays local
           # so the source branch history remains unchanged.
-          git tag -a "v${version}" -m "Release version ${version}"
-          if [[ "${DRY_RUN}" == "true" ]]; then
+          if [[ "${{ inputs.DRY_RUN }}" == "true" ]]; then
             echo "Dry run — skipping tag push."
           else
-            git push origin "v${version}"
-            echo "Release tag v${version} pushed successfully (branch unchanged)."
+            git tag -a "v${{ inputs.VERSION }}" -m "Release version ${{ inputs.VERSION }}"
+            git push origin "v${{ inputs.VERSION }}"
+            echo "Release tag v${{ inputs.VERSION }} pushed successfully (branch unchanged)."
           fi
