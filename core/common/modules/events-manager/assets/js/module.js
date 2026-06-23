@@ -95,7 +95,11 @@ export default class extends elementorModules.Module {
 			};
 
 			mixpanelInstance.track( name, eventData, options );
-		} catch {
+		} catch ( error ) {
+			if ( elementorCommon.config.editor_events?.debug ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Events Manager dispatch failed:', error );
+			}
 		}
 	}
 

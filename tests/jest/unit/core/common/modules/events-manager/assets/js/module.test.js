@@ -73,7 +73,11 @@ describe( 'Events Manager module', () => {
 			const EventsManager = require( 'elementor/core/common/modules/events-manager/assets/js/module' ).default;
 			const eventsManager = new EventsManager();
 
+			eventsManager.onInit();
 			eventsManager.trackingEnabled = false;
+			jest.spyOn( eventsManager, 'enableTracking' ).mockImplementation( () => {
+				throw new Error( 'enableTracking failure' );
+			} );
 
 			expect( () => eventsManager.dispatchEvent( 'test_event', { foo: 'bar' } ) ).not.toThrow();
 			expect( mockTrack ).not.toHaveBeenCalled();
