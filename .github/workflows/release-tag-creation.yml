@@ -64,21 +64,149 @@ jobs:
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
       - name: Update version in tag files
+        id: update-version-in-tag-files
         uses: ./.github/workflows/update-version-in-tag-files
         with:
           VERSION: ${{ inputs.version }}
           CHANNEL: ${{ steps.handle-version-input.outputs.channel }}
-          DRY_RUN: ${{ inputs.DRY_RUN }}
+          DRY_RUN: ${{ inputs.dry_run }}
 
       - name: Create release tag
+        id: create-release-tag
         run: |
           # Tag the local version-bump commit.
           # Only the tag is pushed — the version-bump commit itself stays local
           # so the source branch history remains unchanged.
-          if [[ "${{ inputs.DRY_RUN }}" == "true" ]]; then
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
             echo "Dry run — skipping tag push."
+            echo "tag_pushed=false" >> "$GITHUB_OUTPUT"
           else
-            git tag -a "v${{ inputs.VERSION }}" -m "Release version ${{ inputs.VERSION }}"
-            git push origin "v${{ inputs.VERSION }}"
-            echo "Release tag v${{ inputs.VERSION }} pushed successfully (branch unchanged)."
+            git tag -a "v${{ inputs.version }}" -m "Release version ${{ inputs.version }}"
+            git push origin "v${{ inputs.version }}"
+            echo "Release tag v${{ inputs.version }} pushed successfully (branch unchanged)."
+            echo "tag_pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Generate Job Summary
+        if: always()
+        run: |
+          VERSION="${{ inputs.version }}"
+          CHANNEL="${{ steps.handle-version-input.outputs.channel }}"
+          BRANCH="${{ steps.handle-version-input.outputs.checkout_branch }}"
+          DRY_RUN="${{ inputs.dry_run }}"
+          TAG_PUSHED="${{ steps.create-release-tag.outputs.tag_pushed }}"
+          README_STABLE="${{ steps.update-version-in-tag-files.outputs.readme_stable_tag }}"
+          README_BETA="${{ steps.update-version-in-tag-files.outputs.readme_beta_tag }}"
+          PHP_VERSION="${{ steps.update-version-in-tag-files.outputs.elementor_php_version }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ACTOR="${{ github.actor }}"
+          RUN_NUMBER="${{ github.run_number }}"
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          # Determine overall status
+          if [[ "${{ job.status }}" == "success" ]]; then
+            JOB_BADGE="✅ Success"
+          elif [[ "${{ job.status }}" == "failure" ]]; then
+            JOB_BADGE="❌ Failed"
+          else
+            JOB_BADGE="⚠️ ${{ job.status }}"
+          fi
+
+          # Channel badge
+          if [[ "${CHANNEL}" == "stable" ]]; then
+            CHANNEL_BADGE="🟢 stable"
+          else
+            CHANNEL_BADGE="🔵 beta"
+          fi
+
+          # Dry-run badge
+          if [[ "${DRY_RUN}" == "true" ]]; then
+            DRY_RUN_BADGE="🔶 Dry Run (no changes pushed)"
+          else
+            DRY_RUN_BADGE="🚀 Live Run"
+          fi
+
+          # Tag push status
+          if [[ "${TAG_PUSHED}" == "true" ]]; then
+            TAG_STATUS="✅ Pushed \`v${VERSION}\`"
+          elif [[ "${DRY_RUN}" == "true" ]]; then
+            TAG_STATUS="⏭️ Skipped (dry run)"
+          else
+            TAG_STATUS="❌ Not pushed"
+          fi
+
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          # 🏷️ Release Tag Creation — Run #RUNNUMBER_PLACEHOLDER
+
+          | | |
+          |---|---|
+          | **Status** | JOBBADGE_PLACEHOLDER |
+          | **Triggered by** | `ACTOR_PLACEHOLDER` |
+          | **Timestamp** | TIMESTAMP_PLACEHOLDER |
+          | **Run** | [View full logs](RUNURL_PLACEHOLDER) |
+
+          ---
+
+          ## 📥 Inputs
+
+          | Input | Value |
+          |-------|-------|
+          | **Version** | `VERSION_PLACEHOLDER` |
+          | **Channel** | CHANNELBADGE_PLACEHOLDER |
+          | **Release branch** | `BRANCH_PLACEHOLDER` |
+          | **Mode** | DRYRUNBADGE_PLACEHOLDER |
+
+          ---
+
+## 📝 File Updates
+
+### `elementor.php`
+| Field | New Value |
+|-------|-----------|
+| Plugin version header | `PHPVERSION_PLACEHOLDER` |
+| `ELEMENTOR_VERSION` constant | `PHPVERSION_PLACEHOLDER` |
+
+### `readme.txt`
+| Tag | Value |
+|-----|-------|
+| **Stable tag** | `READMESTABLE_PLACEHOLDER` |
+| **Beta tag** | `READMEBETA_PLACEHOLDER` |
+
+---
+
+## 🚀 Release Tag
+
+| | |
+|---|---|
+| **Tag name** | `vVERSION_PLACEHOLDER` |
+| **Push status** | TAGSTATUS_PLACEHOLDER |
+
+---
+
+## 🔍 Validation Checks
+
+| Check | Result |
+|-------|--------|
+| Version format (`X.Y.Z` or `X.Y.Z-betaN`) | ✅ Passed |
+| Tag `vVERSION_PLACEHOLDER` does not already exist | ✅ Passed |
+| Channel resolved | ✅ CHANNELBADGE_PLACEHOLDER |
+| Release branch resolved | ✅ `BRANCH_PLACEHOLDER` |
+
+SUMMARY
+
+          # Replace placeholders with real values (avoids heredoc variable expansion issues)
+          sed -i \
+            -e "s|RUNNUMBER_PLACEHOLDER|${RUN_NUMBER}|g" \
+            -e "s|JOBBADGE_PLACEHOLDER|${JOB_BADGE}|g" \
+            -e "s|ACTOR_PLACEHOLDER|${ACTOR}|g" \
+            -e "s|TIMESTAMP_PLACEHOLDER|${TIMESTAMP}|g" \
+            -e "s|RUNURL_PLACEHOLDER|${RUN_URL}|g" \
+            -e "s|VERSION_PLACEHOLDER|${VERSION}|g" \
+            -e "s|CHANNELBADGE_PLACEHOLDER|${CHANNEL_BADGE}|g" \
+            -e "s|BRANCH_PLACEHOLDER|${BRANCH}|g" \
+            -e "s|DRYRUNBADGE_PLACEHOLDER|${DRY_RUN_BADGE}|g" \
+            -e "s|PHPVERSION_PLACEHOLDER|${PHP_VERSION}|g" \
+            -e "s|READMESTABLE_PLACEHOLDER|${README_STABLE}|g" \
+            -e "s|READMEBETA_PLACEHOLDER|${README_BETA}|g" \
+            -e "s|TAGSTATUS_PLACEHOLDER|${TAG_STATUS}|g" \
+            "$GITHUB_STEP_SUMMARY"

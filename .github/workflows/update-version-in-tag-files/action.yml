@@ -13,10 +13,22 @@ inputs:
     default: 'true'
     description: 'If true, skips the commit.'
 
+outputs:
+  readme_stable_tag:
+    description: 'The Stable tag value written to readme.txt.'
+    value: ${{ steps.capture-readme.outputs.stable_tag }}
+  readme_beta_tag:
+    description: 'The Beta tag value written to readme.txt.'
+    value: ${{ steps.capture-readme.outputs.beta_tag }}
+  elementor_php_version:
+    description: 'The version string written to elementor.php.'
+    value: ${{ steps.capture-php.outputs.version }}
+
 runs:
   using: "composite"
   steps:
     - name: Update version in elementor.php
+      id: capture-php
       shell: bash
       run: |
         VERSION="${{ inputs.VERSION }}"
@@ -26,6 +38,8 @@ runs:
 
         echo "elementor.php after version update:"
         grep -E "Version:|ELEMENTOR_VERSION" elementor.php
+
+        echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
     - name: Update Stable tag in readme.txt
       shell: bash
@@ -48,6 +62,15 @@ runs:
         sed -i -E "s/Stable tag: .*/Stable tag: ${LAST_STABLE_TAG}/" readme.txt
         echo "readme.txt beta tag updated:"
         grep -E "Stable tag:|Beta tag:" readme.txt
+
+    - name: Capture readme.txt values
+      id: capture-readme
+      shell: bash
+      run: |
+        STABLE_TAG=$(grep -E "^Stable tag:" readme.txt | sed 's/Stable tag: //')
+        BETA_TAG=$(grep -E "^Beta tag:" readme.txt | sed 's/Beta tag: //')
+        echo "stable_tag=${STABLE_TAG}" >> "$GITHUB_OUTPUT"
+        echo "beta_tag=${BETA_TAG}" >> "$GITHUB_OUTPUT"
 
     - name: Commit version bump
       shell: bash
