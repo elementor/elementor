@@ -12,14 +12,9 @@ export default class extends elementorModules.Module {
 	}
 
 	onTrigger( event ) {
-		const scenario = event?.detail?.scenario;
-		const introductionKey = event?.detail?.introductionKey;
+		const { scenario, introductionKey } = event?.detail ?? {};
 
-		if ( ! scenario ) {
-			return;
-		}
-
-		if ( ! introductionKey ) {
+		if ( ! ( scenario && introductionKey ) ) {
 			return;
 		}
 
