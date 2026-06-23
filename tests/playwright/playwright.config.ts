@@ -9,7 +9,6 @@ const localDevServer = 'http://127.0.0.1:9400';
 const localTestServer = 'http://127.0.0.1:9400';
 const ciDevServer = 'http://localhost:8888';
 const ciTestServer = 'http://localhost:8889';
-const forcedVideoMode = ( process.env.PLAYWRIGHT_VIDEO || '' ).trim();
 
 process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
 process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
@@ -51,7 +50,7 @@ export default defineConfig( {
 		actionTimeout: timeouts.action,
 		navigationTimeout: timeouts.navigation,
 		trace: 'retain-on-failure',
-		video: forcedVideoMode || ( isCI ? 'retain-on-failure' : 'off' ),
+		video: process.env.CI ? 'retain-on-failure' : 'off',
 		baseURL: process.env.BASE_URL ||
 			( ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) )
 				? process.env.TEST_SERVER
