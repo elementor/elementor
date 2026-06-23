@@ -15,7 +15,7 @@ class Mock_Color_Converter extends Property_Converter_Base {
 		return [ 'color', 'border-color' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$context->set_prop( $rule['property'], $rule['value'] );
 
 		return true;

@@ -96,22 +96,18 @@ class Css_Converter_REST_API {
 	 * @return array{props: object, customCss: string, rejected: string[]}
 	 */
 	private function convert_block( Css_Converter $converter, array $declarations ): array {
-		$resets = [];
 		$css_declarations = [];
 
 		foreach ( $declarations as $property => $value ) {
-			if ( null === $value ) {
-				$resets[ $property ] = null;
-				continue;
-			}
+			$is_null_reset = null === $value || 'null' === $value;
 
-			$css_declarations[] = $property . ': ' . $value . ';';
+			$css_declarations[] = $property . ': ' . ( $is_null_reset ? 'null' : $value ) . ';';
 		}
 
 		$result = $converter->convert( implode( ' ', $css_declarations ) );
 
 		return [
-			'props'     => (object) array_merge( $result['props'], $resets ),
+			'props'     => (object) $result['props'],
 			'customCss' => $result['customCss'],
 			'rejected'  => $result['rejected'],
 		];
