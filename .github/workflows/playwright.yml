@@ -48,6 +48,11 @@ on:
         options:
           - production
           - staging
+      record_video:
+        type: boolean
+        description: 'Record Playwright video for all tests'
+        required: true
+        default: false
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -77,6 +82,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      PLAYWRIGHT_VIDEO: ${{ inputs.record_video && 'on' || '' }}
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
@@ -266,6 +273,14 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
+      - uses: actions/upload-artifact@v7
+        name: Upload Playwright videos
+        if: always() && inputs.record_video == true
+        with:
+          name: playwright-videos-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          path: test-results/**/video.webm
+          if-no-files-found: ignore
+          retention-days: 7
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
@@ -273,6 +288,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    env:
+      PLAYWRIGHT_VIDEO: ${{ inputs.record_video && 'on' || '' }}
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
@@ -405,6 +422,14 @@ jobs:
           path: test-results/
           if-no-files-found: ignore
           retention-days: 2
+      - uses: actions/upload-artifact@v7
+        name: Upload Playwright videos
+        if: always() && inputs.record_video == true
+        with:
+          name: playwright-videos-tagged-tests
+          path: test-results/**/video.webm
+          if-no-files-found: ignore
+          retention-days: 7
   Build-report:
     needs: Playwright
     runs-on: ubuntu-22.04
