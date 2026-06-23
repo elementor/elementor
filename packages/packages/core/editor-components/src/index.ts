@@ -54,6 +54,8 @@ export {
 	createComponentsAction,
 	registerComponentsReducer,
 	selectOverridableProps,
+	selectCreatedThisSession,
+	selectComponentByUid,
 	selectPath,
 	slice,
 	useCurrentComponent,
@@ -89,5 +91,5 @@ export { isComponentInstance } from './utils/is-component-instance';
 export { resolveOverridePropValue } from './utils/resolve-override-prop-value';
 export { switchToComponent } from './utils/switch-to-component';
 export { onElementDrop, trackComponentEvent } from './utils/tracking';
-export type { Source } from './utils/tracking';
+export type { ExecutedBy } from './utils/tracking';
 export { getComponentDocumentData } from './utils/component-document-data';

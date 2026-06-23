@@ -128,7 +128,7 @@ function getServiceActions( svc: typeof service ) {
 			if ( valueError ) {
 				throw new Error( valueError );
 			}
-			return svc.create( { type, label, value } );
+			return svc.create( { type, label, value }, { eventData: { executedBy: 'mcp_tool' } } );
 		},
 		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
 			if ( ! id || ! label || ! value ) {
@@ -145,7 +145,7 @@ function getServiceActions( svc: typeof service ) {
 					throw new Error( valueError );
 				}
 			}
-			return svc.update( id, { label, value } );
+			return svc.update( id, { label, value }, { eventData: { executedBy: 'mcp_tool' } } );
 		},
 		delete( { id }: Opts< { id: string } > ) {
 			if ( ! id ) {

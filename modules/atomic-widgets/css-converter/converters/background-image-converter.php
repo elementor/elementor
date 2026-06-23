@@ -26,7 +26,16 @@ class Background_Image_Converter extends Property_Converter_Base {
 		return [ 'background-image' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function convert_null( Conversion_Context $context, array $rule ): bool {
+		$fields                        = $this->current_background_fields( $context->get_prop( 'background' ) );
+		$fields['background-overlay']  = null;
+
+		$context->set_prop( 'background', Background_Prop_Type::generate( $fields ) );
+
+		return true;
+	}
+
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$overlays = Background_Image_Value_Parser::parse( trim( $rule['value'] ) );
 
 		if ( null === $overlays ) {
