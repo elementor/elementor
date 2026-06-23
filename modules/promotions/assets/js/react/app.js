@@ -4,7 +4,7 @@ import {
 	LocalizationProvider,
 	ThemeProvider,
 } from '@elementor/ui';
-import AtomicFormPromotionCard from './components/atomic-form-promotion-card';
+import AtomicPromotionCard from './components/atomic-promotion-card';
 import PromotionCard from './components/promotion-card';
 import WidgetPromotionCard from './components/widget-promotion-card';
 
@@ -19,8 +19,8 @@ function getPlacement( anchorTarget, isRTL ) {
 }
 
 function getCardContent( props ) {
-	if ( 'atomicForm' === props.cardType ) {
-		return <AtomicFormPromotionCard doClose={ props.doClose } promotionData={ props.promotionData } ctaUrl={ props.ctaUrl } />;
+	if ( 'atomic' === props.cardType ) {
+		return <AtomicPromotionCard doClose={ props.doClose } promotionData={ props.promotionData } />;
 	}
 
 	if ( 'widgetPromotion' === props.cardType ) {
