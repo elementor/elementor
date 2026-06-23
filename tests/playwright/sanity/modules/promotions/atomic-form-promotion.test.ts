@@ -47,7 +47,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( popover.getByText( 'Atomic form' ) ).toBeVisible();
 		await expect( popover.getByRole( 'link', { name: 'Upgrade now' } ) ).toBeVisible();
 
-		// Screenshot could have a different position on a single run - under the to-bar
+		// Screenshot could have a different position on a single run - under the top-bar
 		await expect( popover ).toHaveScreenshot( 'atomic-form-promotion-popover.png', {
 			mask: [ popover.getByTestId( 'e-atomic-form-animation' ) ],
 		} );
