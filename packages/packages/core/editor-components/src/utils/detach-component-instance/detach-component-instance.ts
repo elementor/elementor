@@ -111,7 +111,7 @@ export async function detachComponentInstance( {
 				const componentUid = selectComponent( getState(), componentId )?.uid;
 				trackComponentEvent( {
 					action: 'detached',
-					source: 'user',
+					executedBy: 'user',
 					component_uid: componentUid,
 					instance_id: instanceId,
 					location: trackingInfo.location,
