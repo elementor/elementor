@@ -81,18 +81,18 @@ class Theme_Builder_Promotion_Detections {
 		$templates = $detections['templatePresence'] ?? [];
 
 		if ( 'single_post' === $scenario ) {
-			return 2 === ( $counts['post'] ?? null ) && empty( $templates['single_post'] );
+			return ( $counts['post'] ?? 0 ) > 1 && empty( $templates['single_post'] );
 		}
 
 		if ( 'single_product' === $scenario ) {
-			return 2 === ( $counts['product'] ?? null ) && empty( $templates['single_product'] );
+			return ( $counts['product'] ?? 0 ) > 1 && empty( $templates['single_product'] );
 		}
 
 		if ( 'header_footer' === $scenario ) {
 			$has_header = ! empty( $templates['header'] );
 			$has_footer = ! empty( $templates['footer'] );
 
-			return 2 === ( $counts['page'] ?? null ) && ( ! $has_header || ! $has_footer );
+			return ( $counts['page'] ?? 0 ) > 1 && ( ! $has_header || ! $has_footer );
 		}
 
 		return false;
