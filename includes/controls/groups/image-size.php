@@ -101,9 +101,22 @@ class Group_Control_Image_Size extends Group_Control_Base {
 		// On static mode don't use WP responsive images.
 		if ( ! empty( $image['id'] ) && in_array( $size, $image_sizes ) && ! $is_static_render_mode ) {
 			$image_class .= " attachment-$size size-$size wp-image-{$image['id']}";
-			$image_attr = [
+			$image_default_attributes = [
 				'class' => trim( $image_class ),
-			];
+		    	];
+	
+			/**
+			* Get Attachment Image Attributes
+			*
+			* Filters the Attachment Attributes
+			* @param array $image_default_attributes Default Image attributes.
+			* @param array $image {
+			*     An array containing image data.
+			*     @type int|string $id The ID of the image attachment.
+			* }
+			* @return array Filtered image attributes.
+			*/
+			$image_attr = apply_filters( 'elementor/image_size/attachment_image_attributes', $image_default_attributes, $image['id'] );
 
 			$html .= wp_get_attachment_image( $image['id'], $size, false, $image_attr );
 		} else {
