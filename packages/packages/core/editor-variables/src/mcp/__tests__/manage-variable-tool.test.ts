@@ -101,11 +101,14 @@ describe( 'manage-variable-tool validation', () => {
 				value: '#000',
 			} );
 
-			expect( service.create ).toHaveBeenCalledWith( {
-				type: 'global-color-variable',
-				label: 'headline-primary',
-				value: '#000',
-			} );
+			expect( service.create ).toHaveBeenCalledWith(
+				{
+					type: 'global-color-variable',
+					label: 'headline-primary',
+					value: '#000',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should allow label with underscores', async () => {
@@ -116,11 +119,14 @@ describe( 'manage-variable-tool validation', () => {
 				value: '#000',
 			} );
 
-			expect( service.create ).toHaveBeenCalledWith( {
-				type: 'global-color-variable',
-				label: 'headline_primary',
-				value: '#000',
-			} );
+			expect( service.create ).toHaveBeenCalledWith(
+				{
+					type: 'global-color-variable',
+					label: 'headline_primary',
+					value: '#000',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should reject empty label', async () => {
@@ -142,11 +148,14 @@ describe( 'manage-variable-tool validation', () => {
 				value: '16px',
 			} );
 
-			expect( service.create ).toHaveBeenCalledWith( {
-				type: 'global-size-variable',
-				label: 'spacing-md',
-				value: '16px',
-			} );
+			expect( service.create ).toHaveBeenCalledWith(
+				{
+					type: 'global-size-variable',
+					label: 'spacing-md',
+					value: '16px',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should block size variable creation when Pro is not active at call time', async () => {
@@ -222,11 +231,14 @@ describe( 'manage-variable-tool validation', () => {
 				value: 'Roboto',
 			} );
 
-			expect( service.create ).toHaveBeenCalledWith( {
-				type: 'global-font-variable',
-				label: 'heading-font',
-				value: 'Roboto',
-			} );
+			expect( service.create ).toHaveBeenCalledWith(
+				{
+					type: 'global-font-variable',
+					label: 'heading-font',
+					value: 'Roboto',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should reject unsupported font family on create', async () => {
@@ -252,11 +264,14 @@ describe( 'manage-variable-tool validation', () => {
 				value: '24px',
 			} );
 
-			expect( service.create ).toHaveBeenCalledWith( {
-				type: 'global-size-variable',
-				label: 'spacing-md',
-				value: '24px',
-			} );
+			expect( service.create ).toHaveBeenCalledWith(
+				{
+					type: 'global-size-variable',
+					label: 'spacing-md',
+					value: '24px',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should reject non-unit value for a size variable', async () => {
@@ -302,7 +317,11 @@ describe( 'manage-variable-tool validation', () => {
 
 			await toolHandler( { action: 'update', id: '123', label: 'heading-font', value: 'Inter' } );
 
-			expect( service.update ).toHaveBeenCalledWith( '123', { label: 'heading-font', value: 'Inter' } );
+			expect( service.update ).toHaveBeenCalledWith(
+				'123',
+				{ label: 'heading-font', value: 'Inter' },
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 
 		it( 'should reject unsupported font family on update', async () => {
@@ -338,10 +357,14 @@ describe( 'manage-variable-tool validation', () => {
 		it( 'should allow valid label', async () => {
 			await toolHandler( { action: 'update', id: '123', label: 'headline-primary', value: '#000' } );
 
-			expect( service.update ).toHaveBeenCalledWith( '123', {
-				label: 'headline-primary',
-				value: '#000',
-			} );
+			expect( service.update ).toHaveBeenCalledWith(
+				'123',
+				{
+					label: 'headline-primary',
+					value: '#000',
+				},
+				{ eventData: { executedBy: 'mcp_tool' } }
+			);
 		} );
 	} );
 } );

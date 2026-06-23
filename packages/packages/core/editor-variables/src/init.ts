@@ -5,6 +5,7 @@ import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { controlActionsMenu } from '@elementor/menus';
 
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
+import { McpVariableConnectListener } from './components/mcp-variable-connect-listener';
 import { VariableControl } from './controls/variable-control';
 import { usePropVariableAction } from './hooks/use-prop-variable-action';
 import { initMcp } from './mcp';
@@ -62,6 +63,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'variables-import-listener',
 		component: GlobalStylesImportListener,
+	} );
+
+	injectIntoLogic( {
+		id: 'mcp-variable-connect-listener',
+		component: McpVariableConnectListener,
 	} );
 }
 

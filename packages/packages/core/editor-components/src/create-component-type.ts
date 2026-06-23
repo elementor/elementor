@@ -341,7 +341,7 @@ function createComponentView( options: ComponentTypeOptions ): typeof TemplatedE
 
 			trackComponentEvent( {
 				action: 'edited',
-				source: 'user',
+				executedBy: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,
