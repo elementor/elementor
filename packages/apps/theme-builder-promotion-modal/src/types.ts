@@ -1,5 +1,11 @@
 export type ThemeBuilderPromotionScenario = 'single_post' | 'single_product' | 'header_footer';
 
+declare global {
+	interface Window {
+		__ELEMENTOR_E2E__?: boolean;
+	}
+}
+
 export type OpenEventDetail = {
 	scenario: ThemeBuilderPromotionScenario;
 	introductionKey: string;

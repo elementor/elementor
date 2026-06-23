@@ -12,6 +12,10 @@ export default class extends elementorModules.Module {
 	}
 
 	onTrigger( event ) {
+		if ( window.__ELEMENTOR_E2E__ ) {
+			return;
+		}
+
 		const { scenario, introductionKey } = event?.detail ?? {};
 
 		if ( ! ( scenario && introductionKey ) ) {
