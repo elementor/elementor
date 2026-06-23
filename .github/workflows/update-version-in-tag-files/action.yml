@@ -57,7 +57,7 @@ runs:
           exit 0
         fi
 
-        git add elementor.php package.json readme.txt
+        git add elementor.php readme.txt
 
         if git diff --cached --quiet; then
           echo "No changes to commit — version files already at ${VERSION}."
