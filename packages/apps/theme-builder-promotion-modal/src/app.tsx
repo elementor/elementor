@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { PromotionModal } from './components/promotion-modal';
 import { TRIGGER_EVENT } from './constants';
 import type { OpenEventDetail } from './types';
+import { markIntroductionViewed } from './utils/mark-introduction-viewed';
 
 export function App( { container }: { container?: HTMLElement } ) {
 	const [ openDetail, setOpenDetail ] = useState< OpenEventDetail | null >( null );
@@ -27,7 +28,13 @@ export function App( { container }: { container?: HTMLElement } ) {
 		};
 	}, [] );
 
-	const handleClose = useCallback( () => setOpenDetail( null ), [] );
+	const handleClose = useCallback( () => {
+		if ( openDetail?.introductionKey ) {
+			void markIntroductionViewed( openDetail.introductionKey );
+		}
+
+		setOpenDetail( null );
+	}, [ openDetail ] );
 
 	if ( ! openDetail ) {
 		return null;

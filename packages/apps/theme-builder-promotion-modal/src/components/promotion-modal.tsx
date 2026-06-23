@@ -5,6 +5,7 @@ import { Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { ExtendedWindow, ThemeBuilderPromotionScenario } from '../types';
+import { markIntroductionViewed } from '../utils/mark-introduction-viewed';
 
 const MODAL_WIDTH = 893;
 const MODAL_HEIGHT = 432;
@@ -58,21 +59,7 @@ function ModalContent( {
 	}, [] );
 
 	const setViewed = useCallback( async () => {
-		const w = window as ExtendedWindow;
-
-		if ( ! w.elementor?.config?.user?.introduction ) {
-			return;
-		}
-
-		w.elementor.config.user.introduction[ introductionKey ] = true;
-
-		try {
-			await w.elementorCommon?.ajax?.addRequest( 'introduction_viewed', {
-				data: { introductionKey },
-			} );
-		} catch {
-			// Analytics gating should never break the user flow.
-		}
+		await markIntroductionViewed( introductionKey );
 	}, [ introductionKey ] );
 
 	const openThemeBuilder = useCallback( () => {
