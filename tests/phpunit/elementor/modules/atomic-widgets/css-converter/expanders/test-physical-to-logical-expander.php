@@ -16,21 +16,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Physical_To_Logical_Expander extends TestCase {
 
-	public function test_expand__rewrites_top_to_inset_block_start() {
+	/**
+	 * @dataProvider all_physical_mappings
+	 */
+	public function test_expand__rewrites_every_physical_property_to_its_logical_equivalent( string $physical, string $logical ) {
 		$rules = ( new Physical_To_Logical_Expander() )->expand( [
-			'property' => 'top',
-			'value' => 'var(--spacing-md)',
+			'property' => $physical,
+			'value'    => '10px',
 		] );
 
 		$this->assertSame(
-			[
-				[
-					'property' => 'inset-block-start',
-					'value' => 'var(--spacing-md)',
-					'declaration' => 'inset-block-start: var(--spacing-md)',
-				],
-			],
+			[ [ 'property' => $logical, 'value' => '10px', 'declaration' => "$logical: 10px" ] ],
 			$rules
+		);
+	}
+
+	public function all_physical_mappings(): array {
+		return array_map(
+			fn( $physical, $logical ) => [ $physical, $logical ],
+			array_keys( Physical_To_Logical_Expander::PHYSICAL_TO_LOGICAL ),
+			array_values( Physical_To_Logical_Expander::PHYSICAL_TO_LOGICAL )
 		);
 	}
 
@@ -69,6 +74,45 @@ class Test_Physical_To_Logical_Expander extends TestCase {
 			],
 			$result['inset-block-start']
 		);
+	}
+
+	/**
+	 * @dataProvider null_physical_properties
+	 */
+	public function test_expand__null_value_rewrites_property_name_and_preserves_null( string $physical, string $logical ) {
+		// Arrange & Act.
+		$rules = ( new Physical_To_Logical_Expander() )->expand( [
+			'property' => $physical,
+			'value' => null,
+		] );
+
+		// Assert: property is renamed to logical; null value passes through as a prop reset.
+		$this->assertSame( [ [ 'property' => $logical, 'value' => null, 'declaration' => $logical . ': ' ] ], $rules );
+	}
+
+	public function null_physical_properties(): array {
+		return [
+			'top'    => [ 'top', 'inset-block-start' ],
+			'right'  => [ 'right', 'inset-inline-end' ],
+			'bottom' => [ 'bottom', 'inset-block-end' ],
+			'left'   => [ 'left', 'inset-inline-start' ],
+		];
+	}
+
+	public function test_parse__null_sentinel_string_is_normalised_to_php_null_before_expansion() {
+		// The 'null' sentinel is a reserved magic word meaning "reset". parse() converts it to PHP
+		// null before expanders run — expanders only ever receive PHP null, never the string 'null'.
+		$converter = new \Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter(
+			\Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory::create(),
+			new \Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter(),
+			( new \Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry() )
+				->register( new Physical_To_Logical_Expander() )
+		);
+
+		$result = $converter->convert( 'top: null;' );
+
+		$this->assertSame( [ 'inset-block-start' => null ], $result['props'] );
+		$this->assertSame( '', $result['customCss'] );
 	}
 
 }

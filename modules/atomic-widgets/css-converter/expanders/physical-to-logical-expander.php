@@ -27,15 +27,18 @@ class Physical_To_Logical_Expander extends Shorthand_Expander_Base {
 		return array_keys( self::PHYSICAL_TO_LOGICAL );
 	}
 
-	public function expand( array $rule ): array {
+	protected function expand_null( array $rule ): array {
+		return [ $this->null_rule( self::PHYSICAL_TO_LOGICAL[ $rule['property'] ] ) ];
+	}
+
+	protected function do_expand( array $rule ): array {
 		$logical = self::PHYSICAL_TO_LOGICAL[ $rule['property'] ];
-		$value = $rule['value'];
 
 		return [
 			[
 				'property'    => $logical,
-				'value'       => $value,
-				'declaration' => $logical . ': ' . $value,
+				'value'       => $rule['value'],
+				'declaration' => $logical . ': ' . $rule['value'],
 			],
 		];
 	}
