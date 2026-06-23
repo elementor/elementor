@@ -10,6 +10,10 @@ const OCCUPIED_GRID_CELL_WIDGET_TYPE = 'e-heading';
 const MOUSE_DRAG_STEPS = 10;
 const OCCUPIED_CELL_DROP_EDGE_OFFSET_PX = 5;
 const PLACEHOLDER_DRAG_TIMEOUT_MS = 5_000;
+const NESTED_OUTER_GRID_COLUMNS = 2;
+const NESTED_OUTER_GRID_ROWS = 1;
+const NESTED_INNER_GRID_COLUMNS = 2;
+const NESTED_INNER_GRID_ROWS = 1;
 
 test.describe( 'CSS Grid Editor @css-grid', () => {
 	test.beforeAll( async () => {
@@ -57,7 +61,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await editor.v4Panel.style.changeButtonGroupControl( displayControl, 'grid' );
 
 		// Assert - screenshot the layout section with grid controls
-		await expect.soft( layoutSection ).toHaveScreenshot( 'grid-controls-panel.png' );
+		await expect( layoutSection ).toHaveScreenshot( 'grid-controls-panel.png' );
 	} );
 
 	test( 'Grid outline overlay renders for a selected V4 grid and toggles off', async ( { page, apiRequests }, testInfo ) => {
@@ -125,7 +129,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		await expect( gridOutline ).toBeVisible();
 		await expect( gridOutline.locator( 'svg rect' ).first() ).toBeVisible();
 		await expect( gridOutline.locator( 'svg line' ) ).toHaveCount( 0 );
-		await expect.soft( gridOutline ).toHaveScreenshot( 'grid-outline-4x3-with-gap.png' );
+		await expect( gridOutline ).toHaveScreenshot( 'grid-outline-4x3-with-gap.png' );
 	} );
 
 	test( 'Grid outline updates live when columns, rows, and breakpoint change', async ( { page, apiRequests }, testInfo ) => {
@@ -294,7 +298,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 		const container = editor.getPreviewFrame().locator( `[data-id="${ containerId }"]` );
 
 		// Assert - screenshot the grid layout in editor
-		await expect.soft( container ).toHaveScreenshot( 'grid-layout-editor.png' );
+		await expect( container ).toHaveScreenshot( 'grid-layout-editor.png' );
 	} );
 
 	test( 'First-empty-cell indicator advances as children are added', async ( { page, apiRequests }, testInfo ) => {
@@ -477,15 +481,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 
 			const gridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
 
-			await editor.selectElement( gridId );
-			await editor.closeNavigatorIfOpen();
-			await editor.v4Panel.openTab( 'style' );
-			await editor.v4Panel.style.openSection( 'Layout' );
-
-			const columnsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Columns' );
-			const rowsControl = await editor.v4Panel.style.getControlByLabel( 'Layout', 'Rows' );
-			await editor.v4Panel.style.changeSizeControl( columnsControl, 3 );
-			await editor.v4Panel.style.changeSizeControl( rowsControl, 2 );
+			await configureGridLayout( editor, gridId, 3, 2 );
 
 			const firstChildId = await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: gridId } );
 
@@ -493,15 +489,13 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 
 			const { box: panelBox } = await getPanelHeadingBox( page );
 
-			const gridFirstAdd = editor
-				.getPreviewFrame()
-				.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` );
+			const gridFirstAdd = getGridFirstAddDropTarget( editor, gridId );
 
 			await expect( gridFirstAdd ).toHaveCount( 1 );
 
-			const firstChild = await getOccupiedCellLocator( editor, gridId, firstChildId );
+			const firstChild = await getGridChildDropTarget( editor, gridId, firstChildId );
 			const firstChildBox = await firstChild.boundingBox();
-			const dropTargetBox = await gridFirstAdd.boundingBox();
+			const dropTargetBox = await getLocatorBox( gridFirstAdd );
 
 			expect( firstChildBox ).toBeTruthy();
 			expect( dropTargetBox ).toBeTruthy();
@@ -517,9 +511,9 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await page.mouse.down();
 
 			await page.mouse.move(
-				dropTargetBox!.x + ( dropTargetBox!.width / 2 ),
-				dropTargetBox!.y + ( dropTargetBox!.height / 2 ),
-				{ steps: 10 },
+				dropTargetBox.x + ( dropTargetBox.width / 2 ),
+				dropTargetBox.y + ( dropTargetBox.height / 2 ),
+				{ steps: MOUSE_DRAG_STEPS },
 			);
 
 			// Assert
@@ -589,18 +583,11 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.openElementsPanel();
 
 			const panelHeading = getPanelHeading( page );
-			const gridFirstAdd = editor
-				.getPreviewFrame()
-				.locator( `[data-id="${ gridId }"] .elementor-empty-view > .elementor-first-add` )
-				.first();
+			const gridFirstAdd = getGridFirstAddDropTarget( editor, gridId ).first();
 
 			await panelHeading.waitFor( { state: 'visible' } );
 
-			const panelBox = await panelHeading.boundingBox();
-			const targetBox = await gridFirstAdd.boundingBox();
-
-			expect( panelBox ).toBeTruthy();
-			expect( targetBox ).toBeTruthy();
+			const targetBox = await getLocatorBox( gridFirstAdd );
 			await expect( plus ).toHaveCount( 1 );
 
 			// Act
@@ -614,7 +601,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			// Assert
 			await expect( plus ).toHaveCount( 0 );
 			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
-				'grid-outline-plus-hidden-while-dragging.png',
+				'grid-drag-heading-placeholder.png',
 			);
 			await releasePanelWidgetDrag( page );
 		} );
@@ -631,7 +618,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.openElementsPanel();
 
 			const panelHeading = getPanelHeading( page );
-			const occupiedCell = await getOccupiedCellLocator( editor, gridId, childId );
+			const occupiedCell = await getGridChildDropTarget( editor, gridId, childId );
 			const targetBox = await occupiedCell.boundingBox();
 
 			expect( targetBox ).toBeTruthy();
@@ -663,7 +650,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.openElementsPanel();
 
 			const panelHeading = getPanelHeading( page );
-			const occupiedCell = await getOccupiedCellLocator( editor, gridId, childId );
+			const occupiedCell = await getGridChildDropTarget( editor, gridId, childId );
 			const targetBox = await occupiedCell.boundingBox();
 
 			expect( targetBox ).toBeTruthy();
@@ -742,7 +729,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.openElementsPanel();
 
 			const panelHeading = getPanelHeading( page );
-			const secondChild = await getOccupiedCellLocator( editor, gridId, secondChildId );
+			const secondChild = await getGridChildDropTarget( editor, gridId, secondChildId );
 			const targetBox = await secondChild.boundingBox();
 
 			expect( targetBox ).toBeTruthy();
@@ -769,7 +756,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			expect( childIds[ 1 ] ).not.toBe( firstChildId );
 			expect( childIds[ 1 ] ).not.toBe( secondChildId );
 			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
-				'grid-drop-insert-before-occupied-cell.png',
+				'grid-drop-append-first-empty-cell.png',
 			);
 		} );
 
@@ -786,7 +773,7 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			await editor.openElementsPanel();
 
 			const panelHeading = getPanelHeading( page );
-			const firstChild = await getOccupiedCellLocator( editor, gridId, firstChildId );
+			const firstChild = await getGridChildDropTarget( editor, gridId, firstChildId );
 			const targetBox = await firstChild.boundingBox();
 
 			expect( targetBox ).toBeTruthy();
@@ -811,8 +798,108 @@ test.describe( 'CSS Grid Editor @css-grid', () => {
 			expect( childIds[ 1 ] ).not.toBe( firstChildId );
 			expect( childIds[ 1 ] ).not.toBe( secondChildId );
 			await expect.soft( editor.getPreviewFrame().locator( `[data-id="${ gridId }"]` ) ).toHaveScreenshot(
-				'grid-drop-insert-after-occupied-cell.png',
+				'grid-drop-append-first-empty-cell.png',
 			);
+		} );
+
+		test( 'Nested grid drop zones show placeholders for first cell, second cell, and between children', async ( { page, apiRequests }, testInfo ) => {
+			// Arrange
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			const editor = await wpAdmin.openNewPage();
+			const outerGridId = await editor.addElement( { elType: 'e-grid' }, 'document' );
+
+			await configureGridLayout( editor, outerGridId, NESTED_OUTER_GRID_COLUMNS, NESTED_OUTER_GRID_ROWS );
+			await editor.addWidget( { widgetType: OCCUPIED_GRID_CELL_WIDGET_TYPE, container: outerGridId } );
+
+			const innerGridId = await editor.addElement( { elType: 'e-grid' }, outerGridId );
+
+			await configureGridLayout( editor, innerGridId, NESTED_INNER_GRID_COLUMNS, NESTED_INNER_GRID_ROWS );
+
+			const outerGrid = editor.getPreviewFrame().locator( `[data-id="${ outerGridId }"]` );
+			const innerGrid = editor.getPreviewFrame().locator( `[data-id="${ innerGridId }"]` );
+			const placeholder = editor.getPreviewFrame().locator( WIDGET_PLACEHOLDER_SELECTOR );
+
+			await editor.openElementsPanel();
+
+			const panelHeading = getPanelHeading( page );
+
+			await test.step( 'Dragging to the inner grid first cell shows a drop placeholder', async () => {
+				const innerFirstAdd = getGridFirstAddDropTarget( editor, innerGridId );
+				const dropTargetBox = await getLocatorBox( innerFirstAdd );
+
+				// Act
+				await startPanelWidgetDrag( page, panelHeading );
+				await dragMouseTo(
+					page,
+					dropTargetBox.x + ( dropTargetBox.width / 2 ),
+					dropTargetBox.y + ( dropTargetBox.height / 2 ),
+				);
+
+				// Assert
+				await expect( placeholder ).toBeVisible();
+				await expect( innerFirstAdd ).toHaveClass( /elementor-html5dnd-current-element/ );
+				await expect( innerGrid ).toHaveScreenshot( 'nested-grid-drag-inner-first-cell.png' );
+				await releasePanelWidgetDrag( page );
+				await expect
+					.poll( () => getGridChildIds( editor, innerGridId ) )
+					.toHaveLength( 1 );
+			} );
+
+			await test.step( 'Dragging to the inner grid second cell shows a drop placeholder', async () => {
+				const innerFirstAdd = getGridFirstAddDropTarget( editor, innerGridId );
+				const dropTargetBox = await getLocatorBox( innerFirstAdd );
+				const cssVars = await readGridEmptyCellCssVars( editor, innerGridId );
+
+				expect( cssVars.col ).toBe( '2' );
+
+				// Act
+				await page.keyboard.press( 'Escape' );
+				await startPanelWidgetDrag( page, panelHeading );
+				await dragMouseTo(
+					page,
+					dropTargetBox.x + ( dropTargetBox.width / 2 ),
+					dropTargetBox.y + ( dropTargetBox.height / 2 ),
+				);
+
+				// Assert
+				await expect( placeholder ).toBeVisible();
+				await expect( innerGrid ).toHaveScreenshot( 'nested-grid-drag-inner-second-cell.png' );
+				await releasePanelWidgetDrag( page );
+				await expect
+					.poll( () => getGridChildIds( editor, innerGridId ) )
+					.toHaveLength( 2 );
+			} );
+
+			await test.step( 'Dragging between inner grid children shows a between-cells placeholder', async () => {
+				const [ firstChildId, secondChildId ] = await getGridChildIds( editor, innerGridId );
+
+				expect( secondChildId ).toBeTruthy();
+
+				const firstChild = await getGridChildDropTarget( editor, innerGridId, firstChildId );
+				const targetBox = await getLocatorBox( firstChild );
+				const dropX = targetBox.x + ( targetBox.width / 2 );
+				const dropY = targetBox.y + targetBox.height - OCCUPIED_CELL_DROP_EDGE_OFFSET_PX;
+
+				// Act
+				await page.keyboard.press( 'Escape' );
+				await startPanelWidgetDrag( page, panelHeading );
+				await page.mouse.move( dropX, dropY, { steps: MOUSE_DRAG_STEPS } );
+
+				// Assert
+				await assertOccupiedCellPlaceholder( editor, innerGridId, firstChildId, /e-dragging-bottom/ );
+				await expect( outerGrid ).toHaveScreenshot( 'nested-grid-drag-inner-between-cells.png' );
+				await releasePanelWidgetDrag( page );
+				await expect
+					.poll( () => getGridChildIds( editor, innerGridId ) )
+					.toHaveLength( 3 );
+
+				const childIds = await getGridChildIds( editor, innerGridId );
+
+				expect( childIds[ 0 ] ).toBe( firstChildId );
+				expect( childIds[ 2 ] ).toBe( secondChildId );
+				expect( childIds[ 1 ] ).not.toBe( firstChildId );
+				expect( childIds[ 1 ] ).not.toBe( secondChildId );
+			} );
 		} );
 	} );
 } );
@@ -887,14 +974,16 @@ async function releasePanelWidgetDrag( page: Page ): Promise<void> {
 	await page.mouse.up();
 }
 
-async function getOccupiedCellLocator( editor: EditorPage, gridId: string, childId: string ): Promise<Locator> {
-	const occupiedCell = editor
+async function getGridChildDropTarget( editor: EditorPage, gridId: string, childId: string ): Promise<Locator> {
+	// Atomic widgets use display: contents on the wrapper, so boundingBox() must target
+	// the inner rendered node (e.g. h2 for e-heading), not the direct grid child.
+	const gridChild = editor
 		.getPreviewFrame()
 		.locator( `[data-id="${ gridId }"] > [data-id="${ childId }"]` );
 
-	await occupiedCell.waitFor( { state: 'attached' } );
+	await gridChild.waitFor( { state: 'attached' } );
 
-	const dropTarget = occupiedCell.locator( `:scope > :not(${ WIDGET_PLACEHOLDER_SELECTOR })` ).first();
+	const dropTarget = gridChild.locator( `:scope > :not(${ WIDGET_PLACEHOLDER_SELECTOR })` ).first();
 
 	await dropTarget.waitFor( { state: 'visible' } );
 	await dropTarget.scrollIntoViewIfNeeded();
@@ -904,6 +993,12 @@ async function getOccupiedCellLocator( editor: EditorPage, gridId: string, child
 		.not.toBeNull();
 
 	return dropTarget;
+}
+
+function getGridFirstAddDropTarget( editor: EditorPage, gridId: string ): Locator {
+	return editor
+		.getPreviewFrame()
+		.locator( `[data-id="${ gridId }"] > .elementor-empty-view > .elementor-first-add` );
 }
 
 async function addOccupiedGridCellChild( editor: EditorPage, gridId: string ): Promise<string> {

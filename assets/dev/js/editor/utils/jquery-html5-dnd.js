@@ -255,7 +255,7 @@
 
 			maybeAddFlexRowClass( container );
 
-			const context = {
+			return {
 				$currentElement,
 				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':scope > :not(.elementor-widget-placeholder)' ) : currentElement,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
@@ -270,8 +270,6 @@
 				hasLogicalWrapper,
 				isAtomicContainer: [ 'e-div-block', 'e-flexbox', 'e-grid' ].includes( currentElement.dataset.element_type ),
 			};
-
-			return context;
 		};
 
 		const maybeAddFlexRowClass = function( container ) {
@@ -386,6 +384,10 @@
 		};
 
 		const insertAtomicGridPlaceholder = function() {
+			if ( ! [ 'top', 'bottom' ].includes( currentSide ) ) {
+				return;
+			}
+
 			const { placeholderTarget } = placeholderContext;
 
 			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
@@ -562,6 +564,7 @@
 				if ( currentElement?.classList?.contains( 'elementor-first-add' ) && currentElement.closest?.( '.e-grid-base' ) ) {
 					originalCurrentElementOpacity = currentElement.style.opacity || '';
 					currentElement.style.opacity = '1';
+					$( document ).on( 'dragend', onDocumentDragEnd );
 				}
 
 				insertPlaceholder();
@@ -600,6 +603,18 @@
 			if ( 'function' === typeof settings.onDragging ) {
 				settings.onDragging.call( this, currentSide, event, self );
 			}
+		};
+
+		var restoreFirstAddOpacity = function() {
+			if ( null !== originalCurrentElementOpacity && currentElement?.style ) {
+				currentElement.style.opacity = originalCurrentElementOpacity;
+				originalCurrentElementOpacity = null;
+			}
+		};
+
+		var onDocumentDragEnd = function() {
+			$( document ).off( 'dragend', onDocumentDragEnd );
+			restoreFirstAddOpacity();
 		};
 
 		var onDragLeave = function( event ) {
@@ -659,10 +674,8 @@
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
 
-			if ( null !== originalCurrentElementOpacity && currentElement?.style ) {
-				currentElement.style.opacity = originalCurrentElementOpacity;
-				originalCurrentElementOpacity = null;
-			}
+			$( document ).off( 'dragend', onDocumentDragEnd );
+			restoreFirstAddOpacity();
 
 			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );
