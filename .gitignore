@@ -17,6 +17,8 @@ data/languages
 tests/data
 
 graphify-out/
+.superpowers/
+docs/superpowers/
 
 # build outputs
 build/

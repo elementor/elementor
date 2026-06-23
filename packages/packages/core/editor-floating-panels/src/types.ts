@@ -1,13 +1,13 @@
 import { type ComponentType } from 'react';
 
-export type LogicalPosition = {
-	insetInlineStart: number;
-	insetBlockStart: number;
-};
-
 export type LogicalSize = {
 	inlineSize: number;
 	blockSize: number;
+};
+
+export type LogicalPosition = {
+	insetInlineStart: number;
+	insetBlockStart: number;
 };
 
 /**
@@ -44,6 +44,7 @@ export type FloatingPanelDeclaration = {
 	icon: ComponentType;
 	component: ComponentType;
 	isDraggable?: boolean;
+	isResizable?: boolean;
 	defaults: FloatingPanelDefaults;
 };
 

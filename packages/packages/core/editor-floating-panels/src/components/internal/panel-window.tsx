@@ -1,14 +1,26 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
 
 import { usePanelResizeInteraction } from '../../hooks/use-floating-panel-resize';
+import { type GlobalState, selectIsResizable } from '../../store/selectors';
 import { type LogicalPosition, type LogicalSize } from '../../types';
+import { type ResizeCorner, type ResizeEdge } from '../../utils/resize-math';
 import CornerResizeHandle from './corner-resize-handle';
 import ResizeHandle from './resize-handle';
 
 const FADE_ENTER_MS = 225;
 const FADE_EXIT_MS = 195;
+
+const RESIZE_EDGES: ResizeEdge[] = [ 'inline-start', 'inline-end', 'block-start', 'block-end' ];
+
+const RESIZE_CORNERS: ResizeCorner[] = [
+	'block-start-inline-start',
+	'block-start-inline-end',
+	'block-end-inline-start',
+	'block-end-inline-end',
+];
 
 type Props = {
 	panelId: string;
@@ -21,17 +33,23 @@ type Props = {
 	children: React.ReactNode;
 };
 
-export default function PanelWindow( { panelId, position, size, title, zIndex, visible, onFocus, children }: Props ) {
+function PanelResizeHandles( { panelId }: { panelId: string } ) {
 	const { getResizeHandleProps } = usePanelResizeInteraction( panelId );
 
-	const floatingSx = {
-		position: 'fixed' as const,
-		insetInlineStart: `${ position.insetInlineStart }px`,
-		insetBlockStart: `${ position.insetBlockStart }px`,
-		inlineSize: `${ size.inlineSize }px`,
-		blockSize: `${ size.blockSize }px`,
-		zIndex,
-	};
+	return (
+		<>
+			{ RESIZE_EDGES.map( ( edge ) => (
+				<ResizeHandle key={ edge } edge={ edge } { ...getResizeHandleProps( edge ) } />
+			) ) }
+			{ RESIZE_CORNERS.map( ( corner ) => (
+				<CornerResizeHandle key={ corner } corner={ corner } { ...getResizeHandleProps( corner ) } />
+			) ) }
+		</>
+	);
+}
+
+export default function PanelWindow( { panelId, position, size, title, zIndex, visible, onFocus, children }: Props ) {
+	const isResizable = useSelector( ( state: GlobalState ) => selectIsResizable( state, panelId ) );
 
 	return (
 		<Fade in={ visible } timeout={ { enter: FADE_ENTER_MS, exit: FADE_EXIT_MS } }>
@@ -43,7 +61,12 @@ export default function PanelWindow( { panelId, position, size, title, zIndex, v
 				aria-hidden={ ! visible }
 				onMouseDown={ onFocus }
 				sx={ {
-					...floatingSx,
+					position: 'fixed',
+					insetInlineStart: `${ position.insetInlineStart }px`,
+					insetBlockStart: `${ position.insetBlockStart }px`,
+					inlineSize: `${ size.inlineSize }px`,
+					blockSize: `${ size.blockSize }px`,
+					zIndex,
 					display: 'flex',
 					flexDirection: 'column',
 					bgcolor: 'var(--e-a-bg-default)',
@@ -55,26 +78,7 @@ export default function PanelWindow( { panelId, position, size, title, zIndex, v
 				<ThemeProvider>
 					<Box sx={ { display: 'flex', flexDirection: 'column', height: '100%' } }>{ children }</Box>
 				</ThemeProvider>
-				<ResizeHandle edge="inline-start" { ...getResizeHandleProps( 'inline-start' ) } />
-				<ResizeHandle edge="inline-end" { ...getResizeHandleProps( 'inline-end' ) } />
-				<ResizeHandle edge="block-start" { ...getResizeHandleProps( 'block-start' ) } />
-				<ResizeHandle edge="block-end" { ...getResizeHandleProps( 'block-end' ) } />
-				<CornerResizeHandle
-					corner="block-start-inline-start"
-					{ ...getResizeHandleProps( 'block-start-inline-start' ) }
-				/>
-				<CornerResizeHandle
-					corner="block-start-inline-end"
-					{ ...getResizeHandleProps( 'block-start-inline-end' ) }
-				/>
-				<CornerResizeHandle
-					corner="block-end-inline-start"
-					{ ...getResizeHandleProps( 'block-end-inline-start' ) }
-				/>
-				<CornerResizeHandle
-					corner="block-end-inline-end"
-					{ ...getResizeHandleProps( 'block-end-inline-end' ) }
-				/>
+				{ isResizable && <PanelResizeHandles panelId={ panelId } /> }
 			</Paper>
 		</Fade>
 	);

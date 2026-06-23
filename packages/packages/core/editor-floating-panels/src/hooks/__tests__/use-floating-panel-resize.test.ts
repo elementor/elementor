@@ -13,7 +13,7 @@ import { act } from '@testing-library/react';
 import { selectPosition, selectSize } from '../../store/selectors';
 import { slice } from '../../store/slice';
 import { type FloatingPanelDefaults } from '../../types';
-import { useFloatingPanelResize, usePanelResizeInteraction } from '../use-floating-panel-resize';
+import { usePanelResizeInteraction } from '../use-floating-panel-resize';
 
 const PANEL_ID = 'resize-panel';
 const SIDE_PANEL_WIDTH_PX = 280;
@@ -127,6 +127,28 @@ describe( 'usePanelResizeInteraction', () => {
 		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( { inlineSize: 360, blockSize: 480 } );
 	} );
 
+	it( 'updates panel size while resizing a block-end edge', () => {
+		// Arrange.
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const target = createPointerTarget();
+		const { result } = renderHookWithStore( () => usePanelResizeInteraction( PANEL_ID ), store );
+		const handleProps = result.current.getResizeHandleProps( 'block-end' );
+
+		// Act.
+		act( () => {
+			handleProps.onPointerDown( createPointerEvent( target, { clientX: 0, clientY: 0 } ) );
+			handleProps.onPointerMove( createPointerEvent( target, { clientX: 0, clientY: 40 } ) );
+		} );
+
+		// Assert.
+		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( { inlineSize: 320, blockSize: 520 } );
+	} );
+
 	it( 'ignores pointer down when the panel has no geometry', () => {
 		// Arrange.
 		const store = __getStore();
@@ -202,43 +224,5 @@ describe( 'usePanelResizeInteraction', () => {
 
 		// Assert.
 		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( startSize );
-	} );
-} );
-
-describe( 'useFloatingPanelResize', () => {
-	beforeEach( () => {
-		setupViewport();
-		__registerSlice( slice );
-		__createStore();
-		__dispatch( slice.actions.register( { id: PANEL_ID, defaults } ) );
-		__dispatch( slice.actions.open( PANEL_ID ) );
-		__dispatch( slice.actions.setPosition( { id: PANEL_ID, position: startPosition } ) );
-		__dispatch( slice.actions.setSize( { id: PANEL_ID, size: startSize } ) );
-	} );
-
-	afterEach( () => {
-		document.body.innerHTML = '';
-		__deleteStore();
-	} );
-
-	it( 'returns resize handlers for the requested direction', () => {
-		// Arrange.
-		const store = __getStore();
-
-		if ( ! store ) {
-			throw new Error( 'Store is not initialized' );
-		}
-
-		const target = createPointerTarget();
-		const { result } = renderHookWithStore( () => useFloatingPanelResize( PANEL_ID, 'block-end' ), store );
-
-		// Act.
-		act( () => {
-			result.current.onPointerDown( createPointerEvent( target, { clientX: 0, clientY: 0 } ) );
-			result.current.onPointerMove( createPointerEvent( target, { clientX: 0, clientY: 40 } ) );
-		} );
-
-		// Assert.
-		expect( selectSize( __getState(), PANEL_ID ) ).toEqual( { inlineSize: 320, blockSize: 520 } );
 	} );
 } );

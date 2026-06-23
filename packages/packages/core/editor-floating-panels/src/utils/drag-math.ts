@@ -2,7 +2,9 @@ import { type LogicalPosition } from '../types';
 import { clamp } from './clamp';
 
 export type PhysicalDelta = { dx: number; dy: number };
+
 export type LogicalDelta = { inlineDelta: number; blockDelta: number };
+
 export type DragBounds = {
 	minInlineStart: number;
 	maxInlineStart: number;

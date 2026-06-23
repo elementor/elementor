@@ -4,9 +4,14 @@ import { useEditMode } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
 
 import { useFloatingPanelsInjections } from '../../location';
-import { type GlobalState, selectOpenPanelIds, selectPanelState, selectPanelTitle } from '../../store/selectors';
+import {
+	type GlobalState,
+	resolvePanelZIndex,
+	selectOpenPanelIds,
+	selectPanelState,
+	selectPanelTitle,
+} from '../../store/selectors';
 import { slice } from '../../store/slice';
-import { FLOATING_PANEL_Z_INDEX_BASE } from '../../utils/constants';
 import PanelWindow from './panel-window';
 
 export default function FloatingPanelsHost() {
@@ -58,6 +63,7 @@ function HostedPanel( {
 } ) {
 	const panel = useSelector( ( state: GlobalState ) => selectPanelState( state, id ) );
 	const title = useSelector( ( state: GlobalState ) => selectPanelTitle( state, id ) );
+	const zIndex = useSelector( ( state: GlobalState ) => resolvePanelZIndex( state, id ) );
 
 	if ( ! panel ) {
 		return null;
@@ -68,7 +74,7 @@ function HostedPanel( {
 			panelId={ id }
 			position={ panel.position }
 			size={ panel.size }
-			zIndex={ FLOATING_PANEL_Z_INDEX_BASE + panel.zIndex }
+			zIndex={ zIndex }
 			visible={ visible }
 			onFocus={ onFocus }
 			title={ title }

@@ -9,7 +9,7 @@ import {
 
 import { slice } from '../../store/slice';
 import { type FloatingPanelDefaults } from '../../types';
-import { FLOATING_PANEL_Z_INDEX_BASE } from '../../utils/constants';
+import { FLOATING_PANEL_Z_INDEX_BASE } from '../../constants';
 import { useFloatingPanelZIndex } from '../use-floating-panel-z-index';
 
 const PANEL_ID = 'panel';
@@ -46,6 +46,8 @@ describe( 'useFloatingPanelZIndex', () => {
 		const { result } = renderHookWithStore( () => useFloatingPanelZIndex( PANEL_ID ), store );
 
 		// Assert.
-		expect( result.current ).toBe( FLOATING_PANEL_Z_INDEX_BASE + 1 + 1 );
+		const BRING_TO_FRONT_Z = 1;
+		const OVERLAY_OFFSET = 1;
+		expect( result.current ).toBe( FLOATING_PANEL_Z_INDEX_BASE + BRING_TO_FRONT_Z + OVERLAY_OFFSET );
 	} );
 } );

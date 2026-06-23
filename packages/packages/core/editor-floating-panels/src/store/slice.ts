@@ -7,6 +7,7 @@ type SliceState = {
 	minSizeById: Record< string, LogicalSize >;
 	titlesById: Record< string, string >;
 	isDraggableById: Record< string, boolean >;
+	isResizableById: Record< string, boolean >;
 	topZIndex: number;
 };
 
@@ -17,6 +18,7 @@ const initialState: SliceState = {
 	minSizeById: {},
 	titlesById: {},
 	isDraggableById: {},
+	isResizableById: {},
 	topZIndex: 0,
 };
 
@@ -31,13 +33,15 @@ export const slice = __createSlice( {
 				defaults: FloatingPanelDefaults;
 				title?: string;
 				isDraggable?: boolean;
+				isResizable?: boolean;
 				persisted?: FloatingPanelState;
 			} >
 		) {
-			const { id, defaults, title, isDraggable, persisted } = action.payload;
+			const { id, defaults, title, isDraggable, isResizable, persisted } = action.payload;
 
 			state.minSizeById[ id ] = { inlineSize: defaults.minWidth, blockSize: defaults.minHeight };
 			state.isDraggableById[ id ] = isDraggable ?? false;
+			state.isResizableById[ id ] = isResizable ?? false;
 
 			if ( title !== undefined ) {
 				state.titlesById[ id ] = title;

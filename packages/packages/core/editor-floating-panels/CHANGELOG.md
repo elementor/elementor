@@ -1,5 +1,5 @@
 # @elementor/editor-floating-panels
 
-## 4.2.0
+## 4.3.0
 
-- Initial release. Generic floating + dockable React panel framework.
+- Initial release. Generic floating panels framework for the Elementor Editor.

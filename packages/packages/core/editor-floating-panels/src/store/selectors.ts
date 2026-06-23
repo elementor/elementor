@@ -1,5 +1,6 @@
 import { __createSelector } from '@elementor/store';
 
+import { FLOATING_PANEL_Z_INDEX_BASE } from '../constants';
 import { type FloatingPanelsSliceState } from './slice';
 
 export type GlobalState = { floatingPanels: FloatingPanelsSliceState };
@@ -8,8 +9,12 @@ export function selectPanelState( state: GlobalState, id: string ) {
 	return state.floatingPanels.byId[ id ];
 }
 
-export function selectPanelZIndex( state: GlobalState, id: string ): number {
-	return state.floatingPanels.byId[ id ]?.zIndex ?? 0;
+export function resolvePanelZIndex( state: GlobalState, id: string ): number {
+	return FLOATING_PANEL_Z_INDEX_BASE + ( state.floatingPanels.byId[ id ]?.zIndex ?? 0 );
+}
+
+export function resolveOverlayZIndex( state: GlobalState, id: string ): number {
+	return resolvePanelZIndex( state, id ) + 1;
 }
 
 export function selectIsOpen( state: GlobalState, id: string ): boolean {
@@ -30,6 +35,10 @@ export function selectMinSize( state: GlobalState, id: string ) {
 
 export function selectIsDraggable( state: GlobalState, id: string ): boolean {
 	return state.floatingPanels.isDraggableById[ id ] ?? false;
+}
+
+export function selectIsResizable( state: GlobalState, id: string ): boolean {
+	return state.floatingPanels.isResizableById[ id ] ?? false;
 }
 
 export function selectPanelTitle( state: GlobalState, id: string ): string | undefined {

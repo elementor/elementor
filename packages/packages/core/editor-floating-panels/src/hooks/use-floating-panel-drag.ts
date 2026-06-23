@@ -13,6 +13,7 @@ type DragSession = {
 	startClientY: number;
 	startPosition: LogicalPosition;
 	bounds: DragBounds;
+	isRtl: boolean;
 };
 
 function getDragBounds( size: LogicalSize | undefined ): DragBounds {
@@ -39,6 +40,7 @@ export function useFloatingPanelDrag( id: string ) {
 				startClientY: event.clientY,
 				startPosition: position ?? { insetInlineStart: 0, insetBlockStart: 0 },
 				bounds: getDragBounds( size ),
+				isRtl: isRtl(),
 			};
 		},
 		[ position, size ]
@@ -53,7 +55,7 @@ export function useFloatingPanelDrag( id: string ) {
 			}
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
-			const logical = physicalToLogicalDelta( physical, isRtl() );
+			const logical = physicalToLogicalDelta( physical, session.isRtl );
 
 			setPosition( applyDragDelta( session.startPosition, logical, session.bounds ) );
 		},

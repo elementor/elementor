@@ -15,7 +15,7 @@ import { createFloatingPanel, registerFloatingPanel } from '../api';
 import { FloatingPanelBody, FloatingPanelHeader } from '../components/external';
 import FloatingPanelsHost from '../components/internal/host';
 import { encodePersistedState } from '../persistence';
-import { selectIsDraggable, selectPanelState } from '../store/selectors';
+import { selectIsDraggable, selectIsResizable, selectPanelState } from '../store/selectors';
 import { slice } from '../store/slice';
 import { type PanelStateStorage, sync } from '../sync';
 import { type FloatingPanelDeclaration, type FloatingPanelState } from '../types';
@@ -94,6 +94,28 @@ describe( 'createFloatingPanel', () => {
 
 		// Assert.
 		expect( selectIsDraggable( __getState(), declaration.id ) ).toBe( false );
+	} );
+
+	it( 'registers isResizable in the store', () => {
+		// Arrange.
+		sync( memoryStorage() );
+
+		// Act.
+		createFloatingPanel( { ...declaration, isResizable: true } );
+
+		// Assert.
+		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( true );
+	} );
+
+	it( 'defaults isResizable to false when not provided', () => {
+		// Arrange.
+		sync( memoryStorage() );
+
+		// Act.
+		createFloatingPanel( declaration );
+
+		// Assert.
+		expect( selectIsResizable( __getState(), declaration.id ) ).toBe( false );
 	} );
 
 	it( 'rehydrates from persisted state when present', () => {

@@ -18,9 +18,8 @@ type ResizeSession = {
 	startPosition: LogicalPosition;
 	startSize: LogicalSize;
 	bounds: ResizeBounds;
+	isRtl: boolean;
 };
-
-const FALLBACK_MIN_SIZE: LogicalSize = { inlineSize: 0, blockSize: 0 };
 
 function getResizeBounds( position: LogicalPosition, minSize: LogicalSize ): ResizeBounds {
 	return {
@@ -47,7 +46,7 @@ export function usePanelResizeInteraction( id: string ) {
 
 	const onPointerDown = useCallback(
 		( direction: ResizeDirection, event: ReactPointerEvent< HTMLElement > ) => {
-			if ( ! position || ! size ) {
+			if ( ! position || ! size || ! minSize ) {
 				return;
 			}
 
@@ -60,7 +59,8 @@ export function usePanelResizeInteraction( id: string ) {
 				startClientY: event.clientY,
 				startPosition: position,
 				startSize: size,
-				bounds: getResizeBounds( position, minSize ?? FALLBACK_MIN_SIZE ),
+				bounds: getResizeBounds( position, minSize ),
+				isRtl: isRtl(),
 			};
 		},
 		[ minSize, position, size ]
@@ -75,7 +75,7 @@ export function usePanelResizeInteraction( id: string ) {
 			}
 
 			const physical = { dx: event.clientX - session.startClientX, dy: event.clientY - session.startClientY };
-			const logical = physicalToLogicalDelta( physical, isRtl() );
+			const logical = physicalToLogicalDelta( physical, session.isRtl );
 			const next = applyResize(
 				session.direction,
 				session.startPosition,
@@ -93,7 +93,13 @@ export function usePanelResizeInteraction( id: string ) {
 				setPosition( next.position );
 			}
 
-			setSize( next.size );
+			const sizeChanged =
+				next.size.inlineSize !== session.startSize.inlineSize ||
+				next.size.blockSize !== session.startSize.blockSize;
+
+			if ( sizeChanged ) {
+				setSize( next.size );
+			}
 		},
 		[ setPosition, setSize ]
 	);
@@ -120,10 +126,4 @@ export function usePanelResizeInteraction( id: string ) {
 	);
 
 	return { getResizeHandleProps };
-}
-
-export function useFloatingPanelResize( id: string, direction: ResizeDirection ) {
-	const { getResizeHandleProps } = usePanelResizeInteraction( id );
-
-	return getResizeHandleProps( direction );
 }

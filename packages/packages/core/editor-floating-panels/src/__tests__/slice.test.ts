@@ -3,6 +3,7 @@ import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice }
 import {
 	selectIsDraggable,
 	selectIsOpen,
+	selectIsResizable,
 	selectMinSize,
 	selectPanelState,
 	selectPosition,
@@ -119,6 +120,22 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		expect( selectIsDraggable( __getState(), 'a' ) ).toBe( true );
+	} );
+
+	it( 'stores isResizable as false by default', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+
+		// Assert.
+		expect( selectIsResizable( __getState(), 'a' ) ).toBe( false );
+	} );
+
+	it( 'stores isResizable as true when provided', () => {
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults, isResizable: true } ) );
+
+		// Assert.
+		expect( selectIsResizable( __getState(), 'a' ) ).toBe( true );
 	} );
 
 	it( 'bringToFront raises zIndex above all others', () => {

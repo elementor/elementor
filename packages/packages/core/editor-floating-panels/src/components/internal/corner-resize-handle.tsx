@@ -26,7 +26,7 @@ const RTL_CURSORS: Record< ResizeCorner, string > = {
 	'block-start-inline-start': 'nesw-resize',
 	'block-start-inline-end': 'nwse-resize',
 	'block-end-inline-start': 'nwse-resize',
-	'block-end-inline-end': 'nwse-resize',
+	'block-end-inline-end': 'nesw-resize',
 };
 
 type Props = {

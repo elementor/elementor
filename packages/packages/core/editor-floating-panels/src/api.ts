@@ -11,9 +11,10 @@ export function createFloatingPanel( declaration: FloatingPanelDeclaration ) {
 	dispatch(
 		slice.actions.register( {
 			id: declaration.id,
-			defaults: declaration.defaults,
 			title: declaration.title,
 			isDraggable: declaration.isDraggable,
+			isResizable: declaration.isResizable,
+			defaults: declaration.defaults,
 			persisted: getPersistedState( declaration.id ),
 		} )
 	);
