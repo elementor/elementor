@@ -86,7 +86,7 @@ export function GridOutline( { element, tracks, width, height }: Props ) {
 			</svg>
 			{ emptyCellRect && ! isDragActiveFromDom( element ) && (
 				<FirstEmptyCell rect={ emptyCellRect } color={ tracks.borderColor } />
-				) }
+			) }
 		</>
 	);
 }
