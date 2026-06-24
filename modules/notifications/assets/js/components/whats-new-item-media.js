@@ -1,10 +1,9 @@
+/* eslint-disable react/prop-types */
 import { Box } from '@elementor/ui';
 import { WhatsNewItemThumbnail } from './whats-new-item-thumbnail';
 
 export const WhatsNewItemMedia = ( { item } ) => {
 	if ( item.youtubeEmbedId ) {
-		// YouTube does not support the <video> tag — iframe embed is required.
-		// Strip any query params (e.g. ?si= appended by YouTube share links) to get a clean ID.
 		const videoId = item.youtubeEmbedId.split( '?' )[ 0 ];
 		const src = `https://www.youtube.com/embed/${ videoId }${ item.youtubeAutoplay ? '?autoplay=1&mute=1' : '' }`;
 		const allow = `encrypted-media; picture-in-picture${ item.youtubeAutoplay ? '; autoplay' : '' }`;
@@ -36,8 +35,4 @@ export const WhatsNewItemMedia = ( { item } ) => {
 			title={ item.title }
 		/>
 	);
-};
-
-WhatsNewItemMedia.propTypes = {
-	item: PropTypes.object.isRequired,
 };
