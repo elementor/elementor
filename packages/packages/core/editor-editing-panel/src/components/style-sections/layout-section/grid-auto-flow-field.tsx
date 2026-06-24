@@ -32,9 +32,7 @@ const directionOptions: ToggleButtonGroupItem< AutoFlowDirection >[] = [
 	},
 ];
 
-const parseAutoFlow = (
-	value: string | null
-): { direction: AutoFlowDirection | null; dense: boolean } => {
+const parseAutoFlow = ( value: string | null ): { direction: AutoFlowDirection | null; dense: boolean } => {
 	if ( ! value ) {
 		return { direction: null, dense: false };
 	}
@@ -54,9 +52,7 @@ const GridAutoFlowFieldContent = () => {
 	const { placeholder } = useBoundProp();
 
 	const { direction, dense } = parseAutoFlow( value?.value ?? null );
-	const directionPlaceholder = parseAutoFlow(
-		( placeholder as StringPropValue | null )?.value ?? null
-	).direction;
+	const directionPlaceholder = parseAutoFlow( ( placeholder as StringPropValue | null )?.value ?? null ).direction;
 
 	const handleDirectionChange = ( newDirection: AutoFlowDirection | null ) => {
 		if ( ! newDirection ) {
