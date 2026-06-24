@@ -71,13 +71,13 @@ class Post_Query extends Base {
 			'post_type'                    => array_keys( $post_types ),
 			'numberposts'                  => $post_count,
 			'suppress_filters'             => false,
+			'custom_search'                => true,
 			'post_status'                  => $is_public_only ? 'publish' : 'any',
 			'orderby'                      => 'modified',
 			'order'                        => 'DESC',
 		];
 
 		if ( ! empty( $term ) ) {
-			$query_args['custom_search'] = true;
 			$query_args['search_term'] = $term;
 			$query_args[ self::SEARCH_IN_CONTENT_KEY ] = $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false;
 		}
