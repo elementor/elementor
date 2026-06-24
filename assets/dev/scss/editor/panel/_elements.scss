@@ -410,6 +410,7 @@
 			object-fit: cover;
 			box-shadow: 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.20);
 			background-repeat: no-repeat;
+			transition: transform 0.2s ease-out;
 		}
 
 		&__image:nth-child(1) {
@@ -439,6 +440,20 @@
 			background-position-x: -20.254px;
 			background-position-y: -1.064px;
 			background-size: 163.105% 103.748%;		
+		}
+	}
+
+	&:hover &__images {
+		&__image:nth-child(1) {
+			transform: rotate(-6.312deg) translate(-4px, -4px);
+		}
+
+		&__image:nth-child(2) {
+			transform: translateY(-12px);
+		}
+
+		&__image:nth-child(3) {
+			transform: rotate(7.26deg) translate(4px, 0px);
 		}
 	}
 
