@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Link, Typography } from '@elementor/ui';
 import { WhatsNewItemTopicLine } from './whats-new-item-topic-line';
 import { WrapperWithLink } from './wrapper-with-link';
-import { WhatsNewItemThumbnail } from './whats-new-item-thumbnail';
+import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
 
 export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
@@ -30,24 +30,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 					{ item.title }
 				</Typography>
 			</WrapperWithLink>
-			{ item.youtubeEmbedId ? (
-				<Box sx={ { pb: 2 } }>
-					<Box
-						component="iframe"
-						src={ `https://www.youtube.com/embed/${ item.youtubeEmbedId.split( '?' )[ 0 ] }${ item.youtubeAutoplay ? '?autoplay=1&mute=1' : '' }` }
-						title={ item.title }
-						allow={ `accelerometer; ${ item.youtubeAutoplay ? 'autoplay; ' : '' }clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share` }
-						allowFullScreen={ true }
-						sx={ { aspectRatio: '16/9', width: '100%', display: 'block', border: 'none' } }
-					/>
-				</Box>
-			) : ( item.gifSrc || item.imageSrc ) && (
-				<WhatsNewItemThumbnail
-					imageSrc={ item.gifSrc || item.imageSrc }
-					link={ item.link }
-					title={ item.title }
-				/>
-			) }
+			<WhatsNewItemMedia item={ item } />
 
 			<WhatsNewItemChips
 				chipPlan={ item.chipPlan }
