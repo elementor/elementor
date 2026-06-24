@@ -27,6 +27,7 @@ export default class extends elementorModules.Module {
 				elementorCommon.config.editor_events?.token,
 				{
 					persistence: 'localStorage',
+					persistence_name: 'elementor-builder-editor',
 					debug: elementorCommon.config.editor_events?.debug ?? false,
 					autocapture: false,
 					flags: true,
@@ -38,7 +39,7 @@ export default class extends elementorModules.Module {
 					record_mask_text_selector: '',
 					remote_settings_mode: 'strict',
 				},
-				'elementor-editor',
+				'elementor-builder-editor',
 			);
 		}
 		elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
