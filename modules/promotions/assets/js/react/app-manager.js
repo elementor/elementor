@@ -1,4 +1,5 @@
 import App from './app';
+import { resolvePromotionAnimation } from './atomic-promotion-media';
 import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 import { createRoot } from 'react-dom/client';
 
@@ -97,16 +98,30 @@ export class AppManager {
 		);
 	}
 
+	resolveAtomicWidgetPromotionCardProps( { cardType, content } ) {
+		return {
+			cardType,
+			promotionData: {
+				title: content.title,
+				content: content.content,
+				ctaText: content.ctaText,
+				ctaUrl: content.widgetCtaUrl,
+				image: content.image,
+				animationData: resolvePromotionAnimation( content.animation ),
+			},
+		};
+	}
+
 	attachAtomicWidgetPromotionListeners() {
 		const promotions = elementor?.config?.atomicWidgetPromotions || [];
 
-		promotions.forEach( ( { type, content } ) => {
+		promotions.forEach( ( { type, cardType, content } ) => {
 			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
-				this.mountCard( event.detail.target, `e-${ type }-promotion-wrapper`, {
-					cardType: 'atomicForm',
-					promotionData: content,
-					ctaUrl: content.widgetCtaUrl,
-				} );
+				this.mountCard(
+					event.detail.target,
+					`e-${ type }-promotion-wrapper`,
+					this.resolveAtomicWidgetPromotionCardProps( { cardType, content } ),
+				);
 			} );
 		} );
 	}
