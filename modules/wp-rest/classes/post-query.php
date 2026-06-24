@@ -57,15 +57,6 @@ class Post_Query extends Base {
 		$params = $request->get_params();
 		$term = trim( $params[ self::SEARCH_TERM_KEY ] ?? '' );
 
-		if ( empty( $term ) ) {
-			return new \WP_REST_Response( [
-				'success' => true,
-				'data' => [
-					'value' => [],
-				],
-			], 200 );
-		}
-
 		$keys_format_map = $this->filter_keys_conversion_map(
 			$params[ self::KEYS_CONVERSION_MAP_KEY ] ?? self::ALLOWED_KEYS_CONVERSION_MAP,
 			self::ALLOWED_KEYS_CONVERSION_MAP
@@ -81,12 +72,15 @@ class Post_Query extends Base {
 			'numberposts'                  => $post_count,
 			'suppress_filters'             => false,
 			'custom_search'                => true,
-			'search_term'                  => $term,
-			self::SEARCH_IN_CONTENT_KEY    => $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false,
 			'post_status'                  => $is_public_only ? 'publish' : 'any',
-			'orderby'                      => 'ID',
-			'order'                        => 'ASC',
+			'orderby'                      => 'modified',
+			'order'                        => 'DESC',
 		];
+
+		if ( ! empty( $term ) ) {
+			$query_args['search_term'] = $term;
+			$query_args[ self::SEARCH_IN_CONTENT_KEY ] = $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false;
+		}
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
 			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
