@@ -228,6 +228,8 @@ export function CreateWidget() {
 			}
 
 			setModalData( customEvent.detail );
+
+			console.log( 'create widget params', customEvent.detail );
 		};
 
 		window.addEventListener( CREATE_WIDGET_EVENT, handleShow );
