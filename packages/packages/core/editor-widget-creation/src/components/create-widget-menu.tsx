@@ -10,6 +10,10 @@ type OpenMenuEventDetail = {
 };
 
 const OPEN_MENU_EVENT = 'elementor/editor/open-create-widget-menu';
+const CREATE_WIDGET_PROMPT = `Create a widget for me.
+Goal: [What should this widget help me accomplish?]
+Placement: [Where will I see it in the editor/UI?]
+How it should work: `;
 
 export function CreateWidgetMenu() {
 	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } | null >( null );
@@ -33,7 +37,7 @@ export function CreateWidgetMenu() {
 
 	const handleCreateWithAngie = () => {
 		handleClose();
-		openCreateWidgetModal( { entryPoint: 'widgets_panel' } );
+		openCreateWidgetModal( { entryPoint: 'widgets_panel', prompt: CREATE_WIDGET_PROMPT } );
 	};
 
 	const handleBrowseCommunityLibrary = () => {
@@ -68,12 +72,13 @@ export function CreateWidgetMenu() {
 }
 
 
-function openCreateWidgetModal( { entryPoint, openCommunityLibrary = false }: { entryPoint: string, openCommunityLibrary?: boolean } ) {
+function openCreateWidgetModal( { entryPoint, openCommunityLibrary = false, prompt = CREATE_WIDGET_PROMPT }: { entryPoint: string, openCommunityLibrary?: boolean, prompt?: string } ) {
 	window.dispatchEvent(
 		new CustomEvent( CREATE_WIDGET_EVENT, {
 			detail: {
 				entry_point: entryPoint,
 				openCommunityLibrary: openCommunityLibrary,
+				prompt: prompt,
 			},
 		} )
 	);
