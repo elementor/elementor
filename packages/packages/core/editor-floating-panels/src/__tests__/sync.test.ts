@@ -86,6 +86,22 @@ describe( 'sync', () => {
 		const parsed = JSON.parse( written as string );
 		expect( parsed.a.isOpen ).toBe( true );
 	} );
+
+	it( 'calling sync() twice keeps a single persistence subscription', () => {
+		// Arrange.
+		const storage = createMemoryStorage();
+		const writeSpy = jest.spyOn( storage, 'write' );
+
+		// Act.
+		sync( storage );
+		sync( storage );
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.open( 'a' ) );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert.
+		expect( writeSpy ).toHaveBeenCalledTimes( 1 );
+	} );
 } );
 
 describe( 'sync before the store is ready', () => {

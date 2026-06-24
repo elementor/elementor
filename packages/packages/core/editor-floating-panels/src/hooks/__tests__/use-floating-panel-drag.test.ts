@@ -187,4 +187,26 @@ describe( 'useFloatingPanelDrag', () => {
 		// Assert.
 		expect( selectPosition( __getState(), PANEL_ID ) ).toEqual( startPosition );
 	} );
+
+	it( 'clears the drag session on pointer cancel', () => {
+		// Arrange.
+		const store = __getStore();
+
+		if ( ! store ) {
+			throw new Error( 'Store is not initialized' );
+		}
+
+		const target = createPointerTarget();
+		const { result } = renderHookWithStore( () => useFloatingPanelDrag( PANEL_ID ), store );
+
+		// Act.
+		act( () => {
+			result.current.onPointerDown( createPointerEvent( target, { clientX: 0, clientY: 0 } ) );
+			result.current.onPointerCancel( createPointerEvent( target ) );
+			result.current.onPointerMove( createPointerEvent( target, { clientX: 500, clientY: 500 } ) );
+		} );
+
+		// Assert.
+		expect( selectPosition( __getState(), PANEL_ID ) ).toEqual( startPosition );
+	} );
 } );

@@ -62,7 +62,7 @@ export function useFloatingPanelDrag( id: string ) {
 		[ setPosition ]
 	);
 
-	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
+	const clearSession = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
 		const session = sessionRef.current;
 
 		if ( ! session || session.pointerId !== event.pointerId ) {
@@ -72,5 +72,5 @@ export function useFloatingPanelDrag( id: string ) {
 		sessionRef.current = null;
 	}, [] );
 
-	return { onPointerDown, onPointerMove, onPointerUp };
+	return { onPointerDown, onPointerMove, onPointerUp: clearSession, onPointerCancel: clearSession };
 }
