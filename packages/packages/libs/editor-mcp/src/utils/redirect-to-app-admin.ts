@@ -6,7 +6,5 @@ const COMMUNITY_LIBRARY_URL_PARAM = 'open_community_library=true';
 export const redirectToAppAdmin = ( { prompt, openCommunityLibrary }: { prompt?: string; openCommunityLibrary?: boolean } ) => {
 	setReferrerRedirect( window.location.href, prompt );
 	saveState( ANGIE_SIDEBAR_STATE_OPEN );
-	const newHref = `${ ANGIE_APP_URL }${ openCommunityLibrary ? `&${ COMMUNITY_LIBRARY_URL_PARAM }` : '' }`;
-	console.log( 'newHref', newHref );
-	window.location.href = newHref;
+	window.location.href = `${ ANGIE_APP_URL }${ openCommunityLibrary ? `&${ COMMUNITY_LIBRARY_URL_PARAM }` : '' }`;
 };
