@@ -12,6 +12,7 @@ type EventMap = {
 		source?: 'created' | 'converted' | 'duplicated';
 		classId: StyleDefinitionID;
 		classTitle?: string;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classDeleted: {
 		classId: StyleDefinitionID;
@@ -27,6 +28,7 @@ type EventMap = {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		totalInstancesAfterApply: number;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classRemoved: {
 		classId: StyleDefinitionID;

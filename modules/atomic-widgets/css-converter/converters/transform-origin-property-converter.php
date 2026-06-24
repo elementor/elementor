@@ -55,7 +55,7 @@ class Transform_Origin_Property_Converter extends Property_Converter_Base {
 		return [ 'transform-origin' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$axes = $this->parse( trim( $rule['value'] ) );
 
 		if ( null === $axes ) {

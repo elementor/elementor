@@ -40,7 +40,7 @@ class Flex_Property_Converter extends Property_Converter_Base {
 		return [ 'flex' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
 
 		$parsed = $this->parse( $value );

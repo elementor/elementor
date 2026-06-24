@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
+
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Css_Token_Splitter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -82,7 +83,16 @@ class Object_Field_Merge_Converter extends Property_Converter_Base {
 		return [ $this->property ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function convert_null( Conversion_Context $context, array $rule ): bool {
+		$fields = $this->current_fields( $context->get_prop( $this->target_property ) );
+		$fields[ $this->field_key ] = null;
+
+		$context->set_prop( $this->target_property, ( $this->object_prop_type )::generate( $fields ) );
+
+		return true;
+	}
+
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
 
 		if ( '' === $value ) {

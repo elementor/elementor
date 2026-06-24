@@ -24,5 +24,22 @@ abstract class Property_Converter_Base implements Property_Converter {
 		return in_array( $property, $this->get_supported_properties(), true );
 	}
 
-	abstract public function convert( Conversion_Context $context, array $rule ): bool;
+	public function convert( Conversion_Context $context, array $rule ): bool {
+		if ( null === $rule['value'] ) {
+			return $this->convert_null( $context, $rule );
+		}
+
+		return $this->do_convert( $context, $rule );
+	}
+
+	/**
+	 * Override to customize null-reset behavior. Default: set the prop to null directly.
+	 */
+	protected function convert_null( Conversion_Context $context, array $rule ): bool {
+		$context->set_prop( $rule['property'], null );
+
+		return true;
+	}
+
+	abstract protected function do_convert( Conversion_Context $context, array $rule ): bool;
 }

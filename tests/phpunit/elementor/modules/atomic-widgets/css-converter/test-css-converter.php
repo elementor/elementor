@@ -25,7 +25,7 @@ class Mock_Setting_Converter extends Property_Converter_Base {
 		return $this->properties;
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$context->set_prop( $rule['property'], $rule['value'] );
 
 		return true;
@@ -43,7 +43,7 @@ class Mock_Declining_Converter extends Property_Converter_Base {
 		return $this->properties;
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		return false;
 	}
 }
@@ -59,7 +59,7 @@ class Mock_Throwing_Converter extends Property_Converter_Base {
 		return $this->properties;
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		throw new \RuntimeException( 'converter defect' );
 	}
 }
