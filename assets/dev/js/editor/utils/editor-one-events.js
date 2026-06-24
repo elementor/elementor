@@ -21,11 +21,7 @@ export class EditorOneEventManager {
 			return false;
 		}
 
-		try {
-			return this.getEventsManager().dispatchEvent( eventName, payload );
-		} catch ( error ) {
-			return false;
-		}
+		this.getEventsManager().dispatchEvent( eventName, payload );
 	}
 
 	static toLowerSnake( value ) {
