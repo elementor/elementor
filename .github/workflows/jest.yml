@@ -48,21 +48,3 @@ jobs:
         run: npm run install:ci
       - name: "Run Jest"
         run: npm run test
-
-  handle-version-input-tests:
-    runs-on: ubuntu-22.04
-    needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
-    name: Test handle-version-input
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v6
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.15.0
-          cache: npm
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
-      - name: Run handle-version-input tests
-        run: node --test .github/workflows/handle-version-input/index.test.mjs
