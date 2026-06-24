@@ -89,6 +89,7 @@ class Module extends BaseModule {
 	public function add_meta_to_preserve_on_kit_import( array $meta_keys ): array {
 		return array_merge( $meta_keys, [
 			Global_Classes_Order::META_KEY,
+			Global_Classes_Order::META_KEY_PREVIEW,
 			Global_Classes_Labels::META_KEY_FRONTEND,
 			Global_Classes_Labels::META_KEY_PREVIEW,
 			Global_Classes_Relations::META_KEY_FRONTEND,
@@ -118,7 +119,9 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$all_classes = Global_Classes_Repository::make( $previous_kit )->get_order();
+		$preview_order = Global_Classes_Order::make( $previous_kit )->set_preview( true )->get_order();
+		$frontend_order = Global_Classes_Order::make( $previous_kit )->set_preview( false )->get_order();
+		$all_classes = array_unique( array_merge( $preview_order, $frontend_order ) );
 
 		foreach ( $all_classes as $class_id ) {
 			Global_Class_Post::clone_to_other_kit( $class_id, $previous_kit, $new_kit );

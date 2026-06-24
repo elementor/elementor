@@ -275,7 +275,7 @@ class Global_Class_Post {
 	}
 
 	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?Global_Class_Post {
-		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
+		$source_post = self::find_by_class_id( $style_id, true, $source_kit );
 
 		if ( ! $source_post ) {
 			return null;
