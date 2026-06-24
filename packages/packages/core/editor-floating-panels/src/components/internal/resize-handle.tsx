@@ -41,9 +41,10 @@ type Props = {
 	onPointerDown: React.PointerEventHandler< HTMLElement >;
 	onPointerMove: React.PointerEventHandler< HTMLElement >;
 	onPointerUp: React.PointerEventHandler< HTMLElement >;
+	onPointerCancel: React.PointerEventHandler< HTMLElement >;
 };
 
-export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPointerUp }: Props ) {
+export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPointerUp, onPointerCancel }: Props ) {
 	return (
 		<Box
 			data-resize-edge={ edge }
@@ -51,6 +52,7 @@ export default function ResizeHandle( { edge, onPointerDown, onPointerMove, onPo
 			onPointerDown={ onPointerDown }
 			onPointerMove={ onPointerMove }
 			onPointerUp={ onPointerUp }
+			onPointerCancel={ onPointerCancel }
 			sx={ { position: 'absolute', touchAction: 'none', zIndex: 1, ...EDGE_SX[ edge ] } }
 		/>
 	);

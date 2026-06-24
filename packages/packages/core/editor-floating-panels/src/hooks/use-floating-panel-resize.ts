@@ -36,6 +36,7 @@ type ResizeHandlePointerHandlers = {
 	onPointerDown: ( event: ReactPointerEvent< HTMLElement > ) => void;
 	onPointerMove: ( event: ReactPointerEvent< HTMLElement > ) => void;
 	onPointerUp: ( event: ReactPointerEvent< HTMLElement > ) => void;
+	onPointerCancel: ( event: ReactPointerEvent< HTMLElement > ) => void;
 };
 
 export function usePanelResizeInteraction( id: string ) {
@@ -104,7 +105,7 @@ export function usePanelResizeInteraction( id: string ) {
 		[ setPosition, setSize ]
 	);
 
-	const onPointerUp = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
+	const clearSession = useCallback( ( event: ReactPointerEvent< HTMLElement > ) => {
 		const session = sessionRef.current;
 
 		if ( ! session || session.pointerId !== event.pointerId ) {
@@ -119,10 +120,11 @@ export function usePanelResizeInteraction( id: string ) {
 			return {
 				onPointerDown: ( event ) => onPointerDown( direction, event ),
 				onPointerMove,
-				onPointerUp,
+				onPointerUp: clearSession,
+				onPointerCancel: clearSession,
 			};
 		},
-		[ onPointerDown, onPointerMove, onPointerUp ]
+		[ onPointerDown, onPointerMove, clearSession ]
 	);
 
 	return { getResizeHandleProps };

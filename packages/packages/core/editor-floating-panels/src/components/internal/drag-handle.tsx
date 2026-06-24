@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function DragHandle( { panelId, children }: Props ) {
-	const { onPointerDown, onPointerMove, onPointerUp } = useFloatingPanelDrag( panelId );
+	const { onPointerDown, onPointerMove, onPointerUp, onPointerCancel } = useFloatingPanelDrag( panelId );
 
 	return (
 		<Box
@@ -19,6 +19,7 @@ export default function DragHandle( { panelId, children }: Props ) {
 			onPointerDown={ onPointerDown }
 			onPointerMove={ onPointerMove }
 			onPointerUp={ onPointerUp }
+			onPointerCancel={ onPointerCancel }
 			sx={ { cursor: 'move', touchAction: 'none', flex: 1 } }
 		>
 			{ children }
