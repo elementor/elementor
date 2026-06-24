@@ -9,11 +9,17 @@ export async function markIntroductionViewed( introductionKey: string ): Promise
 
 	w.elementor.config.user.introduction[ introductionKey ] = true;
 
+	const promotionConfig = w.elementor.config.document?.themeBuilderPromotion;
+
+	if ( promotionConfig?.introductionKey === introductionKey ) {
+		delete w.elementor?.config?.document?.themeBuilderPromotion;
+	}
+
 	try {
 		await w.elementorCommon?.ajax?.addRequest( 'introduction_viewed', {
 			data: { introductionKey },
 		} );
 	} catch {
-		// Analytics gating should never break the user flow.
+		// Should never break the user flow.
 	}
 }

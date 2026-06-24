@@ -5,7 +5,6 @@ import { Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { ExtendedWindow, ThemeBuilderPromotionScenario } from '../types';
-import { markIntroductionViewed } from '../utils/mark-introduction-viewed';
 
 const MODAL_WIDTH = 893;
 const MODAL_HEIGHT = 432;
@@ -14,11 +13,10 @@ const IMAGE_PANEL_WIDTH = 416;
 type Props = {
 	container?: HTMLElement;
 	scenario: ThemeBuilderPromotionScenario;
-	introductionKey: string;
 	onClose: () => void;
 };
 
-export function PromotionModal( { container, scenario, introductionKey, onClose }: Props ) {
+export function PromotionModal( { container, scenario, onClose }: Props ) {
 	return (
 		<ModalShell
 			onClose={ onClose }
@@ -31,18 +29,12 @@ export function PromotionModal( { container, scenario, introductionKey, onClose 
 				height: `${ MODAL_HEIGHT }px`,
 			} }
 		>
-			<ModalContent scenario={ scenario } introductionKey={ introductionKey } />
+			<ModalContent scenario={ scenario } />
 		</ModalShell>
 	);
 }
 
-function ModalContent( {
-	scenario,
-	introductionKey,
-}: {
-	scenario: ThemeBuilderPromotionScenario;
-	introductionKey: string;
-} ) {
+function ModalContent( { scenario }: { scenario: ThemeBuilderPromotionScenario } ) {
 	const { close } = useModalShell();
 
 	const { title, body, imageUrl } = useMemo( () => getDialogContent( scenario ), [ scenario ] );
@@ -57,10 +49,6 @@ function ModalContent( {
 			// Analytics should never break the user flow.
 		}
 	}, [] );
-
-	const setViewed = useCallback( async () => {
-		await markIntroductionViewed( introductionKey );
-	}, [ introductionKey ] );
 
 	const openThemeBuilder = useCallback( () => {
 		try {
@@ -82,10 +70,9 @@ function ModalContent( {
 			location_l1: 'open_theme_builder_button',
 		} );
 
-		await setViewed();
 		close();
 		openThemeBuilder();
-	}, [ close, openThemeBuilder, scenario, setViewed, track ] );
+	}, [ close, openThemeBuilder, scenario, track ] );
 
 	useEffect( () => {
 		track( {

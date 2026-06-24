@@ -1,22 +1,9 @@
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
 
-function getCandidate( result ) {
-	// Check for weird save contexts with different object structures.
-	const candidate = result?.data?.config?.document?.themeBuilderPromotion ??
-		result?.data?.config?.themeBuilderPromotion ??
-		result?.data?.themeBuilderPromotion ??
-		elementor?.config?.document?.themeBuilderPromotion ??
-		null;
+function getPromotion() {
+	const { scenario, introductionKey } = elementor?.config?.document?.themeBuilderPromotion ?? {};
 
-	return 'object' === typeof candidate ? candidate : null;
-}
-
-function getPromotion( result ) {
-	const candidate = getCandidate( result );
-
-	const { shouldShow, scenario, introductionKey } = candidate ?? {};
-
-	if ( ! ( shouldShow && scenario && introductionKey ) ) {
+	if ( ! ( scenario && introductionKey ) ) {
 		return null;
 	}
 
@@ -32,14 +19,14 @@ export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
 		return 'theme-builder-promotion-after-save';
 	}
 
-	apply( args, result ) {
+	apply( args ) {
 		const { status } = args;
 
 		if ( 'publish' !== status ) {
 			return;
 		}
 
-		const promotion = getPromotion( result );
+		const promotion = getPromotion();
 
 		if ( ! promotion ) {
 			return;
@@ -57,4 +44,3 @@ export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
 }
 
 export default ThemeBuilderPromotionAfterSave;
-

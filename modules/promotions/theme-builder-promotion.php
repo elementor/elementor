@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Base\Document;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,22 +25,40 @@ class Theme_Builder_Promotion {
 
 		self::$is_registered = true;
 
-		add_filter( 'elementor/documents/ajax_save/return_data', [ __CLASS__, 'add_promotion_payload_to_save_response' ], 10, 2 );
+		add_filter( 'elementor/document/config', [ __CLASS__, 'add_document_config' ], 10, 2 );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ __CLASS__, 'enqueue_modal_script' ] );
 	}
 
-	public static function add_promotion_payload_to_save_response( array $return_data, $document ): array {
-		if ( ! $document instanceof Document ) {
-			return $return_data;
+	public static function add_document_config( array $additional_config, int $post_id ): array {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $additional_config;
 		}
 
-		$return_data['config']['document']['themeBuilderPromotion'] = Theme_Builder_Promotion_Detections::get_promotion_payload( $document );
+		$document = Plugin::$instance->documents->get( $post_id );
 
-		return $return_data;
+		if ( ! $document instanceof Document ) {
+			return $additional_config;
+		}
+
+		$additional_config['themeBuilderPromotion'] = Theme_Builder_Promotion_Detections::get_promotion_payload( $document );
+
+		return $additional_config;
 	}
 
 	public static function enqueue_modal_script(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( Plugin::$instance->editor->get_post_id() );
+
+		if ( ! $document instanceof Document ) {
+			return;
+		}
+
+		$promotion_payload = Theme_Builder_Promotion_Detections::get_promotion_payload( $document );
+
+		if ( empty( $promotion_payload['introductionKey'] ) || empty( $promotion_payload['scenario'] ) ) {
 			return;
 		}
 

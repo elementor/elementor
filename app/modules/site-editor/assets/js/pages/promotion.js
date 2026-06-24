@@ -17,7 +17,7 @@ export default function Promotion() {
 					app_type: 'editor',
 					window_name: 'theme_builder_promotional_popup',
 					interaction_type: 'click',
-					target_type: 'buttun',
+					target_type: 'button',
 					target_name: 'theme_builder_upgrade_cta',
 					interaction_result: 'theme_builder_upgrade_cta_clicked',
 					target_location: 'theme_builder_promotional_popup',

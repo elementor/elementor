@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Base\Document;
+use Elementor\User;
 use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,39 +16,46 @@ class Theme_Builder_Promotion_Detections {
 
 	private const SUPPORTED_CONTENT_TYPES = [ 'post', 'page', 'product' ];
 
+	private static ?array $cache = null;
+
 	private const TEMPLATE_TYPES = [
 		'header' => [ 'header' ],
 		'footer' => [ 'footer' ],
 		'single_post' => [ 'single-post', 'single' ],
-		'single_product' => [ 'single-product', 'product', 'single' ],
+		'single_product' => [ 'single-product', 'product' ],
 	];
 
 	public static function get(): array {
+		if ( null !== self::$cache ) {
+			return self::$cache;
+		}
+
 		$content_counts = self::get_elementor_published_content_counts();
 		$template_presence = self::get_template_presence();
 
-		return [
+		self::$cache = [
 			'contentCounts' => $content_counts,
 			'templatePresence' => $template_presence,
 		];
+
+		return self::$cache;
 	}
 
-	public static function get_promotion_payload( Document $document ): array {
+	public static function get_promotion_payload( Document $document ): ?array {
 		$detections = self::get();
 		$scenario = self::get_scenario_for_document( $document );
 
 		if ( ! $scenario ) {
-			return [
-				'shouldShow' => false,
-				'scenario' => null,
-				'introductionKey' => null,
-			];
+			return null;
 		}
 
 		$introduction_key = self::get_introduction_key( $scenario );
 
+		if ( self::is_introduction_viewed( $introduction_key ) || ! self::is_eligible_scenario( $scenario, $detections ) ) {
+			return null;
+		}
+
 		return [
-			'shouldShow' => self::should_show_promotion( $scenario, $detections ),
 			'scenario' => $scenario,
 			'introductionKey' => $introduction_key,
 		];
@@ -76,7 +84,11 @@ class Theme_Builder_Promotion_Detections {
 		return "introduce_theme_builder_{$scenario}_popup";
 	}
 
-	private static function should_show_promotion( string $scenario, array $detections ): bool {
+	private static function is_introduction_viewed( string $introduction_key ): bool {
+		return (bool) User::get_introduction_meta( $introduction_key );
+	}
+
+	private static function is_eligible_scenario( string $scenario, array $detections ): bool {
 		$counts = $detections['contentCounts'] ?? [];
 		$templates = $detections['templatePresence'] ?? [];
 

@@ -1,5 +1,11 @@
 export type ThemeBuilderPromotionScenario = 'single_post' | 'single_product' | 'header_footer';
 
+export type ThemeBuilderPromotionConfig = {
+	shouldShow: boolean;
+	scenario: ThemeBuilderPromotionScenario | null;
+	introductionKey: string | null;
+};
+
 export type OpenEventDetail = {
 	scenario: ThemeBuilderPromotionScenario;
 	introductionKey: string;
@@ -27,6 +33,9 @@ export type ExtendedWindow = Window & {
 	elementorCommon?: ElementorCommon;
 	elementor?: {
 		config?: {
+			document?: {
+				themeBuilderPromotion?: ThemeBuilderPromotionConfig;
+			};
 			user?: {
 				introduction?: Record< string, boolean >;
 			};

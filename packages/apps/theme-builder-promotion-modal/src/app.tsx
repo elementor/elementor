@@ -40,12 +40,5 @@ export function App( { container }: { container?: HTMLElement } ) {
 		return null;
 	}
 
-	return (
-		<PromotionModal
-			container={ container }
-			scenario={ openDetail.scenario }
-			introductionKey={ openDetail.introductionKey }
-			onClose={ handleClose }
-		/>
-	);
+	return <PromotionModal container={ container } scenario={ openDetail.scenario } onClose={ handleClose } />;
 }
