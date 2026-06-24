@@ -10,19 +10,6 @@ export type ExecutedBy = 'user' | 'mcp_tool' | 'system';
 /** @deprecated since 4.2.1 - use `ExecutedBy` instead */
 export type Source = ExecutedBy;
 
-// TODO: Remove `source` parameter in version 4.4.0 - it's replaced by `executedBy`, but pro's older versions will still send `source`
-// so we keep both for backward compatibility
-type ExecutedByParam =
-	| {
-			executedBy: ExecutedBy;
-			source?: never;
-	  }
-	| {
-			/** @deprecated since 4.2.1 - use `executedBy` instead */
-			source: ExecutedBy;
-			executedBy?: never;
-	  };
-
 type ComponentEventData = Record< string, unknown > & {
 	action:
 		| 'createClicked'
@@ -35,7 +22,12 @@ type ComponentEventData = Record< string, unknown > & {
 		| 'propertiesPanelOpened'
 		| 'propertiesGroupCreated'
 		| 'detached';
-} & ExecutedByParam;
+	executedBy?: ExecutedBy;
+	// TODO: Remove `source` parameter in version 4.4.0 - it's replaced by `executedBy`, but pro's older versions will still send `source`
+	// so we keep both for backward compatibility
+	/** @deprecated since 4.2.1 - use `executedBy` instead */
+	source?: Source;
+};
 
 const FEATURE_NAME = 'Components';
 
