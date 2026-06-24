@@ -37,7 +37,7 @@ class Collection_Loop_Promotion extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-loop-builder';
+		return 'eicon-loop-widget';
 	}
 
 	protected static function define_props_schema(): array {
