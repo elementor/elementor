@@ -128,6 +128,7 @@ class Module extends BaseModule {
 			
 			<button type="button" class="elementor-panel-custom-widgets-community-promo__button"><?php echo esc_html__( 'See what people are building', 'elementor' ); ?></button>
 			<div class="elementor-panel-custom-widgets-community-promo__icon" style="background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/arrow-up-right.svg' ); ?>);"></div>
+			<div class="elementor-panel-custom-widgets-community-promo__dismiss" style="display: none; background-image: url(<?php echo esc_url( ELEMENTOR_ASSETS_URL . 'images/angie/x-icon.svg' ); ?>);" role="button" tabindex="0" aria-label="<?php echo esc_attr__( 'Dismiss', 'elementor' ); ?>"></div>
 		</div>
 		<# } #>
 		<?php

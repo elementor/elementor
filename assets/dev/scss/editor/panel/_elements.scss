@@ -475,6 +475,16 @@
 		background-repeat: no-repeat;
 		background-size: cover;
 	}
+
+	&__dismiss {
+		width: 16px;
+		height: 16px;
+		flex-shrink: 0;
+		background-repeat: no-repeat;
+		background-size: cover;
+		cursor: pointer;
+		z-index: 2;
+	}
 }
 
 .elementor-panel-heading.elementor-panel-category-title .elementor-panel-custom-widgets__cta--heading {
