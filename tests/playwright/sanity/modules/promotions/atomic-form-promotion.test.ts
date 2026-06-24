@@ -40,6 +40,7 @@ test.describe( 'Atomic Form promotion test @promotions', () => {
 		await expect( category.locator( '.elementor-panel-category-items' ) ).toBeVisible();
 
 		const formWidget = category.locator( '.elementor-element' ).filter( { hasText: 'Form' } ).first();
+		await formWidget.evaluate( ( el ) => el.scrollIntoView( { block: 'center', behavior: 'instant' } ) );
 		await formWidget.click( { force: true } );
 
 		const popover = page.locator( '.MuiTooltip-tooltip > .MuiBox-root' );
