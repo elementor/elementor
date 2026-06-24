@@ -134,9 +134,34 @@ export default function createAtomicElementBaseView( type ) {
 
 			// Defer to wait for everything to render.
 			setTimeout( () => {
+				if ( this.isAtomicGridContainer() ) {
+					this.reInitEmptyView();
+				}
+
 				this.droppableInitialize();
 				this.updateHandlesPosition();
 			} );
+		},
+
+		destroyEmptyView() {
+			if ( this.isAtomicGridContainer() ) {
+				return;
+			}
+
+			return Marionette.CompositeView.prototype.destroyEmptyView.apply( this, arguments );
+		},
+
+		isAtomicGridContainer() {
+			return 'e-grid' === type;
+		},
+
+		reInitEmptyView() {
+			if ( this.el?.querySelector( ':scope > .elementor-empty-view' ) ) {
+				return;
+			}
+
+			delete this._showingEmptyView;
+			this.showEmptyView();
 		},
 
 		onDestroy() {
@@ -300,7 +325,7 @@ export default function createAtomicElementBaseView( type ) {
 			const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 			return {
-				axis: null,
+				axis: this.isAtomicGridContainer() ? 'vertical' : null,
 				items,
 				groups: [ 'elementor-element' ],
 				horizontalThreshold: 0,
@@ -317,13 +342,14 @@ export default function createAtomicElementBaseView( type ) {
 
 					const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 						draggedElement = draggedView?.getContainer().view.el,
-						containerElement = event.currentTarget.parentElement,
+						isEmptyViewTarget = this.emptyViewIsCurrentlyBeingDraggedOver(),
+						containerElement = isEmptyViewTarget ? this.el : event.currentTarget.parentElement,
 						elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
 
-					let targetIndex = elements.indexOf( event.currentTarget );
+					let targetIndex = isEmptyViewTarget ? elements.length : elements.indexOf( event.currentTarget );
 
 					if ( this.isPanelElement( draggedView, draggedElement ) ) {
-						if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						if ( this.draggingOnBottomOrRightSide( side ) && ! isEmptyViewTarget ) {
 							targetIndex++;
 						}
 
@@ -336,8 +362,8 @@ export default function createAtomicElementBaseView( type ) {
 						return;
 					}
 
-					if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
-						this.moveDroppedItem( draggedView, 0 );
+					if ( isEmptyViewTarget ) {
+						this.moveDroppedItem( draggedView, targetIndex );
 						return;
 					}
 
