@@ -372,7 +372,7 @@
 	padding-left: 104px;
 	border-radius: 7px;
 	position: relative;
-	background: #fff;
+	background: var(--e-a-bg-default);
 	border: none;
 	grid-column: 1 / -1;
 	cursor: pointer;
@@ -460,7 +460,7 @@
 	&__button {
 		font-size: 13px;
 		font-weight: 500;
-		color: #0C0D0E;
+		color: var(--e-a-color-txt-accent);
 		line-height: 130%;
 		letter-spacing: 0.15px;
 		text-align: left;

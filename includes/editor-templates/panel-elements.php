@@ -53,11 +53,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
-	<button class="elementor-panel-heading elementor-panel-category-title">
+	<div class="elementor-panel-heading elementor-panel-category-title">
 		<span class="elementor-panel-heading-toggle">
 			<i class="eicon-caret-right" aria-hidden="true"></i>
 		</span>
-		<span class="elementor-panel-heading-title">{{{ title }}}</span>
+		<button class="elementor-panel-heading-title">{{{ title }}}</button>
 		<?php do_action( 'elementor/editor/templates/panel/category' ); ?>
 		<# if ( 'undefined' !== typeof promotion && promotion ) { #>
 			<span class="elementor-panel-heading-promotion">
@@ -66,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 			</span>
 		<# } #>
-	</button>
+	</div>
 	<div class="elementor-panel-category-items elementor-responsive-panel">
 		<?php do_action( 'elementor/editor/templates/panel/category/content' ); ?>
 	</div>

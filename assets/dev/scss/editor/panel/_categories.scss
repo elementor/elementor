@@ -12,9 +12,26 @@
 		padding: 0 15px;
 		border: none;
 		background-color: transparent;
+		position: relative;
 
 		&:focus {
 			// background-color: var(--e-a-bg-hover);
+		}
+
+		.elementor-panel-heading-title {
+			border: none;
+			background-color: transparent;
+		}
+
+		.elementor-panel-heading-title::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			cursor: pointer;
+			z-index: -1;
 		}
 	}
 
