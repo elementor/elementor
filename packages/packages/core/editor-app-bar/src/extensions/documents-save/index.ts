@@ -3,7 +3,6 @@ import PrimaryAction from './components/primary-action';
 import useDocumentCopyAndShareProps from './hooks/use-document-copy-and-share-props';
 import useDocumentSaveDraftProps from './hooks/use-document-save-draft-props';
 import useDocumentSaveTemplateProps from './hooks/use-document-save-template-props';
-import useDocumentViewAsMarkdownProps from './hooks/use-document-view-as-markdown-props';
 import useDocumentViewPageProps from './hooks/use-document-view-page-props';
 import { documentOptionsMenu } from './locations';
 
@@ -37,11 +36,5 @@ export function init() {
 		id: 'document-view-page',
 		priority: 50,
 		useProps: useDocumentViewPageProps,
-	} );
-
-	documentOptionsMenu.registerAction( {
-		id: 'document-view-as-markdown',
-		priority: 60,
-		useProps: useDocumentViewAsMarkdownProps,
 	} );
 }
