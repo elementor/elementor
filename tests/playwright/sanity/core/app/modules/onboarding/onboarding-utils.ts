@@ -4,6 +4,7 @@ export const ONBOARDING_URL = '/wp-admin/admin.php?page=elementor-app#onboarding
 export const USER_CHOICES_ENDPOINT = '/wp-json/elementor/v1/onboarding/user-choices';
 export const USER_PROGRESS_ENDPOINT = '/wp-json/elementor/v1/onboarding/user-progress';
 const INSTALL_THEME_ENDPOINT = '/wp-json/elementor/v1/onboarding/install-theme';
+const INSTALL_PLUGIN_ENDPOINT = '/wp-json/elementor/v1/onboarding/install-plugin';
 
 export async function mockOnboardingApi( page: Page ) {
 	const choicesRequests: Record< string, unknown >[] = [];
@@ -41,9 +42,17 @@ export async function mockOnboardingApi( page: Page ) {
 		},
 	);
 
+	const installThemeRequests: Record< string, unknown >[] = [];
+	const installPluginRequests: Record< string, unknown >[] = [];
+
 	await page.route(
 		( url ) => url.pathname.includes( INSTALL_THEME_ENDPOINT ),
 		async ( route ) => {
+			const body = route.request().postData();
+			if ( body ) {
+				installThemeRequests.push( JSON.parse( body ) as Record< string, unknown > );
+			}
+
 			await route.fulfill( {
 				status: 200,
 				contentType: 'application/json',
@@ -52,7 +61,23 @@ export async function mockOnboardingApi( page: Page ) {
 		},
 	);
 
-	return { choicesRequests, progressRequests };
+	await page.route(
+		( url ) => url.pathname.includes( INSTALL_PLUGIN_ENDPOINT ),
+		async ( route ) => {
+			const body = route.request().postData();
+			if ( body ) {
+				installPluginRequests.push( JSON.parse( body ) as Record< string, unknown > );
+			}
+
+			await route.fulfill( {
+				status: 200,
+				contentType: 'application/json',
+				body: JSON.stringify( { data: { success: true, message: 'Plugin installed' } } ),
+			} );
+		},
+	);
+
+	return { choicesRequests, progressRequests, installThemeRequests, installPluginRequests };
 }
 
 export async function doAndWaitForProgress( page: Page, action: () => Promise< void > ) {
@@ -85,13 +110,6 @@ export async function navigateToSiteFeaturesStep( page: Page ) {
 
 	await doAndWaitForProgress( page, () =>
 		page.getByRole( 'button', { name: 'I have some experience' } ).click(),
-	);
-
-	await expect( page.getByTestId( 'theme-selection-step' ) ).toBeVisible();
-	await page.getByRole( 'radio', { name: 'Hello', exact: true } ).click();
-
-	await doAndWaitForProgress( page, () =>
-		page.getByRole( 'button', { name: 'Continue with this theme' } ).click(),
 	);
 
 	await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();

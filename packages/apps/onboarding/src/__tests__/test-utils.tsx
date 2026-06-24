@@ -43,6 +43,7 @@ interface OnboardingConfig {
 	hadUnexpectedExit: boolean;
 	isConnected: boolean;
 	shouldShowProInstallScreen?: boolean;
+	isElementorThemeActive?: boolean;
 	userName?: string;
 	translations?: Record< string, string >;
 	urls: {

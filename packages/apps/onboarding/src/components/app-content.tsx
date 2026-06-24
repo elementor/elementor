@@ -7,6 +7,7 @@ import type { ConnectSuccessData } from '../analytics';
 import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
+import { useInstallPlugin } from '../hooks/use-install-plugin';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useOnboardingEvent } from '../hooks/use-onboarding-event';
@@ -18,7 +19,11 @@ import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { ProInstall } from '../steps/screens/pro-install';
 import { SiteAbout } from '../steps/screens/site-about';
-import { SiteFeatures } from '../steps/screens/site-features';
+import {
+	COOKIE_CONSENT_FEATURE_ID,
+	HELLO_THEME_FEATURE_ID,
+	SiteFeatures,
+} from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -80,6 +85,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
 	const installTheme = useInstallTheme();
+	const installPlugin = useInstallPlugin();
 
 	const {
 		trackOnboardingInitialized,
@@ -301,6 +307,42 @@ export function AppContent( { onClose }: AppContentProps ) {
 		[ updateChoices ]
 	);
 
+	const installInstallableFeatures = useCallback(
+		async ( selectedIds: string[] ): Promise< void > => {
+			for ( const featureId of selectedIds ) {
+				if ( featureId === HELLO_THEME_FEATURE_ID ) {
+					try {
+						await installTheme.mutateAsync( 'hello-elementor' );
+					} catch ( error ) {
+						trackErrorReported( {
+							targetType: 'install',
+							targetName: 'install_hello_theme',
+							stepId: 'site_features',
+							errorBody: error instanceof Error ? error.message : 'Failed to install Hello theme',
+						} );
+						showToast( t( 'error.theme_install_failed' ) );
+					}
+					continue;
+				}
+
+				if ( featureId === COOKIE_CONSENT_FEATURE_ID ) {
+					try {
+						await installPlugin.mutateAsync( 'cookiez' );
+					} catch ( error ) {
+						trackErrorReported( {
+							targetType: 'install',
+							targetName: 'install_cookie_consent',
+							stepId: 'site_features',
+							errorBody: error instanceof Error ? error.message : 'Failed to install Cookie Consent',
+						} );
+						showToast( t( 'error.plugin_install_failed' ) );
+					}
+				}
+			}
+		},
+		[ installTheme, installPlugin, trackErrorReported, showToast ]
+	);
+
 	const handleContinue = useCallback(
 		( directChoice?: Record< string, unknown > ) => {
 			if ( stepId === StepId.SITE_FEATURES ) {
@@ -310,11 +352,38 @@ export function AppContent( { onClose }: AppContentProps ) {
 				} );
 			}
 
+			let effectiveDirectChoice = directChoice;
+
+			if ( stepId === StepId.THEME_SELECTION && ! effectiveDirectChoice ) {
+				effectiveDirectChoice = { theme_selection: 'hello-elementor' };
+			}
+
 			const storedChoice = choices[ stepId as keyof typeof choices ];
-			const choiceData = directChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
+			const choiceData =
+				effectiveDirectChoice ?? ( isChoiceEmpty( storedChoice ) ? null : { [ stepId ]: storedChoice } );
 
 			if ( choiceData ) {
 				saveChoicesFireAndForget( choiceData );
+			}
+
+			if ( stepId === StepId.SITE_FEATURES && isLast ) {
+				const selectedFeatures = ( choices.site_features as string[] ) || [];
+				const installableSelected = selectedFeatures.filter(
+					( id ) => id === HELLO_THEME_FEATURE_ID || id === COOKIE_CONSENT_FEATURE_ID
+				);
+
+				if ( installableSelected.length > 0 ) {
+					trackSummary( {
+						choices,
+						completedSteps: [ ...completedSteps, stepId ],
+						isConnected,
+						isGuest,
+					} );
+					isCompletingRef.current = true;
+					setIsCompleting( true );
+					installInstallableFeatures( installableSelected ).finally( completeAndRedirect );
+					return;
+				}
 			}
 
 			if ( stepId === StepId.THEME_SELECTION ) {
@@ -398,6 +467,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			updateProgress,
 			saveChoicesFireAndForget,
 			installTheme,
+			installInstallableFeatures,
 			showToast,
 			completeAndRedirect,
 			trackErrorReported,
@@ -438,7 +508,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 			case StepId.EXPERIENCE_LEVEL:
 				return <ExperienceLevel onComplete={ handleContinue } />;
 			case StepId.THEME_SELECTION:
-				return <ThemeSelection onComplete={ handleContinue } />;
+				return <ThemeSelection />;
 			case StepId.SITE_FEATURES:
 				return <SiteFeatures />;
 			default:

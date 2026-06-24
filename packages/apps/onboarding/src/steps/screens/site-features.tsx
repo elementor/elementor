@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
@@ -7,30 +7,30 @@ import { useOnboarding } from '../../hooks/use-onboarding';
 import {
 	AccessibilityToolsIcon,
 	AIGeneratorIcon,
-	ClassesVariablesIcon,
+	CookieConsentIcon,
 	CorePlaceholderIcon,
 	CustomCodeIcon,
 	EmailDeliverabilityIcon,
+	HelloThemeIcon,
 	ImageOptimizationIcon,
-	InteractionsIcon,
 	ThemeBuilderIcon,
 	WoocommerceIcon,
 } from '../../icons';
+import { getConfig } from '../../utils/get-config';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption } from '../components/site-features';
 
+export const HELLO_THEME_FEATURE_ID = 'hello_theme';
+export const COOKIE_CONSENT_FEATURE_ID = 'cookie_consent';
+
+export const INSTALLABLE_DEFAULTS = [ HELLO_THEME_FEATURE_ID ];
+
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
-		id: 'classes_variables',
-		labelKey: 'steps.site_features.option_classes_variables',
-		Icon: ClassesVariablesIcon,
-		licenseType: 'core',
-	},
-	{
-		id: 'interactions',
-		labelKey: 'steps.site_features.option_interactions',
-		Icon: InteractionsIcon,
-		licenseType: 'core',
+		id: HELLO_THEME_FEATURE_ID,
+		labelKey: 'steps.site_features.option_hello_theme',
+		Icon: HelloThemeIcon,
+		licenseType: 'installable',
 	},
 	{
 		id: 'theme_builder',
@@ -55,6 +55,12 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		labelKey: 'steps.site_features.option_email_deliverability',
 		Icon: EmailDeliverabilityIcon,
 		licenseType: 'one',
+	},
+	{
+		id: COOKIE_CONSENT_FEATURE_ID,
+		labelKey: 'steps.site_features.option_cookie_consent',
+		Icon: CookieConsentIcon,
+		licenseType: 'installable',
 	},
 	{
 		id: 'ai_features',
@@ -82,38 +88,55 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 	},
 ];
 
-export const CORE_FEATURE_IDS = new Set(
-	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
-);
-
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
+
+const isInstallable = ( id: string ): boolean =>
+	FEATURE_OPTIONS.some( ( option ) => option.id === id && option.licenseType === 'installable' );
 
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
 
 	const theme = useTheme();
 
-	const storedPaidFeatures = useMemo(
-		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
-		[ choices.site_features ]
+	const isElementorThemeActive = getConfig()?.isElementorThemeActive ?? false;
+
+	const visibleOptions = useMemo(
+		() => FEATURE_OPTIONS.filter( ( option ) => ! ( option.id === HELLO_THEME_FEATURE_ID && isElementorThemeActive ) ),
+		[ isElementorThemeActive ]
 	);
 
-	const selectedValues = useMemo( () => {
-		const combined = [ ...CORE_FEATURE_IDS, ...storedPaidFeatures ];
-		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
-	}, [ storedPaidFeatures ] );
+	const storedSiteFeatures = ( choices.site_features as string[] ) || [];
+	const hasInitializedDefaults = useRef( false );
 
-	function handleFeatureClick( id: string ) {
-		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+	useEffect( () => {
+		if ( hasInitializedDefaults.current ) {
+			return;
+		}
+		hasInitializedDefaults.current = true;
+
+		const hasAnyValid = storedSiteFeatures.some( ( id ) => FEATURE_OPTION_IDS.has( id ) );
+
+		if ( hasAnyValid ) {
 			return;
 		}
 
-		const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
-		const updatedPaidFeatureSelection = hasPaidFeaturesSelected
-			? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
-			: [ ...storedPaidFeatures, id ];
+		const defaults = INSTALLABLE_DEFAULTS.filter(
+			( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isElementorThemeActive )
+		);
+		actions.setUserChoice( 'site_features', defaults );
+	}, [ storedSiteFeatures, isElementorThemeActive, actions ] );
 
-		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
+	const selectedValues = useMemo(
+		() => storedSiteFeatures.filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
+		[ storedSiteFeatures ]
+	);
+
+	function handleFeatureClick( id: string ) {
+		const next = selectedValues.includes( id )
+			? selectedValues.filter( ( featureId ) => featureId !== id )
+			: [ ...selectedValues, id ];
+
+		actions.setUserChoice( 'site_features', next );
 	}
 
 	return (
@@ -128,10 +151,12 @@ export function SiteFeatures() {
 			</Stack>
 
 			<FeatureGrid
-				options={ FEATURE_OPTIONS }
+				options={ visibleOptions }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
 			/>
 		</Stack>
 	);
 }
+
+export { isInstallable };

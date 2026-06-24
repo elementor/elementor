@@ -46,7 +46,6 @@ export const EXPERIENCE_VALUE_MAP: Record< string, string > = {
 
 export const THEME_VALUE_MAP: Record< string, string > = {
 	'hello-elementor': 'hello',
-	'hello-biz': 'hellobiz',
 };
 
 export const STEP_SPEC_NAMES: Record< string, string > = {
@@ -113,6 +112,13 @@ export interface ConnectSuccessData {
 
 /** Enforces target_type/target_name pairing for ob_error_reported. */
 export type ErrorReportedTarget =
-	| { targetType: 'install'; targetName: 'install_pro_on_this_site' | 'continue_with_this_theme' }
+	| {
+			targetType: 'install';
+			targetName:
+				| 'install_pro_on_this_site'
+				| 'continue_with_this_theme'
+				| 'install_hello_theme'
+				| 'install_cookie_consent';
+	  }
 	| { targetType: 'save'; targetName: string }
 	| { targetType: 'request'; targetName: string };

@@ -14,11 +14,6 @@ function getDefaultSteps(): Step[] {
 			type: 'single',
 		},
 		{
-			id: StepId.THEME_SELECTION,
-			label: t( 'steps.theme_selection.title' ),
-			type: 'single',
-		},
-		{
 			id: StepId.SITE_FEATURES,
 			label: t( 'steps.site_features.title' ),
 			type: 'multiple',

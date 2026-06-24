@@ -1,68 +1,28 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
+import { CheckedCircleIcon } from '@elementor/icons';
 import { Stack, Typography } from '@elementor/ui';
 
+import { getGreetingText, HELLO_THEME } from '../../components/theme-selection';
 import {
-	getGreetingText,
-	getRecommendedTheme,
-	HELLO_BIZ_THEME,
-	HELLO_THEME,
-	ThemeCard,
-} from '../../components/theme-selection';
+	InstalledChip,
+	RecommendedChip,
+	ThemeCardRoot,
+	ThemePreview,
+} from '../../components/theme-selection/styled-components';
 import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
-import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
-import type { ThemeSlug } from '../../types';
 import { StepId } from '../../types';
 import { t } from '../../utils/translations';
 
-interface ThemeSelectionProps {
-	onComplete: ( choice: Record< string, unknown > ) => void;
-}
+export function ThemeSelection() {
+	const { choices, completedSteps } = useOnboarding();
 
-export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
-	const { choices, completedSteps, actions } = useOnboarding();
-	const { trackThemeSuggested, trackThemeSelected } = useOnboardingEvent();
-
-	const selectedValue = choices.theme_selection as ThemeSlug | null;
 	const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
-	const isInstalled = isStepCompleted && !! selectedValue;
+	const isInstalled = isStepCompleted && choices.theme_selection === HELLO_THEME.slug;
 
-	const recommendedTheme = useMemo( () => getRecommendedTheme( choices ), [ choices ] );
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
-
-	const hasTrackedSuggestion = useRef( false );
-
-	useEffect( () => {
-		if ( recommendedTheme && ! hasTrackedSuggestion.current ) {
-			hasTrackedSuggestion.current = true;
-			trackThemeSuggested( recommendedTheme );
-		}
-	}, [ recommendedTheme, trackThemeSuggested ] );
-
-	useEffect( () => {
-		if ( ! selectedValue && ! isInstalled ) {
-			actions.setUserChoice( StepId.THEME_SELECTION, recommendedTheme );
-		}
-	}, [ selectedValue, recommendedTheme, isInstalled, actions ] );
-
-	const handleSelect = useCallback(
-		( slug: ThemeSlug ) => {
-			if ( isInstalled ) {
-				onComplete( { theme_selection: selectedValue } );
-				return;
-			}
-
-			trackThemeSelected( slug );
-			actions.setUserChoice( 'theme_selection', slug );
-		},
-		[ actions, isInstalled, onComplete, selectedValue, trackThemeSelected ]
-	);
-
-	const themes = [ HELLO_THEME, HELLO_BIZ_THEME ];
-
-	const effectiveSelection = selectedValue ?? recommendedTheme;
 
 	return (
 		<Stack spacing={ 7.5 } data-testid="theme-selection-step">
@@ -80,35 +40,30 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 					</Typography>
 				</Stack>
 
-				<Stack
-					direction="row"
-					justifyContent="center"
-					flexWrap="wrap"
-					gap={ 4 }
-					role="radiogroup"
-					aria-label={ t( 'steps.theme_selection.aria_label' ) }
-				>
-					{ themes.map( ( theme ) => {
-						const isSelected = effectiveSelection === theme.slug;
-						const isThemeInstalled = isInstalled && selectedValue === theme.slug;
-						const isRecommended = theme.slug === recommendedTheme;
+				<Stack direction="row" justifyContent="center" gap={ 4 }>
+					<ThemeCardRoot selected={ false } disabled>
+						<ThemePreview bgColor={ HELLO_THEME.previewBgColor } previewImage={ HELLO_THEME.previewImage }>
+							{ isInstalled ? (
+								<InstalledChip
+									label={ t( 'common.installed' ) }
+									size="small"
+									color="success"
+									icon={ <CheckedCircleIcon /> }
+								/>
+							) : (
+								<RecommendedChip label={ t( 'common.recommended' ) } size="small" color="default" />
+							) }
+						</ThemePreview>
 
-						return (
-							<ThemeCard
-								key={ theme.slug }
-								slug={ theme.slug }
-								label={ t( theme.labelKey ) }
-								description={ t( theme.descriptionKey ) }
-								previewBgColor={ theme.previewBgColor }
-								previewImage={ theme.previewImage }
-								selected={ isSelected }
-								recommended={ isRecommended }
-								installed={ isThemeInstalled }
-								disabled={ isInstalled && ! isSelected }
-								onClick={ handleSelect }
-							/>
-						);
-					} ) }
+						<Stack spacing={ 0.5 } alignItems="center" sx={ { textAlign: 'center', px: 2.25 } }>
+							<Typography variant="subtitle1" color="text.primary">
+								{ t( HELLO_THEME.labelKey ) }
+							</Typography>
+							<Typography variant="caption" color="text.secondary">
+								{ t( 'steps.theme_selection.by_elementor' ) }
+							</Typography>
+						</Stack>
+					</ThemeCardRoot>
 				</Stack>
 			</Stack>
 		</Stack>

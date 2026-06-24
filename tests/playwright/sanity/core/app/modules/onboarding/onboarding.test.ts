@@ -296,7 +296,7 @@ test.describe( 'Onboarding @onboarding', () => {
 		expect( navigationRequest.url() ).toContain( 'action=elementor_new_post' );
 	} );
 
-	test( 'Back from theme_selection shows experience_level Continue enabled', async ( { page } ) => {
+	test.skip( 'Back from theme_selection shows experience_level Continue enabled (Pro-only flow)', async ( { page } ) => {
 		await mockOnboardingApi( page );
 		await navigateAndPassLogin( page );
 
@@ -325,6 +325,44 @@ test.describe( 'Onboarding @onboarding', () => {
 		).toHaveAttribute( 'aria-pressed', 'true' );
 
 		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
+	} );
+
+	test( 'Core site_features defaults: Hello selected, Cookie Consent unselected, after Email delivery', async ( { page } ) => {
+		await mockOnboardingApi( page );
+		await navigateToSiteFeaturesStep( page );
+
+		const helloCard = page.getByTestId( 'feature-card-hello_theme' );
+		const cookieCard = page.getByTestId( 'feature-card-cookie_consent' );
+		const emailCard = page.getByTestId( 'feature-card-email_deliverability' );
+
+		await expect( helloCard ).toBeVisible();
+		await expect( helloCard ).toHaveAttribute( 'aria-pressed', 'true' );
+
+		await expect( cookieCard ).toBeVisible();
+		await expect( cookieCard ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		const emailBox = await emailCard.boundingBox();
+		const cookieBox = await cookieCard.boundingBox();
+		expect( cookieBox && emailBox ? cookieBox.y >= emailBox.y : false ).toBeTruthy();
+	} );
+
+	test( 'Core Continue with Free installs selected installable features', async ( { page } ) => {
+		const { installThemeRequests, installPluginRequests } = await mockOnboardingApi( page );
+		await navigateToSiteFeaturesStep( page );
+
+		await page.getByTestId( 'feature-card-cookie_consent' ).click();
+
+		await page.route( '**/edit.php**', ( route ) =>
+			route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } ),
+		);
+
+		await Promise.all( [
+			page.waitForRequest( ( req ) => req.url().includes( 'edit.php' ) ),
+			page.getByRole( 'button', { name: 'Continue with Free' } ).click(),
+		] );
+
+		expect( installThemeRequests.some( ( req ) => 'hello-elementor' === req.theme_slug ) ).toBeTruthy();
+		expect( installPluginRequests.some( ( req ) => 'cookiez' === req.plugin_slug ) ).toBeTruthy();
 	} );
 
 	test( 'theme_selection step is skipped when Elementor theme is already active', async ( { page, apiRequests }, testInfo ) => {
