@@ -1,5 +1,4 @@
-var CREATE_WIDGET_PROMPT = require( './widget-creation' ).CREATE_WIDGET_PROMPT,
-	PanelElementsElementsCollection = require( '../collections/elements' ),
+var PanelElementsElementsCollection = require( '../collections/elements' ),
 	PanelElementsCategoryView;
 
 PanelElementsCategoryView = Marionette.CompositeView.extend( {
@@ -16,7 +15,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	events: {
 		'click @ui.title': 'onTitleClick',
 		'click @ui.chip': 'onChipClick',
-		'click .elementor-panel-custom-widgets__cta': 'onCustomWidgetsCtaClick',
+		'click .elementor-panel-custom-widgets__cta--heading': 'onCustomWidgetsMenuOpen',
 		'click .elementor-panel-custom-widgets-community-promo__button': 'onCustomWidgetsCommunityPromoClick',
 		'click .elementor-panel-heading-promotion a': 'onPromotionLinkClick',
 	},
@@ -112,14 +111,18 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		);
 	},
 
-	onCustomWidgetsCtaClick( event ) {
+	onCustomWidgetsMenuOpen( event ) {
 		event.stopPropagation();
 
+		const buttonRect = event.currentTarget.getBoundingClientRect();
+
 		window.dispatchEvent(
-			new CustomEvent( 'elementor/editor/create-widget', {
+			new CustomEvent( 'elementor/editor/open-create-widget-menu', {
 				detail: {
-					prompt: CREATE_WIDGET_PROMPT,
-					entry_point: 'widgets_panel',
+					anchorPosition: {
+						top: buttonRect.bottom,
+						left: buttonRect.right,
+					},
 				},
 			} ),
 		);
@@ -135,7 +138,6 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/editor/create-widget', {
 				detail: {
-					prompt: 'Community Library! TEST',
 					entry_point: 'widgets_panel',
 					urlParams: 'open_community_library=true',
 				},
