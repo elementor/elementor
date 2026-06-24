@@ -11,7 +11,7 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, rmSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -60,7 +60,7 @@ function runScript( version, existingTags = [] ) {
 	// Parse key=value lines written to GITHUB_OUTPUT
 	const outputs = {};
 	try {
-		const raw = execSync( `cat "${ outputFile }"`, { encoding: 'utf8' } );
+		const raw = readFileSync( outputFile, { encoding: 'utf8' } );
 		for ( const line of raw.split( '\n' ) ) {
 			const eq = line.indexOf( '=' );
 			if ( eq > 0 ) {
