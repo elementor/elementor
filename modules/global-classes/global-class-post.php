@@ -274,13 +274,21 @@ class Global_Class_Post {
 		return false !== $result;
 	}
 
-	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?Global_Class_Post {
-		$source_post = self::find_by_class_id( $style_id, true, $source_kit );
+	public function clone( Kit $target_kit ): ?self {
+		return self::clone_to_kit( $this->get_class_id(), $this, $target_kit );
+	}
+
+	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?self {
+		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
 
 		if ( ! $source_post ) {
 			return null;
 		}
 
+		return self::clone_to_kit( $style_id, $source_post, $target_kit );
+	}
+
+	private static function clone_to_kit( string $style_id, self $source_post, Kit $target_kit ): ?self {
 		$new_post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_title' => $source_post->get_label(),

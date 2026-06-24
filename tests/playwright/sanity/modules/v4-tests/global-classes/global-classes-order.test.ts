@@ -2,7 +2,7 @@ import type EditorPage from '../../../../pages/editor-page';
 import { expect, Locator, type Page } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import { deleteAllGlobalClasses, openClassManager, reorderClassInClassManager, saveAndCloseClassManager } from './utils';
+import { deleteAllGlobalClasses, openClassManager, publishAndWaitForClassesSave, reorderClassInClassManager, saveAndCloseClassManager } from './utils';
 import { timeouts } from '../../../../config/timeouts';
 
 async function createClassWithBackgroundColor(
@@ -12,7 +12,7 @@ async function createClassWithBackgroundColor(
 	backgroundColor: string,
 ): Promise<void> {
 	await editor.v4Panel.style.addGlobalClass( className );
-	await page.waitForTimeout( 500 );
+	await page.waitForTimeout( timeouts.short );
 
 	await editor.v4Panel.style.selectClassState( 'normal', className );
 
@@ -30,8 +30,8 @@ function getFrontendDivBlock( page: Page, divBlockId: string ): Locator {
 
 async function goBackToEditor( page: Page, editor: EditorPage ): Promise<void> {
 	await page.goBack();
+	await page.waitForLoadState( 'load', { timeout: timeouts.longAction } );
 	await editor.waitForPanelToLoad();
-	await page.waitForTimeout( timeouts.navigation );
 }
 
 async function assertDivBlockColor( divBlock: Locator, expectedColor: string ): Promise<void> {
@@ -70,7 +70,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		await page.close();
 	} );
 
-	test.skip( 'Global class order determines CSS specificity on canvas and frontend', async () => {
+	test( 'Global class order determines CSS specificity on canvas and frontend', async () => {
 		let divBlockId: string;
 		let canvasDivBlock: Locator;
 		let frontendDivBlock: Locator;
@@ -105,8 +105,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 		} );
 
 		await test.step( 'Publish and view frontend: Verify all classes present and green wins', async () => {
-			await editor.publishPage();
-			await page.waitForTimeout( timeouts.action );
+			await publishAndWaitForClassesSave( editor, page );
 			await editor.viewPage();
 
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
@@ -161,7 +160,7 @@ test.describe( 'Global Classes - Order @v4-tests', () => {
 
 			frontendDivBlock = getFrontendDivBlock( page, divBlockId );
 			await assertDivBlockColor( frontendDivBlock, BLUE );
-			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES.reverse() );
+			await assertDivBlockHasClasses( frontendDivBlock, ALL_CLASSES );
 		} );
 
 		await test.step( 'Go back to editor and verify canvas still shows blue', async () => {

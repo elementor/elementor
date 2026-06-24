@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Background_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Border_Shorthand_Expander;
+use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Outline_Shorthand_Expander;
 use Elementor\Modules\AtomicWidgets\CssConverter\Expanders\Physical_To_Logical_Expander;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -22,6 +23,7 @@ class Expander_Registry_Factory {
 		$registry = ( new Expander_Registry() )
 			->register( new Physical_To_Logical_Expander() )
 			->register( new Background_Shorthand_Expander( $variables_service ) )
+			->register( new Outline_Shorthand_Expander() )
 			->register( new Border_Shorthand_Expander( 'border', self::border_longhands( '' ), $style_enum, $variables_service ) );
 
 		foreach ( self::BORDER_SIDES as $side ) {
@@ -39,7 +41,7 @@ class Expander_Registry_Factory {
 	 *
 	 * @return array<string, string>
 	 */
-	private static function border_longhands( string $infix ): array {
+	public static function border_longhands( string $infix ): array {
 		return [
 			Border_Shorthand_Expander::ROLE_WIDTH => "border-{$infix}width",
 			Border_Shorthand_Expander::ROLE_STYLE => "border-{$infix}style",
