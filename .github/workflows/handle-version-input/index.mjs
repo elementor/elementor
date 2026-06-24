@@ -50,7 +50,7 @@ function checkTagDoesNotExist(version) {
     throw new Error( `Failed to list git tags: ${err.message}` );
   }
 
-  const tagName = `v${version}`;
+  const tagName = `${version}`;
 
   if (existingTags.split('\n').some((t) => t.trim() === tagName)) {
     throw new Error(`Version ${version} already exists as a GitHub Release (tag ${tagName} found).`);
