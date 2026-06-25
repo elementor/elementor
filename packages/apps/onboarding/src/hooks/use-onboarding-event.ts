@@ -24,7 +24,7 @@ import {
 	trackStepViewed,
 	trackSummary,
 	trackThemeSelected,
-	trackThemeSuggested,
+	trackThemeUnselected,
 	trackUpgradeClicked,
 } from '../analytics/onboarding-tracking';
 import { useTrackingState } from '../analytics/tracking-context';
@@ -43,8 +43,8 @@ export function useOnboardingEvent() {
 			trackPersonaSelected: ( value: string ) => trackPersonaSelected( isActive, value ),
 			trackSiteTopicSelected: ( topics: string[] ) => trackSiteTopicSelected( isActive, topics ),
 			trackExperienceSelected: ( level: string ) => trackExperienceSelected( isActive, level ),
-			trackThemeSuggested: ( theme: string ) => trackThemeSuggested( isActive, theme ),
 			trackThemeSelected: ( theme: string ) => trackThemeSelected( isActive, theme ),
+			trackThemeUnselected: () => trackThemeUnselected( isActive ),
 			trackProFeaturesSelected: ( params: {
 				targetName: 'continue_with_free' | 'compare plans';
 				features: string[];

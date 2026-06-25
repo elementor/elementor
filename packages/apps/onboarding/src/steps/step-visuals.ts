@@ -48,8 +48,8 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
-		background: buildBackground( 'step-5.webp' ),
-		video: getOnboardingVideoUrl( 'step-5.webm' ),
+		background: buildBackground( 'step-4.webp' ),
+		video: getOnboardingVideoUrl( 'step-4.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 };

@@ -7,7 +7,6 @@ import type { ConnectSuccessData } from '../analytics';
 import { canSendEvents, initializeAndEnableTracking, setCanSendEvents, updateLibraryConnectConfig } from '../analytics';
 import { useCheckProInstallScreen } from '../hooks/use-check-pro-install-screen';
 import { useElementorConnect } from '../hooks/use-elementor-connect';
-import { useInstallPlugin } from '../hooks/use-install-plugin';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useOnboardingEvent } from '../hooks/use-onboarding-event';
@@ -20,9 +19,9 @@ import { Login } from '../steps/screens/login';
 import { ProInstall } from '../steps/screens/pro-install';
 import { SiteAbout } from '../steps/screens/site-about';
 import {
-	COOKIE_CONSENT_FEATURE_ID,
 	HELLO_THEME_FEATURE_ID,
 	SiteFeatures,
+	isInstallable,
 } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
@@ -85,7 +84,6 @@ export function AppContent( { onClose }: AppContentProps ) {
 	const updateProgress = useUpdateProgress();
 	const updateChoices = useUpdateChoices();
 	const installTheme = useInstallTheme();
-	const installPlugin = useInstallPlugin();
 
 	const {
 		trackOnboardingInitialized,
@@ -98,6 +96,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 		trackUpgradeClicked,
 		trackResumeOnboarding,
 		trackSummary,
+		trackThemeSelected,
 		trackErrorReported,
 		activateTracking,
 		flushQueue,
@@ -307,40 +306,25 @@ export function AppContent( { onClose }: AppContentProps ) {
 		[ updateChoices ]
 	);
 
-	const installInstallableFeatures = useCallback(
+	const installHelloThemeIfSelected = useCallback(
 		async ( selectedIds: string[] ): Promise< void > => {
-			for ( const featureId of selectedIds ) {
-				if ( featureId === HELLO_THEME_FEATURE_ID ) {
-					try {
-						await installTheme.mutateAsync( 'hello-elementor' );
-					} catch ( error ) {
-						trackErrorReported( {
-							targetType: 'install',
-							targetName: 'install_hello_theme',
-							stepId: 'site_features',
-							errorBody: error instanceof Error ? error.message : 'Failed to install Hello theme',
-						} );
-						showToast( t( 'error.theme_install_failed' ) );
-					}
-					continue;
-				}
+			if ( ! selectedIds.includes( HELLO_THEME_FEATURE_ID ) ) {
+				return;
+			}
 
-				if ( featureId === COOKIE_CONSENT_FEATURE_ID ) {
-					try {
-						await installPlugin.mutateAsync( 'cookiez' );
-					} catch ( error ) {
-						trackErrorReported( {
-							targetType: 'install',
-							targetName: 'install_cookie_consent',
-							stepId: 'site_features',
-							errorBody: error instanceof Error ? error.message : 'Failed to install Cookie Consent',
-						} );
-						showToast( t( 'error.plugin_install_failed' ) );
-					}
-				}
+			try {
+				await installTheme.mutateAsync( 'hello-elementor' );
+			} catch ( error ) {
+				trackErrorReported( {
+					targetType: 'install',
+					targetName: 'install_hello_theme',
+					stepId: 'site_features',
+					errorBody: error instanceof Error ? error.message : 'Failed to install Hello theme',
+				} );
+				showToast( t( 'error.theme_install_failed' ) );
 			}
 		},
-		[ installTheme, installPlugin, trackErrorReported, showToast ]
+		[ installTheme, trackErrorReported, showToast ]
 	);
 
 	const handleContinue = useCallback(
@@ -368,11 +352,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 			if ( stepId === StepId.SITE_FEATURES && isLast ) {
 				const selectedFeatures = ( choices.site_features as string[] ) || [];
-				const installableSelected = selectedFeatures.filter(
-					( id ) => id === HELLO_THEME_FEATURE_ID || id === COOKIE_CONSENT_FEATURE_ID
-				);
+				const hasHelloSelected = selectedFeatures.some( ( id ) => isInstallable( id ) );
 
-				if ( installableSelected.length > 0 ) {
+				if ( hasHelloSelected ) {
 					trackSummary( {
 						choices,
 						completedSteps: [ ...completedSteps, stepId ],
@@ -381,15 +363,16 @@ export function AppContent( { onClose }: AppContentProps ) {
 					} );
 					isCompletingRef.current = true;
 					setIsCompleting( true );
-					installInstallableFeatures( installableSelected ).finally( completeAndRedirect );
+					installHelloThemeIfSelected( selectedFeatures ).finally( completeAndRedirect );
 					return;
 				}
 			}
 
 			if ( stepId === StepId.THEME_SELECTION ) {
-				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ) as string;
+				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ?? 'hello-elementor' ) as string;
 
 				if ( themeSlug && isLast ) {
+					trackThemeSelected( themeSlug );
 					isCompletingRef.current = true;
 					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
@@ -397,7 +380,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 						onError: ( error ) => {
 							trackErrorReported( {
 								targetType: 'install',
-								targetName: 'continue_with_this_theme',
+								targetName: 'continue_with_hello',
 								stepId: 'theme_selection',
 								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
 							} );
@@ -409,11 +392,12 @@ export function AppContent( { onClose }: AppContentProps ) {
 				}
 
 				if ( themeSlug ) {
+					trackThemeSelected( themeSlug );
 					installTheme.mutate( themeSlug, {
 						onError: ( error ) => {
 							trackErrorReported( {
 								targetType: 'install',
-								targetName: 'continue_with_this_theme',
+								targetName: 'continue_with_hello',
 								stepId: 'theme_selection',
 								errorBody: error instanceof Error ? error.message : 'Failed to install theme',
 							} );
@@ -467,12 +451,13 @@ export function AppContent( { onClose }: AppContentProps ) {
 			updateProgress,
 			saveChoicesFireAndForget,
 			installTheme,
-			installInstallableFeatures,
+			installHelloThemeIfSelected,
 			showToast,
 			completeAndRedirect,
 			trackErrorReported,
 			trackProFeaturesSelected,
 			trackSummary,
+			trackThemeSelected,
 		]
 	);
 

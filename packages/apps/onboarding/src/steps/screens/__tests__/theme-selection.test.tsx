@@ -1,13 +1,14 @@
 /* eslint-disable testing-library/no-test-id-queries */
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { mockFetch, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
+import { mockFetch, PRO_ONBOARDING_STEPS, renderApp, setupOnboardingTests } from '../../../__tests__/test-utils';
 
 describe( 'ThemeSelection', () => {
 	setupOnboardingTests();
 
 	const navigateToThemeSelection = () => {
 		renderApp( {
+			steps: PRO_ONBOARDING_STEPS,
 			isConnected: true,
 			progress: { current_step_id: 'theme_selection', current_step_index: 3 },
 		} );
@@ -58,8 +59,8 @@ describe( 'ThemeSelection', () => {
 
 	describe( 'Greeting text', () => {
 		it( 'shows beginner greeting when experience_level is beginner', () => {
-			// Arrange & Act
 			renderApp( {
+				steps: PRO_ONBOARDING_STEPS,
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
 				choices: { experience_level: 'beginner' },
@@ -70,8 +71,8 @@ describe( 'ThemeSelection', () => {
 		} );
 
 		it( 'shows default greeting when experience_level is not beginner', () => {
-			// Arrange & Act
 			renderApp( {
+				steps: PRO_ONBOARDING_STEPS,
 				isConnected: true,
 				progress: { current_step_id: 'theme_selection', current_step_index: 3 },
 				choices: { experience_level: 'intermediate' },
@@ -124,8 +125,8 @@ describe( 'ThemeSelection', () => {
 
 	describe( 'Installed state', () => {
 		it( 'shows Installed chip when step is completed and theme is hello-elementor', () => {
-			// Arrange & Act
 			renderApp( {
+				steps: PRO_ONBOARDING_STEPS,
 				isConnected: true,
 				progress: {
 					current_step_id: 'theme_selection',

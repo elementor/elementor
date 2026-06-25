@@ -4,9 +4,11 @@ import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import {
 	AccessibilityToolsIcon,
 	AIGeneratorIcon,
+	ClassesVariablesIcon,
 	CookieConsentIcon,
 	CorePlaceholderIcon,
 	CustomCodeIcon,
@@ -14,7 +16,6 @@ import {
 	HelloThemeIcon,
 	ImageOptimizationIcon,
 	ThemeBuilderIcon,
-	WoocommerceIcon,
 } from '../../icons';
 import { getConfig } from '../../utils/get-config';
 import { t } from '../../utils/translations';
@@ -23,9 +24,13 @@ import { FeatureGrid, type FeatureOption } from '../components/site-features';
 export const HELLO_THEME_FEATURE_ID = 'hello_theme';
 export const COOKIE_CONSENT_FEATURE_ID = 'cookie_consent';
 
-export const INSTALLABLE_DEFAULTS = [ HELLO_THEME_FEATURE_ID ];
-
 export const FEATURE_OPTIONS: FeatureOption[] = [
+	{
+		id: 'classes_variables',
+		labelKey: 'steps.site_features.option_classes_variables',
+		Icon: ClassesVariablesIcon,
+		licenseType: 'core',
+	},
 	{
 		id: HELLO_THEME_FEATURE_ID,
 		labelKey: 'steps.site_features.option_hello_theme',
@@ -60,7 +65,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		id: COOKIE_CONSENT_FEATURE_ID,
 		labelKey: 'steps.site_features.option_cookie_consent',
 		Icon: CookieConsentIcon,
-		licenseType: 'installable',
+		licenseType: 'one',
 	},
 	{
 		id: 'ai_features',
@@ -80,21 +85,20 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		Icon: AccessibilityToolsIcon,
 		licenseType: 'one',
 	},
-	{
-		id: 'woocommerce_builder',
-		labelKey: 'steps.site_features.woocommerce',
-		Icon: WoocommerceIcon,
-		licenseType: 'pro',
-	},
 ];
+
+export const CORE_FEATURE_IDS = new Set(
+	FEATURE_OPTIONS.flatMap( ( option ) => ( option.licenseType === 'core' ? [ option.id ] : [] ) )
+);
 
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
-const isInstallable = ( id: string ): boolean =>
+export const isInstallable = ( id: string ): boolean =>
 	FEATURE_OPTIONS.some( ( option ) => option.id === id && option.licenseType === 'installable' );
 
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
+	const { trackThemeUnselected } = useOnboardingEvent();
 
 	const theme = useTheme();
 
@@ -105,38 +109,54 @@ export function SiteFeatures() {
 		[ isElementorThemeActive ]
 	);
 
-	const storedSiteFeatures = ( choices.site_features as string[] ) || [];
+	const rawSiteFeatures = choices.site_features as string[] | undefined;
+
+	const storedSelectableFeatures = useMemo(
+		() =>
+			( rawSiteFeatures || [] ).filter(
+				( id ) => FEATURE_OPTION_IDS.has( id ) && ! CORE_FEATURE_IDS.has( id )
+			),
+		[ rawSiteFeatures ]
+	);
+
 	const hasInitializedDefaults = useRef( false );
 
 	useEffect( () => {
-		if ( hasInitializedDefaults.current ) {
+		if ( hasInitializedDefaults.current || isElementorThemeActive ) {
 			return;
 		}
+
 		hasInitializedDefaults.current = true;
 
-		const hasAnyValid = storedSiteFeatures.some( ( id ) => FEATURE_OPTION_IDS.has( id ) );
-
-		if ( hasAnyValid ) {
+		if ( storedSelectableFeatures.length > 0 ) {
 			return;
 		}
 
-		const defaults = INSTALLABLE_DEFAULTS.filter(
-			( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isElementorThemeActive )
-		);
-		actions.setUserChoice( 'site_features', defaults );
-	}, [ storedSiteFeatures, isElementorThemeActive, actions ] );
+		actions.setUserChoice( 'site_features', [ HELLO_THEME_FEATURE_ID ] );
+	}, [ storedSelectableFeatures, isElementorThemeActive, actions ] );
 
-	const selectedValues = useMemo(
-		() => storedSiteFeatures.filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
-		[ storedSiteFeatures ]
-	);
+	const selectedValues = useMemo( () => {
+		const combined = [ ...CORE_FEATURE_IDS, ...storedSelectableFeatures ];
+		return combined
+			.filter( ( id, index ) => combined.indexOf( id ) === index )
+			.filter( ( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isElementorThemeActive ) );
+	}, [ storedSelectableFeatures, isElementorThemeActive ] );
 
 	function handleFeatureClick( id: string ) {
-		const next = selectedValues.includes( id )
-			? selectedValues.filter( ( featureId ) => featureId !== id )
-			: [ ...selectedValues, id ];
+		if ( CORE_FEATURE_IDS.has( id ) ) {
+			return;
+		}
 
-		actions.setUserChoice( 'site_features', next );
+		const isCurrentlySelected = storedSelectableFeatures.includes( id );
+		const updatedSelectableFeatures = isCurrentlySelected
+			? storedSelectableFeatures.filter( ( featureId ) => featureId !== id )
+			: [ ...storedSelectableFeatures, id ];
+
+		if ( id === HELLO_THEME_FEATURE_ID && isCurrentlySelected ) {
+			trackThemeUnselected();
+		}
+
+		actions.setUserChoice( 'site_features', updatedSelectableFeatures );
 	}
 
 	return (
@@ -158,5 +178,3 @@ export function SiteFeatures() {
 		</Stack>
 	);
 }
-
-export { isInstallable };

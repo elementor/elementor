@@ -2,7 +2,6 @@
 
 namespace Elementor\App\Modules\Onboarding\Data;
 
-use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Plugin;
 use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Pro;
 use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\Onboarding\Data\Endpoints\Pro_Install_Screen;
@@ -26,7 +25,6 @@ class Controller extends Base_Controller {
 		$this->register_endpoint( new Pro_Install_Screen( $this ) );
 		$this->register_endpoint( new Install_Pro( $this ) );
 		$this->register_endpoint( new Install_Theme( $this ) );
-		$this->register_endpoint( new Install_Plugin( $this ) );
 	}
 
 	public function get_items_permissions_check( $request ) {

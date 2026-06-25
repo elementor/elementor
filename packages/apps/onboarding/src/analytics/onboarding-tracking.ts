@@ -160,31 +160,31 @@ export function trackExperienceSelected( isActive: boolean, level: string ): voi
 	} );
 }
 
-export function trackThemeSuggested( isActive: boolean, theme: string ): void {
-	trackEvent( isActive, OnboardingEventName.THEME_SUGGESTED, {
-		interaction_type: 'exposure',
-		target_type: 'chip',
-		target_name: 'recommended',
-		interaction_result: 'theme_recommended',
-		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
-		target_location: 'onboarding',
-		location_l1: 'select_theme',
-		location_l2: STEP_NUMBERS.theme_selection,
-		interaction_description: 'user got a recommendation for a certain theme',
-	} );
-}
-
 export function trackThemeSelected( isActive: boolean, theme: string ): void {
 	trackEvent( isActive, OnboardingEventName.THEME_SELECTED, {
 		interaction_type: 'click',
 		target_type: 'button',
-		target_name: 'continue_with_this_theme',
+		target_name: 'continue_with_hello',
 		interaction_result: 'theme_installed',
 		target_value: THEME_VALUE_MAP[ theme ] ?? theme,
 		target_location: 'onboarding',
 		location_l1: 'select_theme',
 		location_l2: STEP_NUMBERS.theme_selection,
 		interaction_description: 'user installed a certain theme',
+	} );
+}
+
+export function trackThemeUnselected( isActive: boolean ): void {
+	trackEvent( isActive, OnboardingEventName.THEME_UNSELECTED, {
+		interaction_type: 'click',
+		target_type: 'card',
+		target_name: 'hello_theme',
+		interaction_result: 'theme_unselected',
+		target_value: 'hello',
+		target_location: 'onboarding',
+		location_l1: 'pro_features',
+		location_l2: STEP_NUMBERS.site_features,
+		interaction_description: 'user unselected hello theme on pro features step',
 	} );
 }
 
@@ -322,13 +322,6 @@ export function trackSummary( isActive: boolean, snapshot: ObSummarySnapshot ): 
 					? EXPERIENCE_VALUE_MAP[ snapshot.choices.experience_level ] ?? snapshot.choices.experience_level
 					: null
 			),
-		},
-		{
-			key: 'theme_recommended',
-			value: ( (): string => {
-				const raw = snapshot.themeRecommended ?? snapshot.choices.theme_selection ?? 'none';
-				return raw === 'none' || ! raw ? 'none' : THEME_VALUE_MAP[ raw ] ?? raw;
-			} )(),
 		},
 		{
 			key: 'theme_installed',

@@ -4,7 +4,6 @@ export const ONBOARDING_URL = '/wp-admin/admin.php?page=elementor-app#onboarding
 export const USER_CHOICES_ENDPOINT = '/wp-json/elementor/v1/onboarding/user-choices';
 export const USER_PROGRESS_ENDPOINT = '/wp-json/elementor/v1/onboarding/user-progress';
 const INSTALL_THEME_ENDPOINT = '/wp-json/elementor/v1/onboarding/install-theme';
-const INSTALL_PLUGIN_ENDPOINT = '/wp-json/elementor/v1/onboarding/install-plugin';
 
 export async function mockOnboardingApi( page: Page ) {
 	const choicesRequests: Record< string, unknown >[] = [];
@@ -43,7 +42,6 @@ export async function mockOnboardingApi( page: Page ) {
 	);
 
 	const installThemeRequests: Record< string, unknown >[] = [];
-	const installPluginRequests: Record< string, unknown >[] = [];
 
 	await page.route(
 		( url ) => url.pathname.includes( INSTALL_THEME_ENDPOINT ),
@@ -61,23 +59,7 @@ export async function mockOnboardingApi( page: Page ) {
 		},
 	);
 
-	await page.route(
-		( url ) => url.pathname.includes( INSTALL_PLUGIN_ENDPOINT ),
-		async ( route ) => {
-			const body = route.request().postData();
-			if ( body ) {
-				installPluginRequests.push( JSON.parse( body ) as Record< string, unknown > );
-			}
-
-			await route.fulfill( {
-				status: 200,
-				contentType: 'application/json',
-				body: JSON.stringify( { data: { success: true, message: 'Plugin installed' } } ),
-			} );
-		},
-	);
-
-	return { choicesRequests, progressRequests, installThemeRequests, installPluginRequests };
+	return { choicesRequests, progressRequests, installThemeRequests };
 }
 
 export async function doAndWaitForProgress( page: Page, action: () => Promise< void > ) {

@@ -346,11 +346,9 @@ test.describe( 'Onboarding @onboarding', () => {
 		expect( cookieBox && emailBox ? cookieBox.y >= emailBox.y : false ).toBeTruthy();
 	} );
 
-	test( 'Core Continue with Free installs selected installable features', async ( { page } ) => {
-		const { installThemeRequests, installPluginRequests } = await mockOnboardingApi( page );
+	test( 'Core Continue with Free installs Hello theme when selected', async ( { page } ) => {
+		const { installThemeRequests } = await mockOnboardingApi( page );
 		await navigateToSiteFeaturesStep( page );
-
-		await page.getByTestId( 'feature-card-cookie_consent' ).click();
 
 		await page.route( '**/edit.php**', ( route ) =>
 			route.fulfill( { status: 200, contentType: 'text/html', body: '<html></html>' } ),
@@ -362,7 +360,6 @@ test.describe( 'Onboarding @onboarding', () => {
 		] );
 
 		expect( installThemeRequests.some( ( req ) => 'hello-elementor' === req.theme_slug ) ).toBeTruthy();
-		expect( installPluginRequests.some( ( req ) => 'cookiez' === req.plugin_slug ) ).toBeTruthy();
 	} );
 
 	test( 'theme_selection step is skipped when Elementor theme is already active', async ( { page, apiRequests }, testInfo ) => {

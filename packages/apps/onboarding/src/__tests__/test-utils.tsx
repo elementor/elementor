@@ -60,8 +60,14 @@ const DEFAULT_STEPS = [
 	{ id: 'building_for', label: 'Who are you building for?', type: 'single' as const },
 	{ id: 'site_about', label: 'What is your site about?', type: 'multiple' as const },
 	{ id: 'experience_level', label: 'Experience level', type: 'single' as const },
-	{ id: 'theme_selection', label: 'Theme selection', type: 'single' as const },
 	{ id: 'site_features', label: 'Site features', type: 'multiple' as const },
+];
+
+export const PRO_ONBOARDING_STEPS = [
+	{ id: 'building_for', label: 'Who are you building for?', type: 'single' as const },
+	{ id: 'site_about', label: 'What is your site about?', type: 'multiple' as const },
+	{ id: 'experience_level', label: 'Experience level', type: 'single' as const },
+	{ id: 'theme_selection', label: 'Theme selection', type: 'single' as const },
 ];
 
 export const DEFAULT_TEST_URLS = {

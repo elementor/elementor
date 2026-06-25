@@ -7,8 +7,8 @@ export const OnboardingEventName = {
 	PERSONA_SELECTED: 'ob_persona_selected',
 	SITE_TOPIC_SELECTED: 'ob_site_topic_selected',
 	EXPERIENCE_SELECTED: 'ob_experience_selected',
-	THEME_SUGGESTED: 'ob_theme_suggested',
 	THEME_SELECTED: 'ob_theme_selected',
+	THEME_UNSELECTED: 'ob_theme_unselected',
 	PRO_FEATURES_SELECTED: 'ob_pro_features_selected',
 	BACK_CLICKED: 'ob_back_clicked',
 	SKIP_CLICKED: 'ob_skip_clicked',
@@ -26,7 +26,7 @@ export const STEP_NUMBERS: Record< string, string > = {
 	site_about: '2',
 	experience_level: '3',
 	theme_selection: '4',
-	site_features: '5',
+	site_features: '4',
 };
 
 export const TARGET_NAME_PERSONA = 'who_are_you_building_for';
@@ -97,8 +97,6 @@ export interface ObSummarySnapshot {
 	isConnected: boolean;
 	isGuest: boolean;
 	proInstall?: boolean;
-	/** Recommended theme slug shown to user, or "none". */
-	themeRecommended?: string;
 }
 
 export interface ConnectSuccessData {
@@ -116,9 +114,8 @@ export type ErrorReportedTarget =
 			targetType: 'install';
 			targetName:
 				| 'install_pro_on_this_site'
-				| 'continue_with_this_theme'
-				| 'install_hello_theme'
-				| 'install_cookie_consent';
+				| 'continue_with_hello'
+				| 'install_hello_theme';
 	  }
 	| { targetType: 'save'; targetName: string }
 	| { targetType: 'request'; targetName: string };
