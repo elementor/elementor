@@ -37,9 +37,12 @@ class Render_Element_Action {
 
 		Plugin::$instance->documents->switch_to_document( $document );
 
+		do_action( 'elementor/atomic_widgets/before_render', $document );
+
 		try {
 			$render_html = $this->render_element( $element_data );
 		} finally {
+			do_action( 'elementor/atomic_widgets/after_render', $document );
 			$editor->set_edit_mode( $is_edit_mode );
 			Plugin::$instance->db->restore_current_query();
 		}
