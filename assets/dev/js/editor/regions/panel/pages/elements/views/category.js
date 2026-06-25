@@ -182,6 +182,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 			new CustomEvent( CREATE_WIDGET_EVENT, {
 				detail: {
 					entry_point: 'widgets_panel',
+					trigger: 'community-library-banner',
 					openCommunityLibrary: true,
 				},
 			} ),

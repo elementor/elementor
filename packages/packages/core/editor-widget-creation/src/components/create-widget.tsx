@@ -31,6 +31,7 @@ type ShowModalEventDetail = {
 	prompt?: string;
 	openCommunityLibrary?: boolean;
 	entry_point: string;
+	trigger: 'menu-widget' | 'menu-community-library' | 'community-library-banner';
 };
 
 type InstallState = 'idle' | 'installing' | 'error';
@@ -218,6 +219,7 @@ export function CreateWidget() {
 			trackEvent( {
 				eventName: ANGIE_CTA_CLICKED_EVENT,
 				entry_point: customEvent.detail.entry_point,
+				trigger: customEvent.detail.trigger,
 				has_angie_installed: hasAngieInstalled,
 			} );
 

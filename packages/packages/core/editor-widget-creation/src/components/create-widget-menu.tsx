@@ -38,12 +38,12 @@ export function CreateWidgetMenu() {
 
 	const handleCreateWithAngie = () => {
 		handleClose();
-		openCreateWidgetModal( { entryPoint: 'widgets_panel', prompt: CREATE_WIDGET_PROMPT } );
+		openCreateWidgetModal( { entryPoint: 'widgets_panel', prompt: CREATE_WIDGET_PROMPT, trigger: 'menu-widget' } );
 	};
 
 	const handleBrowseCommunityLibrary = () => {
 		handleClose();
-		openCreateWidgetModal( { entryPoint: 'widgets_panel', openCommunityLibrary: true } );
+		openCreateWidgetModal( { entryPoint: 'widgets_panel', openCommunityLibrary: true, trigger: 'menu-community-library' } );
 	};
 
 	return (
@@ -80,11 +80,13 @@ export function CreateWidgetMenu() {
 function openCreateWidgetModal( {
 	entryPoint,
 	openCommunityLibrary = false,
-	prompt = CREATE_WIDGET_PROMPT,
+	prompt,
+	trigger,
 }: {
 	entryPoint: string;
 	openCommunityLibrary?: boolean;
 	prompt?: string;
+	trigger: 'menu-widget' | 'menu-community-library';
 } ) {
 	window.dispatchEvent(
 		new CustomEvent( CREATE_WIDGET_EVENT, {
@@ -92,6 +94,7 @@ function openCreateWidgetModal( {
 				entry_point: entryPoint,
 				openCommunityLibrary,
 				prompt,
+				trigger,
 			},
 		} )
 	);
