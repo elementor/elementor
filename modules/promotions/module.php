@@ -40,15 +40,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		if ( ! Utils::has_pro() ) {
-			return false;
-		}
-
-		if ( ! class_exists( '\ElementorPro\License\API' ) ) {
-			return true;
-		}
-
-		return ! \ElementorPro\License\API::is_license_active();
+		return ! Utils::has_pro() || ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -60,7 +52,7 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-		if ( self::is_active() ) {
+		if ( Utils::has_pro() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 			$this->register_atomic_promotions();
 
