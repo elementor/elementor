@@ -354,7 +354,6 @@
 .elementor-panel-category-custom-widgets-empty {
 	grid-column: 1 / -1;
 	width: 100%;
-	margin-bottom: 32px;
 
 	&__message {
 		margin: 0;
@@ -377,6 +376,7 @@
 	grid-column: 1 / -1;
 	cursor: pointer;
 	min-height: 50px;
+	margin-top: 32px;
 
 	// Gradient border
 	&::before {
@@ -391,6 +391,24 @@
 		right: -1px;
 		bottom: -1px;
 		z-index: -1;
+	  }
+
+	  &::after {
+		content: '';
+		background: transparent;
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		border: none;
+		cursor: pointer;
+		border-radius: 7px;
+	  }
+
+	  &:hover {
+		&::after {
+			background: var(--e-a-bg-action-hover);
+		}
 	  }
 
 	&__images {
