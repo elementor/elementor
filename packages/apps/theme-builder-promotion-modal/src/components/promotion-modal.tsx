@@ -40,14 +40,10 @@ function ModalContent( { scenario }: { scenario: ThemeBuilderPromotionScenario }
 	const { title, body, imageUrl } = useMemo( () => getDialogContent( scenario ), [ scenario ] );
 
 	const track = useCallback( ( payload: Record< string, unknown > ) => {
-		try {
-			( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.(
-				'theme_builder_promotion',
-				payload
-			);
-		} catch {
-			// Analytics should never break the user flow.
-		}
+		( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.(
+			'theme_builder_promotion',
+			payload
+		);
 	}, [] );
 
 	const openThemeBuilder = useCallback( () => {

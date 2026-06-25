@@ -1,25 +1,23 @@
 import type { ExtendedWindow } from '../types';
 
 export async function markIntroductionViewed( introductionKey: string ): Promise< void > {
-	const w = window as ExtendedWindow;
+	const { elementor, elementorCommon } = window as ExtendedWindow;
 
-	if ( ! w.elementor?.config?.user?.introduction ) {
+	if ( ! elementor?.config?.user?.introduction ) {
 		return;
 	}
 
-	w.elementor.config.user.introduction[ introductionKey ] = true;
+	elementor.config.user.introduction[ introductionKey ] = true;
 
-	const promotionConfig = w.elementor.config.document?.themeBuilderPromotion;
+	const promotionConfig = elementor.config.document?.themeBuilderPromotion;
 
 	if ( promotionConfig?.introductionKey === introductionKey ) {
-		delete w.elementor?.config?.document?.themeBuilderPromotion;
+		delete elementor?.config?.document?.themeBuilderPromotion;
 	}
 
 	try {
-		await w.elementorCommon?.ajax?.addRequest( 'introduction_viewed', {
+		await elementorCommon?.ajax?.addRequest( 'introduction_viewed', {
 			data: { introductionKey },
 		} );
-	} catch {
-		// Should never break the user flow.
-	}
+	} catch {}
 }

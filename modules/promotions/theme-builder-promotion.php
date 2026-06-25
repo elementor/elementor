@@ -12,18 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Theme_Builder_Promotion {
 	const OPTION_KEY = 'elementor_theme_builder_promotion_enabled';
 
-	private static bool $is_registered = false;
-
-	public static function is_enabled(): bool {
+	private static function is_enabled(): bool {
 		return '1' === get_option( self::OPTION_KEY, '1' );
 	}
 
 	public static function register(): void {
-		if ( self::$is_registered || ! self::is_enabled() ) {
+		if ( ! self::is_enabled() ) {
 			return;
 		}
-
-		self::$is_registered = true;
 
 		add_filter( 'elementor/document/config', [ __CLASS__, 'add_document_config' ], 10, 2 );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ __CLASS__, 'enqueue_modal_script' ] );

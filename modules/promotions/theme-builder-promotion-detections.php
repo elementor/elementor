@@ -3,7 +3,6 @@ namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Base\Document;
 use Elementor\User;
-use WP_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,6 +14,11 @@ class Theme_Builder_Promotion_Detections {
 	private const TEMPLATE_TYPE_META_KEY = '_elementor_template_type';
 
 	private const SUPPORTED_CONTENT_TYPES = [ 'post', 'page', 'product' ];
+	private const TYPE_TO_SCENARIO_MAP = [
+		'post' => 'single_post',
+		'page' => 'header_footer',
+		'product' => 'single_product',
+	];
 
 	private static ?array $cache = null;
 
@@ -68,16 +72,7 @@ class Theme_Builder_Promotion_Detections {
 			return null;
 		}
 
-		switch ( $post_type ) {
-			case 'post':
-				return 'single_post';
-			case 'product':
-				return 'single_product';
-			case 'page':
-				return 'header_footer';
-			default:
-				return null;
-		}
+		return self::TYPE_TO_SCENARIO_MAP[ $post_type ] ?? null;
 	}
 
 	private static function get_introduction_key( string $scenario ): string {
@@ -92,15 +87,15 @@ class Theme_Builder_Promotion_Detections {
 		$counts = $detections['contentCounts'] ?? [];
 		$templates = $detections['templatePresence'] ?? [];
 
-		if ( 'single_post' === $scenario ) {
+		if ( self::TYPE_TO_SCENARIO_MAP['post'] === $scenario ) {
 			return ( $counts['post'] ?? 0 ) > 1 && empty( $templates['single_post'] );
 		}
 
-		if ( 'single_product' === $scenario ) {
+		if ( self::TYPE_TO_SCENARIO_MAP['product'] === $scenario ) {
 			return ( $counts['product'] ?? 0 ) > 1 && empty( $templates['single_product'] );
 		}
 
-		if ( 'header_footer' === $scenario ) {
+		if ( self::TYPE_TO_SCENARIO_MAP['page'] === $scenario ) {
 			$has_header = ! empty( $templates['header'] );
 			$has_footer = ! empty( $templates['footer'] );
 
@@ -128,8 +123,7 @@ class Theme_Builder_Promotion_Detections {
 					ON ( p.ID = pm.post_id AND pm.meta_key = %s AND pm.meta_value = %s )
 				WHERE p.post_status = %s
 					AND p.post_type IN (" . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ')
-					AND p.post_type != %s
-				GROUP BY p.post_type',
+				  GROUP BY p.post_type',
 				array_merge(
 					[
 						self::ELEMENTOR_EDIT_MODE_META_KEY,
@@ -137,9 +131,6 @@ class Theme_Builder_Promotion_Detections {
 						'publish',
 					],
 					$post_types,
-					[
-						'elementor_library',
-					]
 				)
 			)
 		);
@@ -154,41 +145,41 @@ class Theme_Builder_Promotion_Detections {
 	}
 
 	private static function get_template_presence(): array {
+		global $wpdb;
+
+		$all_template_types = array_values( array_unique( array_merge( ...array_values( self::TEMPLATE_TYPES ) ) ) );
+
+		if ( empty( $all_template_types ) ) {
+			return array_fill_keys( array_keys( self::TEMPLATE_TYPES ), false );
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$found_types = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT DISTINCT pm.meta_value
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->postmeta} pm
+					ON ( p.ID = pm.post_id AND pm.meta_key = %s )
+				WHERE p.post_status = %s
+					AND p.post_type = %s
+					AND pm.meta_value IN (" . implode( ',', array_fill( 0, count( $all_template_types ), '%s' ) ) . ')',
+				array_merge(
+					[
+						self::TEMPLATE_TYPE_META_KEY,
+						'publish',
+						'elementor_library',
+					],
+					$all_template_types,
+				)
+			)
+		);
+
 		$presence = [];
 
 		foreach ( self::TEMPLATE_TYPES as $key => $types ) {
-			$presence[ $key ] = self::has_published_templates_of_types( $types );
+			$presence[ $key ] = ! empty( array_intersect( $types, $found_types ) );
 		}
 
 		return $presence;
-	}
-
-	private static function has_published_templates_of_types( array $template_types ): bool {
-		$template_types = array_values( array_filter( $template_types ) );
-
-		if ( empty( $template_types ) ) {
-			return false;
-		}
-
-		$args = [
-			'post_type' => 'elementor_library',
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'fields' => 'ids',
-			'no_found_rows' => true,
-			'update_post_term_cache' => false,
-			'update_post_meta_cache' => false,
-			'meta_query' => [
-				[
-					'key' => self::TEMPLATE_TYPE_META_KEY,
-					'value' => $template_types,
-					'compare' => 'IN',
-				],
-			],
-		];
-
-		$query = new WP_Query( $args );
-
-		return ! empty( $query->posts );
 	}
 }

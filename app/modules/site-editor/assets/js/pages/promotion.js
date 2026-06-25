@@ -12,20 +12,16 @@ import './promotion.scss';
 export default function Promotion() {
 	const promotionUrl = elementorAppConfig.promotion.upgrade_url || 'https://go.elementor.com/go-pro-theme-builder/',
 		trackUpgradeClick = ( locationL1 = 'main_upgrade_button' ) => {
-			try {
-				elementorCommon?.eventsManager?.dispatchEvent?.( 'theme_builder_promotion', {
-					app_type: 'editor',
-					window_name: 'theme_builder_promotional_popup',
-					interaction_type: 'click',
-					target_type: 'button',
-					target_name: 'theme_builder_upgrade_cta',
-					interaction_result: 'theme_builder_upgrade_cta_clicked',
-					target_location: 'theme_builder_promotional_popup',
-					location_l1: locationL1,
-				} );
-			} catch {
-				// Silently fail — analytics should never break production functionality.
-			}
+			elementorCommon?.eventsManager?.dispatchEvent?.( 'theme_builder_promotion', {
+				app_type: 'editor',
+				window_name: 'theme_builder_promotional_popup',
+				interaction_type: 'click',
+				target_type: 'button',
+				target_name: 'theme_builder_upgrade_cta',
+				interaction_result: 'theme_builder_upgrade_cta_clicked',
+				target_location: 'theme_builder_promotional_popup',
+				location_l1: locationL1,
+			} );
 		},
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
