@@ -15,7 +15,7 @@ on:
 
 jobs:
   release-tag-creation:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.16
     permissions:
       contents: write
 
@@ -25,22 +25,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get Configuration
-        id: configuration
-        uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
-        with:
-          filename: "./.github/workflows/config.json"
-          prefix: config
-
       - name: Test permissions
         uses: ./.github/workflows/permissions
         with:
-          ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
-          DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+          ENVIRONMENT: ${{ vars.DEPLOYMENT_ENVIRONMENT }}
+          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ vars.DEPLOYMENT_REPOSITORY_OWNER }}
 
       - name: Release tag creation
-        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@main
+        uses: davseve/elementor-editor-github-actions/actions/release-tag-creation@main
         with:
           version: ${{ inputs.version }}
           dry_run: ${{ inputs.dry_run }}
