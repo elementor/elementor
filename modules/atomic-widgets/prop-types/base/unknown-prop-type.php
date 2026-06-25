@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Dialect_Adapters;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Required_Setting;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Settings;
@@ -12,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Unknown_Prop_Type implements Prop_Type {
+	use Has_Dialect_Adapters;
 	use Has_Meta;
 	use Has_Settings;
 	use Has_Required_Setting;
