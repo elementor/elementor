@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Dialect;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Dialect;
 
-use Elementor\Modules\AtomicWidgets\Dialect\Dialect_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;

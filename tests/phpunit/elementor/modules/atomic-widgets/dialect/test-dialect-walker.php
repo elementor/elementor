@@ -2,10 +2,10 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Dialect;
 
-use Elementor\Modules\AtomicWidgets\Dialect\Adapter_Context;
-use Elementor\Modules\AtomicWidgets\Dialect\Base_Dialect_Adapter;
-use Elementor\Modules\AtomicWidgets\Dialect\Dialect_Utils;
-use Elementor\Modules\AtomicWidgets\Dialect\Dialect_Walker;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Adapter_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Base_Dialect_Adapter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Walker;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;

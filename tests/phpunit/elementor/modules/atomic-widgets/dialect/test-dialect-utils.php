@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Dialect;
 
-use Elementor\Modules\AtomicWidgets\Dialect\Dialect_Utils;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Utils;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
