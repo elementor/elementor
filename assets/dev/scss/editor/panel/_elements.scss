@@ -391,25 +391,11 @@
 		right: -1px;
 		bottom: -1px;
 		z-index: -1;
-	  }
+	}
 
-	  &::after {
-		content: '';
-		background: transparent;
-		position: absolute;
-		inset: 0;
-		width: 100%;
-		height: 100%;
-		border: none;
-		cursor: pointer;
-		border-radius: 7px;
-	  }
-
-	  &:hover {
-		&::after {
-			background: var(--e-a-bg-action-hover);
-		}
-	  }
+	&:hover {
+		background: var(--e-a-bg-action-hover);
+	}
 
 	&__images {
 		display: flex;
