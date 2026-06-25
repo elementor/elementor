@@ -2,8 +2,8 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Dialect;
 
-use Elementor\Modules\AtomicWidgets\Dialect\Adapter_Context;
-use Elementor\Modules\AtomicWidgets\Dialect\Base_Dialect_Adapter;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Adapter_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Base_Dialect_Adapter;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
