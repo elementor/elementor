@@ -15,7 +15,7 @@ on:
 
 jobs:
   release-tag-creation:
-    runs-on: ubuntu-24.16
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
 
