@@ -4,18 +4,6 @@ import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-l
 import { __ } from '@wordpress/i18n';
 import { createRoot } from 'react-dom/client';
 
-function applyProConnectPromotionOverrides( promotionData ) {
-	if ( ! elementor.helpers.hasProAndNotConnected() ) {
-		return promotionData;
-	}
-
-	return {
-		...promotionData,
-		ctaUrl: elementorProEditorConfig.urls.connect,
-		ctaText: __( 'Connect & Activate', 'elementor' ),
-	};
-}
-
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
@@ -35,11 +23,9 @@ export class AppManager {
 		const promotions = elementor?.config?.v4Promotions || {};
 		const widgetType = detail.widgetType || '';
 		const normalizedType = widgetType.replace( /[-_]/g, '' ).toLowerCase();
-		const key = normalizedType
-			? Object.keys( promotions ).find( ( promotionKey ) => {
-				return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
-			} )
-			: null;
+		const key = Object.keys( promotions ).find( ( promotionKey ) => {
+			return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
+		} );
 
 		const promotionData = key ? promotions[ key ] : null;
 		const elementsPromotion = elementor.config.promotion?.elements || {};
@@ -182,4 +168,16 @@ export class AppManager {
 	detachEditorEventListeners() {
 		$e.routes.off( 'run:after', this.onRoute );
 	}
+}
+
+function applyProConnectPromotionOverrides( promotionData ) {
+	if ( ! elementor.helpers.hasProAndNotConnected() ) {
+		return promotionData;
+	}
+
+	return {
+		...promotionData,
+		ctaUrl: elementorProEditorConfig.urls.connect,
+		ctaText: __( 'Connect & Activate', 'elementor' ),
+	};
 }

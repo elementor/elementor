@@ -40,10 +40,6 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || self::should_load_editor_widget_promotions();
-	}
-
-	public static function should_load_editor_widget_promotions(): bool {
 		if ( ! Utils::has_pro() ) {
 			return false;
 		}
@@ -64,7 +60,7 @@ class Module extends Base_Module {
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-		if ( self::should_load_editor_widget_promotions() ) {
+		if ( self::is_active() ) {
 			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 			$this->register_atomic_promotions();
 
