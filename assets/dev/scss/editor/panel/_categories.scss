@@ -18,12 +18,15 @@
 			// background-color: var(--e-a-bg-hover);
 		}
 
-		.elementor-panel-heading-title {
+		.elementor-panel-heading-button {
 			border: none;
 			background-color: transparent;
+			cursor: pointer;
+			display: flex;
+			gap: 5px;
 		}
 
-		.elementor-panel-heading-title::after {
+		.elementor-panel-heading-button::after {
 			content: '';
 			position: absolute;
 			top: 0;
