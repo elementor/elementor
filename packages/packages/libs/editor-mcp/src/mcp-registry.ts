@@ -73,8 +73,8 @@ export const createAndRegisterAdapters = () => {
 };
 
 // utility function to run a callback on all MCP interfaces
-function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
-	for ( const adapter of registrationAdapters ) {
+async function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
+	for await ( const adapter of registrationAdapters ) {
 		try {
 			await Promise.resolve( fn( adapter ) );
 		} catch {
