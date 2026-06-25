@@ -192,21 +192,25 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		event.stopPropagation();
 
 		setCommunityLibraryState( { was_dismissed: true } );
-
-		var $promo = this.$el.find( '.elementor-panel-custom-widgets-community-promo' );
-		$promo.hide();
+		this.applyCommunityPromoState();
 	},
 } );
 
 module.exports = PanelElementsCategoryView;
 
 function getCommunityLibraryState() {
+	const defaultState = { was_interacted: false, was_dismissed: false };
 	const stored = localStorage.getItem( COMMUNITY_LIBRARY_STORAGE_KEY );
-	if ( stored ) {
-		return JSON.parse( stored );
+
+	if ( ! stored ) {
+		return defaultState;
 	}
 
-	return { was_interacted: false, was_dismissed: false };
+	try {
+		return { ...defaultState, ...JSON.parse( stored ) };
+	} catch {
+		return defaultState;
+	}
 }
 
 function setCommunityLibraryState( newState ) {
