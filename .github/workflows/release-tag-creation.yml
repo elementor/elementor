@@ -33,7 +33,7 @@ jobs:
           DEPLOYMENT_REPOSITORY_OWNER: ${{ vars.DEPLOYMENT_REPOSITORY_OWNER }}
 
       - name: Release tag creation
-        uses: davseve/elementor-editor-github-actions/actions/release-tag-creation@ED-24451
+        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@main
         with:
           version: ${{ inputs.version }}
           dry_run: ${{ inputs.dry_run }}
