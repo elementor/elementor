@@ -16,6 +16,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	static $KIND = 'array';
 
 	use Concerns\Has_Default;
+	use Concerns\Has_Dialect_Adapters;
 	use Concerns\Has_Generate;
 	use Concerns\Has_Meta;
 	use Concerns\Has_Required_Setting;

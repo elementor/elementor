@@ -15,6 +15,7 @@ class Union_Prop_Type implements Prop_Type {
 	// phpcs:ignore
 	static $KIND = 'union';
 
+	use Concerns\Has_Dialect_Adapters;
 	use Concerns\Has_Meta;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Required_Setting;
