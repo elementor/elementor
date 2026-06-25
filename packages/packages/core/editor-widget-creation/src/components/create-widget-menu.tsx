@@ -55,10 +55,15 @@ export function CreateWidgetMenu() {
 				anchorPosition={ anchorPosition ?? undefined }
 				transformOrigin={ {
 					vertical: 'top',
-					horizontal: 'right',
+					horizontal: 'left',
 				} }
 				slotProps={ {
-					paper: { sx: ( theme: Theme ) => ( { borderRadius: `${ theme.shape.borderRadius / 2 }px` } ) },
+					paper: {
+						sx: ( theme: Theme ) => ( {
+							borderRadius: `${ theme.shape.borderRadius / 2 }px`,
+							marginTop: theme.spacing( 1 ),
+						} ),
+					},
 				} }
 			>
 				<MenuList dense>

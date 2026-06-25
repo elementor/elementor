@@ -164,7 +164,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 				detail: {
 					anchorPosition: {
 						top: buttonRect.bottom,
-						left: buttonRect.right,
+						left: buttonRect.left,
 					},
 				},
 			} ),
