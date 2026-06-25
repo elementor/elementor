@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { MenuItem, MenuList, Popover, type Theme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
 import { CREATE_WIDGET_EVENT } from './create-widget';
 
 type OpenMenuEventDetail = {
@@ -71,14 +72,21 @@ export function CreateWidgetMenu() {
 	);
 }
 
-
-function openCreateWidgetModal( { entryPoint, openCommunityLibrary = false, prompt = CREATE_WIDGET_PROMPT }: { entryPoint: string, openCommunityLibrary?: boolean, prompt?: string } ) {
+function openCreateWidgetModal( {
+	entryPoint,
+	openCommunityLibrary = false,
+	prompt = CREATE_WIDGET_PROMPT,
+}: {
+	entryPoint: string;
+	openCommunityLibrary?: boolean;
+	prompt?: string;
+} ) {
 	window.dispatchEvent(
 		new CustomEvent( CREATE_WIDGET_EVENT, {
 			detail: {
 				entry_point: entryPoint,
-				openCommunityLibrary: openCommunityLibrary,
-				prompt: prompt,
+				openCommunityLibrary,
+				prompt,
 			},
 		} )
 	);
