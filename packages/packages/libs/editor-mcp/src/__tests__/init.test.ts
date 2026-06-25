@@ -1,4 +1,4 @@
-import { type ModelContext } from '../adapters/web-mcp-adapter';
+import { type ModelContext, WebMCPAdapter } from '../adapters/web-mcp-adapter';
 
 const mockRegisterMcpAdapter = jest.fn();
 const mockSignalMcpReady = jest.fn();

@@ -75,7 +75,7 @@ export const createAndRegisterAdapters = () => {
 function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
 	for ( const adapter of registrationAdapters ) {
 		try {
-			fn( adapter );
+			await Promise.resolve( fn( adapter ) );
 		} catch {
 			// exit quietly
 		}
