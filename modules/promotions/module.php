@@ -40,7 +40,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro();
+		return ! Utils::has_pro() || ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -49,6 +49,15 @@ class Module extends Base_Module {
 
 	public function __construct() {
 		parent::__construct();
+
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
+		if ( Utils::has_pro() ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+			$this->register_atomic_promotions();
+
+			return;
+		}
 
 		add_action( 'admin_init', function () {
 			$this->handle_external_redirects();
@@ -81,12 +90,6 @@ class Module extends Base_Module {
 
 		if ( Conversion_Banner::should_display_banner() ) {
 			new Conversion_Banner();
-		}
-
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
-
-		if ( Utils::has_pro() ) {
-			return;
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
