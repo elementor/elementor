@@ -77,7 +77,7 @@ describe( 'startMCPServer', () => {
 		deleteModelContext( navigator );
 	} );
 
-	it( 'prefers the document model context when it is available', () => {
+	it( 'prefers the document model context when it is available', async () => {
 		// Arrange.
 		const documentModelContext = createModelContext();
 		const navigatorModelContext = createModelContext();
@@ -86,7 +86,7 @@ describe( 'startMCPServer', () => {
 		setModelContext( navigator, navigatorModelContext );
 
 		// Act.
-		startMCPServer();
+		await startMCPServer();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
@@ -94,14 +94,14 @@ describe( 'startMCPServer', () => {
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'falls back to the navigator model context for older browser support', () => {
+	it( 'falls back to the navigator model context for older browser support', async () => {
 		// Arrange.
 		const navigatorModelContext = createModelContext();
 
 		setModelContext( navigator, navigatorModelContext );
 
 		// Act.
-		startMCPServer();
+		await startMCPServer();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
