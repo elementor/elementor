@@ -37,7 +37,13 @@ type Props = {
 	onPointerCancel: React.PointerEventHandler< HTMLElement >;
 };
 
-export default function CornerResizeHandle( { corner, onPointerDown, onPointerMove, onPointerUp, onPointerCancel }: Props ) {
+export default function CornerResizeHandle( {
+	corner,
+	onPointerDown,
+	onPointerMove,
+	onPointerUp,
+	onPointerCancel,
+}: Props ) {
 	const cursor = isRtl() ? RTL_CURSORS[ corner ] : LTR_CURSORS[ corner ];
 
 	return (
