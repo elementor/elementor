@@ -72,7 +72,6 @@ export default class extends elementorModules.Module {
 	}
 
 	dispatchEvent( name, data, options = {} ) {
-		console.log( 'dispatchEvent', name, data, options );
 		if ( ! this.canSendEvents() ) {
 			return;
 		}

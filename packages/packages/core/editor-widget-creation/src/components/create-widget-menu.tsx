@@ -43,7 +43,11 @@ export function CreateWidgetMenu() {
 
 	const handleBrowseCommunityLibrary = () => {
 		handleClose();
-		openCreateWidgetModal( { entryPoint: 'widgets_panel', openCommunityLibrary: true, trigger: 'menu-community-library' } );
+		openCreateWidgetModal( {
+			entryPoint: 'widgets_panel',
+			openCommunityLibrary: true,
+			trigger: 'menu-community-library',
+		} );
 	};
 
 	return (
