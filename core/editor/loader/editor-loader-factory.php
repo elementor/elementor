@@ -1,12 +1,9 @@
 <?php
 namespace Elementor\Core\Editor\Loader;
 
-use Elementor\Core\Editor\Editor;
-use Elementor\Core\Editor\Loader\V1\Editor_V1_Loader;
 use Elementor\Core\Editor\Loader\V2\Editor_V2_Loader;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,19 +26,6 @@ class Editor_Loader_Factory {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		if ( static::should_use_v2_loader() ) {
-			return new Editor_V2_Loader( $config, $assets_config_provider );
-		}
-
-		return new Editor_V1_Loader( $config, $assets_config_provider );
-	}
-
-	/**
-	 * If there are v2 packages enqueued, we should use the V2 loader.
-	 *
-	 * @return bool
-	 */
-	private static function should_use_v2_loader() {
-		return ! empty( Editor_V2_Loader::get_packages_to_enqueue() );
+		return new Editor_V2_Loader( $config, $assets_config_provider );
 	}
 }
