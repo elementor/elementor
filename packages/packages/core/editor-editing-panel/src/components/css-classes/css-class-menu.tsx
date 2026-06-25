@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isEmpty } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import {
 	isElementsStylesProvider,
@@ -18,7 +19,7 @@ import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
 import { DuplicateClassMenuItem } from './duplicate-class-menu-item';
 import { LocalClassSubMenu } from './local-class-sub-menu';
-import { useUnapplyClass } from './use-apply-and-unapply-class';
+import { useUndoableUnapplyClass } from './use-apply-and-unapply-class';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -158,7 +159,11 @@ function useModifiedStates( styleId: string | null ): Partial< Record< StyleDefi
 
 	return Object.fromEntries(
 		styleDef?.variants
-			.filter( ( variant ) => meta.breakpoint === variant.meta.breakpoint )
+			.filter(
+				( variant ) =>
+					meta.breakpoint === variant.meta.breakpoint &&
+					( ! isEmpty( variant.props ) || Boolean( variant.custom_css?.raw?.trim() ) )
+			)
 			.map( ( variant ) => [ variant.meta.state ?? 'normal', true ] ) ?? []
 	);
 }
@@ -264,7 +269,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 
 function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void } ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
-	const unapplyClass = useUnapplyClass();
+	const unapplyClass = useUndoableUnapplyClass();
 
 	return classId ? (
 		<MenuListItem

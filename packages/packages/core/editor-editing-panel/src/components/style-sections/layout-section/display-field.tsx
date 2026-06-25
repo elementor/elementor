@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { type ToggleButtonGroupItem, ToggleControl } from '@elementor/editor-controls';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useStylesInheritanceChain } from '../../../contexts/styles-inheritance-context';
@@ -32,6 +30,12 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		showTooltip: true,
 	},
 	{
+		value: 'none',
+		renderContent: () => __( 'None', 'elementor' ),
+		label: __( 'None', 'elementor' ),
+		showTooltip: true,
+	},
+	{
 		value: 'inline-block',
 		renderContent: () => __( 'In-blk', 'elementor' ),
 		label: __( 'Inline-block', 'elementor' ),
@@ -43,26 +47,15 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		label: __( 'Inline-flex', 'elementor' ),
 		showTooltip: true,
 	},
-	{
-		value: 'none',
-		renderContent: () => __( 'None', 'elementor' ),
-		label: __( 'None', 'elementor' ),
-		showTooltip: true,
-	},
 ];
 
 export const DisplayField = () => {
 	const placeholder = useDisplayPlaceholderValue();
-	const isGridActive = isExperimentActive( 'e_css_grid' );
-	const items = useMemo(
-		() => ( isGridActive ? displayFieldItems : displayFieldItems.filter( ( item ) => item.value !== 'grid' ) ),
-		[ isGridActive ]
-	);
 
 	return (
 		<StylesField bind="display" propDisplayName={ DISPLAY_LABEL } placeholder={ placeholder }>
 			<StylesFieldLayout label={ DISPLAY_LABEL } direction="column">
-				<ToggleControl options={ items } maxItems={ 4 } fullWidth={ true } />
+				<ToggleControl options={ displayFieldItems } maxItems={ 4 } fullWidth={ true } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

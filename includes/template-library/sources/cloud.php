@@ -157,7 +157,7 @@ class Source_Cloud extends Source_Base {
 		$data = $this->get_app()->get_resource( [ 'id' => $id ] );
 
 		if ( is_wp_error( $data ) ) {
-			return new \WP_Error( 'export_template_error', 'An error has occured' );
+			return new \WP_Error( 'export_template_error', 'An error has occurred' );
 		}
 
 		if ( static::TEMPLATE_RESOURCE_TYPE === $data['type'] ) {

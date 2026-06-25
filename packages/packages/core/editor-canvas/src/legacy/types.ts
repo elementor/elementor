@@ -7,6 +7,11 @@ export type RenderContext< T = unknown > = Record< string, T >;
 export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
 
 export type LegacyWindow = Window & {
+	elementorCommon?: {
+		helpers?: {
+			getUniqueId?: () => string;
+		};
+	};
 	jQuery: JQueryStatic;
 	elementor: {
 		config: {
@@ -62,11 +67,13 @@ export declare class ElementType {
 	getView(): typeof ElementView;
 }
 
-type MarionetteExtendable< TBase = unknown > = {
+export type MarionetteExtendable< TInstance = unknown > = {
 	extend: < TExtended extends object >(
-		properties: TExtended & ThisType< TBase & TExtended >
-	) => TBase & TExtended & MarionetteExtendable< TBase & TExtended >;
+		properties: TExtended & ThisType< TInstance & TExtended >
+	) => typeof ElementView & MarionetteExtendable< TInstance & TExtended >;
 };
+
+export type NestedTemplatedElementViewClass = typeof ElementView & MarionetteExtendable< ElementView >;
 
 export declare class ElementView {
 	getChildType(): string[];
@@ -120,7 +127,7 @@ export declare class ElementView {
 
 	_renderTemplate(): void;
 
-	_renderChildren(): void;
+	_renderChildren(): Promise< void >;
 
 	_beforeRender(): void;
 
@@ -191,6 +198,8 @@ export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+	on: ( event: string, callback: () => void ) => void;
+	off: ( event: string, callback: () => void ) => void;
 	trigger: ( event: string, ...args: unknown[] ) => void;
 };
 
@@ -228,7 +237,7 @@ type ToJSON< T > = {
 	[ K in keyof T ]: T[ K ] extends BackboneModel< infer M > ? ToJSON< M > : T[ K ];
 };
 
-type ContextMenuGroup = {
+export type ContextMenuGroup = {
 	name: string;
 	actions: ContextMenuAction[];
 };

@@ -1,7 +1,7 @@
 name: Cherry Pick Merged PR
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - closed
       - labeled
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   cherry-pick:
-    if: ${{ github.event.pull_request.merged == true && (github.event.action == 'closed' || (github.event.action == 'labeled' && startsWith(github.event.label.name, 'cp_'))) }}
+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && (github.event.action == 'closed' || (github.event.action == 'labeled' && startsWith(github.event.label.name, 'cp_'))) }}
     runs-on: ubuntu-latest
 
     env:
@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.base.ref }}

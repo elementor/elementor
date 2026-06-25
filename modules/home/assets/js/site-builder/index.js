@@ -1,31 +1,21 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import AiLoaderIcon from '../icons/ai-loader-icon';
 import SiteTypeLayoutToggle from './components/site-type-layout-toggle';
 import SuggestionChips from './components/suggestion-chips';
 import { getStepAction, StepLoader } from './components/step-actions';
-import useSiteBuilderState from './hooks/use-site-builder-state';
+import useSiteBuilderState, { clearHomeScreenSnapshot } from './hooks/use-site-builder-state';
+import { getStepConfig } from './utils/planner-step-utils';
 import {
 	PlannerRoot,
 	PlannerBackground,
 	PlannerGrid,
 	PlannerPreviewContainer,
-	PlannerPreviewInner,
-	PlannerPreviewFrame,
-	PlannerPreviewImage1,
-	PlannerPreviewImage2,
-	PlannerLoaderBadge,
+	PlannerPreviewImage,
 	PlannerContent,
 	PlannerHeading,
 } from './components/styled-components';
 
-const getStepConfig = ( step, stepConfigs, plannerSteps ) => {
-	const normalizedStep = Number( step );
-	const configs = stepConfigs ?? {};
-	const initStep = plannerSteps?.INIT ?? 0;
-	const fallback = configs[ initStep ] ?? {};
-	return configs[ Number.isFinite( normalizedStep ) ? normalizedStep : initStep ] ?? fallback;
-};
+const SITE_BUILDER_READY_TIMEOUT_MS = 30_000;
 
 const SiteBuilder = ( { siteBuilderData } ) => {
 	const { sessionStep, pageSuggestions, siteTypeSuggestions, isLoading } = useSiteBuilderState( siteBuilderData );
@@ -36,6 +26,7 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 
 	const isInitStep = ( plannerSteps.INIT ?? 0 ) === Number( sessionStep );
 	const showLayoutToggle = isInitStep && Boolean( inputValue.trim() );
+	const stepImage = siteBuilderData?.stepImages?.[ sessionStep ?? plannerSteps.INIT ];
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -53,18 +44,41 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 			return;
 		}
 
-		const url = new URL( siteBuilderData.siteBuilderUrl, window.location.origin );
+		const newWindow = window.open( siteBuilderData.siteBuilderUrl, '_blank' );
+
+		if ( ! newWindow ) {
+			return;
+		}
+
+		const payload = {};
 
 		if ( prompt ) {
-			const paramName = sessionStep >= ( plannerSteps.WIREFRAMES ?? 3 ) ? 'page_title' : 'site_type';
-			url.searchParams.append( paramName, prompt );
+			const paramName = sessionStep >= ( plannerSteps.WIREFRAMES ?? 3 ) ? 'pageTitle' : 'siteType';
+			payload[ paramName ] = prompt;
 		}
 
 		if ( isInitStep ) {
-			url.searchParams.append( 'is_one_page', isOnePage ? 'true' : 'false' );
+			payload.isOnePage = isOnePage;
 		}
 
-		window.open( url.toString(), '_blank' );
+		const onReady = ( event ) => {
+			if ( event.source !== newWindow ) {
+				return;
+			}
+			if ( event.origin !== window.location.origin ) {
+				return;
+			}
+			if ( event.data?.type !== 'site-builder/ready' ) {
+				return;
+			}
+			clearTimeout( timeoutId );
+			window.removeEventListener( 'message', onReady );
+			clearHomeScreenSnapshot( siteBuilderData?.siteKey, siteBuilderData?.site_builder_snapshot );
+			newWindow.postMessage( { type: 'site-builder/init', payload }, window.location.origin );
+		};
+		const timeoutId = setTimeout( () => window.removeEventListener( 'message', onReady ), SITE_BUILDER_READY_TIMEOUT_MS );
+
+		window.addEventListener( 'message', onReady );
 	};
 
 	const handleKeyDown = ( event ) => {
@@ -80,33 +94,19 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 
 			<PlannerGrid />
 
-			<PlannerPreviewContainer>
-				<PlannerPreviewInner>
-					<PlannerPreviewFrame>
-						{ siteBuilderData?.previewImage1 && (
-							<PlannerPreviewImage1
+			{ isLoading ? <StepLoader /> : (
+				<>
+					<PlannerPreviewContainer>
+						{ stepImage && (
+							<PlannerPreviewImage
 								component="img"
-								src={ siteBuilderData.previewImage1 }
+								src={ stepImage }
 								alt=""
 							/>
 						) }
-						{ siteBuilderData?.previewImage2 && (
-							<PlannerPreviewImage2
-								component="img"
-								src={ siteBuilderData.previewImage2 }
-								alt=""
-							/>
-						) }
-					</PlannerPreviewFrame>
-					<PlannerLoaderBadge>
-						<AiLoaderIcon />
-					</PlannerLoaderBadge>
-				</PlannerPreviewInner>
-			</PlannerPreviewContainer>
+					</PlannerPreviewContainer>
 
-			<PlannerContent>
-				{ isLoading ? <StepLoader /> : (
-					<>
+					<PlannerContent>
 						<PlannerHeading>{ stepConfig.title }</PlannerHeading>
 						{ getStepAction(
 							stepConfig,
@@ -134,9 +134,9 @@ const SiteBuilder = ( { siteBuilderData } ) => {
 								onChipSelect={ setInputValue }
 							/>
 						) }
-					</>
-				) }
-			</PlannerContent>
+					</PlannerContent>
+				</>
+			) }
 		</PlannerRoot>
 	);
 };

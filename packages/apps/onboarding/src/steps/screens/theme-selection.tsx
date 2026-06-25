@@ -41,6 +41,12 @@ export function ThemeSelection( { onComplete }: ThemeSelectionProps ) {
 		}
 	}, [ recommendedTheme, trackThemeSuggested ] );
 
+	useEffect( () => {
+		if ( ! selectedValue && ! isInstalled ) {
+			actions.setUserChoice( StepId.THEME_SELECTION, recommendedTheme );
+		}
+	}, [ selectedValue, recommendedTheme, isInstalled, actions ] );
+
 	const handleSelect = useCallback(
 		( slug: ThemeSlug ) => {
 			if ( isInstalled ) {

@@ -20,6 +20,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 * Packages that should only be registered, unless some other asset depends on them.
 	 */
 	const LIBS = [
+		'editor-modal-shell',
 		'editor-responsive',
 		'editor-ui',
 		'editor-v1-adapters',
@@ -39,6 +40,7 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'editor-current-user',
 		'editor-elements-panel-notice',
 		'elementor-mcp-common',
+		'editor-embedded-documents-manager',
 	];
 
 	const EXTENSIONS = [

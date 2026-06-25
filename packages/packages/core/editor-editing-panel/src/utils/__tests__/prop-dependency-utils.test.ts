@@ -1,7 +1,10 @@
 import { type PropsSchema } from '@elementor/editor-props';
+import { getSessionStorageItem, removeSessionStorageItem } from '@elementor/session';
 import { describe, expect, it } from '@jest/globals';
 
-import { getElementSettingsWithDefaults } from '../prop-dependency-utils';
+import { getElementSettingsWithDefaults, getUpdatedValues } from '../prop-dependency-utils';
+
+jest.mock( '@elementor/session' );
 
 const str = ( value: string ) => ( { $$type: 'string' as const, value } );
 const arr = ( ...items: string[] ) => ( {
@@ -144,5 +147,104 @@ describe( 'getElementSettingsWithDefaults', () => {
 			// Assert
 			expect( result.conditional ).toEqual( defaultString );
 		} );
+	} );
+} );
+
+describe( 'getUpdatedValues — overridable shape mismatch on restore', () => {
+	const ELEMENT_ID = 'el-1';
+	const STORAGE_PREFIX = `elementor/${ ELEMENT_ID }`;
+
+	const overridable = ( overrideKey: string, origin: { $$type: string; value: unknown } ) => ( {
+		$$type: 'overridable' as const,
+		value: { override_key: overrideKey, origin_value: origin },
+	} );
+
+	const tagSchema = ( linkConditionValue: string ): PropsSchema => ( {
+		tag: {
+			...plain( { default: str( 'div' ) } ),
+			key: 'tag',
+			dependencies: {
+				relation: 'and',
+				terms: [
+					{
+						path: [ 'link' ],
+						operator: 'ne',
+						value: linkConditionValue,
+						newValue: str( 'a' ),
+					},
+				],
+			},
+		},
+		link: { ...plain(), key: 'link' },
+	} );
+
+	beforeEach( () => {
+		jest.mocked( getSessionStorageItem ).mockReturnValue( undefined );
+	} );
+
+	it( 'restores the saved overridable wrapper when the prop is still overridable', () => {
+		// Arrange
+		const savedOverridable = overridable( 'k1', str( 'div' ) );
+		jest.mocked( getSessionStorageItem ).mockImplementation( ( key ) =>
+			key === `${ STORAGE_PREFIX }:tag` ? savedOverridable : undefined
+		);
+
+		const propsSchema = tagSchema( 'no-link' );
+		const elementValues = {
+			tag: overridable( 'k1', str( 'a' ) ),
+			link: str( 'no-link' ),
+		};
+		const newValues = { link: null };
+
+		// Act
+		const result = getUpdatedValues( newValues, [ 'tag' ], propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.tag ).toEqual( savedOverridable );
+		expect( removeSessionStorageItem ).toHaveBeenCalledWith( `${ STORAGE_PREFIX }:tag` );
+	} );
+
+	it( 'falls back to default and discards the cache when the user removed overridable wrapper between save and restore', () => {
+		// Arrange
+		const savedOverridable = overridable( 'k1', str( 'div' ) );
+		jest.mocked( getSessionStorageItem ).mockImplementation( ( key ) =>
+			key === `${ STORAGE_PREFIX }:tag` ? savedOverridable : undefined
+		);
+
+		const propsSchema = tagSchema( 'no-link' );
+		const elementValues = {
+			tag: str( 'a' ),
+			link: str( 'no-link' ),
+		};
+		const newValues = { link: null };
+
+		// Act
+		const result = getUpdatedValues( newValues, [ 'tag' ], propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.tag ).toEqual( str( 'div' ) );
+		expect( removeSessionStorageItem ).toHaveBeenCalledWith( `${ STORAGE_PREFIX }:tag` );
+	} );
+
+	it( 'falls back to default when user added overridable wrapper between save and restore', () => {
+		// Arrange
+		const savedPlain = str( 'div' );
+		jest.mocked( getSessionStorageItem ).mockImplementation( ( key ) =>
+			key === `${ STORAGE_PREFIX }:tag` ? savedPlain : undefined
+		);
+
+		const propsSchema = tagSchema( 'no-link' );
+		const elementValues = {
+			tag: overridable( 'k1', str( 'a' ) ),
+			link: str( 'no-link' ),
+		};
+		const newValues = { link: null };
+
+		// Act
+		const result = getUpdatedValues( newValues, [ 'tag' ], propsSchema, elementValues, ELEMENT_ID );
+
+		// Assert
+		expect( result.tag ).toEqual( overridable( 'k1', str( 'div' ) ) );
+		expect( removeSessionStorageItem ).toHaveBeenCalledWith( `${ STORAGE_PREFIX }:tag` );
 	} );
 } );

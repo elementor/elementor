@@ -8,6 +8,8 @@ import wpPluploadSettings from '../wp-plupload-settings';
 
 export type OpenOptions = {
 	mode?: 'upload' | 'browse' | 'url';
+	currentUrl?: string;
+	currentAlt?: string;
 };
 
 export type MediaType = 'image' | 'svg' | 'video';
@@ -61,6 +63,8 @@ function createFrame( {
 	selected,
 	title,
 	mode = 'browse',
+	currentUrl,
+	currentAlt,
 }: Options & OpenOptions ) {
 	const frame: MediaFrame = media()( {
 		title,
@@ -72,12 +76,11 @@ function createFrame( {
 	} )
 		.on( 'open', () => {
 			setTypeCaller( frame );
-			applyMode( frame, mode );
+			applyMode( frame, mode, currentUrl, currentAlt );
 			if ( mode !== 'url' ) {
 				applySelection( frame, selected );
 			}
 		} )
-		.on( 'close', () => cleanupFrame( frame ) )
 		.on( 'insert select', () => select( frame, multiple, onSelect, onSelectUrl ) );
 
 	if ( allowUrlImport ) {
@@ -94,9 +97,25 @@ function cleanupFrame( frame?: MediaFrame ) {
 	frame?.remove();
 }
 
-function applyMode( frame: MediaFrame, mode: OpenOptions[ 'mode' ] = 'browse' ) {
+function applyMode(
+	frame: MediaFrame,
+	mode: OpenOptions[ 'mode' ] = 'browse',
+	currentUrl?: string,
+	currentAlt?: string
+) {
 	if ( mode === 'url' ) {
 		frame.setState( 'embed' );
+		if ( currentUrl || currentAlt ) {
+			// Defer so the toolbar region is initialized before change:url triggers its refresh callback.
+			setTimeout( () => {
+				if ( currentUrl ) {
+					frame.state()?.props?.set( 'url', currentUrl );
+				}
+				if ( currentAlt ) {
+					frame.state()?.props?.set( 'alt', currentAlt );
+				}
+			}, 0 );
+		}
 	} else {
 		frame.content.mode( mode );
 	}

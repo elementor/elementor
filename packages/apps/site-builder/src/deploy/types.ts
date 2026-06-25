@@ -1,15 +1,22 @@
 export const DEPLOY_DESIGN_SYSTEM_PATH = '/elementor/v1/site-builder/deploy-design-system';
 
+export type ElementorContentNode = {
+	elType?: string;
+	widgetType?: string;
+	settings?: Record< string, unknown >;
+	elements?: ElementorContentNode[];
+};
+
 export interface DeployPage {
 	id: string;
 	title: string;
-	content: object[];
+	content: ElementorContentNode[];
 }
 
 export interface DeployThemePart {
 	title: string;
 	type: 'header' | 'footer' | 'error-404' | 'single-post';
-	content: object[];
+	content: ElementorContentNode[];
 	themeBuilderCondition?: string;
 }
 
@@ -39,20 +46,23 @@ export interface DeployGlobalVariables {
 	version: number;
 }
 
+export type DeployMode = 'full' | 'incremental';
+
 export interface DeployPayload {
+	mode?: DeployMode;
 	pages: DeployPage[];
 	header?: DeployThemePart;
 	footer?: DeployThemePart;
 	error404?: DeployThemePart;
 	singlePost?: DeployThemePart;
-	kitSettings: Record< string, unknown >;
+	kitSettings?: Record< string, unknown >;
 	globalClasses?: DeployGlobalClasses;
 	globalVariables?: DeployGlobalVariables;
-	menus: {
+	menus?: {
 		header: DeployMenuItem[];
 		footer: DeployMenuItem[];
 	};
-	siteMeta: {
+	siteMeta?: {
 		title: string;
 		tagline: string;
 	};
@@ -64,16 +74,29 @@ export interface DeployResult {
 	status: 'success' | 'error';
 	homeUrl?: string;
 	homePageId?: number;
+	pageIdMap?: Record< string, number >;
 	error?: string;
 	errors?: string[];
 }
 
 export interface WpPost {
 	id: number;
+	link?: string;
+}
+
+export interface CreatePagesResult {
+	pageIdMap: Record< string, number >;
+	pageUrlMap: Record< string, string >;
 }
 
 export interface WpMenu {
 	id: number;
+	slug: string;
+}
+
+export interface CreatedMenus {
+	header?: WpMenu;
+	footer?: WpMenu;
 }
 
 export interface ElementorSettingResponse {

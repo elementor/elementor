@@ -249,7 +249,7 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		let $videoElement;
 
-		if ( 'hosted' === options.videoType ) {
+		if ( [ 'hosted', 'videopress', 'dailymotion' ].includes( options.videoType ) ) {
 			const videoParams = $.extend( { src: options.url, autoplay: '' }, options.videoParams );
 
 			const paramKeys = Object.keys( videoParams );

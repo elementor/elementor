@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Chips_Control extends Atomic_Control_Base {
 	private array $options = [];
+	private bool $free_chips = false;
 
 	public function get_type(): string {
 		return 'chips';
@@ -23,6 +24,13 @@ class Chips_Control extends Atomic_Control_Base {
 	public function get_props(): array {
 		return [
 			'options' => $this->options,
+			'freeChips' => $this->free_chips,
 		];
+	}
+
+	public function set_free_chips( bool $free_chips ): self {
+		$this->free_chips = $free_chips;
+
+		return $this;
 	}
 }

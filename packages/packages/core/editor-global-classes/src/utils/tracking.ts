@@ -5,13 +5,14 @@ import { __getState as getState } from '@elementor/store';
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
-import { selectClass } from '../store';
+import { placeholderDefinition, selectClass, selectClassLabels } from '../store';
 
 type EventMap = {
 	classCreated: {
 		source?: 'created' | 'converted' | 'duplicated';
 		classId: StyleDefinitionID;
 		classTitle?: string;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classDeleted: {
 		classId: StyleDefinitionID;
@@ -27,6 +28,7 @@ type EventMap = {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		totalInstancesAfterApply: number;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classRemoved: {
 		classId: StyleDefinitionID;
@@ -38,7 +40,7 @@ type EventMap = {
 		classType: 'global' | 'local';
 	};
 	classManagerOpened: {
-		source: 'style-panel';
+		source: 'style-panel' | 'system-panel';
 	};
 	classManagerSearched: Record< string, never >;
 	classManagerFiltersOpened: Record< string, never >;
@@ -220,16 +222,24 @@ const extractCssClassData = ( classId: StyleDefinitionID ) => {
 };
 
 const getCssClass = ( classId: StyleDefinitionID ) => {
-	const cssClass = selectClass( getState(), classId );
-	if ( ! cssClass ) {
-		throw new Error( `CSS class with ID ${ classId } not found` );
+	const state = getState();
+	const cssClass = selectClass( state, classId );
+
+	if ( cssClass ) {
+		return cssClass;
 	}
-	return cssClass;
+
+	const label = selectClassLabels( state )[ classId ];
+	if ( label !== undefined ) {
+		return placeholderDefinition( classId, label );
+	}
+
+	throw new Error( `CSS class with ID ${ classId } not found` );
 };
 
 const trackDeleteClass = async ( classId: StyleDefinitionID ) => {
-	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	const classTitle = getCssClass( classId ).label;
+	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	return { totalInstances, classTitle };
 };
 

@@ -3,6 +3,7 @@ import {
 	__privateRunCommandSync as runCommandSync,
 } from '@elementor/editor-v1-adapters';
 
+import { getCurrentDocument } from '../store/get-current-document';
 import { type Document, type ExtendedWindow, type V1Document } from '../types';
 
 export function getV1DocumentsManager() {
@@ -40,6 +41,10 @@ export function getV1DocumentPermalink( documentData: V1Document ) {
 	return documentData.config.urls.permalink ?? '';
 }
 
+export function getV1DocumentWpPreview( documentData: V1Document ) {
+	return documentData.config.urls.wp_preview ?? '';
+}
+
 export function normalizeV1Document( documentData: V1Document ): Document {
 	// Draft or autosave.
 	const isUnpublishedRevision = documentData.config.revisions.current_id !== documentData.id;
@@ -58,6 +63,7 @@ export function normalizeV1Document( documentData: V1Document ): Document {
 		},
 		links: {
 			permalink: getV1DocumentPermalink( documentData ),
+			wpPreview: getV1DocumentWpPreview( documentData ),
 			platformEdit: exitToUrl,
 		},
 		isDirty: documentData.editor.isChanged || isUnpublishedRevision,
@@ -94,6 +100,22 @@ export function invalidateDocumentData( documentId: number ) {
 	const documentsManager = getV1DocumentsManager();
 
 	documentsManager.invalidateCache( documentId );
+}
+
+export function reloadCurrentDocument() {
+	const currentDocument = getCurrentDocument();
+
+	if ( ! currentDocument?.id ) {
+		return Promise.resolve();
+	}
+
+	getV1DocumentsManager().invalidateCache();
+
+	return runCommand( 'editor/documents/switch', {
+		id: currentDocument.id,
+		shouldScroll: false,
+		shouldNavigateToDefaultRoute: false,
+	} );
 }
 
 export function switchToDocument(

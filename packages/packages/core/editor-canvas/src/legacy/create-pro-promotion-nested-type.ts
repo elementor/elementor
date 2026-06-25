@@ -40,8 +40,11 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 		_afterRender() {
 			super._afterRender();
 
-			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
-			this.$el.on( 'click', '.e-form-placeholder__remove-btn', ( e: Event ) => {
+			const removeBtnSelector = '.e-pro-promotion-placeholder__remove-btn';
+			const unlockBtnSelector = '.e-pro-promotion-placeholder__unlock-btn';
+
+			this.$el.off( 'click', removeBtnSelector );
+			this.$el.on( 'click', removeBtnSelector, ( e: Event ) => {
 				e.preventDefault();
 				e.stopPropagation();
 
@@ -51,13 +54,13 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 				);
 			} );
 
-			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
-			this.$el.on( 'click', '.e-form-placeholder__unlock-btn', ( e: Event ) => {
+			this.$el.off( 'click', unlockBtnSelector );
+			this.$el.on( 'click', unlockBtnSelector, ( e: Event ) => {
 				e.stopPropagation();
 			} );
 		}
 
-		_renderChildren() {}
+		async _renderChildren() {}
 
 		behaviors() {
 			const disabledBehaviors = [ 'InlineEditing', 'Draggable', 'Resizable' ];
@@ -75,8 +78,8 @@ function createPromotionView( BaseView: typeof ElementView ): typeof ElementView
 
 		onDestroy( ...args: unknown[] ) {
 			super.onDestroy( ...args );
-			this.$el.off( 'click', '.e-form-placeholder__remove-btn' );
-			this.$el.off( 'click', '.e-form-placeholder__unlock-btn' );
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__remove-btn' );
+			this.$el.off( 'click', '.e-pro-promotion-placeholder__unlock-btn' );
 		}
 	} as unknown as typeof ElementView;
 }

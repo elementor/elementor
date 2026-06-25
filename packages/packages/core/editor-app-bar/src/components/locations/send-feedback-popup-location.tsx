@@ -77,7 +77,7 @@ export default function SendFeedbackPopupLocation() {
 			feedback_text: feedbackContent,
 		} );
 	};
-	const handleStartAntoher = () => {
+	const handleStartAnother = () => {
 		setFeedbackContent( '' );
 		setFeedbackResult( null );
 	};
@@ -164,7 +164,7 @@ export default function SendFeedbackPopupLocation() {
 											</>
 										) }
 										{ feedbackResult?.success ? (
-											<Button variant="text" onClick={ () => handleStartAntoher() }>
+											<Button variant="text" onClick={ () => handleStartAnother() }>
 												{ __( 'Submit Another Feedback', 'elementor' ) }
 											</Button>
 										) : (

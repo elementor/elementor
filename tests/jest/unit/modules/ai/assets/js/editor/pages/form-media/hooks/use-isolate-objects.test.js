@@ -28,7 +28,7 @@ describe( 'useIsolateObject', () => {
 			};
 		} );
 
-		getImageToImageIsolateObjects.mockImplementation( ( ) => {
+		getImageToImageIsolateObjects.mockImplementation( () => {
 			return Promise.resolve( { result: [ { url: 'processed-image.jpg' } ] } );
 		} );
 	} );

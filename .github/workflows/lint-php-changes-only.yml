@@ -25,7 +25,7 @@ jobs:
     steps:
       - name: Get all changed PHP files
         id: changed-php-files
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@v47
         with:
           files: |
             **.php
@@ -35,12 +35,16 @@ jobs:
     needs: ['php-file-diff']
     if: ${{ needs.php-file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
     steps:
+      - name: Mask GitHub token
+        run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup PHP 8.1
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Install Dependencies
         run: |
           composer install

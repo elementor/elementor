@@ -33,7 +33,7 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$site_builder_config = $site_builder->get_config();
 
-		if ( ! $site_builder_config ) {
+		if ( ! is_array( $site_builder_config ) ) {
 			unset( $home_screen_data['site_builder'] );
 			return $home_screen_data;
 		}
@@ -48,8 +48,14 @@ class Site_Builder_Config extends Transformations_Abstract {
 
 		$home_screen_data['site_builder'] = array_merge( $site_builder_config, [
 			'siteBuilderUrl' => self::SITE_BUILDER_URL,
-			'previewImage1' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-01.jpg',
-			'previewImage2' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-02.jpg',
+			'stepImages' => [
+				self::PLANNER_STEPS['INIT']               => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-start.png',
+				self::PLANNER_STEPS['CHAT']               => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-start.png',
+				self::PLANNER_STEPS['SITEMAP']            => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-sitemap.png',
+				self::PLANNER_STEPS['WIREFRAMES']         => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-design.png',
+				self::PLANNER_STEPS['DEPLOYING']          => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-expand.png',
+				self::PLANNER_STEPS['DEPLOYED_TO_PLUGIN'] => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-builder-expand.png',
+			],
 			'bgImage' => self::ASSETS_BASE_URL . 'home-screen/v1/images/site-planner-bg.jpg',
 			'plannerSteps' => self::PLANNER_STEPS,
 			'stepConfig' => $validated_step_config,

@@ -4,7 +4,7 @@ import useActionProps from './hooks/use-action-props';
 export function init() {
 	toolsMenu.registerToggleAction( {
 		id: 'document-settings-button',
-		priority: 2,
+		priority: 3,
 		useProps: useActionProps,
 	} );
 }

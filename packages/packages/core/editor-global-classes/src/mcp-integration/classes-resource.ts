@@ -1,13 +1,15 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { __getState as getState } from '@elementor/store';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+import { selectOrderedClasses } from '../store';
 
 export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
 const STORAGE_KEY = 'elementor-global-classes';
 
 const updateLocalStorageCache = () => {
-	const classes = globalClassesStylesProvider.actions.all();
+	const classes = selectOrderedClasses( getState() );
 
 	localStorage.setItem( STORAGE_KEY, JSON.stringify( classes ) );
 };

@@ -9,16 +9,26 @@ export type ComponentDocumentsMap = Map< number, Document >;
 
 type ProcessedCache = Map< number, Promise< Document | null > >;
 
-export async function getComponentDocuments(
-	elements: V1ElementData[],
-	cache: ProcessedCache = new Map()
-): Promise< ComponentDocumentsMap > {
-	const componentIds = await getComponentIds( elements, cache );
+type GetterParams = {
+	elements: V1ElementData[];
+	cache?: ProcessedCache;
+	isRecursive?: boolean;
+};
+export async function getComponentDocuments( {
+	elements,
+	cache = new Map(),
+	isRecursive = true,
+}: GetterParams ): Promise< ComponentDocumentsMap > {
+	const componentIds = await getComponentIds( elements, cache, isRecursive );
 
 	return getDocumentsMap( componentIds, cache );
 }
 
-async function getComponentIds( elements: V1ElementData[], cache: ProcessedCache ): Promise< number[] > {
+async function getComponentIds(
+	elements: V1ElementData[],
+	cache: ProcessedCache,
+	isRecursive: boolean
+): Promise< number[] > {
 	const results = await Promise.all(
 		elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 			const ids: number[] = [];
@@ -37,12 +47,14 @@ async function getComponentIds( elements: V1ElementData[], cache: ProcessedCache
 					cache.set( componentId, getComponentDocumentData( componentId ) );
 				}
 
-				const doc = await cache.get( componentId );
-				childElements = doc?.elements;
+				if ( isRecursive ) {
+					const doc = await cache.get( componentId );
+					childElements = doc?.elements;
+				}
 			}
 
 			if ( childElements?.length ) {
-				const childIds = await getComponentIds( childElements, cache );
+				const childIds = await getComponentIds( childElements, cache, isRecursive );
 				ids.push( ...childIds );
 			}
 

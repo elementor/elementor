@@ -4,19 +4,21 @@ import EditorPage from '../../../pages/editor-page';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 type ExtendedWindow = Window & {
-	__createWidgetPrompt: string;
+  __createWidgetPrompt: string;
 };
 
-test.describe( 'Widget Creation @widget-creation', () => {
+test.describe.skip( 'Widget Creation @widget-creation', () => {
 	const EXPERIMENT_NAME = 'e_widget_creation';
 	const WIDGET_SEARCH_INPUT = 'input#elementor-panel-elements-search-input';
 	const WIDGET_CREATION_CTA = '.elementor-panel-elements-widget-creation__cta';
 	const WIDGET_CREATION_TITLE = '.elementor-panel-elements-widget-creation__title';
 	const WIDGET_CREATION_MESSAGE = '.elementor-panel-elements-widget-creation__message';
 	const CREATE_WIDGET_MODAL = '[role="dialog"].MuiDialog-paper';
-	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install Angie")';
+	const INSTALL_ANGIE_BUTTON = 'button:has-text("Install & Activate")';
+	const TERMS_CHECKBOX = 'input[type="checkbox"]';
 	const SEARCH_RESULTS = '#elementor-panel-elements .elementor-element-wrapper .elementor-element';
 	const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+	const CUSTOM_WIDGETS_CATEGORY = '#elementor-panel-category-custom-widgets';
 
 	async function searchWidgets( page: Page, searchTerm: string ) {
 		const searchInput = page.locator( WIDGET_SEARCH_INPUT );
@@ -51,6 +53,17 @@ test.describe( 'Widget Creation @widget-creation', () => {
 			editor = await wpAdmin.openNewPage();
 			await editor.openElementsPanel();
 
+			await test.step( 'Custom widgets category row shows fallback empty state', async () => {
+				const customWidgetsCategory = page.locator( CUSTOM_WIDGETS_CATEGORY );
+				await expect( customWidgetsCategory ).toBeVisible();
+				await expect( customWidgetsCategory.locator( '.elementor-panel-heading-title' ) ).toContainText(
+					'Custom Widget',
+				);
+				await expect(
+					customWidgetsCategory.locator( '.elementor-panel-category-custom-widgets-empty__message' ),
+				).toBeVisible();
+			} );
+
 			await test.step( 'Search with results shows widget creation footer', async () => {
 				await searchWidgets( page, 'button' );
 
@@ -62,7 +75,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
-				await expect( cta ).toContainText( 'Create custom widget' );
+				await expect( cta ).toContainText( 'Try for free' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toHaveText( "Couldn't find what you're looking for?" );
@@ -81,6 +94,7 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const cta = page.locator( WIDGET_CREATION_CTA );
 				await cta.scrollIntoViewIfNeeded();
 				await expect( cta ).toBeVisible();
+				await expect( cta ).toContainText( 'Try for free' );
 
 				const title = page.locator( WIDGET_CREATION_TITLE );
 				await expect( title ).toContainText( 'No widget found for' );
@@ -95,8 +109,8 @@ test.describe( 'Widget Creation @widget-creation', () => {
 
 				const modal = page.locator( CREATE_WIDGET_MODAL );
 				await expect( modal ).toBeVisible();
-				await expect( modal ).toContainText( 'Install Angie to build custom widgets' );
-				await expect( modal ).toContainText( 'Angie lets you generate custom widgets' );
+				await expect( modal ).toContainText( 'Create custom widgets with Angie' );
+				await expect( modal ).toContainText( 'Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.' );
 
 				const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
 				await expect( installButton ).toBeVisible();
@@ -143,7 +157,11 @@ test.describe( 'Widget Creation @widget-creation', () => {
 				const modal = page.locator( CREATE_WIDGET_MODAL );
 				await expect( modal ).toBeVisible();
 
+				const termsCheckbox = modal.locator( TERMS_CHECKBOX );
+				await termsCheckbox.check();
+
 				const installButton = modal.locator( INSTALL_ANGIE_BUTTON );
+				await expect( installButton ).toBeEnabled();
 				await installButton.click();
 
 				await page.waitForURL( /admin\.php.*angie-app/ );

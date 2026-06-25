@@ -730,11 +730,17 @@ class Utils {
 				return $element;
 			}
 
-			if ( ! empty( $element['elements'] ) ) {
-				$element = self::find_element_recursive( $element['elements'], $id );
+			$inner_elements = apply_filters(
+				'elementor/utils/find_element_recursive/inner_elements',
+				$element['elements'] ?? [],
+				$element
+			);
 
-				if ( $element ) {
-					return $element;
+			if ( ! empty( $inner_elements ) ) {
+				$found = self::find_element_recursive( $inner_elements, $id );
+
+				if ( $found ) {
+					return $found;
 				}
 			}
 		}
@@ -923,8 +929,8 @@ class Utils {
 	}
 
 	public static function is_sale_time(): bool {
-		$sale_start_time = gmmktime( 12, 0, 0, 11, 25, 2025 );
-		$sale_end_time = gmmktime( 3, 59, 0, 12, 3, 2025 );
+		$sale_start_time = gmmktime( 10, 0, 0, 6, 15, 2026 );
+		$sale_end_time = gmmktime( 3, 59, 0, 6, 17, 2026 );
 
 		$now_time = gmdate( 'U' );
 
@@ -972,5 +978,18 @@ class Utils {
 
 	public static function encode_string( string $decoded_string ): string {
 		return base64_encode( $decoded_string );
+	}
+
+	public static function html_to_plain_text( string $html ): string {
+		if ( empty( $html ) ) {
+			return '';
+		}
+
+		$text = preg_replace( '#<br\s*/?\s*>#i', ' ', $html );
+		$text = preg_replace( '#</?[a-z][^>]*>#i', ' ', $text );
+		$text = html_entity_decode( $text, ENT_QUOTES, 'UTF-8' );
+		$text = str_replace( "\xE2\x80\x8B", '', $text );
+
+		return trim( preg_replace( '/\s+/', ' ', $text ) );
 	}
 }

@@ -264,12 +264,15 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'image' => [
 							'src' => 'https://example.com/default-image.jpg',
+							'alt' => '',
 						],
 						'just_default_image' => [
 							'src' => 'https://example.com/default-image-2.jpg',
+							'alt' => '',
 						],
 						'only_url_image' => [
 							'src' => 'https://example.com/image.jpg',
+							'alt' => '',
 						],
 						'image_with_attachment' => [
 							'id' => 123,
@@ -657,7 +660,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. meta.state: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.state: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -692,7 +695,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. meta.breakpoint: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.breakpoint: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -729,7 +732,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `1234`. Widget ID: `1`. id: missing_or_invalid, label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `1234` (widget `1`). Element: `test-widget`. id: missing_or_invalid, label: missing_or_invalid' );
 
 		// Act.
 		$data = $widget->get_data_for_save();
@@ -770,7 +773,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. type: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. type: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -807,7 +810,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. label: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -850,7 +853,46 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. Widget ID: `1`. variants[1].padding: invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `Test`. variants[1].padding: invalid_value' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_validation_error_with_element_context() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 'Hero Section',
+			],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'label' => 'hero-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'gap' => [
+									'$$type' => 'size',
+									'value' => 'invalid-gap',
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Structure label: `Hero Section`. Style label: `hero-style`. variants[0].gap: invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();

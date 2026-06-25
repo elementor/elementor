@@ -74,6 +74,9 @@ on:
         default: ''
         description: 'npm dist-tag for the published packages. Empty/"manual" = "manual", "latest" = no version suffix and published as latest, other = custom dist-tag.'
 
+permissions:
+  contents: read
+
 jobs:
   publish-packages:
     if: startsWith( github.repository, 'elementor/' )
@@ -82,17 +85,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-            node-version: 20.x
-            cache: 'npm'
-            registry-url: 'https://registry.npmjs.org/'
-
-      - name: Install Dependencies
-        run: npm run install:ci
+        uses: actions/checkout@v6
 
       - name: Get Configuration
         if: github.event_name == 'workflow_dispatch'
@@ -109,6 +102,18 @@ jobs:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
           DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+
+      - name: Install Dependencies
+        run: npm run install:ci
 
       - name: Validate Inputs
         run: |
@@ -211,18 +216,18 @@ jobs:
 
       - name: Create Git Tag
         env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          FULL_VERSION: ${{ steps.version.outputs.FULL_VERSION }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          MAINTAIN_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
         run: |
           git config --global user.email "github-actions@github.com"
           git config --global user.name "GitHub Actions"
-          git remote set-url origin https://x-access-token:${{ secrets.MAINTAIN_TOKEN }}@github.com/${{ github.repository }}.git
 
-          TAG_NAME="v${{ steps.version.outputs.FULL_VERSION }}"
+          TAG_NAME="v${FULL_VERSION}-packages"
 
-          # Check if tag exists
           if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
             echo "Tag $TAG_NAME already exists, skipping creation"
           else
-            git tag -a "$TAG_NAME" -m "Release ${{ steps.version.outputs.FULL_VERSION }}"
-            git push origin "$TAG_NAME" || echo "Warning: Failed to push tag"
+            git tag -a "$TAG_NAME" -m "Packages release ${FULL_VERSION}"
+            git push "https://x-access-token:${MAINTAIN_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$TAG_NAME" || echo "Warning: Failed to push tag"
           fi

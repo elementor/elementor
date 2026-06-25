@@ -56,6 +56,39 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'Component A Content', $result );
 	}
 
+	public function test_transform__loads_autosave_when_in_edit_mode() {
+		// Arrange
+		$published_component = new Mock_Simple_Component( self::COMPONENT_ID_A, self::MOCK_CONTENT_A );
+		$autosave_component = new Mock_Simple_Component( self::COMPONENT_ID_A, self::MOCK_CONTENT_B );
+
+		$this->documents_manager_mock
+			->method( 'get' )
+			->willReturn( $published_component );
+
+		$this->documents_manager_mock
+			->method( 'get_doc_or_auto_save' )
+			->willReturn( $autosave_component );
+
+		$original_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		Plugin::$instance->editor->set_edit_mode( true );
+
+		try {
+			$transformer = new Component_Instance_Transformer();
+
+			// Act
+			$result = $transformer->transform(
+				[ 'component_id' => self::COMPONENT_ID_A ],
+				Props_Resolver_Context::make()
+			);
+
+			// Assert - autosave content (B), not published (A)
+			$this->assertStringContainsString( self::MOCK_CONTENT_B, $result );
+			$this->assertStringNotContainsString( self::MOCK_CONTENT_A, $result );
+		} finally {
+			Plugin::$instance->editor->set_edit_mode( $original_edit_mode );
+		}
+	}
+
 	public function test_transform__returns_empty_string_for_direct_circular_reference() {
 		// Arrange
 		$transformer = new Component_Instance_Transformer();

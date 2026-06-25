@@ -303,17 +303,19 @@ const SplitButtonGroup = < TValue, >( {
 					mt: 0.5,
 				} }
 			>
-				{ items.map( ( { label, value: buttonValue } ) => (
-					<MenuItem
-						key={ buttonValue }
-						selected={ buttonValue === value }
-						onClick={ () => onMenuItemClick( buttonValue ) }
-					>
-						<ListItemText>
-							<Typography sx={ { fontSize: '14px' } }>{ label }</Typography>
-						</ListItemText>
-					</MenuItem>
-				) ) }
+				{ items
+					.filter( ( item ) => item.value !== previewButton.value )
+					.map( ( { label, value: buttonValue } ) => (
+						<MenuItem
+							key={ buttonValue }
+							selected={ buttonValue === value }
+							onClick={ () => onMenuItemClick( buttonValue ) }
+						>
+							<ListItemText>
+								<Typography sx={ { fontSize: '14px' } }>{ label }</Typography>
+							</ListItemText>
+						</MenuItem>
+					) ) }
 			</Menu>
 		</>
 	);

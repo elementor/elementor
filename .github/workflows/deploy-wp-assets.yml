@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Preparing envs
         run: |
           svn co https://plugins.svn.wordpress.org/elementor/assets remote-wp-assets

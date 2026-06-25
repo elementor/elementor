@@ -3,6 +3,10 @@ import { createMockMenuAction, createMockMenuLink, createMockMenuToggleAction, r
 import { __flushAllInjections } from '@elementor/locations';
 import { fireEvent, screen } from '@testing-library/react';
 
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
+} ) );
+
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
 import ToolsMenuLocation from '../tools-menu-location';

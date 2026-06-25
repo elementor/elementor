@@ -244,12 +244,18 @@ describe( 'ControlToggleButtonGroup', () => {
 		expect( getCurrentSplitButton() ).toHaveTextContent( mockSplitItems[ Math.max( 0, initIndexInSplit ) ].label );
 
 		// Act.
+		const previewSplitValue = mockSplitItems[ Math.max( 0, initIndexInSplit ) ].value;
+
 		if ( targetIndexInSplit !== -1 ) {
-			fireEvent.click( getSplitTriggerButton() );
+			if ( targetValue === previewSplitValue ) {
+				fireEvent.click( getCurrentSplitButton() );
+			} else {
+				fireEvent.click( getSplitTriggerButton() );
 
-			const splitItem = getItem( mockSplitItems[ targetIndexInSplit ].label );
+				const splitItem = getItem( mockSplitItems[ targetIndexInSplit ].label );
 
-			fireEvent.click( splitItem );
+				fireEvent.click( splitItem );
+			}
 		} else {
 			const targetItem = mockBaseItems.find(
 				( { value } ) => value === targetValue
@@ -261,6 +267,29 @@ describe( 'ControlToggleButtonGroup', () => {
 		// Assert.
 		expect( onChange ).toHaveBeenCalledWith( initValue === targetValue ? null : targetValue );
 		expect( getCurrentSplitButton() ).toHaveTextContent( expectedSplitItem.label );
+	} );
+
+	it( 'should exclude the currently previewed split item from the dropdown', () => {
+		// Arrange.
+		const onChange = jest.fn();
+
+		// Act.
+		renderControlToggleButtonGroup(
+			<ControlToggleButtonGroup
+				value={ 6 }
+				items={ [ ...mockBaseItems, ...mockSplitItems ] }
+				maxItems={ 5 }
+				onChange={ onChange }
+				exclusive
+			/>
+		);
+
+		fireEvent.click( getSplitTriggerButton() );
+
+		// Assert.
+		const menu = screen.getByRole( 'menu' );
+		expect( within( menu ).queryByText( 'Six' ) ).not.toBeInTheDocument();
+		expect( within( menu ).getByText( 'Five' ) ).toBeInTheDocument();
 	} );
 } );
 

@@ -1,6 +1,7 @@
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { V3_DESCRIPTION_URI } from '../mcp-description-resource';
 import type { ElementorContainer, McpToolResult, ToolParams } from '../types';
 import { get$e, getElementor, getElementorCommon } from '../utils';
 import { validateDynamicTagDisabled, validateDynamicTagEnabled } from '../validation-helpers';
@@ -39,6 +40,14 @@ export function addDynamicTool( server: McpServer ): void {
 			},
 			annotations: {
 				title: 'Manage Dynamic Content',
+			},
+			_meta: {
+				'angie/requiredResources': [
+					{
+						uri: V3_DESCRIPTION_URI,
+						whenToUse: 'Read to understand Elementor capabilities and limitations before using this tool.',
+					},
+				],
 			},
 		},
 		async ( params: ToolParams ) => {

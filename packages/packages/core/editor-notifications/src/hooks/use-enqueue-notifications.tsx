@@ -42,7 +42,7 @@ export const useEnqueueNotification = ( notifications: Notifications ) => {
 				dispatch( clearAction( { id: notification.id } ) );
 			};
 
-			const useAlertAction = [ 'promotion', 'info' ].includes( notification.type );
+			const useAlertAction = [ 'promotion', 'info', 'success', 'error' ].includes( notification.type );
 
 			const action = useAlertAction
 				? createPromotionAction( notification )

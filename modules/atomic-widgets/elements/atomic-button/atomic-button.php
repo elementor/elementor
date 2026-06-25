@@ -54,7 +54,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text displayed on the button.' ),
+				->description( 'The text displayed on the button.' )
+				->alias( 'content', 'label' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -72,6 +73,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Inline_Editing_Control::bind_to( 'text' )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) )
@@ -146,5 +148,20 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$text = wp_strip_all_tags( $settings['text'] ?? '' );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return '**' . $text . '**';
 	}
 }

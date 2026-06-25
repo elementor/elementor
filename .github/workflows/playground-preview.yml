@@ -1,0 +1,132 @@
+name: Playground PR Preview Deployments
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types: [completed]
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+  deployments: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Resolve PR context and Build run
+        id: runctx
+        uses: actions/github-script@v9
+        with:
+          script: |
+            console.log('context:${JSON.stringify(context)}');
+            const run = context.payload.workflow_run;
+            const prs = run.pull_requests || [];
+            if (!prs.length) {
+              core.setFailed('No pull request found for this workflow run');
+              return;
+            }
+
+            const prNumber = prs[0].number;
+            const headSha = run.head_sha;
+            const buildRunId = run.id;
+
+            core.setOutput('pr-number', String(prNumber));
+            core.setOutput('head-sha', headSha);
+            core.setOutput('build-run-id', String(buildRunId));
+
+      - name: Download plugin artifact
+        id: artifact
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: Number('${{ steps.runctx.outputs.build-run-id }}'),
+            });
+            const hit = artifacts.find(a => a.name.startsWith('elementor-'));
+            if (!hit) {
+              core.setFailed('No elementor artifact found in resolved Build workflow run');
+              return;
+            }
+            const dl = await github.rest.actions.downloadArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: hit.id,
+              archive_format: 'zip',
+            });
+            require('fs').writeFileSync('build-artifact.zip', Buffer.from(dl.data));
+            core.setOutput('artifact-name', hit.name);
+
+      - name: Repack build artifact for Playground
+        run: |
+          unzip -oq build-artifact.zip -d build-artifact
+          if [ ! -f build-artifact/elementor.php ]; then
+            echo "Downloaded artifact does not look like Elementor plugin root (missing elementor.php)"
+            exit 1
+          fi
+          rm -rf plugin-root
+          mkdir -p plugin-root/elementor
+          cp -a build-artifact/. plugin-root/elementor/
+          test -f plugin-root/elementor/elementor.php
+
+      - name: Upload Playground plugin artifact
+        id: playground-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+          path: plugin-root
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Prepare blueprint JSON
+        id: blueprint
+        env:
+          ARTIFACT_NAME: playground-plugin-pr${{ steps.runctx.outputs.pr-number }}-${{ steps.runctx.outputs.head-sha }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+          const artifactName = process.env.ARTIFACT_NAME;
+          const runId = process.env.GITHUB_RUN_ID;
+          const url = `https://nightly.link/${owner}/${repo}/actions/runs/${runId}/${artifactName}.zip`;
+          const template = fs.readFileSync('tests/playwright/blueprints/pr-preview.json', 'utf8');
+          const blueprint = template.replace(/\$PLUGIN_ZIP_URL/g, url);
+          JSON.parse(blueprint);
+          const playgroundUrl = `https://playground.wordpress.net/?blueprint-url=data:application/json,${encodeURIComponent(blueprint)}`;
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `plugin-zip-url=${url}\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `json<<BLUEPRINT_JSON_EOF\n${blueprint}\nBLUEPRINT_JSON_EOF\n`);
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `playground-url=${playgroundUrl}\n`);
+          NODE
+
+      - name: Create PR deployment
+        uses: actions/github-script@v9
+        env:
+          HEAD_SHA: ${{ steps.runctx.outputs.head-sha }}
+          PR_NUMBER: ${{ steps.runctx.outputs.pr-number }}
+          PREVIEW_URL: ${{ steps.blueprint.outputs.playground-url }}
+        with:
+          script: |
+            const { data: deployment } = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: process.env.HEAD_SHA,
+              environment: 'playground-preview',
+              auto_merge: false,
+              required_contexts: [],
+              transient_environment: true,
+              description: `WP Playground preview for PR #${process.env.PR_NUMBER}`,
+            });
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              deployment_id: deployment.id,
+              state: 'success',
+              environment_url: process.env.PREVIEW_URL,
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+            });

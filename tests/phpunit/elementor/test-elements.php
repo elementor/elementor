@@ -1,7 +1,9 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Elements extends Elementor_Test_Base {
@@ -191,10 +193,82 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 		$this->assertSame( $properties, $categories['test-promote-props'] );
 	}
 
+	public function test_init_categories__v4_inactive__promotes_angie_and_custom_widgets_after_basic() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+		$cb          = $this->register_test_widget_categories();
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_INACTIVE );
+
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$keys = array_keys( $manager->get_categories() );
+
+		// Cleanup
+		remove_action( 'elementor/elements/categories_registered', $cb, 20 );
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
+		$this->reset_categories( $manager );
+
+		// Assert – both sections land after 'basic' and before 'pro-elements'
+		$basic_pos  = array_search( 'basic', $keys, true );
+		$angie_pos  = array_search( Elements_Manager::CATEGORY_ANGIE_WIDGETS, $keys, true );
+		$custom_pos = array_search( Elements_Manager::CATEGORY_CUSTOM_WIDGETS, $keys, true );
+		$pro_pos    = array_search( 'pro-elements', $keys, true );
+
+		$this->assertGreaterThan( $basic_pos, $angie_pos, 'angie-widgets should appear after basic' );
+		$this->assertLessThan( $pro_pos, $angie_pos, 'angie-widgets should appear before pro-elements' );
+		$this->assertGreaterThan( $basic_pos, $custom_pos, 'custom-widgets should appear after basic' );
+		$this->assertLessThan( $pro_pos, $custom_pos, 'custom-widgets should appear before pro-elements' );
+	}
+
+	public function test_init_categories__v4_active__promotes_angie_and_custom_widgets_after_atomic_elements() {
+		// Arrange
+		$experiments = Plugin::$instance->experiments;
+		$cb          = $this->register_test_widget_categories();
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
+
+		$manager = $this->elementor()->elements_manager;
+		$this->reset_categories( $manager );
+
+		// Act
+		$keys = array_keys( $manager->get_categories() );
+
+		// Cleanup
+		remove_action( 'elementor/elements/categories_registered', $cb, 20 );
+		$experiments->set_feature_default_state( 'e_atomic_elements', Experiments_Manager::STATE_ACTIVE );
+		$this->reset_categories( $manager );
+
+		// Assert – angie-widgets lands after atomic-elements and before 'basic'
+		$atomic_pos = array_search( Elements_Manager::CATEGORY_ATOMIC_ELEMENTS, $keys, true );
+		$angie_pos  = array_search( Elements_Manager::CATEGORY_ANGIE_WIDGETS, $keys, true );
+		$basic_pos  = array_search( 'basic', $keys, true );
+
+		$this->assertGreaterThan( $atomic_pos, $angie_pos, 'angie-widgets should appear after atomic-elements when V4 is active' );
+		$this->assertLessThan( $basic_pos, $angie_pos, 'angie-widgets should appear before basic when V4 is active' );
+	}
+
 	private function invoke_promote_category_after( $manager, string $category_name, array $after_candidates ): void {
 		$method = new \ReflectionMethod( $manager, 'promote_category_after' );
 		$method->setAccessible( true );
 		$method->invoke( $manager, $category_name, $after_candidates );
+	}
+
+	private function reset_categories( $manager ): void {
+		$prop = new \ReflectionProperty( $manager, 'categories' );
+		$prop->setAccessible( true );
+		$prop->setValue( $manager, null );
+	}
+
+	private function register_test_widget_categories(): \Closure {
+		$cb = static function ( $mgr ) {
+			$mgr->add_category( Elements_Manager::CATEGORY_ANGIE_WIDGETS, [ 'title' => 'Angie Widgets' ] );
+			$mgr->add_category( Elements_Manager::CATEGORY_CUSTOM_WIDGETS, [ 'title' => 'Custom Widgets' ] );
+		};
+
+		add_action( 'elementor/elements/categories_registered', $cb, 20 );
+
+		return $cb;
 	}
 
 	public function test_addChildWithNonExistentElementType() {

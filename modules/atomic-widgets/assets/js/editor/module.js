@@ -4,6 +4,7 @@ import createAtomicElementViewBase from './create-atomic-element-base-view';
 import AtomicElementBaseModel from './atomic-element-base-model';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
 import createFlexboxType from './atomic-element-types/create-flexbox-type';
+import createGridType from './atomic-element-types/create-grid-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -20,8 +21,17 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicElements() {
-		elementor.elementsManager.registerElementType( createDivBlockType() );
-		elementor.elementsManager.registerElementType( createFlexboxType() );
+		this.registerAtomicElementTypeIfAbsent( createDivBlockType() );
+		this.registerAtomicElementTypeIfAbsent( createFlexboxType() );
+		this.registerAtomicElementTypeIfAbsent( createGridType() );
+	}
+
+	registerAtomicElementTypeIfAbsent( elementType ) {
+		if ( elementor.elementsManager.getElementTypeClass( elementType.getType() ) ) {
+			return;
+		}
+
+		elementor.elementsManager.registerElementType( elementType );
 	}
 }
 

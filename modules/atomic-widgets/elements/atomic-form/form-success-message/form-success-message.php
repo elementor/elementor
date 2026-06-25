@@ -31,6 +31,10 @@ class Form_Success_Message extends Form_Message {
 		return '#2F532E';
 	}
 
+	protected static function get_default_status_paragraph_text(): string {
+		return __( 'Great! We’ve received your information.', 'elementor' );
+	}
+
 	protected function get_css_id_control_meta(): array {
 		return [
 			'layout' => 'two-columns',

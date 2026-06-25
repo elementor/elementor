@@ -82,6 +82,7 @@ describe( 'syncWithDocumentSave', () => {
 					added: [ styleDefinition.id ],
 					deleted: [],
 					modified: [],
+					order: true,
 				},
 			} );
 

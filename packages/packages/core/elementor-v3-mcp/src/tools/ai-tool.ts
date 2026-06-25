@@ -1,6 +1,7 @@
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { V3_DESCRIPTION_URI } from '../mcp-description-resource';
 import type { McpToolResult } from '../types';
 import { get$e } from '../utils';
 
@@ -16,6 +17,14 @@ export function addAiTool( server: McpServer ): void {
 			},
 			annotations: {
 				title: 'Manage AI Integration',
+			},
+			_meta: {
+				'angie/requiredResources': [
+					{
+						uri: V3_DESCRIPTION_URI,
+						whenToUse: 'Read to understand Elementor capabilities and limitations before using this tool.',
+					},
+				],
 			},
 		},
 		async ( params ) => {

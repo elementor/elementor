@@ -400,6 +400,39 @@ describe( '<CssClassSelector />', () => {
 		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should show existing classes in the dropdown when typing at the max classes limit', () => {
+		// Arrange.
+		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ { ...provider1, limit: 0 }, jest.fn() ] );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: 'Provider-1-a' } } );
+
+		// Assert - existing class is visible in dropdown.
+		expect( screen.getByRole( 'option', { name: 'Provider-1-a' } ) ).toBeInTheDocument();
+		// Assert - no "Create" option shown when at limit.
+		expect( screen.queryByRole( 'option', { name: 'Create "Provider-1-a"' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should validate the input when typing an invalid class name at the max classes limit', () => {
+		// Arrange.
+		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ { ...provider1, limit: 0 }, jest.fn() ] );
+		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: false, errorMessage: 'Test error' } );
+
+		renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local' ] } );
+
+		// Act.
+		const input = screen.getByRole( 'combobox', { hidden: true } );
+
+		fireEvent.change( input, { target: { value: '1invalid' } } );
+
+		// Assert - validateStyleLabel is invoked even when at limit, so format errors still surface.
+		expect( validateStyleLabel ).toHaveBeenCalledWith( '1invalid', 'inputChange' );
+	} );
+
 	it( 'should create, apply, and activate a class on click', async () => {
 		// Arrange.
 		const appliedIds = [ 'local', 'provider-1-b' ];
@@ -808,6 +841,60 @@ describe( '<CssClassSelector />', () => {
 		expect( within( normalItem ).getByLabelText( 'Has style' ) ).toBeInTheDocument();
 		expect( within( hoverItem ).getByLabelText( 'Has style' ) ).toBeInTheDocument();
 		expect( within( focusItem ).queryByLabelText( 'Has style' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should not show a style indicator for states with empty variants', () => {
+		// Arrange.
+		const localStyleWithEmptyHoverVariant = createMockStyleDefinitionWithVariants( {
+			id: 'local',
+			label: 'Local',
+			variants: [
+				{
+					meta: {
+						breakpoint: 'mobile',
+						state: null,
+					},
+					props: {
+						'text-align': 'left',
+					},
+					custom_css: null,
+				},
+				{
+					meta: {
+						breakpoint: 'mobile',
+						state: 'hover',
+					},
+					props: {},
+					custom_css: null,
+				},
+			],
+		} );
+		jest.mocked( stylesRepository.all ).mockReturnValue( [
+			localStyleWithEmptyHoverVariant,
+			provider1MockStyleA,
+			provider1MockStyleB,
+			provider2MockStyleA,
+		] );
+
+		// Act.
+		renderComponent( { active: 'local', appliedClasses: [ 'local' ] } );
+		const localChipMenu = within( screen.getAllByRole( 'group' )[ 0 ] ).getByLabelText(
+			__( 'Open CSS Class Menu', 'elementor' )
+		);
+		fireEvent.click( localChipMenu );
+
+		const menu = screen.getByRole( 'menu' );
+		const menuItems = within( menu ).getAllByRole( 'menuitem' );
+		const normalItem = menuItems.find( ( el ) => within( el ).queryByText( 'normal' ) );
+		const hoverItem = menuItems.find( ( el ) => within( el ).queryByText( 'hover' ) );
+
+		// Assert.
+		if ( ! normalItem || ! hoverItem ) {
+			throw new Error( 'missing state items' );
+		}
+
+		expect( within( normalItem ).getByLabelText( 'Has style' ) ).toBeInTheDocument();
+		expect( within( hoverItem ).queryByLabelText( 'Has style' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should show element custom states and set the clicked one active', () => {
@@ -1282,6 +1369,68 @@ describe( '<CssClassSelector />', () => {
 
 			// Assert.
 			expect( within( menu ).queryByText( 'Duplicate' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Missing classes alert', () => {
+		it( 'should not show the alert when all applied classes exist in a provider', () => {
+			// Arrange & Act.
+			renderComponent( { active: 'provider-1-b', appliedClasses: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+
+			// Assert.
+			expect( screen.queryByText( 'Some classes are missing' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show the alert when an applied class ID is not found in any provider', () => {
+			// Arrange.
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			// Act.
+			renderComponent( {
+				active: 'local',
+				appliedClasses: [ 'local', 'ghost-class-id' ],
+			} );
+
+			// Assert.
+			expect( screen.getByText( 'Some classes are missing' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'A class was removed from your site and is no longer active on this element' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'should show the alert even when the missing class is not the active one', () => {
+			// Arrange.
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			// Act — active is 'local' (valid), 'ghost-class-id' is the missing class.
+			renderComponent( {
+				active: 'local',
+				appliedClasses: [ 'local', 'provider-1-a', 'ghost-class-id' ],
+			} );
+
+			// Assert.
+			expect( screen.getByText( 'Some classes are missing' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should remove only the missing class IDs when dismiss is clicked, keeping valid ones', () => {
+			// Arrange.
+			const appliedClasses = [ 'local', 'provider-1-a', 'ghost-class-id' ];
+			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1 ] );
+
+			renderComponent( { active: 'local', appliedClasses } );
+
+			// Act.
+			fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+			// Assert — only the ghost id is stripped, valid classes remain.
+			expect( updateElementSettings ).toHaveBeenCalledWith( {
+				id: 'mock-element',
+				props: {
+					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
+				},
+				withHistory: false,
+			} );
 		} );
 	} );
 

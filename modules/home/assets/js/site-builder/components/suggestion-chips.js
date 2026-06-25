@@ -66,7 +66,7 @@ const SuggestionChips = ( { onChipSelect, siteBuilderState = DEFAULT_SITE_BUILDE
 					onClick={ () => handleChipClick( suggestion ) }
 					size="small"
 					variant="outlined"
-					selected={ selectedChip === suggestion }
+					disabled={ selectedChip === suggestion }
 				/>
 			) ) }
 		</PlannerChipsRow>

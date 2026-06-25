@@ -18,8 +18,32 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
+import { createLabelsForClasses } from '../../../utils/create-labels-for-classes';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
+
+const ROW_HEIGHT = 40;
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count, getItemKey } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		return {
+			getTotalSize: jest.fn().mockReturnValue( count * ROW_HEIGHT ),
+			getVirtualItems: jest.fn().mockReturnValue(
+				indices.map( ( index ) => ( {
+					index,
+					key: getItemKey ? getItemKey( index ) : index,
+					start: index * ROW_HEIGHT,
+					end: ( index + 1 ) * ROW_HEIGHT,
+					size: ROW_HEIGHT,
+					lane: 0,
+				} ) )
+			),
+		};
+	} ),
+} ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
@@ -43,6 +67,9 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	} ),
 } ) );
 
+jest.mock( '../../../load-existing-classes', () => ( {
+	loadExistingClasses: jest.fn().mockResolvedValue( undefined ),
+} ) );
 jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
@@ -67,6 +94,7 @@ describe( 'GlobalClassesList', () => {
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
 
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: true, errorMessage: null } );
+		jest.mocked( useFilters ).mockReturnValue( null );
 
 		registerSlice( slice );
 
@@ -113,7 +141,9 @@ describe( 'GlobalClassesList', () => {
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',
@@ -188,7 +218,9 @@ describe( 'GlobalClassesList', () => {
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
 		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',
@@ -609,6 +641,22 @@ describe( 'GlobalClassesList', () => {
 		expect( triggers ).toHaveLength( 0 );
 		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should keep sortable triggers wired on classes rendered while virtualized', () => {
+		mockClasses(
+			Array.from( { length: 50 }, ( _, i ) => ( {
+				id: `class-${ i + 1 }`,
+				label: `ClassLabel${ i + 1 }`,
+			} ) )
+		);
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		const renderedRows = screen.getAllByRole( 'listitem' );
+		const sortTriggers = screen.getAllByRole( 'button', { name: 'sort' } );
+
+		expect( sortTriggers ).toHaveLength( renderedRows.length );
+	} );
 } );
 
 const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
@@ -619,11 +667,14 @@ const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
 		order: classes.map( ( { id } ) => id ),
 	};
 
+	const classLabels = createLabelsForClasses( classes );
+
 	act( () =>
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		)
 	);

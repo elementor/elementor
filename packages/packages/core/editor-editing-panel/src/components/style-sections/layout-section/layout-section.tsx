@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { useParentElement } from '@elementor/editor-elements';
 import { type StringPropValue } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { createLocation } from '@elementor/locations';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
@@ -10,6 +10,7 @@ import { useComputedStyle } from '../../../hooks/use-computed-style';
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
+import { StyleTabCollapsibleContent } from '../../style-tab-collapsible-content';
 import { AlignContentField } from './align-content-field';
 import { AlignItemsField } from './align-items-field';
 import { AlignSelfChild } from './align-self-child-field';
@@ -20,7 +21,9 @@ import { FlexOrderField } from './flex-order-field';
 import { FlexSizeField } from './flex-size-field';
 import { GapControlField } from './gap-control-field';
 import { GridAutoFlowField } from './grid-auto-flow-field';
+import { GridAutoTrackFields } from './grid-auto-track-fields';
 import { GridJustifyItemsField } from './grid-justify-items-field';
+import { GridOutlineField } from './grid-outline-field';
 import { GridSizeFields } from './grid-size-field';
 import { GridSpanFields } from './grid-span-field';
 import { JustifyContentField } from './justify-content-field';
@@ -30,12 +33,13 @@ const DISPLAY_LABEL = __( 'Display', 'elementor' );
 const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
 const DEFAULT_PARENT_FLOW_DIRECTION = 'row';
 
+export const { Slot: GridFieldsSlot, inject: injectIntoGridFields } = createLocation();
+
 export const LayoutSection = () => {
 	const { value: display } = useStylesField< StringPropValue >( 'display', {
 		history: { propDisplayName: DISPLAY_LABEL },
 	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
-	const isGridExperimentActive = isExperimentActive( 'e_css_grid' );
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
 	const isDisplayGrid = 'grid' === ( display?.value ?? ( displayPlaceholder as StringPropValue )?.value );
 	const { element } = useElement();
@@ -61,8 +65,8 @@ export const LayoutSection = () => {
 			{ 'flex' === parentStyle?.display && (
 				<FlexChildFields parentStyleDirection={ getParentStyleDirection() } />
 			) }
-			{ isGridExperimentActive && isDisplayGrid && <GridFields /> }
-			{ isGridExperimentActive && 'grid' === parentStyle?.display && (
+			{ isDisplayGrid && <GridFields /> }
+			{ 'grid' === parentStyle?.display && (
 				<GridChildFields parentStyleDirection={ getParentStyleDirection() } />
 			) }
 		</SectionContent>
@@ -89,8 +93,13 @@ const FlexFields = () => {
 
 const GridFields = () => (
 	<>
+		<GridOutlineField />
 		<GridSizeFields />
 		<GridAutoFlowField />
+		<GridFieldsSlot />
+		<StyleTabCollapsibleContent fields={ [ 'grid-auto-rows', 'grid-auto-columns' ] }>
+			<GridAutoTrackFields />
+		</StyleTabCollapsibleContent>
 		<PanelDivider />
 		<GapControlField />
 		<PanelDivider />
@@ -112,7 +121,7 @@ const FlexChildFields = ( { parentStyleDirection }: { parentStyleDirection: stri
 const GridChildFields = ( { parentStyleDirection }: { parentStyleDirection: string } ) => (
 	<>
 		<PanelDivider />
-		<ControlFormLabel>{ __( 'Grid Child', 'elementor' ) }</ControlFormLabel>
+		<ControlFormLabel>{ __( 'Grid child', 'elementor' ) }</ControlFormLabel>
 		<GridSpanFields />
 		<AlignSelfGridChild parentStyleDirection={ parentStyleDirection } />
 		<FlexOrderField />

@@ -6,16 +6,7 @@ on:
     branches:
       - main
       - '[0-9].[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-      - '.vscode/**'
-      - '**/package.json'
-      - 'tests/phpunit/**'
+  merge_group:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
@@ -40,12 +31,23 @@ on:
         options:
           - standard
           - nightly
-
-permissions:
-  contents: write
-  pull-requests: write
-  actions: read
-  id-token: write
+      browser:
+        type: choice
+        description: 'Browser to run tests on'
+        required: true
+        default: 'chromium'
+        options:
+          - chromium
+          - firefox
+          - webkit
+      environment:
+        type: choice
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        options:
+          - production
+          - staging
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -60,19 +62,26 @@ jobs:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
-    name: Build plugin
+    name: Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Playwright build artifact
 
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
+    permissions:
+      contents: read
+      id-token: write
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
       github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
@@ -88,7 +97,7 @@ jobs:
           - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set PHP_VERSION environment variable
         run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
@@ -97,16 +106,16 @@ jobs:
         uses: ScribeMD/docker-cache@0.5.0
         with:
           key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
       - name: Install dependencies
         run: |
           npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -114,6 +123,18 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
+      - name: Install staging plugins
+        if: ${{ inputs.environment == 'staging' }}
+        uses: ./.github/actions/install-staging-plugins
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Update PHP version in config
         run: |
@@ -141,19 +162,40 @@ jobs:
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Enable full browser compatibility mode
-        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
-        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+      - name: Resolve browser configuration
+        env:
+          FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+        run: |
+          if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=all" >> $GITHUB_ENV
+          elif [ "$BROWSER_INPUT" != "chromium" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=$BROWSER_INPUT" >> $GITHUB_ENV
+          else
+            echo "BROWSER=chromium" >> $GITHUB_ENV
+          fi
       - name: Install playwright/test
         run: |
-          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
             npx playwright install --with-deps chromium firefox webkit
+          elif [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps "$BROWSER"
           else
-            npx playwright install chromium
+            npx playwright install --with-deps chromium
           fi
       - name: Run Playwright tests
         if: ${{
@@ -164,59 +206,91 @@ jobs:
           matrix.shardIndex != 'import_export_customization'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container"
-      - name: Run Playwright Plugin Container tests
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@plugin_tester_container" $PROJECT_ARG
+      - name: Run Playwright Plugin Section tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section"
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@plugin_tester_section" $PROJECT_ARG
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
-        run: npm run test:playwright -- --grep="@import_export_customization"
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright -- --grep="@import_export_customization" $PROJECT_ARG
       - name: Run core element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
-        run: npm run test:playwright:elements-regression:core
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:core -- $PROJECT_ARG
       - name: Run atomic element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression-atomic' }}
-        run: npm run test:playwright:elements-regression:atomic
-      - uses: actions/upload-artifact@v4
+        run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
+          npm run test:playwright:elements-regression:atomic -- $PROJECT_ARG
+      - uses: actions/upload-artifact@v7
         name: Upload Allure result
         if: always()
         with:
-          name: allure-results-${{ matrix.shardIndex }}
+          name: allure-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
           path: allure-results
           if-no-files-found: ignore
           retention-days: 1
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: playwright-test-results-${{ matrix.shardIndex }}
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          name: playwright-test-results-${{ matrix.shardIndex }}-${{ env.BROWSER || 'chromium' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
+    permissions:
+      contents: read
+      id-token: write
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set PHP_VERSION environment variable
         run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
       - name: Install dependencies
         run: |
           npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -224,6 +298,18 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
+      - name: Install staging plugins
+        if: ${{ inputs.environment == 'staging' }}
+        uses: ./.github/actions/install-staging-plugins
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
 
       - name: Update PHP version in config
         run: |
@@ -236,29 +322,54 @@ jobs:
           npm run start-local-server
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
-      - name: Enable full browser compatibility mode
-        if: contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility')
-        run: echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+      - name: Resolve browser configuration
+        env:
+          FULL_BROWSER_COMPAT_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'full-browser-compatibility') }}
+          BROWSER_INPUT: ${{ inputs.browser || 'chromium' }}
+        run: |
+          if [ "$FULL_BROWSER_COMPAT_LABEL" = "true" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=all" >> $GITHUB_ENV
+          elif [ "$BROWSER_INPUT" != "chromium" ]; then
+            echo "FULL_BROWSER_COMPAT=true" >> $GITHUB_ENV
+            echo "BROWSER=$BROWSER_INPUT" >> $GITHUB_ENV
+          else
+            echo "BROWSER=chromium" >> $GITHUB_ENV
+          fi
       - name: Install playwright/test
         run: |
-          if [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+          if [ "$FULL_BROWSER_COMPAT" = "true" ] && [ "$BROWSER" = "all" ]; then
             npx playwright install --with-deps chromium firefox webkit
+          elif [ "$FULL_BROWSER_COMPAT" = "true" ]; then
+            npx playwright install --with-deps "$BROWSER"
           else
-            npx playwright install chromium
+            npx playwright install --with-deps chromium
           fi
       - name: Run Playwright tests
         env:
           REPEAT_EACH: ${{ inputs.repeat_each }}
           TEST_TAG: ${{ inputs.tag }}
         run: |
+          PROJECT_ARG=""
+          if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
+            PROJECT_ARG="--project=$BROWSER"
+          fi
           if [ -n "$REPEAT_EACH" ]; then
-            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH"
+            npm run test:playwright -- --grep="$TEST_TAG" --repeat-each="$REPEAT_EACH" $PROJECT_ARG
           else
-            npm run test:playwright -- --grep="$TEST_TAG"
+            npm run test:playwright -- --grep="$TEST_TAG" $PROJECT_ARG
           fi
       - name: GCP Authentication
         id: 'auth'
@@ -272,7 +383,7 @@ jobs:
         run: |
           echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
           echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
           name: allure-report
@@ -281,40 +392,47 @@ jobs:
           retention-days: 1
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/upload-cloud-storage@v2
+        uses: google-github-actions/upload-cloud-storage@v3
         with:
           path: allure-report/
           destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}
           parent: false
           glob: '**'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-test-results-tagged-tests
-          path: ${{ inputs.path-to-results || 'test-results/' }}
+          path: test-results/
           if-no-files-found: ignore
           retention-days: 2
   Build-report:
     needs: Playwright
     runs-on: ubuntu-22.04
     name: Merge reports and build Allure report
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
     if: ${{ always() && needs.Playwright.result != 'skipped' }}
     steps:
       - name: Pull repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download allure data
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: allure-results-*
           path: allure-results
           merge-multiple: true
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
+
+      - name: Install dependencies
+        run: npm run install:ci
 
       - name: GCP Authentication
         id: 'auth'
@@ -336,7 +454,7 @@ jobs:
 
       - name: Install gcloud CLI
         if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@v3
 
       - name: Download previous report for main branch
         if: github.ref == 'refs/heads/main' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
@@ -362,14 +480,13 @@ jobs:
       - name: Build test report
         run: |
           if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
-            npm install -g allure-commandline
-            allure generate --clean allure-results -o allure-report || mkdir -p allure-report
+            npx allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
             echo "No allure-results found. Creating empty report directory."
             mkdir -p allure-report
           fi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         name: Upload generated Allure report
         with:
           name: allure-report
@@ -379,7 +496,7 @@ jobs:
 
       - name: Upload Allure report to GCP bucket
         if: hashFiles('allure-report/**') != '' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
-        uses: google-github-actions/upload-cloud-storage@v2
+        uses: google-github-actions/upload-cloud-storage@v3
         with:
           path: allure-report/
           destination: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.ref == 'refs/heads/main' && 'main' || github.run_id }}
@@ -402,26 +519,29 @@ jobs:
     if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
         if: ${{ (needs.Playwright.result == 'failure') }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate a token
         id: generate-token
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
           owner: elementor
       - name: Checkout private action repository
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: elementor/elementor-tests-configuration
           token: ${{ steps.generate-token.outputs.token }}
