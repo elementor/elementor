@@ -58,11 +58,6 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
-<<<<<<< HEAD
-export const activateAdapters = (): void => callAdapters( ( adapter ) => adapter.activate() );
-
-function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => void ): void {
-=======
 export const createAndRegisterAdapters = () => {
 	const modelContext = getModelContext();
 
@@ -77,9 +72,7 @@ export const createAndRegisterAdapters = () => {
 	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
 };
 
-// utility function to run a callback on all MCP interfaces
 function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
->>>>>>> d8bf871c01 (Internal: Added explicit await for angieSDK readiness [ED-24517] (#36207))
 	for ( const adapter of registrationAdapters ) {
 		try {
 			fn( adapter );
