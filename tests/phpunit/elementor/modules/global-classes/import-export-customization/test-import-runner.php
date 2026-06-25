@@ -2,6 +2,8 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\Core\Base\Document;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Core\Kits\Manager as Kits_Manager;
 use Elementor\Modules\GlobalClasses\Global_Class_Post;
 use Elementor\Modules\GlobalClasses\Global_Class_Post_Type;
@@ -10,6 +12,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Import as Import_Runner;
 use Elementor\Plugin;
+use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,12 +29,16 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		'manifest' => [ 'elementor_version' => '4.1.0' ],
 	];
 
+	private int $baseline_kit_id = 0;
+
 	public function setUp(): void {
 		$this->ensure_active_kit_is_valid();
 
 		parent::setUp();
 
 		( new Global_Class_Post_Type() )->register_post_type();
+
+		$this->baseline_kit_id = (int) Plugin::$instance->kits_manager->get_active_id();
 
 		$this->reset_global_classes_state();
 	}
@@ -51,15 +58,19 @@ class Test_Import_Runner extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		parent::tearDown();
-
 		$this->reset_global_classes_state();
+
+		parent::tearDown();
 	}
 
 	private function reset_global_classes_state(): void {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		foreach ( $this->get_kit_post_ids() as $kit_id ) {
+			$kit = Plugin::$instance->kits_manager->get_kit( $kit_id );
 
-		if ( $kit ) {
+			if ( ! $kit ) {
+				continue;
+			}
+
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 			$kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 			$kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
@@ -78,6 +89,65 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		foreach ( $post_ids as $post_id ) {
 			wp_delete_post( $post_id, true );
 		}
+
+		$this->delete_extra_kit_posts();
+		$this->restore_baseline_active_kit();
+	}
+
+	private function get_kit_post_ids(): array {
+		return get_posts( [
+			'fields' => 'ids',
+			'meta_query' => [
+				[
+					'key' => Document::TYPE_META_KEY,
+					'value' => Kit::get_type(),
+				],
+			],
+			'post_status' => 'any',
+			'post_type' => Source_Local::CPT,
+			'posts_per_page' => -1,
+		] );
+	}
+
+	private function delete_extra_kit_posts(): void {
+		if ( 0 === $this->baseline_kit_id ) {
+			return;
+		}
+
+		$extra_kit_ids = array_values( array_filter(
+			$this->get_kit_post_ids(),
+			fn( $kit_id ) => (int) $kit_id !== $this->baseline_kit_id
+		) );
+
+		$this->force_delete_kits( $extra_kit_ids );
+	}
+
+	private function restore_baseline_active_kit(): void {
+		if ( 0 === $this->baseline_kit_id || ! get_post( $this->baseline_kit_id ) ) {
+			delete_option( Kits_Manager::OPTION_ACTIVE );
+			delete_option( Kits_Manager::OPTION_PREVIOUS );
+
+			return;
+		}
+
+		update_option( Kits_Manager::OPTION_ACTIVE, $this->baseline_kit_id );
+		delete_option( Kits_Manager::OPTION_PREVIOUS );
+	}
+
+	private function force_delete_kits( array $kit_ids ): void {
+		if ( empty( $kit_ids ) ) {
+			return;
+		}
+
+		$skip_confirmation = new \ReflectionProperty( Plugin::$instance->kits_manager, 'should_skip_trash_kit_confirmation' );
+		$skip_confirmation->setAccessible( true );
+		$skip_confirmation->setValue( Plugin::$instance->kits_manager, true );
+
+		foreach ( $kit_ids as $kit_id ) {
+			wp_delete_post( $kit_id, true );
+		}
+
+		$skip_confirmation->setValue( Plugin::$instance->kits_manager, false );
 	}
 
 	/**
