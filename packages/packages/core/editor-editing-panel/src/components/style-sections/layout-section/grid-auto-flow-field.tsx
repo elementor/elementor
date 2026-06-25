@@ -89,6 +89,7 @@ const GridAutoFlowFieldContent = () => {
 							onChange={ handleDenseToggle }
 							size="tiny"
 							aria-label={ DENSE_LABEL }
+							disabled={ ! canEdit }
 						>
 							<LayoutDashboardIcon fontSize="tiny" />
 						</ToggleButton>

@@ -79,7 +79,7 @@ describe( '<GridAutoFlowField />', () => {
 		renderGridAutoFlowField();
 
 		// Assert.
-		expect( screen.getByLabelText( 'Dense' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Dense' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should reset grid-auto-flow when the selected direction is clicked again', () => {
@@ -109,5 +109,45 @@ describe( '<GridAutoFlowField />', () => {
 			{ 'grid-auto-flow': null },
 			{ history: { propDisplayName: 'Auto flow' } }
 		);
+	} );
+
+	it( 'should set row dense when dense is toggled on without a direction', () => {
+		// Arrange.
+		const setValues = jest.fn();
+
+		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: false } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'grid-auto-flow': null },
+			setValues,
+			canEdit: true,
+		} );
+
+		// Act.
+		renderGridAutoFlowField();
+		fireEvent.click( screen.getByRole( 'button', { name: 'Dense' } ) );
+
+		// Assert.
+		expect( setValues ).toHaveBeenCalledWith(
+			{ 'grid-auto-flow': { $$type: 'string', value: 'row dense' } },
+			{ history: { propDisplayName: 'Auto flow' } }
+		);
+	} );
+
+	it( 'should disable direction and dense controls when editing is not allowed', () => {
+		// Arrange.
+		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: false } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'grid-auto-flow': { $$type: 'string', value: 'row' } },
+			setValues: jest.fn(),
+			canEdit: false,
+		} );
+
+		// Act.
+		renderGridAutoFlowField();
+
+		// Assert.
+		expect( screen.getByLabelText( 'Row' ) ).toHaveClass( 'Mui-disabled' );
+		expect( screen.getByLabelText( 'Column' ) ).toHaveClass( 'Mui-disabled' );
+		expect( screen.getByRole( 'button', { name: 'Dense' } ) ).toBeDisabled();
 	} );
 } );
