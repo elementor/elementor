@@ -51,12 +51,17 @@ const LeftPanel = styled( Box, {
 	flexDirection: 'column',
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
+	minHeight: 0,
 	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
 	'& > *': {
 		width: '100%',
 	},
 	'& > *:last-of-type': {
 		maxWidth: contentMaxWidth,
+		flex: 1,
+		display: 'flex',
+		flexDirection: 'column',
+		minHeight: 0,
 	},
 	[ theme.breakpoints.down( 'sm' ) ]: {
 		padding: 0,

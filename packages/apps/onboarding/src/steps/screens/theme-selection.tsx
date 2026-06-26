@@ -21,12 +21,12 @@ export function ThemeSelection() {
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 
 	return (
-		<Stack spacing={ 7.5 } width="100%" data-testid="theme-selection-step">
+		<Stack spacing={ 7.5 } width="100%" sx={ { flex: 1 } } data-testid="theme-selection-step">
 			<Stack width="100%" maxWidth={ 386 } alignSelf="center">
 				<GreetingBanner>{ greetingText }</GreetingBanner>
 			</Stack>
 
-			<Stack spacing={ 4 } alignItems="center" width="100%">
+			<Stack spacing={ 4 } alignItems="center" width="100%" sx={ { flex: 1 } }>
 				<Stack spacing={ 1 } textAlign="center" alignItems="center">
 					<StepTitle color="text.primary" variant="h5" align="center">
 						{ t( 'steps.theme_selection.v2.title' ) }
@@ -38,7 +38,11 @@ export function ThemeSelection() {
 
 				<HelloThemePreview isInstalled={ isInstalled } />
 
-				<FooterHighlights items={ THEME_SELECTION_FOOTER_HIGHLIGHTS } testId="theme-selection-highlights" />
+				<FooterHighlights
+					items={ THEME_SELECTION_FOOTER_HIGHLIGHTS }
+					testId="theme-selection-highlights"
+					sx={ { marginBlockStart: 'auto' } }
+				/>
 			</Stack>
 		</Stack>
 	);

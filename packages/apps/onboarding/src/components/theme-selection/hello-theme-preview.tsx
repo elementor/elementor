@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { CheckedCircleIcon } from '@elementor/icons';
-import { Box, Stack, styled, Typography } from '@elementor/ui';
+import { Box, Stack, styled, Typography, useTheme } from '@elementor/ui';
 
-import { ElementorLogoIcon, HelloLayoutIcon, PlusIcon } from '../../icons';
+import { ElementorBoxIcon, HelloLayoutIcon, PlusIcon } from '../../icons';
 import { t } from '../../utils/translations';
 import { InstalledChip } from './styled-components';
+
+const HELLO_BADGE_BG_COLOR = '#491146';
 
 const PreviewRoot = styled( Stack )( {
 	flexDirection: 'row',
@@ -13,26 +15,23 @@ const PreviewRoot = styled( Stack )( {
 	position: 'relative',
 } );
 
-const ElementorBox = styled( Box )( ( { theme } ) => ( {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	inlineSize: theme.spacing( 15 ),
-	blockSize: theme.spacing( 15 ),
-	borderRadius: theme.spacing( 1.5 ),
-	border: `1px dashed ${ theme.palette.divider }`,
-	backgroundColor: theme.palette.action.hover,
-	flexShrink: 0,
-} ) );
-
 const PlusConnector = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	color: theme.palette.text.primary,
 	marginInline: theme.spacing( -1.5 ),
-	zIndex: 1,
+	position: 'relative',
+	zIndex: 3,
 	flexShrink: 0,
+} ) );
+
+const PlusKnockout = styled( Box )( ( { theme } ) => ( {
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	backgroundColor: theme.palette.background.default,
+	borderRadius: '50%',
+	padding: theme.spacing( 0.25 ),
 } ) );
 
 const HelloCard = styled( Box )( ( { theme } ) => ( {
@@ -57,7 +56,7 @@ const HelloBadge = styled( Box )( ( { theme } ) => ( {
 	insetInlineEnd: theme.spacing( -1.25 ),
 	padding: theme.spacing( 0.5, 1.25 ),
 	borderRadius: theme.spacing( 2.5 ),
-	backgroundColor: theme.palette.promotion.main,
+	backgroundColor: HELLO_BADGE_BG_COLOR,
 	color: theme.palette.common.white,
 	zIndex: 3,
 } ) );
@@ -67,14 +66,16 @@ interface HelloThemePreviewProps {
 }
 
 export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewProps ) {
+	const theme = useTheme();
+
 	return (
 		<PreviewRoot data-testid="hello-theme-preview">
-			<ElementorBox>
-				<ElementorLogoIcon sx={ { fontSize: theme => theme.spacing( 7.5 ) } } />
-			</ElementorBox>
+			<ElementorBoxIcon sx={ { fontSize: theme.spacing( 15 ), flexShrink: 0 } } />
 
 			<PlusConnector>
-				<PlusIcon sx={ { fontSize: theme => theme.spacing( 3.5 ) } } />
+				<PlusKnockout>
+					<PlusIcon sx={ { fontSize: theme.spacing( 5 ), color: 'text.primary' } } />
+				</PlusKnockout>
 			</PlusConnector>
 
 			<HelloCard>
@@ -86,8 +87,8 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 						icon={ <CheckedCircleIcon /> }
 						sx={ {
 							position: 'absolute',
-							insetBlockStart: theme => theme.spacing( 1 ),
-							insetInlineStart: theme => theme.spacing( 1 ),
+							insetBlockStart: theme.spacing( 1 ),
+							insetInlineStart: theme.spacing( 1 ),
 							zIndex: 3,
 						} }
 					/>
@@ -99,7 +100,7 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 					</HelloBadge>
 				) }
 
-				<HelloLayoutIcon sx={ { fontSize: theme => theme.spacing( 6 ), color: 'text.primary' } } />
+				<HelloLayoutIcon sx={ { fontSize: theme.spacing( 6 ), color: 'text.primary' } } />
 
 				<Typography variant="caption" color="text.secondary" sx={ { lineHeight: 1.2 } }>
 					{ t( 'steps.theme_selection.by_elementor' ) }

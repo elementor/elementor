@@ -12,6 +12,7 @@ const FooterRoot = styled( Box )( ( { theme } ) => ( {
 	height: FOOTER_HEIGHT,
 	display: 'flex',
 	alignItems: 'center',
+	justifyContent: 'space-between',
 	padding: theme.spacing( 2, 3 ),
 	background: theme.palette.background.paper,
 	boxShadow: theme.shadows[ 4 ],

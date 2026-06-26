@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { CheckedCircleIcon } from '@elementor/icons';
-import { Stack, Typography } from '@elementor/ui';
+import { Stack, type SxProps, type Theme, Typography } from '@elementor/ui';
 
 import { t } from '../../utils/translations';
 
@@ -11,9 +11,10 @@ export interface FooterHighlightItem {
 interface FooterHighlightsProps {
 	items: readonly FooterHighlightItem[];
 	testId?: string;
+	sx?: SxProps< Theme >;
 }
 
-export function FooterHighlights( { items, testId = 'footer-highlights' }: FooterHighlightsProps ) {
+export function FooterHighlights( { items, testId = 'footer-highlights', sx }: FooterHighlightsProps ) {
 	return (
 		<Stack
 			direction="row"
@@ -21,7 +22,7 @@ export function FooterHighlights( { items, testId = 'footer-highlights' }: Foote
 			justifyContent="center"
 			gap={ 3 }
 			data-testid={ testId }
-			sx={ { justifySelf: 'center' } }
+			sx={ sx }
 		>
 			{ items.map( ( item ) => (
 				<Stack key={ item.labelKey } direction="row" alignItems="center" gap={ 0.75 }>
