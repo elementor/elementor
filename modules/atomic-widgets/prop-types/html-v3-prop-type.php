@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Html_V3_Adapter;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Unknown_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -14,6 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Html_V3_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
 		return 'html-v3';
+	}
+
+	public static function define_default_dialects(): array {
+		return [ 'llm' => Html_V3_Adapter::class ];
 	}
 
 	protected function define_shape(): array {

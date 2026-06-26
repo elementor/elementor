@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Primitives;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Scalar_Adapter;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,6 +17,10 @@ class String_Prop_Type extends Plain_Prop_Type {
 
 	public static function get_key(): string {
 		return 'string';
+	}
+
+	public static function define_default_dialects(): array {
+		return [ 'llm' => Scalar_Adapter::class ];
 	}
 
 	public function enum( array $allowed_values ): self {
