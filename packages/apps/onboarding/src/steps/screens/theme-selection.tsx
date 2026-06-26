@@ -33,10 +33,10 @@ export function ThemeSelection() {
 			<Stack spacing={ 4 }>
 				<Stack spacing={ 1 } textAlign="center">
 					<StepTitle color="text.primary" variant="h5" align="center">
-						{ t( 'steps.theme_selection.title' ) }
+						{ t( 'steps.theme_selection.v2.title' ) }
 					</StepTitle>
 					<Typography variant="body1" color="text.secondary">
-						{ t( 'steps.theme_selection.subtitle' ) }
+						{ t( 'steps.theme_selection.v2.subtitle' ) }
 					</Typography>
 				</Stack>
 

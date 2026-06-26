@@ -93,11 +93,11 @@ describe( 'SiteFeatures', () => {
 			expect( ids.indexOf( COOKIE_CONSENT_FEATURE_ID ) ).toBeGreaterThan( ids.indexOf( 'email_deliverability' ) );
 		} );
 
-		it( 'hides Hello theme card when isElementorThemeActive is true', () => {
+		it( 'hides Hello theme card when isHelloThemeActive is true', () => {
 			renderApp( {
 				isConnected: true,
 				progress: SITE_FEATURES_PROGRESS,
-				isElementorThemeActive: true,
+				isHelloThemeActive: true,
 			} );
 
 			expect( screen.queryByText( 'Hello theme' ) ).not.toBeInTheDocument();

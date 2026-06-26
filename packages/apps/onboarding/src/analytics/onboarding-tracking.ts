@@ -325,10 +325,22 @@ export function trackSummary( isActive: boolean, snapshot: ObSummarySnapshot ): 
 		},
 		{
 			key: 'theme_installed',
-			value:
-				snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined
-					? THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
-					: 'none',
+			value: ( (): string => {
+				if (
+					snapshot.choices.theme_selection !== null &&
+					snapshot.choices.theme_selection !== undefined
+				) {
+					return (
+						THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
+					);
+				}
+
+				if ( ( snapshot.choices.site_features ?? [] ).includes( 'hello_theme' ) ) {
+					return 'hello';
+				}
+
+				return 'none';
+			} )(),
 		},
 		{
 			key: 'pro_features',

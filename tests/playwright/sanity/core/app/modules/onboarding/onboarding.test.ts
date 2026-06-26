@@ -296,37 +296,6 @@ test.describe( 'Onboarding @onboarding', () => {
 		expect( navigationRequest.url() ).toContain( 'action=elementor_new_post' );
 	} );
 
-	test.skip( 'Back from theme_selection shows experience_level Continue enabled (Pro-only flow)', async ( { page } ) => {
-		await mockOnboardingApi( page );
-		await navigateAndPassLogin( page );
-
-		await doAndWaitForProgress( page, () =>
-			page.getByRole( 'button', { name: 'Just exploring' } ).click(),
-		);
-		await expect( page.getByTestId( 'site-about-step' ) ).toBeVisible();
-
-		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
-		const siteAboutContinue = page.getByRole( 'button', { name: 'Continue' } );
-		await doAndWaitForProgress( page, () => siteAboutContinue.click() );
-		await expect( page.getByTestId( 'experience-level-step' ) ).toBeVisible();
-
-		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
-
-		await doAndWaitForProgress( page, () =>
-			page.getByRole( 'button', { name: 'I have some experience' } ).click(),
-		);
-		await expect( page.getByTestId( 'theme-selection-step' ) ).toBeVisible();
-
-		await page.getByRole( 'button', { name: 'Back' } ).click();
-		await expect( page.getByTestId( 'experience-level-step' ) ).toBeVisible();
-
-		await expect(
-			page.getByRole( 'button', { name: 'I have some experience' } ),
-		).toHaveAttribute( 'aria-pressed', 'true' );
-
-		await expect( page.getByRole( 'button', { name: 'Continue' } ) ).toBeEnabled();
-	} );
-
 	test( 'Core site_features defaults: Hello selected, Cookie Consent unselected, after Email delivery', async ( { page } ) => {
 		await mockOnboardingApi( page );
 		await navigateToSiteFeaturesStep( page );

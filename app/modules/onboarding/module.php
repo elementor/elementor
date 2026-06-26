@@ -122,7 +122,7 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
-			'isElementorThemeActive' => $this->is_elementor_theme_active(),
+			'isHelloThemeActive' => $this->is_hello_theme_active(),
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -329,7 +329,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( ! $this->is_elementor_theme_active() && self::is_elementor_pro_installed() ) {
+		if ( ! $this->is_hello_theme_active() && self::is_elementor_pro_installed() ) {
 			$steps[] = [
 				'id' => 'theme_selection',
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
@@ -353,9 +353,11 @@ class Module extends BaseModule {
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_pro_installed', $is_pro_installed );
 	}
 
-	private function is_elementor_theme_active(): bool {
+	private function is_hello_theme_active(): bool {
 		$active_theme = get_stylesheet();
 		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
+
+		$is_active = (bool) apply_filters( 'elementor/onboarding/is_hello_theme_active', $is_active );
 
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_theme_active', $is_active );
 	}

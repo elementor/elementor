@@ -96,13 +96,13 @@ class Test_Module extends Test_Base {
 		}
 	}
 
-	public function test_settings_expose_is_elementor_theme_active_flag() {
+	public function test_settings_expose_is_hello_theme_active_flag() {
 		$_GET['page'] = 'elementor-app';
 		do_action( 'elementor/init' );
 
 		$settings = Plugin::$instance->app->get_settings( 'onboarding' );
-		$this->assertArrayHasKey( 'isElementorThemeActive', $settings );
-		$this->assertIsBool( $settings['isElementorThemeActive'] );
+		$this->assertArrayHasKey( 'isHelloThemeActive', $settings );
+		$this->assertIsBool( $settings['isHelloThemeActive'] );
 	}
 
 	public function test_get_onboarding_locale_exact_match() {

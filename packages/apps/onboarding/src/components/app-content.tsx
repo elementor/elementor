@@ -18,11 +18,7 @@ import { ExperienceLevel } from '../steps/screens/experience-level';
 import { Login } from '../steps/screens/login';
 import { ProInstall } from '../steps/screens/pro-install';
 import { SiteAbout } from '../steps/screens/site-about';
-import {
-	HELLO_THEME_FEATURE_ID,
-	SiteFeatures,
-	isInstallable,
-} from '../steps/screens/site-features';
+import { HELLO_THEME_FEATURE_ID, SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
@@ -352,7 +348,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 			if ( stepId === StepId.SITE_FEATURES && isLast ) {
 				const selectedFeatures = ( choices.site_features as string[] ) || [];
-				const hasHelloSelected = selectedFeatures.some( ( id ) => isInstallable( id ) );
+				const hasHelloSelected = selectedFeatures.includes( HELLO_THEME_FEATURE_ID );
 
 				if ( hasHelloSelected ) {
 					trackSummary( {
@@ -470,7 +466,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 
 	const getContinueLabel = () => {
 		if ( stepId === StepId.THEME_SELECTION && ! completedSteps.includes( StepId.THEME_SELECTION ) ) {
-			return t( 'steps.theme_selection.continue_with_theme' );
+			return t( 'steps.theme_selection.v2.continue_with_theme' );
 		}
 
 		if ( stepId === StepId.SITE_FEATURES && ! completedSteps.includes( StepId.SITE_FEATURES ) ) {

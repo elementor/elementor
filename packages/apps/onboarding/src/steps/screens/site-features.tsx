@@ -102,11 +102,11 @@ export function SiteFeatures() {
 
 	const theme = useTheme();
 
-	const isElementorThemeActive = getConfig()?.isElementorThemeActive ?? false;
+	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
 
 	const visibleOptions = useMemo(
-		() => FEATURE_OPTIONS.filter( ( option ) => ! ( option.id === HELLO_THEME_FEATURE_ID && isElementorThemeActive ) ),
-		[ isElementorThemeActive ]
+		() => FEATURE_OPTIONS.filter( ( option ) => ! ( option.id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) ),
+		[ isHelloThemeActive ]
 	);
 
 	const rawSiteFeatures = choices.site_features as string[] | undefined;
@@ -122,7 +122,7 @@ export function SiteFeatures() {
 	const hasInitializedDefaults = useRef( false );
 
 	useEffect( () => {
-		if ( hasInitializedDefaults.current || isElementorThemeActive ) {
+		if ( hasInitializedDefaults.current || isHelloThemeActive ) {
 			return;
 		}
 
@@ -133,14 +133,14 @@ export function SiteFeatures() {
 		}
 
 		actions.setUserChoice( 'site_features', [ HELLO_THEME_FEATURE_ID ] );
-	}, [ storedSelectableFeatures, isElementorThemeActive, actions ] );
+	}, [ storedSelectableFeatures, isHelloThemeActive, actions ] );
 
 	const selectedValues = useMemo( () => {
 		const combined = [ ...CORE_FEATURE_IDS, ...storedSelectableFeatures ];
 		return combined
 			.filter( ( id, index ) => combined.indexOf( id ) === index )
-			.filter( ( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isElementorThemeActive ) );
-	}, [ storedSelectableFeatures, isElementorThemeActive ] );
+			.filter( ( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) );
+	}, [ storedSelectableFeatures, isHelloThemeActive ] );
 
 	function handleFeatureClick( id: string ) {
 		if ( CORE_FEATURE_IDS.has( id ) ) {

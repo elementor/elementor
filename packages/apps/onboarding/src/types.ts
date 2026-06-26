@@ -62,7 +62,7 @@ export interface OnboardingConfig {
 	steps: Step[];
 	isConnected: boolean;
 	shouldShowProInstallScreen: boolean;
-	isElementorThemeActive?: boolean;
+	isHelloThemeActive?: boolean;
 	urls: {
 		dashboard: string;
 		editor: string;
