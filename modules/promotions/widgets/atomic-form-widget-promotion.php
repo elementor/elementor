@@ -34,7 +34,7 @@ class Atomic_Form_Widget_Promotion {
 		return [
 			[
 				'name' => 'e-form',
-				'title' => __( 'Form', 'elementor' ),
+				'title' => __( 'Atomic Form', 'elementor' ),
 				'icon' => 'eicon-atomic-form',
 				'categories' => '["atomic-form"]',
 			],
