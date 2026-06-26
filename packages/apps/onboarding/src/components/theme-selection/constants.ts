@@ -1,4 +1,3 @@
-import { getOnboardingAssetUrl } from '../../steps/step-visuals';
 import type { ThemeSlug } from '../../types';
 import { t } from '../../utils/translations';
 
@@ -7,7 +6,7 @@ export interface ThemeDefinition {
 	labelKey: string;
 	descriptionKey: string;
 	previewBgColor: string;
-	previewImage: string;
+	previewImage?: string;
 }
 
 export const HELLO_THEME: ThemeDefinition = {
@@ -15,7 +14,6 @@ export const HELLO_THEME: ThemeDefinition = {
 	labelKey: 'steps.theme_selection.theme_hello_label',
 	descriptionKey: 'steps.theme_selection.theme_hello_description',
 	previewBgColor: '#f6f6f6',
-	previewImage: getOnboardingAssetUrl( 'theme-hello.png' ),
 };
 
 export function getGreetingText( experienceLevel: string | null ): string {

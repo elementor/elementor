@@ -21,22 +21,30 @@ describe( 'ThemeSelection', () => {
 
 			// Assert
 			expect( screen.getByTestId( 'theme-selection-step' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Start with Hello' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Build faster with Hello Theme' ) ).toBeInTheDocument();
 			expect(
 				screen.getByText( "Use Elementor's lightweight theme for faster setup and full design control." )
 			).toBeInTheDocument();
 		} );
 
-		it( 'renders the Hello theme card with the by-Elementor label', () => {
-			// Arrange & Act
+		it( 'renders the Hello theme preview illustration', () => {
 			navigateToThemeSelection();
 
-			// Assert
-			expect( screen.getByText( 'Hello' ) ).toBeInTheDocument();
+			expect( screen.getByTestId( 'hello-theme-preview' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'by Elementor' ) ).toBeInTheDocument();
 		} );
 
-		it( 'does not render Hello Biz or a radiogroup', () => {
+		it( 'renders feature highlights in the step content', () => {
+			navigateToThemeSelection();
+
+			expect( screen.getByTestId( 'theme-selection-highlights' ) ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'footer-highlights' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Fast by design' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Responsive from the start' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Built for Elementor' ) ).toBeInTheDocument();
+		} );
+
+		it( 'does not render Hello Biz, a radiogroup, or a Recommended chip', () => {
 			// Arrange & Act
 			navigateToThemeSelection();
 
@@ -44,14 +52,7 @@ describe( 'ThemeSelection', () => {
 			expect( screen.queryByText( 'Hello Biz' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'radiogroup' ) ).not.toBeInTheDocument();
 			expect( screen.queryAllByRole( 'radio' ) ).toHaveLength( 0 );
-		} );
-
-		it( 'shows the Recommended chip on the Hello card', () => {
-			// Arrange & Act
-			navigateToThemeSelection();
-
-			// Assert
-			expect( screen.getByText( 'Recommended' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Recommended' ) ).not.toBeInTheDocument();
 		} );
 	} );
 

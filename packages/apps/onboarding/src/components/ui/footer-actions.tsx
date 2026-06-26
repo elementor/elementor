@@ -4,16 +4,25 @@ import { Box, Button, styled, useTheme, withDirection } from '@elementor/ui';
 
 import { t } from '../../utils/translations';
 
+const FooterActionsRoot = styled( Box )( {
+	display: 'grid',
+	gridTemplateColumns: '1fr auto 1fr',
+	alignItems: 'center',
+	width: '100%',
+} );
+
 const LeftActions = styled( Box )( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: 8,
+	justifySelf: 'start',
 } );
 
 const RightActions = styled( Box )( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: 8,
+	justifySelf: 'end',
 } );
 const DirectionalArrowLeftIcon = withDirection( ArrowLeftIcon );
 
@@ -73,6 +82,7 @@ interface FooterActionsProps {
 	isBackDisabled?: boolean;
 	continueDisabled?: boolean;
 	continueLoading?: boolean;
+	centerSlot?: React.ReactNode;
 	onBack?: () => void;
 	onSkip?: () => void;
 	onContinue?: () => void;
@@ -88,6 +98,7 @@ export function FooterActions( {
 	isBackDisabled = false,
 	continueDisabled = false,
 	continueLoading = false,
+	centerSlot,
 	onBack,
 	onSkip,
 	onContinue,
@@ -97,7 +108,7 @@ export function FooterActions( {
 	const backIcon = <DirectionalArrowLeftIcon fontSize="tiny" />;
 
 	return (
-		<>
+		<FooterActionsRoot>
 			<LeftActions>
 				{ showBack && (
 					<BackButton
@@ -111,6 +122,8 @@ export function FooterActions( {
 					</BackButton>
 				) }
 			</LeftActions>
+
+			{ centerSlot }
 
 			<RightActions>
 				{ showSkip && (
@@ -130,6 +143,6 @@ export function FooterActions( {
 					</ContinueButton>
 				) }
 			</RightActions>
-		</>
+		</FooterActionsRoot>
 	);
 }

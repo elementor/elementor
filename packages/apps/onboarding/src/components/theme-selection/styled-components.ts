@@ -35,7 +35,7 @@ export const ThemePreview = styled( Box, {
 } )< { bgColor: string; previewImage?: string } >( ( { theme, bgColor, previewImage } ) => ( {
 	inlineSize: '100%',
 	blockSize: theme.spacing( 14 ),
-	overflow: 'hidden',
+	overflow: 'visible',
 	borderStartStartRadius: theme.spacing( 1.75 ),
 	borderStartEndRadius: theme.spacing( 1.75 ),
 	backgroundColor: bgColor,

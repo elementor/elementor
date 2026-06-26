@@ -3,7 +3,6 @@
 namespace Elementor\App\Modules\Onboarding;
 
 use Elementor\App\Modules\Onboarding\Data\Controller;
-use Elementor\App\Modules\Onboarding\Data\Endpoints\Install_Theme;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
@@ -355,7 +354,7 @@ class Module extends BaseModule {
 
 	private function is_hello_theme_active(): bool {
 		$active_theme = get_stylesheet();
-		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
+		$is_active = 0 === strpos( $active_theme, 'hello-' );
 
 		$is_active = (bool) apply_filters( 'elementor/onboarding/is_hello_theme_active', $is_active );
 
