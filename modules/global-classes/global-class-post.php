@@ -4,6 +4,8 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Concerns\Has_Preview_Context;
+use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Utils\Global_Class_Data_Normalizer;
 use WP_Post;
 
@@ -47,20 +49,20 @@ class Global_Class_Post {
 		return ( new static( $post ) )->set_preview( $is_preview );
 	}
 
-	public static function find_by_class_id( string $class_id, bool $is_preview = false ): ?self {
-		$posts = get_posts( [
-			'post_type' => Global_Class_Post_Type::CPT,
-			'post_status' => 'publish',
-			'posts_per_page' => 1,
-			'meta_key' => self::META_KEY_ID,
-			'meta_value' => $class_id,
-		] );
+	public static function find_by_class_id( string $class_id, bool $is_preview = false, ?Kit $kit = null ): ?self {
+		$kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
 
-		if ( empty( $posts ) ) {
+		if ( ! $kit ) {
 			return null;
 		}
 
-		return ( new self( $posts[0] ) )->set_preview( $is_preview );
+		$post_id = Global_Classes_Post_IDs::make( $kit )->get_post_id( $class_id );
+
+		if ( ! $post_id ) {
+			return null;
+		}
+
+		return self::from_post_id( $post_id, $is_preview );
 	}
 
 	public function get_post_id(): int {
@@ -79,10 +81,6 @@ class Global_Class_Post {
 
 	public function get_label(): string {
 		return $this->post->post_title;
-	}
-
-	public function get_order(): int {
-		return (int) $this->post->menu_order;
 	}
 
 	public function get_data( bool $skip_migration = false ): array {
@@ -199,6 +197,18 @@ class Global_Class_Post {
 		return is_array( $data ) ? $data : [];
 	}
 
+	private function get_preview_data(): array {
+		$data = get_post_meta( $this->post->ID, self::META_KEY_DATA_PREVIEW, true );
+
+		return is_array( $data ) ? $data : [];
+	}
+
+	private function get_version(): string {
+		$version = get_post_meta( $this->post->ID, self::META_KEY_VERSION, true );
+
+		return is_string( $version ) ? $version : '';
+	}
+
 	public function update_data(
 		array $data,
 		string $version = ELEMENTOR_VERSION
@@ -224,14 +234,13 @@ class Global_Class_Post {
 		string $class_id,
 		string $label,
 		array $data,
-		int $order = 0,
+		?Kit $kit = null,
 		string $version = ELEMENTOR_VERSION
 	): ?self {
 		$post_id = wp_insert_post( [
 			'post_type' => Global_Class_Post_Type::CPT,
 			'post_title' => $label,
 			'post_status' => 'publish',
-			'menu_order' => $order,
 		] );
 
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
@@ -243,6 +252,12 @@ class Global_Class_Post {
 		update_post_meta( $post_id, self::META_KEY_ID, $class_id );
 		update_post_meta( $post_id, self::META_KEY_DATA, $normalized_data );
 		update_post_meta( $post_id, self::META_KEY_VERSION, $version );
+
+		$kit = $kit ?? Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			Global_Classes_Post_IDs::make( $kit )->set( $class_id, (int) $post_id );
+		}
 
 		$instance = self::from_post_id( $post_id );
 
@@ -257,5 +272,54 @@ class Global_Class_Post {
 		$result = wp_delete_post( $this->post->ID, true );
 
 		return false !== $result;
+	}
+
+	public function clone( Kit $target_kit ): ?self {
+		return self::clone_to_kit( $this->get_class_id(), $this, $target_kit );
+	}
+
+	public static function clone_to_other_kit( string $style_id, Kit $source_kit, Kit $target_kit ): ?self {
+		$source_post = self::find_by_class_id( $style_id, false, $source_kit );
+
+		if ( ! $source_post ) {
+			return null;
+		}
+
+		return self::clone_to_kit( $style_id, $source_post, $target_kit );
+	}
+
+	private static function clone_to_kit( string $style_id, self $source_post, Kit $target_kit ): ?self {
+		$new_post_id = wp_insert_post( [
+			'post_type' => Global_Class_Post_Type::CPT,
+			'post_title' => $source_post->get_label(),
+			'post_status' => 'publish',
+		] );
+
+		if ( is_wp_error( $new_post_id ) || ! $new_post_id ) {
+			return null;
+		}
+
+		update_post_meta( $new_post_id, self::META_KEY_ID, $style_id );
+		update_post_meta( $new_post_id, self::META_KEY_VERSION, $source_post->get_version() );
+
+		$frontend_data = $source_post->get_frontend_data();
+		$preview_data = $source_post->get_preview_data();
+		$last_edited_timestamp = get_post_meta( $source_post->get_post_id(), self::META_KEY_EDITED, true );
+
+		if ( ! empty( $frontend_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA, $frontend_data );
+		}
+
+		if ( ! empty( $preview_data ) ) {
+			update_post_meta( $new_post_id, self::META_KEY_DATA_PREVIEW, $preview_data );
+		}
+
+		if ( $last_edited_timestamp ) {
+			update_post_meta( $new_post_id, self::META_KEY_EDITED, $last_edited_timestamp );
+		}
+
+		Global_Classes_Post_IDs::make( $target_kit )->set( $style_id, (int) $new_post_id );
+
+		return self::from_post_id( $new_post_id );
 	}
 }

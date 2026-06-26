@@ -5,16 +5,29 @@ import {
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
+	type V1ElementData,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 
 import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { trackCanvasEvent } from '../../../utils/tracking';
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
-import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
+import { BEST_PRACTICES_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { convertStyleBlocksToAtomic } from '../../utils/convert-css-to-atomic';
+import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
 import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
 import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
+import { adaptLeafRootParams } from './xml-leaf-wrapper';
+
+export type ElementAddedEvent = {
+	element: V1ElementData;
+	executedBy: 'mcp_tool' | 'user';
+};
+
+export const ELEMENT_ADDED_EVENT = 'elementor/canvas/element-added';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
@@ -39,16 +52,22 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		requiredResources: [
 			{ description: 'Build compositions guide', uri: BUILD_COMPOSITIONS_GUIDE_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
-			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 		],
 		outputSchema,
-		handler: async ( params ) => {
-			assertCompositionXmlUsesV4WidgetsOnly( params.xmlStructure );
-			const { xmlStructure, elementConfig, stylesConfig, customCSS } = params;
+		handler: async ( rawParams ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( rawParams.xmlStructure );
+			const { stylesConfig: convertedStyles, customCSS } = await convertCompositionStyles( rawParams.style );
+			const { xmlStructure, elementConfig, stylesConfig } = adaptLeafRootParams( {
+				...rawParams,
+				stylesConfig: convertedStyles,
+				widgetsCache: getWidgetsCache() ?? {},
+			} );
+
 			let generatedXML: string = '';
 			const errors: Error[] = [];
 			const rootContainers: V1Element[] = [];
@@ -65,33 +84,26 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const {
-					invalidStyles,
-					configErrors,
-					rootContainers: generatedRootContainers,
-				} = await compositionBuilder.build( targetContainer );
+				const { configErrors, rootContainers: generatedRootContainers } =
+					await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
+				rootContainers.forEach( ( container ) => {
+					const elementData = container.model?.toJSON();
+
+					if ( elementData ) {
+						onElementAdded( elementData as V1ElementData );
+					}
+				} );
+
+				Object.values( stylesConfig ).forEach( ( styleValue ) => {
+					dispatchMcpStylesAppliedEvent( { styleValue } );
+				} );
+
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
-				} else {
-					Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
-						const customCss = {
-							value: rawCssRules.join( ';\n' ),
-						};
-						doUpdateElementProperty( {
-							elementId,
-							propertyName: '_styles',
-							propertyValue: {
-								_styles: {
-									custom_css: customCss,
-								},
-							},
-							elementType: 'widget',
-						} );
-					} );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );
@@ -155,6 +167,26 @@ Remember: Global classes ensure design consistency and reusability. Don't skip a
 	} );
 };
 
+async function convertCompositionStyles( style: Record< string, Record< string, string > > ) {
+	const stylesConfig: Record< string, Record< string, unknown > > = {};
+	const customCSS: Record< string, string > = {};
+
+	if ( ! style || Object.keys( style ).length === 0 ) {
+		return { stylesConfig, customCSS };
+	}
+
+	const results = await convertStyleBlocksToAtomic( style );
+
+	for ( const [ configId, { props, customCss } ] of Object.entries( results ) ) {
+		stylesConfig[ configId ] = props;
+		if ( customCss ) {
+			customCSS[ configId ] = customCss;
+		}
+	}
+
+	return { stylesConfig, customCSS };
+}
+
 function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 	const doc = new DOMParser().parseFromString( xmlStructure, 'application/xml' );
 	if ( doc.querySelector( 'parsererror' ) ) {
@@ -164,16 +196,42 @@ function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
 	for ( const node of doc.querySelectorAll( '*' ) ) {
 		const type = node.tagName;
 		const widgetData = widgetsCache[ type ];
+
 		if ( ! widgetData ) {
 			continue;
 		}
 		if ( widgetData.elType !== 'widget' ) {
 			continue;
 		}
-		if ( ! widgetData.atomic_props_schema ) {
-			throw new Error(
-				`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ type }`
-			);
+		if ( ! isWidgetAvailableForLLM( widgetData ) || ! widgetData.atomic_props_schema ) {
+			throw new Error( `This tool does not support element type: ${ type }` );
 		}
+	}
+}
+
+function onElementAdded( element: V1ElementData ) {
+	const elType = element.elType ?? '';
+	const widgetType = element.widgetType ?? '';
+	const elementName = elType === 'widget' ? widgetType : elType;
+
+	trackCanvasEvent( {
+		eventName: 'add_element',
+		executed_by: 'mcp_tool',
+		element_name: elementName,
+		element_type: elType,
+		widget_type: widgetType,
+	} );
+
+	const event: ElementAddedEvent = {
+		element,
+		executedBy: 'mcp_tool',
+	};
+
+	window.dispatchEvent( new CustomEvent( ELEMENT_ADDED_EVENT, { detail: event } ) );
+
+	if ( element.elements?.length ) {
+		element.elements?.forEach( ( childElement ) => {
+			onElementAdded( childElement );
+		} );
 	}
 }

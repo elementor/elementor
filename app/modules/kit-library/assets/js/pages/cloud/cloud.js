@@ -188,6 +188,7 @@ export default function Cloud( {
 								queryParams.search ? (
 									<ErrorScreen
 										title={ __( 'No Website Templates found for your search', 'elementor' ) }
+										// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
 										description={ __( 'Try different keywords or ', 'elementor' ) }
 										button={ {
 											text: __( 'Continue browsing.', 'elementor' ),

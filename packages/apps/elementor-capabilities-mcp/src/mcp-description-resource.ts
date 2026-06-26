@@ -1,4 +1,4 @@
-import { type McpServer } from '@elementor/editor-mcp';
+import { type McpServer } from '@elementor/elementor-mcp-common';
 
 import { PAGES_LIST_RESOURCE_URI } from './pages-list-resource';
 

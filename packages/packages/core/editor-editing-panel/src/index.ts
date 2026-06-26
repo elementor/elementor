@@ -1,13 +1,16 @@
 export { type ValidationEvent, type ValidationResult } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
+export { ControlLabel } from './components/control-label';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
+export { EditingPanelTabs } from './components/editing-panel-tabs';
 export { SectionContent } from './components/section-content';
 export { SettingsControl } from './components/settings-control';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
 export { injectIntoStyleTab } from './components/style-tab';
+export { injectIntoGridFields } from './components/style-sections/layout-section/layout-section';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
@@ -26,6 +29,7 @@ export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
+export { registerElementPanelDefaults, type ElementPanelDefaults } from './hooks/use-default-panel-settings';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';

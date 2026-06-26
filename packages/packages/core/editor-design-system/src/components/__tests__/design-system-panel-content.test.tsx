@@ -42,12 +42,18 @@ jest.mock( '../../initial-tab', () => ( {
 	persistDesignSystemTab: jest.fn(),
 } ) );
 
+const mockTrackGlobalClasses = jest.fn();
+
 jest.mock( '@elementor/editor-global-classes', () => ( {
 	ClassManagerPanelEmbedded: jest.fn(),
+	trackGlobalClasses: ( ...args: unknown[] ) => mockTrackGlobalClasses( ...args ),
 } ) );
+
+const mockTrackVariablesManagerEvent = jest.fn();
 
 jest.mock( '@elementor/editor-variables', () => ( {
 	VariablesManagerPanelEmbedded: jest.fn(),
+	trackVariablesManagerEvent: ( ...args: unknown[] ) => mockTrackVariablesManagerEvent( ...args ),
 } ) );
 
 const mockVariablesManagerPanelEmbedded = require( '@elementor/editor-variables' )
@@ -229,6 +235,30 @@ describe( 'DesignSystemPanelContent', () => {
 			fireEvent.click( screen.getByRole( 'tab', { name: 'Classes' } ) );
 
 			expect( jest.mocked( notifyDesignSystemTabChange ) ).toHaveBeenCalledWith( 'classes' );
+		} );
+
+		it( 'should track classManagerOpened with system-panel when Classes tab is clicked', () => {
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			fireEvent.click( screen.getByRole( 'tab', { name: 'Classes' } ) );
+
+			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+				event: 'classManagerOpened',
+				source: 'system-panel',
+			} );
+		} );
+
+		it( 'should track open_variables_manager with system-panel when Variables tab is clicked', () => {
+			jest.mocked( getInitialDesignSystemTab ).mockReturnValue( 'classes' );
+
+			render( <DesignSystemPanelContent onRequestClose={ onRequestClose } /> );
+
+			fireEvent.click( screen.getByRole( 'tab', { name: 'Variables' } ) );
+
+			expect( mockTrackVariablesManagerEvent ).toHaveBeenCalledWith( {
+				action: 'openManager',
+				source: 'system-panel',
+			} );
 		} );
 	} );
 

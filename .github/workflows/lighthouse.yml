@@ -26,8 +26,10 @@ on:
 jobs:
   build-plugin-lh:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-    name: Build plugin
+    name: Lighthouse build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Lighthouse build artifact
 
   lighthouse_test:
     name: Lighthouse test - WP latest on PHP 7.4
@@ -36,18 +38,18 @@ jobs:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       
       - name: Remove package.json
         run: rm -f package*.json
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
@@ -85,7 +87,7 @@ jobs:
 
       - name: Upload Lighthouse reports on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouseci-reports
           path: ${{ github.workspace }}/.lighthouseci/reports/**/*
@@ -93,7 +95,7 @@ jobs:
 
       - name: Upload Lighthouse HTML dumps on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouseci-htmls
           path: ${{ github.workspace }}/.lighthouseci/dumps/**/*

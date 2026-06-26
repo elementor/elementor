@@ -176,6 +176,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( $content_controls ),
 			...$email_controls,
 			Section::make()
@@ -210,6 +211,16 @@ class Atomic_Form extends Atomic_Element_Base {
 						->set_meta( $this->get_css_id_control_meta() ),
 				] ),
 		];
+	}
+
+	protected function define_base_settings(): array {
+		$settings = [];
+
+		foreach ( self::build_email_action_defaults() as $key => $default_email ) {
+			$settings[ $key ] = Emails_Prop_Type::generate( $default_email );
+		}
+
+		return $settings;
 	}
 
 	protected function define_base_styles(): array {
@@ -402,11 +413,8 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	private static function get_emails_prop_settings(): array {
 		$props = [];
-		$default_value = self::get_default_email_value();
 
-		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
-			$key = self::get_email_action_key( $i );
-
+		foreach ( self::build_email_action_defaults() as $key => $default_value ) {
 			$props[ $key ] = Emails_Prop_Type::make()
 				->set_dependencies( self::make_action_dependency( $key ) )
 				->meta( Overridable_Prop_Type::ignore() )
@@ -460,12 +468,25 @@ class Atomic_Form extends Atomic_Element_Base {
 		return sprintf( __( 'Email %d', 'elementor' ), $index + 1 );
 	}
 
+	private static function build_email_action_defaults(): array {
+		$defaults = [];
+		$default_email = self::get_default_email_value();
+
+		for ( $i = 0; $i < self::get_email_action_count(); $i++ ) {
+			$key = self::get_email_action_key( $i );
+			$defaults[ $key ] = $default_email;
+		}
+
+		return $defaults;
+	}
+
 	private static function get_default_email_value(): array {
 		return [
 			'to' => String_Array_Prop_Type::generate( [
 				String_Prop_Type::generate( self::get_default_recipient_email() ),
 			] ),
 			'from' => String_Prop_Type::generate( self::get_default_sender_email() ),
+			'message' => String_Prop_Type::generate( '[all-fields]' ),
 		];
 	}
 

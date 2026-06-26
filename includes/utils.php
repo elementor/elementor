@@ -638,6 +638,10 @@ class Utils {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
+	public static function is_license_active(): bool {
+		return class_exists( '\ElementorPro\License\API' ) && \ElementorPro\License\API::is_license_active();
+	}
+
 	public static function is_pro_installed_and_not_active(): bool {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -929,8 +933,8 @@ class Utils {
 	}
 
 	public static function is_sale_time(): bool {
-		$sale_start_time = gmmktime( 12, 0, 0, 11, 25, 2025 );
-		$sale_end_time = gmmktime( 3, 59, 0, 12, 3, 2025 );
+		$sale_start_time = gmmktime( 10, 0, 0, 6, 15, 2026 );
+		$sale_end_time = gmmktime( 3, 59, 0, 6, 17, 2026 );
 
 		$now_time = gmdate( 'U' );
 

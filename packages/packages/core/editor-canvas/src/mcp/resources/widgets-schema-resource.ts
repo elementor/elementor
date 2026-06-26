@@ -3,16 +3,14 @@ import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
 import {
 	type ArrayPropType,
 	type ObjectPropType,
-	type Props,
 	type PropType,
 	Schema,
 	type TransformablePropType,
 	type UnionPropType,
 } from '@elementor/editor-props';
-import { getStylesSchema } from '@elementor/editor-styles';
 
-import { getRequiredDefaultChildTypes } from '../../composition-builder/utils/required-default-child-tags';
 import { hasV3Controls, isWidgetAvailableForLLM } from '../utils/element-data-util';
+import { buildLlmGuidance, enrichPropertiesWithBaseSettingsHints } from './build-llm-guidance';
 
 const V3_LAYOUT_CONTROL_TYPES = new Set( [ 'section', 'tab', 'tabs' ] );
 
@@ -56,9 +54,13 @@ function extractV3ControlsMetadata( controls: unknown ): Record< string, V3Contr
 	return result;
 }
 
+export const CANVAS_SERVER_NAME = 'editor-canvas';
+
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
+export const WIDGET_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ WIDGET_SCHEMA_URI }`;
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
+export const BEST_PRACTICES_FULL_URI = `${ CANVAS_SERVER_NAME }_${ BEST_PRACTICES_URI }`;
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
@@ -78,51 +80,13 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
-When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
-The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
+Styling is provided as raw CSS. The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
 
 ** CRITICAL - VARIABLES **
 When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
 Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 
 `,
-					},
-				],
-			};
-		}
-	);
-
-	resource(
-		'styles-schema',
-		new ResourceTemplate( STYLE_SCHEMA_URI, {
-			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ) ].filter( ( category ) => category !== 'all' );
-				return {
-					resources: categories.map( ( category ) => ( {
-						uri: `elementor://styles/schema/${ category }`,
-						name: 'Style schema for ' + category,
-					} ) ),
-				};
-			},
-		} ),
-		{
-			description: 'Common styles schema for the specified category (applicable for V4 elements only)',
-		},
-		async ( uri, variables ) => {
-			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			const stylesSchema = getStylesSchema()[ category ];
-			if ( ! stylesSchema ) {
-				throw new Error( `No styles schema found for category: ${ category }` );
-			}
-			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
-			return {
-				contents: [
-					{
-						uri: uri.toString(),
-						mimeType: 'application/json',
-						text: JSON.stringify(
-							Schema.enrichWithIntention( asJson, 'Desired CSS in format "property: value;"' )
-						),
 					},
 				],
 			};
@@ -178,55 +142,22 @@ Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
 					],
 				};
 			}
-			const asJson = Object.fromEntries(
-				Object.entries( propSchema )
-					.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
-					.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType ) ] )
+			const baseSettingsKeys = Object.keys( widgetData?.base_settings ?? {} );
+
+			const asJson = enrichPropertiesWithBaseSettingsHints(
+				Object.fromEntries(
+					Object.entries( propSchema )
+						.filter( ( [ key, propType ] ) => Schema.isPropKeyConfigurable( key, propType as PropType ) )
+						.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType ) ] )
+				),
+				baseSettingsKeys
 			);
 
 			const description =
 				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
 
-			const defaultStyles: Record< string, Props > = {};
-			const baseStyleSchema = widgetData?.base_styles;
-			if ( baseStyleSchema ) {
-				Object.values( baseStyleSchema ).forEach( ( stylePropType ) => {
-					stylePropType.variants.forEach( ( variant ) => {
-						Object.assign( defaultStyles, variant.props );
-					} );
-				} );
-			}
-
-			// build llm instructions
-			const hasDefaultStyles = Object.keys( defaultStyles ).length > 0;
-			const llmGuidance: Record< string, unknown > = {
-				can_have_children: !! widgetData?.meta?.is_container,
-			};
-
-			if ( hasDefaultStyles ) {
-				llmGuidance.instructions =
-					'These are the default styles applied to the widget. Override only when necessary.';
-				llmGuidance.default_styles = defaultStyles;
-			}
-
-			const allowedChildTypes = widgetData.allowed_child_types;
-
 			const allWidgets = getWidgetsCache() || {};
-			const allowedParents = Object.entries( allWidgets )
-				.filter( ( [ , parentConfig ] ) => parentConfig.allowed_child_types?.includes( widgetType ) )
-				.map( ( [ parentType ] ) => parentType );
-
-			if ( allowedChildTypes?.length || allowedParents.length ) {
-				llmGuidance.nesting = {
-					...( allowedChildTypes?.length ? { allowed_child_types: allowedChildTypes } : {} ),
-					...( allowedParents.length ? { allowed_parents: allowedParents } : {} ),
-				};
-			}
-
-			const requiredDirectChildTags = getRequiredDefaultChildTypes( widgetData );
-			if ( requiredDirectChildTags.length ) {
-				llmGuidance.required_direct_children = requiredDirectChildTags;
-			}
+			const llmGuidance = buildLlmGuidance( widgetData, widgetType, allWidgets );
 
 			return {
 				contents: [

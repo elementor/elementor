@@ -311,6 +311,40 @@ class Test_Import_Runner extends Elementor_Test_Base {
 		$this->assertContains( 'Test2', $labels );
 	}
 
+	/**
+	 * @dataProvider legacy_format_version_provider
+	 */
+	public function test_is_legacy_import_format( string $elementor_version, bool $expected_legacy ) {
+		// Arrange.
+		$runner = new class() extends Import_Runner {
+			public function public_is_legacy_import_format( array $data ): bool {
+				return $this->is_legacy_import_format( $data );
+			}
+		};
+
+		// Act.
+		$actual = $runner->public_is_legacy_import_format( [
+			'manifest' => [ 'elementor_version' => $elementor_version ],
+		] );
+
+		// Assert.
+		$this->assertSame( $expected_legacy, $actual );
+	}
+
+	public function legacy_format_version_provider(): array {
+		return [
+			'4.0.0-beta1 is legacy' => [ '4.0.0-beta1', true ],
+			'4.0.0 is legacy' => [ '4.0.0', true ],
+			'4.0.9 is legacy' => [ '4.0.9', true ],
+			'4.1.0-beta1 is not legacy (first version with new export format)' => [ '4.1.0-beta1', false ],
+			'4.1.0-beta2 is not legacy' => [ '4.1.0-beta2', false ],
+			'4.1.0-beta3 is not legacy' => [ '4.1.0-beta3', false ],
+			'4.1.0 is not legacy' => [ '4.1.0', false ],
+			'4.1.1 is not legacy' => [ '4.1.1', false ],
+			'4.2.0-beta1 is not legacy' => [ '4.2.0-beta1', false ],
+		];
+	}
+
 	public function test_import__directory_format__design_system_override_all_replaces_existing() {
 		// Arrange - existing classes that should be removed.
 		$repository = Global_Classes_Repository::make();
