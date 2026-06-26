@@ -113,9 +113,7 @@ export function SiteFeatures() {
 
 	const storedSelectableFeatures = useMemo(
 		() =>
-			( rawSiteFeatures || [] ).filter(
-				( id ) => FEATURE_OPTION_IDS.has( id ) && ! CORE_FEATURE_IDS.has( id )
-			),
+			( rawSiteFeatures || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) && ! CORE_FEATURE_IDS.has( id ) ),
 		[ rawSiteFeatures ]
 	);
 

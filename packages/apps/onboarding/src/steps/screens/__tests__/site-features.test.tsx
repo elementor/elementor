@@ -112,7 +112,10 @@ describe( 'SiteFeatures', () => {
 			} );
 
 			await waitFor( () => {
-				expect( screen.getByRole( 'button', { name: 'Hello theme' } ) ).toHaveAttribute( 'aria-pressed', 'true' );
+				expect( screen.getByRole( 'button', { name: 'Hello theme' } ) ).toHaveAttribute(
+					'aria-pressed',
+					'true'
+				);
 			} );
 		} );
 
@@ -233,7 +236,10 @@ describe( 'SiteFeatures', () => {
 				expect( mockFetch ).toHaveBeenCalled();
 			} );
 
-			expect( mockFetch ).not.toHaveBeenCalledWith( expect.stringContaining( 'install-theme' ), expect.anything() );
+			expect( mockFetch ).not.toHaveBeenCalledWith(
+				expect.stringContaining( 'install-theme' ),
+				expect.anything()
+			);
 		} );
 	} );
 

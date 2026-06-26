@@ -23,9 +23,7 @@ describe( 'ThemeSelection', () => {
 			expect( screen.getByTestId( 'theme-selection-step' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Start with Hello' ) ).toBeInTheDocument();
 			expect(
-				screen.getByText(
-					"Use Elementor's lightweight theme for faster setup and full design control."
-				)
+				screen.getByText( "Use Elementor's lightweight theme for faster setup and full design control." )
 			).toBeInTheDocument();
 		} );
 

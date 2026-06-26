@@ -112,10 +112,7 @@ export interface ConnectSuccessData {
 export type ErrorReportedTarget =
 	| {
 			targetType: 'install';
-			targetName:
-				| 'install_pro_on_this_site'
-				| 'continue_with_hello'
-				| 'install_hello_theme';
+			targetName: 'install_pro_on_this_site' | 'continue_with_hello' | 'install_hello_theme';
 	  }
 	| { targetType: 'save'; targetName: string }
 	| { targetType: 'request'; targetName: string };

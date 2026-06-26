@@ -365,7 +365,9 @@ export function AppContent( { onClose }: AppContentProps ) {
 			}
 
 			if ( stepId === StepId.THEME_SELECTION ) {
-				const themeSlug = ( choiceData?.theme_selection ?? choices.theme_selection ?? 'hello-elementor' ) as string;
+				const themeSlug = ( choiceData?.theme_selection ??
+					choices.theme_selection ??
+					'hello-elementor' ) as string;
 
 				if ( themeSlug && isLast ) {
 					trackThemeSelected( themeSlug );

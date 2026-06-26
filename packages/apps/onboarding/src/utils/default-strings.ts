@@ -45,8 +45,7 @@ export const DEFAULT_STRINGS: Record< string, string > = {
 	'steps.theme_selection.title': 'Start with a theme that fits your needs',
 	'steps.theme_selection.subtitle': 'Hello themes are built to work seamlessly with Elementor.',
 	'steps.theme_selection.v2.title': 'Start with Hello',
-	'steps.theme_selection.v2.subtitle':
-		"Use Elementor's lightweight theme for faster setup and full design control.",
+	'steps.theme_selection.v2.subtitle': "Use Elementor's lightweight theme for faster setup and full design control.",
 	'steps.theme_selection.aria_label': 'Theme selection',
 	'steps.theme_selection.theme_hello_label': 'Hello',
 	'steps.theme_selection.theme_hello_description': 'A flexible canvas theme you can shape from the ground up',

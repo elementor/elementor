@@ -326,13 +326,8 @@ export function trackSummary( isActive: boolean, snapshot: ObSummarySnapshot ): 
 		{
 			key: 'theme_installed',
 			value: ( (): string => {
-				if (
-					snapshot.choices.theme_selection !== null &&
-					snapshot.choices.theme_selection !== undefined
-				) {
-					return (
-						THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection
-					);
+				if ( snapshot.choices.theme_selection !== null && snapshot.choices.theme_selection !== undefined ) {
+					return THEME_VALUE_MAP[ snapshot.choices.theme_selection ] ?? snapshot.choices.theme_selection;
 				}
 
 				if ( ( snapshot.choices.site_features ?? [] ).includes( 'hello_theme' ) ) {
