@@ -44,12 +44,12 @@ const stepVisuals: Record< StepIdType, StepVisualConfig > = {
 	},
 	[ StepId.THEME_SELECTION ]: {
 		background: buildBackground( 'step-4.webp' ),
-		video: getOnboardingVideoUrl( 'step-4.webm' ),
+		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 	[ StepId.SITE_FEATURES ]: {
 		background: buildBackground( 'step-4.webp' ),
-		video: getOnboardingVideoUrl( 'step-4.webm' ),
+		video: getOnboardingVideoUrl( 'step-4-v2.webm' ),
 		contentMaxWidth: CONTENT_MAX_WIDTH_WIDE_ELEMENT,
 	},
 };
