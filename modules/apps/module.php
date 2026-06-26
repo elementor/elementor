@@ -1,9 +1,7 @@
 <?php
 namespace Elementor\Modules\Apps;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,5 +48,4 @@ class Module extends BaseModule {
 
 		return $admin_body_classes;
 	}
-
 }
