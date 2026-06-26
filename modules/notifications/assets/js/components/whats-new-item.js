@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Link, Typography } from '@elementor/ui';
 import { WhatsNewItemTopicLine } from './whats-new-item-topic-line';
 import { WrapperWithLink } from './wrapper-with-link';
-import { WhatsNewItemThumbnail } from './whats-new-item-thumbnail';
+import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
 
 export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
@@ -30,13 +30,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen } ) => {
 					{ item.title }
 				</Typography>
 			</WrapperWithLink>
-			{ item.imageSrc && (
-				<WhatsNewItemThumbnail
-					imageSrc={ item.imageSrc }
-					link={ item.link }
-					title={ item.title }
-				/>
-			) }
+			<WhatsNewItemMedia item={ item } />
 
 			<WhatsNewItemChips
 				chipPlan={ item.chipPlan }
