@@ -40,6 +40,27 @@ class Options {
 		return $notifications_dismissed;
 	}
 
+	public static function get_unread_count(): int {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return 0;
+		}
+
+		$unread_notifications = get_transient( "elementor_unread_notifications_{$current_user->ID}" );
+
+		if ( false === $unread_notifications ) {
+			$notifications = API::get_notifications_by_conditions();
+			$notifications_ids = wp_list_pluck( $notifications, 'id' );
+
+			$unread_notifications = array_diff( $notifications_ids, static::get_notifications_dismissed() );
+
+			set_transient( "elementor_unread_notifications_{$current_user->ID}", $unread_notifications, HOUR_IN_SECONDS );
+		}
+
+		return count( $unread_notifications );
+	}
+
 	public static function mark_notification_read( $notifications ): bool {
 		$current_user = wp_get_current_user();
 
