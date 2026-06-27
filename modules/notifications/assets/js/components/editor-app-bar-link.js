@@ -1,50 +1,15 @@
 import * as EditorAppBar from '@elementor/editor-app-bar';
 import { editorOnButtonClicked } from './editor-on-button-clicked';
-import { Box } from '@elementor/ui';
+import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import SpeakerphoneIcon from '@elementor/icons/SpeakerphoneIcon';
 
-const floatUpKeyframes = `
-@keyframes e-notification-badge-float {
-	0%   { transform: translateY( 6px ); opacity: 0; }
-	60%  { transform: translateY( -3px ); opacity: 1; }
-	100% { transform: translateY( 0 ); opacity: 1; }
-}
-`;
-
-const badgeSx = {
-	position: 'absolute',
-	top: -8,
-	insetInlineEnd: -8,
-	backgroundColor: 'primary.main',
-	color: 'primary.contrastText',
-	borderRadius: '10px',
-	minWidth: '18px',
-	height: '18px',
-	fontSize: '0.65rem',
-	fontWeight: 700,
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	lineHeight: 1,
-	padding: '0 4px',
-	animation: 'e-notification-badge-float 0.45s ease-out 0.3s both',
-};
-
 const IconWithBadge = ( { count } ) => {
 	return (
-		<>
-			{ count > 0 && <style>{ floatUpKeyframes }</style> }
-			<Box sx={ { position: 'relative', display: 'inline-flex' } }>
-				<SpeakerphoneIcon />
-				{ count > 0 && (
-					<Box component="span" sx={ badgeSx }>
-						{ count }
-					</Box>
-				) }
-			</Box>
-		</>
+		<Badge color="primary" badgeContent={ count } invisible={ 0 === count }>
+			<SpeakerphoneIcon />
+		</Badge>
 	);
 };
 
