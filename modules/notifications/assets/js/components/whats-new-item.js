@@ -41,7 +41,7 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 						label={ item.chipPlan }
 						color="promotion"
 						size="small"
-						sx={ { position: 'absolute', top: 8, left: 8 } }
+						sx={ { position: 'absolute', top: 8, insetInlineStart: 8 } }
 					/>
 				) }
 			</Box>

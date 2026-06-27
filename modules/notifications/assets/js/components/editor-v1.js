@@ -2,7 +2,7 @@ import { editorOnButtonClicked } from './editor-on-button-clicked';
 
 export const editorV1 = () => {
 	elementor.on( 'panel:init', () => {
-		if ( elementorNotifications.unread_count > 0 ) {
+		if ( elementorNotifications.is_unread ) {
 			document.body.classList.add( 'e-has-notification' );
 		}
 
