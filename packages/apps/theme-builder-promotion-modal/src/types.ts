@@ -1,10 +1,12 @@
 export type ThemeBuilderPromotionScenario = 'single_post' | 'single_product' | 'header_footer';
 
-export type OpenEventDetail = {
+export type ThemeBuilderPromotionConfig = {
 	scenario: ThemeBuilderPromotionScenario;
-	introductionKey: string;
+	introductionKey: string | null;
 	assets: { title: string; body: string; imageUrl: string };
 };
+
+export type OpenEventDetail = ThemeBuilderPromotionConfig;
 
 type ElementorCommonAjax = {
 	addRequest: ( action: string, options: { data?: Record< string, unknown > } ) => Promise< unknown >;
@@ -28,6 +30,9 @@ export type ExtendedWindow = Window & {
 	elementorCommon?: ElementorCommon;
 	elementor?: {
 		config?: {
+			document?: {
+				themeBuilderPromotion?: ThemeBuilderPromotionConfig;
+			};
 			user?: {
 				introduction?: Record< string, boolean >;
 			};
