@@ -99,4 +99,78 @@ class Test_Render_Element_Action extends Elementor_Test_Base {
 			],
 		] );
 	}
+
+	public function test_handle__fires_atomic_widgets_render_actions_with_document(): void {
+		// Arrange.
+		$this->act_as_admin();
+		$document = $this->factory()->documents->create_and_get();
+		$post_id = $document->get_id();
+
+		$before_calls = [];
+		$after_calls = [];
+
+		$before_listener = function ( $doc ) use ( &$before_calls ) {
+			$before_calls[] = $doc;
+		};
+		$after_listener = function ( $doc ) use ( &$after_calls ) {
+			$after_calls[] = $doc;
+		};
+
+		add_action( 'elementor/atomic_widgets/before_render', $before_listener );
+		add_action( 'elementor/atomic_widgets/after_render', $after_listener );
+
+		try {
+			// Act.
+			( new Render_Element_Action() )->handle( [
+				'editor_post_id' => $post_id,
+				'data' => [
+					'id' => 'e1234567',
+					'elType' => 'widget',
+					'settings' => [],
+					'widgetType' => Atomic_Heading::get_element_type(),
+				],
+			] );
+		} finally {
+			remove_action( 'elementor/atomic_widgets/before_render', $before_listener );
+			remove_action( 'elementor/atomic_widgets/after_render', $after_listener );
+		}
+
+		// Assert.
+		$this->assertCount( 1, $before_calls );
+		$this->assertCount( 1, $after_calls );
+		$this->assertSame( $post_id, $before_calls[0]->get_main_id() );
+		$this->assertSame( $post_id, $after_calls[0]->get_main_id() );
+	}
+
+	public function test_handle__fires_after_render_even_on_failure(): void {
+		// Arrange.
+		$this->act_as_admin();
+		$post_id = $this->factory()->documents->create_and_get()->get_id();
+
+		$after_calls = 0;
+		$after_listener = function () use ( &$after_calls ) {
+			$after_calls++;
+		};
+
+		add_action( 'elementor/atomic_widgets/after_render', $after_listener );
+
+		// Act & Assert.
+		try {
+			( new Render_Element_Action() )->handle( [
+				'editor_post_id' => $post_id,
+				'data' => [
+					'elType' => 'widget',
+					'widgetType' => 'non-existent-widget-type',
+				],
+			] );
+
+			$this->fail( 'Expected exception was not thrown.' );
+		} catch ( \Exception $e ) {
+			// Expected.
+		} finally {
+			remove_action( 'elementor/atomic_widgets/after_render', $after_listener );
+		}
+
+		$this->assertSame( 1, $after_calls );
+	}
 }
