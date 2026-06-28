@@ -14,7 +14,7 @@ export default function Layout( props ) {
 		if ( returnTo && safeRedirect( returnTo ) ) {
 			return;
 		}
-		window.top.location = elementorAppConfig.admin_url;
+		window.top.$e.run( 'app/close' );
 	}, [ returnTo ] );
 
 	const config = useMemo( () => ( {
