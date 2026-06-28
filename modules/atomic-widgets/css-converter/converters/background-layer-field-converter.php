@@ -75,7 +75,11 @@ class Background_Layer_Field_Converter extends Property_Converter_Base {
 		return [ $this->property ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function convert_null( Conversion_Context $context, array $rule ): bool {
+		return true;
+	}
+
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$overlay_items = $this->get_overlay_items( $context );
 		$image_indices = array_keys(
 			array_filter( $overlay_items, fn( $item ) => Background_Image_Overlay_Prop_Type::get_key() === ( $item['$$type'] ?? null ) )
