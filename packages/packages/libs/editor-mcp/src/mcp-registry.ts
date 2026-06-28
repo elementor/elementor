@@ -72,12 +72,13 @@ export const createAndRegisterAdapters = () => {
 	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
 };
 
+// utility function to run a callback on all MCP interfaces
 function callAdapters( fn: ( adapter: IMcpRegistrationAdapter ) => unknown ) {
 	for ( const adapter of registrationAdapters ) {
 		try {
 			fn( adapter );
 		} catch {
-			// exit quietly
+			// adapter failed — exit quietly, continue to next
 		}
 	}
 }
