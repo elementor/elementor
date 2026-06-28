@@ -9,6 +9,7 @@ import type { ExtendedWindow, OpenEventDetail, ThemeBuilderPromotionScenario } f
 const MODAL_WIDTH = 893;
 const MODAL_HEIGHT = 432;
 const IMAGE_PANEL_WIDTH = 416;
+const WINDOW = window as ExtendedWindow;
 
 type Props = {
 	container?: HTMLElement;
@@ -17,7 +18,7 @@ type Props = {
 	onClose: () => void;
 };
 
-export function PromotionModal( { container, scenario, assets, onClose }: Props ) {
+export const PromotionModal = ( { container, scenario, assets, onClose }: Props ) => {
 	return (
 		<ModalShell
 			onClose={ onClose }
@@ -33,31 +34,28 @@ export function PromotionModal( { container, scenario, assets, onClose }: Props 
 			<ModalContent scenario={ scenario } assets={ assets } />
 		</ModalShell>
 	);
-}
+};
 
-function ModalContent( {
+const ModalContent = ( {
 	scenario,
 	assets,
 }: {
 	scenario: ThemeBuilderPromotionScenario;
 	assets: OpenEventDetail[ 'assets' ];
-} ) {
+} ) => {
 	const { close } = useModalShell();
 
 	const { title, body, imageUrl } = assets;
 
 	const track = useCallback( ( payload: Record< string, unknown > ) => {
-		( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.(
-			'theme_builder_promotion',
-			payload
-		);
+		WINDOW.elementorCommon?.eventsManager?.dispatchEvent?.( 'theme_builder_promotion', payload );
 	}, [] );
 
 	const openThemeBuilder = useCallback( () => {
 		try {
-			( window as ExtendedWindow ).$e?.run?.( 'app/open' );
+			WINDOW.$e?.run?.( 'app/open' );
 		} catch {
-			open( ( window as ExtendedWindow ).elementorCommon?.config?.home_url || '/', '_blank' );
+			open( WINDOW.elementorCommon?.config?.home_url || '/', '_blank' );
 		}
 	}, [] );
 
@@ -153,4 +151,4 @@ function ModalContent( {
 			</Stack>
 		</>
 	);
-}
+};

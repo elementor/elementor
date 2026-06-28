@@ -1,15 +1,5 @@
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
 
-function getPromotion() {
-	const { scenario, introductionKey, assets } = elementor?.config?.document?.themeBuilderPromotion ?? {};
-
-	if ( ! ( scenario && introductionKey && assets ) ) {
-		return null;
-	}
-
-	return { scenario, introductionKey, assets };
-}
-
 export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
 	getCommand() {
 		return 'document/save/save';
@@ -40,4 +30,12 @@ export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
 	}
 }
 
-export default ThemeBuilderPromotionAfterSave;
+function getPromotion() {
+	const { scenario, introductionKey, assets } = elementor?.config?.document?.themeBuilderPromotion ?? {};
+
+	if ( ! ( scenario && introductionKey && assets ) ) {
+		return null;
+	}
+
+	return { scenario, introductionKey, assets };
+}

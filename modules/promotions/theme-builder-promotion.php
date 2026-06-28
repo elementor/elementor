@@ -5,6 +5,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
+use Elementor\Core\Utils\Assets_Config_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -42,8 +43,10 @@ class Theme_Builder_Promotion {
 
 		if ( ! empty( $additional_config[ self::PROMO_PROP ] ) ) {
 			$assets_data = self::get_scenario_data( $additional_config[ self::PROMO_PROP ]['scenario'] );
+
 			if ( ! self::is_valid_scenario_data( $assets_data ) ) {
 				unset( $additional_config[ self::PROMO_PROP ] );
+
 				return $additional_config;
 			}
 
@@ -73,7 +76,7 @@ class Theme_Builder_Promotion {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 		$package = 'theme-builder-promotion-modal';
 
-		$assets_config_provider = ( new \Elementor\Core\Utils\Assets_Config_Provider() )
+		$assets_config_provider = ( new Assets_Config_Provider() )
 			->set_path_resolver( function ( $name ) {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );

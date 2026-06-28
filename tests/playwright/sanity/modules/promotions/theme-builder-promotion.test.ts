@@ -20,31 +20,29 @@ test.describe( 'Theme builder promotion @promotions', () => {
 		await seedHeaderFooterPromotionPages( apiRequests, request );
 		await resetEditorCounter( apiRequests, request, EDITOR_COUNTER_TO_SKIP_CHECKLIST );
 
-		try {
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			const editor = await wpAdmin.openNewPage();
-			const modal = page.getByRole( 'dialog' ).filter( { hasText: HEADER_FOOTER_MODAL_TITLE } );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const modal = page.getByRole( 'dialog' ).filter( { hasText: HEADER_FOOTER_MODAL_TITLE } );
 
-			await editor.addWidget( { widgetType: 'heading' } );
+		await editor.addWidget( { widgetType: 'heading' } );
 
-			await test.step( 'Publish page and show header-footer promotion modal', async () => {
-				await editor.publishPage();
-				await expect( modal ).toBeVisible( { timeout: timeouts.heavyAction } );
-				await expect( modal.getByRole( 'button', { name: 'Open Theme Builder' } ) ).toBeVisible();
-			} );
+		await test.step( 'Publish page and show header-footer promotion modal', async () => {
+			await editor.publishPage();
+			await expect( modal ).toBeVisible( { timeout: timeouts.heavyAction } );
+			await expect( modal.getByRole( 'button', { name: 'Open Theme Builder' } ) ).toBeVisible();
+		} );
 
-			await test.step( 'Close promotion modal', async () => {
-				await modal.getByRole( 'button', { name: 'close' } ).click();
-				await expect( modal ).toBeHidden( { timeout: timeouts.expect } );
-			} );
+		await test.step( 'Close promotion modal', async () => {
+			await modal.getByRole( 'button', { name: 'close' } ).click();
+			await expect( modal ).toBeHidden( { timeout: timeouts.expect } );
+		} );
 
-			await test.step( 'Publish again after editing and keep promotion dismissed', async () => {
-				await editor.addWidget( { widgetType: 'text-editor' } );
-				await editor.publishPage();
-				await expect( modal ).toBeHidden( { timeout: timeouts.expect } );
-			} );
-		} finally {
-			await cleanupHeaderFooterPromotionTestData( apiRequests, request );
-		}
+		await test.step( 'Publish again after editing and keep promotion dismissed', async () => {
+			await editor.addWidget( { widgetType: 'text-editor' } );
+			await editor.publishPage();
+			await expect( modal ).toBeHidden( { timeout: timeouts.expect } );
+		} );
+
+		await cleanupHeaderFooterPromotionTestData( apiRequests, request );
 	} );
 } );

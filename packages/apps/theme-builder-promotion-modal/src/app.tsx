@@ -6,7 +6,7 @@ import { TRIGGER_EVENT } from './constants';
 import type { OpenEventDetail } from './types';
 import { markIntroductionViewed } from './utils/mark-introduction-viewed';
 
-export function App( { container }: { container?: HTMLElement } ) {
+export const App = ( { container }: { container?: HTMLElement } ) => {
 	const [ openDetail, setOpenDetail ] = useState< OpenEventDetail | null >( null );
 
 	useEffect( () => {
@@ -49,4 +49,4 @@ export function App( { container }: { container?: HTMLElement } ) {
 			onClose={ handleClose }
 		/>
 	);
-}
+};
