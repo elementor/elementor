@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 import App from './app';
 import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 import { createRoot } from 'react-dom/client';
@@ -23,8 +25,8 @@ export class AppManager {
 
 	resolveWidgetPromotionData( detail ) {
 		const promotions = elementor?.config?.v4Promotions || {};
-
-		const normalizedType = detail.widgetType.replace( /[-_]/g, '' ).toLowerCase();
+		const widgetType = detail.widgetType || '';
+		const normalizedType = widgetType.replace( /[-_]/g, '' ).toLowerCase();
 		const key = Object.keys( promotions ).find( ( promotionKey ) => {
 			return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
 		} );
@@ -32,12 +34,12 @@ export class AppManager {
 		const promotionData = key ? promotions[ key ] : null;
 		const elementsPromotion = elementor.config.promotion?.elements || {};
 
-		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', detail.widgetType || '' ) || '';
+		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', widgetType ) || '';
 		const fallbackCtaText = detail.ctaText || elementsPromotion.action_button?.text || '';
 		const widgetName = detail.widgetTitle || detail.title || '';
 		const hideProTag = detail.hideProTag || false;
 
-		return promotionData ? {
+		const resolvedPromotionData = promotionData ? {
 			...promotionData,
 			ctaUrl: promotionData.ctaUrl || fallbackCtaUrl,
 			ctaText: promotionData.ctaText || fallbackCtaText,
@@ -49,6 +51,8 @@ export class AppManager {
 			ctaText: fallbackCtaText,
 			hideProTag,
 		};
+
+		return applyProConnectPromotionOverrides( resolvedPromotionData );
 	}
 
 	mount( targetNode, selectors ) {
@@ -152,4 +156,16 @@ export class AppManager {
 	detachEditorEventListeners() {
 		$e.routes.off( 'run:after', this.onRoute );
 	}
+}
+
+function applyProConnectPromotionOverrides( promotionData ) {
+	if ( ! elementor.helpers.hasProAndNotConnected() ) {
+		return promotionData;
+	}
+
+	return {
+		...promotionData,
+		ctaUrl: elementorProEditorConfig.urls.connect,
+		ctaText: __( 'Connect & Activate', 'elementor' ),
+	};
 }
