@@ -38,6 +38,10 @@
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
   },
+  "dependencies": {
+    "@elementor/locations": "4.3.0",
+    "@elementor/store": "4.3.0"
+  },
   "peerDependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
