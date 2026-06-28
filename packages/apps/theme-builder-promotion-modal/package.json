@@ -37,7 +37,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-modal-shell": "4.3.0",
+    "@elementor/editor-modal-shell": "4.2.0",
     "@elementor/ui": "1.37.5",
     "@wordpress/i18n": "^5.13.0"
   },
