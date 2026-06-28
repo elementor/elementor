@@ -2,31 +2,249 @@
 namespace Elementor\Core\Editor\Loader;
 
 use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Editor_Base_Loader implements Editor_Loader_Interface {
+final class Editor_Loader {
+	const APP_PACKAGE = 'editor';
+	const ENV_PACKAGE = 'env';
+
+	const LIBS = [
+		'editor-modal-shell',
+		'editor-responsive',
+		'editor-ui',
+		'editor-v1-adapters',
+		self::ENV_PACKAGE,
+		'http-client',
+		'icons',
+		'locations',
+		'menus',
+		'query',
+		'schema',
+		'store',
+		'session',
+		'twing',
+		'ui',
+		'utils',
+		'wp-media',
+		'editor-current-user',
+		'editor-elements-panel-notice',
+		'elementor-mcp-common',
+		'editor-embedded-documents-manager',
+	];
+
+	const EXTENSIONS = [
+		'events',
+		'editor-documents',
+		'editor-notifications',
+		'editor-panels',
+		'editor-elements-panel',
+		'unlock-v4-promo',
+		'editor-mcp',
+		'elementor-v3-mcp',
+		'elementor-kit-mcp',
+	];
+
+	const ADDITIONAL_DEPS = [
+		'editor-v1-adapters' => [
+			'elementor-web-cli',
+		],
+		'wp-media' => [
+			'media-models',
+		],
+	];
+
 	/**
 	 * @var Collection
 	 */
-	protected $config;
+	private $config;
 
 	/**
 	 * @var Assets_Config_Provider
 	 */
-	protected $assets_config_provider;
+	private $assets_config_provider;
 
-	/**
-	 * @param Collection             $config
-	 * @param Assets_Config_Provider $assets_config_provider
-	 */
 	public function __construct( Collection $config, Assets_Config_Provider $assets_config_provider ) {
 		$this->config = $config;
 		$this->assets_config_provider = $assets_config_provider;
+	}
+
+	public function init() {
+		$packages = array_merge( $this->get_packages_to_enqueue(), self::LIBS );
+		$packages_with_app = array_merge( $packages, [ self::APP_PACKAGE ] );
+
+		foreach ( $packages_with_app as $package ) {
+			$this->assets_config_provider->load( $package );
+		}
+
+		do_action( 'elementor/editor/v2/init' );
+	}
+
+	public function register_scripts() {
+		$this->register_base_scripts();
+
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
+
+		foreach ( $this->assets_config_provider->all() as $package => $config ) {
+			if ( self::ENV_PACKAGE === $package ) {
+				wp_register_script(
+					'elementor-editor-environment',
+					"{$assets_url}js/editor-environment{$min_suffix}.js",
+					[ $config['handle'] ],
+					ELEMENTOR_VERSION,
+					true
+				);
+			}
+
+			if ( self::APP_PACKAGE === $package ) {
+				wp_register_script(
+					'elementor-editor-loader',
+					"{$assets_url}js/editor-loader{$min_suffix}.js",
+					[ 'elementor-editor', $config['handle'] ],
+					ELEMENTOR_VERSION,
+					true
+				);
+			}
+
+			$additional_deps = self::ADDITIONAL_DEPS[ $package ] ?? [];
+			$deps = array_merge( $config['deps'], $additional_deps );
+
+			wp_register_script(
+				$config['handle'],
+				"{$assets_url}js/packages/{$package}/{$package}{$min_suffix}.js",
+				$deps,
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
+
+		$packages_handles = $this->assets_config_provider->pluck( 'handle' )->all();
+
+		Assets_Translation_Loader::for_handles( $packages_handles, 'elementor' );
+
+		do_action( 'elementor/editor/v2/scripts/register' );
+	}
+
+	public function enqueue_scripts() {
+		do_action( 'elementor/editor/v2/scripts/enqueue/before' );
+
+		wp_enqueue_script( 'elementor-responsive-bar' );
+
+		wp_enqueue_script( 'elementor-editor-environment' );
+
+		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
+
+		if ( $env_config ) {
+			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
+				'@elementor/http-client' => [
+					'base_url' => rest_url(),
+					'headers' => [
+						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
+					],
+				],
+				'@elementor/editor-controls' => [
+					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
+				],
+			] );
+
+			Utils::print_js_config(
+				$env_config['handle'],
+				'elementorEditorEnv',
+				$client_env
+			);
+		}
+
+		$packages_with_app = array_merge( $this->get_packages_to_enqueue(), [ self::APP_PACKAGE ] );
+
+		foreach ( $this->assets_config_provider->only( $packages_with_app ) as $config ) {
+			wp_enqueue_script( $config['handle'] );
+		}
+
+		do_action( 'elementor/editor/v2/scripts/enqueue' );
+
+		Utils::print_js_config(
+			'elementor-editor',
+			'ElementorConfig',
+			Editor_Scripts_Settings::get()
+		);
+
+		wp_enqueue_script( 'elementor-editor-loader' );
+
+		do_action( 'elementor/editor/v2/scripts/enqueue/after' );
+	}
+
+	public function register_styles() {
+		$this->register_base_styles();
+
+		$assets_url = $this->config->get( 'assets_url' );
+		$min_suffix = $this->config->get( 'min_suffix' );
+
+		foreach ( $this->get_styles() as $style ) {
+			wp_register_style(
+				"elementor-{$style}",
+				"{$assets_url}css/{$style}{$min_suffix}.css",
+				[ 'elementor-editor' ],
+				ELEMENTOR_VERSION
+			);
+		}
+
+		do_action( 'elementor/editor/v2/styles/register' );
+	}
+
+	public function enqueue_styles() {
+		wp_enqueue_style( 'elementor-editor' );
+		wp_enqueue_style( 'elementor-responsive-bar' );
+
+		foreach ( $this->get_styles() as $style ) {
+			wp_enqueue_style( "elementor-{$style}" );
+		}
+
+		do_action( 'elementor/editor/v2/styles/enqueue' );
+	}
+
+	public function print_root_template() {
+		$body_file_path = __DIR__ . '/templates/editor-body-view.php';
+
+		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
+	}
+
+	public function register_additional_templates() {
+		$templates = [
+			'global',
+			'panel',
+			'panel-elements',
+			'repeater',
+			'templates',
+			'navigator',
+			'hotkeys',
+			'responsive-bar',
+		];
+
+		$templates = apply_filters( 'elementor/editor/templates', $templates );
+
+		foreach ( $templates as $template ) {
+			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/{$template}.php" );
+		}
+	}
+
+	private function get_packages_to_enqueue(): array {
+		return apply_filters( 'elementor/editor/v2/packages', self::EXTENSIONS );
+	}
+
+	private function get_styles(): array {
+		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
+
+		return Collection::make( $styles )
+			->unique()
+			->all();
 	}
 
 	private function scripts_source_map() {
@@ -91,10 +309,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		];
 	}
 
-	/**
-	 * @return void
-	 */
-	public function register_scripts() {
+	private function register_base_scripts() {
 		$assets_url = $this->config->get( 'assets_url' );
 		$min_suffix = $this->config->get( 'min_suffix' );
 
@@ -235,17 +450,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
 	}
 
-	/**
-	 * @return void
-	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script( 'elementor-responsive-bar' );
-	}
-
-	/**
-	 * @return void
-	 */
-	public function register_styles() {
+	private function register_base_styles() {
 		$assets_url = $this->config->get( 'assets_url' );
 		$min_suffix = $this->config->get( 'min_suffix' );
 		$direction_suffix = $this->config->get( 'direction_suffix' );
@@ -300,36 +505,5 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			[],
 			ELEMENTOR_VERSION
 		);
-	}
-
-	/**
-	 * @return void
-	 */
-	public function enqueue_styles() {
-		wp_enqueue_style( 'elementor-editor' );
-
-		wp_enqueue_style( 'elementor-responsive-bar' );
-	}
-
-	/**
-	 * @return void
-	 */
-	public function register_additional_templates() {
-		$templates = [
-			'global',
-			'panel',
-			'panel-elements',
-			'repeater',
-			'templates',
-			'navigator',
-			'hotkeys',
-			'responsive-bar',
-		];
-
-		$templates = apply_filters( 'elementor/editor/templates', $templates );
-
-		foreach ( $templates as $template ) {
-			Plugin::$instance->common->add_template( ELEMENTOR_PATH . "includes/editor-templates/{$template}.php" );
-		}
 	}
 }
