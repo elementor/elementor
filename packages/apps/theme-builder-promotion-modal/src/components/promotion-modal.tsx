@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ModalShell, useModalShell } from '@elementor/editor-modal-shell';
 import { Box, Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import type { ExtendedWindow, ThemeBuilderPromotionScenario } from '../types';
+import type { ExtendedWindow, OpenEventDetail, ThemeBuilderPromotionScenario } from '../types';
 
 const MODAL_WIDTH = 893;
 const MODAL_HEIGHT = 432;
@@ -13,10 +13,11 @@ const IMAGE_PANEL_WIDTH = 416;
 type Props = {
 	container?: HTMLElement;
 	scenario: ThemeBuilderPromotionScenario;
+	assets: OpenEventDetail[ 'assets' ];
 	onClose: () => void;
 };
 
-export function PromotionModal( { container, scenario, onClose }: Props ) {
+export function PromotionModal( { container, scenario, assets, onClose }: Props ) {
 	return (
 		<ModalShell
 			onClose={ onClose }
@@ -29,15 +30,21 @@ export function PromotionModal( { container, scenario, onClose }: Props ) {
 				height: `${ MODAL_HEIGHT }px`,
 			} }
 		>
-			<ModalContent scenario={ scenario } />
+			<ModalContent scenario={ scenario } assets={ assets } />
 		</ModalShell>
 	);
 }
 
-function ModalContent( { scenario }: { scenario: ThemeBuilderPromotionScenario } ) {
+function ModalContent( {
+	scenario,
+	assets,
+}: {
+	scenario: ThemeBuilderPromotionScenario;
+	assets: OpenEventDetail[ 'assets' ];
+} ) {
 	const { close } = useModalShell();
 
-	const { title, body, imageUrl } = useMemo( () => getDialogContent( scenario ), [ scenario ] );
+	const { title, body, imageUrl } = assets;
 
 	const track = useCallback( ( payload: Record< string, unknown > ) => {
 		( window as ExtendedWindow ).elementorCommon?.eventsManager?.dispatchEvent?.(
@@ -146,47 +153,4 @@ function ModalContent( { scenario }: { scenario: ThemeBuilderPromotionScenario }
 			</Stack>
 		</>
 	);
-}
-
-function getDialogContent( scenario: ThemeBuilderPromotionScenario ) {
-	const assetBase = ( window as ExtendedWindow ).elementorCommon?.config?.urls?.assets || '';
-
-	if ( 'single_product' === scenario ) {
-		return {
-			title: __( 'Create a seamless shopping experience.', 'elementor' ),
-			body:
-				__(
-					'Keep your store looking professional by using a unified, high-converting layout for all your products.'
-				) +
-				'<br />' +
-				__( 'Design it once, apply it everywhere.', 'elementor' ),
-			imageUrl: `${ assetBase }images/theme-builder-promotion/tb-product.png`,
-		};
-	}
-
-	if ( 'header_footer' === scenario ) {
-		return {
-			title: __( 'Tie your whole website together', 'elementor' ),
-			body:
-				__( 'Every great website needs consistent navigation.' ) +
-				'<br />' +
-				__(
-					'Build your Header and Footer in the Theme Builder and apply them globally in seconds.',
-					'elementor'
-				),
-			imageUrl: `${ assetBase }images/theme-builder-promotion/tb-header-footer.png`,
-		};
-	}
-
-	return {
-		title: __( 'Stop designing posts from scratch', 'elementor' ),
-		body:
-			__( 'Why recreate your layout every time?' ) +
-			'<br />' +
-			__(
-				'Work smarter, not harder. Build a Single Post template to automatically apply to all future blog posts.',
-				'elementor'
-			),
-		imageUrl: `${ assetBase }images/theme-builder-promotion/tb-post.png`,
-	};
 }

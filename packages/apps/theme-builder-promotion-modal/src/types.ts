@@ -1,14 +1,9 @@
 export type ThemeBuilderPromotionScenario = 'single_post' | 'single_product' | 'header_footer';
 
-export type ThemeBuilderPromotionConfig = {
-	shouldShow: boolean;
-	scenario: ThemeBuilderPromotionScenario | null;
-	introductionKey: string | null;
-};
-
 export type OpenEventDetail = {
 	scenario: ThemeBuilderPromotionScenario;
 	introductionKey: string;
+	assets: { title: string; body: string; imageUrl: string };
 };
 
 type ElementorCommonAjax = {
@@ -33,9 +28,6 @@ export type ExtendedWindow = Window & {
 	elementorCommon?: ElementorCommon;
 	elementor?: {
 		config?: {
-			document?: {
-				themeBuilderPromotion?: ThemeBuilderPromotionConfig;
-			};
 			user?: {
 				introduction?: Record< string, boolean >;
 			};

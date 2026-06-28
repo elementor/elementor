@@ -1,13 +1,13 @@
 import HookUIAfter from 'elementor-api/modules/hooks/ui/after';
 
 function getPromotion() {
-	const { scenario, introductionKey } = elementor?.config?.document?.themeBuilderPromotion ?? {};
+	const { scenario, introductionKey, assets } = elementor?.config?.document?.themeBuilderPromotion ?? {};
 
-	if ( ! ( scenario && introductionKey ) ) {
+	if ( ! ( scenario && introductionKey && assets ) ) {
 		return null;
 	}
 
-	return { scenario, introductionKey };
+	return { scenario, introductionKey, assets };
 }
 
 export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
@@ -34,10 +34,7 @@ export class ThemeBuilderPromotionAfterSave extends HookUIAfter {
 
 		window.dispatchEvent(
 			new CustomEvent( 'elementor/theme-builder-promotion/trigger', {
-				detail: {
-					scenario: promotion.scenario,
-					introductionKey: promotion.introductionKey,
-				},
+				detail: promotion,
 			} ),
 		);
 	}

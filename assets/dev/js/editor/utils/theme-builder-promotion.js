@@ -20,9 +20,9 @@ export default class extends elementorModules.editor.utils.Module {
 	}
 
 	onTrigger( event ) {
-		const { scenario, introductionKey } = event?.detail ?? {};
+		const { scenario, introductionKey, assets } = event?.detail ?? {};
 
-		if ( ! ( scenario && introductionKey ) ) {
+		if ( ! ( scenario && introductionKey && assets ) ) {
 			return;
 		}
 
@@ -31,6 +31,7 @@ export default class extends elementorModules.editor.utils.Module {
 				detail: {
 					scenario,
 					introductionKey,
+					assets,
 				},
 			} ),
 		);
@@ -41,6 +42,6 @@ export default class extends elementorModules.editor.utils.Module {
 			elementor?.config?.document?.themeBuilderPromotion ??
 			null;
 
-		return config?.scenario && config?.introductionKey;
+		return config?.scenario && config?.introductionKey && config?.assets;
 	}
 }

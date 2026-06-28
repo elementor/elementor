@@ -13,8 +13,9 @@ export function App( { container }: { container?: HTMLElement } ) {
 		const onOpen = ( event: Event ) => {
 			const customEvent = event as CustomEvent< OpenEventDetail >;
 			const detail = customEvent?.detail;
+			const { scenario, introductionKey, assets } = detail ?? {};
 
-			if ( ! detail?.scenario || ! detail?.introductionKey ) {
+			if ( ! scenario || ! introductionKey || ! assets ) {
 				return;
 			}
 
@@ -40,5 +41,12 @@ export function App( { container }: { container?: HTMLElement } ) {
 		return null;
 	}
 
-	return <PromotionModal container={ container } scenario={ openDetail.scenario } onClose={ handleClose } />;
+	return (
+		<PromotionModal
+			container={ container }
+			scenario={ openDetail.scenario }
+			assets={ openDetail.assets }
+			onClose={ handleClose }
+		/>
+	);
 }
