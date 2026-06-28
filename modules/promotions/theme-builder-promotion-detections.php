@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Theme_Builder_Promotion_Detections {
-	private const ELEMENTOR_EDIT_MODE_META_KEY = '_elementor_edit_mode';
 	private const ELEMENTOR_EDIT_MODE_BUILDER = 'builder';
 	private const TEMPLATE_TYPE_META_KEY = '_elementor_template_type';
 
@@ -19,8 +18,14 @@ class Theme_Builder_Promotion_Detections {
 		'page' => 'header_footer',
 		'product' => 'single_product',
 	];
+	private const MIN_PUBLISHED_CONTENT_COUNT_BY_SCENARIO = [
+		'single_post' => 2,
+		'header_footer' => 5,
+		'single_product' => 2,
+	];
 
-	private static ?array $cache = null;
+	private static ?array $template_presence_cache = null;
+	private static array $content_count_cache = [];
 
 	private const TEMPLATE_TYPES = [
 		'header' => [ 'header' ],
@@ -29,24 +34,7 @@ class Theme_Builder_Promotion_Detections {
 		'single_product' => [ 'single-product', 'product' ],
 	];
 
-	public static function get(): array {
-		if ( null !== self::$cache ) {
-			return self::$cache;
-		}
-
-		$content_counts = self::get_elementor_published_content_counts();
-		$template_presence = self::get_template_presence();
-
-		self::$cache = [
-			'contentCounts' => $content_counts,
-			'templatePresence' => $template_presence,
-		];
-
-		return self::$cache;
-	}
-
 	public static function get_promotion_payload( Document $document ): ?array {
-		$detections = self::get();
 		$scenario = self::get_scenario_for_document( $document );
 
 		if ( ! $scenario ) {
@@ -55,7 +43,19 @@ class Theme_Builder_Promotion_Detections {
 
 		$introduction_key = self::get_introduction_key( $scenario );
 
-		if ( self::is_introduction_viewed( $introduction_key ) || ! self::is_eligible_scenario( $scenario, $detections ) ) {
+		if ( self::is_introduction_viewed( $introduction_key ) ) {
+			return null;
+		}
+
+		$post_type = \get_post_type( $document->get_main_id() );
+
+		if ( ! is_string( $post_type ) ) {
+			return null;
+		}
+
+		$content_count = self::get_elementor_published_content_count( $post_type );
+
+		if ( null === $content_count || ! self::is_eligible_scenario( $scenario, $content_count, self::get_template_presence() ) ) {
 			return null;
 		}
 
@@ -83,68 +83,60 @@ class Theme_Builder_Promotion_Detections {
 		return (bool) User::get_introduction_meta( $introduction_key );
 	}
 
-	private static function is_eligible_scenario( string $scenario, array $detections ): bool {
-		$counts = $detections['contentCounts'] ?? [];
-		$templates = $detections['templatePresence'] ?? [];
+	private static function is_eligible_scenario( string $scenario, int $content_count, array $template_presence ): bool {
+		$min_content_count = self::MIN_PUBLISHED_CONTENT_COUNT_BY_SCENARIO[ $scenario ] ?? 0;
+
+		if ( $content_count < $min_content_count ) {
+			return false;
+		}
 
 		if ( self::TYPE_TO_SCENARIO_MAP['post'] === $scenario ) {
-			return ( $counts['post'] ?? 0 ) > 1 && empty( $templates['single_post'] );
+			return empty( $template_presence['single_post'] );
 		}
 
 		if ( self::TYPE_TO_SCENARIO_MAP['product'] === $scenario ) {
-			return ( $counts['product'] ?? 0 ) > 1 && empty( $templates['single_product'] );
+			return empty( $template_presence['single_product'] );
 		}
 
 		if ( self::TYPE_TO_SCENARIO_MAP['page'] === $scenario ) {
-			$has_header = ! empty( $templates['header'] );
-			$has_footer = ! empty( $templates['footer'] );
+			$has_header = ! empty( $template_presence['header'] );
+			$has_footer = ! empty( $template_presence['footer'] );
 
-			return ( $counts['page'] ?? 0 ) > 4 && ( ! $has_header || ! $has_footer );
+			return ! $has_header || ! $has_footer;
 		}
 
 		return false;
 	}
 
-	private static function get_elementor_published_content_counts(): array {
-		global $wpdb;
-
-		$post_types = array_values( array_filter( self::SUPPORTED_CONTENT_TYPES, 'post_type_exists' ) );
-
-		if ( empty( $post_types ) ) {
-			return [];
+	private static function get_elementor_published_content_count( string $post_type ): ?int {
+		if ( ! in_array( $post_type, self::SUPPORTED_CONTENT_TYPES, true ) || ! post_type_exists( $post_type ) ) {
+			return null;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT p.post_type, COUNT(p.ID) as hits
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} pm
-					ON ( p.ID = pm.post_id AND pm.meta_key = %s AND pm.meta_value = %s )
-				WHERE p.post_status = %s
-					AND p.post_type IN (" . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ')
-				  GROUP BY p.post_type',
-				array_merge(
-					[
-						self::ELEMENTOR_EDIT_MODE_META_KEY,
-						self::ELEMENTOR_EDIT_MODE_BUILDER,
-						'publish',
-					],
-					$post_types,
-				)
-			)
-		);
-
-		$counts = array_fill_keys( $post_types, 0 );
-
-		foreach ( $results as $row ) {
-			$counts[ $row->post_type ] = (int) $row->hits;
+		if ( array_key_exists( $post_type, self::$content_count_cache ) ) {
+			return self::$content_count_cache[ $post_type ];
 		}
 
-		return $counts;
+		$query = new \WP_Query( [
+			'post_type' => $post_type,
+			'post_status' => 'publish',
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'meta_value' => self::ELEMENTOR_EDIT_MODE_BUILDER,
+			'posts_per_page' => 1,
+			'fields' => 'ids',
+			'no_found_rows' => false,
+		] );
+
+		self::$content_count_cache[ $post_type ] = $query->found_posts;
+
+		return self::$content_count_cache[ $post_type ];
 	}
 
 	private static function get_template_presence(): array {
+		if ( null !== self::$template_presence_cache ) {
+			return self::$template_presence_cache;
+		}
+
 		global $wpdb;
 
 		$all_template_types = array_values( array_unique( array_merge( ...array_values( self::TEMPLATE_TYPES ) ) ) );
@@ -180,6 +172,8 @@ class Theme_Builder_Promotion_Detections {
 			$presence[ $key ] = ! empty( array_intersect( $types, $found_types ) );
 		}
 
-		return $presence;
+		self::$template_presence_cache = $presence;
+
+		return self::$template_presence_cache;
 	}
 }
