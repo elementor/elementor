@@ -248,7 +248,10 @@ final class Editor_Loader {
 	}
 
 	private function do_editor_action( string $hook_suffix ): void {
-		do_action( 'elementor/editor/' . $hook_suffix );
+		if ( 'init' !== $hook_suffix ) {
+			do_action( 'elementor/editor/' . $hook_suffix );
+		}
+
 		do_action( 'elementor/editor/v1/' . $hook_suffix );
 		do_action( 'elementor/editor/v2/' . $hook_suffix );
 	}
