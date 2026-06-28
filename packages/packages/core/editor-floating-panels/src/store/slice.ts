@@ -1,6 +1,7 @@
 import { __createSlice, type PayloadAction } from '@elementor/store';
 
 import { type FloatingPanelDefaults, type FloatingPanelState, type LogicalPosition, type LogicalSize } from '../types';
+import { buildInitialPosition, type PanelCorner } from '../utils/corner-position';
 
 type SliceState = {
 	byId: Record< string, FloatingPanelState >;
@@ -11,7 +12,7 @@ type SliceState = {
 	topZIndex: number;
 };
 
-const DEFAULT_PANEL_POSITION: LogicalPosition = { insetInlineStart: 24, insetBlockStart: 80 };
+const DEFAULT_CORNER: PanelCorner = 'block-start-inline-start';
 
 const initialState: SliceState = {
 	byId: {},
@@ -51,9 +52,13 @@ export const slice = __createSlice( {
 				return;
 			}
 
-			state.byId[ id ] = persisted ?? {
+			const corner = defaults.corner ?? DEFAULT_CORNER;
+			const canReusePersisted = persisted && persisted.corner === corner;
+
+			state.byId[ id ] = canReusePersisted ? persisted : {
 				isOpen: false,
-				position: defaults.initialPosition ?? DEFAULT_PANEL_POSITION,
+				corner,
+				position: buildInitialPosition( corner, defaults.initialPosition ),
 				size: { inlineSize: defaults.width, blockSize: defaults.height },
 				zIndex: 0,
 			};

@@ -13,6 +13,7 @@ const defaults: FloatingPanelDefaults = {
 	height: 480,
 	minWidth: 240,
 	minHeight: 320,
+	corner: 'block-start-inline-start',
 };
 
 describe( 'useFloatingPanelZIndex', () => {

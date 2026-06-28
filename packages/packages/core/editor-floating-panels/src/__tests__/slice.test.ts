@@ -1,6 +1,7 @@
 import { __createStore, __deleteStore, __dispatch, __getState, __registerSlice } from '@elementor/store';
 
 import {
+	selectCorner,
 	selectIsDraggable,
 	selectIsOpen,
 	selectIsResizable,
@@ -20,6 +21,13 @@ const defaults: FloatingPanelDefaults = {
 	minHeight: 320,
 };
 
+const defaultPosition = {
+	insetBlockStart: 80,
+	insetBlockEnd: 0,
+	insetInlineStart: 24,
+	insetInlineEnd: 0,
+};
+
 describe( 'floating-panels slice', () => {
 	beforeEach( () => {
 		__registerSlice( slice );
@@ -36,7 +44,11 @@ describe( 'floating-panels slice', () => {
 
 		// Assert.
 		const state = selectPanelState( __getState(), 'a' );
-		expect( state ).toMatchObject( { isOpen: false } );
+		expect( state ).toMatchObject( {
+			isOpen: false,
+			corner: 'block-start-inline-start',
+			position: defaultPosition,
+		} );
 		expect( state?.size ).toEqual( { inlineSize: 320, blockSize: 480 } );
 		expect( selectMinSize( __getState(), 'a' ) ).toEqual( { inlineSize: 240, blockSize: 320 } );
 	} );
@@ -66,14 +78,21 @@ describe( 'floating-panels slice', () => {
 		__dispatch(
 			slice.actions.setPosition( {
 				id: 'a',
-				position: { insetInlineStart: 200, insetBlockStart: 80 },
+				position: {
+					insetBlockStart: 80,
+					insetBlockEnd: 0,
+					insetInlineStart: 200,
+					insetInlineEnd: 0,
+				},
 			} )
 		);
 
 		// Assert.
 		expect( selectPosition( __getState(), 'a' ) ).toEqual( {
-			insetInlineStart: 200,
 			insetBlockStart: 80,
+			insetBlockEnd: 0,
+			insetInlineStart: 200,
+			insetInlineEnd: 0,
 		} );
 	} );
 
@@ -81,9 +100,15 @@ describe( 'floating-panels slice', () => {
 		// Arrange.
 		const persisted = {
 			isOpen: true,
-			position: { insetInlineStart: 500, insetBlockStart: 200 },
-			size: { inlineSize: 400, blockSize: 500 },
 			zIndex: 7,
+			size: { inlineSize: 400, blockSize: 500 },
+			corner: 'block-start-inline-start' as const,
+			position: {
+				insetBlockStart: 200,
+				insetBlockEnd: 0,
+				insetInlineStart: 500,
+				insetInlineEnd: 0,
+			},
 		};
 
 		// Act.
@@ -93,6 +118,65 @@ describe( 'floating-panels slice', () => {
 		expect( selectPanelState( __getState(), 'a' ) ).toEqual( persisted );
 		expect( selectMinSize( __getState(), 'a' ) ).toEqual( { inlineSize: 240, blockSize: 320 } );
 		expect( selectTopZIndex( __getState() ) ).toBeGreaterThanOrEqual( 7 );
+	} );
+
+	it( 'discards persisted state when persisted corner differs from defaults corner', () => {
+		// Arrange.
+		const persisted = {
+			isOpen: true,
+			zIndex: 5,
+			size: { inlineSize: 400, blockSize: 500 },
+			corner: 'block-start-inline-start' as const,
+			position: {
+				insetBlockStart: 200,
+				insetBlockEnd: 0,
+				insetInlineStart: 500,
+				insetInlineEnd: 0,
+			},
+		};
+
+		// Act.
+		__dispatch(
+			slice.actions.register( {
+				id: 'a',
+				defaults: { ...defaults, corner: 'block-start-inline-end' },
+				persisted,
+			} )
+		);
+
+		// Assert.
+		const state = selectPanelState( __getState(), 'a' );
+		expect( state?.corner ).toBe( 'block-start-inline-end' );
+		expect( state?.isOpen ).toBe( false );
+		expect( state?.position ).toEqual( {
+			insetBlockStart: 80,
+			insetBlockEnd: 0,
+			insetInlineStart: 0,
+			insetInlineEnd: 24,
+		} );
+	} );
+
+	it( 'registers block-end-inline-end corner with custom initialPosition', () => {
+		// Act.
+		__dispatch(
+			slice.actions.register( {
+				id: 'a',
+				defaults: {
+					...defaults,
+					corner: 'block-end-inline-end',
+					initialPosition: { insetInlineEnd: 100, insetBlockEnd: 50 },
+				},
+			} )
+		);
+
+		// Assert.
+		expect( selectCorner( __getState(), 'a' ) ).toBe( 'block-end-inline-end' );
+		expect( selectPosition( __getState(), 'a' ) ).toEqual( {
+			insetBlockStart: 0,
+			insetBlockEnd: 50,
+			insetInlineStart: 0,
+			insetInlineEnd: 100,
+		} );
 	} );
 
 	it( 'updates size', () => {

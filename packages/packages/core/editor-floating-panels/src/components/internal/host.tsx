@@ -72,6 +72,7 @@ function HostedPanel( {
 	return (
 		<PanelWindow
 			panelId={ id }
+			corner={ panel.corner }
 			position={ panel.position }
 			size={ panel.size }
 			zIndex={ zIndex }

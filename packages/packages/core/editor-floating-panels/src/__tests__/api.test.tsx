@@ -122,9 +122,15 @@ describe( 'createFloatingPanel', () => {
 		// Arrange.
 		const persisted: FloatingPanelState = {
 			isOpen: true,
-			position: { insetInlineStart: 600, insetBlockStart: 240 },
-			size: { inlineSize: 400, blockSize: 520 },
 			zIndex: 5,
+			size: { inlineSize: 400, blockSize: 520 },
+			corner: 'block-start-inline-start',
+			position: {
+				insetBlockStart: 240,
+				insetBlockEnd: 0,
+				insetInlineStart: 600,
+				insetInlineEnd: 0,
+			},
 		};
 		sync( memoryStorage( encodePersistedState( { [ declaration.id ]: persisted } ) ) );
 

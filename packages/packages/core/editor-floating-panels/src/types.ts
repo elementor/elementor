@@ -1,5 +1,9 @@
 import { type ComponentType } from 'react';
 
+import type { PanelCorner } from './utils/corner-position';
+
+export type { PanelCorner };
+
 export type LogicalSize = {
 	inlineSize: number;
 	blockSize: number;
@@ -7,7 +11,9 @@ export type LogicalSize = {
 
 export type LogicalPosition = {
 	insetInlineStart: number;
+	insetInlineEnd: number;
 	insetBlockStart: number;
+	insetBlockEnd: number;
 };
 
 /**
@@ -27,7 +33,8 @@ export type FloatingPanelDefaults = {
 	height: number;
 	minWidth: number;
 	minHeight: number;
-	initialPosition?: LogicalPosition;
+	corner?: PanelCorner;
+	initialPosition?: Partial< LogicalPosition >;
 };
 
 export type FloatingPanelHeaderAction = {
@@ -50,7 +57,8 @@ export type FloatingPanelDeclaration = {
 
 export type FloatingPanelState = {
 	isOpen: boolean;
-	position: LogicalPosition;
-	size: LogicalSize;
 	zIndex: number;
+	size: LogicalSize;
+	corner: PanelCorner;
+	position: LogicalPosition;
 };

@@ -7,9 +7,15 @@ import { type FloatingPanelDefaults, type FloatingPanelState } from '../types';
 
 const persisted: FloatingPanelState = {
 	isOpen: true,
-	position: { insetInlineStart: 24, insetBlockStart: 80 },
-	size: { inlineSize: 320, blockSize: 480 },
 	zIndex: 1,
+	size: { inlineSize: 320, blockSize: 480 },
+	corner: 'block-start-inline-start',
+	position: {
+		insetBlockStart: 80,
+		insetBlockEnd: 0,
+		insetInlineStart: 24,
+		insetInlineEnd: 0,
+	},
 };
 
 const defaults: FloatingPanelDefaults = {
