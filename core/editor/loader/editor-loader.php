@@ -84,7 +84,7 @@ final class Editor_Loader {
 			$this->assets_config_provider->load( $package );
 		}
 
-		do_action( 'elementor/editor/v2/init' );
+		$this->do_editor_action( 'init' );
 	}
 
 	public function register_scripts() {
@@ -130,11 +130,11 @@ final class Editor_Loader {
 
 		Assets_Translation_Loader::for_handles( $packages_handles, 'elementor' );
 
-		do_action( 'elementor/editor/v2/scripts/register' );
+		$this->do_editor_action( 'scripts/register' );
 	}
 
 	public function enqueue_scripts() {
-		do_action( 'elementor/editor/v2/scripts/enqueue/before' );
+		$this->do_editor_action( 'scripts/enqueue/before' );
 
 		wp_enqueue_script( 'elementor-responsive-bar' );
 
@@ -143,7 +143,7 @@ final class Editor_Loader {
 		$env_config = $this->assets_config_provider->get( self::ENV_PACKAGE );
 
 		if ( $env_config ) {
-			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
+			$client_env = $this->apply_editor_filter( 'scripts/env', [
 				'@elementor/http-client' => [
 					'base_url' => rest_url(),
 					'headers' => [
@@ -168,7 +168,7 @@ final class Editor_Loader {
 			wp_enqueue_script( $config['handle'] );
 		}
 
-		do_action( 'elementor/editor/v2/scripts/enqueue' );
+		$this->do_editor_action( 'scripts/enqueue' );
 
 		Utils::print_js_config(
 			'elementor-editor',
@@ -178,7 +178,7 @@ final class Editor_Loader {
 
 		wp_enqueue_script( 'elementor-editor-loader' );
 
-		do_action( 'elementor/editor/v2/scripts/enqueue/after' );
+		$this->do_editor_action( 'scripts/enqueue/after' );
 	}
 
 	public function register_styles() {
@@ -196,7 +196,7 @@ final class Editor_Loader {
 			);
 		}
 
-		do_action( 'elementor/editor/v2/styles/register' );
+		$this->do_editor_action( 'styles/register' );
 	}
 
 	public function enqueue_styles() {
@@ -207,7 +207,7 @@ final class Editor_Loader {
 			wp_enqueue_style( "elementor-{$style}" );
 		}
 
-		do_action( 'elementor/editor/v2/styles/enqueue' );
+		$this->do_editor_action( 'styles/enqueue' );
 	}
 
 	public function print_root_template() {
@@ -236,15 +236,28 @@ final class Editor_Loader {
 	}
 
 	private function get_packages_to_enqueue(): array {
-		return apply_filters( 'elementor/editor/v2/packages', self::EXTENSIONS );
+		return $this->apply_editor_filter( 'packages', self::EXTENSIONS );
 	}
 
 	private function get_styles(): array {
-		$styles = apply_filters( 'elementor/editor/v2/styles', [] );
+		$styles = $this->apply_editor_filter( 'styles', [] );
 
 		return Collection::make( $styles )
 			->unique()
 			->all();
+	}
+
+	private function do_editor_action( string $hook_suffix ): void {
+		do_action( 'elementor/editor/' . $hook_suffix );
+		do_action( 'elementor/editor/v1/' . $hook_suffix );
+		do_action( 'elementor/editor/v2/' . $hook_suffix );
+	}
+
+	private function apply_editor_filter( string $hook_suffix, $value ) {
+		$value = apply_filters( 'elementor/editor/' . $hook_suffix, $value );
+		$value = apply_filters( 'elementor/editor/v1/' . $hook_suffix, $value );
+
+		return apply_filters( 'elementor/editor/v2/' . $hook_suffix, $value );
 	}
 
 	private function scripts_source_map() {

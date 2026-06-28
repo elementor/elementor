@@ -14,6 +14,8 @@ class Test_Editor_Loader extends Elementor_Test_Base {
 	public function set_up() {
 		parent::set_up();
 
+		remove_all_filters( 'elementor/editor/packages' );
+		remove_all_filters( 'elementor/editor/v1/packages' );
 		remove_all_filters( 'elementor/editor/v2/packages' );
 	}
 
