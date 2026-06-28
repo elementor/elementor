@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Promotions;
 
 use Elementor\Core\Base\Document;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Theme_Builder_Promotion_Detections {
 	private const ELEMENTOR_EDIT_MODE_BUILDER = 'builder';
-	private const TEMPLATE_TYPE_META_KEY = '_elementor_template_type';
 
 	private const SUPPORTED_CONTENT_TYPES = [ 'post', 'page', 'product' ];
 	private const TYPE_TO_SCENARIO_MAP = [
@@ -24,12 +24,11 @@ class Theme_Builder_Promotion_Detections {
 		'single_product' => 2,
 	];
 
-	private static ?array $template_presence_cache = null;
 	private static array $content_count_cache = [];
+	private static array $template_exists_cache = [];
 
 	private const TEMPLATE_TYPES = [
-		'header' => [ 'header' ],
-		'footer' => [ 'footer' ],
+		'header_footer' => [ 'header', 'footer' ],
 		'single_post' => [ 'single-post', 'single' ],
 		'single_product' => [ 'single-product', 'product' ],
 	];
@@ -55,7 +54,7 @@ class Theme_Builder_Promotion_Detections {
 
 		$content_count = self::get_elementor_published_content_count( $post_type );
 
-		if ( null === $content_count || ! self::is_eligible_scenario( $scenario, $content_count, self::get_template_presence() ) ) {
+		if ( null === $content_count || ! self::is_eligible_scenario( $scenario, $content_count ) ) {
 			return null;
 		}
 
@@ -83,29 +82,23 @@ class Theme_Builder_Promotion_Detections {
 		return (bool) User::get_introduction_meta( $introduction_key );
 	}
 
-	private static function is_eligible_scenario( string $scenario, int $content_count, array $template_presence ): bool {
+	private static function is_eligible_scenario( string $scenario, int $content_count ): bool {
 		$min_content_count = self::MIN_PUBLISHED_CONTENT_COUNT_BY_SCENARIO[ $scenario ] ?? 0;
 
 		if ( $content_count < $min_content_count ) {
 			return false;
 		}
 
-		if ( self::TYPE_TO_SCENARIO_MAP['post'] === $scenario ) {
-			return empty( $template_presence['single_post'] );
+		switch ( $scenario ) {
+			case self::TYPE_TO_SCENARIO_MAP['post']:
+				return ! self::has_published_template( 'single_post' );
+			case self::TYPE_TO_SCENARIO_MAP['product']:
+				return ! self::has_published_template( 'single_product' );
+			case self::TYPE_TO_SCENARIO_MAP['page']:
+				return ! self::has_published_template( 'header_footer' );
+			default:
+				return false;
 		}
-
-		if ( self::TYPE_TO_SCENARIO_MAP['product'] === $scenario ) {
-			return empty( $template_presence['single_product'] );
-		}
-
-		if ( self::TYPE_TO_SCENARIO_MAP['page'] === $scenario ) {
-			$has_header = ! empty( $template_presence['header'] );
-			$has_footer = ! empty( $template_presence['footer'] );
-
-			return ! $has_header || ! $has_footer;
-		}
-
-		return false;
 	}
 
 	private static function get_elementor_published_content_count( string $post_type ): ?int {
@@ -132,48 +125,34 @@ class Theme_Builder_Promotion_Detections {
 		return self::$content_count_cache[ $post_type ];
 	}
 
-	private static function get_template_presence(): array {
-		if ( null !== self::$template_presence_cache ) {
-			return self::$template_presence_cache;
+	private static function has_published_template( string $template_key ): bool {
+		$template_types = self::TEMPLATE_TYPES[ $template_key ] ?? null;
+
+		if ( empty( $template_types ) ) {
+			return false;
 		}
 
-		global $wpdb;
-
-		$all_template_types = array_values( array_unique( array_merge( ...array_values( self::TEMPLATE_TYPES ) ) ) );
-
-		if ( empty( $all_template_types ) ) {
-			return array_fill_keys( array_keys( self::TEMPLATE_TYPES ), false );
+		if ( array_key_exists( $template_key, self::$template_exists_cache ) ) {
+			return self::$template_exists_cache[ $template_key ];
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
-		$found_types = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT DISTINCT pm.meta_value
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} pm
-					ON ( p.ID = pm.post_id AND pm.meta_key = %s )
-				WHERE p.post_status = %s
-					AND p.post_type = %s
-					AND pm.meta_value IN (" . implode( ',', array_fill( 0, count( $all_template_types ), '%s' ) ) . ')',
-				array_merge(
-					[
-						self::TEMPLATE_TYPE_META_KEY,
-						'publish',
-						'elementor_library',
-					],
-					$all_template_types,
-				)
-			)
-		);
+		$query = new \WP_Query( [
+			'post_type' => Source_Local::CPT,
+			'post_status' => 'publish',
+			'meta_query' => [
+				[
+					'key' => Source_Local::TYPE_META_KEY,
+					'value' => $template_types,
+					'compare' => 'IN',
+				],
+			],
+			'posts_per_page' => 1,
+			'fields' => 'ids',
+			'no_found_rows' => false,
+		] );
 
-		$presence = [];
+		self::$template_exists_cache[ $template_key ] = $query->found_posts > 0;
 
-		foreach ( self::TEMPLATE_TYPES as $key => $types ) {
-			$presence[ $key ] = ! empty( array_intersect( $types, $found_types ) );
-		}
-
-		self::$template_presence_cache = $presence;
-
-		return self::$template_presence_cache;
+		return self::$template_exists_cache[ $template_key ];
 	}
 }
