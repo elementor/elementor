@@ -6,7 +6,7 @@ export type PanelCorner =
 	| 'block-end-inline-start'
 	| 'block-end-inline-end';
 
-	export const DEFAULT_INSET_BLOCK_PX = 80;
+export const DEFAULT_INSET_BLOCK_PX = 80;
 export const DEFAULT_INSET_INLINE_PX = 24;
 
 type InsetKey = keyof LogicalPosition;

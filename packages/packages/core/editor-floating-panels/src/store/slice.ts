@@ -55,13 +55,15 @@ export const slice = __createSlice( {
 			const corner = defaults.corner ?? DEFAULT_CORNER;
 			const canReusePersisted = persisted && persisted.corner === corner;
 
-			state.byId[ id ] = canReusePersisted ? persisted : {
-				isOpen: false,
-				corner,
-				position: buildInitialPosition( corner, defaults.initialPosition ),
-				size: { inlineSize: defaults.width, blockSize: defaults.height },
-				zIndex: 0,
-			};
+			state.byId[ id ] = canReusePersisted
+				? persisted
+				: {
+						isOpen: false,
+						corner,
+						position: buildInitialPosition( corner, defaults.initialPosition ),
+						size: { inlineSize: defaults.width, blockSize: defaults.height },
+						zIndex: 0,
+				  };
 
 			if ( persisted && persisted.zIndex > state.topZIndex ) {
 				state.topZIndex = persisted.zIndex;

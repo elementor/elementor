@@ -28,7 +28,12 @@ type ResizeSession = {
 	isRtl: boolean;
 };
 
-function getResizeBounds( corner: PanelCorner, position: LogicalPosition, currentSize: LogicalSize, minSize: LogicalSize ): ResizeBounds {
+function getResizeBounds(
+	corner: PanelCorner,
+	position: LogicalPosition,
+	currentSize: LogicalSize,
+	minSize: LogicalSize
+): ResizeBounds {
 	const viewport = { width: window.innerWidth, height: window.innerHeight };
 	const startAnchored = toStartAnchoredPosition( corner, position, currentSize, viewport );
 

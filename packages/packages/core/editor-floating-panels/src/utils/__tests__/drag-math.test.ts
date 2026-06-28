@@ -97,7 +97,13 @@ describe( 'applyDragDelta', () => {
 	it( 'clamps to the minimum when the max is smaller than the min (panel larger than free space)', () => {
 		// Arrange.
 		const start = { ...EMPTY_INSETS, insetInlineStart: 320, insetBlockStart: 60 };
-		const bounds = { ...unboundedBounds, minInlineStart: 300, maxInlineStart: 100, minBlockStart: 48, maxBlockStart: 10 };
+		const bounds = {
+			...unboundedBounds,
+			minInlineStart: 300,
+			maxInlineStart: 100,
+			minBlockStart: 48,
+			maxBlockStart: 10,
+		};
 
 		// Act.
 		const next = applyDragDelta( 'block-start-inline-start', start, { inlineDelta: 500, blockDelta: 500 }, bounds );
@@ -108,7 +114,11 @@ describe( 'applyDragDelta', () => {
 
 	it( 'inverts deltas for block-end-inline-end', () => {
 		// Arrange.
-		const start = { ...EMPTY_INSETS, insetInlineEnd: 100, insetBlockEnd: 50 };
+		const start = {
+			...EMPTY_INSETS,
+			insetInlineEnd: 100,
+			insetBlockEnd: 50,
+		};
 
 		// Act.
 		const next = applyDragDelta(
