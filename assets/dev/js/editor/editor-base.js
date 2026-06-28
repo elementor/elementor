@@ -14,6 +14,7 @@ import BrowserImport from './components/browser-import/manager';
 import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
+import ThemeBuilderPromotion from './utils/theme-builder-promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
@@ -472,6 +473,8 @@ export default class EditorBase extends Marionette.Application {
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
+
+		this.themeBuilderPromotion = new ThemeBuilderPromotion();
 
 		this.browserImport = new BrowserImport();
 
