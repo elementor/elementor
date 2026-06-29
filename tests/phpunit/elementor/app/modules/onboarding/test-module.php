@@ -120,12 +120,12 @@ class Test_Module extends Test_Base {
 		return $method->invoke( $module );
 	}
 
-	public function test_onboarding_config_includes_planner_exit_when_experiment_active_and_url_configured() {
+	public function test_onboarding_config_includes_planner_exit_when_site_builder_active_and_url_configured() {
 		if ( ! defined( 'ELEMENTOR_SITE_BUILDER_URL' ) || '' === ELEMENTOR_SITE_BUILDER_URL ) {
 			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is not defined in this environment.' );
 		}
 
-		$this->activate_onboarding_planner_exit_experiment();
+		$this->activate_site_builder_experiment();
 
 		try {
 			$_GET['page'] = 'elementor-app';
@@ -136,7 +136,7 @@ class Test_Module extends Test_Base {
 			$this->assertTrue( $settings['shouldRedirectToSitePlanner'] );
 			$this->assertSame( ELEMENTOR_SITE_BUILDER_URL, $settings['siteBuilderUrl'] );
 		} finally {
-			$this->deactivate_onboarding_planner_exit_experiment();
+			$this->deactivate_site_builder_experiment();
 		}
 	}
 
@@ -145,7 +145,7 @@ class Test_Module extends Test_Base {
 			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is defined in this environment.' );
 		}
 
-		$this->activate_onboarding_planner_exit_experiment();
+		$this->activate_site_builder_experiment();
 
 		try {
 			$_GET['page'] = 'elementor-app';
@@ -156,7 +156,7 @@ class Test_Module extends Test_Base {
 			$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
 			$this->assertSame( '', $settings['siteBuilderUrl'] );
 		} finally {
-			$this->deactivate_onboarding_planner_exit_experiment();
+			$this->deactivate_site_builder_experiment();
 		}
 	}
 
@@ -172,8 +172,8 @@ class Test_Module extends Test_Base {
 		$this->assertSame( '', $method->invoke( $module ) );
 	}
 
-	public function test_onboarding_config_excludes_planner_exit_when_experiment_inactive() {
-		$this->deactivate_onboarding_planner_exit_experiment();
+	public function test_onboarding_config_excludes_planner_exit_when_site_builder_inactive() {
+		$this->deactivate_site_builder_experiment();
 
 		$_GET['page'] = 'elementor-app';
 		do_action( 'elementor/init' );
@@ -183,19 +183,11 @@ class Test_Module extends Test_Base {
 		$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
 	}
 
-	private function activate_onboarding_planner_exit_experiment(): void {
+	private function activate_site_builder_experiment(): void {
 		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_ACTIVE );
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
-			Experiments_Manager::STATE_ACTIVE
-		);
 	}
 
-	private function deactivate_onboarding_planner_exit_experiment(): void {
-		Plugin::$instance->experiments->set_feature_default_state(
-			Module::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
-			Experiments_Manager::STATE_INACTIVE
-		);
+	private function deactivate_site_builder_experiment(): void {
 		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_INACTIVE );
 	}
 }

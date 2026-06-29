@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 
 import type { OnboardingChoices } from '../types';
 import { getOnboardingConfig } from '../utils/get-config';
-import { sendUserExitProgress } from '../utils/send-user-exit-progress';
 import { redirectToSitePlanner } from '../utils/redirect-to-site-planner';
+import { sendUserExitProgress } from '../utils/send-user-exit-progress';
 
 type RouterHistory = {
 	listen: ( callback: ( update: { location: { pathname: string } } ) => void ) => () => void;

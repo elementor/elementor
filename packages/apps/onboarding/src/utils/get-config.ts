@@ -10,5 +10,11 @@ export function getConfig(): OnboardingRestConfig | null {
 }
 
 export function getOnboardingConfig(): OnboardingConfig | null {
-	return window.elementorAppConfig?.onboarding ?? null;
+	const config = window.elementorAppConfig?.onboarding;
+
+	if ( ! config ) {
+		return null;
+	}
+
+	return config as unknown as OnboardingConfig;
 }

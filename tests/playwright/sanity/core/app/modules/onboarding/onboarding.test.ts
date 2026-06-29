@@ -353,7 +353,7 @@ test.describe( 'Onboarding @onboarding', () => {
 		await expect( page.getByTestId( 'theme-selection-step' ) ).toBeHidden();
 	} );
 
-	test.skip( 'Onboarding completion redirects to site-builder when planner exit experiment is active', async ( { page } ) => {
+	test.skip( 'Onboarding completion redirects to site-builder when site-builder experiment is active', async ( { page } ) => {
 		await page.goto( ONBOARDING_URL );
 		await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
 		await page.getByRole( 'button', { name: 'Just exploring' } ).click();

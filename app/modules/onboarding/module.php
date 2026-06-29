@@ -8,7 +8,6 @@ use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
@@ -23,7 +22,6 @@ class Module extends BaseModule {
 	const VERSION = '2.0.0';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
-	const ONBOARDING_PLANNER_EXIT_EXPERIMENT = 'onboarding-planner-exit';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE' => 'de',
@@ -50,8 +48,6 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
-
-		$this->register_experiments();
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
@@ -366,25 +362,9 @@ class Module extends BaseModule {
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_theme_active', $is_active );
 	}
 
-	private function register_experiments(): void {
-		Plugin::instance()->experiments->add_feature( [
-			'name' => self::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
-			'title' => esc_html__( 'Onboarding Planner Exit', 'elementor' ),
-			'description' => esc_html__( 'Redirect onboarding exits to Site Builder.', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-			'hidden' => true,
-			'dependencies' => [
-				'site-builder',
-			],
-		] );
-	}
-
-	public function is_onboarding_planner_exit_active(): bool {
-		return Plugin::instance()->experiments->is_feature_active( self::ONBOARDING_PLANNER_EXIT_EXPERIMENT, true );
-	}
-
 	public function should_redirect_to_site_planner(): bool {
-		return $this->is_onboarding_planner_exit_active() && '' !== $this->get_site_builder_url();
+		return Plugin::instance()->experiments->is_feature_active( 'site-builder' )
+			&& '' !== $this->get_site_builder_url();
 	}
 
 	public function get_site_builder_url(): string {

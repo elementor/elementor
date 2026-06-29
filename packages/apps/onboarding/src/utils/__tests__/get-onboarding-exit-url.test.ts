@@ -1,4 +1,4 @@
-import { getOnboardingExitUrl, buildSiteBuilderParamsFromChoices } from '../get-onboarding-exit-url';
+import { buildSiteBuilderParamsFromChoices, getOnboardingExitUrl } from '../get-onboarding-exit-url';
 
 describe( 'getOnboardingExitUrl', () => {
 	const legacyUrls = {

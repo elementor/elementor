@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import apiFetch from '@wordpress/api-fetch';
 import { ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY } from '@elementor/utils';
+import apiFetch from '@wordpress/api-fetch';
 
 import { isValidConnectAuth } from '../connect-auth-schema';
 import {

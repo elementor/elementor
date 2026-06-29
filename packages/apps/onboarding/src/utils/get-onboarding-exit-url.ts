@@ -1,6 +1,8 @@
 import type { OnboardingChoices, OnboardingConfig } from '../types';
 
-export function getOnboardingExitUrl( config: Pick< OnboardingConfig, 'shouldRedirectToSitePlanner' | 'siteBuilderUrl' | 'urls' > ): string {
+export function getOnboardingExitUrl(
+	config: Pick< OnboardingConfig, 'shouldRedirectToSitePlanner' | 'siteBuilderUrl' | 'urls' >
+): string {
 	if ( config.shouldRedirectToSitePlanner && config.siteBuilderUrl ) {
 		return config.siteBuilderUrl;
 	}
