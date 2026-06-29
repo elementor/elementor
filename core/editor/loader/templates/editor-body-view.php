@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Editor\Loader\V2\Templates;
+namespace Elementor\Core\Editor\Loader\Templates;
 
 use Elementor\Plugin;
 
