@@ -12,10 +12,6 @@ import { GridEmptyCellPositioner, GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
-const E_GRID_TYPE = 'e-grid';
-
-const isGridElement = ( element: HTMLElement ): boolean =>
-	[ element.dataset.eType, element.dataset.element_type ].includes( E_GRID_TYPE );
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -24,11 +20,11 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: GridEmptyCellPositioner,
-		shouldRender: ( { element } ) => isGridElement( element ),
+		shouldRender: () => true,
 	},
 	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element, isSelected } ) => isSelected && isGridElement( element ),
+		shouldRender: ( { isSelected } ) => isSelected,
 	},
 ];
 

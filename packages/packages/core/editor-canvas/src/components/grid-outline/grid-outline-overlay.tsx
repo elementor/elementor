@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useSelectedElementSettings } from '@elementor/editor-elements';
-import { booleanPropTypeUtil } from '@elementor/editor-props';
+import { useElementEditorSettings } from '@elementor/editor-elements';
 import { Box } from '@elementor/ui';
 import { FloatingPortal } from '@floating-ui/react';
 
@@ -11,9 +10,9 @@ import type { ElementOverlayProps } from '../../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 import { GridOutline } from './grid-outline';
 
-export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
-	const { settings } = useSelectedElementSettings();
-	const enabled = booleanPropTypeUtil.extract( settings?.grid_outline );
+export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {	
+	const settings = useElementEditorSettings( id );
+	const enabled = settings?.grid_outline;
 	const rect = useElementRect( element );
 	const tracks = useGridTracks( element, rect );
 	const { floating } = useFloatingOnElement( { element, isSelected } );
