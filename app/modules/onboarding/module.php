@@ -388,7 +388,11 @@ class Module extends BaseModule {
 	}
 
 	public function get_site_builder_url(): string {
-		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) ) {
+		if (
+			defined( 'ELEMENTOR_SITE_BUILDER_URL' )
+			&& is_string( ELEMENTOR_SITE_BUILDER_URL )
+			&& '' !== ELEMENTOR_SITE_BUILDER_URL
+		) {
 			return ELEMENTOR_SITE_BUILDER_URL;
 		}
 

@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 
 import type { OnboardingChoices } from '../types';
-import { getConfig, getOnboardingConfig } from '../utils/get-config';
+import { getOnboardingConfig } from '../utils/get-config';
+import { sendUserExitProgress } from '../utils/send-user-exit-progress';
 import { redirectToSitePlanner } from '../utils/redirect-to-site-planner';
 
 type RouterHistory = {
@@ -13,21 +14,6 @@ type ElementorAppPackages = {
 		appHistory?: RouterHistory;
 	};
 };
-
-function sendUserExitBeacon(): void {
-	const config = getConfig();
-
-	if ( ! config ) {
-		return;
-	}
-
-	const body = JSON.stringify( { user_exit: true } );
-
-	if ( navigator.sendBeacon ) {
-		const blob = new Blob( [ body ], { type: 'application/json' } );
-		navigator.sendBeacon( `${ config.restUrl }user-progress`, blob );
-	}
-}
 
 export function useOnboardingExitListener( choices: OnboardingChoices ): void {
 	const isExitingRef = useRef( false );
@@ -43,7 +29,7 @@ export function useOnboardingExitListener( choices: OnboardingChoices ): void {
 		}
 
 		const handlePageHide = () => {
-			sendUserExitBeacon();
+			sendUserExitProgress();
 		};
 
 		window.addEventListener( 'pagehide', handlePageHide );

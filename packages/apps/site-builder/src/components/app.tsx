@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
+import { ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY } from '@elementor/utils';
 
 import { isValidConnectAuth } from '../connect-auth-schema';
 import {
@@ -9,8 +10,6 @@ import {
 	useSiteBuilderIframeMessaging,
 } from '../hooks/use-site-builder-iframe-messaging';
 import { getSiteBuilderConfig } from '../site-builder-config';
-
-const ONBOARDING_SITE_BUILDER_PARAMS_KEY = 'elementor-onboarding-site-builder-params';
 
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
@@ -68,11 +67,11 @@ export function App() {
 		}
 
 		try {
-			const storedParams = sessionStorage.getItem( ONBOARDING_SITE_BUILDER_PARAMS_KEY );
+			const storedParams = sessionStorage.getItem( ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY );
 
 			if ( storedParams ) {
 				setSiteBuilderParams( JSON.parse( storedParams ) as SiteBuilderParams );
-				sessionStorage.removeItem( ONBOARDING_SITE_BUILDER_PARAMS_KEY );
+				sessionStorage.removeItem( ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY );
 			}
 		} catch {
 			// sessionStorage may be unavailable or contain invalid JSON.

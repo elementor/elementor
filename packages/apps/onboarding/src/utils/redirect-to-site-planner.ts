@@ -1,10 +1,11 @@
 import { getMixpanel } from '@elementor/events';
+import { ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY } from '@elementor/utils';
 
 import type { OnboardingChoices } from '../types';
 import { buildSiteBuilderParamsFromChoices, getOnboardingExitUrl } from './get-onboarding-exit-url';
 import { getOnboardingConfig } from './get-config';
 
-export const ONBOARDING_SITE_BUILDER_PARAMS_KEY = 'elementor-onboarding-site-builder-params';
+export const ONBOARDING_SITE_BUILDER_PARAMS_KEY = ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY;
 export const ONBOARDING_EXITING_TO_PLANNER_KEY = 'elementor-onboarding-exiting-to-planner';
 
 export function storeOnboardingSiteBuilderParams( choices: OnboardingChoices ): void {

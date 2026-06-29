@@ -121,8 +121,8 @@ class Test_Module extends Test_Base {
 	}
 
 	public function test_onboarding_config_includes_planner_exit_when_experiment_active_and_url_configured() {
-		if ( ! defined( 'SITE_BUILDER_URL' ) || '' === SITE_BUILDER_URL ) {
-			$this->markTestSkipped( 'SITE_BUILDER_URL is not defined in this environment.' );
+		if ( ! defined( 'ELEMENTOR_SITE_BUILDER_URL' ) || '' === ELEMENTOR_SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is not defined in this environment.' );
 		}
 
 		$this->activate_onboarding_planner_exit_experiment();
@@ -134,15 +134,15 @@ class Test_Module extends Test_Base {
 			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
 
 			$this->assertTrue( $settings['shouldRedirectToSitePlanner'] );
-			$this->assertSame( SITE_BUILDER_URL, $settings['siteBuilderUrl'] );
+			$this->assertSame( ELEMENTOR_SITE_BUILDER_URL, $settings['siteBuilderUrl'] );
 		} finally {
 			$this->deactivate_onboarding_planner_exit_experiment();
 		}
 	}
 
 	public function test_onboarding_config_excludes_planner_exit_when_url_not_configured() {
-		if ( defined( 'SITE_BUILDER_URL' ) && '' !== SITE_BUILDER_URL ) {
-			$this->markTestSkipped( 'SITE_BUILDER_URL is defined in this environment.' );
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) && '' !== ELEMENTOR_SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is defined in this environment.' );
 		}
 
 		$this->activate_onboarding_planner_exit_experiment();
@@ -158,6 +158,18 @@ class Test_Module extends Test_Base {
 		} finally {
 			$this->deactivate_onboarding_planner_exit_experiment();
 		}
+	}
+
+	public function test_get_site_builder_url_returns_empty_when_constant_undefined() {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is defined in this environment.' );
+		}
+
+		$module = new Module();
+		$method = new ReflectionMethod( $module, 'get_site_builder_url' );
+		$method->setAccessible( true );
+
+		$this->assertSame( '', $method->invoke( $module ) );
 	}
 
 	public function test_onboarding_config_excludes_planner_exit_when_experiment_inactive() {
