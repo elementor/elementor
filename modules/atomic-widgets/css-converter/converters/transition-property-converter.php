@@ -83,7 +83,7 @@ class Transition_Property_Converter extends Property_Converter_Base {
 		return [ 'transition' ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$layers = Css_Token_Splitter::split_by_comma( trim( $rule['value'] ) );
 
 		if ( empty( $layers ) ) {
