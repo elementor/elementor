@@ -4,8 +4,9 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
-use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
+use Elementor\Core\Editor\Loader\Editor_Loader;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -66,7 +67,7 @@ class Editor {
 	public $promotion;
 
 	/**
-	 * @var Editor_Loader_Interface
+	 * @var Editor_Loader
 	 */
 	private $loader;
 
@@ -661,11 +662,22 @@ class Editor {
 	/**
 	 * Get loader.
 	 *
-	 * @return Editor_Loader_Interface
+	 * @return Editor_Loader
 	 */
 	private function get_loader() {
 		if ( ! $this->loader ) {
-			$this->loader = Editor_Loader_Factory::create();
+			$this->loader = new Editor_Loader(
+				new Collection( [
+					'assets_url' => ELEMENTOR_ASSETS_URL,
+					'min_suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+					'direction_suffix' => is_rtl() ? '-rtl' : '',
+				] ),
+				( new Assets_Config_Provider() )->set_path_resolver(
+					function ( $name ) {
+						return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+					}
+				)
+			);
 
 			$this->loader->init();
 		}
