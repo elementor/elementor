@@ -17,6 +17,7 @@ export const GridOutlineField = () => {
 		<StylesFieldLayout label={ GRID_OUTLINE_LABEL }>
 			<Box sx={ { display: 'flex', justifyContent: 'flex-end' } }>
 				<Switch
+					aria-label={ GRID_OUTLINE_LABEL }
 					checked={ value }
 					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 						updateElementEditorSettings( {
