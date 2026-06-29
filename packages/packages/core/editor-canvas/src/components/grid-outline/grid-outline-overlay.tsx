@@ -10,7 +10,7 @@ import type { ElementOverlayProps } from '../../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 import { GridOutline } from './grid-outline';
 
-export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {	
+export const GridOutlineOverlay = ( { element, id, isSelected }: ElementOverlayProps ): React.ReactElement | null => {
 	const settings = useElementEditorSettings( id );
 	const enabled = settings?.grid_outline;
 	const rect = useElementRect( element );
