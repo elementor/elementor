@@ -11,13 +11,31 @@ import './promotion.scss';
 
 export default function Promotion() {
 	const promotionUrl = elementorAppConfig.promotion.upgrade_url || 'https://go.elementor.com/go-pro-theme-builder/',
+		trackUpgradeClick = ( locationL1 = 'main_upgrade_button' ) => {
+			elementorCommon?.eventsManager?.dispatchEvent?.( 'theme_builder_promotion', {
+				app_type: 'editor',
+				window_name: 'theme_builder_promotional_popup',
+				interaction_type: 'click',
+				target_type: 'button',
+				target_name: 'theme_builder_upgrade_cta',
+				interaction_result: 'theme_builder_upgrade_cta_clicked',
+				target_location: 'theme_builder_promotional_popup',
+				location_l1: locationL1,
+			} );
+		},
 		PromotionHoverElement = ( props ) => {
 			const promotionUrlWithType = `${ promotionUrl }?type=${ props.type }`;
 			return (
 				<CardOverlay className="e-site-editor__promotion-overlay">
 					<a className="e-site-editor__promotion-overlay__link" target="_blank" rel="noopener noreferrer" href={ promotionUrlWithType }>
 						<i className="e-site-editor__promotion-overlay__icon eicon-lock" />
-						<Button size="sm" color="brand" variant="contained" text={ __( 'Upgrade', 'elementor' ) } />
+						<Button
+							size="sm"
+							color="brand"
+							variant="contained"
+							text={ __( 'Upgrade', 'elementor' ) }
+							onClick={ () => trackUpgradeClick( `${ props.type }_upgrade_button` ) }
+						/>
 					</a>
 				</CardOverlay>
 			);
@@ -48,6 +66,7 @@ export default function Promotion() {
 							url={ promotionUrl }
 							target="_blank"
 							text={ __( 'Upgrade Now', 'elementor' ) }
+							onClick={ () => trackUpgradeClick( 'main_upgrade_button' ) }
 						/>
 					</Grid>
 				</Grid>
