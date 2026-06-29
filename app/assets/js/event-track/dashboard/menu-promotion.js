@@ -2,7 +2,7 @@ import WpDashboardTracking from '../wp-dashboard-tracking';
 import BaseTracking from './base-tracking';
 
 const PROMO_MENU_ITEMS = {
-	go_elementor_pro: 'Upgrade',
+	'elementor-one-upgrade': 'Upgrade',
 };
 
 class MenuPromotionTracking extends BaseTracking {
