@@ -20,6 +20,16 @@ describe( 'getOnboardingExitUrl', () => {
 		expect( url ).toBe( 'https://example.com/wp-admin/admin.php?page=elementor-app#site-builder' );
 	} );
 
+	it( 'should return legacy url when experiment is active but site builder url is empty', () => {
+		const url = getOnboardingExitUrl( {
+			shouldRedirectToSitePlanner: true,
+			siteBuilderUrl: '',
+			urls: legacyUrls,
+		} );
+
+		expect( url ).toBe( legacyUrls.createNewPage );
+	} );
+
 	it( 'should return legacy create new page url when experiment is inactive', () => {
 		const url = getOnboardingExitUrl( {
 			shouldRedirectToSitePlanner: false,

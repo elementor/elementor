@@ -38,7 +38,7 @@ export function useOnboardingExitListener( choices: OnboardingChoices ): void {
 	useEffect( () => {
 		const config = getOnboardingConfig();
 
-		if ( ! config?.shouldRedirectToSitePlanner ) {
+		if ( ! config?.shouldRedirectToSitePlanner || ! config.siteBuilderUrl ) {
 			return;
 		}
 
@@ -56,7 +56,7 @@ export function useOnboardingExitListener( choices: OnboardingChoices ): void {
 	useEffect( () => {
 		const config = getOnboardingConfig();
 
-		if ( ! config?.shouldRedirectToSitePlanner ) {
+		if ( ! config?.shouldRedirectToSitePlanner || ! config.siteBuilderUrl ) {
 			return;
 		}
 

@@ -127,7 +127,7 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
-			'shouldRedirectToSitePlanner' => $this->is_onboarding_planner_exit_active(),
+			'shouldRedirectToSitePlanner' => $this->should_redirect_to_site_planner(),
 			'siteBuilderUrl' => $this->get_site_builder_url(),
 			'urls' => [
 				'dashboard' => admin_url(),
@@ -383,12 +383,20 @@ class Module extends BaseModule {
 		return Plugin::instance()->experiments->is_feature_active( self::ONBOARDING_PLANNER_EXIT_EXPERIMENT, true );
 	}
 
+	public function should_redirect_to_site_planner(): bool {
+		return $this->is_onboarding_planner_exit_active() && '' !== $this->get_site_builder_url();
+	}
+
 	public function get_site_builder_url(): string {
-		return admin_url( 'admin.php?page=elementor-app#site-builder' );
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) ) {
+			return ELEMENTOR_SITE_BUILDER_URL;
+		}
+
+		return '';
 	}
 
 	public function maybe_redirect_abandoned_onboarding_to_site_planner(): void {
-		if ( ! $this->is_onboarding_planner_exit_active() ) {
+		if ( ! $this->should_redirect_to_site_planner() ) {
 			return;
 		}
 

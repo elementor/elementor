@@ -120,7 +120,11 @@ class Test_Module extends Test_Base {
 		return $method->invoke( $module );
 	}
 
-	public function test_onboarding_config_includes_planner_exit_when_experiment_active() {
+	public function test_onboarding_config_includes_planner_exit_when_experiment_active_and_url_configured() {
+		if ( ! defined( 'SITE_BUILDER_URL' ) || '' === SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'SITE_BUILDER_URL is not defined in this environment.' );
+		}
+
 		$this->activate_onboarding_planner_exit_experiment();
 
 		try {
@@ -130,7 +134,27 @@ class Test_Module extends Test_Base {
 			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
 
 			$this->assertTrue( $settings['shouldRedirectToSitePlanner'] );
-			$this->assertStringContainsString( '#site-builder', $settings['siteBuilderUrl'] );
+			$this->assertSame( SITE_BUILDER_URL, $settings['siteBuilderUrl'] );
+		} finally {
+			$this->deactivate_onboarding_planner_exit_experiment();
+		}
+	}
+
+	public function test_onboarding_config_excludes_planner_exit_when_url_not_configured() {
+		if ( defined( 'SITE_BUILDER_URL' ) && '' !== SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'SITE_BUILDER_URL is defined in this environment.' );
+		}
+
+		$this->activate_onboarding_planner_exit_experiment();
+
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+			$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
+			$this->assertSame( '', $settings['siteBuilderUrl'] );
 		} finally {
 			$this->deactivate_onboarding_planner_exit_experiment();
 		}
@@ -145,7 +169,6 @@ class Test_Module extends Test_Base {
 		$settings = Plugin::$instance->app->get_settings( 'onboarding' );
 
 		$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
-		$this->assertStringContainsString( '#site-builder', $settings['siteBuilderUrl'] );
 	}
 
 	private function activate_onboarding_planner_exit_experiment(): void {
