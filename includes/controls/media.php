@@ -51,6 +51,14 @@ class Control_Media extends Control_Base_Multiple {
 		];
 	}
 
+	public function on_export( $settings ) {
+		if ( ! empty( $settings['url'] ) ) {
+			do_action( 'elementor/templates/collect_media_url', $settings['url'], $settings );
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import media images.
 	 *
@@ -67,6 +75,17 @@ class Control_Media extends Control_Base_Multiple {
 	public function on_import( $settings ) {
 		if ( empty( $settings['url'] ) ) {
 			return $settings;
+		}
+
+		$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $settings['url'] );
+		$imported_attachment = false;
+
+		if ( $local_file_path !== $settings['url'] && file_exists( $local_file_path ) ) {
+			$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path );
+		}
+
+		if ( $imported_attachment ) {
+			return $imported_attachment;
 		}
 
 		$settings = Plugin::$instance->templates_manager->get_import_images_instance()->import( $settings );
@@ -314,33 +333,62 @@ class Control_Media extends Control_Base_Multiple {
 	}
 
 	private function maybe_display_io_hints() {
-		if ( Hints::should_display_hint( 'image-optimization' ) ) {
-			$content_text = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
-			$button_text = Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Plugin', 'elementor' ) : esc_html__( 'Install Plugin', 'elementor' );
-			$action_url = Hints::get_plugin_action_url( 'image-optimization' );
-		} elseif ( Hints::should_display_hint( 'image-optimization-connect' ) ) {
-			$content_text = esc_html__( "This image isn't optimized. You need to connect your Image Optimizer account first.", 'elementor' );
-			$button_text = esc_html__( 'Connect Now', 'elementor' );
-			$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
-		} else {
+		$plugin_slug = 'image-optimization';
+
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
 
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimization is included in your ONE subscription.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-image-one-install';
+			} elseif ( ! $is_active ) {
+				$content = esc_html__( 'Your ONE subscription includes Image Optimization. Activate it to optimize images and improve site performance.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-image-one-activate';
+			}
+		} else {
+			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimization.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-image-install';
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-image-activate';
+			}
+		}
 		?>
-		<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+		<div class="elementor-control-media__promotions" role="alert">	
 			<?php
 			Hints::get_notice_template( [
-				'display' => ! Hints::is_dismissed( 'image-optimization' ),
+				'display' => ! Hints::is_dismissed( $plugin_slug ),
 				'type' => 'info',
-				'content' => $content_text,
 				'icon' => true,
+				'heading' => '',
+				'content' => $content,
 				'dismissible' => 'image_optimizer_hint',
 				'button_text' => $button_text,
 				'button_event' => 'image_optimizer_hint',
 				'button_data' => [
-					'action_url' => $action_url,
+					'action_url' => $button_url,
+					'source' => $source,
 				],
-			] ); ?>
+			] );
+			?>
 		</div>
 		<?php
 	}

@@ -1,5 +1,5 @@
 import { type Dependency, type DependencyTerm, type PropValue } from '../../types';
-import { evaluateTerm, isDependencyMet } from '../prop-dependency-utils';
+import { evaluateTerm, extractValue, isDependencyMet } from '../prop-dependency-utils';
 
 type TestCase = DependencyTerm & {
 	description: string;
@@ -354,7 +354,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [],
 				};
 
-				expect( isDependencyMet( dependency, {} ) ).toBe( true );
+				expect( isDependencyMet( dependency, {} ).isMet ).toBe( true );
 			} );
 
 			it( 'should return true when all terms are met (AND)', () => {
@@ -385,7 +385,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should return false when any term is not met (AND)', () => {
@@ -416,7 +416,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
 			} );
 
 			it( 'should return true when any term is met (OR)', () => {
@@ -446,7 +446,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should return false when no terms are met (OR)', () => {
@@ -475,7 +475,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
 			} );
 		} );
 
@@ -522,7 +522,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should handle nested OR dependencies', () => {
@@ -567,7 +567,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should handle mixed nested dependencies', () => {
@@ -612,7 +612,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 		} );
 
@@ -624,7 +624,7 @@ describe( 'prop-dependency-utils', () => {
 						value: 'production',
 					},
 					version: {
-						$$type: 'nubmer',
+						$$type: 'number',
 						value: 2.1,
 					},
 					feature_flags: {
@@ -673,7 +673,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should handle complex conditional logic', () => {
@@ -728,7 +728,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 		} );
 
@@ -754,7 +754,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				} as unknown as Dependency;
 
-				expect( () => isDependencyMet( dependency, values ) ).toThrow();
+				expect( () => isDependencyMet( dependency, values ).isMet ).toThrow();
 			} );
 
 			it( 'should handle single term dependencies', () => {
@@ -780,7 +780,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 			} );
 
 			it( 'should handle single term dependencies that fail', () => {
@@ -806,8 +806,255 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isDependencyMet( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
 			} );
+		} );
+	} );
+
+	describe( 'extractValue', () => {
+		it( 'should extract a value from a simple path', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'string',
+				value: 'value',
+			} );
+		} );
+
+		it( 'should extract a value from a nested path through non-transformable objects', () => {
+			const values = {
+				level1: {
+					level2: {
+						key: {
+							$$type: 'number',
+							value: 42,
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'level1', 'level2', 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'number',
+				value: 42,
+			} );
+		} );
+
+		it( 'should extract a value from a nested path through transformable objects', () => {
+			const values = {
+				level1: {
+					$$type: 'object',
+					value: {
+						key: {
+							$$type: 'boolean',
+							value: true,
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'level1', 'key' ], values );
+
+			expect( result ).toEqual( {
+				$$type: 'boolean',
+				value: true,
+			} );
+		} );
+
+		it( 'should return null/undefined for non-existent paths', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [ 'nonExistent' ], values );
+
+			expect( result ).toBeUndefined();
+		} );
+
+		it( 'should return undefined when path is broken mid-way', () => {
+			const values = {
+				level1: {
+					$$type: 'string',
+					value: 'leaf',
+				},
+			};
+
+			// Trying to access property of a string value which isn't an object in the structure
+			const result = extractValue( [ 'level1', 'level2' ], values );
+
+			expect( result ).toBeUndefined();
+		} );
+
+		it( 'should handle nestedPath parameter', () => {
+			const values = {
+				key: {
+					$$type: 'object',
+					value: {
+						nested: {
+							deep: 'found',
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values, [ 'nested', 'deep' ] );
+
+			expect( result ).toEqual( {
+				$$type: 'unknown',
+				value: 'found',
+			} );
+		} );
+
+		it( 'should return undefined for invalid nestedPath', () => {
+			const values = {
+				key: {
+					$$type: 'object',
+					value: {
+						nested: 'value',
+					},
+				},
+			};
+
+			const result = extractValue( [ 'key' ], values, [ 'nested', 'invalid' ] );
+
+			expect( result ).toEqual( {
+				$$type: 'unknown',
+				value: undefined,
+			} );
+		} );
+
+		it( 'should handle empty path (return root)', () => {
+			const values = {
+				key: {
+					$$type: 'string',
+					value: 'value',
+				},
+			};
+
+			const result = extractValue( [], values );
+
+			expect( result ).toEqual( values );
+		} );
+
+		it( 'should unwrap overridable leaf to origin_value for dependency checks', () => {
+			const values = {
+				title: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'k1',
+						origin_value: { $$type: 'string', value: 'hello' },
+					},
+				},
+			};
+
+			const result = extractValue( [ 'title' ], values );
+
+			expect( result ).toEqual( { $$type: 'string', value: 'hello' } );
+		} );
+
+		it( 'should keep full overridable wrapper when unwrapOverridableLeaf is false', () => {
+			const overridable = {
+				$$type: 'overridable' as const,
+				value: {
+					override_key: 'k1',
+					origin_value: { $$type: 'string', value: 'hello' },
+				},
+			};
+			const values = { title: overridable };
+
+			const result = extractValue( [ 'title' ], values, [], { unwrapOverridableLeaf: false } );
+
+			expect( result ).toEqual( overridable );
+		} );
+
+		it( 'should traverse into overridable origin for nested paths', () => {
+			const values = {
+				block: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'b1',
+						origin_value: {
+							$$type: 'object',
+							value: {
+								inner: { $$type: 'boolean', value: true },
+							},
+						},
+					},
+				},
+			};
+
+			const result = extractValue( [ 'block', 'inner' ], values );
+
+			expect( result ).toEqual( { $$type: 'boolean', value: true } );
+		} );
+	} );
+
+	describe( 'isDependencyMet with overridable affecting props', () => {
+		const overridable = ( origin: { $$type: string; value: unknown } | null ) => ( {
+			$$type: 'overridable',
+			value: { override_key: 'k', origin_value: origin },
+		} );
+
+		const eqMode: Dependency = {
+			relation: 'and',
+			terms: [ { operator: 'eq', path: [ 'mode' ], value: 'advanced' } ],
+		};
+
+		it( 'should compare against origin value when affecting prop is overridable', () => {
+			const values = { mode: overridable( { $$type: 'string', value: 'advanced' } ) };
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( true );
+		} );
+
+		it( 'should be unaffected by dependent prop being overridable (only affecting path is read)', () => {
+			const values = {
+				mode: { $$type: 'string', value: 'advanced' },
+				dependent: overridable( { $$type: 'string', value: 'irrelevant' } ),
+			};
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( true );
+		} );
+
+		it( 'should fail eq check when overridable origin value differs', () => {
+			const values = { mode: overridable( { $$type: 'string', value: 'basic' } ) };
+
+			expect( isDependencyMet( eqMode, values ).isMet ).toBe( false );
+		} );
+
+		it( 'should treat overridable wrapper with null origin as non-existent for `exists`', () => {
+			const values = { mode: overridable( null ) };
+			const dependency: Dependency = {
+				relation: 'and',
+				terms: [ { operator: 'exists', path: [ 'mode' ], value: null } ],
+			};
+
+			expect( isDependencyMet( dependency, values ).isMet ).toBe( false );
+		} );
+
+		it( 'should resolve nested path through overridable affecting prop', () => {
+			const values = {
+				link: overridable( {
+					$$type: 'object',
+					value: { destination: { $$type: 'string', value: 'action' } },
+				} ),
+			};
+			const dependency: Dependency = {
+				relation: 'and',
+				terms: [ { operator: 'eq', path: [ 'link', 'destination' ], value: 'action' } ],
+			};
+
+			expect( isDependencyMet( dependency, values ).isMet ).toBe( true );
 		} );
 	} );
 } );

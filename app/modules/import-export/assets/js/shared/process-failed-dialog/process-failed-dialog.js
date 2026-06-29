@@ -14,6 +14,7 @@ const messagesContent = {
 	general: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
+			{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
@@ -27,6 +28,7 @@ const messagesContent = {
 	'invalid-zip-file': {
 		title: __( 'Couldn’t use the .zip file', 'elementor' ),
 		text: <>
+			{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
@@ -36,10 +38,12 @@ const messagesContent = {
 	timeout: {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
+			{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 			{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
 			<InlineLink url={ elementorAppConfig.pages_url } >
 				{ __( 'Pages', 'elementor' ) }
 			</InlineLink>
+			{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 			{ __( ', try again and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
@@ -49,7 +53,7 @@ const messagesContent = {
 	'invalid-kit-library-zip-error': {
 		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
@@ -78,6 +82,10 @@ const messagesContent = {
 	'failed-to-fetch-quota': {
 		title: __( 'Couldn’t fetch quota', 'elementor' ),
 		text: __( 'Failed to fetch quota.', 'elementor' ),
+	},
+	'insufficient-storage-quota': {
+		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
+		text: __( 'The export failed because it will pass the maximum Website Templates storage you have available.', 'elementor' ),
 	},
 };
 

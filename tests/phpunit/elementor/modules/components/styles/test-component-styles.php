@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Components\Styles;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\Components\Styles\Component_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,9 +69,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-some-widget',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
-						'value' => '50',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 50 ] ],
 					],
 				],
 			],
@@ -81,9 +81,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -93,9 +93,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -105,9 +105,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
-						'value' => '250',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 250 ] ],
 					],
 				],
 			],
@@ -138,8 +138,13 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'settings' => [
 					'post_id' => [
-						'$$type' => 'string',
-						'value' => '180',
+						'$$type' => 'component-instance',
+						'value' => [
+							'component_id' => [
+								'$$type' => 'number',
+								'value' => [ '$$type' => 'number', 'value' => 180 ],
+							],
+						],
 					],
 				],
 			],
@@ -155,6 +160,71 @@ class Test_Component_Styles extends Elementor_Test_Base {
 		$this->assertEquals( $expected_post_ids, $this->rendered_post_ids, 'Should render original post only' );
 	}
 
+	public function test_related_posts_filter__returns_component_ids() {
+		// Arrange
+		$component_styles = new Component_Styles();
+		$component_styles->register_hooks();
+
+		$component_id = 180;
+
+		$post_id = $this->make_mock_post_with_elements( [
+			[
+				'id'         => 'e-component-1',
+				'elType'     => 'widget',
+				'widgetType' => 'e-component',
+				'settings'   => [
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value'  => [ 'component_id' => [ '$$type' => 'number', 'value' => $component_id ] ],
+					],
+				],
+			],
+		] )->get_main_id();
+
+		// Act
+		$related = apply_filters( 'elementor/document/related_posts', [], $post_id );
+
+		// Assert
+		$this->assertContains( $component_id, $related, 'Component id should be returned via the filter.' );
+	}
+
+	public function test_related_posts_filter__reuses_traversal_cache_from_render() {
+		// Arrange
+		$component_styles = new Component_Styles();
+		$component_styles->register_hooks();
+
+		$component_id = 250;
+
+		$post_id = $this->make_mock_post_with_elements( [
+			[
+				'id'         => 'e-component-1',
+				'elType'     => 'widget',
+				'widgetType' => 'e-component',
+				'settings'   => [
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value'  => [ 'component_id' => [ '$$type' => 'number', 'value' => $component_id ] ],
+					],
+				],
+			],
+		] )->get_main_id();
+
+		// First call via render — populates the traversal cache.
+		do_action( 'elementor/post/render', $post_id );
+
+		$cache_validity = new Cache_Validity();
+		$this->assertTrue(
+			$cache_validity->is_valid( [ Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
+			'Cache should be warm after render.'
+		);
+
+		// Act — filter call should be O(1) (reads from cache, no traversal).
+		$related = apply_filters( 'elementor/document/related_posts', [], $post_id );
+
+		// Assert — same result.
+		$this->assertContains( $component_id, $related );
+	}
+
 	public function test_cache_validity_upon_post_update() {
 		// Arrange
 		$component_styles = new Component_Styles();
@@ -166,9 +236,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component_id' => [
-						'$$type' => 'string',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],

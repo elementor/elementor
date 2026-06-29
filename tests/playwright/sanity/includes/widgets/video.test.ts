@@ -6,14 +6,11 @@ import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
 import VideoWidget from '../../../pages/widgets/video';
 import videos from '../../../testData/video.json';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Video tests inside a container @video', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: true } );
-		await page.close();
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments activate container' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -71,11 +68,13 @@ test.describe( 'Video tests inside a container @video', () => {
 			await editor.setTextControlValue( `${ video }_url`, player.link );
 
 			// Assert 1 - in the Editor.
+			await videoWidget.waitForVideoSrcParams( { isPublished: false, expectedValues: player.expected, player: video } );
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
 
 			// Assert 2 - in the Frontend.
 			await editor.publishAndViewPage();
+			await videoWidget.waitForVideoSrcParams( { isPublished: true, expectedValues: player.expected, player: video } );
 			src = await videoWidget.getVideoSrc( true );
 			videoWidget.verifySrcParams( src, player.expected, video );
 		} );

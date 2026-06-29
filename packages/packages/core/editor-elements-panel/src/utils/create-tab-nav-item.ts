@@ -6,9 +6,10 @@ type Args = {
 	label: string;
 	route: string;
 	isActive: boolean;
+	position?: number;
 };
 
-export function createTabNavItem( { id, label, route, isActive }: Args ): void {
+export function createTabNavItem( { id, label, route, isActive, position }: Args ): void {
 	const wrapper = getNavigationWrapperElement();
 
 	const btn = document.createElement( 'button' );
@@ -25,5 +26,9 @@ export function createTabNavItem( { id, label, route, isActive }: Args ): void {
 		getWindow().$e.route( route );
 	} );
 
-	wrapper.appendChild( btn );
+	if ( position !== undefined && wrapper.children[ position ] ) {
+		wrapper.insertBefore( btn, wrapper.children[ position ] );
+	} else {
+		wrapper.appendChild( btn );
+	}
 }

@@ -28,6 +28,10 @@ class Mock_Prop_Type implements Prop_Type {
 		return null;
 	}
 
+	public function get_initial_value() {
+		return null;
+	}
+
 	public function validate( $value ): bool {
 		return true;
 	}

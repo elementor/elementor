@@ -4,7 +4,7 @@ import Kit from '../models/kit';
 import useKitCallToAction, { TYPE_PROMOTION } from '../hooks/use-kit-call-to-action';
 import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../context/tracking-context';
 import { __ } from '@wordpress/i18n';
 import './kit-list-item.scss';
 
@@ -13,18 +13,7 @@ const KitListItem = ( props ) => {
 	const promotionUrl = useAddKitPromotionUTM( subscriptionPlan.promotion_url, props.model.id, props.model.title );
 	const ctaText = __( 'Upgrade', 'elementor' );
 	const showPromotion = TYPE_PROMOTION === type;
-
-	const eventTracking = ( command ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: props.model.title,
-				grid_location: props.index,
-				search_term: props.queryParams,
-				page_source: props.source && '/' === props.source ? 'all kits' : 'favorites',
-			},
-		);
-	};
+	const tracking = useTracking();
 
 	return (
 		<Card className="e-kit-library__kit-item">
@@ -61,7 +50,9 @@ const KitListItem = ( props ) => {
 								text={ __( 'View Demo', 'elementor' ) }
 								icon="eicon-preview-medium"
 								url={ `/kit-library/preview/${ props.model.id }` }
-								onClick={ () => eventTracking( 'kit-library/check-out-kit' ) }
+								onClick={ () => {
+									tracking.trackKitdemoClicked( props.model.id, props.model.title, props.index, subscriptionPlan.label );
+								} }
 							/>
 							{
 								showPromotion && (
@@ -71,6 +62,7 @@ const KitListItem = ( props ) => {
 										icon="eicon-external-link-square"
 										url={ promotionUrl }
 										target="_blank"
+										onClick={ () => tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan.label ) }
 									/>
 								)
 							}

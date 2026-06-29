@@ -3,7 +3,7 @@ import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-reposit
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-import { getClassesProp, getTitleForContainers } from '../utils';
+import { getClassesProp, getTitleForContainers } from '../../utils/command-utils';
 
 type ResetElementStyleArgs = {
 	containers: V1Element[];

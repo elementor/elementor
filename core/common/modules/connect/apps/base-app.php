@@ -531,7 +531,7 @@ abstract class Base_App {
 	 *
 	 * @return false|string
 	 */
-	private function generate_signature( $payload = [] ) {
+	protected function generate_signature( $payload = [] ) {
 		return hash_hmac(
 			'sha256',
 			wp_json_encode( $payload, JSON_NUMERIC_CHECK ),
@@ -671,9 +671,7 @@ abstract class Base_App {
 					<?php echo wp_json_encode( $data ); ?>
 				);
 
-				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success' ),
-					<?php echo wp_json_encode( $data ); ?>
-				);
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success', { detail: <?php echo wp_json_encode( $data ); ?> } ) );
 
 				window.close();
 				opener.focus();
@@ -800,7 +798,7 @@ abstract class Base_App {
 		}
 	}
 
-	private function get_generated_urls( $endpoint ) {
+	protected function get_generated_urls( $endpoint ) {
 		$base_urls = $this->get_api_url();
 
 		if ( ! is_array( $base_urls ) ) {

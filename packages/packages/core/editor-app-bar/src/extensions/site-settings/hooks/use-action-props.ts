@@ -2,7 +2,7 @@ import {
 	__privateRunCommand as runCommand,
 	__privateUseRouteStatus as useRouteStatus,
 } from '@elementor/editor-v1-adapters';
-import { AdjustmentsHorizontalIcon } from '@elementor/icons';
+import { SettingsIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
@@ -14,7 +14,7 @@ export default function useActionProps(): ToggleActionProps {
 
 	return {
 		title: __( 'Site Settings', 'elementor' ),
-		icon: AdjustmentsHorizontalIcon,
+		icon: SettingsIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
 			const config = extendedWindow?.elementorCommon?.eventsManager?.config;

@@ -3,14 +3,11 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import ContextMenu from '../../../../pages/widgets/context-menu';
 import widgets from '../../../../enums/widgets';
+import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Section tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: false } );
-		await page.close();
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments deactivate container' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -48,13 +45,13 @@ test.describe( 'Section tests', () => {
 
 		// Assert.
 		// Verify that the first section has a `data-id` value of `sectionId1`.
-		expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=0' ).getAttribute( 'data-id' ) ).toEqual( sectionId1 );
+		await expect( editor.getPreviewFrame().locator( '.elementor-section >> nth=0' ) ).toHaveAttribute( 'data-id', sectionId1 );
 		// Verify that the second section doesn't have a `data-id` value of `sectionId1` or `sectionId2`.
-		expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId1 );
-		expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).getAttribute( 'data-id' ) ).not.toEqual( sectionId2 );
+		await expect( editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ) ).not.toHaveAttribute( 'data-id', sectionId1 );
+		await expect( editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ) ).not.toHaveAttribute( 'data-id', sectionId2 );
 		// Verify that the second section has a button widget.
 		await expect( editor.getPreviewFrame().locator( '.elementor-section >> nth=1' ).locator( '.elementor-widget' ) ).toHaveClass( /elementor-widget-button/ );
 		// Verify that the third section has `a `data-id` value of `sectionId2`.
-		expect( await editor.getPreviewFrame().locator( '.elementor-section >> nth=2' ).getAttribute( 'data-id' ) ).toEqual( sectionId2 );
+		await expect( editor.getPreviewFrame().locator( '.elementor-section >> nth=2' ) ).toHaveAttribute( 'data-id', sectionId2 );
 	} );
 } );

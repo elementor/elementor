@@ -5,14 +5,16 @@ import {
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
 } from '@elementor/editor-controls';
-import { useSelectedElement } from '@elementor/editor-elements';
 import { __ } from '@wordpress/i18n';
 
+import { useElement } from '../../../contexts/element-context';
 import { useStyle } from '../../../contexts/style-context';
 import { StylesField } from '../../../controls-registry/styles-field';
+import { canElementHaveChildren } from '../../../utils/can-element-have-children';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
+import { BlendModeField } from './blend-mode-field';
 import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
@@ -22,11 +24,15 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
-	const { element } = useSelectedElement();
+	const { element } = useElement();
 	const { meta } = useStyle();
+
+	const canHaveChildren = canElementHaveChildren( element?.id ?? '' );
 
 	return (
 		<SectionContent gap={ 1 }>
+			<BlendModeField />
+			<PanelDivider />
 			<OpacityControlField />
 			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>
@@ -34,7 +40,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl />
+				<TransformRepeaterControl showChildrenPerspective={ canHaveChildren } />
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>

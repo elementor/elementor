@@ -18,7 +18,7 @@ import { Grid } from '@elementor/app-ui';
 import { useCallback, useEffect } from 'react';
 import { useLastFilterContext } from '../../context/last-filter-context';
 import { useLocation } from '@reach/router';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useTracking } from '../../context/tracking-context';
 
 import './index.scss';
 
@@ -107,12 +107,17 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 	}, [] );
 }
 
-export default function Index( props ) {
+export default function Index( {
+	path,
+	initialQueryParams = {},
+	renderNoResultsComponent = ( { defaultComponent } ) => defaultComponent,
+} ) {
 	usePageTitle( {
 		title: __( 'Website Templates', 'elementor' ),
 	} );
 
-	const menuItems = useMenuItems( props.path );
+	const menuItems = useMenuItems( path );
+	const tracking = useTracking();
 
 	const {
 		data,
@@ -125,9 +130,17 @@ export default function Index( props ) {
 		clearQueryParams,
 		forceRefetch,
 		isFilterActive,
-	} = useKits( props.initialQueryParams );
+	} = useKits( initialQueryParams );
 
-	useRouterQueryParams( queryParams, setQueryParams, [ 'ready', ...Object.keys( props.initialQueryParams ) ] );
+	useRouterQueryParams( queryParams, setQueryParams, [ 'ready', ...Object.keys( initialQueryParams ) ] );
+
+	useEffect( () => {
+		if ( ! queryParams.search ) {
+			return;
+		}
+
+		tracking.trackKitlibSearchSubmitted( queryParams.search, data.length );
+	}, [ queryParams.search, data.length, tracking ] );
 
 	const {
 		data: taxonomiesData,
@@ -137,20 +150,29 @@ export default function Index( props ) {
 
 	const [ selectTaxonomy, unselectTaxonomy ] = useTaxonomiesSelection( setQueryParams );
 
-	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'home page',
-				element_position: elementPosition,
-				search_term: search,
-				sort_direction: direction,
-				sort_type: sortType,
-				event_type: eventType,
-				action,
-			},
-		);
-	};
+	const options = [
+		{
+			label: __( 'Featured', 'elementor' ),
+			value: 'featuredIndex',
+			defaultOrder: 'asc',
+			orderDisabled: true,
+		},
+		{
+			label: __( 'New', 'elementor' ),
+			value: 'createdAt',
+			defaultOrder: 'desc',
+		},
+		{
+			label: __( 'Popular', 'elementor' ),
+			value: 'popularityIndex',
+			defaultOrder: 'desc',
+		},
+		{
+			label: __( 'Trending', 'elementor' ),
+			value: 'trendIndex',
+			defaultOrder: 'desc',
+		},
+	];
 
 	return (
 		<Layout
@@ -160,7 +182,7 @@ export default function Index( props ) {
 						selected={ queryParams.taxonomies }
 						onSelect={ selectTaxonomy }
 						taxonomies={ taxonomiesData }
-						category={ props.path }
+						category={ path }
 					/> }
 					menuItems={ menuItems }
 				/>
@@ -179,12 +201,10 @@ export default function Index( props ) {
 				<Grid container className="e-kit-library__index-layout-heading">
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
-							// eslint-disable-next-line @wordpress/i18n-ellipsis
 							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 							} }
 						/>
 						{ isFilterActive && <FilterIndicationText
@@ -199,34 +219,14 @@ export default function Index( props ) {
 						className="e-kit-library__index-layout-heading-sort"
 					>
 						<SortSelect
-							options={ [
-								{
-									label: __( 'Featured', 'elementor' ),
-									value: 'featuredIndex',
-									defaultOrder: 'asc',
-									orderDisabled: true,
-								},
-								{
-									label: __( 'New', 'elementor' ),
-									value: 'createdAt',
-									defaultOrder: 'desc',
-								},
-								{
-									label: __( 'Popular', 'elementor' ),
-									value: 'popularityIndex',
-									defaultOrder: 'desc',
-								},
-								{
-									label: __( 'Trending', 'elementor' ),
-									value: 'trendIndex',
-									defaultOrder: 'desc',
-								},
-							] }
+							options={ options }
 							value={ queryParams.order }
 							onChange={ ( order ) => setQueryParams( ( prev ) => ( { ...prev, order } ) ) }
-							onChangeSortDirection={ ( direction ) => eventTracking( 'kit-library/change-sort-direction', 'top_area_sort', null, direction ) }
-							onChangeSortValue={ ( value ) => eventTracking( 'kit-library/change-sort-value', 'top_area_sort', null, null, value ) }
-							onSortSelectOpen={ () => eventTracking( 'kit-library/change-sort-type', 'top_area_sort', null, null, null, 'expand' ) }
+							onChangeSortValue={ ( value ) => {
+								const label = options.find( ( option ) => option.value === value ).label;
+								setQueryParams( ( prev ) => ( { ...prev, order: { ...prev.order, by: value } } ) );
+								tracking.trackKitlibSorterSelected( label );
+							} }
 						/>
 					</Grid>
 				</Grid>
@@ -244,22 +244,23 @@ export default function Index( props ) {
 								} }
 							/>
 						}
-						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } queryParams={ queryParams } source={ props.path } /> }
+						{ isSuccess && 0 < data.length && queryParams.ready && <KitList data={ data } queryParams={ queryParams } source={ path } /> }
 						{
-							isSuccess && 0 === data.length && queryParams.ready && props.renderNoResultsComponent( {
+							isSuccess && 0 === data.length && queryParams.ready && renderNoResultsComponent( {
 								defaultComponent: <ErrorScreen
 									title={ __( 'No results matched your search.', 'elementor' ) }
+									// eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
 									description={ __( 'Try different keywords or ', 'elementor' ) }
 									button={ {
 										text: __( 'Continue browsing.', 'elementor' ),
 										action: clearQueryParams,
-										category: props.path,
+										category: path,
 									} }
 								/>,
 								isFilterActive,
 							} )
 						}
-						<EnvatoPromotion category={ props.path } />
+						<EnvatoPromotion category={ path } />
 					</>
 				</Content>
 			</div>
@@ -271,9 +272,4 @@ Index.propTypes = {
 	path: PropTypes.string,
 	initialQueryParams: PropTypes.object,
 	renderNoResultsComponent: PropTypes.func,
-};
-
-Index.defaultProps = {
-	initialQueryParams: {},
-	renderNoResultsComponent: ( { defaultComponent } ) => defaultComponent,
 };

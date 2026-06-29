@@ -9,7 +9,12 @@ import { StyleRenderer } from '../style-renderer';
 // Mock dependencies
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseListenTo: jest.fn(),
+	__privateGetCanvasIframeDocument: jest.fn(),
 	commandEndEvent: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-documents', () => ( {
+	getCurrentDocument: jest.fn().mockReturnValue( { id: 1 } ),
 } ) );
 
 jest.mock( '@elementor/ui', () => ( {
@@ -18,10 +23,6 @@ jest.mock( '@elementor/ui', () => ( {
 
 jest.mock( '../../hooks/use-style-items', () => ( {
 	useStyleItems: jest.fn(),
-} ) );
-
-jest.mock( '../../sync/get-canvas-iframe-document', () => ( {
-	getCanvasIframeDocument: jest.fn(),
 } ) );
 
 jest.mock( '../../hooks/use-documents-css-links', () => ( {
@@ -46,8 +47,8 @@ describe( '<StyleRenderer />', () => {
 		const mockContainer = document.createElement( 'div' );
 
 		const mockCssItems = [
-			{ id: 'style1', value: '.test { color: red; }', breakpoint: 'desktop' },
-			{ id: 'style2', value: '.test2 { color: blue; }', breakpoint: 'desktop' },
+			{ id: 'style1', value: '.test { color: red; }', breakpoint: 'desktop', state: null },
+			{ id: 'style2', value: '.test2 { color: blue; }', breakpoint: 'desktop', state: null },
 		];
 
 		const mockLinkAttrs = [

@@ -85,6 +85,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'mcp',
 			'wp-rest',
 			'safe-mode',
 			'ai',
@@ -100,6 +101,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'element-manager',
+			'pro-free-trial-popup',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
@@ -126,12 +128,20 @@ class Modules_Manager {
 			'atomic-widgets',
 			'global-classes',
 			'variables',
+			'design-system-sync',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',
 			'components',
+			'interactions',
+			'feedback',
+			'widget-creation',
+			'editor-one',
+			'markdown-render',
+			'elementor-capabilities-mcp',
+			'assets-manager',
 		];
 	}
 

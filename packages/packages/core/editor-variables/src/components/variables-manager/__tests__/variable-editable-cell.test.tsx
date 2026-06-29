@@ -149,4 +149,24 @@ describe( 'VariableEditableCell', () => {
 		// Assert
 		expect( mockOnChange ).toHaveBeenCalledWith( 'initial value' );
 	} );
+
+	it( 'should enter edit mode automatically when autoEdit is true', () => {
+		// Arrange
+		const mockOnAutoEditComplete = jest.fn();
+		const props = {
+			initialValue: 'auto-edit value',
+			editableElement: TestEditableElement,
+			children: <span>auto-edit value</span>,
+			onChange: mockOnChange,
+			autoEdit: true,
+			onAutoEditComplete: mockOnAutoEditComplete,
+		};
+
+		// Act
+		render( <VariableEditableCell { ...props } /> );
+
+		// Assert
+		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
+		expect( mockOnAutoEditComplete ).toHaveBeenCalled();
+	} );
 } );

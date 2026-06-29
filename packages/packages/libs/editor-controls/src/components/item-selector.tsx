@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
-import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import { PopoverBody, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -23,6 +23,9 @@ type ItemSelectorProps = {
 	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
 	disabledItems?: string[];
+	id?: string;
+	footer?: ReactNode;
+	categoryItemContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 export const ItemSelector = ( {
@@ -36,6 +39,9 @@ export const ItemSelector = ( {
 	onDebounce = () => {},
 	icon,
 	disabledItems,
+	id = 'item-selector',
+	footer,
+	categoryItemContentTemplate,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -53,72 +59,77 @@ export const ItemSelector = ( {
 	};
 
 	return (
-		<PopoverBody width={ sectionWidth }>
+		<PopoverBody width={ sectionWidth } id={ id }>
 			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize="tiny" /> } />
-			<PopoverSearch
+			<SearchField
 				value={ searchValue }
 				onSearch={ handleSearch }
 				placeholder={ __( 'Search', 'elementor' ) }
+				id={ id + '-search' }
 			/>
 
 			<Divider />
 
-			{ filteredItemsList.length > 0 ? (
-				<ItemList
-					itemListItems={ filteredItemsList }
-					setSelectedItem={ onItemChange }
-					handleClose={ handleClose }
-					selectedItem={ selectedItem }
-					itemStyle={ itemStyle }
-					onDebounce={ onDebounce }
-				/>
-			) : (
-				<Stack
-					alignItems="center"
-					justifyContent="center"
-					height="100%"
-					p={ 2.5 }
-					gap={ 1.5 }
-					overflow="hidden"
-				>
-					<IconComponent fontSize="large" />
-					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
-						<Typography align="center" variant="subtitle2" color="text.secondary">
-							{ __( 'Sorry, nothing matched', 'elementor' ) }
-						</Typography>
-						<Typography
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
-						>
-							<span>&ldquo;</span>
-							<Box
-								component="span"
-								sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
-							>
-								{ searchValue }
-							</Box>
-							<span>&rdquo;.</span>
-						</Typography>
-					</Box>
-					<Typography
-						align="center"
-						variant="caption"
-						color="text.secondary"
-						sx={ { display: 'flex', flexDirection: 'column' } }
+			<Box sx={ { flex: 1, overflow: 'auto', minHeight: 0 } }>
+				{ filteredItemsList.length > 0 ? (
+					<ItemList
+						itemListItems={ filteredItemsList }
+						setSelectedItem={ onItemChange }
+						handleClose={ handleClose }
+						selectedItem={ selectedItem }
+						itemStyle={ itemStyle }
+						onDebounce={ onDebounce }
+						categoryItemContentTemplate={ categoryItemContentTemplate }
+					/>
+				) : (
+					<Stack
+						alignItems="center"
+						justifyContent="center"
+						height="100%"
+						p={ 2.5 }
+						gap={ 1.5 }
+						overflow="hidden"
 					>
-						{ __( 'Try something else.', 'elementor' ) }
-						<Link
-							color="secondary"
+						<IconComponent fontSize="large" />
+						<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
+							<Typography align="center" variant="subtitle2" color="text.secondary">
+								{ __( 'Sorry, nothing matched', 'elementor' ) }
+							</Typography>
+							<Typography
+								variant="subtitle2"
+								color="text.secondary"
+								sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
+							>
+								<span>&ldquo;</span>
+								<Box
+									component="span"
+									sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
+								>
+									{ searchValue }
+								</Box>
+								<span>&rdquo;.</span>
+							</Typography>
+						</Box>
+						<Typography
+							align="center"
 							variant="caption"
-							component="button"
-							onClick={ () => setSearchValue( '' ) }
+							color="text.secondary"
+							sx={ { display: 'flex', flexDirection: 'column' } }
 						>
-							{ __( 'Clear & try again', 'elementor' ) }
-						</Link>
-					</Typography>
-				</Stack>
-			) }
+							{ __( 'Try something else.', 'elementor' ) }
+							<Link
+								color="secondary"
+								variant="caption"
+								component="button"
+								onClick={ () => setSearchValue( '' ) }
+							>
+								{ __( 'Clear & try again', 'elementor' ) }
+							</Link>
+						</Typography>
+					</Stack>
+				) }
+			</Box>
+			{ footer }
 		</PopoverBody>
 	);
 };
@@ -131,6 +142,7 @@ type ItemListProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	disabledItems?: string[];
+	categoryItemContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 const ItemList = ( {
@@ -140,12 +152,12 @@ const ItemList = ( {
 	selectedItem,
 	itemStyle = () => ( {} ),
 	onDebounce = () => {},
+	categoryItemContentTemplate,
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
-	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
-		getVirtualIndexes().forEach( ( index ) => {
-			const item = itemListItems[ index ];
+	const debouncedVirtualizeChange = useDebounce( ( visibleItems: SelectableItem[] ) => {
+		visibleItems.forEach( ( item ) => {
 			if ( item && item.type === 'item' ) {
 				onDebounce( item.value );
 			}
@@ -163,6 +175,7 @@ const ItemList = ( {
 			onClose={ handleClose }
 			itemStyle={ memoizedItemStyle }
 			data-testid="item-list"
+			categoryItemContentTemplate={ categoryItemContentTemplate }
 		/>
 	);
 };

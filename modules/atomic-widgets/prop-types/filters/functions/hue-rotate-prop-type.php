@@ -19,10 +19,10 @@ class Hue_Rotate_Prop_Type extends Object_Prop_Type {
 		return [
 			'size' => Size_Prop_Type::make()
 				->units( Size_Constants::hue_rotate_filter() )
-				->default_unit( Size_Constants::UNIT_ANGLE_DEG )
+				->default_unit( Size_Constants::UNIT_DEG )
 				->default( [
 					'size' => 0,
-					'unit' => Size_Constants::UNIT_ANGLE_DEG,
+					'unit' => Size_Constants::UNIT_DEG,
 				] ),
 		];
 	}

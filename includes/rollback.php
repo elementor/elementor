@@ -98,7 +98,7 @@ class Rollback {
 			}
 
 			h1 {
-				background: #D30C5C;
+				background: #D40C5C;
 				text-align: center;
 				color: #fff !important;
 				padding: 70px !important;
@@ -167,8 +167,21 @@ class Rollback {
 
 		$this->print_inline_style();
 
+		add_filter( 'gettext', [ $this, 'update_installing_string' ], 10, 3 );
+
 		$upgrader = new \Plugin_Upgrader( new \Plugin_Upgrader_Skin( $upgrader_args ) );
+		$upgrader->strings['installing_package'] = esc_html__( 'Installing your selected version&#8230;', 'elementor' );
 		$upgrader->upgrade( $this->plugin_name );
+
+		remove_filter( 'gettext', [ $this, 'update_installing_string' ], 10 );
+	}
+
+	public function update_installing_string( $translation, $text, $domain ) {
+		if ( 'Installing the latest version&#8230;' === $text && 'default' === $domain ) {
+			return esc_html__( 'Installing your selected version&#8230;', 'elementor' );
+		}
+
+		return $translation;
 	}
 
 	/**

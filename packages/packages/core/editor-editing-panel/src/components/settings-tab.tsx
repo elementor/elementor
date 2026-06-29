@@ -1,48 +1,52 @@
 import * as React from 'react';
-import { ControlFormLabel } from '@elementor/editor-controls';
-import { type Control } from '@elementor/editor-elements';
+import { type Control, type ControlItem, type Element, type ElementControl } from '@elementor/editor-elements';
+import { type Props, type PropsSchema } from '@elementor/editor-props';
 import { SessionStorageProvider } from '@elementor/session';
-import { Divider } from '@elementor/ui';
 
 import { useElement } from '../contexts/element-context';
-import { Control as BaseControl } from '../controls-registry/control';
-import { ControlTypeContainer } from '../controls-registry/control-type-container';
-import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
-import { SettingsField } from '../controls-registry/settings-field';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { extractDependencyEffect } from '../utils/prop-dependency-utils';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
+import { SettingsControl } from './settings-control';
 
 export const SettingsTab = () => {
-	const { elementType, element } = useElement();
+	const { elementType, element, settings } = useElement();
 	const settingsDefault = useDefaultPanelSettings();
+	const currentSettings = settings as Props;
 
-	const isDefaultExpanded = ( sectionId: string ) =>
-		settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
+	const isDefaultExpanded = ( sectionId: string | null | undefined ) =>
+		!! sectionId && settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
 
 	return (
 		<SessionStorageProvider prefix={ element.id }>
 			<SectionsList>
-				{ elementType.controls.map( ( { type, value }, index ) => {
-					if ( type === 'control' ) {
-						return <Control key={ value.bind } control={ value } />;
+				{ elementType.controls.map( ( control, index ) => {
+					if ( isControl( control ) ) {
+						return <SettingsControl key={ getKey( control, element ) } control={ control } />;
 					}
 
+					const { type, value } = control;
+
 					if ( type === 'section' ) {
+						const sectionItems = renderSectionItems( {
+							items: value.items,
+							element,
+							propsSchema: elementType.propsSchema,
+							settings: currentSettings,
+						} );
+
+						if ( ! sectionItems.length ) {
+							return null;
+						}
+
 						return (
 							<Section
 								title={ value.label }
 								key={ type + '.' + index }
-								defaultExpanded={ isDefaultExpanded( value.label ) }
+								defaultExpanded={ isDefaultExpanded( value.id ) }
 							>
-								{ value.items?.map( ( item ) => {
-									if ( item.type === 'control' ) {
-										return <Control key={ item.value.bind } control={ item.value } />;
-									}
-
-									// TODO: Handle 2nd level sections
-									return null;
-								} ) }
+								{ sectionItems }
 							</Section>
 						);
 					}
@@ -54,41 +58,47 @@ export const SettingsTab = () => {
 	);
 };
 
-const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
-		return null;
+function getKey( control: Control | ElementControl, element: Element ) {
+	if ( control.type === 'control' ) {
+		return control.value.bind + '.' + element.id;
 	}
 
-	const layout = control.meta?.layout || controlsRegistry.getLayout( control.type as ControlType );
-	const controlProps = populateChildControlProps( control.props );
-	if ( layout === 'custom' ) {
-		controlProps.label = control.label;
-	}
+	return control.value.type + '.' + element.id;
+}
 
+function isControl( control: ControlItem ): control is Control | ElementControl {
+	return control.type === 'control' || control.type === 'element-control';
+}
+
+function renderSectionItems( {
+	items,
+	element,
+	propsSchema,
+	settings,
+}: {
+	items?: ControlItem[];
+	element: Element;
+	propsSchema: PropsSchema;
+	settings: Props;
+} ) {
 	return (
-		<SettingsField bind={ control.bind } propDisplayName={ control.label || control.bind }>
-			{ control.meta?.topDivider && <Divider /> }
-			<ControlTypeContainer layout={ layout }>
-				{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
-				<BaseControl type={ control.type as ControlType } props={ controlProps } />
-			</ControlTypeContainer>
-		</SettingsField>
+		items?.flatMap( ( item ) => {
+			if ( ! isControl( item ) ) {
+				// TODO: Handle 2nd level sections
+				return [];
+			}
+
+			if ( item.type === 'control' && isControlHiddenByDependencies( item, propsSchema, settings ) ) {
+				return [];
+			}
+
+			return [ <SettingsControl key={ getKey( item, element ) } control={ item } /> ];
+		} ) ?? []
 	);
-};
+}
 
-function populateChildControlProps( props: Record< string, unknown > ) {
-	if ( props.childControlType ) {
-		const childComponent = controlsRegistry.get( props.childControlType as ControlType );
-		const childPropType = controlsRegistry.getPropTypeUtil( props.childControlType as ControlType );
-		props = {
-			...props,
-			childControlConfig: {
-				component: childComponent,
-				props: props.childControlProps || {},
-				propTypeUtil: childPropType,
-			},
-		};
-	}
+function isControlHiddenByDependencies( control: Control, propsSchema: PropsSchema, settings: Props ) {
+	const { isHidden } = extractDependencyEffect( control.value.bind, propsSchema, settings );
 
-	return props;
+	return isHidden;
 }

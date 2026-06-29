@@ -12,9 +12,6 @@ import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-col
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
-
-const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform', 'transition' ];
-
 export const StylesInheritanceIndicator = ( {
 	customContext,
 }: {
@@ -28,16 +25,7 @@ export const StylesInheritanceIndicator = ( {
 		return null;
 	}
 
-	const isDisabled = path.some( ( pathItem ) => disabledControls.includes( pathItem ) );
-
-	return (
-		<Indicator
-			inheritanceChain={ inheritanceChain }
-			path={ path }
-			propType={ propType }
-			isDisabled={ isDisabled }
-		/>
-	);
+	return <Indicator inheritanceChain={ inheritanceChain } path={ path } propType={ propType } />;
 };
 
 type IndicatorProps = {

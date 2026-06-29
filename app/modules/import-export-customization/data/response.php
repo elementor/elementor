@@ -16,7 +16,7 @@ class Response {
 		return $response->to_wp_rest_response( 200 );
 	}
 
-	public static function error( string $code, string $message, array $meta = [] ): \WP_REST_Response {
+	public static function error( string $code, $message, array $meta = [] ): \WP_REST_Response {
 		$response = new self([
 			'code' => $code,
 			'message' => $message,

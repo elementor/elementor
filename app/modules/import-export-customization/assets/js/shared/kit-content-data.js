@@ -10,7 +10,6 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Elementor Pages', 'elementor' ),
-					__( 'Landing Pages', 'elementor' ),
 					__( 'Elementor Posts', 'elementor' ),
 					__( 'WP Pages', 'elementor' ),
 					__( 'WP Posts', 'elementor' ),
@@ -53,6 +52,8 @@ const kitContentData = [
 			title: __( 'Settings & configurations', 'elementor' ),
 			features: {
 				open: [
+					__( 'Classes', 'elementor' ),
+					__( 'Variables', 'elementor' ),
 					__( 'Global Colors', 'elementor' ),
 					__( 'Global Fonts', 'elementor' ),
 					__( 'Theme Style Settings', 'elementor' ),
@@ -74,7 +75,7 @@ const kitContentData = [
 			title: __( 'Plugins', 'elementor' ),
 			features: {
 				open: [
-					__( 'All plugins are required for this website templates work', 'elementor' ),
+					__( 'All plugins are required for this website templates to work', 'elementor' ),
 				],
 			},
 		},

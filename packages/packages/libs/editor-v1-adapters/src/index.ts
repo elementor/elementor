@@ -14,6 +14,7 @@ export {
 
 export {
 	setReady as __privateSetReady,
+	isReady as __privateIsReady,
 	listenTo as __privateListenTo,
 	flushListeners as __privateFlushListeners,
 	dispatchReadyEvent as __privateDispatchReadyEvent,
@@ -29,11 +30,17 @@ export type * from './listeners';
 
 export { isRouteActive as __privateIsRouteActive, isExperimentActive, EXPERIMENTAL_FEATURES } from './readers';
 
+export { ajax } from './ajax';
+
 export { undoable } from './undoable';
 
 export type { HistoryItem, WindowWithHistoryManager } from './undoable/get-history-manager';
 
-export { useEditMode, changeEditMode, type EditMode } from './edit-mode';
+export { useEditMode, changeEditMode, type EditMode, getCurrentEditMode } from './edit-mode';
 
-export { registerDataHook } from './data-hooks/register-data-hook';
+export { registerDataHook, type HookOptions } from './data-hooks/register-data-hook';
 export { blockCommand } from './data-hooks/block-command';
+
+export { getCanvasIframeDocument } from './canvas';
+
+export * from './config';

@@ -13,10 +13,13 @@ import { createCombineArrayTransformer } from './transformers/styles/create-comb
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
 import { flexTransformer } from './transformers/styles/flex-transformer';
+import { fontFamilyTransformer } from './transformers/styles/font-family-transformer';
+import { gridTrackSizeTransformer } from './transformers/styles/grid-track-size-transformer';
 import { perspectiveOriginTransformer } from './transformers/styles/perspective-origin-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
+import { spanTransformer } from './transformers/styles/span-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformFunctionsTransformer } from './transformers/styles/transform-functions-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
@@ -28,7 +31,9 @@ import { transitionTransformer } from './transformers/styles/transition-transfor
 
 export function initStyleTransformers() {
 	styleTransformersRegistry
+		.register( 'font-family', fontFamilyTransformer )
 		.register( 'size', sizeTransformer )
+		.register( 'grid-track-size', gridTrackSizeTransformer )
 		.register( 'shadow', shadowTransformer )
 		.register( 'stroke', strokeTransformer )
 		.register(
@@ -53,6 +58,7 @@ export function initStyleTransformers() {
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
+		.register( 'span', spanTransformer )
 		.register( 'transform-origin', transformOriginTransformer )
 		.register( 'perspective-origin', perspectiveOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )

@@ -7,16 +7,18 @@ import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/co
 import DropZone from '../components/drop-zone';
 import { IMPORT_STATUS, ACTION_TYPE, useImportContext } from '../context/import-context';
 import { useUploadKit } from '../hooks/use-upload-kit';
-import ImportError from '../components/import-error';
+import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import useReturnToRedirect from '../../shared/hooks/use-return-to-redirect';
 
 export default function ImportKit() {
 	const { data, dispatch } = useImportContext();
 	const navigate = useNavigate();
 
-	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce } = useQueryParams().getAll();
+	const { id, referrer, file_url: fileUrl, action_type: actionType, nonce, return_to: returnToParam, no_automatic_redirect: noAutomaticRedirectParam } = useQueryParams().getAll();
 
-	const { uploading, error } = useUploadKit();
+	const { uploading, error, uploadKit } = useUploadKit();
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
 
 	const headerContent = (
 		<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -25,6 +27,28 @@ export default function ImportKit() {
 	const onFileSelect = ( file ) => {
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		dispatch( { type: 'SET_FILE', payload: file } );
+	};
+
+	const handleTryAgain = () => {
+		uploadKit();
+	};
+	const handleCloseError = () => {
+		if ( attemptRedirect() ) {
+			return;
+		}
+
+		if ( data.file ) {
+			return dispatch( { type: 'SET_EXPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
+		}
+
+		let path = 'admin.php?page=elementor-tools#tab-import-export-kit';
+		if ( 'cloud' === data?.kitUploadParams?.source ) {
+			path = 'admin.php?page=elementor-app&source=kit_import#kit-library/cloud';
+		} else if ( 'kit-library' === data?.kitUploadParams?.source ) {
+			path = `admin.php?page=elementor-app&source=kit_import#kit-library`;
+		}
+
+		window.top.location = elementorAppConfig.admin_url + path;
 	};
 
 	useEffect( () => {
@@ -68,25 +92,21 @@ export default function ImportKit() {
 			if ( actionType ) {
 				dispatch( { type: 'SET_ACTION_TYPE', payload: actionType } );
 			}
+			if ( returnToParam ) {
+				dispatch( { type: 'SET_RETURN_TO', payload: returnToParam } );
+			}
+			if ( 'true' === noAutomaticRedirectParam ) {
+				dispatch( { type: 'SET_NO_AUTOMATIC_REDIRECT', payload: true } );
+			}
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		}
-	}, [ id, referrer, fileUrl, actionType, nonce, dispatch ] );
+	}, [ id, referrer, fileUrl, actionType, nonce, returnToParam, noAutomaticRedirectParam, dispatch ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );
 	}, [] );
 
 	const renderContent = () => {
-		if ( error ) {
-			return (
-				<CenteredContent data-testid="import-error">
-					<Stack spacing={ 3 } alignItems="center" >
-						<ImportError statusText={ __( 'Uploading failed', 'elementor' ) } />
-					</Stack>
-				</CenteredContent>
-			);
-		}
-
 		if ( uploading || referrer ) {
 			return (
 				<CenteredContent data-testid="import-loader">
@@ -121,6 +141,7 @@ export default function ImportKit() {
 						color="text.secondary"
 						data-testid="import-description"
 					>
+						{ /* eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace */ }
 						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
 						<Link
 							href="#"
@@ -146,6 +167,11 @@ export default function ImportKit() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 		>
 			{ renderContent() }
+			<ProcessingErrorDialog
+				error={ error }
+				handleClose={ handleCloseError }
+				handleTryAgain={ handleTryAgain }
+			/>
 		</BaseLayout>
 	);
 }

@@ -14,6 +14,7 @@ import BrowserImport from './components/browser-import/manager';
 import PreviewComponent from './components/preview/component';
 import PanelMenu from 'elementor-panel/pages/menu/menu';
 import Promotion from './utils/promotion';
+import ThemeBuilderPromotion from './utils/theme-builder-promotion';
 import KitManager from '../../../../core/kits/assets/js/manager.js';
 import Navigator from './regions/navigator/navigator';
 import NoticeBar from './utils/notice-bar';
@@ -411,7 +412,7 @@ export default class EditorBase extends Marionette.Application {
 	 * @return {Container} container
 	 */
 	getPreviewContainer() {
-		return this.getPreviewView().getContainer();
+		return this.getPreviewView()?.getContainer();
 	}
 
 	getContainer( id ) {
@@ -420,6 +421,23 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
+	getContainerByKeyValue( args ) {
+		const { key, value, parent = this.getPreviewView() } = args;
+
+		if ( this.getPreviewContainer().model.get( key ) === value ) {
+			return this.getPreviewContainer();
+		}
+
+		const view = $e.components.get( 'document' ).utils.findViewRecursive(
+			parent.children,
+			key,
+			value,
+			false,
+		);
+
+		return view?.[ 0 ]?.getContainer() ?? null;
 	}
 
 	initComponents() {
@@ -455,6 +473,8 @@ export default class EditorBase extends Marionette.Application {
 		this.history = new HistoryManager();
 
 		this.promotion = new Promotion();
+
+		this.themeBuilderPromotion = new ThemeBuilderPromotion();
 
 		this.browserImport = new BrowserImport();
 
@@ -1152,6 +1172,29 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	async refreshWidgets() {
+		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
+
+		this.widgetsCache = {};
+		this.addWidgetsCache( data.widgets );
+
+		elementor.config.document.panel.elements_categories = data.categories;
+
+		if ( elementor.config.locale !== elementor.config.user.locale ) {
+			this.translateControlsDefaults( elementor.config.locale );
+		}
+
+		this.kitManager.renderGlobalsDefaultCSS();
+
+		elementor.hooks.doAction( 'elementor/widgets/refreshed' );
+
+		$e.routes.refreshContainer( 'panel' );
+
+		$e.run( 'preview/reload' );
+
+		return data;
+	}
+
 	translateControlsDefaults( locale ) {
 		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
 			data: { locale },
@@ -1280,6 +1323,12 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+
+		const eventsManager = elementorCommon.eventsManager;
+
+		if ( eventsManager ) {
+			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
+		}
 	}
 
 	onEditModeSwitched() {

@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\ImportExport\Modifiers;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

@@ -1,10 +1,13 @@
 packages/**/dist/
+apps/**/dist/
 coverage/
 node_modules/
 log/
 *.log
 *.map
 **/.env
+
+CLAUDE.md
 
 .turbo/
 .cspell/

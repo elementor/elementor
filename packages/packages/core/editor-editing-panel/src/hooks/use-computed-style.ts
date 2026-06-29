@@ -1,7 +1,5 @@
 import { __privateUseListenTo as useListenTo, commandEndEvent, windowEvent } from '@elementor/editor-v1-adapters';
 
-import { type ExtendedWindow } from '../sync/types';
-
 export function useComputedStyle( elementId: string | null ) {
 	return useListenTo(
 		[
@@ -15,8 +13,7 @@ export function useComputedStyle( elementId: string | null ) {
 				return null;
 			}
 
-			const extendedWindow: ExtendedWindow = window;
-			const element = extendedWindow.elementor?.getContainer?.( elementId );
+			const element = window.elementor?.getContainer?.( elementId );
 
 			if ( ! element?.view?.el ) {
 				return null;

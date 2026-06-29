@@ -33,6 +33,11 @@ class Google_Font {
 			return true;
 		}
 
+		$is_local_gf_enabled = (bool) get_option( 'elementor_local_google_fonts', '0' );
+		if ( ! $is_local_gf_enabled ) {
+			$force_enqueue_from_cdn = true;
+		}
+
 		if ( $force_enqueue_from_cdn || ! static::fetch_font_data( $font_name, $font_type ) ) {
 			static::enqueue_from_cdn( $font_name, $font_type );
 			return false;

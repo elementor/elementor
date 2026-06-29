@@ -4,11 +4,16 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { GapControl } from '../gap-control';
 
+const settings = {
+	available_units: [ 'px', 'rem' ],
+};
+
 const propType = createMockPropType( {
 	kind: 'object',
+	settings,
 	shape: {
-		column: createMockPropType( { kind: 'object' } ),
-		row: createMockPropType( { kind: 'object' } ),
+		column: createMockPropType( { kind: 'object', settings } ),
+		row: createMockPropType( { kind: 'object', settings } ),
 	},
 } );
 
@@ -65,6 +70,36 @@ describe( 'GapControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'size',
 			value: { unit: 'px', size: 100 },
+		} );
+	} );
+
+	it( 'when linking: should apply row value if column is missing', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const bind = 'gap';
+		const label = 'Gaps';
+
+		const mockValue = {
+			$$type: 'layout-direction',
+			value: {
+				column: null,
+				row: { $$type: 'size', value: { unit: 'px', size: 10 } },
+			},
+		};
+
+		const props = { setValue, value: mockValue, bind, propType };
+
+		renderControl( <GapControl label={ label } />, props );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Link gaps' } );
+
+		// Act.
+		fireEvent.click( toggleButton );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'size',
+			value: { unit: 'px', size: 10 },
 		} );
 	} );
 
@@ -196,38 +231,5 @@ describe( 'GapControl', () => {
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( null );
-	} );
-
-	it( 'should return null layout direction props when clicking toggle link button with undefined size props', () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const bind = 'gap';
-		const label = 'Gaps';
-
-		const props = {
-			setValue,
-			value: {
-				$$type: 'size',
-				value: undefined,
-			},
-			bind,
-			propType,
-		};
-
-		renderControl( <GapControl label={ label } />, props );
-
-		const toggleButton = screen.getByRole( 'button', { name: 'Unlink gaps' } );
-
-		// Act.
-		fireEvent.click( toggleButton );
-
-		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'layout-direction',
-			value: {
-				row: null,
-				column: null,
-			},
-		} );
 	} );
 } );

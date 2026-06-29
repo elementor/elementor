@@ -65,7 +65,7 @@ class General extends Base_Category {
 			],
 			'knowledge-base' => [
 				'title' => esc_html__( 'Knowledge Base', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
+				'url' => 'https://go.elementor.com/docs-admin-menu/',
 				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
 			],
 			'theme-builder' => [
@@ -77,7 +77,7 @@ class General extends Base_Category {
 			'kit-library' => [
 				'title' => esc_html__( 'Website Templates', 'elementor' ),
 				'icon' => 'kit-parts',
-				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+				'url' => Plugin::$instance->app->get_base_url() . '&source=finder#/kit-library',
 				'keywords' => [ 'Website Templates', 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ],
 			],
 		];

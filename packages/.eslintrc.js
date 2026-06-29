@@ -22,20 +22,16 @@ module.exports = {
 			typescript: {},
 			node: {},
 		},
-		'local-rules:no-react-namespace': 'error',
 	},
 	reportUnusedDisableDirectives: true,
 	rules: {
+		'local-rules/no-react-namespace': 'error',
+		'local-rules/no-path-imports': 'error',
+
 		// Don't allow relative import from package to package.
 		'import/no-relative-packages': 'error',
 		'no-restricted-syntax': [
 			'error',
-			{
-				// \u002F - forward slash
-				selector: 'ImportDeclaration[source.value=/^@elementor\\u002F.+\\u002F/]',
-				message:
-					'Path import of Elementor dependencies is not allowed, please use the package root (e.g: use "@elementor/locations" instead of "@elementor/locations/src/index.ts").',
-			},
 			{
 				selector: 'TSEnumDeclaration',
 				message: "Don't use enums. Prefer unions or constants.",
@@ -48,14 +44,14 @@ module.exports = {
 		// Some file need `require` to work.
 		'@typescript-eslint/no-require-imports': 'off',
 
+		'@typescript-eslint/ban-ts-comment': 'off',
+
 		// This rule interferes with React rules of hooks when using our "private" methods convention
 		// (e.g. `__useHook()` instead of `useHook()`).
 		'@wordpress/no-unused-vars-before-return': 'off',
 
 		// This is set to `warn` by WordPress, but we want to enforce it.
 		'react-hooks/exhaustive-deps': 'error',
-
-		'react-compiler/react-compiler': 'error',
 
 		// Styling rules:
 		'@typescript-eslint/consistent-type-imports': [

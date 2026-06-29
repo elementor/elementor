@@ -5,25 +5,39 @@ import {
 	type PropValue,
 	type TransformablePropValue,
 } from '../types';
+import { isOverridable } from './is-overridable';
 import { isTransformable } from './is-transformable';
 
 type ParsedTerm = DependencyTerm;
 
 type Relation = Dependency[ 'relation' ];
 
-export function isDependencyMet( dependency: Dependency | undefined, values: PropValue ): boolean {
+export function isDependencyMet(
+	dependency: Dependency | undefined,
+	values: PropValue
+): { isMet: true } | { isMet: false; failingDependencies: ( DependencyTerm | Dependency )[] } {
 	if ( ! dependency?.terms.length ) {
-		return true;
+		return { isMet: true };
 	}
 
 	const { relation, terms } = dependency;
 	const method = getRelationMethod( relation );
 
-	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
-		isDependency( term )
-			? isDependencyMet( term, values )
-			: evaluateTerm( term, extractValue( term.path, values )?.value )
-	);
+	const failingDependencies: ( DependencyTerm | Dependency )[] = [];
+	const isMet = terms[ method ]( ( term: ParsedTerm | Dependency ) => {
+		const isNestedDependency = isDependency( term );
+		const result = isNestedDependency
+			? isDependencyMet( term, values ).isMet
+			: evaluateTerm( term, extractValue( term.path, values, term.nestedPath )?.value );
+
+		if ( ! result ) {
+			failingDependencies.push( term );
+		}
+
+		return result;
+	} );
+
+	return { isMet, failingDependencies };
 }
 
 export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
@@ -66,7 +80,11 @@ export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
 				return false;
 			}
 
-			return ( 'contains' === operator ) === actualValue.includes( valueToCompare as never );
+			const transformedValue = Array.isArray( actualValue )
+				? actualValue.map( ( item ) => ( isTransformable( item ) ? item.value : item ) )
+				: actualValue;
+
+			return ( 'contains' === operator ) === transformedValue.includes( valueToCompare as never );
 
 		case 'exists':
 		case 'not_exist':
@@ -96,14 +114,59 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
-export function extractValue( path: string[], elementValues: PropValue ): TransformablePropValue< PropKey > | null {
-	return path.reduce( ( acc, key, index ) => {
-		const value = acc?.[ key as keyof typeof acc ] as PropValue | null;
+export type ExtractValueOptions = {
+	unwrapOverridableLeaf?: boolean;
+};
 
-		return index !== path.length - 1 && isTransformable( value ) ? value.value ?? null : value;
+export function extractValue(
+	path: string[],
+	elementValues: PropValue,
+	nestedPath: string[] = [],
+	options: ExtractValueOptions = {}
+) {
+	const { unwrapOverridableLeaf = true } = options;
+
+	const extractedValue = path.reduce( ( acc, key, index ) => {
+		const value = acc?.[ key as keyof typeof acc ] as PropValue;
+
+		if ( index === path.length - 1 ) {
+			return value;
+		}
+
+		if ( isOverridable( value ) ) {
+			const inner = value.value.origin_value;
+
+			return isTransformable( inner ) ? inner.value ?? null : inner;
+		}
+
+		if ( isTransformable( value ) ) {
+			return value.value ?? null;
+		}
+
+		return value;
 	}, elementValues ) as TransformablePropValue< PropKey >;
+
+	let resolved = extractedValue;
+
+	if ( unwrapOverridableLeaf && resolved && isOverridable( resolved ) ) {
+		resolved = resolved.value.origin_value ?? null;
+	}
+
+	if ( ! nestedPath?.length ) {
+		return resolved;
+	}
+
+	const nestedValue = nestedPath.reduce(
+		( acc: Record< string, unknown >, key ) => acc?.[ key ] as Record< string, unknown >,
+		resolved?.value as Record< string, unknown >
+	);
+
+	return {
+		$$type: 'unknown',
+		value: nestedValue,
+	};
 }
 
 export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
-	return 'relation' in term;
+	return 'terms' in term;
 }

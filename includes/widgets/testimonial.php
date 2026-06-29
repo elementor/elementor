@@ -209,8 +209,6 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$aside = is_rtl() ? 'right' : 'left';
-
 		$this->add_control(
 			'testimonial_image_position',
 			[
@@ -220,7 +218,7 @@ class Widget_Testimonial extends Widget_Base {
 				'options' => [
 					'aside' => [
 						'title' => esc_html__( 'Aside', 'elementor' ),
-						'icon' => 'eicon-h-align-' . $aside,
+						'icon' => 'eicon-h-align-left',
 					],
 					'top' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
@@ -232,6 +230,7 @@ class Widget_Testimonial extends Widget_Base {
 					'testimonial_image[url]!' => '',
 				],
 				'separator' => 'before',
+				'classes' => 'elementor-control-start-end',
 				'style_transfer' => true,
 			]
 		);
@@ -243,18 +242,23 @@ class Widget_Testimonial extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
 				'options' => [
-					'left'    => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper' => 'text-align: {{VALUE}}',
@@ -564,6 +568,32 @@ class Widget_Testimonial extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		$content = Utils::html_to_plain_text( $settings['testimonial_content'] ?? '' );
+		$name = Utils::html_to_plain_text( $settings['testimonial_name'] ?? '' );
+		$job = Utils::html_to_plain_text( $settings['testimonial_job'] ?? '' );
+
+		if ( empty( $content ) && empty( $name ) ) {
+			return '';
+		}
+
+		$md = '';
+
+		if ( ! empty( $content ) ) {
+			$md = '> "' . $content . '"';
+		}
+
+		$attribution = array_filter( [ $name, $job ] );
+
+		if ( ! empty( $attribution ) ) {
+			$md .= "\n>\n> -- " . implode( ', ', $attribution );
+		}
+
+		return $md;
+	}
+
 	protected function content_template() {
 		?>
 		<#

@@ -782,6 +782,7 @@ class Module extends BaseModule {
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];
+		$file_size = filesize( $file_name );
 		$file = ElementorUtils::file_get_contents( $file_name );
 
 		if ( ! $file ) {
@@ -800,6 +801,7 @@ class Module extends BaseModule {
 			$export,
 			$settings,
 			$file,
+			$file_size,
 		);
 
 		if ( is_wp_error( $result ) ) {

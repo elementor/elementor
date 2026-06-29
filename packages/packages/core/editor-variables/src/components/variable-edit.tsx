@@ -1,16 +1,16 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
@@ -19,6 +19,7 @@ import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-c
 import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
+const DELETE_LABEL = __( 'Delete variable', 'elementor' );
 
 type Props = {
 	editId: string;
@@ -30,7 +31,7 @@ type Props = {
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( propTypeUtil );
+	const { setVariableValue: notifyBoundPropChange, variableId, path } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
@@ -40,6 +41,8 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 	const variable = useVariable( editId );
+
+	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	if ( ! variable ) {
 		throw new Error( `Global ${ variableType } variable not found` );
@@ -74,10 +77,10 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const handleSaveVariable = () => {
-		updateVariable( editId, {
-			value,
-			label,
-		} )
+		const typeChanged = propTypeKey !== variable.type;
+		const updatePayload = typeChanged ? { value, label, type: propTypeKey } : { value, label };
+
+		updateVariable( editId, updatePayload, { eventData: { controlPath: path.join( '.' ) } } )
 			.then( () => {
 				maybeTriggerBoundPropChange();
 				onSubmit?.();
@@ -105,7 +108,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const maybeTriggerBoundPropChange = () => {
-		if ( editId === assignedValue ) {
+		if ( editId === variableId ) {
 			notifyBoundPropChange( editId );
 		}
 	};
@@ -126,14 +129,11 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	if ( userPermissions.canDelete() ) {
 		actions.push(
-			<IconButton
-				key="delete"
-				size={ SIZE }
-				aria-label={ __( 'Delete', 'elementor' ) }
-				onClick={ handleDeleteConfirmation }
-			>
-				<TrashIcon fontSize={ SIZE } />
-			</IconButton>
+			<Tooltip key="delete" placement="top" title={ DELETE_LABEL }>
+				<IconButton size={ SIZE } onClick={ handleDeleteConfirmation } aria-label={ DELETE_LABEL }>
+					<TrashIcon fontSize={ SIZE } />
+				</IconButton>
+			</Tooltip>
 		);
 	}
 
@@ -159,9 +159,16 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleUpdate();
+		}
+	};
+
 	return (
 		<>
-			<PopoverBody height="auto">
+			<SectionPopoverBody height="auto">
 				<PopoverHeader
 					title={ __( 'Edit variable', 'elementor' ) }
 					onClose={ onClose }
@@ -201,26 +208,33 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							} }
 							onErrorChange={ ( errorMsg ) => {
 								setLabelFieldError( {
-									value: label,
+									value: '',
 									message: errorMsg,
 								} );
 							} }
+							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<Typography variant="h5">
-							<ValueField
-								value={ value }
-								onChange={ ( newValue ) => {
-									setValue( newValue );
-									setErrorMessage( '' );
-									setValueFieldError( '' );
-								} }
-								onValidationChange={ setValueFieldError }
-								propType={ propType }
-							/>
-						</Typography>
-					</FormField>
+					{ ValueField && (
+						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+							<Typography variant="h5">
+								<ValueField
+									propTypeKey={ variable.type }
+									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+									value={ value }
+									onChange={ ( newValue ) => {
+										setValue( newValue );
+										setErrorMessage( '' );
+										setValueFieldError( '' );
+									} }
+									onKeyDown={ handleKeyDown }
+									onValidationChange={ setValueFieldError }
+									propType={ propType }
+								/>
+							</Typography>
+						</FormField>
+					) }
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
@@ -230,7 +244,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 						{ __( 'Save', 'elementor' ) }
 					</Button>
 				</CardActions>
-			</PopoverBody>
+			</SectionPopoverBody>
 
 			{ deleteConfirmation && (
 				<DeleteConfirmationDialog

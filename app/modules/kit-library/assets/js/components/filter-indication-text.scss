@@ -17,7 +17,7 @@
 
 	&-badge-remove {
 		margin-inline-start: spacing(5);
-		font-size: type( size, "14" )
+		font-size: get-type( size, "14" )
 	}
 
 	&-button {

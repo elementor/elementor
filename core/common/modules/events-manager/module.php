@@ -4,7 +4,9 @@ namespace Elementor\Core\Common\Modules\EventsManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
+use Elementor\Core\Common\Modules\Connect\Apps\Common_App;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Utils;
 use Elementor\Plugin;
 use Elementor\Tracker;
@@ -16,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'editor_events';
+	const DEFAULT_SESSION_RECORDING_PERCENT = 0;
+	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
 
 	public function get_name() {
 		return 'events-manager';
@@ -27,8 +31,25 @@ class Module extends BaseModule {
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
+		$is_flags_enabled = false;
+		$session_recording_percent = self::DEFAULT_SESSION_RECORDING_PERCENT;
+		$debug = ( defined( 'ELEMENTOR_EDITOR_EVENTS_DEBUG' ) && ELEMENTOR_EDITOR_EVENTS_DEBUG ) ?? false;
+
+		if ( $can_send_events ) {
+			$mixpanel_config = self::get_remote_mixpanel_config();
+			$has_config = EditorAssetsAPI::has_valid_nested_array( $mixpanel_config, [ 0 ] );
+
+			if ( $has_config ) {
+				$is_flags_enabled = (bool) ( $mixpanel_config[0]['flags'] ?? false );
+
+				$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
+				$session_recording_percent = $session_replays['recordSessionsPercent'] ?? null;
+			}
+		}
+
 		$settings = [
 			'can_send_events' => $can_send_events,
+			'debug' => $debug,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'site_url' => hash( 'sha256', get_site_url() ),
 			'wp_version' => get_bloginfo( 'version' ),
@@ -38,6 +59,9 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
+			'flags_enabled' => $is_flags_enabled,
+			'user_id' => self::get_user_id(),
+			'session_recording_percent' => $session_recording_percent,
 		];
 
 		return $settings;
@@ -75,5 +99,24 @@ class Module extends BaseModule {
 		}
 
 		return json_decode( $license_data['value'], true );
+	}
+
+	private static function get_remote_mixpanel_config() {
+		$editor_assets_api = new EditorAssetsAPI( [
+			EditorAssetsAPI::ASSETS_DATA_URL => static::REMOTE_MIXPANEL_CONFIG_URL,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_mixpanel_config',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'mixpanel',
+		] );
+
+		return $editor_assets_api->get_assets_data();
+	}
+	private static function get_user_id() {
+		$user_common_data = get_user_option( Common_App::OPTION_CONNECT_COMMON_DATA_KEY );
+
+		if ( ! is_array( $user_common_data ) ) {
+			return null;
+		}
+
+		return Common_App::get_connect_user_id_from_access_token( $user_common_data['access_token'] ?? null );
 	}
 }

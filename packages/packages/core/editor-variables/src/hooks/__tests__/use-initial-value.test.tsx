@@ -32,6 +32,7 @@ function stubBoundPropValue( props: any ) {
 		propType: props.propType as unknown as PropTypeUtil,
 		path: [ 'sample-path' ],
 		restoreValue: jest.fn(),
+		resetValue: jest.fn(),
 		value: props.value,
 	};
 }

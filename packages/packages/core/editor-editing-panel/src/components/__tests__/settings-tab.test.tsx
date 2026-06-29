@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { createMockElementType, renderWithTheme } from 'test-utils';
-import { type Control, type ControlsSection, getElementLabel } from '@elementor/editor-elements';
+import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
+import { type Control, type ControlsSection, type ElementControl, getElementLabel } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
 
@@ -16,7 +16,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getElementLabel: jest.fn(),
 } ) );
 
-const MockSelectComponent = ( { id }: { id?: string } ) => <select id={ id } />;
+const MockSelectComponent = ( { id }: { id?: string } ) => <select id={ id } aria-label="mock-select" />;
 
 const MockTextAreaComponent = ( { placeholder }: { placeholder?: string } ) => (
 	<input type="text" placeholder={ placeholder } />
@@ -48,11 +48,11 @@ describe( '<SettingsTab />', () => {
 			controls: [
 				mockSection( {
 					label: 'Section 1',
-					items: [],
+					items: [ mockTextAreaControl( { label: 'Section 1 Control' } ) ],
 				} ),
 				mockSection( {
 					label: 'Section 2',
-					items: [],
+					items: [ mockTextAreaControl( { label: 'Section 2 Control' } ) ],
 				} ),
 			],
 		} );
@@ -60,11 +60,12 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
 			defaultSectionsExpanded: {
-				settings: [],
+				settings: [ 'Section 1', 'Section 2' ],
 			},
 			defaultTab: 'settings',
 		} );
@@ -86,6 +87,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -115,11 +117,12 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
 			defaultSectionsExpanded: {
-				settings: [ 'Section 1', 'Section 2' ],
+				settings: [ 'section' ],
 			},
 			defaultTab: 'settings',
 		} );
@@ -157,6 +160,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -189,6 +193,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -218,6 +223,7 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
 		} );
 
 		// Act.
@@ -242,26 +248,176 @@ describe( '<SettingsTab />', () => {
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { type: 'mock-type', id: 'mock-id' },
 			elementType,
+			settings: {},
+		} );
+
+		renderWithTheme( <SettingsTab /> );
+
+		const control = screen.getByRole( 'textbox' );
+		expect( control ).toHaveAttribute( 'placeholder', 'Enter some text' );
+		const separator = screen.getByRole( 'separator' );
+		expect( separator ).toBeInTheDocument();
+	} );
+
+	it( 'should hide a section when all child controls are dependency-hidden', () => {
+		// Arrange.
+		const elementType = createMockElementType( {
+			propsSchema: {
+				'actions-after-submit': createMockPropType( {
+					kind: 'array',
+					item_prop_type: createMockPropType( { kind: 'plain' } ),
+				} ),
+				email: createMockPropType( {
+					kind: 'plain',
+					dependencies: {
+						relation: 'or',
+						terms: [
+							{
+								operator: 'contains',
+								path: [ 'actions-after-submit' ],
+								value: 'email',
+								effect: 'hide',
+							},
+						],
+					},
+				} ),
+			},
+			controls: [
+				mockSection( {
+					label: 'Email Section',
+					items: [ mockTextAreaControl( { bind: 'email', label: 'Email Control' } ) ],
+				} ),
+			],
+		} );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { type: 'mock-type', id: 'mock-id' },
+			elementType,
+			settings: {
+				'actions-after-submit': {
+					$$type: 'array',
+					value: [ { $$type: 'string', value: 'webhook' } ],
+				},
+			},
+		} );
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'Mixed Section' ],
+			},
+			defaultTab: 'settings',
 		} );
 
 		// Act.
 		renderWithTheme( <SettingsTab /> );
 
 		// Assert.
-		const control = screen.getByRole( 'textbox' );
-		expect( control ).toHaveAttribute( 'placeholder', 'Enter some text' );
-		const separator = screen.getByRole( 'separator' );
-		expect( separator ).toBeInTheDocument();
+		expect( screen.queryByText( 'Email Section' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Email Control' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render section with only visible controls when mixed dependency visibility exists', () => {
+		// Arrange.
+		const elementType = createMockElementType( {
+			propsSchema: {
+				'actions-after-submit': createMockPropType( {
+					kind: 'array',
+					item_prop_type: createMockPropType( { kind: 'plain' } ),
+				} ),
+				email: createMockPropType( {
+					kind: 'plain',
+					dependencies: {
+						relation: 'or',
+						terms: [
+							{
+								operator: 'contains',
+								path: [ 'actions-after-submit' ],
+								value: 'email',
+								effect: 'hide',
+							},
+						],
+					},
+				} ),
+				title: createMockPropType( { kind: 'plain' } ),
+			},
+			controls: [
+				mockSection( {
+					label: 'Mixed Section',
+					items: [
+						mockTextAreaControl( { bind: 'email', label: 'Hidden Control' } ),
+						mockTextAreaControl( { bind: 'title', label: 'Visible Control' } ),
+					],
+				} ),
+			],
+		} );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { type: 'mock-type', id: 'mock-id' },
+			elementType,
+			settings: {
+				'actions-after-submit': {
+					$$type: 'array',
+					value: [ { $$type: 'string', value: 'webhook' } ],
+				},
+			},
+		} );
+
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'section' ],
+			},
+			defaultTab: 'settings',
+		} );
+
+		// Act.
+		renderWithTheme( <SettingsTab /> );
+
+		// Assert.
+		expect( screen.getByText( 'Mixed Section' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Visible Control' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Hidden Control' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should keep section visible when it contains element-control items', () => {
+		// Arrange.
+		const elementType = createMockElementType( {
+			controls: [
+				mockSection( {
+					label: 'Element Control Section',
+					items: [ mockElementControl( { label: 'Element Control' } ) ],
+				} ),
+			],
+		} );
+
+		jest.mocked( useElement ).mockReturnValue( {
+			element: { type: 'mock-type', id: 'mock-id' },
+			elementType,
+			settings: {},
+		} );
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [ 'section' ],
+			},
+			defaultTab: 'settings',
+		} );
+
+		// Act.
+		renderWithTheme( <SettingsTab /> );
+
+		// Assert.
+		expect( screen.getByText( 'Element Control Section' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Element Control' ) ).toBeInTheDocument();
 	} );
 } );
 
 export const mockSection = ( {
+	id = 'section',
 	label = 'Section',
 	description = 'Section description',
 	items = [],
 }: Partial< ControlsSection[ 'value' ] > ): ControlsSection => ( {
 	type: 'section',
 	value: {
+		id,
 		label,
 		description,
 		items,
@@ -289,6 +445,16 @@ const mockTextAreaControl = ( value?: Partial< Control[ 'value' ] > ): Control =
 	value: {
 		label: 'Textarea Control',
 		bind: 'title',
+		type: 'textarea',
+		props: {},
+		...value,
+	},
+} );
+
+const mockElementControl = ( value?: Partial< ElementControl[ 'value' ] > ): ElementControl => ( {
+	type: 'element-control',
+	value: {
+		label: 'Element Control',
 		type: 'textarea',
 		props: {},
 		...value,

@@ -18,6 +18,8 @@ const RemoveChunksPlugin = require('./remove-chunks');
 
 const WatchTimePlugin = require('./plugins/watch-time/index');
 
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+
 // Preventing auto-generated long names of shared sub chunks (optimization.splitChunks.minChunks) by using only the hash.
 const getChunkName = ( chunkData, environment ) => {
 	const minSuffix = 'production' === environment ? '.min' : '',
@@ -66,25 +68,23 @@ const moduleRules = getModuleRules( [ '@wordpress/default' ] );
 const frontendRulesPresets = [ [
 	'@babel/preset-env',
 	{
-		targets: {
-			browsers: [
-				'last 3 versions',
-				'Chrome >= 100',
-				'Firefox >= 100',
-				'Edge >= 100',
-				'Safari >= 15.5',
-				'iOS >= 15.5',
-				'Android >= 100',
-				'ChromeAndroid >= 100',
-				'not dead',
-			],
-		},
 		"useBuiltIns": "usage",
 		"corejs": "3.23",
 	}
 ] ];
 
 const frontendModuleRules = getModuleRules( frontendRulesPresets );
+
+const qunitEntries = {
+	'vendors-redux': path.resolve( __dirname, '../core/common/assets/js/vendors-redux.js' ),
+	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
+	'common-modules': path.resolve( __dirname, '../core/common/assets/js/modules' ),
+	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
+	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
+	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
+	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
+	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
+};
 
 const entry = {
 	'editor': [
@@ -96,6 +96,7 @@ const entry = {
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
 	'announcements-app': path.resolve( __dirname, '../modules/announcements/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
+	'vendors-redux': path.resolve( __dirname, '../core/common/assets/js/vendors-redux.js' ),
 	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),
 	'elementor-admin-bar': path.resolve( __dirname, '../modules/admin-bar/assets/js/frontend/module.js' ),
 	'gutenberg': path.resolve( __dirname, '../assets/dev/js/admin/gutenberg.js' ),
@@ -108,7 +109,6 @@ const entry = {
 	'editor-modules': path.resolve( __dirname, '../assets/dev/js/editor/modules.js' ),
 	'admin-modules': path.resolve( __dirname, '../assets/dev/js/admin/modules.js' ),
 	'editor-document': path.resolve( __dirname, '../assets/dev/js/editor/editor-document.js' ),
-	'qunit-tests': path.resolve( __dirname, '../tests/qunit/main.js' ),
 	'admin-top-bar': path.resolve( __dirname, '../modules/admin-top-bar/assets/js/admin.js' ),
 	'checklist': path.resolve( __dirname, '../modules/checklist/assets/js/editor.js' ),
 	'nested-elements': path.resolve( __dirname, '../modules/nested-elements/assets/js/editor/index.js' ),
@@ -120,10 +120,13 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
+	'editor-one-admin': path.resolve( __dirname, '../modules/editor-one/assets/js/admin.js' ),
+	'interactions-shared-utils': path.resolve( __dirname, '../modules/interactions/assets/js/interactions-shared-utils.js' ),
+	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
+	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
-	'editor-loader-v1': path.resolve( __dirname, '../core/editor/loader/v1/js/editor-loader-v1.js' ),
-	'editor-loader-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-loader-v2.js' ),
-	'editor-environment-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-environment-v2.js' ),
+	'editor-loader': path.resolve( __dirname, '../core/editor/loader/js/editor-loader.js' ),
+	'editor-environment': path.resolve( __dirname, '../core/editor/loader/js/editor-environment.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),
 	'admin-notifications': path.resolve( __dirname, '../modules/notifications/assets/js/admin.js' ),
@@ -139,19 +142,30 @@ const entry = {
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'editor-one-sidebar-navigation': path.resolve( __dirname, '../modules/editor-one/assets/js/sidebar-navigation/app.js' ),
+	'editor-one-top-bar': path.resolve( __dirname, '../modules/editor-one/assets/js/top-bar/app.js' ),
+	'editor-one-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
-	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
+	'pro-free-trial-popup': path.resolve( __dirname, '../modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js'),
 	'editor-v4-opt-in-alphachip': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/panel-chip/panel-chip.js' ),
+	'e-conversion-banner': path.resolve( __dirname, '../modules/promotions/assets/js/conversion-banner/conversion-banner.js' ),
 	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
+	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
+	'design-system-sync': path.resolve( __dirname, '../modules/design-system-sync/assets/js/design-system-sync-handler.js' ),
+	'assets-manager': path.resolve( __dirname, '../modules/assets-manager/assets/js/assets-manager.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
+	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
+	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
+	'atomic-widgets-action-link-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/action-link-handlers.js' ),
+	'atomic-widgets-form-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/form-handlers.js' ),
 };
 
 const externals = [
@@ -169,20 +183,37 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
+		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
+		'@elementor/onboarding': 'elementorV2.onboarding',
+		'@elementor/site-builder': [ 'elementorV2', 'siteBuilder' ],
+		'@elementor/v4-activation-modal': [ 'elementorV2', 'v4-activation-modal' ],
+		'@elementor/editor-modal-shell': [ 'elementorV2', 'editor-modal-shell' ],
+		'@elementor/birthday-easter-egg-modal': [ 'elementorV2', 'birthday-easter-egg-modal' ],
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
 		'@wordpress/data': 'wp.data',
 		'@wordpress/plugins': 'wp.plugins',
+		'@wordpress/api-fetch': 'wp.apiFetch',
 		'@woocommerce/admin-layout': 'wc.adminLayout',
 	},
 	// Handle tree-shaking imports for ui and icons packages (@elementor/ui/xxx) to be pointed to the external object (elementorV2.ui.xxx).
-	function ( { request }, callback ) {
+	function ( { request, context, contextInfo }, callback ) {
 		const matches = request.match( /^@elementor\/(ui|icons)\/(.+)$/ );
 
 		if ( matches?.length ) {
 			return callback( null, `elementorV2.${ matches[ 1 ] }['${ matches[ 2 ] }']` );
+		}
+
+		if ( '@reduxjs/toolkit' === request ) {
+			const issuer = contextInfo?.issuer || context;
+
+			if ( issuer.includes( 'vendors-redux.js' ) ) {
+				return callback();
+			}
+
+			return callback( null, 'elementorVendors.reduxToolkit' );
 		}
 
 		callback();
@@ -284,6 +315,10 @@ const prodSharedConfig = {
 		filename: '[name].js',
 	},
 	performance: { hints: false },
+	cache: {
+		type: 'filesystem',
+    	allowCollectingMemory: true,
+	}
 };
 
 const webpackProductionConfig = [
@@ -296,6 +331,16 @@ const webpackProductionConfig = [
 		module: moduleRules,
 		plugins: [
 			...plugins,
+			new ExtractI18nWordpressExpressionsWebpackPlugin( {
+				pattern: ( entryPath, entryId ) => {
+					const entryName = entryId.replace( '.min', '' );
+					if ( entryName === 'app' || entryName === 'app-packages' || entryName === 'app-loader' ) {
+						return path.resolve( path.dirname( entryPath ), '../../**/*.{js,jsx}' );
+					}
+					const entryDir = path.dirname( entryPath );
+					return path.resolve( entryDir, '**/*.{js,jsx}' );
+				},
+			} ),
 		],
 		name: 'base',
 		entry: {
@@ -362,11 +407,27 @@ const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
 	return { ...config, watch: true };
 } );
 
+const webpackQunitConfig = {
+	...devSharedConfig,
+	watch: false,
+	output: {
+		...devSharedConfig.output,
+		uniqueName: baseOutputUniqueName,
+	},
+	module: moduleRules,
+	plugins: [
+		...plugins,
+	],
+	name: 'qunit',
+	entry: qunitEntries,
+};
+
 const gruntWebpackConfig = {
 	development: webpackConfig,
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
+	qunit: webpackQunitConfig,
 };
 
 module.exports = gruntWebpackConfig;

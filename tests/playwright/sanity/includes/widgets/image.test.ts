@@ -68,6 +68,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 						isPublished: true,
 					} );
 				await wpAdmin.editWithElementor();
+				await page.waitForLoadState( 'load' );
 			}
 		} );
 	}
@@ -107,9 +108,9 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
 		await editor.setSelectControlValue( 'open_lightbox', 'yes' );
-		expect( await editor.getPreviewFrame().locator( EditorSelectors.image.link ).
-			getAttribute( 'data-elementor-open-lightbox' ) ).toEqual( 'yes' );
-		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click( );
+		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.link ),
+		).toHaveAttribute( 'data-elementor-open-lightbox', 'yes' );
+		await editor.getPreviewFrame().locator( EditorSelectors.image.image ).click();
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.image.lightBox ) ).toBeVisible();
 
 		const title = editor.getPreviewFrame().locator( '.elementor-slideshow__title' );
@@ -124,7 +125,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		await editor.publishAndViewPage();
 
-		await page.locator( EditorSelectors.widget ).locator( 'a' ).click( );
+		await page.locator( EditorSelectors.widget ).locator( 'a' ).click();
 
 		const maskPageTitle = page.locator( EditorSelectors.pageHeader );
 		await expect( page.locator( EditorSelectors.dialog.lightBox ) ).toHaveScreenshot( 'frontend-image-lightbox.png', { mask: [ maskPageTitle ] } );

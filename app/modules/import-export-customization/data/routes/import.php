@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Plugin;
 use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 
@@ -19,14 +20,18 @@ class Import extends Base_Route {
 	}
 
 	protected function callback( $request ): \WP_REST_Response {
+		/**
+		 * @var $module ImportExportCustomizationModule
+		 */
+		$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+
 		try {
 			$session = $request->get_param( 'session' );
 
 			if ( empty( $session ) ) {
-				return Response::error( 'Session ID is required.', 'missing_session_id' );
+				return Response::error( 'missing_session_id', 'Session ID is required.' );
 			}
 
-			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 			$settings = [
 				'include' => $request->get_param( 'include' ),
 				'customization' => $request->get_param( 'customization' ),
@@ -42,12 +47,16 @@ class Import extends Base_Route {
 
 			return Response::success( $import );
 
-		} catch ( \Error $e ) {
+		} catch ( \Error | \Exception $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
 					'trace' => $e->getTraceAsString(),
 				],
 			] );
+
+			if ( $module->is_third_party_class( $e->getTrace()[0]['class'] ) ) {
+				return Response::error( ImportExportCustomizationModule::THIRD_PARTY_ERROR, $e->getMessage() );
+			}
 
 			return Response::error( $e->getMessage(), 'import_error' );
 		}
@@ -60,9 +69,15 @@ class Import extends Base_Route {
 				'description' => 'Session ID for import operations',
 				'required' => true,
 			],
-			'settings' => [
+			'include' => [
+				'type' => 'array',
+				'description' => 'Content types to import (e.g. templates, content, plugins, settings, design-system)',
+				'required' => false,
+				'default' => [],
+			],
+			'customization' => [
 				'type' => 'object',
-				'description' => 'Import settings',
+				'description' => 'Fine-grained import customization per content type',
 				'required' => false,
 				'default' => [],
 			],

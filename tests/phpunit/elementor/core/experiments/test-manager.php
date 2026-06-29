@@ -466,6 +466,16 @@ class Test_Manager extends Elementor_Test_Base {
                 'minimum_installation_version' => '3.1.0',
                 'expected' => false,
             ],
+            'empty_history_current_version_meets_minimum' => [
+                'versions_history' => [],
+                'minimum_installation_version' => '3.1.0',
+                'expected' => true,
+            ],
+            'empty_history_current_version_below_minimum' => [
+                'versions_history' => [],
+                'minimum_installation_version' => '999.0.0',
+                'expected' => false,
+            ],
             'new_site_with_beta_active' => [
                 'versions_history' => [
                     '3.1.0-beta1' => time(),

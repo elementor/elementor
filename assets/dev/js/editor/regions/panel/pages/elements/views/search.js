@@ -1,10 +1,14 @@
 import LocalizedValueStore from 'elementor-editor-utils/localized-value-store';
+import { createDebouncedWidgetPanelSearch } from 'elementor-editor-utils/editor-one-events';
+
+const WIDGET_PANEL_SEARCH_DEBOUNCE_MS = 2000;
 
 const PanelElementsSearchView = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-panel-element-search',
 
 	localizedValue: '',
 	localizedValueStore: new LocalizedValueStore(),
+	debouncedTrackSearch: null,
 
 	tagName: 'search',
 
@@ -19,8 +23,29 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 		'input @ui.input': 'onInputChanged', // Will capture the context menu paste
 	},
 
+	initialize() {
+		this.debouncedTrackSearch = createDebouncedWidgetPanelSearch( WIDGET_PANEL_SEARCH_DEBOUNCE_MS );
+	},
+
 	clearInput() {
 		this.ui.input.val( '' );
+	},
+
+	getVisibleWidgetsCount() {
+		const $widgetsContainer = jQuery( '#elementor-panel-elements' );
+		return $widgetsContainer.find( '.elementor-element:visible' ).length;
+	},
+
+	trackWidgetSearch() {
+		const userInput = this.ui.input.val();
+		if ( ! userInput ) {
+			return;
+		}
+
+		setTimeout( () => {
+			const resultsCount = this.getVisibleWidgetsCount();
+			this.debouncedTrackSearch( resultsCount, userInput );
+		}, 100 );
 	},
 
 	onInputChanged( event ) {
@@ -29,9 +54,16 @@ const PanelElementsSearchView = Marionette.ItemView.extend( {
 			this.clearInput();
 		}
 		this.localizedValue = this.localizedValueStore.appendAndParseLocalizedData( event );
-		// Broadcast the localized value.
 		elementor.channels.panelElements.reply( 'filter:localized', this.localizedValue );
 		this.triggerMethod( 'search:change:input' );
+
+		this.trackWidgetSearch();
+	},
+
+	onDestroy() {
+		if ( this.debouncedTrackSearch?.cancel ) {
+			this.debouncedTrackSearch.cancel();
+		}
 	},
 } );
 

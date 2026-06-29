@@ -453,6 +453,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( $result );
 	}
 
+	public function flip() {
+		return new static( array_flip( $this->items ) );
+	}
+
 	/**
 	 * @param array ...$values
 	 *
@@ -480,6 +484,16 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return false;
+	}
+
+	public function every( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( ! $callback( $item, $key ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

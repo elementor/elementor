@@ -4,13 +4,16 @@ import { type CreateOptions, type PropKey, type PropType, type PropValue } from 
 
 import { HookOutsideProviderError } from './errors';
 
-export type SetValueMeta = {
+type Action = {
+	type: string;
+	payload?: object;
+};
+
+export type SetValueMeta< TAction = Action > = {
 	bind?: PropKey;
 	validation?: ( value: PropValue ) => boolean;
-	action?: {
-		type: string;
-		payload?: Record< string, unknown >;
-	};
+	action?: TAction;
+	withHistory?: boolean;
 };
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;
@@ -20,6 +23,7 @@ type PropContext< T extends PropValue, P extends PropType > = {
 	value: T | null;
 	propType: P;
 	placeholder?: T;
+	baseValue?: T;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 };
 
@@ -35,6 +39,7 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 	setValue,
 	propType,
 	placeholder,
+	baseValue,
 	isDisabled,
 }: PropProviderProps< T, P > ) => {
 	return (
@@ -44,6 +49,7 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 				propType,
 				setValue: setValue as SetValue< PropValue >,
 				placeholder,
+				baseValue,
 				isDisabled,
 			} }
 		>

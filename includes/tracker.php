@@ -595,6 +595,11 @@ class Tracker {
 			$params['site_key'] = $site_key;
 		}
 
+		$allowed_usage_time = self::get_last_update_time();
+		if ( ! empty( $allowed_usage_time ) ) {
+			$params['allowed_usage_time'] = $allowed_usage_time;
+		}
+
 		/**
 		 * Tracker send tracking data params.
 		 *

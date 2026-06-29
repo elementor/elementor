@@ -1,13 +1,16 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
+import {
+	__privateUseListenTo as useListenTo,
+	commandEndEvent,
+	getCanvasIframeDocument,
+} from '@elementor/editor-v1-adapters';
 import { Portal } from '@elementor/ui';
 
 import { styleVariablesRepository } from '../style-variables-repository';
-import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
 import { type StyleVariables, type Variable } from '../types';
 
-const VARIABLES_WRAPPER = 'body';
+const VARIABLES_WRAPPER = ':root';
 
 export function StyleVariablesRenderer() {
 	const container = usePortalContainer();

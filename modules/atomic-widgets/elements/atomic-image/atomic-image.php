@@ -2,18 +2,19 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
-use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
+
+	public static $widget_description = 'Display an image with customizable styles and link options.';
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 	const BASE_STYLE_KEY = 'base';
@@ -52,7 +55,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 
 		return $props;
@@ -62,9 +65,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
-						->set_show_mode( 'media' )
 						->set_label( __( 'Image', 'elementor' ) ),
 				] ),
 			Section::make()
@@ -76,15 +79,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Image_Control::bind_to( 'image' )
-				->set_show_mode( 'sizes' )
-				->set_label( __( 'Image resolution', 'elementor' ) )
-				->set_meta( [ 'layout' => 'two-columns' ] ),
 			Link_Control::bind_to( 'link' )
-				->set_label( __( 'Link', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
-				] ),
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
+				->set_label( __( 'Link', 'elementor' ) ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),
@@ -96,8 +93,10 @@ class Atomic_Image extends Atomic_Widget_Base {
 			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
 						->add_prop( 'display', 'inherit' )
 						->add_prop( 'width', 'fit-content' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
@@ -111,5 +110,18 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$src = $settings['image']['src'] ?? '';
+
+		if ( empty( $src ) ) {
+			return '';
+		}
+
+		$alt = $settings['image']['alt'] ?? '';
+
+		return '![' . $alt . '](' . esc_url( $src ) . ')';
 	}
 }

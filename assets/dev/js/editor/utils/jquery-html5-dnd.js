@@ -92,6 +92,7 @@
 			currentElement,
 			currentSide,
 			isDroppingAllowedState = false,
+			originalCurrentElementOpacity = null,
 			placeholderContext = {},
 			defaultSettings = {
 				element: '',
@@ -220,6 +221,9 @@
 			const insertMode = getInsertMode();
 
 			switch ( insertMode ) {
+				case 'atomicGrid':
+					insertAtomicGridPlaceholder();
+					break;
 				case 'gridRow':
 					insertGridRowPlaceholder();
 					break;
@@ -253,17 +257,18 @@
 
 			return {
 				$currentElement,
-				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':scope > :not(.elementor-widget-placeholder)' ) : currentElement,
 				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
 				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
 				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
 				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isAtomicGridContainer: 0 !== $currentElement.closest( '.e-grid-base' ).length,
 				isFlexContainer,
 				isRowDirection,
 				isFlexRowContainer: isFlexContainer && isRowDirection,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
-				isAtomicContainer: [ 'e-div-block', 'e-flexbox' ].includes( currentElement.dataset.element_type ),
+				isAtomicContainer: [ 'e-div-block', 'e-flexbox', 'e-grid' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
@@ -287,6 +292,10 @@
 				return 'default';
 			}
 
+			if ( placeholderContext.isAtomicGridContainer ) {
+				return 'atomicGrid';
+			}
+
 			if ( placeholderContext.isGridRowContainer ) {
 				return 'gridRow';
 			}
@@ -305,7 +314,7 @@
 		const clearPreviousPlaceholder = function() {
 			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
 
-			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
+			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right e-dragging-top e-dragging-bottom is-logical' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-bottom', '' );
 			elementsCache.$placeholder.css( '--e-placeholder-margin-inline-start', '' );
@@ -330,6 +339,62 @@
 			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
 		};
 
+		const VOID_PLACEHOLDER_TAGS = new Set( [
+			'area',
+			'base',
+			'br',
+			'col',
+			'embed',
+			'hr',
+			'img',
+			'input',
+			'link',
+			'meta',
+			'param',
+			'source',
+			'track',
+			'wbr',
+		] );
+
+		const isVoidPlaceholderTarget = function( element ) {
+			return !! element?.tagName && VOID_PLACEHOLDER_TAGS.has( element.tagName.toLowerCase() );
+		};
+
+		const insertPlaceholderOutsideLogicalWrapperChild = function() {
+			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			if ( ! hasLogicalWrapper || ! placeholderTarget ) {
+				return false;
+			}
+
+			insertPlaceholderOutsideElement( placeholderTarget );
+
+			return true;
+		};
+
+		const getDefaultPlaceholderInsertPlan = function() {
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const insertTarget = placeholderTarget || currentElement;
+
+			return {
+				insertTarget,
+				insertOutside: hasLogicalWrapper || isVoidPlaceholderTarget( insertTarget ),
+				useLogicalAttributes: hasLogicalWrapper || isAtomicContainer,
+			};
+		};
+
+		const insertAtomicGridPlaceholder = function() {
+			if ( ! [ 'top', 'bottom' ].includes( currentSide ) ) {
+				return;
+			}
+
+			const { placeholderTarget } = placeholderContext;
+
+			elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+
+			insertPlaceholderInsideElement( placeholderTarget );
+		};
+
 		const insertGridRowPlaceholder = function() {
 			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
 
@@ -343,19 +408,30 @@
 
 		const insertFlexRowPlaceholder = function() {
 			const { $currentElement, isInnerContainer } = placeholderContext;
+
+			if ( insertPlaceholderOutsideLogicalWrapperChild() ) {
+				return;
+			}
+
 			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
 
 			insertPlaceholderOutsideElement( $target[ 0 ] );
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const { insertTarget, insertOutside, useLogicalAttributes } = getDefaultPlaceholderInsertPlan();
 
-			if ( hasLogicalWrapper || isAtomicContainer ) {
+			if ( useLogicalAttributes ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
-			insertPlaceholderInsideElement( placeholderTarget );
+			if ( insertOutside ) {
+				insertPlaceholderOutsideElement( insertTarget );
+
+				return;
+			}
+
+			insertPlaceholderInsideElement( insertTarget );
 		};
 
 		const addLogicalAttributesToPlaceholder = function() {
@@ -485,6 +561,12 @@
 					return;
 				}
 
+				if ( currentElement?.classList?.contains( 'elementor-first-add' ) && currentElement.closest?.( '.e-grid-base' ) ) {
+					originalCurrentElementOpacity = currentElement.style.opacity || '';
+					currentElement.style.opacity = '1';
+					$( document ).on( 'dragend', onDocumentDragEnd );
+				}
+
 				insertPlaceholder();
 
 				elementsCache.$element.addClass( settings.hasDraggingOnChildClass );
@@ -521,6 +603,18 @@
 			if ( 'function' === typeof settings.onDragging ) {
 				settings.onDragging.call( this, currentSide, event, self );
 			}
+		};
+
+		var restoreFirstAddOpacity = function() {
+			if ( null !== originalCurrentElementOpacity && currentElement?.style ) {
+				currentElement.style.opacity = originalCurrentElementOpacity;
+				originalCurrentElementOpacity = null;
+			}
+		};
+
+		var onDocumentDragEnd = function() {
+			$( document ).off( 'dragend', onDocumentDragEnd );
+			restoreFirstAddOpacity();
 		};
 
 		var onDragLeave = function( event ) {
@@ -579,6 +673,9 @@
 			}
 
 			elementsCache.$element.removeClass( settings.hasDraggingOnChildClass );
+
+			$( document ).off( 'dragend', onDocumentDragEnd );
+			restoreFirstAddOpacity();
 
 			if ( 'function' === typeof settings.onDragLeave ) {
 				settings.onDragLeave.call( currentElement, event, self );

@@ -20,6 +20,7 @@ import { Box, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography 
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
+import { trackGlobalClasses } from '../../../utils/tracking';
 import { type ContentType } from '../types';
 
 type CssClassUsageRecord = VirtualizedItem< 'item', string > & { docType: ContentType };
@@ -69,6 +70,14 @@ export const CssClassUsagePopover = ( {
 				} ) as CssClassUsageRecord
 		) ?? [];
 
+	const handleSelect = ( value: string ) => {
+		onNavigate( +value );
+		trackGlobalClasses( {
+			event: 'classUsageLocate',
+			classId: cssClassID,
+		} );
+	};
+
 	return (
 		<>
 			<PopoverHeader
@@ -86,7 +95,7 @@ export const CssClassUsagePopover = ( {
 			<Divider />
 			<PopoverBody width={ 300 }>
 				<PopoverMenuList
-					onSelect={ ( value ) => onNavigate( +value ) }
+					onSelect={ handleSelect }
 					items={ cssClassUsageRecords }
 					onClose={ () => {} }
 					menuListTemplate={ StyledCssClassUsageItem }

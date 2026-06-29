@@ -32,6 +32,7 @@ class Controller extends Base_Controller {
 				'thumbnail_url' => $kit['thumbnailUrl'],
 				'created_at' => $kit['createdAt'],
 				'updated_at' => $kit['updatedAt'],
+				'status' => isset( $kit['status'] ) ? $kit['status'] : 'active',
 			];
 		} );
 
@@ -62,6 +63,7 @@ class Controller extends Base_Controller {
 		] );
 
 		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
+		$this->register_endpoint( new Endpoints\Quota( $this ) );
 	}
 
 	public function get_permission_callback( $request ) {

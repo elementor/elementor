@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { Button, CardActions, Divider, FormHelperText, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { useVariableType } from '../context/variable-type-context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
@@ -24,7 +24,7 @@ type Props = {
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
+	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
 	const variable = useVariable( variableId );
@@ -37,6 +37,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
 	const [ value, setValue ] = useState( variable.value );
+	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError( {
 		value: variable.label,
@@ -44,7 +45,12 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	} );
 
 	const handleRestore = () => {
-		restoreVariable( variableId, label, value )
+		const typeChanged = propTypeKey !== variable.type;
+		const restorePromise = typeChanged
+			? restoreVariable( variableId, label, value, propTypeKey )
+			: restoreVariable( variableId, label, value );
+
+		restorePromise
 			.then( () => {
 				notifyBoundPropChange( variableId );
 				onSubmit?.();
@@ -86,9 +92,16 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 
 	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleRestore();
+		}
+	};
+
 	return (
 		<PopoverContentRefContextProvider>
-			<PopoverBody height="auto">
+			<SectionPopoverBody height="auto">
 				<PopoverHeader
 					icon={ <VariableIcon fontSize={ SIZE } /> }
 					title={ __( 'Restore variable', 'elementor' ) }
@@ -114,26 +127,33 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 							} }
 							onErrorChange={ ( errorMsg ) => {
 								setLabelFieldError( {
-									value: label,
+									value: '',
 									message: errorMsg,
 								} );
 							} }
+							onKeyDown={ handleKeyDown }
+							focusOnShow
 						/>
 					</FormField>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<Typography variant="h5">
-							<ValueField
-								value={ value }
-								onChange={ ( newValue ) => {
-									setValue( newValue );
-									setErrorMessage( '' );
-									setValueFieldError( '' );
-								} }
-								onValidationChange={ setValueFieldError }
-								propType={ propType }
-							/>
-						</Typography>
-					</FormField>
+					{ ValueField && (
+						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+							<Typography variant="h5">
+								<ValueField
+									propTypeKey={ propTypeKey }
+									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+									value={ value }
+									onChange={ ( newValue ) => {
+										setValue( newValue );
+										setErrorMessage( '' );
+										setValueFieldError( '' );
+									} }
+									onValidationChange={ setValueFieldError }
+									propType={ propType }
+									onKeyDown={ handleKeyDown }
+								/>
+							</Typography>
+						</FormField>
+					) }
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
@@ -143,7 +163,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 						{ __( 'Restore', 'elementor' ) }
 					</Button>
 				</CardActions>
-			</PopoverBody>
+			</SectionPopoverBody>
 		</PopoverContentRefContextProvider>
 	);
 };

@@ -24,19 +24,20 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	}
 
 	public function test_should_return_registered_sources() {
-		$new_source = new \Elementor\TemplateLibrary\Source_Local();
-
 		$this->ensure_post_type_rest_routes();
 
-		$this->assertEquals( self::$manager->get_registered_sources()['local'], $new_source );
+		$sources = self::$manager->get_registered_sources();
+		
+		$this->assertArrayHasKey( 'local', $sources );
+		$this->assertInstanceOf( \Elementor\TemplateLibrary\Source_Local::class, $sources['local'] );
 	}
 
 	public function test_should_return_source() {
-		$new_source = new \Elementor\TemplateLibrary\Source_Local();
-
 		$this->ensure_post_type_rest_routes();
 
-		$this->assertEquals( self::$manager->get_source( 'local' ), $new_source );
+		$source = self::$manager->get_source( 'local' );
+		
+		$this->assertInstanceOf( \Elementor\TemplateLibrary\Source_Local::class, $source );
 	}
 
 	public function test_should_return_wp_error_save_error_from_save_template() {
@@ -153,7 +154,7 @@ class Elementor_Test_Manager_Local extends Elementor_Test_Base {
 	public function test_should_return_data_from_get_template_data() {
 		$wordpress_adapter_mock = $this->getMockBuilder( Wordpress_Adapter_Interface::class )->getMock();
 		$wordpress_adapter_mock->method( 'current_user_can' )->willReturn( true );
-		self::$manager->set_wordpress_adapter( $wordpress_adapter_mock );
+		self::$manager->get_source( 'local' )->set_wordpress_adapter( $wordpress_adapter_mock );
 
 		$ret = self::$manager->get_template_data(
 			[

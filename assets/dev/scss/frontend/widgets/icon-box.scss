@@ -5,40 +5,36 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&right {
+		&inline-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
-				gap: var(--icon-box-icon-margin, 15px);
+				flex-direction: row-reverse;
 			}
 		}
 
-		&left {
+		&inline-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
-				gap: var(--icon-box-icon-margin, 15px);
+				flex-direction: row;
 			}
 		}
 
-		&top {
+		&block-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
 				flex-direction: column;
-				gap: var(--icon-box-icon-margin, 15px);
 				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
 
-		&bottom {
+		&block-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
 				flex-direction: column-reverse;
-				gap: var(--icon-box-icon-margin, 15px);
 				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
@@ -51,7 +47,6 @@
 		display: flex;
 		text-align: center;
 		flex-direction: column;
-		gap: var(--icon-box-icon-margin, 15px);
 	}
 
 	.elementor-icon-box-icon {
@@ -100,16 +95,5 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
-
-		&.elementor-position- {
-
-			&left,
-			&right {
-
-				.elementor-icon-box-icon {
-					flex-direction: column;
-				}
-			}
-		}
 	}
 }

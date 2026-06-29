@@ -1,0 +1,110 @@
+[
+	{
+		"id": "3837f142",
+		"settings": {
+			"flex_direction": "row",
+			"flex_wrap": "wrap",
+			"flex_gap": {
+				"unit": "px",
+				"size": 0,
+				"column": "0",
+				"row": "0"
+			}
+		},
+		"elements": [
+			{
+				"id": "4d59afdd",
+				"settings": {
+					"flex_direction": "column",
+					"content_width": "full",
+					"width": {
+						"unit": "%",
+						"size": "50"
+					}
+				},
+				"elements": [
+					{
+						"id": "7697ab64",
+						"settings": {
+							"title": "Export Customization",
+							"align": "center",
+							"title_color": "#D16EE4",
+							"__globals__": {
+								"typography_typography": "globals\/typography?id=primary"
+							}
+						},
+						"elements": [],
+						"isInner": false,
+						"widgetType": "heading",
+						"elType": "widget"
+					}
+				],
+				"isInner": true,
+				"elType": "container"
+			},
+			{
+				"id": "5508b918",
+				"settings": {
+					"flex_direction": "column",
+					"content_width": "full",
+					"width": {
+						"unit": "%",
+						"size": "50"
+					}
+				},
+				"elements": [
+					{
+						"id": "4da2d8b4",
+						"settings": {
+							"text": "Click here",
+							"align": "center",
+							"background_background": "gradient",
+							"button_background_hover_background": "gradient",
+							"button_background_hover_color": "#DE1919",
+							"button_background_hover_color_b": "#29F238"
+						},
+						"elements": [],
+						"isInner": false,
+						"widgetType": "button",
+						"elType": "widget"
+					}
+				],
+				"isInner": true,
+				"elType": "container"
+			},
+			{
+				"id": "4d9a9905",
+				"settings": {
+					"flex_direction": "column",
+					"content_width": "full",
+					"width": {
+						"unit": "%",
+						"size": "100"
+					}
+				},
+				"elements": [
+					{
+						"id": "5ad29d12",
+						"settings": {
+							"image": {
+								"url": "http:\/\/localhost:8889\/wp-content\/uploads\/2025\/08\/About-CTA-1.png",
+								"id": 7,
+								"size": "",
+								"alt": "",
+								"source": "library"
+							}
+						},
+						"elements": [],
+						"isInner": false,
+						"widgetType": "image",
+						"elType": "widget"
+					}
+				],
+				"isInner": true,
+				"elType": "container"
+			}
+		],
+		"isInner": false,
+		"elType": "container"
+	}
+]

@@ -17,16 +17,22 @@ type UseBoundProp< TValue extends PropValue > = {
 	value: TValue;
 	propType: PropType;
 	placeholder?: TValue;
+	baseValue?: TValue;
 	path: PropKey[];
 	restoreValue: () => void;
+	resetValue: () => void;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
 };
 
-export function useBoundProp< T extends PropValue = PropValue, P extends PropType = PropType >(): PropKeyContextValue<
-	T,
-	P
->;
+type EnhancedPropKeyContextValue< T, P > = PropKeyContextValue< T, P > & {
+	resetValue: () => void;
+};
+
+export function useBoundProp<
+	T extends PropValue = PropValue,
+	P extends PropType = PropType,
+>(): EnhancedPropKeyContextValue< T, P >;
 
 export function useBoundProp< TKey extends string, TValue extends PropValue >(
 	propTypeUtil: PropTypeUtil< TKey, TValue >
@@ -41,9 +47,17 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
 
+	const resetValue = () => {
+		propKeyContext.setValue( propKeyContext.propType.initial_value ?? null );
+	};
+
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
 	if ( ! propTypeUtil ) {
-		return { ...propKeyContext, disabled } as PropKeyContextValue< PropValue, PropType >;
+		return {
+			...propKeyContext,
+			disabled,
+			resetValue,
+		} as EnhancedPropKeyContextValue< PropValue, PropType >;
 	}
 
 	function setValue( value: TValue | null, options: CreateOptions, meta?: SetValueMeta ) {
@@ -60,8 +74,12 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const propType = resolveUnionPropType( propKeyContext.propType, propTypeUtil.key );
 
-	const value = propTypeUtil.extract( propKeyContext.value ?? propType.default ?? null );
-	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? null );
+	const hasBaseValue = propKeyContext.baseValue !== undefined && propKeyContext.baseValue !== null;
+	const fallbackValue = hasBaseValue ? null : propType.default;
+
+	const value = propTypeUtil.extract( propKeyContext.value ?? fallbackValue ?? null );
+	const baseValue = propTypeUtil.extract( propKeyContext.baseValue ?? null );
+	const placeholder = propTypeUtil.extract( propKeyContext.placeholder ?? propKeyContext.baseValue ?? null );
 
 	return {
 		...propKeyContext,
@@ -70,7 +88,9 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		value: isValid ? value : null,
 		restoreValue,
 		placeholder,
+		baseValue,
 		disabled,
+		resetValue,
 	};
 }
 

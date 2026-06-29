@@ -1,14 +1,19 @@
 export class Save extends $e.modules.CommandInternalBase {
-	apply( args ) {
+	async apply( args ) {
 		const { status = 'draft', force = false, onSuccess = null, document = elementor.documents.getCurrent() } = args;
 
 		if ( ! force && document.editor.isSaving ) {
 			return jQuery.Deferred().reject( 'Document already in save progress' );
 		}
 
-		const container = document.container,
-			settings = container.settings.toJSON( { remove: [ 'default' ] } ),
-			oldStatus = container.settings.get( 'post_status' );
+		const container = document.container;
+
+		if ( elementorCommon.config.experimentalFeatures?.e_components ) {
+			await elementorCommon.__beforeSave?.( { container, status } );
+		}
+
+		const settings = container.settings.toJSON( { remove: [ 'default' ] } );
+		const oldStatus = container.settings.get( 'post_status' );
 
 		this.addPersistentSettingsToPayload( settings, container );
 

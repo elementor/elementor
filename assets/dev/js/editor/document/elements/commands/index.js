@@ -12,6 +12,7 @@ export { Empty } from './empty';
 export { Import } from './import';
 export { Paste } from './paste';
 export { PasteArea } from './paste-area';
+export { PasteInteractions } from './paste-interactions';
 export { Move } from './move';
 export { PasteStyle } from './paste-style';
 export { ResetSettings } from './reset-settings';

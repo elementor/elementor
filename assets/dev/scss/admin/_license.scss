@@ -1,22 +1,32 @@
 // License Page
-.wrap.elementor-admin-page-license {
+#wpcontent .wrap.elementor-admin-page-license {
+	flex-direction: column;
+	align-items: flex-start;
+	flex-wrap: nowrap;
 
 	.elementor-license-box {
+		width: 100%;
 		max-width: 600px;
 		background: white;
 		margin: 20px 0;
 		padding: 20px 20px;
+		box-sizing: border-box;
 
-		h3 {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin: 0;
-			padding: 0;
-			padding-block-end: 20px;
-			border-block-end: 1px solid #eee;
+	h3 {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 0;
+		padding: 0;
+		padding-block-end: 20px;
+		border-block-end: 1px solid #eee;
 
-			span {
+		@media screen and (max-width: 782px) {
+			flex-wrap: wrap;
+			gap: 15px;
+		}
+
+		span {
 				flex-grow: 1;
 				padding-inline-start: 5px;
 			}
@@ -34,24 +44,36 @@
 			margin: 1em 0;
 		}
 
-		.button {
-			height: 30px;
-			margin-inline-start: 15px;
-			margin-block-end: 0;
-		}
+	.button {
+		margin-inline-start: 15px;
+		margin-block-end: 0;
 
-		p.description {
+		@media screen and (max-width: 782px) {
+			margin-inline: 0;
+			min-height: auto;
+		}
+	}
+
+	p.description {
 			margin: 10px 0;
 		}
 
-		.e-row-stretch,
-		&.e-row-stretch {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
+	.e-row-stretch,
+	&.e-row-stretch {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 
-		.e-row-divider-bottom {
+		@media screen and (max-width: 782px) {
+			align-items: flex-start;
+
+			.button {
+				margin-inline-start: 10px;
+			}
+		}
+	}
+
+	.e-row-divider-bottom {
 			padding-block-end: 15px;
 			border-block-end: 1px solid #eeeeee;
 		}

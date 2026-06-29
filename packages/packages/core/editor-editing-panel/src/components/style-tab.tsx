@@ -40,9 +40,13 @@ export const stickyHeaderStyles = {
 
 export const StyleTab = () => {
 	const currentClassesProp = useCurrentClassesProp();
-	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp );
+	const [ activeStyleDefId, setActiveStyleDefId ] = useActiveStyleDefId( currentClassesProp ?? '' );
 	const [ activeStyleState, setActiveStyleState ] = useState< StyleDefinitionState | null >( null );
 	const breakpoint = useActiveBreakpoint();
+
+	if ( ! currentClassesProp ) {
+		return null;
+	}
 
 	return (
 		<ClassesPropProvider prop={ currentClassesProp }>
@@ -77,6 +81,11 @@ export const StyleTab = () => {
 									'align-content',
 									'align-self',
 									'gap',
+									'order',
+									'grid-column',
+									'grid-row',
+									'grid-auto-rows',
+									'grid-auto-columns',
 								] }
 							/>
 							<StyleTabSection
@@ -159,6 +168,7 @@ export const StyleTab = () => {
 									title: __( 'Effects', 'elementor' ),
 								} }
 								fields={ [
+									'mix-blend-mode',
 									'box-shadow',
 									'opacity',
 									'transform',
@@ -188,7 +198,7 @@ function ClassesHeader( { children }: { children: React.ReactNode } ) {
 	);
 }
 
-function useCurrentClassesProp(): string {
+function useCurrentClassesProp(): string | null {
 	const { elementType } = useElement();
 
 	const prop = Object.entries( elementType.propsSchema ).find(
@@ -196,7 +206,7 @@ function useCurrentClassesProp(): string {
 	);
 
 	if ( ! prop ) {
-		throw new Error( 'Element does not have a classes prop' );
+		return null;
 	}
 
 	return prop[ 0 ];

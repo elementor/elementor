@@ -5,45 +5,56 @@ const FolderCollectionView = require( './folders/folders-list' );
 const LOAD_MORE_ID = 0;
 
 import { SAVE_CONTEXTS } from './../../constants';
+import { rovingTabindex, suppressEscapeKeyUp } from 'elementor-editor-utils/keyboard-nav';
 
 const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	id: 'elementor-template-library-save-template',
 
 	template: '#tmpl-elementor-template-library-save-template',
 
-	ui: {
-		form: '#elementor-template-library-save-template-form',
-		submitButton: '#elementor-template-library-save-template-submit',
-		ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
-		foldersList: '.cloud-folder-selection-dropdown ul',
-		foldersDropdown: '.cloud-folder-selection-dropdown',
-		foldersListContainer: '.cloud-folder-selection-dropdown-list',
-		removeFolderSelection: '.source-selections .selected-folder i',
-		selectedFolder: '.selected-folder',
-		selectedFolderText: '.selected-folder-text',
-		hiddenInputSelectedFolder: '#parentId',
-		templateNameInput: '#elementor-template-library-save-template-name',
-		localInput: '.source-selections-input.local',
-		cloudInput: '.source-selections-input.cloud',
-		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		infoIcon: '.source-selections-input.cloud .eicon-info',
-		connect: '#elementor-template-library-connect__badge',
-		connectBadge: '.source-selections-input.cloud .connect-badge',
-		cloudFormInputs: '.cloud-library-form-inputs',
-		upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+	ui() {
+		return {
+			form: '#elementor-template-library-save-template-form',
+			submitButton: '#elementor-template-library-save-template-submit',
+			ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
+			foldersList: '.cloud-folder-selection-dropdown ul',
+			foldersDropdown: '.cloud-folder-selection-dropdown',
+			foldersListContainer: '.cloud-folder-selection-dropdown-list',
+			removeFolderSelection: '.source-selections .selected-folder i',
+			selectedFolder: '.selected-folder',
+			selectedFolderText: '.selected-folder-text',
+			hiddenInputSelectedFolder: '#parentId',
+			templateNameInput: '#elementor-template-library-save-template-name',
+			localInput: '.source-selections-input.local',
+			cloudInput: '.source-selections-input.cloud',
+			sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+			infoIcon: '.source-selections-input.cloud .eicon-info',
+			connect: '#elementor-template-library-connect__badge',
+			connectBadge: '.source-selections-input.cloud .connect-badge',
+			cloudFormInputs: '.cloud-library-form-inputs',
+			upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
+		};
 	},
 
-	events: {
-		'submit @ui.form': 'onFormSubmit',
-		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
-		'click @ui.foldersList': 'onFoldersListClick',
-		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
-		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
-		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
-		'mouseenter @ui.infoIcon': 'showInfoTip',
-		'mouseenter @ui.connect': 'showConnectInfoTip',
-		'input @ui.templateNameInput': 'onTemplateNameInputChange',
+	events() {
+		return {
+			'submit @ui.form': 'onFormSubmit',
+			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'keydown @ui.ellipsisIcon': 'onEllipsisIconKeyDown',
+			'click @ui.foldersList': 'onFoldersListClick',
+			'keydown @ui.foldersListContainer': 'onFoldersListKeyDown',
+			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
+			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+			'mouseenter @ui.infoIcon': 'showInfoTip',
+			'mouseleave @ui.infoIcon': 'hideInfoTip',
+			'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+			'mouseleave @ui.connectBadge': 'hideConnectInfoTip',
+			'input @ui.templateNameInput': 'onTemplateNameInputChange',
+		};
 	},
 
 	onRender() {
@@ -66,14 +77,17 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	onDestroy() {
+		this.unbindDocumentClickHandler();
+	},
+
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
+		const context = this.getOption( 'context' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
-
-		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
@@ -98,6 +112,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! elementor.config.library_connect.is_connected ) {
 			this.handleElementorConnect();
 		}
+
+		this.bindDocumentClickHandler();
 	},
 
 	cloudMaxCapacityReached() {
@@ -115,7 +131,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.ui.templateNameInput.val( title );
 
-		this.handleContextUiStateChecboxes();
+		this.handleContextUiStateCheckboxes();
 
 		this.maybeEnableSaveButton();
 	},
@@ -138,11 +154,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleBulkActionContextUiState() {
 		this.ui.templateNameInput.remove();
-		this.handleContextUiStateChecboxes();
+		this.handleContextUiStateCheckboxes();
 		this.maybeEnableSaveButton();
 	},
 
-	handleContextUiStateChecboxes() {
+	handleContextUiStateCheckboxes() {
 		const fromSource = elementor.templates.getFilter( 'source' );
 
 		if ( 'local' === fromSource ) {
@@ -192,10 +208,89 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return templateType[ `${ saveContext }Dialog` ];
 	},
 
-	onFormSubmit( event ) {
-		event.preventDefault();
+	onEllipsisIconKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				this.hideFoldersDropdown();
+				suppressEscapeKeyUp( event );
+			}
+			return;
+		}
 
-		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+		if ( ( 'Tab' === event.key && ! event.shiftKey ) || 'ArrowDown' === event.key ) {
+			if ( this.ui.foldersDropdown.is( ':visible' ) ) {
+				event.preventDefault();
+				event.stopPropagation();
+				this.focusFirstFolderItem();
+			}
+		}
+	},
+
+	onFoldersListKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			this.hideFoldersDropdown();
+			this.ui.ellipsisIcon.trigger( 'focus' );
+			suppressEscapeKeyUp( event );
+			return;
+		}
+
+		if ( 'Tab' === event.key ) {
+			this.handleFolderTab( event );
+			return;
+		}
+
+		const $items = this.getFolderItems();
+
+		rovingTabindex( {
+			event,
+			$items,
+			orientation: 'vertical',
+			homeEnd: false,
+			onActivate: ( e, $item ) => {
+				e.stopPropagation();
+				$item.trigger( 'click' );
+			},
+		} );
+
+		event.stopPropagation();
+	},
+
+	handleFolderTab( event ) {
+		const $items = this.getFolderItems();
+		const currentIndex = $items.index( event.target );
+
+		if ( event.shiftKey ) {
+			if ( currentIndex <= 0 ) {
+				// Close dropdown and let the browser naturally move focus backwards.
+				this.hideFoldersDropdown();
+				this.ui.ellipsisIcon.trigger( 'focus' );
+			} else {
+				event.preventDefault();
+				event.stopPropagation();
+				$items.eq( currentIndex - 1 ).trigger( 'focus' );
+			}
+			return;
+		}
+
+		if ( currentIndex < $items.length - 1 ) {
+			event.preventDefault();
+			event.stopPropagation();
+			$items.eq( currentIndex + 1 ).trigger( 'focus' );
+		} else {
+			// Close dropdown and let the browser naturally advance focus forward.
+			this.hideFoldersDropdown();
+			this.ui.ellipsisIcon.trigger( 'focus' );
+		}
+	},
+
+	updateEllipsisAriaExpanded( expanded ) {
+		this.ui.ellipsisIcon.attr( 'aria-expanded', expanded ? 'true' : 'false' );
+	},
+
+	async onFormSubmit( event ) {
+		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
@@ -220,6 +315,14 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.updateSourceState( formData );
 
+		try {
+			await $e.run( 'document/save/auto', { force: true } );
+		} catch ( e ) {
+			// Proceed even if auto-save fails or is rejected.
+		}
+
+		await elementor.templates.syncGlobalStylesBeforeSave();
+
 		elementor.templates.saveTemplate( this.getSaveType(), formData );
 	},
 
@@ -235,10 +338,10 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		[ 'cloud', 'local' ].forEach( ( type ) => delete formData[ type ] );
 	},
 
-	showEmptySourceErrorDialog( ) {
+	showEmptySourceErrorDialog() {
 		elementorCommon.dialogsManager.createWidget( 'alert', {
 			id: 'elementor-template-library-error-dialog',
-			headerMessage: __( 'An error occured.', 'elementor' ),
+			headerMessage: __( 'An error occurred.', 'elementor' ),
 			message: __( 'Please select at least one location.', 'elementor' ),
 		} ).show();
 	},
@@ -372,17 +475,21 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.show();
+		} else {
+			this.hideFoldersDropdown();
 		}
 	},
 
 	async onEllipsisIconClick() {
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
-			this.ui.foldersDropdown.hide();
+			this.hideFoldersDropdown();
+			this.updateEllipsisAriaExpanded( false );
 
 			return;
 		}
 
 		this.ui.foldersDropdown.show();
+		this.updateEllipsisAriaExpanded( true );
 
 		if ( ! this.folderCollectionView ) {
 			this.folderCollectionView = new FolderCollectionView( {
@@ -397,12 +504,28 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			} finally {
 				this.removeSpinner();
 				this.disableSelectedFolder();
+				this.focusFirstFolderItem();
 			}
+		} else {
+			this.focusFirstFolderItem();
 		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectFolder,
 		} );
+	},
+
+	getFolderItems() {
+		// Must query the DOM fresh because the folder list is rendered dynamically
+		// after the view's initial render, so this.ui.foldersList may be stale.
+		return this.$( '.cloud-folder-selection-dropdown ul li:visible' );
+	},
+
+	focusFirstFolderItem() {
+		const $firstItem = this.getFolderItems().first();
+		if ( $firstItem.length ) {
+			$firstItem.trigger( 'focus' );
+		}
 	},
 
 	renderFolderDropdown() {
@@ -489,7 +612,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleFolderSelected( id, value ) {
 		this.highlightSelectedFolder( id );
-		this.ui.foldersDropdown.hide();
+		this.hideFoldersDropdown();
 		this.ui.ellipsisIcon.hide();
 		this.ui.selectedFolderText.html( value );
 		this.ui.selectedFolder.show();
@@ -513,7 +636,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.selectedFolder.hide();
 		this.ui.ellipsisIcon.show();
 		this.ui.hiddenInputSelectedFolder.val( '' );
-		this.ui.foldersDropdown.hide();
+		this.hideFoldersDropdown();
 	},
 
 	async loadMoreFolders() {
@@ -621,6 +744,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.infoTipDialog.show();
 	},
 
+	hideInfoTip() {
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
+		}
+	},
+
+	getConnectInfoTipPosition() {
+		return 'top+80';
+	},
+
 	showConnectInfoTip() {
 		if ( this.connectInfoTipDialog ) {
 			this.connectInfoTipDialog.hide();
@@ -634,7 +767,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.connectBadge,
-				at: 'top+80',
+				at: this.getConnectInfoTipPosition(),
 			},
 		} )
 			.setMessage(
@@ -656,7 +789,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
 		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+
+		this.addVariantClass( this.connectInfoTipDialog.getElements( 'widget' ) );
 		this.connectInfoTipDialog.show();
+	},
+
+	addVariantClass() {
+		return '';
+	},
+
+	hideConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
 	},
 
 	handleElementorConnect() {
@@ -686,6 +831,40 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	updateSubmitButtonState( shouldDisableSubmitButton ) {
 		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
 		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
+	},
+
+	hideFoldersDropdown() {
+		this.ui.foldersDropdown.hide();
+		this.updateEllipsisAriaExpanded( false );
+	},
+
+	bindDocumentClickHandler() {
+		this.documentClickHandler = this.hideDropdownIfClickOutside.bind( this );
+		elementor.templates.layout.modalContent.$el.on( 'click', this.documentClickHandler );
+	},
+
+	unbindDocumentClickHandler() {
+		if ( ! this.documentClickHandler ) {
+			return;
+		}
+
+		elementor.templates.layout.modalContent.$el.off( 'click', this.documentClickHandler );
+		this.documentClickHandler = null;
+	},
+
+	hideDropdownIfClickOutside( event ) {
+		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
+			return;
+		}
+
+		const target = jQuery( event.target );
+		const isClickInsideDropdown = target.closest( this.ui.foldersDropdown ).length > 0;
+		const isClickOnEllipsisIcon = target.closest( this.ui.ellipsisIcon ).length > 0;
+		const isClickOnSelectedFolderText = target.closest( this.ui.selectedFolderText ).length > 0;
+
+		if ( ! isClickInsideDropdown && ! isClickOnEllipsisIcon && ! isClickOnSelectedFolderText ) {
+			this.hideFoldersDropdown();
+		}
 	},
 
 	onUpgradeBadgeClicked() {

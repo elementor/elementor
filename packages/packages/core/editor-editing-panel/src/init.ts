@@ -3,6 +3,8 @@ import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
 import { EditingPanelHooks } from './components/editing-panel-hooks';
+import { init as initPromotionsSections } from './components/promotions/init';
+import { registerElementControls } from './controls-registry/element-controls/registry';
 import { init as initDynamics } from './dynamics/init';
 import { panel } from './panel';
 import { initResetStyleProps } from './reset-style-props';
@@ -24,7 +26,12 @@ export function init() {
 	// TODO: Move it from here once we have styles-inheritance package.
 	initStylesInheritance();
 
+	// TODO: Move it from here once we have element-controls package.
+	registerElementControls();
+
 	initResetStyleProps();
+
+	initPromotionsSections();
 }
 
 const blockV1Panel = () => {

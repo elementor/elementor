@@ -3,8 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
@@ -26,16 +25,13 @@ class Atomic_Widget_Base_Styles {
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
 		$styles_manager->register(
-			self::STYLES_KEY,
+			[ self::STYLES_KEY ],
 			fn () => $this->get_all_base_styles(),
-			[ self::STYLES_KEY ]
 		);
 	}
 
 	private function invalidate_cache() {
-		$cache_validity = new Cache_Validity();
-
-		$cache_validity->invalidate( [ self::STYLES_KEY ] );
+		do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 	}
 
 	public function get_all_base_styles(): array {

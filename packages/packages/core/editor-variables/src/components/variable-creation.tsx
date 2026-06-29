@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -10,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useVariableType } from '../context/variable-type-context';
 import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
-import { trackVariableEvent } from '../utils/tracking';
+import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
@@ -23,9 +22,9 @@ type Props = {
 };
 
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, propTypeUtil } = useVariableType();
 
-	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { setVariableValue: setVariable, path } = useVariableBoundProp();
 	const { propType } = useBoundProp();
 
 	const initialValue = useInitialValue();
@@ -34,6 +33,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
+	const [ propTypeKey, setPropTypeKey ] = useState( propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
@@ -50,11 +50,14 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	const handleCreateAndTrack = () => {
-		createVariable( {
-			value,
-			label,
-			type: propTypeUtil.key,
-		} )
+		createVariable(
+			{
+				value,
+				label,
+				type: propTypeKey,
+			},
+			{ eventData: { controlPath: path.join( '.' ) } }
+		)
 			.then( ( key ) => {
 				setVariable( key );
 				closePopover();
@@ -72,12 +75,6 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
-
-		trackVariableEvent( {
-			varType: variableType,
-			controlPath: path.join( '.' ),
-			action: 'save',
-		} );
 	};
 
 	const hasEmptyFields = () => {
@@ -98,8 +95,15 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleCreateAndTrack();
+		}
+	};
+
 	return (
-		<PopoverBody height="auto">
+		<SectionPopoverBody height="auto">
 			<PopoverHeader
 				icon={
 					<>
@@ -134,35 +138,47 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						} }
 						onErrorChange={ ( errorMsg ) => {
 							setLabelFieldError( {
-								value: label,
+								value: '',
 								message: errorMsg,
 							} );
 						} }
+						onKeyDown={ handleKeyDown }
+						focusOnShow
 					/>
 				</FormField>
-				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<Typography variant="h5">
-						<ValueField
-							value={ value }
-							onChange={ ( newValue ) => {
-								setValue( newValue );
-								setErrorMessage( '' );
-								setValueFieldError( '' );
-							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
-						/>
-					</Typography>
-				</FormField>
+				{ ValueField && (
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5" id="variable-value-wrapper">
+							<ValueField
+								value={ value }
+								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+								onKeyDown={ handleKeyDown }
+							/>
+						</Typography>
+					</FormField>
+				) }
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
+				<Button
+					id="create-variable-button"
+					size="small"
+					variant="contained"
+					disabled={ isSubmitDisabled }
+					onClick={ handleCreateAndTrack }
+				>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
-		</PopoverBody>
+		</SectionPopoverBody>
 	);
 };

@@ -1,52 +1,102 @@
 import {
+	AttachmentTypeControl,
+	ChipsControl,
 	type ControlComponent,
+	DateRangeControl,
+	DateTimeControl,
+	EmailFormActionControl,
+	HtmlTagControl,
 	ImageControl,
+	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
+	QueryChipsControl,
+	QueryControl,
+	QueryFilterRepeaterControl,
 	RepeatableControl,
-	SelectControl,
+	SelectControlWrapper,
 	SizeControl,
 	SvgMediaControl,
 	SwitchControl,
 	TextAreaControl,
 	TextControl,
+	TimeRangeControl,
+	ToggleControl,
 	UrlControl,
+	VideoMediaControl,
 } from '@elementor/editor-controls';
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	createArrayPropUtils,
+	dateRangePropTypeUtil,
+	DateTimePropTypeUtil,
+	emailsPropTypeUtil,
+	htmlV3PropTypeUtil,
 	imagePropTypeUtil,
-	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
+	queryFilterArrayPropTypeUtil,
+	queryPropTypeUtil,
 	sizePropTypeUtil,
+	stringArrayPropTypeUtil,
 	stringPropTypeUtil,
+	svgSrcPropTypeUtil,
+	timeRangePropTypeUtil,
+	videoSrcPropTypeUtil,
 } from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
 
-type ControlRegistry = Record<
+const queryArrayPropTypeUtil = createArrayPropUtils( queryPropTypeUtil.key, queryPropTypeUtil.schema );
+
+export type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	{ component: ControlComponent; layout: ControlLayout; propTypeUtil?: PropTypeUtil< string, any > }
 >;
 
 const controlTypes = {
-	image: { component: ImageControl, layout: 'full', propTypeUtil: imagePropTypeUtil },
-	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
+	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
+	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: svgSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
-	select: { component: SelectControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	select: { component: SelectControlWrapper, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	chips: { component: ChipsControl, layout: 'full', propTypeUtil: stringArrayPropTypeUtil },
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
+	query: { component: QueryControl, layout: 'full', propTypeUtil: queryPropTypeUtil },
+	'query-chips': { component: QueryChipsControl, layout: 'full', propTypeUtil: queryArrayPropTypeUtil },
+	'query-filter-repeater': {
+		component: QueryFilterRepeaterControl,
+		layout: 'full',
+		propTypeUtil: queryFilterArrayPropTypeUtil,
+	},
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
+	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
+	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
+	video: { component: VideoMediaControl, layout: 'full', propTypeUtil: videoSrcPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlV3PropTypeUtil },
+	email: { component: EmailFormActionControl, layout: 'custom', propTypeUtil: emailsPropTypeUtil },
+	'date-range': {
+		component: DateRangeControl,
+		layout: 'custom',
+		propTypeUtil: dateRangePropTypeUtil,
+	},
+	'time-range': {
+		component: TimeRangeControl,
+		layout: 'custom',
+		propTypeUtil: timeRangePropTypeUtil,
+	},
+	'attachment-type': { component: AttachmentTypeControl, layout: 'custom', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
@@ -56,7 +106,7 @@ export type ControlTypes = {
 };
 
 class ControlsRegistry {
-	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+	constructor( private readonly controlsRegistry: ControlRegistry ) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
@@ -98,4 +148,4 @@ class ControlsRegistry {
 	}
 }
 
-export const controlsRegistry = new ControlsRegistry();
+export const controlsRegistry = new ControlsRegistry( controlTypes );

@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { createMockDocument, createMockStyleDefinition, renderWithStore } from 'test-utils';
+import {
+	createMockDocument,
+	createMockStyleDefinition,
+	createMockTrackingModule,
+	mockTracking,
+	renderWithStore,
+} from 'test-utils';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
@@ -12,8 +18,32 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
+import { createLabelsForClasses } from '../../../utils/create-labels-for-classes';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
+
+const ROW_HEIGHT = 40;
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count, getItemKey } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		return {
+			getTotalSize: jest.fn().mockReturnValue( count * ROW_HEIGHT ),
+			getVirtualItems: jest.fn().mockReturnValue(
+				indices.map( ( index ) => ( {
+					index,
+					key: getItemKey ? getItemKey( index ) : index,
+					start: index * ROW_HEIGHT,
+					end: ( index + 1 ) * ROW_HEIGHT,
+					size: ROW_HEIGHT,
+					lane: 0,
+				} ) )
+			),
+		};
+	} ),
+} ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
@@ -37,6 +67,11 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	} ),
 } ) );
 
+jest.mock( '../../../load-existing-classes', () => ( {
+	loadExistingClasses: jest.fn().mockResolvedValue( undefined ),
+} ) );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
+
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
 		inputValue: '',
@@ -55,9 +90,11 @@ describe( 'GlobalClassesList', () => {
 	let store: ReturnType< typeof createStore >;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
 
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: true, errorMessage: null } );
+		jest.mocked( useFilters ).mockReturnValue( null );
 
 		registerSlice( slice );
 
@@ -99,12 +136,21 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classRenamed',
+			classId: 'class-1',
+			oldValue: 'Class 1',
+			newValue: 'New-Class-Name',
+			source: 'class-manager',
+		} );
 	} );
 
 	it( 'should not allow rename if the name is invalid', () => {
@@ -167,12 +213,21 @@ describe( 'GlobalClassesList', () => {
 		// Act.
 		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.blur( editableField );
 
 		// Assert.
 		expect( editableField ).not.toBeInTheDocument();
 
-		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		} );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classRenamed',
+			classId: 'class-1',
+			oldValue: 'Class 1',
+			newValue: 'New-Class-Name',
+			source: 'class-manager',
+		} );
 	} );
 
 	it( 'should show empty state when there are no classes', () => {
@@ -213,8 +268,17 @@ describe( 'GlobalClassesList', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
 		// Assert.
-		expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		} );
 		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classDeleted',
+				classId: 'class-1',
+				runAction: expect.any( Function ),
+			} );
+		} );
 	} );
 
 	it( 'should close the delete dialog when clicking cancel, without deleting', async () => {
@@ -575,6 +639,23 @@ describe( 'GlobalClassesList', () => {
 		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
 
 		expect( triggers ).toHaveLength( 0 );
+		expect( mockTracking ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should keep sortable triggers wired on classes rendered while virtualized', () => {
+		mockClasses(
+			Array.from( { length: 50 }, ( _, i ) => ( {
+				id: `class-${ i + 1 }`,
+				label: `ClassLabel${ i + 1 }`,
+			} ) )
+		);
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		const renderedRows = screen.getAllByRole( 'listitem' );
+		const sortTriggers = screen.getAllByRole( 'button', { name: 'sort' } );
+
+		expect( sortTriggers ).toHaveLength( renderedRows.length );
 	} );
 } );
 
@@ -586,11 +667,14 @@ const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {
 		order: classes.map( ( { id } ) => id ),
 	};
 
+	const classLabels = createLabelsForClasses( classes );
+
 	act( () =>
 		dispatch(
 			slice.actions.load( {
 				preview: data,
 				frontend: data,
+				classLabels,
 			} )
 		)
 	);

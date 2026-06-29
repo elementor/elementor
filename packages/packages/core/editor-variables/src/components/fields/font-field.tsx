@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useId, useRef, useState } from 'react';
-import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
-import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
+import { useId, useMemo, useRef, useState } from 'react';
+import { enqueueFont, ItemSelector, useFontFamilies } from '@elementor/editor-controls';
+import { useSectionWidth } from '@elementor/editor-ui';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -26,7 +26,7 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
 
-	const mapFontSubs = React.useMemo( () => {
+	const mapFontSubs = useMemo( () => {
 		return fontFamilies.map( ( { label, fonts } ) => ( {
 			label,
 			items: fonts,
@@ -68,12 +68,13 @@ export const FontField = ( { value, onChange, onValidationChange }: FontFieldPro
 				{ ...bindPopover( fontPopoverState ) }
 			>
 				<ItemSelector
+					id="font-family-variables-selector"
 					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ handleFontFamilyChange }
 					onClose={ fontPopoverState.close }
 					sectionWidth={ sectionWidth }
-					title={ __( 'Font Family', 'elementor' ) }
+					title={ __( 'Font family', 'elementor' ) }
 					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
 					onDebounce={ enqueueFont }
 					icon={ TextIcon as React.ElementType< { fontSize: string } > }

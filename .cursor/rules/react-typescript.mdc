@@ -1,0 +1,56 @@
+---
+description: React and TypeScript development rules
+globs: ["**/*.tsx", "**/*.jsx", "**/*.ts", "**/*.js"]
+alwaysApply: false
+---
+
+# React & TypeScript Development Rules
+
+## React Best Practices
+- Use functional components with hooks
+- Keep components small and focused
+- Use composition over inheritance
+- Prefer controlled components
+- Use local state when possible, lift state up when needed
+- Use context for shared state, avoid prop drilling
+- Use React.memo, useMemo, useCallback to avoid unnecessary re-renders
+
+## TypeScript Standards
+- Use strict TypeScript configuration
+- Define interfaces for all props
+- Use union types for variants
+- Avoid `any` type unless absolutely necessary
+- Enable strict null checks
+- Use proper type guards
+- Define return types for functions
+
+## Elementor-Specific Patterns
+
+### Pluggable Components (Locations System)
+```typescript
+locations.register('editor.panel.item', MyComponent);
+
+const PanelItem = () => {
+  const components = locations.get('editor.panel.item');
+  return (
+    <div>
+      {components.map((Component, index) => (
+        <Component key={index} />
+      ))}
+    </div>
+  );
+};
+```
+
+### Context Pattern
+```typescript
+const EditorContext = createContext<EditorContextType | null>(null);
+
+export const useEditor = () => {
+  const context = useContext(EditorContext);
+  if (!context) {
+    throw new Error('useEditor must be used within EditorProvider');
+  }
+  return context;
+};
+```

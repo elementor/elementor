@@ -1,32 +1,45 @@
-import type { V1ElementConfig } from '@elementor/editor-elements';
+import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
-import { createPropsResolver, type PropsResolver } from '../renderers/create-props-resolver';
-import { settingsTransformersRegistry } from '../settings-transformers-registry';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import {
+	createAfterRender,
+	createBeforeRender,
+	rerenderExistingChildren,
+	setupTwigRenderer,
+	type TwigViewInterface,
+	waitForChildrenToComplete,
+} from './twig-rendering-utils';
+import {
+	type ElementType,
+	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
+	type TemplatedElementView,
+} from './types';
 
-type CreateTypeOptions = {
+export type CreateTemplatedElementTypeOptions = {
 	type: string;
 	renderer: DomRenderer;
 	element: TemplatedElementConfig;
 };
 
-type TemplatedElementConfig = Required<
+export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 >;
 
-export function createTemplatedElementType( { type, renderer, element }: CreateTypeOptions ): typeof ElementType {
+export function createTemplatedElementType( {
+	type,
+	renderer,
+	element,
+}: CreateTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
-	Object.entries( element.twig_templates ).forEach( ( [ key, template ] ) => {
-		renderer.register( key, template );
-	} );
-
-	const propsResolver = createPropsResolver( {
-		transformers: settingsTransformersRegistry,
-		schema: element.atomic_props_schema,
+	const view = createTemplatedElementView( {
+		type,
+		renderer,
+		element,
 	} );
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
@@ -35,13 +48,7 @@ export function createTemplatedElementType( { type, renderer, element }: CreateT
 		}
 
 		getView() {
-			return createTemplatedElementViewClassDeclaration( {
-				type,
-				renderer,
-				propsResolver,
-				baseStylesDictionary: element.base_styles_dictionary,
-				templateKey: element.twig_main_template,
-			} );
+			return view;
 		}
 	};
 }
@@ -55,77 +62,158 @@ export function canBeTemplated( element: Partial< TemplatedElementConfig > ): el
 	);
 }
 
-type CreateViewOptions = {
-	type: string;
-	renderer: DomRenderer;
-	propsResolver: PropsResolver;
-	templateKey: string;
-	baseStylesDictionary: Record< string, string >;
-};
-
-function createTemplatedElementViewClassDeclaration( {
+export function createTemplatedElementView( {
 	type,
 	renderer,
-	propsResolver: resolveProps,
-	templateKey,
-	baseStylesDictionary,
-}: CreateViewOptions ): typeof ElementView {
+	element,
+}: CreateTemplatedElementTypeOptions ): typeof TemplatedElementView {
 	const BaseView = createElementViewClassDeclaration();
 
+	const { templateKey, baseStylesDictionary, resolveProps } = setupTwigRenderer( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends BaseView {
-		#abortController: AbortController | null = null;
+		_abortController: AbortController | null = null;
+		_lastResolvedSettingsHash: string | null = null;
+		_domUpdateWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
+		}
+
+		getNamespaceKey() {
+			return type;
 		}
 
 		renderOnChange() {
 			this.render();
 		}
 
-		// Overriding Marionette original render method to inject our renderer.
+		getRenderContext(): NamespacedRenderContext | undefined {
+			return this._parent?.getRenderContext?.();
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			return this._parent?.getResolverRenderContext?.();
+		}
+
+		invalidateRenderCache() {
+			this._lastResolvedSettingsHash = null;
+		}
+
+		render() {
+			this._abortController?.abort();
+			this._abortController = new AbortController();
+
+			const process = signalizedProcess( this._abortController.signal )
+				.then( () => this._beforeRender() )
+				.then( () => this._renderTemplate() )
+				.then( () => this._renderChildren() )
+				.then( () => this._afterRender() );
+
+			this._currentRenderPromise = process.execute();
+
+			return this._currentRenderPromise;
+		}
+
+		async _renderChildren() {
+			if ( this._shouldReuseChildren() ) {
+				rerenderExistingChildren( this );
+			} else {
+				super._renderChildren();
+			}
+
+			await waitForChildrenToComplete( this );
+		}
+
+		_shouldReuseChildren() {
+			return this._domUpdateWasSkipped && this.children?.length > 0;
+		}
+
 		async _renderTemplate() {
-			this.#beforeRenderTemplate();
+			this.triggerMethod( 'before:render:template' );
 
-			this.#abortController?.abort();
-			this.#abortController = new AbortController();
-
-			const process = signalizedProcess( this.#abortController.signal )
+			const process = signalizedProcess( this._abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
-
 					return resolveProps( {
 						props: settings,
 						signal,
+						renderContext: this.getResolverRenderContext(),
 					} );
 				} )
-				.then( ( resolvedSettings ) => {
-					// Same as the Backend.
+				.then( ( settings ) => {
+					return this.afterSettingsResolve( settings );
+				} )
+				.then( async ( settings ) => {
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this._lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this._domUpdateWasSkipped = true;
+						return null;
+					}
+					this._domUpdateWasSkipped = false;
+
+					this._lastResolvedSettingsHash = settingsHash;
+
 					const context = {
 						id: this.model.get( 'id' ),
+						interaction_id: this.getInteractionId(),
 						type,
-						settings: resolvedSettings,
+						settings,
 						base_styles: baseStylesDictionary,
+						...( this.getResolverRenderContext?.() ?? {} ),
 					};
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this.$el.html( html );
+				} );
 
 			await process.execute();
 
-			this.#afterRenderTemplate();
-		}
-
-		// Emulating the original Marionette behavior.
-		#beforeRenderTemplate() {
-			this.triggerMethod( 'before:render:template' );
-		}
-
-		#afterRenderTemplate() {
 			this.bindUIElements();
 
 			this.triggerMethod( 'render:template' );
+		}
+
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
+			return settings;
+		}
+
+		_beforeRender() {
+			createBeforeRender( this as unknown as TwigViewInterface );
+		}
+
+		_afterRender() {
+			createAfterRender( this as unknown as TwigViewInterface );
+		}
+
+		_doAfterRender( callback: () => void ) {
+			if ( this.isRendered ) {
+				callback();
+			} else {
+				this.once( 'render', callback );
+			}
+		}
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			this._doAfterRender( () => super._openEditingPanel( options ) );
+		}
+
+		getInteractionId() {
+			const originId = this.model.get( 'originId' );
+			const id = this.model.get( 'id' );
+
+			return originId ?? id;
 		}
 	};
 }

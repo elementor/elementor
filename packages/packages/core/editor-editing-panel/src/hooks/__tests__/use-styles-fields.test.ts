@@ -44,6 +44,7 @@ describe( 'useStylesFields', () => {
 				title: 'Test',
 				propsSchema: {},
 			},
+			settings: {},
 		} );
 
 		jest.mocked( getElementLabel ).mockImplementation( ( id ) => {

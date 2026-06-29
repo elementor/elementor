@@ -1,17 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { getInSettingsTab } from './styleguide.helper';
 
 test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	const fontsContentText = 'The five boxing wizards jump quickly.';
-
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
 
 	test( 'Change font title', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
@@ -166,14 +158,14 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Assert 1.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Typography' ).nth( 1 ) ).toBeVisible();
 
 		// Act 2. click on font again nothing happens.
 		await secondaryFont.click();
 
 		// Assert 2.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Typography' ).nth( 1 ) ).toBeVisible();
 
 		// Arrange 3.
 		await secondaryFont.click();

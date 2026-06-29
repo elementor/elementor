@@ -18,11 +18,11 @@ jest.mock( '@reach/router', () => ( {
 } ) );
 
 const mockSendPageViewsWebsiteTemplates = jest.fn();
-const mockSendExportKitCustomization = jest.fn();
+const mockSendImportKitCustomization = jest.fn();
 jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 	AppsEventTracking: {
 		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
-		sendExportKitCustomization: ( ...args ) => mockSendExportKitCustomization( ...args ),
+		sendImportKitCustomization: ( ...args ) => mockSendImportKitCustomization( ...args ),
 	},
 } ) );
 describe( 'ImportComplete Page', () => {
@@ -63,7 +63,7 @@ describe( 'ImportComplete Page', () => {
 		// Act
 		render( <ImportComplete /> );
 		// Assert
-		expect( screen.getByText( /Your website templates is now live on your site!/i ) ).toBeTruthy();
+		expect( screen.getByText( /Your website template is now live on your site!/i ) ).toBeTruthy();
 		expect( screen.getByText( /You've imported and applied the following to your site:/i ) ).toBeTruthy();
 		expect( screen.getByText( /What's included:/i ) ).toBeTruthy();
 		expect( screen.getByText( /Site settings/i ) ).toBeTruthy();
@@ -94,7 +94,7 @@ describe( 'ImportComplete Page', () => {
 		render( <ImportComplete /> );
 		// Assert
 		expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization', { replace: true } );
-		expect( mockSendExportKitCustomization ).toHaveBeenCalledWith( expect.objectContaining( {
+		expect( mockSendImportKitCustomization ).toHaveBeenCalledWith( expect.objectContaining( {
 			kit_description: false,
 			kit_import_content: true,
 			kit_import_plugins: true,

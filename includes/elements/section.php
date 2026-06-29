@@ -1187,22 +1187,27 @@ class Element_Section extends Element_Base {
 				'label' => esc_html__( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-container' => 'text-align: {{VALUE}};',
@@ -1438,7 +1443,6 @@ class Element_Section extends Element_Base {
 				'background-video-container',
 				{
 					'class': 'elementor-background-video-container',
-					'aria-hidden': 'true',
 				}
 			);
 
@@ -1447,8 +1451,8 @@ class Element_Section extends Element_Base {
 			}
 		#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
-				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
+				<div class="elementor-background-video-embed" role="presentation"></div>
+				<video class="elementor-background-video-hosted" role="presentation" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
@@ -1476,13 +1480,12 @@ class Element_Section extends Element_Base {
 			<?php
 			if ( 'video' === $settings['background_background'] ) :
 				if ( $settings['background_video_link'] ) :
-					$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+					$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
 					$this->add_render_attribute(
 						'background-video-container',
 						[
 							'class' => 'elementor-background-video-container',
-							'aria-hidden' => 'true',
 						]
 					);
 
@@ -1491,8 +1494,8 @@ class Element_Section extends Element_Base {
 					}
 					?>
 					<div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
-						<?php if ( $video_properties ) : ?>
-							<div class="elementor-background-video-embed"></div>
+						<?php if ( $is_embed_video ) : ?>
+							<div class="elementor-background-video-embed" role="presentation"></div>
 							<?php
 						else :
 							$video_tag_attributes = 'autoplay muted playsinline';
@@ -1500,7 +1503,7 @@ class Element_Section extends Element_Base {
 								$video_tag_attributes .= ' loop';
 							endif;
 							?>
-							<video class="elementor-background-video-hosted" <?php
+							<video class="elementor-background-video-hosted" role="presentation" <?php
 								// PHPCS - the variable $video_tag_attributes is a plain string.
 								echo $video_tag_attributes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?>></video>

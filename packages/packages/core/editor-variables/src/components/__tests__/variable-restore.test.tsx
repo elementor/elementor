@@ -7,6 +7,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableRestore } from '../variable-restore';
 
@@ -105,5 +106,125 @@ describe( 'ColorVariableRestore', () => {
 
 		// 3. Save button is disabled due to error
 		expect( saveButton ).toBeDisabled();
+	} );
+
+	it( 'should not pass type when type has not changed', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-4test',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'color',
+			propTypeUtil: colorVariablePropTypeUtil,
+			fallbackPropTypeUtil: colorPropTypeUtil,
+		} );
+
+		( usePropVariablesModule.restoreVariable as jest.Mock ).mockResolvedValue( null );
+
+		// Act.
+		renderControl(
+			<VariableTypeProvider propTypeKey={ colorVariablePropTypeUtil.key }>
+				<VariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />
+			</VariableTypeProvider>,
+			props
+		);
+
+		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
+		fireEvent.change( labelField, { target: { value: 'new-label' } } );
+
+		await waitFor( () => {
+			expect( labelField ).toHaveValue( 'new-label' );
+		} );
+
+		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
+		fireEvent.click( restoreButton );
+
+		// Assert.
+		await waitFor( () => {
+			expect( usePropVariablesModule.restoreVariable ).toHaveBeenCalledWith(
+				'e-gv-4test',
+				'new-label',
+				'#911f1f'
+			);
+		} );
+	} );
+
+	it( 'should pass type in payload when type is changed', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-4test',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		const MockValueField = ( { onPropTypeKeyChange }: ValueFieldProps ) => {
+			return (
+				<button
+					data-testid="change-type-button"
+					onClick={ () => onPropTypeKeyChange?.( 'global-font-variable' ) }
+				>
+					Change Type
+				</button>
+			);
+		};
+
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: MockValueField,
+			variableType: 'color',
+			propTypeUtil: colorVariablePropTypeUtil,
+			fallbackPropTypeUtil: colorPropTypeUtil,
+		} );
+
+		( usePropVariablesModule.restoreVariable as jest.Mock ).mockResolvedValue( null );
+
+		// Act.
+		renderControl(
+			<VariableTypeProvider propTypeKey={ colorVariablePropTypeUtil.key }>
+				<VariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />
+			</VariableTypeProvider>,
+			props
+		);
+
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		const changeTypeButton = screen.getByTestId( 'change-type-button' );
+		fireEvent.click( changeTypeButton );
+
+		// Change the label to enable the restore button
+		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
+		fireEvent.change( labelField, { target: { value: 'new-label' } } );
+
+		await waitFor( () => {
+			expect( labelField ).toHaveValue( 'new-label' );
+		} );
+
+		// Click restore button
+		const restoreButton = screen.getByRole( 'button', { name: /restore/i } );
+		fireEvent.click( restoreButton );
+
+		// Assert - type should be the new type because it has changed
+		await waitFor( () => {
+			expect( usePropVariablesModule.restoreVariable ).toHaveBeenCalledWith(
+				'e-gv-4test',
+				'new-label',
+				'#911f1f',
+				'global-font-variable'
+			);
+		} );
 	} );
 } );

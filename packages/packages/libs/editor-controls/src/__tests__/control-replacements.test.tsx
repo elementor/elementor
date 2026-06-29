@@ -82,4 +82,80 @@ describe( 'control-replacements', () => {
 		expect( screen.getByText( 'control-text' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'replacement' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'should pass placeholder value to condition function', () => {
+		// Arrange.
+		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: 'test-value',
+			placeholder: 'test-placeholder',
+		} as never );
+
+		registerControlReplacement( {
+			component: () => <div>replacement-with-placeholder</div>,
+			condition: ( { value, placeholder } ) => value === 'test-value' && placeholder === 'test-placeholder',
+		} );
+
+		// Act.
+		renderWithTheme(
+			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+				<Control text="control-text" />
+			</ControlReplacementsProvider>
+		);
+
+		// Assert.
+		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'replacement-with-placeholder' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should handle undefined placeholder value', () => {
+		// Arrange.
+		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: 'test-value',
+		} as never );
+
+		registerControlReplacement( {
+			component: () => <div>replacement-no-placeholder</div>,
+			condition: ( { placeholder } ) => typeof placeholder === 'undefined',
+		} );
+
+		// Act.
+		renderWithTheme(
+			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+				<Control text="control-text" />
+			</ControlReplacementsProvider>
+		);
+
+		// Assert.
+		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'replacement-no-placeholder' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should use placeholder value when making replacement decisions', () => {
+		// Arrange.
+		const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			placeholder: 'special-placeholder',
+		} as never );
+
+		registerControlReplacement( {
+			component: () => <div>placeholder-based-replacement</div>,
+			condition: ( { placeholder } ) => placeholder === 'special-placeholder',
+		} );
+
+		// Act.
+		renderWithTheme(
+			<ControlReplacementsProvider replacements={ getControlReplacements() }>
+				<Control text="control-text" />
+			</ControlReplacementsProvider>
+		);
+
+		// Assert.
+		expect( screen.queryByText( 'control-text' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'placeholder-based-replacement' ) ).toBeInTheDocument();
+	} );
 } );

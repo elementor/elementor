@@ -26,7 +26,7 @@ $root: e-app-import-export-wizard-step;
 		font-size: 50px;
 
 		&.eicon-loading {
-			font-size: type( size, '30' );
+			font-size: get-type( size, '30' );
 		}
 	}
 

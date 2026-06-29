@@ -31,8 +31,8 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 		return customPostTypesTitles.filter( ( postType ) => {
 			const postTypeValue = postType.value;
 
-			const wpContentArray = wpContent[ postTypeValue ];
-			const isInWpContent = wpContentArray && Array.isArray( wpContentArray ) && wpContentArray.length > 0;
+			const wpContentObject = wpContent[ postTypeValue ];
+			const isInWpContent = wpContentObject && 'object' === typeof wpContentObject && Object.keys( wpContentObject ).length > 0;
 
 			const contentObject = content[ postTypeValue ];
 			const isInElementorContent = contentObject && 'object' === typeof contentObject && Object.keys( contentObject ).length > 0;

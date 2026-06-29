@@ -35,8 +35,9 @@ describe( 'SvgMediaControl', () => {
 			isPending: false,
 		} as never );
 		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
-			canUser: jest.fn().mockReturnValue( true ),
+			canUser: jest.fn(),
 			capabilities: [],
+			isAdmin: true,
 		} );
 	} );
 
@@ -203,22 +204,24 @@ describe( 'SvgMediaControl', () => {
 		expect( open ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should show no permissions modal for user without admin permissions', async () => {
+	it( 'should show infotip on hover for user without admin permissions', async () => {
 		// Arrange
 		const open = jest.fn();
 		jest.mocked( useWpMediaFrame ).mockReturnValue( { open } );
 		jest.mocked( useUnfilteredFilesUpload ).mockReturnValue( { data: false } as UseQueryResult< boolean, Error > );
 		const props = { setValue: jest.fn(), value: {}, bind: 'svg', propType };
 		jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
-			canUser: jest.fn().mockReturnValue( false ),
+			canUser: jest.fn(),
 			capabilities: [],
+			isAdmin: false,
 		} );
 
 		// Act
 		renderControl( <SvgMediaControl />, props );
 
 		// Assert
-		fireEvent.click( screen.getByText( 'Upload' ) );
+		const uploadButton = screen.getByText( 'Upload' );
+		fireEvent.mouseEnter( uploadButton );
 		expect(
 			await screen.findByText( /ask the site administrator to enable unfiltered/, {}, { timeout: 3000 } )
 		).toBeInTheDocument();

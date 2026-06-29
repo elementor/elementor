@@ -1,4 +1,6 @@
 const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	id: 'elementor-template-library-templates-empty',
 
 	template: '#tmpl-elementor-template-library-templates-empty',

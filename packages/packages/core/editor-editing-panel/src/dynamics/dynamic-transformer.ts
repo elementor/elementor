@@ -2,19 +2,21 @@ import { createTransformer } from '@elementor/editor-canvas';
 import { isTransformable, type Props } from '@elementor/editor-props';
 
 import { DynamicTagsManagerNotFoundError } from './errors';
-import { type ExtendedWindow } from './types';
+import { isDynamicTagSupported } from './utils';
 
 type Dynamic = {
 	name?: string;
 	settings?: Props;
 };
 
-export const dynamicTransformer = createTransformer( ( value: Dynamic ) => {
-	if ( ! value.name ) {
-		return null;
+export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType, renderContext } ) => {
+	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
+		return propType?.default ?? null;
 	}
 
-	return getDynamicValue( value.name, simpleTransform( value.settings ?? {} ) );
+	const renderPostId = ( renderContext as { currentPostId?: number } | undefined )?.currentPostId;
+
+	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ), renderPostId );
 } );
 
 // Temporary naive transformation until we'll have a `backendTransformer` that
@@ -29,9 +31,8 @@ function simpleTransform( props: Props ) {
 	return Object.fromEntries( transformed );
 }
 
-function getDynamicValue( name: string, settings: Record< string, unknown > ) {
-	const extendedWindow = window as unknown as ExtendedWindow;
-	const { dynamicTags } = extendedWindow.elementor ?? {};
+function getDynamicValue( name: string, settings: Record< string, unknown >, renderPostId?: number ) {
+	const { dynamicTags } = window.elementor ?? {};
 
 	if ( ! dynamicTags ) {
 		throw new DynamicTagsManagerNotFoundError();
@@ -42,6 +43,10 @@ function getDynamicValue( name: string, settings: Record< string, unknown > ) {
 
 		if ( ! tag ) {
 			return null;
+		}
+
+		if ( renderPostId ) {
+			tag.editorRenderPostId = renderPostId;
 		}
 
 		return dynamicTags.loadTagDataFromCache( tag ) ?? null;

@@ -9,6 +9,8 @@ module.exports = Marionette.ItemView.extend( {
 		return {
 			'data-id': data.template_id,
 			'data-value': data.title,
+			role: 'option',
+			tabindex: '-1',
 		};
 	},
 

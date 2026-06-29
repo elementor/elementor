@@ -72,7 +72,7 @@ To get started with development:
 1. Clone the repository
 2. Install dependencies:
 ```bash
-npm run prepare-environment
+npm run instal
 ```
 
 3. Start development:

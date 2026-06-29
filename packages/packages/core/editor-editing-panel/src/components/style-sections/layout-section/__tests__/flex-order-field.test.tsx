@@ -14,6 +14,7 @@ jest.mock( '../../../../contexts/style-context', () => ( {
 } ) );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => {
@@ -47,6 +48,7 @@ describe( '<FlexOrderField />', () => {
 			propType: createMockPropType( { kind: 'plain' } ),
 			path: [ 'order' ],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 			placeholder: null,
 			setValue: jest.fn(),
 		} );
@@ -213,6 +215,7 @@ describe( '<FlexOrderField />', () => {
 			propType: createMockPropType( { kind: 'plain' } ),
 			path: [ 'order' ],
 			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
 			setValue: jest.fn(),
 		} );
 

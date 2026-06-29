@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 import { renderWithTheme } from 'test-utils';
+import { trackViewPromotion } from '@elementor/editor-controls';
 import { PopoverMenuList } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
@@ -16,11 +17,18 @@ jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
 jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
+	trackViewPromotion: jest.fn(),
 } ) );
+jest.mock( '../ui/no-search-results', () => ( {
+	NoSearchResults: () => <span>No results found</span>,
+} ) );
+
 jest.mock( '@elementor/editor-ui', () => ( {
 	...jest.requireActual( '@elementor/editor-ui' ),
 	PopoverMenuList: jest.fn(),
+	PopoverBody: ( { children }: PropsWithChildren ) => children,
 } ) );
 
 jest.mocked( PopoverMenuList ).mockImplementation(
@@ -43,13 +51,6 @@ jest.mocked( PopoverMenuList ).mockImplementation(
 	}
 );
 
-jest.mock( '../ui/no-search-results', () => ( {
-	NoSearchResults: () => <span>No results found</span>,
-} ) );
-jest.mock( '@elementor/editor-editing-panel', () => ( {
-	PopoverBody: ( { children }: PropsWithChildren ) => children,
-} ) );
-
 const TestWrapper = ( { children, propTypeKey = 'color' }: { children: React.ReactNode; propTypeKey?: string } ) => {
 	return <VariableTypeProvider propTypeKey={ propTypeKey }>{ children }</VariableTypeProvider>;
 };
@@ -67,6 +68,7 @@ const mockVariableType = {
 	variableType: 'Color',
 	propTypeUtil: { key: 'color' },
 	selectionFilter: null,
+	isUpgradeRequired: false,
 };
 
 const mockBoundProp = {
@@ -331,6 +333,84 @@ describe( 'VariablesSelection', () => {
 			// eslint-disable-next-line testing-library/no-node-access
 			const selectedItem = screen.getByText( 'Primary Color' ).closest( '[aria-selected="true"]' );
 			expect( selectedItem ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Upgrade Promotion', () => {
+		it( 'should show promotion empty state when upgrade required', () => {
+			// Arrange.
+			( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( {
+				...mockVariableType,
+				emptyState: <button>Upgrade Now</button>,
+			} );
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper propTypeKey="size">
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( screen.getByText( /No .* variables yet/i ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Upgrade to create .* variables and maintain consistent element sizing/i )
+			).toBeInTheDocument();
+
+			expect( screen.getByText( 'Upgrade Now' ) ).toBeInTheDocument();
+
+			const addButton = screen.getByRole( 'button', { name: __( 'Create variable', 'elementor' ) } );
+			expect( addButton ).toBeDisabled();
+		} );
+
+		it( 'should call trackViewPromotion when disabled prop is true', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).toHaveBeenCalledWith( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		} );
+
+		it( 'should not call trackViewPromotion when disabled is false', () => {
+			// Arrange.
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( trackViewPromotion ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

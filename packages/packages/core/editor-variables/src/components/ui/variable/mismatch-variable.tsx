@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const MismatchVariable = ( { variable }: Props ) => {
-	const { setValue } = useBoundProp();
+	const { setValue, value } = useBoundProp();
 
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -41,6 +41,8 @@ export const MismatchVariable = ( { variable }: Props ) => {
 		setValue( null );
 	};
 
+	const showClearButton = !! value;
+
 	return (
 		<Box ref={ anchorRef }>
 			{ infotipVisible && <Backdrop open onClick={ closeInfotip } invisible /> }
@@ -53,7 +55,7 @@ export const MismatchVariable = ( { variable }: Props ) => {
 				content={
 					<MismatchVariableAlert
 						onClose={ closeInfotip }
-						onClear={ clearValue }
+						onClear={ showClearButton ? clearValue : undefined }
 						triggerSelect={ triggerSelect }
 					/>
 				}

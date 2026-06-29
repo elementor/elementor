@@ -844,22 +844,27 @@ class Widget_Image_Carousel extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'default' => 'center',
 				'selectors' => [
@@ -1137,5 +1142,25 @@ class Widget_Image_Carousel extends Widget_Base {
 		}
 
 		Icons_Manager::render_icon( $icon_settings, [ 'aria-hidden' => 'true' ] );
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		if ( empty( $settings['carousel'] ) ) {
+			return '';
+		}
+		$images = [];
+		foreach ( $settings['carousel'] as $item ) {
+			$url = $item['url'] ?? '';
+			if ( empty( $url ) ) {
+				continue;
+			}
+			$alt = '';
+			if ( ! empty( $item['id'] ) ) {
+				$alt = get_post_meta( $item['id'], '_wp_attachment_image_alt', true );
+			}
+			$images[] = '![' . $alt . '](' . esc_url( $url ) . ')';
+		}
+		return implode( "\n\n", $images );
 	}
 }

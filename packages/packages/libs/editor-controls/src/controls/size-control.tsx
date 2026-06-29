@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useCallback, useEffect, useMemo } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -42,6 +42,7 @@ type BaseSizeControlProps = {
 	min?: number;
 	enablePropTypeUnits?: boolean;
 	id?: string;
+	ariaLabel?: string;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -79,6 +80,8 @@ const defaultUnits: Record< SizeControlProps[ 'variant' ], Unit[] > = {
 	time: [ ...timeUnits ] as TimeUnit[],
 } as const;
 
+export const CUSTOM_SIZE_LABEL = 'fx';
+
 export const SizeControl = createControl(
 	( {
 		variant = 'length' as SizeControlProps[ 'variant' ],
@@ -92,6 +95,7 @@ export const SizeControl = createControl(
 		min = 0,
 		enablePropTypeUnits = false,
 		id,
+		ariaLabel,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -101,29 +105,24 @@ export const SizeControl = createControl(
 			placeholder: externalPlaceholder,
 			propType,
 		} = useBoundProp( sizePropTypeUtil );
-		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
-		const activeBreakpoint = useActiveBreakpoint();
-		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
 
+		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
+		const activeBreakpoint = useActiveBreakpoint();
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
+		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units, actualExtendedOptions );
+
 		const popupState = usePopupState( { variant: 'popover' } );
 
+		const memorizedExternalState = useMemo(
+			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
+			[ sizeValue, actualDefaultUnit ]
+		);
+
 		const [ state, setState ] = useSyncExternalState( {
-			external: internalState,
+			external: memorizedExternalState,
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
-			persistWhen: ( newState ) => {
-				if ( ! newState?.unit ) {
-					return false;
-				}
-
-				if ( isUnitExtendedOption( newState.unit ) ) {
-					return newState.unit === 'auto' ? true : !! newState.custom;
-				}
-
-				return !! newState?.numeric || newState?.numeric === 0;
-			},
+			persistWhen: ( newState ) => !! extractValueFromState( newState ),
 			fallback: ( newState ) => ( {
 				unit: newState?.unit ?? actualDefaultUnit,
 				numeric: newState?.numeric ?? DEFAULT_SIZE,
@@ -132,7 +131,7 @@ export const SizeControl = createControl(
 		} );
 
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
-			extractValueFromState( state ) || {};
+			extractValueFromState( state, true ) || {};
 
 		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
 			if ( newUnit === 'custom' ) {
@@ -169,40 +168,14 @@ export const SizeControl = createControl(
 			}
 		};
 
-		useEffect( () => {
-			const newState = createStateFromSizeProp(
-				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit,
-				'',
-				state.custom
-			);
-			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
-			const mergedStates = {
-				...state,
-				unit: newState.unit ?? state.unit,
-				[ currentUnitType ]: newState[ currentUnitType ],
-			};
-
-			if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
-				return;
+		const maybeClosePopup = useCallback( () => {
+			if ( popupState && popupState.isOpen ) {
+				popupState.close();
 			}
-
-			if ( state.unit === newState.unit ) {
-				setInternalState( mergedStates );
-
-				return;
-			}
-
-			setState( newState );
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ sizeValue ] );
+		}, [ popupState ] );
 
 		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
-
-			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
-				setState( newState );
-			}
+			maybeClosePopup();
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ activeBreakpoint ] );
 
@@ -212,7 +185,7 @@ export const SizeControl = createControl(
 					disabled={ disabled }
 					size={ controlSize }
 					unit={ controlUnit }
-					units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
+					units={ [ ...actualUnits ] }
 					placeholder={ placeholder }
 					startIcon={ startIcon }
 					handleSizeChange={ handleSizeChange }
@@ -222,6 +195,7 @@ export const SizeControl = createControl(
 					popupState={ popupState }
 					min={ min }
 					id={ id }
+					ariaLabel={ ariaLabel }
 				/>
 				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
@@ -241,12 +215,13 @@ function resolveUnits(
 	propType: PropType,
 	enablePropTypeUnits: boolean,
 	variant: SizeVariant,
-	externalUnits?: Unit[]
+	externalUnits?: Unit[],
+	actualExtendedOptions?: ExtendedOption[]
 ) {
 	const fallback = [ ...defaultUnits[ variant ] ];
 
 	if ( ! enablePropTypeUnits ) {
-		return externalUnits ?? fallback;
+		return [ ...( externalUnits ?? fallback ), ...( actualExtendedOptions || [] ) ];
 	}
 
 	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
@@ -279,7 +254,7 @@ function createStateFromSizeProp(
 	};
 }
 
-function extractValueFromState( state: State | null ): SizeValue | null {
+function extractValueFromState( state: State | null, allowEmpty: boolean = false ): SizeValue | null {
 	if ( ! state ) {
 		return null;
 	}
@@ -294,20 +269,18 @@ function extractValueFromState( state: State | null ): SizeValue | null {
 		return { size: '', unit };
 	}
 
+	if ( unit === 'custom' ) {
+		return { size: state.custom ?? '', unit: 'custom' };
+	}
+
+	const numeric = state.numeric;
+
+	if ( ! allowEmpty && ( numeric === undefined || numeric === null || Number.isNaN( numeric ) ) ) {
+		return null;
+	}
+
 	return {
-		size: state[ unit === 'custom' ? 'custom' : 'numeric' ],
+		size: numeric,
 		unit,
-	} as SizeValue;
-}
-
-function areStatesEqual( state1: State, state2: State ): boolean {
-	if ( state1.unit !== state2.unit || state1.custom !== state2.custom ) {
-		return false;
-	}
-
-	if ( isUnitExtendedOption( state1.unit ) ) {
-		return state1.custom === state2.custom;
-	}
-
-	return state1.numeric === state2.numeric || ( isNaN( state1.numeric ) && isNaN( state2.numeric ) );
+	};
 }

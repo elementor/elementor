@@ -1,7 +1,14 @@
 export { ElementorError, createError, ensureError } from './errors';
 export type { ElementorErrorOptions, CreateErrorParams } from './errors';
 export { useDebounceState, type UseDebounceStateOptions, type UseDebounceStateResult } from './use-debounce-state';
+export { useDebouncedCallback } from './use-debounced-callback';
 export { debounce } from './debounce';
+export { throttle } from './throttle';
 export { encodeString, decodeString } from './encoding';
-export { hash } from './hash';
-export { sendMixpanelEvent, type MixpanelEvent } from './mixpanel-tracking';
+export { hash, hashString } from './hash';
+export { useSearchState, type UseSearchStateResult } from './use-search-state';
+export { generateUniqueId } from './generate-unique-id';
+export { capitalize } from './string-helpers';
+export { compareVersions, isVersionLessThan, isVersionGreaterOrEqual } from './version';
+export { hasProInstalled, isProActive, isProAtLeast } from './is-pro';
+export { createTranslate } from './translations';

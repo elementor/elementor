@@ -1,25 +1,29 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
+import { CollapseIcon, type CollapsibleValue, getCollapsibleValue, SectionRefContext } from '@elementor/editor-ui';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
-import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
-import { CollapseIcon } from './collapse-icon';
-import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
 
 type Props = PropsWithChildren< {
 	title: string;
 	defaultExpanded?: boolean;
 	titleEnd?: CollapsibleValue< ReactNode | string >;
 	unmountOnExit?: boolean;
+	action?: { component: ReactNode; onClick: () => void };
 } >;
 
-export function Section( { title, children, defaultExpanded = false, titleEnd, unmountOnExit = true }: Props ) {
+export function Section( { title, children, defaultExpanded = false, titleEnd, unmountOnExit = true, action }: Props ) {
 	const [ isOpen, setIsOpen ] = useStateByElement( title, !! defaultExpanded );
 	const ref = useRef< HTMLElement >( null );
+	const isDisabled = !! action;
 
 	const handleClick = () => {
-		setIsOpen( ! isOpen );
+		if ( isDisabled ) {
+			action?.onClick();
+		} else {
+			setIsOpen( ! isOpen );
+		}
 	};
 
 	const id = useId();
@@ -31,6 +35,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 			<ListItemButton
 				id={ labelId }
 				aria-controls={ contentId }
+				aria-label={ `${ title } section` }
 				onClick={ handleClick }
 				sx={ { '&:hover': { backgroundColor: 'transparent' } } }
 			>
@@ -42,7 +47,14 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
-				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
+				{ action?.component }
+				<CollapseIcon
+					open={ isOpen }
+					color="secondary"
+					fontSize="tiny"
+					disabled={ isDisabled }
+					sx={ { ml: 1 } }
+				/>
 			</ListItemButton>
 			<Collapse
 				id={ contentId }
@@ -52,7 +64,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 				unmountOnExit={ unmountOnExit }
 			>
 				<SectionRefContext.Provider value={ ref }>
-					<Stack ref={ ref } gap={ 2.5 } p={ 2 }>
+					<Stack ref={ ref } gap={ 2.5 } p={ 2 } aria-label={ `${ title } section content` }>
 						{ children }
 					</Stack>
 				</SectionRefContext.Provider>

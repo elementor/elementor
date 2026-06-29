@@ -16,6 +16,12 @@ class Elementor_Content extends Import_Runner_Base {
 
 	private $import_session_id;
 
+	private $imported_data;
+
+	private $processed_posts = [];
+
+	private $post_orphans = [];
+
 	public function __construct() {
 		$this->init_page_on_front_data();
 	}
@@ -40,6 +46,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		$result['content'] = [];
 		$this->import_session_id = $data['session_id'];
+		$this->imported_data = $imported_data;
 
 		$customization = $data['customization']['content'] ?? null;
 
@@ -98,11 +105,13 @@ class Elementor_Content extends Import_Runner_Base {
 
 					if ( is_array( $import_result ) ) {
 						$result[ $import_result['status'] ][ $id ] = $import_result['result'];
+						$this->map_imported_post_id( $id, $import_result );
 						continue;
 					}
 				}
 
 				$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
+				$this->map_imported_post_id( $id, $import_result );
 
 				$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 			} catch ( \Exception $error ) {
@@ -110,13 +119,15 @@ class Elementor_Content extends Import_Runner_Base {
 			}
 		}
 
+		$this->backfill_parents();
+
 		return $result;
 	}
 
 	public function read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms ) {
 		try {
 			$post_data = ImportExportUtils::read_json_file( $path . $id );
-			$import = $this->import_post( $post_settings, $post_data, $post_type, $imported_terms );
+			$import = $this->import_post( $post_settings, $post_data, $post_type, $imported_terms, $id );
 
 			if ( is_wp_error( $import ) ) {
 				$result = [
@@ -139,7 +150,7 @@ class Elementor_Content extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms ) {
+	private function import_post( array $post_settings, array $post_data, $post_type, array $imported_terms, int $original_post_id ) {
 		$post_attributes = [
 			'post_title' => $post_settings['title'],
 			'post_type' => $post_type,
@@ -148,6 +159,12 @@ class Elementor_Content extends Import_Runner_Base {
 
 		if ( ! empty( $post_settings['excerpt'] ) ) {
 			$post_attributes['post_excerpt'] = $post_settings['excerpt'];
+		}
+
+		$post_parent_id = $this->get_imported_parent_id( $post_settings, $original_post_id );
+
+		if ( $post_parent_id ) {
+			$post_attributes['post_parent'] = $post_parent_id;
 		}
 
 		$new_document = Plugin::$instance->documents->create(
@@ -186,6 +203,21 @@ class Elementor_Content extends Import_Runner_Base {
 		return $new_post_id;
 	}
 
+	private function get_imported_parent_id( array $post_settings, int $original_post_id ): int {
+		$post_parent_id = (int) ( $post_settings['post_parent'] ?? 0 );
+
+		if ( ! $post_parent_id ) {
+			return 0;
+		}
+
+		if ( isset( $this->processed_posts[ $post_parent_id ] ) ) {
+			return $this->processed_posts[ $post_parent_id ];
+		}
+
+		$this->post_orphans[ $original_post_id ] = $post_parent_id;
+		return 0;
+	}
+
 	private function set_post_terms( $post_id, array $terms, array $imported_terms ) {
 		foreach ( $terms as $term ) {
 			if ( ! isset( $imported_terms[ $term['term_id'] ] ) ) {
@@ -216,5 +248,36 @@ class Elementor_Content extends Import_Runner_Base {
 		return [
 			'page_on_front' => $this->page_on_front_id ?? 0,
 		];
+	}
+
+	private function map_imported_post_id( $original_id, $import_result ) {
+		if ( static::IMPORT_STATUS_SUCCEEDED !== $import_result['status'] ) {
+			return;
+		}
+
+		$this->processed_posts[ $original_id ] = $import_result['result'];
+	}
+
+	private function backfill_parents() {
+		global $wpdb;
+
+		// Find parents for post orphans.
+		foreach ( $this->post_orphans as $child_id => $parent_id ) {
+			$local_child_id = false;
+			$local_parent_id = false;
+
+			if ( isset( $this->processed_posts[ $child_id ] ) ) {
+				$local_child_id = $this->processed_posts[ $child_id ];
+			}
+
+			if ( isset( $this->processed_posts[ $parent_id ] ) ) {
+				$local_parent_id = $this->processed_posts[ $parent_id ];
+			}
+
+			if ( $local_child_id && $local_parent_id ) {
+				$wpdb->update( $wpdb->posts, [ 'post_parent' => $local_parent_id ], [ 'ID' => $local_child_id ], '%d', '%d' );
+				clean_post_cache( $local_child_id );
+			}
+		}
 	}
 }

@@ -13,18 +13,32 @@ import {
 	Stack,
 	Link,
 } from '@elementor/ui';
-import { ExternalLinkIcon } from './icons';
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { ExternalLinkIcon } from '@elementor/icons';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
+import useContextDetection from '../hooks/use-context-detection';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { UpgradeVersionBanner } from './upgrade-version-banner';
+import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const transformAnalyticsData = ( payload ) => {
+	const transformed = {};
+
+	for ( const [ key, value ] of Object.entries( payload ) ) {
+		transformed[ key ] = transformValueForAnalytics( key, value, [] );
+	}
+
+	return transformed;
+};
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
-export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const isImport = data.hasOwnProperty( 'uploadedData' );
+export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
+	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
+	const { data = null, isOldElementorVersion = false } = contextData;
 
 	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
 
@@ -43,7 +57,6 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	const isLoading = isImport ? false : fetchIsLoading;
 
 	const [ plugins, setPlugins ] = useState( {} );
-	const unselectedValues = useRef( data.analytics?.customization?.plugins || [] );
 
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
 
@@ -87,13 +100,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		return nonRequiredPlugins.some( ( pluginKey ) => plugins[ pluginKey ] ) && ! isAllSelected;
 	}, [ nonRequiredPlugins, plugins, isAllSelected ] );
 
-	const handleToggleChange = useCallback( ( settingKey, isChecked ) => {
+	const handleToggleChange = useCallback( ( settingKey ) => {
 		if ( isRequiredPlugin( settingKey ) ) {
 			return;
 		}
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( val ) => settingKey !== val )
-			: [ ...unselectedValues.current, settingKey ];
 
 		setPlugins( ( prev ) => ( {
 			...prev,
@@ -101,7 +111,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		} ) );
 	}, [ isRequiredPlugin ] );
 
-	const handleSelectAll = useCallback( ( e, isChecked ) => {
+	const handleSelectAll = useCallback( () => {
 		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
 		const newState = { ...plugins };
 		nonRequiredPlugins.forEach( ( pluginKey ) => {
@@ -113,10 +123,6 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				newState[ pluginKey ] = true;
 			}
 		} );
-
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ) )
-			: [ 'plugins', ...nonRequiredPlugins ];
 
 		setPlugins( newState );
 	}, [ plugins, nonRequiredPlugins ] );
@@ -139,11 +145,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
+					<Typography variant="h6">
 						{ title }
 					</Typography>
 					{ description && (
-						<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+						<Typography variant="body1" color="text.secondary">
 							{ description }
 						</Typography>
 					) }
@@ -239,7 +245,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack>
+				<Stack gap={ 2 }>
+					{ isOldElementorVersion && (
+						<UpgradeVersionBanner />
+					) }
 					{ isLoading ? (
 						<Stack spacing={ 3 } alignItems="center" sx={ { py: 8 } }>
 							<CircularProgress size={ 30 } />
@@ -290,7 +299,8 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 					onClick={ () => {
 						const pluginsSelection = getPluginsSelection();
 						const hasEnabledCustomization = Object.values( pluginsSelection ).some( Boolean );
-						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, unselectedValues.current );
+						const transformedAnalytics = transformAnalyticsData( pluginsSelection );
+						handleSaveChanges( 'plugins', pluginsSelection, hasEnabledCustomization, transformedAnalytics );
 						handleClose();
 					} }
 					variant="contained"
@@ -308,5 +318,4 @@ KitPluginsCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
-	data: PropTypes.object.isRequired,
 };

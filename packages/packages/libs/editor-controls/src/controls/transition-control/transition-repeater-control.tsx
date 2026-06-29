@@ -1,18 +1,31 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { createArrayPropUtils, selectionSizePropTypeUtil, type SelectionSizePropValue } from '@elementor/editor-props';
+import {
+	createArrayPropUtils,
+	type KeyValuePropValue,
+	selectionSizePropTypeUtil,
+	type SelectionSizePropValue,
+} from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
+import { hasProInstalled } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
+import { type Item, type RepeatablePropValue } from '../../components/control-repeater/types';
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
-import { initialTransitionValue, transitionProperties } from './data';
+import {
+	initialTransitionValue,
+	type TransitionItem,
+	transitionProperties,
+	type TransitionProperty,
+	type TransitionValue,
+} from './data';
 import { subscribeToTransitionEvent } from './trainsition-events';
-import { TransitionSelector } from './transition-selector';
+import { getTransitionPropertyByValue, TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
 	variant: 'time',
@@ -20,9 +33,34 @@ const DURATION_CONFIG = {
 	defaultUnit: 'ms',
 };
 
+const childArrayPropTypeUtil = createArrayPropUtils(
+	selectionSizePropTypeUtil.key,
+	selectionSizePropTypeUtil.schema,
+	'transition'
+);
+
+subscribeToTransitionEvent();
+
+const areAllPropertiesUsed = ( value: SelectionSizePropValue[] = [] ) => {
+	return value?.length
+		? transitionProperties.every( ( category ) => {
+				return category.properties.every( ( property ) => {
+					return (
+						property.isDisabled ||
+						!! value?.find( ( item ) => {
+							return (
+								( item.value?.selection?.value as KeyValuePropValue )?.value?.value === property.value
+							);
+						} )
+					);
+				} );
+		  } )
+		: false;
+};
+
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
-const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
+const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[], showPromotion?: boolean ) => {
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -31,6 +69,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 			props: {
 				recentlyUsedList,
 				disabledItems,
+				showPromotion,
 			},
 		},
 		sizeConfigMap: {
@@ -47,13 +86,73 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 	};
 };
 
-function getChildControlConfig( recentlyUsedList: string[], disabledItems?: string[] ) {
+const isItemDisabled = ( item: TransitionItem[ 'value' ] ) => {
+	const property = getTransitionPropertyByValue( item.value.selection.value?.value );
+
+	return ! property ? false : !! property.isDisabled;
+};
+
+const getChildControlConfig = ( recentlyUsedList: string[], disabledItems?: string[], showPromotion?: boolean ) => {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
+		props: getSelectionSizeProps( recentlyUsedList, disabledItems, showPromotion ),
+		isItemDisabled: isItemDisabled as ( item: Item< RepeatablePropValue > ) => boolean,
 	};
-}
+};
+
+const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionProperty ) => {
+	return ( value ?? [] ).some( ( item ) => {
+		return ( item?.value?.selection?.value as KeyValuePropValue )?.value?.value === property.value;
+	} );
+};
+
+const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
+	const selectedLabels: string[] = ( values || [] ).map(
+		( item ) => ( item.value?.selection as KeyValuePropValue )?.value?.key?.value
+	);
+
+	const proDisabledLabels: string[] = [];
+	transitionProperties.forEach( ( category ) => {
+		const disabledProperties = category.properties
+			.filter( ( property ) => property.isDisabled && ! selectedLabels.includes( property.label ) )
+			.map( ( property ) => property.label );
+
+		proDisabledLabels.push( ...disabledProperties );
+	} );
+
+	return {
+		allDisabled: [ ...selectedLabels, ...proDisabledLabels ],
+		proDisabled: proDisabledLabels,
+	};
+};
+
+const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
+	if ( ! values?.length ) {
+		return initialTransitionValue;
+	}
+
+	for ( const category of transitionProperties ) {
+		for ( const property of category.properties ) {
+			if ( isPropertyUsed( values, property ) ) {
+				continue;
+			}
+
+			return {
+				...initialTransitionValue,
+				selection: {
+					$$type: 'key-value',
+					value: {
+						key: { value: property.label, $$type: 'string' },
+						value: { value: property.value, $$type: 'string' },
+					},
+				},
+			};
+		}
+	}
+
+	return initialTransitionValue;
+};
 
 const disableAddItemTooltipContent = (
 	<Alert
@@ -73,16 +172,6 @@ const disableAddItemTooltipContent = (
 	</Alert>
 );
 
-subscribeToTransitionEvent();
-
-const getTransitionLabel = ( item: SelectionSizePropValue ) => {
-	return ( item.value.selection.value as { key: { value: string } } )?.key?.value ?? '';
-};
-
-const getDisabledItems = ( value: SelectionSizePropValue[] | null | undefined ) => {
-	return value?.map( getTransitionLabel ) ?? [];
-};
-
 export const TransitionRepeaterControl = createControl(
 	( {
 		recentlyUsedListGetter,
@@ -93,18 +182,48 @@ export const TransitionRepeaterControl = createControl(
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
+		const proInstalled = hasProInstalled();
 
-		const childArrayPropTypeUtil = useMemo(
-			() => createArrayPropUtils( selectionSizePropTypeUtil.key, selectionSizePropTypeUtil.schema, 'transition' ),
-			[]
+		const { value, setValue } = useBoundProp( childArrayPropTypeUtil );
+		const { allDisabled: disabledItems, proDisabled: proDisabledItems } = useMemo(
+			() => getDisabledItemLabels( value ),
+			[ value ]
 		);
 
-		const { value } = useBoundProp( childArrayPropTypeUtil );
-		const disabledItems = useMemo( () => getDisabledItems( value ), [ value ] );
+		const allowedTransitionSet = useMemo( () => {
+			const set = new Set< string >();
+			transitionProperties.forEach( ( category ) => {
+				category.properties.forEach( ( prop ) => {
+					if ( ! prop.isDisabled || proInstalled ) {
+						set.add( prop.value );
+					}
+				} );
+			} );
+			return set;
+		}, [ proInstalled ] );
+
+		useEffect( () => {
+			if ( ! value || value.length === 0 ) {
+				return;
+			}
+
+			const sanitized = value.filter( ( item ) => {
+				const selectionValue = ( item?.value?.selection?.value as KeyValuePropValue )?.value?.value ?? '';
+				return allowedTransitionSet.has( selectionValue );
+			} );
+
+			if ( sanitized.length !== value.length ) {
+				setValue( sanitized );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ allowedTransitionSet ] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );
 		}, [ recentlyUsedListGetter ] );
+
+		const allPropertiesUsed = useMemo( () => areAllPropertiesUsed( value ), [ value ] );
+		const isAddItemDisabled = ! currentStyleIsNormal || allPropertiesUsed;
 
 		return (
 			<RepeatableControl
@@ -114,11 +233,15 @@ export const TransitionRepeaterControl = createControl(
 				placeholder={ __( 'Empty Transition', 'elementor' ) }
 				showDuplicate={ false }
 				showToggle={ true }
-				initialValues={ initialTransitionValue }
-				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
+				initialValues={ getInitialValue( value ) }
+				childControlConfig={ getChildControlConfig(
+					recentlyUsedList,
+					disabledItems,
+					proDisabledItems.length > 0
+				) }
 				propKey="transition"
 				addItemTooltipProps={ {
-					disabled: ! currentStyleIsNormal,
+					disabled: isAddItemDisabled,
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
 				} }

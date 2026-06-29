@@ -1,4 +1,4 @@
-import { type ComponentType, useMemo } from 'react';
+import { type ComponentType, useSyncExternalStore } from 'react';
 
 import { type LocationsMap, type MenuGroups } from './types';
 
@@ -13,22 +13,33 @@ type GroupedMenuItems< TGroups extends string > = Record<
 >;
 
 export function createUseMenuItems< TGroups extends string >(
-	locations: LocationsMap< MenuGroups< TGroups > >
+	locations: LocationsMap< MenuGroups< TGroups > >,
+	subscribe: ( listener: () => void ) => () => void
 ): UseMenuItems< TGroups > {
-	return () => {
-		// Normalize the injections groups to an object with the groups as keys.
-		return useMemo( () => {
-			return Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
-				const items = location.getInjections().map( ( injection ) => ( {
-					id: injection.id,
-					MenuItem: injection.component,
-				} ) );
+	let snapshot: GroupedMenuItems< TGroups > | null = null;
 
-				return {
-					...carry,
-					[ groupName ]: items,
-				};
-			}, {} as GroupedMenuItems< TGroups > );
-		}, [] );
+	subscribe( () => {
+		snapshot = null;
+	} );
+
+	const getMenuItems = () => {
+		if ( snapshot ) {
+			return snapshot;
+		}
+		snapshot = Object.entries( locations ).reduce( ( carry, [ groupName, location ] ) => {
+			const items = location.getInjections().map( ( injection ) => ( {
+				id: injection.id,
+				MenuItem: injection.component,
+			} ) );
+
+			return {
+				...carry,
+				[ groupName ]: items,
+			};
+		}, {} as GroupedMenuItems< TGroups > );
+
+		return snapshot;
 	};
+
+	return () => useSyncExternalStore( subscribe, getMenuItems );
 }

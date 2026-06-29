@@ -1,8 +1,7 @@
 <?php
+
 namespace Elementor;
 
-use Elementor\Container\Container;
-use ElementorDeps\DI\Container as DIContainer;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
@@ -26,10 +25,7 @@ use Elementor\Modules\System_Info\Module as System_Info_Module;
 use Elementor\Data\Manager as Data_Manager;
 use Elementor\Data\V2\Manager as Data_Manager_V2;
 use Elementor\Core\Files\Uploads_Manager;
-use ElementorDeps\DI\{
-	DependencyException,
-	NotFoundException,
-};
+use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +40,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Plugin {
+
 	const ELEMENTOR_DEFAULT_POST_TYPES = [ 'page', 'post' ];
+
+	private const SANITIZABLE_META_KEYS = [
+		'_elementor_data',
+		'_elementor_page_settings',
+		'_elementor_global_class_data',
+	];
 
 	/**
 	 * Instance.
@@ -829,10 +832,44 @@ class Plugin {
 
 		add_action( 'init', [ $this, 'init' ], 0 );
 		add_action( 'rest_api_init', [ $this, 'on_rest_api_init' ], 9 );
+		add_filter( 'rest_pre_insert_post', [ $this, 'sanitize_post_data' ], 10, 2 );
 	}
 
 	final public static function get_title() {
 		return esc_html__( 'Elementor', 'elementor' );
+	}
+
+	public function sanitize_post_data( $post, WP_REST_Request $request ) {
+		if ( current_user_can( 'unfiltered_html' ) ) {
+			return $post;
+		}
+
+		$meta = $request->get_param( 'meta' );
+		if ( empty( $meta ) || ! is_array( $meta ) ) {
+			return $post;
+		}
+
+		foreach ( self::SANITIZABLE_META_KEYS as $meta_key ) {
+			$elementor_data = $meta[ $meta_key ] ?? null;
+			if ( is_null( $elementor_data ) ) {
+				continue;
+			}
+			if ( is_string( $elementor_data ) ) {
+				$elementor_data = json_decode( $elementor_data, true );
+			}
+			if ( empty( $elementor_data ) ) {
+				continue;
+			}
+
+			$elementor_data = map_deep($elementor_data, function ( $value ) {
+				return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
+			});
+
+			$meta[ $meta_key ] = wp_json_encode( $elementor_data );
+		}
+
+		$request->set_param( 'meta', $meta );
+		return $post;
 	}
 }
 

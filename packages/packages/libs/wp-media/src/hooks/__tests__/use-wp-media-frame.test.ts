@@ -241,7 +241,7 @@ describe( 'useWpMediaFrame', () => {
 		expect( frame.remove ).toHaveBeenCalled();
 	} );
 
-	it( 'should cleanup on close', () => {
+	it( 'should not cleanup on close to avoid WP lifecycle race conditions', () => {
 		// Arrange.
 		const mockMedia = createMedia( {} );
 
@@ -263,9 +263,9 @@ describe( 'useWpMediaFrame', () => {
 
 		frame.trigger( 'close' );
 
-		// Assert.
-		expect( frame.detach ).toHaveBeenCalled();
-		expect( frame.remove ).toHaveBeenCalled();
+		// Assert - cleanup is deferred to next open() or unmount, not triggered by close.
+		expect( frame.detach ).not.toHaveBeenCalled();
+		expect( frame.remove ).not.toHaveBeenCalled();
 	} );
 } );
 
@@ -300,6 +300,9 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 			open: jest.fn( () => frame.trigger( 'open' ) ),
 			detach: jest.fn(),
 			remove: jest.fn(),
+			setState: jest.fn( function ( this: MockFrame ) {
+				return this;
+			} ),
 
 			content: {
 				mode: ( newMode ) => {
@@ -326,9 +329,9 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 			},
 
 			state: () => ( {
-				get: ( key ) => {
-					if ( key !== 'selection' ) {
-						return null as never;
+				get: ( ( key: 'selection' | 'id' ) => {
+					if ( key === 'id' ) {
+						return '';
 					}
 
 					return {
@@ -341,7 +344,7 @@ function createMedia( attachments: Record< number, BackboneAttachmentModel > ) {
 								return attachment.toJSON() as WpAttachmentJSON;
 							} ),
 					};
-				},
+				} ) as ReturnType< MediaFrame[ 'state' ] >[ 'get' ],
 			} ),
 		};
 

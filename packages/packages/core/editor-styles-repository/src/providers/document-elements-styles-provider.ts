@@ -12,6 +12,7 @@ import { createStylesProvider } from '../utils/create-styles-provider';
 
 export const ELEMENTS_STYLES_PROVIDER_KEY_PREFIX = 'document-elements-';
 export const ELEMENTS_STYLES_RESERVED_LABEL = 'local';
+const PREGENERATED_LINK_PATTERN = /^local-\d+-(preview|frontend)-[a-zA-Z_-]+-css$/;
 
 type ElementsMeta = {
 	elementId: string;
@@ -28,6 +29,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 		return `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }${ documentId }`;
 	},
 	priority: 50,
+	isPregeneratedLink: ( { id } ) => PREGENERATED_LINK_PATTERN.test( id ),
 	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
 	actions: {
 		all: ( meta = {} ) => {

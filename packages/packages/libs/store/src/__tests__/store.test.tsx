@@ -301,6 +301,8 @@ describe( '@elementor/store', () => {
 
 	it( 'should delete the added slices', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		createStoreEntities();
 
 		// Act.
@@ -317,7 +319,7 @@ describe( '@elementor/store', () => {
 
 		// Assert.
 		expect( result.current ).toBeUndefined();
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should delete the added middlewares', () => {

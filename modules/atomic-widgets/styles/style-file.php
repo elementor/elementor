@@ -36,6 +36,10 @@ class Style_File {
 	}
 
 	public function get_media(): string {
+		if ( str_starts_with( $this->media, '@media' ) ) {
+			return substr( $this->media, 6 );
+		}
+
 		return $this->media;
 	}
 }

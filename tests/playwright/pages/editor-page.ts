@@ -10,7 +10,8 @@ import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, Co
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
-import v4Panel from './editor/v4-elements-panel';
+import v4Panel from './atomic-elements-panel/v4-elements-panel';
+import { INLINE_EDITING_SELECTORS } from '../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -38,7 +39,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
-		this.v4Panel = new v4Panel( page, testInfo );
+		this.v4Panel = new v4Panel( page, testInfo, this );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
@@ -138,28 +139,11 @@ export default class EditorPage extends BasePage {
 			} );
 		}, templateData );
 
-		// Wait for document state to be properly set after template import
-		await this.page.waitForFunction( () => {
-			interface ElementorWindow extends Window {
-				elementor?: {
-					documents?: {
-						getCurrent(): {
-							editor: { isChanged: boolean };
-						};
-					};
-				};
-			}
-			try {
-				const elementorInstance = ( window as ElementorWindow ).elementor;
-				const currentDoc = elementorInstance?.documents?.getCurrent();
-				return true === currentDoc?.editor?.isChanged;
-			} catch ( error ) {
-				return false;
-			}
-		}, {
-			timeout: 5000,
-			polling: 100,
-		} );
+		await this.page
+			.frameLocator( '#elementor-preview-iframe' )
+			.locator( '.elementor-element' )
+			.first()
+			.waitFor( { timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -406,34 +390,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a tab inside an Editor panel for V2 widgets.
-	 *
-	 * @param {'style' | 'general'} sectionName - The section to open.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
-		const selectorMap: Record< 'style' | 'general', string > = {
-			style: 'style',
-			general: 'settings',
-		};
-		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
-			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
-			isOpenSection = await this.page.evaluate( ( selector ) => {
-				const sectionContentElement: HTMLElement = document.querySelector( selector );
-
-				return ! sectionContentElement?.hidden;
-			}, sectionContentSelector );
-
-		if ( isOpenSection ) {
-			return;
-		}
-
-		await this.page.locator( sectionButtonSelector ).click();
-		await this.page.locator( sectionContentSelector ).waitFor();
-	}
-
-	/**
 	 * Open a section in an active panel tab.
 	 *
 	 * @param {string} sectionId - The section to open.
@@ -486,7 +442,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' | 'effects' ): Promise<void> {
 		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
 		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
 		const isContentVisible = await this.page.evaluate( ( selector ) => {
@@ -580,7 +536,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSelectControlValue( controlId: string, value: string ): Promise<void> {
-		await this.page.selectOption( `.elementor-control-${ controlId } select`, value );
+		const selectLocator = this.page.locator( `.elementor-control-${ controlId } select` );
+		await selectLocator.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await selectLocator.selectOption( value, { timeout: timeouts.longAction } );
 	}
 
 	/**
@@ -817,6 +775,11 @@ export default class EditorPage extends BasePage {
 		await this.setTextareaControlValue( 'type-code', css );
 	}
 
+	async clickButton( buttonName: string, exact = false ): Promise<void> {
+		const button = this.page.getByRole( 'button', { name: buttonName, exact } );
+		await button.click();
+	}
+
 	/**
 	 * Click on a top bar item.
 	 *
@@ -830,6 +793,22 @@ export default class EditorPage extends BasePage {
 			await topbarLocator.getByRole( 'button', { name: selector.attributeValue } ).click();
 		} else {
 			await topbarLocator.locator( `button[${ selector.attribute }="${ selector.attributeValue }"]` ).click();
+		}
+	}
+
+	/**
+	 * Click on a top bar menu item.
+	 *
+	 * @param {string} menuLabel - Optional. The label of the top bar menu item.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async clickTopBarMenuItem( menuLabel?: string ): Promise<void> {
+		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+		await this.page.waitForTimeout( 100 );
+
+		if ( menuLabel ) {
+			await this.page.getByRole( 'menuitem', { name: menuLabel } ).click();
 		}
 	}
 
@@ -849,7 +828,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.documentSettings );
+		await this.clickTopBarItem( TopBarSelectors.pageSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
@@ -861,12 +840,23 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSiteSettings( innerPanel?: string ): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.siteSettings );
+		await this.clickTopBarMenuItem( 'Site Settings' );
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
+			await this.openSiteSettingsInnerPanel( innerPanel );
 		}
+	}
+
+	/**
+	 * Open inner panel section on Site Settings panel.
+	 *
+	 * @param { string } innerPanelSection - The inner section to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	private async openSiteSettingsInnerPanel( innerPanelSection: string ): Promise<void> {
+		await this.page.locator( `.elementor-panel-menu-item.elementor-panel-menu-item-${ innerPanelSection }` ).click();
 	}
 
 	/**
@@ -875,9 +865,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
-		await this.page.waitForTimeout( 100 );
-		await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
+		await this.clickTopBarMenuItem( 'User Preferences' );
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
@@ -985,7 +973,7 @@ export default class EditorPage extends BasePage {
 		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
-		await this.page.waitForLoadState();
+		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 	}
 
 	async viewPage() {
@@ -1362,5 +1350,61 @@ export default class EditorPage extends BasePage {
 		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
+	}
+
+	async triggerEditingElement( elementId: string, waitFor: boolean = true ): Promise<Locator> {
+		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
+
+		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.veryShort );
+		await element.waitFor();
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
+
+		if ( waitFor ) {
+			await inlineEditor.waitFor( { timeout: timeouts.action } );
+		}
+
+		return inlineEditor;
+	}
+
+	async selectInlineEditedText( elementId: string, substringOrSelectAll: string | true ): Promise<void> {
+		const inlineEditor = await this.triggerEditingElement( elementId );
+
+		if ( true === substringOrSelectAll ) {
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
+		}
+
+		if ( 'string' !== typeof substringOrSelectAll ) {
+			return;
+		}
+
+		const substring = substringOrSelectAll;
+		const entireText = await inlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		const startIndex = entireText.indexOf( substring );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
+		}
+	}
+
+	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+			return;
+		}
+
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
+
+		await button.click();
 	}
 }

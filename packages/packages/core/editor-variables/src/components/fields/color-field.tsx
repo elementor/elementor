@@ -30,6 +30,7 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 
 	return (
 		<UnstableColorField
+			id="color-variable-field"
 			size="tiny"
 			fullWidth
 			value={ color }

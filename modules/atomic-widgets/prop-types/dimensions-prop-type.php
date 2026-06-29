@@ -30,10 +30,10 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 		}
 
 		return [
-			'block-start' => clone $size_prop_type,
-			'inline-end' => clone $size_prop_type,
-			'block-end' => clone $size_prop_type,
-			'inline-start' => clone $size_prop_type,
+			'block-start' => ( clone $size_prop_type )->description( 'The size for the block-start (top in LTR languages) side in Size PropType format.' ),
+			'inline-end' => ( clone $size_prop_type )->description( 'The size for the inline-end (right in LTR languages) side in Size PropType format.' ),
+			'block-end' => ( clone $size_prop_type )->description( 'The size for the block-end (bottom in LTR languages) side in Size PropType format.' ),
+			'inline-start' => ( clone $size_prop_type )->description( 'The size for the inline-start (left in LTR languages) side in Size PropType format.' ),
 		];
 	}
 }

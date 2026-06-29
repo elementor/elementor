@@ -3,6 +3,8 @@ import { __resetEnv, initEnv, InvalidEnvError, parseEnv } from '../index';
 describe( '@elementor/env', () => {
 	it( 'should warn for non existing env key', () => {
 		// Arrange.
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
 		__resetEnv();
 
 		// Act.
@@ -10,11 +12,13 @@ describe( '@elementor/env', () => {
 
 		// Assert.
 		expect( env ).toEqual( {} );
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
 	} );
 
 	it( 'should warn when the returned value is not an object', () => {
 		// Arrange.
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
 		initEnv( {
 			key: 'not-an-object' as unknown as object, // Emulate runtime error.
 		} );
@@ -24,11 +28,13 @@ describe( '@elementor/env', () => {
 
 		// Assert.
 		expect( env ).toEqual( {} );
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
 	} );
 
 	it( 'should validate the env data when passing a parsing function', () => {
 		// Arrange
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
 		initEnv( {
 			validEnv: {
 				test: 'value',
@@ -52,11 +58,13 @@ describe( '@elementor/env', () => {
 		// Assert.
 		expect( validEnv ).toEqual( { test: 'value' } );
 		expect( invalidEnv ).toEqual( {} );
-		expect( console ).toHaveWarnedWith( 'invalidEnv - error' );
+		expect( mockConsoleWarn ).toHaveBeenCalledWith( 'invalidEnv - error' );
 	} );
 
 	it( 'should support a standalone validation', () => {
 		// Arrange
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
 		initEnv( {} );
 
 		// Act.
@@ -65,7 +73,7 @@ describe( '@elementor/env', () => {
 		validateEnv();
 
 		// Assert.
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
 	} );
 
 	it( 'should support iterating over the env properties', () => {

@@ -9,9 +9,10 @@ const FALLBACK_POPOVER_WIDTH = 220;
 type PopoverBodyProps = PropsWithChildren< {
 	height?: number | 'auto';
 	width?: number;
+	id?: string;
 } >;
 
-export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width }: PopoverBodyProps ) => {
+export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width, id }: PopoverBodyProps ) => {
 	return (
 		<Box
 			display="flex"
@@ -22,6 +23,7 @@ export const PopoverBody = ( { children, height = DEFAULT_POPOVER_HEIGHT, width 
 				width: `${ width ? width - SECTION_PADDING_INLINE : FALLBACK_POPOVER_WIDTH }px`,
 				maxWidth: 496,
 			} }
+			id={ id }
 		>
 			{ children }
 		</Box>

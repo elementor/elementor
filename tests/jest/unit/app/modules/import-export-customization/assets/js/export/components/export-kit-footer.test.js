@@ -55,7 +55,14 @@ describe( 'ExportKitFooter Component', () => {
 
 		useExportContext.mockReturnValue( {
 			dispatch: mockDispatch,
-			isTemplateNameValid: true,
+			hasValidationErrors: false,
+			data: {
+				customization: {
+					content: {
+						mediaFormat: 'link',
+					},
+				},
+			},
 		} );
 
 		useConnectState.mockReturnValue( {
@@ -102,10 +109,10 @@ describe( 'ExportKitFooter Component', () => {
 			expect( saveToLibraryButton.getAttribute( 'href' ) ).toBe( 'https://example.com/connect' );
 		} );
 
-		it( 'should render Save to Library button disabled when template name is invalid', () => {
+		it( 'should render Save to Library button disabled when there are validation errors', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );
@@ -122,10 +129,10 @@ describe( 'ExportKitFooter Component', () => {
 			expect( exportButton ).toBeTruthy();
 		} );
 
-		it( 'should render Export as .zip button disabled when template name is invalid', () => {
+		it( 'should render Export as .zip button disabled when there are validation errors', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );
@@ -209,7 +216,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should not trigger export when button is disabled', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );

@@ -29,7 +29,7 @@ $root: eps-notice;
 
 		#{$parent}__icon {
 			color: var(--eps-notice-semantic-color);
-			font-size: type(text,xl);
+			font-size: get-type(text,xl);
 			margin-inline-end: spacing(12);
 		}
 	}

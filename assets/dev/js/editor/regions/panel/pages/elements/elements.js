@@ -2,9 +2,14 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
 	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
-	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
+	PanelElementsSearchView = require( './views/search' ),
+	PanelElementsWidgetCreationView = require( './views/widget-creation' ),
 	PanelElementsLayoutView;
+
+function elementorIsAngieIframeInDocument() {
+	return !! document.querySelector( 'iframe[src*="angie/"]' );
+}
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	template: '#tmpl-elementor-panel-elements',
@@ -17,6 +22,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	regions: {
 		elements: '#elementor-panel-elements-wrapper',
+		widgetCreation: '#elementor-panel-elements-widget-creation-area',
 		search: '#elementor-panel-elements-search-area',
 		notice: '#elementor-panel-elements-notice-area',
 	},
@@ -100,6 +106,32 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		( elementor.config.atomicWidgetPromotions || [] ).forEach( ( { type, widgets } ) => {
+			( widgets || [] ).forEach( ( widget ) => {
+				elementsCollection.add( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					promotionType: type,
+					widgetType: widget.name,
+				} );
+			} );
+		} );
+
+		jQuery.each( elementor.config.birthdayEasterEggWidgets || [], ( index, widget ) => {
+			elementsCollection.add( {
+				name: widget.name,
+				title: widget.title,
+				widgetType: widget.name,
+				icon: widget.icon,
+				categories: JSON.parse( widget.categories ),
+				editable: false,
+				birthdayEasterEgg: true,
+			} );
+		} );
+
 		if ( elementor.config.integrationWidgets ) {
 			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
 
@@ -120,8 +152,13 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
-					replacements = widget.replacements,
+				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ];
+
+				if ( ! originalWidget ) {
+					return;
+				}
+
+				const replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
 				if ( ! this.shouldAddWidget( presetWidget ) ) {
@@ -236,6 +273,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			options = viewDetails.options || {};
 
 		viewDetails.region.show( new viewDetails.view( options ) );
+
+		if ( 'elements' === viewName ) {
+			this.appendStickyPromotion();
+		}
+	},
+
+	appendStickyPromotion() {
+		if ( this.$( '#elementor-panel-get-pro-elements-sticky' ).length ) {
+			return;
+		}
+
+		const html = Marionette.Renderer.render( '#tmpl-elementor-panel-element-sticky-promotion', {} ).trim();
+
+		if ( html ) {
+			this.$el.append( html );
+		}
 	},
 
 	clearSearchInput() {
@@ -258,15 +311,53 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		this.search.currentView.ui.input.focus();
+		this.search.currentView.ui.input.trigger( 'focus' );
 	},
 
 	onChildviewChildrenRender() {
+		this.updateWidgetCreation();
 		elementor.getPanelView().updateScrollbar();
 	},
 
 	onChildviewSearchChangeInput( child ) {
 		this.changeFilter( child.ui.input.val(), 'search' );
+	},
+
+	updateWidgetCreation() {
+		const filterValue = elementor.channels.panelElements.request( 'filter:value' );
+
+		if ( ! filterValue ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
+		const isAngiePresent = elementorIsAngieIframeInDocument();
+		const isAdministrator = elementor.config.user.is_administrator;
+
+		if ( ! isAngiePresent && ! isAdministrator ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
+		const elementsView = this.elements.currentView;
+
+		if ( ! elementsView || ! ( elementsView instanceof PanelElementsElementsView ) ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
+		const emptyResults = 0 === elementsView.children.length;
+		const widgetCreationView = new PanelElementsWidgetCreationView( {
+			emptyResults,
+			searchTerm: filterValue,
+		} );
+
+		if ( ! widgetCreationView.hasTemplate() ) {
+			this.widgetCreation.empty();
+			return;
+		}
+
+		this.widgetCreation.show( widgetCreationView );
 	},
 
 	onDestroy() {

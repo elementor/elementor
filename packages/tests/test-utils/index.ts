@@ -1,6 +1,8 @@
 export * from './create-dom-element';
 export * from './create-mock-http-response';
+export * from './create-mock-document-data';
 export * from './create-mock-element';
+export * from './create-mock-element-data';
 export * from './create-mock-element-with-children';
 export * from './create-mock-menu-actions';
 export * from './create-mock-style-definition';
@@ -21,3 +23,7 @@ export { default as renderHookWithQuery } from './render-hook-with-query';
 export { default as renderHookWithStore } from './render-hook-with-store';
 export { default as renderWithQuery } from './render-with-query';
 export { default as renderWithStore } from './render-with-store';
+export { mockTracking, createMockTrackingModule } from './mock-tracking';
+export { mockLegacyElementor } from './mock-legacy-elementor';
+export { createHooksRegistry, setupHooksRegistry, type WindowWithHooks } from './create-hooks-registry';
+export { mockCurrentUserCapabilities } from './mock-current-user-capabilities';

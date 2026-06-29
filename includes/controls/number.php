@@ -77,4 +77,34 @@ class Control_Number extends Base_Data_Control {
 		<# } #>
 		<?php
 	}
+
+	public function get_value( $control, $settings ) {
+		$value = parent::get_value( $control, $settings );
+
+		if ( '' === $value || null === $value ) {
+			return $value;
+		}
+
+		if ( ! is_numeric( $value ) ) {
+			return ! empty( $control['default'] ) ? $control['default'] : '';
+		}
+
+		return $value;
+	}
+
+	public function get_style_value( $css_property, $control_value, array $control_data ) {
+		if ( 'DEFAULT' === $css_property ) {
+			return $control_data['default'];
+		}
+
+		if ( '' === $control_value || null === $control_value ) {
+			return $control_value;
+		}
+
+		if ( ! is_numeric( $control_value ) ) {
+			return ! empty( $control_data['default'] ) ? $control_data['default'] : '';
+		}
+
+		return $control_value;
+	}
 }

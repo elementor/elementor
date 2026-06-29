@@ -131,6 +131,10 @@
 
 			&:not([open]) {
 
+			   .e-con {
+					display: none;
+				}
+
 				&:hover {
 
 					> .e-n-accordion-item-title {

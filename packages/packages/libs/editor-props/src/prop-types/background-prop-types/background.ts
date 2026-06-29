@@ -7,6 +7,7 @@ export const backgroundPropTypeUtil = createPropUtils(
 	'background',
 	z.strictObject( {
 		color: unknownChildrenSchema,
+		clip: unknownChildrenSchema,
 		'background-overlay': unknownChildrenSchema,
 	} )
 );

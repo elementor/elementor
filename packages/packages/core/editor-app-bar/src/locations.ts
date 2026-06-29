@@ -18,7 +18,7 @@ const components = {
 };
 
 export const mainMenu = createMenu( {
-	groups: [ 'exits' ],
+	groups: [ 'help', 'exits' ],
 	components,
 } );
 

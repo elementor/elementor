@@ -1,6 +1,10 @@
 import { createMockStyleDefinition } from 'test-utils';
 import { getCurrentUser } from '@elementor/editor-current-user';
-import { __privateRunCommandSync as runCommandSync, registerDataHook } from '@elementor/editor-v1-adapters';
+import {
+	__privateRunCommandSync as runCommandSync,
+	type HookOptions,
+	registerDataHook,
+} from '@elementor/editor-v1-adapters';
 import {
 	__createStore as createStore,
 	__dispatch as dispatch,
@@ -63,7 +67,7 @@ describe( 'syncWithDocumentSave', () => {
 			dispatch( slice.actions.add( styleDefinition ) );
 
 			// Act.
-			await triggerHook( 'after', 'document/save/save', { status } );
+			await triggerHook( 'dependency', 'document/save/save', { status } );
 
 			// Assert.
 			const method = status === 'publish' ? apiClient.publish : apiClient.saveDraft;
@@ -78,6 +82,7 @@ describe( 'syncWithDocumentSave', () => {
 					added: [ styleDefinition.id ],
 					deleted: [],
 					modified: [],
+					order: true,
 				},
 			} );
 
@@ -116,7 +121,7 @@ describe( 'syncWithDocumentSave', () => {
 		dispatch( slice.actions.add( styleDefinition ) );
 
 		// Act.
-		await triggerHook( 'after', 'document/save/save', { status: 'publish' } );
+		await triggerHook( 'dependency', 'document/save/save', { status: 'publish' } );
 
 		// Assert.
 		expect( apiClient.publish ).not.toHaveBeenCalled();
@@ -135,8 +140,15 @@ describe( 'syncWithDocumentSave', () => {
 	} );
 } );
 
+type AfterHookCallback = (
+	args: Record< string, unknown >,
+	result: unknown,
+	options: HookOptions
+) => unknown | Promise< void >;
+type DependencyHookCallback = ( args: Record< string, unknown >, options: HookOptions ) => boolean;
+
 function mockRegisterDataHook() {
-	const callbacks = new Map< string, ( args: Record< string, unknown > ) => unknown >();
+	const callbacks = new Map< string, AfterHookCallback | DependencyHookCallback >();
 
 	jest.mocked( registerDataHook ).mockImplementation( ( type, command, callback ) => {
 		const key = `${ command }-${ type }`;
@@ -150,13 +162,18 @@ function mockRegisterDataHook() {
 		return {} as never;
 	} );
 
-	return ( type: string, command: string, args: Record< string, unknown > = {} ) => {
+	return ( type: string, command: string, args: Record< string, unknown > = {}, result: unknown = undefined ) => {
 		const key = `${ command }-${ type }`;
 
 		const callback = callbacks.get( key );
 
 		callbacks.delete( key );
 
-		return callback?.( args );
+		switch ( type ) {
+			case 'after':
+				return ( callback as AfterHookCallback )?.( args, result, { commandsCurrentTrace: [] } );
+			case 'dependency':
+				return ( callback as DependencyHookCallback )?.( args, { commandsCurrentTrace: [] } );
+		}
 	};
 }

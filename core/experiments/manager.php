@@ -121,7 +121,9 @@ class Manager extends Base_Object {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
 		if ( empty( $installs_history ) ) {
-			return false;
+			// Fresh installation: upgrade manager hasn't written history yet on this first request.
+			// Use the current plugin version as the effective first-install version.
+			return version_compare( ELEMENTOR_VERSION, $version, '>=' );
 		}
 
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
@@ -371,7 +373,20 @@ class Manager extends Base_Object {
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_STABLE,
+			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.30.0',
+			],
+		] );
+
+		$this->add_feature( [
+			'name' => 'e_panel_promotions',
+			'title' => esc_html__( 'Panel Promotions', 'elementor' ),
+			'description' => esc_html__( 'Enable experimental rendering for targeted promotions within the elements panels.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_ACTIVE,
+			'type' => self::TYPE_HIDDEN,
 		] );
 	}
 
@@ -649,7 +664,10 @@ class Manager extends Base_Object {
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
 			<?php foreach ( $feature['tags'] as $tag ) { ?>
-				<span class="e-experiment__title__tag e-experiment__title__tag__<?php echo $tag['type']; ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<?php
+				$tag_classes = 'e-experiment__title__tag e-experiment__title__tag__' . $tag['type'] . ' e-editor-one';
+				?>
+				<span class="<?php echo esc_attr( $tag_classes ); ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php } ?>
 			<?php if ( $feature['deprecated'] ) { ?>
 				<span class="e-experiment__title__tag e-experiment__title__tag__deprecated"><?php echo esc_html__( 'Deprecated', 'elementor' ); ?></span>

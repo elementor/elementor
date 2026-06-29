@@ -1,44 +1,33 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
-import { getLinkInLinkRestriction } from '@elementor/editor-elements';
-import {
-	linkPropTypeUtil,
-	type LinkPropValue,
-	numberPropTypeUtil,
-	stringPropTypeUtil,
-	urlPropTypeUtil,
-} from '@elementor/editor-props';
-import { type HttpResponse, httpService } from '@elementor/http-client';
+import { useEffect, useState } from 'react';
+import { getLinkInLinkRestriction, type LinkInLinkRestriction } from '@elementor/editor-elements';
+import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
+import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
+import { useDebouncedCallback } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import {
-	Autocomplete,
-	type CategorizedOption,
-	findMatchingOption,
-	type FlatOption,
-	isCategorizedOptionPool,
-} from '../components/autocomplete';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { RestrictedLinkInfotip } from '../components/restricted-link-infotip';
-import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
+import { QueryControl } from './query-control';
 import { SwitchControl } from './switch-control';
 
 type Props = ControlProps< {
 	queryOptions: {
-		requestParams: Record< string, unknown >;
-		endpoint: string;
+		params: Record< string, unknown >;
+		url: string;
 	};
 	allowCustomValues?: boolean;
 	minInputLength?: number;
 	placeholder?: string;
 	label?: string;
+	ariaLabel?: string;
 } >;
 
 type LinkSessionValue = {
@@ -48,32 +37,70 @@ type LinkSessionValue = {
 	};
 };
 
-type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
+export type DestinationProp = LinkPropValue[ 'value' ][ 'destination' ];
 
 const SIZE = 'tiny';
 
 export const LinkControl = createControl( ( props: Props ) => {
 	const { value, path, setValue, ...propContext } = useBoundProp( linkPropTypeUtil );
+	const linkPlaceholder = propContext.placeholder;
 	const [ linkSessionValue, setLinkSessionValue ] = useSessionStorage< LinkSessionValue >( path.join( '/' ) );
-	const [ isActive, setIsActive ] = useState( !! value );
+	const [ isActive, setIsActive ] = useState( !! value || !! linkPlaceholder );
 
 	const {
-		allowCustomValues,
-		queryOptions: { endpoint = '', requestParams = {} },
+		allowCustomValues = true,
+		queryOptions,
 		placeholder,
 		minInputLength = 2,
 		context: { elementId },
 		label = __( 'Link', 'elementor' ),
+		ariaLabel,
 	} = props || {};
 
-	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
-	const [ options, setOptions ] = useState< FlatOption[] | CategorizedOption[] >(
-		generateFirstLoadedOption( value )
+	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState(
+		getLinkInLinkRestriction( elementId, value ?? linkPlaceholder )
 	);
+
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
+	const debouncedCheckRestriction = useDebouncedCallback( () => {
+		const newRestriction = getLinkInLinkRestriction( elementId, value ?? linkPlaceholder );
+
+		if ( newRestriction.shouldRestrict && isActive && ! linkPlaceholder ) {
+			setIsActive( false );
+
+			if ( value !== null ) {
+				setValue( null );
+			}
+		}
+
+		setLinkInLinkRestriction( ( prev ) => ( isSameRestriction( prev, newRestriction ) ? prev : newRestriction ) );
+	}, 300 );
+
+	useListenTo(
+		commandEndEvent( 'document/elements/set-settings' ),
+		() => {
+			debouncedCheckRestriction();
+		},
+		[ debouncedCheckRestriction ]
+	);
+
+	useEffect( () => {
+		debouncedCheckRestriction();
+
+		const handleInlineLinkChanged = () => {
+			debouncedCheckRestriction();
+		};
+
+		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+
+		return () => {
+			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+		};
+	}, [ elementId, debouncedCheckRestriction ] );
+
 	const onEnabledChange = () => {
-		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ?? linkPlaceholder ) );
 
 		if ( linkInLinkRestriction.shouldRestrict && ! isActive ) {
 			return;
@@ -96,59 +123,16 @@ export const LinkControl = createControl( ( props: Props ) => {
 		} );
 	};
 
-	const onOptionChange = ( newValue: number | null ) => {
+	const onSaveValueToSession = ( newValue: DestinationProp[ 'value' ] | null ) => {
 		const valueToSave: LinkPropValue[ 'value' ] | null = newValue
 			? {
 					...value,
-					destination: numberPropTypeUtil.create( newValue ),
-					label: stringPropTypeUtil.create( findMatchingOption( options, newValue )?.label || null ),
+					destination: newValue,
 			  }
 			: null;
 
-		onSaveNewValue( valueToSave );
+		setLinkSessionValue( { ...linkSessionValue, value: valueToSave } );
 	};
-
-	const onTextChange = ( newValue: string | null ) => {
-		newValue = newValue?.trim() || '';
-
-		const valueToSave: LinkPropValue[ 'value' ] | null = newValue
-			? {
-					...value,
-					destination: urlPropTypeUtil.create( newValue ),
-					label: stringPropTypeUtil.create( '' ),
-			  }
-			: null;
-
-		onSaveNewValue( valueToSave );
-		updateOptions( newValue );
-	};
-
-	const onSaveNewValue = ( newValue: LinkPropValue[ 'value' ] | null ) => {
-		setValue( newValue );
-		setLinkSessionValue( { ...linkSessionValue, value: newValue } );
-	};
-
-	const updateOptions = ( newValue: string | null ) => {
-		setOptions( [] );
-
-		if ( ! newValue || ! endpoint || newValue.length < minInputLength ) {
-			return;
-		}
-
-		debounceFetch( { ...requestParams, term: newValue } );
-	};
-
-	const debounceFetch = useMemo(
-		() =>
-			debounce(
-				( params: FetchOptionsParams ) =>
-					fetchOptions( endpoint, params ).then( ( newOptions ) => {
-						setOptions( formatOptions( newOptions ) );
-					} ),
-				400
-			),
-		[ endpoint ]
-	);
 
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ setValue }>
@@ -161,30 +145,29 @@ export const LinkControl = createControl( ( props: Props ) => {
 						marginInlineEnd: -0.75,
 					} }
 				>
-					<ControlFormLabel>{ label }</ControlFormLabel>
+					<ControlLabel>{ label }</ControlLabel>
 					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
-						<ToggleIconControl
+						<IconButton
+							size={ SIZE }
+							onClick={ onEnabledChange }
+							aria-label={ __( 'Toggle link', 'elementor' ) }
 							disabled={ shouldDisableAddingLink }
-							active={ isActive }
-							onIconClick={ onEnabledChange }
-							label={ __( 'Toggle link', 'elementor' ) }
-						/>
+						>
+							{ isActive ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
+						</IconButton>
 					</RestrictedLinkInfotip>
 				</Stack>
 				<Collapse in={ isActive } timeout="auto" unmountOnExit>
 					<Stack gap={ 1.5 }>
 						<PropKeyProvider bind={ 'destination' }>
-							<ControlActions>
-								<Autocomplete
-									options={ options }
-									allowCustomValues={ allowCustomValues }
-									placeholder={ placeholder }
-									value={ value?.destination?.value?.settings?.label || value?.destination?.value }
-									onOptionChange={ onOptionChange }
-									onTextChange={ onTextChange }
-									minInputLength={ minInputLength }
-								/>
-							</ControlActions>
+							<QueryControl
+								queryOptions={ queryOptions }
+								allowCustomValues={ allowCustomValues }
+								minInputLength={ minInputLength }
+								placeholder={ placeholder }
+								onSetValue={ onSaveValueToSession }
+								ariaLabel={ ariaLabel || label }
+							/>
 						</PropKeyProvider>
 						<PropKeyProvider bind={ 'isTargetBlank' }>
 							<Grid container alignItems="center" flexWrap="nowrap" justifyContent="space-between">
@@ -203,56 +186,6 @@ export const LinkControl = createControl( ( props: Props ) => {
 	);
 } );
 
-type ToggleIconControlProps = {
-	disabled: boolean;
-	active: boolean;
-	onIconClick: () => void;
-	label?: string;
-};
-
-const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIconControlProps ) => {
-	return (
-		<IconButton size={ SIZE } onClick={ onIconClick } aria-label={ label } disabled={ disabled }>
-			{ active ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
-		</IconButton>
-	);
-};
-
-type FetchOptionsParams = Record< string, unknown > & { term: string };
-
-async function fetchOptions( ajaxUrl: string, params: FetchOptionsParams ) {
-	if ( ! params || ! ajaxUrl ) {
-		return [];
-	}
-
-	try {
-		const { data: response } = await httpService().get< Response >( ajaxUrl, { params } );
-
-		return response.data.value;
-	} catch {
-		return [];
-	}
-}
-
-function formatOptions( options: FlatOption[] | CategorizedOption[] ): FlatOption[] | CategorizedOption[] {
-	const compareKey = isCategorizedOptionPool( options ) ? 'groupLabel' : 'label';
-
-	return options.sort( ( a, b ) =>
-		a[ compareKey ] && b[ compareKey ] ? a[ compareKey ].localeCompare( b[ compareKey ] ) : 0
-	);
-}
-
-function generateFirstLoadedOption( unionValue: LinkPropValue[ 'value' ] | null ): FlatOption[] {
-	const value = unionValue?.destination?.value;
-	const label = unionValue?.label?.value;
-	const type = unionValue?.destination?.$$type || 'url';
-
-	return value && label && type === 'number'
-		? [
-				{
-					id: value.toString(),
-					label,
-				},
-		  ]
-		: [];
+function isSameRestriction( a: LinkInLinkRestriction, b: LinkInLinkRestriction ): boolean {
+	return a.shouldRestrict === b.shouldRestrict && a.reason === b.reason && a.elementId === b.elementId;
 }

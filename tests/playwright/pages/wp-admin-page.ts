@@ -4,6 +4,7 @@ import EditorPage from './editor-page';
 import { ElementorType, WindowType } from '../types/types';
 import { wpCli } from '../assets/wp-cli';
 import ApiRequests from '../assets/api-requests';
+import { timeouts } from '../config/timeouts';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -67,8 +68,10 @@ export default class WpAdminPage extends BasePage {
 		await this.openElementorSettings( tab );
 
 		for ( const [ selector, state ] of Object.entries( settings ) ) {
-			await this.page.locator( `select[name="${ selector }"]` ).waitFor();
-			await this.page.selectOption( `[name="${ selector }"]`, state.toString() );
+			const selectLocator = this.page.locator( `select[name="${ selector }"]` );
+			await selectLocator.waitFor( { state: 'attached' } );
+
+			await selectLocator.selectOption( state.toString(), { force: true } );
 		}
 
 		await this.page.click( '#submit' );
@@ -138,6 +141,25 @@ export default class WpAdminPage extends BasePage {
 		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
+	}
+
+	/**
+	 * Edit an existing Elementor page.
+	 *
+	 * @param {string}   postId        - The ID of the page to edit.
+	 * @param {Object}   prop          - Properties object.
+	 * @param {Page}     prop.page     - Playwright Page object.
+	 * @param {TestInfo} prop.testInfo - Playwright TestInfo object.
+	 * @return {Promise<EditorPage>}
+	 */
+	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
+		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( page, testInfo );
 	}
 
 	/**
@@ -238,8 +260,8 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async waitForPanel(): Promise<void> {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -263,8 +285,13 @@ export default class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some experiments may be hidden for the user,
-			// but actually exist and need to be tested.
+			await this.page.waitForSelector( selector, { state: 'attached', timeout: 10000 } );
+
+			const selectElement = this.page.locator( selector );
+			await selectElement.waitFor( { state: 'visible', timeout: 5000 } );
+
+			await this.page.waitForTimeout( 500 );
+
 			await this.page.evaluate( ( el ) => {
 				const element: HTMLElement = document.querySelector( el );
 
@@ -273,9 +300,16 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
+			let optionValue: string;
 
-			// Click to confirm any experiment that has dependencies.
+			if ( 'string' === typeof state ) {
+				optionValue = state;
+			} else {
+				optionValue = state ? 'active' : 'inactive';
+			}
+
+			await selectElement.selectOption( optionValue, { timeout: 5000 } );
+
 			await this.confirmExperimentModalIfOpen();
 		}
 
@@ -454,5 +488,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).check();
 		await this.page.locator( '#submit' ).click();
+	}
+
+	async cleanAdminPageForScreenshot(): Promise<void> {
+		await this.page.addStyleTag( {
+			content: '.notice, .update-nag, .e-notice { display: none !important; }',
+		} );
+
+		await this.page.evaluate( () => {
+			document.querySelectorAll( 'iframe' ).forEach( ( iframe ) => iframe.remove() );
+		} );
 	}
 }

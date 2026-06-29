@@ -71,7 +71,7 @@ export default function Layout( props ) {
 			if ( returnTo && safeRedirect( returnTo ) ) {
 				// Do nothing as the redirect is handled by the safeRedirect function.
 			} else if ( 'kit-library' === sharedContext.data.referrer || 'kit-library' === referrer ) {
-				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app#/kit-library';
+				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app&source=kit_import#/kit-library';
 			} else {
 				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
 			}

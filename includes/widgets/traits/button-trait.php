@@ -133,9 +133,6 @@ trait Button_Trait {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = is_rtl() ? 'left' : 'right';
-
 		$this->add_control(
 			'icon_align',
 			[
@@ -145,13 +142,14 @@ trait Button_Trait {
 				'options' => [
 					'row' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-h-align-{$start}",
+						'icon' => 'eicon-h-align-left',
 					],
 					'row-reverse' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-h-align-{$end}",
+						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'selectors_dictionary' => [
 					'left' => is_rtl() ? 'row-reverse' : 'row',
 					'right' => is_rtl() ? 'row' : 'row-reverse',
@@ -275,9 +273,6 @@ trait Button_Trait {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = is_rtl() ? 'left' : 'right';
-
 		$this->add_responsive_control(
 			'content_align',
 			[
@@ -286,7 +281,7 @@ trait Button_Trait {
 				'options' => [
 					'start'    => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-text-align-{$start}",
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -294,7 +289,7 @@ trait Button_Trait {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-text-align-{$end}",
+						'icon' => 'eicon-text-align-right',
 					],
 					'space-between' => [
 						'title' => esc_html__( 'Space between', 'elementor' ),
@@ -302,6 +297,7 @@ trait Button_Trait {
 					],
 				],
 				'default' => $args['content_alignment_default'],
+				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
 				],

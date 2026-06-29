@@ -259,20 +259,25 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'prefix_class' => 'elementor%s-align-',
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -798,6 +803,32 @@ class Widget_Icon_List extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['icon_list'] ) ) {
+			return '';
+		}
+
+		$lines = [];
+
+		foreach ( $settings['icon_list'] as $item ) {
+			$text = Utils::html_to_plain_text( $item['text'] ?? '' );
+
+			if ( empty( $text ) ) {
+				continue;
+			}
+
+			if ( ! empty( $item['link']['url'] ) ) {
+				$text = '[' . $text . '](' . esc_url( $item['link']['url'] ) . ')';
+			}
+
+			$lines[] = '- ' . $text;
+		}
+
+		return implode( "\n", $lines );
+	}
+
 	protected function content_template() {
 		?>
 		<#

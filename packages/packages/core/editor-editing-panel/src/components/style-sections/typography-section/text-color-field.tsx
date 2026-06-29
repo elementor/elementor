@@ -11,7 +11,7 @@ export const TextColorField = () => {
 	return (
 		<StylesField bind="color" propDisplayName={ TEXT_COLOR_LABEL }>
 			<StylesFieldLayout label={ TEXT_COLOR_LABEL }>
-				<ColorControl />
+				<ColorControl id="text-color-control" />
 			</StylesFieldLayout>
 		</StylesField>
 	);

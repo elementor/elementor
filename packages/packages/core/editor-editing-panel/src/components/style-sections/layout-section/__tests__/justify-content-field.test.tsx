@@ -16,6 +16,7 @@ jest.mock( '../../../../contexts/style-context', () => ( {
 
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 describe( '<JustifyContentField />', () => {

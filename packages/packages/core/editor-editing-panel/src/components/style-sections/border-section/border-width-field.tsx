@@ -16,21 +16,25 @@ const InlineEndIcon = withDirection( SideLeftIcon );
 const getEdges = ( isSiteRtl: boolean ): EqualUnequalItems => [
 	{
 		label: __( 'Top', 'elementor' ),
+		ariaLabel: __( 'Border top width', 'elementor' ),
 		icon: <SideTopIcon fontSize={ 'tiny' } />,
 		bind: 'block-start',
 	},
 	{
 		label: isSiteRtl ? __( 'Left', 'elementor' ) : __( 'Right', 'elementor' ),
+		ariaLabel: isSiteRtl ? __( 'Border left width', 'elementor' ) : __( 'Border right width', 'elementor' ),
 		icon: <InlineStartIcon fontSize={ 'tiny' } />,
 		bind: 'inline-end',
 	},
 	{
 		label: __( 'Bottom', 'elementor' ),
+		ariaLabel: __( 'Border bottom width', 'elementor' ),
 		icon: <SideBottomIcon fontSize={ 'tiny' } />,
 		bind: 'block-end',
 	},
 	{
 		label: isSiteRtl ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' ),
+		ariaLabel: isSiteRtl ? __( 'Border right width', 'elementor' ) : __( 'Border left width', 'elementor' ),
 		icon: <InlineEndIcon fontSize={ 'tiny' } />,
 		bind: 'inline-start',
 	},

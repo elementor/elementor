@@ -8,12 +8,13 @@ import { createControl } from '../create-control';
 
 export const TextControl = createControl(
 	( {
-		placeholder,
+		placeholder: propPlaceholder,
 		error,
 		inputValue,
 		inputDisabled,
 		helperText,
 		sx,
+		ariaLabel,
 	}: {
 		placeholder?: string;
 		error?: boolean;
@@ -21,9 +22,12 @@ export const TextControl = createControl(
 		inputDisabled?: boolean;
 		helperText?: string;
 		sx?: SxProps;
+		ariaLabel?: string;
 	} ) => {
-		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+		const { value, setValue, disabled, placeholder: boundPlaceholder } = useBoundProp( stringPropTypeUtil );
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
+
+		const placeholder = propPlaceholder ?? boundPlaceholder ?? undefined;
 
 		return (
 			<ControlActions>
@@ -37,6 +41,9 @@ export const TextControl = createControl(
 					error={ error }
 					helperText={ helperText }
 					sx={ sx }
+					inputProps={ {
+						...( ariaLabel ? { 'aria-label': ariaLabel } : {} ),
+					} }
 				/>
 			</ControlActions>
 		);

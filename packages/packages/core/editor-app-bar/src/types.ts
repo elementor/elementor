@@ -12,12 +12,14 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
+
 		config: {
 			library_connect: {
 				is_connected: boolean;
 			};
 		};
 	};
+
 	elementor: {
 		helpers: {
 			hasPro: () => boolean;

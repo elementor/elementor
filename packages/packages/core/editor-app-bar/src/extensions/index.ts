@@ -3,11 +3,13 @@
  * The code should be moved to the appropriate packages.
  */
 
+import { init as initAngie } from './angie';
 import { init as initConnect } from './connect';
-import { init as initDocumentsIndicator } from './documents-indicator';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
+import { init as initDocumentsSettings } from './documents-settings';
 import { init as initElements } from './elements';
+import { init as initFeedback } from './feedback';
 import { init as initFinder } from './finder';
 import { init as initHelp } from './help';
 import { init as initHistory } from './history';
@@ -20,9 +22,10 @@ import { init as initUserPreferences } from './user-preferences';
 import { init as initWordpress } from './wordpress';
 
 export function init() {
-	initDocumentsIndicator();
+	initAngie();
 	initDocumentsPreview();
 	initDocumentsSave();
+	initDocumentsSettings();
 	initElements();
 	initFinder();
 	initHelp();
@@ -30,6 +33,7 @@ export function init() {
 	initKeyboardShortcuts();
 	initResponsive();
 	initSiteSettings();
+	initFeedback();
 	initStructure();
 	initThemeBuilder();
 	initUserPreferences();

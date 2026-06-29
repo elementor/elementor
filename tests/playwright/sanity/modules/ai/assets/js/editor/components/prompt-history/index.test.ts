@@ -231,7 +231,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			await expect( input ).toHaveValue( 'Test prompt' );
 
 			await closeAIDialog( page );
 		} );
@@ -255,7 +255,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( textarea ).toBeVisible();
 
-			expect( await textarea.inputValue() ).toBe( 'Test result' );
+			await expect( textarea ).toHaveValue( 'Test result' );
 
 			await closeAIDialog( page );
 		} );
@@ -285,7 +285,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			await expect( input ).toHaveValue( 'Test prompt' );
 		} );
 	} );
 
@@ -316,28 +316,28 @@ test.describe( 'AI @ai', () => {
 
 			await expect( promptTextarea ).toBeVisible();
 
-			expect( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
+			await expect( promptTextarea ).toHaveValue( 'Test prompt' );
 
 			// Check image type
 			const imageTypeInput = page.locator( image.typeInput ).first();
 
 			await expect( imageTypeInput ).toBeVisible();
 
-			expect( await imageTypeInput.inputValue() ).toBe( 'photographic' );
+			await expect( imageTypeInput ).toHaveValue( 'photographic' );
 
 			// Check image style
 			const imageStyleInput = page.locator( image.styleInput ).first();
 
 			await expect( imageStyleInput ).toBeVisible();
 
-			expect( await imageStyleInput.inputValue() ).toBe( 'portrait' );
+			await expect( imageStyleInput ).toHaveValue( 'portrait' );
 
 			// Check image ratio
 			const imageRatioInput = page.locator( image.aspectRationInput ).first();
 
 			await expect( imageRatioInput ).toBeVisible();
 
-			expect( await imageRatioInput.inputValue() ).toBe( '16:9' );
+			await expect( imageRatioInput ).toHaveValue( '16:9' );
 
 			// Check restored images
 			const images = page.locator( image.generatedImage );
@@ -346,7 +346,7 @@ test.describe( 'AI @ai', () => {
 
 			expect( await images.count() ).toEqual( 2 );
 
-			expect( await images.first().getAttribute( 'src' ) ).toEqual( 'https://example.com/img1.jpg' );
+			await expect( images.first() ).toHaveAttribute( 'src', 'https://example.com/img1.jpg' );
 		} );
 	} );
 } );

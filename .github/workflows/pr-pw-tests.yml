@@ -10,8 +10,10 @@ permissions:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: PR Playwright build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: PR Playwright build artifact
 
   playwright-tests:
     name: Playwright Tests
@@ -20,16 +22,16 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -37,7 +39,7 @@ jobs:
       - name: Run wp-playground
         id: wp-playground
         run: |
-            npm run experimental:wp-playground:ci &
+            npm run wp-playground:ci &
             
             # Wait for WordPress to be ready
             while ! curl -s http://127.0.0.1:9400 > /dev/null; do

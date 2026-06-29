@@ -28,10 +28,16 @@ export default function ConnectScreen( {
 				height: 700,
 			},
 			success: ( _event, data ) => {
+				const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
+
 				elementorCommon.config.library_connect.is_connected = true;
 				elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 				elementorCommon.config.library_connect.current_access_tier = data.access_tier;
 				elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+				if ( isTrackingOptedInConnect ) {
+					elementorCommon.config.editor_events.can_send_events = true;
+				}
 
 				onConnectSuccess?.();
 			},

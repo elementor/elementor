@@ -1,0 +1,9 @@
+{
+    "settings": {
+        "collection": [
+            "existing1",
+            "existing2",
+            "to-move"
+        ]
+    }
+}

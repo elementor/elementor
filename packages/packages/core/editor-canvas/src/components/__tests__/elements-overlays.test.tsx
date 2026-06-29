@@ -1,17 +1,22 @@
 import * as React from 'react';
 import { createDOMElement, createMockElement, createMockElementType, renderWithTheme } from 'test-utils';
 import { getElements, useSelectedElement } from '@elementor/editor-elements';
-import { __privateUseIsRouteActive as useIsRouteActive, useEditMode } from '@elementor/editor-v1-adapters';
-import { act, screen } from '@testing-library/react';
+import {
+	__privateUseIsRouteActive as useIsRouteActive,
+	isExperimentActive,
+	useEditMode,
+} from '@elementor/editor-v1-adapters';
+import { screen, waitFor } from '@testing-library/react';
 
-import { CANVAS_WRAPPER_ID } from '../element-overlay';
 import { ElementsOverlays } from '../elements-overlays';
+import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	useEditMode: jest.fn(),
 	__privateUseIsRouteActive: jest.fn(),
+	isExperimentActive: jest.fn(),
 } ) );
 
 describe( '<ElementsOverlays />', () => {
@@ -23,6 +28,7 @@ describe( '<ElementsOverlays />', () => {
 
 		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
 		jest.mocked( useIsRouteActive ).mockReturnValue( false );
+		jest.mocked( isExperimentActive ).mockReturnValue( true );
 
 		jest.mocked( getElements ).mockReturnValue( [
 			createMockElement( {
@@ -68,16 +74,15 @@ describe( '<ElementsOverlays />', () => {
 		} );
 
 		// Act.
-		// eslint-disable-next-line testing-library/no-unnecessary-act
-		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+		renderWithTheme( <ElementsOverlays /> );
 
 		// Assert.
-		const overlay = screen.getByRole( 'presentation' );
-
-		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic2' );
-
-		// eslint-disable-next-line testing-library/no-test-id-queries
-		expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay );
+		await waitFor( () => {
+			const overlay = screen.getByRole( 'presentation' );
+			expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic2' );
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay );
+		} );
 	} );
 
 	it.each( [
@@ -127,5 +132,55 @@ describe( '<ElementsOverlays />', () => {
 
 		// Assert.
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should return null when editor is not in edit mode', () => {
+		// Arrange
+		jest.mocked( useEditMode ).mockReturnValue( 'preview' );
+		jest.mocked( useIsRouteActive ).mockReturnValue( false );
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		const { container } = renderWithTheme( <ElementsOverlays /> );
+
+		// Assert
+		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should return null when panel/global route is active', () => {
+		// Arrange
+		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
+		jest.mocked( useIsRouteActive ).mockReturnValue( true );
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		const { container } = renderWithTheme( <ElementsOverlays /> );
+
+		// Assert
+		expect( container ).toBeEmptyDOMElement();
+		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render OutlineOverlay for atomic elements', async () => {
+		// Arrange
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		renderWithTheme( <ElementsOverlays /> );
+
+		// Assert
+		const overlay = await screen.findByRole( 'presentation' );
+		expect( overlay ).toBeInTheDocument();
+		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic1' );
 	} );
 } );

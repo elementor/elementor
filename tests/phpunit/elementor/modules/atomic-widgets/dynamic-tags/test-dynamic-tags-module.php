@@ -111,12 +111,13 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [
-					[
-						'type' => 'section',
-						'value' => [
-							'label' => 'Settings',
-							'description' => null,
-							'items' => [
+				[
+					'type' => 'section',
+					'value' => [
+						'id' => null,
+						'label' => 'Settings',
+						'description' => null,
+						'items' => [
 								[
 									'type' => 'control',
 									'value' => [
@@ -148,6 +149,8 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 													'label' => 'Email',
 												],
 											],
+											'fallbackLabels' => null,
+											'placeholder' => '',
 										],
 										'meta' => null,
 									],
@@ -158,27 +161,25 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'props_schema' => [
 					'before' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [],
 						'meta' => [],
 						'dependencies' => null,
+						'initial_value' => null,
 					],
 					'key' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
-						'settings' => [
-							'enum' => [
-								'name',
-								'email',
-							],
-						],
+						'settings' => [],
 						'meta' => [],
 						'dependencies' => null,
+						'initial_value' => null,
 					],
 				],
+				'meta' => [],
 			],
 			'post' => [
 				'name' => 'post',
@@ -189,6 +190,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			]
 		];
 
@@ -276,7 +278,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				$tag->add_control(
 					'unsupported-control',
 					[
-						'type' => 'choose',
+						'type' => 'code',
 					]
 				);
 			},
@@ -303,6 +305,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			],
 		];
 

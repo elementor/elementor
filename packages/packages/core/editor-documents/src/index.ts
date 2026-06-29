@@ -12,6 +12,16 @@ export { slice } from './store';
 
 export { getCurrentDocument } from './store/get-current-document';
 
-export { setDocumentModifiedStatus, getV1DocumentsManager } from './sync/utils';
+export {
+	setDocumentModifiedStatus,
+	getV1DocumentsManager,
+	getV1CurrentDocument,
+	isDocumentDirty,
+	invalidateDocumentData,
+	reloadCurrentDocument,
+	switchToDocument,
+} from './sync/utils';
+
+export { COMPONENT_DOCUMENT_TYPE } from './consts';
 
 export * from './types';

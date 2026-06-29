@@ -3,10 +3,14 @@
 namespace Elementor\Modules\WpRest;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\WpRest\Classes\Design_System_REST_API;
 use Elementor\Modules\WpRest\Classes\Elementor_Post_Meta;
 use Elementor\Modules\WpRest\Classes\Elementor_Settings;
 use Elementor\Modules\WpRest\Classes\Elementor_User_Meta;
 use Elementor\Modules\WpRest\Classes\Post_Query;
+use Elementor\Modules\WpRest\Classes\Term_Query;
+use Elementor\Modules\WpRest\Classes\User_Query;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,7 +29,12 @@ class Module extends BaseModule {
 			( new Elementor_Post_Meta() )->register();
 			( new Elementor_Settings() )->register();
 			( new Elementor_User_Meta() )->register();
-			( new Post_Query() )->register();
+			( new Post_Query() )->register( Post_Query::ENDPOINT );
+			( new Term_Query() )->register( Term_Query::ENDPOINT );
+			( new User_Query() )->register( User_Query::ENDPOINT );
+			if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
+				( new Design_System_REST_API() )->register();
+			}
 		} );
 	}
 }

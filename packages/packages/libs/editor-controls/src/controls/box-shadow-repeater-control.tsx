@@ -5,37 +5,46 @@ import { FormLabel, Grid, styled, type SxProps, type Theme, UnstableColorIndicat
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { ControlRepeater, Item, ItemsContainer, TooltipAddItemAction } from '../components/control-repeater';
+import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../components/control-repeater/context/repeater-context';
+import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Header, Item, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
-import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
-import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
-import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
-import { useRepeaterContext } from '../components/unstable-repeater/context/repeater-context';
-import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
+import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
-import { SizeControl } from './size-control';
+import { CUSTOM_SIZE_LABEL, SizeControl } from './size-control';
 
 export const BoxShadowRepeaterControl = createControl( () => {
 	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
-			<UnstableRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
-				<Header label={ __( 'Box shadow', 'elementor' ) }>
-					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
-				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
+			<ControlRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
+				<RepeaterHeader label={ __( 'Box shadow', 'elementor' ) }>
+					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } ariaLabel={ 'Box shadow' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
 				</ItemsContainer>
 				<EditItemPopover>
 					<Content />
 				</EditItemPopover>
-			</UnstableRepeater>
+			</ControlRepeater>
 		</PropProvider>
 	);
 } );
@@ -73,10 +82,10 @@ const Content = () => {
 				</PopoverGridContainer>
 				<PopoverGridContainer ref={ rowRef[ 0 ] }>
 					<Control bind="hOffset" label={ __( 'Horizontal', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+						<SizeControl anchorRef={ rowRef[ 0 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 					<Control bind="vOffset" label={ __( 'Vertical', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+						<SizeControl anchorRef={ rowRef[ 0 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 				</PopoverGridContainer>
 				<PopoverGridContainer ref={ rowRef[ 1 ] }>
@@ -84,7 +93,7 @@ const Content = () => {
 						<SizeControl anchorRef={ rowRef[ 1 ] } />
 					</Control>
 					<Control bind="spread" label={ __( 'Spread', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 1 ] } />
+						<SizeControl anchorRef={ rowRef[ 1 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 				</PopoverGridContainer>
 			</PopoverContent>
@@ -127,11 +136,19 @@ const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
 	const positionLabel = position?.value || 'outset';
 
 	const sizes = [
-		hOffsetSize + hOffsetUnit,
-		vOffsetSize + vOffsetUnit,
-		blurSize + blurUnit,
-		spreadSize + spreadUnit,
-	].join( ' ' );
+		[ hOffsetSize, hOffsetUnit ],
+		[ vOffsetSize, vOffsetUnit ],
+		[ blurSize, blurUnit ],
+		[ spreadSize, spreadUnit ],
+	]
+		.map( ( [ size, unit ] ) => {
+			if ( unit !== 'custom' ) {
+				return size + unit;
+			}
+
+			return ! size ? CUSTOM_SIZE_LABEL : size;
+		} )
+		.join( ' ' );
 
 	return (
 		<span style={ { textTransform: 'capitalize' } }>

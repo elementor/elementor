@@ -8,3 +8,14 @@ export async function fetchCloudKitsEligibility() {
 
 	return response?.data;
 }
+
+/**
+ * Fetch cloud kits quota from WordPress backend
+ *
+ * @return {Promise<Object>} Quota data including storage information
+ */
+export async function fetchCloudKitsQuota() {
+	const response = await $e.data.get( 'cloud-kits/quota', {}, { refresh: true } );
+
+	return response?.data;
+}

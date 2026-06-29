@@ -268,22 +268,27 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-wrapper' => 'text-align: {{VALUE}};',
@@ -864,7 +869,7 @@ class Widget_Image_Box extends Widget_Base {
 				var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link?.url ) {
-					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title_html + '</a>';
+					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + titleText + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );
@@ -890,5 +895,30 @@ class Widget_Image_Box extends Widget_Base {
 		print( html );
 		#>
 		<?php
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$title = Utils::html_to_plain_text( $settings['title_text'] ?? '' );
+		$description = Utils::html_to_plain_text( $settings['description_text'] ?? '' );
+		$image_url = $settings['image']['url'] ?? '';
+		if ( empty( $title ) && empty( $description ) && empty( $image_url ) ) {
+			return '';
+		}
+		$parts = [];
+		if ( ! empty( $image_url ) ) {
+			$parts[] = '![' . $title . '](' . esc_url( $image_url ) . ')';
+		}
+		if ( ! empty( $title ) ) {
+			if ( ! empty( $settings['link']['url'] ) ) {
+				$parts[] = '### [' . $title . '](' . esc_url( $settings['link']['url'] ) . ')';
+			} else {
+				$parts[] = '### ' . $title;
+			}
+		}
+		if ( ! empty( $description ) ) {
+			$parts[] = $description;
+		}
+		return implode( "\n\n", $parts );
 	}
 }

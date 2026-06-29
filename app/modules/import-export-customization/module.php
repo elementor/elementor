@@ -7,7 +7,10 @@ use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
+use Elementor\Modules\GlobalClasses\Global_Classes_REST_API;
 use Elementor\Modules\System_Info\Reporters\Server;
+use Elementor\Modules\Variables\Storage\Constants;
+use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
@@ -37,11 +40,15 @@ class Module extends BaseModule {
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
 
+	const CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE = 'error-loading-resource';
+
 	const NO_WRITE_PERMISSIONS_KEY = 'no-write-permissions';
 
 	const THIRD_PARTY_ERROR = 'third-party-error';
 
 	const DOMDOCUMENT_MISSING = 'domdocument-missing';
+
+	const MEDIA_PROCESSING_ERROR = 'media-processing-error';
 
 	const OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS = 'elementor_import_sessions';
 
@@ -154,8 +161,13 @@ class Module extends BaseModule {
 		];
 
 		if ( $is_cloud_kits_available ) {
+			$return_to_url = Tools::get_url() . '#tab-import-export-kit';
+			$kit_library_url = add_query_arg(
+				[ 'return_to' => rawurlencode( $return_to_url ) ],
+				Plugin::$instance->app->get_base_url() . '#/kit-library/cloud'
+			);
 			$content_data['import']['button_secondary'] = [
-				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'url' => $kit_library_url,
 				'text' => esc_html__( 'Import from library', 'elementor' ),
 				'id' => 'elementor-import-export__import_from_library',
 			];
@@ -237,8 +249,9 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
+		$container_classes = 'tab-import-export-kit__container e-editor-one';
 		?>
-		<div class="tab-import-export-kit__container">
+		<div class="<?php echo esc_attr( $container_classes ); ?>">
 			<div class="tab-import-export-kit__box">
 				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
@@ -249,7 +262,7 @@ class Module extends BaseModule {
 			<?php endif; ?>
 			<div class="tab-import-export-kit__box action-buttons">
 				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+					<a id="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['id'] ); ?>" href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
 						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
 					</a>
 				<?php endif; ?>
@@ -262,9 +275,8 @@ class Module extends BaseModule {
 	}
 
 	private function get_revert_href(): string {
-		$admin_post_url = admin_url( 'admin-post.php?action=elementor_revert_kit' );
-		$nonced_admin_post_url = wp_nonce_url( $admin_post_url, 'elementor_revert_kit' );
-		return $this->maybe_add_referrer_param( $nonced_admin_post_url );
+		$current_url = add_query_arg( null, null );
+		return $this->maybe_add_referrer_param( $current_url );
 	}
 
 	/**
@@ -282,6 +294,16 @@ class Module extends BaseModule {
 		}
 
 		return add_query_arg( $param_name, sanitize_key( $_GET[ $param_name ] ), $href );
+	}
+
+	/**
+	 * Get referrer kit ID from current request
+	 *
+	 * @return string
+	 */
+	private function get_referrer_kit_id_from_request(): string {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Called via REST API with its own authentication
+		return sanitize_key( $_GET['referrer_kit'] ?? '' );
 	}
 
 	/**
@@ -334,6 +356,8 @@ class Module extends BaseModule {
 			'id' => $kit_id,
 		] );
 
+		$this->save_upload_session_data();
+
 		return [
 			'session' => $this->import->get_session_id(),
 			'manifest' => $this->import->get_manifest(),
@@ -378,6 +402,10 @@ class Module extends BaseModule {
 		}
 
 		return $this->import->run();
+	}
+
+	private function save_upload_session_data(): void {
+		$this->import->init_import_session();
 	}
 
 	/**
@@ -428,36 +456,40 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Handle revert kit ajax request.
+	 * Handle revert kit request.
 	 */
-	public function revert_last_imported_kit() {
+	public function revert_last_imported_kit(): array {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
+
+		$import_sessions = Revert::get_import_sessions();
+
+		if ( empty( $import_sessions ) ) {
+			return [
+				'revert_completed' => false,
+				'message' => __( 'No import sessions available to revert.', 'elementor' ),
+				'referrer_kit_id' => $this->get_referrer_kit_id_from_request(),
+				'show_referrer_dialog' => false,
+			];
+		}
 
 		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
-	}
 
+		$referrer_kit_id = $this->get_referrer_kit_id_from_request();
 
-	/**
-	 * Handle revert last imported kit ajax request.
-	 */
-	public function handle_revert_last_imported_kit() {
-		check_admin_referer( 'elementor_revert_kit' );
-
-		$this->revert_last_imported_kit();
-
-		wp_safe_redirect( admin_url( 'admin.php?page=' . Tools::PAGE_ID . '#tab-import-export-kit' ) );
-		die;
+		return [
+			'revert_completed' => true,
+			'referrer_kit_id' => $referrer_kit_id,
+			'show_referrer_dialog' => ! empty( $referrer_kit_id ),
+		];
 	}
 
 	/**
 	 * Register appropriate actions.
 	 */
 	private function register_actions() {
-		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
-
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
 		$page_id = Tools::PAGE_ID;
@@ -553,7 +585,7 @@ class Module extends BaseModule {
 		wp_enqueue_script(
 			'import-export-customization-admin',
 			$this->get_js_assets_url( 'import-export-customization-admin' ),
-			[ 'elementor-common' ],
+			[ 'elementor-common', 'wp-api-fetch' ],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -595,9 +627,14 @@ class Module extends BaseModule {
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
+			'restNonce' => wp_create_nonce( 'wp_rest' ),
+			'restUrl' => rest_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
 			'manifestVersion' => self::FORMAT_VERSION,
+			'elementorVersion' => ELEMENTOR_VERSION,
+			'upgradeVersionUrl' => admin_url( 'plugins.php' ),
+			'limits' => $this->get_limits(),
 		];
 	}
 
@@ -616,6 +653,21 @@ class Module extends BaseModule {
 		}
 
 		return $export_groups;
+	}
+
+	private function get_limits() {
+		$classes_limit = class_exists( Global_Classes_REST_API::class )
+			? Global_Classes_REST_API::MAX_ITEMS
+			: 100;
+
+		$variables_limit = class_exists( Constants::class )
+			? Constants::TOTAL_VARIABLES_COUNT
+			: 100;
+
+		return [
+			'classes' => $classes_limit,
+			'variables' => $variables_limit,
+		];
 	}
 
 	/**

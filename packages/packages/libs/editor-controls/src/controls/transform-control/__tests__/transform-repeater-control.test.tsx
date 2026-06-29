@@ -21,6 +21,8 @@ type DimensionPropValue< T extends string[] > = {
 	};
 };
 
+const TRANSFORM_SETTINGS_BUTTON_NAME = 'Transform settings';
+
 describe( 'TransformRepeaterControl', () => {
 	const sizePropType = createMockPropType( {
 		kind: 'object',
@@ -144,7 +146,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Assert.
 		expect( screen.getByText( 'Transform' ) ).toBeInTheDocument();
@@ -156,7 +161,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Open the first item
 		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
@@ -174,7 +182,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Open the first item
 		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
@@ -195,7 +206,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Open the first item
 		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
@@ -216,7 +230,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Open the first item
 		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
@@ -242,7 +259,7 @@ describe( 'TransformRepeaterControl', () => {
 		const mockSetValue = jest.fn();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, {
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
 			value: mockTransformValue,
 			propType,
 			setValue: mockSetValue,
@@ -278,7 +295,10 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue( { functions: [] } );
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
 		// Assert.
 		expect( screen.getByText( 'Transform' ) ).toBeInTheDocument();
@@ -291,9 +311,12 @@ describe( 'TransformRepeaterControl', () => {
 		const mockTransformValue = createMockTransformValue();
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
 
-		const transformBaseTriggerButton = screen.getByRole( 'button', { name: 'Base Transform' } );
+		const transformBaseTriggerButton = screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } );
 
 		// Assert.
 		expect( transformBaseTriggerButton ).toBeInTheDocument();
@@ -315,8 +338,11 @@ describe( 'TransformRepeaterControl', () => {
 		} );
 
 		// Act.
-		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
-		fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
+		renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+			value: mockTransformValue,
+			propType,
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } ) );
 
 		const inputs = screen.getAllByDisplayValue( /\d*/ );
 
@@ -350,8 +376,12 @@ describe( 'TransformRepeaterControl', () => {
 				const setValue = jest.fn();
 
 				// Act.
-				renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType, setValue } );
-				fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
+				renderControl( <TransformRepeaterControl showChildrenPerspective={ true } />, {
+					value: mockTransformValue,
+					propType,
+					setValue,
+				} );
+				fireEvent.click( screen.getByRole( 'button', { name: TRANSFORM_SETTINGS_BUTTON_NAME } ) );
 
 				const inputs = screen.getAllByDisplayValue( /\d*/ );
 

@@ -1,4 +1,8 @@
 export default class extends Marionette.LayoutView {
+	tagName() {
+		return 'header';
+	}
+
 	className() {
 		return 'elementor-templates-modal__header';
 	}
@@ -27,6 +31,26 @@ export default class extends Marionette.LayoutView {
 		};
 	}
 
+	onRender() {
+		this.bindEscapeKey();
+	}
+
+	bindEscapeKey() {
+		this.onDocumentKeyDown = ( event ) => {
+			if ( 'Escape' === event.key ) {
+				this.onCloseModalClick();
+			}
+		};
+
+		document.addEventListener( 'keydown', this.onDocumentKeyDown );
+	}
+
+	onDestroy() {
+		if ( this.onDocumentKeyDown ) {
+			document.removeEventListener( 'keydown', this.onDocumentKeyDown );
+		}
+	}
+
 	templateHelpers() {
 		return {
 			closeType: this.getOption( 'closeType' ),
@@ -36,9 +60,9 @@ export default class extends Marionette.LayoutView {
 	onCloseModalClick() {
 		this._parent._parent._parent.hideModal();
 
-		const type = elementor.config?.document?.type ?? 'default';
+		const documentType = this.getDocumentType();
 
-		const customEvent = new CustomEvent( `core/modal/close/${ type }` );
+		const customEvent = new CustomEvent( `core/modal/close/${ documentType }` );
 
 		window.dispatchEvent( customEvent );
 
@@ -46,6 +70,16 @@ export default class extends Marionette.LayoutView {
 			$e.internal( 'document/save/set-is-modified', { status: false } );
 			window.location.href = elementor.config.admin_floating_button_admin_url;
 		}
+	}
+
+	getDocumentType() {
+		const DEFAULT_TYPE = 'default';
+
+		if ( 'undefined' === typeof window.elementor ) {
+			return DEFAULT_TYPE;
+		}
+
+		return elementor?.config?.document?.type ?? DEFAULT_TYPE;
 	}
 
 	isFloatingButtonLibraryClose() {

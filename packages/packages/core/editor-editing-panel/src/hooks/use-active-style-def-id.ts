@@ -1,8 +1,9 @@
-import { getElementStyles, useElementSetting } from '@elementor/editor-elements';
+import { getElementStyles } from '@elementor/editor-elements';
 import { type ClassesPropValue, type PropKey } from '@elementor/editor-props';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
+import { useProviders } from '@elementor/editor-styles-repository';
 
-import { useElement } from '../contexts/element-context';
+import { useElement, usePanelElementSetting } from '../contexts/element-context';
 import { useStateByElement } from './use-state-by-element';
 
 export function useActiveStyleDefId( classProp: PropKey ) {
@@ -11,12 +12,21 @@ export function useActiveStyleDefId( classProp: PropKey ) {
 		null
 	);
 
-	const appliedClassesIds = useAppliedClassesIds( classProp )?.value || [];
+	const appliedClassesIds = usePanelElementSetting< ClassesPropValue >( classProp )?.value || [];
+	const validAppliedClassesIds = useValidClassIds( appliedClassesIds );
 
 	const fallback = useFirstAppliedClass( appliedClassesIds );
 
-	const activeAndAppliedClassId = useActiveAndAppliedClassId( activeStyledDefId, appliedClassesIds );
+	const activeAndAppliedClassId = useActiveAndAppliedClassId( activeStyledDefId, validAppliedClassesIds );
 	return [ activeAndAppliedClassId || fallback?.id || null, setActiveStyledDefId ] as const;
+}
+
+function useValidClassIds( appliedClassesIds: string[] ) {
+	const providers = useProviders();
+	const allKnownIds = new Set(
+		providers.flatMap( ( provider ) => provider.actions.all().map( ( style ) => style.id ) )
+	);
+	return appliedClassesIds.filter( ( id ) => allKnownIds.has( id ) );
 }
 
 function useFirstAppliedClass( appliedClassesIds: string[] ) {
@@ -24,12 +34,6 @@ function useFirstAppliedClass( appliedClassesIds: string[] ) {
 	const stylesDefs = getElementStyles( element.id ) ?? {};
 
 	return Object.values( stylesDefs ).find( ( styleDef ) => appliedClassesIds.includes( styleDef.id ) );
-}
-
-function useAppliedClassesIds( classProp: PropKey ) {
-	const { element } = useElement();
-
-	return useElementSetting< ClassesPropValue >( element.id, classProp );
 }
 
 function useActiveAndAppliedClassId( id: StyleDefinitionID | null, appliedClassesIds: string[] ) {

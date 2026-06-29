@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import { transformOriginPropTypeUtil } from '@elementor/editor-props';
 import { Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -43,7 +44,7 @@ export const TransformOriginControl = () => {
 
 const ControlFields = ( { control }: { control: ( typeof TRANSFORM_ORIGIN_FIELDS )[ number ] } ) => {
 	const context = useBoundProp( transformOriginPropTypeUtil );
-	const rowRef = React.useRef< HTMLDivElement >( null );
+	const rowRef = useRef< HTMLDivElement >( null );
 
 	return (
 		<PropProvider { ...context }>
@@ -53,7 +54,7 @@ const ControlFields = ( { control }: { control: ( typeof TRANSFORM_ORIGIN_FIELDS
 						<ControlFormLabel>{ control.label }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
-						<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+						<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } />
 					</Grid>
 				</PopoverGridContainer>
 			</PropKeyProvider>

@@ -72,6 +72,10 @@ class Site_Settings extends Revert_Runner_Base {
 	}
 
 	protected function delete_theme( $theme_slug ): bool {
+		if ( ! function_exists( 'delete_theme' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/theme.php';
+		}
+
 		return delete_theme( $theme_slug );
 	}
 

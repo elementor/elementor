@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
 import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackGlobalClasses, type TrackingEvent } from '../../../../utils/tracking';
 import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { FilterList } from './filter-list';
@@ -16,6 +18,14 @@ export const CssClassFilter = () => {
 		variant: 'popover',
 		disableAutoFocus: true,
 	} );
+
+	useEffect( () => {
+		if ( popupState.isOpen ) {
+			trackGlobalClasses( {
+				event: 'classManagerFiltersOpened',
+			} as TrackingEvent );
+		}
+	}, [ popupState.isOpen ] );
 
 	const showCleanIcon = Object.values( filters ).some( ( value ) => value );
 
@@ -50,6 +60,7 @@ export const CssClassFilter = () => {
 						showCleanIcon
 							? [
 									<ClearIconButton
+										trigger="menu"
 										key="clear-all-button"
 										tooltipText={ __( 'Clear all', 'elementor' ) }
 									/>,

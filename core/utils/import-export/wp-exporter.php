@@ -178,7 +178,7 @@ class WP_Exporter {
 
 		$is_valid_utf8 = wp_check_invalid_utf8( $str, true ) === $str;
 		if ( ! $is_valid_utf8 ) {
-			$str = utf8_encode( $str );
+			$str = mb_convert_encoding( $str, 'UTF-8', 'ISO-8859-1' );
 		}
 
 		$str = '<![CDATA[' . str_replace( ']]>', ']]]]><![CDATA[>', $str ) . ']]>';

@@ -4,33 +4,37 @@ import { __ } from '@wordpress/i18n';
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
 import { type V1Element, type V1ElementModelProps } from './types';
 
-type RemoveNestedElementsParams = {
+type RemoveElementsParams = {
 	elementIds: string[];
 	title: string;
 	subtitle?: string;
+	onRemoveElements?: () => void;
+	onRestoreElements?: () => void;
 };
 
 type RemovedElement = {
-	elementId: string;
+	container: V1Element;
+	parent: V1Element;
 	model: V1ElementModelProps;
-	parent: V1Element | null;
 	at: number;
+	containerId: string;
+	parentId: string;
 };
 
 type RemovedElementsResult = {
-	elementIds: string[];
 	removedElements: RemovedElement[];
 };
-
-export type { RemoveNestedElementsParams, RemovedElement, RemovedElementsResult };
 
 export const removeElements = ( {
 	elementIds,
 	title,
 	subtitle = __( 'Item removed', 'elementor' ),
-}: RemoveNestedElementsParams ): RemovedElementsResult => {
+	onRemoveElements,
+	onRestoreElements,
+}: RemoveElementsParams ): RemovedElementsResult => {
 	const undoableRemove = undoable(
 		{
 			do: ( { elementIds: elementIdsParam }: { elementIds: string[] } ): RemovedElementsResult => {
@@ -39,54 +43,91 @@ export const removeElements = ( {
 				elementIdsParam.forEach( ( elementId ) => {
 					const container = getContainer( elementId );
 
-					if ( container ) {
-						const model = container.model.toJSON();
-						const parent = container.parent;
-
-						const at = container.view?._index ?? 0;
-
+					if ( container?.parent ) {
 						removedElements.push( {
-							elementId,
-							model,
-							parent: parent ?? null,
-							at,
+							container,
+							parent: container.parent,
+							model: container.model.toJSON(),
+							at: container.view?._index ?? 0,
+							containerId: container.id,
+							parentId: container.parent.id,
 						} );
 					}
 				} );
 
-				elementIdsParam.forEach( ( elementId ) => {
+				onRemoveElements?.();
+
+				removedElements.forEach( ( { container } ) => {
 					deleteElement( {
-						elementId,
+						container,
 						options: { useHistory: false },
 					} );
 				} );
 
-				return { elementIds: elementIdsParam, removedElements };
+				return { removedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
-				// Restore elements in reverse order to maintain proper hierarchy
-				[ ...removedElements ].reverse().forEach( ( { model, parent, at } ) => {
-					if ( parent && model ) {
+				onRestoreElements?.();
+
+				[ ...removedElements ].reverse().forEach( ( { parent, parentId, model, at } ) => {
+					const freshParent = resolveContainer( parent, parentId );
+
+					if ( freshParent ) {
 						createElement( {
-							containerId: parent.id,
+							container: freshParent,
 							model,
 							options: { useHistory: false, at },
 						} );
+
+						return;
 					}
+
+					addModelToParent( parentId, model, { at } );
 				} );
 			},
 			redo: (
 				_: { elementIds: string[] },
-				{ elementIds: originalElementIds, removedElements }: RemovedElementsResult
+				{ removedElements }: RemovedElementsResult
 			): RemovedElementsResult => {
-				originalElementIds.forEach( ( elementId ) => {
-					deleteElement( {
-						elementId,
-						options: { useHistory: false },
+				onRemoveElements?.();
+
+				const newRemovedElements: RemovedElement[] = [];
+
+				removedElements.forEach( ( { container, parent, model, at, containerId, parentId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+					const freshParent = resolveContainer( parent, parentId );
+
+					if ( freshContainer && freshParent ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
+
+						newRemovedElements.push( {
+							container: freshContainer,
+							parent: freshParent,
+							model,
+							at,
+							containerId,
+							parentId,
+						} );
+
+						return;
+					}
+
+					removeModelFromParent( parentId, containerId );
+
+					newRemovedElements.push( {
+						container,
+						parent,
+						model,
+						at,
+						containerId,
+						parentId,
 					} );
 				} );
 
-				return { elementIds: originalElementIds, removedElements };
+				return { removedElements: newRemovedElements };
 			},
 		},
 		{
