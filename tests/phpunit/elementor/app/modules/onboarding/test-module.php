@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding;
 
 use Elementor\App\Modules\Onboarding\Module;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ReflectionMethod;
 
@@ -117,5 +118,49 @@ class Test_Module extends Test_Base {
 		$method->setAccessible( true );
 
 		return $method->invoke( $module );
+	}
+
+	public function test_onboarding_config_includes_planner_exit_when_experiment_active() {
+		$this->activate_onboarding_planner_exit_experiment();
+
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+			$this->assertTrue( $settings['shouldRedirectToSitePlanner'] );
+			$this->assertStringContainsString( '#site-builder', $settings['siteBuilderUrl'] );
+		} finally {
+			$this->deactivate_onboarding_planner_exit_experiment();
+		}
+	}
+
+	public function test_onboarding_config_excludes_planner_exit_when_experiment_inactive() {
+		$this->deactivate_onboarding_planner_exit_experiment();
+
+		$_GET['page'] = 'elementor-app';
+		do_action( 'elementor/init' );
+
+		$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+		$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
+		$this->assertStringContainsString( '#site-builder', $settings['siteBuilderUrl'] );
+	}
+
+	private function activate_onboarding_planner_exit_experiment(): void {
+		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_ACTIVE );
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
+			Experiments_Manager::STATE_ACTIVE
+		);
+	}
+
+	private function deactivate_onboarding_planner_exit_experiment(): void {
+		Plugin::$instance->experiments->set_feature_default_state(
+			Module::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
+			Experiments_Manager::STATE_INACTIVE
+		);
+		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_INACTIVE );
 	}
 }

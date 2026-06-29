@@ -8,6 +8,7 @@ use Elementor\App\Modules\Onboarding\Storage\Entities\User_Choices;
 use Elementor\App\Modules\Onboarding\Storage\Entities\User_Progress;
 use Elementor\App\Modules\Onboarding\Storage\Onboarding_Progress_Manager;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
@@ -22,6 +23,7 @@ class Module extends BaseModule {
 	const VERSION = '2.0.0';
 	const ASSETS_BASE_URL = 'https://assets.elementor.com/onboarding/v1/strings/';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
+	const ONBOARDING_PLANNER_EXIT_EXPERIMENT = 'onboarding-planner-exit';
 
 	const SUPPORTED_LOCALES = [
 		'de_DE' => 'de',
@@ -49,8 +51,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->progress_manager = Onboarding_Progress_Manager::instance();
 
+		$this->register_experiments();
+
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
+		add_action( 'admin_init', [ $this, 'maybe_redirect_abandoned_onboarding_to_site_planner' ], 5 );
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		if ( $this->should_show_starter() ) {
@@ -122,6 +127,8 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
+			'shouldRedirectToSitePlanner' => $this->is_onboarding_planner_exit_active(),
+			'siteBuilderUrl' => $this->get_site_builder_url(),
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -357,5 +364,90 @@ class Module extends BaseModule {
 		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
 
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_theme_active', $is_active );
+	}
+
+	private function register_experiments(): void {
+		Plugin::instance()->experiments->add_feature( [
+			'name' => self::ONBOARDING_PLANNER_EXIT_EXPERIMENT,
+			'title' => esc_html__( 'Onboarding Planner Exit', 'elementor' ),
+			'description' => esc_html__( 'Redirect onboarding exits to Site Builder.', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'hidden' => true,
+			'dependencies' => [
+				'site-builder',
+			],
+		] );
+	}
+
+	public function is_onboarding_planner_exit_active(): bool {
+		return Plugin::instance()->experiments->is_feature_active( self::ONBOARDING_PLANNER_EXIT_EXPERIMENT, true );
+	}
+
+	public function get_site_builder_url(): string {
+		return admin_url( 'admin.php?page=elementor-app#site-builder' );
+	}
+
+	public function maybe_redirect_abandoned_onboarding_to_site_planner(): void {
+		if ( ! $this->is_onboarding_planner_exit_active() ) {
+			return;
+		}
+
+		if ( self::has_user_finished_onboarding() ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( wp_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'elementor-app' === $page ) {
+			return;
+		}
+
+		if ( ! $this->is_onboarding_escape_target_screen() ) {
+			return;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+
+		if ( null === $progress->get_started_at() ) {
+			return;
+		}
+
+		$progress->set_exit_type( 'user_exit' );
+		$this->progress_manager->save_progress( $progress );
+
+		wp_safe_redirect( $this->get_site_builder_url() );
+		exit;
+	}
+
+	private function is_onboarding_escape_target_screen(): bool {
+		global $pagenow;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : '';
+
+		if ( 'index.php' === $pagenow ) {
+			return true;
+		}
+
+		if ( 'post.php' === $pagenow && 'elementor' === $action ) {
+			return true;
+		}
+
+		if ( 'edit.php' === $pagenow && 'elementor_library' === $post_type ) {
+			return true;
+		}
+
+		return false;
 	}
 }

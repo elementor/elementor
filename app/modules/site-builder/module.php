@@ -5,7 +5,9 @@ use Elementor\App\Modules\SiteBuilder\Connect\App;
 use Elementor\App\Modules\SiteBuilder\Rest\Rest_Api;
 use Elementor\App\Modules\SiteBuilder\Services\Connect_Auth_Service;
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Connect\Module as Connect_Module;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -61,6 +63,10 @@ class Module extends BaseModule {
 			'isAdmin' => current_user_can( 'manage_options' ),
 			'exitTo' => admin_url( 'admin.php?page=elementor' ),
 			'elementorAiCurrentContext' => $this->get_elementor_ai_current_context(),
+			'isConnected' => $this->is_user_connected(),
+			'isPro' => Utils::has_pro(),
+			'accessLevel' => Utils::has_pro() ? Connect_Module::ACCESS_LEVEL_PRO : Connect_Module::ACCESS_LEVEL_CORE,
+			'accessTier' => Utils::has_pro() ? Connect_Module::ACCESS_TIER_PRO_LEGACY : Connect_Module::ACCESS_TIER_FREE,
 		];
 
 		Plugin::$instance->app->set_settings( 'site-builder', $settings );
@@ -81,6 +87,22 @@ class Module extends BaseModule {
 		}
 
 		return 'https://planner.elementor.com/chat.html';
+	}
+
+	private function is_user_connected(): bool {
+		if ( ! Plugin::instance()->common ) {
+			return false;
+		}
+
+		$connect = Plugin::instance()->common->get_component( 'connect' );
+
+		if ( ! $connect ) {
+			return false;
+		}
+
+		$library = $connect->get_app( 'library' );
+
+		return $library ? $library->is_connected() : false;
 	}
 
 	public function get_config(): ?array {

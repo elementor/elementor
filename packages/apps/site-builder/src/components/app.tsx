@@ -10,6 +10,8 @@ import {
 } from '../hooks/use-site-builder-iframe-messaging';
 import { getSiteBuilderConfig } from '../site-builder-config';
 
+const ONBOARDING_SITE_BUILDER_PARAMS_KEY = 'elementor-onboarding-site-builder-params';
+
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
 	top: 0,
@@ -58,6 +60,23 @@ export function App() {
 		};
 
 		fetchConnectAuth();
+	}, [] );
+
+	useEffect( () => {
+		if ( window.opener ) {
+			return;
+		}
+
+		try {
+			const storedParams = sessionStorage.getItem( ONBOARDING_SITE_BUILDER_PARAMS_KEY );
+
+			if ( storedParams ) {
+				setSiteBuilderParams( JSON.parse( storedParams ) as SiteBuilderParams );
+				sessionStorage.removeItem( ONBOARDING_SITE_BUILDER_PARAMS_KEY );
+			}
+		} catch {
+			// sessionStorage may be unavailable or contain invalid JSON.
+		}
 	}, [] );
 
 	useEffect( () => {

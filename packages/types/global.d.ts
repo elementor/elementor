@@ -43,6 +43,8 @@ interface OnboardingConfig {
 		createNewPage?: string;
 		upgradeUrl: string;
 	};
+	shouldRedirectToSitePlanner?: boolean;
+	siteBuilderUrl?: string;
 }
 
 declare global {
@@ -175,6 +177,10 @@ declare global {
 			iframeUrl?: string;
 			isAdmin?: boolean;
 			exitTo?: string;
+			isConnected?: boolean;
+			isPro?: boolean;
+			accessLevel?: number;
+			accessTier?: string;
 			elementorAiCurrentContext?: {
 				siteTitle: string;
 				siteAbout: unknown;

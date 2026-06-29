@@ -77,6 +77,8 @@ function getEmptyState(): OnboardingState {
 		urls: { dashboard: '', editor: '', connect: '', signUp: '', comparePlans: '', upgradeUrl: '' },
 		shouldShowProInstallScreen: false,
 		hasProInstallScreenDismissed: false,
+		shouldRedirectToSitePlanner: false,
+		siteBuilderUrl: '',
 	};
 }
 
@@ -124,6 +126,8 @@ function buildStateFromConfig(
 		},
 		shouldShowProInstallScreen: config.shouldShowProInstallScreen ?? false,
 		hasProInstallScreenDismissed: false,
+		shouldRedirectToSitePlanner: config.shouldRedirectToSitePlanner ?? false,
+		siteBuilderUrl: config.siteBuilderUrl ?? '',
 	};
 }
 
