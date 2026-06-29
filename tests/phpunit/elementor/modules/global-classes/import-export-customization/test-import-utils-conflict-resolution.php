@@ -53,6 +53,7 @@ class Test_Import_Utils_Conflict_Resolution extends Elementor_Test_Base {
 			$kit->delete_meta( Global_Classes_Labels::META_KEY_FRONTEND );
 			$kit->delete_meta( Global_Classes_Labels::META_KEY_PREVIEW );
 			$kit->delete_meta( Global_Classes_Order::META_KEY );
+			$kit->delete_meta( Global_Classes_Order::META_KEY_PREVIEW );
 		}
 
 		$post_ids = get_posts( [

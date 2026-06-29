@@ -26,6 +26,9 @@ wp user meta add admin wp_persisted_preferences 'a:2:{s:14:\"core/edit-post\";a:
 wp option update e_editor_counter 10
 wp option update elementor_checklist '{"last_opened_timestamp":null,"first_closed_checklist_in_editor":true,"is_popup_minimized":false,"steps":[],"should_open_in_editor":false,"editor_visit_count":10}'
 
+# Disable theme builder promotion modal during Playwright runs
+wp option update elementor_theme_builder_promotion_enabled 0
+
 # Add user meta so the announcement popup will not be displayed - ED-9723
 for id in $(wp user list --field=ID)
 do wp user meta add "$id" "announcements_user_counter" 999 || echo "Announcement counter already set for user $id"
