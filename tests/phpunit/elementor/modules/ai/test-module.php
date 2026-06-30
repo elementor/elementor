@@ -196,12 +196,16 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 
 	public function test_add_create_with_ai_banner_to_homescreen__returns_null_when_site_builder_experiment_active() {
 		$this->ensure_site_builder_experiment_registered();
-		update_option( 'elementor_experiment-site-builder', 'active' );
+		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', 'active' );
 
-		$module = new Module();
-		$result = $module->add_create_with_ai_banner_to_homescreen( [] );
+		try {
+			$module = new Module();
+			$result = $module->add_create_with_ai_banner_to_homescreen( [] );
 
-		$this->assertNull( $result['create_with_ai'] );
+			$this->assertNull( $result['create_with_ai'] );
+		} finally {
+			Plugin::$instance->experiments->set_feature_default_state( 'site-builder', 'inactive' );
+		}
 	}
 
 	private function ensure_site_builder_experiment_registered() {
