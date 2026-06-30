@@ -23,8 +23,8 @@ export function PostListItem( { post, closePopup, ...props }: Props ) {
 			onClick={ async () => {
 				const eventName = config?.names?.editorOne?.topBarPageList;
 				if ( eventName ) {
-				dispatchEvent?.( eventName, {
-					window_name: config?.appTypes?.editor,
+					dispatchEvent?.( eventName, {
+						window_name: config?.appTypes?.editor,
 						interaction_type: config?.triggers?.click?.toLowerCase(),
 						target_type: config?.targetTypes?.dropdownItem,
 						target_name: postTitle,
