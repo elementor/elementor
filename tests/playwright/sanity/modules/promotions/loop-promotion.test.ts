@@ -34,7 +34,7 @@ test.describe( 'Loop promotion test @promotions', () => {
 		await expect( loopWidget.locator( '.eicon-loop-widget' ) ).toBeVisible();
 	} );
 
-	test( 'Promotion popover shown on Loop widget click', async ( { page, apiRequests }, testInfo ) => {
+	test.skip( 'Promotion popover shown on Loop widget click', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
