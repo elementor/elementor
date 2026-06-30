@@ -80,8 +80,9 @@ export const generatePluginTests = ( testType: string ) => {
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
-				await page.locator( '[data-widget_type="progress.default"]' ).first().scrollIntoViewIfNeeded();
-				await page.waitForTimeout( 500 );
+				const progressWidget = page.locator( '[data-widget_type="progress.default"]' ).first();
+				await progressWidget.scrollIntoViewIfNeeded();
+				await expect( progressWidget ).toBeVisible();
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 				if ( plugin.hasInstallationPage ) {
