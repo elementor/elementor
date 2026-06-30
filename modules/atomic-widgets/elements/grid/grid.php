@@ -85,7 +85,6 @@ class Grid extends Atomic_Element_Base {
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
-			'grid_outline' => Boolean_Prop_Type::make()->default( true ),
 		];
 	}
 
