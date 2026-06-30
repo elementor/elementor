@@ -19,12 +19,19 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	isExperimentActive: jest.fn(),
 } ) );
 
+function mockGridComputedStyle( element: HTMLElement ) {
+	element.computedStyleMap = jest.fn().mockReturnValue( new Map( [ [ 'display', { toString: () => 'grid' } ] ] ) );
+}
+
 describe( '<ElementsOverlays />', () => {
 	beforeEach( () => {
 		const documentEl = createDOMElement( { tag: 'div' } );
 		const containerEl = createDOMElement( { tag: 'div' } );
 		const atomic1El = createDOMElement( { tag: 'div', attrs: { 'data-atomic': '', id: '10' } } );
 		const atomic2El = createDOMElement( { tag: 'div', attrs: { 'data-atomic': '', id: '20' } } );
+
+		mockGridComputedStyle( atomic1El );
+		mockGridComputedStyle( atomic2El );
 
 		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
 		jest.mocked( useIsRouteActive ).mockReturnValue( false );
