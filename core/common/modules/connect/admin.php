@@ -5,6 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Core\Common\Modules\Connect\AdminMenuItems\Editor_One_Connect_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,12 +18,32 @@ class Admin {
 
 	public static $url = '';
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
-	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
+	private function get_valid_redirect_to_from_request() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only reading a URL parameter.
+		$raw = Utils::get_super_global_value( $_GET, 'redirect_to' );
+
+		if ( ! $raw ) {
+			return '';
+		}
+
+		$raw = esc_url_raw( $raw );
+
+		$validated = wp_validate_redirect( $raw, '' );
+		if ( ! $validated ) {
+			return '';
+		}
+
+		$admin_host = wp_parse_url( admin_url(), PHP_URL_HOST );
+		$dest_host  = wp_parse_url( $validated, PHP_URL_HOST );
+		if ( $dest_host && $admin_host && ! hash_equals( $admin_host, $dest_host ) ) {
+			return '';
+		}
+
+		return $validated;
+	}
+
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Connect_Menu() );
 	}
 
 	/**
@@ -33,6 +55,12 @@ class Admin {
 			wp_die( 'You do not have sufficient permissions to access this page.', 'You do not have sufficient permissions to access this page.', [
 				'back_link' => true,
 			] );
+		}
+
+		// Allow a per-request default landing URL when provided via a safe `redirect_to` parameter.
+		$maybe_redirect_to = $this->get_valid_redirect_to_from_request();
+		if ( $maybe_redirect_to ) {
+			self::$url = $maybe_redirect_to;
 		}
 
 		if ( isset( $_GET['action'], $_GET['app'] ) ) {
@@ -84,12 +112,12 @@ class Admin {
 	public function __construct() {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
 
-		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
 
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', function ( array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
 			}
-		}, 10, 2 );
+		} );
 	}
 }

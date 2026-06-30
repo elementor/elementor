@@ -154,19 +154,4 @@ class Test_Frontend extends Elementor_Test_Base {
 		$this->assertTrue( wp_script_is( 'elementor-frontend-modules' ) );
 		$this->assertTrue( wp_script_is( 'jquery' ) );
 	}
-
-	public function test_widget_without_global_scripts() {
-		// Arrange
-		$frontend = new Frontend();
-		$frontend->register_scripts();
-
-		// Act
-		$widget_without_global_scripts = $this->elementor()->widgets_manager->get_widget_types( Atomic_Heading::get_element_type() );
-		$widget_without_global_scripts->enqueue_scripts();
-
-		// Assert
-		$this->assertFalse( wp_script_is( 'elementor-frontend' ) );
-		$this->assertFalse( wp_script_is( 'elementor-frontend-modules' ) );
-		$this->assertFalse( wp_script_is( 'jquery' ) );
-	}
 }

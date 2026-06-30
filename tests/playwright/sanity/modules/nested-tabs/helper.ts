@@ -1,6 +1,5 @@
 import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import _path from 'path';
 
 export const locators = {
@@ -22,11 +21,6 @@ export async function editTab( editor: EditorPage, tabIndex: number ): Promise<s
 
 export async function clickTabByPosition( context: Page | Frame, tabPosition: number ): Promise<void> {
 	await context.locator( locators.tabTitle ).nth( tabPosition ).first().click();
-}
-
-export async function setupExperiments( wpAdmin: WpAdminPage, customExperiment = {} ): Promise<void> {
-	const experiments = { container: 'active', 'nested-elements': 'active', ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
 }
 
 export async function setTabItemColor(
@@ -109,7 +103,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 	// Arrange
 	const addItemButton = editor.page.locator( locators.repeaterAddButton ),
 		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
-		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
 

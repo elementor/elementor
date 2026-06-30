@@ -5,15 +5,12 @@
 .e-con {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
-			left: 1px;
-			right: 1px;
-			top: 1px;
-			bottom: 1px;
+			inset: 1px;
 			outline: 1px solid var(--e-p-border-con);
 			animation: section-outline .75s;
 		}
@@ -71,6 +68,9 @@
 		width: 100%;
 		height: 100%;
 		min-height: 100px;
+		stroke: transparent;
+		stroke-width: 0;
+		-webkit-text-stroke: 0 transparent;
 
 		.elementor-first-add {
 			width: auto;
@@ -84,18 +84,6 @@
 		.elementor-empty-view {
 			// Use the Container's `min-height` or default to 100px.
 			min-height: var( --min-height, 100px );
-		}
-	}
-
-	&.e-div-block-base, &.e-flexbox-base {
-		&:has( >.elementor-empty-view ) {
-			display: flex;
-		}
-
-		.elementor-empty-view {
-			flex: 1 1 auto;
-			height: auto;
-			min-height: unset;
 		}
 	}
 
@@ -122,7 +110,8 @@
 		&,
 		& > .e-con-inner {
 
-			> .elementor-widget-placeholder {
+			> .elementor-widget-placeholder,
+			> .elementor-element[data-atomic] > .elementor-widget-placeholder {
 				position: relative;
 				z-index: $editor-layer; // To put it above the element overlay.
 				width: var( --size );
@@ -290,9 +279,68 @@
 	}
 }
 
-.e-div-block-base:has( .elementor-empty-view ),
-.e-flexbox-base:has( .elementor-empty-view ) {
-	height: 100px;
+.e-atomic-element {
+	&:has( .elementor-empty-view ) {
+		min-height: 120px;
+	}
+
+	& > .elementor-empty-view.elementor-empty-view {
+		min-height: inherit;
+	}
+}
+
+.e-grid-base {
+
+	> .elementor-empty-view.elementor-empty-view {
+
+		> .elementor-first-add {
+			opacity: 0;
+		}
+	}
+
+	&:has( > .elementor-element ) > .elementor-empty-view.elementor-empty-view {
+		position: absolute;
+		grid-row: var( --e-grid-empty-cell-row, 1 ) / span 1;
+		grid-column: var( --e-grid-empty-cell-col, 1 ) / span 1;
+		visibility: var( --e-grid-empty-cell-visibility, visible );
+		inset: 0;
+		width: auto;
+		height: auto;
+		min-width: 0;
+		min-height: 0;
+	}
+
+	.elementor-element:has( > .elementor-widget-placeholder.e-dragging-top ),
+	.elementor-element:has( > .elementor-widget-placeholder.e-dragging-bottom ),
+	.elementor-element > :has( > .elementor-widget-placeholder.e-dragging-top ),
+	.elementor-element > :has( > .elementor-widget-placeholder.e-dragging-bottom ) {
+		position: relative;
+	}
+
+	.elementor-element {
+
+		.elementor-widget-placeholder {
+			--size: 10px;
+
+			&.e-dragging-top,
+			&.e-dragging-bottom {
+				position: absolute;
+				width: 100%;
+				height: var( --size );
+				inset-inline: 0;
+				z-index: $editor-layer;
+				animation: placeholder-widget 500ms;
+			}
+
+			&.e-dragging-top {
+				inset-block-start: 0;
+			}
+
+			&.e-dragging-bottom {
+				inset-block-end: 0;
+			}
+		}
+	}
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.

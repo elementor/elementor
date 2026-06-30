@@ -1,16 +1,11 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Column tests @column', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
-		await page.close();
+	test.beforeAll( async () => {
+		await wpCli( 'wp elementor experiments deactivate container' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -26,7 +21,7 @@ test.describe( 'Column tests @column', () => {
 		const editor = await wpAdmin.openNewPage();
 		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );
 		const columnId = await editor.addElement( { elType: 'column' }, sectionId );
-		await editor.addWidget( 'heading', columnId );
+		await editor.addWidget( { widgetType: 'heading', container: columnId } );
 		await editor.selectElement( columnId );
 
 		await editor.closeNavigatorIfOpen();

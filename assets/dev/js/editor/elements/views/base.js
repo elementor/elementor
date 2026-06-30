@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -187,6 +188,22 @@ BaseElementView = BaseContainer.extend( {
 						isEnabled: () => !! elementorCommon.storage.get( 'clipboard' ),
 						callback: () => $e.run( 'document/elements/paste-style', { containers: elementor.selection.getElements( this.getContainer() ) } ),
 					}, {
+						name: 'pasteInteractions',
+						title: __( 'Paste interactions', 'elementor' ),
+						isEnabled: () => {
+							const clipboard = elementorCommon.storage.get( 'clipboard' );
+							if ( ! clipboard ) {
+								return false;
+							}
+							const elements = elementor.selection.getElements( this.getContainer() );
+							return elements.length > 0 && elements.every( ( c ) => elementor.helpers.isAtomicWidget( c.model ) );
+						},
+						callback: () => {
+							$e.run( 'document/elements/paste-interactions', {
+								containers: elementor.selection.getElements( this.getContainer() ),
+							} );
+						},
+					}, {
 						name: 'pasteArea',
 						icon: 'eicon-import-export',
 						title: __( 'Paste from other site', 'elementor' ),
@@ -234,7 +251,7 @@ BaseElementView = BaseContainer.extend( {
 						return __( 'Delete', 'elementor' );
 					},
 					shortcut: '⌦',
-					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ) } ),
+					callback: () => $e.run( 'document/elements/delete', { containers: elementor.selection.getElements( this.getContainer() ), callerName: 'context_menu' } ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
@@ -278,16 +295,27 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
-		const elementType = this.getElementType(),
-			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+		const elementType = this.getElementType();
+
+		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
+			return;
+		}
+
+		if ( ! this.getContainer().isEditable() ) {
+			return;
+		}
+
+		const isElement = getAllElementTypes().includes( elementType );
+		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
 		let editButtons = this.getEditButtons();
+		const shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-		// We should only allow external modification to edit buttons if the user enabled edit buttons.
-		if ( editButtonsEnabled ) {
+		// We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+		if ( shouldShowEditButtons ) {
 			/**
 			 * Filter edit buttons.
 			 *
@@ -353,13 +381,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		this.model.toggleVisibility();
 
 		this.toggleVisibilityClass();
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', !! this.model.get( 'hidden' ) );
+		const isVisible = this.model.getVisibility();
+
+		if ( ! elementor.helpers.isAtomicWidget( this.model ) ) {
+			this.$el.toggleClass( 'elementor-edit-hidden', isVisible );
+
+			return;
+		}
+
+		/**
+		 * We cannot know for sure the nature of this.$el in atomic widgets in terms of its css display value.
+		 * Though most atomic widgets are wrapped with a { display: contents !important } inline styled div, not all are, i.e. div-block and flexbox - both have display: flex.
+		 *
+		 * The simplest solution might be to switch the inline display value to 'none',
+		 * but that would require us to also store the original display value to revert to upon showing back the widget.
+		 *
+		 * This leaves us with a slightly less elegant workaround - to wrap/unwrap it with a {display: none} inline styled div
+		 */
+		const isWrappedWithHiddenElement = this.$el.parent().is( 'div[data-type="hide-atomic-widget"]' );
+
+		if ( isVisible ) {
+			if ( ! isWrappedWithHiddenElement ) {
+				this.$el.wrap( '<div data-type="hide-atomic-widget" style="display: none" />' );
+			}
+
+			return;
+		}
+
+		if ( isWrappedWithHiddenElement ) {
+			this.$el.unwrap();
+		}
 	},
 
 	addElementFromPanel( options ) {
@@ -905,6 +962,8 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	save() {
+		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 		} );
@@ -1021,10 +1080,23 @@ BaseElementView = BaseContainer.extend( {
 		event.stopPropagation();
 		this.handleAnchorClick( event );
 
-		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+		$e.run( 'document/elements/delete', { container: this.getContainer(), callerName: 'remove_button' } );
 	},
 
 	handleAnchorClick( event ) {
+		const anchor = event.target.closest( 'a' );
+		const hash =
+			anchor?.getAttribute( 'href' ) ||
+			this.model?.get( 'settings' )?.get( 'link' )?.url ||
+			'';
+		if ( hash && hash.startsWith( '#' ) && ! hash.includes( 'elementor-action' ) ) {
+			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
+
+			if ( scrollTargetElem ) {
+				scrollTargetElem.scrollIntoView();
+			}
+		}
+
 		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
 			event.preventDefault();
 		}
@@ -1111,6 +1183,10 @@ BaseElementView = BaseContainer.extend( {
 
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
+			return;
+		}
+
+		if ( ! this.getContainer().isEditable() ) {
 			return;
 		}
 

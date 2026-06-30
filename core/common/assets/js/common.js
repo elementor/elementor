@@ -7,6 +7,7 @@ import Connect from 'elementor-common-modules/connect/assets/js/connect';
 import WordpressComponent from './components/wordpress/component';
 import EventsDispatcherComponent from 'elementor-common-modules/event-tracker/assets/js/data/component';
 import Events from 'elementor-common-modules/event-tracker/assets/js/events';
+import EventsManager from 'elementor-common-modules/events-manager/assets/js/module';
 import Notifications from 'elementor-utils/notifications';
 
 class ElementorCommonApp extends elementorModules.ViewModule {
@@ -32,6 +33,8 @@ class ElementorCommonApp extends elementorModules.ViewModule {
 
 	initComponents() {
 		this.events = new Events();
+
+		this.eventsManager = new EventsManager();
 
 		this.debug = new Debug();
 

@@ -41,14 +41,14 @@ class Maintenance_Mode {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $option  Option name. Expected to not be SQL-escaped.
-	 * @param mixed  $default Optional. Default value to return if the option
-	 *                        does not exist. Default is false.
+	 * @param string $option        Option name. Expected to not be SQL-escaped.
+	 * @param mixed  $default_value Optional. Default value to return if the option
+	 *                              does not exist. Default is false.
 	 *
 	 * @return bool False if value was not updated and true if value was updated.
 	 */
-	public static function get( $option, $default = false ) {
-		return get_option( self::OPTION_PREFIX . $option, $default );
+	public static function get( $option, $default_value = false ) {
+		return get_option( self::OPTION_PREFIX . $option, $default_value );
 	}
 
 	/**

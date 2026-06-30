@@ -14,7 +14,6 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
-import useQueryParams from 'elementor-app/hooks/use-query-params';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './import-resolver.scss';
@@ -25,7 +24,6 @@ export default function ImportResolver() {
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
 		{ referrer, currentPage } = sharedContext.data || {},
-		{ return_to: returnToParam } = useQueryParams().getAll(),
 		eventTracking = ( command, sitePart = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
@@ -56,10 +54,7 @@ export default function ImportResolver() {
 					color="primary"
 					onClick={ () => {
 						eventTracking( 'kit-library/approve-selection' );
-						let url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
-						if ( 'import/process' === url && returnToParam ) {
-							url += '?return_to=' + returnToParam;
-						}
+						const url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
 						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
 					} }

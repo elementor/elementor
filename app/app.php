@@ -3,6 +3,7 @@ namespace Elementor\App;
 
 use Elementor\App\AdminMenuItems\Theme_Builder_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -11,6 +12,18 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
+use Elementor\Core\Utils\Assets_Translation_Loader;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\App\AdminMenuItems\Editor_One_Theme_Builder_Menu;
+
+use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
+use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
+use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
+use Elementor\App\Modules\SiteBuilder\Module as SiteBuilderModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,8 +51,8 @@ class App extends BaseApp {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
-	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Theme_Builder_Menu() );
 	}
 
 	public function fix_submenu( $menu ) {
@@ -106,6 +119,7 @@ class App extends BaseApp {
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
+			'home_url' => home_url(),
 			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
 				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
 				'elementor/site-editor/promotion',
@@ -150,8 +164,35 @@ class App extends BaseApp {
 		}
 	}
 
+	private function register_packages() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		Collection::make( [ 'ui', 'icons', 'store', 'query', 'utils', 'events', 'onboarding', 'schema', 'site-builder' ] )
+			->each( function( $package ) use ( $assets_config_provider ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
+
+				wp_register_script(
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	private function enqueue_assets() {
 		Plugin::$instance->init_common();
+
+		$this->register_packages();
 
 		/** @var WebCLIModule $web_cli */
 		$web_cli = Plugin::$instance->modules_manager->get_modules( 'web-cli' );
@@ -214,6 +255,10 @@ class App extends BaseApp {
 			[
 				'wp-url',
 				'wp-i18n',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+				'elementor-v2-onboarding',
+				'elementor-v2-site-builder',
 				'react',
 				'react-dom',
 				'select2',
@@ -224,8 +269,7 @@ class App extends BaseApp {
 
 		$this->enqueue_dark_theme_detection_script();
 
-		wp_set_script_translations( 'elementor-app-packages', 'elementor' );
-		wp_set_script_translations( 'elementor-app', 'elementor' );
+		Assets_Translation_Loader::for_handles( [ 'elementor-app-packages', 'elementor-app' ], 'elementor' );
 
 		$this->print_config();
 	}
@@ -244,21 +288,40 @@ class App extends BaseApp {
 		$this->print_config( 'elementor-app-loader' );
 	}
 
+	private function register_import_export_customization_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'import-export-customization',
+			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
+			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'default' => ExperimentsManager::STATE_ACTIVE,
+			'hidden' => true,
+			'mutable' => false,
+		] );
+	}
+
 	public function __construct() {
-		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
+		$this->register_import_export_customization_experiment();
+
+		$this->add_component( 'site-editor', new SiteEditorModule() );
+		$this->add_component( 'site-builder', new SiteBuilderModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
-			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
+			$this->add_component( 'import-export', new ImportExportModule() );
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
+				$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
+			}
 
 			// Kit library is depended on import-export
-			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
+			$this->add_component( 'kit-library', new KitLibraryModule() );
 		}
 
-		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
+		$this->add_component( 'onboarding', new OnboardingModule() );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );

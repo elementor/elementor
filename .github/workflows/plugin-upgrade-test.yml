@@ -1,17 +1,17 @@
 name: Upgrade Elementor test
 
 on:
-  push:
-    branches:
-      - 'main'
-      - '3.*'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
+  #push:
+    # branches:
+    #   - 'main'
+    #   - '[0-9].[0-9][0-9]'
+    # paths-ignore:
+    #   - '**.md'
+    #   - '**.txt'
+    #   - '.github/config.json'
+    #   - 'bin/**'
+    #   - '.gitignore'
+    #   - 'docs/**'
   workflow_dispatch:
     inputs:
       version:
@@ -22,6 +22,8 @@ on:
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Plugin upgrade build artifact
   run-upgrade-test:
     name: Playwright plugin upgrade test
     runs-on: ubuntu-22.04
@@ -29,17 +31,17 @@ jobs:
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm ci
+          npm run install:ci
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
@@ -69,7 +71,7 @@ jobs:
           npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
       - name: Run Playwright tests
         run: npm run test:playwright:elements-regression -- --grep="Test heading template"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: playwright-test-results-elements-regression
@@ -80,7 +82,7 @@ jobs:
     needs: run-upgrade-test
     if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
     runs-on: ubuntu-22.04
-    name: Playwright - Test Results
+    name: Plugin upgrade - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.run-upgrade-test.result }}"

@@ -1,0 +1,279 @@
+import { __ } from '@wordpress/i18n';
+
+import { apiClient } from './api';
+import { buildOperationsArray, type OperationResult } from './batch-operations';
+import { OP_RW, Storage, type TVariable, type TVariablesList } from './storage';
+import { styleVariablesRepository } from './style-variables-repository';
+import { type Variable } from './types';
+import { trackVariableEvent, type VariableEventData } from './utils/tracking';
+
+type EventData = {
+	controlPath?: VariableEventData[ 'controlPath' ];
+	executedBy?: VariableEventData[ 'executedBy' ];
+};
+
+export type CreateVariableOptions = {
+	eventData?: EventData;
+};
+
+export type UpdateVariableOptions = {
+	eventData?: EventData;
+};
+
+const storage = new Storage();
+
+export const service = {
+	variables: (): TVariablesList => {
+		return storage.load();
+	},
+
+	findIdByLabel( needle: string ): string {
+		const variableId = Object.entries( this.variables() ).find( ( [ , variable ] ) => variable.label === needle );
+		if ( ! variableId ) {
+			throw new Error( `Variable with label ${ needle } not found` );
+		}
+		return variableId[ 0 ];
+	},
+
+	findVariableByLabel( needle: string ): TVariable | null {
+		return Object.values( this.variables() ).find( ( variable ) => variable.label === needle ) || null;
+	},
+
+	getWatermark: (): number => {
+		return storage.state.watermark;
+	},
+
+	init: () => {
+		return service.load();
+	},
+
+	load: () => {
+		return apiClient
+			.list()
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variables, watermark } = data;
+
+				storage.fill( variables, watermark );
+
+				styleVariablesRepository.update( variables );
+
+				return variables;
+			} );
+	},
+
+	create: ( { type, label, value }: Variable, options: CreateVariableOptions = {} ) => {
+		return apiClient
+			.create( type, label, value )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
+					throw new Error( errorMessage );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variable, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				const { id: variableId, ...createdVariable } = variable;
+
+				storage.add( variableId, createdVariable );
+
+				styleVariablesRepository.update( {
+					[ variableId ]: createdVariable,
+				} );
+
+				trackVariableEvent( {
+					varType: type,
+					action: 'save',
+					...options.eventData,
+				} );
+
+				return {
+					id: variableId,
+					variable: createdVariable,
+				};
+			} );
+	},
+
+	update: (
+		id: string,
+		{ label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] },
+		options: UpdateVariableOptions = {}
+	) => {
+		return apiClient
+			.update( id, label, value, type )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
+					throw new Error( errorMessage );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variable, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				const { id: variableId, ...updatedVariable } = variable;
+
+				storage.update( variableId, updatedVariable );
+
+				styleVariablesRepository.update( {
+					[ variableId ]: updatedVariable,
+				} );
+
+				trackVariableEvent( {
+					varType: updatedVariable.type,
+					action: 'update',
+					...options.eventData,
+				} );
+
+				return {
+					id: variableId,
+					variable: updatedVariable,
+				};
+			} );
+	},
+
+	delete: ( id: string ) => {
+		return apiClient
+			.delete( id )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variable, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				const { id: variableId, ...deletedVariable } = variable;
+
+				storage.update( variableId, deletedVariable );
+
+				styleVariablesRepository.update( {
+					[ variableId ]: deletedVariable,
+				} );
+
+				return {
+					id: variableId,
+					variable: deletedVariable,
+				};
+			} );
+	},
+
+	restore: ( id: string, label?: string, value?: string, type?: string ) => {
+		return apiClient
+			.restore( id, label, value, type )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variable, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				const { id: variableId, ...restoredVariable } = variable;
+
+				storage.update( variableId, restoredVariable );
+
+				styleVariablesRepository.update( {
+					[ variableId ]: restoredVariable,
+				} );
+
+				return {
+					id: variableId,
+					variable: restoredVariable,
+				};
+			} );
+	},
+
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
+		const batchPayload = { operations, watermark: storage.state.watermark };
+
+		if ( operations.length === 0 ) {
+			return Promise.resolve( {
+				success: true,
+				watermark: storage.state.watermark,
+				operations: 0,
+			} );
+		}
+
+		return apiClient
+			.batch( batchPayload )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { results, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				if ( results ) {
+					results.forEach( ( result: OperationResult ) => {
+						const variableId = result.id;
+
+						if ( result.variable ) {
+							if ( result.type === 'create' ) {
+								storage.add( variableId, result.variable );
+							} else {
+								storage.update( variableId, result.variable );
+							}
+
+							styleVariablesRepository.update( {
+								[ variableId ]: result.variable,
+							} );
+						}
+					} );
+				}
+
+				return {
+					success: true,
+					watermark,
+					operations: operations.length,
+				};
+			} );
+	},
+};
+
+const handleWatermark = ( operation: string, newWatermark: number ) => {
+	if ( storage.watermarkDiff( operation, newWatermark ) ) {
+		setTimeout( () => service.load(), 500 );
+	}
+	storage.watermark( newWatermark );
+};

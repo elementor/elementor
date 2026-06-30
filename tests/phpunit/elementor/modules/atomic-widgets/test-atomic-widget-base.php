@@ -3,7 +3,8 @@
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\DynamicTags\Tag;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
@@ -15,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,6 +38,9 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
+		array_pop( $settings ); // remove common settings
+
+		$settings = $this->filter_out_extra_fields( $settings );
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -72,8 +77,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'text' => 'This text is more great than the greatest text',
 						'tag' => 'h2',
 						'link' => [
-							'href' => 'https://elementor.com',
-							'target' => '_blank',
+							'tag' => 'a',
+							'attributes' => 'href="https://elementor.com" target="_blank"',
 						],
 					],
 				]
@@ -259,14 +264,18 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 					'result' => [
 						'image' => [
 							'src' => 'https://example.com/default-image.jpg',
+							'alt' => '',
 						],
 						'just_default_image' => [
 							'src' => 'https://example.com/default-image-2.jpg',
+							'alt' => '',
 						],
 						'only_url_image' => [
 							'src' => 'https://example.com/image.jpg',
+							'alt' => '',
 						],
 						'image_with_attachment' => [
+							'id' => 123,
 							'src' => 'https://example.com/image.jpg',
 							'width' => 100,
 							'height' => 200,
@@ -293,6 +302,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		$schema = [
+			'_cssid' => String_Prop_Type::make(),
+
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
@@ -320,6 +331,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$keys = [
+			'_cssid', // will automatically be added as a common prop
 			'string_prop',
 			'number_prop',
 			'boolean_prop',
@@ -330,7 +342,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertEqualSets( $keys, array_keys( $json ) );
 
 		foreach ( $keys as $key ) {
-			$this->assertEquals( $json[$key]['kind'], $schema[$key]::KIND );
+			// phpcs:ignore
+			$this->assertEquals( $json[$key]['kind'], $schema[$key]::$KIND );
 			$this->assertEquals( $json[$key]['key'], $schema[$key]::get_key() );
 			$this->assertEquals( $json[$key]['default'], $schema[$key]->get_default() );
 			$this->assertEquals( $json[$key]['settings'], $schema[$key]->get_settings() );
@@ -342,30 +355,16 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$schema = [
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
-				->default( 'value-a' ),
+				->default( 'value-a' )
+				->meta( Overridable_Prop_Type::ignore() ),
 		];
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
 
+		$test_schema = $widget::get_props_schema();
+		$test_schema = $this->filter_out_extra_fields( $test_schema );
 		// Act & Assert.
-		$this->assertSame( $schema, $widget::get_props_schema() );
-	}
-
-	public function test_get_atomic_controls__throws_when_control_is_invalid() {
-		// Arrange.
-		$widget = $this->make_mock_widget( [
-			'props_schema' => [],
-			'controls' => [
-				new \stdClass(),
-			],
-		] );
-
-		// Expect.
-		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Control must be an instance of `Atomic_Control_Base`.' );
-
-		// Act.
-		$widget->get_atomic_controls();
+		$this->assertSame( $schema, $test_schema );
 	}
 
 	public function test_get_atomic_controls__throws_when_control_inside_a_section_is_not_in_schema() {
@@ -470,13 +469,57 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
+	public function test_get_atomic_controls__supports_control_injections() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop-1' => String_Prop_Type::make()->default( '' ),
+				'prop-2' => String_Prop_Type::make()->default( '' ),
+				'prop-3' => String_Prop_Type::make()->default( '' ),
+			],
+			'controls' => [
+				Section::make()
+					->set_id( 'test-section-1')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-1' ),
+					] ),
+
+				Section::make()
+					->set_id( 'test-section-2')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-2' ),
+					] ),
+			]
+		] );
+
+		add_filter( 'elementor/atomic-widgets/controls', function ( $controls ) {
+			/** @var Section $second_section */
+			$second_section = Collection::make( $controls )->find(
+				fn( $control ) => $control instanceof Section && $control->get_id() === 'test-section-2'
+			);
+
+			$second_section->add_item(
+				Textarea_Control::bind_to( 'prop-3' )
+			);
+
+			return $controls;
+		} );
+
+		// Act.
+		$controls = $widget->get_atomic_controls();
+
+		// Assert.
+		$this->assertCount( 2, $controls[1]->get_items() );
+		$this->assertEquals( Textarea_Control::bind_to( 'prop-3' ), $controls[1]->get_items()[1] );
+	}
+
 	public function test_get_data_for_save() {
 		// Arrange.
 		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
-				'label' => 'My Class',
+				'label' => 'my-class',
 				'variants' => [
 					[
 						'props' => [
@@ -489,6 +532,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'breakpoint' => 'desktop',
 							'state' => null,
 						],
+						'custom_css' => null,
 					],
 				],
 			]
@@ -600,7 +644,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -616,7 +660,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. meta.state: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.state: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -635,7 +679,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -651,7 +695,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. meta.breakpoint: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. meta.breakpoint: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -688,7 +732,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `1234`. id: missing_or_invalid, label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `1234` (widget `1`). Element: `test-widget`. id: missing_or_invalid, label: missing_or_invalid' );
 
 		// Act.
 		$data = $widget->get_data_for_save();
@@ -713,7 +757,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'invalid-type',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -729,7 +773,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. type: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `my-class`. type: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -766,7 +810,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. label: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -809,7 +853,46 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. variants[1].padding: invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Element: `test-widget`. Style label: `Test`. variants[1].padding: invalid_value' );
+
+		// Act.
+		$widget->get_data_for_save();
+	}
+
+	public function test_get_data_for_save__throws_on_styles_validation_error_with_element_context() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'editor_settings' => [
+				'title' => 'Hero Section',
+			],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				's-1234' => [
+					'id' => 's-1234',
+					'label' => 'hero-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'gap' => [
+									'$$type' => 'size',
+									'value' => 'invalid-gap',
+								],
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Expect.
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234` (widget `1`). Structure label: `Hero Section`. Style label: `hero-style`. variants[0].gap: invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -868,5 +951,19 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				return static::$options['props_schema'] ?? [];
 			}
 		};
+	}
+
+	/**
+	 * Remove extra fields that may be added by other modules
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	private function filter_out_extra_fields( array $data ): array {
+		unset( $data['_cssid'] );
+		unset( $data['display-conditions'] );
+		unset( $data['attributes'] );
+
+		return $data;
 	}
 }

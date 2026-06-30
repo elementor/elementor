@@ -70,8 +70,8 @@ export default function ImportComplete() {
 		<Layout type="import" footer={ <ImportCompleteFooter seeItLiveUrl={ seeItLiveUrl } referrer={ referrer } /> }>
 			<WizardStep
 				image={ elementorAppConfig.assets_url + 'images/kit-is-live.svg' }
-				heading={ __( 'Your kit is now live on your site!', 'elementor' ) }
-				description={ __( 'You’ve imported and applied the following to your site:', 'elementor' ) }
+				heading={ __( 'We applied your template and your site is online!', 'elementor' ) }
+				description={ __( 'You\'ve imported and applied the following to your site:', 'elementor' ) }
 				notice={ (
 					<>
 						<InlineLink
@@ -80,7 +80,7 @@ export default function ImportComplete() {
 							onClick={ () => eventTracking( 'kit-library/seek-more-info', 'kit is live', 'click', 'app_header' ) }
 						>
 							{ __( 'Click here', 'elementor' ) }
-						</InlineLink> { __( 'to learn more about building your site with Elementor Kits', 'elementor' ) }
+						</InlineLink> { __( 'to learn more about building your site with Elementor Website Templates', 'elementor' ) }
 					</>
 				) }
 			>

@@ -59,21 +59,6 @@
 				"separator": "before",
 				"name": "preview_heading"
 			},
-			"default_device_view": {
-				"type": "select",
-				"tab": "settings",
-				"section": "preferences",
-				"label": "Default device view",
-				"default": "default",
-				"options": {
-					"default": "Default",
-					"mobile": "Mobile",
-					"tablet": "Tablet",
-					"desktop": "Desktop"
-				},
-				"description": "Choose which device to display when clicking the Responsive Mode icon.",
-				"name": "default_device_view"
-			},
 			"edit_buttons": {
 				"type": "switcher",
 				"tab": "settings",

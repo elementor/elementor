@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Collection;
 class Global_Classes {
 	private Collection $items;
 	private Collection $order;
+	private Collection $ordered_items;
 
 	public static function make( array $items = [], array $order = [] ) {
 		return new static( $items, $order );
@@ -15,6 +16,9 @@ class Global_Classes {
 	private function __construct( array $data = [], array $order = [] ) {
 		$this->items = Collection::make( $data );
 		$this->order = Collection::make( $order );
+		$this->ordered_items = $this->order
+			->map( fn( $id ) => $data[ $id ] ?? null )
+			->filter( fn( $item ) => null !== $item );
 	}
 
 	public function get_items() {
@@ -23,6 +27,10 @@ class Global_Classes {
 
 	public function get_order() {
 		return $this->order;
+	}
+
+	public function get_ordered_items() {
+		return $this->ordered_items;
 	}
 
 	public function get() {

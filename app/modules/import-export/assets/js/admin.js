@@ -34,21 +34,31 @@ class Admin {
 		if ( this.revertButton ) {
 			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
 			this.maybeAddRevertBtnMargin();
+			this.maybeScrollToRevertButton();
 		}
 
 		this.maybeShowReferrerKitDialog();
 	}
 
-	/**
-	 * Add bottom margin to revert btn if referred from Kit library
-	 */
+	shouldScrollToRevert() {
+		const urlParams = new URLSearchParams( window.location.search );
+
+		return !! urlParams.get( 'scroll_to_revert' );
+	}
+
 	maybeAddRevertBtnMargin() {
-		const referrerKitId = new URLSearchParams( this.revertButton.href ).get( 'referrer_kit' );
-		if ( ! referrerKitId ) {
+		if ( ! this.shouldScrollToRevert() ) {
 			return;
 		}
 
 		this.revertButton.style.marginBottom = this.calculateMargin();
+	}
+
+	maybeScrollToRevertButton() {
+		if ( ! this.shouldScrollToRevert() ) {
+			return;
+		}
+
 		this.scrollToBottom();
 	}
 
@@ -92,7 +102,7 @@ class Admin {
 		elementorCommon.dialogsManager.createWidget( 'confirm', {
 			headerMessage: __( 'Are you sure?', 'elementor' ),
 			// Translators: %s is the name of the active Kit
-			message: __( 'Removing %s will permanently delete changes made to the Kit\'s content and site settings', 'elementor' ).replace( '%s', this.activeKitName ),
+			message: __( 'Removing %s will permanently delete changes made to the Websites Template\'s content and site settings', 'elementor' ).replace( '%s', this.activeKitName ),
 			strings: {
 				confirm: __( 'Delete', 'elementor' ),
 				cancel: __( 'Cancel', 'elementor' ),
@@ -117,10 +127,10 @@ class Admin {
 
 		if ( 0 === referrerKitId.length ) {
 			this.createKitDeletedWidget( {
-				message: __( 'Try a different Kit or build your site from scratch.', 'elementor' ),
+				message: __( 'Try a different Website Template or build your site from scratch.', 'elementor' ),
 				strings: {
 					confirm: __( 'OK', 'elementor' ),
-					cancel: __( 'Kit Library', 'elementor' ),
+					cancel: __( 'Library', 'elementor' ),
 				},
 				onCancel: () => {
 					location.href = elementorImportExport.appUrl;

@@ -24,6 +24,10 @@ export const IMAGE_PROMPT_SETTINGS = {
 	IMAGE_BACKGROUND_COLOR: 'background_color',
 };
 
+export const FEATURE_IDENTIFIER = {
+	ISOLATE_OBJECT: 'isolate-object',
+};
+
 export const IMAGE_PROMPT_CATEGORIES = {
 	'': {
 		label: __( 'None', 'elementor' ),
@@ -42,7 +46,7 @@ export const IMAGE_PROMPT_CATEGORIES = {
 		},
 	},
 	vector: {
-		label: __( 'Vector', 'elementor' ),
+		label: __( 'Vector / Logo', 'elementor' ),
 		subCategories: {
 			'': __( 'None', 'elementor' ),
 			'typographic-logo': __( 'Typographic Logo', 'elementor' ),
@@ -143,4 +147,9 @@ export const IMAGE_ASPECT_RATIO = {
 
 export const IMAGE_PLACEHOLDERS_HOSTS = {
 	WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io',
+};
+
+export const AI_EVENTS = {
+	MODAL_CLOSED: 'elementor:ai:modal-closed',
+	SHOW_MODAL: 'elementor:ai:show-modal',
 };

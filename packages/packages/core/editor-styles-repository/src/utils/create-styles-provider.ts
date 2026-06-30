@@ -1,0 +1,63 @@
+import { type PregeneratedLinkItem, type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
+
+export type CreateStylesProviderOptions = {
+	key: string | ( () => string );
+	priority?: number;
+	limit?: number;
+	subscribe?: ( callback: ( previous?: StylesCollection, current?: StylesCollection ) => void ) => () => void;
+	labels?: {
+		singular: string;
+		plural: string;
+	};
+	actions: {
+		all: StylesProvider[ 'actions' ][ 'all' ];
+		get: StylesProvider[ 'actions' ][ 'get' ];
+		resolveCssName?: StylesProvider[ 'actions' ][ 'resolveCssName' ];
+		create?: StylesProvider[ 'actions' ][ 'create' ];
+		delete?: StylesProvider[ 'actions' ][ 'delete' ];
+		update?: StylesProvider[ 'actions' ][ 'update' ];
+		updateProps?: StylesProvider[ 'actions' ][ 'updateProps' ];
+		updateCustomCss?: StylesProvider[ 'actions' ][ 'updateCustomCss' ];
+		tracking?: StylesProvider[ 'actions' ][ 'tracking' ];
+	};
+	capabilities?: UserCapabilities;
+	isPregeneratedLink?: ( pregeneratedLinkItem: PregeneratedLinkItem ) => boolean;
+};
+
+const DEFAULT_LIMIT = 10000;
+const DEFAULT_PRIORITY = 10;
+
+export function createStylesProvider( {
+	key,
+	priority = DEFAULT_PRIORITY,
+	limit = DEFAULT_LIMIT,
+	subscribe = () => () => {},
+	labels,
+	actions,
+	capabilities,
+	isPregeneratedLink,
+}: CreateStylesProviderOptions ): StylesProvider {
+	return {
+		getKey: typeof key === 'string' ? () => key : key,
+		priority,
+		limit,
+		capabilities,
+		subscribe,
+		labels: {
+			singular: labels?.singular ?? null,
+			plural: labels?.plural ?? null,
+		},
+		actions: {
+			all: actions.all,
+			get: actions.get,
+			resolveCssName: actions.resolveCssName ?? ( ( id ) => id ),
+			create: actions.create,
+			delete: actions.delete,
+			update: actions.update,
+			updateProps: actions.updateProps,
+			updateCustomCss: actions.updateCustomCss,
+			tracking: actions.tracking,
+		},
+		isPregeneratedLink,
+	};
+}

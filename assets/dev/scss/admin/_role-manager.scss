@@ -18,6 +18,16 @@
 		color: $editor-dark;
 		margin-block-end: 2px;
 
+		&.e-editor-one {
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			margin-block-end: 20px;
+			border-radius: 8px;
+			.elementor-role-controls {
+				border-end-start-radius: 8px;
+				border-end-end-radius: 8px;
+			}
+		}
+
 		.elementor-role-label {
 			display: flex;
 			padding: 15px 20px;
@@ -41,6 +51,7 @@
 		.elementor-role-controls {
 			background-color: $gray-lightest;
 			padding: 20px 20px 5px;
+			transition: all 0.3s ease-in-out;
 
 			> div {
 				margin-block-end: 15px;

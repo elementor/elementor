@@ -5,6 +5,8 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
+use Elementor\Utils;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -23,6 +25,50 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		parent::tear_down();
 
 		Render_Props_Resolver::reset();
+	}
+
+	/**
+	 * @dataProvider font_family_css_quoting_data_provider
+	 */
+	public function test_render__font_family_css_quoting( array $font_family_prop, string $expected_css ) {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-family' => $font_family_prop,
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		// Act.
+		$css = Styles_Renderer::make( [], '' )->render( $styles );
+
+		// Assert.
+		$this->assertStringContainsString( $expected_css, $css );
+	}
+
+	public function font_family_css_quoting_data_provider() {
+		return [
+			'multi-word with digit' => [
+				[ '$$type' => 'font-family', 'value' => 'My Font 3' ],
+				'font-family:"My Font 3";',
+			],
+			'multi-word without digit' => [
+				[ '$$type' => 'font-family', 'value' => 'Open Sans' ],
+				'font-family:"Open Sans";',
+			],
+			'single-word' => [
+				[ '$$type' => 'font-family', 'value' => 'Arial' ],
+				'font-family:"Arial";',
+			],
+		];
 	}
 
 	public function test_render__basic_style() {
@@ -167,7 +213,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'meta' => [
 							'breakpoint' => 'tablet', // non-existing breakpoint
 						],
-					]
+					],
 				],
 			],
 		];
@@ -209,7 +255,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'meta' => [
 							'breakpoint' => 'tablet',
 						],
-					]
+					],
 				],
 			],
 		];
@@ -256,9 +302,9 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						],
 						'meta' => [
 							'breakpoint' => 'tablet',
-							'state' => 'focus'
+							'state' => 'focus',
 						],
-					]
+					],
 				],
 			],
 		];
@@ -294,7 +340,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'props' => [
 							'text-decoration' => [
 								'$$type' => 'mismatching-prop-type',
-								'value' => 'underline'
+								'value' => 'underline',
 							],
 						],
 						'meta' => [],
@@ -303,7 +349,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer =  Styles_Renderer::make( [], '' );
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -323,7 +369,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 						'props' => [
 							'font-size' => [
 								'$$type' => 'size',
-								'value' => 14 // expected array{size: int, unit: string}
+								'value' => 14, // expected array{size: int, unit: string}
 							],
 						],
 						'meta' => [],
@@ -332,7 +378,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			],
 		];
 
-		$stylesRenderer =  Styles_Renderer::make( [], '' );
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );
@@ -343,7 +389,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -368,6 +414,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'value' => [
 													'color' => 'blue',
 												],
+												'disabled' => true,
+											], // this should not be rendered due to `disabled` => true
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => [
+													'color' => 'blue',
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -382,19 +435,19 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 																		'$$type' => 'image-attachment-id',
 																		'value' => 3,
 																	],
-																	'url' => null
+																	'url' => null,
 																],
 															],
 															'size' => [
 																'$$type' => 'string',
 																'value' => 'medium',
-															]
-														]
+															],
+														],
 													],
 													'position' => 'top center',
 													'repeat' => 'repeat-y',
 													'attachment' => 'fixed',
-												]
+												],
 											],
 										],
 									],
@@ -410,8 +463,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 				],
 			],
 		];
-
-
 
 		$stylesRenderer = Styles_Renderer::make( [], '' );
 
@@ -480,7 +531,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 														],
 													],
-												]
+												],
 											],
 											[
 												'$$type' => 'background-gradient-overlay',
@@ -524,7 +575,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 														],
 													],
-												]
+												],
 											],
 										],
 									],
@@ -532,8 +583,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							],
 						],
 						'meta' => [],
-					]
-				]
+					],
+				],
 			],
 		];
 
@@ -581,13 +632,12 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 																	'url' => 'https://example.com/image.jpg',
 																],
 															],
-														]
+														],
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
-													'repeat' => 'repeat',
 													'attachment' => 'fixed',
-												]
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -602,7 +652,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 																	'url' => 'https://example.com/image.jpg',
 																],
 															],
-														]
+														],
 													],
 													'position' => [
 														'$$type' => 'background-image-position-offset',
@@ -623,7 +673,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 														],
 													],
-												]
+												],
 											],
 										],
 									],
@@ -651,6 +701,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		$styles = [
@@ -689,7 +740,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -728,31 +779,30 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 																		'$$type' => 'image-attachment-id',
 																		'value' => 3,
 																	],
-																	'url' => null
+																	'url' => null,
 																],
 															],
 															'size' => [
 																'$$type' => 'string',
 																'value' => 'large',
-															]
-														]
-													],
-													'size' => [
-														'$$type' => 'background-image-size-scale',
-														'value'  => [
-															//Missing 'height'
-															'width'  => [
-																'$$type' => 'size',
-																'value'  => [
-																	'size' => 140,
-																	'unit' => 'px'
-																]
 															],
 														],
 													],
-													'attachment' => 'scroll',
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value' => [
+															// Missing 'height'
+															'width' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 140,
+																	'unit' => 'px',
+																],
+															],
+														],
+													],
 													'repeat' => 'repeat-x',
-												]
+												],
 											],
 										],
 									],
@@ -778,7 +828,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_image_transformers_without_image() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
+		add_filter( 'wp_get_attachment_image_src', function () {
 			return [
 				'https://example.com/image.jpg',
 				100,
@@ -803,6 +853,165 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'$$type' => 'background-color-overlay',
 												'value' => [
 													'color' => 'blue',
+												],
+											],
+										],
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_background_with_fields_of_similar_values() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
+			$resolution = $args[2];
+			$images = $this->mock_images();
+
+			return $images[ $resolution ];
+		}, 10, 3 );
+
+		$styles = [
+			[
+				'id' => 'test-background-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null,
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															],
+														],
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value' => [
+															// Missing 'height'
+															'width' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 140,
+																	'unit' => 'px',
+																],
+															],
+														],
+													],
+													'position' => 'center left',
+												],
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null,
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															],
+														],
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value' => [
+															// Missing 'height'
+															'width' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 140,
+																	'unit' => 'px',
+																],
+															],
+														],
+													],
+													'position' => 'center left',
+													'attachment' => 'scroll',
+												],
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null,
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															],
+														],
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value' => [
+															// Missing 'height'
+															'width' => [
+																'$$type' => 'size',
+																'value' => [
+																	'size' => 150,
+																	'unit' => 'px',
+																],
+															],
+														],
+													],
+													'position' => 'center left',
 												],
 											],
 										],
@@ -870,8 +1079,8 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 								'$$type' => 'size',
 								'value' => [
 									'size' => 14,
-									'unit' => 'px'
-								]
+									'unit' => 'px',
+								],
 							],
 							'margin' => [
 								'$$type' => 'dimensions',
@@ -880,22 +1089,25 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'block-end' => null,
 									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'inline-end' => [
-										'$$type' => 'string',
-										'value' => 'auto'
+										'$$type' => 'size',
+										'value' => [
+											'size' => '',
+											'unit' => 'auto',
+										],
 									],
-								]
+								],
 							],
 							'border-radius' => [
 								'$$type' => 'border-radius',
@@ -904,25 +1116,25 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'start-end' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'end-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'end-end' => null,
-								]
+								],
 							],
 							'border-width' => [
 								'$$type' => 'border-width',
@@ -931,18 +1143,18 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
 									'block-end' => null,
 									'inline-start' => [
 										'$$type' => 'size',
 										'value' => [
 											'size' => 1,
-											'unit' => 'px'
-										]
+											'unit' => 'px',
+										],
 									],
-								]
+								],
 							],
 							'stroke' => [
 								'$$type' => 'stroke',
@@ -978,7 +1190,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										],
 									],
 								],
-							]
+							],
 						],
 						'meta' => [],
 					],
@@ -997,7 +1209,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_thrown_exceptions_in_transformer() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function($registry) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$faulty_transformer = new class() extends Transformer_Base {
 				public function transform( $value, $key ): string {
 					throw new \Exception( 'Faulty transformer' );
@@ -1005,7 +1217,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			};
 
 			$registry->register( Number_Prop_Type::get_key(), $faulty_transformer );
-		});
+		} );
 
 		$styles = [
 			[
@@ -1109,6 +1321,143 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render_atomic_widget_styles__append_css_of_styles_with_flex_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex(
+								Props_Factory::size( 1 ),
+								Props_Factory::size( 1 ),
+								Props_Factory::size( 0, 'px' )
+							),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render_atomic_widget_styles__append_css_of_styles_with_flex_partial_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style-grow-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( 2 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+			[
+				'id' => 'test-style-grow-shrink',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( 1, 2 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+			[
+				'id' => 'test-style-basis-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( null, null, Props_Factory::size( 100, 'px' ) ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_variant_with_custom_css() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'red',
+						],
+						'meta' => [ 'state' => 'hover' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow;' ) ],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert: Should contain both the prop and the custom_css.
+		$this->assertStringContainsString( 'color:red;', $css );
+		$this->assertStringContainsString( 'background: yellow;', $css );
+	}
+
+	public function test_render__style_variant_with_custom_css_multiple_rules() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => '16px',
+						],
+						'meta' => [ 'state' => 'hover' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow; color: red;' ) ],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert
+		$this->assertStringContainsString( 'font-size:16px;', $css );
+		$this->assertStringContainsString( 'background: yellow;', $css );
+		$this->assertStringContainsString( 'color: red;', $css );
 	}
 
 	private function mock_images() {

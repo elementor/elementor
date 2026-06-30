@@ -3,7 +3,13 @@
 namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Base_Tag;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,7 +33,7 @@ class Dynamic_Tags_Schemas {
 				continue;
 			}
 
-			$prop_type = $this->convert_control_to_prop_type( $control );
+			$prop_type = Dynamic_Tags_Converter::convert_control_to_prop_type( $control );
 
 			if ( ! $prop_type ) {
 				continue;
@@ -51,22 +57,5 @@ class Dynamic_Tags_Schemas {
 		}
 
 		return $tag_info['instance'];
-	}
-
-	private function convert_control_to_prop_type( array $control ) {
-		$control_type = $control['type'];
-
-		if ( 'text' === $control_type ) {
-			return String_Prop_Type::make()
-				->default( $control['default'] ?? null );
-		}
-
-		if ( 'select' === $control_type ) {
-			return String_Prop_Type::make()
-				->default( $control['default'] ?? null )
-				->enum( array_keys( $control['options'] ?? [] ) );
-		}
-
-		return null;
 	}
 }

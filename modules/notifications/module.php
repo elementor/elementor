@@ -55,14 +55,9 @@ class Module extends BaseModule {
 			'elementor-v2-ui',
 			'elementor-v2-icons',
 			'elementor-v2-query',
+			'elementor-v2-editor-app-bar',
 			'wp-i18n',
 		];
-
-		$is_editor_v2 = current_action() === 'elementor/editor/v2/scripts/enqueue';
-
-		if ( $is_editor_v2 ) {
-			$deps[] = 'elementor-v2-editor-app-bar';
-		}
 
 		wp_enqueue_script(
 			'e-editor-notifications',

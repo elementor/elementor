@@ -50,7 +50,7 @@
 	overflow: var(--overflow);
 	--flex-wrap-mobile: wrap;
 
-	&:not(.e-div-block-base) {
+	&:where(:not(.e-div-block-base)) {
 		transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 	}
 
@@ -184,6 +184,15 @@
 		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
 		// Capital `M` in order to use the CSS function and not the SCSS one.
 		max-width: min(100%, var(--width));
+	}
+
+	// Selector explanation:
+	// [data-widget_type="e-component.default"] > .e-con - Component wrapper element, when out of component edit mode.
+	// [data-widget_type="e-component.default"] > .elementor-section-wrap > .e-con - Component wrapper element, when inside component edit mode.
+	:is( [data-widget_type="e-component.default"], [data-widget_type="e-component.default"] > .elementor-section-wrap ) > & {
+		// Reset margin to default values for component wrapper element.
+		--margin-right: 0px;
+		--margin-left: 0px;
 	}
 
 	// Hack to increase specificity and avoid using `!important`.

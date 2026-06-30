@@ -4,15 +4,14 @@ namespace Elementor\Core\Editor;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Common\Modules\Ajax\Module;
 use Elementor\Core\Debug\Loading_Inspection_Manager;
-use Elementor\Core\Editor\Loader\Editor_Loader_Factory;
-use Elementor\Core\Editor\Loader\Editor_Loader_Interface;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Editor\Loader\Editor_Loader;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use Elementor\Core\Editor\Data;
-use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,13 +31,6 @@ class Editor {
 	 * User capability required to access Elementor editor.
 	 */
 	const EDITING_CAPABILITY = 'edit_posts';
-
-	/**
-	 * The const is deprecated, it remains here for backward compatibility.
-	 *
-	 * @deprecated Use App_Bar_Module::EXPERIMENT_NAME instead
-	 */
-	const EDITOR_V2_EXPERIMENT_NAME = App_Bar_Module::EXPERIMENT_NAME;
 
 	/**
 	 * Post ID.
@@ -75,7 +67,7 @@ class Editor {
 	public $promotion;
 
 	/**
-	 * @var Editor_Loader_Interface
+	 * @var Editor_Loader
 	 */
 	private $loader;
 
@@ -90,9 +82,9 @@ class Editor {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param bool $die Optional. Whether to die at the end. Default is `true`.
+	 * @param bool $to_die Optional. Whether to die at the end. Default is `true`.
 	 */
-	public function init( $die = true ) {
+	public function init( $to_die = true ) {
 		if ( empty( $_REQUEST['post'] ) ) {
 			return;
 		}
@@ -125,6 +117,8 @@ class Editor {
 
 		// Send MIME Type header like WP admin-header.
 		@header( 'Content-Type: ' . get_option( 'html_type' ) . '; charset=' . get_option( 'blog_charset' ) );
+
+		self::send_document_isolation_policy_header();
 
 		add_filter( 'show_admin_bar', '__return_false' );
 
@@ -169,7 +163,7 @@ class Editor {
 		$this->get_loader()->print_root_template();
 
 		// From the action it's an empty string, from tests its `false`
-		if ( false !== $die ) {
+		if ( false !== $to_die ) {
 			die;
 		}
 	}
@@ -547,6 +541,84 @@ class Editor {
 		// Handle autocomplete feature for URL control.
 		add_filter( 'wp_link_query_args', [ $this, 'filter_wp_link_query_args' ] );
 		add_filter( 'wp_link_query', [ $this, 'filter_wp_link_query' ] );
+
+		add_filter( 'replace_editor', [ $this, 'filter_replace_editor' ], 10, 2 );
+	}
+
+	/**
+	 * Whether the Document-Isolation-Policy header should be sent on the
+	 * Elementor editor screen and the editor preview iframe.
+	 *
+	 * DIP places the document in its own agent cluster, which is the prerequisite
+	 * for cross-origin isolation features such as SharedArrayBuffer (required by
+	 * WordPress core's client-side media processing introduced in WP 7.1).
+	 *
+	 * Both the editor parent document and the preview iframe must send the same
+	 * DIP header so they join the same agent cluster and synchronous DOM access
+	 * between them (e.g. `iframe.contentWindow.elementorFrontend`) keeps working.
+	 *
+	 * The header is only honored by browsers on a secure context (HTTPS or
+	 * localhost) so the helper short-circuits on insecure origins to avoid
+	 * sending a header that the browser will ignore.
+	 *
+	 * @since 4.1.0
+	 *
+	 * @return bool
+	 */
+	public static function should_use_document_isolation_policy() {
+		if ( ! is_ssl() ) {
+			$raw_host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
+			$host = strtolower( (string) strtok( $raw_host, ':' ) );
+
+			if ( 'localhost' !== $host && ! str_ends_with( $host, '.localhost' ) ) {
+				return false;
+			}
+		}
+
+		/**
+		 * Filters whether Elementor sends the Document-Isolation-Policy header
+		 * on the editor screen and preview iframe.
+		 *
+		 * @since 4.1.0
+		 *
+		 * @param bool $enabled Whether DIP is enabled. Defaults to true on a secure context.
+		 */
+		return (bool) apply_filters( 'elementor/editor/use_document_isolation_policy', true );
+	}
+
+	/**
+	 * Send the Document-Isolation-Policy header for the current response.
+	 *
+	 * Safe to call from both the Elementor editor screen handler and the
+	 * preview iframe handler. No-op when {@see self::should_use_document_isolation_policy()}
+	 * returns false.
+	 *
+	 * @since 4.1.0
+	 */
+	public static function send_document_isolation_policy_header() {
+		if ( ! self::should_use_document_isolation_policy() || headers_sent() ) {
+			return;
+		}
+
+		header( 'Document-Isolation-Policy: isolate-and-credentialless' );
+	}
+
+	/**
+	 * Signals to WordPress that Elementor is replacing the block editor on its own editor page,
+	 * so that block-editor-specific behaviour (e.g. WP 7.0 COOP/COEP isolation headers) is not
+	 * applied when the Elementor editor is active.
+	 *
+	 * @param bool     $replace Whether the editor is being replaced.
+	 * @param \WP_Post $post    The post being edited.
+	 *
+	 * @return bool
+	 */
+	public function filter_replace_editor( $replace, $post ) {
+		if ( isset( $_REQUEST['action'] ) && 'elementor' === $_REQUEST['action'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return true;
+		}
+
+		return $replace;
 	}
 
 	/**
@@ -590,11 +662,22 @@ class Editor {
 	/**
 	 * Get loader.
 	 *
-	 * @return Editor_Loader_Interface
+	 * @return Editor_Loader
 	 */
 	private function get_loader() {
 		if ( ! $this->loader ) {
-			$this->loader = Editor_Loader_Factory::create();
+			$this->loader = new Editor_Loader(
+				new Collection( [
+					'assets_url' => ELEMENTOR_ASSETS_URL,
+					'min_suffix' => ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min',
+					'direction_suffix' => is_rtl() ? '-rtl' : '',
+				] ),
+				( new Assets_Config_Provider() )->set_path_resolver(
+					function ( $name ) {
+						return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+					}
+				)
+			);
 
 			$this->loader->init();
 		}

@@ -305,7 +305,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'border-block-end-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
 				],
 			]
@@ -329,7 +329,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -499,8 +499,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle-icon' => 'margin-inline-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -739,5 +738,26 @@ class Widget_Toggle extends Widget_Base {
 			} #>
 		</div>
 		<?php
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		if ( empty( $settings['tabs'] ) ) {
+			return '';
+		}
+		$sections = [];
+		foreach ( $settings['tabs'] as $item ) {
+			$title = Utils::html_to_plain_text( $item['tab_title'] ?? '' );
+			$content = \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $item['tab_content'] ?? '' );
+			if ( empty( $title ) && empty( $content ) ) {
+				continue;
+			}
+			$section = '### ' . $title;
+			if ( ! empty( $content ) ) {
+				$section .= "\n\n" . $content;
+			}
+			$sections[] = $section;
+		}
+		return implode( "\n\n", $sections );
 	}
 }

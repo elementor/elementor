@@ -6,6 +6,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, id: payload };
 		case 'SET_FILE':
 			return { ...state, file: payload };
+		case 'SET_KIT_SOURCE':
+			return { ...state, source: payload };
 		case 'ADD_OVERRIDE_CONDITION':
 			return ReducerUtils.updateArray( state, 'overrideConditions', payload, 'add' );
 		case 'REMOVE_OVERRIDE_CONDITION':

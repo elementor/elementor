@@ -12,19 +12,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Base_Promotion_Item implements Promotion_Menu_Item {
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'base_promotion';
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Settings::PAGE_ID;
 	}
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return 'manage_options';
 	}
 

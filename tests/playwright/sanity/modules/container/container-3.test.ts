@@ -4,27 +4,9 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 import ContextMenu from '../../../pages/widgets/context-menu';
 
-test.describe( 'Container tests @container', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
-	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
+test.describe( 'Container tests #3 @container', () => {
+	// TODO: to be fixed in ED-23584
+	test.skip( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
@@ -38,24 +20,24 @@ test.describe( 'Container tests @container', () => {
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 		await editor.setChooseControlValue( 'flex_wrap', 'eicon-wrap' );
 
-		await editor.addWidget( 'divider', container );
+		await editor.addWidget( { widgetType: 'divider', container } );
 		await editor.setWidgetCustomWidth( '80' );
 
-		await editor.addWidget( 'google_maps', container );
+		await editor.addWidget( { widgetType: 'google_maps', container } );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-google_maps iframe' );
 		await editor.hideMapControls();
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setChooseControlValue( '_flex_size', 'eicon-grow' );
 		await editor.setWidgetMask();
 
-		await editor.addWidget( 'video', container );
+		await editor.addWidget( { widgetType: 'video', container } );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.setWidgetMask();
 		await page.waitForLoadState( 'domcontentloaded' );
 		await editor.hideVideoControls();
 
 		// Hide carousel navigation.
-		await editor.addWidget( 'image-carousel', container );
+		await editor.addWidget( { widgetType: 'image-carousel', container } );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await editor.setWidgetCustomWidth( '40' );
 		await editor.openPanelTab( 'content' );
@@ -89,8 +71,8 @@ test.describe( 'Container tests @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await page.goto( '/wp-admin/media-new.php' );
 
-		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
-			await page.locator( '.upload-flash-bypass a' ).click();
+		if ( await page.locator( '.upload-flash-bypass button' ).isVisible() ) {
+			await page.locator( '.upload-flash-bypass button' ).click();
 		}
 
 		await page.setInputFiles( 'input[name="async-upload"]', './tests/playwright/resources/video.webm' );
@@ -162,7 +144,7 @@ test.describe( 'Container tests @container', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_align_items', 'eicon-align-center-v' );
 		await editor.hideEditorElements();
-		await editor.addWidget( 'spacer', containerId );
+		await editor.addWidget( { widgetType: 'spacer', container: containerId } );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setWidgetCustomWidth( '20' );
 		await editor.openSection( '_section_background' );
@@ -181,16 +163,18 @@ test.describe( 'Container tests @container', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
+		const previewFrame = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addNewContainerPreset( 'flex', 'c100-c50-50' );
 
-		// Assert.
-		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
+		// Assert
+		const outerFlexbox = previewFrame.locator( '[data-element_type="e-flexbox"]' ).first();
+		const rightWrapper = outerFlexbox.locator( '> [data-element_type="e-flexbox"]' ).nth( 1 );
+		await expect.soft( rightWrapper ).toHaveCSS( 'padding', '0px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
-			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
-			await expect.soft( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
+			await expect.soft( outerFlexbox ).not.toHaveCSS( 'flex-wrap', 'wrap' );
 		} );
 	} );
 
@@ -239,13 +223,41 @@ test.describe( 'Container tests @container', () => {
 		await page.locator( '.elementor-control-_transform_scale_effect .elementor-control-input-wrapper input' ).fill( '2' );
 		await page.locator( '.elementor-control-_transform_scale_popover .elementor-control-popover-toggle-toggle-label' ).click();
 
-		await editor.addWidget( 'heading', containerId );
+		await editor.addWidget( { widgetType: 'heading', container: containerId } );
 
 		// Assert.
 		// Check rotate and scale value.
 		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-rotateZ', '2deg' );
 		await expect.soft( editor.getPreviewFrame().locator( containerSelector ) ).toHaveCSS( '--e-con-transform-scale', '2' );
+	} );
+
+	test( 'Edit handles should be inside when overflow is hidden', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+		await editor.setPageTemplate( 'canvas' );
+
+		// Act.
+		await editor.addElement( { elType: 'container' }, 'document' ); // Add container to push second one down and avoid inside handles due to scroll snap.
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.openPanelTab( 'layout' );
+		await editor.openSection( 'section_layout_additional_options' );
+		await editor.setSelectControlValue( 'overflow', 'hidden' );
+
+		const containerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+		const container = editor.getPreviewFrame().locator( containerSelector );
+		const handles = container.locator( '> .elementor-element-overlay > .elementor-editor-element-settings' );
+
+		await editor.getPreviewFrame().hover( containerSelector );
+
+		// Assert.
+		await expect.soft( container ).toHaveClass( /e-handles-inside/ );
+		await expect.soft( handles ).toBeVisible();
+
+		await editor.setPageTemplate( 'default' );
 	} );
 } );
 

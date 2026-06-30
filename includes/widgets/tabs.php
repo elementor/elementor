@@ -187,13 +187,14 @@ class Widget_Tabs extends Widget_Base {
 				'options' => [
 					'vertical' => [
 						'title' => esc_html__( 'Vertical', 'elementor' ),
-						'icon' => 'eicon-h-align-' . ( is_rtl() ? 'right' : 'left' ),
+						'icon' => 'eicon-h-align-left',
 					],
 					'horizontal' => [
 						'title' => esc_html__( 'Horizontal', 'elementor' ),
 						'icon' => 'eicon-v-align-top',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'prefix_class' => 'elementor-tabs-view-',
 				'separator' => 'before',
 			]
@@ -422,18 +423,23 @@ class Widget_Tabs extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-tab-title' => 'text-align: {{VALUE}};',
@@ -580,6 +586,35 @@ class Widget_Tabs extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+	public function render_markdown(): string {
+		$tabs = $this->get_settings_for_display( 'tabs' );
+
+		if ( empty( $tabs ) ) {
+			return '';
+		}
+
+		$sections = [];
+
+		foreach ( $tabs as $item ) {
+			$title = Utils::html_to_plain_text( $item['tab_title'] ?? '' );
+			$content = \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $item['tab_content'] ?? '' );
+
+			if ( empty( $title ) && empty( $content ) ) {
+				continue;
+			}
+
+			$section = '### ' . $title;
+
+			if ( ! empty( $content ) ) {
+				$section .= "\n\n" . $content;
+			}
+
+			$sections[] = $section;
+		}
+
+		return implode( "\n\n", $sections );
+	}
+
 	protected function content_template() {
 		?>
 		<div class="elementor-tabs" role="tablist" aria-orientation="vertical">

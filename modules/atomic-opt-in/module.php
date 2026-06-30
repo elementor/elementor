@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicOptIn;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Opt_In as Atomic_Widgets_Opt_In;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In as Atomic_Widgets_Opt_In;
 use Elementor\Plugin;
 
 class Module extends BaseModule {
@@ -38,6 +38,7 @@ class Module extends BaseModule {
 			return;
 		}
 
+		( new Atomic_Widgets_Opt_In() )->init();
 		( new OptInPage( $this ) )->init();
 
 		if ( ! $this->is_atomic_experiment_active() ) {

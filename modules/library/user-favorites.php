@@ -29,12 +29,12 @@ class User_Favorites {
 
 	/**
 	 * @param null  $vendor
-	 * @param null  $resource
+	 * @param null  $resource_name
 	 * @param false $ignore_cache
 	 *
 	 * @return array
 	 */
-	public function get( $vendor = null, $resource = null, $ignore_cache = false ) {
+	public function get( $vendor = null, $resource_name = null, $ignore_cache = false ) {
 		if ( $ignore_cache || empty( $this->cache ) ) {
 			$this->cache = get_user_meta( $this->user_id, self::USER_META_KEY, true );
 		}
@@ -43,8 +43,8 @@ class User_Favorites {
 			return [];
 		}
 
-		if ( $vendor && $resource ) {
-			$key = $this->get_key( $vendor, $resource );
+		if ( $vendor && $resource_name ) {
+			$key = $this->get_key( $vendor, $resource_name );
 
 			return isset( $this->cache[ $key ] ) ? $this->cache[ $key ] : [];
 		}
@@ -54,27 +54,27 @@ class User_Favorites {
 
 	/**
 	 * @param $vendor
-	 * @param $resource
+	 * @param $resource_name
 	 * @param $id
 	 *
 	 * @return bool
 	 */
-	public function exists( $vendor, $resource, $id ) {
-		return in_array( $id, $this->get( $vendor, $resource ), true );
+	public function exists( $vendor, $resource_name, $id ) {
+		return in_array( $id, $this->get( $vendor, $resource_name ), true );
 	}
 
 	/**
 	 * @param       $vendor
-	 * @param       $resource
+	 * @param       $resource_name
 	 * @param array $value
 	 *
 	 * @return $this
-	 * @throws \Exception If fails to save.
+	 * @throws \Exception If the favorites cannot be saved.
 	 */
-	public function save( $vendor, $resource, $value = [] ) {
+	public function save( $vendor, $resource_name, $value = [] ) {
 		$all_favorites = $this->get();
 
-		$all_favorites[ $this->get_key( $vendor, $resource ) ] = $value;
+		$all_favorites[ $this->get_key( $vendor, $resource_name ) ] = $value;
 
 		$result = update_user_meta( $this->user_id, self::USER_META_KEY, $all_favorites );
 
@@ -89,14 +89,14 @@ class User_Favorites {
 
 	/**
 	 * @param $vendor
-	 * @param $resource
+	 * @param $resource_name
 	 * @param $id
 	 *
 	 * @return $this
-	 * @throws \Exception If fails to add.
+	 * @throws \Exception If the favorites cannot be added.
 	 */
-	public function add( $vendor, $resource, $id ) {
-		$favorites = $this->get( $vendor, $resource );
+	public function add( $vendor, $resource_name, $id ) {
+		$favorites = $this->get( $vendor, $resource_name );
 
 		if ( in_array( $id, $favorites, true ) ) {
 			return $this;
@@ -104,21 +104,21 @@ class User_Favorites {
 
 		$favorites[] = $id;
 
-		$this->save( $vendor, $resource, $favorites );
+		$this->save( $vendor, $resource_name, $favorites );
 
 		return $this;
 	}
 
 	/**
 	 * @param $vendor
-	 * @param $resource
+	 * @param $resource_name
 	 * @param $id
 	 *
 	 * @return $this
-	 * @throws \Exception If fails to save.
+	 * @throws \Exception If the favorites cannot be removed.
 	 */
-	public function remove( $vendor, $resource, $id ) {
-		$favorites = $this->get( $vendor, $resource );
+	public function remove( $vendor, $resource_name, $id ) {
+		$favorites = $this->get( $vendor, $resource_name );
 
 		if ( ! in_array( $id, $favorites, true ) ) {
 			return $this;
@@ -128,18 +128,18 @@ class User_Favorites {
 			return $item !== $id;
 		} );
 
-		$this->save( $vendor, $resource, $favorites );
+		$this->save( $vendor, $resource_name, $favorites );
 
 		return $this;
 	}
 
 	/**
 	 * @param $vendor
-	 * @param $resource
+	 * @param $resource_name
 	 *
 	 * @return string
 	 */
-	private function get_key( $vendor, $resource ) {
-		return "{$vendor}/{$resource}";
+	private function get_key( $vendor, $resource_name ) {
+		return "{$vendor}/{$resource_name}";
 	}
 }

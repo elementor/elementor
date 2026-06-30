@@ -1,5 +1,8 @@
 module.exports = elementorModules.Module.extend( {
 
+	openMenuEvent: null,
+	location: null,
+
 	getDefaultSettings() {
 		return {
 			context: 'preview',
@@ -14,6 +17,7 @@ module.exports = elementorModules.Module.extend( {
 				itemShortcut: 'elementor-context-menu-list__item__shortcut',
 				iconShortcut: 'elementor-context-menu-list__item__icon',
 				itemDisabled: 'elementor-context-menu-list__item--disabled',
+				itemHasShortcutAction: 'elementor-context-menu-list__item--has-shortcut-action',
 				divider: 'elementor-context-menu-list__divider',
 				hidden: 'elementor-hidden',
 				promotionLink: 'elementor-context-menu-list__item__shortcut--link-fullwidth',
@@ -92,6 +96,10 @@ module.exports = elementorModules.Module.extend( {
 		this.maybeAddPromotionLink( action );
 
 		action.$item.toggleClass( this.getSettings( 'classes.itemDisabled' ), ! state );
+
+		if ( action.hasShortcutAction ) {
+			action.$item.toggleClass( this.getSettings( 'classes.itemHasShortcutAction' ), ! state );
+		}
 	},
 
 	maybeAddPromotionLink( action ) {
@@ -142,7 +150,11 @@ module.exports = elementorModules.Module.extend( {
 			return;
 		}
 
-		action.callback();
+		action.callback( this.openMenuEvent, {
+			location: this.location,
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.contextMenu,
+			trigger: elementorCommon.eventsManager.config.triggers.rightClick,
+		} );
 
 		this.getModal().hide();
 	},
@@ -174,9 +186,12 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	show( event ) {
+	show( event, options = {} ) {
 		var self = this,
 			modal = self.getModal();
+
+		this.openMenuEvent = event;
+		this.location = options.location;
 
 		modal.setSettings( 'position', {
 			of: event,
@@ -203,6 +218,8 @@ module.exports = elementorModules.Module.extend( {
 		} );
 
 		modal.show();
+
+		elementor.templates.eventManager.sendContextMenuExposureEvent();
 	},
 
 	destroy() {

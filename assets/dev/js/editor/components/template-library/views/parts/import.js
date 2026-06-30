@@ -1,9 +1,12 @@
 import FilesUploadHandler from '../../../../utils/files-upload-handler';
 import { showJsonUploadWarningMessageIfNeeded } from 'elementor-utils/json-upload-warning-message';
+import { showGlobalStylesDialog } from './global-styles-dialog';
 
 var TemplateLibraryImportView;
 
 TemplateLibraryImportView = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-import',
 
 	id: 'elementor-template-library-import',
@@ -11,6 +14,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	ui: {
 		uploadForm: '#elementor-template-library-import-form',
 		fileInput: '#elementor-template-library-import-form-input',
+		icon: '.elementor-template-library-blank-icon i',
 	},
 
 	events: {
@@ -67,6 +71,11 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 				$e.route( 'library/templates/my-templates' );
 				elementor.templates.triggerQuotaUpdate();
+				elementor.templates.eventManager.sendTemplateImportEvent( {
+					library_type: activeSource,
+					file_type: fileName.split( '.' ).pop(),
+					template_count: successData.length,
+				} );
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );
@@ -82,6 +91,22 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			introductionMap: window.elementor.config.user.introduction,
 			IntroductionClass: window.elementorModules.editor.utils.Introduction,
 		} );
+
+		if ( fileName.endsWith( '.json' ) ) {
+			try {
+				const jsonContent = JSON.parse( atob( fileData ) );
+				if ( elementor.templates.hasGlobalStyles( jsonContent ) ) {
+					try {
+						const { mode } = await showGlobalStylesDialog();
+						this.options.data.import_mode = mode;
+					} catch ( e ) {
+						return;
+					}
+				}
+			} catch ( parseError ) {
+				console.warn( 'Failed to parse template JSON for global styles check:', parseError ); // eslint-disable-line no-console
+			}
+		}
 
 		if ( ! elementorCommon.config.filesUpload.unfilteredFiles ) {
 			const enableUnfilteredFilesModal = FilesUploadHandler.getUnfilteredFilesNotEnabledImportTemplateDialog( () => this.sendImportRequest() );
@@ -105,6 +130,20 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			'dragleave drop': this.onFormDragLeave.bind( this ),
 			drop: this.onFormDrop.bind( this ),
 		} );
+
+		this.resolveIcon();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.importModal,
+		} );
+	},
+
+	resolveIcon() {
+		const activeSource = elementor.templates.getFilter( 'source' ) || 'local';
+
+		const className = 'local' === activeSource ? 'eicon-library-upload' : 'eicon-library-import';
+
+		this.ui.icon.removeClass().addClass( className );
 	},
 
 	onFormActions( event ) {

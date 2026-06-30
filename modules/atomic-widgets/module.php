@@ -3,24 +3,40 @@
 namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Ajax\Render_Element_Action;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
+use Elementor\Modules\AtomicWidgets\Elements\Grid\Grid;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Array_Transformer;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Svg_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Svg_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V2_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Html_V3_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -28,12 +44,26 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Color_Stop_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Multi_Props_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Position_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Shadow_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Grid_Track_Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Size_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Position_Offset_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Font_Family_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Functions_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Move_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -46,21 +76,65 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Time_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Date_Range_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Time_Range_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V2_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Move_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Functions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Scale_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Rotate_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions\Transform_Skew_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Converter_REST_API;
+use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop\Collection_Loop_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Success_Message\Form_Success_Message;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Error_Message\Form_Error_Message;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
+use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Range_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Time_Range_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -68,17 +142,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
+	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 
 	const PACKAGES = [
 		'editor-canvas',
-		'editor-current-user',
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
-		'editor-panels',
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
+		'editor-interactions',
+		'editor-templates',
+		'editor-design-system',
 	];
 
 	public function get_name() {
@@ -88,41 +165,103 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_feature();
-
-		( new Opt_In() )->init();
-
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-			Dynamic_Tags_Module::instance()->register_hooks();
-
-			( new Atomic_Widget_Styles() )->register_hooks();
-			( new Atomic_Widget_Base_Styles() )->register_hooks();
-			( new Atomic_Import_Export() )->register_hooks();
-
-			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
-			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
-
-			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
-			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
-			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+		if ( ! self::is_active() ) {
+			return;
 		}
+
+		$this->register_experimental_features();
+		$this->register_hooks();
+
+		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+		add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+
+		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
+		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
+		add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+		add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
+
+		add_action( 'elementor/ajax/register_actions', fn ( Ajax $ajax ) => ( new Render_Element_Action() )->register( $ajax ) );
+
+		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
+		add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+		add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
 	}
 
-	private function register_feature() {
-		Plugin::$instance->experiments->add_feature([
+	public static function get_experimental_data() {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '4.0.0',
+			],
+		];
+	}
+
+	private function register_experimental_features() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
+			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
+			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_EDITOR_MCP,
+			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
+			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => Migrations_Orchestrator::EXPERIMENT_BC_MIGRATIONS,
+			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
+			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		// When a new feature affects settings or style schema, global class, interactions, variable, etc
+		// anything in need of addressing migration for BC purposes, add it here.
+		$migrations_affecting_features = [];
+
+		Migrations_Orchestrator::register_affecting_feature_flag_hooks( $migrations_affecting_features );
+	}
+
+	private function register_hooks() {
+		Dynamic_Tags_Module::instance()->register_hooks();
+		Atomic_Styles_Manager::instance()->register_hooks();
+		Migrations_Orchestrator::make()->register_hooks();
+		( new Atomic_Widget_Styles() )->register_hooks();
+		( new Atomic_Widget_Base_Styles() )->register_hooks();
+		( new Atomic_Widgets_Library() )->register_hooks();
+		( new Atomic_Import_Export() )->register_hooks();
+		( new Atomic_Widgets_Database_Updater() )->register();
+		( new Css_Converter_REST_API() )->register_hooks();
 	}
 
 	private function add_packages( $packages ) {
@@ -139,61 +278,141 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	private function add_supported_units( $settings ) {
+		$settings['supported_size_units'] = Size_Constants::all_supported_units();
+
+		$settings['size_units'] = Size_Constants::grouped_units();
+
+		return $settings;
+	}
+
 	private function register_widgets( Widgets_Manager $widgets_manager ) {
 		$widgets_manager->register( new Atomic_Heading() );
 		$widgets_manager->register( new Atomic_Image() );
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Youtube() );
+		$widgets_manager->register( new Atomic_Divider() );
+		$widgets_manager->register( new Atomic_Self_Hosted_Video() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
+		$elements_manager->register_element_type( new Grid() );
+
+		$elements_manager->register_element_type( new Atomic_Tabs() );
+		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
+		$elements_manager->register_element_type( new Atomic_Tab() );
+		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
+		$elements_manager->register_element_type( new Atomic_Tab_Content() );
+
+		if ( \Elementor\Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+			$elements_manager->register_element_type( new Atomic_Form() );
+			$elements_manager->register_element_type( new Form_Success_Message() );
+			$elements_manager->register_element_type( new Form_Error_Message() );
+		} elseif ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
+		}
+
+		if ( ! \Elementor\Utils::has_pro() ) {
+			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
+		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
-
-		$transformers->register( Classes_Prop_Type::get_key(), new Array_Transformer() );
+		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Transformer() );
+		$transformers->register( Video_Src_Prop_Type::get_key(), new Video_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
+		$transformers->register( Query_Prop_Type::get_key(), new Query_Transformer() );
+		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
+		$transformers->register( Date_Time_Prop_Type::get_key(), new Date_Time_Transformer() );
+		$transformers->register( Date_Range_Prop_Type::get_key(), new Date_Range_Transformer() );
+		$transformers->register( Time_Range_Prop_Type::get_key(), new Time_Range_Transformer() );
+		$transformers->register( Html_V2_Prop_Type::get_key(), new Html_V2_Transformer() );
+		$transformers->register( Html_V3_Prop_Type::get_key(), new Html_V3_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
 
+		$this->register_basic_styles_transformers( $transformers );
+		$this->register_background_styles_transformers( $transformers );
+		$this->register_filter_styles_transformers( $transformers );
+		$this->register_transform_styles_transformers( $transformers );
+		$this->register_layout_styles_transformers( $transformers );
+	}
+
+	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Font_Family_Prop_Type::get_key(), new Font_Family_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Grid_Track_Size_Prop_Type::get_key(), new Grid_Track_Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
+		$transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Span_Prop_Type::get_key(), new Span_Transformer() );
+	}
+
+	private function register_background_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
 		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
-		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Background_Image_Position_Offset_Transformer() );
+		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Position_Transformer() );
 		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+	}
+
+	private function register_filter_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+	}
+
+	private function register_transform_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
+		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
+		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
+		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
+		$transformers->register( Transform_Functions_Prop_Type::get_key(), new Transform_Functions_Transformer() );
+		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
+		$transformers->register( Perspective_Origin_Prop_Type::get_key(), new Perspective_Origin_Transformer() );
+		$transformers->register(
+			Transform_Prop_Type::get_key(),
+			new Multi_Props_Transformer(
+				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
+				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
+			)
+		);
+	}
+
+	private function register_layout_styles_transformers( Transformers_Registry $transformers ): void {
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
 		);
 		$transformers->register(
 			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $_, $key ) => "border-{$key}-width" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $_, $key ) => "border-{$key}-width" )
 		);
 		$transformers->register(
 			Layout_Direction_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn ( $prop_key, $key ) => "{$key}-{$prop_key}" )
 		);
 		$transformers->register(
 			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 	}
 
@@ -201,12 +420,18 @@ class Module extends BaseModule {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Import_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Import_Transformer() );
 	}
 
 	public function register_export_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+		$transformers->register( Svg_Src_Prop_Type::get_key(), new Svg_Src_Export_Transformer() );
+	}
+
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private function get_element_usage_name( $title, $type ) {
@@ -219,6 +444,7 @@ class Module extends BaseModule {
 
 		return $title;
 	}
+
 	/**
 	 * Enqueue the module scripts.
 	 *
@@ -232,14 +458,52 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( 'elementor-atomic-widgets-editor', 'elementor' );
 	}
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-			<span class="elementor-panel-heading-category-chip">
-				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+		<span class="elementor-panel-heading-category-chip">
+				<?php echo esc_html__( 'New', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
+	}
+
+	private function register_frontend_scripts() {
+		$loader = new Frontend_Assets_Loader();
+		$loader->register_scripts();
+	}
+
+	private function add_inline_styles() {
+		$inline_css = implode( '', [
+			'.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }',
+			'form[data-element_type="e-form"].form-state-success [data-element_type="e-form-success-message"],',
+			'form[data-element_type="e-form"].form-state-error [data-element_type="e-form-error-message"]',
+			'{ display: block; }',
+		] );
+		wp_add_inline_style( 'elementor-frontend', $inline_css );
+		wp_add_inline_style( 'elementor-editor', $inline_css );
+	}
+
+	private function enqueue_promotion_styles() {
+		if ( \Elementor\Utils::has_pro() ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion-fonts',
+			'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap',
+			[],
+			ELEMENTOR_VERSION
+		);
+
+		wp_enqueue_style(
+			'elementor-atomic-widgets-promotion',
+			$this->get_css_assets_url( 'modules/atomic-widgets/editor' ),
+			[ 'elementor-atomic-widgets-promotion-fonts' ],
+			ELEMENTOR_VERSION
+		);
 	}
 }

@@ -3,12 +3,15 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
@@ -16,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -41,28 +45,55 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'text' => String_Prop_Type::make()
-				->default( __( 'Click here', 'elementor' ) ),
+			'text' => Html_V3_Prop_Type::make()
+				->default( [
+					'content'  => String_Prop_Type::generate( __( 'Click here', 'elementor' ) ),
+					'children' => [],
+				] )
+				->description( 'The text displayed on the button.' )
+				->alias( 'content', 'label' ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'tag' => String_Prop_Type::make()
+				->default( 'button' )
+				->description( 'The HTML tag for the button element.' ),
+
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
-					Text_Control::bind_to( 'text' )
-						->set_label( __( 'Button text', 'elementor' ) )
-						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
-
-					Link_Control::bind_to( 'link' ),
+					Inline_Editing_Control::bind_to( 'text' )
+						->set_placeholder( __( 'Type your button text here', 'elementor' ) )
+						->set_label( __( 'Button text', 'elementor' ) ),
 				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
+				->set_label( __( 'Link', 'elementor' ) ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -97,6 +128,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			'size' => 0,
 			'unit' => 'px',
 		] );
+		$align_text_value = String_Prop_Type::generate( 'center' );
 
 		return [
 			'base' => Style_Definition::make()
@@ -107,6 +139,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->add_prop( 'padding', $padding_value )
 						->add_prop( 'border-radius', $border_radius_value )
 						->add_prop( 'border-width', $border_width_value )
+						->add_prop( 'text-align', $align_text_value )
 				),
 		];
 	}
@@ -115,5 +148,20 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$text = wp_strip_all_tags( $settings['text'] ?? '' );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return '**' . $text . '**';
 	}
 }

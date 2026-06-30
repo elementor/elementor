@@ -132,6 +132,8 @@ class Global_Colors extends Tab_Base {
 			]
 		);
 
+		do_action( 'elementor/kit/global-colors/register_controls', $this );
+
 		$this->end_controls_section();
 	}
 }

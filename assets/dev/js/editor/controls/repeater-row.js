@@ -5,6 +5,10 @@ module.exports = Marionette.CompositeView.extend( {
 
 	className: 'elementor-repeater-fields',
 
+	attributes: {
+		role: 'listitem',
+	},
+
 	ui() {
 		return {
 			duplicateButton: '.elementor-repeater-tool-duplicate',

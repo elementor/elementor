@@ -9,7 +9,6 @@ import useKitDocumentByType from '../../hooks/use-kit-document-by-type';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { useMemo } from 'react';
 import { useNavigate } from '@reach/router';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './overview.scss';
 
@@ -25,20 +24,11 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				appsEventTrackingDispatch(
-					'kit-library/view-demo-page',
-					{
-						kit_name: kitName,
-						page_source: 'overview',
-						element_position: 'app_header',
-						view_type_clicked: 'demo',
-					},
-				);
 				navigate( `/kit-library/preview/${ id }` );
 			},
 			includeHeaderBtnClass: false,
 		},
-	], [ id ] );
+	], [ id, kitName, navigate ] );
 }
 
 export default function Overview( props ) {

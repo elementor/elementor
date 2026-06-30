@@ -1,5 +1,508 @@
 == Changelog ==
 
+= 4.1.4 - 2026-06-21 =
+
+* Fix: Improved code security enforcement in query handling
+
+= 4.1.3 - 2026-06-10 =
+
+* Fix: Cloud Library screenshot errors could prevent users from saving templates locally
+
+= 4.1.2 - 2026-06-08 =
+
+* Tweak: Improved Global Classes usage tracking for safer deletion - Atomic Editor
+* Fix: Image with Lightbox inherits default button styles - Atomic Editor
+* Fix: Image settings are not saved when using Insert from URL - Atomic Editor
+* Fix: Media attachments may be requested too many times in the Editor - Atomic Editor
+* Fix: Pages using Global Classes may fail to publish or show missing styles on the live site - Atomic Editor
+* Fix: Editor context may not sync correctly when navigating between documents
+
+= 4.1.1 - 2026-05-27 =
+
+* Security Fix: Improved code security enforcement in content handling
+* Security Fix: Improved code security enforcement in template handling
+* Fix: Hiding one filter prevents other filters from being applied - Atomic Editor
+
+= 4.1.0 - 2026-05-26 =
+
+* New: Introducing the Design System panel for managing Variables and Classes in one place - Atomic Editor
+* New: Introducing Angie in the Editor to help generate and modify Atomic layouts, Components, Forms, Classes, and Variables - Atomic Editor
+* New: Introducing Markdown rendering as an Alpha experiment to improve how content is structured for AI systems
+* Tweak: Added import and export for Variables and Classes from the Design System panel - Atomic Editor
+* Tweak: Increased the Class limit to 1000 - Atomic Editor
+* Tweak: Added duplicate support for Variables in the Variables Manager - Atomic Editor
+* Tweak: Added duplicate support for Classes in the Class field - Atomic Editor
+* Tweak: Added support for Variables in additional style controls, including Effects, Filters, and Box Shadow - Atomic Editor
+* Tweak: Added multi-select support to Direction control in Interactions - Atomic Editor
+* Tweak: Added Interaction actions to the History panel - Atomic Editor
+* Tweak: Added support for negative Box Shadow values - Atomic Editor
+* Tweak: Improved reordering of Component properties with full drag-and-drop support - Atomic Editor
+* Tweak: Updated Position and Z-index control visibility and behavior - Atomic Editor
+* Tweak: Updated the minimum required WordPress version to 6.8
+* Tweak: Added the External URL option to Image control - Atomic Editor
+* Fix: Slide Interactions can be applied without selecting a direction - Atomic Editor
+* Fix: Undo does not work as expected for individual Class properties - Atomic Editor
+* Fix: Font family values persist on Global Classes after deletion - Atomic Editor
+
+= 4.0.9 - 2026-05-19 =
+
+* Fix: Arrow navigation doesn't work in Carousel widgets when Reduced Motion is enabled ([#33613](https://github.com/elementor/elementor/issues/33613))
+
+= 4.0.8 - 2026-05-12 =
+
+* Tweak: Updated WordPress compatibility to version 7.0
+
+= 4.0.7 - 2026-05-06 =
+
+* Tweak: Updated endpoint URL to align with migration infrastructure - Atomic Editor
+
+= 4.0.6 - 2026-05-04 =
+
+* Security Fix: Improved code security enforcement in query handling
+
+= 4.0.5 - 2026-04-30 =
+
+* Security Fix: Improved code security enforcement in input handling
+
+= 4.0.4 - 2026-04-28 =
+
+* Tweak: Optimized handling of repeated background requests - Atomic Editor
+* Fix: Link in atomic elements wraps subsequent elements incorrectly – Atomic Editor ([#35559](https://github.com/elementor/elementor/issues/35559))
+* Fix: Interactions disappear when editing elements - Atomic Editor
+
+= 4.0.3 - 2026-04-20 =
+
+* Fix: UI and functionality issues in Tabs - Atomic Editor
+* Fix: Classes not saving in various scenarios - Atomic Editor
+* Fix: Cannot edit styles of components inside Loop Item templates - Atomic Editor
+* Fix: Loading screen gets stuck when attempting to load non-existing posts - Atomic Editor
+
+= 4.0.2 - 2026-04-13 =
+
+* Security Fix: Improved code security enforcement in global style settings
+* Fix: Exposed props are not displayed on first load in instance panel for nested components - Atomic Editor
+* Fix: Interactions apply only to the first matching element instead of all instances on the page - Atomic Editor
+
+= 4.0.1 - 2026-04-01 =
+
+* Fix: Interactions on canvas do not work across various elements - Atomic Editor
+* Fix: Inline editing affects button width when clicking inside a Tabs content container - Atomic Editor
+* Fix: Styling changes to atomic elements appear on canvas only after refresh in Firefox browser - Atomic Editor
+* Fix: Importing classes with duplicate names prevents elements from being edited - Atomic Editor
+
+= 4.0.0 - 2026-03-30 =
+
+* New: Introducing syncing between Atomic Variables, Classes and Global Styles - ensures consistent styling between Atomic elements and legacy widgets - Atomic Editor
+* New: Introducing self-hosted Video Atomic Element - Atomic Editor
+* New: Introducing a new onboarding flow for new Editor installations to provide better guidance for getting started
+* Tweak: Updated Atomic Editor status to Stable - Atomic Editor
+* Tweak: Enabled Atomic Editor by default for new websites - Atomic Editor
+* Tweak: Added inline editing support for the Atomic Button element - Atomic Editor
+* Tweak: Improved performance and ordering of Global Classes styles on the frontend - Atomic Editor
+* Tweak: Improved request reliability during temporary network issues - Atomic Editor
+* Tweak: Improved size control structure and behavior - Atomic Editor
+* Tweak: Added support for importing and exporting Classes and Variables through website templates
+* Tweak: Added support for importing and exporting Classes and Variables through templates
+* Tweak: Improved accessibility in Cloud Templates modal
+* Fix: PHP warnings in the editor when WP_DEBUG is enabled after updating to WordPress 6.9.1 ([#34617](https://github.com/elementor/elementor/issues/34617), [#34831](https://github.com/elementor/elementor/issues/34831))
+* Fix: Typography modal fails to apply settings after using the "Back to default" reset option
+* Fix: Data Updater does not run automatically after plugin updates
+* Fix: Revision is not working as expected - Atomic Editor
+* Fix: Styling issues in Repeater Indications popovers – Atomic Editor
+* Fix: Selecting "auto" for size returns an incorrect value - Atomic Editor
+* Fix: Resetting position does not clear related properties - Atomic Editor
+* Fix: Variable name field does not auto-focus on creation in Variables - Atomic Editor
+
+= 3.35.9 - 2026-03-25 =
+
+* Fix: Inserting AI-generated images fails when "Enable Unfiltered File Uploads" is enabled
+
+= 3.35.8 - 2026-03-23 =
+
+* Security Fix: Improved code security enforcement in Template Library
+* Security Fix: Improved code security enforcement in upload mechanism
+
+= 3.35.7 - 2026-03-11 =
+
+* Fix: General UI issues in Editor screens in WordPress Admin
+
+= 3.35.6 - 2026-03-03 =
+
+* Tweak: Improved compatibility with WordPress 7.0
+* Security Fix: Improved code security enforcement in request handling
+* Security Fix: Improved code security enforcement in Lightbox
+* Security Fix: Improved code security enforcement in image loading
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Inline editing toolbar is hidden behind the editor panel in various scenarios - Editor V4
+* Fix: Styles do not load as expected when using nested templates inside the Editor - Editor V4
+* Fix: Properties do not work as expected in certain scenarios in Components - Editor V4
+
+= 3.35.5 - 2026-02-17 =
+
+* Security Fix: Improved code security enforcement in global style settings
+* Fix: General UI issues in Editor screens in WordPress Admin
+
+= 3.35.4 - 2026-02-11 =
+
+* Fix: License activation issues in various scenarios
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Inline editing UI issues on canvas - Editor V4
+
+= 3.35.3 - 2026-02-05 =
+
+* Fix: Fatal error appears in dashboard widget in WordPress Admin ([#34663](https://github.com/elementor/elementor/issues/34663), [#34659](https://github.com/elementor/elementor/issues/34659))
+
+= 3.35.2 - 2026-02-05 =
+
+* Fix: Editor menu in WordPress admin displays incorrectly in RTL
+
+= 3.35.1 - 2026-02-04 =
+
+* Fix: Editor Top Bar does not appear in various scenarios ([#34623](https://github.com/elementor/elementor/issues/34623))
+* Fix: Fatal error when the PHP `mbstring` module is missing
+* Fix: General UI issues in Editor screens in WordPress Admin
+
+= 3.35.0 - 2026-02-02 =
+
+* New: Introducing Components - reusable layout building blocks with global sync and per-instance content overrides - Editor V4
+* New: Introducing Inline Editing - edit Atomic Heading and Paragraph text directly on the canvas - Editor V4
+* New: Introducing a contextual formatting toolbar for inline text editing, including links and common text styles - Editor V4
+* Tweak: Version 4 status updated to Beta and production-ready - Editor V4
+* Tweak: Children perspective controls available only for relevant parent elements - Editor V4
+* Tweak: `:hover` styling automatically applies to `:focus-visible` for improved accessibility - Editor V4
+* Tweak: Dynamic tags support added to color picker controls - Editor V4
+* Tweak: Link and Button accessibility improvements in Dynamic Tags - Editor V4
+* Tweak: Nested Accordion optimizations with Grid in Chrome browser
+* Fix: Size link-unlink operations not applying consistently - Editor V4
+* Fix: Div Block and Flexbox base styles overriding user settings when viewed from another document - Editor V4
+* Fix: Flex and Div blocks lose selection when deleting an assigned class via the Class Manager - Editor V4
+* Fix: Container handles not visible when "Overflow: Hidden" is enabled
+
+= 3.34.4 - 2026-01-29 =
+
+* Tweak: Updated import and export flow for Website Templates
+* Tweak: Optimized configuration loading behavior ([#34206](https://github.com/elementor/elementor/issues/34206))
+* Fix: Editor errors occur when references are undefined ([#34411](https://github.com/elementor/elementor/issues/34411))
+* Security Fix: Improved code security enforcement in request handling
+* Fix: Importing a site containing elements with dynamic tags fails - Editor V4
+
+= 3.34.3 - 2026-01-26 =
+
+* Tweak: Editor home page renamed to Quick Start
+* Fix: Video background does not play on Mobile in Safari browser
+* Fix: Landing Pages do not appear in Editor menu in WordPress Admin
+* Fix: Theme Builder WordPress view does not work as expected
+* Fix: General UI issues in Editor screens in WordPress Admin
+* Fix: Save as Template modal appears blank in some scenarios
+* Fix: Clicking the Templates menu item leads to an incorrect URL
+
+= 3.34.2 - 2026-01-20 =
+
+* Tweak: Unified the Elementor interface into a single place to manage, optimize, and configure Elementor capabilities in WordPress Admin
+* Tweak: Moved editor-related entry points under the unified Elementor menu in WordPress Admin
+
+= 3.34.1 - 2026-01-07 =
+
+* Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))
+* Fix: Incorrect `space_between_widgets` spacing in columns ([#34033](https://github.com/elementor/elementor/issues/34033))
+* Fix: User settings not applied correctly ([#34065](https://github.com/elementor/elementor/issues/34065))
+* Fix: Flex Grow is not applied correctly to child containers in the Flexbox element - Editor V4
+* Fix: Deleting a Tab breaks the content–tab relationship in Tabs element - Editor V4
+* Fix: Appearance badge in Site Templates is misaligned and not centered
+
+= 3.34.0 - 2025-12-22 =
+
+* New: Introducing Atomic Tabs - enabling flexible and fully customizable tab layouts with nested Atomic Elements - Editor V4
+* New: Introducing Entrance Interactions to add lightweight motion and bring elements to life as they appear - Editor V4
+* Tweak: Replaced the legacy V3 container wrapper with the optimized V4 wrapper for improved markup - Editor V4
+* Tweak: Improved frontend link control output to ensure consistent rendering - Editor V4 ([#32233](https://github.com/elementor/elementor/issues/32233))
+* Tweak: Added reset option inside popovers - Editor V4
+* Tweak: Updated Border control layout for a clearer and more consistent editing workflow - Editor V4
+* Tweak: Added `span` option inside the Paragraph atom - Editor V4
+* Tweak: Improved transitions to better support logical properties - Editor V4
+* Tweak: Improved dropdown folder behavior and resolved related UI issues in Template Library
+* Tweak: Merged "Import/Export Customization" feature into the version
+* Tweak: Added `builder_content_data` filter for extending Template Library and Global Widget content (props [@dgwatkins](https://github.com/dgwatkins))
+* Tweak: Applied CSS logical properties in Icon Box widget
+* Tweak: Applied CSS logical properties in Icon List widget
+* Tweak: Applied CSS logical properties in text alignment controls and fixed RTL rendering in the Editor
+* Fix: Local Transform values overridden Class-level Transform defaults even when unchanged - Editor V4
+* Fix: Fatal error when opening pages containing atomic elements while the V4 experiment is deactivated - Editor V4
+* Fix: Hover Scale transform set through Class did not save correctly - Editor V4
+* Fix: PHP 8.4 deprecation notices related to deprecated `E_STRICT` constant
+* Fix: Missing CSS regeneration after clearing cached files on pages containing dynamic tags
+
+= 3.33.6 - 2025-12-18 =
+
+* Fix: Issues with rendering in Text Editor widget
+* Fix: Context menu fails to open after using 'Copy' action on a widget – Editor V4
+
+= v3.33.5 - 2025-12-17 =
+
+* Security Fix: Improved code security enforcement in site navigation module
+* Security Fix: Improved code security enforcement in text editor
+
+= 3.33.4 - 2025-12-08 =
+
+* Security Fix: Improved code security enforcement in Text Path widget
+
+= 3.33.3 - 2025-12-04 =
+
+* Fix: Improved compatibility with WordPress 6.9
+* Fix: Keyboard navigation does not work as expected when setting a CSS ID in Tabs widget
+
+= 3.33.2 - 2025-11-23 =
+
+* Security Fix: Improved code security enforcement in repeater widgets
+* Security Fix: Improved code security enforcement in Star Rating widget
+* Fix: Editor not loading with errors in the console in certain scenarios – Editor V4
+
+= 3.33.1 - 2025-11-17 =
+
+* Security Fix: Improved code security enforcement in Floating Elements
+
+= 3.33.0 - 2025-11-10 =
+
+* New: Introducing Variables Manager to manage design variables like colors, fonts, and sizes from a centralized panel - Editor V4
+* New: Introducing Blend Mode control to create layered visual effects by defining how elements blend with backgrounds - Editor V4
+* New: Introducing Background Clipping control to define where an element's background is rendered across the element's layout - Editor V4
+* Tweak: Updated Editor Top Bar layout and button placement for improved navigation
+* Tweak: Adjusted default cache behavior to inactive and updated FAQ Schema notice in Accordion widget
+* Tweak: Improved error handling in Import and Export customization flow
+* Tweak: Applied CSS logical properties support in Star Rating widget
+* Tweak: Enhanced accessibility in Star Rating widget
+* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
+* Fix: Child pages and menu items not importing correctly in Website Templates
+* Fix: Deprecated `utf8_encode()` and `utf8_decode()` functions replaced for PHP 8.2 compatibility ([#27499](https://github.com/elementor/elementor/issues/27499))
+
+= 3.32.5 - 2025-10-21 =
+
+* Fix: Create Template dialog doesn't close in WordPress Templates section
+* Fix: Website Template fails to apply when Custom Code or Custom Icons are included
+
+= 3.32.4 - 2025-10-05 =
+
+* Tweak: Added notice for Load Google Fonts Locally feature to clarify behavior and setup
+
+= 3.32.3 - 2025-09-29 =
+
+* Fix: Custom post types are imported even when unselected in Website Templates import
+* Fix: Taxonomy queries not connected properly to widgets in Website Templates import
+
+= 3.32.2 - 2025-09-18 =
+
+* Tweak: Improved compatibility for 3rd-party plugins serving templates
+* Fix: Structure Panel indicators not visible in RTL layouts
+* Fix: Issues with loading Google Fonts when enabling or disabling Load Google Fonts Locally option ([#32795](https://github.com/elementor/elementor/issues/32795))
+* Fix: Background videos not displaying correctly on RTL websites
+
+= 3.32.1 - 2025-09-16 =
+
+* Tweak: Disabled Load Google Fonts locally on all sites by default
+* Tweak: Moved the Load Google Fonts locally option to the Performance tab as a feature
+* Fix: Column editing handles appear outside the editing overlay
+* Fix: Full width containers not aligned to the center
+* Fix: Editor stuck on loading when using an Image Box widget with a link ([#32756](https://github.com/elementor/elementor/issues/32756))
+
+= 3.32.0 - 2025-09-15 =
+
+* New: Introducing Transform controls to move, scale, rotate, and skew elements with 2D and 3D support - Editor V4
+* New: Introducing Transitions to control how elements animate between states - Editor V4
+* New: Added filter and sort options in Class Manager - Editor V4
+* New: Introducing advanced import and export customization for Website Templates, with selective import of themes, experiments, custom assets, and content
+* Tweak: Added option to convert local styles into a reusable Global Class - Editor V4
+* Tweak: Variables now update live on the canvas while editing a variable - Editor V4
+* Tweak: Updated custom unit UI and improved functionality - Editor V4
+* Tweak: Enabled typing negative values in style fields - Editor V4
+* Tweak: Added Bottom position option on layout setting in Icon Box widget
+* Tweak: Reduced API-Info size for better performance
+* Tweak: Added option for connected users to install Elementor Pro via the Connect Account tab
+* Tweak: Enabled ZIP download of Website Templates from the library
+* Tweak: Merged Cloud Library feature into version
+* Tweak: Optimized compiled CSS output for background videos
+* Tweak: Merged Element Caching feature and moved to Performance tab
+* Fix: Reaching the Global Class limit prevented page saving - Editor V4 ([#32277](https://github.com/elementor/elementor/issues/32277))
+* Fix: PHP 8.4 deprecation notices when running with `WP_DEBUG` enabled
+* Fix: Indications popover not displaying correctly in repeaters for Background Overlay - Editor V4
+* Fix: Reduced-motion preferences are not applied to entrance and exit animations
+* Fix: Added required PHP and WordPress versions to the plugin header
+
+= 3.31.5 - 2025-09-09 =
+
+* Fix: Fatal error occurs for non-admin users when editing a page
+
+= 3.31.4 - 2025-09-08 =
+
+* Tweak: Enabled external applications to open AI modals via API
+
+= 3.31.3 - 2025-08-27 =
+
+* Tweak: Disabled indication popover on repeater items – Editor V4
+* Tweak: Enforced numeric keys in `promotionWidgets` and ensured consistent Pro widget injection
+* Fix: Floating Bar disappears from the frontend after activating Elementor Pro
+
+= 3.31.2 - 2025-08-11 =
+
+* Tweak: Improved permissions functionality in Class Management - Editor V4
+* Fix: Page failed to save on certain hosting providers due to blocked requests – Editor V4 ([#31992](https://github.com/elementor/elementor/issues/31992))
+* Fix: Renaming a class causes it to lose applied styles – Editor V4
+* Fix: Inherited values not working as expected with custom units in responsive modes – Editor V4
+* Fix: Visual Choose control not displaying properly in Firefox for Shape Divider
+* Fix: Icon alignment not working in Icon Box widget
+
+= 3.31.1 - 2025-08-06 =
+
+* Tweak: Updated `form-data` package version
+* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
+
+= 3.31.0 - 2025-08-05 =
+
+* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
+* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
+* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
+* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
+* New: Introducing Divider - a modular layout element for visual separation - Editor V4
+* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
+* New: Class Locator - locate all elements using a specific class across your design - Editor V4
+* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
+* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
+* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
+* Tweak: Added Custom option to Object Position in Size section - Editor V4
+* Tweak: Added ID control in YouTube element - Editor V4
+* Tweak: Added Opacity control - set element transparency - Editor V4
+* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
+* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
+* Tweak: Replaced select control with a visual choice control in Shape Dividers
+* Tweak: Replaced SASS mixins and functions with native CSS logical properties
+* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
+* Tweak: Added responsive capabilities to Custom Mask
+* Tweak: Activated "Element Caching" experiment for all sites
+* Tweak: Updated Icon List widget to use CSS logical properties
+* Tweak: Updated Star Rating widget to use CSS logical properties
+* Tweak: Updated Alert widget to use CSS logical properties
+* Tweak: Updated Accordion widget to use CSS logical properties
+* Tweak: Updated Toggle widget to use CSS logical properties
+* Tweak: Updated Icon Box widget to use CSS logical properties
+* Tweak: Updated Menu Anchor widget to use CSS logical properties
+* Tweak: Updated Tabs widget to use CSS logical properties
+* Tweak: Updated Testimonial widget to use CSS logical properties
+* Tweak: Updated Text Editor widget to use CSS logical properties
+* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
+* Tweak: Optimized CSS output for Masks
+
+= 3.30.4 - 2025-07-30 =
+
+* Tweak: Improved redirection functionality during the website template import process
+
+= 3.30.3 - 2025-07-22 =
+
+* Tweak: Improved performance of the first-time Editor load
+* Security Fix: Improved code security enforcement in Import process
+* Security Fix: Improved code security enforcement in Text Path widget
+* Security Fix: Improved content sanitization in multiple widgets
+* Fix: Link control label is missing in all elements - Editor V4
+
+= 3.30.2 - 2025-07-09 =
+
+* Fix: Editor failing to load on certain hosting providers due to blocked requests
+
+= 3.30.1 - 2025-07-07 =
+
+* Fix: Focus not applied correctly to chosen property in popovers - Editor V4
+* Fix: Font Family popover not loading as expected - Editor V4
+* Fix: Empty list displayed when opening the Class Manager - Editor V4
+
+= 3.30.0 - 2025-07-01 =
+
+* New: Added support for setting custom units in size controls - Editor V4 ([#31287](https://github.com/elementor/elementor/issues/31287))
+* New: Added reset control visibility via the floating action bar - Editor V4 ([#31356](https://github.com/elementor/elementor/issues/31356))
+* New: Added JS handler infrastructure for the new elements system - Editor V4
+* New: Introduced modular YouTube element built with new structure and JS handlers – Editor V4
+* New: Added support for context-aware editing memory - Editor V4
+* New: Enabled Smart Unit Typing - allows typing values with units directly - Editor V4
+* New: Added ID control to Settings section under General tab - Editor V4
+* New: Added Anchor Offset control to Position section under Style tab - Editor V4
+* New: Added Display None control to Layout section under Style tab - Editor V4
+* New: Added Object Fit control to Size section under Style tab - Editor V4
+* New: Added Columns control to Typography section under Style tab - Editor V4
+* New: Added Aspect Ratio control to Size section under Style tab - Editor V4
+* New: Added group-level style indicators to show where class-based styles are applied – Editor V4
+* New: Added Indications Popover for visualizing class-based style origins – Editor V4
+* New: Introduced class permissions for non-admin users - Editor V4
+* Tweak: Added title hover and focus color options to Icon Box and Image Box widgets ([#29948](https://github.com/elementor/elementor/issues/29948))
+* Tweak: Added support for registering custom mask shapes ([#19396](https://github.com/elementor/elementor/issues/19396))
+* Tweak: User-defined class names now appear as-is in the final code output in Class Management - Editor V4 ([#31055](https://github.com/elementor/elementor/issues/31055))
+* Tweak: Renamed "Kits" to "Website Template" across the interface
+* Tweak: Added Settings section inside the General tab - Editor V4
+* Tweak: Merged "Editor Top Bar" feature into the core version
+* Tweak: Merged "Load Google Fonts locally" feature into the core version
+* Tweak: Activated "Optimized Markup" feature for new sites
+* Tweak: Promoted "Element Caching" feature to Stable status
+* Tweak: Added new mask shapes
+* Tweak: Replaced select control with a visual choice control in Mask shapes
+* Tweak: Add image `height`, `object-fit`, `object-position`, `box-shadow` in Image Box widget
+* Tweak: Standardized naming convention for items in the editor `app-bar`
+* Tweak: Consolidated control visibility and layout into a single Style tab in Progress Bar widget
+* Tweak: Updated minimum required WordPress version to 6.6
+* Fix: Global CSS transition with higher specificity prevents Container transitions from being applied ([#30460](https://github.com/elementor/elementor/issues/30460))
+* Fix: Global CSS classes are lost when publishing from multiple tabs - Editor V4
+* Fix: Redundant spacing appears below the image in the Image Box widget
+* Fix: Scrolling to anchors no longer works inside the Editor
+
+= 3.29.2 - 2025-06-04 =
+
+* Fix: Missing responsive resize handles in responsive mode preventing manual preview adjustments
+* Fix: Style sections expanded by default instead of remaining collapsed - Editor V4
+* Fix: Publish button not triggered when applying a class - Editor V4
+
+= 3.29.1 - 2025-05-28 =
+
+* Tweak: Disabled the ability to use elements caching shortcode via the interface
+* Security Fix: Improved code security enforcement in Shortcode widget
+* Fix: Information modals are not showing as expected in the Editor - Editor V4
+* Fix: Error on the frontend when background overlay is set to hidden - Editor V4
+* Fix: Editor load issue when a widget does not register the "Advanced" tab
+
+= 3.29.0 - 2025-05-19 =
+
+* New: Introduced the first Alpha release of the next-generation Editor - a faster, modular, CSS-based infrastructure available as an opt-in experience - Editor V4
+* New: Combine familiar and new Editor elements for a seamless editing experience - Editor V4
+* New: Introduced cleaner code and fewer div wrappers for faster performance and a lighter editing experience - Editor V4
+* New: Gain full responsive control - adjust every style property individually for each device, without limitations - Editor V4
+* New: Introduced Classes - a reusable styling system that brings consistency, modularity, and CSS-based workflows to your designs - Editor V4
+* New: Introduced Class Manager - centrally manage, rename, reorder, and delete Classes across your site - Editor V4
+* New: Introduced States - define hover, focus, and active styles for Classes to create dynamic, interactive designs - Editor V4
+* New: Introduced Local Class - a fixed, non-removable class with highest styling priority, ensuring unique styling for each element - Editor V4
+* New: Introduced Class Indicators - color-coded visual cues that show where styles originate, inherit, or conflict - Editor V4
+* New: Introduced a unified Style Tab - a consistent, CSS-based styling system shared across all elements, streamlining design workflows - Editor V4
+* New: Introduced Style Repeaters - create and manage multiple background and box shadow layers with full control over their order and visibility - Editor V4
+* New: Introduced Actions Floating Bar - a cleaner, context-aware toolbar that appears on hover, starting with Dynamic Tags support - Editor V4
+* New: Introduced Link Control - add and customize links across elements with clean HTML, while preventing nested links - Editor V4
+* New: Introduced Logical Properties - styling adapts automatically to different writing directions for global language support - Editor V4
+* New: Added DIV Block element - a container element for structuring layouts with customizable display options - Editor V4
+* New: Added Flexbox element - a layout element for precise alignment and distribution - Editor V4
+* New: Added Heading element - a standalone heading element with flexible styling - Editor V4
+* New: Added Paragraph element - a simple, dedicated text element for paragraphs - Editor V4
+* New: Added Image element - a modular image element with clean markup and consistent styling - Editor V4
+* New: Added Button element - a customizable button element for modular design - Editor V4
+* New: Added SVG element - a lightweight element for adding scalable vector graphics - Editor V4
+* Tweak: Added `AVIF` image format support to Lightbox ([#28256](https://github.com/elementor/elementor/issues/28256), [#25175](https://github.com/elementor/elementor/issues/25175), [#28169](https://github.com/elementor/elementor/issues/28169), [#29624](https://github.com/elementor/elementor/issues/29624))
+* Tweak: Renamed "My Templates" to "Templates" in the Templates Library
+* Tweak: Marked local templates as "Site Templates" to distinguish them from Cloud Templates
+* Tweak: Excluded Shape Dividers from the accessibility tree
+* Tweak: Improved accessibility with `role` attributes in the Social Icons widget
+* Tweak: Added Display Title control to the Progress Bar widget to enhance accessibility
+* Fix: Strings are not translating properly in the Global Style Guide ([#23237](https://github.com/elementor/elementor/issues/23237))
+* Fix: Mask shape URLs use double slashes instead of single slashes ([#17534](https://github.com/elementor/elementor/issues/17534))
+* Fix: Common scripts are loaded late when using the Theme Builder
+* Fix: 'New Prompt' Button does not work in Generate Code AI feature
+
+= 3.28.4 - 2025-04-22 =
+
+* Tweak: Added Site Planner as an option in the onboarding wizard
+* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
+* Tweak: Added inline editing support for controls using multiple repeaters
+
 = 3.28.3 - 2025-04-01 =
 
 * Tweak: Added Isolate object tool to Elementor AI image editing capabilities

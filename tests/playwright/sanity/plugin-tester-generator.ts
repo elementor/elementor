@@ -5,38 +5,35 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean }[] = [
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
 	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
-	{ pluginName: 'wunderwp', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
-	{ pluginName: 'addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api', dependency: 'polylang' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
-	{ pluginName: 'envato-elements', installSource: 'cli' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
-	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'cli' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
-	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
-	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
+	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'cli' },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
-	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
+	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
 	{ pluginName: 'visibility-logic-elementor', installSource: 'api' },
 	{ pluginName: 'ht-mega-for-elementor', installSource: 'api' },
@@ -47,12 +44,18 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'hello-plus', installSource: 'cli' },
+	{ pluginName: 'template-kit-import', installSource: 'api' },
+	{ pluginName: 'template-kit-export', installSource: 'api' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
+			if ( plugin.dependency ) {
+				await wpCli( `wp plugin install ${ plugin.dependency } --activate` );
+			}
 			switch ( plugin.installSource ) {
 				case 'api':
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
@@ -77,8 +80,9 @@ export const generatePluginTests = ( testType: string ) => {
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
-				await page.locator( '[data-widget_type="progress.default"]' ).first().scrollIntoViewIfNeeded();
-				await page.waitForTimeout( 500 );
+				const progressWidget = page.locator( '[data-widget_type="progress.default"]' ).first();
+				await progressWidget.scrollIntoViewIfNeeded();
+				await expect( progressWidget ).toBeVisible();
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 				if ( plugin.hasInstallationPage ) {
@@ -95,6 +99,14 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {
 					const plusAddonTemplateModal = new ImportTemplatesModal( page );
 					await plusAddonTemplateModal.skipTemplatesImportIfVisible();
+				}
+
+				if ( 'wordpress-seo' === plugin.pluginName ) {
+					const gotItButton = editor.page.locator( '#yoast-introduction-editor-v2 .dialog-buttons-ok' );
+
+					if ( await gotItButton.isVisible() ) {
+						await gotItButton.click();
+					}
 				}
 
 				await editor.closeNavigatorIfOpen();

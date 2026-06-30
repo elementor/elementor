@@ -1,5 +1,4 @@
 // Ask Josh
-@import "../../../../assets/dev/scss/helpers/direction";
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
 @import "../../../../assets/dev/scss/editor/breakpoints";
@@ -16,13 +15,13 @@ $top-bar-height: 50px;
 
 // The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 #e-admin-top-bar-root {
-	@include end( 0 );
 	font-family: var(--e-a-font-family);
 	background: var(--e-a-bg-default);
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 	display: none;
 	position: absolute;
-	top: 0;
+	inset-block-start: 0;
+	inset-inline-end: 0;
 	width: calc(100% - 160px);
 	z-index: $first-layer;
 
@@ -95,22 +94,6 @@ $top-bar-height: 50px;
 
 	&.e-admin-top-bar--active {
 		display: block;
-
-		&~ #wpbody {
-			#wpbody-content {
-				margin-block-start: $top-bar-height;
-			}
-
-			.wrap {
-				// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
-				clear: both;
-				padding-block-start: 10px;
-
-				h1 {
-					display: none;
-				}
-			}
-		}
 	}
 
 	&:not(.e-admin-top-bar--active) ~ #wpbody {
@@ -164,15 +147,6 @@ $top-bar-height: 50px;
 		font-weight: 500;
 		margin: 0 4px;
 		line-height: normal;
-	}
-
-	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin top bar.
-	&~ #wpbody {
-		.wrap {
-			h1, .page-title-action {
-				display: none;
-			}
-		}
 	}
 }
 

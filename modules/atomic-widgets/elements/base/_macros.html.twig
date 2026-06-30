@@ -1,0 +1,24 @@
+{%- macro render_base_classes(id, base_styles, settings, extra_classes) -%}
+{{- ['elementor-element', 'elementor-element-' ~ id, 'e-con', 'e-atomic-element', base_styles.base] | merge(settings.classes | default([])) | merge(extra_classes | default([])) | join(' ') -}}
+{%- endmacro -%}
+
+{%- macro render_data_attributes(id, type, interaction_id) -%}
+data-id="{{ id }}" data-element_type="{{ type }}" data-e-type="{{ type }}" data-interaction-id="{{ interaction_id }}"
+{%- endmacro -%}
+
+{%- macro render_custom_attributes(settings, editor_attributes) -%}
+{%- if settings._cssid is defined and settings._cssid is not empty %} id="{{ settings._cssid | e }}"{% endif -%}
+{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+{%- if editor_attributes is defined and editor_attributes is not empty %} {{ editor_attributes | raw }}{% endif -%}
+{%- endmacro -%}
+
+{%- macro render_link_attributes(link) -%}
+{%- if link is defined and link.href is defined and link.href is not empty -%}
+{%- if link.tag | default('a') == 'button' %} data-action-link="{{ link.href | e }}"{% else %} href="{{ link.href | e }}"{% endif -%}
+{%- if link.target is defined and link.target is not empty %} target="{{ link.target | e }}"{% endif -%}
+{%- endif -%}
+{%- endmacro -%}
+
+{%- macro render_interactions(interactions) -%}
+data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+{%- endmacro -%}

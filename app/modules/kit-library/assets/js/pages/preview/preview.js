@@ -7,8 +7,8 @@ import useKit from '../../hooks/use-kit';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { PreviewIframe } from './preview-iframe';
 import { useLocation, useNavigate } from '@reach/router';
-import { useState, useMemo } from 'react';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { useTracking } from '../../context/tracking-context';
 
 import './preview.scss';
 
@@ -45,18 +45,8 @@ export const breakpoints = [
 
 function useHeaderButtons( id, kitName ) {
 	const navigate = useNavigate();
-	const eventTracking = ( command, viewTypeClicked, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: kitName,
-				element_position: 'app_header',
-				page_source: 'view demo',
-				view_type_clicked: viewTypeClicked,
-				event_type: eventType,
-			},
-		);
-	};
+	const tracking = useTracking();
+
 	return useMemo( () => [
 		{
 			id: 'overview',
@@ -66,12 +56,11 @@ function useHeaderButtons( id, kitName ) {
 			color: 'secondary',
 			size: 'sm',
 			onClick: () => {
-				eventTracking( 'kit-library/view-overview-page', 'overview' );
-				navigate( `/kit-library/overview/${ id }` );
+				tracking.trackKitdemoOverviewClicked( id, kitName, () => navigate( `/kit-library/overview/${ id }` ) );
 			},
 			includeHeaderBtnClass: false,
 		},
-	], [ id ] );
+	], [ id, kitName, tracking, navigate ] );
 }
 
 /**
@@ -107,32 +96,30 @@ export default function Preview( props ) {
 	const headersButtons = useHeaderButtons( props.id, data && data.title );
 	const previewUrl = usePreviewUrl( data );
 	const [ activeDevice, setActiveDevice ] = useState( 'desktop' );
+	const tracking = useTracking();
+	const loadStartTime = useRef( Date.now() );
+	const hasTrackedOpen = useRef( false );
+
 	const iframeStyle = useMemo(
 		() => breakpoints.find( ( { value } ) => value === activeDevice ).style,
 		[ activeDevice ],
 	);
-	const eventTracking = ( command, layout, elementPosition = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				kit_name: data.title,
-				page_source: 'view demo',
-				layout,
-				element_position: elementPosition,
-				event_type: eventType,
-			},
-		);
-	};
+
+	useEffect( () => {
+		if ( ! isIframeLoading && data && ! hasTrackedOpen.current ) {
+			const loadTime = Date.now() - loadStartTime.current;
+			tracking.trackKitdemoOpened( props.id, data.title, loadTime );
+			hasTrackedOpen.current = true;
+		}
+	}, [ isIframeLoading, data, props.id, tracking ] );
 
 	const onChange = ( device ) => {
 		setActiveDevice( device );
-		eventTracking( 'kit-library/responsive-controls', device, 'app_header' );
 	};
 
 	usePageTitle( {
 		title: data
 			? `${ __( 'Kit Library', 'elementor' ) } | ${ data.title }`
-			// eslint-disable-next-line @wordpress/i18n-ellipsis
 			: __( 'Loading...', 'elementor' ),
 	} );
 

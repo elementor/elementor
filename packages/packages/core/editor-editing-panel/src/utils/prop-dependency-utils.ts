@@ -1,0 +1,311 @@
+import {
+	type Dependency,
+	type DependencyTerm,
+	extractValue,
+	isDependency,
+	isDependencyMet,
+	isOverridable,
+	isTransformable,
+	type Props,
+	type PropsSchema,
+	type PropType,
+	rewrapOverridableValue,
+	type TransformablePropValue,
+} from '@elementor/editor-props';
+import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem } from '@elementor/session';
+
+type Value = TransformablePropValue< string > | null;
+
+export type Values = Record< string, Value >;
+
+export type DependencyEffect = {
+	isHidden: boolean;
+	isDisabled: ( propType: PropType ) => boolean;
+};
+
+export function getElementSettingsWithDefaults( propsSchema: PropsSchema, elementSettings?: Props ): Values {
+	const elementSettingsWithDefaults = { ...elementSettings };
+	Object.keys( propsSchema ).forEach( ( key ) => {
+		if ( elementSettingsWithDefaults[ key ] === null && propsSchema[ key ].default !== null ) {
+			elementSettingsWithDefaults[ key ] = propsSchema[ key ].default as Values[ keyof Values ];
+		}
+	} );
+
+	return elementSettingsWithDefaults as Values;
+}
+
+export function extractDependencyEffect( bind: string, propsSchema: PropsSchema, settings: Props ): DependencyEffect {
+	const settingsWithDefaults = getElementSettingsWithDefaults( propsSchema, settings );
+	const propType = propsSchema[ bind ];
+	const depCheck = isDependencyMet( propType?.dependencies, settingsWithDefaults );
+
+	const failingTerm = ! depCheck.isMet ? depCheck.failingDependencies[ 0 ] : undefined;
+	const isHidden = !! failingTerm && ! isDependency( failingTerm ) && failingTerm?.effect === 'hide';
+
+	return {
+		isHidden,
+		isDisabled: ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, settingsWithDefaults ).isMet,
+	};
+}
+
+export function extractOrderedDependencies( dependenciesPerTargetMapping: Record< string, string[] > ): string[] {
+	return Object.values( dependenciesPerTargetMapping )
+		.flat()
+		.filter( ( dependent, index, self ) => self.indexOf( dependent ) === index );
+}
+
+export function getUpdatedValues(
+	values: Values,
+	dependencies: string[],
+	propsSchema: PropsSchema,
+	elementValues: Values,
+	elementId: string
+): Values {
+	if ( ! dependencies.length ) {
+		return values;
+	}
+
+	return dependencies.reduce(
+		( newValues, dependency ) => {
+			const path = dependency.split( '.' );
+			const combinedValues = { ...elementValues, ...newValues };
+			const propType = getPropType( propsSchema, combinedValues, path );
+
+			if ( ! propType ) {
+				return newValues;
+			}
+
+			const testDependencies = {
+				previousValues: isDependencyMet( propType.dependencies, elementValues ),
+				newValues: isDependencyMet( propType.dependencies, combinedValues ),
+			};
+
+			if ( ! testDependencies.newValues.isMet ) {
+				const newValue = handleUnmetCondition( {
+					failingDependencies: testDependencies.newValues.failingDependencies,
+					dependency,
+					elementValues: combinedValues,
+					defaultValue: propType.default as Value,
+					elementId,
+				} );
+
+				return {
+					...newValues,
+					...updateValue( path, newValue, combinedValues ),
+				};
+			}
+
+			if ( ! testDependencies.previousValues.isMet ) {
+				const savedValue = retrievePreviousValueFromStorage< Value >( { path: dependency, elementId } );
+				const currentValue = extractValue( path, combinedValues, [], {
+					unwrapOverridableLeaf: false,
+				} ) as Value;
+
+				removePreviousValueFromStorage( { path: dependency, elementId } );
+
+				const restored = isCompatibleSavedValue( savedValue, currentValue )
+					? savedValue
+					: ( propType.default as Value );
+
+				return {
+					...newValues,
+					...updateValue( path, restored, combinedValues ),
+				};
+			}
+
+			return newValues;
+		},
+		{ ...values }
+	);
+}
+
+function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ): PropType | null {
+	if ( ! path.length ) {
+		return null;
+	}
+
+	const [ basePropKey, ...keys ] = path;
+	const baseProp = schema[ basePropKey ];
+
+	if ( ! baseProp ) {
+		return null;
+	}
+
+	return keys.reduce(
+		( prop: PropType | null, key, index ) =>
+			evaluatePropType( { prop, key, index, path, elementValues, basePropKey } ),
+		baseProp
+	);
+}
+
+function evaluatePropType( props: {
+	prop: PropType | null;
+	key: string;
+	index: number;
+	path: string[];
+	elementValues: Values;
+	basePropKey: string;
+} ) {
+	const { prop } = props;
+
+	if ( ! prop?.kind ) {
+		return null;
+	}
+
+	const { key, index, path, elementValues, basePropKey } = props;
+
+	switch ( prop.kind ) {
+		case 'union':
+			const value = extractValue( path.slice( 0, index + 1 ), elementValues );
+			const type = ( value?.$$type as string ) ?? null;
+
+			return getPropType(
+				{ [ basePropKey ]: prop.prop_types?.[ type ] },
+				elementValues,
+				path.slice( 0, index + 2 )
+			);
+		case 'array':
+			return prop.item_prop_type;
+		case 'object':
+			return prop.shape[ key ];
+	}
+
+	return prop[ key as keyof typeof prop ] as PropType;
+}
+
+function updateValue( path: string[], value: Value, values: Values ) {
+	const topPropKey = path[ 0 ];
+	const root: Values = { ...values };
+
+	let carry: Values = root;
+
+	for ( let index = 0; index < path.length; index++ ) {
+		const key = path[ index ];
+		const isLeaf = index === path.length - 1;
+
+		if ( isLeaf ) {
+			carry[ key ] = mergeLeafValue( carry[ key ], value );
+			break;
+		}
+
+		const next = cloneDescent( carry[ key ] );
+
+		if ( ! next ) {
+			break;
+		}
+
+		carry[ key ] = next.replacement;
+		carry = next.descended;
+	}
+
+	return { [ topPropKey ]: root[ topPropKey ] ?? null };
+}
+
+function cloneDescent( child: Value ): { replacement: Value; descended: Values } | null {
+	if ( ! child ) {
+		return null;
+	}
+
+	if ( isOverridable( child ) ) {
+		const origin = child.value.origin_value;
+
+		if ( ! origin || ! isTransformable( origin ) ) {
+			return null;
+		}
+
+		const descended: Values = { ...( origin.value as Values ) };
+		const replacement: Value = {
+			...child,
+			value: {
+				...child.value,
+				origin_value: { ...origin, value: descended },
+			},
+		};
+
+		return { replacement, descended };
+	}
+
+	if ( isTransformable( child ) ) {
+		const descended: Values = { ...( child.value as Values ) };
+		const replacement: Value = { ...child, value: descended };
+
+		return { replacement, descended };
+	}
+
+	return null;
+}
+
+function isCompatibleSavedValue( saved: Value | null, current: Value ): saved is Value {
+	if ( ! saved ) {
+		return false;
+	}
+
+	return isOverridable( saved ) === isOverridable( current );
+}
+
+function mergeLeafValue( existing: Value, incoming: Value ) {
+	if ( incoming === null ) {
+		return null;
+	}
+
+	if ( incoming && isOverridable( incoming ) ) {
+		return incoming;
+	}
+
+	if ( existing && isOverridable( existing ) && incoming ) {
+		return rewrapOverridableValue( existing, incoming );
+	}
+
+	return incoming;
+}
+
+function handleUnmetCondition( props: {
+	failingDependencies: ( DependencyTerm | Dependency )[];
+	dependency: string;
+	elementValues: Values;
+	defaultValue: Value;
+	elementId: string;
+} ) {
+	const { failingDependencies, dependency, elementValues, defaultValue, elementId } = props;
+	const termWithNewValue = failingDependencies.find(
+		( term ): term is Dependency => 'newValue' in term && !! term.newValue
+	) as Dependency | undefined;
+	const newValue = termWithNewValue?.newValue ?? null;
+	const currentValue =
+		extractValue( dependency.split( '.' ), elementValues, [], { unwrapOverridableLeaf: false } ) ?? defaultValue;
+
+	savePreviousValueToStorage( {
+		path: dependency,
+		elementId,
+		value: currentValue,
+	} );
+
+	return newValue;
+}
+
+function savePreviousValueToStorage( { path, elementId, value }: { path: string; elementId: string; value: unknown } ) {
+	const prefix = `elementor/${ elementId }`;
+	const savedValue = retrievePreviousValueFromStorage( { path, elementId } );
+
+	if ( savedValue ) {
+		return;
+	}
+
+	const key = `${ prefix }:${ path }`;
+
+	setSessionStorageItem( key, value );
+}
+
+function retrievePreviousValueFromStorage< T >( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	return getSessionStorageItem< T >( key ) ?? null;
+}
+
+function removePreviousValueFromStorage( { path, elementId }: { path: string; elementId: string } ) {
+	const prefix = `elementor/${ elementId }`;
+	const key = `${ prefix }:${ path }`;
+
+	removeSessionStorageItem( key );
+}

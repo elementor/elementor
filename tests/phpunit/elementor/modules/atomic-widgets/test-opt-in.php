@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
-use Elementor\Modules\AtomicWidgets\Opt_In;
+use Elementor\Modules\AtomicWidgets\OptIn\Opt_In;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 

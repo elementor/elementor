@@ -5,8 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Admin\Admin_Notices;
 
 class Hints {
 
@@ -22,6 +24,11 @@ class Hints {
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
 	const NOT_HAS_OPTION = 'not_has_option';
+
+	const INSTALL = 'install';
+	const ACTIVATE = 'activate';
+	const CONNECT = 'connect';
+	const CUSTOMIZE = 'customize';
 
 	/**
 	 * Get_notice_types
@@ -72,6 +79,11 @@ class Hints {
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
+			'ally_heading_notice' => [
+				self::DISMISSED => 'ally_heading_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::NOT_HAS_OPTION => 'ea11y_access_token',
+			],
 		];
 		if ( ! $hint_key ) {
 			return $hints;
@@ -99,11 +111,11 @@ class Hints {
 	 * Print or Retrieve the notice template.
 	 *
 	 * @param array $notice
-	 * @param bool $return
+	 * @param bool  $should_return
 	 *
 	 * @return string|void
 	 */
-	public static function get_notice_template( array $notice, bool $return = false ) {
+	public static function get_notice_template( array $notice, bool $should_return = false ) {
 		$default_settings = [
 			'type' => 'info',
 			'icon' => false,
@@ -176,7 +188,7 @@ class Hints {
 			$notice_settings['display']
 		);
 
-		if ( $return ) {
+		if ( $should_return ) {
 			return $notice_template;
 		}
 		echo wp_kses( $notice_template, self::get_notice_allowed_html() );
@@ -333,6 +345,10 @@ class Hints {
 	 * @return bool
 	 */
 	public static function is_plugin_installed( $plugin ): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
@@ -427,5 +443,99 @@ class Hints {
 				'target' => [],
 			],
 		];
+	}
+
+	public static function is_plugin_connected( $option_prefix ): bool {
+		return ! empty( get_option( $option_prefix . '_access_token' ) );
+	}
+
+	public static function is_plugin_connected_to_one_subscription(): bool {
+		return self::is_plugin_connected( 'elementor_one' );
+	}
+
+	private static function get_all_widget_content( $step, $one_subscription = false ) {
+		if ( $one_subscription ) {
+			$steps = [
+				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Web Accessibility, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Web Accessibility. Activate it to place an accessibility widget on your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		} else {
+			$steps = [
+				self::INSTALL => esc_html__( 'Install Web Accessibility to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Activate the Web Accessibility plugin to turn its accessibility features on across your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Web Accessibility plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		}
+		return $steps[ $step ];
+	}
+
+	private static function get_all_widget_action_button( $step ) {
+		$steps = [
+			self::INSTALL => esc_html__( 'Install now', 'elementor' ),
+			self::ACTIVATE => esc_html__( 'Activate now', 'elementor' ),
+			self::CONNECT => esc_html__( 'Connect now', 'elementor' ),
+			self::CUSTOMIZE => esc_html__( 'Customize', 'elementor' ),
+		];
+		return $steps[ $step ];
+	}
+
+	private static function get_all_widget_action_url( $step, $one_subscription = false ) {
+		if ( in_array( $step, [ self::INSTALL, self::ACTIVATE ], true ) ) {
+			$action = ( self::INSTALL === $step ? 'install' : 'activate' );
+			if ( $one_subscription ) {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally-one-' . $action,
+					'source' => 'editor-ally-widget-one-' . $action,
+					'medium' => 'editor-one',
+				];
+			} else {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally',
+					'source' => 'editor-ally-widget',
+					'medium' => 'editor',
+				];
+			}
+			return Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( 'pojo-accessibility' ), $campaign_data );
+		}
+		return self::CONNECT === $step ? admin_url( 'admin.php?page=accessibility-settings' ) : admin_url( 'admin.php?page=accessibility-settings#design' );
+	}
+
+	private static function get_ally_cta_button( $step, $one_subscription = false ) {
+		return [
+			'text' => self::get_all_widget_action_button( $step ),
+			'url' => self::get_all_widget_action_url( $step, $one_subscription ),
+			'classes' => [ 'elementor-button' ],
+		];
+	}
+
+	public static function get_ally_action_data(): array {
+		$plugin_slug = 'pojo-accessibility';
+		$is_installed = self::is_plugin_installed( $plugin_slug );
+		$is_active = self::is_plugin_active( $plugin_slug );
+		$is_connected = self::is_plugin_connected( 'ea11y' );
+		$one_subscription = self::is_plugin_connected_to_one_subscription();
+
+		if ( ! $is_installed ) {
+			$step = self::INSTALL;
+		} elseif ( ! $is_active ) {
+			$step = self::ACTIVATE;
+		} elseif ( ! $is_connected ) {
+			$step = self::CONNECT;
+		} else {
+			$step = self::CUSTOMIZE;
+		}
+
+		$data = [
+			'title' => __( 'Web accessibility', 'elementor' ),
+			'content' => self::get_all_widget_content( $step, $one_subscription ),
+			'action_button' => self::get_ally_cta_button( $step, $one_subscription ),
+		];
+
+		return $data;
 	}
 }

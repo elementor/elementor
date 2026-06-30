@@ -52,6 +52,7 @@ const { useLocation } = require( 'elementor/modules/ai/assets/js/editor/pages/fo
 const usePromptSettings = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' ).default;
 const { IMAGE_RATIO, IMAGE_BACKGROUND_COLOR } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/hooks/use-prompt-settings' );
 const IsolateObject = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/views/isolate-objects/index' ).default;
+const { FEATURE_IDENTIFIER } = require( 'elementor/modules/ai/assets/js/editor/pages/form-media/constants' );
 
 describe( 'IsolateObject Component - Functional Tests', () => {
 	const mockSubmitFn = jest.fn();
@@ -131,6 +132,7 @@ describe( 'IsolateObject Component - Functional Tests', () => {
 				[ IMAGE_RATIO ]: '1:1',
 				[ IMAGE_BACKGROUND_COLOR ]: '#ffffff',
 			},
+			featureIdentifier: FEATURE_IDENTIFIER.ISOLATE_OBJECT,
 		} );
 	} );
 

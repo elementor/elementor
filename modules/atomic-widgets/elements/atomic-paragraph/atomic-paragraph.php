@@ -2,18 +2,22 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,6 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
+
+	const LINK_BASE_STYLE_KEY = 'link-base';
+
+	public static $widget_description = 'Display a paragraph with customizable tag, styles, and link options.';
 
 	public static function get_element_type(): string {
 		return 'e-paragraph';
@@ -43,10 +51,21 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => String_Prop_Type::make()
-				->default( __( 'Type your paragraph here', 'elementor' ) ),
+			'paragraph' => Html_V3_Prop_Type::make()
+				->default( [
+					'content'  => String_Prop_Type::generate( __( 'Type your paragraph here', 'elementor' ) ),
+					'children' => [],
+				] )
+				->description( 'The text content of the paragraph.' )
+				->alias( 'text', 'content' ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'p', 'span' ] )
+				->default( 'p' ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -54,13 +73,42 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
-					Textarea_Control::bind_to( 'paragraph' )
-						->set_label( __( 'Paragraph', 'elementor' ) )
-						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
-
-					Link_Control::bind_to( 'link' ),
+					Inline_Editing_Control::bind_to( 'paragraph' )
+						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+						->set_label( __( 'Paragraph', 'elementor' ) ),
 				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Select_Control::bind_to( 'tag' )
+				->set_options([
+					[
+						'value' => 'p',
+						'label' => 'p',
+					],
+					[
+						'value' => 'span',
+						'label' => 'span',
+					],
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
+			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -76,6 +124,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Style_Variant::make()
 						->add_prop( 'margin', $margin_value )
 				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
+				),
 		];
 	}
 
@@ -83,5 +137,16 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$content = $settings['paragraph'] ?? '';
+
+		if ( empty( $content ) ) {
+			return '';
+		}
+
+		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $content );
 	}
 }

@@ -6,7 +6,7 @@ test( 'renderDataBindings() sanity test', async ( { page, apiRequests }, testInf
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage(),
-		elementId = await editor.addWidget( 'testimonial' ),
+		elementId = await editor.addWidget( { widgetType: 'testimonial' } ),
 		elementHandle = await editor.getElementHandle( elementId ),
 		elementContent = await elementHandle.$( '.elementor-testimonial-image' );
 

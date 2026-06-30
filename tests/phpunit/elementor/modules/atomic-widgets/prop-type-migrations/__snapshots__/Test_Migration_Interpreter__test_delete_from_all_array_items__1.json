@@ -1,0 +1,15 @@
+{
+    "settings": {
+        "links": [
+            {
+                "url": "a.com"
+            },
+            {
+                "url": "b.com"
+            },
+            {
+                "url": "c.com"
+            }
+        ]
+    }
+}

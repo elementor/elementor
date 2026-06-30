@@ -48,6 +48,7 @@ export default class Kit extends BaseModel {
 			documents: kit.documents
 				? kit.documents.map( ( document ) => Document.createFromResponse( document ) )
 				: [],
+			status: kit.status || 'active',
 		} );
 	}
 

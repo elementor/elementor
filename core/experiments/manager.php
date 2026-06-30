@@ -121,7 +121,9 @@ class Manager extends Base_Object {
 		$installs_history = Upgrade_Manager::get_installs_history();
 
 		if ( empty( $installs_history ) ) {
-			return false;
+			// Fresh installation: upgrade manager hasn't written history yet on this first request.
+			// Use the current plugin version as the effective first-install version.
+			return version_compare( ELEMENTOR_VERSION, $version, '>=' );
 		}
 
 		$cleaned_version = preg_replace( '/-(beta|cloud|dev)\d*$/', '', key( $installs_history ) );
@@ -341,6 +343,7 @@ class Manager extends Base_Object {
 			'name' => 'container',
 			'title' => esc_html__( 'Container', 'elementor' ),
 			'description' => sprintf(
+				/* translators: 1: Link opening tag, 2: Link closing tag, 3: Link opening tag, 4: Link closing tag, 5: Link opening tag, 6: Link closing tag */
 				esc_html__( 'Create advanced layouts and responsive designs with %1$sFlexbox%2$s and %3$sGrid%4$s container elements. Give it a try using the %5$sContainer playground%6$s.', 'elementor' ),
 				'<a target="_blank" href="https://go.elementor.com/wp-dash-flex-container/">',
 				'</a>',
@@ -369,18 +372,21 @@ class Manager extends Base_Object {
 			'title' => esc_html__( 'Optimized Markup', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_BETA,
+			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.30.0',
+			],
 		] );
 
 		$this->add_feature( [
-			'name' => 'e_local_google_fonts',
-			'title' => esc_html__( 'Load Google Fonts locally', 'elementor' ),
-			'description' => esc_html__( "To improve page load performance and user privacy, replace Google Fonts CDN links with self-hosted font files. This approach downloads and serves font files directly from your server, eliminating external requests to Google's servers.", 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'generator_tag' => true,
+			'name' => 'e_panel_promotions',
+			'title' => esc_html__( 'Panel Promotions', 'elementor' ),
+			'description' => esc_html__( 'Enable experimental rendering for targeted promotions within the elements panels.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_DEV,
 			'default' => self::STATE_ACTIVE,
+			'type' => self::TYPE_HIDDEN,
 		] );
 	}
 
@@ -658,7 +664,10 @@ class Manager extends Base_Object {
 			<div class="<?php echo $indicator_classes; ?>" data-tooltip="<?php echo $indicator_tooltip; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"></div>
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
 			<?php foreach ( $feature['tags'] as $tag ) { ?>
-				<span class="e-experiment__title__tag e-experiment__title__tag__<?php echo $tag['type']; ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+				<?php
+				$tag_classes = 'e-experiment__title__tag e-experiment__title__tag__' . $tag['type'] . ' e-editor-one';
+				?>
+				<span class="<?php echo esc_attr( $tag_classes ); ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php } ?>
 			<?php if ( $feature['deprecated'] ) { ?>
 				<span class="e-experiment__title__tag e-experiment__title__tag__deprecated"><?php echo esc_html__( 'Deprecated', 'elementor' ); ?></span>
@@ -731,8 +740,6 @@ class Manager extends Base_Object {
 	 * @param array  $old_feature_data
 	 * @param string $new_state
 	 * @param string $old_state
-	 *
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function on_feature_state_change( array $old_feature_data, $new_state, $old_state ) {
 		$new_feature_data = $this->get_features( $old_feature_data['name'] );
@@ -751,7 +758,7 @@ class Manager extends Base_Object {
 	}
 
 	/**
-	 * @throws Dependency_Exception If the feature dependency is not available or not active.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not available or not active.
 	 */
 	private function validate_dependency( array $feature, $new_state ) {
 		$rollback = function ( $feature_option_key, $state ) {
@@ -941,7 +948,7 @@ class Manager extends Base_Object {
 	 * @param array $experimental_data
 	 * @return array
 	 *
-	 * @throws Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
+	 * @throws Exceptions\Dependency_Exception If the feature dependency is not initialized or depends on a hidden experiment.
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {

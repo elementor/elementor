@@ -1,8 +1,16 @@
-#eps-app-header-btn-apply,
 #eps-app-header-btn-promotion,
 #eps-app-header-btn-connect {
 	margin-inline-start: spacing(10);
 	margin-inline-end: spacing(10);
+}
+
+#eps-app-header-btn-apply {
+	margin-inline-start: spacing(10);
+}
+
+#eps-app-header-btn-download {
+	margin-inline-end: spacing(16);
+	margin-inline-start: spacing(16);
 }
 
 .e-kit-library__apply-button {

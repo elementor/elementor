@@ -1,0 +1,19 @@
+{
+  "data": {
+    "e-gv-123": {
+      "type": "color",
+      "label": "Active Color",
+      "value": "#ff5733",
+      "order": 1
+    },
+    "e-gv-456": {
+      "type": "color",
+      "label": "Deleted Color",
+      "value": "#000000",
+      "order": 2,
+      "deleted_at": "2024-01-01 00:00:00"
+    }
+  },
+  "watermark": 5,
+  "version": 1
+}

@@ -1,13 +1,10 @@
-import { useLocation } from '@reach/router';
 import Kit from '../models/kit';
 import KitListItem from './kit-list-item';
-import NewPageKitListItem from '../../../../onboarding/assets/js/components/new-page-kit-list-item';
+import NewPageKitListItem from './new-page-kit-list-item';
 import { CssGrid } from '@elementor/app-ui';
 
 export default function KitList( props ) {
-	const location = useLocation();
-
-	const referrer = new URLSearchParams( location.pathname.split( '?' )?.[ 1 ] ).get( 'referrer' );
+	const referrer = new URLSearchParams( window.location.search ).get( 'referrer' );
 
 	return (
 		<CssGrid spacing={ 24 } colMinWidth={ 290 }>

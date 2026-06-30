@@ -46,7 +46,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Modal can be opened and closed', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -62,7 +62,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noPlanMock } );
 
@@ -76,7 +76,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Shows a message when there are no history items', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -90,7 +90,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders items from different periods correctly', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: differentPeriodsDataMock } );
 
@@ -106,7 +106,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders upgrade ad if a user has less than 90 items limit', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: thirtyDaysLimitDataMock } );
 
@@ -120,7 +120,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Renders a fallback icon for an unknown action', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: unknownActionDataMock } );
 
@@ -134,7 +134,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Removes item', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -165,7 +165,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Text - History items list a11y', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -186,7 +186,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image - History items list a11y', async () => {
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,
@@ -213,7 +213,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -231,13 +231,13 @@ test.describe( 'AI @ai', () => {
 
 			await expect( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			await expect( input ).toHaveValue( 'Test prompt' );
 
 			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Edit button edits result', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -255,7 +255,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( textarea ).toBeVisible();
 
-			expect( await textarea.inputValue() ).toBe( 'Test result' );
+			await expect( textarea ).toHaveValue( 'Test result' );
 
 			await closeAIDialog( page );
 		} );
@@ -267,7 +267,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'html' );
+			await editor.addWidget( { widgetType: 'html' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -285,7 +285,7 @@ test.describe( 'AI @ai', () => {
 
 			await expect( input ).toBeVisible();
 
-			expect( await input.inputValue() ).toBe( 'Test prompt' );
+			await expect( input ).toHaveValue( 'Test prompt' );
 		} );
 	} );
 
@@ -297,7 +297,7 @@ test.describe( 'AI @ai', () => {
 		await test.step( 'Restore button restores prompt', async () => {
 			const { promptHistory, image } = EditorSelectors.ai;
 
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,
@@ -316,28 +316,28 @@ test.describe( 'AI @ai', () => {
 
 			await expect( promptTextarea ).toBeVisible();
 
-			expect( await promptTextarea.inputValue() ).toBe( 'Test prompt' );
+			await expect( promptTextarea ).toHaveValue( 'Test prompt' );
 
 			// Check image type
 			const imageTypeInput = page.locator( image.typeInput ).first();
 
 			await expect( imageTypeInput ).toBeVisible();
 
-			expect( await imageTypeInput.inputValue() ).toBe( 'photographic' );
+			await expect( imageTypeInput ).toHaveValue( 'photographic' );
 
 			// Check image style
 			const imageStyleInput = page.locator( image.styleInput ).first();
 
 			await expect( imageStyleInput ).toBeVisible();
 
-			expect( await imageStyleInput.inputValue() ).toBe( 'portrait' );
+			await expect( imageStyleInput ).toHaveValue( 'portrait' );
 
 			// Check image ratio
 			const imageRatioInput = page.locator( image.aspectRationInput ).first();
 
 			await expect( imageRatioInput ).toBeVisible();
 
-			expect( await imageRatioInput.inputValue() ).toBe( '16:9' );
+			await expect( imageRatioInput ).toHaveValue( '16:9' );
 
 			// Check restored images
 			const images = page.locator( image.generatedImage );
@@ -346,7 +346,7 @@ test.describe( 'AI @ai', () => {
 
 			expect( await images.count() ).toEqual( 2 );
 
-			expect( await images.first().getAttribute( 'src' ) ).toEqual( 'https://example.com/img1.jpg' );
+			await expect( images.first() ).toHaveAttribute( 'src', 'https://example.com/img1.jpg' );
 		} );
 	} );
 } );

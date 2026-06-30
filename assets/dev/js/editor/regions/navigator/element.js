@@ -107,13 +107,79 @@ export default class extends Marionette.CompositeView {
 		return helpers;
 	}
 
+	isProPromotion() {
+		const elType = this.model.get( 'elType' );
+		return !! elementor.widgetsCache?.[ elType ]?.meta?.is_pro_promotion;
+	}
+
+	shouldShowChildrenInStructure() {
+		if ( this.isProPromotion() ) {
+			return false;
+		}
+
+		return elementor.hooks.applyFilters( 'navigator/element/show-children', true, this.model );
+	}
+
 	initialize() {
-		this.collection = this.model.get( 'elements' );
+		this.collection = this.isProPromotion()
+			? new Backbone.Collection()
+			: this.model.get( 'elements' );
 
 		this.childViewContainer = '.elementor-navigator__elements';
 
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
+		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
+		this.listenTo( this.model, 'title_external_change', this.onTitleExternalChange );
+		this.listenTo( this.model, 'navigator:add', this.onNavigatorAdd );
+
+		this._onRefreshChildrenRequest = this._onRefreshChildrenRequest.bind( this );
+		window.addEventListener( 'elementor/navigator/refresh-children', this._onRefreshChildrenRequest );
+	}
+
+	onDestroy() {
+		window.removeEventListener( 'elementor/navigator/refresh-children', this._onRefreshChildrenRequest );
+	}
+
+	_onRefreshChildrenRequest( event ) {
+		const targetId = event?.detail?.elementId;
+
+		if ( targetId && this.model.get( 'id' ) !== targetId ) {
+			return;
+		}
+
+		this.render();
+		this.syncNavigatorStructureState();
+		this.updateSelection();
+	}
+
+	addChild( child, ChildView, index ) {
+		if ( ! this.shouldShowChildrenInStructure() ) {
+			return;
+		}
+
+		return Marionette.CompositeView.prototype.addChild.call( this, child, ChildView, index );
+	}
+
+	onNavigatorAdd( childModel, options ) {
+		this._onCollectionAdd( childModel, this.collection, options || {} );
+	}
+
+	onTitleExternalChange() {
+		this.ui.title.text( this.model.getTitle() );
+	}
+
+	onModelEditorSettingsChange( elementModel, editorSettings ) {
+		if ( undefined !== elementModel.changed?.editor_settings?.title ) {
+			this.ui.title.text( editorSettings.title );
+		}
+
+		window.dispatchEvent( new CustomEvent( 'elementor/element/update_editor_settings', {
+			detail: {
+				element: elementModel,
+				editorSettings,
+			},
+		} ) );
 	}
 
 	getIndent() {
@@ -129,6 +195,10 @@ export default class extends Marionette.CompositeView {
 	}
 
 	hasChildren() {
+		if ( ! this.shouldShowChildrenInStructure() ) {
+			return false;
+		}
+
 		return this.model.get( 'elements' )?.length || 'widget' !== this.model.get( 'elType' );
 	}
 
@@ -155,7 +225,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	toggleHiddenClass() {
-		this.$el.toggleClass( 'elementor-navigator__element--hidden', !! this.model.get( 'hidden' ) );
+		this.$el.toggleClass( 'elementor-navigator__element--hidden', this.model.getVisibility() );
 	}
 
 	recursiveChildInvoke( method, ...restArgs ) {
@@ -248,7 +318,7 @@ export default class extends Marionette.CompositeView {
 			settingsModel.unset( '_title', { silent: true } );
 		}
 
-		if ( this.isAtomicWidget() ) {
+		if ( elementor.helpers.isAtomicWidget( this.model ) ) {
 			const prevEditorSettings = this.model.get( 'editor_settings' );
 
 			this.model.set( 'editor_settings', { ...prevEditorSettings, title: newTitle } );
@@ -349,12 +419,15 @@ export default class extends Marionette.CompositeView {
 		this.ui.item.css( 'padding-inline-start', this.getIndent() + 'px' );
 
 		this.toggleHiddenClass();
-
 		this.renderIndicators();
+		this.syncNavigatorStructureState();
 	}
 
 	onModelChange() {
-		if ( undefined !== this.model.changed.hidden ) {
+		if (
+			undefined !== this.model.changed.hidden ||
+			undefined !== this.model.changed.editor_settings?.is_hidden
+		) {
 			this.toggleHiddenClass();
 		}
 	}
@@ -381,6 +454,14 @@ export default class extends Marionette.CompositeView {
 		} );
 	}
 
+	syncNavigatorStructureState() {
+		if ( this.isNavigatorContainer() ) {
+			return;
+		}
+
+		this.$el.toggleClass( 'elementor-navigator__element--has-children', !! this.hasChildren() );
+	}
+
 	onItemPress( event ) {
 		const ENTER_KEY = 13,
 			SPACE_KEY = 32;
@@ -396,6 +477,13 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onItemClick( event ) {
+		window.dispatchEvent( new CustomEvent( 'elementor/navigator/item/click', {
+			detail: {
+				id: this.model.get( 'id' ),
+				type: this.model.get( 'elType' ),
+			},
+		} ) );
+
 		this.model.trigger( 'request:edit', {
 			append: event.ctrlKey || event.metaKey,
 			scrollIntoView: true,
@@ -495,7 +583,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onContextMenu( event ) {
-		this.model.trigger( 'request:contextmenu', event );
+		this.model.trigger( 'request:contextmenu', event, { location: elementorCommon.eventsManager.config.locations.structurePanel } );
 	}
 
 	onEditRequest() {
@@ -517,11 +605,5 @@ export default class extends Marionette.CompositeView {
 
 			editor.render();
 		} );
-	}
-
-	isAtomicWidget() {
-		const elementType = 'widget' === this.model.get( 'elType' ) ? this.model.get( 'widgetType' ) : this.model.get( 'elType' );
-
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	}
 }

@@ -1,0 +1,152 @@
+name: Create Revert PR
+description: Creates a revert PR when tests fail on push events to main or version branches
+
+inputs:
+  GITHUB_TOKEN:
+    required: true
+    description: 'GitHub token for API access'
+  COMMIT_SHA:
+    required: true
+    description: 'The commit SHA that caused the test failure'
+  BRANCH_NAME:
+    required: true
+    description: 'The branch where the failing commit was pushed'
+  WORKFLOW_NAME:
+    required: true
+    description: 'The name of the workflow that failed (e.g., "Playwright")'
+  WORKFLOW_RUN_URL:
+    required: true
+    description: 'URL to the failed workflow run'
+  ALLOW_WORKFLOW_CHANGES:
+    required: false
+    description: 'Allow creating revert PRs for commits that modify workflow files'
+    default: 'false'
+
+outputs:
+  pr_number:
+    description: 'The number of the created revert PR'
+    value: ${{ steps.create_revert_pr.outputs.pr_number }}
+  pr_url:
+    description: 'The URL of the created revert PR'
+    value: ${{ steps.create_revert_pr.outputs.pr_url }}
+  status:
+    description: 'Status of the revert PR creation (created, exists, skipped, error)'
+    value: ${{ steps.create_revert_pr.outputs.status }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Create revert PR
+      id: create_revert_pr
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
+      run: |
+        set -e
+        
+        handle_error() {
+          echo "::error::Failed to create revert PR: $1"
+          echo "status=error" >> $GITHUB_OUTPUT
+          echo "pr_number=" >> $GITHUB_OUTPUT
+          echo "pr_url=" >> $GITHUB_OUTPUT
+          exit 1
+        }
+        
+        trap 'handle_error "Unexpected error occurred"' ERR
+        
+        # Get commit information
+        COMMIT_SHA="${{ inputs.COMMIT_SHA }}"
+        PARENT_SHA=$(git rev-parse "${COMMIT_SHA}^")
+        COMMIT_MESSAGE=$(git log --format=%B -n 1 "${COMMIT_SHA}")
+        COMMIT_AUTHOR=$(git log --format='%an' -n 1 "${COMMIT_SHA}")
+        COMMIT_AUTHOR_EMAIL=$(git log --format='%ae' -n 1 "${COMMIT_SHA}")
+        BRANCH_NAME="${{ inputs.BRANCH_NAME }}"
+        WORKFLOW_NAME="${{ inputs.WORKFLOW_NAME }}"
+        
+        # Check if the commit contains workflow changes
+        WORKFLOW_CHANGES=$(git diff --name-only "${PARENT_SHA}" "${COMMIT_SHA}" | grep "^\.github/workflows/" || echo "")
+        
+        if [ -n "$WORKFLOW_CHANGES" ]; then
+          if [ "${{ inputs.ALLOW_WORKFLOW_CHANGES }}" != "true" ]; then
+            echo "::warning::Cannot create revert PR: Commit contains workflow changes that require 'workflows' permission"
+            echo "::warning::Workflow files changed: $WORKFLOW_CHANGES"
+            echo "::warning::Please create revert PR manually or grant 'workflows' permission to GitHub Actions"
+            echo "::warning::Or set ALLOW_WORKFLOW_CHANGES to 'true' to bypass this check"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "pr_number=" >> $GITHUB_OUTPUT
+            echo "pr_url=" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "::notice::Commit contains workflow changes: $WORKFLOW_CHANGES"
+            echo "::notice::Proceeding with revert PR creation (ALLOW_WORKFLOW_CHANGES=true)"
+          fi
+        fi
+        
+        # Create revert branch name
+        REVERT_BRANCH="revert-${COMMIT_SHA:0:7}-$(date +%s)"
+        
+        # Check if a revert PR already exists for this commit
+        EXISTING_PR=$(gh pr list --state open --search "revert ${COMMIT_SHA:0:7}" | head -n 1 | awk '{print $1}' || echo "")
+        
+        if [ -n "$EXISTING_PR" ]; then
+          echo "Revert PR already exists: #$EXISTING_PR"
+          echo "status=exists" >> $GITHUB_OUTPUT
+          echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+          echo "pr_url=https://github.com/${{ github.repository }}/pull/$EXISTING_PR" >> $GITHUB_OUTPUT
+          exit 0
+        fi
+        
+        # Configure git to use original commit author (helps with CLA compliance)
+        echo "Using original commit author for revert: ${COMMIT_AUTHOR} <${COMMIT_AUTHOR_EMAIL}>"
+        git config user.name "${COMMIT_AUTHOR}"
+        git config user.email "${COMMIT_AUTHOR_EMAIL}"
+        
+        # Create and checkout revert branch from the current branch
+        git checkout -b "${REVERT_BRANCH}" "${BRANCH_NAME}"
+        
+        # Create the actual revert commit
+        git revert --no-edit "${COMMIT_SHA}"
+        
+        # Push the revert branch
+        git push origin "${REVERT_BRANCH}"
+        
+        # Create PR with revert
+        PR_TITLE="Revert \"$(echo "${COMMIT_MESSAGE}" | head -n1)\""
+        PR_BODY="This PR automatically reverts commit ${COMMIT_SHA} due to ${WORKFLOW_NAME} test failures.
+
+        **Reverted commit:** ${COMMIT_SHA}
+        **Original author:** ${COMMIT_AUTHOR}
+        **Branch:** ${BRANCH_NAME}
+        **Failed workflow:** ${{ inputs.WORKFLOW_RUN_URL }}
+
+        **Original commit message:**
+        \`\`\`
+        ${COMMIT_MESSAGE}
+        \`\`\`
+
+        This revert commit was created automatically using \`git revert\` because the ${WORKFLOW_NAME} tests failed after the original commit was pushed to ${BRANCH_NAME}.
+        
+        The 'run-tests' label has been added to trigger tests on this revert PR."
+        
+        # Create the PR
+        PR_URL=$(gh pr create \
+          --title "${PR_TITLE}" \
+          --body "${PR_BODY}" \
+          --base "${BRANCH_NAME}" \
+          --head "${REVERT_BRANCH}")
+        
+        # Extract PR number from URL
+        PR_NUMBER=$(echo "${PR_URL}" | grep -o '[0-9]*$')
+        
+        echo "Created revert PR #${PR_NUMBER}"
+        
+        # Add the 'run-tests' label
+        gh pr edit "${PR_NUMBER}" --add-label "run-tests"
+        
+        echo "Added 'run-tests' label to PR #${PR_NUMBER}"
+        echo "::notice::Created revert PR #${PR_NUMBER} for commit ${COMMIT_SHA}"
+        
+        # Set outputs
+        echo "status=created" >> $GITHUB_OUTPUT
+        echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+        echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT 

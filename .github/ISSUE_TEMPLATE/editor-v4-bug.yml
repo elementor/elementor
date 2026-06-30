@@ -1,0 +1,147 @@
+name: "🐛 Report a Confirmed Bug in Editor V4"
+description: "Report confirmed bugs in Editor V4's features and help us improve the experience before the final release."
+labels: ["status/awaiting_triage", "product/editor-v4"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              # 🐛 Report a Confirmed Bug in Editor V4
+              <br>
+
+              👋 **Welcome, and thank you for helping shape the future of Elementor!**
+
+              We're excited to introduce the **Editor V4** - a refreshed foundation for the Elementor Editor that improves performance, responsiveness, and workflow experience.
+
+              Your feedback is incredibly valuable. Use this form to report bugs related to Editor V4's features. Every report helps us create a better product before its full release.
+              <br>
+
+              ## 🧭 Guidelines
+
+              Before getting started, please take a moment to review our **[Contribution Guidelines](https://elemn.to/gh-contributing)** and **[Code of Conduct](https://elemn.to/gh-code-of-conduct)**. These help us keep this space organized, respectful, and inclusive for everyone.
+              <br>
+
+              > [!IMPORTANT]
+              > ### 🐛 This form is for reporting <ins>confirmed bugs in Editor V4</ins> features only.
+              > **We welcome your input, but please only use this form if you've already investigated and confirmed that the issue is caused specifically by Editor V4 features.**
+              > 
+              > ℹ️ Keep in mind **the Editor V4 is still a work in progress** - it may not include all existing features from Elementor V3, is subject to change or instability, and should not be used on production websites.
+              >
+              > 🧪 For discussing and sharing feedback about the **Editor V4**, please go to the dedicated Discussion Category instead: **[Discuss the Editor V4](https://elemn.to/editor-v4-feedback)**
+              >
+              > ⚠️ _**Issues that are unrelated to Editor V4 or missing required information may be closed without further action.**_
+
+              <details>
+              <summary>
+              <h3>📋 Requirements</h3> <em>(click to expand)</em>
+              
+              For a quick review and efficient resolution, please ensure your report meets the following requirements.
+              </summary>
+
+              - *️⃣ **All fields in this form are required** - no exceptions. <br>Incomplete issues will be closed without further action.
+
+              - 🔍 **Search for similar issues before opening a new one.** <br>Avoid duplicates and save time by using the **[editor-v4](https://elemn.to/editor-v4-issues)** label to narrow your search.
+
+              - 🗑️ **Clear all relevant cache layers.** <br>Confirm the issue is not being caused by old cached data. <br>Please clear server cache, site-level cache (including plugin-based cache), CDN cache, and your browser cache - in that order to avoid possible cache conflicts.
+
+              - 🕵️ **Test with only Elementor, Elementor Pro, and the Hello Theme active.** <br>Temporarily disable all other plugins and themes. This step helps confirm that the issue is not being caused by a 3rd-party conflict. <br>👉 Reference: **[Troubleshooting the Editor](https://elemn.to/help-troubleshooting)**
+
+              - 💾 **Copy and paste your complete Elementor System Info.** <br>This is not optional. It helps us better reproduce and understand your issue. Reports without the full Elementor System Info will be closed. <br>👉 Learn how to copy it here: **[Share system information with Elementor](https://elemn.to/help-system-info)**
+
+              - 🪪 **If you're a 3rd-party developer**, please introduce yourself. <br>Include your name, company, product name, and a way for us to contact you (such as an email address) if needed. <br>This helps us collaborate more effectively.
+
+              - ☝️ **Only one issue per report.** <br>Please don't bundle multiple bugs in a single submission. This helps us track, reproduce, and fix each issue accurately.
+              </details>
+              <details>
+              <summary>
+              <h3>🎯 Scope</h3> <em>(click to expand)</em>
+              
+              To keep this repository focused and efficient, there are some types of reports that we are unable to handle here. These issues will be **closed without further action**.
+              </summary>
+
+              - 🐞 **Issues unrelated to bugs in the Editor V4.** <br>If you're here to report issues with existing features in Elementor V3, please **[use our general 🐞 Bug Report form instead](https://elemn.to/gh-new-bug-report)**.
+
+              - 🛟 **Requests for personal support** <br>This includes help with setup, troubleshooting, or usage guidance. For that, please contact one of our **[official Support Channels](https://elemn.to/support-ticket)**.
+
+              - 🧩 **Conflicts with 3rd-party plugins, themes, or services.** <br>We're only able to address issues related to **Editor V4** features enable. If the problem occurs when using a plugin, theme, or integration that is not officially supported by Elementor, please reach out to the 3rd-party provider for assistance.
+
+              - 🚀 **Feature requests or suggestions.** <br>We love your ideas! But this form is only for confirmed bugs. This includes missing but not supported or intended features. Please use the dedicated Feature Request form instead. <br>See: **[Request a Feature](https://elemn.to/gh-new-feature-request)**
+
+              - 📚 **Questions about custom code or extending Elementor.** <br>We cannot provide assistance with writing or debugging custom code. If your goal is to extend Elementor, we recommend referring to our **[Developers Documentation](https://elemn.to/dev-docs)**.
+
+              - 🛡️ **Security and vulnerability disclosures.** <br>We take security seriously. Please use our managed **[Bug Bounty Programs](https://elemn.to/bug-bounty)** to responsibly report security issues.
+
+              - ☹️ **Complaints or offensive content.** <br>While we are open to feedback, this is not the appropriate place to submit complaints about Elementor's products or services. We also do not tolerate offensive, discriminatory, or hostile remarks. Please keep discussions respectful as outlined in our **[Code of Conduct](https://elemn.to/gh-code-of-conduct)**.
+
+              - ❌ **Incomplete, invalid, or out-of-scope reports.** <br>Issues without clear steps to reproduce, missing required fields, or unrelated to **Editor V4** will be closed without further action.
+              </details>
+              
+              ## 📝 Instructions
+              
+              To help us understand and resolve your issue, please follow these best practices:
+
+              - ✒️ **Use a clear and descriptive title.** <br>A good title helps everyone quickly understand what the issue is about. Try to summarize the problem in a few words.
+
+              - 💬 **Describe the issue in detail.** <br>Include as much context as you can. What happened? When did it start? What page or feature does it affect? <br>Feel free to attach screenshots or screen recordings - just drag and drop them into the text field when filling out the form.
+
+              - 👣 **List all steps to reproduce the issue.** <br>Pease be specific! <br>We need to follow the exact steps you took to reproduce the issue - ideally on a clean WordPress installation. <br>Reports without clear reproduction steps may be closed, as we cannot fix what we cannot replicate.
+
+              - 🧠 **Explain what you expected to happen.** <br>Help us understand what you believe the correct or intended behavior should be.
+    - type: textarea
+      id: description
+      validations:
+          required: true
+      attributes:
+          label: "Description"
+          description: "Describe the issue in detail and include as much context as possible. <br><br>Feel free to attach screenshots or screen recordings - just drag and drop them into the field below."
+          placeholder: "Please be thorough. What happened? When did it start? What page or feature does it affect? \n\nThe more information you share, the quicker we can find a solution! \n\nDrag and drop your attachments here:"
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+    - type: textarea
+      id: steps_to_reproduce
+      validations:
+          required: true
+      attributes:
+          label: "Steps to reproduce"
+          description: "List all steps to reproduce the issue. <strong>Be specific!</strong> <br><br>We need to follow the exact steps you took to reproduce the issue - ideally on a clean WordPress installation."
+          placeholder: "Example: \n1. In the WordPress Dashboard, go to... \n2. Create a Template... \n3. Drag & Drop the element... \n4. ..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+    - type: textarea
+      id: expected_behavior
+      validations:
+          required: true
+      attributes:
+          label: "Expected behavior"
+          description: "Explain what you expected to happen. <br><br>Help us understand what you believe the correct or intended behavior should be. <br>This way we can identify the root of the issue quickly and find a solution faster."
+          placeholder: "Examples: \nAccording to the Documentation in the Help Center I expected... \nWhen I apply a style to an element I expect it to... \nWhen I visit a page in the fontend, I expect..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+    - type: textarea
+      id: system_info
+      validations:
+          required: true
+      attributes:
+          label: "Elementor System Info"
+          description: "<strong>⚠️ This field is required and is not optional.</strong> <br><br>Redact or remove sensitive information (like admin email, or root paths) if necessary. <br>Keep other details, as these are vital for understanding your problem and recreating it correctly. <br><br>To learn how to copy and paste the full report visit https://elemn.to/help-system-info."
+          placeholder: "== Server Environment == \n== WordPress Environment == \n== Theme == \n== User == \n== Active Plugins == \n== Elements Usage == \n== Settings == \n== Features == \n== Integrations == \n== Elementor Experiments == \n== Log == \n== Elementor - Compatibility Tag == \n== Elementor Pro - Compatibility Tag =="
+          render: txt
+    - type: markdown
+      attributes:
+          value: |
+              <br>
+    - type: checkboxes
+      id: final_agreement
+      attributes:
+          label: "Agreement"
+          description: "By filling out this form, you confirm that you have read and followed all the guidelines, requirements, scope, and instructions outlined above, and you agree your issue may be closed without further action if it doesn't meet them."
+          options:
+              - label: "I confirm I have read and followed all the guidelines and instructions outlined in the Editor V4 Bug Report form."
+                required: true
+              - label: "I agree that my issue may be closed without further action if it doesn't meet all the requirements outlined in the Editor V4 Bug Report form."
+                required: true

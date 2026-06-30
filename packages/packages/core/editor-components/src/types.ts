@@ -1,0 +1,102 @@
+import { type RenderContext } from '@elementor/editor-canvas';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+
+export type ComponentFormValues = {
+	componentName: string;
+};
+
+export type ComponentId = number;
+
+export type Component = PublishedComponent | UnpublishedComponent;
+
+export type PublishedComponent = BaseComponent & {
+	id: number;
+	isArchived?: boolean;
+};
+
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
+};
+
+export type UnpublishedComponent = BaseComponent & {
+	elements: V1ElementData[];
+};
+
+export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
+
+export type OverridableProp = {
+	overrideKey: string;
+	label: string;
+	elementId: string;
+	propKey: string;
+	elType: string;
+	widgetType: string;
+	originValue: PropValue;
+	groupId: string;
+	originPropFields?: OriginPropFields;
+};
+
+export type OverridablePropsGroup = {
+	id: string;
+	label: string;
+	props: string[];
+};
+
+export type OverridableProps = {
+	props: Record< string, OverridableProp >;
+	groups: {
+		items: Record< string, OverridablePropsGroup >;
+		order: string[];
+	};
+};
+
+type BaseComponent = {
+	uid: string;
+	name: string;
+	overridableProps?: OverridableProps;
+};
+
+export type DocumentStatus = 'publish' | 'draft';
+export type DocumentSaveStatus = DocumentStatus | 'autosave';
+
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
+export type ExtendedWindow = Window & {
+	elementorCommon: Record< string, unknown > & {
+		eventsManager: {
+			config: {
+				locations: Record< string, string | Record< string, string > >;
+				secondaryLocations: Record< string, string >;
+				triggers: Record< string, string >;
+			};
+		};
+		storage: ElementorStorage;
+	};
+	elementor?: {
+		getContainerByKeyValue?: ( args: {
+			key: string;
+			value: string;
+			parent?: V1Element[ 'view' ];
+		} ) => V1Element | null;
+	};
+};
+
+export type ComponentOverridable = {
+	override_key: string;
+	origin_value: TransformablePropValue< string >;
+};
+
+export type ComponentRenderContext = RenderContext< {
+	overrides?: Record< string, unknown >;
+} >;
+
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
+};

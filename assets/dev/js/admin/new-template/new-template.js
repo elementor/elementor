@@ -5,7 +5,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				addButton: '.page-title-action:first, #elementor-template-library-add-new',
+				addButton: 'a.page-title-action[href*="post-new.php?post_type=elementor_library"], #elementor-template-library-add-new',
 			},
 		};
 	},
@@ -26,7 +26,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 
 	showModalByHash() {
 		if ( '#add_new' === location.hash ) {
-			this.layout.showModal();
+			this.layout?.showModal();
 
 			location.hash = '';
 		}
@@ -43,7 +43,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	onAddButtonClick( event ) {
 		event.preventDefault();
 
-		this.layout.showModal();
+		this.layout?.showModal();
 	},
 } );
 

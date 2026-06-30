@@ -3,9 +3,12 @@ const TemplateLibraryTemplateRemoteView = require( 'elementor-templates/views/te
 const TemplateLibraryTemplateCloudView = require( 'elementor-templates/views/template/cloud' );
 
 import Select2 from 'elementor-editor-utils/select2.js';
+import { rovingTabindex } from 'elementor-editor-utils/keyboard-nav';
 import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
@@ -28,13 +31,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
-		selectSourceFilter: '.elementor-template-library-filter-select-source',
+		sourceFilterRadiogroup: '.elementor-template-library-filter-select-source',
+		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
+		addNewFolderDivider: '.elementor-template-library-filter-toolbar-side-actions .divider',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
-		bulkSelectionItemCheckbox: '.bulk-selection-item-checkbox',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
-		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
+		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',
@@ -44,7 +48,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
+		quotaStatus: '#elementor-template-library-quota-status',
 		navigationContainer: '#elementor-template-library-navigation-container',
+		sourceOptionBadges: '.source-option-badge.variant-b-only',
+		cloudBadge: '.source-option-badge.cloud-badge',
+		siteBadge: '.source-option-badge.site-badge',
+		sortStatus: '#elementor-template-library-sort-status',
+		loadStatus: '#elementor-template-library-load-status',
 	},
 
 	events: {
@@ -52,11 +63,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.selectFilter': 'onSelectFilterChange',
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
-		'change @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'keydown @ui.selectSourceFilter': 'onSelectSourceFilterKeyDown',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
-		'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 		'change @ui.bulkSelectAllCheckbox': 'onBulkSelectAllCheckbox',
 		'click @ui.clearBulkSelections': 'onClearBulkSelections',
 		'mouseenter @ui.bulkMove': 'onHoverBulkAction',
@@ -64,6 +75,11 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.bulkMove': 'onClickBulkMove',
 		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
 		'click @ui.bulkCopy': 'onClickBulkCopy',
+		'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
+		'mouseenter @ui.cloudBadge': 'showCloudBadgeTooltip',
+		'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip',
+		'mouseleave @ui.cloudBadge': 'hideCloudBadgeTooltip',
+		'mouseleave @ui.siteBadge': 'hideSiteBadgeTooltip',
 	},
 
 	className: 'no-bulk-selections',
@@ -93,7 +109,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.html( sprintf( message, quotaUsage ) );
 		this.ui.quotaWarning.show();
 	},
 
@@ -104,7 +120,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage?.toLocaleString() }/${ quota?.threshold?.toLocaleString() }` );
 
 		this.ui.quotaWarning.hide();
 
@@ -115,6 +131,23 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaWarning( quotaState, value );
 
 		this.setQuotaBarStyles( quotaState );
+
+		if ( this.ui.quota.length ) {
+			this.ui.quota.attr( {
+				'aria-valuenow': value,
+			} );
+		}
+
+		if ( quota && this.ui.quotaStatus.length ) {
+			// Translators: %1$s: current usage number, %2$s: threshold number
+			const statusText = sprintf(
+				// Translators: %1$s: current usage number, %2$s: threshold number
+				__( '%1$s of %2$s templates used', 'elementor' ),
+				quota.currentUsage.toLocaleString(),
+				quota.threshold.toLocaleString(),
+			);
+			this.ui.quotaStatus.text( statusText );
+		}
 	},
 
 	resolveQuotaState( value ) {
@@ -140,18 +173,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} else {
 			document.querySelectorAll( '.bulk-selected-item' ).forEach( function( item ) {
 				item.classList.remove( 'bulk-selected-item' );
+				item.setAttribute( 'aria-selected', 'false' );
+				item.setAttribute( 'tabindex', '-1' );
+
+				const checkbox = item.querySelector( '.bulk-selection-item-checkbox' );
+				if ( checkbox ) {
+					checkbox.checked = false;
+					checkbox.setAttribute( 'aria-checked', 'false' );
+				}
 			} );
 		}
-	},
-
-	onSelectBulkSelectionItemCheckbox( event ) {
-		if ( event?.target?.checked ) {
-			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
-		} else {
-			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
-		}
-
-		this.handleBulkActionBarUi();
 	},
 
 	onBulkSelectAllCheckbox() {
@@ -162,32 +193,32 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		this.updateBulkSelectedItems( isChecked );
-		this.handleBulkActionBarUi();
+
+		elementor.templates.layout.handleBulkActionBarUi();
 	},
 
 	updateBulkSelectedItems( isChecked ) {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
+			checkbox.setAttribute( 'aria-checked', String( isChecked ) );
+
 			const templateId = checkbox.dataset.template_id;
+			const type = checkbox.dataset.type;
+			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
-				elementor.templates.addBulkSelectionItem( templateId );
+				elementor.templates.addBulkSelectionItem( templateId, type );
+				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
-				elementor.templates.removeBulkSelectionItem( templateId );
+				elementor.templates.removeBulkSelectionItem( templateId, type );
+				parentDiv?.classList.remove( 'bulk-selected-item' );
+			}
+
+			if ( parentDiv ) {
+				parentDiv.setAttribute( 'aria-selected', String( isChecked ) );
+				parentDiv.setAttribute( 'tabindex', isChecked ? '0' : '-1' );
 			}
 		} );
-	},
-
-	handleBulkActionBarUi() {
-		if ( 0 === this.$( '.bulk-selection-item-checkbox:checked' ).length ) {
-			this.$el.addClass( 'no-bulk-selections' );
-			this.$el.removeClass( 'has-bulk-selections' );
-		} else {
-			this.$el.addClass( 'has-bulk-selections' );
-			this.$el.removeClass( 'no-bulk-selections' );
-		}
-
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onBulkDeleteClick() {
@@ -249,7 +280,10 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	initialize() {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
+		this.handleSourceFilterChange = this.handleSourceFilterChange.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceOptionBadges );
+		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceFilterChange );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -263,6 +297,30 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 					this.handleQuotaBar();
 				} );
 		}
+	},
+
+	handleSourceFilterChange( filterName ) {
+		if ( 'source' === filterName ) {
+			const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+			this.updateSourceFilterAriaAttributes( activeSource );
+		}
+	},
+
+	updateSourceFilterAriaAttributes( selectedSource ) {
+		if ( ! this.ui.selectSourceFilter.length ) {
+			return;
+		}
+
+		this.ui.selectSourceFilter.each( function() {
+			const $option = jQuery( this ),
+				source = $option.data( 'source' ),
+				isSelected = source === selectedSource;
+
+			$option.attr( {
+				'aria-checked': isSelected ? 'true' : 'false',
+				tabindex: isSelected ? '0' : '-1',
+			} );
+		} );
 	},
 
 	filter( childModel ) {
@@ -320,6 +378,33 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+
+		this.announceSortStatus( by, reverseOrder );
+	},
+
+	announceSortStatus( by, reverseOrder ) {
+		const orderLabels = {
+			title: __( 'Name', 'elementor' ),
+			type: __( 'Type', 'elementor' ),
+			author: __( 'Created By', 'elementor' ),
+			date: __( 'Creation Date', 'elementor' ),
+		};
+
+		const orderDirection = reverseOrder ? __( 'descending', 'elementor' ) : __( 'ascending', 'elementor' );
+		const sortLabel = orderLabels[ by ] || by;
+		const message = __( 'Sorted by', 'elementor' ) + ' ' + sortLabel + ', ' + orderDirection;
+
+		if ( this.ui.sortStatus.length ) {
+			this.ui.sortStatus.text( message );
+		}
+	},
+
+	announceLoadStatus( count ) {
+		const message = count + ' ' + __( 'more templates loaded', 'elementor' );
+
+		if ( this.ui.loadStatus.length ) {
+			this.ui.loadStatus.text( message );
+		}
 	},
 
 	handleCloudOrder( by, reverseOrder ) {
@@ -335,6 +420,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.loadMore( {
 			onUpdate: () => {
 				elementor.templates.layout.hideLoadingView();
+				this.announceSortStatus( by, reverseOrder );
 			},
 			search: this.ui.textFilter.val(),
 			refresh: true,
@@ -426,6 +512,25 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	async shouldShowVariantB() {
+		const experimentVariant = await elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+		return 'B' === experimentVariant;
+	},
+
+	async handleSourceOptionBadges() {
+		const shouldShow = await this.shouldShowVariantB();
+
+		if ( ! shouldShow ) {
+			this.ui.sourceOptionBadges.hide();
+			return;
+		}
+
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		this.$( '.source-option-badge.site-badge' ).toggle( 'local' === activeSource );
+		this.$( '.source-option-badge.cloud-badge' ).toggle( 'cloud' === activeSource );
+	},
+
 	onRender() {
 		elementor.templates.clearBulkSelectionItems();
 		const activeSource = elementor.templates.getFilter( 'source' );
@@ -436,8 +541,23 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		if ( 'cloud' === activeSource ) {
+			const isFolderView = elementor.templates.getFilter( 'parentId' );
+			const location = isFolderView
+				? elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTab;
+
+			elementor.templates.eventManager.sendPageViewEvent( { location } );
+
 			this.handleQuotaBar();
 		}
+
+		if ( 'local' === activeSource ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.siteTab,
+			} );
+		}
+
+		this.handleSourceOptionBadges();
 	},
 
 	onRenderCollection() {
@@ -458,6 +578,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 			this.handleQuotaUpdate();
 		}
+
+		this.handleSourceOptionBadges();
 	},
 
 	onBeforeRenderEmpty() {
@@ -512,6 +634,24 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
+	onSelectSourceFilterKeyDown( event ) {
+		const handled = rovingTabindex( {
+			event,
+			$items: this.ui.selectSourceFilter,
+			orientation: 'both',
+			activateOnFocus: true,
+			homeEnd: false,
+			onActivate: ( e, $item ) => {
+				this._restoreFocusToSourceFilter = true;
+				$item.trigger( 'click' );
+			},
+		} );
+
+		if ( handled ) {
+			this._restoreFocusToSourceFilter = true;
+		}
+	},
+
 	onSelectGridViewClick() {
 		elementor.templates.onSelectViewChange( 'grid' );
 	},
@@ -564,9 +704,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 			elementor.templates.layout.selectAllCheckboxMinus();
 
+			const previousCount = this.collection.length;
+
 			elementor.templates.loadMore( {
 				onUpdate: () => {
 					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+					const newCount = this.collection.length;
+					const loadedCount = newCount - previousCount;
+					if ( loadedCount > 0 ) {
+						this.announceLoadStatus( loadedCount );
+					}
 				},
 				search: this.ui.textFilter.val(),
 			} );
@@ -574,7 +721,55 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		scrollableContainer.on( 'scroll', listener );
 
-		this.removeScrollListener = () => scrollableContainer.off( 'scroll', listener );
+		// QA #13: Also trigger load-more when keyboard focus reaches the last few items
+		const focusListener = ( event ) => {
+			const canLoadMore = elementor.templates.canLoadMore() && ! elementor.templates.isLoading();
+
+			if ( ! canLoadMore ) {
+				return;
+			}
+
+			if ( ! this.$childViewContainer || ! this.$childViewContainer.length ) {
+				return;
+			}
+
+			const $children = this.$childViewContainer.children();
+			const totalChildren = $children.length;
+
+			if ( totalChildren < 2 ) {
+				return;
+			}
+
+			// Check if focus target is within one of the last 2 template items
+			const $target = jQuery( event.target );
+			const focusedIndex = $children.index( $target.closest( $children ) );
+
+			if ( focusedIndex >= totalChildren - 2 ) {
+				this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+				elementor.templates.layout.selectAllCheckboxMinus();
+
+				const previousCount = this.collection.length;
+
+				elementor.templates.loadMore( {
+					onUpdate: () => {
+						this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+						const newCount = this.collection.length;
+						const loadedCount = newCount - previousCount;
+						if ( loadedCount > 0 ) {
+							this.announceLoadStatus( loadedCount );
+						}
+					},
+					search: this.ui.textFilter.val(),
+				} );
+			}
+		};
+
+		scrollableContainer.on( 'focusin', focusListener );
+
+		this.removeScrollListener = () => {
+			scrollableContainer.off( 'scroll', listener );
+			scrollableContainer.off( 'focusin', focusListener );
+		};
 	},
 
 	onCreateNewFolderClick() {
@@ -595,7 +790,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onHoverBulkAction() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
 			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'not-allowed' );
 		} else {
@@ -605,7 +800,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onClickBulkMove() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 
@@ -626,8 +821,18 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	hasLockedTemplatesInBulkSelection() {
+		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
+
+		return this.collection.some( ( model ) => {
+			const templateId = model.get( 'template_id' );
+
+			return bulkSelectedItems.has( templateId ) && model.isLocked();
+		} );
+	},
+
 	onClickBulkCopy() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 
@@ -635,6 +840,83 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_COPY,
 		} );
+	},
+
+	onQuotaUpgradeClicked() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.quotaBar,
+			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
+		} );
+	},
+
+	showCloudBadgeTooltip() {
+		if ( this.cloudBadgeDialog ) {
+			this.cloudBadgeDialog.hide();
+		}
+
+		const emailReplacement = elementor.config.library_connect.is_connected ? elementor.config.library_connect.user_email : __( 'connected', 'elementor' );
+		/* Translators: %s: User's email. */
+		const message = sprintf( __( 'Only %s Elementor account can access Cloud Templates from any connected site.', 'elementor' ), emailReplacement );
+
+		this.cloudBadgeDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--cloud-upgrade__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.cloudBadge,
+				at: 'top-50',
+			},
+		} )
+			.setMessage( message );
+
+		this.cloudBadgeDialog.getElements( 'widget' ).addClass( 'variant-b' );
+		this.cloudBadgeDialog.getElements( 'header' ).remove();
+		this.cloudBadgeDialog.getElements( 'buttonsWrapper' ).remove();
+		this.cloudBadgeDialog.show();
+	},
+
+	hideCloudBadgeTooltip() {
+		if ( this.cloudBadgeDialog ) {
+			this.cloudBadgeDialog.hide();
+		}
+	},
+
+	showSiteBadgeTooltip() {
+		if ( this.siteBadgeDialog ) {
+			this.siteBadgeDialog.hide();
+		}
+
+		const message = __( 'Authorized users on this site can access Site Templates.', 'elementor' );
+
+		this.siteBadgeDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--site-info__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.siteBadge,
+				at: 'top-35',
+			},
+		} )
+			.setMessage( message );
+
+		this.siteBadgeDialog.getElements( 'widget' ).addClass( 'variant-b' );
+		this.siteBadgeDialog.getElements( 'header' ).remove();
+		this.siteBadgeDialog.getElements( 'buttonsWrapper' ).remove();
+		this.siteBadgeDialog.show();
+	},
+
+	hideSiteBadgeTooltip() {
+		if ( this.siteBadgeDialog ) {
+			this.siteBadgeDialog.hide();
+		}
 	},
 } );
 

@@ -171,7 +171,7 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	public function test_should_return_wp_error_massage_template_error_from_get_template_data() {
 		$elementor_mock = $this->getMockBuilder( Elementor_Adapter_Interface::class )->getMock();
 		$elementor_mock->method( 'get_template_type' )->willReturn( 'page' );
-		self::$manager->set_elementor_adapter( $elementor_mock );
+		self::$manager->get_source( 'local' )->set_elementor_adapter( $elementor_mock );
 
 		$this->assertWPError(
 			self::$manager->get_template_data(
@@ -347,7 +347,18 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			]
 		];
 
-		set_transient( 'elementor_remote_templates_data_' . ELEMENTOR_VERSION, $templates );
+		add_filter( 'pre_http_request', function () use ( $templates ) {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( $templates ),
+			];
+		}, 10, 3 );
 
 		$document = $this->factory()->documents->create_and_get([
 			'type' => 'page',
@@ -514,5 +525,132 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				]
 			), 'arguments_not_specified'
 		);
+	}
+
+	public function test_import_from_json__returns_wp_error_when_args_missing() {
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'editor_post_id' => 123,
+				]
+			),
+			'arguments_not_specified'
+		);
+
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'elements' => wp_json_encode( [] ),
+				]
+			),
+			'arguments_not_specified'
+		);
+	}
+
+	public function test_import_from_json__returns_wp_error_when_document_not_found() {
+		$this->assertWPError(
+			self::$manager->import_from_json(
+				[
+					'editor_post_id' => PHP_INT_MAX,
+					'elements' => wp_json_encode( [] ),
+				]
+			),
+			'template_error'
+		);
+	}
+
+	public function test_import_from_json__plain_elements_pass_through() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'a1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'elements' => [],
+				'settings' => [
+					'title' => 'Heading title',
+					'selected_editor' => 'classic',
+					'title_tag' => 'h2',
+				],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertEquals( $elements[0]['widgetType'], $result[0]['widgetType'] );
+		$this->assertEquals( $elements[0]['settings'], $result[0]['settings'] );
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
+	}
+
+	public function test_import_from_json__strips_html_cache() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'a1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'elements' => [],
+				'htmlCache' => '<div>foreign preview</div>',
+				'settings' => [
+					'title' => 'Heading title',
+				],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0] );
+	}
+
+	public function test_import_from_json__strips_html_cache_in_nested_elements() {
+		// Arrange
+		$document = $this->factory()->documents->create_and_get();
+		$elements = [
+			[
+				'id' => 'container-1',
+				'elType' => 'container',
+				'widgetType' => 'container',
+				'elements' => [
+					[
+						'id' => 'b1',
+						'elType' => 'widget',
+						'widgetType' => 'heading',
+						'elements' => [],
+						'htmlCache' => '<div>nested foreign preview</div>',
+						'settings' => [
+							'title' => 'Nested heading',
+						],
+					],
+				],
+				'settings' => [],
+			],
+		];
+
+		// Act
+		$result = self::$manager->import_from_json(
+			[
+				'editor_post_id' => $document->get_id(),
+				'elements' => wp_json_encode( $elements ),
+			]
+		);
+
+		// Assert
+		$this->assertArrayNotHasKey( 'htmlCache', $result[0]['elements'][0] );
 	}
 }

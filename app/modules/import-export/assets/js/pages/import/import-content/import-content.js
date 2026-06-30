@@ -59,10 +59,7 @@ export default function ImportContent() {
 			<section className="e-app-import-content">
 				<PageHeader
 					heading={ __( 'Select which parts you want to apply', 'elementor' ) }
-					description={ [
-						__( 'These are the templates, content and site settings that come with your kit.', 'elementor' ),
-						__( "All items are already selected by default. Uncheck the ones you don't want.", 'elementor' ),
-					] }
+					description={ __( "All items are already selected by default. Uncheck the ones you don't want.", 'elementor' ) }
 				/>
 				<ImportContentDisplay
 					manifest={ uploadedData?.manifest }

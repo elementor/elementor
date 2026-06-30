@@ -1,11 +1,13 @@
-{% if settings.paragraph is not empty %}
-        <p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
-            {% if settings.link.href %}
-                <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
-                    {{ settings.paragraph }}
-                </a>
-            {% else %}
-                {{ settings.paragraph }}
-            {% endif %}
-        </p>
-{% endif %}
+{% import 'elementor/macros' as m %}
+{%- set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') -%}
+<{{ settings.tag | e('html_tag') }} class="{{ classes }}" data-interaction-id="{{ interaction_id }}"
+	{{- m.render_custom_attributes(settings) }}>
+{%- if settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}">
+		{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- else -%}
+	{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
+{%- endif %}
+</{{ settings.tag | e('html_tag') }}>

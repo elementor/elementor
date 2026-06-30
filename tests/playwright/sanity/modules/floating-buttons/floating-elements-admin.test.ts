@@ -14,11 +14,11 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const editor = await floatingElPage.goToFloatingButtonElementorEditor();
 		await floatingElPage.waitForPanel();
 
-		await test.step( 'Check that the editor has no button to Add Element and no navigator', async () => {
-			const navigator = page.locator( 'header [aria-label="Structure"]' );
-			await expect( navigator ).toBeHidden();
+		await test.step( 'Check that the Top Bar has no "Add Element" and no "Site Settings" buttons', async () => {
 			const addButton = page.locator( 'header [aria-label="Add Element"]' );
 			await expect( addButton ).toBeHidden();
+			const siteSettings = page.locator( 'header [aria-label="Site Settings"]' );
+			await expect( siteSettings ).toBeHidden();
 		} );
 
 		await test.step( 'Check that the floating element has been selected correctly when opening.', async () => {
@@ -28,7 +28,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 
 		const advancedSettingsCustom = page.locator( '.elementor-tab-control-advanced-tab-floating-buttons' );
 
-		await test.step( 'Check that we are displaying three tabs for the widget, and that we are displaying our custom Advenced Tab.', async () => {
+		await test.step( 'Check that we are displaying three tabs for the widget, and that we are displaying our custom Advanced Tab.', async () => {
 			const panelTitle = page.locator( '#elementor-panel-header-title' );
 			await expect( panelTitle ).toHaveText( 'Edit Single Chat' );
 			const navigationContainer = page.locator( '.elementor-panel-navigation' );
@@ -69,12 +69,15 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				const actions = contactButtonActionsContainer.locator( 'li' );
 				await expect( actions ).toHaveCount( 1 );
 
-				const contactButtonElement = editor.getPreviewFrame().locator( '.elementor-widget-container .e-contact-buttons' );
+				const contactButtonElement = editor.getPreviewFrame().locator( '.e-contact-buttons' );
 
 				await contactButtonElement.hover();
 				const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );
 				await deleteContainer.click();
 				const libraryModal = page.locator( '#elementor-template-library-modal' );
+				await expect( libraryModal ).toBeVisible();
+				await libraryModal.focus();
+				await page.keyboard.press( 'Escape' );
 				await expect( libraryModal ).toBeVisible();
 			} );
 
@@ -134,12 +137,10 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		await floatingElPage.goToFloatingButtonsPage();
 
-		const addNewButton = page.locator( '.e-admin-top-bar__main-area-buttons a' );
+		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
 
-		await test.step( 'Check that buttons and top bar exists', async () => {
+		await test.step( 'Check that button exists', async () => {
 			await expect( addNewButton ).toBeVisible();
-			const topBar = page.locator( '#e-admin-top-bar-root' );
-			await expect( topBar ).toBeVisible();
 		} );
 
 		await test.step(
@@ -176,7 +177,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await expect( footer.first() ).toBeVisible();
 
 				const closeIcon = page.locator( '.elementor-templates-modal__header__close i' );
-				await expect( closeIcon ).toHaveAttribute( 'title', 'Go To Dashboard' );
+				await expect( closeIcon ).toHaveAttribute( 'class', 'eicon-close' );
 				await closeIcon.click();
 				await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
 			} );

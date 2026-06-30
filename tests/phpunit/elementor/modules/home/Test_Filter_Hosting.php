@@ -55,6 +55,14 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"youtube_embed_id" => "QdkDGrS8ZZs?si=s_VjZCQR6Fh1jgB5",
 				],
 			],
+			"create_with_ai" => [
+				"title" => "Create and launch your site faster with AI",
+				"description" => "Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:",
+				"input_placeholder" => "Start describing the site you want to create...",
+				"button_title" => "Create with AI",
+				"button_cta_url" => "http://planner.elementor.com/chat.html",
+				"background_image" => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
+			],
 			"get_started" => [
 				[
 					"license" => [ "free" ],
@@ -139,37 +147,6 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 						"description" => "These quick actions will get your site airborne with a customized design.",
 					],
 					"repeater" => [],
-				],
-			],
-			"add_ons" => [
-				"header" => [
-					"title" => "Expand your design toolkit",
-					"description" => "These plugins, add-ons, and tools, have been selected to streamline your workflow and maximize your creativity.",
-				],
-				"repeater" => [],
-				"footer" => [
-					"label" => "Explore more add-ons",
-					"file_path" => "wp-admin/admin.php?page=elementor-apps",
-				],
-			],
-			"sidebar_upgrade" => [
-				[
-					"license" => [ "free" ],
-					"show" => true,
-					"header" => [
-						"title" => "Bring your vision to life",
-						"description" => "Get complete design flexibility for your website with Elementor Pro’s advanced tools and premium features.",
-						"image" => "https://assets.elementor.com/home-screen/v1/images/update-sidebar.svg",
-					],
-					"cta" => [
-						"label" => "Upgrade Now",
-						"url" => "https://go.elementor.com/go-pro-home-sidebar-upgrade/",
-						"image" => "https://assets.elementor.com/home-screen/v1/images/icon-crown.svg",
-					],
-					"repeater" => [
-						[ "title" => "Popup Builder" ],
-						[ "title" => "Custom Code & CSS" ],
-					],
 				],
 			],
 			"external_links" => [

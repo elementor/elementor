@@ -154,8 +154,8 @@ class Export {
 		}
 	}
 
-	public function settings_include( $include ) {
-		$this->settings_include = $include;
+	public function settings_include( $included_settings ) {
+		$this->settings_include = $included_settings;
 	}
 
 	public function get_settings_include() {
@@ -237,6 +237,8 @@ class Export {
 
 	/**
 	 * Init the zip archive.
+	 *
+	 * @throws \Error If export process fails, file creation errors occur, or data serialization fails.
 	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {
@@ -311,8 +313,8 @@ class Export {
 	 * Add json file to the zip archive.
 	 *
 	 * @param string $path The relative path to the file.
-	 * @param array $content The content of the file.
-	 * @param int $json_flags
+	 * @param array  $content The content of the file.
+	 * @param int    $json_flags
 	 */
 	private function add_json_file( $path, array $content, $json_flags = 0 ) {
 		if ( ! Str::ends_with( $path, '.json' ) ) {

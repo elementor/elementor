@@ -5,6 +5,74 @@ assets/js/
 **/vendor/**
 **/vendor_prefixed/**
 build/**
-packages/**/*
 tests/qunit/setup/tinymce.js
 /tmp/**
+packages/**/*
+eslint-local-rules.js
+.eslintrc.js
+scripts/**
+
+# directories
+coverage-report/
+node_modules/
+.sass-cache/
+log/
+vendor/
+local-site/
+tmp/
+8888/
+8889/
+data/languages/
+tests/data
+
+http-playground/
+
+data/languages
+tests/data
+
+# build outputs
+build/
+assets/css/
+assets/js/
+assets/lib/swiper/css/swiper*.css
+*.log
+*.map
+/templates/
+/hello-elementor/
+.turbo/
+
+# build tools lock
+yarn.lock
+
+# IDE's
+.project/
+.vscode/
+!vscode/extensions.json
+.idea/
+
+# other
+Thumbs.db
+*.DS_Store
+coverage/
+.zimud.json
+.phpunit.result.cache
+.npmrc
+
+# Code agents
+.cursor/
+!.cursor/rules/
+.claude/
+
+# PHPunit and PHPlint cache files
+*.cache
+
+# playwright
+test-results/
+**/storageState-*.json
+tests/playwright/config/local.config.js
+playwright-report
+tests/playwright/blob-report
+**/allure-results
+playwright-test-results
+**/.env
+docker-output/

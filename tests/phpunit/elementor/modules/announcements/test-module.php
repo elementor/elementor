@@ -99,6 +99,6 @@ class Elementor_Test_Module extends Elementor_Test_Base {
 		$result = ob_get_clean();
 
 		// Assert
-		$this->assertStringContainsString( '<div id="e-announcements-root"></div>', $result );
+		$this->assertStringNotContainsString( '<div id="e-announcements-root"></div>', $result );
 	}
 }

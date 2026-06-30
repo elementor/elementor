@@ -5,59 +5,37 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&left,
-		&right {
-
-			.elementor-icon-box-wrapper	 {
-				display: flex;
-			}
-
-			.elementor-icon-box-icon {
-				display: inline-flex;
-				flex: 0 0 auto; // Hack for Safari
-			}
-		}
-
-		&right {
+		&inline-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
-			}
-
-			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin, 15px);
-				margin-right: 0;
-				margin-bottom: unset;
+				flex-direction: row-reverse;
 			}
 		}
 
-		&left {
+		&inline-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
-			}
-
-			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin, 15px);
-				margin-left: 0;
-				margin-bottom: unset;
+				flex-direction: row;
 			}
 		}
 
-		&top {
+		&block-start {
 
 			.elementor-icon-box-wrapper {
-				display: block;
 				text-align: center;
-				flex-direction: unset;
+				flex-direction: column;
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
+		}
 
-			.elementor-icon-box-icon {
-				margin-bottom: var(--icon-box-icon-margin, 15px);
-				margin-right: auto;
-				margin-left: auto;
+		&block-end {
+
+			.elementor-icon-box-wrapper {
+				text-align: center;
+				flex-direction: column-reverse;
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
 	}
@@ -66,41 +44,31 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
-		display: block;
+		display: flex;
 		text-align: center;
+		flex-direction: column;
 	}
 
 	.elementor-icon-box-icon {
-		margin-bottom: var(--icon-box-icon-margin, 15px);
-		margin-right: auto;
-		margin-left: auto;
+		display: inline-block;
+		flex: 0 0 auto; // Hack for Safari
+		line-height: 0;
 	}
 
-	@media (min-width: $screen-mobile-next) {
+	.elementor-icon-box-content {
+		width: 100%;
+		flex-grow: 1;
+	}
 
-		&.elementor-vertical-align- {
+	.elementor-icon-box-title {
 
-			&top {
-
-				.elementor-icon-box-wrapper {
-					align-items: flex-start;
-				}
-			}
-
-			&middle {
-
-				.elementor-icon-box-wrapper {
-					align-items: center;
-				}
-			}
-
-			&bottom {
-
-				.elementor-icon-box-wrapper {
-					align-items: flex-end;
-				}
-			}
+		a {
+			color: inherit;
 		}
+	}
+
+	.elementor-icon-box-description {
+		margin: 0;
 	}
 
 	@include icon-position('');
@@ -127,32 +95,5 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
-
-		&.elementor-position- {
-
-			&left,
-			&right {
-
-				.elementor-icon-box-icon {
-					display: block;
-					flex: unset;
-				}
-			}
-		}
-	}
-
-	.elementor-icon-box-title {
-
-		a {
-			color: inherit;
-		}
-	}
-
-	.elementor-icon-box-content {
-		flex-grow: 1;
-	}
-
-	.elementor-icon-box-description {
-		margin: 0;
 	}
 }

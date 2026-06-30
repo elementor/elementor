@@ -1,4 +1,6 @@
 module.exports = Marionette.ItemView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-connect',
 
 	id: 'elementor-template-library-connect',
@@ -13,6 +15,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabConnect,
+		} );
+
 		this.ui.connect.elementorConnect( {
 			parseUrl: ( url ) => url.replace( '%%template_type%%', this.model.get( 'type' ) ),
 			success: () => {

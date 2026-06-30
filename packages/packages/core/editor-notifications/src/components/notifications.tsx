@@ -1,0 +1,151 @@
+import * as React from 'react';
+import { forwardRef } from 'react';
+import { closeSnackbar, type CustomContentProps, SnackbarProvider } from 'notistack';
+import { AlertCircleFilled, CircleCheckFilledIcon, CrownFilledIcon, InfoCircleFilledIcon } from '@elementor/icons';
+import { __getStore as getStore, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
+import { Alert, SnackbarContent, type SnackbarProps, ThemeProvider } from '@elementor/ui';
+
+import { useEnqueueNotification } from '../hooks/use-enqueue-notifications';
+import { clearAction, notifyAction } from '../slice';
+import { getEditingPanelWidth } from '../sync/get-editing-panel-width';
+import { type NotificationData, type Notifications } from '../types';
+
+// 8 seconds
+const AUTO_HIDE_DURATION = 8000;
+
+const DefaultCustomSnackbar = forwardRef( ( props: SnackbarProps, ref ) => {
+	const filteredProps = getFilteredSnackbarProps( props );
+	const panelWidth = getEditingPanelWidth();
+
+	return (
+		<ThemeProvider palette="unstable">
+			<SnackbarContent
+				ref={ ref }
+				{ ...filteredProps }
+				sx={ {
+					'&.MuiPaper-root': { minWidth: 'max-content' },
+					ml: panelWidth + 'px',
+				} }
+			/>
+		</ThemeProvider>
+	);
+} );
+
+interface AlertSnackbarProps extends CustomContentProps {
+	color: 'promotion' | 'info' | 'success' | 'error';
+	icon: React.ReactElement;
+}
+
+const AlertSnackbar = forwardRef< HTMLDivElement, AlertSnackbarProps >( ( { color, icon, ...props }, ref ) => {
+	const panelWidth = getEditingPanelWidth();
+
+	return (
+		<ThemeProvider colorScheme="light" palette="unstable">
+			<Alert
+				ref={ ref }
+				variant="standard"
+				color={ color }
+				icon={ icon }
+				role="alert"
+				action={ props.action }
+				onClose={ () => closeSnackbar( props.id ) }
+				sx={ {
+					ml: panelWidth + 'px',
+					'& .MuiAlert-message': { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' },
+					'& .MuiAlert-content': { whiteSpace: 'nowrap' },
+				} }
+			>
+				{ props.message }
+			</Alert>
+		</ThemeProvider>
+	);
+} );
+
+const PromotionSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="promotion" icon={ <CrownFilledIcon /> } { ...props } />
+) );
+
+const InfoSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="info" icon={ <InfoCircleFilledIcon /> } { ...props } />
+) );
+
+const SuccessSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="success" icon={ <CircleCheckFilledIcon /> } { ...props } />
+) );
+
+const ErrorSnackbar = forwardRef< HTMLDivElement, CustomContentProps >( ( props, ref ) => (
+	<AlertSnackbar ref={ ref } color="error" icon={ <AlertCircleFilled /> } { ...props } />
+) );
+
+const muiToEuiMapper = {
+	default: DefaultCustomSnackbar,
+	promotion: PromotionSnackbar,
+	info: InfoSnackbar,
+	success: SuccessSnackbar,
+	error: ErrorSnackbar,
+};
+
+const Handler = () => {
+	const notifications = useSelector( ( state: { notifications: Notifications } ) => state.notifications );
+
+	useEnqueueNotification( notifications );
+
+	return null;
+};
+
+const Wrapper = () => {
+	return (
+		<SnackbarProvider
+			maxSnack={ 3 }
+			autoHideDuration={ AUTO_HIDE_DURATION }
+			disableWindowBlurListener
+			anchorOrigin={ { horizontal: 'center', vertical: 'bottom' } }
+			Components={ muiToEuiMapper }
+		>
+			<Handler />
+		</SnackbarProvider>
+	);
+};
+
+/*
+ * This function can be used to trigger notifications from anywhere in the code.
+ * even if you're running in a JS environment as opposed to a React environment.
+ */
+export function notify( notification: NotificationData ) {
+	const store = getStore();
+
+	store?.dispatch( notifyAction( notification ) );
+}
+
+export function dismissNotification( id: NotificationData[ 'id' ] ) {
+	const store = getStore();
+
+	closeSnackbar( id );
+	store?.dispatch( clearAction( { id } ) );
+}
+
+/*
+ * This function can be used to trigger notifications from within a React component.
+ * This is the preferred way to trigger notifications.
+ */
+export function NotifyReact( notification: NotificationData ) {
+	const dispatch = useDispatch();
+	dispatch( notifyAction( notification ) );
+}
+
+function getFilteredSnackbarProps( props: SnackbarProps ) {
+	const forbiddenProps = [ 'autoHideDuration', 'persist', 'hideIconVariant', 'iconVariant', 'anchorOrigin' ];
+
+	return Object.entries( props ).reduce(
+		( filteredProps, [ key, value ] ) => {
+			if ( ! forbiddenProps.includes( key ) ) {
+				filteredProps[ key ] = value;
+			}
+
+			return filteredProps;
+		},
+		{} as Record< string, unknown >
+	);
+}
+
+export default Wrapper;

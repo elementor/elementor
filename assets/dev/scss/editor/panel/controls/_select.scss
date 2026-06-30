@@ -35,9 +35,9 @@
 				content: '\e8ad';
 				font-size: 12px;
 				position: absolute;
-				top: 50%;
+				inset-block-start: 50%;
+				inset-inline-end: 5px;
 				transform: translateY(-50%);
-				@include end(5px);
 				pointer-events: none;
 			}
 		}

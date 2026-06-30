@@ -1,0 +1,665 @@
+import * as React from 'react';
+import { createMockPropType, dispatchCommandAfter, renderControl } from 'test-utils';
+import {
+	getContainer,
+	getCurrentDocumentId,
+	getLinkInLinkRestriction,
+	type LinkInLinkRestriction,
+	selectElement,
+} from '@elementor/editor-elements';
+import { useSessionStorage } from '@elementor/session';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+
+import { LinkControl } from '../link-control';
+
+const buildContainerWithDocId = ( docId: string ) => {
+	const root = document.createElement( 'div' );
+	root.setAttribute( 'data-elementor-id', docId );
+	const el = document.createElement( 'div' );
+	root.appendChild( el );
+	return { view: { el } } as unknown as ReturnType< typeof getContainer >;
+};
+
+const propType = createMockPropType( {
+	kind: 'object',
+	shape: {
+		enabled: createMockPropType( { kind: 'object' } ),
+		destination: createMockPropType( {
+			kind: 'union',
+			prop_types: {
+				url: createMockPropType( { kind: 'plain' } ),
+				query: createMockPropType( {
+					kind: 'object',
+					shape: {
+						id: createMockPropType( { kind: 'plain' } ),
+						label: createMockPropType( { kind: 'plain' } ),
+					},
+				} ),
+			},
+		} ),
+		isTargetBlank: createMockPropType( { kind: 'object' } ),
+	},
+} );
+
+jest.mock( '@elementor/session' );
+
+jest.mock( '@elementor/editor-elements' );
+
+const globalProps = {
+	context: { elementId: '1' },
+	allowCustomValues: true,
+	queryOptions: {
+		params: {},
+		url: '',
+	},
+};
+
+const baseProps = {
+	bind: 'link',
+	setValue: jest.fn(),
+	propType,
+	value: null,
+};
+
+const restrictionTestCases: [ LinkInLinkRestriction, string ][] = [
+	[ { shouldRestrict: true, reason: 'ancestor', elementId: null }, 'from its parent container' ],
+	[ { shouldRestrict: true, reason: 'descendant', elementId: null }, 'from the elements inside of it' ],
+];
+
+const restrictionCtaTestCases: LinkInLinkRestriction[] = [
+	{
+		shouldRestrict: true,
+		reason: 'ancestor',
+		elementId: '123456',
+	},
+	{
+		shouldRestrict: true,
+		reason: 'descendant',
+		elementId: '123456',
+	},
+];
+
+describe( '<LinkControl />', () => {
+	beforeEach( () => {
+		jest.mocked( useSessionStorage ).mockReturnValue( [
+			{
+				value: {
+					$$type: 'link',
+					value: {
+						destination: {
+							$$type: 'url',
+							value: 'https://url-from-storage.com/',
+						},
+						isTargetBlank: {
+							$$type: 'boolean',
+							value: false,
+						},
+					},
+				},
+				meta: {
+					isEnabled: true,
+				},
+			},
+			jest.fn(),
+			jest.fn(),
+		] );
+
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: false,
+		} );
+
+		jest.mocked( getCurrentDocumentId ).mockReturnValue( 100 );
+		jest.mocked( getContainer ).mockReturnValue( buildContainerWithDocId( '100' ) );
+	} );
+
+	afterEach( () => {
+		jest.resetAllMocks();
+	} );
+
+	it( 'should render control', () => {
+		// Arrange.
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: {
+						$$type: 'url',
+						value: '',
+					},
+					isTargetBlank: {
+						$$type: 'boolean',
+						value: false,
+					},
+				},
+			},
+		};
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		// Assert.
+		expect( screen.getByText( 'Link' ) ).toBeInTheDocument();
+
+		// Assert.
+		expect( screen.getByPlaceholderText( 'test' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should be closed when value is null', () => {
+		// Arrange.
+		const props = {
+			...baseProps,
+			value: null,
+		};
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		// Assert.
+		expect( screen.queryByPlaceholderText( 'test' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should set existing value to null when closing collapsible', () => {
+		// Arrange.
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: {
+						$$type: 'url',
+						value: 'https://url.com/',
+					},
+					isTargetBlank: {
+						$$type: 'boolean',
+						value: false,
+					},
+				},
+			},
+		};
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		fireEvent.click(
+			screen.getByRole( 'button', {
+				name: 'Toggle link',
+			} )
+		);
+
+		// Assert.
+		expect( props.setValue ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should be open when value not null, and update new value to input', () => {
+		// Arrange.
+		const testHref = 'https://elementor.com/';
+
+		const props = {
+			...baseProps,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: {
+						$$type: 'url',
+						value: '',
+					},
+					isTargetBlank: {
+						$$type: 'boolean',
+						value: false,
+					},
+				},
+			},
+		};
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		const hrefInput = screen.getByPlaceholderText( 'test' );
+		fireEvent.input( hrefInput, { target: { value: testHref } } );
+
+		// Assert.
+		expect( props.setValue ).toHaveBeenCalledWith( {
+			$$type: 'link',
+			value: {
+				destination: {
+					$$type: 'url',
+					value: testHref,
+				},
+				isTargetBlank: {
+					$$type: 'boolean',
+					value: false,
+				},
+			},
+		} );
+	} );
+
+	it( 'should not update value from session when no session value exists on collapsible open', () => {
+		// Arrange.
+		jest.mocked( useSessionStorage ).mockReturnValue( [
+			{
+				value: null,
+				meta: {
+					isEnabled: false,
+				},
+			},
+			jest.fn(),
+			jest.fn(),
+		] );
+
+		const props = {
+			...baseProps,
+			value: null,
+		};
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		fireEvent.click(
+			screen.getByRole( 'button', {
+				name: 'Toggle link',
+			} )
+		);
+
+		// Assert.
+		expect( props.setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should restore value from session when opening collapsible and session has value', () => {
+		// Arrange.
+		const mockSetSessionValue = jest.fn();
+		const storedValue = {
+			value: {
+				destination: {
+					$$type: 'url',
+					value: 'https://url-from-storage.com/',
+				},
+				isTargetBlank: {
+					$$type: 'boolean',
+					value: false,
+				},
+			},
+			meta: {
+				isEnabled: false,
+			},
+		};
+
+		jest.mocked( useSessionStorage ).mockReturnValue( [ storedValue, mockSetSessionValue, jest.fn() ] );
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', {
+			name: 'Toggle link',
+		} );
+		fireEvent.click( toggleButton );
+
+		// Assert.
+		expect( baseProps.setValue ).toHaveBeenLastCalledWith( {
+			$$type: 'link',
+			value: {
+				destination: {
+					$$type: 'url',
+					value: 'https://url-from-storage.com/',
+				},
+				isTargetBlank: {
+					$$type: 'boolean',
+					value: false,
+				},
+			},
+		} );
+
+		// Check that the session value correct after open collapsible
+		expect( mockSetSessionValue ).toHaveBeenCalledWith( {
+			value: storedValue.value,
+			meta: { isEnabled: true },
+		} );
+		expect( mockSetSessionValue ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'should set new value to session and input', () => {
+		// Arrange.
+		const props = {
+			...baseProps,
+			value: null,
+		};
+
+		const mockSetSessionValue = jest.fn();
+
+		jest.mocked( useSessionStorage ).mockReturnValue( [
+			{
+				value: null,
+				meta: { isEnabled: false },
+			},
+			mockSetSessionValue,
+			jest.fn(),
+		] );
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, props );
+
+		const toggleButton = screen.getByRole( 'button', {
+			name: 'Toggle link',
+		} );
+
+		fireEvent.click( toggleButton );
+
+		const hrefInput = screen.getByPlaceholderText( 'test' );
+
+		// Assert.
+		expect( hrefInput ).toBeVisible();
+
+		// Act.
+		fireEvent.input( hrefInput, { target: { value: 'Value' } } );
+
+		// Assert.
+		expect( props.setValue ).toHaveBeenCalledWith( {
+			$$type: 'link',
+			value: {
+				destination: {
+					$$type: 'url',
+					value: 'Value',
+				},
+			},
+		} );
+
+		expect( mockSetSessionValue ).toHaveBeenCalledWith( {
+			value: {
+				destination: {
+					$$type: 'url',
+					value: 'Value',
+				},
+			},
+			meta: { isEnabled: false },
+		} );
+	} );
+
+	it( 'should prevent link enabling when ancestor has anchor', () => {
+		// Arrange.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: null,
+		} );
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, baseProps );
+
+		const addLinkButton = screen.getByRole( 'button' );
+		fireEvent.click( addLinkButton );
+
+		// Assert.
+		expect( baseProps.setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should prevent link enabling when descendant has anchor', () => {
+		// Arrange.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: null,
+		} );
+
+		// Act.
+		renderControl( <LinkControl { ...globalProps } placeholder={ 'test' } />, baseProps );
+
+		const addLinkButton = screen.getByRole( 'button' );
+		fireEvent.click( addLinkButton );
+
+		// Assert.
+		expect( baseProps.setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not call setValue when opening link collapsible and value is already null', () => {
+		// Arrange
+		jest.mocked( useSessionStorage ).mockReturnValue( [
+			{
+				value: null,
+				meta: { isEnabled: false },
+			},
+			jest.fn(),
+			jest.fn(),
+		] );
+
+		const props = {
+			...baseProps,
+			value: null,
+		};
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, props );
+
+		fireEvent.click(
+			screen.getByRole( 'button', {
+				name: 'Toggle link',
+			} )
+		);
+
+		// Assert
+		expect( props.setValue ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should not call setValue when closing link collapsible and value is already null', () => {
+		// Arrange
+		jest.mocked( useSessionStorage ).mockReturnValue( [
+			{
+				value: null,
+				meta: { isEnabled: true },
+			},
+			jest.fn(),
+			jest.fn(),
+		] );
+
+		const props = {
+			...baseProps,
+			value: null,
+		};
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, props );
+
+		fireEvent.click(
+			screen.getByRole( 'button', {
+				name: 'Toggle link',
+			} )
+		);
+
+		// Assert
+		expect( props.setValue ).not.toHaveBeenCalled();
+	} );
+
+	test.each( restrictionTestCases )(
+		'should display the correct tooltip for restriction state %s',
+		async ( restrictionState, expectedInfoTipText ) => {
+			// Arrange
+			jest.mocked( getLinkInLinkRestriction ).mockReturnValue( restrictionState );
+
+			renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+			// Act
+			const item = screen.getByRole( 'button', { name: 'Toggle link' } );
+			fireEvent.mouseOver( item );
+
+			// Assert
+			await waitFor( () => {
+				screen.getByText( expectedInfoTipText, { exact: false } );
+			} );
+		}
+	);
+
+	test.each( restrictionCtaTestCases )(
+		'should select and navigate to correct element when clicking the "take me there" button - %s',
+		async ( restrictionState ) => {
+			// Arrange
+			jest.mocked( getLinkInLinkRestriction ).mockReturnValue( restrictionState );
+
+			// Act.
+			renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+			const openLinkSectionButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+			fireEvent.mouseOver( openLinkSectionButton );
+
+			// Assert,
+			const takeMeThereButton = await screen.findByText( 'Take me there' );
+
+			// Act.
+			fireEvent.click( takeMeThereButton );
+
+			// Assert.
+			expect( selectElement ).toHaveBeenCalledWith( restrictionState.elementId );
+		}
+	);
+
+	it( 'should disable adding link when inline link exists from toolbar', () => {
+		// Arrange
+		const inlineLinkRestriction: LinkInLinkRestriction = {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: '1',
+		};
+
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( inlineLinkRestriction );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+
+		// Assert
+		expect( toggleButton ).toBeDisabled();
+	} );
+
+	it( 'should re-evaluate restriction when any element settings change via V1 command', async () => {
+		// Arrange - start unrestricted (sibling LinkControl has no link yet).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( { shouldRestrict: false } );
+
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		// Wait for the on-mount restriction check to settle as unrestricted.
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeEnabled();
+		} );
+
+		const callCountAfterMount = jest.mocked( getLinkInLinkRestriction ).mock.calls.length;
+
+		// Settle: give the on-mount debounced check time to fire (300ms),
+		// and confirm no further calls happen on their own.
+		await new Promise( ( resolve ) => setTimeout( resolve, 400 ) );
+		const callCountAfterSettle = jest.mocked( getLinkInLinkRestriction ).mock.calls.length;
+		expect( callCountAfterSettle ).toBeGreaterThanOrEqual( callCountAfterMount );
+
+		// Act - simulate a sibling element saving a link (V1 set-settings command).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'sibling-element-id',
+		} );
+
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		// Assert - the V1 command-end event must trigger another restriction
+		// re-check on this control (which has not changed its own value or elementId).
+		await waitFor( () => {
+			expect( jest.mocked( getLinkInLinkRestriction ).mock.calls.length ).toBeGreaterThan( callCountAfterSettle );
+		} );
+
+		// And the control should become disabled.
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeDisabled();
+		} );
+	} );
+
+	it( 'should clear partial value when restriction forcibly closes the active control', async () => {
+		// Arrange - control is active with a non-null value, restriction is initially absent.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( { shouldRestrict: false } );
+
+		const setValueSpy = jest.fn();
+		const props = {
+			...baseProps,
+			setValue: setValueSpy,
+			value: {
+				$$type: 'link',
+				value: {
+					destination: {
+						$$type: 'url',
+						value: 'https://partial',
+					},
+					isTargetBlank: {
+						$$type: 'boolean',
+						value: false,
+					},
+				},
+			},
+		};
+
+		renderControl( <LinkControl { ...globalProps } />, props );
+
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Toggle link' } ) ).toBeEnabled();
+		} );
+
+		setValueSpy.mockClear();
+
+		// Act - sibling/ancestor gains a link, restriction becomes active.
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'ancestor',
+			elementId: 'ancestor-id',
+		} );
+
+		act( () => {
+			dispatchCommandAfter( 'document/elements/set-settings' );
+		} );
+
+		// Assert - setValue(null) must be called so the partial URL is cleared.
+		await waitFor( () => {
+			expect( setValueSpy ).toHaveBeenCalledWith( null );
+		} );
+	} );
+
+	it( 'should show tooltip when inline link restriction is active', async () => {
+		// Arrange
+		const inlineLinkRestriction: LinkInLinkRestriction = {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: '1',
+		};
+
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( inlineLinkRestriction );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should hide "Take me there" button when target element lives in a different document', async () => {
+		// Arrange - target's data-elementor-id (200) differs from current document (100).
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: 'inner-component-element-id',
+		} );
+		jest.mocked( getContainer ).mockReturnValue( buildContainerWithDocId( '200' ) );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		// Assert - infotip text still shown, but the CTA button is absent.
+		await waitFor( () => {
+			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
+		} );
+		expect( screen.queryByRole( 'button', { name: 'Take me there' } ) ).not.toBeInTheDocument();
+	} );
+} );

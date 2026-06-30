@@ -4,6 +4,14 @@ const sass = {
 	options: {
 		implementation: sassImplementation,
 		sourceMap: true,
+		logger: {
+			warn(message) {
+				// suppress all warnings
+			},
+			debug(message) {
+				// suppress all debug logs
+			}
+		}
 	},
 	dist: {
 		files: [
@@ -16,7 +24,7 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'core/editor/loader/v2/scss',
+				cwd: 'core/editor/loader/scss',
 				src: '*.scss',
 				dest: 'assets/css',
 				ext: '.css'
@@ -28,13 +36,20 @@ const sass = {
 				dest: 'assets/css/modules/container-converter',
 				ext: '.css',
 			},
-			{
-				expand: true,
-				cwd: 'modules/notes/assets/scss',
-				src: 'editor.scss',
-				dest: 'assets/css/modules/notes',
-				ext: '.css',
-			},
+		{
+			expand: true,
+			cwd: 'modules/design-system-sync/assets/scss',
+			src: 'design-system-sync.scss',
+			dest: 'assets/css/modules/design-system-sync',
+			ext: '.css',
+		},
+		{
+			expand: true,
+			cwd: 'modules/notes/assets/scss',
+			src: 'editor.scss',
+			dest: 'assets/css/modules/notes',
+			ext: '.css',
+		},
 			{
 				expand: true,
 				cwd: 'assets/dev/scss/frontend',
@@ -58,6 +73,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/atomic-widgets/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/atomic-widgets',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/atomic-opt-in/assets/scss',
 				src: '*.scss',
 				dest: 'assets/css/modules/editor-v4-opt-in',
@@ -75,6 +97,27 @@ const sass = {
 				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
 				dest: 'assets/css/modules/apps',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/editor-one/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/editor-one',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/home/assets/scss',
+				src: 'e-home-screen.scss',
+				dest: 'assets/css/modules/home',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/promotions/assets/scss',
+				src: 'conversion-banner.scss',
+				dest: 'assets/css/modules/promotions',
 				ext: '.css',
 			},
 			{

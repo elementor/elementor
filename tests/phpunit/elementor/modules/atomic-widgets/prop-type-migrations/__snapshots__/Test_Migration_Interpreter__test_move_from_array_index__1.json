@@ -1,0 +1,11 @@
+{
+    "settings": {
+        "items": [
+            "first",
+            "third"
+        ],
+        "target": {
+            "moved": "second"
+        }
+    }
+}

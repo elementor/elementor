@@ -102,8 +102,8 @@
 
 		content: '';
 		position: absolute;
-		top: -#{$triangle-size * 2};
-		@include start(5px);
+		inset-block-start: -#{$triangle-size * 2};
+		inset-inline-start: 5px;
 		border: $triangle-size solid transparent;
 		border-block-end-color: var(--e-a-border-color);
 	}

@@ -69,7 +69,6 @@ class Compatibility_Tag_Report extends Base {
 	 * Report data.
 	 *
 	 * @return string[]
-	 * @throws \Exception
 	 */
 	public function get_report_data() {
 		$compatibility_status = $this->compatibility_tag_service->check(

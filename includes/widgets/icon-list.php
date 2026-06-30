@@ -244,12 +244,11 @@ class Widget_Icon_List extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child)' => 'padding-bottom: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:first-child)' => 'margin-top: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item' => 'margin-right: calc({{SIZE}}{{UNIT}}/2); margin-left: calc({{SIZE}}{{UNIT}}/2)',
-					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items' => 'margin-right: calc(-{{SIZE}}{{UNIT}}/2); margin-left: calc(-{{SIZE}}{{UNIT}}/2)',
-					'body.rtl {{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after' => 'left: calc(-{{SIZE}}{{UNIT}}/2)',
-					'body:not(.rtl) {{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after' => 'right: calc(-{{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child)' => 'padding-block-end: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:first-child)' => 'margin-block-start: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item' => 'margin-inline: calc({{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items' => 'margin-inline: calc(-{{SIZE}}{{UNIT}}/2)',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:after' => 'inset-inline-end: calc(-{{SIZE}}{{UNIT}}/2)',
 				],
 			]
 		);
@@ -260,20 +259,25 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'prefix_class' => 'elementor%s-align-',
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -307,8 +311,8 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-top-style: {{VALUE}}',
-					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-left-style: {{VALUE}}',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-block-start-style: {{VALUE}}',
+					'{{WRAPPER}} .elementor-icon-list-items.elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-inline-start-style: {{VALUE}}',
 				],
 			]
 		);
@@ -332,8 +336,8 @@ class Widget_Icon_List extends Widget_Base {
 					'divider' => 'yes',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-top-width: {{SIZE}}{{UNIT}}',
-					'{{WRAPPER}} .elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-left-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-list-items:not(.elementor-inline-items) .elementor-icon-list-item:not(:last-child):after' => 'border-block-start-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-inline-items .elementor-icon-list-item:not(:last-child):after' => 'border-inline-start-width: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -526,7 +530,7 @@ class Widget_Icon_List extends Widget_Base {
 				],
 				'separator' => 'after',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-list-icon' => is_rtl() ? 'padding-left: {{SIZE}}{{UNIT}};' : 'padding-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-list-icon' => 'padding-inline-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -779,7 +783,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php echo wp_kses_post( $item['text'] ); ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>
@@ -799,6 +803,32 @@ class Widget_Icon_List extends Widget_Base {
 	 * @since 2.9.0
 	 * @access protected
 	 */
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		if ( empty( $settings['icon_list'] ) ) {
+			return '';
+		}
+
+		$lines = [];
+
+		foreach ( $settings['icon_list'] as $item ) {
+			$text = Utils::html_to_plain_text( $item['text'] ?? '' );
+
+			if ( empty( $text ) ) {
+				continue;
+			}
+
+			if ( ! empty( $item['link']['url'] ) ) {
+				$text = '[' . $text . '](' . esc_url( $item['link']['url'] ) . ')';
+			}
+
+			$lines[] = '- ' . $text;
+		}
+
+		return implode( "\n", $lines );
+	}
+
 	protected function content_template() {
 		?>
 		<#
@@ -823,8 +853,8 @@ class Widget_Icon_List extends Widget_Base {
 					view.addInlineEditingAttributes( iconTextKey ); #>
 
 					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
-						<# if ( item.link && item.link.url ) { #>
-							<a href="{{ elementor.helpers.sanitizeUrl( item.link.url ) }}">
+						<# if ( item.link && item.link?.url ) { #>
+							<a href="{{ elementor.helpers.sanitizeUrl( item.link?.url ) }}">
 						<# } #>
 						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
@@ -840,7 +870,7 @@ class Widget_Icon_List extends Widget_Base {
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
-						<# if ( item.link && item.link.url ) { #>
+						<# if ( item.link && item.link?.url ) { #>
 							</a>
 						<# } #>
 					</li>

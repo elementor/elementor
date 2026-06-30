@@ -10,18 +10,10 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
-
-function isValidRedirectUrl( url ) {
-	try {
-		const parsedUrl = new URL( url );
-		return parsedUrl.hostname === window.location.hostname;
-	} catch ( e ) {
-		return false;
-	}
-}
+import safeRedirect from '../../../shared/utils/redirect';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -31,11 +23,10 @@ export default function ImportProcess() {
 		[ showUnfilteredFilesDialog, setShowUnfilteredFilesDialog ] = useState( false ),
 		[ startImport, setStartImport ] = useState( false ),
 		[ plugins, setPlugins ] = useState( [] ),
-		[ returnTo, setReturnTo ] = useState( '' ),
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
 		{ id, referrer, file_url: fileURL, action_type: actionType, nonce, return_to: returnToParam } = useQueryParams().getAll(),
-		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
+		{ includes, selectedCustomPostTypes, currentPage, returnTo } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -100,7 +91,7 @@ export default function ImportProcess() {
 		}
 
 		if ( returnToParam ) {
-			setReturnTo( returnToParam );
+			sharedContext.dispatch( { type: 'SET_RETURN_TO', payload: returnToParam } );
 		}
 
 		if ( fileURL && ! file ) {
@@ -118,12 +109,17 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
+			const { data } = importContext;
+			const isImportFromCloud = KIT_SOURCE_MAP.CLOUD === data.source;
+			const kitId = isImportFromCloud ? data.file.id : data.id;
+			const importReferrer = isImportFromCloud ? data.source : referrer;
+
 			kitActions.import( {
-				id: importContext.data.id,
+				id: kitId,
 				session: uploadedData.session,
 				include: includes,
 				overrideConditions,
-				referrer,
+				referrer: importReferrer,
 				selectedCustomPostTypes,
 			} );
 		}
@@ -150,21 +146,17 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
-				if ( returnTo && isValidRedirectUrl( decodeURIComponent( returnTo ) ) ) {
-					window.location.href = decodeURIComponent( returnTo );
+				if ( returnTo && safeRedirect( returnTo ) ) {
 					return;
 				}
+
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
 				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {
 					importContext.dispatch( { type: 'SET_PLUGINS_STATE', payload: 'have' } );
 				}
 				if ( uploadedData.conflicts && Object.keys( uploadedData.conflicts ).length && ! isResolvedData ) {
-					if ( returnTo ) {
-						navigate( '/import/resolver?return_to=' + returnTo );
-					} else {
-						navigate( '/import/resolver' );
-					}
+					navigate( '/import/resolver' );
 				} else {
 					// The kitState must be reset due to staying in the same page, so that the useEffect will be re-triggered.
 					kitActions.reset();

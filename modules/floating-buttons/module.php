@@ -3,20 +3,19 @@
 namespace Elementor\Modules\FloatingButtons;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\FloatingButtons\AdminMenuItems\Editor_One_Floating_Elements_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -59,14 +58,8 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_contact_menu_args();
-		$function = $menu_args['function'];
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
-		} else {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-		};
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
 	}
 
 	public function __construct() {
@@ -99,6 +92,14 @@ class Module extends BaseModule {
 				$this->flush_permalinks_on_elementor_version_change();
 			}
 		});
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT_FLOATING_BUTTONS ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=e-floating-buttons',
+			];
+			return $elementor_post_types;
+		} );
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
@@ -152,9 +153,9 @@ class Module extends BaseModule {
 			return $is_top_bar_active;
 		}, 10, 2 );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );
@@ -171,44 +172,12 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'admin_init', function () {
-			$action = filter_input( INPUT_GET, 'action' );
-			$menu_args = $this->get_contact_menu_args();
+			$action = sanitize_text_field( filter_input( INPUT_GET, 'action' ) );
 
-			switch ( $action ) {
-				case 'remove_from_entire_site':
-					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-					check_admin_referer( 'remove_from_entire_site_' . $post );
-					delete_post_meta( $post, '_elementor_conditions' );
-
-					wp_redirect( $menu_args['menu_slug'] );
-					exit;
-				case 'set_as_entire_site':
-					$post = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
-					check_admin_referer( 'set_as_entire_site_' . $post );
-
-					$posts = get_posts( [
-						'post_type' => static::CPT_FLOATING_BUTTONS,
-						'posts_per_page' => -1,
-						'post_status' => 'publish',
-						'fields' => 'ids',
-						'no_found_rows' => true,
-						'update_post_term_cache' => false,
-						'update_post_meta_cache' => false,
-						'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
-							Floating_Buttons::get_floating_element_type( $post )
-						),
-					] );
-
-					foreach ( $posts as $post_id ) {
-						delete_post_meta( $post_id, '_elementor_conditions' );
-					}
-
-					update_post_meta( $post, '_elementor_conditions', [ 'include/general' ] );
-
-					wp_redirect( $menu_args['menu_slug'] );
-					exit;
-				default:
-					break;
+			if ( $action ) {
+				$menu_args = $this->get_contact_menu_args();
+				$action_handler = new Action_Handler( $action, $menu_args );
+				$action_handler->process_action();
 			}
 		} );
 
@@ -269,7 +238,7 @@ class Module extends BaseModule {
 				$starting_clicks = (int) get_post_meta( $post_id, static::META_CLICK_TRACKING, true );
 				$posts_to_update[ $post_id ] = $starting_clicks ? $starting_clicks : 0;
 			}
-			$posts_to_update[ $post_id ]++;
+			++$posts_to_update[ $post_id ];
 		}
 
 		foreach ( $posts_to_update as $post_id => $clicks ) {
@@ -379,8 +348,8 @@ class Module extends BaseModule {
 				<div class="e-trashed-items">
 					<?php
 					printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'Or view %1$sTrashed Items%2$s', 'elementor' ),
 						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_FLOATING_BUTTONS ) ) . '">',
 						'</a>'
 					);
@@ -424,7 +393,16 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'post',
+			'capabilities' => [
+				'edit_post' => 'manage_options',
+				'read_post' => 'manage_options',
+				'delete_post' => 'manage_options',
+				'edit_posts' => 'manage_options',
+				'edit_others_posts' => 'manage_options',
+				'publish_posts' => 'manage_options',
+				'read_private_posts' => 'manage_options',
+				'create_posts' => 'manage_options',
+			],
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'show_in_rest' => true,
 			'supports' => [

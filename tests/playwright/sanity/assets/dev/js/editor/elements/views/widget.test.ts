@@ -9,7 +9,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'image-carousel' );
+		await editor.addWidget( { widgetType: 'image-carousel' } );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-carousel .elementor-widget-empty-icon' );
 
@@ -25,7 +25,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'sidebar' );
+		await editor.addWidget( { widgetType: 'sidebar' } );
 		await editor.closeNavigatorIfOpen();
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
@@ -42,7 +42,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'image-box' );
+		await editor.addWidget( { widgetType: 'image-box' } );
 		await page.hover( '.elementor-control-image .elementor-control-media__content' );
 		await page.hover( '.elementor-control-media-area' );
 		await page.click( '.elementor-control-media__remove' );
@@ -63,7 +63,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'image-gallery' );
+		await editor.addWidget( { widgetType: 'image-gallery' } );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget-image-gallery .elementor-widget-empty-icon' );
 
@@ -79,7 +79,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'video' );
+		await editor.addWidget( { widgetType: 'video' } );
 		await editor.setSelectControlValue( 'video_type', 'hosted' );
 		await page.waitForTimeout( 500 );
 		await editor.getPreviewFrame().waitForSelector( '.elementor-widget .elementor-widget-empty-icon' );
@@ -96,7 +96,7 @@ test.describe( `$e.run( 'editor/elements/views/widget' )`, () => {
 			editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'google_maps' );
+		await editor.addWidget( { widgetType: 'google_maps' } );
 		await editor.setTextControlValue( 'address', '' );
 		await editor.page.waitForLoadState( 'domcontentloaded' );
 		await page.waitForTimeout( 500 );

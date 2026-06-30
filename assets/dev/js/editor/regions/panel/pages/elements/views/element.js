@@ -6,8 +6,12 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() ) {
+		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() && ! this.isBirthdayEasterEgg() ) {
 			className += ' elementor-element--promotion';
+		}
+
+		if ( this.isIntegration() ) {
+			className += ' elementor-element--integration';
 		}
 
 		return className;
@@ -16,7 +20,7 @@ module.exports = Marionette.ItemView.extend( {
 	events() {
 		const events = {};
 
-		if ( ! this.isEditable() ) {
+		if ( ! this.isEditable() && ! this.isBirthdayEasterEgg() ) {
 			events.mousedown = 'onMouseDown';
 		}
 
@@ -46,8 +50,30 @@ module.exports = Marionette.ItemView.extend( {
 		return false !== this.model.get( 'editable' );
 	},
 
+	isIntegration() {
+		return !! this.model.get( 'integration' );
+	},
+
+	isAtomicWidgetPromotion() {
+		return !! this.model.get( 'promotionType' );
+	},
+
+	isBirthdayEasterEgg() {
+		return !! this.model.get( 'birthdayEasterEgg' );
+	},
+
 	onRender() {
-		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
+		if ( this.isBirthdayEasterEgg() ) {
+			this.ui.element.on( 'click', () => this.openBirthdayEasterEgg() );
+			this.bindBirthdayEasterEggDrag();
+			return;
+		}
+
+		if ( ! this.isEditable() ) {
 			return;
 		}
 
@@ -71,27 +97,71 @@ module.exports = Marionette.ItemView.extend( {
 		} );
 	},
 
-	onMouseDown() {
-		const title = this.model.get( 'title' ),
-			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			promotion = elementor.config.promotion.elements;
+	bindBirthdayEasterEggDrag() {
+		this.ui.element.html5Draggable( {
+			onDragStart: () => {
+				elementor.channels.editor.reply( 'element:dragged', null );
 
-		elementor.promotion.showDialog( {
-			// eslint-disable-next-line @wordpress/valid-sprintf
-			title: sprintf( promotion.title, title ),
-			// eslint-disable-next-line @wordpress/valid-sprintf
-			content: sprintf( promotion.content, title ),
-			targetElement: this.el,
-			position: {
-				blockStart: '-7',
+				elementor.channels.panelElements
+					.reply( 'element:selected', this )
+					.trigger( 'element:drag:start' );
 			},
-			actionButton: {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url, widgetType ),
-				text: promotion.action_button.text,
-				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
+
+			onDragEnd: () => {
+				elementor.channels.panelElements.trigger( 'element:drag:end' );
+				this.openBirthdayEasterEgg();
 			},
+
+			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	openBirthdayEasterEgg() {
+		document.dispatchEvent( new CustomEvent( 'birthday-easter-egg:open', {
+			detail: { target: this.el },
+		} ) );
+	},
+
+	onMouseDown( event ) {
+		event.stopPropagation();
+
+		if ( this.isAtomicWidgetPromotion() ) {
+			const promotionType = this.model.get( 'promotionType' );
+			document.dispatchEvent( new CustomEvent( `${ promotionType }-promotion:open`, {
+				detail: { target: this.el },
+			} ) );
+			return;
+		}
+
+		const widgetTitle = this.model.get( 'title' ),
+			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
+
+		let ctaUrl, ctaText, title, content;
+
+		if ( isIntegration ) {
+			const integrationPromo = configPromotion?.integration?.[ widgetType ];
+			ctaUrl = integrationPromo.action_button.url.toString().replaceAll( '&amp;', '&' );
+			ctaText = integrationPromo.action_button.text;
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			title = sprintf( integrationPromo.title, widgetTitle );
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			content = sprintf( integrationPromo.content, widgetTitle );
+		}
+
+		document.dispatchEvent( new CustomEvent( 'widget-promotion:open', {
+			detail: {
+				target: this.el,
+				widgetType,
+				widgetTitle,
+				title,
+				content,
+				ctaUrl,
+				ctaText,
+				hideProTag: isIntegration,
+			},
+		} ) );
 	},
 
 	addToPage() {
@@ -155,14 +225,29 @@ module.exports = Marionette.ItemView.extend( {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
+		const modelData = this.model.toJSON();
+
 		$e.run( 'preview/drop', {
 			container,
 			options: {
 				...options,
 				scrollIntoView: true,
 			},
-			model: this.model.toJSON(),
+			model: modelData,
 		} );
+
+		if ( elementorCommon?.eventsManager?.dispatchEvent ) {
+			const elType = modelData?.elType ?? '';
+			const widgetType = modelData?.widgetType ?? '';
+			const elementName = 'widget' === elType ? widgetType : elType;
+
+			elementorCommon.eventsManager.dispatchEvent( 'add_element', {
+				location: 'editor_panel',
+				element_name: elementName,
+				element_type: elType,
+				widget_type: widgetType,
+			} );
+		}
 	},
 
 	getSelectedElements() {

@@ -21,27 +21,55 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			return {
 				'data-template_id': data.template_id,
 				'data-type': data.type,
+				'data-status': data.status,
+				tabindex: '0',
+				'aria-label': data.title || '',
 			};
 		}
 	},
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
-			toggleMore: '.elementor-template-library-template-more-toggle',
 			previewImg: '.elementor-template-library-template-thumbnail img',
+			insertButton: '.elementor-template-library-template-insert',
 		} );
 	},
 
 	events() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			click: 'handleItemClicked',
-			'click @ui.toggleMore': 'onToggleMoreClick',
+			keydown: 'onGridCardKeyDown',
 		} );
 	},
 
 	modelEvents: _.extend( {}, TemplateLibraryTemplateLocalView.prototype.modelEvents, {
 		'change:preview_url': 'onPreviewUrlChange',
 	} ),
+
+	onGridCardKeyDown( event ) {
+		if ( 'grid' !== elementor.templates.getViewSelection() ) {
+			return;
+		}
+
+		// Only handle keydown events directly on the card element itself, not on children
+		if ( event.target !== this.el ) {
+			return;
+		}
+
+		if ( 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+
+			if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+				$e.route( 'library/view-folder', {
+					model: this.model,
+					onAfter: () => {
+						elementor.templates.resetBulkActionBar();
+					},
+				} );
+			} else {
+				this.handleGridViewItemSingleClick();
+			}
+		}
+	},
 
 	onRender() {
 		const previewUrl = this.model.get( 'preview_url' );
@@ -69,7 +97,26 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	updatePreviewImgStyle() {
-		this.ui.previewImg.css( 'object-fit', 'contain' );
+		const img = this.ui.previewImg[ 0 ];
+
+		if ( ! img ) {
+			return;
+		}
+
+		const applyObjectFit = () => {
+			const objectFit = img.naturalHeight > 2000 ? 'cover' : 'contain';
+
+			if ( 'cover' === objectFit ) {
+				this.ui.previewImg.css( 'object-fit', 'cover' );
+				this.ui.previewImg.css( 'object-position', 'top' );
+			}
+		};
+
+		if ( img.complete && img.naturalHeight > 0 ) {
+			applyObjectFit();
+		} else {
+			img.onload = applyObjectFit;
+		}
 	},
 
 	shouldGeneratePreview() {
@@ -83,42 +130,20 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 	},
 
 	onPreviewButtonClick( event ) {
-		if ( event.shiftKey ) {
-			return;
-		}
+		event.stopPropagation();
 
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
-		}
-	},
-
-	handleItemClicked( event ) {
-		if ( 'list' === elementor.templates.getViewSelection() ) {
-			return;
-		}
-
-		if ( event.shiftKey ) {
-			this.handleShiftAndClick();
-
-			return;
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
 		}
 
-		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
+		if ( 'TEMPLATE' === this.model.get( 'subType' ) ) {
+			this.handleGridViewItemSingleClick();
 		}
-	},
-
-	handleShiftAndClick() {
-		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
-
-		if ( itemIsSelected ) {
-			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ) );
-		} else {
-			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ) );
-		}
-
-		this.$el.toggleClass( 'bulk-selected-item' );
-		elementor.templates.layout.handleBulkActionBar();
 	},
 
 	onDeleteButtonClick( event ) {
@@ -143,6 +168,38 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 				$e.routes.refreshContainer( 'library' );
 			},
 		} );
+	},
+
+	handleItemSingleClick() {
+		if ( 'grid' === elementor.templates.getViewSelection() ) {
+			this.handleGridViewItemSingleClick();
+		} else {
+			this.handleListViewItemSingleClick();
+		}
+	},
+
+	handleItemDoubleClick() {
+		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
+		}
+	},
+
+	handleGridViewItemSingleClick() {
+		const itemIsSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		if ( itemIsSelected ) {
+			elementor.templates.removeBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
+		} else {
+			elementor.templates.addBulkSelectionItem( this.model.get( 'template_id' ), this.model.get( 'type' ) );
+		}
+
+		this.$el.toggleClass( 'bulk-selected-item' );
+		elementor.templates.layout.handleBulkActionBar();
 	},
 } );
 

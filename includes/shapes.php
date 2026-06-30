@@ -135,81 +135,99 @@ class Shapes {
 		$native_shapes = [
 			'mountains' => [
 				'title' => esc_html_x( 'Mountains', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/mountains.svg',
 				'has_flip' => true,
 			],
 			'drops' => [
 				'title' => esc_html_x( 'Drops', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/drops.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'clouds' => [
 				'title' => esc_html_x( 'Clouds', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/clouds.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'zigzag' => [
 				'title' => esc_html_x( 'Zigzag', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/zigzag.svg',
 			],
 			'pyramids' => [
 				'title' => esc_html_x( 'Pyramids', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/pyramids.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'triangle' => [
 				'title' => esc_html_x( 'Triangle', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/triangle.svg',
 				'has_negative' => true,
 			],
 			'triangle-asymmetrical' => [
 				'title' => esc_html_x( 'Triangle Asymmetrical', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/triangle-asymmetrical.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'tilt' => [
 				'title' => esc_html_x( 'Tilt', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/tilt.svg',
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'opacity-tilt' => [
 				'title' => esc_html_x( 'Tilt Opacity', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/opacity-tilt.svg',
 				'has_flip' => true,
 			],
 			'opacity-fan' => [
 				'title' => esc_html_x( 'Fan Opacity', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/opacity-fan.svg',
 			],
 			'curve' => [
 				'title' => esc_html_x( 'Curve', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/curve.svg',
 				'has_negative' => true,
 			],
 			'curve-asymmetrical' => [
 				'title' => esc_html_x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/curve-asymmetrical.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'waves' => [
 				'title' => esc_html_x( 'Waves', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/waves.svg',
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'wave-brush' => [
 				'title' => esc_html_x( 'Waves Brush', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/wave-brush.svg',
 				'has_flip' => true,
 			],
 			'waves-pattern' => [
 				'title' => esc_html_x( 'Waves Pattern', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/waves-pattern.svg',
 				'has_flip' => true,
 			],
-			'arrow' => [
-				'title' => esc_html_x( 'Arrow', 'Shapes', 'elementor' ),
+			'book' => [
+				'title' => esc_html_x( 'Book', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/book.svg',
 				'has_negative' => true,
 			],
 			'split' => [
 				'title' => esc_html_x( 'Split', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/split.svg',
 				'has_negative' => true,
 			],
-			'book' => [
-				'title' => esc_html_x( 'Book', 'Shapes', 'elementor' ),
+			'arrow' => [
+				'title' => esc_html_x( 'Arrow', 'Shapes', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'shapes/arrow.svg',
 				'has_negative' => true,
 			],
 		];
@@ -232,7 +250,9 @@ class Shapes {
 		if ( null !== $additional_shapes ) {
 			return $additional_shapes;
 		}
+
 		$additional_shapes = [];
+
 		/**
 		 * Additional shapes.
 		 *
@@ -243,6 +263,14 @@ class Shapes {
 		 * @param array $additional_shapes Additional Elementor shapes.
 		 */
 		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+
+		// BC for addons that add additional shapes the old way using `url` instead of `image`.
+		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
+			if ( ! isset( $shape_settings['image'] ) && isset( $shape_settings['url'] ) ) {
+				$additional_shapes[ $shape_name ]['image'] = $shape_settings['url'];
+			}
+		}
+
 		return $additional_shapes;
 	}
 

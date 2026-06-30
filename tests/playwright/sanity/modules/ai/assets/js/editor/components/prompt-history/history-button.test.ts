@@ -25,7 +25,7 @@ test.describe( 'AI @ai', () => {
 		await mockRoute( page );
 
 		await test.step( 'Textarea control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 
 			await findPromptHistoryButton( page );
 
@@ -33,7 +33,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Wysiwyg control', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await findPromptHistoryButton( page );
 
@@ -41,7 +41,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'HTML control', async () => {
-			await editor.addWidget( 'html' );
+			await editor.addWidget( { widgetType: 'html' } );
 
 			await findPromptHistoryButton( page );
 
@@ -49,7 +49,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image control', async () => {
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await findPromptHistoryButton( page );
 
@@ -57,7 +57,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image box', async () => {
-			await editor.addWidget( 'image-box' );
+			await editor.addWidget( { widgetType: 'image-box' } );
 
 			await findPromptHistoryButton( page );
 

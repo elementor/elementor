@@ -1,8 +1,6 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
-@import "../../helpers/direction";
 @import "../../global/global";
-@import "../../direction/theme-light";
 
 @import "../units";
 @import "../breakpoints";
@@ -218,8 +216,8 @@ html.elementor-html {
 
 	> .elementor-element-overlay {
 		position: absolute;
-		top: 0;
-		@include end(0);
+		inset-block-start: 0;
+		inset-inline-end: 0;
 		letter-spacing: 0; // Hack for front-end style themes
 		z-index: $element-overlay;
 		pointer-events: none;
@@ -428,6 +426,14 @@ html.elementor-html {
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
+
+	&.is-logical {
+		margin-top: var(--e-placeholder-margin-top);
+		margin-bottom: var(--e-placeholder-margin-bottom);
+		margin-inline-start: var(--e-placeholder-margin-inline-start);
+		width: var(--e-placeholder-width);
+		min-width: 200px;
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
@@ -473,6 +479,34 @@ html.elementor-html {
 	.elementor-empty-view,
 	.elementor-widget-empty {
 		display: none;
+	}
+
+	// Show elements overlays when an embedded document is being edited
+	// For example, when a component is being edited.
+	:where(.elementor-edit-area-active) {
+		.elementor-element-overlay,
+		.elementor-empty,
+		.elementor-empty-view,
+		.elementor-widget-empty 
+		{
+			display: revert;
+		}
+	}
+
+	// Component editing mode - change top level element overlay outline color to global element color
+	:where(.elementor-edit-area-active.elementor-widget-e-component) {
+		> .elementor-section-wrap > :first-child {
+			> .elementor-element-overlay::after {
+				outline-color: var(--e-p-border-global-element);
+			}
+
+			&.elementor-element-editable {
+				> .elementor-element-overlay::after {
+					// When selected, the outline should be inside the element, to avoid overlapping with component edit mode backdrop
+					outline-offset: -1px;
+				}
+			}
+		}
 	}
 }
 
@@ -527,6 +561,25 @@ html.elementor-html {
 	//Compatibility for hidden element by the navigator
 	&.elementor-edit-hidden {
 		display: none;
+	}
+}
+
+.e-youtube-base iframe {
+	pointer-events: none;
+}
+
+
+.elementor-widget-e-component[data-atomic] {
+	&.elementor-edit-area-active {
+		& > * > * {
+			pointer-events: initial;
+		}
+	}
+
+	&:not(.elementor-edit-area-active) {
+		& > * > * {
+			pointer-events: none;
+		}
 	}
 }
 

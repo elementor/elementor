@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { createReadStream } from 'fs';
 import { type APIRequestContext } from '@playwright/test';
 
 import { Image, Post, WpPage, User } from '../types/types';
@@ -36,20 +36,18 @@ export default class ApiRequests {
 
 	public async createMedia( request: APIRequestContext, image: Image ) {
 		const imagePath = image.filePath;
+		const multipart = {
+			file: createReadStream( imagePath ),
+			status: 'publish',
+			...image,
+		};
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
 			params: { rest_route: '/wp/v2/media' },
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
-			multipart: {
-				file: fs.createReadStream( imagePath ),
-				title: image.title,
-				status: 'publish',
-				description: image.description,
-				alt_text: image.alt_text,
-				caption: image.caption,
-			},
+			multipart,
 		} );
 
 		if ( ! response.ok() ) {
@@ -62,6 +60,33 @@ export default class ApiRequests {
 		const { id } = await response.json();
 
 		return id;
+	}
+
+	public async getMedia( request: APIRequestContext, mediaId: string ) {
+		const response = await request.get( `${ this.baseUrl }/index.php`, {
+			params: { rest_route: `/wp/v2/media/${ mediaId }` },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `Failed to get media: ${ response.status() }. ${ await response.text() }` );
+		}
+
+		return await response.json();
+	}
+
+	public async uploadImageAndGetUrl( request: APIRequestContext, image: Image ): Promise<string> {
+		const mediaId = await this.createMedia( request, image );
+		const mediaData = await this.getMedia( request, String( mediaId ) );
+		const mediaUrl = mediaData.source_url || mediaData.guid?.rendered || mediaData.link;
+
+		if ( ! mediaUrl ) {
+			throw new Error( `Media URL not found in response. Media data: ${ JSON.stringify( mediaData ) }` );
+		}
+
+		return mediaUrl;
 	}
 
 	public async deleteMedia( request: APIRequestContext, ids: string[] ) {
@@ -173,6 +198,24 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async post( request: APIRequestContext, restRoute: string, data ) {
+		const response = await request.post( `${ this.baseUrl }/${ restRoute }`, {
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+			data,
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to post to ${ restRoute }: ${ response.status() }.
+				${ await response.text() }
+			` );
+		}
+
+		return await response.json();
+	}
+
 	public async customPut( request: APIRequestContext, restRoute: string, data ) {
 		const response = await request.put( `${ this.baseUrl }/${ restRoute }`, {
 			headers: {
@@ -240,10 +283,15 @@ export default class ApiRequests {
 		return await response.json();
 	}
 
+	public async delete( request: APIRequestContext, entity: string, id: string ) {
+		return await this._delete( request, entity, id );
+	}
+
 	private async _delete( request: APIRequestContext, entity: string, id: string ) {
 		const response = await request.delete( `${ this.baseUrl }/index.php`, {
 			params: {
 				rest_route: `/wp/v2/${ entity }/${ id }`,
+				force: true,
 			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
@@ -276,7 +324,7 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
-				roles: [ ...roles ],
+				roles: roles ? roles.join( ',' ) : '',
 			},
 		} );
 

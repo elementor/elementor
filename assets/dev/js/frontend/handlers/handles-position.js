@@ -1,5 +1,5 @@
 const handlesInsideClass = 'e-handles-inside';
-const handlesHeight = 25;
+const handlesHeight = 100;
 
 export default class HandlesPosition extends elementorModules.frontend.handlers.Base {
 	onInit() {
@@ -30,29 +30,19 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 	setHandlesPosition() {
 		const document = elementor.documents.getCurrent();
 
-		if ( ! document || ! document.container.isEditable() ) {
+		if ( ! document?.container.isEditable() ) {
 			return;
 		}
 
 		if ( this.isSectionScrollSnapEnabled() ) {
 			this.$element.addClass( handlesInsideClass );
-
 			return;
 		}
 
-		if ( ! this.isOverflowHidden() && ! this.isFirstElement() ) {
-			this.$element.removeClass( handlesInsideClass );
+		const { top } = this.$element[ 0 ].getBoundingClientRect();
 
-			return;
-		}
-
-		const offset = this.getOffset(),
-			$handlesElement = this.$element.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
-
-		if ( offset < handlesHeight ) {
+		if ( top < handlesHeight || this.isOverflowHidden() ) {
 			this.$element.addClass( handlesInsideClass );
-
-			$handlesElement.css( 'top', offset < -5 ? -offset : '' );
 		} else {
 			this.$element.removeClass( handlesInsideClass );
 		}

@@ -73,7 +73,7 @@ class Network_Plugins extends Base_Plugin {
 	public function is_enabled() {
 		if ( ! is_multisite() ) {
 			return false;
-		};
+		}
 
 		return (bool) $this->get_network_plugins();
 	}

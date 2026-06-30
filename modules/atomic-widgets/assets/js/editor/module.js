@@ -1,22 +1,37 @@
 import Component from './component';
+import AtomicElementBaseType from './atomic-element-base-type';
+import createAtomicElementViewBase from './create-atomic-element-base-view';
+import AtomicElementBaseModel from './atomic-element-base-model';
+import createDivBlockType from './atomic-element-types/create-div-block-type';
+import createFlexboxType from './atomic-element-types/create-flexbox-type';
+import createGridType from './atomic-element-types/create-grid-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
 		$e.components.register( new Component() );
 
-		this.registerAtomicWidgetTypes();
+		this.exposeAtomicElementClasses();
+		this.registerAtomicElements();
 	}
 
-	registerAtomicWidgetTypes() {
-		this.registerAtomicDivBlockType();
+	exposeAtomicElementClasses() {
+		elementor.modules.elements.types.AtomicElementBase = AtomicElementBaseType;
+		elementor.modules.elements.views.createAtomicElementBase = createAtomicElementViewBase;
+		elementor.modules.elements.models.AtomicElementBase = AtomicElementBaseModel;
 	}
 
-	registerAtomicDivBlockType() {
-		const DivBlock = require( './div-block-type' ).default;
-		const FlexBox = require( './flexbox-type' ).default;
+	registerAtomicElements() {
+		this.registerAtomicElementTypeIfAbsent( createDivBlockType() );
+		this.registerAtomicElementTypeIfAbsent( createFlexboxType() );
+		this.registerAtomicElementTypeIfAbsent( createGridType() );
+	}
 
-		elementor.elementsManager.registerElementType( new DivBlock() );
-		elementor.elementsManager.registerElementType( new FlexBox() );
+	registerAtomicElementTypeIfAbsent( elementType ) {
+		if ( elementor.elementsManager.getElementTypeClass( elementType.getType() ) ) {
+			return;
+		}
+
+		elementor.elementsManager.registerElementType( elementType );
 	}
 }
 

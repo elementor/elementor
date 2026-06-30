@@ -1,16 +1,32 @@
+import BlockBirthdayEasterEggDrop from './hooks/block-birthday-easter-egg-drop';
 import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
+		if ( ! this.hasPromotionWidgets() && ! this.hasIntegrationWidgets() ) {
 			return;
 		}
 
+		new BlockBirthdayEasterEggDrop().register();
+
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
-			const isProWidget = elementor.config.promotionWidgets.find( ( item ) => widgetType === item.name );
+			const { config } = elementor;
 
-			if ( isProWidget ) {
+			const hasWidget = ( path ) => !! config[ path ].find( ( item ) => widgetType === item.name );
+
+			let isProWidget = false,
+				isIntegrationWidget = false;
+
+			if ( config?.promotionWidgets?.length ) {
+				isProWidget = hasWidget( 'promotionWidgets' );
+			}
+
+			if ( config?.integrationWidgets?.length && ! isProWidget ) {
+				isIntegrationWidget = hasWidget( 'integrationWidgets' );
+			}
+
+			if ( isProWidget || isIntegrationWidget ) {
 				return require( './widget/view' ).default;
 			}
 
@@ -18,6 +34,18 @@ export default class Module extends elementorModules.editor.utils.Module {
 		} );
 
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
+	}
+
+	hasWidgetsElements( path ) {
+		return elementor.config?.[ path ]?.length;
+	}
+
+	hasPromotionWidgets() {
+		return this.hasWidgetsElements( 'promotionWidgets' );
+	}
+
+	hasIntegrationWidgets() {
+		return this.hasWidgetsElements( 'integrationWidgets' );
 	}
 
 	registerControlBehavior( behaviors, view ) {

@@ -4,6 +4,8 @@
  */
 const getBuildFiles = [
 	'**',
+	'!.cursor/**',
+	'!.vscode/**',
 	'!.git/**',
 	'!.github/**',
 	'!.run/**',
@@ -46,25 +48,31 @@ const getBuildFiles = [
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
+	'!scripts/**',
+	'!eslint-local-rules.js',
+	'!run-on-linux.js',
+	'!test*/**',
+	'!8888/**',
+	'!8889/**',
+	'!*.log',
+	'!hello-elementor/**',
+	'!.env',
+	'!Dockerfile',
+	'!.dockerignore',
 
 	// Conflict with above rule.
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
+	'vendor/elementor/wp-one-package/**',
+	'vendor/elementor/wp-notifications-package/**',
 ];
-/**
- * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
- */
+
 const copy = {
 	main: {
 		src: getBuildFiles,
 		expand: true,
 		dest: 'build/'
-	},
-	secondary: {
-		src: getBuildFiles,
-		expand: true,
-		dest: '/tmp/elementor-builds/<%= pkg.version %>/'
 	}
 };
 

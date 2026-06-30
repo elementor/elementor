@@ -6,7 +6,7 @@ export const Message = ( { action, children, severity = 'message', onClose } ) =
 		<Snackbar
 			open
 			autoHideDuration={ 4000 }
-			anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
+			anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } }
 			onClose={ onClose }
 		>
 			{ ( 'message' !== severity ) ? (

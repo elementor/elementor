@@ -138,7 +138,7 @@ class Stylesheet {
 	 *
 	 * @return Stylesheet The current stylesheet class instance.
 	 */
-	public function add_rules( $selector, $style_rules = null, array $query = null ) {
+	public function add_rules( $selector, $style_rules = null, ?array $query = null ) {
 		$query_hash = 'all';
 
 		if ( $query ) {

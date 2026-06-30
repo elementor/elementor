@@ -29,6 +29,13 @@ const MediaOutlet = ( { additionalOptions = null, onClose = null } ) => {
 	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
 
 	useEffect( () => {
+		const hasExplicitLocation = additionalOptions?.location && additionalOptions.location !== LOCATIONS.GENERATE;
+
+		if ( hasExplicitLocation ) {
+			navigate( additionalOptions.location );
+			return;
+		}
+
 		if ( editImage.url ) {
 			const wireframeHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
 			const isWireframeHost = wireframeHostRegex.test( new URL( editImage.url ).host );
@@ -41,7 +48,7 @@ const MediaOutlet = ( { additionalOptions = null, onClose = null } ) => {
 				navigate( LOCATIONS.GENERATE );
 			}
 		}
-	}, [ editImage.id, editImage.url, editImage.source ] );
+	}, [ editImage.id, editImage.url, editImage.source, additionalOptions?.location ] );
 
 	useSubscribeOnPromptHistoryAction( [
 		{

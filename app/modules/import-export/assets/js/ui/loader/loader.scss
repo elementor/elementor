@@ -10,13 +10,13 @@ $root: e-app-import-export-loader;
 	font-size: 50px;
 
 	&.eicon-loading {
-		font-size: type( size, '30' );
+		font-size: get-type( size, '30' );
 	}
 
 	&--absolute-center {
 		position: absolute;
-		top: 50%;
-		@include start(50%);
+		inset-block-start: 50%;
+		inset-inline-start: 50%;
 		transform: translateX(-50%) translateY(-50%);
 	}
 }

@@ -3,7 +3,13 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Font_Enqueueable;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
+use Elementor\Plugin;
+use Elementor\Utils;
 
 class Styles_Renderer {
 	const DEFAULT_SELECTOR_PREFIX = '.elementor';
@@ -13,13 +19,13 @@ class Styles_Renderer {
 	 */
 	private array $breakpoints;
 
-	private $on_prop_transform;
+	private $on_font_enqueue;
 
 	private string $selector_prefix;
 
 	/**
 	 * @param array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}> $breakpoints
-	 * @param string $selector_prefix
+	 * @param string                                                                          $selector_prefix
 	 */
 	private function __construct( array $breakpoints, string $selector_prefix = self::DEFAULT_SELECTOR_PREFIX ) {
 		$this->breakpoints = $breakpoints;
@@ -37,6 +43,7 @@ class Styles_Renderer {
 	 *   array<int, array{
 	 *     id: string,
 	 *     type: string,
+	 *     cssName: string | null,
 	 *     variants: array<int, array{
 	 *         props: array<string, mixed>,
 	 *         meta: array<string, mixed>
@@ -58,8 +65,8 @@ class Styles_Renderer {
 		return implode( '', $css_style );
 	}
 
-	public function on_prop_transform( callable $callback ): self {
-		$this->on_prop_transform = $callback;
+	public function on_font_enqueue( callable $callback ): self {
+		$this->on_font_enqueue = $callback;
 
 		return $this;
 	}
@@ -96,11 +103,11 @@ class Styles_Renderer {
 			$style_def['id']
 		) {
 			$type = $map[ $style_def['type'] ];
-			$id = $style_def['id'];
+			$name = $style_def['cssName'] ?? $style_def['id'];
 
 			$selector_parts = array_filter( [
 				$this->selector_prefix,
-				"{$type}{$id}",
+				"{$type}{$name}",
 			] );
 
 			return implode( ' ', $selector_parts );
@@ -110,16 +117,20 @@ class Styles_Renderer {
 	}
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] );
+		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
-		if ( ! $css ) {
+		if ( ! $css && ! $custom_css ) {
 			return '';
 		}
 
-		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
-		$selector = $base_selector . $state;
+		if ( isset( $variant['meta']['state'] ) ) {
+			$selector = Style_States::get_selector_with_state( $base_selector, $variant['meta']['state'] );
+		} else {
+			$selector = $base_selector;
+		}
 
-		$style_declaration = $selector . '{' . $css . '}';
+		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
 		if ( isset( $variant['meta']['breakpoint'] ) ) {
 			$style_declaration = $this->wrap_with_media_query( $variant['meta']['breakpoint'], $style_declaration );
@@ -128,19 +139,54 @@ class Styles_Renderer {
 		return $style_declaration;
 	}
 
+
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
 		return Collection::make( Render_Props_Resolver::for_styles()->resolve( $schema, $props ) )
 			->filter()
-			->map( function ( $value, $prop ) {
-				if ( $this->on_prop_transform ) {
-					call_user_func( $this->on_prop_transform, $prop, $value );
-				}
+			->map( function ( $value, $prop ) use ( $props, $schema ) {
+				$this->maybe_enqueue_font( $schema, $prop, $props[ $prop ] ?? null );
 
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
+	}
+
+	private function maybe_enqueue_font( array $schema, string $prop_key, $prop_value ): void {
+		if ( ! $this->on_font_enqueue || ! is_array( $prop_value ) || empty( $prop_value['value'] ) ) {
+			return;
+		}
+
+		$enqueueable = $this->resolve_font_enqueueable( $schema[ $prop_key ] ?? null, $prop_value );
+
+		if ( ! $enqueueable ) {
+			return;
+		}
+
+		$font = $enqueueable->get_enqueue_font_family( $prop_value['value'] );
+
+		if ( $font ) {
+			call_user_func( $this->on_font_enqueue, $font );
+		}
+	}
+
+	private function resolve_font_enqueueable( ?Prop_Type $prop_type, array $prop_value ): ?Font_Enqueueable {
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			$prop_type = $prop_type->get_prop_type( $prop_value['$$type'] ?? '' );
+		}
+
+		if ( $prop_type instanceof Font_Enqueueable ) {
+			return $prop_type;
+		}
+
+		return null;
+	}
+
+	private function custom_css_to_css_string( ?array $custom_css ): string {
+		return ! empty( $custom_css['raw'] )
+			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			: '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
@@ -153,12 +199,22 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint_id ] );
+		$query = $this->get_media_query( $this->breakpoints[ $breakpoint_id ] );
 
-		return $size ? '@media(' . $size . '){' . $css . '}' : $css;
+		return $query ? $query . '{' . $css . '}' : $css;
 	}
 
-	private function get_breakpoint_size( array $breakpoint ): ?string {
+	public static function get_media_query( $breakpoint ): ?string {
+		if ( isset( $breakpoint['is_enabled'] ) && ! $breakpoint['is_enabled'] ) {
+			return null;
+		}
+
+		$size = self::get_breakpoint_size( $breakpoint );
+
+		return $size ? '@media(' . $size . ')' : null;
+	}
+
+	private static function get_breakpoint_size( array $breakpoint ): ?string {
 		$bound = 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width';
 		$width = $breakpoint['value'] . 'px';
 

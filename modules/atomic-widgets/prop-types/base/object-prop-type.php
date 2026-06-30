@@ -12,7 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Object_Prop_Type implements Transformable_Prop_Type {
-	const KIND = 'object';
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'object';
 
 	use Concerns\Has_Default;
 	use Concerns\Has_Generate;
@@ -20,14 +22,21 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Required_Setting;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Initial_Value;
 
 	/**
 	 * @var array<Prop_Type>
 	 */
 	protected array $shape;
 
+	protected ?array $dependencies = null;
+
 	public function __construct() {
 		$this->shape = $this->define_shape();
+	}
+
+	public function get_type(): string {
+		return 'object';
 	}
 
 	public function get_default() {
@@ -125,12 +134,15 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$default = $this->get_default();
 
 		return [
-			'kind' => static::KIND,
+			// phpcs:ignore
+			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => is_array( $default ) ? (object) $default : $default,
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'shape' => (object) $this->get_shape(),
+			'dependencies' => $this->get_dependencies(),
+			'initial_value' => $this->get_initial_value(),
 		];
 	}
 
@@ -138,4 +150,22 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 * @return array<Prop_Type>
 	 */
 	abstract protected function define_shape(): array;
+
+	public function set_dependencies( ?array $dependencies ): self {
+		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
+
+		return $this;
+	}
+
+	public function get_dependencies(): ?array {
+		return $this->dependencies;
+	}
+
+	public function set_shape_meta( string $shape_key, array $meta ): self {
+		foreach ( $meta as $key => $value ) {
+			$this->get_shape_field( $shape_key )->meta( $key, $value );
+		}
+
+		return $this;
+	}
 }

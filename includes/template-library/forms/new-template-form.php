@@ -15,7 +15,7 @@ class New_Template_Form extends Controls_Stack {
 	}
 
 	/**
-	 * @throws \Exception Exception Throws an exception if the control type is not supported.
+	 * @throws \Exception If control type is not supported.
 	 */
 	public function render() {
 		foreach ( $this->get_controls() as $control ) {

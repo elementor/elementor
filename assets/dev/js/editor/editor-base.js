@@ -28,13 +28,14 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
-import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
+
 import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
 import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
 import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
+import * as hints from './hints';
 import ElementBase from './elements/types/base/element-base';
 import { FontVariables } from './utils/font-variables';
 
@@ -61,6 +62,7 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
+	hints = new hints.Ally();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -239,7 +241,7 @@ export default class EditorBase extends Marionette.Application {
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 			components: {
-				AddSectionView: require( 'elementor-views/add-section/inline' ),
+				AddSectionView: require( 'elementor-views/add-section/inline' ).default,
 			},
 		},
 		layouts: {
@@ -409,7 +411,7 @@ export default class EditorBase extends Marionette.Application {
 	 * @return {Container} container
 	 */
 	getPreviewContainer() {
-		return this.getPreviewView().getContainer();
+		return this.getPreviewView()?.getContainer();
 	}
 
 	getContainer( id ) {
@@ -418,6 +420,23 @@ export default class EditorBase extends Marionette.Application {
 		}
 
 		return $e.components.get( 'document' ).utils.findContainerById( id );
+	}
+
+	getContainerByKeyValue( args ) {
+		const { key, value, parent = this.getPreviewView() } = args;
+
+		if ( this.getPreviewContainer().model.get( key ) === value ) {
+			return this.getPreviewContainer();
+		}
+
+		const view = $e.components.get( 'document' ).utils.findViewRecursive(
+			parent.children,
+			key,
+			value,
+			false,
+		);
+
+		return view?.[ 0 ]?.getContainer() ?? null;
 	}
 
 	initComponents() {
@@ -458,7 +477,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
-		this.editorEvents = new EditorEvents();
+		this.editorEvents = elementorCommon.eventsManager;
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -479,9 +498,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.promotionModule = new PromotionModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
-			this.modules.cloudLibraryModule = new CloudLibraryModule();
-		}
+		this.modules.cloudLibraryModule = new CloudLibraryModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
@@ -1152,6 +1169,29 @@ export default class EditorBase extends Marionette.Application {
 		} );
 	}
 
+	async refreshWidgets() {
+		const data = await elementorCommon.ajax.addRequest( 'refresh_widgets_config' );
+
+		this.widgetsCache = {};
+		this.addWidgetsCache( data.widgets );
+
+		elementor.config.document.panel.elements_categories = data.categories;
+
+		if ( elementor.config.locale !== elementor.config.user.locale ) {
+			this.translateControlsDefaults( elementor.config.locale );
+		}
+
+		this.kitManager.renderGlobalsDefaultCSS();
+
+		elementor.hooks.doAction( 'elementor/widgets/refreshed' );
+
+		$e.routes.refreshContainer( 'panel' );
+
+		$e.run( 'preview/reload' );
+
+		return data;
+	}
+
 	translateControlsDefaults( locale ) {
 		elementorCommon.ajax.addRequest( 'get_widgets_default_value_translations', {
 			data: { locale },
@@ -1280,6 +1320,12 @@ export default class EditorBase extends Marionette.Application {
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
+
+		const eventsManager = elementorCommon.eventsManager;
+
+		if ( eventsManager ) {
+			eventsManager.dispatchEvent( eventsManager.config?.names?.elementorEditor?.editorLoaded, {} );
+		}
 	}
 
 	onEditModeSwitched() {

@@ -60,6 +60,8 @@ class OptInPage {
 			'elementorSettingsEditor4OptIn',
 			$this->prepare_data()
 		);
+
+		wp_set_script_translations( Module::MODULE_NAME, 'elementor' );
 	}
 
 	private function prepare_data() {
@@ -85,7 +87,7 @@ class OptInPage {
 
 	private function add_new_tab_to( Settings $settings ) {
 		$settings->add_tab( Module::MODULE_NAME, [
-			'label' => esc_html__( 'Editor V4', 'elementor' ),
+			'label' => esc_html__( 'Atomic Editor', 'elementor' ),
 			'sections' => [
 				'opt-in' => [
 					'callback' => function() {

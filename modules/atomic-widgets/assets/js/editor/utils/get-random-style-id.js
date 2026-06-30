@@ -12,8 +12,7 @@ export function getRandomStyleId( container, existingStyleIds = {} ) {
 
 	do {
 		id = `e-${ container.id }-${ elementorCommon.helpers.getUniqueId() }`;
-	}
-	while ( existingStyleIds.hasOwnProperty( id ) );
+	} while ( existingStyleIds.hasOwnProperty( id ) );
 
 	return id;
 }

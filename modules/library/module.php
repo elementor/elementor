@@ -57,12 +57,5 @@ class Module extends BaseModule {
 			Plugin::$instance->documents
 				->register_document_type( 'container', Documents\Container::get_class_full_name() );
 		}
-
-		if ( $experiments_manager->is_feature_active( AtomicWidgets_Module::EXPERIMENT_NAME ) ) {
-			Plugin::$instance->documents
-				->register_document_type( 'e-div-block', Documents\Div_Block::get_class_full_name() );
-			Plugin::$instance->documents
-				->register_document_type( 'e-flexbox', Documents\Flexbox::get_class_full_name() );
-		}
 	}
 }

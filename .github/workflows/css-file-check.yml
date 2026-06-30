@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+      - '[0-9].[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -16,8 +15,10 @@ on:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: CSS size build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: CSS size build artifact
 
   check-size-limit:
     runs-on: ubuntu-22.04
@@ -25,20 +26,20 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
 
       - name: Install dependencies
         run: |
-          npm ci
+          npm run install:ci
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build

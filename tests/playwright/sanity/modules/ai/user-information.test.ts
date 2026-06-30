@@ -20,7 +20,7 @@ test.describe( 'AI @ai', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 
 		await test.step( 'Connected and Get started', async () => {
 			await page.click( '.e-ai-button' );

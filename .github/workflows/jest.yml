@@ -2,13 +2,6 @@ name: Jest
 
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -25,7 +18,7 @@ jobs:
       js_diff: ${{ steps.js_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -42,13 +35,13 @@ jobs:
     name: Test
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: npm
       - name: Install Dependencies
-        run: npm ci
+        run: npm run install:ci
       - name: "Run Jest"
-        run: npm run test:jest
+        run: npm run test

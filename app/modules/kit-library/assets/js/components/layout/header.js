@@ -1,31 +1,27 @@
 import { Grid } from '@elementor/app-ui';
 import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { useReturnTo } from '../../context/return-to-context';
+import safeRedirect from '../../../../../import-export/assets/js/shared/utils/redirect';
+import { useCallback } from 'react';
 
 export default function Header( props ) {
-	const eventTracking = ( command, source = 'home page', kitName = null, eventType = 'click' ) => appsEventTrackingDispatch(
-			command,
-			{
-				page_source: source,
-				element_position: 'app_header',
-				kit_name: kitName,
-				event_type: eventType,
-			},
-		),
-		onClose = () => {
-			eventTracking( 'kit-library/close', props?.pageId, props?.kitName );
-			window.top.location = elementorAppConfig.admin_url;
-		};
+	const returnTo = useReturnTo();
+
+	const onClose = useCallback( () => {
+		if ( returnTo && safeRedirect( returnTo ) ) {
+			return;
+		}
+		window.top.location = elementorAppConfig.admin_url;
+	}, [ returnTo ] );
 
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
 			{ props.startColumn || <a
 				className="eps-app__logo-title-wrapper"
 				href="#/kit-library"
-				onClick={ () => eventTracking( 'kit-library/logo' ) }
 			>
-				<i className="eps-app__logo eicon-elementor" />
-				<h1 className="eps-app__title">{ __( 'Kit Library', 'elementor' ) }</h1>
+				<i className="eps-app__logo eicon-elementor-circle" />
+				<h1 className="eps-app__title">{ __( 'Website Templates', 'elementor' ) }</h1>
 			</a> }
 			{ props.centerColumn || <span /> }
 			{ props.endColumn || <div style={ { flex: 1 } }>

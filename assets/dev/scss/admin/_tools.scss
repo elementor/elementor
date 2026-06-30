@@ -22,6 +22,7 @@
 #elementor_rollback_pro {
 	> div {
 		display: flex;
+		align-items: center;
 
 		input,
 		select {
@@ -47,9 +48,27 @@
 			margin-block-start: 5px;
 		}
 
+		&.e-editor-one {
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			border-radius: 8px;
+
+			&:not(:first-child) {
+				margin-block-start: 20px;
+			}
+		}
+
 		p {
 			font-size: 16px;
 			margin: 20px 0 25px;
+		}
+
+		.description {
+			font-size: 16px;
+			margin: 8px 0 8px;
+		}
+
+		.action-buttons {
+			margin-block-start: 20px;
 		}
 	}
 
@@ -67,6 +86,11 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+
+		&.action-buttons {
+			justify-content: end;
+			gap: 12px;
+		}
 
 		h2 {
 			font-size: 28px;
@@ -103,8 +127,9 @@
 
 		img {
 			width: 330px;
-			height: 315px;
-			padding: 0.625rem;
+			height: auto;
+			max-width: 100%;
+			aspect-ratio: 330 / 315;
 		}
 	}
 

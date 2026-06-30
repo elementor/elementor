@@ -38,7 +38,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Open the modal with default value from the control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 
 			await page.click( '.e-ai-button' );
 
@@ -65,7 +65,7 @@ test.describe( 'AI @ai', () => {
 
 			await newPromptButton.click();
 
-			expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
+			await expect( page.locator( 'input[name="prompt"]' ) ).toHaveValue( 'Some prompt' );
 			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 			await generateTextButton.click();
 
@@ -79,11 +79,11 @@ test.describe( 'AI @ai', () => {
 			await useTextButton.click();
 
 			const inputControl = page.locator( '.elementor-control-title.elementor-control-type-textarea textarea' );
-			expect( await inputControl.inputValue() ).toBe( 'Response Prompt Shorter' );
+			await expect( inputControl ).toHaveValue( 'Response Prompt Shorter' );
 		} );
 
 		await test.step( 'Open the modal with non-default value from the control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 			await editor.setTextareaControlValue( 'title', 'Hello World' );
 
 			await page.click( '.e-ai-button' );

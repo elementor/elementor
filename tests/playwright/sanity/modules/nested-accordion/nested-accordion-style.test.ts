@@ -7,30 +7,6 @@ import { displayState } from '../../../enums/display-states';
 import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
 test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
-
-		await page.close();
-	} );
-
 	test( 'Accordion style tests', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
@@ -46,7 +22,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await test.step( 'Editor', async () => {
 			// Add Widget and navigate to Style Tab
 			await editor.closeNavigatorIfOpen();
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			await nestedAccordionItem.first().click();
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await editor.openPanelTab( 'style' );
@@ -82,7 +58,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
 
 		await editor.closeNavigatorIfOpen();
-		const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+		const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		const nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 		await editor.openSection( 'section_interactions' );
@@ -190,7 +166,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await test.step( 'Add Widget and navigate to Style Tab', async () => {
 				// Act
 				await editor.closeNavigatorIfOpen();
-				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+				nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 				await editor.openPanelTab( 'style' );
@@ -246,7 +222,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await test.step( 'Add Widget and navigate to Style Tab', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
-			await editor.addWidget( 'nested-accordion', container );
+			await editor.addWidget( { widgetType: 'nested-accordion', container } );
 
 			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );

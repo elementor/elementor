@@ -1,0 +1,245 @@
+name: Cherry Pick Merged PR
+
+on:
+  pull_request:
+    types:
+      - closed
+      - labeled
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  cherry-pick:
+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.head.repo.full_name == github.repository && (github.event.action == 'closed' || (github.event.action == 'labeled' && startsWith(github.event.label.name, 'cp_'))) }}
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      USING_PAT: ${{ secrets.GH_PAT != '' }}
+      JIRA_TICKET_PATTERN: '[A-Z]{2,10}-[0-9]+'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Check if PR is from fork
+        id: check_fork
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+        run: |
+          IS_FORK="false"
+          if [ "$HEAD_REPO" != "$BASE_REPO" ]; then
+            IS_FORK="true"
+          fi
+          echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Log trigger and PR information
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
+          ADDED_LABEL: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          TARGET_REPO: ${{ github.repository }}
+          IS_FORK: ${{ steps.check_fork.outputs.is_fork }}
+          PR_MERGED: ${{ github.event.pull_request.merged }}
+        run: |
+          echo "Trigger: $EVENT_ACTION"
+          if [ "$EVENT_ACTION" = "labeled" ]; then
+            echo "Added label: $ADDED_LABEL"
+          fi
+          echo "PR #${PR_NUMBER} from: $HEAD_REPO"
+          echo "Target repository: $TARGET_REPO"
+          echo "Is fork PR: $IS_FORK"
+          echo "PR merged: $PR_MERGED"
+        shell: bash
+
+      - name: Get branch labels
+        id: get_labels
+        env:
+          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
+        run: |
+          LABELS=$(jq -r '.[].name' <<< "$LABELS_JSON" | grep '^cp_' | paste -sd ',' || echo "")
+          echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Fetch all branches
+        run: git fetch --all
+        shell: bash
+
+      - name: Cherry-Pick and Create PRs
+        if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
+          LABEL_NAME: ${{ github.event.label.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ORIG_URL: ${{ github.event.pull_request.html_url }}
+          FILTERED_LABELS_CSV: ${{ steps.get_labels.outputs.filtered_labels_csv }}
+          EVENT_ACTION: ${{ github.event.action }}
+          SOURCE_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          PR_TITLE=$(echo "$PR_TITLE" | sed 's/[;&|<>`$()]//g')
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS_CSV"
+          for lbl in "${BRANCHES[@]}"; do
+            TARGET=${lbl#cp_}
+
+            TARGET_SAFE=$(echo "$TARGET" | sed 's/\./_/g')
+            BRANCH="cherry-pick-pr${PR_NUMBER}_to_${TARGET_SAFE}"
+
+            # Create branch
+            if ! git checkout -b "$BRANCH" "origin/$TARGET"; then
+              echo "::warning:: Branch $TARGET does not exist - skipping"
+              continue
+            fi
+
+            # Cherry-pick
+            if ! git cherry-pick -m 1 "$MERGE_SHA"; then
+              echo "::error:: Cherry-pick conflicts detected for PR #${PR_NUMBER} on branch ${TARGET}"
+              # Create a conflict resolution branch
+              TARGET_SAFE=$(echo "$TARGET" | sed 's/\./_/g')
+              CONFLICT_BRANCH="cherry-pick-pr${PR_NUMBER}_to_${TARGET_SAFE}_conflicts"
+
+              # Add conflict markers and create a commit for manual resolution
+              git add .
+              git commit -m "Cherry-pick PR #${PR_NUMBER} with conflicts - manual resolution needed"
+
+              # Extract type from original PR title, fallback to "Internal:" if not found
+              TYPE=$(echo "$PR_TITLE" | grep -oE '^[A-Za-z]+:' | head -1)
+              if [ -z "$TYPE" ]; then
+                TYPE="Internal:"
+              fi
+
+              # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+              TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+              if [ -n "$TICKET" ]; then
+                TICKET_SUFFIX=" [${TICKET}]"
+              else
+                TICKET_SUFFIX=" [NO-TICKET]"
+              fi
+
+              # Extract title body by stripping the leading "Type: " prefix
+              PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+
+              # Push the conflict branch
+              if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
+                # Create draft PR with conflict information
+                if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
+                  CONFLICT_TRIGGER_INFO=""
+                  if [ "$EVENT_ACTION" = "labeled" ]; then
+                    CONFLICT_TRIGGER_INFO="
+                  **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
+                  fi
+
+                  gh pr create \
+                    --base "$TARGET" \
+                    --head "$CONFLICT_BRANCH" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts: ${PR_TITLE_BODY}" \
+                    --body "⚠️ **Manual Resolution Required**
+
+                  This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
+
+                  **Conflict Files:**
+                  The conflicted files are included in this branch with conflict markers.
+
+                  **Resolution Steps:**
+                  1. Check out this branch: \`git checkout $CONFLICT_BRANCH\`
+                  2. Resolve conflicts in the marked files
+                  3. Stage resolved files: \`git add <resolved-files>\`
+                  4. Amend the commit: \`git commit --amend\`
+                  5. Push changes: \`git push --force-with-lease\`
+                  6. Mark this PR as ready for review
+
+                  **Original PR:** [#${PR_NUMBER}](${ORIG_URL})${CONFLICT_TRIGGER_INFO}" \
+                    --draft
+
+                  echo "::notice:: Created draft PR for manual conflict resolution: $CONFLICT_BRANCH"
+                else
+                  echo "::notice:: Draft PR already exists for conflict resolution: $CONFLICT_BRANCH"
+                fi
+              else
+                echo "::warning:: Failed to push conflict branch $CONFLICT_BRANCH"
+                git cherry-pick --abort
+              fi
+              continue
+            else
+              echo "Cherry-pick successful"
+            fi
+
+            # Push (force push to handle existing branches)
+            if ! git push --force-with-lease origin "$BRANCH"; then
+              echo "::warning:: Failed to push branch $BRANCH"
+              continue
+            fi
+
+            # Extract type from original PR title, fallback to "Internal:" if not found
+            TYPE=$(echo "$PR_TITLE" | grep -oE '^[A-Za-z]+:' | head -1)
+            if [ -z "$TYPE" ]; then
+              TYPE="Internal:"
+            fi
+
+            # Extract ticket from original PR title (e.g. [ED-22962], [PROJ-123])
+            TICKET=$(echo "$PR_TITLE" | grep -oE "$JIRA_TICKET_PATTERN" | head -1)
+            if [ -n "$TICKET" ]; then
+              TICKET_SUFFIX=" [${TICKET}]"
+            else
+              TICKET_SUFFIX=" [NO-TICKET]"
+            fi
+
+            # Extract title body by stripping the leading "Type: " prefix
+            PR_TITLE_BODY=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
+
+            # Create PR via gh CLI (token already in env: GH_TOKEN)
+            # Check if PR already exists
+            if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
+              echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
+            else
+              TRIGGER_INFO=""
+              if [ "$EVENT_ACTION" = "labeled" ]; then
+                TRIGGER_INFO="
+                **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
+              fi
+
+              PR_URL=$(gh pr create \
+                --base "$TARGET" \
+                --head "$BRANCH" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}: ${PR_TITLE_BODY}" \
+                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
+
+                **Source:** ${SOURCE_REPO}
+                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}")
+              
+              NEW_PR=$(echo "$PR_URL" | grep -oE '/pull/[0-9]+' | grep -oE '[0-9]+' || echo "")
+
+              if [ -n "$NEW_PR" ]; then
+                if [ "$USING_PAT" = "true" ]; then
+                  echo "::notice:: PR #${NEW_PR} created with PAT - workflows will trigger automatically"
+                else
+                  echo "Created PR #${NEW_PR} with GITHUB_TOKEN, triggering workflows via empty commit..."
+                  CURRENT_BRANCH=$(git branch --show-current)
+                  if [ "$CURRENT_BRANCH" = "$BRANCH" ]; then
+                    git commit --allow-empty -m "Trigger workflows for PR #${NEW_PR}"
+                    git push origin "$BRANCH"
+                    echo "::notice:: Triggered workflows for PR #${NEW_PR}"
+                  else
+                    echo "::warning:: Not on branch $BRANCH (on $CURRENT_BRANCH), skipping workflow trigger"
+                  fi
+                fi
+              fi
+            fi
+          done
+        shell: bash

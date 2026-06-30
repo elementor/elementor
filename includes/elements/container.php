@@ -39,7 +39,7 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], ?array $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->active_kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -140,6 +140,7 @@ class Container extends Element_Base {
 		$config['tabs_controls'] = $this->get_tabs_controls();
 		$config['show_in_panel'] = true;
 		$config['categories'] = [ 'layout' ];
+		$config['include_in_widgets_config'] = true;
 
 		return $config;
 	}
@@ -162,15 +163,20 @@ class Container extends Element_Base {
 				videoAttributes += ' loop';
 			}
 
-			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+			view.addRenderAttribute(
+				'background-video-container',
+				{
+					'class': 'elementor-background-video-container',
+				}
+			);
 
 			if ( ! settings.background_play_on_mobile ) {
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 			}
 			#>
 			<div {{{ view.getRenderAttributeString( 'background-video-container' ) }}}>
-				<div class="elementor-background-video-embed"></div>
-				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
+				<div class="elementor-background-video-embed" role="presentation"></div>
+				<video class="elementor-background-video-hosted" role="presentation" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
 		<div class="elementor-shape elementor-shape-top" aria-hidden="true"></div>
@@ -197,17 +203,22 @@ class Container extends Element_Base {
 			return;
 		}
 
-		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
+		$is_embed_video = Embed::is_embed_video( $settings['background_video_link'] );
 
-		$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+		$this->add_render_attribute(
+			'background-video-container',
+			[
+				'class' => 'elementor-background-video-container',
+			]
+		);
 
 		if ( ! $settings['background_play_on_mobile'] ) {
 			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
 		}
 
 		?><div <?php $this->print_render_attribute_string( 'background-video-container' ); ?>>
-			<?php if ( $video_properties ) : ?>
-				<div class="elementor-background-video-embed"></div>
+			<?php if ( $is_embed_video ) : ?>
+				<div class="elementor-background-video-embed" role="presentation"></div>
 				<?php
 			else :
 				$video_tag_attributes = 'autoplay muted playsinline';
@@ -216,7 +227,7 @@ class Container extends Element_Base {
 					$video_tag_attributes .= ' loop';
 				}
 				?>
-				<video class="elementor-background-video-hosted" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
+				<video class="elementor-background-video-hosted" role="presentation" <?php echo esc_attr( $video_tag_attributes ); ?>></video>
 			<?php endif; ?>
 		</div><?php
 	}
@@ -323,8 +334,14 @@ class Container extends Element_Base {
 	 * @return \Elementor\Element_Base|\Elementor\Widget_Base|null
 	 */
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] || 'e-div-block' === $element_data['elType'] ) {
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
+		}
+
+		if ( ! isset( $element_data['widgetType'] ) ) {
+			return null;
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -476,6 +493,7 @@ class Container extends Element_Base {
 					],
 				],
 				'description' => sprintf(
+					/* translators: %s: 100vh. */
 					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
 					'100vh'
 				),
@@ -1163,14 +1181,6 @@ class Container extends Element_Base {
 
 		$this->start_controls_tabs( 'tabs_shape_dividers' );
 
-		$shapes_options = [
-			'' => esc_html__( 'None', 'elementor' ),
-		];
-
-		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
-			$shapes_options[ $shape_name ] = $shape_props['title'];
-		}
-
 		foreach ( [
 			'top' => esc_html__( 'Top', 'elementor' ),
 			'bottom' => esc_html__( 'Bottom', 'elementor' ),
@@ -1188,8 +1198,10 @@ class Container extends Element_Base {
 				$base_control_key,
 				[
 					'label' => esc_html__( 'Type', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'options' => $shapes_options,
+					'type' => Controls_Manager::VISUAL_CHOICE,
+					'label_block' => true,
+					'columns' => 2,
+					'options' => Shapes::get_shapes(),
 					'render_type' => 'none',
 					'frontend_available' => true,
 					'assets' => [
@@ -1401,7 +1413,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1414,7 +1426,7 @@ class Container extends Element_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-column: span {{VALUE}};',
@@ -1445,7 +1457,7 @@ class Container extends Element_Base {
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => ' Default',
+					'' => ' ' . esc_html__( 'Default', 'elementor' ),
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1458,7 +1470,7 @@ class Container extends Element_Base {
 					'10' => '10',
 					'11' => '11',
 					'12' => '12',
-					'custom' => 'Custom',
+					'custom' => esc_html__( 'Custom', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}}' => 'grid-row: span {{VALUE}};',

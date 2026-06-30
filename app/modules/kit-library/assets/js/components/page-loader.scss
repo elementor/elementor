@@ -3,6 +3,6 @@
 	height: 100%;
 	display: grid;
 	place-items: center;
-	font-size: type( size, '30' );
+	font-size: get-type( size, '30' );
 	color: tints( 500 );
 }

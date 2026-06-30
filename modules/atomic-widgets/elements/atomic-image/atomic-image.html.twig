@@ -1,17 +1,18 @@
-{% if settings.image.src is not empty %}
-	{% if settings.link.href %}
-		<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
-	{% endif %}
-	<img class="{{ settings.classes | join(' ') }}"
-		{% for attr, value in settings.image %}
-			{% if attr == 'src' %}
-				src="{{ value | e('full_url') }}"
-			{% else %}
-				{{ attr | e('html_attr') }}="{{ value }}"
-			{% endif %}
-		{% endfor %}
-	/>
-	{% if settings.link.href %}
-		</a>
-	{% endif %}
-{% endif %}
+{% import 'elementor/macros' as m %}
+{%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
+{%- if has_link -%}
+	<{{ settings.link.tag | default('a') | e('html_tag') }}
+		{{- m.render_link_attributes(settings.link) }} class="{{ base_styles['link-base'] }}" data-interaction-id="{{ interaction_id }}"
+	>
+{%- endif %}
+<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
+	{%- if not has_link %} data-interaction-id="{{ interaction_id }}"{% endif -%}
+	{{- m.render_custom_attributes(settings) }}
+	{%- for attr, value in settings.image -%}
+		{%- if attr == 'src' %} src="{{ value | e('full_url') }}"
+		{%- else %} {{ attr | e('html_attr') }}="{{ value }}"{% endif -%}
+	{%- endfor %}
+/>
+{%- if has_link %}
+	</{{ settings.link.tag | default('a') | e('html_tag') }}>
+{%- endif %}

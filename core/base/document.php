@@ -6,6 +6,7 @@ use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Ac
 use Elementor\Core\Behaviors\Interfaces\Lock_Behavior;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
@@ -19,7 +20,6 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -46,6 +46,8 @@ abstract class Document extends Controls_Stack {
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
 	const CACHE_META_KEY = '_elementor_element_cache';
+
+	const UNEDITABLE_WITH_ELEMENTOR_TYPES = [ 'kit' ];
 
 	/**
 	 * Document publish status.
@@ -231,7 +233,14 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	private static function get_panel_category_item( $promotion, $index, array $categories, bool $has_pro ): array {
-		if ( ! $has_pro ) {
+		$keep_promotion = $has_pro && apply_filters(
+			'elementor/document/panel_category_keep_promotion',
+			false,
+			$index,
+			$promotion
+		);
+
+		if ( ! $has_pro || $keep_promotion ) {
 			$categories[ $index ]['promotion'] = Filtered_Promotions_Manager::get_filtered_promotion_data(
 				$promotion,
 				'elementor/panel/' . $index . '/custom_promotion',
@@ -609,6 +618,10 @@ abstract class Document extends Controls_Stack {
 		if ( $autosave_id ) {
 			$document = Plugin::$instance->documents->get( $autosave_id );
 		} elseif ( $create ) {
+			if ( ! function_exists( 'wp_create_post_autosave' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/post.php';
+			}
+
 			$autosave_id = wp_create_post_autosave( [
 				'post_ID' => $this->post->ID,
 				'post_type' => $this->post->post_type,
@@ -639,12 +652,12 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array    $actions An array of row action links.
+	 * @param array $actions An array of row action links.
 	 *
 	 * @return array An updated array of row action links.
 	 */
 	public function filter_admin_row_actions( $actions ) {
-		if ( $this->is_built_with_elementor() && $this->is_editable_by_current_user() ) {
+		if ( $this->is_editable_with_elementor() ) {
 			$actions['edit_with_elementor'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				$this->get_edit_url(),
@@ -653,6 +666,14 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $actions;
+	}
+
+	public function is_editable_with_elementor() {
+		if ( in_array( $this->get_type(), self::UNEDITABLE_WITH_ELEMENTOR_TYPES ) ) {
+			return false;
+		}
+
+		return $this->is_editable_by_current_user() && $this->is_built_with_elementor();
 	}
 
 	/**
@@ -726,24 +747,14 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container_config = [];
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
-				$container_config['container'] =
-					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
-			}
-
-			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
-				// Order reflects the order in the editor.
-				$atomic_elements = [ 'e-flexbox', 'e-div-block' ];
-
-				foreach ( $atomic_elements as $element ) {
-					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
-				}
-			}
+			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
+				->filter( fn( $element ) => ( ! empty( $element->get_config()['include_in_widgets_config'] ) ) )
+				->map( fn( $element ) => $element->get_config() )
+				->all();
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
+			// `get_elements_raw_data` has to be called before `get_widget_types_config`, because it affects it.
+			$config['widgets'] = array_merge( $elements_config, Plugin::$instance->widgets_manager->get_widget_types_config() );
 		}
 
 		$additional_config = [];
@@ -843,7 +854,9 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_save', $this, $data );
 
 		if ( ! current_user_can( 'unfiltered_html' ) ) {
-			$data = wp_kses_post_deep( $data );
+			$data = map_deep( $data, function ( $value ) {
+				return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
+			} );
 		}
 
 		if ( ! empty( $data['settings'] ) ) {
@@ -1057,6 +1070,8 @@ abstract class Document extends Controls_Stack {
 	 * @param bool $with_html_content
 	 *
 	 * @return array
+	 *
+	 * @throws \Exception If elements retrieval fails or data processing errors occur.
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
 		if ( ! static::get_property( 'has_elements' ) ) {
@@ -1065,6 +1080,21 @@ abstract class Document extends Controls_Stack {
 
 		if ( is_null( $data ) ) {
 			$data = $this->get_elements_data();
+		}
+
+		/**
+		 * Filters document elements data after loading.
+		 *
+		 * Allows modification of elements data when loading (not saving).
+		 * Useful for migrations, transformations, or data enrichment.
+		 *
+		 * @since 3.35.0
+		 *
+		 * @param array                         $data      The elements data array.
+		 * @param \Elementor\Core\Base\Document $document  The document instance.
+		 */
+		if ( ! $this->is_saving ) {
+			$data = apply_filters( 'elementor/document/load/data', $data, $this );
 		}
 
 		// Change the current documents, so widgets can use `documents->get_current` and other post data
@@ -1464,7 +1494,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param mixed $value Meta data value.
+	 * @param mixed  $value Meta data value.
 	 *
 	 * @return bool|int
 	 */
@@ -1801,10 +1831,10 @@ abstract class Document extends Controls_Stack {
 
 	/**
 	 * @since 2.1.3
-	 * @access protected
+	 * @access public
 	 */
-	protected function print_elements( $elements_data ) {
-		$is_element_cache_active = Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) && 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
+	public function print_elements( $elements_data ) {
+		$is_element_cache_active = 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
 		if ( ! $is_element_cache_active ) {
 			ob_start();
 
@@ -2095,5 +2125,9 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $this->elements_iteration_actions;
+	}
+
+	public function get_elementor_version() {
+		return $this->get_main_meta( '_elementor_version' );
 	}
 }

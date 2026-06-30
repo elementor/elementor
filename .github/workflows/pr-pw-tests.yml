@@ -1,0 +1,50 @@
+name: PR Playwright Tests
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  build-plugin:
+    name: PR Playwright build artifact
+    uses: ./.github/workflows/build.yml
+    with:
+      job_name: PR Playwright build artifact
+
+  playwright-tests:
+    name: Playwright Tests
+    runs-on: ubuntu-22.04
+    needs: [build-plugin]
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v6
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          cache: 'npm'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+
+      - name: Run wp-playground
+        id: wp-playground
+        run: |
+            npm run wp-playground:ci &
+            
+            # Wait for WordPress to be ready
+            while ! curl -s http://127.0.0.1:9400 > /dev/null; do
+              echo "Waiting for WordPress to be ready..."
+              sleep 2
+            done
+            
+            echo "WordPress is running on http://127.0.0.1:9400"
