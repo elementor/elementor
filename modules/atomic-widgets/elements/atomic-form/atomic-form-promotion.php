@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Preserves_Unregistered_Children;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -15,12 +15,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Form_Promotion extends Atomic_Element_Base {
 	use Has_Element_Template;
+	use Preserves_Unregistered_Children;
 
 	const BASE_STYLE_KEY = 'base';
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 		$this->meta( 'is_pro_promotion', true );
+
+		add_filter( 'elementor/atomic/form/email_action_count', fn( $count ) => max( $count, 2 ) );
 	}
 
 	public static function get_type() {
@@ -40,10 +43,7 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-		];
+		return Atomic_Form::get_base_props_schema();
 	}
 
 	protected function define_atomic_controls(): array {
