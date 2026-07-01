@@ -52,8 +52,8 @@ jobs:
           exempt-branches-regex: ${{ env.exempt_branches_regex }}
           exempt-protected-branches: true
           stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last {daysBeforeBranchStale} days and is marked as stale. It will be removed in {daysBeforeBranchDelete} days.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
-          default-recipient: "Svitlana-Dykun"
-          days-before-branch-stale: 90
-          days-before-branch-delete: 7
-          operations-per-run: 10
+          default-recipient: "elementorbot"
+          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE || '90' }}
+          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE || '7' }}
+          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN || '10' }}
           ignore-unknown-authors: true
