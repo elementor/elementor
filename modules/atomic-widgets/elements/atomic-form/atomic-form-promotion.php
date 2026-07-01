@@ -22,8 +22,6 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 		$this->meta( 'is_pro_promotion', true );
-
-		add_filter( 'elementor/atomic/form/email_action_count', fn( $count ) => max( $count, 2 ) );
 	}
 
 	public static function get_type() {
