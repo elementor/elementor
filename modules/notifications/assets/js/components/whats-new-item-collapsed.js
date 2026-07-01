@@ -15,13 +15,6 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 		setExpanded( ! expanded );
 	};
 
-	// When a topic line appears above the title, the header row is taller.
-	// top: 50% would land between the two lines, so we pin to the topic line center instead.
-	// py: 1.5 = 12px padding-top, caption line-height ≈ 20px → center at 12 + 10 - 3 (half-dot) = 19px.
-	const dotSx = item.topic
-		? { top: '19px' }
-		: { top: '50%', transform: 'translateY(-50%)' };
-
 	return (
 		<Box>
 			<Box
@@ -29,10 +22,10 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 				sx={ {
 					position: 'relative',
 					display: 'flex',
-					alignItems: 'center',
+					alignItems: 'flex-start',
 					gap: 1,
 					cursor: 'pointer',
-					py: 1.5,
+					py: 2,
 					paddingInlineStart: 1,
 				} }
 			>
@@ -41,7 +34,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 					sx={ {
 						position: 'absolute',
 						insetInlineStart: '-6px',
-						...dotSx,
+						top: '23px',
 						width: 6,
 						height: 6,
 						borderRadius: '50%',
@@ -58,12 +51,28 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
+					{ ! expanded && item.description && (
+						<Typography
+							variant="body2"
+							color="text.secondary"
+							sx={ {
+								mt: 0.5,
+								display: '-webkit-box',
+								WebkitLineClamp: 2,
+								WebkitBoxOrient: 'vertical',
+								overflow: 'hidden',
+							} }
+						>
+							{ item.description }
+						</Typography>
+					) }
 				</Box>
 				<ChevronDownIcon
 					sx={ {
 						flexShrink: 0,
 						color: 'secondary.main',
 						fontSize: 'small',
+						mt: 0.25,
 						transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
 						transition: 'transform 0.2s',
 					} }
