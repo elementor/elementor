@@ -29,8 +29,13 @@ export const WhatsNew = ( props ) => {
 	}, [ isOpen, setIsRead ] );
 
 	const handleSeen = useCallback( ( itemId ) => {
-		setSeenItemIds( ( prev ) => new Set( [ ...prev, itemId ] ) );
-		window.dispatchEvent( new CustomEvent( 'e-notification-item-seen' ) );
+		setSeenItemIds( ( prev ) => {
+			if ( prev.has( itemId ) ) {
+				return prev;
+			}
+			window.dispatchEvent( new CustomEvent( 'e-notification-item-seen' ) );
+			return new Set( [ ...prev, itemId ] );
+		} );
 	}, [] );
 
 	return (

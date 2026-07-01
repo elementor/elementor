@@ -8,7 +8,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 	const [ expanded, setExpanded ] = useState( false );
 
 	const handleToggle = () => {
-		if ( ! expanded && onSeen ) {
+		if ( ! expanded && isNew && onSeen ) {
 			onSeen();
 		}
 		setExpanded( ! expanded );
