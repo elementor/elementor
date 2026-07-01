@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@elementor/query';
 import { getNotifications } from '../api';
 import { Box, Divider, LinearProgress, Typography } from '@elementor/ui';
@@ -13,11 +12,9 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 		queryFn: getNotifications,
 	} );
 
-	// Auto-mark fully-visible items as seen so they don't inflate the badge.
-	// - Featured items: always visible in the hero section.
-	// - Regular items (no featured exist): all fully visible as expanded cards.
-	// The seenItemIds check prevents re-dispatching on subsequent drawer opens.
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const seenItemIdsRef = useRef( seenItemIds );
+	seenItemIdsRef.current = seenItemIds;
+
 	useEffect( () => {
 		if ( ! items ) {
 			return;
@@ -27,9 +24,9 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 			? items.filter( ( item ) => item.featured )
 			: items;
 		fullyVisibleItems
-			.filter( ( item ) => ! seenItemIds.has( item.id ) )
+			.filter( ( item ) => ! seenItemIdsRef.current.has( item.id ) )
 			.forEach( ( item ) => onSeen( item.id ) );
-	}, [ items ] );
+	}, [ items, onSeen ] );
 
 	if ( isPending ) {
 		return (
@@ -98,4 +95,11 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 			) ) }
 		</>
 	);
+};
+
+WhatsNewDrawerContent.propTypes = {
+	setIsOpen: PropTypes.func.isRequired,
+	seenItemIds: PropTypes.instanceOf( Set ).isRequired,
+	onSeen: PropTypes.func.isRequired,
+	initialHasUnread: PropTypes.bool.isRequired,
 };

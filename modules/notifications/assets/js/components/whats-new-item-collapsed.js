@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { Box, Button, Collapse, Divider, Link, Typography } from '@elementor/ui';
 import { ChevronDownIcon } from '@elementor/icons';
@@ -125,4 +124,11 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 			<Divider />
 		</Box>
 	);
+};
+
+WhatsNewItemCollapsed.propTypes = {
+	item: PropTypes.object.isRequired,
+	itemIndex: PropTypes.number.isRequired,
+	isNew: PropTypes.bool,
+	onSeen: PropTypes.func,
 };

@@ -25,11 +25,8 @@ export const WhatsNewItem = ( { item, itemIndex, itemsLength, setIsOpen, feature
 			) }
 			<WrapperWithLink link={ item.link }>
 				<Typography
-					variant="subtitle1"
-					sx={ {
-						pb: 2,
-						...( featured && { fontSize: '1.2rem' } ),
-					} }
+					variant={ featured ? 'h6' : 'subtitle1' }
+					sx={ { pb: 2 } }
 				>
 					{ item.title }
 				</Typography>

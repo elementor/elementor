@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Box, DirectionProvider, Drawer, ThemeProvider } from '@elementor/ui';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { WhatsNewTopBar } from './whats-new-top-bar';
@@ -14,11 +14,10 @@ const queryClient = new QueryClient( {
 	},
 } );
 
-// Captured once at page load — reflects PHP's persisted unread state.
 const initialHasUnread = ( window.elementorNotifications?.unread_count ?? 0 ) > 0;
 
 export const WhatsNew = ( props ) => {
-	const { isOpen, setIsOpen, setIsRead, anchorPosition = 'right' } = props;
+	const { isOpen, setIsOpen, setIsRead = () => {}, anchorPosition = 'right' } = props;
 	const [ seenItemIds, setSeenItemIds ] = useState( () => new Set() );
 
 	useEffect( () => {
@@ -29,10 +28,10 @@ export const WhatsNew = ( props ) => {
 		setIsRead( true );
 	}, [ isOpen, setIsRead ] );
 
-	const handleSeen = ( itemId ) => {
+	const handleSeen = useCallback( ( itemId ) => {
 		setSeenItemIds( ( prev ) => new Set( [ ...prev, itemId ] ) );
 		window.dispatchEvent( new CustomEvent( 'e-notification-item-seen' ) );
-	};
+	}, [] );
 
 	return (
 		<>
@@ -82,6 +81,6 @@ export const WhatsNew = ( props ) => {
 WhatsNew.propTypes = {
 	isOpen: PropTypes.bool.isRequired,
 	setIsOpen: PropTypes.func.isRequired,
-	setIsRead: PropTypes.func.isRequired,
+	setIsRead: PropTypes.func,
 	anchorPosition: PropTypes.oneOf( [ 'left', 'top', 'right', 'bottom' ] ),
 };

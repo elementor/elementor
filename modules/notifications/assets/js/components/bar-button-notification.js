@@ -40,7 +40,7 @@ export const BarButtonNotification = ( props ) => {
 					{ props.children }
 				</span>
 			</button>
-			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } setIsRead={ () => {} } />
+			<WhatsNew isOpen={ isOpen } setIsOpen={ setIsOpen } />
 		</>
 	);
 };
