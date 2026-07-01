@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { useQuery } from '@elementor/query';
 import { getNotifications } from '../api';
 import { Box, Divider, LinearProgress, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 import { WhatsNewItem } from './whats-new-item';
 import { WhatsNewItemCollapsed } from './whats-new-item-collapsed';
 
@@ -49,6 +48,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 	const featuredItems = items.filter( ( item ) => item.featured );
 	const alsoNewItems = featuredItems.length > 0 ? items.filter( ( item ) => ! item.featured ) : [];
 	const regularItems = featuredItems.length > 0 ? [] : items;
+	const listLabel = featuredItems[ 0 ]?.listLabel ?? null;
 
 	return (
 		<>
@@ -64,15 +64,20 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 			) ) }
 			{ alsoNewItems.length > 0 && (
 				<>
-					<Divider sx={ { my: 1.5 } }>
-						<Typography
-							variant="caption"
-							color="text.secondary"
-							sx={ { px: 1, textTransform: 'uppercase', letterSpacing: '0.08em' } }
-						>
-							{ __( 'Also new', 'elementor' ) }
-						</Typography>
-					</Divider>
+					{ listLabel
+						? (
+							<Divider sx={ { my: 1.5 } }>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									sx={ { px: 1, textTransform: 'uppercase', letterSpacing: '0.08em' } }
+								>
+									{ listLabel }
+								</Typography>
+							</Divider>
+						)
+						: <Divider sx={ { my: 1.5 } } />
+					}
 					{ alsoNewItems.map( ( item, index ) => (
 						<WhatsNewItemCollapsed
 							key={ index }
