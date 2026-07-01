@@ -17,7 +17,6 @@ export const BarButtonNotification = ( props ) => {
 		setIsOpen( true );
 	};
 
-	// TODO: This is a temporary solution until we have a proper admin bar component.
 	return (
 		<>
 			<button
