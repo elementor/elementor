@@ -26,7 +26,6 @@ export const trackInteractionCreated = ( elementId: string, item: InteractionIte
 	const type = extractString( item.value.animation.value.type );
 
 	dispatchEvent?.( config.names.interactions.created, {
-		app_type: config?.appTypes?.editor,
 		window_name: config?.appTypes?.editor,
 		interaction_type: config?.triggers?.click,
 		target_name: getElementLabel( elementId ),
