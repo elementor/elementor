@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createDOMElement, renderWithTheme } from 'test-utils';
-import { useSelectedElementSettings } from '@elementor/editor-elements';
+import { useElementEditorSettings } from '@elementor/editor-elements';
 import { screen } from '@testing-library/react';
 
 import { useElementRect } from '../../../hooks/use-element-rect';
@@ -34,12 +34,10 @@ const EMPTY_TRACKS: GridTracks = {
 	borderColor: '',
 };
 
-function mockGridOutlineSetting( value: { $$type: 'boolean'; value: boolean } | null ) {
-	jest.mocked( useSelectedElementSettings ).mockReturnValue( {
-		element: { id: ID, type: 'e-grid' },
-		elementType: {} as never,
-		settings: { grid_outline: value },
-	} );
+function mockGridOutlineSetting( gridOutline: boolean | undefined ) {
+	jest.mocked( useElementEditorSettings ).mockReturnValue(
+		gridOutline === undefined ? {} : { grid_outline: gridOutline }
+	);
 }
 
 function mockFloating() {
@@ -87,7 +85,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'renders the outline svg with the element id when the setting is enabled', () => {
-		mockGridOutlineSetting( { $$type: 'boolean', value: true } );
+		mockGridOutlineSetting( true );
 
 		renderOverlay();
 
@@ -97,8 +95,8 @@ describe( '<GridOutlineOverlay />', () => {
 		expect( overlay.querySelector( 'svg' ) ).toBeInTheDocument();
 	} );
 
-	it( 'treats a null setting as default-on and renders the outline', () => {
-		mockGridOutlineSetting( null );
+	it( 'treats an unset setting as default-on and renders the outline', () => {
+		mockGridOutlineSetting( undefined );
 
 		renderOverlay();
 
@@ -106,7 +104,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'renders nothing when the setting is explicitly disabled', () => {
-		mockGridOutlineSetting( { $$type: 'boolean', value: false } );
+		mockGridOutlineSetting( false );
 
 		renderOverlay();
 
@@ -114,7 +112,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'renders nothing while tracks have not resolved yet', () => {
-		mockGridOutlineSetting( { $$type: 'boolean', value: true } );
+		mockGridOutlineSetting( true );
 		jest.mocked( useGridTracks ).mockReturnValue( EMPTY_TRACKS );
 
 		renderOverlay();
@@ -123,7 +121,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'renders one rect per cell when the grid has a gap', () => {
-		mockGridOutlineSetting( null );
+		mockGridOutlineSetting( undefined );
 		jest.mocked( useGridTracks ).mockReturnValue( {
 			...NON_EMPTY_TRACKS,
 			columns: [ 100, 100, 100 ],
@@ -140,7 +138,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'renders boundary lines when the grid has no gap', () => {
-		mockGridOutlineSetting( null );
+		mockGridOutlineSetting( undefined );
 		jest.mocked( useGridTracks ).mockReturnValue( {
 			...NON_EMPTY_TRACKS,
 			columns: [ 100, 100, 100 ],
@@ -157,7 +155,7 @@ describe( '<GridOutlineOverlay />', () => {
 	} );
 
 	it( 'mounts inside the canvas wrapper portal', () => {
-		mockGridOutlineSetting( null );
+		mockGridOutlineSetting( undefined );
 
 		renderOverlay();
 

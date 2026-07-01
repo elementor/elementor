@@ -3,7 +3,6 @@ namespace Elementor\App\Modules\SiteEditor;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
-use Elementor\Modules\Promotions\Theme_Builder_Promotion;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,7 +39,6 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-		Theme_Builder_Promotion::register();
 		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_menu_in_admin_bar' ] ); // After kit (Site settings)
 	}
 }
