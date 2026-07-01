@@ -4,7 +4,7 @@ import { Badge } from '@elementor/ui';
 
 export const BarButtonNotification = ( props ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ unreadCount, setUnreadCount ] = useState( window.elementorNotifications?.unread_count ?? 0 );
+	const [ unreadCount, setUnreadCount ] = useState( parseInt( window.elementorNotifications?.unread_count, 10 ) || 0 );
 
 	useEffect( () => {
 		const handler = () => setUnreadCount( ( prev ) => Math.max( 0, prev - 1 ) );
