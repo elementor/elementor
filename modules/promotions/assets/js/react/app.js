@@ -20,11 +20,11 @@ function getPlacement( anchorTarget, isRTL ) {
 
 function getCardContent( props ) {
 	if ( 'atomic' === props.cardType ) {
-		return <AtomicPromotionCard doClose={ props.doClose } promotionData={ props.promotionData } />;
+		return <AtomicPromotionCard doClose={ props.doClose } onCtaClick={ props.onCtaClick } promotionData={ props.promotionData } />;
 	}
 
 	if ( 'widgetPromotion' === props.cardType ) {
-		return <WidgetPromotionCard doClose={ props.doClose } promotionData={ props.promotionData } />;
+		return <WidgetPromotionCard doClose={ props.doClose } onCtaClick={ props.onCtaClick } promotionData={ props.promotionData } />;
 	}
 
 	return <PromotionCard doClose={ props.onClose } promotionsData={ props.promotionsData } />;
@@ -61,6 +61,7 @@ App.propTypes = {
 	ctaUrl: PropTypes.string,
 	doClose: PropTypes.func,
 	onClose: PropTypes.func,
+	onCtaClick: PropTypes.func,
 };
 
 export default App;

@@ -13,6 +13,7 @@ const eventsConfig = {
 		searchInput: 'search_input',
 		searchResult: 'search_result',
 		buttons: 'buttons',
+		popup: 'popup',
 		searchWidget: 'search_widget',
 		wpDashAdminMenuItem: 'wpdash_admin_menu_item',
 		wpDashEditorMenu: 'wpdash_editor_menu',
@@ -32,6 +33,10 @@ const eventsConfig = {
 		noResults: 'no_results',
 		selected: 'selected',
 		promotionViewed: 'promotion_viewed',
+		popupShown: 'popup_shown',
+		popupViewed: 'popup_viewed',
+		exitToLandingPage: 'exit_to_landing_page',
+		cancel: 'cancel',
 		upgradeNow: 'upgrade_now',
 		elementorSideMenuOpened: 'elementor_side_menu_opened',
 		editorSubMenuOpened: 'wpdash_editor_sub_menu_opened',
@@ -318,6 +323,8 @@ const eventsConfig = {
 		promotions: {
 			viewPromotion: 'view_promotion',
 			upgradePromotionClick: 'upgrade_promotion_click',
+			popupOpened: 'locked_widget_popup_opened',
+			popupCtaClick: 'locked_widget_popup_cta_click',
 		},
 	},
 };

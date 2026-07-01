@@ -16,7 +16,7 @@ const CARD_WIDTH = 296;
 const IMAGE_HEIGHT = 176;
 const DEFAULT_CTA_TEXT = __( 'Upgrade Now', 'elementor' );
 
-const WidgetPromotionCard = ( { doClose, promotionData } ) => {
+const WidgetPromotionCard = ( { doClose, onCtaClick, promotionData } ) => {
 	const { title, content, image, ctaUrl, ctaText, hideProTag } = promotionData;
 
 	return (
@@ -51,6 +51,7 @@ const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 						rel="noopener noreferrer"
 						startIcon={ hideProTag ? null : <CrownFilledIcon /> }
 						sx={ { ml: 'auto' } }
+						onClick={ onCtaClick }
 					>
 						{ ctaText || DEFAULT_CTA_TEXT }
 					</Button>
@@ -62,6 +63,7 @@ const WidgetPromotionCard = ( { doClose, promotionData } ) => {
 
 WidgetPromotionCard.propTypes = {
 	doClose: PropTypes.func,
+	onCtaClick: PropTypes.func,
 	promotionData: PropTypes.object,
 };
 

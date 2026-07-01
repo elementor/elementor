@@ -13,7 +13,7 @@ import { AtomicPromotionMedia } from '../atomic-promotion-media';
 
 const CARD_WIDTH = 296;
 
-const AtomicPromotionCard = ( { doClose, promotionData } ) => {
+const AtomicPromotionCard = ( { doClose, onCtaClick, promotionData } ) => {
 	const { title, content, ctaText, ctaUrl, image, animationData } = promotionData ?? {};
 
 	return (
@@ -42,6 +42,7 @@ const AtomicPromotionCard = ( { doClose, promotionData } ) => {
 						href={ ctaUrl }
 						target="_blank"
 						rel="noopener noreferrer"
+						onClick={ onCtaClick }
 					>{ ctaText }</Button>
 				</Stack>
 			</Box>
@@ -51,6 +52,7 @@ const AtomicPromotionCard = ( { doClose, promotionData } ) => {
 
 AtomicPromotionCard.propTypes = {
 	doClose: PropTypes.func,
+	onCtaClick: PropTypes.func,
 	promotionData: PropTypes.object,
 };
 

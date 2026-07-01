@@ -3,6 +3,11 @@ import { resolvePromotionAnimation } from './atomic-promotion-media';
 import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
 import { __ } from '@wordpress/i18n';
 import { createRoot } from 'react-dom/client';
+import {
+	normalizeWidgetName,
+	trackLockedWidgetPopupClick,
+	trackLockedWidgetPopupShown,
+} from '../editor/tracking';
 
 export class AppManager {
 	constructor() {
@@ -81,7 +86,7 @@ export class AppManager {
 		);
 	}
 
-	mountCard( targetEl, wrapperClassName, appProps ) {
+	mountCard( targetEl, wrapperClassName, appProps, widgetName = '' ) {
 		this.unmount();
 
 		this.promotionWrapper = document.createElement( 'span' );
@@ -89,13 +94,25 @@ export class AppManager {
 		document.body.appendChild( this.promotionWrapper );
 
 		this.attachEditorEventListeners();
+
+		if ( widgetName ) {
+			trackLockedWidgetPopupShown( widgetName );
+		}
+
+		const onCtaClick = widgetName && ( () => trackLockedWidgetPopupClick( widgetName, 'upgrade_now' ) );
+		const onCancelClick = widgetName && ( () => trackLockedWidgetPopupClick( widgetName, 'cancel' ) );
+
 		this.promotionInfoTip = createRoot( this.promotionWrapper );
 		this.promotionInfoTip.render(
 			<App
 				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
 				isRTL={ elementorCommon.config.isRTL }
 				anchorTarget={ targetEl }
-				doClose={ () => this.unmount() }
+				doClose={ () => {
+					onCancelClick?.();
+					this.unmount();
+				} }
+				onCtaClick={ onCtaClick }
 				{ ...appProps }
 			/>,
 		);
@@ -124,6 +141,7 @@ export class AppManager {
 					event.detail.target,
 					`e-${ type }-promotion-wrapper`,
 					this.resolveAtomicWidgetPromotionCardProps( { cardType, content } ),
+					normalizeWidgetName( type ),
 				);
 			} );
 		} );
@@ -131,10 +149,15 @@ export class AppManager {
 
 	attachWidgetPromotionListeners() {
 		document.addEventListener( 'widget-promotion:open', ( event ) => {
-			this.mountCard( event.detail.target, 'e-widget-promotion-wrapper', {
-				cardType: 'widgetPromotion',
-				promotionData: this.resolveWidgetPromotionData( event.detail ),
-			} );
+			this.mountCard(
+				event.detail.target,
+				'e-widget-promotion-wrapper',
+				{
+					cardType: 'widgetPromotion',
+					promotionData: this.resolveWidgetPromotionData( event.detail ),
+				},
+				normalizeWidgetName( event.detail.widgetType ),
+			);
 		} );
 	}
 
