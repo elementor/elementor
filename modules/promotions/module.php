@@ -122,7 +122,7 @@ class Module extends Base_Module {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $page ) {
+		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
 			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
