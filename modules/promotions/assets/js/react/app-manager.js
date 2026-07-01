@@ -5,7 +5,8 @@ import { __ } from '@wordpress/i18n';
 import { createRoot } from 'react-dom/client';
 import {
 	normalizeWidgetName,
-	trackLockedWidgetPopupClick,
+	trackLockedWidgetPopupCancel,
+	trackLockedWidgetPopupCtaClick,
 	trackLockedWidgetPopupShown,
 } from '../editor/tracking';
 
@@ -95,12 +96,16 @@ export class AppManager {
 
 		this.attachEditorEventListeners();
 
+		this.currentWidgetName = widgetName || null;
+
 		if ( widgetName ) {
 			trackLockedWidgetPopupShown( widgetName );
 		}
 
-		const onCtaClick = widgetName && ( () => trackLockedWidgetPopupClick( widgetName, 'upgrade_now' ) );
-		const onCancelClick = widgetName && ( () => trackLockedWidgetPopupClick( widgetName, 'cancel' ) );
+		const onCtaClick = widgetName && ( () => {
+			trackLockedWidgetPopupCtaClick( widgetName );
+			this.currentWidgetName = null;
+		} );
 
 		this.promotionInfoTip = createRoot( this.promotionWrapper );
 		this.promotionInfoTip.render(
@@ -108,10 +113,7 @@ export class AppManager {
 				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
 				isRTL={ elementorCommon.config.isRTL }
 				anchorTarget={ targetEl }
-				doClose={ () => {
-					onCancelClick?.();
-					this.unmount();
-				} }
+				doClose={ () => this.unmount() }
 				onCtaClick={ onCtaClick }
 				{ ...appProps }
 			/>,
@@ -163,6 +165,9 @@ export class AppManager {
 
 	unmount() {
 		if ( this.promotionInfoTip ) {
+			if ( this.currentWidgetName ) {
+				trackLockedWidgetPopupCancel( this.currentWidgetName );
+			}
 			this.detachEditorEventListeners();
 			this.promotionInfoTip.unmount();
 			this.unbindIframeEvents();
@@ -172,6 +177,7 @@ export class AppManager {
 
 		this.promotionInfoTip = null;
 		this.promotionWrapper = null;
+		this.currentWidgetName = null;
 	}
 
 	attachEditorEventListeners() {

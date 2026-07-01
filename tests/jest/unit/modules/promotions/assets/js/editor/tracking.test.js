@@ -1,6 +1,7 @@
 import {
 	normalizeWidgetName,
-	trackLockedWidgetPopupClick,
+	trackLockedWidgetPopupCancel,
+	trackLockedWidgetPopupCtaClick,
 	trackLockedWidgetPopupShown,
 } from 'elementor/modules/promotions/assets/js/editor/tracking';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
@@ -65,9 +66,9 @@ describe( 'locked widget popover tracking', () => {
 		} );
 	} );
 
-	describe( 'trackLockedWidgetPopupClick', () => {
+	describe( 'trackLockedWidgetPopupCtaClick', () => {
 		test( 'dispatches upgrade_now click', () => {
-			trackLockedWidgetPopupClick( 'loop_grid', 'upgrade_now' );
+			trackLockedWidgetPopupCtaClick( 'loop_grid' );
 
 			expect( dispatchEvent ).toHaveBeenCalledWith( 'locked_widget_popup_cta_click', {
 				app_type: 'editor',
@@ -81,8 +82,15 @@ describe( 'locked widget popover tracking', () => {
 			} );
 		} );
 
+		test( 'no-ops without a widget name', () => {
+			trackLockedWidgetPopupCtaClick( '' );
+			expect( dispatchEvent ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'trackLockedWidgetPopupCancel', () => {
 		test( 'dispatches cancel click', () => {
-			trackLockedWidgetPopupClick( 'posts', 'cancel' );
+			trackLockedWidgetPopupCancel( 'posts' );
 
 			expect( dispatchEvent ).toHaveBeenCalledWith( 'locked_widget_popup_cta_click', {
 				app_type: 'editor',
@@ -97,7 +105,7 @@ describe( 'locked widget popover tracking', () => {
 		} );
 
 		test( 'no-ops without a widget name', () => {
-			trackLockedWidgetPopupClick( '', 'upgrade_now' );
+			trackLockedWidgetPopupCancel( '' );
 			expect( dispatchEvent ).not.toHaveBeenCalled();
 		} );
 	} );
