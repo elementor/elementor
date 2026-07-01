@@ -11,8 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Preserved_Element extends Element_Base {
 
 	public function get_name() {
-		return $this->get_data( 'widgetType' )
-			?: ( $this->get_data( 'elType' ) ?: 'e-preserved-element' );
+		$widget_type = $this->get_data( 'widgetType' );
+
+		if ( ! empty( $widget_type ) ) {
+			return $widget_type;
+		}
+
+		$el_type = $this->get_data( 'elType' );
+
+		return empty( $el_type ) ? 'e-preserved-element' : $el_type;
 	}
 
 	protected function _get_default_child_type( array $element_data ) {
