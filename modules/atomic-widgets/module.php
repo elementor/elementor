@@ -271,11 +271,7 @@ class Module extends BaseModule {
 		( new Atomic_Widgets_Library() )->register_hooks();
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
-<<<<<<< HEAD
-=======
-		( new Css_Converter_REST_API() )->register_hooks();
 		( new Pro_Promotion_Data_Preservation() )->register_hooks();
->>>>>>> 844aac3dda (Fix: Add widget content preserving when pro is disabled [ED-24489] (#36392))
 	}
 
 	private function add_packages( $packages ) {
