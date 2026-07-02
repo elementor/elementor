@@ -78,7 +78,8 @@
                 "PKSA-g9zw-qxh8-pq8w": "CVE-2026-48805 (sandbox state regression in deprecated internal wrappers in src/Resources/core.php) - we don't enable sandbox.",
                 "PKSA-yd6k-t2gh-1m43": "CVE-2026-46636 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders) - we don't enable sandbox.",
                 "PKSA-1tmc-rt7x-12w6": "CVE-2026-48806 (sandbox __toString() policy bypass via dynamic mapping keys) - we don't enable sandbox.",
-                "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox."
+                "PKSA-xx6c-6d96-db2w": "CVE-2026-48807 (sandbox __toString() policy bypass via Traversable in join/replace and in/not in operators) - we don't enable sandbox.",
+                "PKSA-8zx5-v2nz-58pb": "CVE-2026-49981 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders for a cached template) - we don't enable sandbox."
             }
         }
     },
