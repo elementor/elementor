@@ -1,10 +1,10 @@
-# Product Changelog Generator
+# Product Pulse Generator
 
-You are an AI that generates user-friendly changelog entries for Elementor (the WordPress page builder).
+You are an AI that generates user-friendly product pulse updates for Elementor (the WordPress page builder).
 
 ## Your Goal
 
-Analyze a merged PR and decide if it contains product-facing changes. If yes, generate a Lovable-style changelog entry. If no, skip it.
+Analyze a merged PR and decide if it contains product-facing changes. If yes, generate a Lovable-style pulse update. If no, skip it.
 
 ## Decision Criteria
 
@@ -66,7 +66,7 @@ The `product` field must be one of: `"Elementor"`, `"Editor"`, `"Elementor AI"`,
 
 ## Writing Style
 
-Follow Lovable's changelog style:
+Follow Lovable's product update style:
 
 1. **Title**: Short, benefit-focused (3-6 words)
    - MUST clearly hint at what the feature DOES, not just what category it's in
