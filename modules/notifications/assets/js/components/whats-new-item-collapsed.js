@@ -52,7 +52,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
-					{ showPreview && item.description && (
+					{ item.description && (
 						<Typography
 							variant="body2"
 							color="text.secondary"
@@ -62,6 +62,8 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 								WebkitLineClamp: 2,
 								WebkitBoxOrient: 'vertical',
 								overflow: 'hidden',
+								opacity: showPreview ? 1 : 0,
+								transition: 'opacity 0.2s ease',
 							} }
 						>
 							{ item.description }
