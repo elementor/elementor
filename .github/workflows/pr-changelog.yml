@@ -6,12 +6,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
   pull-requests: read
-
-concurrency:
-  group: product-changelog-${{ github.repository }}
-  cancel-in-progress: false
 
 jobs:
   product-changelog:
@@ -20,10 +15,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          ref: main
-          token: ${{ secrets.MAINTAIN_TOKEN }}
 
       - name: Get PR details
         id: pr
@@ -80,9 +71,8 @@ jobs:
           }
 
           cat /tmp/changelog_output.json
-          echo "output_file=/tmp/changelog_output.json" >> $GITHUB_OUTPUT
 
-      - name: Parse and update changelog
+      - name: Parse changelog output
         id: update
         run: |
           RAW_OUTPUT=$(cat /tmp/changelog_output.json)
@@ -157,32 +147,6 @@ jobs:
             echo "loom_url=$LOOM_URL" >> $GITHUB_OUTPUT
           fi
 
-          DATE=$(date +"%B %d, %Y")
-
-          ENTRY=$(printf '%s\n' "## $DATE" "" "### $TITLE" "$DESCRIPTION" "" "---" "")
-
-          if [ ! -f CHANGELOG-PRODUCT.md ]; then
-            printf '%s\n' "# What's New in Elementor" "" "Stay up to date with new features and improvements." "" "---" "" > CHANGELOG-PRODUCT.md
-          fi
-
-          TEMP_FILE=$(mktemp)
-          HEAD_LINE=$(head -n 1 CHANGELOG-PRODUCT.md)
-
-          if [ "$HEAD_LINE" = "# What's New in Elementor" ]; then
-            {
-              head -n 5 CHANGELOG-PRODUCT.md
-              echo "$ENTRY"
-              tail -n +6 CHANGELOG-PRODUCT.md
-            } > "$TEMP_FILE"
-          else
-            {
-              echo "$ENTRY"
-              cat CHANGELOG-PRODUCT.md
-            } > "$TEMP_FILE"
-          fi
-
-          mv "$TEMP_FILE" CHANGELOG-PRODUCT.md
-
           echo "should_notify=true" >> $GITHUB_OUTPUT
           {
             echo "title<<EOF"
@@ -194,25 +158,8 @@ jobs:
             echo "product=$PRODUCT"
           } >> $GITHUB_OUTPUT
 
-      - name: Commit changes
-        if: steps.update.outputs.should_notify == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git diff --quiet CHANGELOG-PRODUCT.md; then
-            echo "No changes to commit"
-            exit 0
-          fi
-
-          git add CHANGELOG-PRODUCT.md
-          git commit -m "chore: update product changelog from PR #${{ steps.pr.outputs.pr_number }} [skip ci]"
-          git pull --rebase
-          git push
-
       - name: Notify Slack
         if: steps.update.outputs.should_notify == 'true'
-        continue-on-error: true
         run: |
           TITLE="${{ steps.update.outputs.title }}"
           DESCRIPTION="${{ steps.update.outputs.description }}"
