@@ -57,13 +57,14 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 							variant="body2"
 							color="text.secondary"
 							sx={ {
-								mt: 0.5,
 								display: '-webkit-box',
 								WebkitLineClamp: 2,
 								WebkitBoxOrient: 'vertical',
 								overflow: 'hidden',
 								opacity: showPreview ? 1 : 0,
-								transition: 'opacity 0.2s ease',
+								maxHeight: showPreview ? '4em' : 0,
+								mt: showPreview ? 0.5 : 0,
+								transition: 'opacity 0.2s ease, max-height 0.25s ease, margin-top 0.2s ease',
 							} }
 						>
 							{ item.description }
