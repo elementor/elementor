@@ -14,6 +14,8 @@ class Test_Pro_Promotion_Data_Preservation extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		$this->act_as_admin();
+
 		// Pro is absent in the test env, so the promotion element stands in for `e-form`.
 		Plugin::$instance->elements_manager->register_element_type( new Atomic_Form_Promotion() );
 
