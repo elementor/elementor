@@ -23,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -179,7 +180,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
 		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-		add_filter( 'elementor/document/save/data', fn ( $data, $document ) => $this->preserve_pro_promotion_children( $data, $document ), 10, 2 );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 		add_action( 'elementor/editor/after_enqueue_styles', fn () => $this->enqueue_promotion_styles() );
 		add_action( 'elementor/preview/enqueue_styles', fn () => $this->enqueue_promotion_styles() );
@@ -263,6 +263,7 @@ class Module extends BaseModule {
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
+		( new Pro_Promotion_Data_Preservation() )->register_hooks();
 	}
 
 	private function add_packages( $packages ) {
@@ -321,93 +322,6 @@ class Module extends BaseModule {
 		if ( ! \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Collection_Loop_Promotion() );
 		}
-	}
-
-	public function preserve_pro_promotion_children( $data, $document ) {
-		if ( \Elementor\Utils::has_pro() || empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
-			return $data;
-		}
-
-		$promotion_types = $this->get_pro_promotion_types();
-
-		if ( empty( $promotion_types ) ) {
-			return $data;
-		}
-
-		$stored = [];
-		$this->map_pro_promotion_elements( $document->get_elements_data(), $promotion_types, $stored );
-
-		if ( empty( $stored ) ) {
-			return $data;
-		}
-
-		$data['elements'] = $this->restore_pro_promotion_elements( $data['elements'], $promotion_types, $stored );
-
-		return $data;
-	}
-
-	private function get_pro_promotion_types(): array {
-		$types = [];
-
-		foreach ( Plugin::$instance->elements_manager->get_element_types() as $type => $element ) {
-			if ( method_exists( $element, 'get_meta_item' ) && $element->get_meta_item( 'is_pro_promotion' ) ) {
-				$types[] = $type;
-			}
-		}
-
-		return $types;
-	}
-
-	private function map_pro_promotion_elements( $elements, array $promotion_types, array &$map ): void {
-		if ( ! is_array( $elements ) ) {
-			return;
-		}
-
-		foreach ( $elements as $element ) {
-			if ( ! is_array( $element ) ) {
-				continue;
-			}
-
-			$id = $element['id'] ?? '';
-			$is_promotion = in_array( $element['elType'] ?? '', $promotion_types, true );
-
-			if ( $id && $is_promotion && ! empty( $element['elements'] ) ) {
-				$map[ $id ] = [
-					'settings' => $element['settings'] ?? [],
-					'elements' => $element['elements'],
-				];
-
-				continue;
-			}
-
-			$this->map_pro_promotion_elements( $element['elements'] ?? [], $promotion_types, $map );
-		}
-	}
-
-	private function restore_pro_promotion_elements( array $elements, array $promotion_types, array $map ): array {
-		foreach ( $elements as &$element ) {
-			if ( ! is_array( $element ) ) {
-				continue;
-			}
-
-			$id = $element['id'] ?? '';
-			$is_promotion = in_array( $element['elType'] ?? '', $promotion_types, true );
-
-			if ( $id && $is_promotion && empty( $element['elements'] ) && isset( $map[ $id ] ) ) {
-				$element['settings'] = $map[ $id ]['settings'];
-				$element['elements'] = $map[ $id ]['elements'];
-
-				continue;
-			}
-
-			if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->restore_pro_promotion_elements( $element['elements'], $promotion_types, $map );
-			}
-		}
-
-		unset( $element );
-
-		return $elements;
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {

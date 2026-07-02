@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-trait Preserves_Unregistered_Children {
+trait Preserves_Children_Subtree {
 
 	protected function _get_default_child_type( array $element_data ) {
 		$document = Plugin::$instance->documents->get_current();
