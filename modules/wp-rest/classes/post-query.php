@@ -73,13 +73,17 @@ class Post_Query extends Base {
 			'suppress_filters'             => false,
 			'custom_search'                => true,
 			'post_status'                  => $is_public_only ? 'publish' : 'any',
-			'orderby'                      => 'modified',
-			'order'                        => 'DESC',
 		];
 
 		if ( ! empty( $term ) ) {
+			$query_args['s'] = $term;
 			$query_args['search_term'] = $term;
 			$query_args[ self::SEARCH_IN_CONTENT_KEY ] = $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false;
+			$query_args['orderby'] = 'ID';
+			$query_args['order'] = 'ASC';
+		} else {
+			$query_args['orderby'] = 'modified';
+			$query_args['order'] = 'DESC';
 		}
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
