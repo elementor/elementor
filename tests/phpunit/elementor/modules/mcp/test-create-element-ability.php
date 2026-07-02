@@ -96,6 +96,64 @@ class Test_Create_Element_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
 	}
 
+	// execute() — document resolution
+
+	public function test_execute__uses_auto_save_when_available() {
+		// Arrange
+		$this->act_as_admin();
+		$this->stub_type_registries_with_widget_type( 'e-heading' );
+
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft', 'post_type' => 'page' ] );
+
+		$auto_save_document = $this->createMock( Document::class );
+		$auto_save_document->method( 'get_elements_data' )->willReturn( [] );
+		$auto_save_document->method( 'get_main_id' )->willReturn( $post_id );
+		$auto_save_document->method( 'get_preview_url' )->willReturn( 'https://example.com/?p=' . $post_id );
+		$auto_save_document->method( 'save' )->willReturn( true );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get_doc_or_auto_save' )->willReturn( $auto_save_document );
+		$mock_docs->method( 'get' )->willReturn( null );
+		Plugin::$instance->documents = $mock_docs;
+
+		$ability = new Create_Element_Ability( $this->make_noop_mutator() );
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'element' => [ 'type' => 'e-heading' ] ] );
+
+		// Assert — resolved via auto-save, not fallback
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+	}
+
+	public function test_execute__falls_back_to_get_when_no_auto_save() {
+		// Arrange
+		$this->act_as_admin();
+		$this->stub_type_registries_with_widget_type( 'e-heading' );
+
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft', 'post_type' => 'page' ] );
+
+		$main_document = $this->createMock( Document::class );
+		$main_document->method( 'get_elements_data' )->willReturn( [] );
+		$main_document->method( 'get_main_id' )->willReturn( $post_id );
+		$main_document->method( 'get_preview_url' )->willReturn( 'https://example.com/?p=' . $post_id );
+		$main_document->method( 'save' )->willReturn( true );
+
+		$mock_docs = $this->createMock( Documents_Manager::class );
+		$mock_docs->method( 'get_doc_or_auto_save' )->willReturn( null );
+		$mock_docs->method( 'get' )->willReturn( $main_document );
+		Plugin::$instance->documents = $mock_docs;
+
+		$ability = new Create_Element_Ability( $this->make_noop_mutator() );
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'element' => [ 'type' => 'e-heading' ] ] );
+
+		// Assert — resolved via fallback get()
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+	}
+
 	// execute() — draft-save
 
 	public function test_execute__sets_published_post_to_draft_before_save() {
@@ -233,6 +291,7 @@ class Test_Create_Element_Ability extends Elementor_Test_Base {
 	private function stub_documents_returning( ?Document $document ): void {
 		$mock_docs = $this->createMock( Documents_Manager::class );
 		$mock_docs->method( 'get' )->willReturn( $document );
+		$mock_docs->method( 'get_doc_or_auto_save' )->willReturn( $document );
 		Plugin::$instance->documents = $mock_docs;
 	}
 
