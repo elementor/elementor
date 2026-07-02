@@ -200,6 +200,94 @@ class Document_Mutator_Test extends TestCase {
 		$this->assertWPError( $result, 'elementor_not_found' );
 	}
 
+	// move
+
+	public function test_move_relocates_node_to_new_parent() {
+		// Arrange
+		$widget = $this->make_widget( 'w1' );
+		$tree   = [
+			$this->make_container( 'c1', [ $widget ] ),
+			$this->make_container( 'c2' ),
+		];
+
+		// Act
+		$result = $this->mutator->move( $tree, 'w1', 'c2', null );
+
+		// Assert
+		$this->assertCount( 0, $result[0]['elements'] );
+		$this->assertCount( 1, $result[1]['elements'] );
+		$this->assertSame( 'w1', $result[1]['elements'][0]['id'] );
+	}
+
+	public function test_move_absent_id_returns_not_found_error() {
+		// Arrange
+		$tree = [ $this->make_container( 'c1' ) ];
+
+		// Act
+		$result = $this->mutator->move( $tree, 'ghost', 'c1', null );
+
+		// Assert
+		$this->assertWPError( $result, 'elementor_not_found' );
+	}
+
+	public function test_move_to_invalid_parent_returns_error() {
+		// Arrange
+		$widget  = $this->make_widget( 'w1' );
+		$widget2 = $this->make_widget( 'w2' );
+		$tree    = [ $this->make_container( 'c1', [ $widget, $widget2 ] ) ];
+
+		// Act — try to move w1 into w2 (widget parent)
+		$result = $this->mutator->move( $tree, 'w1', 'w2', null );
+
+		// Assert
+		$this->assertWPError( $result, 'elementor_invalid_parent' );
+	}
+
+	// child-type restrictions
+
+	public function test_insert_at_respects_allowed_child_types_when_restricted() {
+		// Arrange
+		$mock_instance = $this->createMock( \Elementor\Element_Base::class );
+		$mock_instance->method( 'get_config' )->willReturn( [ 'allowed_child_types' => [ 'e-tab-content' ] ] );
+
+		$mock_element_manager = $this->createMock( \Elementor\Elements_Manager::class );
+		$mock_element_manager->method( 'get_element_types' )->willReturn( $mock_instance );
+
+		$mutator = new Document_Mutator( $mock_element_manager, $this->createMock( \Elementor\Widgets_Manager::class ) );
+
+		$parent = $this->make_container( 'c1' );
+		$tree   = [ $parent ];
+		$child  = $this->make_widget( 'w1' ); // widgetType = 'text-editor', not in allowed list
+
+		// Act
+		$result = $mutator->insert_at( $tree, 'c1', null, $child );
+
+		// Assert
+		$this->assertWPError( $result, 'elementor_invalid_parent' );
+	}
+
+	public function test_insert_at_allows_child_when_type_in_allowed_list() {
+		// Arrange
+		$mock_instance = $this->createMock( \Elementor\Element_Base::class );
+		$mock_instance->method( 'get_config' )->willReturn( [ 'allowed_child_types' => [ 'e-tab-content' ] ] );
+
+		$mock_element_manager = $this->createMock( \Elementor\Elements_Manager::class );
+		$mock_element_manager->method( 'get_element_types' )->willReturn( $mock_instance );
+
+		$mutator = new Document_Mutator( $mock_element_manager, $this->createMock( \Elementor\Widgets_Manager::class ) );
+
+		$parent = $this->make_container( 'c1' );
+		$tree   = [ $parent ];
+		$child  = [ 'id' => 'tc1', 'elType' => 'e-tab-content', 'elements' => [] ];
+
+		// Act
+		$result = $mutator->insert_at( $tree, 'c1', null, $child );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertSame( 'tc1', $result[0]['elements'][0]['id'] );
+	}
+
 	// Input immutability
 
 	public function test_insert_at_does_not_mutate_input_tree() {

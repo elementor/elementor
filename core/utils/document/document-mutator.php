@@ -154,15 +154,20 @@ class Document_Mutator {
 	private function insert_into_tree( array $tree, string $parent_id, ?int $index, array $element ) {
 		foreach ( $tree as $i => $node ) {
 			if ( isset( $node['id'] ) && $node['id'] === $parent_id ) {
-				if ( isset( $node['elType'] ) && 'widget' === $node['elType'] ) {
-					return new \WP_Error(
-						'elementor_invalid_parent',
-						__( 'Cannot insert into a widget element.', 'elementor' ),
-						[ 'status' => \WP_Http::BAD_REQUEST ]
-					);
-				}
+			if ( isset( $node['elType'] ) && 'widget' === $node['elType'] ) {
+				return new \WP_Error(
+					'elementor_invalid_parent',
+					__( 'Cannot insert into a widget element.', 'elementor' ),
+					[ 'status' => \WP_Http::BAD_REQUEST ]
+				);
+			}
 
-				$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
+			$child_type_error = $this->check_child_type_allowed( $node, $element );
+			if ( is_wp_error( $child_type_error ) ) {
+				return $child_type_error;
+			}
+
+			$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
 				$tree[ $i ] = $node;
 				return $tree;
 			}
@@ -205,6 +210,36 @@ class Document_Mutator {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @return null|\WP_Error
+	 */
+	private function check_child_type_allowed( array $parent_node, array $child ): ?\WP_Error {
+		$parent_instance = $this->element_manager->get_element_types( $parent_node['elType'] ?? '' );
+
+		if ( ! $parent_instance ) {
+			return null;
+		}
+
+		$config  = $parent_instance->get_config();
+		$allowed = $config['allowed_child_types'] ?? [];
+
+		if ( empty( $allowed ) ) {
+			return null;
+		}
+
+		$child_type = $child['widgetType'] ?? $child['elType'] ?? '';
+
+		if ( ! in_array( $child_type, $allowed, true ) ) {
+			return new \WP_Error(
+				'elementor_invalid_parent',
+				__( 'Element type not allowed as child of this parent.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
+
+		return null;
 	}
 
 	/**
