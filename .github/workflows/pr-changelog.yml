@@ -8,6 +8,10 @@ on:
 permissions:
   pull-requests: read
 
+concurrency:
+  group: product-changelog-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   product-changelog:
     if: github.event.pull_request.merged == true && startsWith(github.repository, 'elementor/')
@@ -160,6 +164,7 @@ jobs:
 
       - name: Notify Slack
         if: steps.update.outputs.should_notify == 'true'
+        continue-on-error: true
         run: |
           TITLE="${{ steps.update.outputs.title }}"
           DESCRIPTION="${{ steps.update.outputs.description }}"
