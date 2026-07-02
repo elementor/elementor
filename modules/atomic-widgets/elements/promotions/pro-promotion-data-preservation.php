@@ -89,7 +89,7 @@ class Pro_Promotion_Data_Preservation {
 			$id = $element['id'] ?? '';
 			$is_promotion = in_array( $element['elType'] ?? '', $promotion_types, true );
 
-			if ( $id && $is_promotion && empty( $element['elements'] ) && isset( $map[ $id ] ) ) {
+			if ( $is_promotion && empty( $element['elements'] ) && isset( $map[ $id ] ) ) {
 				$element['settings'] = $map[ $id ]['settings'];
 				$element['elements'] = $map[ $id ]['elements'];
 
