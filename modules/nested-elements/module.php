@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\NestedElements;
 
-use Elementor\Plugin;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -11,8 +11,18 @@ class Module extends \Elementor\Core\Base\Module {
 
 	const EXPERIMENT_NAME = 'nested-elements';
 
-	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'container' );
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
+			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'mutable' => false,
+			'hidden' => true,
+			'dependencies' => [
+				'container',
+			],
+		];
 	}
 
 	public function get_name() {
