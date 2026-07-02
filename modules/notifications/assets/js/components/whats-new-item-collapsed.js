@@ -4,7 +4,7 @@ import { ChevronDownIcon } from '@elementor/icons';
 import { WhatsNewItemMedia } from './whats-new-item-media';
 import { WhatsNewItemChips } from './whats-new-item-chips';
 
-export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
+export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOpen } ) => {
 	const [ expanded, setExpanded ] = useState( false );
 
 	const handleToggle = () => {
@@ -99,6 +99,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 								variant="contained"
 								size="small"
 								color="promotion"
+								onClick={ item.ctaLink.startsWith( '#' ) ? () => setIsOpen( false ) : undefined }
 							>
 								{ item.cta }
 							</Button>
@@ -116,4 +117,5 @@ WhatsNewItemCollapsed.propTypes = {
 	itemIndex: PropTypes.number.isRequired,
 	isNew: PropTypes.bool,
 	onSeen: PropTypes.func,
+	setIsOpen: PropTypes.func,
 };

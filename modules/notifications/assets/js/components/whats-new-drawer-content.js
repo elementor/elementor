@@ -85,6 +85,7 @@ export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initial
 							itemIndex={ index }
 							isNew={ initialHasUnread && ! seenItemIds.has( item.id ) }
 							onSeen={ () => onSeen( item.id ) }
+							setIsOpen={ setIsOpen }
 						/>
 					) ) }
 				</>
