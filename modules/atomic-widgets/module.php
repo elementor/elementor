@@ -315,7 +315,6 @@ class Module extends BaseModule {
 			$elements_manager->register_element_type( new Form_Success_Message() );
 			$elements_manager->register_element_type( new Form_Error_Message() );
 		} elseif ( ! \Elementor\Utils::has_pro() ) {
-			add_filter( 'elementor/atomic/form/email_action_count', fn ( $count ) => max( $count, 2 ) );
 			$elements_manager->register_element_type( new Atomic_Form_Promotion() );
 		}
 

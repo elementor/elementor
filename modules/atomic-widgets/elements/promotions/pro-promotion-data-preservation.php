@@ -11,12 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Pro_Promotion_Data_Preservation {
 
+	const EMAIL_ACTION_COUNT = 2;
+
 	public function register_hooks(): void {
 		if ( Utils::has_pro() ) {
 			return;
 		}
 
 		add_filter( 'elementor/document/save/data', fn ( $data, $document ) => $this->preserve( $data, $document ), 10, 2 );
+		add_filter( 'elementor/atomic/form/email_action_count', fn ( $count ) => max( $count, self::EMAIL_ACTION_COUNT ) );
 	}
 
 	public function preserve( $data, $document ) {
