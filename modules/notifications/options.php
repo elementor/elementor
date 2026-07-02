@@ -4,24 +4,7 @@ namespace Elementor\Modules\Notifications;
 class Options {
 
 	public static function has_unread_notifications(): bool {
-		$current_user = wp_get_current_user();
-
-		if ( ! $current_user ) {
-			return false;
-		}
-
-		$unread_notifications = get_transient( "elementor_unread_notifications_{$current_user->ID}" );
-
-		if ( false === $unread_notifications ) {
-			$notifications = API::get_notifications_by_conditions();
-			$notifications_ids = wp_list_pluck( $notifications, 'id' );
-
-			$unread_notifications = array_diff( $notifications_ids, static::get_notifications_dismissed() );
-
-			set_transient( "elementor_unread_notifications_{$current_user->ID}", $unread_notifications, HOUR_IN_SECONDS );
-		}
-
-		return ! empty( $unread_notifications );
+		return ! empty( static::get_unread_notification_ids() );
 	}
 
 	public static function get_notifications_dismissed() {
@@ -38,6 +21,10 @@ class Options {
 		}
 
 		return $notifications_dismissed;
+	}
+
+	public static function get_unread_count(): int {
+		return count( static::get_unread_notification_ids() );
 	}
 
 	public static function mark_notification_read( $notifications ): bool {
@@ -62,5 +49,26 @@ class Options {
 		delete_transient( "elementor_unread_notifications_{$current_user->ID}" );
 
 		return true;
+	}
+
+	private static function get_unread_notification_ids(): array {
+		$current_user = wp_get_current_user();
+
+		if ( ! $current_user ) {
+			return [];
+		}
+
+		$unread_notifications = get_transient( "elementor_unread_notifications_{$current_user->ID}" );
+
+		if ( false === $unread_notifications ) {
+			$notifications = API::get_notifications_by_conditions();
+			$notifications_ids = wp_list_pluck( $notifications, 'id' );
+
+			$unread_notifications = array_diff( $notifications_ids, static::get_notifications_dismissed() );
+
+			set_transient( "elementor_unread_notifications_{$current_user->ID}", $unread_notifications, HOUR_IN_SECONDS );
+		}
+
+		return $unread_notifications;
 	}
 }

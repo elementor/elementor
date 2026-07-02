@@ -1,13 +1,31 @@
+import { useEffect, useRef } from 'react';
 import { useQuery } from '@elementor/query';
 import { getNotifications } from '../api';
-import { Box, LinearProgress } from '@elementor/ui';
+import { Box, Divider, LinearProgress, Typography } from '@elementor/ui';
 import { WhatsNewItem } from './whats-new-item';
+import { WhatsNewItemCollapsed } from './whats-new-item-collapsed';
 
-export const WhatsNewDrawerContent = ( { setIsOpen } ) => {
+export const WhatsNewDrawerContent = ( { setIsOpen, seenItemIds, onSeen, initialHasUnread } ) => {
 	const { isPending, error, data: items } = useQuery( {
 		queryKey: [ 'e-notifications' ],
 		queryFn: getNotifications,
 	} );
+
+	const seenItemIdsRef = useRef( seenItemIds );
+	seenItemIdsRef.current = seenItemIds;
+
+	useEffect( () => {
+		if ( ! items ) {
+			return;
+		}
+		const hasFeatured = items.some( ( item ) => item.featured );
+		const fullyVisibleItems = hasFeatured
+			? items.filter( ( item ) => item.featured )
+			: items;
+		fullyVisibleItems
+			.filter( ( item ) => ! seenItemIdsRef.current.has( item.id ) )
+			.forEach( ( item ) => onSeen( item.id ) );
+	}, [ items, onSeen ] );
 
 	if ( isPending ) {
 		return (
@@ -27,21 +45,67 @@ export const WhatsNewDrawerContent = ( { setIsOpen } ) => {
 		);
 	}
 
+	const featuredItems = items.filter( ( item ) => item.featured );
+	const alsoNewItems = featuredItems.length > 0 ? items.filter( ( item ) => ! item.featured ) : [];
+	const regularItems = featuredItems.length > 0 ? [] : items;
+	const listLabel = featuredItems[ 0 ]?.listLabel ?? null;
+
 	return (
-		items.map( ( item, itemIndex ) => {
-			return (
+		<>
+			{ featuredItems.map( ( item, index ) => (
+				<WhatsNewItem
+					key={ index }
+					item={ item }
+					itemIndex={ index }
+					itemsLength={ featuredItems.length }
+					setIsOpen={ setIsOpen }
+					featured={ true }
+				/>
+			) ) }
+			{ alsoNewItems.length > 0 && (
+				<>
+					{ listLabel
+						? (
+							<Divider sx={ { my: 1.5 } }>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									sx={ { px: 1, textTransform: 'uppercase', letterSpacing: '0.08em' } }
+								>
+									{ listLabel }
+								</Typography>
+							</Divider>
+						)
+						: <Divider sx={ { my: 1.5 } } />
+					}
+					{ alsoNewItems.map( ( item, index ) => (
+						<WhatsNewItemCollapsed
+							key={ index }
+							item={ item }
+							itemIndex={ index }
+							isNew={ initialHasUnread && ! seenItemIds.has( item.id ) }
+							onSeen={ () => onSeen( item.id ) }
+							setIsOpen={ setIsOpen }
+						/>
+					) ) }
+				</>
+			) }
+			{ regularItems.map( ( item, itemIndex ) => (
 				<WhatsNewItem
 					key={ itemIndex }
 					item={ item }
 					itemIndex={ itemIndex }
-					itemsLength={ items.length }
+					itemsLength={ regularItems.length }
 					setIsOpen={ setIsOpen }
 				/>
-			);
-		} )
+			) ) }
+		</>
 	);
 };
 
 WhatsNewDrawerContent.propTypes = {
 	setIsOpen: PropTypes.func.isRequired,
+	seenItemIds: PropTypes.instanceOf( Set ).isRequired,
+	onSeen: PropTypes.func.isRequired,
+	initialHasUnread: PropTypes.bool.isRequired,
 };
