@@ -19,10 +19,12 @@ import {
 	isUnitExtendedOption,
 	type LengthUnit,
 	lengthUnits,
+	type SizeUnit,
 	type TimeUnit,
 	timeUnits,
 	type Unit,
 } from '../utils/size-control';
+import { getPropTypeSettings } from './size-control/utils/settings/get-prop-type-settings';
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -65,7 +67,7 @@ export type SizeControlProps = LengthSizeControlProps | AngleSizeControlProps | 
 type State = {
 	numeric: number;
 	custom: string;
-	unit: Unit | ExtendedOption;
+	unit: SizeUnit;
 };
 
 const defaultSelectedUnit: Record< SizeControlProps[ 'variant' ], Unit > = {
@@ -133,7 +135,7 @@ export const SizeControl = createControl(
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
 			extractValueFromState( state, true ) || {};
 
-		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
+		const handleUnitChange = ( newUnit: SizeUnit ) => {
 			if ( newUnit === 'custom' ) {
 				popupState.open( anchorRef?.current );
 			}
@@ -217,17 +219,17 @@ function resolveUnits(
 	variant: SizeVariant,
 	externalUnits?: Unit[],
 	actualExtendedOptions?: ExtendedOption[]
-) {
+): SizeUnit[] {
 	const fallback = [ ...defaultUnits[ variant ] ];
 
 	if ( ! enablePropTypeUnits ) {
 		return [ ...( externalUnits ?? fallback ), ...( actualExtendedOptions || [] ) ];
 	}
 
-	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
+	return getPropTypeSettings( propType )?.available_units ?? fallback;
 }
 
-function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
+function formatSize< TSize extends string | number >( size: TSize, unit: SizeUnit ): TSize {
 	if ( isUnitExtendedOption( unit ) ) {
 		return unit === 'auto' ? ( '' as TSize ) : ( String( size ?? '' ) as TSize );
 	}
@@ -237,7 +239,7 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 
 function createStateFromSizeProp(
 	sizeValue: SizeValue | null,
-	defaultUnit: Unit | ExtendedOption,
+	defaultUnit: SizeUnit,
 	defaultSize: string | number = '',
 	customState: string = ''
 ): State {

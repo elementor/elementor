@@ -30,7 +30,7 @@ import 'elementor-app/event-track/wp-dashboard-tracking';
 				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
+				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"], a[href*="admin.php?page=elementor-one-upgrade"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
 

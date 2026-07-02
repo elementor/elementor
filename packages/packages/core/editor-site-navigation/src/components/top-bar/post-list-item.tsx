@@ -24,7 +24,6 @@ export function PostListItem( { post, closePopup, ...props }: Props ) {
 				const eventName = config?.names?.editorOne?.topBarPageList;
 				if ( eventName ) {
 					dispatchEvent?.( eventName, {
-						app_type: config?.appTypes?.editor,
 						window_name: config?.appTypes?.editor,
 						interaction_type: config?.triggers?.click?.toLowerCase(),
 						target_type: config?.targetTypes?.dropdownItem,
