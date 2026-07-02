@@ -12,9 +12,30 @@
 		padding: 0 15px;
 		border: none;
 		background-color: transparent;
+		position: relative;
 
 		&:focus {
 			// background-color: var(--e-a-bg-hover);
+		}
+
+		.elementor-panel-heading-button {
+			border: none;
+			background-color: transparent;
+			color: var(--e-a-color-txt-accent);
+			cursor: pointer;
+			display: flex;
+			gap: 5px;
+		}
+
+		.elementor-panel-heading-button::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			cursor: pointer;
+			z-index: -1;
 		}
 	}
 
