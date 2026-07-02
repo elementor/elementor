@@ -1,10 +1,9 @@
 import type { SizePropValue } from '@elementor/editor-props';
 
-type SizeValueUnit = SizePropValue[ 'value' ][ 'unit' ];
+export type SizeUnit = SizePropValue[ 'value' ][ 'unit' ];
 
-export type ExtendedOption = Extract< SizeValueUnit, 'auto' | 'custom' >;
-export type Unit = Exclude< SizeValueUnit, ExtendedOption >;
-export type SizeUnit = SizeValueUnit;
+export type ExtendedOption = Extract< SizeUnit, 'auto' | 'custom' >;
+export type Unit = Exclude< SizeUnit, ExtendedOption >;
 
 export const lengthUnits = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ] as const satisfies readonly Unit[];
 export const angleUnits = [ 'deg', 'rad', 'grad', 'turn' ] as const satisfies readonly Unit[];
