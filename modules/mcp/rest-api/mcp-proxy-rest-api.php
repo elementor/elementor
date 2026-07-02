@@ -31,8 +31,12 @@ class Mcp_Proxy_REST_API {
 			[
 				'methods'             => 'POST',
 				'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
+				'permission_callback' => fn( $request ) => current_user_can( 'edit_post', (int) $request->get_param( 'post_id' ) ),
 				'args'                => [
+					'post_id' => [
+						'type'     => 'integer',
+						'required' => true,
+					],
 					'tool'  => [
 						'type' => 'string',
 						'required' => true,
