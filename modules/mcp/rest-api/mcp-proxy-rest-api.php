@@ -33,8 +33,14 @@ class Mcp_Proxy_REST_API {
 				'callback'            => fn( $request ) => $this->route_wrapper( fn() => $this->handle( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args'                => [
-					'tool'  => [ 'type' => 'string', 'required' => true ],
-					'input' => [ 'type' => 'object', 'required' => true ],
+					'tool'  => [
+						'type' => 'string',
+						'required' => true,
+					],
+					'input' => [
+						'type' => 'object',
+						'required' => true,
+					],
 				],
 			],
 		] );
@@ -47,6 +53,7 @@ class Mcp_Proxy_REST_API {
 		if ( ! isset( $this->tools[ $tool ] ) ) {
 			return Error_Builder::make( 'unknown_tool' )
 				->set_status( 404 )
+				// translators: By tool name
 				->set_message( sprintf( __( 'Unknown tool: %s', 'elementor' ), $tool ) )
 				->build();
 		}

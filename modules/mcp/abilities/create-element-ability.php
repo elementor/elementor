@@ -38,7 +38,10 @@ class Create_Element_Ability extends Abstract_Ability {
 					'post_id'     => [ 'type' => 'integer' ],
 					'element_id'  => [ 'type' => 'string' ],
 					'version'     => [ 'type' => 'string' ],
-					'preview_url' => [ 'type' => 'string', 'format' => 'uri' ],
+					'preview_url' => [
+						'type' => 'string',
+						'format' => 'uri',
+					],
 				],
 			],
 			[
@@ -161,12 +164,18 @@ class Create_Element_Ability extends Abstract_Ability {
 
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
 		if ( $widget ) {
-			return [ 'elType' => 'widget', 'widgetType' => $type ];
+			return [
+				'elType' => 'widget',
+				'widgetType' => $type,
+			];
 		}
 
 		$element = Plugin::$instance->elements_manager->get_element_types( $type );
 		if ( $element ) {
-			return [ 'elType' => $type, 'widgetType' => null ];
+			return [
+				'elType' => $type,
+				'widgetType' => null,
+			];
 		}
 
 		return new \WP_Error(
@@ -182,7 +191,10 @@ class Create_Element_Ability extends Abstract_Ability {
 	 */
 	private function save_to_draft( \Elementor\Core\Base\Document $document, array $elements ) {
 		if ( 'publish' === get_post_status( $document->get_main_id() ) ) {
-			wp_update_post( [ 'ID' => $document->get_main_id(), 'post_status' => 'draft' ] );
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_status' => 'draft',
+			] );
 		}
 
 		return $document->save( [ 'elements' => $elements ] );
