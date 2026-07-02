@@ -14,15 +14,16 @@ import { SelectControl } from './select-control';
 
 type ImageControlProps = {
 	sizes: { label: string; value: string }[];
+	label?: string;
 };
 
-export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
+export const ImageControl = createControl( ( { sizes, label = __( 'Image', 'elementor' ) }: ImageControlProps ) => {
 	const propContext = useBoundProp( imagePropTypeUtil );
 
 	return (
 		<PropProvider { ...propContext }>
 			<Stack gap={ 1.5 }>
-				<ControlLabel>{ __( 'Image', 'elementor' ) }</ControlLabel>
+				<ControlLabel>{ label }</ControlLabel>
 				<ImageSrcControl />
 				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
 					<Grid item xs={ 6 }>

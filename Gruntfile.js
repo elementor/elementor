@@ -25,9 +25,6 @@ module.exports = function( grunt ) {
 		sass: require( './.grunt-config/sass' ),
 		postcss: require( './.grunt-config/postcss' ),
 		watch: require( './.grunt-config/watch' ),
-		replace: require( './.grunt-config/replace' ),
-		shell: require( './.grunt-config/shell' ),
-		release: require( './.grunt-config/release' ),
 		copy: require( './.grunt-config/copy' ),
 		clean: require( './.grunt-config/clean' ),
 		webpack: require( './.grunt-config/webpack' ),
@@ -127,6 +124,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'test', [
+		'webpack:qunit',
 		'karma:unit',
 	] );
 

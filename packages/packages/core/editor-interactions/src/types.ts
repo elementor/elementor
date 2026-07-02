@@ -1,8 +1,12 @@
+import { type RefObject } from 'react';
+import { type Unit } from '@elementor/editor-controls';
 import type {
 	AnimationPresetPropValue,
 	BooleanPropValue,
 	ConfigPropValue,
 	ElementInteractions,
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 	InteractionItemPropValue,
 	NumberPropValue,
 	StringPropValue,
@@ -18,11 +22,8 @@ export type {
 	AnimationPresetPropValue,
 	InteractionItemPropValue,
 	ElementInteractions,
-};
-
-export type AnimationOption = {
-	value: string;
-	label: string;
+	ExcludedBreakpointsPropValue,
+	InteractionBreakpointsPropValue,
 };
 
 export type InteractionConstants = {
@@ -30,26 +31,28 @@ export type InteractionConstants = {
 	defaultDelay: number;
 	slideDistance: number;
 	scaleStart: number;
-	easing: string;
+	defaultEasing: string;
+	relativeTo: string;
+	start: number;
+	end: number;
 };
 
 export type InteractionsConfig = {
 	constants: InteractionConstants;
-	animationOptions: AnimationOption[];
 };
 
-export type FieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+export type FieldProps< T = string > = {
+	value: T;
+	onChange: ( value: T ) => void;
 	label?: string;
+	disabled?: boolean;
+	anchorRef?: RefObject< HTMLElement | null >;
 };
 
-export type ReplayFieldProps = {
-	value: boolean;
-	onChange: ( value: boolean ) => void;
-	disabled?: boolean;
-};
-export type DirectionFieldProps = FieldProps & {
+export type ReplayFieldProps = FieldProps< boolean >;
+export type RepeatFieldProps = FieldProps< string >;
+export type TimesFieldProps = FieldProps< number >;
+export type DirectionFieldProps = FieldProps< string > & {
 	interactionType: string;
 };
 
@@ -71,3 +74,5 @@ export type InteractionsProvider = {
 };
 
 export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
+
+export type SizeStringValue = `${ number }${ Unit }` | number;

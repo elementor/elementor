@@ -158,14 +158,14 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		// Assert 1.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Typography' ).nth( 1 ) ).toBeVisible();
 
 		// Act 2. click on font again nothing happens.
 		await secondaryFont.click();
 
 		// Assert 2.
 		await expect( secondaryFont ).toHaveClass( /active/ );
-		expect( await page.getByText( 'Typography' ).nth( 1 ).isVisible() ).toBeTruthy();
+		await expect( page.getByText( 'Typography' ).nth( 1 ) ).toBeVisible();
 
 		// Arrange 3.
 		await secondaryFont.click();

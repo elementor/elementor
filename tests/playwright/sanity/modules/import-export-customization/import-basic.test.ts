@@ -22,7 +22,7 @@ test.describe( 'Import Export Customization - Basic Import @import_export_custom
 		await ImportExportHelpers.openImportPage( page );
 
 		const importButton = page.locator( 'button:has-text("Import")' );
-		await expect( importButton ).not.toBeVisible();
+		await expect( importButton ).toBeHidden();
 
 		await ImportExportHelpers.uploadKitFile( page );
 

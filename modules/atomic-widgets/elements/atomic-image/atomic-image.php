@@ -65,6 +65,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
 						->set_label( __( 'Image', 'elementor' ) ),
@@ -92,8 +93,10 @@ class Atomic_Image extends Atomic_Widget_Base {
 			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
 						->add_prop( 'display', 'inherit' )
 						->add_prop( 'width', 'fit-content' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
@@ -107,5 +110,18 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-image' => __DIR__ . '/atomic-image.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$src = $settings['image']['src'] ?? '';
+
+		if ( empty( $src ) ) {
+			return '';
+		}
+
+		$alt = $settings['image']['alt'] ?? '';
+
+		return '![' . $alt . '](' . esc_url( $src ) . ')';
 	}
 }

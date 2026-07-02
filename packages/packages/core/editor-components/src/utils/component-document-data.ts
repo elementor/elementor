@@ -11,9 +11,3 @@ export const getComponentDocumentData = async ( id: number ) => {
 		return null;
 	}
 };
-
-export const invalidateComponentDocumentData = ( id: number ) => {
-	const documentManager = getV1DocumentsManager();
-
-	documentManager.invalidateCache( id );
-};

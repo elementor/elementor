@@ -82,10 +82,10 @@ const Content = () => {
 				</PopoverGridContainer>
 				<PopoverGridContainer ref={ rowRef[ 0 ] }>
 					<Control bind="hOffset" label={ __( 'Horizontal', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+						<SizeControl anchorRef={ rowRef[ 0 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 					<Control bind="vOffset" label={ __( 'Vertical', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 0 ] } />
+						<SizeControl anchorRef={ rowRef[ 0 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 				</PopoverGridContainer>
 				<PopoverGridContainer ref={ rowRef[ 1 ] }>
@@ -93,7 +93,7 @@ const Content = () => {
 						<SizeControl anchorRef={ rowRef[ 1 ] } />
 					</Control>
 					<Control bind="spread" label={ __( 'Spread', 'elementor' ) }>
-						<SizeControl anchorRef={ rowRef[ 1 ] } />
+						<SizeControl anchorRef={ rowRef[ 1 ] } min={ -Number.MAX_SAFE_INTEGER } />
 					</Control>
 				</PopoverGridContainer>
 			</PopoverContent>

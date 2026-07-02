@@ -18,6 +18,8 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private ?string $pattern_label;
 	private ?string $placeholder;
 	private ?string $prop_key = '';
+	private bool $is_sortable = false;
+	private ?object $add_item_tooltip_props = null;
 
 	public function get_type(): string {
 		return 'repeatable';
@@ -77,6 +79,18 @@ class Repeatable_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	public function set_is_sortable( bool $is_sortable ): self {
+		$this->is_sortable = $is_sortable;
+
+		return $this;
+	}
+
+	public function set_add_item_tooltip_props( $add_item_tooltip_props ): self {
+		$this->add_item_tooltip_props = (object) $add_item_tooltip_props;
+
+		return $this;
+	}
+
 	public function get_props(): array {
 		return [
 			'childControlType'   => $this->child_control_type,
@@ -88,6 +102,8 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'repeaterLabel'      => $this->repeater_label,
 			'placeholder'        => $this->placeholder,
 			'propKey'            => $this->prop_key,
+			'isSortable'         => $this->is_sortable,
+			'addItemTooltipProps' => $this->add_item_tooltip_props,
 		];
 	}
 }

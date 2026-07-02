@@ -23,6 +23,7 @@ use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
 use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
+use Elementor\App\Modules\SiteBuilder\Module as SiteBuilderModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,18 +51,8 @@ class App extends BaseApp {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
-	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
-		}
-	}
-
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Theme_Builder_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function fix_submenu( $menu ) {
@@ -179,7 +170,7 @@ class App extends BaseApp {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
-		Collection::make( [ 'ui', 'icons' ] )
+		Collection::make( [ 'ui', 'icons', 'store', 'query', 'utils', 'events', 'onboarding', 'schema', 'site-builder' ] )
 			->each( function( $package ) use ( $assets_config_provider ) {
 				$suffix = Utils::is_script_debug() ? '' : '.min';
 				$config = $assets_config_provider->load( $package )->get( $package );
@@ -266,6 +257,8 @@ class App extends BaseApp {
 				'wp-i18n',
 				'elementor-v2-ui',
 				'elementor-v2-icons',
+				'elementor-v2-onboarding',
+				'elementor-v2-site-builder',
 				'react',
 				'react-dom',
 				'select2',
@@ -311,6 +304,7 @@ class App extends BaseApp {
 		$this->register_import_export_customization_experiment();
 
 		$this->add_component( 'site-editor', new SiteEditorModule() );
+		$this->add_component( 'site-builder', new SiteBuilderModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new ImportExportModule() );
@@ -324,10 +318,6 @@ class App extends BaseApp {
 		}
 
 		$this->add_component( 'onboarding', new OnboardingModule() );
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );

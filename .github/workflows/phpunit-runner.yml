@@ -35,8 +35,10 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
+      - name: Mask GitHub token
+        run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup PHP
@@ -44,6 +46,8 @@ jobs:
         with:
           php-version: ${{ matrix.php_versions }}
           coverage: none
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Install Dependencies
         run: |
           bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true

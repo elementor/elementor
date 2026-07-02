@@ -26,6 +26,8 @@ export class ReplacementBase implements ReplacementBaseInterface {
 	protected type: ReplacementSettings[ 'type' ];
 	protected id: ReplacementSettings[ 'id' ];
 	protected refreshView: ReplacementSettings[ 'refreshView' ];
+	protected reactRoot: ReplacementSettings[ 'reactRoot' ];
+	protected reactContainer: ReplacementSettings[ 'reactContainer' ];
 
 	constructor( settings: ReplacementSettings ) {
 		this.getSetting = settings.getSetting;
@@ -34,6 +36,8 @@ export class ReplacementBase implements ReplacementBaseInterface {
 		this.type = settings.type;
 		this.id = settings.id;
 		this.refreshView = settings.refreshView;
+		this.reactRoot = settings.reactRoot;
+		this.reactContainer = settings.reactContainer;
 	}
 
 	static getTypes(): string[] | null {

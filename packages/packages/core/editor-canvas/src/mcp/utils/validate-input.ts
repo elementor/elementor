@@ -2,6 +2,8 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { type PropsSchema, type PropValue, Schema } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
+import { STYLE_SCHEMA_URI } from '../resources/widgets-schema-resource';
+
 let _widgetsSchema: Record< string, PropsSchema > | null = null;
 
 type ValidationResult = {
@@ -45,12 +47,17 @@ export const validateInput = {
 			if ( ! propSchema ) {
 				errors.push( `Property "${ propName }" is not defined in the schema.` );
 				hasInvalidKey = true;
-			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
+			} else if ( ! Schema.isPropKeyConfigurable( propName, propSchema ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const { valid, jsonSchema } = Schema.validatePropValue( propSchema, propValue as PropValue );
+				const { valid } = Schema.validatePropValue( propSchema, propValue as PropValue );
 				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }". Expected schema: ${ jsonSchema }` );
+					errors.push(
+						`Invalid property "${ propName }". Validate input with resource [${ STYLE_SCHEMA_URI.replace(
+							'{category}',
+							propName
+						) }]`
+					);
 				}
 			}
 		} );

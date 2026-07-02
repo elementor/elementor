@@ -1,17 +1,22 @@
+'use strict';
+
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+	skipInteraction,
+	extractAnimationConfig,
 	getAnimateFunction,
 	getInViewFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
 } from './interactions-utils.js';
 
-function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+import { initBreakpoints } from './interactions-breakpoints.js';
+
+function scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
-	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
@@ -46,23 +51,46 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
+	const resetKeyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, 'in', animConfig.direction ),
+		baseline,
+	);
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.ease,
+		ease: config().defaultEasing,
 	};
 
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
+		scrollOutAnimation( element, transition, keyframes, resetKeyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
 		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
 		defaultAnimation( element, transition, keyframes, options, animateFunc );
 	}
+}
+
+function processElementInteractions( element, interactions, animateFunc, inViewFunc ) {
+	if ( ! interactions || ! Array.isArray( interactions ) ) {
+		return;
+	}
+
+	interactions.forEach( ( interaction ) => {
+		const animConfig = extractAnimationConfig( interaction );
+
+		if ( animConfig && ! skipInteraction( animConfig ) ) {
+			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		}
+	} );
 }
 
 function initInteractions() {
@@ -74,30 +102,45 @@ function initInteractions() {
 			return;
 		}
 
+		// New method: Read centralized interactions data from script tag
+		const dataScript = document.getElementById( 'elementor-interactions-data' );
+		if ( dataScript ) {
+			const elementsData = JSON.parse( dataScript.textContent );
+
+			elementsData.forEach( ( elementData ) => {
+				const { elementId, interactions } = elementData;
+
+				if ( ! elementId || ! interactions || ! Array.isArray( interactions ) ) {
+					return;
+				}
+
+				document.querySelectorAll( `[data-interaction-id="${ elementId }"]` ).forEach( ( element ) => {
+					processElementInteractions( element, interactions, animateFunc, inViewFunc );
+				} );
+			} );
+
+			return;
+		}
+
+		// Legacy fallback: parse data-interactions attributes
 		const elements = document.querySelectorAll( '[data-interactions]' );
 
 		elements.forEach( ( element ) => {
 			const interactionsData = element.getAttribute( 'data-interactions' );
 			const parsedData = parseInteractionsData( interactionsData );
 
-			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
-				return;
-			}
-
-			parsedData.forEach( ( interaction ) => {
-				const animationName = extractAnimationId( interaction );
-				const animConfig = animationName && parseAnimationName( animationName );
-
-				if ( animConfig ) {
-					applyAnimation( element, animConfig, animateFunc, inViewFunc );
-				}
-			} );
+			processElementInteractions( element, parsedData, animateFunc, inViewFunc );
 		} );
 	} );
 }
 
-if ( 'loading' === document.readyState ) {
-	document.addEventListener( 'DOMContentLoaded', initInteractions );
-} else {
+function init() {
+	initBreakpoints();
 	initInteractions();
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', init );
+} else {
+	init();
 }

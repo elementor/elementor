@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { createMockMenuAction, createMockMenuLink, createMockMenuToggleAction, renderWithTheme } from 'test-utils';
+import { __flushAllInjections } from '@elementor/locations';
 import { fireEvent, screen } from '@testing-library/react';
+
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
+} ) );
 
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
@@ -8,6 +13,13 @@ import ToolsMenuLocation from '../tools-menu-location';
 import UtilitiesMenuLocation from '../utilities-menu-location';
 
 describe( 'Menus components', () => {
+	beforeEach( () => {
+		integrationsMenu.registerAction( {
+			...createMockMenuAction(),
+			id: '__reset__',
+		} );
+		__flushAllInjections();
+	} );
 	describe( 'Main menu', () => {
 		it( 'should render ordered menu items in a popover', () => {
 			// Arrange.

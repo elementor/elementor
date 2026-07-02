@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
-use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Widget_Base;
@@ -21,6 +20,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	protected $styles = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
+	protected $origin_id = null;
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -29,9 +29,12 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+
 		if ( static::$widget_description ) {
 			$this->description( static::$widget_description );
 		}
+
+		$this->origin_id = $data['origin_id'] ?? null;
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -53,27 +56,11 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return $interactions;
 	}
 
-	private function convert_prop_type_interactions_to_legacy_for_runtime( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
 	abstract protected function define_atomic_controls(): array;
+
+	protected function define_atomic_pseudo_states(): array {
+		return [];
+	}
 
 	public function get_global_scripts() {
 		return [];
@@ -87,7 +74,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
 		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
+		$config['base_settings'] = $this->get_base_settings();
 		$config['atomic_props_schema'] = $props_schema;
+		$config['atomic_pseudo_states'] = $this->define_atomic_pseudo_states();
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 		$config['meta'] = $this->get_meta();
@@ -109,7 +98,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		return Widget_Builder::make( static::get_element_type() );
 	}
 
-	public function get_script_depends() {
-		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
+	public function get_interaction_id() {
+		return $this->origin_id ?? $this->get_id();
 	}
 }

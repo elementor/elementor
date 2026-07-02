@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { imageSrcPropTypeUtil } from '@elementor/editor-props';
+import { imageSrcPropTypeUtil, stringPropTypeUtil, urlPropTypeUtil } from '@elementor/editor-props';
 import { UploadIcon } from '@elementor/icons';
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from '@elementor/ui';
 import { type MediaType, useWpMediaAttachment, useWpMediaFrame } from '@elementor/wp-media';
@@ -14,16 +14,22 @@ type ImageMediaControlProps = {
 };
 
 export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: ImageMediaControlProps ) => {
-	const { value, setValue, propType } = useBoundProp( imageSrcPropTypeUtil );
+	const { value, setValue, propType, placeholder } = useBoundProp( imageSrcPropTypeUtil );
 	const { id, url } = value ?? {};
 
 	const { data: attachment, isFetching } = useWpMediaAttachment( id?.value || null );
-	const src = attachment?.url ?? url?.value ?? null;
+	const { data: placeholderAttachment } = useWpMediaAttachment( placeholder?.id?.value || null );
+	const src = attachment?.url ?? url?.value ?? placeholderAttachment?.url ?? null;
+
+	const defaultUrl = imageSrcPropTypeUtil.extract( propType.default ?? null )?.url?.value;
+	const currentUrlForModal = url?.value && url.value !== defaultUrl ? url.value : undefined;
+	const currentAltForModal = ( value as { alt?: { value?: string } | null } | null | undefined )?.alt?.value;
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes,
 		multiple: false,
 		selected: id?.value || null,
+		allowUrlImport: true,
 		onSelect: ( selectedAttachment ) => {
 			setValue( {
 				id: {
@@ -31,6 +37,13 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 					value: selectedAttachment.id,
 				},
 				url: null,
+			} );
+		},
+		onSelectUrl: ( selectedUrl, alt ) => {
+			setValue( {
+				id: null,
+				url: urlPropTypeUtil.create( selectedUrl ),
+				alt: alt ? stringPropTypeUtil.create( alt ) : null,
 			} );
 		},
 	} );
@@ -65,6 +78,16 @@ export const ImageMediaControl = createControl( ( { mediaTypes = [ 'image' ] }: 
 							onClick={ () => open( { mode: 'upload' } ) }
 						>
 							{ __( 'Upload', 'elementor' ) }
+						</Button>
+						<Button
+							size="tiny"
+							variant="text"
+							color="inherit"
+							onClick={ () =>
+								open( { mode: 'url', currentUrl: currentUrlForModal, currentAlt: currentAltForModal } )
+							}
+						>
+							{ __( 'Insert from URL', 'elementor' ) }
 						</Button>
 					</Stack>
 				</CardOverlay>

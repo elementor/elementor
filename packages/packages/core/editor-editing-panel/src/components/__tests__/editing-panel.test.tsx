@@ -1,21 +1,22 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
-import { type Element, type ElementType, useSelectedElement } from '@elementor/editor-elements';
+import { type Element, type ElementType, useSelectedElementSettings } from '@elementor/editor-elements';
 import { screen } from '@testing-library/react';
 
 import { EditingPanel } from '../editing-panel';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
-	useSelectedElement: jest.fn(),
+	useSelectedElementSettings: jest.fn(),
 } ) );
 
 describe( '<EditingPanel />', () => {
 	it( 'should render the selected element editing panel', () => {
 		// Arrange
-		jest.mocked( useSelectedElement ).mockReturnValue( {
+		jest.mocked( useSelectedElementSettings ).mockReturnValue( {
 			element: { id: '1', type: 'atomic-heading' },
 			elementType: createMockElementType( { key: 'atomic-heading', title: 'Heading' } ),
+			settings: {},
 		} );
 
 		// Act.
@@ -38,9 +39,10 @@ describe( '<EditingPanel />', () => {
 		},
 	] )( 'should not render panel when $title', ( { element, elementType } ) => {
 		// Arrange.
-		jest.mocked( useSelectedElement ).mockReturnValue( {
+		jest.mocked( useSelectedElementSettings ).mockReturnValue( {
 			element: element as Element,
 			elementType: elementType as ElementType,
+			settings: {},
 		} );
 
 		// Act.

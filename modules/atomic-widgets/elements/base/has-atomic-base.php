@@ -5,6 +5,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -16,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
+	use Has_Base_Settings;
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -90,14 +94,58 @@ trait Has_Atomic_Base {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				$widget_id = $data['id'] ?? 'unknown';
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
+				throw new \Exception(
+					esc_html( $this->format_styles_validation_error_message( $style_id, $data, $style, $result->errors()->to_string() ) )
+				);
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
+	}
+
+	private function format_styles_validation_error_message(
+		string $style_id,
+		array $data,
+		array $style,
+		string $validation_errors
+	): string {
+		$widget_id = $data['id'] ?? 'unknown';
+		$structure_label = $this->get_editor_structure_label( $data );
+		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
+
+		$message_parts = [
+			"Styles validation failed for style `$style_id` (widget `$widget_id`)",
+		];
+
+		if ( $structure_label ) {
+			$message_parts[] = "Structure label: `$structure_label`";
+		} else {
+			$element_name = $this->get_title();
+
+			if ( '' === $element_name ) {
+				$element_name = $this->get_name();
+			}
+
+			$message_parts[] = "Element: `$element_name`";
+		}
+
+		if ( $style_label ) {
+			$message_parts[] = "Style label: `$style_label`";
+		}
+
+		return implode( '. ', $message_parts ) . '. ' . $validation_errors;
+	}
+
+	private function get_editor_structure_label( array $data ): ?string {
+		$title = $data['editor_settings']['title'] ?? $this->editor_settings['title'] ?? null;
+
+		if ( ! is_string( $title ) || '' === $title ) {
+			return null;
+		}
+
+		return $title;
 	}
 
 	private function parse_atomic_settings( array $settings ): array {
@@ -131,65 +179,6 @@ trait Has_Atomic_Base {
 		}
 
 		return [];
-	}
-
-	private function convert_prop_type_interactions_to_legacy( $interactions ) {
-		$legacy_items = [];
-
-		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
-				if ( $legacy_item ) {
-					$legacy_items[] = $legacy_item;
-				}
-			} else {
-				$legacy_items[] = $item;
-			}
-		}
-
-		return [
-			'version' => $interactions['version'] ?? 1,
-			'items' => $legacy_items,
-		];
-	}
-
-	private function extract_legacy_interaction_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$interaction_id = $this->extract_prop_value( $item_value, 'interaction_id' );
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-
-		$duration = 300;
-		$delay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
-		}
-
-		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
-
-		return [
-			'interaction_id' => $interaction_id,
-			'animation' => [
-				'animation_id' => $animation_id,
-				'animation_type' => 'full-preset',
-			],
-		];
 	}
 
 	private function extract_prop_value( $data, $key, $default = '' ) {
@@ -282,7 +271,7 @@ trait Has_Atomic_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = $this->styles;
+		$raw_data['styles'] = Atomic_Widget_Styles::get_license_based_filtered_styles( $this->styles ?? [] );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
@@ -299,14 +288,27 @@ trait Has_Atomic_Base {
 	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
-		$initial_attributes = $this->get_initial_attributes();
 
-		$props['attributes'] = Attributes_Prop_Type::generate( array_merge(
-			$initial_attributes['value'] ?? [],
+		$merged_attribute_values = array_merge(
+			$this->get_initial_attributes()['value'] ?? [],
 			$props['attributes']['value'] ?? []
-		) );
+		);
+		$props['attributes'] = Attributes_Prop_Type::generate( $merged_attribute_values );
 
-		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+		$parsed = Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+
+		return $this->transform_link_for_render( $parsed );
+	}
+
+	protected function transform_link_for_render( array $parsed ): array {
+		$link_attributes = isset( $parsed['link'] ) ? $this->get_link_attributes_string( $parsed['link'] ) : '';
+
+		$parsed['link'] = ! empty( $link_attributes ) ? [
+			'tag' => $parsed['link']['tag'],
+			'attributes' => $link_attributes,
+		] : null;
+
+		return $parsed;
 	}
 
 	protected function get_initial_attributes() {
@@ -347,12 +349,19 @@ trait Has_Atomic_Base {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
 		}
 
+		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
+			$editor_data['grid_outline'] = $data['grid_outline'];
+		}
+
 		return $editor_data;
 	}
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
-		$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+
+		if ( ! isset( $schema['_cssid'] ) ) {
+			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+		}
 
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
@@ -360,116 +369,116 @@ trait Has_Atomic_Base {
 		);
 	}
 
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
-
-		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
-				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
-				if ( $animation_id ) {
-					$animation_ids[] = $animation_id;
-				}
-			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
+	protected function set_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			$context = $context_pair['context'];
+			Render_Context::push( $context_key, $context );
 		}
-
-		return $animation_ids;
 	}
 
-	private function extract_animation_id_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
+	protected function clear_render_context( array $context_pairs ): void {
+		foreach ( $context_pairs as $context_pair ) {
+			$context_key = $context_pair['context_key'] ?? static::class;
+			Render_Context::pop( $context_key );
 		}
-
-		$item_value = $item['value'];
-
-		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value( $animation, 'effect' );
-		$type = $this->extract_prop_value( $animation, 'type' );
-		$direction = $this->extract_prop_value( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-		$config = $this->extract_prop_value( $animation, 'config' );
-
-		$duration = 300;
-		$delay = 0;
-		$replay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
-		}
-
-		if ( is_array( $config ) ) {
-			$replay = $this->extract_prop_value( $config, 'replay', 0 );
-			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
-				$replay = 0;
-			}
-		} else {
-			$replay = 0;
-		}
-
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
 	}
 
 	public function print_content() {
 		$defined_context = $this->define_render_context();
 
-		$context_key = $defined_context['context_key'] ?? static::class;
-		$element_context = $defined_context['context'] ?? [];
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
+		if ( empty( $defined_context ) ) {
 			return parent::print_content();
 		}
 
-		Render_Context::push( $context_key, $element_context );
+		$this->set_render_context( $defined_context );
 
 		parent::print_content();
 
-		Render_Context::pop( $context_key );
+		$this->clear_render_context( $defined_context );
 	}
 
 	/**
 	 * Define the context for element's Render_Context.
 	 *
-	 * @return array{context_key: ?string, context: array}
+	 * @return array Array of context pairs. Each pair is an associative array with:
+	 *               - 'context_key' (optional): The context key. Defaults to static::class if not provided.
+	 *               - 'context' (required): The context value (can be any type).
+	 *
+	 * @example
+	 * [
+	 *     [
+	 *         'context_key' => 'custom-key',
+	 *         'context' => ['some' => 'data'],
+	 *     ],
+	 *     [
+	 *         'context' => ['instance_id' => $this->get_id()],
+	 *     ],
+	 * ]
 	 */
 	protected function define_render_context(): array {
+		return [];
+	}
+
+	protected function get_link_attributes( $link_settings ) {
+		if ( empty( $link_settings['href'] ) ) {
+			return [];
+		}
+
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$url = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+		$is_action_link = 'button' === $tag;
+		$url_attr_key = $is_action_link ? 'data-action-link' : 'href';
+
 		return [
-			'context_key' => null,
-			'context' => [],
+			$url_attr_key => $url,
+			'target' => $target,
 		];
 	}
 
-	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
-		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
-		$target = $link_settings['target'] ?? '_self';
+	private function get_link_attributes_string( $link_settings ) {
+		$link_attributes = $this->get_link_attributes( $link_settings );
 
-		$is_button = 'button' === $tag;
-		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
-
-		$result = [
-			$href_attribute_key => $href,
-			'target' => $target,
-		];
-
-		if ( $add_key_to_result ) {
-			$result['key'] = $href_attribute_key;
+		if ( empty( $link_attributes ) ) {
+			return '';
 		}
 
-		return $result;
+		$parts = [];
+
+		foreach ( $link_attributes as $key => $value ) {
+			if ( 'tag' === $key ) {
+				continue;
+			}
+
+			$parts[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
+		}
+
+		return implode( ' ', $parts );
+	}
+
+	public function has_action_link() {
+		if ( ! $this->get_id() ) {
+			return true;
+		}
+
+		$link_settings = $this->get_atomic_setting( 'link' ) ?? null;
+		$attributes = $this->get_link_attributes( $link_settings );
+
+		return isset( $attributes['data-action-link'] );
+	}
+
+	public function get_script_depends() {
+		$depends = parent::get_script_depends();
+
+		if ( $this->has_action_link() ) {
+			$depends[] = Frontend_Assets_Loader::ACTION_LINK_HANDLERS_HANDLE;
+		}
+
+		if ( Atomic_Form::is_instance_form( $this ) ) {
+			$depends[] = Frontend_Assets_Loader::FORM_HANDLERS_HANDLE;
+		}
+
+		return $depends;
 	}
 }

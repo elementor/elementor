@@ -1,7 +1,6 @@
 import { type RenderContext } from '@elementor/editor-canvas';
-import { type V1ElementData } from '@elementor/editor-elements';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
-import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
 	componentName: string;
@@ -9,13 +8,17 @@ export type ComponentFormValues = {
 
 export type ComponentId = number;
 
-export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
-
 export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = BaseComponent & {
 	id: number;
 	isArchived?: boolean;
+};
+
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
 };
 
 export type UnpublishedComponent = BaseComponent & {
@@ -59,15 +62,28 @@ type BaseComponent = {
 export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
 			config: {
-				locations: Record< string, string >;
+				locations: Record< string, string | Record< string, string > >;
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
 		};
+		storage: ElementorStorage;
+	};
+	elementor?: {
+		getContainerByKeyValue?: ( args: {
+			key: string;
+			value: string;
+			parent?: V1Element[ 'view' ];
+		} ) => V1Element | null;
 	};
 };
 

@@ -10,6 +10,7 @@ use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
+use Elementor\Modules\Variables\Utils\Template_Library_Variables;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -21,7 +22,7 @@ use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Hooks {
@@ -36,7 +37,8 @@ class Hooks {
 			->register_fonts()
 			->register_api_endpoints()
 			->filter_for_style_schema()
-			->register_variable_types();
+			->register_variable_types()
+			->register_template_library_import();
 
 		return $this;
 	}
@@ -129,5 +131,37 @@ class Hooks {
 		);
 
 		return new Variables_Service( $repository, new Batch_Processor() );
+	}
+
+	private function register_template_library_import() {
+		add_filter(
+			'elementor/template_library/export/build_snapshots',
+			[ Template_Library_Variables::class, 'add_variables_snapshot' ],
+			20,
+			4
+		);
+
+		add_filter(
+			'elementor/template_library/get_data/extract_snapshots',
+			[ Template_Library_Variables::class, 'extract_variables_from_data' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/template_library/import/process_content',
+			[ Template_Library_Variables::class, 'process_variables_import' ],
+			10,
+			3
+		);
+
+		add_filter(
+			'elementor/global_classes/import/transform_snapshot',
+			[ Template_Library_Variables::class, 'transform_variables_in_classes_snapshot' ],
+			10,
+			4
+		);
+
+		return $this;
 	}
 }

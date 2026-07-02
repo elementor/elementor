@@ -82,6 +82,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				</li>
 
+				<?php if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' ) ) : ?>
+				<li class="elementor-hotkeys__item">
+					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Create Component', 'elementor' ); ?></div>
+					<div class="elementor-hotkeys__item--shortcut">
+						<kbd>{{{ ctrlLabel }}}</kbd>
+						<kbd>Shift</kbd>
+						<kbd>K</kbd>
+					</div>
+				</li>
+				<?php endif ?>
+
 			</ul>
 
 		</div>

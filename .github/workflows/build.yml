@@ -4,15 +4,15 @@ on:
   pull_request:
     branches:
       - 'main'
-      - '3.[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - '.gitignore'
-      - 'docs/**'
+      - '[0-9].[0-9][0-9]'
+  merge_group:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      job_name:
+        type: string
+        required: false
+        default: Build plugin
     outputs:
       artifact_name:
         value: ${{ jobs.build-plugin.outputs.artifact_name }}
@@ -21,7 +21,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.[0-9][0-9]'
+      - '[0-9].[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -35,7 +35,7 @@ permissions:
 
 jobs:
   build-plugin:
-    name: Build plugin
+    name: ${{ inputs.job_name || 'Build plugin' }}
     runs-on: ubuntu-22.04
     if: startsWith( github.repository, 'elementor/' )
     outputs:
@@ -43,10 +43,10 @@ jobs:
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache turbo build setup
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .turbo
           key: ${{ runner.os }}-turbo-${{ github.sha }}
@@ -63,10 +63,10 @@ jobs:
             !readme.txt
             !changelog.txt
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: 'npm'
 
       - name: Set ENV variables
@@ -92,7 +92,7 @@ jobs:
         env:
           MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         id: upload-artifact
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
@@ -103,7 +103,7 @@ jobs:
 
       - name: Find existing comment on PR (Elementor repo)
         if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         id: find
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -112,7 +112,7 @@ jobs:
 
       - name: Comment build info on PR (Elementor repo)
         if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}

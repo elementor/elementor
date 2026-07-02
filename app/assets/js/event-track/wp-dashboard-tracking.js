@@ -4,7 +4,6 @@ import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 import ActionControlTracking from './dashboard/action-controls';
-import TopBarTracking from './dashboard/top-bar';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -38,6 +37,22 @@ export const SCREEN_TYPES = {
 };
 
 export default class WpDashboardTracking {
+	static anyPageWithElementorString = 'elementor';
+
+	static elementorPages = [
+		this.anyPageWithElementorString,
+		'e-form-submissions',
+		'popup_templates',
+	];
+
+	static elementorPostTypes = [
+		'elementor_library',
+		'e-floating-buttons',
+		'elementor_snippet',
+		'elementor_font',
+		'elementor_icons',
+	];
+
 	static sessionStartTime = Date.now();
 	static lastActivityTime = Date.now();
 	static sessionEnded = false;
@@ -46,6 +61,10 @@ export default class WpDashboardTracking {
 	static initialized = false;
 	static navigationListeners = [];
 	static isNavigatingToElementor = false;
+
+	static getElementorCommon() {
+		return window.elementorCommon;
+	}
 
 	static init() {
 		if ( this.initialized ) {
@@ -82,6 +101,7 @@ export default class WpDashboardTracking {
 	}
 
 	static isEditorOneActive() {
+		const elementorCommon = this.getElementorCommon();
 		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
 	}
 
@@ -132,12 +152,15 @@ export default class WpDashboardTracking {
 	}
 
 	static isEventsManagerAvailable() {
+		const elementorCommon = this.getElementorCommon();
+
 		return elementorCommon?.eventsManager &&
 			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
 	static canSendEvents() {
-		return elementorCommon?.config?.editor_events?.can_send_events || false;
+		const elementorCommon = this.getElementorCommon();
+		return elementorCommon?.config?.editor_events?.can_send_events ?? false;
 	}
 
 	static dispatchEvent( eventName, properties = {}, options = {} ) {
@@ -145,7 +168,8 @@ export default class WpDashboardTracking {
 			return;
 		}
 
-		elementorCommon.eventsManager.dispatchEvent( eventName, properties, options );
+		const elementorCommon = this.getElementorCommon();
+		elementorCommon?.eventsManager?.dispatchEvent( eventName, properties, options );
 	}
 
 	static updateActivity() {
@@ -182,12 +206,9 @@ export default class WpDashboardTracking {
 			const postType = params.get( 'post_type' );
 			const action = params.get( 'action' );
 
-			const elementorPages = [ 'elementor', 'go_knowledge_base_site', 'e-form-submissions' ];
-			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
-
-			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
-				( postType && elementorPostTypes.includes( postType ) ) ||
-				( action && action.includes( 'elementor' ) );
+			return !! ( ( page && this.elementorPages.some( ( p ) => page.includes( p ) ) ) ||
+				( postType && this.elementorPostTypes.includes( postType ) ) ||
+				( action && action.includes( this.anyPageWithElementorString ) ) );
 		} catch ( error ) {
 			return false;
 		}
@@ -382,10 +403,6 @@ export default class WpDashboardTracking {
 		MenuPromotionTracking.destroy();
 		ActionControlTracking.destroy();
 
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.destroy();
-		}
-
 		this.initialized = false;
 	}
 }
@@ -407,10 +424,6 @@ window.addEventListener( 'elementor/admin/init', () => {
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
 		ActionControlTracking.init();
-
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.init();
-		}
 	}
 } );
 

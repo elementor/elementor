@@ -4,11 +4,16 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { GapControl } from '../gap-control';
 
+const settings = {
+	available_units: [ 'px', 'rem' ],
+};
+
 const propType = createMockPropType( {
 	kind: 'object',
+	settings,
 	shape: {
-		column: createMockPropType( { kind: 'object' } ),
-		row: createMockPropType( { kind: 'object' } ),
+		column: createMockPropType( { kind: 'object', settings } ),
+		row: createMockPropType( { kind: 'object', settings } ),
 	},
 } );
 

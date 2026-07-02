@@ -8,6 +8,8 @@
 		// Avoid theme conflicts.
 		all: initial;
 		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
 		max-width: 1160px;
 		position: relative;
 		margin-inline: auto;

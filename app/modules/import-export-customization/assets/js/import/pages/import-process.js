@@ -68,11 +68,11 @@ export default function ImportProcess() {
 							<Stack spacing={ 3 } alignItems="center" >
 								<CircularProgress size={ 30 } />
 								<Typography variant="h5" >
-									{ __( 'Settings up your website templates...', 'elementor' ) }
+									{ __( 'Setting up your website template...', 'elementor' ) }
 								</Typography>
 								<Stack>
 									<Typography variant="subtitle1" >
-										{ __( 'This usually take a few moments.', 'elementor' ) }
+										{ __( 'This usually takes a few moments.', 'elementor' ) }
 									</Typography>
 									<Typography variant="subtitle1" >
 										{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }

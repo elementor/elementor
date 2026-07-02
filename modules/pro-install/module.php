@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\ProInstall;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
@@ -31,18 +30,6 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'pro-install', Connect::get_class_name() );
 		} );
 
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$admin_menu->register(
-					'elementor-connect-account',
-					new Pro_Install_Menu_Item(
-						$this->get_connect_app(),
-						$this->get_pro_install_page_assets(),
-					)
-				);
-			}
-		}, 116 );
-
 		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
 			$excluded_slugs[] = 'elementor-connect';
 			return $excluded_slugs;
@@ -56,10 +43,6 @@ class Module extends BaseModule {
 				)
 			);
 		} );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	private function get_connect_app(): Connect {

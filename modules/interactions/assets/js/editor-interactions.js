@@ -3,40 +3,55 @@
 import {
 	config,
 	getKeyframes,
-	parseAnimationName,
-	extractAnimationId,
+	getTransformBaselineFromComputedStyle,
+	preserveTransformKeyframes,
+	extractAnimationConfig,
 	extractInteractionId,
 	getAnimateFunction,
 	waitForAnimateFunction,
 	parseInteractionsData,
+	resetElementStyles,
 } from './interactions-utils.js';
 
+/**
+ * @type {Record<string, Promise<void> & { cancel: () => void }>}
+ */
+const playingInteractionsToStop = {};
+
 function applyAnimation( element, animConfig, animateFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const { id } = element;
+	if ( playingInteractionsToStop[ id ] ) {
+		playingInteractionsToStop[ id ].cancel();
+		delete playingInteractionsToStop[ id ];
+	}
+	const baseline = getTransformBaselineFromComputedStyle( element );
+	const keyframes = preserveTransformKeyframes(
+		getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+		baseline,
+	);
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.ease,
+		ease: config().defaultEasing,
 	};
 
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
-	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
-	const transition = element.style.transition;
-	element.style.transition = 'none';
+
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
-		animateFunc( element, keyframes, options ).then( () => {
-			if ( 'out' === animConfig.type ) {
-				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
-				const resetKeyframes = {};
-				Object.keys( keyframes ).forEach( ( key ) => {
-					resetKeyframes[ key ] = resetValues[ key ];
-				} );
-				element.style.transition = transition;
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			}
+		const animation = animateFunc( element, keyframes, options );
+
+		playingInteractionsToStop[ id ] = animation;
+
+		animation.then( () => {
+			requestAnimationFrame( () => {
+				resetElementStyles( element );
+			} );
+
+			delete playingInteractionsToStop[ id ];
 		} );
 	} );
 }
@@ -73,8 +88,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 	const interactions = Object.values( parsedData?.items || [] );
 
 	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction );
-		const animConfig = animationName && parseAnimationName( animationName );
+		const animConfig = extractAnimationConfig( interaction );
 
 		if ( animConfig ) {
 			applyAnimation( element, animConfig, animateFunc );
@@ -101,6 +115,7 @@ function handleInteractionsUpdate() {
 			.filter( Boolean )
 			.sort()
 			.join( ',' );
+
 		const prevIds = ( previousItem.interactions?.items || [] )
 			.map( extractInteractionId )
 			.filter( Boolean )

@@ -81,6 +81,11 @@ export const StyleTab = () => {
 									'align-content',
 									'align-self',
 									'gap',
+									'order',
+									'grid-column',
+									'grid-row',
+									'grid-auto-rows',
+									'grid-auto-columns',
 								] }
 							/>
 							<StyleTabSection

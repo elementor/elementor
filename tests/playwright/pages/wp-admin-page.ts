@@ -4,6 +4,7 @@ import EditorPage from './editor-page';
 import { ElementorType, WindowType } from '../types/types';
 import { wpCli } from '../assets/wp-cli';
 import ApiRequests from '../assets/api-requests';
+import { timeouts } from '../config/timeouts';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -143,6 +144,25 @@ export default class WpAdminPage extends BasePage {
 	}
 
 	/**
+	 * Edit an existing Elementor page.
+	 *
+	 * @param {string}   postId        - The ID of the page to edit.
+	 * @param {Object}   prop          - Properties object.
+	 * @param {Page}     prop.page     - Playwright Page object.
+	 * @param {TestInfo} prop.testInfo - Playwright TestInfo object.
+	 * @return {Promise<EditorPage>}
+	 */
+	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
+		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( page, testInfo );
+	}
+
+	/**
 	 * Create a new page with the API and open it in Elementor.
 	 *
 	 * @return {Promise<string>}
@@ -240,8 +260,8 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async waitForPanel(): Promise<void> {
-		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.heavyAction } );
+		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.heavyAction } );
 	}
 
 	/**
@@ -280,7 +300,15 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			await selectElement.selectOption( state ? 'active' : 'inactive', { timeout: 5000 } );
+			let optionValue: string;
+
+			if ( 'string' === typeof state ) {
+				optionValue = state;
+			} else {
+				optionValue = state ? 'active' : 'inactive';
+			}
+
+			await selectElement.selectOption( optionValue, { timeout: 5000 } );
 
 			await this.confirmExperimentModalIfOpen();
 		}
@@ -460,5 +488,15 @@ export default class WpAdminPage extends BasePage {
 		await this.page.goto( '/wp-admin/profile.php' );
 		await this.page.locator( '#admin_bar_front' ).check();
 		await this.page.locator( '#submit' ).click();
+	}
+
+	async cleanAdminPageForScreenshot(): Promise<void> {
+		await this.page.addStyleTag( {
+			content: '.notice, .update-nag, .e-notice { display: none !important; }',
+		} );
+
+		await this.page.evaluate( () => {
+			document.querySelectorAll( 'iframe' ).forEach( ( iframe ) => iframe.remove() );
+		} );
 	}
 }

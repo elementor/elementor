@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
+import { defaultRangeExtractor, useVirtualizer } from '@tanstack/react-virtual';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
+import { loadExistingClasses } from '../../load-existing-classes';
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 import { useSearchAndFilters } from '../search-and-filter/context';
@@ -17,21 +19,66 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { getNotFoundType, NotFound } from './not-found';
 import { SortableItem, SortableProvider } from './sortable';
 
+const ROW_HEIGHT = 40;
+const OVERSCAN = 6;
+
+type LoadingClassesMap = Record< StyleDefinitionID, boolean >;
+
 type GlobalClassesListProps = {
 	disabled?: boolean;
+	scrollElement?: HTMLElement | null;
+	onStopSyncRequest?: ( id: string ) => void;
+	onStartSyncRequest?: ( id: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( {
+	disabled,
+	scrollElement,
+	onStopSyncRequest,
+	onStartSyncRequest,
+}: GlobalClassesListProps ) => {
 	const {
 		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
 	const filters = useFilters();
-	const [ draggedItemId, setDraggedItemId ] = React.useState< StyleDefinitionID | null >( null );
+	const [ draggedItemId, setDraggedItemId ] = useState< StyleDefinitionID | null >( null );
+	const [ loading, setLoading ] = useState< LoadingClassesMap >( {} );
+
+	const addLoadingClass = ( classId: StyleDefinitionID ) =>
+		setLoading( ( prev ) => ( { ...prev, [ classId ]: true } ) );
+
+	const removeLoadingClass = ( classId: StyleDefinitionID ) =>
+		setLoading( ( prev ) => {
+			const { [ classId ]: _, ...rest } = prev;
+			return rest;
+		} );
+
 	const draggedItemLabel = cssClasses.find( ( cssClass ) => cssClass.id === draggedItemId )?.label ?? '';
 	const [ classesOrder, reorderClasses ] = useReorder( draggedItemId, setDraggedItemId, draggedItemLabel ?? '' );
 	const filteredCssClasses = useFilteredCssClasses();
+
+	const virtualizer = useVirtualizer( {
+		count: filteredCssClasses.length,
+		getScrollElement: () => scrollElement ?? null,
+		estimateSize: () => ROW_HEIGHT,
+		overscan: OVERSCAN,
+		getItemKey: ( index ) => filteredCssClasses[ index ].id,
+		// Keep the actively dragged row mounted even when scrolled out of view.
+		// SortableItem unregisters its render on unmount, which would make the
+		// DragOverlay clone disappear mid-drag.
+		rangeExtractor: ( range ) => {
+			const indices = new Set( defaultRangeExtractor( range ) );
+			if ( draggedItemId ) {
+				const draggedItemIndex = filteredCssClasses.findIndex( ( cssClass ) => cssClass.id === draggedItemId );
+				if ( draggedItemIndex >= 0 ) {
+					indices.add( draggedItemIndex );
+				}
+			}
+			return [ ...indices ].sort( ( a, b ) => a - b );
+		},
+	} );
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -67,51 +114,94 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 
 	return (
 		<DeleteConfirmationProvider>
-			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+			<List
+				sx={ {
+					position: 'relative',
+					display: 'block',
+					height: virtualizer.getTotalSize(),
+					padding: 0,
+				} }
+			>
 				<SortableProvider
 					value={ classesOrder }
 					onChange={ reorderClasses }
+					onDragStart={ ( event ) => setDraggedItemId( event.active.id as StyleDefinitionID ) }
+					onDragEnd={ () => setDraggedItemId( null ) }
+					onDragCancel={ () => setDraggedItemId( null ) }
 					disableDragOverlay={ ! allowSorting }
 				>
-					{ filteredCssClasses?.map( ( { id, label } ) => (
-						<SortableItem key={ id } id={ id }>
-							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => {
-								if ( isDragged && ! draggedItemId ) {
-									setDraggedItemId( id );
-								}
-								return (
+					{ virtualizer.getVirtualItems().map( ( virtualRow ) => {
+						const cssClass = filteredCssClasses[ virtualRow.index ];
+						return (
+							<SortableItem
+								key={ virtualRow.key }
+								id={ cssClass.id }
+								style={ {
+									position: 'absolute',
+									top: virtualRow.start,
+									left: 0,
+									width: '100%',
+								} }
+							>
+								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
 									<ClassItem
-										id={ id }
-										label={ label }
-										renameClass={ ( newLabel: string ) => {
-											trackGlobalClasses( {
-												event: 'classRenamed',
-												classId: id,
-												oldValue: label,
-												newValue: newLabel,
-												source: 'class-manager',
-											} );
-											dispatch(
-												slice.actions.update( {
-													style: {
-														id,
-														label: newLabel,
-													},
-												} )
-											);
+										id={ cssClass.id }
+										label={ cssClass.label }
+										renameClass={ async ( newLabel: string ) => {
+											addLoadingClass( cssClass.id );
+
+											try {
+												trackGlobalClasses( {
+													event: 'classRenamed',
+													classId: cssClass.id,
+													oldValue: cssClass.label,
+													newValue: newLabel,
+													source: 'class-manager',
+												} );
+
+												void ( await loadExistingClasses( [ cssClass.id ] ) );
+
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id: cssClass.id,
+															label: newLabel,
+														},
+													} )
+												);
+											} finally {
+												removeLoadingClass( cssClass.id );
+											}
 										} }
 										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
+										disabled={ disabled || isDragPlaceholder || loading[ cssClass.id ] }
 										sortableTriggerProps={ {
 											...triggerProps,
 											style: triggerStyle,
 										} }
 										showSortIndicator={ allowSorting }
+										syncToV3={ cssClass.sync_to_v3 }
+										onToggleSync={ ( id, newValue ) => {
+											if ( ! newValue && onStopSyncRequest ) {
+												onStopSyncRequest( id );
+											} else if ( newValue && onStartSyncRequest ) {
+												onStartSyncRequest( id );
+											} else {
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id,
+															sync_to_v3: newValue,
+														},
+													} )
+												);
+											}
+										} }
 									/>
-								);
-							} }
-						</SortableItem>
-					) ) }
+								) }
+							</SortableItem>
+						);
+					} ) }
 				</SortableProvider>
 			</List>
 		</DeleteConfirmationProvider>
@@ -157,7 +247,7 @@ const useReorder = (
 				classId: draggedItemId,
 				classTitle: draggedItemLabel,
 			} );
-			setDraggedItemId( null ); // Reset after tracking
+			setDraggedItemId( null );
 		}
 	};
 
@@ -181,8 +271,9 @@ const useFilteredCssClasses = (): StyleDefinition[] => {
 	);
 
 	const filteredClasses = useMemo( () => {
-		if ( searchValue.length > 1 ) {
-			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( searchValue.toLowerCase() ) );
+		const normalizedSearch = searchValue.replace( /[^a-zA-Z0-9_-]/g, '' ).toLowerCase();
+		if ( normalizedSearch.length > 1 ) {
+			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( normalizedSearch ) );
 		}
 		return cssClasses;
 	}, [ searchValue, cssClasses, lowercaseLabels ] );

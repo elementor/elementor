@@ -10,6 +10,7 @@ jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+	useInheritedValues: () => ( {} ),
 } ) );
 
 const renderDimensionsField = () => {

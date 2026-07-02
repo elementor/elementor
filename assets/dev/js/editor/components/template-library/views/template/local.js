@@ -1,6 +1,7 @@
 const TemplateLibraryTemplateView = require( 'elementor-templates/views/template/base' );
 
 import { SAVE_CONTEXTS } from './../../constants';
+import { rovingTabindex, suppressEscapeKeyUp } from 'elementor-editor-utils/keyboard-nav';
 
 const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	template: '#tmpl-elementor-template-library-template-local',
@@ -27,6 +28,8 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			'change @ui.bulkSelectionItemCheckbox': 'onSelectBulkSelectionItemCheckbox',
 			'click @ui.deleteButton': 'onDeleteButtonClick',
 			'click @ui.toggleMore': 'onToggleMoreClick',
+			'keydown @ui.toggleMore': 'onToggleMoreKeyDown',
+			'keydown @ui.morePopup': 'onMenuKeyDown',
 			'click @ui.renameButton': 'onRenameClick',
 			'click @ui.moveButton': 'onMoveClick',
 			'click @ui.copyButton': 'onCopyClick',
@@ -36,6 +39,159 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	modelEvents: {
 		'change:title': 'onTitleChange',
+	},
+
+	onRender() {
+		if ( this.ui.toggleMore.length ) {
+			this.ui.toggleMore.attr( {
+				'aria-haspopup': 'menu',
+				'aria-expanded': 'false',
+			} );
+		}
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			this.updateRowSelectionAttributes();
+		}
+
+		// Set up click-outside handler to close context menu
+		if ( this.ui.morePopup && this.ui.morePopup.length ) {
+			this._onDocumentClick = ( e ) => {
+				if ( 'true' !== this.ui.toggleMore.attr( 'aria-expanded' ) ) {
+					return;
+				}
+				if ( ! this.ui.toggleMore[ 0 ].contains( e.target ) && ! this.ui.morePopup[ 0 ].contains( e.target ) ) {
+					this.closeContextMenu();
+				}
+			};
+			jQuery( document ).on( 'click', this._onDocumentClick );
+
+			// Set tabindex on menu items for keyboard focus
+			this.ui.morePopup.find( 'button, a' ).attr( 'tabindex', '-1' );
+		}
+	},
+
+	onBeforeDestroy() {
+		if ( this._onDocumentClick ) {
+			jQuery( document ).off( 'click', this._onDocumentClick );
+		}
+	},
+
+	openContextMenu() {
+		this.handleLockedTemplate();
+		this.ui.toggleMore.attr( 'aria-expanded', 'true' );
+		this.ui.morePopup.show();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.morePopup,
+		} );
+	},
+
+	closeContextMenu() {
+		this.ui.toggleMore.attr( 'aria-expanded', 'false' );
+		this.ui.morePopup.hide();
+	},
+
+	getMenuItems() {
+		return this.ui.morePopup.find( 'button:visible, a:visible' );
+	},
+
+	onToggleMoreKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+
+			if ( 'true' === this.ui.toggleMore.attr( 'aria-expanded' ) ) {
+				this.closeContextMenu();
+				suppressEscapeKeyUp( event );
+			}
+			return;
+		}
+
+		if ( 'ArrowDown' === event.key || 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+			event.stopPropagation();
+
+			if ( 'true' !== this.ui.toggleMore.attr( 'aria-expanded' ) ) {
+				this.openContextMenu();
+			}
+
+			const $items = this.getMenuItems();
+			if ( $items.length ) {
+				$items.first().trigger( 'focus' );
+			}
+		}
+	},
+
+	onMenuKeyDown( event ) {
+		if ( 'Escape' === event.key ) {
+			event.preventDefault();
+			this.closeContextMenu();
+			this.ui.toggleMore.trigger( 'focus' );
+			suppressEscapeKeyUp( event );
+			return;
+		}
+
+		if ( 'Tab' === event.key ) {
+			this.handleMenuTab( event );
+			return;
+		}
+
+		const $items = this.getMenuItems();
+
+		rovingTabindex( {
+			event,
+			$items,
+			orientation: 'vertical',
+			homeEnd: true,
+		} );
+
+		event.stopPropagation();
+	},
+
+	handleMenuTab( event ) {
+		const $items = this.getMenuItems();
+		const currentIndex = $items.index( event.target );
+
+		if ( event.shiftKey ) {
+			if ( currentIndex <= 0 ) {
+				// Close menu and let the browser naturally move focus backwards.
+				this.closeContextMenu();
+				this.ui.toggleMore.trigger( 'focus' );
+			} else {
+				event.preventDefault();
+				event.stopPropagation();
+				$items.eq( currentIndex - 1 ).trigger( 'focus' );
+			}
+			return;
+		}
+
+		if ( currentIndex < $items.length - 1 ) {
+			event.preventDefault();
+			event.stopPropagation();
+			$items.eq( currentIndex + 1 ).trigger( 'focus' );
+		} else {
+			// Close menu and let the browser naturally advance focus forward.
+			this.closeContextMenu();
+			this.ui.toggleMore.trigger( 'focus' );
+		}
+	},
+
+	updateRowSelectionAttributes() {
+		const isChecked = this.ui.bulkSelectionItemCheckbox.prop( 'checked' );
+		const isSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		this.ui.bulkSelectionItemCheckbox.attr( 'aria-checked', isChecked );
+
+		if ( isSelected ) {
+			this.$el.attr( {
+				'aria-selected': 'true',
+				tabindex: '0',
+			} );
+		} else {
+			this.$el.attr( {
+				'aria-selected': 'false',
+				tabindex: '-1',
+			} );
+		}
 	},
 
 	handleLockedTemplate() {
@@ -51,6 +207,11 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		const title = _.escape( this.model.get( 'title' ) );
 
 		this.ui.titleCell.text( title );
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			const ariaLabel = __( 'Select template', 'elementor' ) + ' ' + title;
+			this.ui.bulkSelectionItemCheckbox.attr( 'aria-label', ariaLabel );
+		}
 	},
 
 	handleItemClicked( event ) {
@@ -97,6 +258,9 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onDeleteButtonClick( event ) {
 		event.stopPropagation();
 
+		// Close the context menu before opening the delete confirmation dialog
+		this.closeContextMenu();
+
 		var toggleMoreIcon = this.ui.toggleMoreIcon;
 
 		elementor.templates.deleteTemplate( this.model, {
@@ -111,7 +275,20 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		this.handleLockedTemplate();
 
-		this.ui.morePopup.show();
+		const isExpanded = 'true' === this.ui.toggleMore.attr( 'aria-expanded' );
+		this.ui.toggleMore.attr( 'aria-expanded', ! isExpanded );
+
+		if ( isExpanded ) {
+			this.ui.morePopup.hide();
+		} else {
+			this.ui.morePopup.show();
+
+			// Focus the first visible menu item when opening via click
+			const $items = this.getMenuItems();
+			if ( $items.length ) {
+				$items.first().trigger( 'focus' );
+			}
+		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.morePopup,
@@ -131,12 +308,20 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			return;
 		}
 
+		// Close the context menu before opening rename dialog
+		this.closeContextMenu();
+
 		try {
 			await elementor.templates.renameTemplate( this.model, {
 				onConfirm: () => this.showToggleMoreLoader(),
 			} );
 		} finally {
 			this.hideToggleMoreLoader();
+
+			// Restore focus to the toggle button after rename completes
+			if ( this.ui.toggleMore && this.ui.toggleMore.length ) {
+				this.ui.toggleMore.trigger( 'focus' );
+			}
 		}
 	},
 
@@ -189,6 +374,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
+		this.updateRowSelectionAttributes();
 		elementor.templates.layout.handleBulkActionBarUi();
 	},
 } );

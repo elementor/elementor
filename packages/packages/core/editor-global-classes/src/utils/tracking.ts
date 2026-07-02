@@ -1,17 +1,18 @@
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
-import { getMixpanel } from '@elementor/mixpanel';
+import { getMixpanel } from '@elementor/events';
 import { __getState as getState } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
-import { selectClass } from '../store';
+import { placeholderDefinition, selectClass, selectClassLabels } from '../store';
 
 type EventMap = {
 	classCreated: {
-		source?: 'created' | 'converted';
+		source?: 'created' | 'converted' | 'duplicated';
 		classId: StyleDefinitionID;
 		classTitle?: string;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classDeleted: {
 		classId: StyleDefinitionID;
@@ -27,6 +28,7 @@ type EventMap = {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		totalInstancesAfterApply: number;
+		executedBy?: 'mcp_tool' | 'user';
 	};
 	classRemoved: {
 		classId: StyleDefinitionID;
@@ -38,7 +40,7 @@ type EventMap = {
 		classType: 'global' | 'local';
 	};
 	classManagerOpened: {
-		source: 'style-panel';
+		source: 'style-panel' | 'system-panel';
 	};
 	classManagerSearched: Record< string, never >;
 	classManagerFiltersOpened: Record< string, never >;
@@ -71,6 +73,17 @@ type EventMap = {
 		classId: StyleDefinitionID | null;
 		type: string;
 		source: 'global' | 'local';
+	};
+	classSyncToV3PopupShown: {
+		classId: StyleDefinitionID;
+	};
+	classSyncToV3: {
+		classId: StyleDefinitionID;
+		action: 'sync' | 'unsync';
+	};
+	classSyncToV3PopupClick: {
+		classId: StyleDefinitionID;
+		action: 'sync' | 'cancel';
 	};
 };
 
@@ -138,6 +151,43 @@ const getSanitizedData = async ( payload: TrackingEvent ): Promise< Record< stri
 				return { ...payload, classTitle: getCssClass( payload.classId ).label };
 			}
 			break;
+		case 'classSyncToV3PopupShown':
+			return {
+				...payload,
+				interaction_type: 'popup_shown',
+				target_type: 'popup',
+				target_name: 'sync_to_v3_popup',
+				interaction_result: 'popup_viewed',
+				target_location: 'widget_panel',
+				location_l1: 'class_manager',
+			};
+		case 'classSyncToV3': {
+			const classLabel = getCssClass( payload.classId ).label;
+			const isSync = payload.action === 'sync';
+			return {
+				...payload,
+				interaction_type: 'click',
+				target_type: classLabel,
+				target_name: isSync ? 'sync_to_v3' : 'unsync_to_v3',
+				interaction_result: isSync ? 'class_is_synced_to_V3' : 'class_is_unsynced_from_V3',
+				target_location: 'widget_panel',
+				location_l1: 'class_manager',
+				interaction_description: isSync
+					? `user_synced_${ classLabel }_to_v3`
+					: `user_unsync_${ classLabel }_from_v3`,
+			};
+		}
+		case 'classSyncToV3PopupClick': {
+			const isSyncAction = payload.action === 'sync';
+			return {
+				...payload,
+				interaction_type: 'click',
+				target_type: 'button',
+				target_name: isSyncAction ? 'sync_to_v3' : 'cancel',
+				interaction_result: isSyncAction ? 'class_is_synced' : 'cancel',
+				target_location: 'sync_to_v3_popup',
+			};
+		}
 		default:
 			return payload;
 	}
@@ -172,16 +222,24 @@ const extractCssClassData = ( classId: StyleDefinitionID ) => {
 };
 
 const getCssClass = ( classId: StyleDefinitionID ) => {
-	const cssClass = selectClass( getState(), classId );
-	if ( ! cssClass ) {
-		throw new Error( `CSS class with ID ${ classId } not found` );
+	const state = getState();
+	const cssClass = selectClass( state, classId );
+
+	if ( cssClass ) {
+		return cssClass;
 	}
-	return cssClass;
+
+	const label = selectClassLabels( state )[ classId ];
+	if ( label !== undefined ) {
+		return placeholderDefinition( classId, label );
+	}
+
+	throw new Error( `CSS class with ID ${ classId } not found` );
 };
 
 const trackDeleteClass = async ( classId: StyleDefinitionID ) => {
-	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	const classTitle = getCssClass( classId ).label;
+	const totalInstances = await getTotalInstancesByCssClassID( classId );
 	return { totalInstances, classTitle };
 };
 

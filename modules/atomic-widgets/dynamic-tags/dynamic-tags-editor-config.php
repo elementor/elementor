@@ -87,6 +87,7 @@ class Dynamic_Tags_Editor_Config {
 			'group'           => $tag['atomic_group'] ?? $tag['group'] ?? '',
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
+			'meta'            => $tag['meta'] ?? [],
 		];
 
 		if ( ! isset( $tag['controls'] ) ) {
@@ -163,9 +164,9 @@ class Dynamic_Tags_Editor_Config {
 			return null;
 		}
 
-		$is_convertable = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
+		$is_convertible = ! isset( $control['name'], $control['section'], $control['label'], $control['default'] );
 
-		if ( $is_convertable ) {
+		if ( $is_convertible ) {
 			throw new \Exception( 'Control must have name, section, label, and default' );
 		}
 

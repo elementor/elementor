@@ -85,11 +85,7 @@ abstract class Settings_Page {
 	 * @return string Settings tab URL.
 	 */
 	final public static function get_settings_tab_url( $tab_id ): string {
-		$settings_page_id = Plugin::$instance->experiments->is_feature_active( 'home_screen' )
-			? 'elementor-settings'
-			: 'elementor';
-
-		return admin_url( "admin.php?page=$settings_page_id#tab-$tab_id" );
+		return admin_url( "admin.php?page=elementor-settings#tab-$tab_id" );
 	}
 
 	/**

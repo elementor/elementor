@@ -2,15 +2,13 @@
 
 namespace Elementor\Modules\Variables\Services;
 
-use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
-use Elementor\Modules\Variables\Storage\Entities\Variable;
+use Elementor\Modules\Variables\Storage\Constants;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
-use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use PHPUnit\Framework\TestCase;
@@ -74,13 +72,13 @@ class Test_Variables_Service extends TestCase {
 				],
 				'id-2' => [
 					'type' => 'global-color',
-					'label' => 'Deleted Variable',
+					'label' => 'Deleted-Variable',
 					'value' => '#FFFFFF',
 					'deleted_at' => '2024-01-01 10:00:00',
 				],
 				'delete-me' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Delete Me',
+					'label' => 'Delete-Me',
 					'value' => '#000000',
 				],
 			],
@@ -94,7 +92,7 @@ class Test_Variables_Service extends TestCase {
 				'variable' => [
 					'id' => 'temp-123',
 					'type' => 'global-color',
-					'label' => 'New Color',
+					'label' => 'New-Color',
 					'value' => '#FF0000',
 				],
 			],
@@ -102,7 +100,7 @@ class Test_Variables_Service extends TestCase {
 				'type' => 'update',
 				'id' => 'id-1',
 				'variable' => [
-					'label' => 'Updated Primary',
+					'label' => 'Updated-Primary',
 					'value' => '#00FF00',
 				],
 			],
@@ -127,7 +125,7 @@ class Test_Variables_Service extends TestCase {
 		$create = $operations_results[0];
 		$expected_variable = [
 			'type' => 'global-color',
-			'label' => 'New Color',
+			'label' => 'New-Color',
 			'value' => '#FF0000',
 		];
 
@@ -139,7 +137,7 @@ class Test_Variables_Service extends TestCase {
 		$update = $operations_results[1];
 		$expected_variable = [
 			'type' => 'global-color',
-			'label' => 'Updated Primary',
+			'label' => 'Updated-Primary',
 			'value' => '#00FF00',
 		];
 		$this->assertEquals( 'id-1', $update['id'] );
@@ -160,10 +158,10 @@ class Test_Variables_Service extends TestCase {
 	public function test_process_batch__throws_variables_limit_reached() {
 		// Arrange
 		$variables = [];
-		for ( $i = 0; $i < 100; $i++ ) {
+		for ( $i = 0; $i < Constants::TOTAL_VARIABLES_COUNT; $i++ ) {
 			$variables[ "id-{$i}" ] = [
 				'type' => 'color',
-				'label' => "Label {$i}",
+				'label' => "Label-{$i}",
 				'value' => '#000',
 				'order' => $i,
 			];
@@ -180,7 +178,7 @@ class Test_Variables_Service extends TestCase {
 				'type' => 'create',
 				'variable' => [
 					'type' => 'global-color',
-					'label' => 'New Color',
+					'label' => 'New-Color',
 					'value' => '#FF0000',
 				],
 			]
@@ -209,7 +207,7 @@ class Test_Variables_Service extends TestCase {
 		// Arrange
 		$data = [
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 		];
 
@@ -222,7 +220,7 @@ class Test_Variables_Service extends TestCase {
 		// Assert
 		$this->assertIsArray( $result );
 		$this->assertNotEmpty( $result['variable']['id'] );
-		$this->assertEquals( 'Primary Color', $result['variable']['label'] );
+		$this->assertEquals( 'Primary-Color', $result['variable']['label'] );
 		$this->assertEquals( '#000000', $result['variable']['value'] );
 		$this->assertEquals( 'color', $result['variable']['type'] );
 		$this->assertEquals( 0, $result['watermark'] );
@@ -255,7 +253,7 @@ class Test_Variables_Service extends TestCase {
 		$collection = $this->mock_collection();
 		$data = [
 			'type' => 'color',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 			'value' => '#000000',
 			'order' => 1,
 		];
@@ -275,7 +273,7 @@ class Test_Variables_Service extends TestCase {
 		// Arrange
 		$collection = $this->mock_collection();
 		$data = [
-			'label' => 'Updated Color',
+			'label' => 'Updated-Color',
 			'value' => '#FFFFFF',
 			'order' => 10,
 		];
@@ -288,7 +286,7 @@ class Test_Variables_Service extends TestCase {
 
 		// Assert
 		$this->assertEquals( 'id-2', $result['variable']['id'] );
-		$this->assertEquals( 'Updated Color', $result['variable']['label'] );
+		$this->assertEquals( 'Updated-Color', $result['variable']['label'] );
 		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
 		$this->assertEquals( 10, $result['variable']['order'] );
 		$this->assertEquals( 2, $result['watermark'] );
@@ -298,7 +296,7 @@ class Test_Variables_Service extends TestCase {
 		// Arrange
 		$collection = $this->mock_collection();
 		$data = [
-			'label' => 'Updated Color',
+			'label' => 'Updated-Color',
 			'value' => '#FFFFFF',
 		];
 
@@ -316,7 +314,7 @@ class Test_Variables_Service extends TestCase {
 		// Arrange
 		$collection = $this->mock_collection();
 		$data = [
-			'label' => 'Updated Color',
+			'label' => 'Updated-Color',
 		];
 
 		$this->repository->method( 'load' )->willReturn( $collection );
@@ -369,7 +367,7 @@ class Test_Variables_Service extends TestCase {
 			'data' => [
 				'id-1' => [
 					'type' => 'global-color',
-					'label' => 'Deleted Variable',
+					'label' => 'Deleted-Variable',
 					'value' => '#000000',
 					'deleted_at' => '2024-01-01 10:00:00',
 					'order' => 2,
@@ -397,7 +395,7 @@ class Test_Variables_Service extends TestCase {
 			'data' => [
 				'id-1' => [
 					'type' => 'global-color',
-					'label' => 'Deleted Variable',
+					'label' => 'Deleted-Variable',
 					'value' => '#000000',
 					'deleted_at' => '2024-01-01 10:00:00',
 					'order' => 1,
@@ -408,7 +406,7 @@ class Test_Variables_Service extends TestCase {
 		] );
 
 		$overrides = [
-			'label' => 'Restored Variable',
+			'label' => 'Restored-Variable',
 			'value' => '#FFFFFF',
 		];
 
@@ -420,7 +418,7 @@ class Test_Variables_Service extends TestCase {
 
 		// Assert
 		$this->assertEquals( 'id-1', $result['variable']['id'] );
-		$this->assertEquals( 'Restored Variable', $result['variable']['label'] );
+		$this->assertEquals( 'Restored-Variable', $result['variable']['label'] );
 		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 		$this->assertEquals( 6, $result['watermark'] );
@@ -432,13 +430,13 @@ class Test_Variables_Service extends TestCase {
 			'data' => [
 				'id-1' => [
 					'type' => 'global-color',
-					'label' => 'Active Variable',
+					'label' => 'Active-Variable',
 					'value' => '#000000',
 					'order' => 1,
 				],
 				'id-2' => [
 					'type' => 'global-color',
-					'label' => 'Deleted Variable',
+					'label' => 'Deleted-Variable',
 					'value' => '#FFFFFF',
 					'deleted_at' => '2024-01-01 10:00:00',
 					'order' => 1,
@@ -449,7 +447,7 @@ class Test_Variables_Service extends TestCase {
 		] );
 
 		$overrides = [
-			'label' => 'Active Variable',
+			'label' => 'Active-Variable',
 		];
 
 		$this->repository->method( 'load' )->willReturn( $collection );
@@ -547,12 +545,12 @@ class Test_Variables_Service extends TestCase {
 			'data' => [
 				'id-1' => [
 					'type' => 'global-color',
-					'label' => 'Active Variable',
+					'label' => 'Active-Variable',
 					'value' => '#000000',
 				],
 				'id-2' => [
 					'type' => 'global-color',
-					'label' => 'Deleted Variable',
+					'label' => 'Deleted-Variable',
 					'value' => '#FFFFFF',
 					'deleted_at' => '2024-01-01 10:00:00',
 				],
@@ -572,6 +570,70 @@ class Test_Variables_Service extends TestCase {
 		$this->assertArrayHasKey( 'id-2', $result );
 		$this->assertArrayNotHasKey( 'deleted_at', $result['id-1'] );
 		$this->assertArrayHasKey( 'deleted_at', $result['id-2'] );
+	}
+
+	public function test_find_by_label_or_id__finds_by_id() {
+		$service = $this->service_with_variables_list( [
+			'id-2' => [
+				'type' => 'global-color-var',
+				'label' => 'Secondary',
+				'value' => '#000000',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'id-2' );
+
+		$this->assertSame( 'id-2', $result['id'] );
+		$this->assertSame( 'Secondary', $result['label'] );
+	}
+
+	public function test_find_by_label_or_id__finds_by_label_case_insensitive() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( 'primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__strips_leading_dashes() {
+		$service = $this->service_with_variables_list( [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+		] );
+
+		$result = $service->find_by_label_or_id( '--primary' );
+
+		$this->assertSame( 'id-1', $result['id'] );
+	}
+
+	public function test_find_by_label_or_id__returns_null_for_unknown() {
+		$service = $this->service_with_variables_list( [] );
+
+		$this->assertNull( $service->find_by_label_or_id( 'nope' ) );
+	}
+
+	private function service_with_variables_list( array $variables ): Variables_Service {
+		return new class( $this->repository, new Batch_Processor(), $variables ) extends Variables_Service {
+			private array $variables;
+
+			public function __construct( $repository, $batch_processor, array $variables ) {
+				parent::__construct( $repository, $batch_processor );
+				$this->variables = $variables;
+			}
+
+			public function get_variables_list(): array {
+				return $this->variables;
+			}
+		};
 	}
 
 }

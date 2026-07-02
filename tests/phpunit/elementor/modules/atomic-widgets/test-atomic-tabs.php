@@ -1,10 +1,10 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content\Atomic_Tab_Content;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic_Tabs_Menu;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;

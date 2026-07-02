@@ -28,6 +28,12 @@ export const getIndex = ( el, elementType ) => {
 	return children.indexOf( el );
 };
 
+export const getDirectTabCount = ( tabsRootElement ) => {
+	return tabsRootElement.querySelectorAll(
+		`:scope > [data-element_type="${ TABS_MENU_ELEMENT_TYPE }"] > [data-element_type="${ TAB_ELEMENT_TYPE }"]`,
+	).length;
+};
+
 export const getNextTab = ( key, tab ) => {
 	const tabs = getChildren( tab, TAB_ELEMENT_TYPE );
 	const tabsLength = tabs.length;

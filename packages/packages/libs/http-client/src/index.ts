@@ -1,2 +1,2 @@
 export { type AxiosResponse, AxiosError } from 'axios';
-export { type HttpResponse, httpService } from './http';
+export { type HttpResponse, httpService, registerUrlForCache } from './http';

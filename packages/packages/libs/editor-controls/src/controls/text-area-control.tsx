@@ -11,12 +11,14 @@ type Props = {
 	ariaLabel?: string;
 };
 
-export const TextAreaControl = createControl( ( { placeholder, ariaLabel }: Props ) => {
-	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
+export const TextAreaControl = createControl( ( { placeholder: propPlaceholder, ariaLabel }: Props ) => {
+	const { value, setValue, disabled, placeholder: boundPlaceholder } = useBoundProp( stringPropTypeUtil );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 		setValue( event.target.value );
 	};
+
+	const placeholder = propPlaceholder ?? boundPlaceholder ?? undefined;
 
 	return (
 		<ControlActions>

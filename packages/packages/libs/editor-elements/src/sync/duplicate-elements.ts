@@ -5,7 +5,8 @@ import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { duplicateElement } from './duplicate-element';
 import { getContainer } from './get-container';
-import { type V1ElementModelProps } from './types';
+import { addModelToParent, removeModelFromParent, resolveContainer } from './resolve-element';
+import { type V1Element, type V1ElementModelProps } from './types';
 
 type DuplicateElementsParams = {
 	elementIds: string[];
@@ -16,12 +17,12 @@ type DuplicateElementsParams = {
 };
 
 type DuplicatedElement = {
-	id: string;
+	container: V1Element;
+	parentContainer: V1Element;
 	model: V1ElementModelProps;
-	originalElementId: string;
-	modelToRestore?: V1ElementModelProps;
-	parentContainerId?: string;
 	at?: number;
+	containerId: string;
+	parentContainerId: string;
 };
 
 type DuplicatedElementsResult = {
@@ -40,40 +41,53 @@ export const duplicateElements = ( {
 	const undoableDuplicate = undoable(
 		{
 			do: ( { elementIds: elementIdsToDuplicate }: { elementIds: string[] } ): DuplicatedElementsResult => {
-				// Call onCreate before duplicating elements to avoid conflicts between commands
 				onDuplicateElements?.();
-				const duplicatedElements: DuplicatedElement[] = elementIdsToDuplicate.reduce( ( acc, elementId ) => {
+				const duplicatedElements: DuplicatedElement[] = [];
+
+				elementIdsToDuplicate.forEach( ( elementId ) => {
 					const originalContainer = getContainer( elementId );
 
-					if ( originalContainer?.parent ) {
-						const duplicatedElement = duplicateElement( {
-							elementId,
-							options: { useHistory: false },
-						} );
-
-						acc.push( {
-							id: duplicatedElement.id,
-							model: duplicatedElement.model.toJSON(),
-							originalElementId: elementId,
-							modelToRestore: duplicatedElement.model.toJSON(),
-							parentContainerId: duplicatedElement.parent?.id,
-							at: duplicatedElement.view?._index,
-						} );
+					if ( ! originalContainer?.parent ) {
+						return;
 					}
 
-					return acc;
-				}, [] as DuplicatedElement[] );
+					const duplicatedElement = duplicateElement( {
+						element: originalContainer,
+						options: { useHistory: false },
+					} );
+
+					if ( ! duplicatedElement.parent ) {
+						return;
+					}
+
+					duplicatedElements.push( {
+						container: duplicatedElement,
+						parentContainer: duplicatedElement.parent,
+						model: duplicatedElement.model.toJSON(),
+						at: duplicatedElement.view?._index,
+						containerId: duplicatedElement.id,
+						parentContainerId: duplicatedElement.parent.id,
+					} );
+				} );
 
 				return { duplicatedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
 				onRestoreElements?.();
-				// Delete duplicated elements in reverse order to avoid dependency issues
-				[ ...duplicatedElements ].reverse().forEach( ( { id } ) => {
-					deleteElement( {
-						elementId: id,
-						options: { useHistory: false },
-					} );
+
+				[ ...duplicatedElements ].reverse().forEach( ( { container, containerId, parentContainerId } ) => {
+					const freshContainer = resolveContainer( container, containerId );
+
+					if ( freshContainer ) {
+						deleteElement( {
+							container: freshContainer,
+							options: { useHistory: false },
+						} );
+
+						return;
+					}
+
+					removeModelFromParent( parentContainerId, containerId );
 				} );
 			},
 			redo: (
@@ -81,30 +95,41 @@ export const duplicateElements = ( {
 				{ duplicatedElements: previousElements }: DuplicatedElementsResult
 			): DuplicatedElementsResult => {
 				onDuplicateElements?.();
-				const duplicatedElements: DuplicatedElement[] = previousElements.reduce( ( acc, previousElement ) => {
-					if ( previousElement.modelToRestore && previousElement.parentContainerId ) {
+				const duplicatedElements: DuplicatedElement[] = [];
+
+				previousElements.forEach( ( { parentContainer, parentContainerId, model, at } ) => {
+					const freshParent = resolveContainer( parentContainer, parentContainerId );
+
+					if ( freshParent ) {
 						const createdElement = createElement( {
-							containerId: previousElement.parentContainerId,
-							model: previousElement.modelToRestore,
-							options: {
-								useHistory: false,
-								clone: false,
-								at: previousElement.at,
-							},
+							container: freshParent,
+							model,
+							options: { useHistory: false, clone: false, at },
 						} );
 
-						acc.push( {
-							id: createdElement.id,
-							model: createdElement.model.toJSON(),
-							originalElementId: previousElement.originalElementId,
-							modelToRestore: previousElement.modelToRestore,
-							parentContainerId: previousElement.parentContainerId,
-							at: previousElement.at,
+						duplicatedElements.push( {
+							container: createdElement,
+							parentContainer: freshParent,
+							model,
+							at,
+							containerId: createdElement.id,
+							parentContainerId: freshParent.id,
 						} );
+
+						return;
 					}
 
-					return acc;
-				}, [] as DuplicatedElement[] );
+					addModelToParent( parentContainerId, model, { at } );
+
+					duplicatedElements.push( {
+						container: parentContainer,
+						parentContainer,
+						model,
+						at,
+						containerId: model.id ?? '',
+						parentContainerId,
+					} );
+				} );
 
 				return { duplicatedElements };
 			},

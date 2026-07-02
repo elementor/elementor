@@ -1,5 +1,6 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, ListSubheader, styled } from '@elementor/ui';
 import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
+import isRTL from '../../../shared/is-rtl';
 
 export const NavContainer = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
@@ -27,14 +28,14 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 export const CollapseButton = styled( IconButton, {
 	shouldForwardProp: ( prop ) => prop !== 'expanded',
 } )( ( { theme, expanded } ) => {
-	const isRtl = 'rtl' === theme.direction;
+	const isRtlLanguage = isRTL();
 	let transform = 'none';
 
-	if ( expanded && isRtl ) {
+	if ( expanded && isRtlLanguage ) {
 		transform = 'rotate(180deg) scaleX(-1)';
 	} else if ( expanded ) {
 		transform = 'rotate(180deg)';
-	} else if ( isRtl ) {
+	} else if ( isRtlLanguage ) {
 		transform = 'scaleX(-1)';
 	}
 

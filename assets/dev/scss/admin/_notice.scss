@@ -84,9 +84,7 @@
 
 	&__actions {
 		display: flex;
-		> * + * {
-			margin-inline-start: 8px;
-		}
+		gap: 8px;
 	}
 
 	// Dismiss button

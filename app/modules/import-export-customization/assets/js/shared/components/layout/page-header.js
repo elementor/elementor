@@ -1,7 +1,6 @@
+import { XIcon } from '@elementor/icons';
 import { Typography, Stack, IconButton, styled, SvgIcon } from '@elementor/ui';
 import PropTypes from 'prop-types';
-
-import { XIcon } from '../icons';
 import useContextDetection from '../../hooks/use-context-detection';
 
 const ElementorLogo = ( props ) => {

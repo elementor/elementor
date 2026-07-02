@@ -1,42 +1,20 @@
 import * as React from 'react';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen, within } from '@testing-library/react';
 
+import { Direction } from '../components/controls/direction';
+import { Easing } from '../components/controls/easing';
+import { Effect } from '../components/controls/effect';
+import { EffectType } from '../components/controls/effect-type';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import { extractExcludedBreakpoints } from '../utils/prop-value-utils';
+import { createInteractionItemValue } from './utils';
+
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
-
-const createInteractionItemValue = ( {
-	trigger = 'load',
-	effect = 'fade',
-	type = 'in',
-	direction = '',
-	duration = 300,
-	delay = 0,
-	replay = false,
-}: {
-	trigger?: string;
-	effect?: string;
-	type?: string;
-	direction?: string;
-	duration?: number;
-	delay?: number;
-	replay?: boolean;
-} = {} ): InteractionItemValue => ( {
-	interaction_id: createString( 'test-id' ),
-	trigger: createString( trigger ),
-	animation: createAnimationPreset( {
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-		replay,
-	} ),
-} );
 
 const getEffectCombobox = (): HTMLElement => {
 	const allComboboxes = screen.getAllByRole( 'combobox' );
@@ -63,6 +41,7 @@ const getEffectCombobox = (): HTMLElement => {
 
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
+
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
 		<div>
 			<span>Replay: { String( value ) }</span>
@@ -70,10 +49,11 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
-		return render(
+		return renderWithTheme(
 			<InteractionDetails
 				interaction={ interaction }
 				onChange={ mockOnChange }
@@ -85,17 +65,44 @@ describe( 'InteractionDetails', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
+
 		getInteractionsControl.mockImplementation( ( type: string ) => {
 			if ( type === 'trigger' ) {
 				return {
 					component: Trigger,
 				};
 			}
+
+			if ( type === 'effect' ) {
+				return {
+					component: Effect,
+				};
+			}
+
 			if ( type === 'replay' ) {
 				return {
 					component: mockReplayControl,
 				};
 			}
+
+			if ( type === 'easing' ) {
+				return {
+					component: Easing,
+				};
+			}
+
+			if ( type === 'direction' ) {
+				return {
+					component: Direction,
+				};
+			}
+
+			if ( type === 'effectType' ) {
+				return {
+					component: EffectType,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -112,6 +119,21 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByText( 'Direction' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Duration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delay' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Easing' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render scrollOn-only controls for load or scrollIn triggers', () => {
+			// Arrange + Assert (load)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'load' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
+
+			// Arrange + Assert (scrollIn)
+			renderInteractionDetails( createInteractionItemValue( { trigger: 'scrollIn' } ) );
+			expect( screen.queryByText( 'Relative To' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -123,6 +145,7 @@ describe( 'InteractionDetails', () => {
 				duration: 500,
 				delay: 200,
 				replay: true,
+				easing: 'easeIn',
 			} );
 
 			renderInteractionDetails( interaction );
@@ -186,6 +209,28 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
+	describe( 'Trigger menu options', () => {
+		it( 'should show "While scrolling" option as disabled in the trigger menu', () => {
+			const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+			renderInteractionDetails( interaction );
+
+			const comboboxes = screen.getAllByRole( 'combobox' );
+			const triggerSelect = comboboxes[ 0 ];
+
+			fireEvent.mouseDown( triggerSelect );
+
+			// Sanity: core UI enables only these trigger options.
+			expect( screen.getByRole( 'option', { name: /page load/i, hidden: true } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } ) ).toBeInTheDocument();
+
+			// Guard: Pro-only trigger should be present but disabled in the core trigger control.
+			const scrollOnOption = screen.getByRole( 'option', { name: /while scrolling/i, hidden: true } );
+			expect( scrollOnOption ).toBeInTheDocument();
+			expect( scrollOnOption ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+	} );
+
 	describe( 'onChange callback', () => {
 		it( 'should call onChange when trigger changes', () => {
 			const interaction = createInteractionItemValue( {
@@ -201,7 +246,7 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -224,7 +269,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
@@ -280,6 +325,27 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'bottom' );
 		} );
 
+		it( 'should keep a default direction for slide when the last direction toggle is cleared', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'slide',
+				type: 'in',
+				direction: 'top',
+				duration: 300,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const topButton = screen.getByRole( 'button', { name: 'From top' } );
+			expect( topButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			fireEvent.click( topButton );
+
+			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.animation.value.direction.value ).toBe( 'top' );
+		} );
+
 		it( 'should call onChange when duration changes', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'load',
@@ -291,19 +357,19 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			expect( duration500Option ).toBeInTheDocument();
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 354 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 354,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -317,15 +383,36 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
+		} );
+
+		it( 'should prevent negative values for duration', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 0,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			fireEvent.keyDown( sizeInputs[ 0 ], { key: '-' } );
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should call onChange when replay changes', () => {
@@ -345,226 +432,6 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
-	/**
-	 * Why? - This is a test for the direction logic in the InteractionDetails component.
-	 * The use cases are:
-	 * 1. Changes: Effect to slide, Direction not present => we default to top.
-	 * 2. Changes: Effect to slide, Direction present => we use the new direction.
-	 * 3. Changes: Effect to non-slide, Direction not present => we use the existing direction.
-	 * 4. Changes: Effect to non-slide, Direction present => we use the new direction (even if it is empty).
-	 */
-	describe( 'Direction logic', () => {
-		it( 'should default direction to top when effect is slide and direction is empty', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: '',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const directionButtons = screen.getAllByRole( 'button' );
-			const topButton = directionButtons.find(
-				( button ) => button.getAttribute( 'aria-label' )?.includes( 'top' )
-			);
-			expect( topButton ).toBeInTheDocument();
-		} );
-
-		it( 'should use provided direction when effect is slide and direction is set', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'bottom',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const directionButtons = screen.getAllByRole( 'button' );
-			const bottomButton = directionButtons.find(
-				( button ) => button.getAttribute( 'aria-label' )?.includes( 'bottom' )
-			);
-			expect( bottomButton ).toBeInTheDocument();
-		} );
-
-		it( 'should preserve direction when changing from slide to fade', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'left',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const effectSelect = getEffectCombobox();
-			fireEvent.mouseDown( effectSelect );
-			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
-			fireEvent.click( fadeOption );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.effect.value ).toBe( 'fade' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-		} );
-
-		it( 'should set direction to top when changing effect to slide without direction', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'fade',
-				type: 'in',
-				direction: '',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const effectSelect = getEffectCombobox();
-			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
-			fireEvent.click( slideOption );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.effect.value ).toBe( 'slide' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'top' );
-		} );
-
-		it( 'should be able to reset direction to undefined when effect is fade', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'right',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const effectSelect = getEffectCombobox();
-			fireEvent.mouseDown( effectSelect );
-			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
-			fireEvent.click( fadeOption );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.effect.value ).toBe( 'fade' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-		} );
-
-		it( 'should default to top when changing from fade to slide without explicit direction', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'fade',
-				type: 'in',
-				direction: 'left',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const effectSelect = getEffectCombobox();
-			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
-			fireEvent.click( slideOption );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.effect.value ).toBe( 'slide' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'top' );
-		} );
-
-		it( 'should preserve direction when changing from slide to scale', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'bottom',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const effectSelect = getEffectCombobox();
-			fireEvent.mouseDown( effectSelect );
-			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
-			fireEvent.click( scaleOption );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.effect.value ).toBe( 'scale' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'bottom' );
-		} );
-
-		it( 'should preserve direction when changing type without updating direction', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'top',
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const typeButtons = screen.getAllByRole( 'button' );
-			const outButton = typeButtons.find( ( button ) => button.textContent === 'Out' );
-			if ( outButton ) {
-				fireEvent.click( outButton );
-			}
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.type.value ).toBe( 'out' );
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'top' );
-		} );
-
-		it( 'should preserve direction when updating duration', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'slide',
-				type: 'in',
-				direction: 'right',
-				duration: 300,
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
-		} );
-
-		it( 'should preserve direction when updating delay', () => {
-			const interaction = createInteractionItemValue( {
-				trigger: 'load',
-				effect: 'fade',
-				type: 'in',
-				direction: 'left',
-				delay: 0,
-			} );
-
-			renderInteractionDetails( interaction );
-
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
-
-			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
-			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
-		} );
-	} );
-
 	describe( 'State preservation', () => {
 		it( 'should preserve all unchanged values when updating trigger', () => {
 			const interaction = createInteractionItemValue( {
@@ -581,15 +448,45 @@ describe( 'InteractionDetails', () => {
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
 			fireEvent.mouseDown( triggerSelect );
-			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i } );
+			const scrollInOption = screen.getByRole( 'option', { name: /scroll into view/i, hidden: true } );
 			fireEvent.click( scrollInOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.animation.value.effect.value ).toBe( 'fade' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'in' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'left' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 500,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 200,
+				unit: 'ms',
+			} );
+		} );
+
+		it( 'should preserve breakpoints when updating other properties', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 300,
+				delay: 0,
+				excludedBreakpoints: [ 'desktop', 'tablet' ],
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const effectSelect = getEffectCombobox();
+			fireEvent.mouseDown( effectSelect );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
+			fireEvent.click( slideOption );
+
+			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
+			expect( updatedInteraction.breakpoints ).toBeDefined();
+
+			const excluded = extractExcludedBreakpoints( updatedInteraction.breakpoints );
+			expect( excluded ).toEqual( [ 'desktop', 'tablet' ] );
 		} );
 
 		it( 'should preserve all unchanged values when updating effect', () => {
@@ -606,15 +503,21 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
+			const scaleOption = screen.getByRole( 'option', { name: /scale/i, hidden: true } );
 			fireEvent.click( scaleOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
 			expect( updatedInteraction.trigger.value ).toBe( 'load' );
 			expect( updatedInteraction.animation.value.type.value ).toBe( 'out' );
 			expect( updatedInteraction.animation.value.direction.value ).toBe( 'right' );
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 750 );
-			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 100 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toEqual( {
+				size: 750,
+				unit: 'ms',
+			} );
+			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toEqual( {
+				size: 100,
+				unit: 'ms',
+			} );
 		} );
 
 		it( 'should preserve replay value when updating other properties', () => {
@@ -631,7 +534,7 @@ describe( 'InteractionDetails', () => {
 
 			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
-			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
+			const slideOption = screen.getByRole( 'option', { name: /slide/i, hidden: true } );
 			fireEvent.click( slideOption );
 
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -679,6 +582,182 @@ describe( 'InteractionDetails', () => {
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Start / End (size)', () => {
+		let startControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+		let endControlProps: { value: unknown; onChange: ( v: unknown ) => void };
+
+		const MockStartControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			startControlProps = props;
+			return (
+				<div data-testid="start-control">
+					<span data-value={ JSON.stringify( props.value ) } />
+					<button type="button" onClick={ () => props.onChange( '25' ) }>
+						Set start 25%
+					</button>
+				</div>
+			);
+		};
+
+		const MockEndControl = ( props: { value: unknown; onChange: ( v: unknown ) => void } ) => {
+			endControlProps = props;
+			return (
+				<div data-testid="end-control">
+					<span data-value={ JSON.stringify( props.value ) } />
+					<button type="button" onClick={ () => props.onChange( '75' ) }>
+						Set end 75%
+					</button>
+				</div>
+			);
+		};
+
+		beforeEach( () => {
+			const { getInteractionsControl } = require( '../interactions-controls-registry' );
+			getInteractionsControl.mockImplementation( ( type: string ) => {
+				if ( type === 'trigger' ) {
+					return { component: Trigger };
+				}
+				if ( type === 'effect' ) {
+					return { component: Effect };
+				}
+				if ( type === 'replay' ) {
+					return { component: mockReplayControl };
+				}
+				if ( type === 'easing' ) {
+					return { component: Easing };
+				}
+				if ( type === 'start' ) {
+					return { component: MockStartControl };
+				}
+				if ( type === 'end' ) {
+					return { component: MockEndControl };
+				}
+				if ( type === 'relativeTo' ) {
+					return { component: () => <div data-testid="relative-to" /> };
+				}
+				return null;
+			} );
+		} );
+
+		it( 'should render Start and End when trigger is scrollOn', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				start: 85,
+				end: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			expect( screen.getByText( 'Start' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'End' ) ).toBeInTheDocument();
+
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( 'start-control' ) ).toBeInTheDocument();
+
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( 'end-control' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should not render Start or End when trigger is load', () => {
+			const interaction = createInteractionItemValue( { trigger: 'load' } );
+
+			renderInteractionDetails( interaction );
+
+			expect( screen.queryByText( 'Start' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'End' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should pass value to StartControl as size string value', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				start: 85,
+				end: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			expect( startControlProps ).toBeDefined();
+			const value = startControlProps.value;
+
+			expect( value ).toEqual( '85' );
+		} );
+
+		it( 'should call onChange with size string value when StartControl onChange is called', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				start: 85,
+				end: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /set start 25%/i } ) );
+
+			expect( mockOnChange ).toHaveBeenCalled();
+
+			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
+			const start = updated.animation.value.config?.value?.start;
+
+			expect( start ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 25,
+					unit: '%',
+				},
+			} );
+		} );
+
+		it( 'should call onChange with size string when EndControl onChange is called', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				start: 85,
+				end: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			fireEvent.click( screen.getByRole( 'button', { name: /set end 75%/i } ) );
+
+			expect( mockOnChange ).toHaveBeenCalled();
+
+			const updated = mockOnChange.mock.calls[ 0 ][ 0 ];
+			const end = updated.animation.value.config?.value?.end;
+
+			expect( end ).toEqual( {
+				$$type: 'size',
+				value: {
+					size: 75,
+					unit: '%',
+				},
+			} );
+		} );
+
+		it( 'should use default size for start when config has no start', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				end: 15,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const startValue = startControlProps.value;
+
+			expect( startValue ).toEqual( '85' );
+		} );
+
+		it( 'should use default size for end when config has no end', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'scrollOn',
+				start: 85,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const endValue = endControlProps.value;
+
+			expect( endValue ).toEqual( '15' );
 		} );
 	} );
 } );

@@ -31,6 +31,10 @@ class Process_Media extends Base_Route {
 
 		$cloud_kit_library_app = $this->get_cloud_kit_library_app();
 
+		if ( $cloud_kit_library_app && ! $cloud_kit_library_app->is_connected() ) {
+			return Response::error( ImportExportCustomizationModule::MEDIA_PROCESSING_ERROR, 'Cloud Library is not connected' );
+		}
+
 		$media_urls = $request->get_param( 'media_urls' );
 		$kit = $request->get_param( 'kit' );
 		$quota = null;

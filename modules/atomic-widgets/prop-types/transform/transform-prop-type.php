@@ -19,7 +19,7 @@ class Transform_Prop_Type extends Object_Prop_Type {
 		return [
 			'transform-functions' => Transform_Functions_Prop_Type::make(),
 			'transform-origin' => Transform_Origin_Prop_Type::make(),
-			'perspective' => Size_Prop_Type::make()->units( Size_Constants::LENGTH_UNITS ),
+			'perspective' => Size_Prop_Type::make()->units( Size_Constants::length() ),
 			'perspective-origin' => Perspective_Origin_Prop_Type::make(),
 		];
 	}

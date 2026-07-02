@@ -1,26 +1,15 @@
 import * as React from 'react';
 import { useDialog } from '@elementor/editor-ui';
 import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
-import { VariablesManagerPanel } from '../variables-manager-panel';
+import { VariablesManagerPanelEmbedded } from '../variables-manager-panel';
 
 jest.mock( '@elementor/editor-panels', () => ( {
-	__createPanel: () => ( {
-		panel: {},
-		usePanelActions: () => ( {
-			close: jest.fn(),
-		} ),
-	} ),
-	Panel: ( { children }: { children: React.ReactNode } ) => <div role="dialog">{ children }</div>,
 	PanelBody: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
 		<div role="region" data-props={ JSON.stringify( { sx } ) }>
 			{ children }
 		</div>
-	),
-	PanelHeader: ( { children }: { children: React.ReactNode } ) => <header>{ children }</header>,
-	PanelHeaderTitle: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
-		<h2 data-props={ JSON.stringify( { sx } ) }>{ children }</h2>
 	),
 	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
 } ) );
@@ -40,7 +29,6 @@ jest.mock( '@elementor/editor-ui', () => {
 	return {
 		__esModule: true,
 		...actual,
-		ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 		EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 		useDialog: jest.fn().mockReturnValue( {
 			open: jest.fn(),
@@ -50,11 +38,23 @@ jest.mock( '@elementor/editor-ui', () => {
 	};
 } );
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	changeEditMode: jest.fn(),
-	commandEndEvent: jest.fn(),
-	windowEvent: jest.fn(),
-	getCurrentEditMode: jest.fn().mockReturnValue( 'edit' ),
+jest.mock( '@elementor/editor-current-user', () => ( {
+	useSuppressedMessage: jest.fn().mockReturnValue( [ false, jest.fn() ] ),
+} ) );
+
+jest.mock( '../hooks/use-auto-edit', () => ( {
+	useAutoEdit: jest.fn().mockReturnValue( {
+		autoEditVariableId: null,
+		startAutoEdit: jest.fn(),
+		handleAutoEditComplete: jest.fn(),
+	} ),
+} ) );
+
+jest.mock( '../hooks/use-error-navigation', () => ( {
+	useErrorNavigation: jest.fn().mockReturnValue( {
+		createNavigationCallback: jest.fn(),
+		resetNavigation: jest.fn(),
+	} ),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
@@ -94,10 +94,12 @@ jest.mock( '../hooks/use-variables-manager-state', () => ( {
 
 jest.mock( '../variables-manager-table', () => {
 	const VariablesManagerTable = ( props: {
-		menuActions: unknown[];
+		menuActions: ( variableId: string ) => unknown[];
 		variables: Record< string, unknown >;
 		onChange: ( variables: Record< string, unknown > ) => void;
 	} ) => {
+		const menuActionsArray = props.menuActions( 'var-1' );
+
 		return (
 			<button
 				type="button"
@@ -114,7 +116,7 @@ jest.mock( '../variables-manager-table', () => {
 				} }
 				data-props={ JSON.stringify( {
 					...props,
-					menuActions: props.menuActions?.map( ( action ) => {
+					menuActions: menuActionsArray.map( ( action ) => {
 						const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
 						return {
 							...typedAction,
@@ -141,12 +143,19 @@ describe( 'VariablesManagerPanel', () => {
 		isDirty: false,
 		hasValidationErrors: false,
 		searchValue: '',
+		isSaveDisabled: false,
+		isSaving: false,
 		handleOnChange: jest.fn(),
 		createVariable: jest.fn(),
+		duplicateVariable: jest.fn(),
 		handleDeleteVariable: jest.fn(),
+		handleStartSync: jest.fn(),
+		handleStopSync: jest.fn(),
 		handleSave: jest.fn(),
 		handleSearch: mockHandleSearch,
 		setHasValidationErrors: jest.fn(),
+		setIsSaving: jest.fn(),
+		setIsSaveDisabled: jest.fn(),
 	};
 
 	beforeEach( () => {
@@ -162,38 +171,30 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render panel structure correctly', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
-		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		expect( screen.getByPlaceholderText( 'Search' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'region' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { level: 2 } ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render panel title with icon', () => {
-		// Arrange & Act
-		render( <VariablesManagerPanel /> );
-
-		// Assert
-		const title = screen.getByRole( 'heading', { level: 2 } );
-		const props = JSON.parse( title.getAttribute( 'data-props' ) || '{}' );
-		expect( props.sx ).toEqual( {
-			display: 'flex',
-			alignItems: 'center',
-			gap: 0.5,
-		} );
-		expect( title ).toHaveTextContent( 'Variables Manager' );
+		expect( screen.getByRole( 'grid', { name: 'Variables Table' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Save changes' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should pass variables and menu actions to table', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const table = screen.getByRole( 'grid' );
 		const props = JSON.parse( table.getAttribute( 'data-props' ) || '{}' );
 		expect( props.variables ).toBeDefined();
 		expect( props.menuActions ).toEqual( [
+			{
+				name: 'Duplicate',
+				icon: 'IconComponent',
+				color: 'text.primary',
+				onClick: 'function',
+			},
 			{
 				name: 'Delete',
 				icon: 'IconComponent',
@@ -205,7 +206,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should render save button in footer', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const button = screen.getByRole( 'button', { name: 'Save changes' } );
@@ -219,7 +220,9 @@ describe( 'VariablesManagerPanel', () => {
 		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
 
 		// Act
-		const { unmount } = render( <VariablesManagerPanel /> );
+		const { unmount } = render(
+			<VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } />
+		);
 
 		// Assert
 		expect( addEventListenerSpy ).toHaveBeenCalledWith( 'beforeunload', expect.any( Function ) );
@@ -235,7 +238,7 @@ describe( 'VariablesManagerPanel', () => {
 
 	it( 'should apply correct styles to panel body', () => {
 		// Arrange & Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		const body = screen.getByRole( 'region' );
@@ -243,7 +246,8 @@ describe( 'VariablesManagerPanel', () => {
 		expect( props.sx ).toEqual( {
 			display: 'flex',
 			flexDirection: 'column',
-			height: '100%',
+			flex: 1,
+			minHeight: 0,
 		} );
 	} );
 
@@ -257,7 +261,7 @@ describe( 'VariablesManagerPanel', () => {
 		} );
 
 		// Act
-		render( <VariablesManagerPanel /> );
+		render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 		// Assert
 		expect( close ).not.toHaveBeenCalled();
@@ -283,16 +287,34 @@ describe( 'VariablesManagerPanel', () => {
 			handleOnChange: mockHandleOnChange,
 		} ) );
 
+		let attemptClose: ( () => void ) | null = null;
+
 		// Act
-		const { rerender } = render( <VariablesManagerPanel /> );
+		const { rerender } = render(
+			<VariablesManagerPanelEmbedded
+				onRequestClose={ jest.fn() }
+				onExposeCloseAttempt={ ( cb ) => {
+					attemptClose = cb;
+				} }
+			/>
+		);
 
 		await screen.findByRole( 'grid', { name: 'Variables Table' } );
 
 		fireEvent.click( screen.getByRole( 'grid', { name: 'Variables Table' } ) );
 
-		rerender( <VariablesManagerPanel /> );
+		rerender(
+			<VariablesManagerPanelEmbedded
+				onRequestClose={ jest.fn() }
+				onExposeCloseAttempt={ ( cb ) => {
+					attemptClose = cb;
+				} }
+			/>
+		);
 
-		fireEvent.click( screen.getByLabelText( 'Close' ) );
+		act( () => {
+			attemptClose?.();
+		} );
 
 		// Assert
 		expect( openDialog ).toHaveBeenCalled();
@@ -301,7 +323,7 @@ describe( 'VariablesManagerPanel', () => {
 	describe( 'Search', () => {
 		it( 'should render search component correctly', () => {
 			// Arrange & Act
-			render( <VariablesManagerPanel /> );
+			render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 			const searchInput = screen.getByPlaceholderText( 'Search' );
 			expect( searchInput ).toBeInTheDocument();
@@ -320,7 +342,7 @@ describe( 'VariablesManagerPanel', () => {
 			} );
 
 			// Act
-			render( <VariablesManagerPanel /> );
+			render( <VariablesManagerPanelEmbedded onRequestClose={ jest.fn() } onExposeCloseAttempt={ jest.fn() } /> );
 
 			// Assert
 			expect( screen.getByText( 'No results for nonexistent' ) ).toBeInTheDocument();

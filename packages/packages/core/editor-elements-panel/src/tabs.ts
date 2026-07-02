@@ -1,17 +1,27 @@
 import { type ComponentType } from 'react';
 
 type Tab = {
-	id: string;
 	label: string;
 	component: ComponentType;
+	priority: number;
 };
 
-const tabs: Record< Tab[ 'id' ], Tab > = {};
+const registry = new Map< string, Tab >();
 
-export function registerTab( tab: Tab ) {
-	tabs[ tab.id ] = tab;
+const DEFAULT_PRIORITY = 10;
+
+export function registerTab( {
+	id,
+	priority = DEFAULT_PRIORITY,
+	...props
+}: Omit< Tab, 'priority' > & { id: string; priority?: number } ) {
+	const existing = registry.get( id );
+
+	if ( ! existing || priority <= existing.priority ) {
+		registry.set( id, { ...props, priority } );
+	}
 }
 
 export function getTab( id: string ): Tab | null {
-	return tabs[ id ] || null;
+	return registry.get( id ) ?? null;
 }

@@ -58,6 +58,10 @@ export default class HistoryManager {
 		}
 
 		this.doItem( requiredIndex );
+
+		const matchingDoItem = isRedo ? this.items.at( requiredIndex ) : this.items.at( requiredIndex - 1 );
+
+		return matchingDoItem;
 	}
 
 	setActive( value ) {

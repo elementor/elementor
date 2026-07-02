@@ -1,7 +1,14 @@
+import { useEffect, useState } from 'react';
 import * as React from 'react';
-import { useState } from 'react';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
+import { trackUpgradePromotionClick, trackViewPromotion } from '@elementor/editor-controls';
+import {
+	PopoverHeader,
+	PopoverMenuList,
+	SearchField,
+	SectionPopoverBody,
+	type VirtualizedItem,
+} from '@elementor/editor-ui';
+import { PromotionAlert } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton, Tooltip } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
@@ -19,6 +26,9 @@ import { VariablesStyledMenuList } from './ui/styled-menu-list';
 const SIZE = 'tiny';
 const CREATE_LABEL = __( 'Create variable', 'elementor' );
 const MANAGER_LABEL = __( 'Variables Manager', 'elementor' );
+
+const getProUpgradeUrl = ( variableType: string ) =>
+	`https://go.elementor.com/renew-license-panel-${ variableType }-variable`;
 
 type Props = {
 	closePopover: () => void;
@@ -85,6 +95,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 			onSettings();
 			trackVariablesManagerEvent( {
 				action: 'openManager',
+				source: 'vars-popover',
 				varType: variableType,
 				controlPath: path.join( '.' ),
 			} );
@@ -123,8 +134,18 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 		setSearchValue( '' );
 	};
 
+	useEffect( () => {
+		if ( disabled ) {
+			trackViewPromotion( {
+				target_name: 'variables_popover',
+				target_location: 'widget_panel',
+				location_l1: 'variables_list',
+			} );
+		}
+	}, [ disabled ] );
+
 	return (
-		<PopoverBody>
+		<SectionPopoverBody>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
 				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
@@ -143,17 +164,35 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 			<Divider />
 
 			{ hasVariables && hasSearchResults && (
-				<PopoverMenuList
-					items={ items }
-					onSelect={ handleSetVariable }
-					onClose={ () => {} }
-					selectedValue={ variable }
-					data-testid={ `${ variableType }-variables-list` }
-					menuListTemplate={ VariablesStyledMenuList }
-					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-						<MenuItemContent item={ item } />
+				<>
+					<PopoverMenuList
+						items={ items }
+						onSelect={ disabled ? () => {} : handleSetVariable }
+						onClose={ () => {} }
+						selectedValue={ variable }
+						data-testid={ `${ variableType }-variables-list` }
+						menuListTemplate={ ( props ) => <VariablesStyledMenuList { ...props } disabled={ disabled } /> }
+						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+							<MenuItemContent item={ item } disabled={ disabled } />
+						) }
+					/>
+					{ disabled && (
+						<PromotionAlert
+							message={ sprintf(
+								/* translators: %s: Variable Type. */
+								__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+								variableType
+							) }
+							upgradeUrl={ getProUpgradeUrl( variableType ) }
+							onCtaClick={ () =>
+								trackUpgradePromotionClick( {
+									target_name: 'variables_popover',
+									location_l1: 'variables_list',
+								} )
+							}
+						/>
 					) }
-				/>
+				</>
 			) }
 
 			{ ! hasSearchResults && hasVariables && (
@@ -164,7 +203,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 				/>
 			) }
 
-			{ disabled && (
+			{ disabled && ! hasVariables && (
 				<EmptyState
 					title={ sprintf(
 						/* translators: %s: Variable Type. */
@@ -209,6 +248,6 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 					onAdd={ onAdd }
 				/>
 			) }
-		</PopoverBody>
+		</SectionPopoverBody>
 	);
 };

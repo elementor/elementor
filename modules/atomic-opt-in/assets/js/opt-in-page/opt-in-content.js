@@ -1,5 +1,4 @@
 import { Box, Typography } from '@elementor/ui';
-import { CheckIcon } from '@elementor/icons';
 
 export const TextNode = ( { children, ...props } ) => {
 	return (
@@ -13,7 +12,7 @@ TextNode.propTypes = {
 
 export const ContentList = ( { children, ...props } ) => {
 	return (
-		<Box component="ul" sx={ { my: 0 } } { ...props }>
+		<Box component="ul" sx={ { listStyle: 'disc' } } { ...props }>
 			{ children }
 		</Box>
 	);
@@ -25,7 +24,7 @@ ContentList.propTypes = {
 
 export const ContentListItem = ( { children, ...props } ) => {
 	return (
-		<TextNode component="li" sx={ { listStyle: 'disc', marginInlineStart: 3 } } { ...props }>
+		<TextNode component="li" { ...props }>
 			{ children }
 		</TextNode>
 	);
@@ -39,12 +38,7 @@ export const AdvantagesList = ( { children, ...props } ) => {
 	return (
 		<Box
 			component="ul"
-			sx={ {
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 0.5,
-				my: 0,
-			} }
+			sx={ { marginInlineStart: 2 } }
 			{ ...props }
 		>
 			{ children }
@@ -61,16 +55,12 @@ export const AdvantagesListItem = ( { children, ...props } ) => {
 		<TextNode
 			component="li"
 			sx={ {
-				listStyle: 'none',
-				marginInlineStart: 0,
 				lineHeight: '150%',
-				display: 'flex',
-				alignItems: 'flex-start',
-				gap: 0.5,
+				listStyle: 'disc',
 			} }
 			{ ...props }
 		>
-			<CheckIcon fontSize="small" />{ children }
+			{ children }
 		</TextNode>
 	);
 };

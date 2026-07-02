@@ -1,150 +1,109 @@
+import { getCurrentDocument } from '@elementor/editor-documents';
 import {
 	createElement,
 	deleteElement,
-	generateElementId,
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
+	type V1ElementData,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 
-import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
-import { doUpdateElementProperty } from '../../utils/do-update-element-property';
-import { validateInput } from '../../utils/validate-input';
-import { generatePrompt } from './prompt';
+import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { trackCanvasEvent } from '../../../utils/tracking';
+import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
+import { BEST_PRACTICES_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { convertStyleBlocksToAtomic } from '../../utils/convert-css-to-atomic';
+import { isWidgetAvailableForLLM } from '../../utils/element-data-util';
+import { getCompositionTargetContainer } from '../../utils/get-composition-target-container';
+import { BUILD_COMPOSITIONS_GUIDE_URI, generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
+import { adaptLeafRootParams } from './xml-leaf-wrapper';
+
+export type ElementAddedEvent = {
+	element: V1ElementData;
+	executedBy: 'mcp_tool' | 'user';
+};
+
+export const ELEMENT_ADDED_EVENT = 'elementor/canvas/element-added';
 
 export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
-	const { addTool } = reg;
+	const { addTool, resource } = reg;
+
+	resource(
+		'build-compositions-guide',
+		BUILD_COMPOSITIONS_GUIDE_URI,
+		{
+			title: 'Build Compositions Guide',
+			description: 'Detailed guide for using the build-compositions tool',
+			mimeType: 'text/plain',
+		},
+		async ( uri: URL ) => ( {
+			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generatePrompt() } ],
+		} )
+	);
 
 	addTool( {
 		name: 'build-compositions',
-		description: generatePrompt(),
+		description: 'Build V4 element compositions on the Elementor canvas. Read the guide resource before use.',
 		schema,
 		requiredResources: [
+			{ description: 'Build compositions guide', uri: BUILD_COMPOSITIONS_GUIDE_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
-			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 			{ description: 'Global Variables', uri: 'elementor://global-variables' },
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
+			{ description: 'Available widgets for this tool', uri: AVAILABLE_WIDGETS_URI_V4 },
+			{ description: 'Dynamic tags catalog', uri: DYNAMIC_TAGS_URI },
 		],
 		outputSchema,
-		modelPreferences: {
-			hints: [ { name: 'claude-sonnet-4-5' } ],
-			intelligencePriority: 0.95,
-			speedPriority: 0.5,
-		},
-		handler: async ( params ) => {
-			let xml: Document | null = null;
-			const { xmlStructure, elementConfig, stylesConfig } = params;
+		handler: async ( rawParams ) => {
+			assertCompositionXmlUsesV4WidgetsOnly( rawParams.xmlStructure );
+			const { stylesConfig: convertedStyles, customCSS } = await convertCompositionStyles( rawParams.style );
+			const { xmlStructure, elementConfig, stylesConfig } = adaptLeafRootParams( {
+				...rawParams,
+				stylesConfig: convertedStyles,
+				widgetsCache: getWidgetsCache() ?? {},
+			} );
+
+			let generatedXML: string = '';
 			const errors: Error[] = [];
-			const softErrors: Error[] = [];
 			const rootContainers: V1Element[] = [];
-			const widgetsCache = getWidgetsCache() || {};
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
+			const currentDocument = getCurrentDocument();
+			const targetContainer = getCompositionTargetContainer( documentContainer, currentDocument?.type.value );
 			try {
-				const parser = new DOMParser();
-				xml = parser.parseFromString( xmlStructure, 'application/xml' );
-				const errorNode = xml.querySelector( 'parsererror' );
-				if ( errorNode ) {
-					throw new Error( 'Failed to parse XML structure: ' + errorNode.textContent );
-				}
+				const compositionBuilder = CompositionBuilder.fromXMLString( xmlStructure, {
+					createElement,
+					deleteElement,
+					getWidgetsCache,
+				} );
+				compositionBuilder.setElementConfig( elementConfig );
+				compositionBuilder.setStylesConfig( stylesConfig );
+				compositionBuilder.setCustomCSS( customCSS );
 
-				const children = Array.from( xml.children );
-				const iterate = async (
-					node: Element,
-					containerElement: V1Element = documentContainer,
-					childIndex: number
-				) => {
-					const elementTag = node.tagName;
-					if ( ! widgetsCache[ elementTag ] ) {
-						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
-					}
-					const CONTAINER_ELEMENTS = Object.values( widgetsCache )
-						.filter( ( widget ) => widget.meta?.is_container )
-						.map( ( widget ) => widget.elType );
-					const isContainer = CONTAINER_ELEMENTS.includes( elementTag );
-					const parentElType = containerElement.model.get( 'elType' );
-					let targetContainerId =
-						parentElType === 'e-tabs'
-							? containerElement.children?.[ 1 ].children?.[ childIndex ]?.id ||
-							  containerElement.children?.[ 1 ].id
-							: containerElement.id;
-					if ( ! targetContainerId ) {
-						targetContainerId = containerElement.id;
-					}
-					const newElement = isContainer
-						? createElement( {
-								containerId: targetContainerId,
-								model: {
-									elType: elementTag,
-									id: generateElementId(),
-								},
-								options: { useHistory: false },
-						  } )
-						: createElement( {
-								containerId: targetContainerId,
-								model: {
-									elType: 'widget',
-									widgetType: elementTag,
-									id: generateElementId(),
-								},
-								options: { useHistory: false },
-						  } );
-					if ( containerElement === documentContainer ) {
-						rootContainers.push( newElement );
-					}
-					node.setAttribute( 'id', newElement.id );
-					const configId = node.getAttribute( 'configuration-id' ) || '';
-					try {
-						const configObject = elementConfig[ configId ] || {};
-						const styleObject = stylesConfig[ configId ] || {};
-						const { errors: propsValidationErrors } = validateInput.validatePropSchema(
-							elementTag,
-							configObject
-						);
-						errors.push( ...( propsValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
-						const { errors: stylesValidationErrors } = validateInput.validateStyles( styleObject );
-						errors.push( ...( stylesValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
+				const { configErrors, rootContainers: generatedRootContainers } =
+					await compositionBuilder.build( targetContainer );
 
-						if ( propsValidationErrors?.length || stylesValidationErrors?.length ) {
-							return;
-						}
-						configObject._styles = styleObject || {};
-						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
-							try {
-								doUpdateElementProperty( {
-									elementId: newElement.id,
-									propertyName,
-									propertyValue,
-									elementType: elementTag,
-								} );
-							} catch ( error ) {
-								softErrors.push( error as Error );
-							}
-						}
-						if ( isContainer ) {
-							let currentChild = 0;
-							for ( const child of node.children ) {
-								iterate( child, newElement, currentChild );
-								currentChild++;
-							}
-						} else {
-							node.innerHTML = '';
-							node.removeAttribute( 'configuration' );
-						}
-					} finally {
-					}
-				};
+				rootContainers.push( ...generatedRootContainers );
+				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
-				let currentChild = 0;
-				for await ( const childNode of children ) {
-					await iterate( childNode, documentContainer, currentChild );
-					currentChild++;
-					try {
-					} catch ( error ) {
-						errors.push( error as Error );
+				rootContainers.forEach( ( container ) => {
+					const elementData = container.model?.toJSON();
+
+					if ( elementData ) {
+						onElementAdded( elementData as V1ElementData );
 					}
+				} );
+
+				Object.values( stylesConfig ).forEach( ( styleValue ) => {
+					dispatchMcpStylesAppliedEvent( { styleValue } );
+				} );
+
+				if ( configErrors.length ) {
+					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );
@@ -153,7 +112,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			if ( errors.length ) {
 				rootContainers.forEach( ( rootContainer ) => {
 					deleteElement( {
-						elementId: rootContainer.id,
+						container: rootContainer,
 						options: { useHistory: false },
 					} );
 				} );
@@ -184,31 +143,95 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
 					'\n\n'
-				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
+				) }`;
 				throw new Error( errorText );
 			}
-			if ( ! xml ) {
-				throw new Error( 'XML structure is null after parsing.' );
-			}
 			return {
-				xmlStructure: new XMLSerializer().serializeToString( xml ),
+				xmlStructure: generatedXML,
 				errors: errors?.length
 					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
 					: undefined,
-				llmInstructions:
-					( softErrors.length
-						? `The composition was built successfully, but there were some issues with the provided configurations:
+				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
 
-${ softErrors.map( ( e ) => `- ${ e.message }` ).join( '\n' ) }
+**CRITICAL NEXT STEPS** (Follow in order):
+1. **Apply Global Classes**: Use "apply-global-class" tool to apply the global classes you created BEFORE building this composition
+   - Check the created element IDs in the returned XML
+   - Apply semantic classes (heading-primary, button-cta, etc.) to appropriate elements
 
-Please use configure-element tool to fix these issues. Now that you have information about these issues, use the configure-element tool to fix them!`
-						: '' ) +
-					`
-Next Steps:
-- Use "apply-global-class" tool as there may be global styles ready to be applied to elements.
-- Use "configure-element" tool to further configure elements as needed, including styles.
+2. **Fine-tune if needed**: Use "configure-element" tool only for element-specific adjustments that don't warrant global classes
+
+Remember: Global classes ensure design consistency and reusability. Don't skip applying them!
 `,
 			};
 		},
 	} );
 };
+
+async function convertCompositionStyles( style: Record< string, Record< string, string > > ) {
+	const stylesConfig: Record< string, Record< string, unknown > > = {};
+	const customCSS: Record< string, string > = {};
+
+	if ( ! style || Object.keys( style ).length === 0 ) {
+		return { stylesConfig, customCSS };
+	}
+
+	const results = await convertStyleBlocksToAtomic( style );
+
+	for ( const [ configId, { props, customCss } ] of Object.entries( results ) ) {
+		stylesConfig[ configId ] = props;
+		if ( customCss ) {
+			customCSS[ configId ] = customCss;
+		}
+	}
+
+	return { stylesConfig, customCSS };
+}
+
+function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {
+	const doc = new DOMParser().parseFromString( xmlStructure, 'application/xml' );
+	if ( doc.querySelector( 'parsererror' ) ) {
+		throw new Error( 'Failed to parse XML string: ' + doc );
+	}
+	const widgetsCache = getWidgetsCache() ?? {};
+	for ( const node of doc.querySelectorAll( '*' ) ) {
+		const type = node.tagName;
+		const widgetData = widgetsCache[ type ];
+
+		if ( ! widgetData ) {
+			continue;
+		}
+		if ( widgetData.elType !== 'widget' ) {
+			continue;
+		}
+		if ( ! isWidgetAvailableForLLM( widgetData ) || ! widgetData.atomic_props_schema ) {
+			throw new Error( `This tool does not support element type: ${ type }` );
+		}
+	}
+}
+
+function onElementAdded( element: V1ElementData ) {
+	const elType = element.elType ?? '';
+	const widgetType = element.widgetType ?? '';
+	const elementName = elType === 'widget' ? widgetType : elType;
+
+	trackCanvasEvent( {
+		eventName: 'add_element',
+		executed_by: 'mcp_tool',
+		element_name: elementName,
+		element_type: elType,
+		widget_type: widgetType,
+	} );
+
+	const event: ElementAddedEvent = {
+		element,
+		executedBy: 'mcp_tool',
+	};
+
+	window.dispatchEvent( new CustomEvent( ELEMENT_ADDED_EVENT, { detail: event } ) );
+
+	if ( element.elements?.length ) {
+		element.elements?.forEach( ( childElement ) => {
+			onElementAdded( childElement );
+		} );
+	}
+}

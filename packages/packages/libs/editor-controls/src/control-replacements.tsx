@@ -54,3 +54,5 @@ export const createControlReplacementsRegistry = () => {
 
 	return { registerControlReplacement, getControlReplacements };
 };
+
+export const { registerControlReplacement, getControlReplacements } = createControlReplacementsRegistry();

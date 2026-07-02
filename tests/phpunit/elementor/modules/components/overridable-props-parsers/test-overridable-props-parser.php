@@ -29,10 +29,16 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'title',
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
-				'groupId' => 'group-uuid-1',
-			]
-		];
+			'originValue' => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => 'Original text'],
+					'children' => [],
+				],
+			],
+			'groupId' => 'group-uuid-1',
+		]
+	];
 
 		// Act.
 		$result = $this->parser->parse( $valid_data );
@@ -51,12 +57,19 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
-				'groupId' => 'group-uuid-1',
-				'originPropFields' => [
+			'originValue' => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => 'Original text'],
+					'children' => [],
+				],
+			],
+			'groupId' => 'group-uuid-1',
+			'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
+					'elementId' => 'element-123',
 				],
 			]
 		];
@@ -79,9 +92,12 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [
-					'$$type' => 'html',
-					'value' => '<strong>Original text</strong><script>alert("xss")</script>',
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => '<strong>Original text</strong><script>alert("xss")</script>'],
+					'children' => [],
 				],
+			],
 				'groupId' => 'group-uuid-1',
 			],
 		];
@@ -94,7 +110,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value'] );
+		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value']['content']['value'] );
 	}
 
 	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
@@ -107,11 +123,18 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'override',
 				'widgetType' => 'e-component',
 				'elType' => 'widget',
-				'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
+				'originValue' => [
+				'$$type' => 'html-v3',
+				'value' => [
+					'content' => ['$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here'],
+					'children' => [],
+				],
+			],
 				'originPropFields' => [
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
+					'elementId' => 'button-123',
 				],
 				'groupId' => 'group-uuid-1',
 			],
@@ -122,7 +145,13 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		// Assert.
 		$sanitized = $result->unwrap();
-		$this->assertEquals( [ '$$type' => 'string', 'value' => 'Click here' ], $sanitized['prop-uuid-1']['originValue'] );
+		$this->assertEquals( [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => ['$$type' => 'string', 'value' => 'alert("xss")Click here'],
+				'children' => [],
+			],
+		], $sanitized['prop-uuid-1']['originValue'] );
 	}
 
 	/**
@@ -198,9 +227,15 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
-			'groupId' => 'group-uuid-1' 
-		];
+		'originValue' => [
+			'$$type' => 'html-v3',
+			'value' => [
+				'content' => ['$$type' => 'string', 'value' => 'Original text'],
+				'children' => [],
+			],
+		],
+		'groupId' => 'group-uuid-1' 
+	];
 
 		foreach ( $fields as $field => $value ) {
 			if ( $value !== null ) {

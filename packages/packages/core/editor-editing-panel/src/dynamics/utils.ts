@@ -5,9 +5,9 @@ import {
 	type PropValue,
 	type TransformablePropType,
 } from '@elementor/editor-props';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 import { z } from '@elementor/schema';
 
-import { getElementorConfig } from '../sync/get-elementor-globals';
 import { type DynamicPropType, type DynamicPropValue } from './types';
 
 const DYNAMIC_PROP_TYPE_KEY = 'dynamic';

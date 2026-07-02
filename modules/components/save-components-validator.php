@@ -10,8 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Save_Components_Validator {
-	const MAX_COMPONENTS = 50;
-
 	private Collection $components;
 
 	public function __construct( Collection $components ) {
@@ -42,9 +40,10 @@ class Save_Components_Validator {
 	}
 
 	private function validate_count( Collection $data ): array {
-		$count = $this->components->count() + $data->count();
+		$non_archived_components = $this->components->filter( fn ( $component ) => ! $component['is_archived'] );
+		$count = $non_archived_components->count() + $data->count();
 
-		if ( $count > self::MAX_COMPONENTS ) {
+		if ( $count > Components_REST_API::MAX_COMPONENTS ) {
 			return [ esc_html__( 'Maximum number of components exceeded.', 'elementor' ) ];
 		}
 

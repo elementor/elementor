@@ -240,189 +240,6 @@ export default {
 			],
 		},
 	],
-	add_ons: {
-		hide_section: [ 'free' ],
-		header: {
-			title: 'Test Add-ons Title',
-			description: 'Test add-ons description with predictable content for testing purposes.',
-		},
-		repeater: [
-			{
-				file_path: 'test-plugin-1/test-plugin-1.php',
-				title: 'Test Plugin 1',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'ally_logo.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-2/test-plugin-2.php',
-				title: 'Test Plugin 2',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'send-logo.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-3/test-plugin-3.php',
-				title: 'Test Plugin 3',
-				url: '',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'site-mailer.svg' ),
-				type: 'wporg',
-			},
-			{
-				file_path: 'test-plugin-4/test-plugin-4.php',
-				title: 'Test Plugin 4',
-				url: 'https://test.example.com/plugin4',
-				description: 'Test plugin description with predictable content for testing.',
-				button_label: 'Install',
-				image: getImageUrl( 'image-optimizer.svg' ),
-				type: 'wporg',
-			},
-			{
-				title: 'Test Elementor AI',
-				url: 'https://test.example.com/elementor-ai',
-				description: 'Test AI description with predictable content for testing purposes.',
-				button_label: 'Let\'s go',
-				image: getImageUrl( 'elementor.svg' ),
-				type: 'link',
-				condition: {
-					key: 'introduction_meta',
-					value: 'ai_get_started',
-				},
-			},
-		],
-		footer: {
-			label: 'Explore more add-ons',
-			file_path: 'wp-admin/admin.php?page=elementor-apps',
-		},
-	},
-	sidebar_upgrade: [
-		{
-			license: [ 'free' ],
-			show: 'true',
-			header: {
-				title: 'Test Upgrade Title',
-				description: 'Test upgrade description with predictable content for testing.',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			cta: {
-				label: 'Upgrade Now',
-				url: 'https://test.example.com/upgrade',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			repeater: [
-				{
-					title: 'Test Feature 1',
-				},
-				{
-					title: 'Test Feature 2',
-				},
-				{
-					title: 'Test Feature 3',
-				},
-				{
-					title: 'Test Feature 4',
-				},
-				{
-					title: 'Test Feature 5',
-				},
-				{
-					title: 'Test Feature 6',
-				},
-				{
-					title: 'Test Feature 7',
-				},
-				{
-					title: 'Test Feature 8',
-				},
-			],
-		},
-		{
-			license: [ 'pro' ],
-			show: 'false',
-			header: {
-				title: 'Test Upgrade Title',
-				description: 'Test upgrade description with predictable content for testing.',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			cta: {
-				label: 'Upgrade Now',
-				url: 'https://test.example.com/upgrade',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			repeater: [
-				{
-					title: 'Test Feature 1',
-				},
-				{
-					title: 'Test Feature 2',
-				},
-				{
-					title: 'Test Feature 3',
-				},
-				{
-					title: 'Test Feature 4',
-				},
-				{
-					title: 'Test Feature 5',
-				},
-				{
-					title: 'Test Feature 6',
-				},
-				{
-					title: 'Test Feature 7',
-				},
-				{
-					title: 'Test Feature 8',
-				},
-			],
-		},
-		{
-			license: [ 'one' ],
-			show: 'false',
-			header: {
-				title: 'Test Upgrade Title',
-				description: 'Test upgrade description with predictable content for testing.',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			cta: {
-				label: 'Upgrade Now',
-				url: 'https://test.example.com/upgrade',
-				image: getImageUrl( 'icon-crown.svg' ),
-			},
-			repeater: [
-				{
-					title: 'Test Feature 1',
-				},
-				{
-					title: 'Test Feature 2',
-				},
-				{
-					title: 'Test Feature 3',
-				},
-				{
-					title: 'Test Feature 4',
-				},
-				{
-					title: 'Test Feature 5',
-				},
-				{
-					title: 'Test Feature 6',
-				},
-				{
-					title: 'Test Feature 7',
-				},
-				{
-					title: 'Test Feature 8',
-				},
-			],
-		},
-	],
 	sidebar_promotion_variants: [
 		{
 			license: [ 'essential' ],
@@ -458,6 +275,57 @@ export default {
 			data: {
 				image: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
 				link: 'https://test.example.com/one-banner',
+			},
+		},
+	],
+	site_builder_variants: [
+		{
+			id: 'step_with_input',
+			site_builder: {
+				siteBuilderUrl: '/wp-admin/admin.php?page=elementor-app#site-builder',
+				previewImage1: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				previewImage2: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				stepConfig: {
+					0: {
+						hasInput: true,
+						title: 'From idea to website in minutes',
+						placeholder: 'What site do you want to build?',
+						buttonLabel: 'Create my site',
+					},
+				},
+				site_builder_snapshot: {},
+			},
+		},
+		{
+			id: 'step_without_input',
+			site_builder: {
+				siteBuilderUrl: '/wp-admin/admin.php?page=elementor-app#site-builder',
+				previewImage1: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				previewImage2: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				stepConfig: {
+					3: {
+						hasInput: false,
+						title: "Let's turn your sitemap into a design",
+						text: 'Your sitemap is waiting for you to continue.',
+						buttonLabel: 'Visit sitemap',
+					},
+				},
+				plannerSteps: {
+					INIT: 0,
+					CHAT: 1,
+					SITEMAP: 2,
+					WIREFRAMES: 3,
+					DEPLOYING: 4,
+					DEPLOYED_TO_PLUGIN: 6,
+				},
+				siteKey: 'test-site-key',
+				site_builder_snapshot: {
+					'test-site-key': {
+						step: 3,
+						pageSuggestions: [ 'About', 'Services', 'Contact' ],
+						siteTypeSuggestions: [],
+					},
+				},
 			},
 		},
 	],

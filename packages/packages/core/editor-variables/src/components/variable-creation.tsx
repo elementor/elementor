@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +10,6 @@ import { useVariableType } from '../context/variable-type-context';
 import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
 import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
-import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
@@ -24,7 +22,7 @@ type Props = {
 };
 
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, propTypeUtil } = useVariableType();
 
 	const { setVariableValue: setVariable, path } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -52,11 +50,14 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	const handleCreateAndTrack = () => {
-		createVariable( {
-			value,
-			label,
-			type: propTypeKey,
-		} )
+		createVariable(
+			{
+				value,
+				label,
+				type: propTypeKey,
+			},
+			{ eventData: { controlPath: path.join( '.' ) } }
+		)
 			.then( ( key ) => {
 				setVariable( key );
 				closePopover();
@@ -74,12 +75,6 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
-
-		trackVariableEvent( {
-			varType: variableType,
-			controlPath: path.join( '.' ),
-			action: 'save',
-		} );
 	};
 
 	const hasEmptyFields = () => {
@@ -108,7 +103,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	return (
-		<PopoverBody height="auto">
+		<SectionPopoverBody height="auto">
 			<PopoverHeader
 				icon={
 					<>
@@ -143,11 +138,12 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						} }
 						onErrorChange={ ( errorMsg ) => {
 							setLabelFieldError( {
-								value: label,
+								value: '',
 								message: errorMsg,
 							} );
 						} }
 						onKeyDown={ handleKeyDown }
+						focusOnShow
 					/>
 				</FormField>
 				{ ValueField && (
@@ -183,6 +179,6 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
-		</PopoverBody>
+		</SectionPopoverBody>
 	);
 };

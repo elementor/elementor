@@ -16,6 +16,7 @@ export type Document = {
 	links: {
 		platformEdit: string;
 		permalink: string;
+		wpPreview: string;
 	};
 	isDirty: boolean;
 	isSaving: boolean;
@@ -72,6 +73,7 @@ export type V1Document = {
 		urls: {
 			exit_to_dashboard: string;
 			permalink: string;
+			wp_preview: string;
 			main_dashboard: string;
 			all_post_type: string;
 		};

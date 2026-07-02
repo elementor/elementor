@@ -13,6 +13,12 @@ class Post_Query extends Base {
 	const ENDPOINT = 'post';
 	const SEARCH_FILTER_ACCEPTED_ARGS = 2;
 	const DEFAULT_FORBIDDEN_POST_TYPES = [ 'e-floating-buttons', 'e-landing-page', 'elementor_library', 'attachment', 'revision', 'nav_menu_item', 'custom_css', 'customize_changeset' ];
+	const SEARCH_IN_CONTENT_KEY = 'search_in_content';
+	const ALLOWED_KEYS_CONVERSION_MAP = [
+		'ID' => 'id',
+		'post_title' => 'label',
+		'post_type' => 'groupLabel',
+	];
 
 	/**
 	 * @param string    $search_term The original search query.
@@ -25,8 +31,13 @@ class Post_Query extends Base {
 
 		if ( $is_custom_search && ! empty( $term ) ) {
 			$escaped = esc_sql( $term );
+			$search_in_content = $wp_query->get( self::SEARCH_IN_CONTENT_KEY ) ?? false;
 			$search_term .= ' AND (';
 			$search_term .= "post_title LIKE '%{$escaped}%'";
+			if ( $search_in_content ) {
+				$search_term .= " OR post_content LIKE '%{$escaped}%'";
+				$search_term .= " OR post_excerpt LIKE '%{$escaped}%'";
+			}
 			if ( ctype_digit( $term ) ) {
 				$search_term .= ' OR ID = ' . intval( $term );
 			} else {
@@ -46,32 +57,30 @@ class Post_Query extends Base {
 		$params = $request->get_params();
 		$term = trim( $params[ self::SEARCH_TERM_KEY ] ?? '' );
 
-		if ( empty( $term ) ) {
-			return new \WP_REST_Response( [
-				'success' => true,
-				'data' => [
-					'value' => [],
-				],
-			], 200 );
-		}
-
-		$keys_format_map = $params[ self::KEYS_CONVERSION_MAP_KEY ];
+		$keys_format_map = $this->filter_keys_conversion_map(
+			$params[ self::KEYS_CONVERSION_MAP_KEY ] ?? self::ALLOWED_KEYS_CONVERSION_MAP,
+			self::ALLOWED_KEYS_CONVERSION_MAP
+		);
 		$requested_count = $params[ self::ITEMS_COUNT_KEY ] ?? 0;
 		$validated_count = max( $requested_count, 1 );
 		$post_count = min( $validated_count, self::MAX_RESPONSE_COUNT );
 		$is_public_only = $params[ self::IS_PUBLIC_KEY ] ?? true;
-		$post_types = $this->get_post_types_from_params( $params );
+		$post_types = $this->get_post_types_from_params( $request );
 
 		$query_args = [
-			'post_type' => array_keys( $post_types ),
-			'numberposts' => $post_count,
-			'suppress_filters' => false,
-			'custom_search' => true,
-			'search_term' => $term,
-			'post_status' => $is_public_only ? 'publish' : 'any',
-			'orderby' => 'ID',
-			'order' => 'ASC',
+			'post_type'                    => array_keys( $post_types ),
+			'numberposts'                  => $post_count,
+			'suppress_filters'             => false,
+			'custom_search'                => true,
+			'post_status'                  => $is_public_only ? 'publish' : 'any',
+			'orderby'                      => 'modified',
+			'order'                        => 'DESC',
 		];
+
+		if ( ! empty( $term ) ) {
+			$query_args['search_term'] = $term;
+			$query_args[ self::SEARCH_IN_CONTENT_KEY ] = $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false;
+		}
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
 			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
@@ -95,15 +104,21 @@ class Post_Query extends Base {
 			'success' => true,
 			'data' => [
 				'value' => $posts
+					->filter( function ( $post ) {
+						return current_user_can( 'read_post', $post->ID );
+					} )
 					->map( function ( $post ) use ( $keys_format_map, $post_type_labels ) {
-						$post_object = (array) $post;
+						$post_type_label = $post->post_type;
 
-						if ( isset( $post_object['post_type'] ) ) {
-							$pt_name = $post_object['post_type'];
-							if ( isset( $post_type_labels[ $pt_name ] ) ) {
-								$post_object['post_type'] = $post_type_labels[ $pt_name ];
-							}
+						if ( isset( $post_type_labels[ $post->post_type ] ) ) {
+							$post_type_label = $post_type_labels[ $post->post_type ];
 						}
+
+						$post_object = [
+							'ID' => $post->ID,
+							'post_title' => $post->post_title,
+							'post_type' => $post_type_label,
+						];
 
 						return $this->translate_keys( $post_object, $keys_format_map );
 					} )
@@ -130,6 +145,10 @@ class Post_Query extends Base {
 		$accepted_args = self::SEARCH_FILTER_ACCEPTED_ARGS;
 
 		remove_filter( 'posts_search', [ $this, 'customize_post_query' ], $priority, $accepted_args );
+	}
+
+	protected function permission_check( \WP_REST_Request $request ): bool {
+		return current_user_can( 'edit_posts' );
 	}
 
 	protected function get_endpoint_registration_args(): array {
@@ -192,6 +211,12 @@ class Post_Query extends Base {
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
+			self::SEARCH_IN_CONTENT_KEY => [
+				'description' => 'Whether to search within post content and excerpt in addition to title',
+				'type' => 'boolean',
+				'required' => false,
+				'default' => false,
+			],
 		];
 	}
 
@@ -204,6 +229,7 @@ class Post_Query extends Base {
 			self::TAX_QUERY_KEY,
 			self::IS_PUBLIC_KEY,
 			self::ITEMS_COUNT_KEY,
+			self::SEARCH_IN_CONTENT_KEY,
 		];
 	}
 
@@ -217,9 +243,9 @@ class Post_Query extends Base {
 		];
 	}
 
-	private function get_post_types_from_params( $params ) {
-		$included_types = $params[ self::INCLUDED_TYPE_KEY ];
-		$excluded_types = $params[ self::EXCLUDED_TYPE_KEY ];
+	private function get_post_types_from_params( \WP_REST_Request $request ) {
+		$included_types = $request->get_param( self::INCLUDED_TYPE_KEY );
+		$excluded_types = $request->get_param( self::EXCLUDED_TYPE_KEY );
 		$post_type_query_args = [
 			'public' => true,
 		];

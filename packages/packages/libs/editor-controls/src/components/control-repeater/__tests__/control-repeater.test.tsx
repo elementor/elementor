@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -17,6 +18,10 @@ import { type ItemProps, type RepeatablePropValue } from '../types';
 
 jest.mock( '../../../bound-prop-context/use-bound-prop' );
 jest.mock( '../../../bound-prop-context' );
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] ),
+} ) );
 
 const defaultInitialValues = {
 	$$type: 'example',
@@ -49,6 +54,10 @@ describe( 'ControlRepeater', () => {
 			setValue: jest.fn(),
 			...globalUseBoundPropArgs,
 		} );
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked( useBreakpoints ).mockReturnValue( [
+			{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
+		] );
 	} );
 
 	it( 'should render the unstable repeater with no items', () => {
@@ -544,6 +553,176 @@ describe( 'ControlRepeater', () => {
 				value: 'First item',
 			},
 		] );
+	} );
+
+	it( 'should close the popover when Escape is pressed', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Act.
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+		fireEvent.click( addButton );
+
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
+
+		// Assert.
+		await waitFor( () => {
+			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
+		} );
+	} );
+
+	it( 'should not close the popover when clicking outside the repeater', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Act.
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+		fireEvent.click( addButton );
+
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		fireEvent.click( document.body );
+
+		// Assert.
+		expect( document.body ).toHaveStyle( { overflow: 'hidden' } );
+	} );
+
+	it( 'should close the popover when the active breakpoint changes', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		const { rerender } = renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Act.
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+		fireEvent.click( addButton );
+
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+		rerender(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Assert.
+		await waitFor( () => {
+			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
+		} );
+	} );
+
+	it( 'should close the popover when the breakpoints configuration changes', async () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+
+		const { rerender } = renderWithTheme(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Act.
+		const addButton = screen.getByRole( 'button', { name: /Add Test repeater item/i } );
+		fireEvent.click( addButton );
+
+		await waitFor( () => expect( document.body ).toHaveStyle( { overflow: 'hidden' } ) );
+
+		jest.mocked( useBreakpoints ).mockReturnValue( [
+			{ id: 'desktop', label: 'Desktop', width: 1200, type: undefined },
+		] );
+		rerender(
+			<ControlRepeater { ...defaultProps }>
+				<RepeaterHeader label={ 'Test Repeater' }>
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
+				</RepeaterHeader>
+				<ItemsContainer>
+					<Item { ...createItemSettings() } />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
+		);
+
+		// Assert.
+		await waitFor( () => {
+			expect( document.body ).not.toHaveStyle( { overflow: 'hidden' } );
+		} );
 	} );
 
 	it.skip( 'should open the added repeater item popover', () => {

@@ -1,8 +1,19 @@
-import { getAnchoredAncestorId, getAnchoredDescendantId, isElementAnchored } from '../link-restriction';
+import {
+	getAnchoredAncestorId,
+	getAnchoredDescendantId,
+	getLinkInLinkRestriction,
+	isElementAnchored,
+} from '../link-restriction';
+
+const containersWithoutView = new Set< string >();
 
 jest.mock( '../sync/get-container', () => {
 	return {
 		getContainer: jest.fn( ( elementId: string ) => {
+			if ( containersWithoutView.has( elementId ) ) {
+				return null;
+			}
+
 			const element = document.querySelector( `[data-id="${ elementId }"]` );
 			return element ? { view: { el: element } } : null;
 		} ),
@@ -14,6 +25,8 @@ const BUTTON_ACTION_LINK_ATTRIBUTE = 'data-action-link';
 describe( 'link-restriction', () => {
 	beforeEach( () => {
 		document.body.innerHTML = '';
+		containersWithoutView.clear();
+		delete ( window as unknown as { elementor?: unknown } ).elementor;
 	} );
 
 	describe( 'doesElementHaveAnchorTag', () => {
@@ -426,6 +439,86 @@ describe( 'link-restriction', () => {
 
 			// Assert
 			expect( result ).toBeNull();
+		} );
+	} );
+
+	describe( 'getElementDOM fallback for inner component elements', () => {
+		it( 'should detect ancestor anchor for an inner element that has no V1 view but exists in the preview DOM', () => {
+			// Arrange: inner heading has data-id in DOM but no registered V1 container/view
+			document.body.innerHTML = `
+				<a data-id="ancestor-div" href="#">
+					<div data-id="inner-heading">Heading</div>
+				</a>
+			`;
+			containersWithoutView.add( 'inner-heading' );
+
+			( window as unknown as { elementor: unknown } ).elementor = {
+				getPreviewContainer: () => ( { view: { el: document.body } } ),
+			};
+
+			// Act
+			const result = getAnchoredAncestorId( 'inner-heading' );
+
+			// Assert
+			expect( result ).toBe( 'ancestor-div' );
+		} );
+
+		it( 'should detect descendant anchor for an inner element that has no V1 view but exists in the preview DOM', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="inner-wrapper">
+					<a data-id="inner-link" href="#">Link</a>
+				</div>
+			`;
+			containersWithoutView.add( 'inner-wrapper' );
+
+			( window as unknown as { elementor: unknown } ).elementor = {
+				getPreviewContainer: () => ( { view: { el: document.body } } ),
+			};
+
+			// Act
+			const result = getAnchoredDescendantId( 'inner-wrapper' );
+
+			// Assert
+			expect( result ).toBe( 'inner-link' );
+		} );
+	} );
+
+	describe( 'getLinkInLinkRestriction with resolved value', () => {
+		it( 'should not restrict when resolvedValue has a destination even if element contains inline anchor', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="element-with-inline-anchor">
+					<a href="#">Inline anchor</a>
+				</div>
+			`;
+			const resolvedValue = { destination: 'https://example.com' };
+
+			// Act
+			const result = getLinkInLinkRestriction( 'element-with-inline-anchor', resolvedValue );
+
+			// Assert
+			expect( result ).toEqual( { shouldRestrict: false } );
+		} );
+
+		it( 'should restrict for inline anchor when resolvedValue has no destination', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="element-with-inline-anchor">
+					<a href="#">Inline anchor</a>
+				</div>
+			`;
+			const resolvedValue = {};
+
+			// Act
+			const result = getLinkInLinkRestriction( 'element-with-inline-anchor', resolvedValue );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'element-with-inline-anchor',
+			} );
 		} );
 	} );
 } );

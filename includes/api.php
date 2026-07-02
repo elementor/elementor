@@ -55,7 +55,7 @@ class Api {
 
 	private static $api_library_info_url = 'https://my.elementor.com/api/v1/templates/info/';
 
-	private static function get_info_data( $force_update = false, $additinal_status = false ) {
+	private static function get_info_data( $force_update = false, $additional_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
@@ -75,8 +75,8 @@ class Api {
 				$body_request['site_key'] = $site_key;
 			}
 
-			if ( ! empty( $additinal_status ) ) {
-				$body_request['status'] = $additinal_status;
+			if ( ! empty( $additional_status ) ) {
+				$body_request['status'] = $additional_status;
 				$timeout = 3;
 			}
 
@@ -86,7 +86,7 @@ class Api {
 			] );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
-				set_transient( $cache_key, [], 2 * HOUR_IN_SECONDS );
+				set_transient( $cache_key, [ 'last_error' => gmdate( 'c' ) ], 2 * HOUR_IN_SECONDS );
 
 				return false;
 			}
@@ -94,7 +94,7 @@ class Api {
 			$info_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( empty( $info_data ) || ! is_array( $info_data ) ) {
-				set_transient( $cache_key, [], 2 * HOUR_IN_SECONDS );
+				set_transient( $cache_key, [ 'last_error' => gmdate( 'c' ) ], 2 * HOUR_IN_SECONDS );
 
 				return false;
 			}

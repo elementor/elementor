@@ -1,343 +1,166 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
+import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
+
+export const BUILD_COMPOSITIONS_GUIDE_URI = 'elementor://canvas/tools/build-compositions-guide';
 
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
 	buildCompositionsToolPrompt.description( `
-# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
-   Required to understand which widgets are available, and what are their configuration schemas.
-   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+# RESOURCES (Read before use)
+- [elementor://global-classes] - Check FIRST for reusable classes
+- [elementor://global-variables] - ONLY use variables defined here
+- [${ AVAILABLE_WIDGETS_URI }/v4]
 
-# DESIGN QUALITY IMPERATIVE
-You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
-**The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
-**Your Mission**: Actively resist distributional convergence by making intentional, distinctive design choices across all aesthetic dimensions. Every design decision should have a clear purpose tied to visual hierarchy, brand personality, or user experience goals.
-When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
+# TOOL SUPPORT
+This tool support v4 elements only
 
-# When to use this tool
-Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
-Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+# WORKFLOW
+1. Check/create global classes via "manage-global-classes" tool
+2. Build composition (THIS TOOL) - minimal inline styles
+3. Apply classes via "apply-global-class" tool
 
-# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
-   Required to understand which widgets are available, and what are their configuration schemas.
-   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+# XML STRUCTURE
+- Use widget tags: \`<e-button configuration-id="btn1"></e-button>\`
+- Containers: "e-flexbox", "e-div-block", "e-tabs"
+- Every element needs unique "configuration-id"
+- No attributes, classes, IDs, or text nodes in XML
 
-# DESIGN QUALITY IMPERATIVE
-You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
-**The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
-**Your Mission**: Actively resist distributional convergence by making intentional, distinctive design choices across all aesthetic dimensions. Every design decision should have a clear purpose tied to visual hierarchy, brand personality, or user experience goals.
-When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
+## NESTED ELEMENTS
+Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
+- Check \`llm_guidance.nesting\` in widget schemas for structure requirements
+- \`llm_guidance.required_direct_children\` lists element types that must appear as direct child tags in XML (from widget defaults)
+- \`allowed_child_types\` lists which element types can be nested inside
+- \`allowed_parents\` lists which element types this element can be placed inside
 
-# When to use this tool
-Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
-Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+# CONFIGURATION
+- Map configuration-id → elementConfig (props) + style (raw CSS declarations)
+- elementConfig PropValues require \`$$type\` matching schema
+- style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
+- NO LINKS in configuration
+- Retry on errors up to 10x
+- Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
-# Instructions
-1. Understand the user requirements carefully.
-2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
-   use the "e-button" element, it would be represented as <e-button></e-button> in the XML structure.
-3. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
-   Every widget type has it's own configuration schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
-   PropValues must follow the exact PropType schema provided in the resource.
-4. For every element, provide a "configuration-id" attribute. For example:
-   \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
-   In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
-   In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
-5. Ensure the XML structure is valid and parsable.
-6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
-   Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
-7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
-8. Make sure that non-container elements do NOT have any nested elements.
+# DYNAMIC TAGS
+- A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).
+- Put the dynamic object EXACTLY at that node, in place of the static variant. The variant's \`name\` lists the allowed tags; read [${ DYNAMIC_TAGS_URI }] for each tag's settings schema.
+- Provide at that node: \`{ "$$type": "dynamic", "value": { "name": "<allowed tag>", "settings": { ... } } }\`
+- Example (image): \`{ "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }\`
+- Do NOT send \`group\` (it is resolved automatically). Populate \`settings\` strictly per the tag's schema; use \`{}\` only when it has none.
 
-# DESIGN VECTORS - Concrete Implementation Guidance
+Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
-## 1. Typography & Visual Hierarchy
+# DESIGN PHILOSOPHY: CONTEXT-DRIVEN CREATIVITY
 
-**Avoid Distributional Defaults:**
-- NO generic sans-serifs as primary typefaces (Inter, Roboto, Arial, Helvetica)
-- NO timid size ratios (1.2x, 1.5x scaling)
-- NO uniform font weights (everything at 400 or 600)
+**Use the user's context aggressively.** Business type, brand personality, target audience, and purpose should drive every design decision. A law firm needs gravitas; a children's app needs playfulness. Don't default to generic.
 
-**Intentional Alternatives:**
-- **For Technical/Modern**: Consider monospace headlines (JetBrains Mono, SF Mono) paired with clean body text
-- **For Editorial/Elegant**: Consider serif headlines (Playfair Display, Crimson Text) with sans-serif body
-- **For Playful/Creative**: Consider display fonts with character, paired with highly legible body text
+## SIZING: DEFAULT IS NO SIZE (CRITICAL)
 
-**Scale & Contrast Implementation:**
-- Headline-to-body size ratios: 3x minimum (e.g., 48px headline vs 16px body)
-- Use extreme weight contrasts: pair weight-100 or 200 with weight-800 or 900
-- Line height contrasts: tight headlines (1.1) vs. generous body (1.7)
-- Letter spacing: compressed headlines (-0.02em to -0.05em) vs. open small text (0.03em+)
+**DO NOT specify height or width unless you have a specific visual reason.**
 
-**Hierarchy Mapping:**
-/* Intentional hierarchy example */
-H1: font-size: 3.5rem; font-weight: 900; line-height: 1.1; letter-spacing: -0.03em;
-H2: font-size: 2rem; font-weight: 200; line-height: 1.2;
-Body: font-size: 1rem; font-weight: 400; line-height: 1.7;
-Caption: font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+Flexbox and CSS already handle sizing automatically:
+- Containers grow to fit their content
+- Flex children distribute space via flex properties, not width/height
+- Text elements size to their content
 
-## 2. Color & Theme Strategy
+WHEN TO SPECIFY SIZE:
+- min-height on ROOT section for viewport-spanning hero (use min-height, NOT height)
+- max-width for contained content areas (e.g., max-width: 60rem)
+- Explicit aspect ratios for media containers
 
-**Avoid Distributional Defaults:**
-- NO purple gradients or blue-purple color schemes (massively overrepresented in AI output)
-- NO evenly-distributed color palettes (3-4 colors used equally)
-- NO timid pastels or all-neutral schemes
-- NO #333333, #666666, #999999 grays
+NEVER SPECIFY:
+- height on nested containers (causes overflow)
+- width on flex children (use flex-basis or gap instead)
+- 100vh on anything except root-level sections
+- Any size "just to be safe" - if unsure, OMIT IT
 
-**Intentional Alternatives:**
-- **Commit to a Dominant Color**: Choose ONE primary brand color that appears in 60-70% of colored elements
-- **Sharp Accent Strategy**: Use 1-2 high-contrast accent colors sparingly (10-15% of colored elements)
-- **Neutrals with Personality**: Replace pure grays with warm (#3d3228, #f5f1ed) or cool (#2a2f3d, #f0f2f5) tinted neutrals
+vh units are VIEWPORT-relative. Nested 100vh inside 100vh = 200vh overflow.
 
-**Color Psychology Mapping:**
-- Energy/Action → Warm reds, oranges, yellows (NOT purple/blue)
-- Trust/Calm → Deep teals, forest greens (NOT generic blue)
-- Luxury/Premium → Deep burgundy, emerald, charcoal with gold accents
-- Playful/Creative → Unexpected combinations (coral + mint, mustard + navy)
+GOOD: \`<e-flexbox>content naturally sizes</e-flexbox>\`
+BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflow</e-div-block></e-flexbox>\`
 
-**Implementation:**
-/* Intentional color system example */
---brand-primary: #d84315;        /* Dominant: Deep orange */
---brand-accent: #00bfa5;         /* Accent: Teal (complementary) */
---neutral-dark: #2d2622;         /* Warm dark brown, not #333 */
---neutral-light: #faf8f6;        /* Warm off-white, not pure white */
---background: linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); /* Subtle warmth */
+## Layout Variety (Break the Template)
+- AVOID: Full-width 100vh hero → three columns → testimonials → CTA (every AI does this)
+- VARY heights: Use auto-height sections with generous padding (6rem+). Let content breathe
+- VARY widths: Not everything spans full width. Use contained sections (max-width: 960px) mixed with edge-to-edge
+- ASYMMETRIC grids: 2:1, 1:3, offset layouts. Avoid equal column widths
+- Negative space as design element: Large margins create focus and sophistication
+- Break alignment intentionally: Offset headings, overlapping elements, broken grids
 
-## 3. Spatial Design & White Space
+## Visual Depth & Effects
+- Layer elements: Overlapping cards, text over images, floating elements
+- Subtle shadows with color tint (not pure black): \`box-shadow: 0 20px 60px rgba(<brand-color-here>, 0.15)\`
+- Gradient overlays on images for text readability
+- Border radius variation: Mix sharp (0) and soft (1rem+) corners purposefully
+- Backdrop blur for glassmorphism where appropriate
+- Micro-interactions via CSS: hover transforms, transitions (0.3s ease)
 
-**Avoid Distributional Defaults:**
-- NO uniform spacing (everything 16px or 24px)
-- NO cramped layouts that maximize content density
-- NO default container widths (1200px, 1440px)
+## Typography with Character
+- Display fonts for headlines (from user's brand or contextually appropriate)
+- Size contrast: 4rem+ headlines vs 1rem body. Make hierarchy unmistakable
+- Letter-spacing: Tight for large headlines (-0.02em), loose for small caps (0.1em)
+- Line-height: Tight for headlines (1.1), generous for body (1.6-1.8)
+- Text decoration: Underlines, highlights, gradient text for emphasis
 
-**Intentional Alternatives:**
-- **Breathing Room**: Use generous white space as a design element (80-120px vertical spacing between sections)
-- **Asymmetric Spacing**: Vary padding dramatically (small: 12px, medium: 48px, large: 96px)
-- **Content Width Strategy**:
-  - Reading content: max 65-75 characters (600-700px)
-  - Hero sections: asymmetric layouts, not centered blocks
-  - Cards/components: vary sizes intentionally, not uniform grids
+## Color with Purpose
+- Extract palette from user context (brand colors, industry norms, mood)
+- 60-30-10 rule: dominant, secondary, accent
+- Tinted neutrals over pure grays: warm (#faf8f5, #2d2a26) or cool (#f5f7fa, #1e2430)
+- Color blocking: Large colored sections create visual rhythm
+- Gradient directions: Diagonal (135deg, 225deg) feel more dynamic than vertical
 
-**Implementation:**
-/* Intentional spacing scale */
---space-xs: 0.5rem;   /* 8px */
---space-sm: 1rem;     /* 16px */
---space-md: 3rem;     /* 48px */
---space-lg: 6rem;     /* 96px */
---space-xl: 10rem;    /* 160px */
+## Spacing Strategy
+- Section padding: 6rem-10rem vertical, creating breathing room
+- Rhythm variation: Tight groups (2rem) with generous gaps between (6rem)
+- Use rem/em exclusively for responsive scaling
+- Generous padding on CTAs: min 1rem 2.5rem
 
-/* Use in combinations: */
-padding: var(--space-lg) var(--space-md);  /* Not uniform padding */
-margin-bottom: var(--space-xl);            /* Generous section breaks */
+# HARD CONSTRAINTS
+- Variables ONLY from [elementor://global-variables] (others throw errors)
+- Avoid SVG widgets unless assets are pre-uploaded
+- Check \`llm_guidance\` in widget schemas (\`default_styles\`, nesting, required children)
 
-## 4. Backgrounds & Atmospheric Depth
-
-**Avoid Distributional Defaults:**
-- NO solid white or light gray backgrounds
-- NO single-color backgrounds
-- NO generic gradient overlays
-
-**Intentional Alternatives:**
-- **Layered Gradients**: Combine 2-3 subtle gradients for depth
-- **Geometric Patterns**: SVG patterns, mesh gradients, or subtle noise textures
-- **Strategic Contrast**: Alternate between light and dark sections for rhythm
-
-**Implementation:**
-/* Intentional background example */
-background:
-  radial-gradient(circle at 20% 30%, rgba(216, 67, 21, 0.08) 0%, transparent 50%),
-  radial-gradient(circle at 80% 70%, rgba(0, 191, 165, 0.06) 0%, transparent 50%),
-  linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%);
-
-## 5. Visual Hierarchy Principles
-
-**Clear Priority System:**
-1. **Primary Focus (1 element)**: Largest, highest contrast, most visual weight
-2. **Secondary Elements (2-3 elements)**: 40-60% of primary size, reduced contrast
-3. **Tertiary/Support (everything else)**: Minimal visual weight, muted colors
-
-**Contrast Techniques:**
-- Size: 3x+ differences between hierarchy levels
-- Weight: 300+ difference in font-weight values
-- Color: Primary gets brand color, secondary gets neutral, tertiary gets muted
-- Space: Primary gets 2x+ surrounding white space vs. secondary
-
-## 6. EXAMPLES - Intentional vs. Generic Design
-
-### ❌ GENERIC (Distributional Convergence)
-
-{
-  "xmlStructure": "<e-flexbox configuration-id=\"flex1\"><e-heading configuration-id=\"heading1\"></e-heading><e-button configuration-id=\"button1\"></e-button></e-flexbox>",
-  "elementConfig": {
-    "heading1": {
-      "title": { "$$type": "string", "value": "Welcome to Our Site" }
-    }
-  },
-  "stylesConfig": {
-    "heading1": {
-      "font-size": {
-        "$$type": "size",
-        "value": {
-          "size": { "$$type": "number", "value": 24 },
-          "unit": { "$$type": "string", "value": "px" }
-        }
-      },
-    }
-  }
-}
-
-**Why Generic**: 24px default size, #333 safe gray, 600 weight (middle-ground), purple gradient (AI cliché), uniform 12/24px padding
-
-### ✅ INTENTIONAL (Resisting Convergence)
-{
-  "xmlStructure": "<e-flexbox configuration-id=\"hero-section\"><e-heading configuration-id=\"hero-title\"></e-heading><e-text configuration-id=\"hero-subtitle\"></e-text><e-button configuration-id=\"hero-cta\"></e-button></e-flexbox>",
-  "elementConfig": {
-    "hero-title": {
-      "title": { "$$type": "string", "value": "Transform Your Workflow" }
-    },
-    "hero-subtitle": {
-      "content": { "$$type": "string", "value": "Built for teams who refuse to compromise on quality" }
-    }
-  },
-  "stylesConfig": {
-    "hero-section": {
-      "display": { "$$type": "string", "value": "flex" },
-      "flex-direction": { "$$type": "string", "value": "column" },
-      "align-items": { "$$type": "string", "value": "flex-start" },
-      "background": {
-        "$$type": "color",
-        "value": "#f0ebe6",
-        "$intention": "background: #f0ebe6",
-      }
-    },
-    "hero-title": {
-      "font-size": {
-          "$$type": "size",
-          "value": {
-            "size": { "$$type": "number", "value": 72 },
-            "unit": { "$$type": "string", "value": "px" }
-          }
-        },
-    }
-  }
-}
-
-
-**Why Intentional**:
-- Typography: 4.5rem headline (3.6x body), weight 900 vs 200 contrast, tight leading
-- Color: Warm orange primary (#d84315), warm neutrals (#2d2622, #5a534d) NOT #333/#666
-- Spacing: 10rem vertical padding (generous), 3rem gap, asymmetric alignment
-- Background: Layered gradients with subtle brand color accent
-
-# CONSTRAINTS
-When a tool execution fails, retry up to 10 more times, read the error message carefully, and adjust the XML structure or the configurations accordingly.
-If a "$$type" is missing, update the invalid object, if the XML has parsing errors, fix it, etc. and RETRY.
-VALIDATE the XML structure before delivering it as the final result.
-VALIDATE the JSON structure used in the "configuration" attributes for each element before delivering the final result. The configuration must MATCH the PropValue schemas.
-NO LINKS ALLOWED. Never apply links to elements, even if they appear in the PropType schema.
-elementConfig values must align with the widget's PropType schema, available at the resource [${ WIDGET_SCHEMA_URI }].
-stylesConfig values must align with the common styles PropType schema, available at the resource [${ STYLE_SCHEMA_URI }].
-
-# DESIGN QUALITY CONSTRAINTS
-
-**Typography Constraints:**
-- NEVER use Inter, Roboto, Arial, or Helvetica as primary display fonts
-- NEVER use font-size ratios smaller than 2.5x between headlines and body
-- NEVER use font-weight values between 500-700 for headlines (go lighter or heavier)
-
-**Color Constraints:**
-- NEVER use purple gradients or blue-purple color schemes
-- NEVER use pure grays (#333, #666, #999) - use tinted neutrals instead
-- NEVER distribute colors evenly - commit to ONE dominant color
-- NEVER use more than 3 core colors (1 dominant, 1-2 accents)
-
-**Spacing Constraints:**
-- NEVER use uniform spacing across all elements
-- NEVER use section padding less than 4rem (64px) for hero/major sections
-- NEVER center everything - use asymmetric layouts for visual interest
-
-**Background Constraints:**
-- NEVER use solid white (#ffffff) or light gray (#f5f5f5) backgrounds without texture/gradients
-- ALWAYS layer at least 2 gradient or color elements for atmospheric depth
-
-# Parameters
-All parameters are MANDATORY.
-- xmlStructure
-- elementConfig
-- stylesConfig
-
-If unsure about the configuration of a specific property, read the schema resources carefully.
-
-# About our widgets
-Most widgets are self-explanatory by their name. Here is some additional information.
-Check for available llm_guidance property in the widget's schema.
-SVG elements are bound to internal content upload. Avoid usage, unless you have tools to upload SVG content.
-When working with containers, do not forget to apply style schema for controlling the layout.
-
-
+# PARAMETERS
+- **xmlStructure**: Valid XML with configuration-id attributes
+- **elementConfig**: configuration-id → widget PropValues
+- **style**: configuration-id → raw CSS declarations (property → value strings; no selectors)
   ` );
 
 	buildCompositionsToolPrompt.example( `
-A Heading and a button inside a flexbox
+Section with heading + button (NO explicit heights - content sizes naturally):
 {
-  xmlStructure: "<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading1"></e-heading><e-button configuration-id="button1"></e-button></e-flexbox>"
+  xmlStructure: "<e-flexbox configuration-id="Main Section"><e-heading configuration-id="Section Title"></e-heading><e-button configuration-id="Call to Action"></e-button></e-flexbox>",
   elementConfig: {
-    "flex1": {
-      "tag": {
-        "$$type": "string",
-        "value": "section"
-      },
+    "section1": { "tag": { "$$type": "string", "value": "section" } }
   },
-  stylesConfig: {
-    "heading1": {
-      "font-size": {
-        "$$type": "size",
-        "value": {
-          "size": { "$$type": "number", "value": 24 },
-          "unit": { "$$type": "string", "value": "px" }
-        }
-      },
-      "color": {
-        "$$type": "color",
-        "value": { "$$type": "string", "value": "#333" }
-      }
+  style: {
+    "Section Title": {
+      "padding": "6rem 4rem",
+      "background": "linear-gradient(135deg, #faf8f5 0%, #f0ebe4 100%)",
+      "font-size": "3.5rem",
+      "color": "#2d2a26"
     }
-  },
+  }
 }
+Note: No height/width specified on any element - flexbox handles layout automatically.
 ` );
 
 	buildCompositionsToolPrompt.parameter(
 		'xmlStructure',
-		`**MANDATORY** A valid XML structure representing the composition to be built, using custom elementor tags, styling and configuration PropValues.`
+		`Valid XML structure with custom elementor tags and configuration-id attributes.`
 	);
 
-	buildCompositionsToolPrompt.parameter(
-		'elementConfig',
-		`**MANDATORY** A record mapping configuration IDs to their corresponding configuration objects, defining the PropValues for each element created.`
-	);
+	buildCompositionsToolPrompt.parameter( 'elementConfig', `Record mapping configuration IDs to widget PropValues.` );
 
 	buildCompositionsToolPrompt.parameter(
-		'stylesConfig',
-		`**MANDATORY** A record mapping style PropTypes to their corresponding style configuration objects, defining the PropValues for styles to be applied to elements.`
+		'style',
+		`Record mapping configuration IDs to raw CSS declarations (property → value strings).`
 	);
 
 	buildCompositionsToolPrompt.instruction(
-		`You will be provided the XML structure with element IDs. These IDs represent the actual elementor widgets created on the page/post.
-You should use these IDs as reference for further configuration, styling or changing elements later on.`
-	);
-
-	buildCompositionsToolPrompt.instruction(
-		`You must use styles/variables/classes that are available in the project resources, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
+		`Element IDs in the returned XML represent actual widgets. Use these IDs for subsequent styling or configuration changes.`
 	);
 
 	return buildCompositionsToolPrompt.prompt();

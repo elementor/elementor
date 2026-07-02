@@ -1,17 +1,17 @@
+import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
 import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { expandNavigator } from './expand-navigator';
-
 export async function switchToComponent(
-	componentId: number | string,
+	componentId: number,
 	componentInstanceId?: string | null,
 	element?: HTMLElement | null
 ) {
 	const selector = getSelector( element, componentInstanceId );
 
-	await runCommand( 'editor/documents/switch', {
-		id: componentId,
+	invalidateDocumentData( componentId );
+
+	await switchToDocument( componentId, {
 		selector,
 		mode: 'autosave',
 		setAsInitial: false,
@@ -25,6 +25,10 @@ export async function switchToComponent(
 		selectElement( topLevelElement.id );
 		expandNavigator();
 	}
+}
+
+export async function expandNavigator() {
+	await runCommand( 'navigator/expand-all' );
 }
 
 function getSelector( element?: HTMLElement | null, componentInstanceId?: string | null ): string | undefined {

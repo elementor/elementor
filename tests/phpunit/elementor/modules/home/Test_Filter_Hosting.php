@@ -149,37 +149,6 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"repeater" => [],
 				],
 			],
-			"add_ons" => [
-				"header" => [
-					"title" => "Expand your design toolkit",
-					"description" => "These plugins, add-ons, and tools, have been selected to streamline your workflow and maximize your creativity.",
-				],
-				"repeater" => [],
-				"footer" => [
-					"label" => "Explore more add-ons",
-					"file_path" => "wp-admin/admin.php?page=elementor-apps",
-				],
-			],
-			"sidebar_upgrade" => [
-				[
-					"license" => [ "free" ],
-					"show" => true,
-					"header" => [
-						"title" => "Bring your vision to life",
-						"description" => "Get complete design flexibility for your website with Elementor Pro’s advanced tools and premium features.",
-						"image" => "https://assets.elementor.com/home-screen/v1/images/update-sidebar.svg",
-					],
-					"cta" => [
-						"label" => "Upgrade Now",
-						"url" => "https://go.elementor.com/go-pro-home-sidebar-upgrade/",
-						"image" => "https://assets.elementor.com/home-screen/v1/images/icon-crown.svg",
-					],
-					"repeater" => [
-						[ "title" => "Popup Builder" ],
-						[ "title" => "Custom Code & CSS" ],
-					],
-				],
-			],
 			"external_links" => [
 				[
 					"label" => "Help Center",

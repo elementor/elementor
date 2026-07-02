@@ -11,11 +11,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Style_Schema extends TestCase {
@@ -110,6 +109,7 @@ class Test_Style_Schema extends TestCase {
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
+
 
 	public function test_augment__will_convert_item_of_array_prop_type() {
 		// Arrange.

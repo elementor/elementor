@@ -1112,6 +1112,8 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_upload_image( $data ) {
+		$this->verify_upload_permissions( $data );
+
 		if ( empty( $data['image'] ) ) {
 			throw new \Exception( 'Missing image data' );
 		}
@@ -1584,6 +1586,12 @@ class Module extends BaseModule {
 	}
 
 	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
+		if ( Plugin::instance()->experiments->is_feature_active( 'site-builder' ) ) {
+			$home_screen_data['create_with_ai'] = null;
+
+			return $home_screen_data;
+		}
+
 		if ( $this->should_display_create_with_ai_banner() ) {
 			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
 		} else {

@@ -1,3 +1,5 @@
+import { createRoot, type Root } from 'react-dom/client';
+
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
@@ -34,10 +36,17 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 	return class extends TemplatedView {
 		#replacement: ReplacementBaseInterface | null = null;
 		#config: ReplacementSettings;
+		#reactContainer: HTMLElement;
+		#reactRoot: Root;
 
 		constructor( ...args: unknown[] ) {
 			super( ...args );
 			const settings = this.model.get( 'settings' );
+
+			this.#reactContainer = this.el.ownerDocument.createElement( 'div' );
+			this.#reactContainer.style.display = 'none';
+			this.el.ownerDocument.body.appendChild( this.#reactContainer );
+			this.#reactRoot = createRoot( this.#reactContainer );
 
 			this.#config = {
 				getSetting: settings.get.bind( settings ),
@@ -46,6 +55,8 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
 				refreshView: this.refreshView.bind( this ),
+				reactRoot: this.#reactRoot,
+				reactContainer: this.#reactContainer,
 			};
 		}
 
@@ -72,6 +83,8 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 
 		onDestroy() {
 			this.#triggerAltMethod( 'onDestroy' );
+			this.#reactRoot.unmount();
+			this.#reactContainer.remove();
 		}
 
 		_afterRender() {

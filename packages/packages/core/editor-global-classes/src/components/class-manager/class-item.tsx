@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
-import { DotsVerticalIcon } from '@elementor/icons';
+import { DotsVerticalIcon, RefreshIcon, RefreshOffIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
@@ -32,6 +32,8 @@ type ClassItemProps = React.PropsWithChildren< {
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
 	showSortIndicator?: boolean;
+	syncToV3?: boolean;
+	onToggleSync?: ( id: string, newValue: boolean ) => void;
 } >;
 
 export const ClassItem = ( {
@@ -42,6 +44,8 @@ export const ClassItem = ( {
 	disabled,
 	sortableTriggerProps,
 	showSortIndicator,
+	syncToV3,
+	onToggleSync,
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const {
@@ -137,6 +141,23 @@ export const ClassItem = ( {
 						{ __( 'Rename', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
+				{ onToggleSync && (
+					<MenuListItem
+						onClick={ () => {
+							popupState.close();
+							onToggleSync( id, ! syncToV3 );
+						} }
+					>
+						<Stack direction="row" alignItems="center" gap={ 1 }>
+							{ syncToV3 ? <RefreshOffIcon fontSize="tiny" /> : <RefreshIcon fontSize="tiny" /> }
+							<Typography variant="caption" sx={ { color: 'text.primary' } }>
+								{ syncToV3
+									? __( 'Stop syncing to Global Fonts', 'elementor' )
+									: __( 'Sync to Global Fonts', 'elementor' ) }
+							</Typography>
+						</Stack>
+					</MenuListItem>
+				) }
 				<MenuListItem
 					onClick={ () => {
 						popupState.close();

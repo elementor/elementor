@@ -1,4 +1,6 @@
-module.exports = Marionette.CompositeView.extend( {
+import { filterUnknownElements } from 'elementor-frontend-utils/filter-unknown-elements';
+
+export default Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
 
 	template: '#tmpl-elementor-panel-revisions',
@@ -38,11 +40,13 @@ module.exports = Marionette.CompositeView.extend( {
 	getRevisionViewData( revisionView ) {
 		this.document.revisions.getRevisionDataAsync( revisionView.model.get( 'id' ), {
 			success: ( data ) => {
+				const sanitizedData = filterUnknownElements( data );
+
 				if ( this.document.config.panel.has_elements ) {
-					this.document.revisions.setEditorData( data.elements );
+					this.document.revisions.setEditorData( sanitizedData.elements );
 				}
 
-				elementor.settings.page.model.set( data.settings );
+				elementor.settings.page.model.set( sanitizedData.settings );
 
 				this.setRevisionsButtonsActive( true );
 

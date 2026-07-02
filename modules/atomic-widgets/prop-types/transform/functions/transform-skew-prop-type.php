@@ -22,7 +22,7 @@ class Transform_Skew_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function get_default_value_unit(): string {
-		return Size_Constants::UNIT_ANGLE_DEG;
+		return Size_Constants::UNIT_DEG;
 	}
 
 	protected function get_dimensions(): array {

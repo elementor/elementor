@@ -14,8 +14,12 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const elementType = this.get( 'elType' );
 		this.config = elementor.config.elements[ elementType ];
 
+		if ( this.config?.meta?.permanently_locked ) {
+			this.set( 'isLocked', true );
+		}
+
 		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
-            $e.commands.currentTrace.includes( 'document/elements/create' );
+			$e.commands.currentTrace.includes( 'document/elements/create' );
 
 		if ( isNewElementCreate ) {
 			this.onElementCreate();
@@ -31,6 +35,11 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	onElementCreate() {
+		if ( this.get( 'skipDefaultChildren' ) ) {
+			this.unset( 'skipDefaultChildren', { silent: true } );
+			return;
+		}
+
 		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
 	}
 
@@ -51,6 +60,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			elements,
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
+			meta: element.meta || {},
 		};
 	}
 }

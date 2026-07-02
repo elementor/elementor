@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Editor\Editor;
 use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -92,6 +93,11 @@ class Preview extends App {
 
 		$this->post_id = get_the_ID();
 		$this->is_preview = true;
+
+		// Send Document-Isolation-Policy on the preview iframe so it shares
+		// an agent cluster with the editor parent and synchronous DOM access
+		// (e.g. iframe.contentWindow.elementorFrontend) keeps working.
+		Editor::send_document_isolation_policy_header();
 
 		// Don't redirect to permalink.
 		remove_action( 'template_redirect', 'redirect_canonical' );
@@ -192,6 +198,18 @@ class Preview extends App {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Whether WordPress post preview or Elementor preview iframe is active.
+	 *
+	 * @since 4.1.0
+	 * @access public
+	 *
+	 * @return bool
+	 */
+	public function is_editor_or_preview() {
+		return is_preview() || $this->is_preview_mode();
 	}
 
 	/**

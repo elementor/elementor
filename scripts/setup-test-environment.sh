@@ -34,7 +34,7 @@ fi
 
 # Step 2: Prepare environment
 echo "Step 2: Installing dependencies"
-npm run prepare-environment:ci
+npm run install:ci
 
 # Step 3: Build project from current branch
 echo "Step 3: Building project from $CURRENT_BRANCH"

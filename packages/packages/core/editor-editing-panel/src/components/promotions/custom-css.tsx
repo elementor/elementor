@@ -1,20 +1,14 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
+import { useRef } from 'react';
+import { PromotionTrigger, type PromotionTriggerRef } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
 import { StyleTabSection } from '../style-tab-section';
-import { type CanvasExtendedWindow } from './types';
 
-function getCustomCssPromotion() {
-	const extendedWindow = window as unknown as CanvasExtendedWindow;
-
-	return extendedWindow.elementor?.config?.v4Promotions?.customCss;
-}
+const TRACKING_DATA = { target_name: 'custom_css', location_l2: 'style' } as const;
 
 export const CustomCssSection = () => {
-	const [ showInfoTip, setShowInfoTip ] = useState( false );
-	const promotion = getCustomCssPromotion();
+	const triggerRef = useRef< PromotionTriggerRef >( null );
 
 	return (
 		<StyleTabSection
@@ -23,24 +17,9 @@ export const CustomCssSection = () => {
 				title: __( 'Custom CSS', 'elementor' ),
 				action: {
 					component: (
-						<PromotionInfotip
-							title={ promotion?.title ?? '' }
-							content={ promotion?.content ?? '' }
-							assetUrl={ promotion?.image ?? '' }
-							ctaUrl={ promotion?.ctaUrl ?? '' }
-							open={ showInfoTip }
-							onClose={ () => {
-								setShowInfoTip( false );
-							} }
-						>
-							<PromotionChip />
-						</PromotionInfotip>
+						<PromotionTrigger ref={ triggerRef } promotionKey="customCss" trackingData={ TRACKING_DATA } />
 					),
-					onClick: () => {
-						if ( ! showInfoTip ) {
-							setShowInfoTip( true );
-						}
-					},
+					onClick: () => triggerRef.current?.toggle(),
 				},
 			} }
 		/>

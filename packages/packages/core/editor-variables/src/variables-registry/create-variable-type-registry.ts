@@ -1,12 +1,9 @@
+import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
 import {
-	type ForwardRefExoticComponent,
-	type JSX,
-	type KeyboardEvent,
-	type RefAttributes,
-	type RefObject,
-} from 'react';
-import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
-import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
+	type AnyTransformer,
+	stylesInheritanceTransformersRegistry,
+	styleTransformersRegistry,
+} from '@elementor/editor-canvas';
 import {
 	type createPropUtils,
 	type PropType,
@@ -16,9 +13,21 @@ import {
 } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
+import { type VariableManagerMenuAction } from '../components/variables-manager/ui/variable-edit-menu';
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable, type Variable } from '../types';
+
+export type MenuActionContext = {
+	variable: Variable;
+	variableId: string;
+	handlers: {
+		onStartSync: ( id: string ) => void;
+		onStopSync: ( id: string ) => void;
+	};
+};
+
+export type MenuActionsFactory = ( context: MenuActionContext ) => VariableManagerMenuAction[];
 
 export type ValueFieldProps = {
 	value: string;
@@ -28,7 +37,6 @@ export type ValueFieldProps = {
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
-	ref?: RefObject< HTMLElement | null >;
 	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
 };
 
@@ -48,6 +56,8 @@ type VariableTypeOptions = {
 	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
+	isActive?: boolean;
+	menuActionsFactory?: MenuActionsFactory;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -69,6 +79,8 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 		emptyState,
+		isActive = true,
+		menuActionsFactory,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
@@ -95,6 +107,8 @@ export function createVariableTypeRegistry() {
 			fallbackPropTypeUtil,
 			isCompatible,
 			emptyState,
+			isActive,
+			menuActionsFactory,
 		};
 
 		registerTransformer( propTypeUtil.key, styleTransformer );
@@ -118,7 +132,7 @@ export function createVariableTypeRegistry() {
 	};
 
 	const hasVariableType = ( key: string ) => {
-		return key in variableTypes;
+		return key in variableTypes && !! variableTypes[ key ].isActive;
 	};
 
 	return {

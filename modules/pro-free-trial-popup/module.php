@@ -13,6 +13,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Ab_Test;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Utils;
 use Elementor\Plugin;
@@ -33,6 +34,7 @@ class Module extends BaseModule {
 	const ACTIVE = 'active';
 
 	private Elementor_Adapter_Interface $elementor_adapter;
+	private array $external_data;
 
 	public function __construct() {
 		parent::__construct();
@@ -49,13 +51,19 @@ class Module extends BaseModule {
 			return;
 		}
 
+		$this->external_data = $this->get_external_data();
+
+		if ( ! EditorAssetsAPI::has_valid_nested_array( $this->external_data, [ self::MODULE_NAME, 0 ] ) ) {
+			return false;
+		}
+
 		$this->elementor_adapter = new Elementor_Adapter();
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'maybe_enqueue_popup' ] );
 	}
 
 	public function get_name() {
-		return 'pro-free-trial-popup';
+		return self::MODULE_NAME;
 	}
 
 	public static function get_experimental_data(): array {
@@ -114,8 +122,10 @@ class Module extends BaseModule {
 	 * @return bool True if feature is enabled
 	 */
 	private function is_feature_enabled(): bool {
-		$data = $this->get_external_data();
-		return ( self::ACTIVE === $data['pro-free-trial-popup'][0]['status'] );
+		$popup_data = $this->extract_popup_data( $this->external_data );
+
+		$status = $popup_data['status'] ?? '';
+		return ! empty( $status ) && self::ACTIVE === $status;
 	}
 
 	/**
@@ -124,28 +134,16 @@ class Module extends BaseModule {
 	 * @return array External data or empty array on failure
 	 */
 	private function get_external_data(): array {
-		$cached_data = get_transient( 'elementor_pro_free_trial_data' );
+		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
+		return $editor_assets_api->get_assets_data();
+	}
 
-		if ( false !== $cached_data ) {
-			return $cached_data;
-		}
-
-		$response = wp_remote_get( self::EXTERNAL_DATA_URL );
-
-		if ( is_wp_error( $response ) ) {
-			return [];
-		}
-
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
-
-		if ( ! is_array( $data ) ) {
-			return [];
-		}
-
-		set_transient( 'elementor_pro_free_trial_data', $data, HOUR_IN_SECONDS );
-
-		return $data;
+	private function get_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => self::EXTERNAL_DATA_URL,
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_pro_free_trial_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => self::MODULE_NAME,
+		];
 	}
 
 	/**
@@ -199,8 +197,7 @@ class Module extends BaseModule {
 			true
 		);
 
-		$external_data = $this->get_external_data();
-		$popup_data = $this->extract_popup_data( $external_data );
+		$popup_data = $this->extract_popup_data( $this->external_data );
 
 		wp_localize_script( self::MODULE_NAME, 'elementorProFreeTrialData', $popup_data );
 
@@ -214,11 +211,7 @@ class Module extends BaseModule {
 	 * @return array Popup data or empty array if not found
 	 */
 	private function extract_popup_data( array $external_data ): array {
-		if ( ! isset( $external_data['pro-free-trial-popup'] ) || ! is_array( $external_data['pro-free-trial-popup'] ) ) {
-			return [];
-		}
-
-		return $external_data['pro-free-trial-popup'][0];
+		return $external_data[ self::MODULE_NAME ][0];
 	}
 
 	/**

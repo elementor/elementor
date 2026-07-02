@@ -13,6 +13,10 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	commandEndEvent: jest.fn(),
 } ) );
 
+jest.mock( '@elementor/editor-documents', () => ( {
+	getCurrentDocument: jest.fn().mockReturnValue( { id: 1 } ),
+} ) );
+
 jest.mock( '@elementor/ui', () => ( {
 	Portal: jest.fn( ( { children } ) => <div data-testid="portal">{ children }</div> ),
 } ) );

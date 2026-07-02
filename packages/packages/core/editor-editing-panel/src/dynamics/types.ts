@@ -10,6 +10,10 @@ export type DynamicTag = {
 	categories: string[];
 	atomic_controls: ControlItem[];
 	props_schema: PropsSchema;
+	meta?: {
+		origin: string;
+		required_license: string;
+	};
 };
 
 export type DynamicPropType = TransformablePropType & {
@@ -38,4 +42,5 @@ export type TagInstance = {
 	model: {
 		toJSON: () => Record< string, unknown >;
 	};
+	editorRenderPostId?: number;
 };

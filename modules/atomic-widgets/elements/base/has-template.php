@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Template {
 
+	private static function get_macros_template_key(): string {
+		return 'elementor/macros';
+	}
+
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
@@ -22,11 +26,23 @@ trait Has_Template {
 		return $config;
 	}
 
+	protected function transform_link_for_render( array $parsed ): array {
+		return $parsed;
+	}
+
+	protected function get_shared_templates(): array {
+		return [
+			self::get_macros_template_key() => __DIR__ . '/_macros.html.twig',
+		];
+	}
+
 	protected function render() {
 		try {
 			$renderer = Template_Renderer::instance();
 
-			foreach ( $this->get_templates() as $name => $path ) {
+			$all_templates = array_merge( $this->get_shared_templates(), $this->get_templates() );
+
+			foreach ( $all_templates as $name => $path ) {
 				if ( $renderer->is_registered( $name ) ) {
 					continue;
 				}
@@ -36,10 +52,10 @@ trait Has_Template {
 
 			$context = [
 				'id' => $this->get_id(),
+				'interaction_id' => $this->get_interaction_id(),
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
-				'interactions' => $this->get_interactions_ids(),
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -51,87 +67,10 @@ trait Has_Template {
 		}
 	}
 
-	public function get_interactions_ids() {
-		$animation_ids = [];
-
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
-
-		foreach ( $list_of_interactions as $interaction ) {
-
-			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
-				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
-				if ( $animation_id ) {
-					$animation_ids[] = $animation_id;
-				}
-			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
-		}
-
-		return $animation_ids;
-	}
-
-	private function extract_animation_id_from_prop_type( $item ) {
-		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
-			return null;
-		}
-
-		$item_value = $item['value'];
-
-		$trigger = $this->extract_prop_value_simple( $item_value, 'trigger' );
-		$animation = $this->extract_prop_value_simple( $item_value, 'animation' );
-
-		if ( ! is_array( $animation ) ) {
-			return null;
-		}
-
-		$effect = $this->extract_prop_value_simple( $animation, 'effect' );
-		$type = $this->extract_prop_value_simple( $animation, 'type' );
-		$direction = $this->extract_prop_value_simple( $animation, 'direction' );
-		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
-		$config = $this->extract_prop_value_simple( $animation, 'config' );
-
-		$duration = 300;
-		$delay = 0;
-		$replay = 0;
-
-		if ( is_array( $timing_config ) ) {
-			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
-			$delay = $this->extract_prop_value_simple( $timing_config, 'delay', 0 );
-		}
-
-		if ( is_array( $config ) ) {
-			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
-			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
-				$replay = 0;
-			}
-		} else {
-			$replay = 0;
-		}
-
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
-	}
-
-	private function extract_prop_value_simple( $data, $key, $default = '' ) {
-		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
-			return $default;
-		}
-
-		$value = $data[ $key ];
-
-		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
-			return $value['value'];
-		}
-
-		return null !== $value ? $value : $default;
-	}
-
 	protected function get_templates_contents() {
 		return array_map(
 			fn ( $path ) => Utils::file_get_contents( $path ),
-			$this->get_templates()
+			array_merge( $this->get_shared_templates(), $this->get_templates() )
 		);
 	}
 

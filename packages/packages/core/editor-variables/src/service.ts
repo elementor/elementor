@@ -5,6 +5,20 @@ import { buildOperationsArray, type OperationResult } from './batch-operations';
 import { OP_RW, Storage, type TVariable, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
+import { trackVariableEvent, type VariableEventData } from './utils/tracking';
+
+type EventData = {
+	controlPath?: VariableEventData[ 'controlPath' ];
+	executedBy?: VariableEventData[ 'executedBy' ];
+};
+
+export type CreateVariableOptions = {
+	eventData?: EventData;
+};
+
+export type UpdateVariableOptions = {
+	eventData?: EventData;
+};
 
 const storage = new Storage();
 
@@ -56,7 +70,7 @@ export const service = {
 			} );
 	},
 
-	create: ( { type, label, value }: Variable ) => {
+	create: ( { type, label, value }: Variable, options: CreateVariableOptions = {} ) => {
 		return apiClient
 			.create( type, label, value )
 			.then( ( response ) => {
@@ -82,6 +96,12 @@ export const service = {
 					[ variableId ]: createdVariable,
 				} );
 
+				trackVariableEvent( {
+					varType: type,
+					action: 'save',
+					...options.eventData,
+				} );
+
 				return {
 					id: variableId,
 					variable: createdVariable,
@@ -89,7 +109,11 @@ export const service = {
 			} );
 	},
 
-	update: ( id: string, { label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] } ) => {
+	update: (
+		id: string,
+		{ label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] },
+		options: UpdateVariableOptions = {}
+	) => {
 		return apiClient
 			.update( id, label, value, type )
 			.then( ( response ) => {
@@ -113,6 +137,12 @@ export const service = {
 
 				styleVariablesRepository.update( {
 					[ variableId ]: updatedVariable,
+				} );
+
+				trackVariableEvent( {
+					varType: updatedVariable.type,
+					action: 'update',
+					...options.eventData,
 				} );
 
 				return {
@@ -186,8 +216,8 @@ export const service = {
 			} );
 	},
 
-	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
-		const operations = buildOperationsArray( originalVariables, currentVariables );
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList, deletedVariables: string[] ) => {
+		const operations = buildOperationsArray( originalVariables, currentVariables, deletedVariables );
 		const batchPayload = { operations, watermark: storage.state.watermark };
 
 		if ( operations.length === 0 ) {
@@ -216,17 +246,17 @@ export const service = {
 
 				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if ( result.variable ) {
-							const { id: variableId, ...variableData } = result.variable;
+						const variableId = result.id;
 
+						if ( result.variable ) {
 							if ( result.type === 'create' ) {
-								storage.add( variableId, variableData );
+								storage.add( variableId, result.variable );
 							} else {
-								storage.update( variableId, variableData );
+								storage.update( variableId, result.variable );
 							}
 
 							styleVariablesRepository.update( {
-								[ variableId ]: variableData,
+								[ variableId ]: result.variable,
 							} );
 						}
 					} );

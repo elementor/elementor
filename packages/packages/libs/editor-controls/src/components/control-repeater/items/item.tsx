@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import { bindTrigger } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -18,7 +19,7 @@ export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions }:
 		value,
 		isItemDisabled,
 	} = useRepeaterContext();
-	const repeatableContext = React.useContext( RepeatableControlContext );
+	const repeatableContext = useContext( RepeatableControlContext );
 	const disableOpen = !! repeatableContext?.props?.readOnly;
 	const triggerProps = bindTrigger( popoverState );
 

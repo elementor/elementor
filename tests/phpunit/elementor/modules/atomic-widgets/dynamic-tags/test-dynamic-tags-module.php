@@ -111,12 +111,13 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'group' => 'post',
 				'atomic_controls' => [
-					[
-						'type' => 'section',
-						'value' => [
-							'label' => 'Settings',
-							'description' => null,
-							'items' => [
+				[
+					'type' => 'section',
+					'value' => [
+						'id' => null,
+						'label' => 'Settings',
+						'description' => null,
+						'items' => [
 								[
 									'type' => 'control',
 									'value' => [
@@ -172,17 +173,13 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
-						'settings' => [
-							'enum' => [
-								'name',
-								'email',
-							],
-						],
+						'settings' => [],
 						'meta' => [],
 						'dependencies' => null,
 						'initial_value' => null,
 					],
 				],
+				'meta' => [],
 			],
 			'post' => [
 				'name' => 'post',
@@ -193,6 +190,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			]
 		];
 
@@ -307,6 +305,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			],
 		];
 

@@ -1,4 +1,6 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+import { EditorOneEventManager } from 'elementor-editor-utils/editor-one-events';
+
 export default function SelectPreset( props ) {
 	const containerHelper = elementor.helpers.container,
 		onPresetSelected = ( preset, container ) => {
@@ -6,9 +8,25 @@ export default function SelectPreset( props ) {
 				createWrapper: false,
 			};
 
-			// Create new one by selected preset.
+			EditorOneEventManager.sendCanvasEmptyBoxAction( {
+				targetName: 'add_container',
+				metadata: {
+					container_type: 'flexbox',
+					structure_type: preset,
+				},
+				containerCreated: true,
+			} );
+
 			containerHelper.createContainerFromPreset( preset, container, options );
 		};
+
+	const handleClose = () => {
+		EditorOneEventManager.sendCanvasEmptyBoxAction( {
+			targetName: 'close',
+			containerCreated: false,
+		} );
+		props.setIsRenderPresets( false );
+	};
 
 	return (
 		<>
@@ -16,7 +34,7 @@ export default function SelectPreset( props ) {
 				type="button"
 				className="elementor-add-section-close"
 				aria-label={ __( 'Close', 'elementor' ) }
-				onClick={ () => props.setIsRenderPresets( false ) }
+				onClick={ handleClose }
 			>
 				<i className="eicon-close" aria-hidden="true" />
 			</button>

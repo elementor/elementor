@@ -65,7 +65,7 @@ class General extends Base_Category {
 			],
 			'knowledge-base' => [
 				'title' => esc_html__( 'Knowledge Base', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
+				'url' => 'https://go.elementor.com/docs-admin-menu/',
 				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],
 			],
 			'theme-builder' => [

@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\RoleManager;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
@@ -49,14 +48,6 @@ class Role_Manager extends Settings_Page {
 	 */
 	protected function get_page_title() {
 		return esc_html__( 'Role Manager', 'elementor' );
-	}
-
-	/**
-	 * @since 2.0.0
-	 * @access public
-	 */
-	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
 	}
 
 	/**
@@ -146,11 +137,7 @@ class Role_Manager extends Settings_Page {
 			$excluded_options = $this->get_role_manager_options();
 		}
 
-		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
-		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug );
-		if ( $is_editor_one_enabled ) {
-			$row_classes .= ' e-editor-one';
-		}
+		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug ) . ' e-editor-one';
 
 		?>
 		<div class="<?php echo esc_attr( $row_classes ); ?>">
@@ -320,22 +307,12 @@ class Role_Manager extends Settings_Page {
 		$menu_data_provider->register_menu( new Editor_One_Role_Manager_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	/**
 	 * @since 2.0.0
 	 * @access public
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$this->register_admin_menu( $admin_menu );
-			}
-		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );

@@ -1,6 +1,6 @@
 type Settings = Record< string, unknown >;
 
-type ChildRenderCallback = () => void;
+type ChildRenderCallback = ( event: Event ) => void;
 
 interface ListenToChildrenAPI {
 	render: ( callback: ChildRenderCallback ) => void;
@@ -36,6 +36,11 @@ export const register = ( { elementType, id, callback }: { elementType: string; 
 		elementTypeHandlers.get( elementType )?.set( id, callback );
 	}
 };
+
+Object.defineProperty( window, 'registerElementorElement', {
+	value: register,
+	enumerable: true,
+} );
 
 export const unregister = ( { elementType, id }: { elementType: string; id?: string } ) => {
 	if ( ! elementTypeHandlers.has( elementType ) ) {

@@ -85,6 +85,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'mcp',
 			'wp-rest',
 			'safe-mode',
 			'ai',
@@ -127,6 +128,7 @@ class Modules_Manager {
 			'atomic-widgets',
 			'global-classes',
 			'variables',
+			'design-system-sync',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
@@ -135,7 +137,11 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
+			'widget-creation',
 			'editor-one',
+			'markdown-render',
+			'elementor-capabilities-mcp',
+			'assets-manager',
 		];
 	}
 

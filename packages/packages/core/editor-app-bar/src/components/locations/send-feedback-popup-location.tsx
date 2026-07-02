@@ -2,9 +2,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { useMixpanel } from '@elementor/events';
 import { httpService } from '@elementor/http-client';
 import { AlertCircleIcon, CheckIcon } from '@elementor/icons';
-import { useMixpanel } from '@elementor/mixpanel';
 import {
 	bindDialog,
 	Button,
@@ -77,7 +77,7 @@ export default function SendFeedbackPopupLocation() {
 			feedback_text: feedbackContent,
 		} );
 	};
-	const handleStartAntoher = () => {
+	const handleStartAnother = () => {
 		setFeedbackContent( '' );
 		setFeedbackResult( null );
 	};
@@ -164,7 +164,7 @@ export default function SendFeedbackPopupLocation() {
 											</>
 										) }
 										{ feedbackResult?.success ? (
-											<Button variant="text" onClick={ () => handleStartAntoher() }>
+											<Button variant="text" onClick={ () => handleStartAnother() }>
 												{ __( 'Submit Another Feedback', 'elementor' ) }
 											</Button>
 										) : (

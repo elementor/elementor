@@ -304,7 +304,7 @@ class DB {
 
 				$callback( $document, $elements_data );
 
-				$processed_posts++;
+				++$processed_posts;
 			}
 		}
 	}
@@ -350,10 +350,11 @@ class DB {
 	 * @since 1.1.0
 	 * @access public
 	 *
-	 * @param int $from_post_id Original post ID.
-	 * @param int $to_post_id   Target post ID.
+	 * @param int    $from_post_id Original post ID.
+	 * @param int    $to_post_id   Target post ID.
+	 * @param ?array $specific_meta_keys Optional. Specific meta keys to copy. Default is null, which copies all elementor meta keys.
 	 */
-	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
+	public function copy_elementor_meta( $from_post_id, $to_post_id, $specific_meta_keys = null ) {
 		$from_post_meta = get_post_meta( $from_post_id );
 		$core_meta = [
 			'_wp_page_template',
@@ -361,6 +362,10 @@ class DB {
 		];
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
+			if ( $specific_meta_keys && ! in_array( $meta_key, $specific_meta_keys, true ) ) {
+				continue;
+			}
+
 			// Copy only meta with the `_elementor` prefix.
 			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
 				$value = $values[0];

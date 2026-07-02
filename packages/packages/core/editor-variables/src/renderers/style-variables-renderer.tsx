@@ -10,7 +10,7 @@ import { Portal } from '@elementor/ui';
 import { styleVariablesRepository } from '../style-variables-repository';
 import { type StyleVariables, type Variable } from '../types';
 
-const VARIABLES_WRAPPER = 'body';
+const VARIABLES_WRAPPER = ':root';
 
 export function StyleVariablesRenderer() {
 	const container = usePortalContainer();

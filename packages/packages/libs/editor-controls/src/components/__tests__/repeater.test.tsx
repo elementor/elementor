@@ -1,11 +1,24 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { useActiveBreakpoint, useBreakpoints } from '@elementor/editor-responsive';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { Repeater, type RepeaterItem } from '../repeater/repeater';
 
+jest.mock( '@elementor/editor-responsive', () => ( {
+	useActiveBreakpoint: jest.fn( () => 'desktop' ),
+	useBreakpoints: jest.fn( () => [ { id: 'desktop', label: 'Desktop', width: undefined, type: undefined } ] ),
+} ) );
+
 describe( 'Repeater', () => {
+	beforeEach( () => {
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'desktop' );
+		jest.mocked( useBreakpoints ).mockReturnValue( [
+			{ id: 'desktop', label: 'Desktop', width: undefined, type: undefined },
+		] );
+	} );
+
 	it( 'should render the repeater with no items', () => {
 		// Arrange.
 		const itemSettings = {
@@ -460,6 +473,81 @@ describe( 'Repeater', () => {
 		// Assert.
 		const toggleButton = screen.queryByLabelText( 'Hide' );
 		expect( toggleButton ).not.toBeInTheDocument();
+	} );
+
+	it( 'should close the popover when Escape is pressed', async () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'Hello World',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+		];
+
+		renderWithTheme(
+			<Repeater label={ 'Repeater' } itemSettings={ itemSettings } values={ values } setValues={ jest.fn() } />
+		);
+
+		// Act.
+		const openItemButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openItemButton );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+		} );
+
+		fireEvent.keyDown( document, { key: 'Escape', code: 'Escape' } );
+
+		// Assert.
+		await waitFor( () => {
+			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should close the popover when the active breakpoint changes', async () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'Hello World',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		const values = [ { $$type: 'example', value: 'First item' } ];
+		const setValues = jest.fn();
+		const props = { label: 'Repeater', itemSettings, values, setValues };
+
+		const { rerender } = renderWithTheme( <Repeater { ...props } /> );
+
+		// Act.
+		fireEvent.click( screen.getByRole( 'button', { name: 'Open item' } ) );
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+		} );
+
+		jest.mocked( useActiveBreakpoint ).mockReturnValue( 'tablet' );
+		rerender( <Repeater { ...props } /> );
+
+		// Assert.
+		await waitFor( () => {
+			expect( screen.queryByText( 'Content - 0' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'should hide the remove button when showRemove is false', () => {

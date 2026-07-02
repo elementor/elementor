@@ -48,10 +48,6 @@ class Menu_Config {
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
 
-	public static function is_elementor_home_menu_available(): bool {
-		return class_exists( '\ElementorOne\Loader' );
-	}
-
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
@@ -88,7 +84,7 @@ class Menu_Config {
 	public static function get_attribute_mapping(): array {
 		$default_mapping = [
 			'e-form-submissions' => [
-				'position' => 50,
+				'position' => 70,
 				'icon' => 'send',
 			],
 		];

@@ -1,4 +1,5 @@
 packages/**/dist/
+apps/**/dist/
 coverage/
 node_modules/
 log/

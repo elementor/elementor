@@ -6,12 +6,18 @@ import { createString } from '../utils/prop-value-utils';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
 
 export function initCleanInteractionIdsOnDuplicate() {
-	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
+	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] | false ) => {
+		if ( ! result || ( typeof result === 'boolean' && result === false ) ) {
+			return;
+		}
+
 		const containers = Array.isArray( result ) ? result : [ result ];
 
 		containers.forEach( ( container ) => {
 			cleanInteractionIdsRecursive( container.id );
 		} );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	} );
 }
 

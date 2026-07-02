@@ -9,6 +9,7 @@ use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Import as 
 
 class Import_Export_Customization {
 	const FILE_NAME = 'global-classes';
+	const DIRECTORY_NAME = 'global-classes';
 
 	public function register_hooks() {
 		add_action( 'elementor/import-export-customization/export-kit', function ( Export $export ) {

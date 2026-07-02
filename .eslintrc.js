@@ -65,6 +65,18 @@ module.exports = {
 				'local-rules:no-react-namespace': 'off',
 			},
 		},
+		{
+			files: [
+				'tests/playwright/**/*.ts',
+				'tests/elements-regression/**/*.ts',
+			],
+			extends: [ 'plugin:playwright/recommended' ],
+			rules: {
+				'playwright/no-networkidle': 'warn',
+				'playwright/expect-expect': 'off',
+				'playwright/no-conditional-in-test': 'off',
+			},
+		},
 	],
 	rules: {
 		// Custom canceled rules

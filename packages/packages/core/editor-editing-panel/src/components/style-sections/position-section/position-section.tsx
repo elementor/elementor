@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { type StringPropValue } from '@elementor/editor-props';
+import { useEffect, useRef } from 'react';
+import { type NumberPropValue, type SizePropValue, type StringPropValue } from '@elementor/editor-props';
 import { useSessionStorage } from '@elementor/session';
+import { styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../../contexts/style-context';
@@ -13,76 +15,62 @@ import { OffsetField } from './offset-field';
 import { PositionField } from './position-field';
 import { ZIndexField } from './z-index-field';
 
-type DimensionValue =
-	| {
-			$$type: 'size';
-			value: number;
-	  }
-	| undefined
-	| null;
-
-type DimensionsValues = {
-	'inset-block-start': DimensionValue;
-	'inset-block-end': DimensionValue;
-	'inset-inline-start': DimensionValue;
-	'inset-inline-end': DimensionValue;
+type DependentValues = {
+	'inset-block-start'?: SizePropValue | null;
+	'inset-block-end'?: SizePropValue | null;
+	'inset-inline-start'?: SizePropValue | null;
+	'inset-inline-end'?: SizePropValue | null;
+	'z-index'?: NumberPropValue | null;
 };
+
+const POSITION_STATIC = 'static';
 
 const POSITION_LABEL = __( 'Position', 'elementor' );
 const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
 
+const DEPENDENT_PROP_NAMES: Array< keyof DependentValues > = [
+	'inset-block-start',
+	'inset-block-end',
+	'inset-inline-start',
+	'inset-inline-end',
+	'z-index',
+];
+
 export const PositionSection = () => {
-	const { value: positionValue } = useStylesField< StringPropValue >( 'position', {
-		history: { propDisplayName: POSITION_LABEL },
-	} );
-	const { values: dimensions, setValues: setDimensions } = useStylesFields< DimensionsValues >( [
-		'inset-block-start',
-		'inset-block-end',
-		'inset-inline-start',
-		'inset-inline-end',
-	] );
+	const { value: position } = useStylesField< StringPropValue >( 'position', withHistoryLabel( POSITION_LABEL ) );
+	const positionPrevRef = useRef( position );
+	const { values: dependentValues, setValues: setDependentValues } =
+		useStylesFields< DependentValues >( DEPENDENT_PROP_NAMES );
 
-	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
+	const [ savedDependentValues, saveToHistory, clearHistory ] = usePersistDimensions();
 
-	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
-		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
-
-		if ( newPosition === 'static' ) {
-			if ( dimensions ) {
-				updateDimensionsHistory( dimensions );
-				setDimensions(
-					{
-						'inset-block-start': undefined,
-						'inset-block-end': undefined,
-						'inset-inline-start': undefined,
-						'inset-inline-end': undefined,
-					},
-					meta
-				);
-			}
-		} else if ( previousPosition === 'static' ) {
-			if ( dimensionsValuesFromHistory ) {
-				setDimensions( dimensionsValuesFromHistory, meta );
-				clearDimensionsHistory();
-			}
+	useEffect( () => {
+		if ( position && position?.value === POSITION_STATIC && hasDependentValues( dependentValues ) ) {
+			saveToHistory( extractDimensions( dependentValues ) );
 		}
-	};
 
-	const isNotStatic = positionValue && positionValue?.value !== 'static';
+		if ( positionPrevRef.current?.value === POSITION_STATIC ) {
+			setDependentValues( { ...savedDependentValues }, withHistoryLabel( DIMENSIONS_LABEL ) );
+
+			clearHistory();
+		}
+
+		if ( ( ! position || position?.value === POSITION_STATIC ) && dependentValues?.[ 'z-index' ] ) {
+			setDependentValues( { 'z-index': null }, withHistoryLabel( DIMENSIONS_LABEL ) );
+		}
+
+		positionPrevRef.current = position;
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ position?.value ] );
 
 	return (
-		<SectionContent>
-			<PositionField onChange={ onPositionChange } />
-			{ isNotStatic ? (
-				<>
-					<DimensionsField />
-					<ZIndexField />
-				</>
-			) : null }
-
+		<StyledSectionContent>
+			<PositionField />
+			<DimensionsField />
+			<ZIndexField disabled={ ! position || position?.value === POSITION_STATIC } />
 			<PanelDivider />
 			<OffsetField />
-		</SectionContent>
+		</StyledSectionContent>
 	);
 };
 
@@ -91,5 +79,51 @@ const usePersistDimensions = () => {
 	const styleVariantPath = `styles/${ styleDefID }/${ meta.breakpoint || 'desktop' }/${ meta.state || 'null' }`;
 	const dimensionsPath = `${ styleVariantPath }/dimensions`;
 
-	return useSessionStorage< DimensionsValues >( dimensionsPath );
+	return useSessionStorage< DependentValues >( dimensionsPath );
 };
+
+const withHistoryLabel = ( name: string ) => {
+	return {
+		history: { propDisplayName: name },
+	};
+};
+
+const hasDependentValues = ( values?: DependentValues | null ) => {
+	if ( ! values ) {
+		return false;
+	}
+
+	const dimensions = extractDimensions( values );
+
+	return Object.values( dimensions ).some( ( v ) => v !== null );
+};
+
+const extractDimensions = ( values: DependentValues | null ): DependentValues => {
+	return DEPENDENT_PROP_NAMES.reduce( ( acc, key ) => {
+		return {
+			...acc,
+			[ key ]: values?.[ key ] ?? null,
+		};
+	}, {} );
+};
+
+const StyledSectionContent = styled( SectionContent, {
+	shouldForwardProp: ( prop ) => prop !== 'gap',
+} )< { gap?: number } >( ( { gap = 2, theme } ) => ( {
+	gap: 0,
+	'& > *': {
+		marginBottom: theme.spacing( gap ),
+	},
+	'& > *:last-child': {
+		marginBottom: 0,
+	},
+	'& > .MuiStack-root': {
+		marginBottom: 0,
+	},
+	'& > .MuiStack-root:has(> *)': {
+		marginBottom: theme.spacing( gap ),
+	},
+	'& > .MuiDivider-root': {
+		marginBottom: theme.spacing( gap ),
+	},
+} ) );

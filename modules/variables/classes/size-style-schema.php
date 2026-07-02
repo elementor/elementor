@@ -4,37 +4,43 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Grid_Track_Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Size_Style_Schema {
-	private $blacklist = [
-		'box-shadow',
-		'filter',
-		'backdrop-filter',
-		'transform',
-		'transition',
-	];
+	private const PRO_VERSION_FOR_GRID_TRACK_VARIABLES = '4.2';
 
-	private function ignore( $css_property ): bool {
-		if ( in_array( $css_property, $this->blacklist, true ) ) {
-			return true;
+	private $units_to_skip = [];
+
+	public function __construct() {
+		$this->units_to_skip = [
+			...Size_Constants::angle(),
+			...Size_Constants::time(),
+		];
+	}
+
+	private function skip_by_units( Size_Prop_Type $size_prop_type ) {
+		$settings = $size_prop_type->get_settings();
+
+		if ( ! array_key_exists( 'available_units', $settings ) ) {
+			return false;
 		}
 
-		return false;
+		$available_units = $settings['available_units'];
+
+		return count( array_intersect( $available_units, $this->units_to_skip ) ) > 0;
 	}
 
 	public function augment( array $schema ): array {
 		foreach ( $schema as $css_property => $prop_type ) {
-			if ( $this->ignore( $css_property ) ) {
-				continue;
-			}
-
 			$schema[ $css_property ] = $this->update( $prop_type );
 		}
 
@@ -61,9 +67,25 @@ class Size_Style_Schema {
 		return $prop_type;
 	}
 
-	private function update_size( Size_Prop_Type $size_prop_type ): Union_Prop_Type {
+	private function update_size( Size_Prop_Type $size_prop_type ) {
+		if ( $this->skip_by_units( $size_prop_type ) ) {
+			return $size_prop_type;
+		}
+
+		if (
+			$size_prop_type instanceof Grid_Track_Size_Prop_Type
+			&& ! $this->is_grid_track_variables_supported_by_pro()
+		) {
+			return $size_prop_type;
+		}
+
 		return Union_Prop_Type::create_from( $size_prop_type )
 			->add_prop_type( Size_Variable_Prop_Type::make() );
+	}
+
+	private function is_grid_track_variables_supported_by_pro(): bool {
+		return ElementorUtils::has_pro()
+			&& version_compare( ELEMENTOR_PRO_VERSION, self::PRO_VERSION_FOR_GRID_TRACK_VARIABLES, '>=' );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {

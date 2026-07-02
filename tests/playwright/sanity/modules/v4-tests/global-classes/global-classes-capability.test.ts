@@ -45,7 +45,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 			try {
 				await apiRequests.deleteUser( page.context().request, testUser.id );
-			} catch ( error ) {
+			} catch {
 				// Silently handle cleanup errors - test cleanup should not fail the test
 			}
 

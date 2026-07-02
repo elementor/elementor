@@ -2,15 +2,16 @@
 
 namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
+use Elementor\App\Modules\ImportExportCustomization\Design_System_Import_Context;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
-use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Import_Utils;
 use Elementor\Plugin;
+use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\GlobalClasses\ImportExportUtils\Legacy_Import_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Import extends Import_Runner_Base {
@@ -18,39 +19,41 @@ class Import extends Import_Runner_Base {
 		return 'global-classes';
 	}
 
-	public function should_import( array $data ) {
-		// Same as the site-settings runner.
+	public function should_import( array $data ): bool {
+		$import_context = Design_System_Import_Context::from_data( $data );
+
 		return (
-			isset( $data['include'] ) &&
-			in_array( 'settings', $data['include'], true ) &&
-			! empty( $data['site_settings']['settings'] ) &&
-			! empty( $data['extracted_directory_path'] )
+			$import_context->is_included() &&
+			! empty( $data['extracted_directory_path'] ) &&
+			$this->is_classes_enabled( $data )
 		);
 	}
 
-	public function import( array $data, array $imported_data ) {
-		$kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		$file_name = Import_Export_Customization::FILE_NAME;
-		$global_classes = ImportExportUtils::read_json_file( "{$data['extracted_directory_path']}/{$file_name}.json" );
-
-		if ( ! $kit || ! $global_classes ) {
-			return [];
+	private function is_classes_enabled( array $data ): bool {
+		if ( isset( $data['customization']['settings']['classes'] ) ) {
+			return (bool) $data['customization']['settings']['classes'];
 		}
 
-		$global_classes_result = Global_Classes_Parser::make()->parse( $global_classes );
+		return true;
+	}
 
-		if ( ! $global_classes_result->is_valid() ) {
-			return [];
+	public function import( array $data, array $imported_data ): array {
+		$import_context = Design_System_Import_Context::from_data( $data );
+		$conflict_resolution = $import_context->resolve_conflict_resolution( $data, 'classesOverrideAll' );
+
+		if ( $this->is_legacy_import_format( $data ) ) {
+			$global_classes_file = $data['extracted_directory_path'] . '/' . Import_Export_Customization::FILE_NAME . '.json';
+			return Legacy_Import_Utils::import_classes( $global_classes_file, $conflict_resolution );
 		}
 
-		$global_classes = $global_classes_result->unwrap();
+		$global_classes_dir = $data['extracted_directory_path'] . '/' . Import_Export_Customization::DIRECTORY_NAME;
+		return Import_Utils::import_classes( $global_classes_dir, [ 'conflict_resolution' => $conflict_resolution ] );
+	}
 
-		Global_Classes_Repository::make()->put(
-			$global_classes['items'],
-			$global_classes['order']
-		);
+	protected function is_legacy_import_format( array $data ): bool {
+		$manifest = $data['manifest'];
+		$elementor_version = $manifest['elementor_version'];
 
-		return $global_classes;
+		return version_compare( $elementor_version, '4.1.0-beta1', '<' );
 	}
 }

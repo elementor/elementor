@@ -1,7 +1,12 @@
+import { type LinkPropValue } from '@elementor/editor-props';
+
 import { getContainer } from './sync/get-container';
 import { getElementSetting } from './sync/get-element-setting';
+import { type ExtendedWindow } from './sync/types';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
+
+type LinkValue = LinkPropValue[ 'value' ];
 
 export type LinkInLinkRestriction =
 	| {
@@ -15,23 +20,23 @@ export type LinkInLinkRestriction =
 			elementId?: never;
 	  };
 
-export function getLinkInLinkRestriction( elementId: string ): LinkInLinkRestriction {
+export function getLinkInLinkRestriction( elementId: string, resolvedValue?: LinkValue ): LinkInLinkRestriction {
 	const anchoredDescendantId = getAnchoredDescendantId( elementId );
 
 	if ( anchoredDescendantId ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId: anchoredDescendantId,
 		};
 	}
 
-	const hasInlineLink = checkForInlineLink( elementId );
+	const hasInlineLink = checkForInlineLink( elementId, resolvedValue );
 
 	if ( hasInlineLink ) {
 		return {
-			shouldRestrict: true,
-			reason: 'descendant',
+			shouldRestrict: true as const,
+			reason: 'descendant' as const,
 			elementId,
 		};
 	}
@@ -40,8 +45,8 @@ export function getLinkInLinkRestriction( elementId: string ): LinkInLinkRestric
 
 	if ( ancestor ) {
 		return {
-			shouldRestrict: true,
-			reason: 'ancestor',
+			shouldRestrict: true as const,
+			reason: 'ancestor' as const,
 			elementId: ancestor,
 		};
 	}
@@ -118,7 +123,7 @@ function findElementIdOf( element: Element ): string | null {
 	return element.closest< HTMLElement >( '[data-id]' )?.dataset.id || null;
 }
 
-function checkForInlineLink( elementId: string ): boolean {
+function checkForInlineLink( elementId: string, resolvedValue?: LinkValue ): boolean {
 	const element = getElementDOM( elementId );
 
 	if ( ! element ) {
@@ -129,9 +134,9 @@ function checkForInlineLink( elementId: string ): boolean {
 		return false;
 	}
 
-	const linkSetting = getElementSetting< { value?: { destination?: unknown } } >( elementId, 'link' );
+	const linkSetting = resolvedValue ?? getElementSetting< LinkPropValue >( elementId, 'link' )?.value;
 
-	if ( linkSetting?.value?.destination ) {
+	if ( linkSetting?.destination ) {
 		return false;
 	}
 
@@ -140,10 +145,31 @@ function checkForInlineLink( elementId: string ): boolean {
 
 function getElementDOM( id: string ) {
 	try {
-		return getContainer( id )?.view?.el || null;
+		const fromContainer = getContainer( id )?.view?.el;
+
+		if ( fromContainer ) {
+			return fromContainer;
+		}
+
+		// Inner elements of component instances are rendered from Twig and have
+		// no V1 Backbone view, so getContainer(id) returns null. Fall back to
+		// querying the preview iframe document directly so link-in-link
+		// restriction still works for those elements.
+		return queryPreviewDOMByElementId( id );
 	} catch {
 		return null;
 	}
+}
+
+function queryPreviewDOMByElementId( id: string ): HTMLElement | null {
+	const previewDocument = ( window as unknown as ExtendedWindow ).elementor?.getPreviewContainer?.()?.view?.el
+		?.ownerDocument;
+
+	if ( ! previewDocument ) {
+		return null;
+	}
+
+	return previewDocument.querySelector< HTMLElement >( `[data-id="${ id }"]` );
 }
 
 function isElementorElement( element: Element ): boolean {

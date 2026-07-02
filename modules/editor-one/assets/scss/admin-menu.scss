@@ -168,3 +168,13 @@
 #menu-posts-elementor_library {
 	display: none !important;
 }
+
+[class*="branch-7"] {
+	#adminmenu {
+		--editor-one-flyout-menu-bg: rgb(12.15, 12.15, 12.15);
+        --editor-one-flyout-menu-bg-level-4: rgb(12.15, 12.15, 12.15);
+        --editor-one-flyout-menu-bg-hover: rgb(12.15, 12.15, 12.15);
+        --editor-one-flyout-menu-bg-hover-alt: rgb(12.15, 12.15, 12.15);
+        --editor-one-flyout-menu-text-hover: rgb(123, 144, 255);
+	}
+}

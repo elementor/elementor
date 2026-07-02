@@ -1,16 +1,13 @@
-import { getMCPByDomain } from '@elementor/editor-mcp';
+import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { initClassesResource } from './classes-resource';
 import initMcpApplyUnapplyGlobalClasses from './mcp-apply-unapply-global-classes';
-import { initCreateGlobalClass } from './mcp-create-global-class';
 import initMcpApplyGetGlobalClassUsages from './mcp-get-global-class-usages';
-import { initModifyGlobalClass } from './mcp-modify-global-class';
+import { initManageGlobalClasses } from './mcp-manage-global-classes';
 
-export const initMcpIntegration = () => {
-	const reg = getMCPByDomain( 'canvas' );
+export const initMcpIntegration = ( reg: MCPRegistryEntry, canvasMcpEntry: MCPRegistryEntry ) => {
 	initMcpApplyUnapplyGlobalClasses( reg );
 	initMcpApplyGetGlobalClassUsages( reg );
-	initCreateGlobalClass( reg );
-	initModifyGlobalClass( reg );
-	initClassesResource();
+	initManageGlobalClasses( reg );
+	initClassesResource( reg, canvasMcpEntry );
 };

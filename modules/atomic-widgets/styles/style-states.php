@@ -7,8 +7,10 @@ class Style_States {
 	const ACTIVE = 'active';
 	const FOCUS = 'focus';
 	const FOCUS_VISIBLE = 'focus-visible';
+	const CHECKED = 'checked';
 
 	const SELECTED = 'e--selected';
+	const DISABLED = 'e--disabled';
 
 	private static function get_pseudo_states(): array {
 		return [
@@ -16,12 +18,14 @@ class Style_States {
 			self::ACTIVE,
 			self::FOCUS,
 			self::FOCUS_VISIBLE,
+			self::CHECKED,
 		];
 	}
 
 	private static function get_class_states(): array {
 		return [
 			self::SELECTED,
+			self::DISABLED,
 		];
 	}
 
@@ -90,6 +94,19 @@ class Style_States {
 			'selected' => [
 				'name' => 'selected',
 				'value' => self::SELECTED,
+			],
+			'disabled' => [
+				'name' => 'disabled',
+				'value' => self::DISABLED,
+			],
+		];
+	}
+
+	public static function get_pseudo_states_map(): array {
+		return [
+			'checked' => [
+				'name' => 'checked',
+				'value' => self::CHECKED,
 			],
 		];
 	}
