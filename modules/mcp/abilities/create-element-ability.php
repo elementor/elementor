@@ -139,6 +139,11 @@ class Create_Element_Ability extends Abstract_Ability {
 			return $save_result;
 		}
 
+		if ( ! $save_result ) {
+			return new \WP_Error('save_failed', __( 'Could not save document', 'elementor' ),
+			[ 'status' => \WP_Http::INTERNAL_SERVER_ERROR ]);
+		}
+
 		$post = get_post( $post_id );
 
 		return [
