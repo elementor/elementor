@@ -96,6 +96,31 @@ class Test_Create_Element_Ability extends Elementor_Test_Base {
 		$this->assertSame( \WP_Http::NOT_FOUND, $result->get_error_data()['status'] );
 	}
 
+	public function test_execute__returns_403_when_user_cannot_edit_post() {
+		// Arrange
+		$this->act_as_admin();
+		$this->stub_type_registries_with_widget_type( 'e-heading' );
+
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft', 'post_type' => 'page' ] );
+
+		$mock_document = $this->createMock( Document::class );
+		$mock_document->method( 'get_elements_data' )->willReturn( [] );
+		$mock_document->method( 'get_main_id' )->willReturn( $post_id );
+		$this->stub_documents_returning( $mock_document );
+
+		$ability = new Create_Element_Ability( $this->make_noop_mutator() );
+
+		wp_set_current_user( $this->factory()->user->create( [ 'role' => 'subscriber' ] ) );
+
+		// Act
+		$result = $ability->execute( [ 'post_id' => $post_id, 'element' => [ 'type' => 'e-heading' ] ] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_forbidden', $result->get_error_code() );
+		$this->assertSame( \WP_Http::FORBIDDEN, $result->get_error_data()['status'] );
+	}
+
 	// execute() — document resolution
 
 	public function test_execute__uses_auto_save_when_available() {

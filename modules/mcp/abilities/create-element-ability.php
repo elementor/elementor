@@ -116,6 +116,14 @@ class Create_Element_Ability extends Abstract_Ability {
 			);
 		}
 
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error(
+				'elementor_forbidden',
+				__( 'You do not have permission to edit this post.', 'elementor' ),
+				[ 'status' => \WP_Http::FORBIDDEN ]
+			);
+		}
+
 		$tree = $document->get_elements_data();
 		$tree = is_array( $tree ) ? $tree : [];
 
