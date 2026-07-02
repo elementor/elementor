@@ -6,13 +6,11 @@ import { WhatsNewItemChips } from './whats-new-item-chips';
 
 export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 	const [ expanded, setExpanded ] = useState( false );
-	const [ showPreview, setShowPreview ] = useState( true );
 
 	const handleToggle = () => {
 		if ( ! expanded && isNew && onSeen ) {
 			onSeen();
 		}
-		setShowPreview( false );
 		setExpanded( ! expanded );
 	};
 
@@ -52,24 +50,6 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
-					{ item.description && (
-						<Typography
-							variant="body2"
-							color="text.secondary"
-							sx={ {
-								display: '-webkit-box',
-								WebkitLineClamp: 2,
-								WebkitBoxOrient: 'vertical',
-								overflow: 'hidden',
-								opacity: showPreview ? 1 : 0,
-								maxHeight: showPreview ? '4em' : 0,
-								mt: showPreview ? 0.5 : 0,
-								transition: 'opacity 0.2s ease, max-height 0.25s ease, margin-top 0.2s ease',
-							} }
-						>
-							{ item.description }
-						</Typography>
-					) }
 				</Box>
 				<ChevronDownIcon
 					sx={ {
@@ -82,7 +62,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 					} }
 				/>
 			</Box>
-			<Collapse in={ expanded } onExited={ () => setShowPreview( true ) }>
+			<Collapse in={ expanded }>
 				<Box sx={ { pb: 2, paddingInlineStart: 1 } }>
 					<WhatsNewItemMedia item={ item } />
 					<WhatsNewItemChips
