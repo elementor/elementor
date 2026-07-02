@@ -7,6 +7,7 @@ test( 'navigator empty placeholder should be in dark mode', async ( { page, apiR
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
+	
 	// Act.
 	await editor.addElement( { elType: 'container' }, 'document' );
 	await editor.setDisplayMode( 'dark' );
