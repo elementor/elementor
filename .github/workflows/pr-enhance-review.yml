@@ -106,6 +106,38 @@ jobs:
           PR_BASE_SHA: ${{ steps.pr-info.outputs.pr_base_sha }}
         run: |
           echo "Starting PR review with 3-minute timeout..."
+
+          REAL_GH="$(command -v gh)"
+          mkdir -p "$HOME/bin"
+          cat > "$HOME/bin/gh" << EOF
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          real_gh="${REAL_GH}"
+
+          if [[ "\$1" == "pr" && "\$2" == "review" ]]; then
+            echo "ERROR: PR review submissions are forbidden for the review agent. Use gh pr comment or inline comments instead." >&2
+            exit 1
+          fi
+
+          if [[ "\$1" == "api" ]]; then
+            api_args=("\${@:2}")
+            for arg in "\${api_args[@]}"; do
+              if [[ "\$arg" == *"/pulls/"*"/reviews"* ]]; then
+                for event_arg in "\${api_args[@]}"; do
+                  if [[ "\$event_arg" == "event=APPROVE" || "\$event_arg" == "event=REQUEST_CHANGES" || "\$event_arg" == "event=COMMENT" ]]; then
+                    echo "ERROR: Pull request review submissions are forbidden for the review agent. Use gh pr comment or inline comments instead." >&2
+                    exit 1
+                  fi
+                done
+              fi
+            done
+          fi
+
+          exec "\$real_gh" "\$@"
+          EOF
+          chmod +x "$HOME/bin/gh"
+          export PATH="$HOME/bin:$PATH"
           
           cd $GITHUB_WORKSPACE
           if [ ! -f ".github/pr-instructions/pr-review-prompt.md" ]; then
