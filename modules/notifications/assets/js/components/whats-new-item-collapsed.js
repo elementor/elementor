@@ -6,11 +6,13 @@ import { WhatsNewItemChips } from './whats-new-item-chips';
 
 export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 	const [ expanded, setExpanded ] = useState( false );
+	const [ showPreview, setShowPreview ] = useState( true );
 
 	const handleToggle = () => {
 		if ( ! expanded && isNew && onSeen ) {
 			onSeen();
 		}
+		setShowPreview( false );
 		setExpanded( ! expanded );
 	};
 
@@ -50,7 +52,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
-					{ ! expanded && item.description && (
+					{ showPreview && item.description && (
 						<Typography
 							variant="body2"
 							color="text.secondary"
@@ -77,7 +79,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen } ) => {
 					} }
 				/>
 			</Box>
-			<Collapse in={ expanded }>
+			<Collapse in={ expanded } onExited={ () => setShowPreview( true ) }>
 				<Box sx={ { pb: 2, paddingInlineStart: 1 } }>
 					<WhatsNewItemMedia item={ item } />
 					<WhatsNewItemChips
