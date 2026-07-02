@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Preserves_Children_Subtree;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Preserves_Children_Subtree;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\Base;
+namespace Elementor\Modules\AtomicWidgets\Elements\Promotions;
 
 use Elementor\Plugin;
 

@@ -1,7 +1,7 @@
 <?php
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Promotion;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Preserved_Element;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Preserved_Element;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

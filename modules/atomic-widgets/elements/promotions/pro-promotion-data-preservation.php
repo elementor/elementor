@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\Base;
+namespace Elementor\Modules\AtomicWidgets\Elements\Promotions;
 
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -12,11 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Pro_Promotion_Data_Preservation {
 
 	public function register_hooks(): void {
+		if ( Utils::has_pro() ) {
+			return;
+		}
+
 		add_filter( 'elementor/document/save/data', fn ( $data, $document ) => $this->preserve( $data, $document ), 10, 2 );
 	}
 
 	public function preserve( $data, $document ) {
-		if ( Utils::has_pro() || empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
+		if ( empty( $data['elements'] ) || ! is_array( $data['elements'] ) ) {
 			return $data;
 		}
 
