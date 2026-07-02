@@ -56,7 +56,6 @@ export class EditorOneEventManager {
 	static createBasePayload( overrides = {} ) {
 		const config = this.getConfig();
 		return {
-			app_type: config?.appTypes?.editor ?? 'editor',
 			window_name: config?.appTypes?.editor ?? 'editor',
 			...overrides,
 		};
