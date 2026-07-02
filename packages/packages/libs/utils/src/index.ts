@@ -12,3 +12,4 @@ export { capitalize } from './string-helpers';
 export { compareVersions, isVersionLessThan, isVersionGreaterOrEqual } from './version';
 export { hasProInstalled, isProActive, isProAtLeast } from './is-pro';
 export { createTranslate } from './translations';
+export { ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY } from './onboarding-site-builder-handoff';

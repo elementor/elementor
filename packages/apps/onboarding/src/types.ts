@@ -62,6 +62,8 @@ export interface OnboardingConfig {
 	steps: Step[];
 	isConnected: boolean;
 	shouldShowProInstallScreen: boolean;
+	shouldRedirectToSitePlanner?: boolean;
+	siteBuilderUrl?: string;
 	urls: {
 		dashboard: string;
 		editor: string;
@@ -91,6 +93,8 @@ export interface OnboardingState {
 	userName: string;
 	shouldShowProInstallScreen: boolean;
 	hasProInstallScreenDismissed: boolean;
+	shouldRedirectToSitePlanner: boolean;
+	siteBuilderUrl: string;
 	urls: {
 		dashboard: string;
 		editor: string;

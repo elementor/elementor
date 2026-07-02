@@ -51,6 +51,7 @@ class Module extends BaseModule {
 
 		Plugin::instance()->data_manager_v2->register_controller( new Controller() );
 
+		add_action( 'admin_init', [ $this, 'maybe_redirect_abandoned_onboarding_to_site_planner' ], 5 );
 		add_action( 'elementor/init', [ $this, 'on_elementor_init' ], 12 );
 
 		if ( $this->should_show_starter() ) {
@@ -122,6 +123,8 @@ class Module extends BaseModule {
 			'uiTheme' => $this->get_ui_theme_preference(),
 			'translations' => $this->get_translated_strings(),
 			'shouldShowProInstallScreen' => $is_connected ? $this->should_show_pro_install_screen() : false,
+			'shouldRedirectToSitePlanner' => $this->should_redirect_to_site_planner(),
+			'siteBuilderUrl' => $this->get_site_builder_url(),
 			'urls' => [
 				'dashboard' => admin_url(),
 				'editor' => admin_url( 'edit.php?post_type=elementor_library' ),
@@ -357,5 +360,86 @@ class Module extends BaseModule {
 		$is_active = in_array( $active_theme, Install_Theme::ALLOWED_THEMES, true );
 
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_theme_active', $is_active );
+	}
+
+	public function should_redirect_to_site_planner(): bool {
+		return Plugin::instance()->experiments->is_feature_active( 'site-builder' )
+			&& '' !== $this->get_site_builder_url();
+	}
+
+	public function get_site_builder_url(): string {
+		if (
+			defined( 'ELEMENTOR_SITE_BUILDER_URL' )
+			&& is_string( ELEMENTOR_SITE_BUILDER_URL )
+			&& '' !== ELEMENTOR_SITE_BUILDER_URL
+		) {
+			return ELEMENTOR_SITE_BUILDER_URL;
+		}
+
+		return '';
+	}
+
+	public function maybe_redirect_abandoned_onboarding_to_site_planner(): void {
+		if ( ! $this->should_redirect_to_site_planner() ) {
+			return;
+		}
+
+		if ( self::has_user_finished_onboarding() ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( wp_doing_ajax() || wp_doing_cron() ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+		if ( 'elementor-app' === $page ) {
+			return;
+		}
+
+		if ( ! $this->is_onboarding_escape_target_screen() ) {
+			return;
+		}
+
+		$progress = $this->progress_manager->get_progress();
+
+		if ( null === $progress->get_started_at() ) {
+			return;
+		}
+
+		$progress->set_exit_type( 'user_exit' );
+		$this->progress_manager->save_progress( $progress );
+
+		wp_safe_redirect( $this->get_site_builder_url() );
+		exit;
+	}
+
+	private function is_onboarding_escape_target_screen(): bool {
+		global $pagenow;
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$post_type = isset( $_GET['post_type'] ) ? sanitize_key( wp_unslash( $_GET['post_type'] ) ) : '';
+
+		if ( 'index.php' === $pagenow ) {
+			return true;
+		}
+
+		if ( 'post.php' === $pagenow && 'elementor' === $action ) {
+			return true;
+		}
+
+		if ( 'edit.php' === $pagenow && 'elementor_library' === $post_type ) {
+			return true;
+		}
+
+		return false;
 	}
 }

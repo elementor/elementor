@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\App\Modules\Onboarding;
 
 use Elementor\App\Modules\Onboarding\Module;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use ReflectionMethod;
 
@@ -117,5 +118,76 @@ class Test_Module extends Test_Base {
 		$method->setAccessible( true );
 
 		return $method->invoke( $module );
+	}
+
+	public function test_onboarding_config_includes_planner_exit_when_site_builder_active_and_url_configured() {
+		if ( ! defined( 'ELEMENTOR_SITE_BUILDER_URL' ) || '' === ELEMENTOR_SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is not defined in this environment.' );
+		}
+
+		$this->activate_site_builder_experiment();
+
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+			$this->assertTrue( $settings['shouldRedirectToSitePlanner'] );
+			$this->assertSame( ELEMENTOR_SITE_BUILDER_URL, $settings['siteBuilderUrl'] );
+		} finally {
+			$this->deactivate_site_builder_experiment();
+		}
+	}
+
+	public function test_onboarding_config_excludes_planner_exit_when_url_not_configured() {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) && '' !== ELEMENTOR_SITE_BUILDER_URL ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is defined in this environment.' );
+		}
+
+		$this->activate_site_builder_experiment();
+
+		try {
+			$_GET['page'] = 'elementor-app';
+			do_action( 'elementor/init' );
+
+			$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+			$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
+			$this->assertSame( '', $settings['siteBuilderUrl'] );
+		} finally {
+			$this->deactivate_site_builder_experiment();
+		}
+	}
+
+	public function test_get_site_builder_url_returns_empty_when_constant_undefined() {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_URL' ) ) {
+			$this->markTestSkipped( 'ELEMENTOR_SITE_BUILDER_URL is defined in this environment.' );
+		}
+
+		$module = new Module();
+		$method = new ReflectionMethod( $module, 'get_site_builder_url' );
+		$method->setAccessible( true );
+
+		$this->assertSame( '', $method->invoke( $module ) );
+	}
+
+	public function test_onboarding_config_excludes_planner_exit_when_site_builder_inactive() {
+		$this->deactivate_site_builder_experiment();
+
+		$_GET['page'] = 'elementor-app';
+		do_action( 'elementor/init' );
+
+		$settings = Plugin::$instance->app->get_settings( 'onboarding' );
+
+		$this->assertFalse( $settings['shouldRedirectToSitePlanner'] );
+	}
+
+	private function activate_site_builder_experiment(): void {
+		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_ACTIVE );
+	}
+
+	private function deactivate_site_builder_experiment(): void {
+		Plugin::$instance->experiments->set_feature_default_state( 'site-builder', Experiments_Manager::STATE_INACTIVE );
 	}
 }

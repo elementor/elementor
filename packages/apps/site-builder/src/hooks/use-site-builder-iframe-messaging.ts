@@ -41,7 +41,34 @@ function sendReferrerInfo(
 					url: window.location.href,
 					elementorAiCurrentContext: getElementorAiCurrentContext(),
 				},
-				user: { isAdmin: config?.isAdmin ?? false },
+				user: {
+					isAdmin: config?.isAdmin ?? false,
+					isConnected: config?.isConnected ?? false,
+				},
+				products: {
+					core: {
+						version: '',
+					},
+					pro: {
+						isPro: config?.isPro ?? false,
+						accessLevel: String( config?.accessLevel ?? '' ),
+						accessTier: config?.accessTier ?? '',
+					},
+					ai: {
+						config: {
+							usage: {},
+						},
+						hasSubscription: false,
+						usagePercentage: 0,
+						subscription: {
+							id: '',
+							type: '',
+							usedQuota: 0,
+							quota: 0,
+							status: '',
+						},
+					},
+				},
 				siteBuilderParams,
 			},
 		},

@@ -10,6 +10,7 @@ import { useElementorConnect } from '../hooks/use-elementor-connect';
 import { useInstallTheme } from '../hooks/use-install-theme';
 import { useOnboarding } from '../hooks/use-onboarding';
 import { useOnboardingEvent } from '../hooks/use-onboarding-event';
+import { useOnboardingExitListener } from '../hooks/use-onboarding-exit-listener';
 import { useUpdateChoices } from '../hooks/use-update-choices';
 import { useUpdateProgress } from '../hooks/use-update-progress';
 import { useVideoPreload } from '../hooks/use-video-preload';
@@ -22,6 +23,9 @@ import { SiteFeatures } from '../steps/screens/site-features';
 import { ThemeSelection } from '../steps/screens/theme-selection';
 import { getStepVisualConfig } from '../steps/step-visuals';
 import { StepId } from '../types';
+import { getOnboardingConfig } from '../utils/get-config';
+import { getOnboardingExitUrl } from '../utils/get-onboarding-exit-url';
+import { redirectToSitePlanner } from '../utils/redirect-to-site-planner';
 import { t } from '../utils/translations';
 import { useToast } from './toast/toast-context';
 import { BaseLayout } from './ui/base-layout';
@@ -70,6 +74,8 @@ export function AppContent( { onClose }: AppContentProps ) {
 		actions,
 		isGuest,
 	} = useOnboarding();
+
+	useOnboardingExitListener( choices );
 
 	const [ isCompleting, setIsCompleting ] = useState( false );
 	const isCompletingRef = useRef( false );
@@ -188,10 +194,20 @@ export function AppContent( { onClose }: AppContentProps ) {
 			{
 				onSuccess: () => {
 					actions.setExitType( 'user_exit' );
+
+					if ( redirectToSitePlanner( choices ) ) {
+						return;
+					}
+
 					onClose?.();
 				},
 				onError: () => {
 					actions.setExitType( 'user_exit' );
+
+					if ( redirectToSitePlanner( choices ) ) {
+						return;
+					}
+
 					onClose?.();
 				},
 			}
@@ -209,13 +225,22 @@ export function AppContent( { onClose }: AppContentProps ) {
 	}
 
 	const redirectToNewPage = useCallback( () => {
-		const redirectUrl = urls.createNewPage || urls.editor || urls.dashboard;
+		const config = getOnboardingConfig();
+		const redirectUrl = config
+			? getOnboardingExitUrl( config )
+			: urls.createNewPage || urls.editor || urls.dashboard;
 		const mp = getMixpanel().getMixpanelInstance?.() as
 			| { request_batchers?: { events?: { flush: () => void } } }
 			| undefined;
 		mp?.request_batchers?.events?.flush?.();
+
+		if ( config?.shouldRedirectToSitePlanner ) {
+			redirectToSitePlanner( choices );
+			return;
+		}
+
 		window.location.href = redirectUrl;
-	}, [ urls ] );
+	}, [ choices, urls ] );
 
 	const completeAndRedirect = useCallback( () => {
 		updateProgress.mutate(

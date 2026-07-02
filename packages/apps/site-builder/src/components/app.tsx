@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY } from '@elementor/utils';
 import apiFetch from '@wordpress/api-fetch';
 
 import { isValidConnectAuth } from '../connect-auth-schema';
@@ -58,6 +59,23 @@ export function App() {
 		};
 
 		fetchConnectAuth();
+	}, [] );
+
+	useEffect( () => {
+		if ( window.opener ) {
+			return;
+		}
+
+		try {
+			const storedParams = sessionStorage.getItem( ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY );
+
+			if ( storedParams ) {
+				setSiteBuilderParams( JSON.parse( storedParams ) as SiteBuilderParams );
+				sessionStorage.removeItem( ONBOARDING_SITE_BUILDER_PARAMS_STORAGE_KEY );
+			}
+		} catch {
+			// sessionStorage may be unavailable or contain invalid JSON.
+		}
 	}, [] );
 
 	useEffect( () => {

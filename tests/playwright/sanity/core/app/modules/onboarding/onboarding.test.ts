@@ -352,4 +352,17 @@ test.describe( 'Onboarding @onboarding', () => {
 		await expect( page.getByTestId( 'site-features-step' ) ).toBeVisible();
 		await expect( page.getByTestId( 'theme-selection-step' ) ).toBeHidden();
 	} );
+
+	test.skip( 'Onboarding completion redirects to site-builder when site-builder experiment is active', async ( { page } ) => {
+		await page.goto( ONBOARDING_URL );
+		await page.getByRole( 'link', { name: 'Continue as a guest' } ).click();
+		await page.getByRole( 'button', { name: 'Just exploring' } ).click();
+		await page.getByRole( 'button', { name: 'Small-Med Business' } ).click();
+		await page.getByRole( 'button', { name: 'Continue' } ).click();
+		await page.getByRole( 'button', { name: 'I have some experience' } ).click();
+		await page.getByRole( 'button', { name: 'Continue with this theme' } ).click();
+		await page.getByRole( 'button', { name: 'Continue with free features' } ).click();
+
+		await expect( page ).toHaveURL( /#site-builder/ );
+	} );
 } );
