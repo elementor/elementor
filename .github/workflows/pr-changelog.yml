@@ -5,13 +5,18 @@ on:
     types: [closed]
     branches: [main]
 
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: product-changelog-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   product-changelog:
     if: github.event.pull_request.merged == true && startsWith(github.repository, 'elementor/')
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
 
     steps:
       - uses: actions/checkout@v6
@@ -128,6 +133,21 @@ jobs:
             exit 0
           fi
 
+          if [ -z "$DESCRIPTION" ] || [ "$DESCRIPTION" = "null" ]; then
+            echo "⏭️  No description in AI response, skipping"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          case "$PRODUCT" in
+            Elementor|Editor|"Elementor AI"|"Cloud Library"|"Design System"|"Site Navigation"|Interactions|Widgets)
+              ;;
+            *)
+              echo "⚠️  Invalid product '$PRODUCT', defaulting to Elementor"
+              PRODUCT="Elementor"
+              ;;
+          esac
+
           echo "✅ Generated entry: $TITLE (product: $PRODUCT)"
 
           PR_BODY=$(cat /tmp/pr.json | jq -r '.body // ""')
@@ -164,12 +184,35 @@ jobs:
           mv "$TEMP_FILE" CHANGELOG-PRODUCT.md
 
           echo "should_notify=true" >> $GITHUB_OUTPUT
-          echo "title=$TITLE" >> $GITHUB_OUTPUT
-          echo "description=$DESCRIPTION" >> $GITHUB_OUTPUT
-          echo "product=$PRODUCT" >> $GITHUB_OUTPUT
+          {
+            echo "title<<EOF"
+            echo "$TITLE"
+            echo "EOF"
+            echo "description<<EOF"
+            echo "$DESCRIPTION"
+            echo "EOF"
+            echo "product=$PRODUCT"
+          } >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.update.outputs.should_notify == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet CHANGELOG-PRODUCT.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git add CHANGELOG-PRODUCT.md
+          git commit -m "chore: update product changelog from PR #${{ steps.pr.outputs.pr_number }} [skip ci]"
+          git pull --rebase
+          git push
 
       - name: Notify Slack
         if: steps.update.outputs.should_notify == 'true'
+        continue-on-error: true
         run: |
           TITLE="${{ steps.update.outputs.title }}"
           DESCRIPTION="${{ steps.update.outputs.description }}"
@@ -269,22 +312,6 @@ jobs:
             cat /tmp/slack_response.json
             exit 1
           fi
-
-      - name: Commit changes
-        if: steps.update.outputs.should_notify == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git diff --quiet CHANGELOG-PRODUCT.md; then
-            echo "No changes to commit"
-            exit 0
-          fi
-
-          git add CHANGELOG-PRODUCT.md
-          git commit -m "chore: update product changelog from PR #${{ steps.pr.outputs.pr_number }} [skip ci]"
-          git pull --rebase
-          git push
 
       - name: Notify Slack on failure
         if: failure()

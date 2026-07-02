@@ -130,6 +130,18 @@ Why it's bad: The title doesn't tell users WHAT the feature does.
 }
 ```
 
+## Edge Cases
+
+### Chore-only PR (skip):
+A PR titled `chore: update Playwright config` that only touches `.github/workflows/playwright.yml` and `tests/playwright/` → skip. CI and test infrastructure changes are never product-facing.
+
+### Feature PR (include):
+A PR titled `feat: add nested tabs widget` touching `modules/nested-tabs/` and `includes/widgets/` → include with product `"Widgets"`. New user-visible widgets always qualify.
+
+### Partial `packages/` changes (evaluate carefully):
+A PR that bumps versions in `packages/packages/core/editor/CHANGELOG.md` only → skip (release housekeeping).
+A PR that changes editor behavior in `packages/packages/core/editor-canvas/src/` with corresponding UI impact → include with product `"Editor"`. Read the diff and PR body to determine whether the package change reaches users.
+
 ## Context You'll Receive
 
 - PR title
