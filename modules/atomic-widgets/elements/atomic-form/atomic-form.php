@@ -80,6 +80,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		return 'eicon-atomic-form';
 	}
 
+	public static function get_base_props_schema(): array {
+		return self::define_props_schema();
+	}
+
 	protected static function define_props_schema(): array {
 		$submissions_metadata_dependencies = Dependency_Manager::make()
 			->where( [
