@@ -1,10 +1,11 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\Elements\Promotions\Preserves_Children_Subtree;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -13,11 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Form_Promotion extends Atomic_Element_Base {
+class Collection_Loop_Promotion extends Atomic_Element_Base {
 	use Has_Element_Template;
 	use Preserves_Children_Subtree;
 
 	const BASE_STYLE_KEY = 'base';
+
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
@@ -25,7 +27,7 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 	}
 
 	public static function get_type() {
-		return 'e-form';
+		return 'e-collection-loop';
 	}
 
 	public static function get_element_type(): string {
@@ -33,15 +35,18 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Form', 'elementor' );
+		return esc_html__( 'Loop', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'eicon-atomic-form';
+		return 'eicon-loop-widget';
 	}
 
 	protected static function define_props_schema(): array {
-		return Atomic_Form::get_base_props_schema();
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+		];
 	}
 
 	protected function define_atomic_controls(): array {
@@ -71,7 +76,7 @@ class Atomic_Form_Promotion extends Atomic_Element_Base {
 
 	protected function get_templates(): array {
 		return [
-			'elementor/elements/atomic-form-promotion' => __DIR__ . '/atomic-form-promotion.html.twig',
+			'elementor/elements/collection-loop-promotion' => __DIR__ . '/collection-loop-promotion.html.twig',
 		];
 	}
 }
