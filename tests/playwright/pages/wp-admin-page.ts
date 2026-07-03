@@ -1,10 +1,10 @@
 import { type APIRequestContext, type Page, Response, type TestInfo } from '@playwright/test';
+import ApiRequests from '../assets/api-requests';
+import { wpCli } from '../assets/wp-cli';
+import { timeouts } from '../config/timeouts';
+import { ElementorType, WindowType } from '../types/types';
 import BasePage from './base-page';
 import EditorPage from './editor-page';
-import { ElementorType, WindowType } from '../types/types';
-import { wpCli } from '../assets/wp-cli';
-import ApiRequests from '../assets/api-requests';
-import { timeouts } from '../config/timeouts';
 let elementor: ElementorType;
 
 export default class WpAdminPage extends BasePage {
@@ -435,6 +435,10 @@ export default class WpAdminPage extends BasePage {
 			const editorSessionId = window.EDITOR_SESSION_ID;
 			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
 		} );
+
+		if ( await this.page.getByTestId( 'e-angie-guide-card' ).isVisible() ) {
+			await this.page.getByRole( 'button', { name: 'Try for free' } ).click();
+		}
 	}
 
 	/**
