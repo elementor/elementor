@@ -436,8 +436,9 @@ export default class WpAdminPage extends BasePage {
 			window.sessionStorage.setItem( 'ai_promotion_introduction_editor_session_key', editorSessionId );
 		} );
 
-		if ( await this.page.getByTestId( 'e-angie-guide-card' ).isVisible() ) {
-			await this.page.getByRole( 'button', { name: 'Try for free' } ).click();
+		const angieGuideCard = this.page.getByTestId( 'e-angie-guide-card' );
+		if ( await angieGuideCard.isVisible() ) {
+			await angieGuideCard.getByRole( 'button', { name: 'Close' } ).click();
 		}
 	}
 
