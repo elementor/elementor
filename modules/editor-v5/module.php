@@ -65,9 +65,6 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			'dependencies' => [
-				Atomic_Widgets_Module::EXPERIMENT_NAME,
-			],
 		];
 	}
 
