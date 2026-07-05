@@ -60,8 +60,10 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         shardTotal: [17]
         include:
-          - shardIndex: "plugin_tester_section"
-          - shardIndex: "plugin_tester_container"
+          - shardIndex: "plugin_tester_section_1"
+          - shardIndex: "plugin_tester_section_2"
+          - shardIndex: "plugin_tester_container_1"
+          - shardIndex: "plugin_tester_container_2"
           - shardIndex: "elements-regression-core"
           - shardIndex: "elements-regression-atomic"
     steps:
@@ -101,8 +103,8 @@ jobs:
 
       - name: Update snapshots
         if: ${{
-          matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section' &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_container_') &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_section_') &&
           matrix.shardIndex != 'elements-regression-core' &&
           matrix.shardIndex != 'elements-regression-atomic'
           }}
@@ -116,24 +118,30 @@ jobs:
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Update plugin tester container snapshots
-        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
           npm run test:playwright -- \
             --update-snapshots \
-            --grep="@plugin_tester_container"
+            --grep="@plugin_tester_container" \
+            --shard=${SHARD_NUM}/2
 
       - name: Update plugin tester section snapshots
-        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
           npm run test:playwright -- \
             --update-snapshots \
-            --grep="@plugin_tester_section"
+            --grep="@plugin_tester_section" \
+            --shard=${SHARD_NUM}/2
 
       - name: Update elements regression core snapshots
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}

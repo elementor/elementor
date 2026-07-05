@@ -32,7 +32,6 @@ describe( 'EditorOneEventManager wpdash menu events', () => {
 
 		// Assert
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'wpdash_elementor_menu_click', {
-			app_type: 'editor',
 			window_name: 'wpdash',
 			interaction_type: 'click',
 			target_type: 'wpdash_admin_menu_item',
@@ -51,7 +50,6 @@ describe( 'EditorOneEventManager wpdash menu events', () => {
 
 		// Assert
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'wpdash_editor_sub_menu_hover', {
-			app_type: 'editor',
 			window_name: 'wpdash',
 			interaction_type: 'hover',
 			target_type: 'wpdash_editor_menu',
@@ -70,7 +68,6 @@ describe( 'EditorOneEventManager wpdash menu events', () => {
 
 		// Assert
 		expect( dispatchEvent ).toHaveBeenCalledWith( 'wpdash_theme_builder_click', {
-			app_type: 'editor',
 			window_name: 'wpdash',
 			interaction_type: 'click',
 			target_type: 'wpdash_sub_menu_item',
