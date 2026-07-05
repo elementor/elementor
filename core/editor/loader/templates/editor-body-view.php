@@ -30,6 +30,9 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	esc_html( get_the_title() )
 ); ?></h1>
 
+<?php if ( class_exists( '\Elementor\Modules\EditorV5\Module' ) && \Elementor\Modules\EditorV5\Module::should_use_v5() ) : ?>
+<div id="elementor-editor-wrapper-v5" class="elementor-editor-v5"></div>
+<?php else : ?>
 <div id="elementor-editor-wrapper-v2"></div>
 
 <div id="elementor-editor-wrapper">
@@ -47,3 +50,4 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	</main>
 	<aside id="elementor-navigator" aria-labelledby="elementor-navigator__header__title"></aside>
 </div>
+<?php endif; ?>

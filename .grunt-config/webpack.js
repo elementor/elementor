@@ -126,6 +126,7 @@ const entry = {
 	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader': path.resolve( __dirname, '../core/editor/loader/js/editor-loader.js' ),
+	'editor-v5-loader': path.resolve( __dirname, '../core/editor/loader/js/editor-v5-loader.js' ),
 	'editor-environment': path.resolve( __dirname, '../core/editor/loader/js/editor-environment.js' ),
 	'responsive-bar': path.resolve( __dirname, '../assets/dev/js/editor/regions/responsive-bar/index.js' ),
 	'ai': path.resolve( __dirname, '../modules/ai/assets/js/editor/index.js' ),

@@ -117,6 +117,7 @@ class Modules_Manager {
 			'kit-elements-defaults',
 			'announcements',
 			'editor-app-bar',
+			'editor-v5',
 			'site-navigation',
 			'styleguide',
 			'element-cache',
