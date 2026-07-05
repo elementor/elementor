@@ -29,10 +29,6 @@ class Global_Classes_Repository {
 			'frontend' => self::CONTEXT_FRONTEND,
 			'preview' => self::CONTEXT_PREVIEW,
 		],
-		'meta_key' => [
-			'frontend' => self::META_KEY_FRONTEND,
-			'preview' => self::META_KEY_PREVIEW,
-		],
 	];
 
 	private ?Global_Classes $cache = null;
@@ -88,14 +84,6 @@ class Global_Classes_Repository {
 
 		$labels->set_labels( $existing_labels );
 
-		if ( ! $this->is_preview() ) {
-			Global_Classes_Order::make( $this->get_kit() )
-				->set_preview( true )
-				->set_order( $order );
-
-			$this->clear_preview_labels_for_ids( array_keys( $new_labels ) );
-		}
-
 		$this->cache = null;
 	}
 
@@ -104,7 +92,7 @@ class Global_Classes_Repository {
 	}
 
 	public function get( string $class_id ): ?array {
-		$post = Global_Class_Post::find_by_class_id( $class_id, $this->is_preview() );
+		$post = Global_Class_Post::find_by_class_id( $class_id, $this->is_preview(), $this->get_kit() );
 
 		return $post ? $post->to_array() : null;
 	}
@@ -443,7 +431,7 @@ class Global_Classes_Repository {
 		$order = $this->get_order();
 
 		$this->each_class_id_batch( $order, function ( string $class_id ) {
-			$post = Global_Class_Post::find_by_class_id( $class_id );
+			$post = Global_Class_Post::find_by_class_id( $class_id, false, $this->get_kit() );
 
 			if ( $post ) {
 				$post->delete();

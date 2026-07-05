@@ -29,6 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
+	use Has_Base_Settings;
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -346,6 +347,10 @@ trait Has_Atomic_Base {
 
 		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
+			$editor_data['grid_outline'] = $data['grid_outline'];
 		}
 
 		return $editor_data;

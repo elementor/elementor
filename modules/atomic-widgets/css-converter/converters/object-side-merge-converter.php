@@ -3,8 +3,9 @@
 namespace Elementor\Modules\AtomicWidgets\CssConverter\Converters;
 
 use Elementor\Modules\AtomicWidgets\CssConverter\Conversion_Context;
-use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
 use Elementor\Modules\AtomicWidgets\CssConverter\Property_Converter_Base;
+use Elementor\Modules\AtomicWidgets\CssConverter\Css_Var_Token_Resolver;
+
 use Elementor\Modules\AtomicWidgets\CssConverter\ValueParsers\Size_Value_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -78,7 +79,16 @@ class Object_Side_Merge_Converter extends Property_Converter_Base {
 		return [ $this->property ];
 	}
 
-	public function convert( Conversion_Context $context, array $rule ): bool {
+	protected function convert_null( Conversion_Context $context, array $rule ): bool {
+		$sides = $this->current_sides( $context->get_prop( $this->target_property ) );
+		$sides[ $this->side_key ] = null;
+
+		$context->set_prop( $this->target_property, ( $this->object_prop_type )::generate( $sides ) );
+
+		return true;
+	}
+
+	protected function do_convert( Conversion_Context $context, array $rule ): bool {
 		$value = trim( $rule['value'] );
 		$leaf  = Size_Value_Parser::parse( $value );
 

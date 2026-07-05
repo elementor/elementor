@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Collection_Loop;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Preserves_Children_Subtree;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -15,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Collection_Loop_Promotion extends Atomic_Element_Base {
 	use Has_Element_Template;
+	use Preserves_Children_Subtree;
 
 	const BASE_STYLE_KEY = 'base';
 
@@ -33,11 +35,11 @@ class Collection_Loop_Promotion extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Collection Loop', 'elementor' );
+		return esc_html__( 'Loop', 'elementor' );
 	}
 
 	public function get_icon() {
-		return 'eicon-loop-builder';
+		return 'eicon-loop-widget';
 	}
 
 	protected static function define_props_schema(): array {

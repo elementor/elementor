@@ -40,7 +40,7 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro();
+		return ! Utils::has_pro() || ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -49,6 +49,15 @@ class Module extends Base_Module {
 
 	public function __construct() {
 		parent::__construct();
+
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
+		if ( Utils::has_pro() ) {
+			add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
+			$this->register_atomic_promotions();
+
+			return;
+		}
 
 		add_action( 'admin_init', function () {
 			$this->handle_external_redirects();
@@ -83,12 +92,6 @@ class Module extends Base_Module {
 			new Conversion_Banner();
 		}
 
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
-
-		if ( Utils::has_pro() ) {
-			return;
-		}
-
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
 
 		add_action( 'elementor/controls/register', function ( Controls_Manager $controls_manager ) {
@@ -119,7 +122,7 @@ class Module extends Base_Module {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $page ) {
+		if ( in_array( $page, [ 'go_elementor_pro', 'elementor-one-upgrade' ], true ) ) {
 			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
@@ -170,6 +173,7 @@ class Module extends Base_Module {
 				'backbone-marionette',
 				'elementor-editor-modules',
 				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION,
 			true

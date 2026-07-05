@@ -32,6 +32,7 @@ trait Post_Query {
 	protected function init() {
 		$this->register_post_types();
 		$this->create_posts();
+		$this->set_deterministic_modified_times();
 		$this->create_and_set_post_term();
 	}
 
@@ -80,6 +81,23 @@ trait Post_Query {
 			'post_status' => $status,
 			'post_type' => $post_type,
 		], $extra_args ) );
+	}
+
+	private function set_deterministic_modified_times() {
+		global $wpdb;
+
+		foreach ( $this->posts as $index => $post ) {
+			$time = gmdate( 'Y-m-d H:i:s', strtotime( "-{$index} minutes" ) );
+			$wpdb->update(
+				$wpdb->posts,
+				[
+					'post_modified' => $time,
+					'post_modified_gmt' => $time,
+				],
+				[ 'ID' => $post->ID ]
+			);
+			clean_post_cache( $post->ID );
+		}
 	}
 
 	private function create_and_set_post_term() {

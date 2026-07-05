@@ -23,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu\Atomic
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
+use Elementor\Modules\AtomicWidgets\Elements\Promotions\Pro_Promotion_Data_Preservation;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -53,6 +54,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Font_Family_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
@@ -131,6 +133,7 @@ use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Self_Hosted_Video\Atomic_Self_Hosted_Video;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Span_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Video_Src_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Span_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Video_Src_Prop_Type;
 
@@ -260,6 +263,7 @@ class Module extends BaseModule {
 		( new Atomic_Import_Export() )->register_hooks();
 		( new Atomic_Widgets_Database_Updater() )->register();
 		( new Css_Converter_REST_API() )->register_hooks();
+		( new Pro_Promotion_Data_Preservation() )->register_hooks();
 	}
 
 	private function add_packages( $packages ) {
@@ -347,6 +351,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_basic_styles_transformers( Transformers_Registry $transformers ): void {
+		$transformers->register( Font_Family_Prop_Type::get_key(), new Font_Family_Transformer() );
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Grid_Track_Size_Prop_Type::get_key(), new Grid_Track_Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );

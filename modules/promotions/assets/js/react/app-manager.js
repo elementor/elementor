@@ -1,17 +1,54 @@
 import App from './app';
+import { resolvePromotionAnimation } from './atomic-promotion-media';
+import { bindPreviewIframeEvents } from 'elementor-editor-utils/preview-iframe-listeners';
+import { __ } from '@wordpress/i18n';
 import { createRoot } from 'react-dom/client';
 
 export class AppManager {
 	constructor() {
 		this.promotionInfoTip = null;
-		this.activePromotionWrapper = null;
+		this.promotionWrapper = null;
 		this.onRoute = () => {};
+		this.unbindIframeEvents = () => {};
 
 		this.attachAtomicWidgetPromotionListeners();
+		this.attachWidgetPromotionListeners();
 	}
 
 	getPromotionData( promotionType ) {
 		return elementorPromotionsData[ promotionType ] || {};
+	}
+
+	resolveWidgetPromotionData( detail ) {
+		const promotions = elementor?.config?.v4Promotions || {};
+		const widgetType = detail.widgetType || '';
+		const normalizedType = widgetType.replace( /[-_]/g, '' ).toLowerCase();
+		const key = Object.keys( promotions ).find( ( promotionKey ) => {
+			return promotionKey.replace( /[-_]/g, '' ).toLowerCase() === normalizedType;
+		} );
+
+		const promotionData = key ? promotions[ key ] : null;
+		const elementsPromotion = elementor.config.promotion?.elements || {};
+
+		const fallbackCtaUrl = detail.ctaUrl || elementsPromotion.action_button?.url?.replace( '%s', widgetType ) || '';
+		const fallbackCtaText = detail.ctaText || elementsPromotion.action_button?.text || '';
+		const widgetName = detail.widgetTitle || detail.title || '';
+		const hideProTag = detail.hideProTag || false;
+
+		const resolvedPromotionData = promotionData ? {
+			...promotionData,
+			ctaUrl: promotionData.ctaUrl || fallbackCtaUrl,
+			ctaText: promotionData.ctaText || fallbackCtaText,
+			hideProTag,
+		} : {
+			title: detail.title || elementsPromotion.title?.replace( '%s', widgetName ) || '',
+			content: detail.content || elementsPromotion.content?.replace( '%s', widgetName ) || '',
+			ctaUrl: fallbackCtaUrl,
+			ctaText: fallbackCtaText,
+			hideProTag,
+		};
+
+		return applyProConnectPromotionOverrides( resolvedPromotionData );
 	}
 
 	mount( targetNode, selectors ) {
@@ -44,37 +81,59 @@ export class AppManager {
 		);
 	}
 
-	mountCustomPromotion( targetEl, wrapperClassName, promotionData, ctaUrl ) {
+	mountCard( targetEl, wrapperClassName, appProps ) {
 		this.unmount();
 
-		this.activePromotionWrapper = document.createElement( 'span' );
-		this.activePromotionWrapper.className = wrapperClassName;
-		targetEl.appendChild( this.activePromotionWrapper );
+		this.promotionWrapper = document.createElement( 'span' );
+		this.promotionWrapper.className = wrapperClassName;
+		document.body.appendChild( this.promotionWrapper );
 
 		this.attachEditorEventListeners();
-
-		const colorScheme = elementor?.getPreferences?.( 'ui_theme' ) || 'auto';
-		const isRTL = elementorCommon.config.isRTL;
-
-		this.promotionInfoTip = createRoot( this.activePromotionWrapper );
+		this.promotionInfoTip = createRoot( this.promotionWrapper );
 		this.promotionInfoTip.render(
 			<App
-				colorScheme={ colorScheme }
-				isRTL={ isRTL }
-				cardType="atomicForm"
-				promotionData={ promotionData }
-				ctaUrl={ ctaUrl }
+				colorScheme={ elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }
+				isRTL={ elementorCommon.config.isRTL }
+				anchorTarget={ targetEl }
 				doClose={ () => this.unmount() }
+				{ ...appProps }
 			/>,
 		);
+	}
+
+	resolveAtomicWidgetPromotionCardProps( { cardType, content } ) {
+		return {
+			cardType,
+			promotionData: applyProConnectPromotionOverrides( {
+				title: content.title,
+				content: content.content,
+				ctaText: content.ctaText,
+				ctaUrl: content.widgetCtaUrl,
+				image: content.image,
+				animationData: resolvePromotionAnimation( content.animation ),
+			} ),
+		};
 	}
 
 	attachAtomicWidgetPromotionListeners() {
 		const promotions = elementor?.config?.atomicWidgetPromotions || [];
 
-		promotions.forEach( ( { type, content } ) => {
+		promotions.forEach( ( { type, cardType, content } ) => {
 			document.addEventListener( `${ type }-promotion:open`, ( event ) => {
-				this.mountCustomPromotion( event.detail.target, `e-${ type }-promotion-wrapper`, content, content.widgetCtaUrl );
+				this.mountCard(
+					event.detail.target,
+					`e-${ type }-promotion-wrapper`,
+					this.resolveAtomicWidgetPromotionCardProps( { cardType, content } ),
+				);
+			} );
+		} );
+	}
+
+	attachWidgetPromotionListeners() {
+		document.addEventListener( 'widget-promotion:open', ( event ) => {
+			this.mountCard( event.detail.target, 'e-widget-promotion-wrapper', {
+				cardType: 'widgetPromotion',
+				promotionData: this.resolveWidgetPromotionData( event.detail ),
 			} );
 		} );
 	}
@@ -83,21 +142,23 @@ export class AppManager {
 		if ( this.promotionInfoTip ) {
 			this.detachEditorEventListeners();
 			this.promotionInfoTip.unmount();
+			this.unbindIframeEvents();
 		}
 
-		if ( this.activePromotionWrapper?.parentNode ) {
-			this.activePromotionWrapper.parentNode.removeChild( this.activePromotionWrapper );
-		}
+		this.promotionWrapper?.parentNode?.removeChild( this.promotionWrapper );
 
 		this.promotionInfoTip = null;
-		this.activePromotionWrapper = null;
+		this.promotionWrapper = null;
 	}
 
 	attachEditorEventListeners() {
+		this.unbindIframeEvents = bindPreviewIframeEvents( () => this.unmount() );
+
 		this.onRoute = ( component, route ) => {
 			if ( route !== 'panel/elements/categories' && route !== 'panel/editor/content' ) {
 				return;
 			}
+
 			this.unmount();
 		};
 
@@ -107,4 +168,16 @@ export class AppManager {
 	detachEditorEventListeners() {
 		$e.routes.off( 'run:after', this.onRoute );
 	}
+}
+
+function applyProConnectPromotionOverrides( promotionData ) {
+	if ( ! elementor.helpers.hasProAndNotConnected() ) {
+		return promotionData;
+	}
+
+	return {
+		...promotionData,
+		ctaUrl: elementorProEditorConfig.urls.connect,
+		ctaText: __( 'Connect & Activate', 'elementor' ),
+	};
 }

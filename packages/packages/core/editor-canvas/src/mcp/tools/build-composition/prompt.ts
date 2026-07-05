@@ -41,6 +41,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
 - NO LINKS in configuration
 - Retry on errors up to 10x
+- Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
 # DYNAMIC TAGS
 - A value can be made dynamic wherever its schema exposes a \`"$$type": "dynamic"\` variant. This may be the property root OR a NESTED field (e.g. an image's \`src\`, not the whole \`image\`).
@@ -119,7 +120,7 @@ BAD: \`<e-flexbox style="height:100vh"><e-div-block style="height:100vh">overflo
 # HARD CONSTRAINTS
 - Variables ONLY from [elementor://global-variables] (others throw errors)
 - Avoid SVG widgets unless assets are pre-uploaded
-- Check \`llm_guidance\` in widget schemas
+- Check \`llm_guidance\` in widget schemas (\`default_styles\`, nesting, required children)
 
 # PARAMETERS
 - **xmlStructure**: Valid XML with configuration-id attributes

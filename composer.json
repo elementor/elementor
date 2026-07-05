@@ -6,7 +6,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.64"
+        "elementor/wp-one-package": "1.0.66"
     },
     "repositories": [
         {
@@ -66,6 +66,7 @@
         },
         "audit": {
             "ignore": {
+                "PKSA-8zx5-v2nz-58pb": "CVE-2026-49981 (sandbox filter, tag and function allow-list bypass when sandbox state changes between renders for a cached template) - we don't enable sandbox.",
                 "PKSA-sjvz-tbbr-vwth": "CVE-2026-46628 (spaceless filter implicitly marks output as safe) - we only render our twig templates and don't allow users to upload their own templates. Our templates do not use the spaceless filter.",
                 "PKSA-h8hf-ytnd-5t9q": "CVE-2026-46633 (PHP code injection via {% use %} template name) - template names passed to Twig are hardcoded. No user can inject twig source.",
                 "PKSA-wwb1-81rc-pd65": "CVE-2026-47730 (XSS in profiler HtmlDumper via unescaped template/profile names) - we don't use Twig's profiler/HtmlDumper.",

@@ -13,7 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Background_Shorthand_Expander extends TestCase {
-	private function expand( string $value, ?Variables_Service $variables_service = null ): array {
+
+	private function expand( $value, ?Variables_Service $variables_service = null ): array {
 		return ( new Background_Shorthand_Expander( $variables_service ) )->expand( [
 			'property' => 'background',
 			'value' => $value,
@@ -226,5 +227,31 @@ class Test_Background_Shorthand_Expander extends TestCase {
 		foreach ( $rules as $rule ) {
 			$this->assertSame( $rule['property'] . ': ' . $rule['value'], $rule['declaration'] );
 		}
+	}
+
+	public function test_expand__null_value_expands_to_all_longhands_with_null_values() {
+		// Arrange & Act: PHP null — parse() normalises the 'null' sentinel before expanders run.
+		$rules = $this->expand( null );
+
+		// Assert: all background longhands are emitted with null values so each becomes a prop reset.
+		$this->assertSame( Background_Shorthand_Expander::ALL_LONGHANDS, array_column( $rules, 'property' ) );
+		$this->assertSame( array_fill( 0, count( Background_Shorthand_Expander::ALL_LONGHANDS ), null ), array_column( $rules, 'value' ) );
+	}
+
+	public function test_expand__php_null_value_expands_to_all_longhands_with_null_values() {
+		// Arrange & Act.
+		$rules = $this->expand( null );
+
+		// Assert.
+		$this->assertSame( Background_Shorthand_Expander::ALL_LONGHANDS, array_column( $rules, 'property' ) );
+		$this->assertSame( array_fill( 0, count( Background_Shorthand_Expander::ALL_LONGHANDS ), null ), array_column( $rules, 'value' ) );
+	}
+
+	public function test_expand__full_value_with_all_slots_emits_every_longhand() {
+		// Act: a value that fills all 7 background longhand slots.
+		$rules = $this->expand( 'url(bg.jpg) no-repeat scroll center / cover border-box #fff' );
+
+		// Assert: every longhand in ALL_LONGHANDS is present exactly once.
+		$this->assertSame( Background_Shorthand_Expander::ALL_LONGHANDS, array_column( $rules, 'property' ) );
 	}
 }

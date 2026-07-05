@@ -17,6 +17,8 @@ data/languages
 tests/data
 
 graphify-out/
+.superpowers/
+docs/superpowers/
 
 # build outputs
 build/
@@ -65,3 +67,5 @@ tests/playwright/blob-report
 playwright-test-results
 **/.env
 docker-output/
+.wp-env.override.json
+tests/wp-env/plugins/

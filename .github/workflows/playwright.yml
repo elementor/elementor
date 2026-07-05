@@ -40,6 +40,14 @@ on:
           - chromium
           - firefox
           - webkit
+      environment:
+        type: choice
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        options:
+          - production
+          - staging
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -67,6 +75,7 @@ jobs:
     needs: [build-plugin, get-php-version]
     permissions:
       contents: read
+      id-token: write
     if: |
       github.event.inputs.tag == '' &&
       ((github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
@@ -81,8 +90,10 @@ jobs:
         include:
           - shardIndex: "elements-regression-core"
           - shardIndex: "elements-regression-atomic"
-          - shardIndex: "plugin_tester_section"
-          - shardIndex: "plugin_tester_container"
+          - shardIndex: "plugin_tester_section_1"
+          - shardIndex: "plugin_tester_section_2"
+          - shardIndex: "plugin_tester_container_1"
+          - shardIndex: "plugin_tester_container_2"
           - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
@@ -113,6 +124,18 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
+      - name: Install staging plugins
+        if: ${{ inputs.environment == 'staging' }}
+        uses: ./.github/actions/install-staging-plugins
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -139,6 +162,14 @@ jobs:
           echo "WP_MAJOR_VERSION=$WP_VER" >> $GITHUB_ENV
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
@@ -170,8 +201,8 @@ jobs:
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
           matrix.shardIndex != 'elements-regression-atomic' &&
-          matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section' &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_container_') &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_section_') &&
           matrix.shardIndex != 'import_export_customization'
           }}
         run: |
@@ -181,21 +212,25 @@ jobs:
           fi
           npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
       - name: Run Playwright Plugin Container tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@plugin_tester_container" $PROJECT_ARG
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG
       - name: Run Playwright Plugin Section tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@plugin_tester_section" $PROJECT_ARG
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
         run: |
@@ -268,6 +303,18 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
+      - name: Install staging plugins
+        if: ${{ inputs.environment == 'staging' }}
+        uses: ./.github/actions/install-staging-plugins
+        with:
+          app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
+          private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+
+      - name: Add staging plugins to config
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          jq '.plugins["elementor-dev-tools-master"] = "./tests/wp-env/plugins/elementor-dev-tools-master" | .plugins["stg-runner"] = "./tests/wp-env/plugins/stg-runner"' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+
       - name: Update PHP version in config
         run: |
           jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
@@ -279,6 +326,14 @@ jobs:
           npm run start-local-server
       - name: Setup test data
         run: npm run test:setup:playwright
+      - name: Activate staging environment
+        if: ${{ inputs.environment == 'staging' }}
+        run: |
+          for port in 8888 8889; do
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate elementor-dev-tools-master"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp plugin activate stg-runner"
+            npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port="$port" --command="wp option update elementor-dev-tools-env stg.elementor.red"
+          done
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"

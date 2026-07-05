@@ -8,8 +8,12 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { GridOutlineOverlay } from './grid-outline';
+import { GridEmptyCellPositioner, GridOutlineOverlay } from './grid-outline';
 import { OutlineOverlay } from './outline-overlay';
+
+const hasGridStyleDisplay = ( element: HTMLElement ): boolean => {
+	return element.computedStyleMap().get( 'display' )?.toString() === 'grid';
+};
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 
@@ -19,8 +23,12 @@ const overlayRegistry: ElementOverlayConfig[] = [
 		shouldRender: () => true,
 	},
 	{
+		component: GridEmptyCellPositioner,
+		shouldRender: ( { element } ) => hasGridStyleDisplay( element ),
+	},
+	{
 		component: GridOutlineOverlay,
-		shouldRender: ( { element, isSelected } ) => isSelected && element.dataset.eType === 'e-grid',
+		shouldRender: ( { isSelected, element } ) => isSelected && hasGridStyleDisplay( element ),
 	},
 ];
 
