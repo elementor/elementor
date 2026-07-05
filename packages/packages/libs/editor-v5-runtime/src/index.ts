@@ -1,2 +1,2 @@
 export { saveDocument } from './ajax';
-export { dispatchReadyEvent } from './ready';
+export { dismissEditorLoading, dispatchReadyEvent } from './ready';

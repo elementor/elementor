@@ -51,6 +51,10 @@ class Module extends BaseModule {
 		'elementor-editor-loader',
 		'elementor-responsive-bar',
 		'elementor-v2-editor',
+		'elementor-atomic-widgets-editor',
+		'elementor-notes',
+		'elementor-styleguide',
+		'elementor-styleguide-app-initiator',
 	];
 
 	public function get_name() {
@@ -96,6 +100,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_editor_settings' ] );
 		add_action( 'elementor/editor/init', [ $this, 'on_editor_init' ], 1 );
 		add_action( 'elementor/editor/v2/scripts/enqueue/after', [ $this, 'on_scripts_enqueue_after' ], 999 );
+		add_action( 'elementor/editor/after_enqueue_scripts', [ $this, 'on_after_enqueue_scripts' ], PHP_INT_MAX );
 		add_action( 'elementor/editor/v2/styles/enqueue', [ $this, 'on_styles_enqueue' ] );
 	}
 
@@ -146,11 +151,19 @@ class Module extends BaseModule {
 			return;
 		}
 
-		foreach ( self::LEGACY_SCRIPTS_TO_DEQUEUE as $handle ) {
-			wp_dequeue_script( $handle );
+		$this->apply_v5_script_swaps();
+	}
+
+	public function on_after_enqueue_scripts() {
+		if ( ! self::should_use_v5() ) {
+			return;
 		}
 
-		$this->dequeue_non_v5_extension_scripts();
+		$this->dequeue_legacy_editor_scripts();
+	}
+
+	private function apply_v5_script_swaps() {
+		$this->dequeue_legacy_editor_scripts();
 
 		wp_enqueue_script( 'elementor-common' );
 		wp_enqueue_script( 'heartbeat' );
@@ -174,6 +187,35 @@ class Module extends BaseModule {
 		);
 
 		wp_enqueue_script( 'elementor-editor-v5-loader' );
+	}
+
+	private function dequeue_legacy_editor_scripts() {
+		foreach ( self::LEGACY_SCRIPTS_TO_DEQUEUE as $handle ) {
+			wp_dequeue_script( $handle );
+		}
+
+		$this->dequeue_scripts_with_dependency( 'elementor-editor' );
+		$this->dequeue_non_v5_extension_scripts();
+	}
+
+	private function dequeue_scripts_with_dependency( $dependency_handle ) {
+		global $wp_scripts;
+
+		if ( ! $wp_scripts instanceof \WP_Scripts ) {
+			return;
+		}
+
+		foreach ( $wp_scripts->queue as $handle ) {
+			$script = $wp_scripts->registered[ $handle ] ?? null;
+
+			if ( ! $script || empty( $script->deps ) ) {
+				continue;
+			}
+
+			if ( in_array( $dependency_handle, $script->deps, true ) ) {
+				wp_dequeue_script( $handle );
+			}
+		}
 	}
 
 	public function on_styles_enqueue() {
