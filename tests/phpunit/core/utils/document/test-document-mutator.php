@@ -247,8 +247,11 @@ class Document_Mutator_Test extends TestCase {
 
 	public function test_insert_at_respects_allowed_child_types_when_restricted() {
 		// Arrange
-		$mock_instance = $this->createMock( \Elementor\Element_Base::class );
-		$mock_instance->method( 'get_config' )->willReturn( [ 'allowed_child_types' => [ 'e-tab-content' ] ] );
+		$mock_instance = new class {
+			public function get_config(): array {
+				return [ 'allowed_child_types' => [ 'e-tab-content' ] ];
+			}
+		};
 
 		$mock_element_manager = $this->createMock( \Elementor\Elements_Manager::class );
 		$mock_element_manager->method( 'get_element_types' )->willReturn( $mock_instance );
@@ -268,8 +271,11 @@ class Document_Mutator_Test extends TestCase {
 
 	public function test_insert_at_allows_child_when_type_in_allowed_list() {
 		// Arrange
-		$mock_instance = $this->createMock( \Elementor\Element_Base::class );
-		$mock_instance->method( 'get_config' )->willReturn( [ 'allowed_child_types' => [ 'e-tab-content' ] ] );
+		$mock_instance = new class {
+			public function get_config(): array {
+				return [ 'allowed_child_types' => [ 'e-tab-content' ] ];
+			}
+		};
 
 		$mock_element_manager = $this->createMock( \Elementor\Elements_Manager::class );
 		$mock_element_manager->method( 'get_element_types' )->willReturn( $mock_instance );

@@ -106,8 +106,10 @@ class Create_Element_Ability extends Abstract_Ability {
 			$index = null;
 		}
 
-		$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id, get_current_user_id() )
-			?: Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get_doc_or_auto_save( $post_id, get_current_user_id() );
+		if ( ! $document ) {
+			$document = Plugin::$instance->documents->get( $post_id );
+		}
 		if ( ! $document ) {
 			return new \WP_Error(
 				'elementor_not_found',

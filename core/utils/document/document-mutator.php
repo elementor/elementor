@@ -154,20 +154,20 @@ class Document_Mutator {
 	private function insert_into_tree( array $tree, string $parent_id, ?int $index, array $element ) {
 		foreach ( $tree as $i => $node ) {
 			if ( isset( $node['id'] ) && $node['id'] === $parent_id ) {
-			if ( isset( $node['elType'] ) && 'widget' === $node['elType'] ) {
-				return new \WP_Error(
-					'elementor_invalid_parent',
-					__( 'Cannot insert into a widget element.', 'elementor' ),
-					[ 'status' => \WP_Http::BAD_REQUEST ]
-				);
-			}
+				if ( isset( $node['elType'] ) && 'widget' === $node['elType'] ) {
+					return new \WP_Error(
+						'elementor_invalid_parent',
+						__( 'Cannot insert into a widget element.', 'elementor' ),
+						[ 'status' => \WP_Http::BAD_REQUEST ]
+					);
+				}
 
-			$child_type_error = $this->check_child_type_allowed( $node, $element );
-			if ( is_wp_error( $child_type_error ) ) {
-				return $child_type_error;
-			}
+				$child_type_error = $this->check_child_type_allowed( $node, $element );
+				if ( is_wp_error( $child_type_error ) ) {
+					return $child_type_error;
+				}
 
-			$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
+				$node['elements'] = $this->splice_into( $node['elements'] ?? [], $index, $element );
 				$tree[ $i ] = $node;
 				return $tree;
 			}
