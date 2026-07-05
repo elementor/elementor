@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { type ComponentType } from 'react';
 import { XIcon } from '@elementor/icons';
 import { __useSelector as useSelector } from '@elementor/store';

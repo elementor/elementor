@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { type ReactNode } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';

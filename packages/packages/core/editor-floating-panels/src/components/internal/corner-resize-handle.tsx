@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { type PointerEventHandler } from 'react';
 import { Box } from '@elementor/ui';
 

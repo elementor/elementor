@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { type ReactNode } from 'react';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
