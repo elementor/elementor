@@ -30,6 +30,7 @@ export const localStorageAdapter: PanelStateStorage = {
 
 let cachedPersistedState: Record< string, FloatingPanelState > = {};
 let isSyncInitialized = false;
+let persistenceTimer: ReturnType< typeof setTimeout > | null = null;
 let persistenceUnsubscribe: ( () => void ) | null = null;
 let persistenceSession = 0;
 
@@ -50,12 +51,19 @@ export function getPersistedState( id: string ): FloatingPanelState | undefined 
 
 const STORE_READY_POLL_MS = 16;
 
+function clearPersistenceTimer(): void {
+	if ( persistenceTimer ) {
+		clearTimeout( persistenceTimer );
+		persistenceTimer = null;
+	}
+}
+
 function schedulePersistence( storage: PanelStateStorage ): void {
+	clearPersistenceTimer();
 	persistenceUnsubscribe?.();
 	persistenceUnsubscribe = null;
 
 	const session = ++persistenceSession;
-	let timer: ReturnType< typeof setTimeout > | null = null;
 
 	const subscribe = () => {
 		if ( session !== persistenceSession ) {
@@ -65,12 +73,15 @@ function schedulePersistence( storage: PanelStateStorage ): void {
 		persistenceUnsubscribe = __subscribeWithSelector(
 			( state: GlobalState ) => state.floatingPanels.byId,
 			( byId ) => {
-				if ( timer ) {
-					clearTimeout( timer );
-				}
+				clearPersistenceTimer();
 
-				timer = setTimeout( () => {
-					storage.write( encodePersistedState( byId ) );
+				persistenceTimer = setTimeout( () => {
+					if ( session !== persistenceSession ) {
+						return;
+					}
+
+					cachedPersistedState = { ...cachedPersistedState, ...byId };
+					storage.write( encodePersistedState( cachedPersistedState ) );
 				}, PERSIST_DEBOUNCE_MS );
 			}
 		);

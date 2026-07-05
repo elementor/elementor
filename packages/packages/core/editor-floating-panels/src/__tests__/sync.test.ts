@@ -108,6 +108,51 @@ describe( 'sync', () => {
 		// Assert.
 		expect( writeSpy ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'merges store updates with preloaded panels not yet registered', () => {
+		// Arrange.
+		const panelB: FloatingPanelState = {
+			...persisted,
+			isOpen: false,
+			zIndex: 2,
+		};
+		const storage = createMemoryStorage( encodePersistedState( { a: persisted, b: panelB } ) );
+		sync( storage );
+
+		// Act.
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		__dispatch( slice.actions.open( 'a' ) );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert.
+		const written = JSON.parse( storage.snapshot() as string );
+		expect( written.a.isOpen ).toBe( true );
+		expect( written.b ).toEqual( panelB );
+	} );
+
+	it( 'calling sync() twice cancels pending debounce from the first session', () => {
+		// Arrange.
+		const storage = createMemoryStorage();
+		const writeSpy = jest.spyOn( storage, 'write' );
+
+		// Act.
+		sync( storage );
+		__dispatch( slice.actions.register( { id: 'a', defaults } ) );
+		sync( storage );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert — stale timer from the first session must not write.
+		expect( writeSpy ).not.toHaveBeenCalled();
+
+		// Act — change after re-sync schedules persistence for the active session.
+		__dispatch( slice.actions.open( 'a' ) );
+		jest.advanceTimersByTime( 300 );
+
+		// Assert — only the final state is written once.
+		expect( writeSpy ).toHaveBeenCalledTimes( 1 );
+		const written = JSON.parse( storage.snapshot() as string );
+		expect( written.a.isOpen ).toBe( true );
+	} );
 } );
 
 describe( 'sync before the store is ready', () => {
