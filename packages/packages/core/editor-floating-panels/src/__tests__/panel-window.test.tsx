@@ -31,7 +31,7 @@ const DEFAULT_POSITION: LogicalPosition = {
 	insetInlineEnd: 0,
 };
 
-function renderPanelWindow( isResizable: boolean ) {
+function renderPanelWindow( isResizable: boolean, visible = true ) {
 	__dispatch(
 		slice.actions.register( {
 			id: PANEL_ID,
@@ -54,7 +54,7 @@ function renderPanelWindow( isResizable: boolean ) {
 				size={ { inlineSize: 320, blockSize: 480 } }
 				corner={ DEFAULT_CORNER }
 				position={ DEFAULT_POSITION }
-				visible
+				visible={ visible }
 				onFocus={ () => undefined }
 			>
 				<div>Panel body</div>
@@ -85,6 +85,22 @@ describe( 'PanelWindow', () => {
 
 		expect( document.querySelectorAll( '[data-resize-edge]' ).length ).toBe( 0 );
 		expect( document.querySelectorAll( '[data-resize-corner]' ).length ).toBe( 0 );
+	} );
+
+	it( 'applies pointer-events auto when visible', () => {
+		renderPanelWindow( false, true );
+
+		const panel = document.querySelector( '[data-floating-panel="test-panel"]' );
+		expect( panel ).toHaveStyle( { pointerEvents: 'auto' } );
+		expect( panel ).not.toHaveAttribute( 'inert' );
+	} );
+
+	it( 'applies pointer-events none and inert when not visible', () => {
+		renderPanelWindow( false, false );
+
+		const panel = document.querySelector( '[data-floating-panel="test-panel"]' );
+		expect( panel ).toHaveStyle( { pointerEvents: 'none' } );
+		expect( panel ).toHaveAttribute( 'inert' );
 	} );
 
 	it( 'applies insetInlineEnd and insetBlockEnd for block-end-inline-end', () => {

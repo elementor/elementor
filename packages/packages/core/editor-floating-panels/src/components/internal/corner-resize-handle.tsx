@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { type PointerEventHandler } from 'react';
 import { Box } from '@elementor/ui';
 
 import { isRtl } from '../../utils/direction';
@@ -31,10 +31,10 @@ const RTL_CURSORS: Record< ResizeCorner, string > = {
 
 type Props = {
 	corner: ResizeCorner;
-	onPointerDown: React.PointerEventHandler< HTMLElement >;
-	onPointerMove: React.PointerEventHandler< HTMLElement >;
-	onPointerUp: React.PointerEventHandler< HTMLElement >;
-	onPointerCancel: React.PointerEventHandler< HTMLElement >;
+	onPointerDown: PointerEventHandler< HTMLElement >;
+	onPointerMove: PointerEventHandler< HTMLElement >;
+	onPointerUp: PointerEventHandler< HTMLElement >;
+	onPointerCancel: PointerEventHandler< HTMLElement >;
 };
 
 export default function CornerResizeHandle( {
