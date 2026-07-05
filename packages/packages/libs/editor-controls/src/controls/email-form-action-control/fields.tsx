@@ -14,7 +14,9 @@ import { EmailField } from './email-field';
 import { shouldShowMentionsInfo } from './utils';
 
 export const SendToField = ( { placeholder }: { placeholder?: string } ) => (
-	<EmailChipsField fieldLabel={ __( 'Send to', 'elementor' ) } placeholder={ placeholder } />
+	<PropKeyProvider bind="to">
+		<EmailChipsField fieldLabel={ __( 'Send to', 'elementor' ) } placeholder={ placeholder } />
+	</PropKeyProvider>
 );
 
 export const SubjectField = () => (

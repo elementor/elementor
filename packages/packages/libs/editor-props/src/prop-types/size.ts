@@ -9,7 +9,7 @@ export const sizePropTypeUtil = createPropUtils(
 	'size',
 	z
 		.strictObject( {
-			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'ch' ] ),
+			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'ch', 'fr' ] ),
 			size: sizeNumberOrEmpty,
 		} )
 		.or(
