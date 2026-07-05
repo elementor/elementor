@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Array_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -37,6 +38,12 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	 */
 	public static function make() {
 		return new static();
+	}
+
+	public static function define_default_dialects(): array {
+		return [
+			'llm' => Array_Adapter::class,
+		];
 	}
 
 	public function get_type(): string {

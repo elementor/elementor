@@ -38,10 +38,11 @@ class Test_Scalar_Adapter extends TestCase {
 		$schema = Dialect_Walker::to_schema( $root, 'llm' );
 
 		// Assert
-		$this->assertSame( [ 'type' => 'string', 'description' => 'The heading text', 'llm_instructions' => 'Keep it short' ], $schema['title'] );
-		$this->assertSame( [ 'type' => 'number', 'examples' => [ 42 ] ], $schema['count'] );
-		$this->assertSame( [ 'type' => 'boolean', 'examples' => [ true, false ] ], $schema['enabled'] );
-		$this->assertSame( [], $schema['passthru'] );
+		$properties = $schema['properties'];
+		$this->assertSame( [ 'type' => 'string', 'description' => 'The heading text', 'llm_instructions' => 'Keep it short' ], $properties['title'] );
+		$this->assertSame( [ 'type' => 'number', 'examples' => [ 42 ] ], $properties['count'] );
+		$this->assertSame( [ 'type' => 'boolean', 'examples' => [ true, false ] ], $properties['enabled'] );
+		$this->assertSame( [], $properties['passthru'] );
 	}
 
 	public function test_enum_prop_outputs_enum_instead_of_type() {
@@ -54,7 +55,21 @@ class Test_Scalar_Adapter extends TestCase {
 		$schema = Dialect_Walker::to_schema( $root, 'llm' );
 
 		// Assert
-		$this->assertSame( [ 'enum' => [ 'h1', 'h2', 'h3' ] ], $schema['tag'] );
-		$this->assertArrayNotHasKey( 'type', $schema['tag'] );
+		$properties = $schema['properties'];
+		$this->assertSame( [ 'enum' => [ 'h1', 'h2', 'h3' ] ], $properties['tag'] );
+		$this->assertArrayNotHasKey( 'type', $properties['tag'] );
+	}
+
+	public function test_default_is_converted_to_dialect_value() {
+		// Arrange
+		$root = Stub_Object_For_Scalar::make()->set_shape( [
+			'tag' => String_Prop_Type::make()->enum( [ 'h1', 'h2', 'h3' ] )->default( 'h2' ),
+		] );
+
+		// Act
+		$schema = Dialect_Walker::to_schema( $root, 'llm' );
+
+		// Assert
+		$this->assertSame( 'h2', $schema['properties']['tag']['default'] );
 	}
 }

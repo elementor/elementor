@@ -16,12 +16,35 @@ class Dialect_Walker {
 	public static function to_schema( Prop_Type $prop_type, string $dialect, ?Prop_Type $parent = null, ?string $shape_key = null ) {
 		$children = self::walk_children_schema( $prop_type, $dialect );
 
-		$ctx = new Adapter_Context( $prop_type, $children, $parent, $shape_key );
+		$ctx = new Adapter_Context( $prop_type, $children, $parent, $shape_key, $dialect );
 
 		$adapters = $prop_type->get_dialect_adapters();
 		$adapter_class = $adapters[ $dialect ] ?? Base_Dialect_Adapter::class;
 
-		return $adapter_class::to_schema( $ctx );
+		$schema = $adapter_class::to_schema( $ctx );
+
+		if ( ! is_array( $schema ) ) {
+			return $schema;
+		}
+
+		$default = $prop_type->get_default();
+		if ( null !== $default ) {
+			$schema['default'] = $adapter_class::to_dialect_value( $ctx, $default );
+		}
+
+		foreach ( $prop_type->get_meta() as $key => $value ) {
+			if ( ! in_array( $key, [ 'description', 'llm_instructions', 'examples' ], true ) ) {
+				continue;
+			}
+
+			if ( empty( $value ) || isset( $schema[ $key ] ) ) {
+				continue;
+			}
+
+			$schema[ $key ] = 'examples' === $key && ! is_array( $value ) ? [ $value ] : $value;
+		}
+
+		return $schema;
 	}
 
 	private static function walk_children_schema( Prop_Type $prop_type, string $dialect ): array {

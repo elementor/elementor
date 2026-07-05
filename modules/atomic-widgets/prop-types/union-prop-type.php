@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Union_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,6 +32,12 @@ class Union_Prop_Type implements Prop_Type {
 
 	public static function get_key(): string {
 		return 'union';
+	}
+
+	public static function define_default_dialects(): array {
+		return [
+			'llm' => Union_Adapter::class,
+		];
 	}
 
 	public static function make(): self {

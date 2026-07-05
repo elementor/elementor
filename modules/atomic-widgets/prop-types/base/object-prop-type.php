@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Object_Adapter;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -34,6 +35,12 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function __construct() {
 		$this->shape = $this->define_shape();
+	}
+
+	public static function define_default_dialects(): array {
+		return [
+			'llm' => Object_Adapter::class,
+		];
 	}
 
 	public function get_type(): string {

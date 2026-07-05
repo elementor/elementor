@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Omit_Dialect_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,6 +23,12 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 
 	public static function get_key(): string {
 		return 'overridable';
+	}
+
+	public static function define_default_dialects(): array {
+		return [
+			'llm' => Omit_Dialect_Adapter::class,
+		];
 	}
 
 	protected function validate_value( $value ): bool {

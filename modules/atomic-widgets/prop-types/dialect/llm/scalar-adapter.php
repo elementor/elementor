@@ -4,7 +4,6 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Adapter_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Base_Dialect_Adapter;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Llm\Common_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,7 +23,7 @@ class Scalar_Adapter extends Base_Dialect_Adapter {
 			$base['pattern'] = $regex;
 		}
 
-		return Common_Utils::enrich( $base, $prop_type );
+		return $base;
 	}
 
 	public static function to_dialect_value( Adapter_Context $ctx, $canonical ) {

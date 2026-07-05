@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Create_Element_Ability;
 use Elementor\Modules\Mcp\Abilities\Simple_Resource_Ability;
+use Elementor\Modules\Mcp\Abilities\Widget_Schema_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,6 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Mcp_Proxy_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE      = 'mcp-proxy';
+
+	const WIDGET_SCHEMA_PREFIX = 'elementor://widgets/schema/';
+	const WIDGET_SCHEMA_LIST_URI = 'elementor://widgets/schema';
 
 	private array $tools     = [];
 	private array $resources = [];
@@ -81,19 +85,27 @@ class Mcp_Proxy_REST_API {
 	}
 
 	private function handle_resource( \WP_REST_Request $request ) {
-		$uri = $request->get_param( 'uri' );
-
-		if ( ! isset( $this->resources[ $uri ] ) ) {
-			return Error_Builder::make( 'unknown_resource' )
-				->set_status( 404 )
-				// translators: By resource URI
-				->set_message( sprintf( __( 'Unknown resource: %s', 'elementor' ), $uri ) )
-				->build();
-		}
-
-		$result = ( $this->resources[ $uri ] )();
+		$uri    = $request->get_param( 'uri' );
+		$result = $this->dispatch_resource( $uri );
 
 		return $this->build_response( $result );
+	}
+
+	private function dispatch_resource( string $uri ) {
+		if ( isset( $this->resources[ $uri ] ) ) {
+			return ( $this->resources[ $uri ] )();
+		}
+
+		if ( str_starts_with( $uri, self::WIDGET_SCHEMA_PREFIX ) ) {
+			$widget_type = substr( $uri, strlen( self::WIDGET_SCHEMA_PREFIX ) );
+			return ( new Widget_Schema_Ability( $widget_type ) )->execute();
+		}
+
+		return Error_Builder::make( 'unknown_resource' )
+			->set_status( 404 )
+			// translators: By resource URI
+			->set_message( sprintf( __( 'Unknown resource: %s', 'elementor' ), $uri ) )
+			->build();
 	}
 
 	private function build_response( $result ) {
