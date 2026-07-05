@@ -1,0 +1,299 @@
+name: Product Pulse
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  pull-requests: read
+
+concurrency:
+  group: product-pulse-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  product-pulse:
+    if: github.event.pull_request.merged == true && startsWith(github.repository, 'elementor/')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Get PR details
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          gh pr view $PR_NUMBER \
+            --json title,body,files > /tmp/pr.json
+
+          gh pr diff $PR_NUMBER > /tmp/diff.txt || echo "No diff available"
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> $GITHUB_PATH
+
+      - name: Generate product pulse
+        id: generate
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
+        run: |
+          if [ -z "$CURSOR_API_KEY" ]; then
+            echo "❌ Error: CURSOR_APIKEY secret not configured"
+            exit 1
+          fi
+
+          echo "Generating product pulse..."
+
+          PR_DATA=$(cat /tmp/pr.json | head -c 50000)
+          DIFF_DATA=$(head -500 /tmp/diff.txt 2>/dev/null | head -c 100000 || echo "No diff")
+
+          {
+            cat .github/product-pulse-prompt.md
+            printf '\n## PR Information\n%s\n\n## Diff (first 500 lines, truncated to 100KB)\n```\n%s\n```\n' "$PR_DATA" "$DIFF_DATA"
+          } > /tmp/full_prompt.md
+
+          FULL_PROMPT=$(head -c 500000 /tmp/full_prompt.md)
+
+          timeout 300 cursor-agent --force --model "composer-2.5" \
+            --output-format=json --print "$FULL_PROMPT" \
+            > /tmp/pulse_output.json || {
+            exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+              echo "⚠️ Product pulse generation timed out after 5 minutes"
+              echo '{"skip": true, "reason": "Timeout"}' > /tmp/pulse_output.json
+            else
+              echo "❌ Product pulse generation failed with exit code: $exit_code"
+              exit $exit_code
+            fi
+          }
+
+          cat /tmp/pulse_output.json
+
+      - name: Parse pulse output
+        id: update
+        run: |
+          RAW_OUTPUT=$(cat /tmp/pulse_output.json)
+
+          RESULT_CONTENT=$(echo "$RAW_OUTPUT" | jq -r '.result // empty')
+
+          if [ -z "$RESULT_CONTENT" ]; then
+            RESULT_CONTENT="$RAW_OUTPUT"
+          fi
+
+          OUTPUT=""
+
+          if echo "$RESULT_CONTENT" | jq -e 'has("title") or has("skip")' >/dev/null 2>&1; then
+            OUTPUT="$RESULT_CONTENT"
+          fi
+
+          if [ -z "$OUTPUT" ]; then
+            TRIMMED=$(echo "$RESULT_CONTENT" | python3 .github/extract-pulse-json.py 2>/dev/null)
+            if [ -n "$TRIMMED" ]; then
+              OUTPUT="$TRIMMED"
+            fi
+          fi
+
+          echo "Parsed output: $OUTPUT"
+
+          if [ -z "$OUTPUT" ]; then
+            echo "❌ Failed to extract JSON from AI output"
+            echo "Raw output: $RAW_OUTPUT"
+            exit 1
+          fi
+
+          SKIP=$(echo "$OUTPUT" | jq -r '.skip // false')
+
+          if [ "$SKIP" = "true" ]; then
+            REASON=$(echo "$OUTPUT" | jq -r '.reason // "Not product-facing"')
+            echo "⏭️  Skipping pulse entry: $REASON"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          TITLE=$(echo "$OUTPUT" | jq -r '.title')
+          DESCRIPTION=$(echo "$OUTPUT" | jq -r '.description')
+          PRODUCT=$(echo "$OUTPUT" | jq -r '.product // "Elementor"')
+
+          if [ -z "$TITLE" ] || [ "$TITLE" = "null" ]; then
+            echo "⏭️  No title in AI response, skipping"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          if [ -z "$DESCRIPTION" ] || [ "$DESCRIPTION" = "null" ]; then
+            echo "⏭️  No description in AI response, skipping"
+            echo "should_notify=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          case "$PRODUCT" in
+            Elementor|Editor|"Elementor AI"|"Cloud Library"|"Design System"|"Site Navigation"|Interactions|Widgets)
+              ;;
+            *)
+              echo "⚠️  Invalid product '$PRODUCT', defaulting to Elementor"
+              PRODUCT="Elementor"
+              ;;
+          esac
+
+          echo "✅ Generated pulse: $TITLE (product: $PRODUCT)"
+
+          PR_BODY=$(cat /tmp/pr.json | jq -r '.body // ""')
+          LOOM_URL=$(echo "$PR_BODY" | grep -oE 'https://(www\.)?loom\.com/share/[a-zA-Z0-9]+' | head -1 || echo "")
+          if [ -n "$LOOM_URL" ]; then
+            echo "🎥 Found Loom video: $LOOM_URL"
+            echo "loom_url=$LOOM_URL" >> $GITHUB_OUTPUT
+          fi
+
+          echo "should_notify=true" >> $GITHUB_OUTPUT
+          {
+            echo "title<<EOF"
+            echo "$TITLE"
+            echo "EOF"
+            echo "description<<EOF"
+            echo "$DESCRIPTION"
+            echo "EOF"
+            echo "product=$PRODUCT"
+          } >> $GITHUB_OUTPUT
+
+      - name: Notify Slack
+        if: steps.update.outputs.should_notify == 'true'
+        continue-on-error: true
+        run: |
+          TITLE="${{ steps.update.outputs.title }}"
+          DESCRIPTION="${{ steps.update.outputs.description }}"
+          PRODUCT="${{ steps.update.outputs.product }}"
+          LOOM_URL="${{ steps.update.outputs.loom_url }}"
+          DEV_NAME="${{ github.event.pull_request.user.login }}"
+
+          HEADER="📦 New in ${PRODUCT:-Elementor}"
+
+          PR_URL="${{ github.event.pull_request.html_url }}"
+
+          BLOCKS=$(jq -n \
+            --arg title "$TITLE" \
+            --arg description "$DESCRIPTION" \
+            --arg header "$HEADER" \
+            --arg dev "Dev: $DEV_NAME" \
+            --arg pr_url "$PR_URL" \
+            '[
+              {
+                type: "header",
+                text: {
+                  type: "plain_text",
+                  text: $header,
+                  emoji: true
+                }
+              },
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: ("*" + $title + "*")
+                }
+              },
+              {
+                type: "section",
+                text: {
+                  type: "mrkdwn",
+                  text: $description
+                }
+              },
+              {
+                type: "context",
+                elements: [
+                  {
+                    type: "mrkdwn",
+                    text: $dev
+                  },
+                  {
+                    type: "mrkdwn",
+                    text: ("<" + $pr_url + "|Pull Request>")
+                  }
+                ]
+              }
+            ]')
+
+          if [ -n "$LOOM_URL" ]; then
+            BLOCKS=$(echo "$BLOCKS" | jq \
+              --arg loom_url "$LOOM_URL" \
+              '. + [{
+                type: "actions",
+                elements: [{
+                  type: "button",
+                  text: {
+                    type: "plain_text",
+                    text: "🎥 Watch Demo",
+                    emoji: true
+                  },
+                  url: $loom_url,
+                  style: "primary"
+                }]
+              }]')
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg channel "${{ secrets.SLACK_PULSE_CHANNEL_ID }}" \
+            --arg title "$TITLE" \
+            --arg header "$HEADER" \
+            --argjson blocks "$BLOCKS" \
+            '{
+              channel: $channel,
+              text: ($header + ": " + $title),
+              blocks: $blocks
+            }')
+
+          HTTP_STATUS=$(curl -s -w "%{http_code}" -X POST "https://slack.com/api/chat.postMessage" \
+            -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            -o /tmp/slack_response.json)
+
+          SLACK_OK=$(jq -r '.ok' /tmp/slack_response.json 2>/dev/null)
+
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ] && [ "$SLACK_OK" = "true" ]; then
+            echo "✅ Slack notification sent"
+          else
+            echo "❌ Slack notification failed (HTTP $HTTP_STATUS, ok=$SLACK_OK)"
+            cat /tmp/slack_response.json
+            exit 1
+          fi
+
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg channel "${{ secrets.SLACK_PULSE_CHANNEL_ID }}" \
+            --arg pr_title "$PR_TITLE" \
+            --arg pr_url "$PR_URL" \
+            --arg run_url "$RUN_URL" \
+            --arg pr_number "$PR_NUMBER" \
+            '{
+              channel: $channel,
+              text: ("⚠️ Product pulse generation failed for PR #" + $pr_number),
+              blocks: [
+                {
+                  type: "section",
+                  text: {
+                    type: "mrkdwn",
+                    text: ("⚠️ *Product pulse generation failed*\n<" + $pr_url + "|#" + $pr_number + ": " + $pr_title + ">\n<" + $run_url + "|View workflow run>")
+                  }
+                }
+              ]
+            }')
+
+          curl -s -X POST "https://slack.com/api/chat.postMessage" \
+            -H "Authorization: Bearer ${{ secrets.SLACK_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" > /dev/null

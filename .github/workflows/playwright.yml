@@ -92,8 +92,10 @@ jobs:
         include:
           - shardIndex: "elements-regression-core"
           - shardIndex: "elements-regression-atomic"
-          - shardIndex: "plugin_tester_section"
-          - shardIndex: "plugin_tester_container"
+          - shardIndex: "plugin_tester_section_1"
+          - shardIndex: "plugin_tester_section_2"
+          - shardIndex: "plugin_tester_container_1"
+          - shardIndex: "plugin_tester_container_2"
           - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
@@ -201,8 +203,8 @@ jobs:
         if: ${{
           matrix.shardIndex != 'elements-regression-core' &&
           matrix.shardIndex != 'elements-regression-atomic' &&
-          matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section' &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_container_') &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_section_') &&
           matrix.shardIndex != 'import_export_customization'
           }}
         run: |
@@ -212,21 +214,25 @@ jobs:
           fi
           npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} $PROJECT_ARG
       - name: Run Playwright Plugin Container tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@plugin_tester_container" $PROJECT_ARG
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_container" --shard=${SHARD_NUM}/2 $PROJECT_ARG
       - name: Run Playwright Plugin Section tests
-        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         run: |
           PROJECT_ARG=""
           if [ "$BROWSER" != "all" ] && [ "$BROWSER" != "chromium" ]; then
             PROJECT_ARG="--project=$BROWSER"
           fi
-          npm run test:playwright -- --grep="@plugin_tester_section" $PROJECT_ARG
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
+          npm run test:playwright -- --grep="@plugin_tester_section" --shard=${SHARD_NUM}/2 $PROJECT_ARG
       - name: Run import export customization tests
         if: ${{ matrix.shardIndex == 'import_export_customization' }}
         run: |
