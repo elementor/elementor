@@ -76,6 +76,7 @@ class Module extends BaseModule {
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Get_Globals_Ability() )->register();
 		( new Abilities\Create_Element_Ability() )->register();
+		( new Abilities\Simple_Resource_Ability( 'elementor://style/best-practices', __( 'Style Best Practices', 'elementor' ) ) )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -101,7 +102,9 @@ class Module extends BaseModule {
 				'elementor/get-globals',
 				'elementor/create-element',
 			],
-			[],
+			[
+				'elementor/style/best-practices',
+			],
 			[]
 		);
 

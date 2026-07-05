@@ -66,34 +66,6 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
 
 	resource(
-		'styles-best-practices',
-		BEST_PRACTICES_URI,
-		{
-			description: 'Styling best practices',
-		},
-		async () => {
-			return {
-				contents: [
-					{
-						uri: BEST_PRACTICES_URI,
-						text: `# Styling best practices
-Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
-This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
-
-Styling is provided as raw CSS. The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
-
-** CRITICAL - VARIABLES **
-When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
-Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
-
-`,
-					},
-				],
-			};
-		}
-	);
-
-	resource(
 		'widget-schema-by-type',
 		new ResourceTemplate( WIDGET_SCHEMA_URI, {
 			list: () => {
