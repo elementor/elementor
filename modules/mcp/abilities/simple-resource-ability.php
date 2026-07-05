@@ -21,7 +21,7 @@ class Simple_Resource_Ability extends Abstract_Ability {
 
 		if ( ! file_exists( $this->file_path ) ) {
 			throw new \InvalidArgumentException(
-				sprintf( 'Static resource file not found: %s', $this->file_path )
+				__( 'Static resource file not found', 'elementor' ) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			);
 		}
 	}
@@ -50,6 +50,7 @@ class Simple_Resource_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		return file_get_contents( $this->file_path );
 	}
 
