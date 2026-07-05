@@ -1,33 +1,20 @@
 import * as React from 'react';
-import { markSaved } from '@elementor/editor-v5-store';
+import { useState } from 'react';
 import { saveDocument } from '@elementor/editor-v5-runtime';
+import { markSaved } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import { AppBar as UiAppBar, Button, Stack, Toolbar, Typography } from '@elementor/ui';
 
-function getClassicEditorUrl(): string {
-	const config = window.ElementorConfig as {
-		editorV5?: {
-			classicEditorUrl?: string;
-		};
-	} | undefined;
-
-	return config?.editorV5?.classicEditorUrl ?? '#';
-}
-
-function getDocumentTitle(): string {
-	const config = window.ElementorConfig as {
-		initial_document?: {
-			title?: string;
-		};
-	} | undefined;
-
-	return config?.initial_document?.title ?? 'Editor V5';
-}
+import { getClassicEditorUrl, getDocumentTitle } from '../editor-config';
 
 export default function AppBar() {
-	const dirty = useSelector( ( state: { editorV5Document: { dirty: boolean; elements: unknown[] } } ) => state.editorV5Document.dirty );
-	const elements = useSelector( ( state: { editorV5Document: { elements: unknown[] } } ) => state.editorV5Document.elements );
-	const [ isSaving, setIsSaving ] = React.useState( false );
+	const dirty = useSelector(
+		( state: { editorV5Document: { dirty: boolean; elements: unknown[] } } ) => state.editorV5Document.dirty
+	);
+	const elements = useSelector(
+		( state: { editorV5Document: { elements: unknown[] } } ) => state.editorV5Document.elements
+	);
+	const [ isSaving, setIsSaving ] = useState( false );
 
 	const handleSave = async () => {
 		setIsSaving( true );

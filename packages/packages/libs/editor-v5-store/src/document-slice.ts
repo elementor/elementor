@@ -9,11 +9,7 @@ const initialState: DocumentState = {
 	dirty: false,
 };
 
-function findElementPath(
-	elements: ElementNode[],
-	targetId: string,
-	path: number[] = []
-): number[] | null {
+function findElementPath( elements: ElementNode[], targetId: string, path: number[] = [] ): number[] | null {
 	for ( let index = 0; index < elements.length; index++ ) {
 		const element = elements[ index ];
 
@@ -98,11 +94,7 @@ function removeElementAtPath( elements: ElementNode[], path: number[] ): Element
 	} );
 }
 
-function insertElement(
-	elements: ElementNode[],
-	parentId: string | null,
-	element: ElementNode
-): ElementNode[] {
+function insertElement( elements: ElementNode[], parentId: string | null, element: ElementNode ): ElementNode[] {
 	if ( ! parentId ) {
 		return [ ...elements, element ];
 	}
@@ -153,10 +145,7 @@ export const documentSlice = __createSlice( {
 			state.selectedIds = [ element.id ];
 			state.dirty = true;
 		},
-		updateSetting(
-			state,
-			action: PayloadAction< { id: string; key: string; value: unknown } >
-		) {
+		updateSetting( state, action: PayloadAction< { id: string; key: string; value: unknown } > ) {
 			const path = findElementPath( state.elements, action.payload.id );
 
 			if ( ! path ) {
@@ -191,14 +180,7 @@ export const documentSlice = __createSlice( {
 
 __registerSlice( documentSlice );
 
-export const {
-	hydrate,
-	select,
-	createElement,
-	updateSetting,
-	removeElement,
-	markSaved,
-} = documentSlice.actions;
+export const { hydrate, select, createElement, updateSetting, removeElement, markSaved } = documentSlice.actions;
 
 export function getElementById( elements: ElementNode[], id: string ): ElementNode | null {
 	const path = findElementPath( elements, id );

@@ -1,5 +1,6 @@
 import {
 	createElement,
+	type DocumentSliceState,
 	getAtomicCatalog,
 	getAtomicWidgetConfig,
 	getElementById,
@@ -8,7 +9,6 @@ import {
 	removeElement,
 	select,
 	updateSetting,
-	type DocumentSliceState,
 } from '@elementor/editor-v5-store';
 import { type __createStore } from '@elementor/store';
 
@@ -101,10 +101,7 @@ export class AgentRuntime {
 				result = this.getSnapshot().elements;
 				break;
 			case 'getElement':
-				result = getElementById(
-					this.getSnapshot().elements,
-					String( input.id )
-				);
+				result = getElementById( this.getSnapshot().elements, String( input.id ) );
 				break;
 			case 'listWidgets':
 				result = getAtomicCatalog();
@@ -167,10 +164,7 @@ export class AgentRuntime {
 	}
 }
 
-export function createAgentRuntime(
-	store: EditorV5Store,
-	options?: AgentRuntimeOptions
-): AgentRuntime {
+export function createAgentRuntime( store: EditorV5Store, options?: AgentRuntimeOptions ): AgentRuntime {
 	return new AgentRuntime( store, options );
 }
 

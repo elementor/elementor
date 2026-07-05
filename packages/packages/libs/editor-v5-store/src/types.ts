@@ -15,7 +15,7 @@ export type AtomicWidgetConfig = {
 	name: string;
 	atomic_controls?: unknown[];
 	atomic_props_schema?: Record< string, unknown >;
-	[key: string]: unknown;
+	[ key: string ]: unknown;
 };
 
 export type DocumentState = {

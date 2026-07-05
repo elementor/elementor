@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { select, type ElementNode } from '@elementor/editor-v5-store';
+import { type ElementNode, select } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import { List, ListItemButton, ListItemText, Typography } from '@elementor/ui';
 
@@ -30,20 +30,19 @@ function NavigatorItem( { element, depth, selectedIds }: NavigatorItemProps ) {
 				<ListItemText primary={ getElementLabel( element ) } secondary={ element.id } />
 			</ListItemButton>
 			{ element.elements?.map( ( child ) => (
-				<NavigatorItem
-					key={ child.id }
-					element={ child }
-					depth={ depth + 1 }
-					selectedIds={ selectedIds }
-				/>
+				<NavigatorItem key={ child.id } element={ child } depth={ depth + 1 } selectedIds={ selectedIds } />
 			) ) }
 		</>
 	);
 }
 
 export default function Navigator() {
-	const elements = useSelector( ( state: { editorV5Document: { elements: ElementNode[] } } ) => state.editorV5Document.elements );
-	const selectedIds = useSelector( ( state: { editorV5Document: { selectedIds: string[] } } ) => state.editorV5Document.selectedIds );
+	const elements = useSelector(
+		( state: { editorV5Document: { elements: ElementNode[] } } ) => state.editorV5Document.elements
+	);
+	const selectedIds = useSelector(
+		( state: { editorV5Document: { selectedIds: string[] } } ) => state.editorV5Document.selectedIds
+	);
 
 	return (
 		<>
@@ -52,12 +51,7 @@ export default function Navigator() {
 			</Typography>
 			<List dense>
 				{ elements.map( ( element ) => (
-					<NavigatorItem
-						key={ element.id }
-						element={ element }
-						depth={ 0 }
-						selectedIds={ selectedIds }
-					/>
+					<NavigatorItem key={ element.id } element={ element } depth={ 0 } selectedIds={ selectedIds } />
 				) ) }
 			</List>
 		</>

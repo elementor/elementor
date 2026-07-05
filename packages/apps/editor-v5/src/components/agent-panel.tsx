@@ -1,14 +1,7 @@
 import * as React from 'react';
+import { type ChangeEvent, type SyntheticEvent, useEffect, useState } from 'react';
 import type { AgentEvent, AgentRuntime } from '@elementor/editor-v5-agent';
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Button,
-	Stack,
-	TextField,
-	Typography,
-} from '@elementor/ui';
+import { Accordion, AccordionDetails, AccordionSummary, Button, Stack, TextField, Typography } from '@elementor/ui';
 
 type AgentPanelProps = {
 	agent: AgentRuntime;
@@ -17,15 +10,15 @@ type AgentPanelProps = {
 const DEFAULT_TOOL_INPUT = '{\n  \n}';
 
 export default function AgentPanel( { agent }: AgentPanelProps ) {
-	const [ expanded, setExpanded ] = React.useState( false );
-	const [ toolName, setToolName ] = React.useState( 'getSnapshot' );
-	const [ toolInput, setToolInput ] = React.useState( DEFAULT_TOOL_INPUT );
-	const [ lastEvent, setLastEvent ] = React.useState< AgentEvent | null >( null );
-	const [ lastResult, setLastResult ] = React.useState< string >( '' );
-	const [ error, setError ] = React.useState< string | null >( null );
+	const [ expanded, setExpanded ] = useState( false );
+	const [ toolName, setToolName ] = useState( 'getSnapshot' );
+	const [ toolInput, setToolInput ] = useState( DEFAULT_TOOL_INPUT );
+	const [ lastEvent, setLastEvent ] = useState< AgentEvent | null >( null );
+	const [ lastResult, setLastResult ] = useState< string >( '' );
+	const [ error, setError ] = useState< string | null >( null );
 
-	React.useEffect( () => {
-		return agent.on( '*', ( event ) => {
+	useEffect( () => {
+		return agent.on( '*', ( event: AgentEvent ) => {
 			setLastEvent( event );
 		} );
 	}, [ agent ] );
@@ -44,7 +37,10 @@ export default function AgentPanel( { agent }: AgentPanelProps ) {
 	};
 
 	return (
-		<Accordion expanded={ expanded } onChange={ ( _, isExpanded ) => setExpanded( isExpanded ) }>
+		<Accordion
+			expanded={ expanded }
+			onChange={ ( _event: SyntheticEvent, isExpanded: boolean ) => setExpanded( isExpanded ) }
+		>
 			<AccordionSummary>
 				<Typography variant="subtitle2">Agent Dev Panel</Typography>
 			</AccordionSummary>
@@ -53,7 +49,9 @@ export default function AgentPanel( { agent }: AgentPanelProps ) {
 					<TextField
 						fullWidth
 						label="Tool"
-						onChange={ ( event ) => setToolName( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement | HTMLTextAreaElement > ) =>
+							setToolName( event.target.value )
+						}
 						select
 						SelectProps={ { native: true } }
 						size="small"
@@ -70,7 +68,9 @@ export default function AgentPanel( { agent }: AgentPanelProps ) {
 						label="Input JSON"
 						minRows={ 4 }
 						multiline
-						onChange={ ( event ) => setToolInput( event.target.value ) }
+						onChange={ ( event: ChangeEvent< HTMLInputElement | HTMLTextAreaElement > ) =>
+							setToolInput( event.target.value )
+						}
 						size="small"
 						value={ toolInput }
 					/>
@@ -83,15 +83,27 @@ export default function AgentPanel( { agent }: AgentPanelProps ) {
 						</Typography>
 					) }
 					<Typography variant="caption">Tools</Typography>
-					<Typography component="pre" sx={ { fontSize: 11, maxHeight: 120, overflow: 'auto' } } variant="body2">
+					<Typography
+						component="pre"
+						sx={ { fontSize: 11, maxHeight: 120, overflow: 'auto' } }
+						variant="body2"
+					>
 						{ JSON.stringify( agent.listTools(), null, 2 ) }
 					</Typography>
 					<Typography variant="caption">Last Event</Typography>
-					<Typography component="pre" sx={ { fontSize: 11, maxHeight: 120, overflow: 'auto' } } variant="body2">
+					<Typography
+						component="pre"
+						sx={ { fontSize: 11, maxHeight: 120, overflow: 'auto' } }
+						variant="body2"
+					>
 						{ lastEvent ? JSON.stringify( lastEvent, null, 2 ) : 'No events yet.' }
 					</Typography>
 					<Typography variant="caption">Last Result</Typography>
-					<Typography component="pre" sx={ { fontSize: 11, maxHeight: 160, overflow: 'auto' } } variant="body2">
+					<Typography
+						component="pre"
+						sx={ { fontSize: 11, maxHeight: 160, overflow: 'auto' } }
+						variant="body2"
+					>
 						{ lastResult || 'No results yet.' }
 					</Typography>
 				</Stack>

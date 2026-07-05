@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { createElement, getAtomicCatalog } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch } from '@elementor/store';
 import { List, ListItemButton, ListItemText, Typography } from '@elementor/ui';
 
 export default function ElementsPanel() {
-	const widgets = React.useMemo( () => getAtomicCatalog(), [] );
+	const widgets = useMemo( () => getAtomicCatalog(), [] );
 
 	const handleAdd = ( name: string, elType?: string ) => {
 		const isWidget = elType === 'widget';

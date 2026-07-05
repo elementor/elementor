@@ -29,10 +29,7 @@ function getDocumentSettings(): Record< string, unknown > {
 	return { ...settings };
 }
 
-export async function saveDocument(
-	elements: unknown[],
-	status: string = DEFAULT_SAVE_STATUS
-): Promise< unknown > {
+export async function saveDocument( elements: unknown[], status: string = DEFAULT_SAVE_STATUS ): Promise< unknown > {
 	const ajax = ( window as ElementorCommonWindow ).elementorCommon?.ajax;
 
 	if ( ! ajax ) {

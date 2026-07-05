@@ -1,8 +1,8 @@
 import * as React from 'react';
 import type { AgentRuntime } from '@elementor/editor-v5-agent';
-import { isLegacyDocument, type ElementNode } from '@elementor/editor-v5-store';
-import { Box } from '@elementor/ui';
+import { type ElementNode, isLegacyDocument } from '@elementor/editor-v5-store';
 import { __useSelector as useSelector } from '@elementor/store';
+import { Box } from '@elementor/ui';
 
 import AgentPanel from './agent-panel';
 import AppBar from './app-bar';

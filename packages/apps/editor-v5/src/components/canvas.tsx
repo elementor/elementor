@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { select, type ElementNode } from '@elementor/editor-v5-store';
+import { type ElementNode, select } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import { Box, Typography } from '@elementor/ui';
 
@@ -35,7 +35,9 @@ function CanvasElement( { element, selectedIds }: CanvasElementProps ) {
 				p: 1,
 			} }
 		>
-			<Typography variant="caption">{ getElementLabel( element ) } ({ element.id })</Typography>
+			<Typography variant="caption">
+				{ getElementLabel( element ) } ({ element.id })
+			</Typography>
 			{ element.elements?.map( ( child ) => (
 				<CanvasElement key={ child.id } element={ child } selectedIds={ selectedIds } />
 			) ) }
@@ -44,8 +46,12 @@ function CanvasElement( { element, selectedIds }: CanvasElementProps ) {
 }
 
 export default function Canvas() {
-	const elements = useSelector( ( state: { editorV5Document: { elements: ElementNode[] } } ) => state.editorV5Document.elements );
-	const selectedIds = useSelector( ( state: { editorV5Document: { selectedIds: string[] } } ) => state.editorV5Document.selectedIds );
+	const elements = useSelector(
+		( state: { editorV5Document: { elements: ElementNode[] } } ) => state.editorV5Document.elements
+	);
+	const selectedIds = useSelector(
+		( state: { editorV5Document: { selectedIds: string[] } } ) => state.editorV5Document.selectedIds
+	);
 
 	const handleBackgroundClick = () => {
 		dispatch( select( { ids: [] } ) );

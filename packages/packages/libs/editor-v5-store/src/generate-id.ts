@@ -7,7 +7,9 @@ export function generateElementId( existingIds: string[] = [] ): string {
 	let id = '';
 
 	do {
-		id = Math.random().toString( 16 ).slice( 2, 2 + ID_LENGTH );
+		id = Math.random()
+			.toString( 16 )
+			.slice( 2, 2 + ID_LENGTH );
 	} while ( existing.has( id ) );
 
 	return id;
