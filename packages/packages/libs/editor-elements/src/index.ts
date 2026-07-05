@@ -2,6 +2,18 @@
 export * from './types';
 export type * from './sync/types';
 
+// children dependencies (schema-driven settings <-> children sync)
+export {
+	bindSettingsReconcile,
+	type ChildDependenciesConfig,
+	type ChildDependencyRule,
+	type ChildPosition,
+	type ChildPositionKind,
+	evaluateWhen,
+	reconcileInitialChildren,
+	resolveInsertIndex,
+} from './children-dependencies';
+
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';

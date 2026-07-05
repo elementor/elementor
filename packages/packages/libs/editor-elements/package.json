@@ -45,6 +45,7 @@
     "@elementor/editor-styles": "4.3.0",
     "@elementor/editor-v1-adapters": "4.3.0",
     "@elementor/schema": "4.3.0",
+    "@elementor/session": "4.3.0",
     "@elementor/utils": "4.3.0",
     "@wordpress/i18n": "^3.1.0"
   },
