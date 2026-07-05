@@ -1,15 +1,12 @@
 import { type LogicalPosition, type LogicalSize } from '../types';
 import { clamp } from './clamp';
+import { type PanelCorner } from './corner-position';
 
 export type ResizeEdge = 'inline-start' | 'inline-end' | 'block-start' | 'block-end';
 
-export type ResizeCorner =
-	| 'block-start-inline-start'
-	| 'block-start-inline-end'
-	| 'block-end-inline-start'
-	| 'block-end-inline-end';
+export type ResizeCorner = PanelCorner;
 
-export type ResizeDirection = ResizeEdge | ResizeCorner;
+export type ResizeDirection = ResizeEdge | PanelCorner;
 
 export type ResizeBounds = {
 	minInlineSize: number;
