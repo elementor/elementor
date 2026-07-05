@@ -27,7 +27,8 @@ class Simple_Resource_Ability extends Abstract_Ability {
 	}
 
 	protected function get_ability_id(): string {
-		return 'elementor/' . ltrim( str_replace( self::URI_SCHEME, '', $this->uri ), '/' );
+		$path = ltrim( str_replace( self::URI_SCHEME, '', $this->uri ), '/' );
+		return 'elementor/resource-' . str_replace( '/', '-', $path );
 	}
 
 	protected function get_definition(): Ability_Definition {

@@ -103,7 +103,7 @@ class Module extends BaseModule {
 				'elementor/create-element',
 			],
 			[
-				'elementor/style/best-practices',
+				'elementor/resource-style-best-practices',
 			],
 			[]
 		);
