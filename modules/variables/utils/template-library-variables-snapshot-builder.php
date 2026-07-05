@@ -168,12 +168,14 @@ class Template_Library_Variables_Snapshot_Builder extends Template_Library_Snaps
 		return $count;
 	}
 
-	protected function save_data( array $items, array $metadata ): array {
+	protected function save_data( array $data, array $metadata ): array {
 		$repository = $this->get_repository_or_null();
 
 		if ( ! $repository ) {
 			return [];
 		}
+
+		$items = $data['updated_items'] ?? [];
 
 		$updated_collection = Variables_Collection::hydrate( [
 			'data' => $items,

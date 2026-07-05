@@ -12,12 +12,15 @@ export const baseSchema = {
 		),
 	duration: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation duration in milliseconds' ),
 	delay: z.number().min( 0 ).max( 10000 ).optional().describe( 'Animation delay in milliseconds' ),
-	easing: z.string().optional().describe( 'Easing function. See interactions schema for options.' ),
+	easing: z
+		.enum( [ 'easeIn' ] )
+		.optional()
+		.describe( 'Easing function for the animation. Use "easeIn" for free tier.' ),
 	excludedBreakpoints: z
-		.array( z.string() )
+		.array( z.enum( [ 'widescreen', 'desktop', 'laptop', 'tablet_extra', 'tablet', 'mobile_extra', 'mobile' ] ) )
 		.optional()
 		.describe(
-			'Breakpoint IDs on which this interaction is disabled (e.g. ["mobile", "tablet"]). Omit to enable on all breakpoints.'
+			'Breakpoint IDs on which this interaction is disabled (e.g. ["mobile", "tablet"]). Fetch the "elementor://breakpoints/list" resource to get the valid IDs for the current site. Omit to enable on all breakpoints.'
 		),
 };
 
@@ -27,6 +30,10 @@ export const proSchema = {
 		.optional()
 		.describe( 'Event that triggers the animation' ),
 	effect: z.enum( [ 'fade', 'slide', 'scale', 'custom' ] ).optional().describe( 'Animation effect type' ),
+	easing: z
+		.enum( [ 'easeIn', 'easeInOut', 'easeOut', 'backIn', 'backInOut', 'backOut', 'linear' ] )
+		.optional()
+		.describe( 'Easing function for the animation.' ),
 	customEffects: z
 		.object( {
 			keyframes: z

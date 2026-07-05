@@ -1,22 +1,29 @@
 import {
 	createElement,
 	type CreateElementParams,
+	deleteElement,
 	generateElementId,
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
 	type V1ElementConfig,
+	type V1ElementModelProps,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
-import { validateInput } from '../mcp/utils/validate-input';
+import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
+import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
+import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
 
+const CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE = 'createElement did not return an element container with a model.';
+
 type API = {
 	createElement: typeof createElement;
+	deleteElement: typeof deleteElement;
 	getWidgetsCache: typeof getWidgetsCache;
 	generateElementId: typeof generateElementId;
 	getContainer: typeof getContainer;
@@ -34,10 +41,11 @@ type CtorOptions = {
 export class CompositionBuilder {
 	private elementConfig: Record< string, Record< string, AnyValue > > = {};
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
-	private elementCusomCSS: Record< string, string > = {};
+	private elementCustomCSS: Record< string, string > = {};
 	private rootContainers: V1Element[] = [];
 	private api: API = {
 		createElement,
+		deleteElement,
 		getWidgetsCache,
 		generateElementId,
 		getContainer,
@@ -76,7 +84,7 @@ export class CompositionBuilder {
 	}
 
 	setCustomCSS( config: Record< string, string > ) {
-		this.elementCusomCSS = config;
+		this.elementCustomCSS = config;
 	}
 
 	getXML() {
@@ -94,14 +102,25 @@ export class CompositionBuilder {
 
 		node.setAttribute( 'id', id );
 
-		const base = {
+		const base: V1ElementModelProps = {
 			id,
 			skipDefaultChildren: true,
-			elements: children,
+			elements: children as V1ElementModelProps[ 'elements' ],
 			editor_settings: {
 				title: node.getAttribute( 'configuration-id' ) ?? undefined,
 			},
+			elType: 'widget',
 		};
+
+		// TODO: Restore this code once components are working in compositions
+		// if ( elementTag === 'e-component' ) {
+		// 	// apply component id before applying values
+		// 	const elementConfig = this.elementConfig[ String( node.getAttribute( 'configuration-id' ) ) ];
+		// 	if ( elementConfig ) {
+		// 		base.settings = base.settings || {};
+		// 		base.settings.component_instance = elementConfig.component_instance;
+		// 	}
+		// }
 
 		if ( isWidget ) {
 			return { ...base, elType: 'widget' as const, widgetType: elementTag };
@@ -142,13 +161,6 @@ export class CompositionBuilder {
 		return errors;
 	}
 
-	private findSchemaForNode( node: Element ) {
-		const widgetsCache = this.api.getWidgetsCache() || {};
-		const widgetType = node.tagName;
-		const widgetData = widgetsCache[ widgetType ]?.atomic_props_schema;
-		return widgetData || null;
-	}
-
 	private matchNodeByConfigId( configId: string ) {
 		const node = this.xml.querySelector( `[configuration-id="${ configId }"]` );
 		if ( ! node ) {
@@ -171,12 +183,11 @@ export class CompositionBuilder {
 	private async applyProperties() {
 		const configErrors: string[] = [];
 		const styleErrors: string[] = [];
-		const invalidStyles: Record< string, string[] > = {};
 
 		const allConfigIds = new Set( [
 			...Object.keys( this.elementConfig ),
 			...Object.keys( this.elementStylesConfig ),
-			...Object.keys( this.elementCusomCSS ),
+			...Object.keys( this.elementCustomCSS ),
 		] );
 
 		for ( const configId of allConfigIds ) {
@@ -188,7 +199,7 @@ export class CompositionBuilder {
 				if ( this.elementConfig[ configId ] ) {
 					configErrors.push( msg );
 				}
-				if ( this.elementStylesConfig[ configId ] || this.elementCusomCSS[ configId ] ) {
+				if ( this.elementStylesConfig[ configId ] || this.elementCustomCSS[ configId ] ) {
 					styleErrors.push( msg );
 				}
 				continue;
@@ -211,19 +222,14 @@ export class CompositionBuilder {
 			}
 
 			const styleConfig = this.elementStylesConfig[ configId ];
+			const hasInvalidStyles = false;
 			if ( styleConfig ) {
 				const validStylesPropValues: Record< string, AnyValue > = {};
 				for ( const [ styleName, stylePropValue ] of Object.entries( styleConfig ) ) {
-					const { valid, errors: validationErrors } = validateInput.validateStyles( {
-						[ styleName ]: stylePropValue,
-					} );
-					if ( ! valid ) {
-						if ( styleConfig.$intention ) {
-							invalidStyles[ element.id ] = invalidStyles[ element.id ] || [];
-							invalidStyles[ element.id ].push( styleName );
-						}
-						styleErrors.push( ...( validationErrors || [] ) );
+					if ( styleName === '$intention' ) {
+						continue;
 					} else {
+						// skipping actual validation - properies comes from the server
 						validStylesPropValues[ styleName ] = stylePropValue;
 					}
 				}
@@ -241,13 +247,15 @@ export class CompositionBuilder {
 				}
 			}
 
-			const customCSS = this.elementCusomCSS[ configId ];
-			if ( customCSS ) {
+			const intentionCss = typeof styleConfig?.$intention === 'string' ? styleConfig.$intention.trim() : '';
+			const fallbackCss = hasInvalidStyles && intentionCss ? intentionCss : '';
+			const mergedCustomCss = mergeCustomCssText( this.elementCustomCSS[ configId ], fallbackCss );
+			if ( mergedCustomCss ) {
 				try {
 					this.api.doUpdateElementProperty( {
 						elementId: element.id,
 						propertyName: '_styles',
-						propertyValue: { custom_css: customCSS },
+						propertyValue: { custom_css: mergedCustomCss },
 						elementType: node.tagName,
 					} );
 				} catch ( cssErr ) {
@@ -258,7 +266,7 @@ export class CompositionBuilder {
 			await this.awaitViewRender( element );
 		}
 
-		return { configErrors, styleErrors, invalidStyles };
+		return { configErrors, styleErrors };
 	}
 
 	async build( rootContainer: V1Element ) {
@@ -268,6 +276,14 @@ export class CompositionBuilder {
 			if ( ! widgetsCache[ node.tagName ] ) {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
 			}
+		} );
+
+		const typesWithRequiredChildren = Object.keys( widgetsCache ).filter(
+			( elementType ) => getRequiredDefaultChildTemplates( widgetsCache[ elementType ] ).length > 0
+		);
+
+		typesWithRequiredChildren.forEach( ( elementType ) => {
+			new RequiredChildrenEnforcer( elementType, widgetsCache ).enforce( this.xml );
 		} );
 
 		const childTypeErrors: string[] = [];
@@ -282,23 +298,40 @@ export class CompositionBuilder {
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
 
-			const newElement = this.api.createElement( {
-				container: rootContainer,
-				model: modelTree as CreateElementParams[ 'model' ],
-				options: { useHistory: false },
-			} );
-
-			this.rootContainers.push( newElement );
-
-			await this.awaitViewRender( newElement );
+			try {
+				const newElement = this.api.createElement( {
+					container: rootContainer,
+					model: modelTree as CreateElementParams[ 'model' ],
+					options: { useHistory: false },
+				} );
+				if ( ! newElement?.model ) {
+					throw new Error( CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE );
+				}
+				this.rootContainers.push( newElement );
+				await this.awaitViewRender( newElement );
+			} catch ( e: unknown ) {
+				const attempToRestoreInvalidContainer = this.api.getContainer( modelTree.id as string );
+				if ( attempToRestoreInvalidContainer ) {
+					this.api.deleteElement( { container: attempToRestoreInvalidContainer } );
+				}
+				throw e;
+			}
 		}
 
-		const { configErrors, styleErrors, invalidStyles } = await this.applyProperties();
+		const { configErrors, styleErrors } = await this.applyProperties();
+
+		if ( typeof window !== 'undefined' ) {
+			const targetWindow = window.top || window;
+			targetWindow.dispatchEvent(
+				new CustomEvent( 'elementor/composition/built', {
+					detail: { rootContainers: this.rootContainers.map( ( c ) => c.id ) },
+				} )
+			);
+		}
 
 		return {
 			configErrors,
 			styleErrors,
-			invalidStyles,
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}

@@ -18,10 +18,10 @@ class Border_Width_Prop_Type extends Object_Prop_Type {
 		$units = Size_Constants::border();
 
 		return [
-			'block-start' => Size_Prop_Type::make()->required()->units( $units ),
-			'block-end' => Size_Prop_Type::make()->required()->units( $units ),
-			'inline-start' => Size_Prop_Type::make()->required()->units( $units ),
-			'inline-end' => Size_Prop_Type::make()->required()->units( $units ),
+			'block-start' => Size_Prop_Type::make()->units( $units ),
+			'block-end' => Size_Prop_Type::make()->units( $units ),
+			'inline-start' => Size_Prop_Type::make()->units( $units ),
+			'inline-end' => Size_Prop_Type::make()->units( $units ),
 		];
 	}
 }

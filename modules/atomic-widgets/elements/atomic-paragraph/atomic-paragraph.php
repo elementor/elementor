@@ -56,7 +56,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					'content'  => String_Prop_Type::generate( __( 'Type your paragraph here', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text content of the paragraph.' ),
+				->description( 'The text content of the paragraph.' )
+				->alias( 'text', 'content' ),
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'p', 'span' ] )
@@ -72,6 +73,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Inline_Editing_Control::bind_to( 'paragraph' )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
@@ -135,5 +137,16 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-paragraph' => __DIR__ . '/atomic-paragraph.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$content = $settings['paragraph'] ?? '';
+
+		if ( empty( $content ) ) {
+			return '';
+		}
+
+		return \Elementor\Modules\MarkdownRender\Html_To_Markdown::convert( $content );
 	}
 }

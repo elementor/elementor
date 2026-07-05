@@ -1,6 +1,7 @@
 import { z } from '@elementor/schema';
 import { type McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 
+import { V3_DESCRIPTION_URI } from '../mcp-description-resource';
 import type { McpToolResult, ToolParams } from '../types';
 import { get$e, getElementor } from '../utils';
 
@@ -35,6 +36,14 @@ export function addUiTool( server: McpServer ): void {
 			},
 			annotations: {
 				title: 'Manage UI',
+			},
+			_meta: {
+				'angie/requiredResources': [
+					{
+						uri: V3_DESCRIPTION_URI,
+						whenToUse: 'Read to understand Elementor capabilities and limitations before using this tool.',
+					},
+				],
 			},
 		},
 		async ( params: ToolParams ) => {

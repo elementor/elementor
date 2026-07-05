@@ -1,31 +1,16 @@
 import * as React from 'react';
-import {
-	__useActiveDocument as useActiveDocument,
-	__useActiveDocumentActions as useActiveDocumentActions,
-} from '@elementor/editor-documents';
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
-import { SaveChangesDialog, useDialog } from '@elementor/editor-ui';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
 import { usePrefetchCssClassUsage } from '../../hooks/use-prefetch-css-class-usage';
 import { trackGlobalClasses } from '../../utils/tracking';
-import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
-const trackGlobalClassesButton = () => {
-	trackGlobalClasses( {
-		event: 'classManagerOpened',
-		source: 'style-panel',
-	} );
-};
+const EVENT_TOGGLE_DESIGN_SYSTEM = 'elementor/toggle-design-system';
 
 export const ClassManagerButton = () => {
-	const document = useActiveDocument();
-	const { open: openPanel } = usePanelActions();
-	const { save: saveDocument } = useActiveDocumentActions();
-	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 	const { prefetchClassesUsage } = usePrefetchCssClassUsage();
 
 	const { userCan } = useUserStylesCapability();
@@ -37,13 +22,12 @@ export const ClassManagerButton = () => {
 	}
 
 	const handleOpenPanel = () => {
-		if ( document?.isDirty ) {
-			openSaveChangesDialog();
-			return;
-		}
+		window.dispatchEvent(
+			new CustomEvent( EVENT_TOGGLE_DESIGN_SYSTEM, {
+				detail: { tab: 'classes' as const },
+			} )
+		);
 
-		openPanel();
-		trackGlobalClassesButton();
 		trackGlobalClasses( {
 			event: 'classManagerOpened',
 			source: 'style-panel',
@@ -52,43 +36,10 @@ export const ClassManagerButton = () => {
 	};
 
 	return (
-		<>
-			<Tooltip title={ __( 'Class Manager', 'elementor' ) } placement="top">
-				<IconButton size="tiny" onClick={ handleOpenPanel } sx={ { marginInlineEnd: -0.75 } }>
-					<FlippedColorSwatchIcon fontSize="tiny" />
-				</IconButton>
-			</Tooltip>
-			{ isSaveChangesDialogOpen && (
-				<SaveChangesDialog>
-					<SaveChangesDialog.Title>{ __( 'You have unsaved changes', 'elementor' ) }</SaveChangesDialog.Title>
-					<SaveChangesDialog.Content>
-						<SaveChangesDialog.ContentText sx={ { mb: 2 } }>
-							{ __(
-								"To open the Class Manager, save your page first. You can't continue without saving.",
-								'elementor'
-							) }
-						</SaveChangesDialog.ContentText>
-					</SaveChangesDialog.Content>
-					<SaveChangesDialog.Actions
-						actions={ {
-							cancel: {
-								label: __( 'Stay here', 'elementor' ),
-								action: closeSaveChangesDialog,
-							},
-							confirm: {
-								label: __( 'Save & Continue', 'elementor' ),
-								action: async () => {
-									await saveDocument();
-									closeSaveChangesDialog();
-									openPanel();
-									trackGlobalClassesButton();
-									prefetchClassesUsage();
-								},
-							},
-						} }
-					/>
-				</SaveChangesDialog>
-			) }
-		</>
+		<Tooltip title={ __( 'Class Manager', 'elementor' ) } placement="top">
+			<IconButton size="tiny" onClick={ handleOpenPanel } sx={ { marginInlineEnd: -0.75 } }>
+				<FlippedColorSwatchIcon fontSize="tiny" />
+			</IconButton>
+		</Tooltip>
 	);
 };

@@ -161,7 +161,7 @@ async function main() {
       skipBranches = /^[Yy]$/.test(skipBranchesInput);
     }
 
-    const branchName = `${major}.${minor}`;
+    const branchName = `${major}.${String(minor).padStart(2, '0')}`;
 
     // Get current git branch
     const currentBranch = execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf8' }).trim();

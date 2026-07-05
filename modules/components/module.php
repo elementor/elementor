@@ -16,6 +16,7 @@ use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
+use Elementor\Modules\Components\Widgets\Component_Instance;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -44,6 +45,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
 		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
+		add_filter( 'elementor/utils/find_element_recursive/inner_elements', fn( array $inner_elements, array $element_data ) => $this->get_inner_elements_for_search( $inner_elements, $element_data ), 10, 2 );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
@@ -152,5 +154,25 @@ class Module extends BaseModule {
 		}
 
 		$document->align_overridable_props_with_elements();
+	}
+
+	private function get_inner_elements_for_search( array $inner_elements, array $element_data ): array {
+		if ( ! $this->is_component_instance( $element_data ) ) {
+			return $inner_elements;
+		}
+
+		$element_instance = Plugin::$instance->elements_manager->create_element_instance( $element_data );
+
+		if ( ! $element_instance instanceof Component_Instance ) {
+			return [];
+		}
+
+		return $element_instance->get_inner_elements_data_for_search();
+	}
+
+	private function is_component_instance( array $element_data ): bool {
+		return isset( $element_data['elType'], $element_data['widgetType'] )
+			&& 'widget' === $element_data['elType']
+			&& Component_Instance::get_element_type() === $element_data['widgetType'];
 	}
 }

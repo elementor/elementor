@@ -34,7 +34,23 @@ class Test_User_Query extends Elementor_Test_Base {
 		}
 	}
 
+	public function test_user_query_denies_users_without_list_users_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$request = new \WP_REST_Request( 'GET', self::URL );
+		$request->set_param( User_Query::SEARCH_TERM_KEY, 'admin' );
+		$request->set_header( User_Query::NONCE_KEY, wp_create_nonce( 'wp_rest' ) );
+
+		// Act
+		$response = rest_get_server()->dispatch( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+	}
+
 	private function execute( $params, $expected ) {
+		$this->setExpectedIncorrectUsage( 'elementor/v1/user' );
+
 		// Arrange
 		$request = new \WP_REST_Request( 'GET', self::URL );
 		$request->set_param( User_Query::SEARCH_TERM_KEY, $params[ User_Query::SEARCH_TERM_KEY ] );

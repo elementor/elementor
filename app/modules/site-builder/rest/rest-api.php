@@ -1,8 +1,10 @@
 <?php
 namespace Elementor\App\Modules\SiteBuilder\Rest;
 
+use Elementor\App\Modules\SiteBuilder\Services\Connect_Auth_Service;
 use Elementor\Plugin;
 use WP_Error;
+use WP_Http;
 use WP_REST_Response;
 use WP_REST_Server;
 
@@ -19,6 +21,12 @@ class Rest_Api {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/home-screen', [
 			'methods' => WP_REST_Server::READABLE,
 			'callback' => [ $this, 'get_home_screen' ],
+			'permission_callback' => fn() => current_user_can( 'manage_options' ),
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/auth', [
+			'methods' => WP_REST_Server::READABLE,
+			'callback' => [ $this, 'get_auth_credentials' ],
 			'permission_callback' => fn() => current_user_can( 'manage_options' ),
 		] );
 
@@ -48,7 +56,7 @@ class Rest_Api {
 		$app = $this->get_connect_app();
 
 		if ( ! $app || ! $app->is_connected() ) {
-			return new WP_Error( 'site_builder_unavailable', 'Site builder is not connected.', [ 'status' => 503 ] );
+			return new WP_Error( 'site_builder_unavailable', 'Site builder is not connected.', [ 'status' => WP_Http::SERVICE_UNAVAILABLE ] );
 		}
 
 		$data = $app->get_home_screen();
@@ -57,7 +65,28 @@ class Rest_Api {
 			return $data;
 		}
 
-		return new WP_REST_Response( $data, 200 );
+		return new WP_REST_Response( $data, WP_Http::OK );
+	}
+
+	public function get_auth_credentials() {
+		$connect_auth = ( new Connect_Auth_Service() )->get_connect_auth();
+
+		if ( ! $connect_auth ) {
+			return new WP_Error(
+				'auth_unavailable',
+				'Authentication credentials not available',
+				[ 'status' => WP_Http::SERVICE_UNAVAILABLE ]
+			);
+		}
+
+		$response = new WP_REST_Response( [
+			'success' => true,
+			'data' => $connect_auth,
+		], WP_Http::OK );
+
+		$response->header( 'Cache-Control', 'no-store, private' );
+
+		return $response;
 	}
 
 	public function get_snapshot() {
@@ -65,7 +94,7 @@ class Rest_Api {
 		return new WP_REST_Response( [
 			'success' => true,
 			'data' => [ 'value' => $snapshot ],
-		], 200 );
+		], WP_Http::OK );
 	}
 
 	public function update_snapshot( $request ) {
@@ -76,7 +105,7 @@ class Rest_Api {
 			return new WP_REST_Response( [
 				'success' => false,
 				'data' => [ 'message' => 'Snapshot exceeds maximum allowed size.' ],
-			], 400 );
+			], WP_Http::BAD_REQUEST );
 		}
 
 		$success = update_option( 'elementor_site_builder_snapshot', $sanitized, false );
@@ -85,13 +114,13 @@ class Rest_Api {
 			return new WP_REST_Response( [
 				'success' => true,
 				'data' => [ 'message' => 'Snapshot updated successfully.' ],
-			], 200 );
+			], WP_Http::OK );
 		}
 
 		return new WP_REST_Response( [
 			'success' => false,
 			'data' => [ 'message' => 'Failed to update snapshot.' ],
-		], 500 );
+		], WP_Http::INTERNAL_SERVER_ERROR );
 	}
 
 	protected function get_connect_app() {

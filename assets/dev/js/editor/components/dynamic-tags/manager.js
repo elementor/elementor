@@ -12,12 +12,25 @@ module.exports = elementorModules.Module.extend( {
 
 	cacheCallbacks: [],
 
+	getTagRenderPostId( tag ) {
+		return tag.editorRenderPostId ?? elementor.config.document.id;
+	},
+
 	addCacheRequest( tag ) {
-		this.cacheRequests[ this.createCacheKey( tag ) ] = true;
+		const postId = this.getTagRenderPostId( tag );
+		const cacheKey = this.createCacheKey( tag );
+
+		if ( ! this.cacheRequests[ postId ] ) {
+			this.cacheRequests[ postId ] = {};
+		}
+
+		this.cacheRequests[ postId ][ cacheKey ] = true;
 	},
 
 	createCacheKey( tag ) {
-		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) );
+		const postId = this.getTagRenderPostId( tag );
+
+		return btoa( tag.getOption( 'name' ) ) + '-' + btoa( encodeURIComponent( JSON.stringify( tag.model ) ) ) + '-' + postId;
 	},
 
 	loadTagDataFromCache( tag ) {
@@ -27,7 +40,9 @@ module.exports = elementorModules.Module.extend( {
 			return this.cache[ cacheKey ];
 		}
 
-		if ( ! this.cacheRequests[ cacheKey ] ) {
+		const postId = this.getTagRenderPostId( tag );
+
+		if ( ! this.cacheRequests[ postId ] || ! this.cacheRequests[ postId ][ cacheKey ] ) {
 			this.addCacheRequest( tag );
 		}
 	},
@@ -40,26 +55,52 @@ module.exports = elementorModules.Module.extend( {
 
 		this.cacheCallbacks = [];
 
-		elementorCommon.ajax.addRequest( 'render_tags', {
-			data: {
-				post_id: elementor.config.document.id,
-				tags: Object.keys( cacheRequests ),
-			},
-			success: ( data ) => {
-				this.cache = {
-					...this.cache,
-					...data,
-				};
+		var postIds = Object.keys( cacheRequests );
 
-				cacheCallbacks.forEach( function( callback ) {
-					callback();
+		if ( 0 === postIds.length ) {
+			cacheCallbacks.forEach( function( entry ) {
+				entry.callback();
+			} );
+
+			return;
+		}
+
+		var pendingRequests = postIds.length;
+
+		var onRequestComplete = () => {
+			pendingRequests -= 1;
+
+			if ( 0 === pendingRequests ) {
+				cacheCallbacks.forEach( function( entry ) {
+					entry.callback();
 				} );
-			},
+			}
+		};
+
+		const needsUniqueIds = postIds.length > 1;
+		const batchId = needsUniqueIds ? elementorCommon.helpers.getUniqueId() : null;
+
+		postIds.forEach( ( postId ) => {
+			elementorCommon.ajax.addRequest( 'render_tags', {
+				...( needsUniqueIds ? { unique_id: `render_tags-${ postId }-${ batchId }` } : {} ),
+				data: {
+					post_id: Number( postId ),
+					tags: Object.keys( cacheRequests[ postId ] ),
+				},
+				success: ( data ) => {
+					this.cache = {
+						...this.cache,
+						...data,
+					};
+
+					onRequestComplete();
+				},
+			} );
 		} );
 	},
 
 	refreshCacheFromServer( callback ) {
-		this.cacheCallbacks.push( callback );
+		this.cacheCallbacks.push( { callback } );
 
 		this.loadCacheRequests();
 	},

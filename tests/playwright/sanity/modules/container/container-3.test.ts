@@ -163,16 +163,18 @@ test.describe( 'Container tests #3 @container', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
+		const previewFrame = editor.getPreviewFrame();
 
 		// Act.
 		await editor.addNewContainerPreset( 'flex', 'c100-c50-50' );
 
-		// Assert.
-		await expect.soft( editor.getPreviewFrame().locator( '.e-con.e-con-full.e-con--column[data-nesting-level="1"]' ).last() ).toHaveCSS( 'padding', '0px' );
+		// Assert
+		const outerFlexbox = previewFrame.locator( '[data-element_type="e-flexbox"]' ).first();
+		const rightWrapper = outerFlexbox.locator( '> [data-element_type="e-flexbox"]' ).nth( 1 );
+		await expect.soft( rightWrapper ).toHaveCSS( 'padding', '0px' );
 
 		await test.step( 'Wrap value is not selected in c100-c50-50 preset', async () => {
-			const container = editor.getPreviewFrame().locator( '.elementor-section-wrap > .e-con.e-flex > .e-con-inner' );
-			await expect.soft( container ).not.toHaveCSS( 'flex-wrap', 'wrap' );
+			await expect.soft( outerFlexbox ).not.toHaveCSS( 'flex-wrap', 'wrap' );
 		} );
 	} );
 

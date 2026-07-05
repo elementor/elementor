@@ -7,15 +7,15 @@ jest.mock( 'elementor/modules/home/assets/js/site-builder/components/styled-comp
 	const PlannerChipsRow = ( { children } ) => <div data-testid="chips-row">{ children }</div>;
 	PlannerChipsRow.propTypes = { children: PropTypes.node };
 
-	const SuggestionChip = ( { label, onClick, selected } ) => (
-		<button type="button" data-selected={ selected } onClick={ onClick }>
+	const SuggestionChip = ( { label, onClick, disabled } ) => (
+		<button type="button" data-disabled={ disabled } disabled={ disabled } onClick={ onClick }>
 			{ label }
 		</button>
 	);
 	SuggestionChip.propTypes = {
 		label: PropTypes.string,
 		onClick: PropTypes.func,
-		selected: PropTypes.bool,
+		disabled: PropTypes.bool,
 	};
 
 	return { PlannerChipsRow, SuggestionChip };

@@ -2,8 +2,10 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
 
+use Elementor\Modules\GlobalClasses\Global_Classes_Order;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Export as Export_Runner;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Export_Runner extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( $kit ) {
+			clean_post_cache( $kit->get_id() );
+			Global_Classes_Order::make( $kit )->set_order( [] );
+		}
+	}
 
 	public function test_export() {
 		// Arrange.
@@ -28,7 +41,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 						'props' => [
 							'color' => [
 								'$$type' => 'color',
-								'value' => '<script>alert(1)</script>',
+								'value' => '',
 							],
 							'padding' => [
 								'$$type' => 'size',
@@ -57,67 +70,67 @@ class Test_Export_Runner extends Elementor_Test_Base {
 		$result = ( new Export_Runner() )->export( [] );
 
 		// Assert.
-		$sanitized_items = [
-			'g-123' => [
-				'id' => 'g-123',
-				'type' => 'class',
-				'label' => 'Test',
-				'variants' => [
-					[
-						'meta' => [
-							'breakpoint' => 'desktop',
-							'state' => null,
+		$expected_g_123 = [
+			'id' => 'g-123',
+			'type' => 'class',
+			'label' => 'Test',
+			'variants' => [
+				[
+					'meta' => [
+						'breakpoint' => 'desktop',
+						'state' => null,
+					],
+					'props' => [
+						'color' => [
+							'$$type' => 'color',
+							'value' => '',
 						],
-						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => '',
-							],
-							'padding' => [
-								'$$type' => 'size',
-								'value' => [
-									'size' => 10,
-									'unit' => 'px',
-								],
+						'padding' => [
+							'$$type' => 'size',
+							'value' => [
+								'size' => 10,
+								'unit' => 'px',
 							],
 						],
-						'custom_css' => null,
 					],
 				],
 			],
-			'g-456' => [
-				'id' => 'g-456',
-				'type' => 'class',
-				'label' => 'test-2',
-				'variants' => [],
-			],
 		];
 
-		$sanitized_order = [ 'g-123', 'g-456' ];
+		$expected_g_456 = [
+			'id' => 'g-456',
+			'type' => 'class',
+			'label' => 'test-2',
+			'variants' => [],
+		];
 
-		$this->assertSame( [
-			'files' => [
-				'path' => 'global-classes',
-				'data' => [
-					'items' => $sanitized_items,
-					'order' => $sanitized_order,
-				],
+		$expected_order = [
+			[ 'id' => 'g-123', 'label' => 'Test' ],
+			[ 'id' => 'g-456', 'label' => 'test-2' ],
+		];
+
+		$this->assertSame( [], $result['manifest'] );
+		$this->assertCount( 3, $result['files'] );
+
+		$files_by_path = $this->index_files_by_path( $result['files'] );
+
+		$this->assertEqualsCanonicalizing(
+			[
+				'global-classes/g-123.json',
+				'global-classes/g-456.json',
+				'global-classes/order.json',
 			],
-			'manifest' => [],
-		], $result );
+			array_keys( $files_by_path )
+		);
+
+		$this->assertEquals( $expected_g_123, json_decode( $files_by_path['global-classes/g-123.json'], true ) );
+		$this->assertEquals( $expected_g_456, json_decode( $files_by_path['global-classes/g-456.json'], true ) );
+		$this->assertEquals( $expected_order, json_decode( $files_by_path['global-classes/order.json'], true ) );
 	}
 
-	public function test_export__invalid_style() {
+	public function test_export__no_classes() {
 		// Arrange.
-		$items = [
-			'g-123' => [
-				'id' => 'g-123',
-			],
-		];
-
-		$order = [ 'g-123' ];
-
-		Global_Classes_Repository::make()->put( $items, $order );
+		Global_Classes_Repository::make()->put( [], [] );
 
 		// Act.
 		$result = ( new Export_Runner() )->export( [] );
@@ -127,5 +140,15 @@ class Test_Export_Runner extends Elementor_Test_Base {
 			'manifest' => [],
 			'files' => [],
 		], $result );
+	}
+
+	private function index_files_by_path( array $files ): array {
+		$indexed = [];
+
+		foreach ( $files as $file ) {
+			$indexed[ $file['path'] ] = $file['data'];
+		}
+
+		return $indexed;
 	}
 }

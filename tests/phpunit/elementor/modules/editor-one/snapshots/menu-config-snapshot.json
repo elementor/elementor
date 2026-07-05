@@ -30,12 +30,21 @@
                 "has_divider_before": false
             },
             {
+                "slug": "elementor-templates",
+                "label": "Templates",
+                "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
+                "icon": "folder",
+                "group_id": "elementor-editor-templates",
+                "priority": 40,
+                "has_divider_before": false
+            },
+            {
                 "slug": "elementor-role-manager",
                 "label": "Role Manager",
                 "url": "/wp-admin/admin.php?page=elementor-role-manager",
                 "icon": "users",
                 "group_id": "",
-                "priority": 40,
+                "priority": 60,
                 "has_divider_before": false
             },
             {
@@ -44,16 +53,7 @@
                 "url": "/wp-admin/admin.php?page=e-form-submissions",
                 "icon": "send",
                 "group_id": "",
-                "priority": 50,
-                "has_divider_before": false
-            },
-            {
-                "slug": "elementor-templates",
-                "label": "Templates",
-                "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
-                "icon": "folder",
-                "group_id": "elementor-editor-templates",
-                "priority": 60,
+                "priority": 70,
                 "has_divider_before": false
             },
             {
@@ -62,7 +62,7 @@
                 "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
-                "priority": 70,
+                "priority": 80,
                 "has_divider_before": false
             },
             {
@@ -71,7 +71,7 @@
                 "url": "/wp-admin/admin.php?page=elementor-system-info",
                 "icon": "file-settings",
                 "group_id": "elementor-editor-system",
-                "priority": 80,
+                "priority": 90,
                 "has_divider_before": false
             }
         ]

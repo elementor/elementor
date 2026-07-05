@@ -1,18 +1,20 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Form_Message;
 
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,6 +31,8 @@ abstract class Form_Message extends Atomic_Element_Base {
 	abstract protected static function get_background_color(): string;
 
 	abstract protected static function get_text_color(): string;
+
+	abstract protected static function get_default_status_paragraph_text(): string;
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
@@ -49,6 +53,23 @@ abstract class Form_Message extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
+		];
+	}
+
+	protected function define_allowed_child_types() {
+		return [ Atomic_Paragraph::get_element_type() ];
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Paragraph::generate()
+				->settings( [
+					'paragraph' => Html_V3_Prop_Type::generate( [
+						'content' => String_Prop_Type::generate( static::get_default_status_paragraph_text() ),
+						'children' => [],
+					] ),
+				] )
+				->build(),
 		];
 	}
 

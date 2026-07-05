@@ -190,8 +190,18 @@ function createComponentView( options: ComponentTypeOptions ): typeof TemplatedE
 		getResolverRenderContext(): RenderContext | undefined {
 			const namespaceKey = this.getNamespaceKey();
 			const context = this.getRenderContext();
+			const ownContext = context?.[ namespaceKey ];
 
-			return context?.[ namespaceKey ];
+			if ( ! ownContext ) {
+				return this._parent?.getResolverRenderContext?.();
+			}
+
+			const parentResolverContext = this._parent?.getResolverRenderContext?.();
+
+			return {
+				...parentResolverContext,
+				...ownContext,
+			};
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -331,7 +341,7 @@ function createComponentView( options: ComponentTypeOptions ): typeof TemplatedE
 
 			trackComponentEvent( {
 				action: 'edited',
-				source: 'user',
+				executedBy: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,

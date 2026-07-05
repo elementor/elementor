@@ -1413,4 +1413,26 @@ class Widget_Video extends Widget_Base {
 		<video class="elementor-video" src="<?php echo esc_attr( $video_url ); ?>" <?php Utils::print_html_attributes( $video_params ); ?>></video>
 		<?php
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$video_type = $settings['video_type'] ?? 'youtube';
+		$url = '';
+
+		if ( 'hosted' === $video_type ) {
+			if ( ! empty( $settings['insert_url'] ) ) {
+				$url = $settings['external_url']['url'] ?? '';
+			} else {
+				$url = $settings['hosted_url']['url'] ?? '';
+			}
+		} else {
+			$url = $settings[ $video_type . '_url' ] ?? '';
+		}
+
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		return '[Video](' . esc_url( $url ) . ')';
+	}
 }

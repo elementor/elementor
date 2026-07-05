@@ -22,7 +22,7 @@ jobs:
       php_diff: ${{ steps.php_diff_files.outputs.diff }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Check JS files diff
         id: js_diff_files
         uses: technote-space/get-diff-action@v6
@@ -47,11 +47,11 @@ jobs:
     if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.15.0
           cache: npm
       - name: Install Dependencies
         run: npm run install:ci
@@ -65,12 +65,16 @@ jobs:
     needs: ['file-diff']
     if: ${{ needs.file-diff.outputs.php_diff || github.event.pull_request.title == null }}
     steps:
+      - name: Mask GitHub token
+        run: echo "::add-mask::${{ secrets.GITHUB_TOKEN }}"
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Setup PHP 7.4
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Install Dependencies
         run: |
           composer install
@@ -82,6 +86,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.4'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 7.4
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
@@ -91,6 +97,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.0'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 8.0
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH
@@ -100,6 +108,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
+      - name: Remove Composer GitHub OAuth token
+        run: composer config --global --unset github-oauth.github.com || true
       - name: Run PHP Syntax Lint 8.1
         run: |
           export PATH=$HOME/.composer/vendor/bin:$PATH

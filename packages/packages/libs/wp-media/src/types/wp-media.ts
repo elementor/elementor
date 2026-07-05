@@ -36,7 +36,7 @@ export type MediaFrame = {
 			toJSON: () => WpAttachmentJSON[];
 		} ) &
 			( ( key: 'id' ) => string );
-		props?: { get: ( key: string ) => string | undefined };
+		props?: { get: ( key: string ) => string | undefined; set: ( key: string, value: string ) => void };
 	};
 	setState: ( id: string ) => MediaFrame;
 	on: ( event: string, callback: () => void ) => MediaFrame;

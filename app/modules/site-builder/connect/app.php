@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class App extends Library {
 	const API_URL = 'https://my.elementor.com/api/v2/builder/';
 
+	const HOME_SCREEN_REQUEST_TIMEOUT_SECONDS = 30;
+
 	public function get_title() {
 		return esc_html__( 'Site Builder', 'elementor' );
 	}
@@ -19,6 +21,10 @@ class App extends Library {
 	}
 
 	protected function get_api_url() {
+		if ( defined( 'ELEMENTOR_SITE_BUILDER_API_ORIGIN' ) ) {
+			return ELEMENTOR_SITE_BUILDER_API_ORIGIN . '/api/v2/builder/';
+		}
+
 		return static::API_URL;
 	}
 
@@ -31,6 +37,7 @@ class App extends Library {
 					'x-host-site-title' => (string) get_bloginfo( 'name' ),
 					'x-host-site-context' => (string) get_bloginfo( 'description' ),
 				],
+				'timeout' => self::HOME_SCREEN_REQUEST_TIMEOUT_SECONDS,
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,

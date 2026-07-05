@@ -44,8 +44,10 @@ jobs:
     uses: ./.github/workflows/calculate_php_version.yml
 
   build-plugin:
-    name: Build plugin
+    name: Snapshot build artifact
     uses: ./.github/workflows/build.yml
+    with:
+      job_name: Snapshot build artifact
 
   update-snapshots:
     name: Update snapshots - shard ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
@@ -58,13 +60,15 @@ jobs:
         shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
         shardTotal: [17]
         include:
-          - shardIndex: "plugin_tester_section"
-          - shardIndex: "plugin_tester_container"
+          - shardIndex: "plugin_tester_section_1"
+          - shardIndex: "plugin_tester_section_2"
+          - shardIndex: "plugin_tester_container_1"
+          - shardIndex: "plugin_tester_container_2"
           - shardIndex: "elements-regression-core"
           - shardIndex: "elements-regression-atomic"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Playwright environment
         id: setup
@@ -99,8 +103,8 @@ jobs:
 
       - name: Update snapshots
         if: ${{
-          matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section' &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_container_') &&
+          !startsWith(matrix.shardIndex, 'plugin_tester_section_') &&
           matrix.shardIndex != 'elements-regression-core' &&
           matrix.shardIndex != 'elements-regression-atomic'
           }}
@@ -114,24 +118,30 @@ jobs:
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
       - name: Update plugin tester container snapshots
-        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_container_') }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
           npm run test:playwright -- \
             --update-snapshots \
-            --grep="@plugin_tester_container"
+            --grep="@plugin_tester_container" \
+            --shard=${SHARD_NUM}/2
 
       - name: Update plugin tester section snapshots
-        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        if: ${{ startsWith(matrix.shardIndex, 'plugin_tester_section_') }}
         continue-on-error: true
         env:
           BROWSERS: ${{ steps.setup.outputs.browsers }}
         run: |
+          SHARD_NUM="${{ matrix.shardIndex }}"
+          SHARD_NUM="${SHARD_NUM##*_}"
           npm run test:playwright -- \
             --update-snapshots \
-            --grep="@plugin_tester_section"
+            --grep="@plugin_tester_section" \
+            --shard=${SHARD_NUM}/2
 
       - name: Update elements regression core snapshots
         if: ${{ matrix.shardIndex == 'elements-regression-core' }}
@@ -152,7 +162,7 @@ jobs:
             --update-snapshots
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snapshots-shard-${{ matrix.shardIndex }}
           path: |
@@ -169,7 +179,7 @@ jobs:
     if: ${{ inputs.test_grep != '' }}
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Playwright environment
         id: setup
@@ -194,7 +204,7 @@ jobs:
             --grep="$TEST_GREP"
 
       - name: Upload updated snapshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: snapshots-targeted
           path: |
@@ -211,13 +221,13 @@ jobs:
     if: always() && (needs.update-snapshots.result != 'skipped' || needs.update-snapshots-targeted.result != 'skipped')
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download all snapshot artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: snapshots-*
           path: tests/

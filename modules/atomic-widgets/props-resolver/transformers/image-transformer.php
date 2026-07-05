@@ -39,6 +39,7 @@ class Image_Transformer extends Transformer_Base {
 
 		return [
 			'src' => $value['src']['url'],
+			'alt' => $value['src']['alt'] ?? '',
 		];
 	}
 }

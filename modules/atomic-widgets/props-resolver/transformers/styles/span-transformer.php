@@ -11,6 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Span_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		return $value || 0 === $value ? 'span ' . $value : null;
+		return is_null( $value ) ? null : trim( $value );
 	}
 }

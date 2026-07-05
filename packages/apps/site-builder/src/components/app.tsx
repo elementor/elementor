@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import apiFetch from '@wordpress/api-fetch';
 
-import { deployWebsite } from '../deploy';
+import { isValidConnectAuth } from '../connect-auth-schema';
+import {
+	type ConnectAuth,
+	type SiteBuilderParams,
+	useSiteBuilderIframeMessaging,
+} from '../hooks/use-site-builder-iframe-messaging';
+import { getSiteBuilderConfig } from '../site-builder-config';
 
 const iframeStyle: React.CSSProperties = {
 	position: 'fixed',
@@ -13,141 +20,82 @@ const iframeStyle: React.CSSProperties = {
 	zIndex: 10000,
 };
 
-function getConfig() {
-	return window.elementorAppConfig?.[ 'site-builder' ];
-}
-
-function getElementorAiCurrentContext() {
-	return getConfig()?.elementorAiCurrentContext || {};
-}
-
-function sendReferrerInfo( iframe: HTMLIFrameElement, event: MessageEvent, targetOrigin: string ) {
-	const config = getConfig();
-
-	iframe.contentWindow?.postMessage(
-		{
-			type: 'referrer/info',
-			instanceId: event.data?.payload?.instanceId ?? '',
-			info: {
-				connectAuth: config?.connectAuth,
-				exitTo: config?.exitTo,
-				page: {
-					url: window.location.href,
-					elementorAiCurrentContext: getElementorAiCurrentContext(),
-				},
-				user: { isAdmin: config?.isAdmin ?? false },
-			},
-		},
-		targetOrigin
-	);
-}
-
-async function handleDeploy( iframe: HTMLIFrameElement | null, event: MessageEvent ) {
-	const origin = event.origin || '*';
-
-	try {
-		const result = await deployWebsite( event.data.payload );
-
-		iframe?.contentWindow?.postMessage(
-			{
-				type: 'site-planner/deploy-website/result',
-				payload: result,
-			},
-			origin
-		);
-
-		if ( result.status === 'success' && result.homePageId ) {
-			window.location.href = `/wp-admin/post.php?post=${ result.homePageId }&action=elementor`;
-		}
-	} catch ( err ) {
-		iframe?.contentWindow?.postMessage(
-			{
-				type: 'site-planner/deploy-website/result',
-				payload: {
-					status: 'error',
-					error: err instanceof Error ? err.message : 'Deploy failed',
-				},
-			},
-			origin
-		);
-	}
-}
+type SiteBuilderAuthResponse = {
+	success?: boolean;
+	data?: unknown;
+};
 
 export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
+	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
+	const [ connectAuth, setConnectAuth ] = useState< ConnectAuth | null >( null );
 
-	const iframeUrl = useMemo( () => getConfig()?.iframeUrl ?? '', [] );
+	const iframeUrl = useMemo( () => getSiteBuilderConfig()?.iframeUrl ?? '', [] );
 
-	const allowedOrigin = useMemo( () => {
-		try {
-			return new URL( iframeUrl ).origin;
-		} catch {
-			return '';
+	useSiteBuilderIframeMessaging( {
+		iframeRef,
+		iframeUrl,
+		siteBuilderParams,
+		connectAuth,
+	} );
+
+	useEffect( () => {
+		const fetchConnectAuth = async () => {
+			try {
+				const json = await apiFetch< SiteBuilderAuthResponse >( {
+					path: '/elementor/v1/site-builder/auth',
+				} );
+
+				if ( json.success && json.data && isValidConnectAuth( json.data ) ) {
+					setConnectAuth( json.data );
+				} else {
+					throw new Error( 'Invalid auth response: missing required Connect fields' );
+				}
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Failed to fetch connectAuth:', err );
+			}
+		};
+
+		fetchConnectAuth();
+	}, [] );
+
+	useEffect( () => {
+		if ( ! window.opener ) {
+			return;
 		}
-	}, [ iframeUrl ] );
 
-	const handleMessage = useCallback(
-		async ( event: MessageEvent ) => {
-			if ( ! allowedOrigin ) {
+		const onInit = ( event: MessageEvent ) => {
+			if ( event.source !== window.opener ) {
 				return;
 			}
-
-			if ( event.origin !== allowedOrigin ) {
+			if ( event.origin !== window.location.origin ) {
 				return;
 			}
-
-			if ( event.source !== iframeRef.current?.contentWindow ) {
+			if ( event.data?.type !== 'site-builder/init' ) {
 				return;
 			}
+			setSiteBuilderParams( event.data.payload ?? {} );
+			window.removeEventListener( 'message', onInit );
+		};
 
-			const { type } = event.data ?? {};
+		window.addEventListener( 'message', onInit );
+		window.opener.postMessage( { type: 'site-builder/ready' }, window.location.origin );
 
-			if ( type === 'get/referrer/info' ) {
-				const iframe = iframeRef.current;
-				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin );
-				}
-				return;
-			}
-
-			if ( type === 'site-planner/deploy-website' ) {
-				await handleDeploy( iframeRef.current, event );
-			}
-
-			if ( type === 'element-selector/close' ) {
-				const exitTo = getConfig()?.exitTo;
-				if ( window.top && exitTo && typeof exitTo === 'string' ) {
-					window.top.location.href = exitTo;
-				}
-			}
-		},
-		[ allowedOrigin ]
-	);
+		return () => window.removeEventListener( 'message', onInit );
+	}, [] );
 
 	useEffect( () => {
-		window.addEventListener( 'message', handleMessage );
-		return () => window.removeEventListener( 'message', handleMessage );
-	}, [ handleMessage ] );
-
-	useEffect( () => {
-		const wpApiSettings = ( window as unknown as { wpApiSettings?: { nonce?: string; root?: string } } )
-			.wpApiSettings;
+		const wpApiSettings = window.wpApiSettings;
 		const nonce = wpApiSettings?.nonce || '';
 		if ( ! nonce ) {
 			return;
 		}
 
-		const baseUrl = wpApiSettings?.root || '/wp-json/';
-		const settingsUrl = `${ baseUrl }elementor/v1/site-builder/snapshot`;
-
-		fetch( settingsUrl, {
+		apiFetch( {
+			path: '/elementor/v1/site-builder/snapshot',
 			method: 'POST',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-WP-Nonce': nonce,
-			},
-			body: JSON.stringify( { value: {} } ),
+			data: { value: {} },
 		} ).catch( () => {} );
 	}, [] );
 

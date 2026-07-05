@@ -34,6 +34,40 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$this->assertSame( [ 'hello' => 'world' ], $result );
 	}
 
+	public function test_transform__removes_site_builder_when_component_is_missing() {
+		Plugin::$instance->app->add_component( 'site-builder', null );
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( [ 'site_builder' => [ 'existing' => 'data' ] ] );
+
+		$this->assertArrayNotHasKey( 'site_builder', $result );
+	}
+
+	public function test_transform__includes_site_builder_when_site_not_connected() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( [] );
+
+		$this->assertArrayHasKey( 'site_builder', $result );
+		$this->assertArrayNotHasKey( 'siteKey', $result['site_builder'] );
+		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
+		$this->assertArrayHasKey( 'plannerSteps', $result['site_builder'] );
+		$this->assertSame( [], $result['site_builder']['site_builder_snapshot'] );
+	}
+
 	public function test_transform__returns_original_data_when_config_is_null() {
 		$site_builder = new class {
 			public function get_config(): ?array {
@@ -71,8 +105,8 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 
 		$this->assertSame( 'abc', $result['site_builder']['siteKey'] );
 		$this->assertSame( Site_Builder_Config::SITE_BUILDER_URL, $result['site_builder']['siteBuilderUrl'] );
-		$this->assertStringContainsString( 'site-planner-01.jpg', $result['site_builder']['previewImage1'] );
-		$this->assertStringContainsString( 'site-planner-02.jpg', $result['site_builder']['previewImage2'] );
+		$this->assertArrayHasKey( 0, $result['site_builder']['stepImages'] );
+		$this->assertStringContainsString( 'site-builder-start.png', $result['site_builder']['stepImages'][0] );
 		$this->assertStringContainsString( 'site-planner-bg.jpg', $result['site_builder']['bgImage'] );
 		$this->assertSame( $snapshot, $result['site_builder']['site_builder_snapshot'] );
 	}
@@ -136,6 +170,37 @@ class Test_Site_Builder_Config extends PHPUnit_TestCase {
 		$this->assertFalse( $result['site_builder']['stepConfig'][3]['hasInput'] );
 		$this->assertSame( 'Review and publish your site.', $result['site_builder']['stepConfig'][3]['text'] );
 		$this->assertSame( 'Review', $result['site_builder']['stepConfig'][3]['buttonLabel'] );
+	}
+
+	public function test_transform__preserves_deployed_to_plugin_step_config() {
+		$site_builder = new class {
+			public function get_config(): array {
+				return [ 'siteKey' => 'test-key' ];
+			}
+		};
+
+		Plugin::$instance->app->add_component( 'site-builder', $site_builder );
+
+		$input_data = [
+			'site_builder' => [
+				6 => [
+					'hasInput' => true,
+					'title' => 'Expand your site with Elementor AI',
+					'placeholder' => 'Which page do you want to create?',
+					'buttonLabel' => 'Create page',
+				],
+			],
+		];
+
+		$transformation = new Site_Builder_Config( [
+			'wordpress_adapter' => $this->mock_wordpress_adapter(),
+		] );
+
+		$result = $transformation->transform( $input_data );
+
+		$this->assertSame( 'Expand your site with Elementor AI', $result['site_builder']['stepConfig'][6]['title'] );
+		$this->assertTrue( $result['site_builder']['stepConfig'][6]['hasInput'] );
+		$this->assertStringContainsString( 'site-builder-expand.png', $result['site_builder']['stepImages'][6] );
 	}
 
 	public function test_transform__strips_unknown_step_config_fields() {

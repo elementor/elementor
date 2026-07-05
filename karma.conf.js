@@ -26,21 +26,22 @@ module.exports = function( config ) {
 			'tests/qunit/vendor/wp-includes/backbone.min.js',
 			'tests/qunit/vendor/wp-includes/react.min.js',
 			'tests/qunit/vendor/wp-includes/react-dom.min.js',
+			'assets/js/vendors-redux.js',
 			'tests/qunit/vendor/wp-includes/i18n.min.js',
 			'assets/lib/backbone/backbone.marionette.min.js',
 			'assets/lib/backbone/backbone.radio.min.js',
 
 			// Dev tools.
 			'tests/qunit/setup/dev-tools.js',
-			'assets/js/dev-tools.min.js',
+			'assets/js/dev-tools.js',
 
 			// Elementor Common.
 			'tests/qunit/setup/elementor-common.js',
 			'tests/qunit/setup/web-cli.js',
 			'assets/lib/dialog/dialog.js',
-			'assets/js/common-modules.min.js',
-			'assets/js/web-cli.min.js',
-			'assets/js/common.min.js',
+			'assets/js/common-modules.js',
+			'assets/js/web-cli.js',
+			'assets/js/common.js',
 
 			// Editor Fixtures.
 			'tests/qunit/index.html',
@@ -63,11 +64,11 @@ module.exports = function( config ) {
 			'assets/lib/jquery-hover-intent/jquery-hover-intent.min.js',
 
 			// Editor.
-			'assets/js/editor-modules.min.js',
-			'assets/js/editor-document.min.js',
+			'assets/js/editor-modules.js',
+			'assets/js/editor-document.js',
 
 			// Tests.
-			'assets/js/qunit-tests.min.js',
+			'assets/js/qunit-tests.js',
 		],
 		preprocessors: {
 			'tests/qunit/index.html': [ 'html2js' ],

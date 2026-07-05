@@ -12,7 +12,13 @@ import { debounce } from '@elementor/utils';
 import { slice } from '../store';
 import { selectActiveDocument } from '../store/selectors';
 import { type Document } from '../types';
-import { getV1DocumentPermalink, getV1DocumentsExitTo, getV1DocumentsManager, normalizeV1Document } from './utils';
+import {
+	getV1DocumentPermalink,
+	getV1DocumentsExitTo,
+	getV1DocumentsManager,
+	getV1DocumentWpPreview,
+	normalizeV1Document,
+} from './utils';
 
 export function syncStore() {
 	syncInitialization();
@@ -127,8 +133,9 @@ function syncOnExitToChange() {
 		const currentDocument = getV1DocumentsManager().getCurrent();
 		const newExitTo = getV1DocumentsExitTo( currentDocument );
 		const permalink = getV1DocumentPermalink( currentDocument );
+		const wpPreview = getV1DocumentWpPreview( currentDocument );
 
-		__dispatch( updateActiveDocument( { links: { platformEdit: newExitTo, permalink } } ) );
+		__dispatch( updateActiveDocument( { links: { platformEdit: newExitTo, permalink, wpPreview } } ) );
 	}, 400 );
 
 	listenTo( commandEndEvent( 'document/elements/settings' ), updateExitTo );

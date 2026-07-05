@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
-	const MIGRATIONS_URL = 'https://migrations.elementor.com/';
+	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
 
 	private static ?self $instance = null;
 
@@ -68,6 +68,10 @@ class Migrations_Orchestrator {
 
 	public static function clear_migration_cache(): void {
 		Migrations_Cache::clear_all();
+	}
+
+	public static function clear_entity_migration_cache( int $id, string $data_identifier ): void {
+		Migrations_Cache::clear_migration_cache( $id, $data_identifier );
 	}
 
 	/**

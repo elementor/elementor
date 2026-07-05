@@ -42,6 +42,9 @@ export const FORM_FIELD_ELEMENT_TYPES = new Set( [
 	'e-form-submit-button',
 	'e-form-select',
 	'e-form-radio-button',
+	'e-form-file-upload',
+	'e-form-date-picker',
+	'e-form-time-picker',
 ] );
 
 export function getArgsElementType( args: CreateArgs ): string | undefined {

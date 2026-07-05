@@ -1,7 +1,6 @@
 import eventsConfig from './events-config';
 import mixpanel, { Mixpanel } from 'mixpanel-browser';
 import { TIERS } from 'elementor-utils/tiers';
-import { configureSessionRecording, handleSessionRecording } from './session-recording';
 
 /** @type {Mixpanel | null} */
 let mixpanelInstance = null;
@@ -17,7 +16,6 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		configureSessionRecording( elementorCommon.config.editor_events?.session_recording_events );
 		this.initializeMixpanel( () => this.enableTracking() );
 	}
 
@@ -29,19 +27,19 @@ export default class extends elementorModules.Module {
 				elementorCommon.config.editor_events?.token,
 				{
 					persistence: 'localStorage',
+					persistence_name: 'elementor-builder-editor',
+					debug: elementorCommon.config.editor_events?.debug ?? false,
 					autocapture: false,
 					flags: true,
-					api_hosts: {
-						flags: 'https://api-eu.mixpanel.com',
-					},
+					api_host: 'https://api-eu.mixpanel.com',
 					loaded: onLoaded,
-					record_sessions_percent: 0,
+					record_sessions_percent: elementorCommon.config.editor_events?.session_recording_percent ?? 0,
 					record_idle_timeout_ms: 60 * 1000, // 60 Seconds
 					record_min_ms: 5 * 1000, // 5 Seconds
-					record_max_ms: 30 * 1000, // 30 Seconds
 					record_mask_text_selector: '',
+					remote_settings_mode: 'strict',
 				},
-				'elementor-editor',
+				'elementor-builder-editor',
 			);
 		}
 		elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
@@ -78,29 +76,31 @@ export default class extends elementorModules.Module {
 			return;
 		}
 
-		if ( ! this.trackingEnabled ) {
-			this.enableTracking();
-		}
+		try {
+			if ( ! this.trackingEnabled ) {
+				this.enableTracking();
+			}
 
-		const eventData = {
-			user_id: elementorCommon.config.editor_events?.user_id || null,
-			user_roles: elementorCommon.config.library_connect?.user_roles || [],
-			subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
-			user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
-			url: elementorCommon.config.editor_events?.site_url,
-			wp_version: elementorCommon.config.editor_events?.wp_version,
-			client_id: elementorCommon.config.editor_events?.site_key,
-			app_version: elementorCommon.config.editor_events?.elementor_version,
-			site_language: elementorCommon.config.editor_events?.site_language,
-			experiments: this.availableExperiments,
-			...data,
-		};
+			const eventData = {
+				user_id: elementorCommon.config.editor_events?.user_id || null,
+				user_roles: elementorCommon.config.library_connect?.user_roles || [],
+				subscription_id: elementorCommon.config.editor_events?.subscription_id || null,
+				user_tier: elementorCommon.config.library_connect?.current_access_tier || null,
+				url: elementorCommon.config.editor_events?.site_url,
+				wp_version: elementorCommon.config.editor_events?.wp_version,
+				client_id: elementorCommon.config.editor_events?.site_key,
+				app_version: elementorCommon.config.editor_events?.elementor_version,
+				site_language: elementorCommon.config.editor_events?.site_language,
+				experiments: this.availableExperiments,
+				...data,
+			};
 
-		mixpanelInstance.track( name, eventData, options );
-
-		const recordingDecision = handleSessionRecording( name, mixpanelInstance );
-		if ( recordingDecision ) {
-			mixpanelInstance.track( recordingDecision, eventData );
+			mixpanelInstance.track( name, eventData, options );
+		} catch ( error ) {
+			if ( elementorCommon.config.editor_events?.debug ) {
+				// eslint-disable-next-line no-console
+				console.error( 'Events Manager dispatch failed:', error );
+			}
 		}
 	}
 

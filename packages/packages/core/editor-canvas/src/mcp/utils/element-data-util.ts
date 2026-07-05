@@ -17,6 +17,10 @@ export function isWidgetAvailableForLLM( config: V1ElementConfig | undefined ): 
 	if ( config.meta?.llm_support === false ) {
 		return false;
 	}
+	// TODO: Restore component once working in compositions
+	if ( config.title === 'Component' ) {
+		return false;
+	}
 	if ( config.atomic_props_schema ) {
 		return true;
 	}

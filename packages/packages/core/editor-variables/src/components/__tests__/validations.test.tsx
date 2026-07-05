@@ -102,11 +102,14 @@ it( 'should successfully change name with valid input', async () => {
 
 	// Assert.
 	await waitFor( () => {
-		expect( mockCreateVariable ).toHaveBeenCalledWith( {
-			value: '#ff0000',
-			label: 'valid-name',
-			type: 'global-color-variable',
-		} );
+		expect( mockCreateVariable ).toHaveBeenCalledWith(
+			{
+				value: '#ff0000',
+				label: 'valid-name',
+				type: 'global-color-variable',
+			},
+			{ eventData: { controlPath: 'settings.color' } }
+		);
 	} );
 } );
 

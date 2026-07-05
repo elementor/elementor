@@ -1,5 +1,4 @@
 {% import 'elementor/macros' as m %}
-{%- set id_attribute = settings._cssid is not empty ? 'id="' ~ settings._cssid | e('html_attr') ~ '"' : '' -%}
 {%- set has_link = settings.link is defined and settings.link.href is defined and settings.link.href is not empty -%}
 {%- if has_link -%}
 	<{{ settings.link.tag | default('a') | e('html_tag') }}
@@ -8,8 +7,7 @@
 {%- endif %}
 <img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
 	{%- if not has_link %} data-interaction-id="{{ interaction_id }}"{% endif -%}
-	{%- if id_attribute is not empty %} {{ id_attribute }}{% endif -%}
-	{%- if settings.attributes is defined and settings.attributes is not empty %} {{ settings.attributes | raw }}{% endif -%}
+	{{- m.render_custom_attributes(settings) }}
 	{%- for attr, value in settings.image -%}
 		{%- if attr == 'src' %} src="{{ value | e('full_url') }}"
 		{%- else %} {{ attr | e('html_attr') }}="{{ value }}"{% endif -%}

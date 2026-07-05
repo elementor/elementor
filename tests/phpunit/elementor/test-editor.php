@@ -1,9 +1,17 @@
 <?php
 namespace Elementor\Testing;
 
+use Elementor\Core\Editor\Editor;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Editor extends Elementor_Test_Base {
+
+	/**
+	 * Original $_SERVER values, restored in tearDown.
+	 *
+	 * @var array
+	 */
+	private $original_server = [];
 
 	public function setUp(): void {
 		parent::setUp();
@@ -11,6 +19,23 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 		wp_set_current_user( $this->factory()->get_administrator_user()->ID );
 
 		$GLOBALS['post'] = $this->factory()->create_and_get_default_post()->IDs;
+
+		$this->original_server = [
+			'HTTPS' => $_SERVER['HTTPS'] ?? null,
+			'HTTP_HOST' => $_SERVER['HTTP_HOST'] ?? null,
+		];
+	}
+
+	public function tearDown(): void {
+		foreach ( $this->original_server as $key => $value ) {
+			if ( null === $value ) {
+				unset( $_SERVER[ $key ] );
+			} else {
+				$_SERVER[ $key ] = $value;
+			}
+		}
+
+		parent::tearDown();
 	}
 
 	public function test_getInstance() {
@@ -73,4 +98,64 @@ class Elementor_Test_Editor extends Elementor_Test_Base {
 
 		$this->assertNotEmpty( $buffer );
 	}*/
+
+	public function test_should_use_document_isolation_policy__https() {
+		$_SERVER['HTTPS'] = 'on';
+		$_SERVER['HTTP_HOST'] = 'example.com';
+
+		$this->assertTrue( Editor::should_use_document_isolation_policy() );
+	}
+
+	public function test_should_use_document_isolation_policy__localhost() {
+		unset( $_SERVER['HTTPS'] );
+		$_SERVER['HTTP_HOST'] = 'localhost';
+
+		$this->assertTrue( Editor::should_use_document_isolation_policy() );
+	}
+
+	public function test_should_use_document_isolation_policy__localhost_subdomain() {
+		unset( $_SERVER['HTTPS'] );
+		$_SERVER['HTTP_HOST'] = 'site.localhost';
+
+		$this->assertTrue( Editor::should_use_document_isolation_policy() );
+	}
+
+	public function test_should_use_document_isolation_policy__localhost_with_port() {
+		unset( $_SERVER['HTTPS'] );
+		$_SERVER['HTTP_HOST'] = 'localhost:8888';
+
+		$this->assertTrue( Editor::should_use_document_isolation_policy() );
+	}
+
+	public function test_should_use_document_isolation_policy__insecure() {
+		unset( $_SERVER['HTTPS'] );
+		$_SERVER['HTTP_HOST'] = 'example.com';
+
+		$this->assertFalse( Editor::should_use_document_isolation_policy() );
+	}
+
+	public function test_should_use_document_isolation_policy__filter_can_disable() {
+		$_SERVER['HTTPS'] = 'on';
+		$_SERVER['HTTP_HOST'] = 'example.com';
+
+		add_filter( 'elementor/editor/use_document_isolation_policy', '__return_false' );
+
+		$this->assertFalse( Editor::should_use_document_isolation_policy() );
+
+		remove_filter( 'elementor/editor/use_document_isolation_policy', '__return_false' );
+	}
+
+	public function test_should_use_document_isolation_policy__filter_cannot_force_on_insecure() {
+		unset( $_SERVER['HTTPS'] );
+		$_SERVER['HTTP_HOST'] = 'example.com';
+
+		add_filter( 'elementor/editor/use_document_isolation_policy', '__return_true' );
+
+		$this->assertFalse(
+			Editor::should_use_document_isolation_policy(),
+			'Filter should not bypass the secure-context requirement.'
+		);
+
+		remove_filter( 'elementor/editor/use_document_isolation_policy', '__return_true' );
+	}
 }

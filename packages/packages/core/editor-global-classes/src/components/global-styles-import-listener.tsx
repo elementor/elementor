@@ -1,59 +1,41 @@
 import { useEffect } from 'react';
+import { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from '@elementor/editor-canvas';
 import { __useDispatch as useDispatch } from '@elementor/store';
 
-import { apiClient } from '../api';
+import { loadCurrentDocumentClasses } from '../load-document-classes';
 import { slice } from '../store';
+import { createLabelsForClasses } from '../utils/create-labels-for-classes';
 
 export function GlobalStylesImportListener() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		const handleGlobalStylesImported = ( event: CustomEvent ) => {
-			const importedClasses = event.detail?.global_classes;
+		const handleGlobalStylesImported = async ( event: Event ) => {
+			const customEvent = event as CustomEvent< ImportedGlobalStylesPayload >;
+			const globalClasses = customEvent.detail?.global_classes;
 
-			if ( importedClasses?.items && importedClasses?.order ) {
-				dispatch(
-					slice.actions.load( {
-						preview: {
-							items: importedClasses.items,
-							order: importedClasses.order,
-						},
-						frontend: {
-							items: importedClasses.items,
-							order: importedClasses.order,
-						},
-					} )
-				);
+			if (
+				! globalClasses?.added_items_order ||
+				! globalClasses?.added_items ||
+				globalClasses?.added_items_order?.length === 0
+			) {
+				loadCurrentDocumentClasses();
+				return;
 			}
 
-			Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] )
-				.then( ( [ previewRes, frontendRes ] ) => {
-					const { data: previewData } = previewRes;
-					const { data: frontendData } = frontendRes;
-
-					dispatch(
-						slice.actions.load( {
-							preview: {
-								items: previewData.data,
-								order: previewData.meta.order,
-							},
-							frontend: {
-								items: frontendData.data,
-								order: frontendData.meta.order,
-							},
-						} )
-					);
+			dispatch(
+				slice.actions.updateAfterTemplateImport( {
+					addedItems: globalClasses.added_items,
+					addedIdsOrder: globalClasses.added_items_order,
+					addedClassLabels: createLabelsForClasses( Object.values( globalClasses.added_items ) ),
 				} )
-				.catch( () => {} );
+			);
 		};
 
-		window.addEventListener( 'elementor/global-styles/imported', handleGlobalStylesImported as EventListener );
+		window.addEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );
 
 		return () => {
-			window.removeEventListener(
-				'elementor/global-styles/imported',
-				handleGlobalStylesImported as EventListener
-			);
+			window.removeEventListener( GLOBAL_STYLES_IMPORTED_EVENT, handleGlobalStylesImported as EventListener );
 		};
 	}, [ dispatch ] );
 

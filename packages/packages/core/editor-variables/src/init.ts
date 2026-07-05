@@ -1,14 +1,11 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 import { registerControlReplacement } from '@elementor/editor-controls';
 import { getMCPByDomain } from '@elementor/editor-mcp';
-import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
 import { controlActionsMenu } from '@elementor/menus';
 
 import { GlobalStylesImportListener } from './components/global-styles-import-listener';
-import { OpenPanelFromEvent } from './components/open-panel-from-event';
-import { OpenPanelFromUrl } from './components/open-panel-from-url';
-import { panel } from './components/variables-manager/variables-manager-panel';
+import { McpVariableConnectListener } from './components/mcp-variable-connect-listener';
 import { VariableControl } from './controls/variable-control';
 import { usePropVariableAction } from './hooks/use-prop-variable-action';
 import { initMcp } from './mcp';
@@ -45,9 +42,18 @@ export function init() {
 		useProps: usePropVariableAction,
 	} );
 
-	variablesService.init().then( () => {
-		initMcp( getMCPByDomain( 'variables' ), getMCPByDomain( 'canvas' ) );
+	variablesService.init();
+
+	const variablesMcpRegistry = getMCPByDomain( 'variables', {
+		instructions: `Everything related to V4 ( Atomic ) variables.
+# Global variables
+- Create/update/delete global variables
+- Get list of global variables
+- Get details of a global variable
+`,
 	} );
+
+	initMcp( variablesMcpRegistry, getMCPByDomain( 'canvas' ) );
 
 	injectIntoTop( {
 		id: 'canvas-style-variables-render',
@@ -60,16 +66,9 @@ export function init() {
 	} );
 
 	injectIntoLogic( {
-		id: 'variables-open-panel-from-url',
-		component: OpenPanelFromUrl,
+		id: 'mcp-variable-connect-listener',
+		component: McpVariableConnectListener,
 	} );
-
-	injectIntoLogic( {
-		id: 'variables-open-panel-from-event',
-		component: OpenPanelFromEvent,
-	} );
-
-	registerPanel( panel );
 }
 
 function hasVariableAssigned( value: PropValue ) {

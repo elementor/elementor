@@ -29,6 +29,7 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		getPreviewContainer?: () => V1Element | undefined;
 		helpers?: {
 			isAtomicWidget?: ( model: unknown ) => boolean;
 		};
@@ -150,6 +151,7 @@ export type ElementInteractions = {
 export type V1ElementModelProps = {
 	title?: string;
 	isLocked?: boolean;
+	meta?: Record< string, unknown >;
 	widgetType?: string;
 	elType: string;
 	id: string;
@@ -170,6 +172,7 @@ export type V1ElementEditorSettingsProps = {
 	title?: string;
 	initial_position?: number;
 	component_uid?: string;
+	grid_outline?: boolean;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
@@ -188,6 +191,7 @@ export type V1ElementConfig< T = object, TChild = unknown > = {
 	twig_main_template?: string;
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
+	base_settings?: Record< string, PropValue >;
 	atomic_style_states?: ClassState[];
 	atomic_pseudo_states?: PseudoState[];
 	show_in_panel?: boolean;

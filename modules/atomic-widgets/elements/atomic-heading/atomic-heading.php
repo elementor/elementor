@@ -60,7 +60,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					'content'  => String_Prop_Type::generate( __( 'This is a title', 'elementor' ) ),
 					'children' => [],
 				] )
-				->description( 'The text content of the heading.' ),
+				->description( 'The text content of the heading.' )
+				->alias( 'text', 'content', 'heading' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -71,6 +72,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function define_atomic_controls(): array {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
+			->set_id( 'content' )
 			->set_items( [
 				Inline_Editing_Control::bind_to( 'title' )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) )
@@ -153,5 +155,33 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
 		];
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_atomic_settings();
+		$title = wp_strip_all_tags( $settings['title'] ?? '' );
+
+		if ( empty( $title ) ) {
+			return '';
+		}
+
+		$tag = $settings['tag'] ?? 'h2';
+		$level_map = [
+			'h1' => 1,
+			'h2' => 2,
+			'h3' => 3,
+			'h4' => 4,
+			'h5' => 5,
+			'h6' => 6,
+		];
+		$level = $level_map[ $tag ] ?? 2;
+
+		$md = str_repeat( '#', $level ) . ' ' . $title;
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$md = str_repeat( '#', $level ) . ' [' . $title . '](' . esc_url( $settings['link']['href'] ) . ')';
+		}
+
+		return $md;
 	}
 }

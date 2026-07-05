@@ -144,4 +144,20 @@ class Widget_Button extends Widget_Base {
 	protected function render() {
 		$this->render_button();
 	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+
+		$text = Utils::html_to_plain_text( $settings['text'] ?? '' );
+
+		if ( empty( $text ) ) {
+			return '';
+		}
+
+		if ( ! empty( $settings['link']['url'] ) ) {
+			return '[' . $text . '](' . esc_url( $settings['link']['url'] ) . ')';
+		}
+
+		return '**' . $text . '**';
+	}
 }

@@ -32,9 +32,15 @@ type VariableManagerCreateMenuProps = {
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
 	disabled?: boolean;
 	menuState: PopupState;
+	outlinedTrigger?: boolean;
 };
 
-export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( {
+	variables,
+	onCreate,
+	menuState,
+	outlinedTrigger = false,
+}: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
@@ -59,6 +65,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: V
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
 				size={ SIZE }
+				variant={ outlinedTrigger ? 'outlined' : undefined }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
 				<PlusIcon fontSize={ SIZE } />
