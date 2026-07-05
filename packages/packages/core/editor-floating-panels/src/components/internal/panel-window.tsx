@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { type ReactNode } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Fade, Paper } from '@elementor/ui';
@@ -32,7 +32,7 @@ type Props = {
 	zIndex: number;
 	visible: boolean;
 	onFocus: () => void;
-	children: React.ReactNode;
+	children: ReactNode;
 };
 
 function PanelResizeHandles( { panelId }: { panelId: string } ) {
@@ -71,7 +71,9 @@ export default function PanelWindow( {
 				elevation={ 0 }
 				aria-label={ title || panelId }
 				aria-hidden={ ! visible }
+				inert={ ! visible ? '' : undefined }
 				onMouseDown={ onFocus }
+				onFocusCapture={ onFocus }
 				sx={ {
 					position: 'fixed',
 					...positionToCssInsets( corner, position ),
@@ -80,6 +82,7 @@ export default function PanelWindow( {
 					zIndex,
 					display: 'flex',
 					flexDirection: 'column',
+					pointerEvents: visible ? 'auto' : 'none',
 					bgcolor: 'var(--e-a-bg-default)',
 					color: 'var(--e-a-color-txt)',
 					border: 'var(--e-a-border)',

@@ -9,12 +9,15 @@ The panes are persisted and survive reloads. The state stores open/closed, posit
 ```ts
 import {
 	createFloatingPanel,
+	init,
 	registerFloatingPanel,
 
 	FloatingPanelBody,
 	FloatingPanelFooter,
 	FloatingPanelHeader,
 } from '@elementor/editor-floating-panels';
+
+init();
 
 const myPanel = createFloatingPanel( {
 	id: 'my-panel',
@@ -111,4 +114,4 @@ defaults: {
 
 When persisted state exists, the persisted `position`, `corner`, and `size` override `initialPosition`, `corner`, `width`, and `height`. The resize minimums (`minWidth`/`minHeight`) are always derived from `defaults`.
 
-Call `init()` once during editor bootstrap to register the slice, sync persisted state, and mount the host into the editor's top location.
+Call `init()` once during editor bootstrap, **before** any `createFloatingPanel` call, to register the slice, sync persisted state, and mount the host into the editor's top location.

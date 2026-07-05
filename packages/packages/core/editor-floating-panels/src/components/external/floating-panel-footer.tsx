@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Box, type BoxProps } from '@elementor/ui';
 
 export default function FloatingPanelFooter( { children, sx, ...props }: BoxProps ) {

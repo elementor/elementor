@@ -23,6 +23,8 @@ type ResizeSession = {
 	startClientY: number;
 	startPosition: LogicalPosition;
 	startSize: LogicalSize;
+	lastPosition: LogicalPosition;
+	lastSize: LogicalSize;
 	bounds: ResizeBounds;
 	corner: PanelCorner;
 	isRtl: boolean;
@@ -75,6 +77,8 @@ export function usePanelResizeInteraction( id: string ) {
 				startClientY: event.clientY,
 				startPosition: position,
 				startSize: size,
+				lastPosition: position,
+				lastSize: size,
 				bounds: getResizeBounds( corner, position, size, minSize ),
 				corner,
 				isRtl: isRtl(),
@@ -119,16 +123,18 @@ export function usePanelResizeInteraction( id: string ) {
 				viewport
 			);
 
-			if ( activePositionChanged( session.corner, session.startPosition, nextPosition ) ) {
+			if ( activePositionChanged( session.corner, session.lastPosition, nextPosition ) ) {
 				setPosition( nextPosition );
+				session.lastPosition = nextPosition;
 			}
 
 			const sizeChanged =
-				next.size.inlineSize !== session.startSize.inlineSize ||
-				next.size.blockSize !== session.startSize.blockSize;
+				next.size.inlineSize !== session.lastSize.inlineSize ||
+				next.size.blockSize !== session.lastSize.blockSize;
 
 			if ( sizeChanged ) {
 				setSize( next.size );
+				session.lastSize = next.size;
 			}
 		},
 		[ setPosition, setSize ]
