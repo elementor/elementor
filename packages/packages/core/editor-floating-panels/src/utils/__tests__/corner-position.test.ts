@@ -3,13 +3,16 @@ import {
 	buildInitialPosition,
 	fromStartAnchoredPosition,
 	getActiveInsetKeys,
+	getDragBounds,
 	type PanelCorner,
 	positionToCssInsets,
 	toStartAnchoredPosition,
 } from '../corner-position';
+import { APP_BAR_HEIGHT_PX } from '../viewport-bounds';
 
 const VIEWPORT = { width: 1200, height: 900 };
 const SIZE: LogicalSize = { inlineSize: 320, blockSize: 480 };
+const SIDE_PANEL_INLINE_SIZE_PX = 280;
 
 describe( 'corner-position', () => {
 	it.each< [ PanelCorner, [ keyof LogicalPosition, keyof LogicalPosition ] ] >( [
@@ -59,5 +62,33 @@ describe( 'corner-position', () => {
 		const restored = fromStartAnchoredPosition( 'block-end-inline-end', startAnchored, SIZE, VIEWPORT );
 
 		expect( restored ).toEqual( position );
+	} );
+
+	it( 'getDragBounds returns normal bounds within the viewport', () => {
+		expect( getDragBounds( SIZE, VIEWPORT, SIDE_PANEL_INLINE_SIZE_PX, APP_BAR_HEIGHT_PX ) ).toEqual( {
+			minInlineStart: SIDE_PANEL_INLINE_SIZE_PX,
+			maxInlineStart: VIEWPORT.width - SIZE.inlineSize,
+			minInlineEnd: 0,
+			maxInlineEnd: VIEWPORT.width - SIDE_PANEL_INLINE_SIZE_PX - SIZE.inlineSize,
+			minBlockStart: APP_BAR_HEIGHT_PX,
+			maxBlockStart: VIEWPORT.height - SIZE.blockSize,
+			minBlockEnd: 0,
+			maxBlockEnd: VIEWPORT.height - APP_BAR_HEIGHT_PX - SIZE.blockSize,
+		} );
+	} );
+
+	it( 'getDragBounds allows inverted bounds when the panel exceeds the viewport', () => {
+		const oversizedSize: LogicalSize = { inlineSize: 1000, blockSize: 900 };
+
+		expect( getDragBounds( oversizedSize, VIEWPORT, SIDE_PANEL_INLINE_SIZE_PX, APP_BAR_HEIGHT_PX ) ).toEqual( {
+			minInlineStart: SIDE_PANEL_INLINE_SIZE_PX,
+			maxInlineStart: VIEWPORT.width - oversizedSize.inlineSize,
+			minInlineEnd: 0,
+			maxInlineEnd: VIEWPORT.width - SIDE_PANEL_INLINE_SIZE_PX - oversizedSize.inlineSize,
+			minBlockStart: APP_BAR_HEIGHT_PX,
+			maxBlockStart: VIEWPORT.height - oversizedSize.blockSize,
+			minBlockEnd: 0,
+			maxBlockEnd: VIEWPORT.height - APP_BAR_HEIGHT_PX - oversizedSize.blockSize,
+		} );
 	} );
 } );
