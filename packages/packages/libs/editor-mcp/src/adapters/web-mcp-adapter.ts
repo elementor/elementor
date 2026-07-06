@@ -30,6 +30,7 @@ type ResourceEntry = {
 
 export class WebMCPAdapter implements IMcpRegistrationAdapter {
 	private readonly registeredToolNames = new Set< string >();
+	private readonly pendingRegistrations = new Map< string, Promise< void > >();
 	private readonly resourceEntries: ResourceEntry[] = [];
 	private activated = false;
 
@@ -93,7 +94,16 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 	}
 
 	private registerTool( tool: McpToolDescriptor ): void {
-		void registerModelContextTool( this.ctx.registerTool, tool );
+		const previous = this.pendingRegistrations.get( tool.name );
+		const registration = ( previous ?? Promise.resolve() ).then( () =>
+			registerModelContextTool( this.ctx.registerTool, tool )
+		);
+		this.pendingRegistrations.set( tool.name, registration );
+		void registration.finally( () => {
+			if ( this.pendingRegistrations.get( tool.name ) === registration ) {
+				this.pendingRegistrations.delete( tool.name );
+			}
+		} );
 	}
 
 	onToolRegistered(

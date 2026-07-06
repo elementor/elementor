@@ -8,6 +8,8 @@ const createTool = ( name: string ) => ( {
 	execute: async () => 'ok',
 } );
 
+const flushPromises = (): Promise< void > => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
 describe( 'registerModelContextTool', () => {
 	let consoleErrorSpy: jest.SpyInstance;
 
@@ -120,7 +122,7 @@ describe( 'WebMCPAdapter', () => {
 
 		// Act.
 		adapter.onToolRegistered( tool );
-		await Promise.resolve();
+		await flushPromises();
 
 		// Assert.
 		expect( registerTool ).toHaveBeenCalledWith(
@@ -141,7 +143,7 @@ describe( 'WebMCPAdapter', () => {
 		// Act.
 		adapter.onToolRegistered( tool );
 		adapter.onToolRegistered( tool );
-		await Promise.resolve();
+		await flushPromises();
 
 		// Assert.
 		expect( unregisterTool ).toHaveBeenCalledWith( 'page-tool' );
@@ -156,9 +158,45 @@ describe( 'WebMCPAdapter', () => {
 
 		// Act.
 		adapter.onToolRegistered( createTool( 'page-tool' ) );
-		await Promise.resolve();
+		await flushPromises();
 
 		// Assert.
 		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'Tool registration failed:', registrationError );
+	} );
+
+	it( 'serializes overlapping registrations so the latest descriptor wins', async () => {
+		// Arrange.
+		const completedDescriptions: string[] = [];
+		let resolveSlowRegistration!: () => void;
+		let callCount = 0;
+		const registerTool = jest.fn( ( tool: ReturnType< typeof createTool > ) => {
+			callCount += 1;
+			if ( callCount === 1 ) {
+				return new Promise< void >( ( resolve ) => {
+					resolveSlowRegistration = () => {
+						completedDescriptions.push( tool.description );
+						resolve();
+					};
+				} );
+			}
+
+			completedDescriptions.push( tool.description );
+			return Promise.resolve();
+		} );
+		const adapter = new WebMCPAdapter( { registerTool } );
+
+		// Act.
+		adapter.onToolRegistered( createTool( 'page-tool' ) );
+		adapter.onToolRegistered( { ...createTool( 'page-tool' ), description: 'updated description' } );
+		await flushPromises();
+		expect( completedDescriptions ).toEqual( [] );
+
+		resolveSlowRegistration();
+		await flushPromises();
+		await flushPromises();
+
+		// Assert.
+		expect( completedDescriptions ).toEqual( [ 'page-tool description', 'updated description' ] );
+		expect( registerTool ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

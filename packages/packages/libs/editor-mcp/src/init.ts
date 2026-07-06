@@ -7,7 +7,13 @@ export function startMCPServer() {
 	}
 	isInitialized = true;
 
-	void createAndRegisterAdapters().then( () => signalMcpReady() );
+	void createAndRegisterAdapters()
+		.then( () => signalMcpReady() )
+		.catch( ( error ) => {
+			/* eslint-disable-next-line no-console */
+			console.error( 'MCP adapter activation failed:', error );
+			signalMcpReady();
+		} );
 }
 
 if ( typeof document !== 'undefined' ) {
