@@ -7,8 +7,7 @@ export function startMCPServer() {
 	}
 	isInitialized = true;
 
-	createAndRegisterAdapters();
-	signalMcpReady();
+	void createAndRegisterAdapters().then( () => signalMcpReady() );
 }
 
 if ( typeof document !== 'undefined' ) {

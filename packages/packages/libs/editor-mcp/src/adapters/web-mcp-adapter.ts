@@ -2,6 +2,10 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z, type z3 } from '@elementor/schema';
 
 import {
+	registerModelContextTool,
+	unregisterModelContextTool,
+} from '../utils/register-model-context-tool';
+import {
 	type IMcpRegistrationAdapter,
 	type McpResourceHandler,
 	type McpResourceUriOrTemplate,
@@ -12,8 +16,8 @@ import {
 type ZodRawShape = z3.ZodRawShape;
 
 export type ModelContext = {
-	registerTool: ( tool: McpToolDescriptor ) => void;
-	unregisterTool: ( name: string ) => void;
+	registerTool: ModelContextRegisterTool;
+	unregisterTool?: ModelContextUnregisterTool;
 };
 
 type ResourceEntry = {
@@ -29,12 +33,12 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 
 	constructor( private readonly ctx: ModelContext ) {}
 
-	activate(): void {
+	async activate(): Promise< void > {
 		if ( this.activated ) {
 			return;
 		}
 		this.activated = true;
-		this.ctx.registerTool( {
+		await registerModelContextTool( this.ctx.registerTool, {
 			name: 'editor-resource-getter',
 			description:
 				'Get an editor resource by URI, or search for available resources by partial URI. Pass a full URI to retrieve content, or a partial string to discover matching patterns.',
@@ -86,6 +90,10 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		} );
 	}
 
+	private registerTool( tool: McpToolDescriptor ): void {
+		void registerModelContextTool( this.ctx.registerTool, tool );
+	}
+
 	onToolRegistered(
 		tool: McpToolDescriptor,
 		extraData?: { resources: string[]; requiredResources: string[] }
@@ -98,7 +106,7 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		}
 
 		if ( this.registeredToolNames.has( tool.name ) ) {
-			this.ctx.unregisterTool( tool.name );
+			unregisterModelContextTool( this.ctx.unregisterTool, tool.name );
 		}
 
 		let resourcesDescription = '';
@@ -111,7 +119,7 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 			}
 			resourcesDescription += `To read resources, use editor-resource-getter tool.\n\n`;
 		}
-		this.ctx.registerTool( {
+		this.registerTool( {
 			name: tool.name,
 			description: `${ resourcesDescription }${ tool.description }`,
 			inputSchema: jsonSchema,
