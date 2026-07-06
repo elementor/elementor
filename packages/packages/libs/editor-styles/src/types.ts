@@ -1,10 +1,15 @@
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 
-export type ClassState = {
-	name: 'selected';
-	value: 'e--selected';
-};
+export type ClassState =
+	| {
+			name: 'selected';
+			value: 'e--selected';
+	  }
+	| {
+			name: 'disabled';
+			value: 'e--disabled';
+	  };
 
 export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
 

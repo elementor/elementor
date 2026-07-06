@@ -349,6 +349,10 @@ trait Has_Atomic_Base {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
 		}
 
+		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
+			$editor_data['grid_outline'] = $data['grid_outline'];
+		}
+
 		return $editor_data;
 	}
 
