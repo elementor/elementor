@@ -122,6 +122,7 @@ export function useSiteBuilderIframeMessaging( {
 	connectAuth,
 }: UseSiteBuilderIframeMessagingArgs ): void {
 	const pendingRedirectRef = useRef< PendingEditorRedirect | null >( null );
+	const pendingHandshakeRef = useRef< MessageEvent | null >( null );
 
 	const allowedOrigin = useMemo( () => {
 		try {
@@ -149,9 +150,14 @@ export function useSiteBuilderIframeMessaging( {
 
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
-				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
+				if ( ! iframe?.contentWindow ) {
+					return;
 				}
+				if ( ! connectAuth ) {
+					pendingHandshakeRef.current = event;
+					return;
+				}
+				sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
 				return;
 			}
 
@@ -186,6 +192,22 @@ export function useSiteBuilderIframeMessaging( {
 		window.addEventListener( 'message', handleMessage );
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
+
+	useEffect( () => {
+		if ( ! connectAuth ) {
+			return;
+		}
+		const pending = pendingHandshakeRef.current;
+		if ( ! pending ) {
+			return;
+		}
+		const iframe = iframeRef.current;
+		if ( ! iframe?.contentWindow ) {
+			return;
+		}
+		sendReferrerInfo( iframe, pending, allowedOrigin, siteBuilderParams, connectAuth );
+		pendingHandshakeRef.current = null;
+	}, [ connectAuth, allowedOrigin, siteBuilderParams, iframeRef ] );
 
 	useEffect( () => {
 		return () => clearPendingEditorRedirect( pendingRedirectRef.current );
