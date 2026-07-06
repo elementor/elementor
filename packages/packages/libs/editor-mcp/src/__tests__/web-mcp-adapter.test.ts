@@ -1,7 +1,12 @@
+import { type McpToolDescriptor } from '../adapters/types';
 import { WebMCPAdapter } from '../adapters/web-mcp-adapter';
-import { registerModelContextTool, unregisterModelContextTool } from '../utils/register-model-context-tool';
+import {
+	type ModelContextRegisterTool,
+	registerModelContextTool,
+	unregisterModelContextTool,
+} from '../utils/register-model-context-tool';
 
-const createTool = ( name: string ) => ( {
+const createTool = ( name: string ): McpToolDescriptor => ( {
 	name,
 	description: `${ name } description`,
 	inputSchema: { type: 'object', properties: {} },
@@ -169,20 +174,22 @@ describe( 'WebMCPAdapter', () => {
 		const completedDescriptions: string[] = [];
 		let resolveSlowRegistration!: () => void;
 		let callCount = 0;
-		const registerTool = jest.fn( ( tool: ReturnType< typeof createTool > ) => {
-			callCount += 1;
-			if ( callCount === 1 ) {
-				return new Promise< void >( ( resolve ) => {
-					resolveSlowRegistration = () => {
-						completedDescriptions.push( tool.description );
-						resolve();
-					};
-				} );
-			}
+		const registerTool = jest.fn< ReturnType< ModelContextRegisterTool >, Parameters< ModelContextRegisterTool > >(
+			( tool ) => {
+				callCount += 1;
+				if ( callCount === 1 ) {
+					return new Promise< void >( ( resolve ) => {
+						resolveSlowRegistration = () => {
+							completedDescriptions.push( tool.description );
+							resolve();
+						};
+					} );
+				}
 
-			completedDescriptions.push( tool.description );
-			return Promise.resolve();
-		} );
+				completedDescriptions.push( tool.description );
+				return Promise.resolve();
+			}
+		);
 		const adapter = new WebMCPAdapter( { registerTool } );
 
 		// Act.
