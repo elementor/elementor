@@ -30,6 +30,9 @@
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
   },
+  "dependencies": {
+    "@elementor/editor-v5-store": "4.3.0"
+  },
   "devDependencies": {
     "tsup": "^8.3.5"
   }

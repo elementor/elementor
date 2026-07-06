@@ -175,7 +175,7 @@ class Module extends BaseModule {
 		wp_register_script(
 			'elementor-editor-v5-loader',
 			"{$assets_url}js/editor-v5-loader{$min_suffix}.js",
-			[ 'elementor-v2-editor-v5' ],
+			[ 'elementor-common', 'elementor-v2-editor-v5' ],
 			ELEMENTOR_VERSION,
 			true
 		);

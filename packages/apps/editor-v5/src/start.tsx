@@ -3,29 +3,23 @@ import { type JSX } from 'react';
 import * as ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { createAgentRuntime } from '@elementor/editor-v5-agent';
-import { dispatchReadyEvent, saveDocument } from '@elementor/editor-v5-runtime';
-import { type ElementNode, hydrate } from '@elementor/editor-v5-store';
+import { configureEditorAjax, dispatchReadyEvent, getInitialElements, saveDocument } from '@elementor/editor-v5-runtime';
+import { hydrate } from '@elementor/editor-v5-store';
 import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __StoreProvider as StoreProvider } from '@elementor/store';
 import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 
 import Shell from './components/shell';
-import { getElementorConfig } from './editor-config';
 
 type ElementorConfigWindow = Window & {
 	elementorV5Agent?: ReturnType< typeof createAgentRuntime >;
 };
 
-function getInitialElements(): ElementNode[] {
-	const config = getElementorConfig();
-
-	return ( config?.initial_document?.elements ?? [] ) as ElementNode[];
-}
-
 export function start( domElement: Element ): void {
 	const store = __createStore();
 	const queryClient = createQueryClient();
 
+	configureEditorAjax();
 	store.dispatch( hydrate( { elements: getInitialElements() } ) );
 
 	const agent = createAgentRuntime( store, {
