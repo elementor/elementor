@@ -113,6 +113,7 @@ type UseSiteBuilderIframeMessagingArgs = {
 	iframeUrl: string;
 	siteBuilderParams: SiteBuilderParams;
 	connectAuth: ConnectAuth | null;
+	isConnectAuthResolved: boolean;
 };
 
 export function useSiteBuilderIframeMessaging( {
@@ -120,6 +121,7 @@ export function useSiteBuilderIframeMessaging( {
 	iframeUrl,
 	siteBuilderParams,
 	connectAuth,
+	isConnectAuthResolved,
 }: UseSiteBuilderIframeMessagingArgs ): void {
 	const pendingRedirectRef = useRef< PendingEditorRedirect | null >( null );
 	const pendingHandshakeRef = useRef< MessageEvent | null >( null );
@@ -153,7 +155,7 @@ export function useSiteBuilderIframeMessaging( {
 				if ( ! iframe?.contentWindow ) {
 					return;
 				}
-				if ( ! connectAuth ) {
+				if ( ! isConnectAuthResolved ) {
 					pendingHandshakeRef.current = event;
 					return;
 				}
@@ -185,7 +187,7 @@ export function useSiteBuilderIframeMessaging( {
 				}
 			}
 		},
-		[ allowedOrigin, siteBuilderParams, connectAuth, iframeRef ]
+		[ allowedOrigin, siteBuilderParams, connectAuth, isConnectAuthResolved, iframeRef ]
 	);
 
 	useEffect( () => {
@@ -194,7 +196,7 @@ export function useSiteBuilderIframeMessaging( {
 	}, [ handleMessage ] );
 
 	useEffect( () => {
-		if ( ! connectAuth ) {
+		if ( ! isConnectAuthResolved ) {
 			return;
 		}
 		const pending = pendingHandshakeRef.current;
@@ -207,7 +209,7 @@ export function useSiteBuilderIframeMessaging( {
 		}
 		sendReferrerInfo( iframe, pending, allowedOrigin, siteBuilderParams, connectAuth );
 		pendingHandshakeRef.current = null;
-	}, [ connectAuth, allowedOrigin, siteBuilderParams, iframeRef ] );
+	}, [ isConnectAuthResolved, connectAuth, allowedOrigin, siteBuilderParams, iframeRef ] );
 
 	useEffect( () => {
 		return () => clearPendingEditorRedirect( pendingRedirectRef.current );
