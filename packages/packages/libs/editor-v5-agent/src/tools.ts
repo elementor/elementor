@@ -15,7 +15,7 @@ export const AGENT_TOOLS: AgentTool[] = [
 	},
 	{
 		name: 'listElements',
-		description: 'List all top-level elements.',
+		description: 'List the full nested element tree.',
 		inputSchema: {
 			type: 'object',
 			properties: {},
@@ -57,11 +57,12 @@ export const AGENT_TOOLS: AgentTool[] = [
 	},
 	{
 		name: 'createElement',
-		description: 'Create a new element in the document.',
+		description: 'Create a new element in the document tree.',
 		inputSchema: {
 			type: 'object',
 			properties: {
 				parentId: { type: [ 'string', 'null' ] },
+				index: { type: 'number' },
 				elType: STRING_SCHEMA,
 				widgetType: STRING_SCHEMA,
 				settings: OBJECT_SCHEMA,
@@ -108,6 +109,20 @@ export const AGENT_TOOLS: AgentTool[] = [
 				id: STRING_SCHEMA,
 			},
 			required: [ 'id' ],
+			additionalProperties: false,
+		},
+	},
+	{
+		name: 'moveElement',
+		description: 'Move an element to a new parent and index in the nested tree.',
+		inputSchema: {
+			type: 'object',
+			properties: {
+				id: STRING_SCHEMA,
+				parentId: { type: [ 'string', 'null' ] },
+				index: { type: 'number' },
+			},
+			required: [ 'id', 'index' ],
 			additionalProperties: false,
 		},
 	},

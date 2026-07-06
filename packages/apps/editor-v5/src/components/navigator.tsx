@@ -1,8 +1,15 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { type ElementNode, getElementLabel, moveElement, select } from '@elementor/editor-v5-store';
+import {
+	createElement,
+	type ElementNode,
+	getElementLabel,
+	isContainerElement,
+	moveElement,
+	select,
+} from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
-import { List, ListItemButton, ListItemText } from '@elementor/ui';
+import { Box, List, ListItemButton, ListItemText, Typography } from '@elementor/ui';
 
 import { type ElementDragPayload, readDragPayload, setDragPayload } from '../utils/dnd';
 import PanelChrome from './panel-chrome';
@@ -12,7 +19,7 @@ type NavigatorItemProps = {
 	depth: number;
 	element: ElementNode;
 	onActivateDrop: ( dropId: string | null ) => void;
-	onDropBefore: ( event: React.DragEvent, elementId: string, index: number, parentId: string | null ) => void;
+	onDropAt: ( event: React.DragEvent, parentId: string | null, index: number ) => void;
 	parentId: string | null;
 	selectedIds: string[];
 	siblingIndex: number;
@@ -23,13 +30,15 @@ function NavigatorItem( {
 	depth,
 	element,
 	onActivateDrop,
-	onDropBefore,
+	onDropAt,
 	parentId,
 	selectedIds,
 	siblingIndex,
 }: NavigatorItemProps ) {
 	const isSelected = selectedIds.includes( element.id );
 	const dropId = `${ parentId ?? 'root' }:${ siblingIndex }`;
+	const children = element.elements ?? [];
+	const isContainer = isContainerElement( element );
 
 	const handleDragStart = ( event: React.DragEvent ) => {
 		const payload: ElementDragPayload = {
@@ -45,13 +54,13 @@ function NavigatorItem( {
 			<ListItemButton
 				draggable
 				onClick={ () => dispatch( select( { ids: [ element.id ] } ) ) }
+				onDragLeave={ () => onActivateDrop( null ) }
 				onDragOver={ ( event ) => {
 					event.preventDefault();
 					onActivateDrop( dropId );
 				} }
-				onDragLeave={ () => onActivateDrop( null ) }
-				onDrop={ ( event ) => onDropBefore( event, element.id, siblingIndex, parentId ) }
 				onDragStart={ handleDragStart }
+				onDrop={ ( event ) => onDropAt( event, parentId, siblingIndex ) }
 				selected={ isSelected || activeDropId === dropId }
 				sx={ {
 					borderLeft: activeDropId === dropId ? '2px solid' : '2px solid transparent',
@@ -59,22 +68,77 @@ function NavigatorItem( {
 					pl: 2 + depth * 1.5,
 				} }
 			>
-				<ListItemText primary={ getElementLabel( element ) } secondary={ element.id } />
+				<ListItemText
+					primary={ getElementLabel( element ) }
+					secondary={ isContainer ? `${ children.length } children` : element.id }
+					primaryTypographyProps={ { variant: 'body2' } }
+					secondaryTypographyProps={ { variant: 'caption' } }
+				/>
 			</ListItemButton>
-			{ element.elements?.map( ( child, index ) => (
+			{ children.map( ( child, index ) => (
 				<NavigatorItem
 					key={ child.id }
 					activeDropId={ activeDropId }
 					depth={ depth + 1 }
 					element={ child }
 					onActivateDrop={ onActivateDrop }
-					onDropBefore={ onDropBefore }
+					onDropAt={ onDropAt }
 					parentId={ element.id }
 					selectedIds={ selectedIds }
 					siblingIndex={ index }
 				/>
 			) ) }
+			{ isContainer && (
+				<NavigatorDropRow
+					activeDropId={ activeDropId }
+					depth={ depth + 1 }
+					dropId={ `${ element.id }:${ children.length }` }
+					label="Drop inside container"
+					onActivateDrop={ onActivateDrop }
+					onDrop={ ( event ) => onDropAt( event, element.id, children.length ) }
+				/>
+			) }
 		</>
+	);
+}
+
+function NavigatorDropRow( {
+	activeDropId,
+	depth,
+	dropId,
+	label,
+	onActivateDrop,
+	onDrop,
+}: {
+	activeDropId: string | null;
+	depth: number;
+	dropId: string;
+	label: string;
+	onActivateDrop: ( dropId: string | null ) => void;
+	onDrop: ( event: React.DragEvent ) => void;
+} ) {
+	return (
+		<Box
+			onDragLeave={ () => onActivateDrop( null ) }
+			onDragOver={ ( event ) => {
+				event.preventDefault();
+				onActivateDrop( dropId );
+			} }
+			onDrop={ onDrop }
+			sx={ {
+				borderLeft: activeDropId === dropId ? '2px solid' : '2px dashed transparent',
+				borderColor: activeDropId === dropId ? 'primary.main' : 'divider',
+				color: 'text.secondary',
+				fontSize: 12,
+				ml: 2 + depth * 1.5,
+				mr: 1,
+				my: 0.5,
+				px: 1,
+				py: 0.75,
+			} }
+		>
+			{ label }
+		</Box>
 	);
 }
 
@@ -87,13 +151,26 @@ export default function Navigator() {
 	);
 	const [ activeDropId, setActiveDropId ] = useState< string | null >( null );
 
-	const handleDropBefore = ( event: React.DragEvent, _elementId: string, index: number, parentId: string | null ) => {
+	const handleDropAt = ( event: React.DragEvent, parentId: string | null, index: number ) => {
 		event.preventDefault();
 		setActiveDropId( null );
 
 		const payload = readDragPayload( event.dataTransfer );
 
-		if ( ! payload || payload.source !== 'element' ) {
+		if ( ! payload ) {
+			return;
+		}
+
+		if ( payload.source === 'catalog' ) {
+			dispatch(
+				createElement( {
+					elType: payload.elType,
+					index,
+					parentId,
+					widgetType: payload.widgetType,
+				} )
+			);
+
 			return;
 		}
 
@@ -107,22 +184,36 @@ export default function Navigator() {
 	};
 
 	return (
-		<PanelChrome subtitle="Drag to reorder" title="Navigator">
-			<List dense sx={ { py: 1 } }>
-				{ elements.map( ( element, index ) => (
-					<NavigatorItem
-						key={ element.id }
+		<PanelChrome subtitle="Drag to reorder or nest" title="Navigator">
+			{ elements.length ? (
+				<List dense sx={ { py: 1 } }>
+					{ elements.map( ( element, index ) => (
+						<NavigatorItem
+							key={ element.id }
+							activeDropId={ activeDropId }
+							depth={ 0 }
+							element={ element }
+							onActivateDrop={ setActiveDropId }
+							onDropAt={ handleDropAt }
+							parentId={ null }
+							selectedIds={ selectedIds }
+							siblingIndex={ index }
+						/>
+					) ) }
+					<NavigatorDropRow
 						activeDropId={ activeDropId }
 						depth={ 0 }
-						element={ element }
+						dropId={ `root:${ elements.length }` }
+						label="Drop at page root"
 						onActivateDrop={ setActiveDropId }
-						onDropBefore={ handleDropBefore }
-						parentId={ null }
-						selectedIds={ selectedIds }
-						siblingIndex={ index }
+						onDrop={ ( event ) => handleDropAt( event, null, elements.length ) }
 					/>
-				) ) }
-			</List>
+				</List>
+			) : (
+				<Typography color="text.secondary" sx={ { p: 2 } } variant="body2">
+					No elements yet.
+				</Typography>
+			) }
 		</PanelChrome>
 	);
 }

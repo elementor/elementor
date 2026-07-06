@@ -1,8 +1,14 @@
 export { getAtomicCatalog, getAtomicWidgetConfig } from './catalog';
 export {
+	canAcceptChild,
+	findElementById,
 	getAtomicStringSetting,
+	getContainerLayoutSx,
 	getDefaultElementSettings,
+	getElementBreadcrumb,
 	getElementLabel,
+	getParentId,
+	getPreferredParentId,
 	isContainerElement,
 } from './element-display';
 export {

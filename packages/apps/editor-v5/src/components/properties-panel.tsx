@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react';
 import {
 	type ElementNode,
 	getAtomicStringSetting,
+	getElementBreadcrumb,
 	getElementLabel,
+	isContainerElement,
 	removeElement,
 	updateSetting,
 } from '@elementor/editor-v5-store';
@@ -120,12 +122,22 @@ export default function PropertiesPanel() {
 	return (
 		<Stack spacing={ 2 } sx={ { p: 2 } }>
 			<Box>
+				<Typography color="text.secondary" sx={ { mb: 0.5 } } variant="caption">
+					{ getElementBreadcrumb( elements, selected.id )
+						.map( ( node ) => getElementLabel( node ) )
+						.join( ' / ' ) }
+				</Typography>
 				<Typography sx={ { fontWeight: 600 } } variant="subtitle2">
 					{ getElementLabel( selected ) }
 				</Typography>
 				<Typography color="text.secondary" variant="caption">
 					{ selected.id }
 				</Typography>
+				{ isContainerElement( selected ) && (
+					<Typography color="primary.main" sx={ { display: 'block', mt: 1 } } variant="caption">
+						Container selected — new elements will nest inside.
+					</Typography>
+				) }
 			</Box>
 			{ settingKey ? (
 				<TextField

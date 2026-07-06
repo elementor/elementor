@@ -3,6 +3,7 @@ import { useState } from 'react';
 import {
 	createElement,
 	type ElementNode,
+	getContainerLayoutSx,
 	getElementLabel,
 	isContainerElement,
 	moveElement,
@@ -16,6 +17,7 @@ import ElementPreview from './element-preview';
 
 const ARTBOARD_MAX_WIDTH = 1140;
 const DROP_INDICATOR_HEIGHT = 4;
+const NESTED_INDENT_PX = 16;
 
 type DropSlotProps = {
 	active: boolean;
@@ -37,13 +39,7 @@ function DropSlot( { active, onDragLeave, onDragOver, onDrop }: DropSlotProps ) 
 			} }
 		>
 			{ active && (
-				<Box
-					sx={ {
-						backgroundColor: 'primary.main',
-						borderRadius: 999,
-						height: DROP_INDICATOR_HEIGHT,
-					} }
-				/>
+				<Box sx={ { backgroundColor: 'primary.main', borderRadius: 999, height: DROP_INDICATOR_HEIGHT } } />
 			) }
 		</Box>
 	);
@@ -51,6 +47,7 @@ function DropSlot( { active, onDragLeave, onDragOver, onDrop }: DropSlotProps ) 
 
 type CanvasElementProps = {
 	activeDrop: DropTargetPayload | null;
+	depth: number;
 	element: ElementNode;
 	onActivateDrop: ( target: DropTargetPayload | null ) => void;
 	onDropAt: ( event: React.DragEvent, target: DropTargetPayload ) => void;
@@ -61,6 +58,7 @@ type CanvasElementProps = {
 
 function CanvasElement( {
 	activeDrop,
+	depth,
 	element,
 	onActivateDrop,
 	onDropAt,
@@ -71,6 +69,13 @@ function CanvasElement( {
 	const isSelected = selectedIds.includes( element.id );
 	const isContainer = isContainerElement( element );
 	const dropTarget: DropTargetPayload = { parentId, index: siblingIndex };
+	const isDropActive = activeDrop?.parentId === dropTarget.parentId && activeDrop?.index === dropTarget.index;
+	const children = element.elements ?? [];
+	const containerAppendTarget: DropTargetPayload = { parentId: element.id, index: children.length };
+	const isContainerDropActive =
+		isContainer &&
+		activeDrop?.parentId === containerAppendTarget.parentId &&
+		activeDrop?.index === containerAppendTarget.index;
 
 	const handleClick = ( event: React.MouseEvent ) => {
 		event.stopPropagation();
@@ -88,27 +93,31 @@ function CanvasElement( {
 		setDragPayload( event.dataTransfer, payload );
 	};
 
-	const handleDragOver = ( event: React.DragEvent ) => {
-		event.preventDefault();
-		event.stopPropagation();
-		onActivateDrop( dropTarget );
+	const getContainerBorderColor = () => {
+		if ( isContainerDropActive ) {
+			return 'primary.main';
+		}
+
+		if ( children.length ) {
+			return 'transparent';
+		}
+
+		return 'grey.300';
 	};
 
-	const handleDrop = ( event: React.DragEvent ) => {
-		event.preventDefault();
-		event.stopPropagation();
-		onDropAt( event, dropTarget );
-	};
-
-	const isDropActive = activeDrop?.parentId === dropTarget.parentId && activeDrop?.index === dropTarget.index;
+	const containerBorderColor = getContainerBorderColor();
 
 	return (
-		<Box>
+		<Box sx={ { pl: depth > 0 ? `${ NESTED_INDENT_PX }px` : 0 } }>
 			<DropSlot
 				active={ isDropActive }
 				onDragLeave={ () => onActivateDrop( null ) }
-				onDragOver={ handleDragOver }
-				onDrop={ handleDrop }
+				onDragOver={ ( event ) => {
+					event.preventDefault();
+					event.stopPropagation();
+					onActivateDrop( dropTarget );
+				} }
+				onDrop={ ( event ) => onDropAt( event, dropTarget ) }
 			/>
 			<Box
 				draggable
@@ -118,23 +127,27 @@ function CanvasElement( {
 					'&:hover': {
 						boxShadow: isSelected ? undefined : '0 0 0 1px rgba(30, 115, 190, 0.35)',
 					},
-					backgroundColor: 'background.paper',
+					backgroundColor: isContainer ? 'grey.50' : 'background.paper',
 					border: '1px solid',
-					borderColor: isSelected ? 'primary.main' : 'transparent',
-					borderRadius: 1,
-					boxShadow: isSelected ? '0 0 0 2px rgba(30, 115, 190, 0.2)' : 'none',
+					borderColor: isSelected ? 'primary.main' : 'divider',
+					borderRadius: 1.5,
+					boxShadow: isSelected ? '0 0 0 2px rgba(30, 115, 190, 0.18)' : 'none',
 					cursor: 'grab',
-					p: isContainer ? 1.5 : 2,
+					overflow: 'hidden',
 					position: 'relative',
 				} }
 			>
 				<Box
 					sx={ {
 						alignItems: 'center',
+						backgroundColor: isContainer ? 'grey.100' : 'transparent',
+						borderBottom: isContainer ? '1px solid' : 'none',
+						borderColor: 'divider',
 						color: 'text.secondary',
 						display: 'flex',
 						justifyContent: 'space-between',
-						mb: isContainer ? 1 : 0,
+						px: 1.5,
+						py: 0.75,
 					} }
 				>
 					<Typography
@@ -143,67 +156,78 @@ function CanvasElement( {
 						{ getElementLabel( element ) }
 					</Typography>
 					<Typography sx={ { fontSize: 10 } } variant="caption">
-						⋮⋮
+						{ isContainer ? `${ children.length } nested` : '⋮⋮' }
 					</Typography>
 				</Box>
-				<ElementPreview element={ element } />
-				{ isContainer && (
-					<Stack spacing={ 0 } sx={ { mt: 1.5 } }>
-						{ ( element.elements ?? [] ).map( ( child, index ) => (
-							<CanvasElement
-								key={ child.id }
-								activeDrop={ activeDrop }
-								element={ child }
-								onActivateDrop={ onActivateDrop }
-								onDropAt={ onDropAt }
-								parentId={ element.id }
-								selectedIds={ selectedIds }
-								siblingIndex={ index }
-							/>
-						) ) }
-						<ContainerEndDropSlot
-							activeDrop={ activeDrop }
-							containerId={ element.id }
-							elementCount={ element.elements?.length ?? 0 }
-							onActivateDrop={ onActivateDrop }
-							onDropAt={ onDropAt }
-						/>
-					</Stack>
-				) }
+				<Box sx={ { p: isContainer ? 1.5 : 2 } }>
+					{ ! isContainer && <ElementPreview element={ element } /> }
+					{ isContainer && (
+						<Box
+							onDragLeave={ ( event ) => {
+								event.stopPropagation();
+								onActivateDrop( null );
+							} }
+							onDragOver={ ( event ) => {
+								event.preventDefault();
+								event.stopPropagation();
+								onActivateDrop( containerAppendTarget );
+							} }
+							onDrop={ ( event ) => onDropAt( event, containerAppendTarget ) }
+							sx={ {
+								...getContainerLayoutSx( element ),
+								backgroundColor: isContainerDropActive ? 'rgba(30, 115, 190, 0.06)' : 'transparent',
+								border: '1px dashed',
+								borderColor: containerBorderColor,
+								borderRadius: 1,
+								minHeight: children.length ? undefined : 96,
+								p: children.length ? 0 : 1.5,
+								transition: 'background-color 120ms ease, border-color 120ms ease',
+							} }
+						>
+							{ ! children.length && (
+								<Box
+									sx={ {
+										alignItems: 'center',
+										color: 'text.secondary',
+										display: 'flex',
+										justifyContent: 'center',
+										minHeight: 72,
+										textAlign: 'center',
+									} }
+								>
+									<Typography variant="caption">Drop widgets or containers here</Typography>
+								</Box>
+							) }
+							{ children.map( ( child, index ) => (
+								<CanvasElement
+									key={ child.id }
+									activeDrop={ activeDrop }
+									depth={ depth + 1 }
+									element={ child }
+									onActivateDrop={ onActivateDrop }
+									onDropAt={ onDropAt }
+									parentId={ element.id }
+									selectedIds={ selectedIds }
+									siblingIndex={ index }
+								/>
+							) ) }
+							{ children.length > 0 && (
+								<DropSlot
+									active={ isContainerDropActive }
+									onDragLeave={ () => onActivateDrop( null ) }
+									onDragOver={ ( event ) => {
+										event.preventDefault();
+										event.stopPropagation();
+										onActivateDrop( containerAppendTarget );
+									} }
+									onDrop={ ( event ) => onDropAt( event, containerAppendTarget ) }
+								/>
+							) }
+						</Box>
+					) }
+				</Box>
 			</Box>
 		</Box>
-	);
-}
-
-type ContainerEndDropSlotProps = {
-	activeDrop: DropTargetPayload | null;
-	containerId: string;
-	elementCount: number;
-	onActivateDrop: ( target: DropTargetPayload | null ) => void;
-	onDropAt: ( event: React.DragEvent, target: DropTargetPayload ) => void;
-};
-
-function ContainerEndDropSlot( {
-	activeDrop,
-	containerId,
-	elementCount,
-	onActivateDrop,
-	onDropAt,
-}: ContainerEndDropSlotProps ) {
-	const dropTarget: DropTargetPayload = { parentId: containerId, index: elementCount };
-	const isDropActive = activeDrop?.parentId === dropTarget.parentId && activeDrop?.index === dropTarget.index;
-
-	return (
-		<DropSlot
-			active={ isDropActive }
-			onDragLeave={ () => onActivateDrop( null ) }
-			onDragOver={ ( event ) => {
-				event.preventDefault();
-				event.stopPropagation();
-				onActivateDrop( dropTarget );
-			} }
-			onDrop={ ( event ) => onDropAt( event, dropTarget ) }
-		/>
 	);
 }
 
@@ -246,8 +270,8 @@ export default function Canvas() {
 		dispatch(
 			moveElement( {
 				id: payload.id,
-				parentId: target.parentId,
 				index: target.index,
+				parentId: target.parentId,
 			} )
 		);
 	};
@@ -282,11 +306,12 @@ export default function Canvas() {
 				} }
 			>
 				{ elements.length ? (
-					<Stack spacing={ 0 }>
+					<Stack spacing={ 0.5 }>
 						{ elements.map( ( element, index ) => (
 							<CanvasElement
 								key={ element.id }
 								activeDrop={ activeDrop }
+								depth={ 0 }
 								element={ element }
 								onActivateDrop={ setActiveDrop }
 								onDropAt={ handleDropAt }
@@ -328,7 +353,9 @@ export default function Canvas() {
 						<Typography sx={ { fontWeight: 600, mb: 1 } } variant="h6">
 							Start building your page
 						</Typography>
-						<Typography variant="body2">Drag elements from the left panel or click to add them.</Typography>
+						<Typography variant="body2">
+							Add a container, then drag widgets inside it — nesting is supported in this POC.
+						</Typography>
 					</Box>
 				) }
 			</Box>

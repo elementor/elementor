@@ -1,6 +1,6 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
 
-import { getDefaultElementSettings } from './element-display';
+import { canAcceptChild, getDefaultElementSettings } from './element-display';
 import { collectElementIds, generateElementId } from './generate-id';
 import type { DocumentState, ElementNode } from './types';
 
@@ -223,6 +223,10 @@ export const documentSlice = __createSlice( {
 
 			const parentId = action.payload.parentId ?? null;
 
+			if ( ! canAcceptChild( state.elements, parentId ) ) {
+				return;
+			}
+
 			if ( typeof action.payload.index === 'number' ) {
 				state.elements = insertElementAtIndex( state.elements, parentId, action.payload.index, element );
 			} else {
@@ -264,6 +268,10 @@ export const documentSlice = __createSlice( {
 			let { index } = action.payload;
 
 			if ( parentId === id || ( parentId && isDescendant( state.elements, id, parentId ) ) ) {
+				return;
+			}
+
+			if ( ! canAcceptChild( state.elements, parentId ) ) {
 				return;
 			}
 

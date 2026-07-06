@@ -6,6 +6,7 @@ import {
 	getElementById,
 	hydrate,
 	markSaved,
+	moveElement,
 	removeElement,
 	select,
 	updateSetting,
@@ -116,6 +117,7 @@ export class AgentRuntime {
 						elType: String( input.elType ),
 						widgetType: input.widgetType as string | undefined,
 						settings: input.settings as Record< string, unknown > | undefined,
+						index: typeof input.index === 'number' ? input.index : undefined,
 					} )
 				);
 				result = this.getSnapshot();
@@ -140,6 +142,16 @@ export class AgentRuntime {
 				break;
 			case 'removeElement':
 				this.store.dispatch( removeElement( { id: String( input.id ) } ) );
+				result = this.getSnapshot();
+				break;
+			case 'moveElement':
+				this.store.dispatch(
+					moveElement( {
+						id: String( input.id ),
+						parentId: ( input.parentId as string | null | undefined ) ?? null,
+						index: Number( input.index ),
+					} )
+				);
 				result = this.getSnapshot();
 				break;
 			case 'saveDocument':
