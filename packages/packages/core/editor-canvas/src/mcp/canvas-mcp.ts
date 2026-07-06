@@ -11,6 +11,7 @@ import { initSelectedElementResource } from './resources/selected-element-resour
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
 import { initBuildCompositionsTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
+import { initCreateElementTool } from './tools/create-element/tool';
 import { initGetElementConfigTool } from './tools/get-element-config/tool';
 import { getDynamicTagNamesByCategories } from './utils/resolve-dynamic-tag';
 
@@ -29,5 +30,6 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initBuildCompositionsTool( reg );
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );
+	initCreateElementTool( reg );
 	initBreakpointsResource( reg );
 };
