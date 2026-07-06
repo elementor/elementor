@@ -32,7 +32,7 @@ function renderActionsHook() {
 	}
 
 	const wrapper = ( { children }: { children: React.ReactNode } ) =>
-		React.createElement( StoreProvider, { store }, children );
+		React.createElement( StoreProvider, { store, children } );
 
 	return renderHook( () => useFloatingPanelActions( PANEL_ID ), { wrapper } );
 }
