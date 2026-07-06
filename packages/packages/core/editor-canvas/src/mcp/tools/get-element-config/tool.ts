@@ -3,6 +3,8 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
 
+import { toDialect } from '../../http-services/prop-conversion';
+
 const schema = {
 	elementId: z.string(),
 };
@@ -10,7 +12,7 @@ const schema = {
 const outputSchema = {
 	properties: z
 		.record( z.string(), z.any() )
-		.describe( 'A record mapping PropTypes to their corresponding PropValues' ),
+		.describe( 'Property name → current value pairs for the element' ),
 	style: z
 		.record( z.string(), z.any() )
 		.describe( 'A record mapping StyleSchema properties to their corresponding PropValues' ),
@@ -100,10 +102,13 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 				}
 			}
 
+			// OLD: returned canonical PropValues directly
+			// return { properties: { ...propValues }, style: { ...stylePropValues }, childElements: structuredElements( element ) };
+
+			const dialectProps = await toDialect( elementType, propValues );
+
 			return {
-				properties: {
-					...propValues,
-				},
+				properties: dialectProps,
 				style: {
 					...stylePropValues,
 				},

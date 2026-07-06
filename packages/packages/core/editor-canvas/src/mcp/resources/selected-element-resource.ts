@@ -1,11 +1,14 @@
 import { getContainer, getSelectedElements, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { Schema } from '@elementor/editor-props';
 import {
 	__privateListenTo as listenTo,
 	commandEndEvent,
 	type CommandEvent,
 	type ListenerEvent,
 } from '@elementor/editor-v1-adapters';
+
+import { toDialect } from '../http-services/prop-conversion';
 
 export const SELECTED_ELEMENT_URI = 'elementor://context/selected-element';
 
@@ -93,11 +96,13 @@ export const initSelectedElementResource = ( reg: MCPRegistryEntry ) => {
 			description: 'Currently selected Elementor element context.',
 		},
 		async () => {
+			const payload = await buildSelectionPayloadAsync();
+
 			return {
 				contents: [
 					{
 						uri: SELECTED_ELEMENT_URI,
-						text: JSON.stringify( readSelectionFromEditor(), null, 2 ),
+						text: JSON.stringify( payload, null, 2 ),
 					},
 				],
 			};
@@ -186,6 +191,49 @@ function getElementProperties(
 	}
 
 	return Object.keys( filtered ).length > 0 ? filtered : null;
+}
+
+async function buildSelectionPayloadAsync(): Promise< SelectedElementPayload > {
+	const elements = getSelectedElements();
+
+	if ( elements.length !== 1 ) {
+		return createEmptySelectedElementPayload();
+	}
+
+	const container = getContainer( elements[ 0 ].id );
+
+	if ( ! container?.id ) {
+		return createEmptySelectedElementPayload();
+	}
+
+	const widgetType = container.model.get( 'widgetType' ) ?? null;
+	const version = resolveElementVersion( container, widgetType );
+
+	const payload = buildPayloadFromContainer( container );
+
+	if ( version !== 'v4' || ! widgetType || ! payload.properties ) {
+		return payload;
+	}
+
+	const propSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
+
+	if ( ! propSchema ) {
+		return payload;
+	}
+
+	const configurableProps: Record< string, unknown > = {};
+	Schema.configurableKeys( propSchema ).forEach( ( key ) => {
+		if ( payload.properties?.[ key ] !== undefined ) {
+			configurableProps[ key ] = payload.properties[ key ];
+		}
+	} );
+
+	// OLD: returned canonical PropValues directly
+	// return { ...payload, properties: configurableProps };
+
+	const dialectProps = await toDialect( widgetType, configurableProps );
+
+	return { ...payload, properties: dialectProps };
 }
 
 function getElementDisplayName( container: SelectionContainer ): string {

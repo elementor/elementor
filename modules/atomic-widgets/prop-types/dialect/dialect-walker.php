@@ -95,6 +95,61 @@ class Dialect_Walker {
 		return $children;
 	}
 
+	public static function to_canonical( Prop_Type $prop_type, string $dialect, $value ) {
+		if ( is_array( $value ) && isset( $value['$$type'] ) ) {
+			return $value;
+		}
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			return self::to_canonical_union( $prop_type, $dialect, $value );
+		}
+
+		$adapters      = $prop_type->get_dialect_adapters();
+		$adapter_class = $adapters[ $dialect ] ?? Base_Dialect_Adapter::class;
+		$ctx           = new Adapter_Context( $prop_type, [], null, null, $dialect );
+		$canonical     = $adapter_class::to_canonical_value( $ctx, $value );
+
+		if ( $prop_type instanceof Object_Prop_Type && is_array( $canonical ) && isset( $canonical['value'] ) && is_array( $canonical['value'] ) ) {
+			foreach ( $prop_type->get_shape() as $key => $child_prop_type ) {
+				if ( array_key_exists( $key, $canonical['value'] ) && null !== $canonical['value'][ $key ] ) {
+					$canonical['value'][ $key ] = self::to_canonical( $child_prop_type, $dialect, $canonical['value'][ $key ] );
+				}
+			}
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type && is_array( $canonical ) && isset( $canonical['value'] ) && is_array( $canonical['value'] ) ) {
+			$item_type               = $prop_type->get_item_type();
+			$canonical['value']      = array_map( fn( $item ) => self::to_canonical( $item_type, $dialect, $item ), $canonical['value'] );
+		}
+
+		return $canonical;
+	}
+
+	private static function to_canonical_union( Union_Prop_Type $prop_type, string $dialect, $value ) {
+		$effective = array_values( array_filter(
+			$prop_type->get_prop_types(),
+			function ( $member ) use ( $dialect ) {
+				$adapters      = $member->get_dialect_adapters();
+				$adapter_class = $adapters[ $dialect ] ?? Base_Dialect_Adapter::class;
+				$ctx           = new Adapter_Context( $member, [], null, null, $dialect );
+				return ! Dialect_Utils::is_omit( $adapter_class::to_schema( $ctx ) );
+			}
+		) );
+
+		foreach ( $effective as $member ) {
+			$result = self::to_canonical( $member, $dialect, $value );
+			if ( is_array( $result ) && isset( $result['$$type'] ) ) {
+				return $result;
+			}
+		}
+
+		return $value;
+	}
+
+	public static function convert_canonical_to_dialect( Prop_Type $prop_type, string $dialect, $canonical ) {
+		return self::convert_default( $prop_type, $dialect, $canonical );
+	}
+
 	private static function convert_default( Prop_Type $prop_type, string $dialect, $canonical ) {
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			return self::convert_union_default( $prop_type, $dialect, $canonical );

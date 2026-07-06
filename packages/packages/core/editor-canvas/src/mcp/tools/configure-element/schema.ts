@@ -4,14 +4,8 @@ import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const inputSchema = {
 	propertiesToChange: z
-		.record(
-			z.string().describe( 'The property name.' ),
-			z
-				.any()
-				.describe( `PropValue, refer to [${ WIDGET_SCHEMA_URI }] by correct type, as appears in elementType` ),
-			z.any()
-		)
-		.describe( 'An object record containing property names and their new values to be set on the element' ),
+		.record( z.string(), z.any() )
+		.describe( `Property name → value pairs to set on the element. Refer to [${ WIDGET_SCHEMA_URI }] for the value format of each property.` ),
 	style: z
 		.record(
 			z.string().describe( 'A CSS property name, e.g. "color", "margin-top".' ),

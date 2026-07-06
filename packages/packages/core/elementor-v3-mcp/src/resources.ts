@@ -37,23 +37,76 @@ async function handleGetWidgetSettings( params: { elementId: string; action: str
 	}
 
 	const settings = container.settings.attributes || {};
-	return {
-		content: [ { type: 'text', text: encodeToolJson( settings ) } ],
-	};
+	const widgetType = ( container.model.get?.( 'widgetType' ) ?? container.model.widgetType ) as string | undefined;
+	const propSchema = widgetType ? elementor?.widgetsCache?.[ widgetType ]?.atomic_props_schema : null;
+
+	if ( ! widgetType || ! propSchema ) {
+		return { content: [ { type: 'text', text: encodeToolJson( settings ) } ] };
+	}
+
+	const dialectSettings = await convertToDialect( widgetType, settings as Record< string, unknown > );
+	return { content: [ { type: 'text', text: encodeToolJson( dialectSettings ) } ] };
+}
+
+async function convertToDialect(
+	widgetType: string,
+	props: Record< string, unknown >
+): Promise< Record< string, unknown > > {
+	type ElementorV2 = { httpClient?: { post: ( url: string, data: unknown ) => Promise< { data: { data: Record< string, unknown > } } > } };
+	const httpClient = ( ( window as unknown as { elementorV2?: ElementorV2 } ).elementorV2 )?.httpClient;
+
+	if ( ! httpClient ) {
+		return props;
+	}
+
+	try {
+		const response = await httpClient.post( 'elementor/v1/mcp-proxy', {
+			tool: 'to-dialect',
+			input: { widget_type: widgetType, props, dialect: 'llm' },
+		} );
+		return response?.data?.data ?? props;
+	} catch {
+		return props;
+	}
 }
 
 async function handleGetWidgetSchema( params: { widgetType: string; action: string } ): Promise< {
 	content: [ { type: 'text'; text: string } ];
 } > {
 	const elementor = getElementor();
-	const controls = elementor?.widgetsCache[ params.widgetType ]?.controls as ElementorControls | undefined;
-	if ( ! controls ) {
+	const widgetCache = elementor?.widgetsCache[ params.widgetType ];
+
+	if ( ! widgetCache ) {
 		throw new Error( `Widget type ${ params.widgetType } not found.` );
 	}
 
+	if ( widgetCache.atomic_props_schema ) {
+		const schema = await fetchV4WidgetSchema( params.widgetType );
+		return { content: [ { type: 'text', text: encodeToolJson( schema ) } ] };
+	}
+
+	const controls = widgetCache.controls as ElementorControls | undefined;
 	return {
 		content: [ { type: 'text', text: encodeToolJson( controls ) } ],
 	};
+}
+
+async function fetchV4WidgetSchema( widgetType: string ): Promise< unknown > {
+	type ElementorV2 = { httpClient?: { get: ( url: string, config: unknown ) => Promise< { data: { data: unknown } } > } };
+	const httpClient = ( ( window as unknown as { elementorV2?: ElementorV2 } ).elementorV2 )?.httpClient;
+
+	if ( ! httpClient ) {
+		return {};
+	}
+
+	try {
+		const response = await httpClient.get( 'elementor/v1/mcp-proxy', {
+			params: { uri: `elementor://widgets/schema/${ widgetType }` },
+		} );
+		return response?.data?.data ?? {};
+	} catch {
+		return {};
+	}
 }
 
 export function addElementorResources( server: McpServer ): void {

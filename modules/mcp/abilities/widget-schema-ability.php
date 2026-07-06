@@ -64,13 +64,13 @@ class Widget_Schema_Ability extends Abstract_Ability {
 		$config = $widget->get_config();
 
 		if ( ! empty( $config['atomic'] ) ) {
-			return $this->build_v4_schema( $config );
+			return $this->build_v4_schema( $config, $input );
 		}
 
 		return $this->build_v3_schema( $config );
 	}
 
-	private function build_v4_schema( array $config ): array {
+	private function build_v4_schema( array $config, array $input = [] ): array {
 		$props_schema = $config['atomic_props_schema'] ?? null;
 
 		if ( empty( $props_schema ) ) {
@@ -80,12 +80,14 @@ class Widget_Schema_Ability extends Abstract_Ability {
 
 		$properties = [];
 
+		$dialect = $input['dialect'] ?? 'llm';
+
 		foreach ( $props_schema as $key => $prop_type ) {
 			if ( ! $this->is_prop_key_configurable( $key, $prop_type ) ) {
 				continue;
 			}
 
-			$properties[ $key ] = Dialect_Walker::to_schema( $prop_type, 'llm' );
+			$properties[ $key ] = Dialect_Walker::to_schema( $prop_type, $dialect );
 		}
 
 		return [

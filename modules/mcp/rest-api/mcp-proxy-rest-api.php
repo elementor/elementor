@@ -6,7 +6,10 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Create_Element_Ability;
 use Elementor\Modules\Mcp\Abilities\Simple_Resource_Ability;
+use Elementor\Modules\Mcp\Abilities\To_Canonical_Ability;
+use Elementor\Modules\Mcp\Abilities\To_Dialect_Ability;
 use Elementor\Modules\Mcp\Abilities\Widget_Schema_Ability;
+use Elementor\Modules\Mcp\Abilities\Widget_Schema_List_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,10 +28,13 @@ class Mcp_Proxy_REST_API {
 	public function __construct() {
 		$this->tools = [
 			'create-element' => fn( array $input ) => ( new Create_Element_Ability() )->execute( $input ),
+			'to-canonical'   => fn( array $input ) => ( new To_Canonical_Ability() )->execute( $input ),
+			'to-dialect'     => fn( array $input ) => ( new To_Dialect_Ability() )->execute( $input ),
 		];
 
 		$this->resources = [
 			'elementor://style/best-practices' => fn() => ( new Simple_Resource_Ability( 'elementor://style/best-practices', __( 'Style Best Practices', 'elementor' ) ) )->execute(),
+			self::WIDGET_SCHEMA_LIST_URI        => fn() => ( new Widget_Schema_List_Ability() )->execute(),
 		];
 	}
 
@@ -98,7 +104,7 @@ class Mcp_Proxy_REST_API {
 
 		if ( str_starts_with( $uri, self::WIDGET_SCHEMA_PREFIX ) ) {
 			$widget_type = substr( $uri, strlen( self::WIDGET_SCHEMA_PREFIX ) );
-			return ( new Widget_Schema_Ability( $widget_type ) )->execute();
+			return ( new Widget_Schema_Ability( $widget_type ) )->execute( [ 'dialect' => 'llm' ] );
 		}
 
 		return Error_Builder::make( 'unknown_resource' )

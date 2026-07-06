@@ -3,6 +3,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 
+import { toCanonical } from '../../http-services/prop-conversion';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { convertCssToAtomic } from '../../utils/convert-css-to-atomic';
@@ -59,8 +60,15 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 					`This tool does not support V3 elements. Please use the elementor-v3-mcp tools instead for element type: ${ elementType }`
 				);
 			}
-			const propertiesToUpdate = resolveCanonicalPropKeys( elementType, propertiesToChange );
-			const toUpdate = Object.entries( propertiesToUpdate );
+			// OLD: LLM was expected to send canonical PropValues directly
+			// const propertiesToUpdate = resolveCanonicalPropKeys( elementType, propertiesToChange );
+			// const toUpdate = Object.entries( propertiesToUpdate );
+			// for ( const [ propertyName, propertyValue ] of toUpdate as [ string, PropValue ][] ) { ... }
+
+			const resolvedKeys = resolveCanonicalPropKeys( elementType, propertiesToChange );
+			const canonicalProps = await toCanonical( elementType, resolvedKeys );
+			const toUpdate = Object.entries( canonicalProps );
+
 			for ( const [ propertyName, propertyValue ] of toUpdate as [ string, PropValue ][] ) {
 				if ( ! Schema.isPropKeyConfigurable( propertyName ) ) {
 					throw new Error( `Not allowed to update ${ propertyName }` );

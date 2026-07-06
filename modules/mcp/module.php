@@ -77,6 +77,7 @@ class Module extends BaseModule {
 		( new Abilities\Get_Globals_Ability() )->register();
 		( new Abilities\Create_Element_Ability() )->register();
 		( new Abilities\Simple_Resource_Ability( 'elementor://style/best-practices', __( 'Style Best Practices', 'elementor' ) ) )->register();
+		( new Abilities\Widget_Schema_List_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -104,6 +105,7 @@ class Module extends BaseModule {
 			],
 			[
 				'elementor/resource-style-best-practices',
+				'elementor/widget-schema-list',
 			],
 			[]
 		);

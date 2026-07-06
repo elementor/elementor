@@ -79,6 +79,68 @@ class Test_Dialect_Walker extends TestCase {
 		$this->assertNull( $schema['default']['id'] );
 	}
 
+	public function test_to_canonical_returns_value_unchanged_when_already_canonical() {
+		// Arrange
+		$canonical = [ '$$type' => 'string', 'value' => 'hello' ];
+
+		// Act
+		$result = Dialect_Walker::to_canonical( String_Prop_Type::make(), 'llm', $canonical );
+
+		// Assert
+		$this->assertSame( $canonical, $result );
+	}
+
+	public function test_to_canonical_wraps_scalar_dialect_value() {
+		// Arrange
+		$prop_type = String_Prop_Type::make();
+
+		// Act
+		$result = Dialect_Walker::to_canonical( $prop_type, 'llm', 'hello' );
+
+		// Assert
+		$this->assertSame( [ '$$type' => 'string', 'value' => 'hello' ], $result );
+	}
+
+	public function test_to_canonical_wraps_object_dialect_value_recursively() {
+		// Arrange
+		$image_src = Image_Src_Prop_Type::make();
+
+		// Act
+		$result = Dialect_Walker::to_canonical( $image_src, 'llm', [
+			'id'  => null,
+			'url' => 'https://example.com/image.jpg',
+		] );
+
+		// Assert
+		$this->assertSame( '$$type', array_key_first( $result ) );
+		$this->assertSame( 'image-src', $result['$$type'] );
+		$this->assertSame( [ '$$type' => 'url', 'value' => 'https://example.com/image.jpg' ], $result['value']['url'] );
+		$this->assertNull( $result['value']['id'] );
+	}
+
+	public function test_to_canonical_single_member_union_delegates_to_member() {
+		// Arrange - simulates dynamic-tags wrapping
+		$string_type = String_Prop_Type::make();
+		$union        = Union_Prop_Type::make()->add_prop_type( $string_type );
+
+		// Act
+		$result = Dialect_Walker::to_canonical( $union, 'llm', 'hello' );
+
+		// Assert
+		$this->assertSame( [ '$$type' => 'string', 'value' => 'hello' ], $result );
+	}
+
+	public function test_convert_canonical_to_dialect_unwraps_scalar() {
+		// Arrange
+		$canonical = [ '$$type' => 'string', 'value' => 'hello' ];
+
+		// Act
+		$result = Dialect_Walker::convert_canonical_to_dialect( String_Prop_Type::make(), 'llm', $canonical );
+
+		// Assert
+		$this->assertSame( 'hello', $result );
+	}
+
 	public function test_to_schema_walks_object_children_bottom_up() {
 		// Arrange
 		$omit_child = String_Prop_Type::make()->with_dialect( self::DIALECT, Omit_Schema_Adapter::class );

@@ -27,4 +27,12 @@ class Array_Adapter extends Base_Dialect_Adapter {
 	public static function to_dialect_value( Adapter_Context $ctx, $canonical ) {
 		return $canonical['value'] ?? null;
 	}
+
+	public static function to_canonical_value( Adapter_Context $ctx, $value ) {
+		if ( null === $value || ! is_array( $value ) ) {
+			return null;
+		}
+
+		return $ctx->prop_type::generate( $value );
+	}
 }
