@@ -7,6 +7,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Base_Dialect_Adapter;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dialect\Dialect_Walker;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -44,6 +46,38 @@ class Stub_Object_Prop_Type extends Object_Prop_Type {
 
 class Test_Dialect_Walker extends TestCase {
 	const DIALECT = 'test';
+
+	public function test_nested_object_default_values_are_recursively_converted() {
+		// Arrange
+		$image_src = Image_Src_Prop_Type::make()->default( [
+			'id'  => null,
+			'url' => Url_Prop_Type::generate( 'https://example.com/image.jpg' ),
+		] );
+
+		// Act
+		$schema = Dialect_Walker::to_schema( $image_src, 'llm' );
+
+		// Assert
+		$this->assertSame( 'https://example.com/image.jpg', $schema['default']['url'] );
+		$this->assertNull( $schema['default']['id'] );
+	}
+
+	public function test_union_wrapping_object_default_values_are_recursively_converted() {
+		// Arrange - simulates dynamic-tags wrapping a prop type in a union at runtime
+		$image_src = Image_Src_Prop_Type::make()->default( [
+			'id'  => null,
+			'url' => Url_Prop_Type::generate( 'https://example.com/image.jpg' ),
+		] );
+
+		$union = Union_Prop_Type::make()->add_prop_type( $image_src );
+
+		// Act
+		$schema = Dialect_Walker::to_schema( $union, 'llm' );
+
+		// Assert
+		$this->assertSame( 'https://example.com/image.jpg', $schema['default']['url'] );
+		$this->assertNull( $schema['default']['id'] );
+	}
 
 	public function test_to_schema_walks_object_children_bottom_up() {
 		// Arrange

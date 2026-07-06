@@ -29,7 +29,7 @@ class Dialect_Walker {
 
 		$default = $prop_type->get_default();
 		if ( null !== $default ) {
-			$schema['default'] = $adapter_class::to_dialect_value( $ctx, $default );
+			$schema['default'] = self::convert_default( $prop_type, $dialect, $default );
 		}
 
 		foreach ( $prop_type->get_meta() as $key => $value ) {
@@ -93,6 +93,47 @@ class Dialect_Walker {
 		}
 
 		return $children;
+	}
+
+	private static function convert_default( Prop_Type $prop_type, string $dialect, $canonical ) {
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			return self::convert_union_default( $prop_type, $dialect, $canonical );
+		}
+
+		$adapters      = $prop_type->get_dialect_adapters();
+		$adapter_class = $adapters[ $dialect ] ?? Base_Dialect_Adapter::class;
+		$ctx           = new Adapter_Context( $prop_type, [], null, null, $dialect );
+
+		$value = $adapter_class::to_dialect_value( $ctx, $canonical );
+
+		if ( $prop_type instanceof Object_Prop_Type && is_array( $value ) ) {
+			foreach ( $prop_type->get_shape() as $key => $child_prop_type ) {
+				if ( array_key_exists( $key, $value ) && null !== $value[ $key ] ) {
+					$value[ $key ] = self::convert_default( $child_prop_type, $dialect, $value[ $key ] );
+				}
+			}
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type && is_array( $value ) ) {
+			$item_type = $prop_type->get_item_type();
+			$value     = array_map( fn( $item ) => self::convert_default( $item_type, $dialect, $item ), $value );
+		}
+
+		return $value;
+	}
+
+	private static function convert_union_default( Union_Prop_Type $prop_type, string $dialect, $canonical ) {
+		if ( ! is_array( $canonical ) || ! isset( $canonical['$$type'] ) ) {
+			return $canonical;
+		}
+
+		$member = $prop_type->get_prop_type( $canonical['$$type'] );
+
+		if ( ! $member ) {
+			return $canonical;
+		}
+
+		return self::convert_default( $member, $dialect, $canonical );
 	}
 
 	private static function walk_array_children_schema( Array_Prop_Type $prop_type, string $dialect ): array {

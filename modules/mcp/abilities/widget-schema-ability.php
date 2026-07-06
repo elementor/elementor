@@ -46,7 +46,8 @@ class Widget_Schema_Ability extends Abstract_Ability {
 	}
 
 	public function execute( $input = [] ) {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $this->widget_type );
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $this->widget_type )
+			?? Plugin::$instance->elements_manager->get_element_types( $this->widget_type );
 
 		if ( ! $widget ) {
 			return new \WP_Error(
