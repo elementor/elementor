@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { saveDocument } from '@elementor/editor-v5-runtime';
 import { markSaved } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
-import { AppBar as UiAppBar, Button, Stack, Toolbar, Typography } from '@elementor/ui';
+import { AppBar as UiAppBar, Box, Button, Chip, Stack, Toolbar, Typography } from '@elementor/ui';
 
 import { getClassicEditorUrl, getDocumentTitle } from '../editor-config';
 
@@ -28,13 +28,30 @@ export default function AppBar() {
 	};
 
 	return (
-		<UiAppBar position="static" color="default" elevation={ 1 }>
+		<UiAppBar
+			position="static"
+			sx={ {
+				backgroundColor: 'background.paper',
+				borderBottom: '1px solid',
+				borderColor: 'divider',
+				color: 'text.primary',
+			} }
+		>
 			<Toolbar>
 				<Stack direction="row" spacing={ 2 } alignItems="center" sx={ { width: '100%' } }>
-					<Typography variant="subtitle1" sx={ { flexGrow: 1 } }>
-						{ getDocumentTitle() }
-						{ dirty ? ' *' : '' }
-					</Typography>
+					<Box sx={ { flexGrow: 1 } }>
+						<Stack alignItems="center" direction="row" spacing={ 1 }>
+							<Typography sx={ { fontWeight: 600 } } variant="subtitle1">
+								{ getDocumentTitle() }
+							</Typography>
+							<Chip
+								color={ dirty ? 'warning' : 'default' }
+								label={ dirty ? 'Unsaved' : 'Saved' }
+								size="small"
+							/>
+							<Chip label="Editor V5 POC" size="small" variant="outlined" />
+						</Stack>
+					</Box>
 					<Button component="a" href={ getClassicEditorUrl() } variant="outlined" size="small">
 						Classic Editor
 					</Button>

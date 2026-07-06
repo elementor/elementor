@@ -10,6 +10,11 @@ import Canvas from './canvas';
 import ElementsPanel from './elements-panel';
 import LegacyGuard from './legacy-guard';
 import Navigator from './navigator';
+import PanelChrome from './panel-chrome';
+import PropertiesPanel from './properties-panel';
+
+const ELEMENTS_PANEL_WIDTH = 300;
+const SIDE_PANEL_WIDTH = 280;
 
 type ShellProps = {
 	agent: AgentRuntime;
@@ -25,23 +30,51 @@ export default function Shell( { agent }: ShellProps ) {
 	}
 
 	return (
-		<Box sx={ { display: 'flex', flexDirection: 'column', height: '100vh', width: '100%' } }>
+		<Box
+			sx={ {
+				backgroundColor: 'grey.100',
+				display: 'flex',
+				flexDirection: 'column',
+				height: '100vh',
+				overflow: 'hidden',
+				width: '100%',
+			} }
+		>
 			<AppBar />
 			<Box sx={ { display: 'flex', flex: 1, minHeight: 0 } }>
 				<Box
 					component="aside"
-					sx={ { borderRight: '1px solid #d5d8dc', flexShrink: 0, overflow: 'auto', width: 280 } }
+					sx={ {
+						borderRight: '1px solid',
+						borderColor: 'divider',
+						flexShrink: 0,
+						width: ELEMENTS_PANEL_WIDTH,
+					} }
 				>
 					<ElementsPanel />
 				</Box>
-				<Box component="main" sx={ { flex: 1, minWidth: 0, overflow: 'auto', p: 2 } }>
+				<Box component="main" sx={ { display: 'flex', flex: 1, minWidth: 0 } }>
 					<Canvas />
 				</Box>
 				<Box
 					component="aside"
-					sx={ { borderLeft: '1px solid #d5d8dc', flexShrink: 0, overflow: 'auto', width: 240 } }
+					sx={ {
+						borderLeft: '1px solid',
+						borderColor: 'divider',
+						display: 'flex',
+						flexDirection: 'column',
+						flexShrink: 0,
+						width: SIDE_PANEL_WIDTH,
+					} }
 				>
-					<Navigator />
+					<Box sx={ { borderBottom: '1px solid', borderColor: 'divider', flex: 1, minHeight: 0 } }>
+						<Navigator />
+					</Box>
+					<Box sx={ { flex: 1, minHeight: 0 } }>
+						<PanelChrome subtitle="Quick edit" title="Properties">
+							<PropertiesPanel />
+						</PanelChrome>
+					</Box>
 				</Box>
 			</Box>
 			<Box sx={ { bottom: 16, maxHeight: '40vh', position: 'fixed', right: 16, width: 360, zIndex: 1000 } }>

@@ -1,10 +1,17 @@
 export { getAtomicCatalog, getAtomicWidgetConfig } from './catalog';
 export {
+	getAtomicStringSetting,
+	getDefaultElementSettings,
+	getElementLabel,
+	isContainerElement,
+} from './element-display';
+export {
 	createElement,
 	documentSlice,
 	getElementById,
 	hydrate,
 	markSaved,
+	moveElement,
 	removeElement,
 	select,
 	updateSetting,

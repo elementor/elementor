@@ -1,5 +1,6 @@
 import { __createSlice, __registerSlice, type PayloadAction } from '@elementor/store';
 
+import { getDefaultElementSettings } from './element-display';
 import { collectElementIds, generateElementId } from './generate-id';
 import type { DocumentState, ElementNode } from './types';
 
@@ -111,6 +112,82 @@ function insertElement( elements: ElementNode[], parentId: string | null, elemen
 	} ) );
 }
 
+function insertElementAtIndex(
+	elements: ElementNode[],
+	parentId: string | null,
+	index: number,
+	element: ElementNode
+): ElementNode[] {
+	if ( ! parentId ) {
+		const nextElements = [ ...elements ];
+		const boundedIndex = Math.max( 0, Math.min( index, nextElements.length ) );
+
+		nextElements.splice( boundedIndex, 0, element );
+
+		return nextElements;
+	}
+
+	const path = findElementPath( elements, parentId );
+
+	if ( ! path ) {
+		return elements;
+	}
+
+	return updateElementAtPath( elements, path, ( parent ) => {
+		const children = [ ...( parent.elements ?? [] ) ];
+		const boundedIndex = Math.max( 0, Math.min( index, children.length ) );
+
+		children.splice( boundedIndex, 0, element );
+
+		return {
+			...parent,
+			elements: children,
+		};
+	} );
+}
+
+function extractElement(
+	elements: ElementNode[],
+	targetId: string
+): { elements: ElementNode[]; element: ElementNode | null } {
+	const path = findElementPath( elements, targetId );
+
+	if ( ! path ) {
+		return { elements, element: null };
+	}
+
+	const element = getElementAtPath( elements, path );
+
+	if ( ! element ) {
+		return { elements, element: null };
+	}
+
+	return {
+		elements: removeElementAtPath( elements, path ),
+		element: { ...element, elements: element.elements ?? [] },
+	};
+}
+
+function isDescendant( elements: ElementNode[], ancestorId: string, targetId: string ): boolean {
+	const ancestor = getElementById( elements, ancestorId );
+
+	if ( ! ancestor ) {
+		return false;
+	}
+
+	return Boolean( findElementPath( ancestor.elements ?? [], targetId ) );
+}
+
+function getElementById( elements: ElementNode[], id: string ): ElementNode | null {
+	const path = findElementPath( elements, id );
+
+	if ( ! path ) {
+		return null;
+	}
+
+	return getElementAtPath( elements, path );
+}
+
 export const documentSlice = __createSlice( {
 	name: 'editorV5Document',
 	initialState,
@@ -130,6 +207,7 @@ export const documentSlice = __createSlice( {
 				elType: string;
 				widgetType?: string;
 				settings?: Record< string, unknown >;
+				index?: number;
 			} >
 		) {
 			const existingIds = collectElementIds( state.elements );
@@ -137,11 +215,20 @@ export const documentSlice = __createSlice( {
 				id: generateElementId( existingIds ),
 				elType: action.payload.elType,
 				widgetType: action.payload.widgetType,
-				settings: action.payload.settings ?? {},
+				settings:
+					action.payload.settings ??
+					getDefaultElementSettings( action.payload.elType, action.payload.widgetType ),
 				elements: [],
 			};
 
-			state.elements = insertElement( state.elements, action.payload.parentId ?? null, element );
+			const parentId = action.payload.parentId ?? null;
+
+			if ( typeof action.payload.index === 'number' ) {
+				state.elements = insertElementAtIndex( state.elements, parentId, action.payload.index, element );
+			} else {
+				state.elements = insertElement( state.elements, parentId, element );
+			}
+
 			state.selectedIds = [ element.id ];
 			state.dirty = true;
 		},
@@ -172,6 +259,40 @@ export const documentSlice = __createSlice( {
 			state.selectedIds = state.selectedIds.filter( ( id ) => id !== action.payload.id );
 			state.dirty = true;
 		},
+		moveElement( state, action: PayloadAction< { id: string; parentId: string | null; index: number } > ) {
+			const { id, parentId } = action.payload;
+			let { index } = action.payload;
+
+			if ( parentId === id || ( parentId && isDescendant( state.elements, id, parentId ) ) ) {
+				return;
+			}
+
+			const sourcePath = findElementPath( state.elements, id );
+
+			if ( ! sourcePath ) {
+				return;
+			}
+
+			const sourceParentId =
+				sourcePath.length === 1
+					? null
+					: getElementAtPath( state.elements, sourcePath.slice( 0, -1 ) )?.id ?? null;
+			const sourceIndex = sourcePath[ sourcePath.length - 1 ];
+
+			if ( sourceParentId === parentId && sourceIndex < index ) {
+				index -= 1;
+			}
+
+			const { elements, element } = extractElement( state.elements, id );
+
+			if ( ! element ) {
+				return;
+			}
+
+			state.elements = insertElementAtIndex( elements, parentId, index, element );
+			state.selectedIds = [ id ];
+			state.dirty = true;
+		},
 		markSaved( state ) {
 			state.dirty = false;
 		},
@@ -180,17 +301,10 @@ export const documentSlice = __createSlice( {
 
 __registerSlice( documentSlice );
 
-export const { hydrate, select, createElement, updateSetting, removeElement, markSaved } = documentSlice.actions;
+export const { hydrate, select, createElement, updateSetting, removeElement, moveElement, markSaved } =
+	documentSlice.actions;
 
-export function getElementById( elements: ElementNode[], id: string ): ElementNode | null {
-	const path = findElementPath( elements, id );
-
-	if ( ! path ) {
-		return null;
-	}
-
-	return getElementAtPath( elements, path );
-}
+export { getElementById };
 
 export type DocumentSliceState = {
 	editorV5Document: DocumentState;
