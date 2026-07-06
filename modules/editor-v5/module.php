@@ -196,6 +196,7 @@ class Module extends BaseModule {
 
 		$this->dequeue_scripts_with_dependency( 'elementor-editor' );
 		$this->dequeue_non_v5_extension_scripts();
+		$this->dequeue_scripts_depending_on_non_v5_v2_packages();
 	}
 
 	private function dequeue_scripts_with_dependency( $dependency_handle ) {
@@ -260,6 +261,37 @@ class Module extends BaseModule {
 			}
 
 			wp_dequeue_script( $handle );
+		}
+	}
+
+	private function dequeue_scripts_depending_on_non_v5_v2_packages() {
+		global $wp_scripts;
+
+		if ( ! $wp_scripts instanceof \WP_Scripts ) {
+			return;
+		}
+
+		$v5_handles = array_flip( self::V5_SCRIPT_HANDLES );
+
+		foreach ( $wp_scripts->queue as $handle ) {
+			$script = $wp_scripts->registered[ $handle ] ?? null;
+
+			if ( ! $script || empty( $script->deps ) ) {
+				continue;
+			}
+
+			foreach ( $script->deps as $dependency ) {
+				if ( ! str_starts_with( $dependency, 'elementor-v2-' ) ) {
+					continue;
+				}
+
+				if ( isset( $v5_handles[ $dependency ] ) ) {
+					continue;
+				}
+
+				wp_dequeue_script( $handle );
+				break;
+			}
 		}
 	}
 
