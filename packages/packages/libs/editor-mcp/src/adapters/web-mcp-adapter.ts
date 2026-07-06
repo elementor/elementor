@@ -2,10 +2,10 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z, type z3 } from '@elementor/schema';
 
 import {
-	registerModelContextTool,
-	unregisterModelContextTool,
 	type ModelContextRegisterTool,
 	type ModelContextUnregisterTool,
+	registerModelContextTool,
+	unregisterModelContextTool,
 } from '../utils/register-model-context-tool';
 import {
 	type IMcpRegistrationAdapter,

@@ -1,8 +1,5 @@
 import { WebMCPAdapter } from '../adapters/web-mcp-adapter';
-import {
-	registerModelContextTool,
-	unregisterModelContextTool,
-} from '../utils/register-model-context-tool';
+import { registerModelContextTool, unregisterModelContextTool } from '../utils/register-model-context-tool';
 
 const createTool = ( name: string ) => ( {
 	name,
@@ -106,9 +103,7 @@ describe( 'WebMCPAdapter', () => {
 
 		// Act.
 		await Promise.resolve();
-		expect( registerTool ).toHaveBeenCalledWith(
-			expect.objectContaining( { name: 'editor-resource-getter' } )
-		);
+		expect( registerTool ).toHaveBeenCalledWith( expect.objectContaining( { name: 'editor-resource-getter' } ) );
 		expect( activateSettled ).toBe( false );
 		resolveRegisterTool();
 		await activatePromise;
