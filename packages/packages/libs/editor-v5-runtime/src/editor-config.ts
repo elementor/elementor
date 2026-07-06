@@ -19,16 +19,42 @@ function getConfig(): ElementorConfigShape | undefined {
 	return ( window as ElementorConfigWindow ).ElementorConfig;
 }
 
-export function getDocumentId(): number | null {
-	const documentId = getConfig()?.initial_document?.id;
+function parseDocumentId( value: unknown ): number | null {
+	if ( typeof value === 'number' && Number.isFinite( value ) ) {
+		return value;
+	}
 
-	return typeof documentId === 'number' ? documentId : null;
+	if ( typeof value === 'string' && value.length > 0 ) {
+		const parsed = Number.parseInt( value, 10 );
+
+		return Number.isFinite( parsed ) ? parsed : null;
+	}
+
+	return null;
+}
+
+type PageSettingsConfig = {
+	settings?: Record< string, unknown >;
+};
+
+export function getDocumentId(): number | null {
+	return parseDocumentId( getConfig()?.initial_document?.id );
 }
 
 export function getDocumentSettings(): Record< string, unknown > {
-	const settings = getConfig()?.initial_document?.settings ?? {};
+	const pageSettings = getConfig()?.initial_document?.settings;
 
-	return { ...settings };
+	if ( ! pageSettings || typeof pageSettings !== 'object' ) {
+		return {};
+	}
+
+	const nestedSettings = ( pageSettings as PageSettingsConfig ).settings;
+
+	if ( nestedSettings && typeof nestedSettings === 'object' ) {
+		return { ...nestedSettings };
+	}
+
+	return { ...( pageSettings as Record< string, unknown > ) };
 }
 
 export function getInitialElements(): ElementNode[] {

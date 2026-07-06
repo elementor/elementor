@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { saveDocument } from '@elementor/editor-v5-runtime';
+import { formatAjaxError, saveDocument } from '@elementor/editor-v5-runtime';
 import { markSaved, type ElementNode } from '@elementor/editor-v5-store';
 import { __dispatch as dispatch, __useSelector as useSelector } from '@elementor/store';
 import { AppBar as UiAppBar, Alert, Box, Button, Chip, Snackbar, Stack, Toolbar, Typography } from '@elementor/ui';
@@ -28,7 +28,7 @@ export default function AppBar() {
 			dispatch( markSaved() );
 			setSaveMessage( 'Page saved. Reload to verify persisted preview.' );
 		} catch ( error ) {
-			setSaveError( error instanceof Error ? error.message : 'Save failed.' );
+			setSaveError( formatAjaxError( error ).message );
 		} finally {
 			setIsSaving( false );
 		}
