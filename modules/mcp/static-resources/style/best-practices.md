@@ -1,4 +1,3 @@
-export const BEST_PRACTICES_PROMPT = `
 # DESIGN QUALITY IMPERATIVE
 
 You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
@@ -156,4 +155,3 @@ If user specifies:
 - Specific fonts → use them
 - Specific spacing → use it
 - "Minimal/simple" → reduce ornamentation but maintain quality principles
-`;
