@@ -159,9 +159,9 @@ class Atomic_Form extends Atomic_Element_Base {
 		$email_controls = $email_control_settings['email-controls'];
 
 		if ( class_exists( '\ElementorPro\License\API' ) ) {
-			$tier = \ElementorPro\License\API::get_plan_type();
+			$has_form_submissions_feature = \ElementorPro\License\API::is_licence_has_feature( 'form-submissions' );
 
-			if ( false === strpos( $tier, 'essential' ) ) {
+			if ( $has_form_submissions_feature ) {
 				$form_action_chips = array_merge( $form_action_chips, [
 					[
 						'label' => __( 'Collect submissions', 'elementor' ),

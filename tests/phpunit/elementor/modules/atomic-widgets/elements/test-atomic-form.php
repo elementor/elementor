@@ -53,12 +53,12 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider collect_submissions_chip_by_plan_type_provider
+	 * @dataProvider collect_submissions_chip_by_license_feature_provider
 	 */
-	public function test_actions_after_submit_collect_submissions_chip_by_plan_type( string $plan_type, bool $should_include_chip ) {
+	public function test_actions_after_submit_collect_submissions_chip_by_license_feature( array $features, bool $should_include_chip ) {
 		// Arrange
 		\Mock_Pro_License_API::set_license_state( true );
-		\Mock_Pro_License_API::set_plan_type( $plan_type );
+		\Mock_Pro_License_API::set_features( $features );
 
 		// Act
 		$form = $this->make_atomic_form_instance();
@@ -73,12 +73,11 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		}
 	}
 
-	public function collect_submissions_chip_by_plan_type_provider(): array {
+	public function collect_submissions_chip_by_license_feature_provider(): array {
 		return [
-			'essential plan' => [ 'essential', false ],
-			'advanced plan' => [ 'advanced', true ],
-			'expert plan' => [ 'expert', true ],
-			'agency plan' => [ 'agency', true ],
+			'with form-submissions feature' => [ [ 'form-submissions' ], true ],
+			'without form-submissions feature' => [ [ 'template_access_level_1' ], false ],
+			'no features' => [ [], false ],
 		];
 	}
 

@@ -5,12 +5,12 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 	class Mock_Pro_License_API {
 		private static bool $active = true;
 		private static bool $expired = false;
-		private static string $plan_type = 'essential';
+		private static array $features = [];
 
 		public static function reset(): void {
 			self::$active = true;
 			self::$expired = false;
-			self::$plan_type = 'essential';
+			self::$features = [];
 		}
 
 		public static function set_license_state( bool $active, bool $expired = false ): void {
@@ -18,8 +18,8 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 			self::$expired = $expired;
 		}
 
-		public static function set_plan_type( string $plan_type ): void {
-			self::$plan_type = $plan_type;
+		public static function set_features( array $features ): void {
+			self::$features = $features;
 		}
 
 		public static function is_license_active(): bool {
@@ -30,12 +30,10 @@ if ( ! class_exists( '\ElementorPro\License\API' ) ) {
 			return self::$expired;
 		}
 
-		public static function get_plan_type(): string {
-			if ( ! self::is_license_active() ) {
-				return 'free';
-			}
+		public static function is_licence_has_feature( $feature_name, $license_check_validator = null ): bool {
+			unset( $license_check_validator );
 
-			return self::$plan_type;
+			return in_array( $feature_name, self::$features, true );
 		}
 	}
 
