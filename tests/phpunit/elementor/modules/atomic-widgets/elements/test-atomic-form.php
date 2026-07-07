@@ -12,7 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+require_once __DIR__ . '/../../components/mocks/mock-pro-license-api.php';
+
 class Test_Atomic_Form extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		\Mock_Pro_License_API::reset();
+	}
 
 	public function test_action_webhook_constant_matches_expected_slug() {
 		$this->assertSame( 'webhook', Atomic_Form::ACTION_WEBHOOK );
@@ -42,6 +50,36 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 
 		$values = array_column( $chips->get_props()['options'] ?? [], 'value' );
 		$this->assertContains( Atomic_Form::ACTION_WEBHOOK, $values );
+	}
+
+	/**
+	 * @dataProvider collect_submissions_chip_by_plan_type_provider
+	 */
+	public function test_actions_after_submit_collect_submissions_chip_by_plan_type( string $plan_type, bool $should_include_chip ) {
+		// Arrange
+		\Mock_Pro_License_API::set_license_state( true );
+		\Mock_Pro_License_API::set_plan_type( $plan_type );
+
+		// Act
+		$form = $this->make_atomic_form_instance();
+		$chips = $this->find_control_by_bind( $form->get_atomic_controls(), 'actions-after-submit' );
+		$values = array_column( $chips->get_props()['options'] ?? [], 'value' );
+
+		// Assert
+		if ( $should_include_chip ) {
+			$this->assertContains( Atomic_Form::ACTION_COLLECT_SUBMISSIONS, $values );
+		} else {
+			$this->assertNotContains( Atomic_Form::ACTION_COLLECT_SUBMISSIONS, $values );
+		}
+	}
+
+	public function collect_submissions_chip_by_plan_type_provider(): array {
+		return [
+			'essential plan' => [ 'essential', false ],
+			'advanced plan' => [ 'advanced', true ],
+			'expert plan' => [ 'expert', true ],
+			'agency plan' => [ 'agency', true ],
+		];
 	}
 
 	public function test_webhook_url_text_control_is_registered() {
