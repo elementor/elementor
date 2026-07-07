@@ -1,12 +1,12 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\ChildrenDependencies;
+namespace Elementor\Modules\AtomicWidgets\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Child_Position {
+class Element_Position {
 
 	const KIND_LAST = 'last';
 	const KIND_FIRST = 'first';
@@ -31,7 +31,7 @@ class Child_Position {
 
 	private function __construct( string $kind, $value = null ) {
 		if ( ! in_array( $kind, self::KINDS, true ) ) {
-			throw new \InvalidArgumentException( esc_html( "Invalid child position kind: {$kind}" ) );
+			throw new \InvalidArgumentException( esc_html( "Invalid element position kind: {$kind}" ) );
 		}
 
 		$this->kind = $kind;
@@ -48,7 +48,7 @@ class Child_Position {
 
 	public static function at_index( int $index ): self {
 		if ( $index < 0 ) {
-			throw new \InvalidArgumentException( 'Child_Position: index must be >= 0.' );
+			throw new \InvalidArgumentException( 'Element_Position: index must be >= 0.' );
 		}
 
 		return new self( self::KIND_INDEX, $index );
@@ -69,7 +69,7 @@ class Child_Position {
 	private static function assert_non_empty_element_type( string $element_type, string $method ): void {
 		if ( '' === trim( $element_type ) ) {
 			throw new \InvalidArgumentException(
-				esc_html( "Child_Position::{$method}: element_type must be a non-empty string." )
+				esc_html( "Element_Position::{$method}: element_type must be a non-empty string." )
 			);
 		}
 	}

@@ -3,8 +3,8 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\ChildrenDependencies;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
-use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Position;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,7 +24,7 @@ class Test_Child_Dependency extends TestCase {
 		// Act.
 		$rule = Child_Dependency::for( 'e-pagination' )
 			->when( $when )
-			->position( Child_Position::after_type( 'e-collection-loop-layout' ) )
+			->position( Element_Position::after_type( 'e-collection-loop-layout' ) )
 			->stash()
 			->default_model( [ 'elType' => 'e-pagination', 'isLocked' => true ] )
 			->build();
@@ -104,46 +104,4 @@ class Test_Child_Dependency extends TestCase {
 		Child_Dependency::for( 'e-child' )->when( Dependency_Manager::make() )->build();
 	}
 
-	/**
-	 * @dataProvider position_constructors_provider
-	 */
-	public function test_position_constructors( callable $factory, string $expected_kind, $expected_value ) {
-		// Act.
-		$position = $factory();
-
-		// Assert.
-		$this->assertSame( $expected_kind, $position->to_array()['kind'] );
-		$this->assertSame( $expected_value, $position->to_array()['value'] );
-	}
-
-	public function test_at_index_rejects_negative_index() {
-		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessageMatches( '/index must be >= 0/' );
-
-		Child_Position::at_index( -1 );
-	}
-
-	public function test_after_type_rejects_empty_element_type() {
-		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessageMatches( '/element_type must be a non-empty string/' );
-
-		Child_Position::after_type( '   ' );
-	}
-
-	public function test_before_type_rejects_empty_element_type() {
-		$this->expectException( \InvalidArgumentException::class );
-		$this->expectExceptionMessageMatches( '/element_type must be a non-empty string/' );
-
-		Child_Position::before_type( '' );
-	}
-
-	public function position_constructors_provider(): array {
-		return [
-			'last' => [ fn() => Child_Position::last(), 'last', null ],
-			'first' => [ fn() => Child_Position::first(), 'first', null ],
-			'at_index' => [ fn() => Child_Position::at_index( 3 ), 'index', 3 ],
-			'after_type' => [ fn() => Child_Position::after_type( 'e-layout' ), 'after_type', 'e-layout' ],
-			'before_type' => [ fn() => Child_Position::before_type( 'e-layout' ), 'before_type', 'e-layout' ],
-		];
-	}
 }

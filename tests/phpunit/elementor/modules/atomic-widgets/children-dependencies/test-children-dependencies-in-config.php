@@ -3,9 +3,9 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\ChildrenDependencies;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
-use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Position;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +25,7 @@ class Widget_With_Builder_Rule extends Div_Block {
 						'value' => true,
 					] )
 				)
-				->position( Child_Position::after_type( 'e-collection-loop-layout' ) )
+				->position( Element_Position::after_type( 'e-collection-loop-layout' ) )
 				->stash( true )
 				->default_model( [ 'elType' => 'e-pagination', 'isLocked' => true ] ),
 		];

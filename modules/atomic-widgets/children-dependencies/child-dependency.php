@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\ChildrenDependencies;
 
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,7 +13,7 @@ class Child_Dependency {
 
 	private string $child_type;
 	private ?Dependency_Manager $when = null;
-	private ?Child_Position $position = null;
+	private ?Element_Position $position = null;
 	private bool $stash = true;
 	private ?array $default_model = null;
 
@@ -30,7 +31,7 @@ class Child_Dependency {
 		return $this;
 	}
 
-	public function position( Child_Position $position ): self {
+	public function position( Element_Position $position ): self {
 		$this->position = $position;
 
 		return $this;
@@ -62,7 +63,7 @@ class Child_Dependency {
 		return [
 			'child_type' => $this->child_type,
 			'when' => $when_config,
-			'position' => ( $this->position ?? Child_Position::last() )->to_array(),
+			'position' => ( $this->position ?? Element_Position::last() )->to_array(),
 			'stash' => $this->stash,
 			'default_model' => $this->default_model,
 		];
