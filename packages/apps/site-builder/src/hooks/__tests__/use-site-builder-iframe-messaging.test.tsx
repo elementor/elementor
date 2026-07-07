@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 import { act, renderHook } from '@testing-library/react';
 
 import {
@@ -43,20 +43,28 @@ const setupHook = ( initial: HookProps ) => {
 	const iframeRef = { current: { contentWindow: fakeContentWindow } as unknown as HTMLIFrameElement };
 
 	const { rerender } = renderHook(
-		( props: HookProps ) => useSiteBuilderIframeMessaging( {
-			iframeRef: iframeRef as React.RefObject< HTMLIFrameElement | null >,
-			iframeUrl: IFRAME_URL,
-			siteBuilderParams: props.siteBuilderParams ?? {},
-			connectAuth: props.connectAuth,
-			isConnectAuthResolved: props.isConnectAuthResolved,
-		} ),
-		{ initialProps: initial },
+		( props: HookProps ) =>
+			useSiteBuilderIframeMessaging( {
+				iframeRef: iframeRef as React.RefObject< HTMLIFrameElement | null >,
+				iframeUrl: IFRAME_URL,
+				siteBuilderParams: props.siteBuilderParams ?? {},
+				connectAuth: props.connectAuth,
+				isConnectAuthResolved: props.isConnectAuthResolved,
+			} ),
+		{ initialProps: initial }
 	);
 
 	const dispatchGetReferrerInfo = () => {
 		act( () => {
-			const evt = new Event( 'message' ) as unknown as MessageEvent & { data: unknown; origin: string; source: Window };
-			( evt as unknown as { data: unknown } ).data = { type: 'get/referrer/info', payload: { instanceId: 'inst-1' } };
+			const evt = new Event( 'message' ) as unknown as MessageEvent & {
+				data: unknown;
+				origin: string;
+				source: Window;
+			};
+			( evt as unknown as { data: unknown } ).data = {
+				type: 'get/referrer/info',
+				payload: { instanceId: 'inst-1' },
+			};
 			( evt as unknown as { origin: string } ).origin = IFRAME_ORIGIN;
 			( evt as unknown as { source: Window } ).source = fakeContentWindow;
 			window.dispatchEvent( evt );
