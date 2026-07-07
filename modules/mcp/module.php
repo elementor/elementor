@@ -3,8 +3,9 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Plugin;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +37,8 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
+
+		( new Mcp_Proxy_REST_API() )->register_hooks();
 
 		if ( ! $this->is_active() ) {
 			return;
@@ -72,6 +75,7 @@ class Module extends BaseModule {
 		( new Abilities\Update_Settings_Ability() )->register();
 		( new Abilities\Create_Page_Ability() )->register();
 		( new Abilities\Get_Globals_Ability() )->register();
+		( new Abilities\Create_Element_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -95,6 +99,7 @@ class Module extends BaseModule {
 				'elementor/update-page-settings',
 				'elementor/create-page',
 				'elementor/get-globals',
+				'elementor/create-element',
 			],
 			[],
 			[]
