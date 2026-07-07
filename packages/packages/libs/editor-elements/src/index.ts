@@ -7,11 +7,8 @@ export {
 	bindSettingsReconcile,
 	type ChildDependenciesConfig,
 	type ChildDependencyRule,
-	type ChildPosition,
-	type ChildPositionKind,
 	evaluateWhen,
 	reconcileInitialChildren,
-	resolveInsertIndex,
 } from './children-dependencies';
 
 // hooks
@@ -56,6 +53,7 @@ export { moveElement, type MoveElementParams } from './sync/move-element';
 export { moveElements } from './sync/move-elements';
 export { removeElements } from './sync/remove-elements';
 export { replaceElement } from './sync/replace-element';
+export { resolveInsertIndex } from './sync/resolve-insert-index';
 export { updateElementEditorSettings } from './sync/update-element-editor-settings';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 

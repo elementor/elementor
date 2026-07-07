@@ -2,11 +2,11 @@ import { type PropValue } from '@elementor/editor-props';
 
 import { getContainer } from '../sync/get-container';
 import { addModelToParent, removeModelFromParent } from '../sync/resolve-element';
+import { resolveInsertIndex } from '../sync/resolve-insert-index';
 import { type V1Element, type V1ElementConfig, type V1ElementData, type V1ElementModelProps } from '../sync/types';
-import { evaluateWhen } from './evaluate-when';
-import { resolveInsertIndex } from './resolve-insert-index';
 import { createChildrenStash } from './stash';
 import { type ChildDependencyRule, type ChildrenStash } from './types';
+import { evaluateWhen } from './utils';
 
 type SettingsChangeSource = {
 	get: ( key: string ) => unknown;

@@ -169,6 +169,13 @@ export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 	elements?: V1ElementData[];
 };
 
+export type ElementPositionKind = 'last' | 'first' | 'index' | 'after_type' | 'before_type';
+
+export type ElementPosition = {
+	kind: ElementPositionKind;
+	value: number | string | null;
+};
+
 export type V1ElementEditorSettingsProps = {
 	title?: string;
 	initial_position?: number;

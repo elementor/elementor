@@ -1,5 +1,5 @@
-import { type V1ElementData } from '../../sync/types';
 import { resolveInsertIndex } from '../resolve-insert-index';
+import { type V1ElementData } from '../types';
 
 const elements: V1ElementData[] = [
 	{ elType: 'a' } as V1ElementData,

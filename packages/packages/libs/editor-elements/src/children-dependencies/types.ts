@@ -1,18 +1,11 @@
 import { type Dependency } from '@elementor/editor-props';
 
-import { type V1ElementData } from '../sync/types';
-
-export type ChildPositionKind = 'last' | 'first' | 'index' | 'after_type' | 'before_type';
-
-export type ChildPosition = {
-	kind: ChildPositionKind;
-	value: number | string | null;
-};
+import { type ElementPosition, type V1ElementData } from '../sync/types';
 
 export type ChildDependencyRule = {
 	child_type: string;
 	when: Dependency;
-	position: ChildPosition;
+	position: ElementPosition;
 	stash: boolean;
 	default_model: V1ElementData | null;
 };

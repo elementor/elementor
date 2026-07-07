@@ -1,7 +1,6 @@
-import { type V1ElementData } from '../sync/types';
-import { type ChildPosition } from './types';
+import { type ElementPosition, type V1ElementData } from './types';
 
-export function resolveInsertIndex( position: ChildPosition, elements: V1ElementData[] ): number {
+export function resolveInsertIndex( position: ElementPosition, elements: V1ElementData[] ): number {
 	const lastIndex = elements.length;
 
 	switch ( position.kind ) {
