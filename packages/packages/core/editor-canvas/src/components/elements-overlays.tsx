@@ -45,18 +45,19 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( { id, domElement, isGlobal } ) => {
+	return elements.map( ( { id, domElement, isGlobal, widgetType } ) => {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element: domElement, isSelected } ) && (
+				shouldRender( { id, element: domElement, isSelected, widgetType } ) && (
 					<Overlay
 						key={ `${ id }-${ index }` }
 						id={ id }
 						element={ domElement }
 						isSelected={ isSelected }
 						isGlobal={ isGlobal }
+						widgetType={ widgetType }
 					/>
 				)
 		);
@@ -67,6 +68,7 @@ type ElementData = {
 	id: string;
 	domElement: HTMLElement;
 	isGlobal: boolean;
+	widgetType?: string;
 };
 
 function useElementsDom() {
@@ -79,6 +81,7 @@ function useElementsDom() {
 					id: element.id,
 					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
 					isGlobal: element.model.get( 'isGlobal' ) ?? false,
+					widgetType: element.model.get( 'widgetType' ),
 				} ) )
 				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
