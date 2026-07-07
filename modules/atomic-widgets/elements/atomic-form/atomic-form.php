@@ -158,16 +158,25 @@ class Atomic_Form extends Atomic_Element_Base {
 		$form_action_chips = $email_control_settings['form-action-chips'];
 		$email_controls = $email_control_settings['email-controls'];
 
+		if ( class_exists( '\ElementorPro\License\API' ) ) {
+			$tier = \ElementorPro\License\API::get_plan_type();
+
+			if ( false === strpos( $tier, 'essential' ) ) {
+				$form_action_chips = array_merge( $form_action_chips, [
+					[
+						'label' => __( 'Collect submissions', 'elementor' ),
+						'value' => self::ACTION_COLLECT_SUBMISSIONS,
+					],
+				] );
+			}
+		}
+
 		$content_controls = [
 			Text_Control::bind_to( 'form-name' )
 				->set_label( __( 'Form name', 'elementor' ) ),
 			$state_control,
 			Chips_Control::bind_to( 'actions-after-submit' )
 				->set_options( array_merge( $form_action_chips, [
-					[
-						'label' => __( 'Collect submissions', 'elementor' ),
-						'value' => self::ACTION_COLLECT_SUBMISSIONS,
-					],
 					[
 						'label' => __( 'Webhook', 'elementor' ),
 						'value' => self::ACTION_WEBHOOK,
