@@ -117,9 +117,9 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 V4 only: If MCP fails, give manual steps using V4 UI.
 
 V4 Editor structure:
-Panel tabs: General (→ Settings section: ID, Tag, Link), Style, Interactions.
+Panel tabs: General (→ Settings section: ID, Tag, and Link only when the widget's schema exposes a \`link\` prop), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
-Note: \`link\` is not a documented, universally-available key. The Link field appears in a widget's Settings only when that widget's schema exposes a \`link\` prop; do not assume every element has one or instruct the user to set a link on widgets that lack it.
+Note: \`link\` is not a documented, universally-available key; never assume an element has one or instruct the user to set a link on a widget whose schema lacks it.
 ` );
 
 	return configureElementToolPrompt.prompt();

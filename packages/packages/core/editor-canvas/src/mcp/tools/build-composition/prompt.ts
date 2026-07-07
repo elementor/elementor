@@ -39,7 +39,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → elementConfig (props) + style (raw CSS declarations)
 - elementConfig PropValues require \`$$type\` matching schema
 - style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
-- NO LINKS in configuration
+- NO LINKS in configuration — do not include a \`link\` prop here; add links afterward with the "configure-element" tool, and only on widgets whose schema exposes a \`link\` prop
 - Retry on errors up to 10x
 - Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
