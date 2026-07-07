@@ -81,7 +81,7 @@ jobs:
           prerelease: ${{ env.PRERELEASE }}
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Post To Slack Created Latest auto Release
-        if: ${{ github.event.inputs.pre_release }} == false
+        if: ${{ env.PRERELEASE == 'false' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

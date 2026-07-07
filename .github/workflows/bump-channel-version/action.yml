@@ -22,17 +22,17 @@ runs:
     - shell: bash
       run: |
         case ${{ inputs.CHANNEL }} in
+          "latest" )
+            NEW_CHANNEL_VERSION=-$(date +%s)
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+            ;;
+          "ga" )
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
+            ;;
           * )
             CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
             NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
             ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
-            ;;&
-          "latest" )
-            NEW_CHANNEL_VERSION=-$(date +%s)
-            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
-           ;;
-          "ga" )
-            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
             ;;
         esac
 
