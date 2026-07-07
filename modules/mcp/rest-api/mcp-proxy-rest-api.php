@@ -5,7 +5,7 @@ namespace Elementor\Modules\Mcp\RestApi;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Create_Element_Ability;
-use Elementor\Modules\Mcp\Abilities\Simple_Resource_Ability;
+use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -24,7 +24,7 @@ class Mcp_Proxy_REST_API {
 		];
 
 		$this->resources = [
-			'elementor://style/best-practices' => fn() => ( new Simple_Resource_Ability( 'elementor://style/best-practices', __( 'Style Best Practices', 'elementor' ) ) )->execute(),
+			'elementor://style/best-practices' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
 		];
 	}
 
