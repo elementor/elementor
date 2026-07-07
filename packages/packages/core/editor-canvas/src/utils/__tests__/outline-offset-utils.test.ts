@@ -1,7 +1,4 @@
-import {
-	shouldUseSmallerOutlineOffset,
-	THIN_ELEMENT_MAX_HEIGHT_PX,
-} from '../outline-offset-utils';
+import { shouldUseSmallerOutlineOffset, THIN_ELEMENT_MAX_HEIGHT_PX } from '../outline-offset-utils';
 
 describe( 'shouldUseSmallerOutlineOffset', () => {
 	it( 'returns true for thin elements like dividers', () => {

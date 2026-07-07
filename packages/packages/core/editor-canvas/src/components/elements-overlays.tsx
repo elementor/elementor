@@ -68,13 +68,13 @@ type ElementData = {
 	id: string;
 	domElement: HTMLElement;
 	isGlobal: boolean;
-	widgetType?: string;
+	widgetType: string | undefined;
 };
 
-function useElementsDom() {
+function useElementsDom(): ElementData[] {
 	return useListenTo(
 		[ windowEvent( 'elementor/editor/element-rendered' ), windowEvent( 'elementor/editor/element-destroyed' ) ],
-		() => {
+		(): ElementData[] => {
 			return getElements()
 				.filter( ( el ) => isV4Element( el.view?.el?.dataset ) )
 				.map( ( element ) => ( {
