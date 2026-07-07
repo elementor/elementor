@@ -50,7 +50,7 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOp
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
-					{ item.description && (
+					{ ! expanded && item.description && (
 						<Typography variant="caption" color="text.secondary" noWrap display="block">
 							{ item.description }
 						</Typography>
