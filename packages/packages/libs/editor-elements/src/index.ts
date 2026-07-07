@@ -36,7 +36,9 @@ export { addModelToParent, findModelInDocument, removeModelFromParent, resolveCo
 export { getCurrentDocumentContainer } from './sync/get-current-document-container';
 export { getCurrentDocumentId } from './sync/get-current-document-id';
 export { getElementEditorSettings } from './sync/get-element-editor-settings';
+export { getElementIcon } from './sync/get-element-icon';
 export { getElementLabel } from './sync/get-element-label';
+export { getElementTitle } from './sync/get-element-title';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
