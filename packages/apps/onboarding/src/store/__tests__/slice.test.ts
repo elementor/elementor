@@ -1,5 +1,5 @@
-import { markProInstalled, slice } from '../slice';
 import { StepId } from '../../types';
+import { markProInstalled, slice } from '../slice';
 
 describe( 'markProInstalled', () => {
 	it( 'replaces site_features with theme_selection for free onboarding config', () => {
