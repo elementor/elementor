@@ -98,6 +98,12 @@ declare global {
 		};
 		elementor?: {
 			$preview?: [ HTMLIFrameElement ];
+			changeEditMode?: ( newMode: string ) => void;
+			channels?: {
+				dataEditMode?: {
+					request: ( key: 'activeMode' ) => string;
+				};
+			};
 			selection?: {
 				getElements: () => V1Element[];
 			};

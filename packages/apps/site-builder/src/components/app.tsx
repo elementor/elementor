@@ -30,6 +30,7 @@ export function App() {
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ siteBuilderParams, setSiteBuilderParams ] = useState< SiteBuilderParams >( {} );
 	const [ connectAuth, setConnectAuth ] = useState< ConnectAuth | null >( null );
+	const [ isConnectAuthResolved, setIsConnectAuthResolved ] = useState( false );
 
 	const iframeUrl = useMemo( () => getSiteBuilderConfig()?.iframeUrl ?? '', [] );
 
@@ -38,6 +39,7 @@ export function App() {
 		iframeUrl,
 		siteBuilderParams,
 		connectAuth,
+		isConnectAuthResolved,
 	} );
 
 	useEffect( () => {
@@ -55,6 +57,8 @@ export function App() {
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
 				console.error( 'Failed to fetch connectAuth:', err );
+			} finally {
+				setIsConnectAuthResolved( true );
 			}
 		};
 

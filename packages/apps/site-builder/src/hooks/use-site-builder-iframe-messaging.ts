@@ -140,6 +140,7 @@ type UseSiteBuilderIframeMessagingArgs = {
 	iframeUrl: string;
 	siteBuilderParams: SiteBuilderParams;
 	connectAuth: ConnectAuth | null;
+	isConnectAuthResolved: boolean;
 };
 
 export function useSiteBuilderIframeMessaging( {
@@ -147,8 +148,10 @@ export function useSiteBuilderIframeMessaging( {
 	iframeUrl,
 	siteBuilderParams,
 	connectAuth,
+	isConnectAuthResolved,
 }: UseSiteBuilderIframeMessagingArgs ): void {
 	const pendingRedirectRef = useRef< PendingEditorRedirect | null >( null );
+	const pendingHandshakeRef = useRef< MessageEvent | null >( null );
 
 	const allowedOrigin = useMemo( () => {
 		try {
@@ -176,9 +179,14 @@ export function useSiteBuilderIframeMessaging( {
 
 			if ( type === 'get/referrer/info' ) {
 				const iframe = iframeRef.current;
-				if ( iframe?.contentWindow ) {
-					sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
+				if ( ! iframe?.contentWindow ) {
+					return;
 				}
+				if ( ! isConnectAuthResolved ) {
+					pendingHandshakeRef.current = event;
+					return;
+				}
+				sendReferrerInfo( iframe, event, allowedOrigin, siteBuilderParams, connectAuth );
 				return;
 			}
 
@@ -206,13 +214,29 @@ export function useSiteBuilderIframeMessaging( {
 				}
 			}
 		},
-		[ allowedOrigin, siteBuilderParams, connectAuth, iframeRef ]
+		[ allowedOrigin, siteBuilderParams, connectAuth, isConnectAuthResolved, iframeRef ]
 	);
 
 	useEffect( () => {
 		window.addEventListener( 'message', handleMessage );
 		return () => window.removeEventListener( 'message', handleMessage );
 	}, [ handleMessage ] );
+
+	useEffect( () => {
+		if ( ! isConnectAuthResolved ) {
+			return;
+		}
+		const pending = pendingHandshakeRef.current;
+		if ( ! pending ) {
+			return;
+		}
+		const iframe = iframeRef.current;
+		if ( ! iframe?.contentWindow ) {
+			return;
+		}
+		sendReferrerInfo( iframe, pending, allowedOrigin, siteBuilderParams, connectAuth );
+		pendingHandshakeRef.current = null;
+	}, [ isConnectAuthResolved, connectAuth, allowedOrigin, siteBuilderParams, iframeRef ] );
 
 	useEffect( () => {
 		return () => clearPendingEditorRedirect( pendingRedirectRef.current );
