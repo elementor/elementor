@@ -24,7 +24,7 @@ interface FeatureGridProps {
 	onFeatureClick: ( id: string ) => void;
 }
 
-const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
+const CornerChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
 	insetBlockStart: theme.spacing( 0.75 ),
 	insetInlineStart: theme.spacing( 0.75 ),
@@ -103,6 +103,7 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 				const isOptionPaid = isPaid( option.licenseType );
 				const BadgeIcon = isOptionPaid ? CrownFilledIcon : CheckIcon;
 				const isCore = option.licenseType === 'core';
+				const isInstallable = option.licenseType === 'installable';
 
 				const handleClick = () => onFeatureClick( option.id );
 
@@ -121,8 +122,10 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 						tabIndex={ isCore ? undefined : 0 }
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
+						aria-label={ isCore ? undefined : t( option.labelKey ) }
 					>
-						{ isCore && <IncludedInCoreChip label={ t( 'steps.site_features.included' ) } size="small" /> }
+						{ isCore && <CornerChip label={ t( 'steps.site_features.included' ) } size="small" /> }
+						{ isInstallable && <CornerChip label={ t( 'common.recommended' ) } size="small" /> }
 						{ isSelected && (
 							<SelectionBadge icon={ BadgeIcon } variant={ isOptionPaid ? 'paid' : 'free' } />
 						) }

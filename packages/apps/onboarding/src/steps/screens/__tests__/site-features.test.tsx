@@ -93,6 +93,16 @@ describe( 'SiteFeatures', () => {
 			expect( ids.indexOf( COOKIE_CONSENT_FEATURE_ID ) ).toBeGreaterThan( ids.indexOf( 'email_deliverability' ) );
 		} );
 
+		it( 'renders Recommended chip on Hello theme card', () => {
+			renderApp( {
+				isConnected: true,
+				progress: SITE_FEATURES_PROGRESS,
+			} );
+
+			const card = screen.getByTestId( `feature-card-${ HELLO_THEME_FEATURE_ID }` );
+			expect( within( card ).getByText( 'Recommended' ) ).toBeInTheDocument();
+		} );
+
 		it( 'hides Hello theme card when isHelloThemeActive is true', () => {
 			renderApp( {
 				isConnected: true,

@@ -351,6 +351,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				const hasHelloSelected = selectedFeatures.includes( HELLO_THEME_FEATURE_ID );
 
 				if ( hasHelloSelected ) {
+					trackThemeSelected( 'hello-elementor', 'site_features' );
 					trackSummary( {
 						choices,
 						completedSteps: [ ...completedSteps, stepId ],
@@ -370,7 +371,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 					'hello-elementor' ) as string;
 
 				if ( themeSlug && isLast ) {
-					trackThemeSelected( themeSlug );
+					trackThemeSelected( themeSlug, 'theme_selection' );
 					isCompletingRef.current = true;
 					setIsCompleting( true );
 					installTheme.mutate( themeSlug, {
@@ -390,7 +391,7 @@ export function AppContent( { onClose }: AppContentProps ) {
 				}
 
 				if ( themeSlug ) {
-					trackThemeSelected( themeSlug );
+					trackThemeSelected( themeSlug, 'theme_selection' );
 					installTheme.mutate( themeSlug, {
 						onError: ( error ) => {
 							trackErrorReported( {

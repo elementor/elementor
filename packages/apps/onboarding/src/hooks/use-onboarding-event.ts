@@ -8,6 +8,7 @@ import type {
 } from '../analytics/events';
 import {
 	flushQueue,
+	type ThemeSelectedSource,
 	trackBackClicked,
 	trackConnect,
 	trackErrorReported,
@@ -43,7 +44,8 @@ export function useOnboardingEvent() {
 			trackPersonaSelected: ( value: string ) => trackPersonaSelected( isActive, value ),
 			trackSiteTopicSelected: ( topics: string[] ) => trackSiteTopicSelected( isActive, topics ),
 			trackExperienceSelected: ( level: string ) => trackExperienceSelected( isActive, level ),
-			trackThemeSelected: ( theme: string ) => trackThemeSelected( isActive, theme ),
+			trackThemeSelected: ( theme: string, source: ThemeSelectedSource ) =>
+				trackThemeSelected( isActive, theme, source ),
 			trackThemeUnselected: () => trackThemeUnselected( isActive ),
 			trackProFeaturesSelected: ( params: {
 				targetName: 'continue_with_free' | 'compare plans';
