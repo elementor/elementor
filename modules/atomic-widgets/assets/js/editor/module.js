@@ -19,6 +19,11 @@ class Module extends elementorModules.editor.utils.Module {
 		const api = window.elementorV2?.editorElements;
 
 		if ( ! api?.reconcileInitialChildren || ! api?.bindSettingsReconcile ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'[atomic-widgets] @elementor/editor-elements runtime bridge missing on window.elementorV2.editorElements. ' +
+				'Any element with children_dependencies will silently no-op.',
+			);
 			return;
 		}
 
