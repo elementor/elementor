@@ -1,4 +1,10 @@
 export default class AtomicElementBaseModel extends elementor.modules.elements.models.Element {
+	static childrenDependenciesAdapter = null;
+
+	static setChildrenDependenciesAdapter( adapter ) {
+		AtomicElementBaseModel.childrenDependenciesAdapter = adapter;
+	}
+
 	/**
 	 * Do not allow section, column or container be placed in the Atomic container.
 	 *
@@ -25,7 +31,54 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			this.onElementCreate();
 		}
 
+		this.reconcileChildrenAgainstSchema( attributes );
+
 		super.initialize( attributes, options );
+
+		this.bindChildrenReconcile();
+	}
+
+	reconcileChildrenAgainstSchema( attributes ) {
+		if ( ! this.config?.children_dependencies?.length ) {
+			return;
+		}
+
+		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
+
+		if ( ! adapter?.reconcileInitialChildren ) {
+			return;
+		}
+
+		attributes.elements = this.get( 'elements' );
+
+		adapter.reconcileInitialChildren( {
+			elementId: this.get( 'id' ),
+			elementConfig: this.config,
+			attributes,
+		} );
+
+		this.set( 'elements', attributes.elements );
+	}
+
+	bindChildrenReconcile() {
+		if ( ! this.config?.children_dependencies?.length ) {
+			return;
+		}
+
+		const adapter = AtomicElementBaseModel.childrenDependenciesAdapter;
+
+		if ( ! adapter?.bindSettingsReconcile ) {
+			return;
+		}
+
+		this.unbindChildrenReconcile?.();
+
+		this.unbindChildrenReconcile = adapter.bindSettingsReconcile( {
+			model: this,
+			elementConfig: this.config,
+		} );
+
+		this.once( 'destroy', () => this.unbindChildrenReconcile?.() );
 	}
 
 	getDefaultChildren() {
