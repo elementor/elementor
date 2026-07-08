@@ -9,6 +9,7 @@ import { GreetingBanner } from '../../components/ui/greeting-banner';
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
 import { StepId } from '../../types';
+import { getConfig } from '../../utils/get-config';
 import { t } from '../../utils/translations';
 import { THEME_SELECTION_FOOTER_HIGHLIGHTS } from '../theme-selection-footer';
 
@@ -16,7 +17,8 @@ export function ThemeSelection() {
 	const { choices, completedSteps } = useOnboarding();
 
 	const isStepCompleted = completedSteps.includes( StepId.THEME_SELECTION );
-	const isInstalled = isStepCompleted && choices.theme_selection === HELLO_THEME.slug;
+	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
+	const isInstalled = isHelloThemeActive || ( isStepCompleted && choices.theme_selection === HELLO_THEME.slug );
 
 	const greetingText = useMemo( () => getGreetingText( choices.experience_level ), [ choices.experience_level ] );
 

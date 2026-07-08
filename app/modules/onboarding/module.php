@@ -328,7 +328,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( ! $this->is_hello_theme_active() && self::is_elementor_pro_installed() ) {
+		if ( self::is_elementor_pro_installed() ) {
 			$steps[] = [
 				'id' => 'theme_selection',
 				'label' => __( 'Start with a theme that fits your needs', 'elementor' ),
