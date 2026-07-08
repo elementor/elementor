@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "237fb693f8f0df09d2c4a804c7312f92",
+    "content-hash": "d9867a7d4c2af17d8f202bb70ee314ce",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,10 +39,10 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.65",
+            "version": "1.0.66",
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.65"
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.66"
             },
             "require": {
                 "elementor/wp-notifications-package": "^1.2"
@@ -69,7 +69,7 @@
                     "vendor/bin/phpcbf ."
                 ]
             },
-            "time": "2026-06-16T07:28:42+00:00"
+            "time": "2026-06-24T10:34:47+00:00"
         }
     ],
     "packages-dev": [
