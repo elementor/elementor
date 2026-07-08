@@ -64,6 +64,10 @@ abstract class Base_Module extends BaseModule {
 	 * @param array $args
 	 */
 	protected function on_plugin_update_message( array $args ) {
+		if ( empty( $args['new_version'] ) || ! Version::is_valid_version( $args['new_version'] ) ) {
+			return;
+		}
+
 		$new_version = Version::create_from_string( $args['new_version'] );
 
 		if ( $new_version->compare( '=', $args['Version'], Version::PART_MAJOR_2 ) ) {

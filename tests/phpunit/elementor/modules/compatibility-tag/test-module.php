@@ -75,4 +75,29 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertDoesNotMatchRegularExpression( '/elementor core/', $result );
 		$this->assertDoesNotMatchRegularExpression( '/elementor beta/', $result );
 	}
+
+	public function test_on_plugin_update_message__with_four_segment_new_version() {
+		$this->mock_wp_api( [
+			'get_plugins' => new Collection( [
+				'old' => [
+					'Name' => 'old version plugin',
+					Module::PLUGIN_VERSION_TESTED_HEADER => '2.9.0',
+				],
+			] ),
+		] );
+
+		new Module();
+
+		// Act - a four-segment version is not parsable and must not cause an uncaught exception.
+		ob_start();
+		do_action( 'in_plugin_update_message-' . ELEMENTOR_PLUGIN_BASE, [
+			'new_version' => '3.1.5.1',
+			'Version' => '3.0.0',
+		] );
+
+		$result = ob_get_clean();
+
+		// Assert
+		$this->assertEmpty( $result );
+	}
 }
