@@ -59,7 +59,6 @@ export const STEP_SPEC_NAMES: Record< string, string > = {
 };
 
 export interface OnboardingEventPayload {
-	app_type: 'editor';
 	window_name: 'core_onboarding' | 'editor';
 	interaction_type: string;
 	target_type: string;

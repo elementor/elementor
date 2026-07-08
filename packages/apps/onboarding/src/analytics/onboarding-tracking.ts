@@ -27,7 +27,6 @@ function dispatchDirectly( eventName: string, payload: Record< string, unknown >
 
 function trackEvent( isActive: boolean, eventName: string, payload: Partial< OnboardingEventPayload > ): void {
 	const fullPayload: Record< string, unknown > = {
-		app_type: 'editor',
 		window_name: 'core_onboarding',
 		...payload,
 	};

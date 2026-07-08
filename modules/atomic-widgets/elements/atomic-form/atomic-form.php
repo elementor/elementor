@@ -80,6 +80,10 @@ class Atomic_Form extends Atomic_Element_Base {
 		return 'eicon-atomic-form';
 	}
 
+	public static function get_base_props_schema(): array {
+		return self::define_props_schema();
+	}
+
 	protected static function define_props_schema(): array {
 		$submissions_metadata_dependencies = Dependency_Manager::make()
 			->where( [
@@ -154,16 +158,25 @@ class Atomic_Form extends Atomic_Element_Base {
 		$form_action_chips = $email_control_settings['form-action-chips'];
 		$email_controls = $email_control_settings['email-controls'];
 
+		if ( class_exists( '\ElementorPro\License\API' ) ) {
+			$has_form_submissions_feature = \ElementorPro\License\API::is_licence_has_feature( 'form-submissions' );
+
+			if ( $has_form_submissions_feature ) {
+				$form_action_chips = array_merge( $form_action_chips, [
+					[
+						'label' => __( 'Collect submissions', 'elementor' ),
+						'value' => self::ACTION_COLLECT_SUBMISSIONS,
+					],
+				] );
+			}
+		}
+
 		$content_controls = [
 			Text_Control::bind_to( 'form-name' )
 				->set_label( __( 'Form name', 'elementor' ) ),
 			$state_control,
 			Chips_Control::bind_to( 'actions-after-submit' )
 				->set_options( array_merge( $form_action_chips, [
-					[
-						'label' => __( 'Collect submissions', 'elementor' ),
-						'value' => self::ACTION_COLLECT_SUBMISSIONS,
-					],
 					[
 						'label' => __( 'Webhook', 'elementor' ),
 						'value' => self::ACTION_WEBHOOK,

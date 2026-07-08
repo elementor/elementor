@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+		return Plugin::$instance->experiments->is_feature_active( 'container' );
 	}
 
 	public function get_name() {
