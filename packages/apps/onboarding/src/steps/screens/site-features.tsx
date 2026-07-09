@@ -36,6 +36,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		labelKey: 'steps.site_features.option_hello_theme',
 		Icon: HelloThemeIcon,
 		licenseType: 'installable',
+		iconSize: 24,
 	},
 	{
 		id: 'theme_builder',
@@ -66,6 +67,7 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		labelKey: 'steps.site_features.option_cookie_consent',
 		Icon: CookieConsentIcon,
 		licenseType: 'one',
+		iconSize: 24,
 	},
 	{
 		id: 'ai_features',

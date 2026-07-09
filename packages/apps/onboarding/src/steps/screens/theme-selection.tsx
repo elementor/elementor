@@ -28,7 +28,7 @@ export function ThemeSelection() {
 				<GreetingBanner>{ greetingText }</GreetingBanner>
 			</Stack>
 
-			<Stack useFlexGap spacing={ 4 } alignItems="center" width="100%" sx={ { flex: 1 } }>
+			<Stack useFlexGap spacing={ 4 } alignItems="center" width="100%">
 				<Stack spacing={ 1 } textAlign="center" alignItems="center">
 					<StepTitle color="text.primary" variant="h5" align="center">
 						{ t( 'steps.theme_selection.v2.title' ) }
@@ -43,7 +43,7 @@ export function ThemeSelection() {
 				<FooterHighlights
 					items={ THEME_SELECTION_FOOTER_HIGHLIGHTS }
 					testId="theme-selection-highlights"
-					sx={ { marginBlockStart: 'auto' } }
+					sx={ { marginBlockStart: '60px' } }
 				/>
 			</Stack>
 		</Stack>
