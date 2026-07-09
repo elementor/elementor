@@ -61,7 +61,7 @@ class Test_Module extends Test_Base {
 		}
 	}
 
-	public function test_steps_include_theme_selection_when_pro_installed_and_theme_not_active() {
+	public function test_steps_include_theme_selection_when_pro_active_and_theme_not_active() {
 		add_filter( 'elementor/onboarding/is_elementor_theme_active', '__return_false' );
 		add_filter( 'elementor/onboarding/is_elementor_pro_installed', '__return_true' );
 		try {

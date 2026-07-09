@@ -187,7 +187,7 @@ class Module extends BaseModule {
 	}
 
 	public static function should_show_pro_install_screen(): bool {
-		if ( self::is_elementor_pro_installed() ) {
+		if ( Utils::has_pro() || Utils::is_pro_installed_and_not_active() ) {
 			return false;
 		}
 
@@ -348,7 +348,7 @@ class Module extends BaseModule {
 	}
 
 	private static function is_elementor_pro_installed(): bool {
-		$is_pro_installed = Utils::has_pro() || Utils::is_pro_installed_and_not_active();
+		$is_pro_installed = Utils::has_pro();
 		return (bool) apply_filters( 'elementor/onboarding/is_elementor_pro_installed', $is_pro_installed );
 	}
 
