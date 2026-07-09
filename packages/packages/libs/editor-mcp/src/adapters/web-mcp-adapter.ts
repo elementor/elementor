@@ -4,6 +4,7 @@ import { z, type z3 } from '@elementor/schema';
 import {
 	type ModelContextRegisterTool,
 	registerModelContextTool,
+	unregisterModelContextTool,
 } from '../utils/register-model-context-tool';
 import {
 	type IMcpRegistrationAdapter,
@@ -28,6 +29,7 @@ type ResourceEntry = {
 
 export class WebMCPAdapter implements IMcpRegistrationAdapter {
 	private readonly registeredToolNames = new Set< string >();
+	private readonly pendingRegistrations = new Map< string, Promise< void > >();
 	private readonly resourceEntries: ResourceEntry[] = [];
 	private activated = false;
 
@@ -101,11 +103,6 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 			jsonSchema = tool.inputSchema;
 		}
 
-		if ( this.registeredToolNames.has( tool.name ) ) {
-			this.ctx.unregisterTool?.( tool.name );
-			this.registeredToolNames.delete( tool.name );
-		}
-
 		let resourcesDescription = '';
 		if ( extraData ) {
 			if ( extraData.resources?.length > 0 ) {
@@ -116,13 +113,32 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 			}
 			resourcesDescription += `To read resources, use editor-resource-getter tool.\n\n`;
 		}
-		void registerModelContextTool( this.ctx.registerTool, {
-			name: tool.name,
-			description: `${ resourcesDescription }${ tool.description }`,
-			inputSchema: jsonSchema,
-			execute: tool.execute,
-		} ).then( () => {
+
+		const previous = this.pendingRegistrations.get( tool.name );
+		const registration = ( async () => {
+			if ( previous ) {
+				await previous;
+			}
+
+			if ( this.registeredToolNames.has( tool.name ) ) {
+				unregisterModelContextTool( this.ctx.unregisterTool, tool.name );
+				this.registeredToolNames.delete( tool.name );
+			}
+
+			await registerModelContextTool( this.ctx.registerTool, {
+				name: tool.name,
+				description: `${ resourcesDescription }${ tool.description }`,
+				inputSchema: jsonSchema,
+				execute: tool.execute,
+			} );
 			this.registeredToolNames.add( tool.name );
+		} )();
+
+		this.pendingRegistrations.set( tool.name, registration );
+		void registration.finally( () => {
+			if ( this.pendingRegistrations.get( tool.name ) === registration ) {
+				this.pendingRegistrations.delete( tool.name );
+			}
 		} );
 	}
 

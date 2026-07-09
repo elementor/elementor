@@ -13,3 +13,10 @@ export async function registerModelContextTool(
 		console.error( 'Tool registration failed:', error );
 	}
 }
+
+export function unregisterModelContextTool(
+	unregisterTool: ( ( name: string ) => void ) | undefined,
+	name: string
+): void {
+	unregisterTool?.( name );
+}
