@@ -58,7 +58,7 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
-export const createAndRegisterAdapters = async (): Promise< void[] > => {
+export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 
 	if ( modelContext ) {
@@ -69,7 +69,7 @@ export const createAndRegisterAdapters = async (): Promise< void[] > => {
 		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 
-	return Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
+	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
 };
 
 // utility function to run a callback on all MCP interfaces
