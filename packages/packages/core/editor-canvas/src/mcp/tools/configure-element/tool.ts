@@ -117,7 +117,7 @@ async function applyStyleFromCss( opts: {
 			customCssWriteMode: 'merge-with-stored',
 		} );
 
-		dispatchMcpStylesAppliedEvent( { styleValue, appliedClass: 'local' } );
+		dispatchMcpStylesAppliedEvent( { styleValue } );
 	} catch ( error ) {
 		throw new Error(
 			createUpdateErrorMessage( {

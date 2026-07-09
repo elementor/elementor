@@ -99,7 +99,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				} );
 
 				Object.values( stylesConfig ).forEach( ( styleValue ) => {
-					dispatchMcpStylesAppliedEvent( { styleValue, appliedClass: 'local' } );
+					dispatchMcpStylesAppliedEvent( { styleValue } );
 				} );
 
 				if ( configErrors.length ) {
