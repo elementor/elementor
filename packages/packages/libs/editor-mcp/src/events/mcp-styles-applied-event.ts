@@ -2,6 +2,7 @@ export const MCP_STYLES_APPLIED_EVENT = 'elementor/mcp/styles-applied';
 
 export type McpStylesAppliedPayload = {
 	styleValue: Record< string, unknown >;
+	appliedClass?: string;
 };
 
 export function dispatchMcpStylesAppliedEvent( payload: McpStylesAppliedPayload ): void {

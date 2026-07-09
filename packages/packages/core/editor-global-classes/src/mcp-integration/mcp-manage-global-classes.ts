@@ -145,7 +145,10 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 							executedBy: 'mcp_tool',
 							classId: newClassId,
 						} );
-						dispatchMcpStylesAppliedEvent( { styleValue: props } );
+						dispatchMcpStylesAppliedEvent( {
+							styleValue: props,
+							appliedClass: globalClassesStylesProvider.actions.get( newClassId )?.label,
+						} );
 					} else {
 						throw new Error( 'error creating class' );
 					}
@@ -161,7 +164,12 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 					} );
 					if ( updated ) {
 						result = { status: 'ok', classId };
-						dispatchMcpStylesAppliedEvent( { styleValue: props } );
+						dispatchMcpStylesAppliedEvent( {
+							styleValue: props,
+							appliedClass: classId
+								? globalClassesStylesProvider.actions.get( classId )?.label
+								: undefined,
+						} );
 					} else {
 						throw new Error( 'error modifying class' );
 					}

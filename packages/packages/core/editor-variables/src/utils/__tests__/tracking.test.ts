@@ -1,10 +1,59 @@
 import { getMixpanel } from '@elementor/events';
 
-import { trackVariableSyncToV3 } from '../tracking';
+import { trackVariableEvent, trackVariableSyncToV3 } from '../tracking';
 
 jest.mock( '@elementor/events', () => ( {
 	getMixpanel: jest.fn(),
 } ) );
+
+describe( 'trackVariableEvent', () => {
+	const mockDispatchEvent = jest.fn();
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+
+		jest.mocked( getMixpanel ).mockReturnValue( {
+			dispatchEvent: mockDispatchEvent,
+			config: {
+				names: {
+					variables: {
+						connect: 'connect_variable',
+					},
+				},
+				locations: { variables: 'variables-location' },
+				secondaryLocations: { variablesPopover: 'variables-popover' },
+				triggers: { click: 'click' },
+			},
+		} as never );
+	} );
+
+	it( 'should include applied_class when provided', () => {
+		trackVariableEvent( { varType: 'color', action: 'connect', appliedClass: 'my-button-class' } );
+
+		expect( mockDispatchEvent ).toHaveBeenCalledWith(
+			'connect_variable',
+			expect.objectContaining( { applied_class: 'my-button-class' } )
+		);
+	} );
+
+	it( 'should omit applied_class when not provided', () => {
+		trackVariableEvent( { varType: 'color', action: 'connect' } );
+
+		expect( mockDispatchEvent ).toHaveBeenCalledWith(
+			'connect_variable',
+			expect.not.objectContaining( { applied_class: expect.anything() } )
+		);
+	} );
+
+	it( 'should omit applied_class when explicitly null', () => {
+		trackVariableEvent( { varType: 'color', action: 'connect', appliedClass: null } );
+
+		expect( mockDispatchEvent ).toHaveBeenCalledWith(
+			'connect_variable',
+			expect.not.objectContaining( { applied_class: expect.anything() } )
+		);
+	} );
+} );
 
 describe( 'trackVariableSyncToV3', () => {
 	const mockDispatchEvent = jest.fn();

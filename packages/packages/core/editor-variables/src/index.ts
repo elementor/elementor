@@ -15,6 +15,7 @@ export {
 	type VariableManagerMenuAction,
 } from './variables-registry/variable-type-registry';
 export { hasVariable } from './hooks/use-prop-variables';
+export { setAppliedClassContext } from './utils/applied-class-context';
 export { trackVariablesManagerEvent } from './utils/tracking';
 
 import { globalVariablesLLMResolvers } from './utils/llm-propvalue-label-resolver';

@@ -7,7 +7,7 @@ import { trackVariableEvent } from '../utils/tracking';
 export function McpVariableConnectListener() {
 	useEffect( () => {
 		const handleMcpStylesApplied = ( event: CustomEvent< McpStylesAppliedPayload > ) => {
-			const { styleValue } = event.detail;
+			const { styleValue, appliedClass } = event.detail;
 			const variables = extractVariablesFromStyleValue( styleValue );
 
 			variables.forEach( ( { type, controlPath } ) => {
@@ -16,6 +16,7 @@ export function McpVariableConnectListener() {
 					controlPath,
 					action: 'connect',
 					executedBy: 'mcp_tool',
+					appliedClass,
 				} );
 			} );
 		};

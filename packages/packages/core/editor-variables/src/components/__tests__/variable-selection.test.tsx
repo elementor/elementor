@@ -8,6 +8,7 @@ import { __ } from '@wordpress/i18n';
 
 import { VariableTypeProvider } from '../../context/variable-type-context';
 import { useFilteredVariables } from '../../hooks/use-prop-variables';
+import * as appliedClassContext from '../../utils/applied-class-context';
 import * as tracking from '../../utils/tracking';
 import * as variablesRegistry from '../../variables-registry/variable-type-registry';
 import { VariablesSelection } from '../variables-selection';
@@ -15,6 +16,7 @@ import { VariablesSelection } from '../variables-selection';
 jest.mock( '../../hooks/use-prop-variables' );
 jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
+jest.mock( '../../utils/applied-class-context' );
 jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
 	...jest.requireActual( '@elementor/editor-controls' ),
@@ -84,6 +86,7 @@ describe( 'VariablesSelection', () => {
 		( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( mockVariableType );
 		( require( '@elementor/editor-controls' ).useBoundProp as jest.Mock ).mockReturnValue( mockBoundProp );
 		( tracking.trackVariableEvent as jest.Mock ).mockImplementation( () => {} );
+		( appliedClassContext.getAppliedClassContext as jest.Mock ).mockReturnValue( null );
 		( require( '../../hooks/use-permissions' ).usePermissions as jest.Mock ).mockReturnValue( {
 			canAdd: () => true,
 			canEdit: () => true,
@@ -303,7 +306,35 @@ describe( 'VariablesSelection', () => {
 				varType: 'Color',
 				controlPath: 'controls.color',
 				action: 'connect',
+				appliedClass: null,
 			} );
+		} );
+
+		it( 'should track the applied class when the variable is connected within a style context', () => {
+			// Arrange.
+			const mockVariables = [ { key: 'var1', label: 'Primary Color', value: '#ff0000' } ];
+
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: mockVariables,
+				hasMatches: true,
+				isSourceNotEmpty: true,
+				hasNoCompatibleVariables: false,
+			} );
+			( appliedClassContext.getAppliedClassContext as jest.Mock ).mockReturnValue( 'my-button-class' );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper>
+					<VariablesSelection { ...defaultProps } />
+				</TestWrapper>
+			);
+
+			fireEvent.click( screen.getByText( 'Primary Color' ) );
+
+			// Assert.
+			expect( tracking.trackVariableEvent ).toHaveBeenCalledWith(
+				expect.objectContaining( { appliedClass: 'my-button-class' } )
+			);
 		} );
 
 		it( 'should show selected variable as active', () => {

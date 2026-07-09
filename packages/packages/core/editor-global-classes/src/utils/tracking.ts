@@ -9,7 +9,7 @@ import { placeholderDefinition, selectClass, selectClassLabels } from '../store'
 
 type EventMap = {
 	classCreated: {
-		source?: 'created' | 'converted' | 'duplicated';
+		source?: 'created' | 'converted' | 'duplicated' | 'imported';
 		classId: StyleDefinitionID;
 		classTitle?: string;
 		executedBy?: 'mcp_tool' | 'user';
@@ -102,7 +102,7 @@ export const trackGlobalClasses = async ( payload: TrackingEvent ) => {
 	const data = await getSanitizedData( payload );
 	if ( data ) {
 		track( data );
-		if ( data.event === 'classCreated' && 'classId' in data ) {
+		if ( data.event === 'classCreated' && 'classId' in data && data.source !== 'imported' ) {
 			fireClassApplied( data.classId as StyleDefinitionID );
 		}
 	}

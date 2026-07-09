@@ -1,4 +1,4 @@
-import { GLOBAL_STYLES_IMPORTED_EVENT } from '@elementor/editor-canvas';
+import { GLOBAL_STYLES_IMPORTED_EVENT, type ImportedGlobalStylesPayload } from '@elementor/editor-canvas';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { useMutation } from '@elementor/query';
@@ -38,9 +38,13 @@ export const useImportRequest = () => {
 			const session = await uploadKit( file );
 			const runners = await startImport( session, conflictStrategy );
 
-			await runRunners( session, runners );
+			const importedClassIds = await runRunners( session, runners );
 
-			window.dispatchEvent( new CustomEvent( GLOBAL_STYLES_IMPORTED_EVENT ) );
+			window.dispatchEvent(
+				new CustomEvent< ImportedGlobalStylesPayload | undefined >( GLOBAL_STYLES_IMPORTED_EVENT, {
+					detail: importedClassIds.length ? { imported_class_ids: importedClassIds } : undefined,
+				} )
+			);
 		},
 	} );
 };
@@ -90,12 +94,61 @@ const startImport = async ( session: string, conflictStrategy: ConflictStrategy 
 	return ( data.data.runners ?? [] ).filter( ( runner ) => SUPPORTED_RUNNERS.includes( runner ) );
 };
 
-const runRunners = async ( session: string, runners: string[] ): Promise< void > => {
+type ImportedClassEntry = {
+	result_entry?: { id: string; label: string };
+};
+
+type ImportedClassesSection = {
+	created?: ImportedClassEntry[];
+	renamed?: ImportedClassEntry[];
+};
+
+type RunnerResponseData = ImportedClassesSection & {
+	imported_data?: ImportedClassesSection;
+};
+
+type SeenCounts = { created: number; renamed: number };
+
+// The `global-classes` runner returns the newly created classes as part of `imported_data`, which accumulates
+// across every runner call in the session. Only entries beyond what was already seen before this runner ran
+// belong to it, since a later runner (e.g. `global-variables`) may append its own entries under the same keys.
+const getNewEntriesSinceLastCall = (
+	section: ImportedClassesSection | undefined,
+	seenCounts: SeenCounts
+): { newEntries: ImportedClassEntry[]; seenCounts: SeenCounts } => {
+	const created = section?.created ?? [];
+	const renamed = section?.renamed ?? [];
+
+	return {
+		newEntries: [ ...created.slice( seenCounts.created ), ...renamed.slice( seenCounts.renamed ) ],
+		seenCounts: { created: created.length, renamed: renamed.length },
+	};
+};
+
+const runRunners = async ( session: string, runners: string[] ): Promise< string[] > => {
+	let seenCounts: SeenCounts = { created: 0, renamed: 0 };
+	let importedClassIds: string[] = [];
+
 	for ( const runner of runners ) {
-		await httpService().post(
+		const { data } = await httpService().post< HttpResponse< RunnerResponseData > >(
 			`${ IMPORT_BASE_PATH }/import-runner`,
 			{ session, runner },
 			{ timeout: IMPORT_REQUEST_TIMEOUT_MS }
 		);
+
+		const importedDataSection = data.data.imported_data ?? data.data;
+		const { newEntries, seenCounts: nextSeenCounts } = getNewEntriesSinceLastCall(
+			importedDataSection,
+			seenCounts
+		);
+		seenCounts = nextSeenCounts;
+
+		if ( runner === GLOBAL_CLASSES_RUNNER ) {
+			importedClassIds = newEntries
+				.map( ( entry ) => entry.result_entry?.id )
+				.filter( ( id ): id is string => Boolean( id ) );
+		}
 	}
+
+	return importedClassIds;
 };

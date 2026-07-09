@@ -5,9 +5,10 @@ export type VariableEventData = {
 	controlPath?: string;
 	action: 'open' | 'add' | 'connect' | 'save' | 'update';
 	executedBy?: 'mcp_tool' | 'user';
+	appliedClass?: string | null;
 };
 
-export const trackVariableEvent = ( { varType, controlPath, action, executedBy }: VariableEventData ) => {
+export const trackVariableEvent = ( { varType, controlPath, action, executedBy, appliedClass }: VariableEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
@@ -36,6 +37,10 @@ export const trackVariableEvent = ( { varType, controlPath, action, executedBy }
 
 	if ( controlPath ) {
 		eventData.control_path = controlPath;
+	}
+
+	if ( appliedClass ) {
+		eventData.applied_class = appliedClass;
 	}
 
 	dispatchEvent?.( name, eventData );
