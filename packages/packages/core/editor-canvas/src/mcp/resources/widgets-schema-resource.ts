@@ -59,39 +59,11 @@ export const CANVAS_SERVER_NAME = 'editor-canvas';
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const WIDGET_SCHEMA_FULL_URI = `${ CANVAS_SERVER_NAME }_${ WIDGET_SCHEMA_URI }`;
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
-export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
+export const BEST_PRACTICES_URI = 'elementor://style/best-practices';
 export const BEST_PRACTICES_FULL_URI = `${ CANVAS_SERVER_NAME }_${ BEST_PRACTICES_URI }`;
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { resource } = reg;
-
-	resource(
-		'styles-best-practices',
-		BEST_PRACTICES_URI,
-		{
-			description: 'Styling best practices',
-		},
-		async () => {
-			return {
-				contents: [
-					{
-						uri: BEST_PRACTICES_URI,
-						text: `# Styling best practices
-Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
-This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
-
-Styling is provided as raw CSS. The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
-
-** CRITICAL - VARIABLES **
-When using global variables, ensure that the variables are defined in the ${ 'elementor://global-variables' } resource.
-Variables from the user context ARE NOT SUPPORTED AND WILL RESOLVE IN ERROR.
-
-`,
-					},
-				],
-			};
-		}
-	);
 
 	resource(
 		'widget-schema-by-type',
