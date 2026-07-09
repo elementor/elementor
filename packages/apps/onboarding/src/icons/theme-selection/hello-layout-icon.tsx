@@ -16,11 +16,16 @@ const HelloLayoutIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< t
 				strokeWidth="3.33"
 			/>
 			<path
-				d="M1.66 16h44.68M17.33 16v30.34M30.67 16v30.34"
+				d="M3.33 17.11H44.67M3.33 30.89H44.67"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="3.33"
-				strokeLinecap="butt"
+			/>
+			<path
+				d="M17.11 17.11V30.89M30.89 17.11V30.89"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="3.33"
 			/>
 		</SvgIcon>
 	);

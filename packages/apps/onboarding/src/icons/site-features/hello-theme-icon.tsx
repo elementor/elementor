@@ -4,21 +4,27 @@ import { SvgIcon } from '@elementor/ui';
 const HelloThemeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
 	return (
 		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
-			<path
-				d="M6 4.5h20A1.5 1.5 0 0 1 27.5 6v20a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 26V6A1.5 1.5 0 0 1 6 4.5Z"
+			<rect
+				x="0.75"
+				y="0.75"
+				width="30.5"
+				height="30.5"
+				rx="2.56"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
 			/>
 			<path
-				d="M11 10v12M11 16h5v6M16 10v6M21 10v12"
+				d="M1.5 11.17H30.5M1.5 20.83H30.5"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+			/>
+			<path
+				d="M11.17 11.17V20.83M20.83 11.17V20.83"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.5"
 			/>
 		</SvgIcon>
 	);
