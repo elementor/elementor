@@ -30,7 +30,7 @@ async function getComponentIds(
 	isRecursive: boolean
 ): Promise< number[] > {
 	const results = await Promise.all(
-		elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
+		elements.filter( Boolean ).map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 			const ids: number[] = [];
 
 			if ( isComponentInstance( { widgetType, elType } ) ) {
