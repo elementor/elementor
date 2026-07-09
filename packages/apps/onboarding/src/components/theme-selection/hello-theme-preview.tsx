@@ -2,64 +2,77 @@ import * as React from 'react';
 import { CheckedCircleIcon } from '@elementor/icons';
 import { Box, Stack, styled, Typography, useTheme } from '@elementor/ui';
 
-import { ElementorBoxIcon, HelloLayoutIcon, PlusIcon } from '../../icons';
+import { ElementorLogoIcon, HelloLayoutIcon, PlusIcon } from '../../icons';
 import { t } from '../../utils/translations';
 import { InstalledChip } from './styled-components';
 
-const HELLO_BADGE_BG_COLOR = '#491146';
+const HELLO_BADGE_BG_COLOR = '#ED01EE';
+const LEFT_CARD_SIZE = 120;
+const RIGHT_CARD_SIZE = 144;
+const CARDS_OVERLAP = 15;
+const PLUS_SIZE = 32;
 
-const PreviewRoot = styled( Stack )( {
-	flexDirection: 'row',
+const PreviewRoot = styled( Box )( {
+	position: 'relative',
+	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	position: 'relative',
 } );
 
-const PlusConnector = styled( Box )( ( { theme } ) => ( {
+const ElementorPlaceholderCard = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	alignItems: 'center',
 	justifyContent: 'center',
-	marginInline: theme.spacing( -1.5 ),
-	position: 'relative',
-	zIndex: 3,
+	inlineSize: LEFT_CARD_SIZE,
+	blockSize: LEFT_CARD_SIZE,
+	borderRadius: theme.spacing( 1.25 ),
+	border: `2px dashed ${ theme.palette.divider }`,
+	backgroundColor: '#F4F4F4',
 	flexShrink: 0,
-} ) );
-
-const PlusKnockout = styled( Box )( ( { theme } ) => ( {
-	display: 'flex',
-	alignItems: 'center',
-	justifyContent: 'center',
-	backgroundColor: theme.palette.background.default,
-	borderRadius: '50%',
-	padding: theme.spacing( 0.25 ),
 } ) );
 
 const HelloCard = styled( Box )( ( { theme } ) => ( {
+	position: 'relative',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	justifyContent: 'center',
-	gap: theme.spacing( 1 ),
-	inlineSize: theme.spacing( 18 ),
-	blockSize: theme.spacing( 18 ),
-	borderRadius: theme.spacing( 1.5 ),
-	border: `2px solid ${ theme.palette.text.primary }`,
+	justifyContent: 'flex-start',
+	gap: theme.spacing( 1.5 ),
+	inlineSize: RIGHT_CARD_SIZE,
+	blockSize: RIGHT_CARD_SIZE,
+	paddingBlockStart: theme.spacing( 5.5 ),
+	paddingBlockEnd: theme.spacing( 2.5 ),
+	borderRadius: theme.spacing( 1.25 ),
+	border: `2px solid ${ theme.palette.common.black }`,
 	backgroundColor: theme.palette.background.paper,
-	position: 'relative',
+	marginInlineStart: `-${ CARDS_OVERLAP }px`,
 	flexShrink: 0,
-	zIndex: 2,
+	zIndex: 1,
 } ) );
 
 const HelloBadge = styled( Box )( ( { theme } ) => ( {
 	position: 'absolute',
-	insetBlockStart: theme.spacing( -1.25 ),
-	insetInlineEnd: theme.spacing( -1.25 ),
-	padding: theme.spacing( 0.5, 1.25 ),
+	insetBlockStart: theme.spacing( -1.5 ),
+	insetInlineEnd: theme.spacing( -1.5 ),
+	paddingBlock: theme.spacing( 0.375 ),
+	paddingInline: theme.spacing( 1 ),
 	borderRadius: theme.spacing( 2.5 ),
 	backgroundColor: HELLO_BADGE_BG_COLOR,
 	color: theme.palette.common.white,
-	zIndex: 3,
+	zIndex: 2,
 } ) );
+
+const PlusOverlay = styled( Box )( {
+	position: 'absolute',
+	insetBlockStart: '50%',
+	insetInlineStart: `${ LEFT_CARD_SIZE - CARDS_OVERLAP }px`,
+	transform: 'translate(-50%, -50%)',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	zIndex: 3,
+	pointerEvents: 'none',
+} );
 
 interface HelloThemePreviewProps {
 	isInstalled?: boolean;
@@ -69,43 +82,45 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 	const theme = useTheme();
 
 	return (
-		<PreviewRoot data-testid="hello-theme-preview">
-			<ElementorBoxIcon sx={ { fontSize: theme.spacing( 15 ), flexShrink: 0 } } />
+		<Stack alignItems="center" width="100%" data-testid="hello-theme-preview">
+			<PreviewRoot>
+				<ElementorPlaceholderCard>
+					<ElementorLogoIcon sx={ { fontSize: theme.spacing( 5.5 ) } } />
+				</ElementorPlaceholderCard>
 
-			<PlusConnector>
-				<PlusKnockout>
-					<PlusIcon sx={ { fontSize: theme.spacing( 5 ), color: 'text.primary' } } />
-				</PlusKnockout>
-			</PlusConnector>
+				<HelloCard>
+					{ isInstalled ? (
+						<InstalledChip
+							label={ t( 'common.installed' ) }
+							size="small"
+							color="success"
+							icon={ <CheckedCircleIcon /> }
+							sx={ {
+								position: 'absolute',
+								insetBlockStart: theme.spacing( 1 ),
+								insetInlineStart: theme.spacing( 1 ),
+								zIndex: 2,
+							} }
+						/>
+					) : (
+						<HelloBadge>
+							<Typography variant="caption" color="inherit" sx={ { fontWeight: 400, lineHeight: 1.5 } }>
+								{ t( 'steps.theme_selection.theme_hello_label' ) }
+							</Typography>
+						</HelloBadge>
+					) }
 
-			<HelloCard>
-				{ isInstalled ? (
-					<InstalledChip
-						label={ t( 'common.installed' ) }
-						size="small"
-						color="success"
-						icon={ <CheckedCircleIcon /> }
-						sx={ {
-							position: 'absolute',
-							insetBlockStart: theme.spacing( 1 ),
-							insetInlineStart: theme.spacing( 1 ),
-							zIndex: 3,
-						} }
-					/>
-				) : (
-					<HelloBadge>
-						<Typography variant="caption" color="inherit" sx={ { fontWeight: 600, lineHeight: 1.2 } }>
-							{ t( 'steps.theme_selection.theme_hello_label' ) }
-						</Typography>
-					</HelloBadge>
-				) }
+					<HelloLayoutIcon sx={ { fontSize: theme.spacing( 6 ), color: 'common.black' } } />
 
-				<HelloLayoutIcon sx={ { fontSize: theme.spacing( 6 ), color: 'text.primary' } } />
+					<Typography variant="caption" color="text.secondary">
+						{ t( 'steps.theme_selection.by_elementor' ) }
+					</Typography>
+				</HelloCard>
 
-				<Typography variant="caption" color="text.secondary" sx={ { lineHeight: 1.2 } }>
-					{ t( 'steps.theme_selection.by_elementor' ) }
-				</Typography>
-			</HelloCard>
-		</PreviewRoot>
+				<PlusOverlay>
+					<PlusIcon sx={ { fontSize: PLUS_SIZE, color: 'common.black' } } />
+				</PlusOverlay>
+			</PreviewRoot>
+		</Stack>
 	);
 }

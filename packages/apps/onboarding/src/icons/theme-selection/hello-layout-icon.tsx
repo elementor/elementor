@@ -3,22 +3,24 @@ import { SvgIcon } from '@elementor/ui';
 
 const HelloLayoutIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
-			<path
-				d="M6 4.5h20A1.5 1.5 0 0 1 27.5 6v20a1.5 1.5 0 0 1-1.5 1.5H6A1.5 1.5 0 0 1 4.5 26V6A1.5 1.5 0 0 1 6 4.5Z"
+		<SvgIcon viewBox="0 0 48 48" { ...props } ref={ ref }>
+			<rect
+				x="1.66"
+				y="1.66"
+				width="44.68"
+				height="44.68"
+				rx="3.88"
+				ry="3.88"
 				fill="none"
 				stroke="currentColor"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				strokeWidth="3.33"
 			/>
 			<path
-				d="M6 12.5h20M6 19.5h20M12.5 12.5v7M19.5 12.5v7"
+				d="M1.66 16h44.68M17.33 16v30.34M30.67 16v30.34"
 				fill="none"
 				stroke="currentColor"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
+				strokeWidth="3.33"
+				strokeLinecap="butt"
 			/>
 		</SvgIcon>
 	);

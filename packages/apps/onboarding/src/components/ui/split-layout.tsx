@@ -52,7 +52,8 @@ const LeftPanel = styled( Box, {
 	alignItems: 'center',
 	gap: LEFT_PANEL_GAP,
 	minHeight: 0,
-	padding: `${ LEFT_PANEL_PADDING_TOP }px ${ LEFT_PANEL_PADDING_X }px`,
+	paddingBlockStart: LEFT_PANEL_PADDING_TOP,
+	paddingInline: LEFT_PANEL_PADDING_X,
 	'& > *': {
 		width: '100%',
 	},

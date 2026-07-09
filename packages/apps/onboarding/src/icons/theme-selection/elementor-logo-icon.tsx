@@ -1,15 +1,14 @@
 import * as React from 'react';
-import { SvgIcon, useTheme } from '@elementor/ui';
+import { SvgIcon } from '@elementor/ui';
 
 const ElementorLogoIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< typeof SvgIcon > >( ( props, ref ) => {
-	const theme = useTheme();
-
 	return (
-		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
-			<circle cx="16" cy="16" r="16" fill={ theme.palette.text.disabled } />
+		<SvgIcon viewBox="0 0 44 44" { ...props } ref={ ref }>
+			<circle cx="22" cy="22" r="22" fill="#ffffff" />
 			<path
-				d="M11.15 24H7.97V8h3.18v16zm12.74 0h-9.56v-3.2h9.56V24zm0-6.4h-9.56v-3.2h9.56v3.2zm0-6.4h-9.56V8h9.56v3.2z"
-				fill={ theme.palette.common.white }
+				d="M22 0C9.85 0 0 9.85 0 22s9.85 22 22 22 22-9.85 22-22S34.15 0 22 0ZM15.4 33H11V11h4.4v22Zm17.6 0H19.8v-4.4H33V33Zm0-8.8H19.8v-4.4H33v4.4Zm0-8.8H19.8V11H33v4.4Z"
+				fill="#515962"
+				fillOpacity="0.38"
 			/>
 		</SvgIcon>
 	);
