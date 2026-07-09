@@ -30,7 +30,7 @@ class Manage_Variable_Guide_Ability extends Abstract_Ability {
 					'description' => __( 'Detailed guide for using the manage-global-variable tool', 'elementor' ),
 				],
 			],
-			fn() => current_user_can( 'edit_posts' )
+			fn() => current_user_can( 'manage_options' )
 		);
 	}
 
