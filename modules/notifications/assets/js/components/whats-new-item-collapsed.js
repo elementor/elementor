@@ -50,10 +50,22 @@ export const WhatsNewItemCollapsed = ( { item, itemIndex, isNew, onSeen, setIsOp
 						</Typography>
 					) }
 					<Typography variant="subtitle2" noWrap>{ item.title }</Typography>
-					{ ! expanded && item.description && (
-						<Typography variant="caption" color="text.secondary" noWrap display="block">
-							{ item.description }
-						</Typography>
+					{ item.description && (
+						<Box sx={ {
+							maxHeight: expanded ? 0 : '3em',
+							opacity: expanded ? 0 : 1,
+							overflow: 'hidden',
+							transition: 'max-height 0.2s ease, opacity 0.15s ease',
+						} }>
+							<Typography variant="caption" color="text.secondary" sx={ {
+								display: '-webkit-box',
+								WebkitLineClamp: 2,
+								WebkitBoxOrient: 'vertical',
+								overflow: 'hidden',
+							} }>
+								{ item.description }
+							</Typography>
+						</Box>
 					) }
 				</Box>
 				<ChevronDownIcon

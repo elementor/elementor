@@ -69,3 +69,4 @@ playwright-test-results
 docker-output/
 .wp-env.override.json
 tests/wp-env/plugins/
+.github/scripts/.env.release-doc
