@@ -68,74 +68,69 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Remove stale tags
+      - name: Remove old tags
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
           EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v[0-9]+\.[0-9]+\.[0-9]+$' }}
-          DAYS_BEFORE_TAG_STALE: ${{ vars.DAYS_BEFORE_TAG_STALE || '90' }}
-          DAYS_BEFORE_STALE_TAG_DELETE: ${{ vars.DAYS_BEFORE_STALE_TAG_DELETE || '7' }}
+          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || vars.DAYS_BEFORE_TAG_STALE || '90' }}
           OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
           set -euo pipefail
 
-          operations=0
+          deletions=0
+          skipped_exempt=0
+          skipped_young=0
           now_epoch=$(date -u +%s)
-          stale_seconds=$((DAYS_BEFORE_TAG_STALE * 86400))
-          delete_seconds=$(((DAYS_BEFORE_TAG_STALE + DAYS_BEFORE_STALE_TAG_DELETE) * 86400))
+          min_age_seconds=$((DAYS_BEFORE_TAG_DELETE * 86400))
           tag_count=$(git tag -l | wc -l | tr -d ' ')
 
-          echo "Found ${tag_count} tags (stale after ${DAYS_BEFORE_TAG_STALE} days, delete after $((DAYS_BEFORE_TAG_STALE + DAYS_BEFORE_STALE_TAG_DELETE)) days)"
+          echo "Found ${tag_count} tags (delete non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days, up to ${OPERATIONS_PER_RUN} per run)"
+
+          log_tag_result() {
+            printf 'STALE_CLEANUP\t%s\ttag\t%s\n' "$1" "$2"
+          }
+
+          log_tag_detail() {
+            printf 'STALE_CLEANUP_DETAIL\t%s\n' "$1"
+          }
 
           while IFS= read -r tag_date tag_name; do
             [ -z "${tag_name}" ] && continue
-            [ "${operations}" -ge "${OPERATIONS_PER_RUN}" ] && break
+            [ "${deletions}" -ge "${OPERATIONS_PER_RUN}" ] && break
 
             tag_epoch=$(date -d "${tag_date}" +%s)
             age_seconds=$((now_epoch - tag_epoch))
 
             if [[ "${tag_name}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
-              echo "##[group]✅ tag ${tag_name}"
-              echo "-> tag is exempt"
-              echo "##[endgroup]"
+              skipped_exempt=$((skipped_exempt + 1))
               continue
             fi
 
-            if [ "${age_seconds}" -lt "${stale_seconds}" ]; then
+            if [ "${age_seconds}" -lt "${min_age_seconds}" ]; then
+              skipped_young=$((skipped_young + 1))
               continue
             fi
 
-            operations=$((operations + 1))
+            deletions=$((deletions + 1))
+            log_tag_result "deleted" "${tag_name}"
+            log_tag_detail "tag was last updated on ${tag_date} (${age_seconds} seconds old)"
 
-            if [ "${age_seconds}" -ge "${delete_seconds}" ]; then
-              echo "##[group]❌ tag ${tag_name}"
-              echo "-> tag was last updated on ${tag_date}"
-              if [ "${DRY_RUN}" = "true" ]; then
-                echo "-> (doing nothing because of dry run flag)"
-              else
-                if gh release view "${tag_name}" >/dev/null 2>&1; then
-                  gh release delete "${tag_name}" --yes
-                  echo "-> deleted release ${tag_name}"
-                fi
-                gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"
-                echo "-> deleted tag ${tag_name}"
-              fi
-              echo "##[endgroup]"
-              continue
-            fi
-
-            removal_epoch=$((tag_epoch + delete_seconds))
-            removal_date=$(date -u -d "@${removal_epoch}" +%Y-%m-%dT%H:%M:%SZ)
-            echo "##[group]✏ tag ${tag_name}"
-            echo "-> tag was last updated on ${tag_date}"
-            echo "-> tag will be removed on ${removal_date}"
             if [ "${DRY_RUN}" = "true" ]; then
-              echo "-> (doing nothing because of dry run flag)"
+              log_tag_detail "(doing nothing because of dry run flag)"
+            else
+              if gh release view "${tag_name}" >/dev/null 2>&1; then
+                gh release delete "${tag_name}" --yes
+                log_tag_detail "deleted release ${tag_name}"
+              fi
+              gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"
+              log_tag_detail "deleted tag ${tag_name}"
             fi
-            echo "##[endgroup]"
           done < <(git for-each-ref --sort=creatordate --format='%(creatordate:iso) %(refname:short)' refs/tags)
 
-          echo "Exiting after ${operations} operations"
+          printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' \
+            "${skipped_exempt}" "${skipped_young}" "${deletions}"
+          echo "Exiting after ${deletions} deletions (${skipped_exempt} exempt, ${skipped_young} too young)"
 
   publish-cleanup-summary:
     name: Publish Cleanup Summary
@@ -160,16 +155,40 @@ jobs:
             fi
 
             awk -v entity="${entity}" '
+              function strip_line(raw) {
+                line = raw
+                sub(/^[^\t]*Z /, "", line)
+                gsub(/\033\[[0-9;]*m/, "", line)
+                return line
+              }
               function flush() {
                 if (ref == "") return
                 if (detail == "") detail = "see workflow logs"
                 printf "%s\t%s\t%s\n", bucket, ref, detail
                 ref = bucket = detail = ""
               }
-              /##\[group\]/ {
+              {
+                line = strip_line($0)
+              }
+              line ~ /^STALE_CLEANUP\t/ {
                 flush()
-                header = $0
-                sub(/^.*##\[group\]/, "", header)
+                split(line, parts, "\t")
+                if (parts[3] == entity) {
+                  bucket = parts[2]
+                  ref = parts[4]
+                }
+                next
+              }
+              line ~ /^STALE_CLEANUP_DETAIL\t/ {
+                sub(/^STALE_CLEANUP_DETAIL\t/, "", line)
+                if (detail == "") detail = line
+                else detail = detail "; " line
+                next
+              }
+              line ~ /^##\[group\]/ && line !~ /\$\{/ {
+                flush()
+                header = line
+                sub(/^##\[group\]/, "", header)
                 deleted_prefix = "❌ " entity " "
                 stale_prefix = "✏ " entity " "
                 kept_prefix = "😐 " entity " "
@@ -180,10 +199,8 @@ jobs:
                 else if (sub("^" skipped_prefix, "", header)) { bucket = "skipped"; ref = header }
                 next
               }
-              /##\[endgroup\]/ { flush(); next }
-              bucket != "" && $0 !~ /##\[/ {
-                line = $0
-                sub(/^[^Z]*Z /, "", line)
+              line ~ /^##\[endgroup\]/ { flush(); next }
+              bucket != "" && line !~ /^##\[/ {
                 if (line ~ /^-> /) detail = substr(line, 4)
                 else if (bucket == "skipped" && detail == "") detail = line
               }
@@ -210,6 +227,48 @@ jobs:
               echo "Could not download job logs for ${job_name}" >&2
               return 1
             fi
+          }
+
+          render_tag_summary_section() {
+            local action_log="$1"
+            local parsed="$2"
+            local stats_exempt=0 stats_young=0 stats_deleted=0
+
+            if [ -s "${action_log}" ]; then
+              stats_line=$(awk '/STALE_CLEANUP_STATS/ {
+                line = $0
+                sub(/^[^Z]*Z /, "", line)
+                print line
+              }' "${action_log}" | tail -1)
+              if [ -n "${stats_line}" ]; then
+                stats_exempt=$(echo "${stats_line}" | sed -n 's/.*exempt=\([0-9]*\).*/\1/p')
+                stats_young=$(echo "${stats_line}" | sed -n 's/.*young=\([0-9]*\).*/\1/p')
+                stats_deleted=$(echo "${stats_line}" | sed -n 's/.*deleted=\([0-9]*\).*/\1/p')
+              fi
+            fi
+
+            deleted_count=$(awk -F '\t' '$1 == "deleted" { c++ } END { print c + 0 }' "${parsed}")
+
+            {
+              echo "## Stale tag cleanup"
+              echo ""
+              echo "- **Deleted:** ${deleted_count}"
+              echo "- **Skipped (exempt):** ${stats_exempt}"
+              echo "- **Skipped (too young):** ${stats_young}"
+              echo ""
+              if [ ! -s "${action_log}" ]; then
+                echo "_Could not parse action logs. Expand the **Remove old tags** step for details._"
+              elif [ "${deleted_count}" -eq 0 ]; then
+                echo "_No tags were deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+              else
+                echo "_Deleted oldest eligible non-exempt tags first._"
+                echo ""
+                echo "| Action | Tag | Detail |"
+                echo "| --- | --- | --- |"
+                awk -F '\t' '$1 == "deleted" { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${parsed}"
+              fi
+              echo ""
+            } >> "${GITHUB_STEP_SUMMARY}"
           }
 
           render_summary_section() {
@@ -267,4 +326,4 @@ jobs:
           } >> "${GITHUB_STEP_SUMMARY}"
 
           render_summary_section "Stale branch cleanup" "branch" "Remove stale branches except PR branches" "${BRANCH_LOG}" "${BRANCH_PARSED}"
-          render_summary_section "Stale tag cleanup" "tag" "Remove stale tags" "${TAG_LOG}" "${TAG_PARSED}"
+          render_tag_summary_section "${TAG_LOG}" "${TAG_PARSED}"
