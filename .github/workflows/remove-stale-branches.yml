@@ -85,7 +85,7 @@ jobs:
           min_age_seconds=$((DAYS_BEFORE_TAG_DELETE * 86400))
           tag_count=$(git tag -l | wc -l | tr -d ' ')
 
-          echo "Found ${tag_count} tags (delete non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days, up to ${OPERATIONS_PER_RUN} per run)"
+          echo "Found ${tag_count} tags; deleting up to ${OPERATIONS_PER_RUN} non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days"
 
           log_tag_result() {
             printf 'STALE_CLEANUP\t%s\ttag\t%s\n' "$1" "$2"
@@ -114,23 +114,22 @@ jobs:
 
             deletions=$((deletions + 1))
             log_tag_result "deleted" "${tag_name}"
-            log_tag_detail "tag was last updated on ${tag_date} (${age_seconds} seconds old)"
 
             if [ "${DRY_RUN}" = "true" ]; then
-              log_tag_detail "(doing nothing because of dry run flag)"
+              log_tag_detail "dry run; last updated ${tag_date}"
             else
+              detail="last updated ${tag_date}"
               if gh release view "${tag_name}" >/dev/null 2>&1; then
                 gh release delete "${tag_name}" --yes
-                log_tag_detail "deleted release ${tag_name}"
+                detail="${detail}; release deleted"
               fi
               gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"
-              log_tag_detail "deleted tag ${tag_name}"
+              log_tag_detail "${detail}; tag deleted"
             fi
           done < <(git for-each-ref --sort=creatordate --format='%(creatordate:iso) %(refname:short)' refs/tags)
 
           printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' \
             "${skipped_exempt}" "${skipped_young}" "${deletions}"
-          echo "Exiting after ${deletions} deletions (${skipped_exempt} exempt, ${skipped_young} too young)"
 
   publish-cleanup-summary:
     name: Publish Cleanup Summary
