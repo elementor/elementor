@@ -66,6 +66,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Remove stale tags
         env:
@@ -82,6 +83,9 @@ jobs:
           now_epoch=$(date -u +%s)
           stale_seconds=$((DAYS_BEFORE_TAG_STALE * 86400))
           delete_seconds=$(((DAYS_BEFORE_TAG_STALE + DAYS_BEFORE_STALE_TAG_DELETE) * 86400))
+          tag_count=$(git tag -l | wc -l | tr -d ' ')
+
+          echo "Found ${tag_count} tags (stale after ${DAYS_BEFORE_TAG_STALE} days, delete after $((DAYS_BEFORE_TAG_STALE + DAYS_BEFORE_STALE_TAG_DELETE)) days)"
 
           while IFS= read -r tag_date tag_name; do
             [ -z "${tag_name}" ] && continue
@@ -91,7 +95,6 @@ jobs:
             age_seconds=$((now_epoch - tag_epoch))
 
             if [[ "${tag_name}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
-              operations=$((operations + 1))
               echo "##[group]✅ tag ${tag_name}"
               echo "-> tag is exempt"
               echo "##[endgroup]"
@@ -190,8 +193,7 @@ jobs:
 
           fetch_job_log() {
             local job_name="$1"
-            local step_glob="$2"
-            local output_log="$3"
+            local output_log="$2"
 
             : > "${output_log}"
 
@@ -204,12 +206,10 @@ jobs:
               return 1
             fi
 
-            if ! gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${job_id}/logs" > job-logs.zip 2>/dev/null; then
+            if ! gh api "/repos/${GITHUB_REPOSITORY}/actions/jobs/${job_id}/logs" > "${output_log}" 2>/dev/null; then
               echo "Could not download job logs for ${job_name}" >&2
               return 1
             fi
-
-            unzip -p job-logs.zip "${step_glob}" > "${output_log}" 2>/dev/null || true
           }
 
           render_summary_section() {
@@ -251,8 +251,8 @@ jobs:
           TAG_LOG="$(mktemp)"
           TAG_PARSED="$(mktemp)"
 
-          fetch_job_log "Remove Stale Branches" '*Remove stale branches except PR branches*' "${BRANCH_LOG}" || true
-          fetch_job_log "Remove Stale Tags" '*Remove stale tags*' "${TAG_LOG}" || true
+          fetch_job_log "Remove Stale Branches" "${BRANCH_LOG}" || true
+          fetch_job_log "Remove Stale Tags" "${TAG_LOG}" || true
 
           parse_cleanup_log "branch" "${BRANCH_LOG}" "${BRANCH_PARSED}" || true
           parse_cleanup_log "tag" "${TAG_LOG}" "${TAG_PARSED}" || true
