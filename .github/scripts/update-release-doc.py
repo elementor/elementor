@@ -28,8 +28,9 @@ import base64
 JIRA_BASE   = os.environ["JIRA_BASE_URL"].rstrip("/")
 JIRA_EMAIL  = os.environ["JIRA_EMAIL"]
 JIRA_TOKEN  = os.environ["JIRA_API_TOKEN"]
-CONF_PARENT = os.environ["CONFLUENCE_PARENT_PAGE_ID"]  # 471075795
-CONF_SPACE  = os.environ["CONFLUENCE_SPACE_KEY"]        # RDDEP
+CONF_PARENT   = os.environ["CONFLUENCE_PARENT_PAGE_ID"]  # 471075795
+CONF_SPACE    = os.environ["CONFLUENCE_SPACE_KEY"]        # RDDEP
+JIRA_PROJECT  = os.environ.get("JIRA_PROJECT", "ED")
 
 PR_TITLE  = os.environ.get("PR_TITLE", "")
 PR_BODY   = os.environ.get("PR_BODY", "")
@@ -451,7 +452,7 @@ if issue_type not in USER_FACING_TYPES:
 # ── Step 3: Find ALL Jira versions matching this number (free + pro) ──────────
 # e.g. both "v4.3.0 - Beta 1" and "Pro v4.3.0 - Beta 1"
 try:
-    all_project_versions = jira_get("/rest/api/3/project/ED/versions")
+    all_project_versions = jira_get(f"/rest/api/3/project/{JIRA_PROJECT}/versions")
     matching_version_names = [
         v["name"] for v in all_project_versions
         if extract_version_number(v["name"]) == fix_version
@@ -465,7 +466,7 @@ print(f"Querying versions: {matching_version_names}", file=sys.stderr)
 # ── Step 4: Get ALL user-facing issues for this version ──────────────────────
 version_filter = " OR ".join(f'fixVersion = "{v}"' for v in matching_version_names)
 jql = (
-    f'project = ED AND ({version_filter}) '
+    f'project = {JIRA_PROJECT} AND ({version_filter}) '
     f'AND issuetype in (Epic, Story, Task) '
     f'ORDER BY updated DESC'
 )
