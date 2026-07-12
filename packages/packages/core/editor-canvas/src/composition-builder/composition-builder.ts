@@ -295,23 +295,15 @@ export class CompositionBuilder {
 			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
 		}
 
-		const formAncestorErrors = collectFormAncestorErrors(this.xml);
+		
+		const formErrors = [
+			...collectFormAncestorErrors( this.xml ),
+			...collectSubmitButtonErrors( this.xml ),
+			...collectEmptyMessageErrors( this.xml ),
+		];
 
-		if (formAncestorErrors.length) {
-		  throw new Error(`Invalid form structure:\n${formAncestorErrors.join('\n')}`);
-		}
-
-
-		const submitErrors = collectSubmitButtonErrors(this.xml);
-
-		if (submitErrors.length) {
-			throw new Error(`Invalid form structure:\n${submitErrors.join('\n')}`);
-		}
-
-		const emptyMessageErrors = collectEmptyMessageErrors(this.xml);
-
-		if (emptyMessageErrors.length) {
-			throw new Error(`Invalid form structure:\n${emptyMessageErrors.join('\n')}`);
+		if ( formErrors.length ) {
+			throw new Error( `Invalid form structure:\n${ formErrors.join( n ) }` );
 		}
 
 		const children = Array.from( this.xml.children );
