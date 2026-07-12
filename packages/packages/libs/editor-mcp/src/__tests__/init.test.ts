@@ -2,23 +2,23 @@ import { type ModelContext } from '../adapters/web-mcp-adapter';
 
 const mockRegisterMcpAdapter = jest.fn();
 const mockSignalMcpReady = jest.fn();
-
-jest.mock( '../mcp-registry', () => {
+const mockCreateAndRegisterAdapters = jest.fn( async () => {
 	const { WebMCPAdapter: WebMCPAdapterClass } = jest.requireActual( '../adapters/web-mcp-adapter' );
 	const { getModelContext } = jest.requireActual( '../utils/get-model-context' );
+	const modelContext = getModelContext();
 
-	return {
-		registerMcpAdapter: mockRegisterMcpAdapter,
-		signalMcpReady: mockSignalMcpReady,
-		createAndRegisterAdapters: () => {
-			const modelContext = getModelContext();
-
-			if ( modelContext ) {
-				mockRegisterMcpAdapter( new WebMCPAdapterClass( modelContext ) );
-			}
-		},
-	};
+	if ( modelContext ) {
+		const adapter = new WebMCPAdapterClass( modelContext );
+		mockRegisterMcpAdapter( adapter );
+		await adapter.activate();
+	}
 } );
+
+jest.mock( '../mcp-registry', () => ( {
+	registerMcpAdapter: mockRegisterMcpAdapter,
+	signalMcpReady: mockSignalMcpReady,
+	createAndRegisterAdapters: () => mockCreateAndRegisterAdapters(),
+} ) );
 
 jest.mock( '../utils/get-sdk', () => ( {
 	getSDK: jest.fn(),
@@ -64,20 +64,25 @@ const getRegisteredWebMCPAdapterContext = (): ModelContext => {
 	return ( adapter as unknown as { ctx: ModelContext } ).ctx;
 };
 
+const flushPromises = (): Promise< void > => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
 describe( 'startMCPServer', () => {
 	let startMCPServer: InitModule[ 'startMCPServer' ];
+	let consoleErrorSpy: jest.SpyInstance;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
 		startMCPServer = loadStartMCPServer();
 	} );
 
 	afterEach( () => {
+		consoleErrorSpy.mockRestore();
 		deleteModelContext( document );
 		deleteModelContext( navigator );
 	} );
 
-	it( 'prefers the document model context when it is available', () => {
+	it( 'prefers the document model context when it is available', async () => {
 		// Arrange.
 		const documentModelContext = createModelContext();
 		const navigatorModelContext = createModelContext();
@@ -87,6 +92,7 @@ describe( 'startMCPServer', () => {
 
 		// Act.
 		startMCPServer();
+		await flushPromises();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
@@ -94,7 +100,7 @@ describe( 'startMCPServer', () => {
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'falls back to the navigator model context for older browser support', () => {
+	it( 'falls back to the navigator model context for older browser support', async () => {
 		// Arrange.
 		const navigatorModelContext = createModelContext();
 
@@ -102,10 +108,51 @@ describe( 'startMCPServer', () => {
 
 		// Act.
 		startMCPServer();
+		await flushPromises();
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
 		expect( getRegisteredWebMCPAdapterContext() ).toBe( navigatorModelContext );
+		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'signals MCP readiness only after async activation completes', async () => {
+		// Arrange.
+		let resolveRegisterTool!: () => void;
+		const documentModelContext = createModelContext();
+		documentModelContext.registerTool = jest.fn(
+			() =>
+				new Promise< void >( ( resolve ) => {
+					resolveRegisterTool = resolve;
+				} )
+		);
+
+		setModelContext( document, documentModelContext );
+
+		// Act.
+		startMCPServer();
+		await flushPromises();
+
+		// Assert.
+		expect( mockSignalMcpReady ).not.toHaveBeenCalled();
+
+		resolveRegisterTool();
+		await flushPromises();
+
+		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'signals MCP readiness when adapter activation fails', async () => {
+		// Arrange.
+		const activationError = new Error( 'activation failed' );
+		mockCreateAndRegisterAdapters.mockRejectedValueOnce( activationError );
+
+		// Act.
+		startMCPServer();
+		await flushPromises();
+
+		// Assert.
+		expect( consoleErrorSpy ).toHaveBeenCalledWith( 'MCP adapter activation failed:', activationError );
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
