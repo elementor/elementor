@@ -5,6 +5,9 @@ namespace Elementor\Modules\Mcp\RestApi;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\Mcp\Abilities\Create_Element_Ability;
+use Elementor\Modules\Mcp\Abilities\List_Variables_Ability;
+use Elementor\Modules\Mcp\Abilities\Manage_Variable_Ability;
+use Elementor\Modules\Mcp\Abilities\Manage_Variable_Guide_Ability;
 use Elementor\Modules\Mcp\Abilities\Style_Best_Practices_Ability;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,10 +24,13 @@ class Mcp_Proxy_REST_API {
 	public function __construct() {
 		$this->tools = [
 			'create-element' => fn( array $input ) => ( new Create_Element_Ability() )->execute( $input ),
+			'manage-global-variable' => fn( array $input ) => ( new Manage_Variable_Ability() )->execute( $input ),
 		];
 
 		$this->resources = [
-			'elementor://style/best-practices' => fn() => ( new Style_Best_Practices_Ability() )->execute(),
+			Style_Best_Practices_Ability::URI => fn() => ( new Style_Best_Practices_Ability() )->execute(),
+			List_Variables_Ability::URI => fn() => ( new List_Variables_Ability() )->execute(),
+			Manage_Variable_Guide_Ability::URI => fn() => ( new Manage_Variable_Guide_Ability() )->execute(),
 		];
 	}
 
