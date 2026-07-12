@@ -141,63 +141,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 				);
 			}
 
-			$rule = $dependency->build();
-
-			if ( is_array( $rule['default_model'] ?? null ) ) {
-				$rule['default_model'] = $this->expand_default_children_recursively( $rule['default_model'] );
-			}
-
-			$config[] = $rule;
+			$config[] = $dependency->build();
 		}
 
 		return $config;
-	}
-
-	/**
-	 * Expand a `default_model` subtree so every empty-children node is
-	 * hydrated with its own registered element type's `define_default_children()`.
-	 *
-	 * Needed because the client-side reconciler splices `default_model` verbatim
-	 * and does not run the legacy `document/elements/create` → `onElementCreate()`
-	 * → `getDefaultChildren()` pipeline, so nested defaults would be lost.
-	 *
-	 * @param array $model Raw element data (elType, settings, elements, ...).
-	 * @return array The same shape, with `elements` populated where missing.
-	 */
-	private function expand_default_children_recursively( array $model ): array {
-		$has_existing_children = ! empty( $model['elements'] );
-		$opted_out = ! empty( $model['skipDefaultChildren'] );
-
-		if ( ! $has_existing_children && ! $opted_out ) {
-			$defaults = $this->resolve_default_children_for_type( $model['elType'] ?? '' );
-
-			if ( ! empty( $defaults ) ) {
-				$model['elements'] = $defaults;
-			}
-		}
-
-		if ( ! empty( $model['elements'] ) && is_array( $model['elements'] ) ) {
-			$model['elements'] = array_map(
-				fn( $child ) => is_array( $child ) ? $this->expand_default_children_recursively( $child ) : $child,
-				$model['elements']
-			);
-		}
-
-		return $model;
-	}
-
-	private function resolve_default_children_for_type( string $element_type ): array {
-		if ( '' === $element_type ) {
-			return [];
-		}
-
-		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
-
-		if ( ! $element instanceof self ) {
-			return [];
-		}
-
-		return $element->define_default_children();
 	}
 
 	protected function define_default_html_tag() {

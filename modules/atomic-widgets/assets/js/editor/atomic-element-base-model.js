@@ -24,10 +24,16 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			this.set( 'isLocked', true );
 		}
 
-		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
+		const isEmpty = 0 === this.get( 'elements' ).length;
+		const isNewElementCreate = isEmpty &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
+		const shouldHydrate = isEmpty && this.get( 'hydrateDefaultChildren' );
 
-		if ( isNewElementCreate ) {
+		if ( shouldHydrate ) {
+			this.unset( 'hydrateDefaultChildren', { silent: true } );
+		}
+
+		if ( isNewElementCreate || shouldHydrate ) {
 			this.onElementCreate();
 		}
 
@@ -102,8 +108,11 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 
 	buildElement( element ) {
 		const id = elementorCommon.helpers.getUniqueId();
-
-		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
+		const hasExplicitChildren = Array.isArray( element.elements ) && element.elements.length > 0;
+		const elements = hasExplicitChildren
+			? element.elements.map( ( el ) => this.buildElement( el ) )
+			: [];
+		const shouldHydrateChild = ! hasExplicitChildren && ! element.skipDefaultChildren;
 
 		return {
 			elType: element.elType,
@@ -114,6 +123,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
 			meta: element.meta || {},
+			...( shouldHydrateChild ? { hydrateDefaultChildren: true } : {} ),
 		};
 	}
 }

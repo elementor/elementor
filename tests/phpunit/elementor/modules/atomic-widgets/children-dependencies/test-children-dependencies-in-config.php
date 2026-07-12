@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\ChildrenDependencies;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
@@ -33,41 +33,25 @@ class Widget_With_Builder_Rule extends Div_Block {
 	}
 }
 
-class Widget_With_Registered_Child_Default_Model extends Div_Block {
+class Widget_With_Hydrated_Default_Model extends Div_Block {
 	protected function define_children_dependencies(): array {
 		return [
-			Child_Dependency::for( Atomic_Tabs::get_element_type() )
+			Child_Dependency::for( 'e-pagination' )
 				->when(
 					Dependency_Manager::make()->where( [
 						'operator' => 'eq',
-						'path' => [ 'tag' ],
-						'value' => 'section',
+						'path' => [ 'pagination' ],
+						'value' => true,
 					] )
 				)
 				->position( Element_Position::last() )
 				->stash( false )
-				->default_model( [ 'elType' => Atomic_Tabs::get_element_type(), 'isLocked' => true ] ),
-		];
-	}
-}
-
-class Widget_With_Opted_Out_Default_Model extends Div_Block {
-	protected function define_children_dependencies(): array {
-		return [
-			Child_Dependency::for( Atomic_Tabs::get_element_type() )
-				->when(
-					Dependency_Manager::make()->where( [
-						'operator' => 'eq',
-						'path' => [ 'tag' ],
-						'value' => 'section',
-					] )
-				)
-				->stash( false )
-				->default_model( [
-					'elType' => Atomic_Tabs::get_element_type(),
-					'isLocked' => true,
-					'skipDefaultChildren' => true,
-				] ),
+				->default_model(
+					Element_Builder::make( 'e-pagination' )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->build()
+				),
 		];
 	}
 }
@@ -129,23 +113,23 @@ class Test_Children_Dependencies_In_Config extends Elementor_Test_Base {
 		$this->assertSame( [ 'pagination' ], $rule['when']['terms'][0]['path'] );
 	}
 
-	public function test_default_model_is_hydrated_with_registered_child_type_default_children() {
+	public function test_default_model_carries_hydrate_flag_when_opted_in_via_builder() {
 		// Act.
-		$config = $this->get_initial_config( $this->make_widget( Widget_With_Registered_Child_Default_Model::class ) );
+		$config = $this->get_initial_config( $this->make_widget( Widget_With_Hydrated_Default_Model::class ) );
 
 		// Assert.
 		$default_model = $config['children_dependencies'][0]['default_model'];
-		$this->assertSame( Atomic_Tabs::get_element_type(), $default_model['elType'] );
-		$this->assertNotEmpty( $default_model['elements'], 'expected Atomic_Tabs default children to be spliced in' );
+		$this->assertSame( 'e-pagination', $default_model['elType'] );
+		$this->assertTrue( $default_model['hydrateDefaultChildren'] );
 	}
 
-	public function test_default_model_expansion_is_skipped_when_skipDefaultChildren_is_set() {
+	public function test_default_model_omits_hydrate_flag_by_default() {
 		// Act.
-		$config = $this->get_initial_config( $this->make_widget( Widget_With_Opted_Out_Default_Model::class ) );
+		$config = $this->get_initial_config( $this->make_widget( Widget_With_Builder_Rule::class ) );
 
 		// Assert.
 		$default_model = $config['children_dependencies'][0]['default_model'];
-		$this->assertArrayNotHasKey( 'elements', $default_model );
+		$this->assertArrayNotHasKey( 'hydrateDefaultChildren', $default_model );
 	}
 
 	public function test_raw_array_rules_are_rejected() {

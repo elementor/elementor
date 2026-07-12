@@ -155,14 +155,11 @@ describe( 'reconcileInitialChildren', () => {
 		expect( attributes.elements[ 0 ]?.id ).toBe( 'preset-id' );
 	} );
 
-	it( 'assigns ids recursively to nested children that lack them', () => {
+	it( 'strips skipDefaultChildren from an inserted default_model', () => {
 		// Arrange.
 		const defaultModel = {
 			elType: 'e-pagination',
-			elements: [
-				{ elType: 'e-pagination-prev' } as V1ElementData,
-				{ elType: 'e-pagination-next', id: 'preset-next' } as V1ElementData,
-			],
+			skipDefaultChildren: true,
 		} as V1ElementData;
 		const attributes = {
 			elements: [] as V1ElementData[],
@@ -177,11 +174,10 @@ describe( 'reconcileInitialChildren', () => {
 		} );
 
 		// Assert.
-		const inserted = attributes.elements[ 0 ];
+		const inserted = attributes.elements[ 0 ] as V1ElementData & { skipDefaultChildren?: boolean };
+		expect( inserted?.skipDefaultChildren ).toBeUndefined();
+		expect( inserted?.elType ).toBe( 'e-pagination' );
 		expect( inserted?.id ).toEqual( expect.any( String ) );
-		expect( inserted?.elements?.[ 0 ]?.id ).toEqual( expect.any( String ) );
-		expect( inserted?.elements?.[ 0 ]?.id ).not.toBe( '' );
-		expect( inserted?.elements?.[ 1 ]?.id ).toBe( 'preset-next' );
 	} );
 
 	it( 'falls back to a minimal { elType } (with generated id) when neither stash nor default_model exist', () => {

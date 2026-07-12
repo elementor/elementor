@@ -163,6 +163,7 @@ export type V1ElementModelProps = {
 	interactions?: string | ElementInteractions;
 	isGlobal?: boolean;
 	skipDefaultChildren?: boolean;
+	hydrateDefaultChildren?: boolean;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {

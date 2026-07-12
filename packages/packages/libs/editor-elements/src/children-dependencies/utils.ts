@@ -8,11 +8,7 @@ export function evaluateWhen( when: Dependency | undefined, settings: Record< st
 }
 
 export function ensureModelId( model: V1ElementData ): V1ElementData {
-	const withId = model.id ? model : { ...model, id: generateElementId() };
+	const { skipDefaultChildren: _skipDefaultChildren, ...rest } = model;
 
-	if ( ! withId.elements?.length ) {
-		return withId;
-	}
-
-	return { ...withId, elements: withId.elements.map( ensureModelId ) };
+	return rest.id ? rest : { ...rest, id: generateElementId() };
 }

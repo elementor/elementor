@@ -9,6 +9,7 @@ class Element_Builder {
 	protected $children = [];
 	protected $editor_settings = [];
 	protected $meta = [];
+	protected $hydrate_default_children = false;
 
 	public static function make( string $element_type ) {
 		return new self( $element_type );
@@ -43,6 +44,26 @@ class Element_Builder {
 		return $this;
 	}
 
+	/**
+	 * Opt this element payload into client-side default-children hydration.
+	 *
+	 * When the payload is inserted into the editor model tree by the
+	 * children-dependencies reconciler (or any code path that constructs a
+	 * Backbone `AtomicElementBaseModel` from raw data), the model's
+	 * `initialize()` sees `hydrateDefaultChildren: true` and routes through
+	 * `onElementCreate()` → `getDefaultChildren()` to seed defaults. Hydration
+	 * cascades to every nested level via `buildElement()`.
+	 *
+	 * Only meaningful on payloads that reach the editor model init path
+	 * (typically `Child_Dependency::default_model()`). Silently ignored when
+	 * used inside `define_default_children()` return values — `buildElement()`
+	 * on the JS side controls that flag per level itself.
+	 */
+	public function hydrate_default_children( bool $hydrate = true ) {
+		$this->hydrate_default_children = $hydrate;
+		return $this;
+	}
+
 	public function build() {
 		$element_data = [
 			'elType' => $this->element_type,
@@ -54,6 +75,10 @@ class Element_Builder {
 
 		if ( ! empty( $this->meta ) ) {
 			$element_data['meta'] = $this->meta;
+		}
+
+		if ( $this->hydrate_default_children ) {
+			$element_data['hydrateDefaultChildren'] = true;
 		}
 
 		return $element_data;
