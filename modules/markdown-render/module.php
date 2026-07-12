@@ -97,7 +97,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		Module::set_rendering_markdown( true );
+		self::set_rendering_markdown( true );
 
 		try {
 			if ( $is_preview ) {
@@ -118,7 +118,7 @@ class Module extends BaseModule {
 			echo $markdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			exit;
 		} finally {
-			Module::set_rendering_markdown( false );
+			self::set_rendering_markdown( false );
 		}
 	}
 

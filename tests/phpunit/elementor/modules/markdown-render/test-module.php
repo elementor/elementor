@@ -83,6 +83,46 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertFalse( Module::is_rendering_markdown() );
 	}
 
+	public function test_rendering_markdown_flag_resets_after_render_exception() {
+		$post = $this->factory()->create_and_get_default_post();
+		$document = $this->getMockBuilder( \Elementor\Core\Base\Document::class )
+			->disableOriginalConstructor()
+			->onlyMethods( [ 'get_main_id', 'get_elements_data' ] )
+			->getMock();
+
+		$document->method( 'get_main_id' )->willReturn( $post->ID );
+		$document->method( 'get_elements_data' )->willReturn( [
+			[
+				'id' => 'abc123',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [
+					'title' => 'Hello',
+				],
+			],
+		] );
+
+		add_filter(
+			'elementor/markdown/document_output',
+			static function () {
+				throw new \RuntimeException( 'markdown render failed' );
+			}
+		);
+
+		$renderer = new \Elementor\Modules\MarkdownRender\Markdown_Renderer();
+
+		try {
+			$renderer->render( $document );
+			$this->fail( 'Expected RuntimeException was not thrown.' );
+		} catch ( \RuntimeException $exception ) {
+			$this->assertSame( 'markdown render failed', $exception->getMessage() );
+		} finally {
+			remove_all_filters( 'elementor/markdown/document_output' );
+		}
+
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
 	public function test_cache_invalidation_hooks_are_registered() {
 		// Arrange
 		$module = new Module();

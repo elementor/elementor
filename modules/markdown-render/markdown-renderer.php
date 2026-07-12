@@ -47,36 +47,6 @@ class Markdown_Renderer {
 		}
 	}
 
-	public function render_elements_data( array $elements_data ): string {
-		$was_rendering_markdown = Module::is_rendering_markdown();
-
-		if ( ! $was_rendering_markdown ) {
-			Module::set_rendering_markdown( true );
-		}
-
-		try {
-			if ( empty( $elements_data ) ) {
-				return '';
-			}
-
-			$sections = [];
-
-			foreach ( $elements_data as $element_data ) {
-				$md = $this->render_element( $element_data );
-
-				if ( ! empty( trim( $md ) ) ) {
-					$sections[] = $md;
-				}
-			}
-
-			return implode( "\n\n", $sections );
-		} finally {
-			if ( ! $was_rendering_markdown ) {
-				Module::set_rendering_markdown( false );
-			}
-		}
-	}
-
 	private function build_frontmatter( Document $document ): string {
 		$post_id = $document->get_main_id();
 
