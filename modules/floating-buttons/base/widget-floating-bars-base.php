@@ -1551,5 +1551,4 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 
 		$render_strategy->render();
 	}
-
 }

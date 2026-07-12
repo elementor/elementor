@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -97,6 +98,8 @@ class Module extends BaseModule {
 			return;
 		}
 
+		// While rendering markdown we skip CSS enqueues that would trigger WP 6.9.1 notices
+		// in editor-like contexts. The flag must reset even when rendering throws.
 		self::set_rendering_markdown( true );
 
 		try {
@@ -111,11 +114,11 @@ class Module extends BaseModule {
 				}
 			}
 
-			nocache_headers();
+			Utils::do_not_cache();
 			status_header( 200 );
 			header( 'Content-Type: text/markdown; charset=utf-8' );
 			header( 'X-Content-Type-Options: nosniff' );
-			echo $markdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			Utils::print_unescaped_internal_string( $markdown );
 			exit;
 		} finally {
 			self::set_rendering_markdown( false );
