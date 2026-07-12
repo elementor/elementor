@@ -1,6 +1,7 @@
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { z, type z3 } from '@elementor/schema';
 
+import { type ModelContextRegisterTool, registerModelContextTool } from '../utils/register-model-context-tool';
 import {
 	type IMcpRegistrationAdapter,
 	type McpResourceHandler,
@@ -12,8 +13,8 @@ import {
 type ZodRawShape = z3.ZodRawShape;
 
 export type ModelContext = {
-	registerTool: ( tool: McpToolDescriptor ) => void;
-	unregisterTool: ( name: string ) => void;
+	registerTool: ModelContextRegisterTool;
+	unregisterTool?: ( name: string ) => void;
 };
 
 type ResourceEntry = {
@@ -29,12 +30,12 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 
 	constructor( private readonly ctx: ModelContext ) {}
 
-	activate(): void {
+	activate(): Promise< void > {
 		if ( this.activated ) {
-			return;
+			return Promise.resolve();
 		}
 		this.activated = true;
-		this.ctx.registerTool( {
+		return registerModelContextTool( this.ctx.registerTool, {
 			name: 'editor-resource-getter',
 			description:
 				'Get an editor resource by URI, or search for available resources by partial URI. Pass a full URI to retrieve content, or a partial string to discover matching patterns.',
@@ -98,7 +99,8 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 		}
 
 		if ( this.registeredToolNames.has( tool.name ) ) {
-			this.ctx.unregisterTool( tool.name );
+			this.ctx.unregisterTool?.( tool.name );
+			this.registeredToolNames.delete( tool.name );
 		}
 
 		let resourcesDescription = '';
@@ -111,13 +113,14 @@ export class WebMCPAdapter implements IMcpRegistrationAdapter {
 			}
 			resourcesDescription += `To read resources, use editor-resource-getter tool.\n\n`;
 		}
-		this.ctx.registerTool( {
+		void registerModelContextTool( this.ctx.registerTool, {
 			name: tool.name,
 			description: `${ resourcesDescription }${ tool.description }`,
 			inputSchema: jsonSchema,
 			execute: tool.execute,
+		} ).then( () => {
+			this.registeredToolNames.add( tool.name );
 		} );
-		this.registeredToolNames.add( tool.name );
 	}
 
 	onResourceRegistered( _name: string, uriOrTemplate: McpResourceUriOrTemplate, handler: McpResourceHandler ): void {
