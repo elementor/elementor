@@ -178,7 +178,6 @@ const externals = [
 		'@elementor/site-builder': [ 'elementorV2', 'siteBuilder' ],
 		'@elementor/v4-activation-modal': [ 'elementorV2', 'v4-activation-modal' ],
 		'@elementor/editor-modal-shell': [ 'elementorV2', 'editor-modal-shell' ],
-		'@elementor/birthday-easter-egg-modal': [ 'elementorV2', 'birthday-easter-egg-modal' ],
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
