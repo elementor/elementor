@@ -5,6 +5,7 @@ use Elementor\Controls_Stack;
 use Elementor\Core\DynamicTags\Dynamic_CSS;
 use Elementor\Core\Kits\Manager;
 use Elementor\Element_Base;
+use Elementor\Modules\MarkdownRender\Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -281,6 +282,10 @@ class Post extends Base {
 	 * @param Element_Base $element The element.
 	 */
 	protected function render_styles( Element_Base $element ) {
+		if ( Module::is_rendering_markdown() ) {
+			return;
+		}
+
 		/**
 		 * Before element parse CSS.
 		 *

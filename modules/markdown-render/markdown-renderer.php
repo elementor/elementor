@@ -11,28 +11,70 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Markdown_Renderer {
 
 	public function render( Document $document ): string {
-		$frontmatter = $this->build_frontmatter( $document );
-		$data = $document->get_elements_data();
+		$was_rendering_markdown = Module::is_rendering_markdown();
 
-		if ( empty( $data ) ) {
-			return $frontmatter;
+		if ( ! $was_rendering_markdown ) {
+			Module::set_rendering_markdown( true );
 		}
 
-		$sections = [];
+		try {
+			$frontmatter = $this->build_frontmatter( $document );
+			$data = $document->get_elements_data();
 
-		foreach ( $data as $element_data ) {
-			$md = $this->render_element( $element_data );
+			if ( empty( $data ) ) {
+				return $frontmatter;
+			}
 
-			if ( ! empty( trim( $md ) ) ) {
-				$sections[] = $md;
+			$sections = [];
+
+			foreach ( $data as $element_data ) {
+				$md = $this->render_element( $element_data );
+
+				if ( ! empty( trim( $md ) ) ) {
+					$sections[] = $md;
+				}
+			}
+
+			$body = implode( "\n\n---\n\n", $sections );
+
+			$output = $frontmatter . "\n\n" . $body;
+
+			return apply_filters( 'elementor/markdown/document_output', $output, $document );
+		} finally {
+			if ( ! $was_rendering_markdown ) {
+				Module::set_rendering_markdown( false );
 			}
 		}
+	}
 
-		$body = implode( "\n\n---\n\n", $sections );
+	public function render_elements_data( array $elements_data ): string {
+		$was_rendering_markdown = Module::is_rendering_markdown();
 
-		$output = $frontmatter . "\n\n" . $body;
+		if ( ! $was_rendering_markdown ) {
+			Module::set_rendering_markdown( true );
+		}
 
-		return apply_filters( 'elementor/markdown/document_output', $output, $document );
+		try {
+			if ( empty( $elements_data ) ) {
+				return '';
+			}
+
+			$sections = [];
+
+			foreach ( $elements_data as $element_data ) {
+				$md = $this->render_element( $element_data );
+
+				if ( ! empty( trim( $md ) ) ) {
+					$sections[] = $md;
+				}
+			}
+
+			return implode( "\n\n", $sections );
+		} finally {
+			if ( ! $was_rendering_markdown ) {
+				Module::set_rendering_markdown( false );
+			}
+		}
 	}
 
 	private function build_frontmatter( Document $document ): string {

@@ -11,6 +11,7 @@ use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Modules\MarkdownRender\Module as Markdown_Render_Module;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -201,6 +202,10 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function enqueue() {
+		if ( $this->should_skip_enqueue() ) {
+			return;
+		}
+
 		$handle_id = $this->get_file_handle_id();
 
 		if ( isset( self::$printed[ $handle_id ] ) ) {
@@ -233,14 +238,15 @@ abstract class Base extends Base_File {
 
 		if ( self::CSS_STATUS_INLINE === $meta['status'] ) {
 			$dep = $this->get_inline_dependency();
-			// If the dependency has already been printed ( like a template in footer )
-			if ( wp_styles()->query( $dep, 'done' ) ) {
+			$is_dependency_registered = (bool) wp_styles()->query( $dep, 'registered' );
+
+			if ( ! $is_dependency_registered || wp_styles()->query( $dep, 'done' ) ) {
 				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_registered_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -605,6 +611,29 @@ abstract class Base extends Base_File {
 	 * @return string CSS file handle ID.
 	 */
 	abstract protected function get_file_handle_id();
+
+	protected function should_skip_enqueue(): bool {
+		if ( Markdown_Render_Module::is_rendering_markdown() ) {
+			return true;
+		}
+
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		$editor = Plugin::$instance->editor;
+
+		return $editor && $editor->is_editor_request();
+	}
+
+	protected function get_registered_enqueue_dependencies(): array {
+		return array_values( array_filter(
+			$this->get_enqueue_dependencies(),
+			static function ( $handle ) {
+				return (bool) wp_styles()->query( $handle, 'registered' );
+			}
+		) );
+	}
 
 	/**
 	 * Render CSS.

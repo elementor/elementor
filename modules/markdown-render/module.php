@@ -15,6 +15,16 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'markdown_rendering';
 	const CACHE_META_KEY = '_elementor_markdown_cache';
 
+	private static bool $is_rendering_markdown = false;
+
+	public static function is_rendering_markdown(): bool {
+		return self::$is_rendering_markdown;
+	}
+
+	public static function set_rendering_markdown( bool $is_rendering ): void {
+		self::$is_rendering_markdown = $is_rendering;
+	}
+
 	public function get_name() {
 		return 'markdown-render';
 	}
@@ -87,23 +97,29 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( $is_preview ) {
-			$markdown = ( new Markdown_Renderer() )->render( $document );
-		} else {
-			$markdown = $this->get_cached_markdown( $post_id );
+		Module::set_rendering_markdown( true );
 
-			if ( false === $markdown ) {
+		try {
+			if ( $is_preview ) {
 				$markdown = ( new Markdown_Renderer() )->render( $document );
-				$this->set_cached_markdown( $post_id, $markdown );
-			}
-		}
+			} else {
+				$markdown = $this->get_cached_markdown( $post_id );
 
-		nocache_headers();
-		status_header( 200 );
-		header( 'Content-Type: text/markdown; charset=utf-8' );
-		header( 'X-Content-Type-Options: nosniff' );
-		echo $markdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		exit;
+				if ( false === $markdown ) {
+					$markdown = ( new Markdown_Renderer() )->render( $document );
+					$this->set_cached_markdown( $post_id, $markdown );
+				}
+			}
+
+			nocache_headers();
+			status_header( 200 );
+			header( 'Content-Type: text/markdown; charset=utf-8' );
+			header( 'X-Content-Type-Options: nosniff' );
+			echo $markdown; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			exit;
+		} finally {
+			Module::set_rendering_markdown( false );
+		}
 	}
 
 	private function is_valid_preview_request( int $post_id ): bool {

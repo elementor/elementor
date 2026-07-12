@@ -72,6 +72,17 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_rendering_markdown_flag_defaults_to_false() {
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_rendering_markdown_flag_can_be_toggled() {
+		Module::set_rendering_markdown( true );
+		$this->assertTrue( Module::is_rendering_markdown() );
+		Module::set_rendering_markdown( false );
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
 	public function test_cache_invalidation_hooks_are_registered() {
 		// Arrange
 		$module = new Module();
