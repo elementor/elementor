@@ -27,13 +27,13 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const isEmpty = 0 === this.get( 'elements' ).length;
 		const isNewElementCreate = isEmpty &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
-		const shouldHydrate = isEmpty && this.get( 'hydrateDefaultChildren' );
+		const hasHydrateFlag = this.get( 'hydrateDefaultChildren' );
 
-		if ( shouldHydrate ) {
+		if ( hasHydrateFlag ) {
 			this.unset( 'hydrateDefaultChildren', { silent: true } );
 		}
 
-		if ( isNewElementCreate || shouldHydrate ) {
+		if ( isNewElementCreate || ( isEmpty && hasHydrateFlag ) ) {
 			this.onElementCreate();
 		}
 
@@ -108,11 +108,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 
 	buildElement( element ) {
 		const id = elementorCommon.helpers.getUniqueId();
-		const hasExplicitChildren = Array.isArray( element.elements ) && element.elements.length > 0;
-		const elements = hasExplicitChildren
-			? element.elements.map( ( el ) => this.buildElement( el ) )
-			: [];
-		const shouldHydrateChild = ! hasExplicitChildren && ! element.skipDefaultChildren;
+		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
 
 		return {
 			elType: element.elType,
@@ -123,7 +119,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
 			meta: element.meta || {},
-			...( shouldHydrateChild ? { hydrateDefaultChildren: true } : {} ),
+			...( element.skipDefaultChildren ? {} : { hydrateDefaultChildren: true } ),
 		};
 	}
 }

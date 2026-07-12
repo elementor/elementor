@@ -125,7 +125,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * attaches / detaches the child at the model layer as the condition flips,
 	 * without per-widget v1 hooks.
 	 *
-	 * @return Child_Dependency[]|array<int, array>
+	 * @return Child_Dependency[]
 	 */
 	protected function define_children_dependencies(): array {
 		return [];

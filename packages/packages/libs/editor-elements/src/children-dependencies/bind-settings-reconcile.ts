@@ -85,6 +85,7 @@ function attachChildFromRule( parentId: string, rule: ChildDependencyRule, stash
 		return;
 	}
 
+	// Prefer a previously-stashed (user-customized) model, then the rule's default, else a bare element.
 	const stashed = rule.stash ? stash.get( parentId, rule.child_type ) : undefined;
 	const modelData = ensureModelId(
 		stashed ?? rule.default_model ?? ( { elType: rule.child_type } as V1ElementData )

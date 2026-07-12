@@ -45,19 +45,8 @@ class Element_Builder {
 	}
 
 	/**
-	 * Opt this element payload into client-side default-children hydration.
-	 *
-	 * When the payload is inserted into the editor model tree by the
-	 * children-dependencies reconciler (or any code path that constructs a
-	 * Backbone `AtomicElementBaseModel` from raw data), the model's
-	 * `initialize()` sees `hydrateDefaultChildren: true` and routes through
-	 * `onElementCreate()` → `getDefaultChildren()` to seed defaults. Hydration
-	 * cascades to every nested level via `buildElement()`.
-	 *
-	 * Only meaningful on payloads that reach the editor model init path
-	 * (typically `Child_Dependency::default_model()`). Silently ignored when
-	 * used inside `define_default_children()` return values — `buildElement()`
-	 * on the JS side controls that flag per level itself.
+	 * Marks this payload to seed its default children client-side (via
+	 * `AtomicElementBaseModel::onElementCreate()`) once inserted into the editor.
 	 */
 	public function hydrate_default_children( bool $hydrate = true ) {
 		$this->hydrate_default_children = $hydrate;
