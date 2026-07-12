@@ -20,7 +20,11 @@ use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
+<<<<<<< HEAD
 use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
+=======
+use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
+>>>>>>> 1bcc5f2357 (Internal: Cherry-pick PR 36471 to 4.02 with conflicts: Delete 10th BD easter egg [ED-24869])
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -294,8 +298,6 @@ class Module extends Base_Module {
 					2
 				);
 			}
-
-			( new Birthday_Easter_Egg_Promotion() )->register();
 		} );
 
 		( new Atomic_Form_Widget_Promotion() )->register();
