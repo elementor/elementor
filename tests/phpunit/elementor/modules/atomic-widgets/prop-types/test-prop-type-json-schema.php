@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Unknown_Prop_Type;
@@ -22,6 +23,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\AtomicWidgets\PropTypes
  */
 class Test_Prop_Type_Json_Schema extends TestCase {
+
+	public function setUp(): void {
+		parent::setUp();
+
+		Union_Prop_Type::reset_registered_variants();
+		Dynamic_Prop_Type::set_tag_names_resolver( null );
+
+		Dynamic_Prop_Type::register_union_json_schema_variant();
+		Union_Prop_Type::register_omitted_variant_key( Overridable_Prop_Type::get_key() );
+	}
+
+	public function tearDown(): void {
+		Union_Prop_Type::reset_registered_variants();
+		Dynamic_Prop_Type::set_tag_names_resolver( null );
+
+		parent::tearDown();
+	}
 
 	public function test_to_json_schema__string_prop_type() {
 		// Arrange
@@ -100,6 +118,89 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 		$this->assertSame( 'A union of string and number', $result['description'] );
 		$this->assertArrayHasKey( 'anyOf', $result );
 		$this->assertCount( 2, $result['anyOf'] );
+	}
+
+	public function test_to_json_schema__union_with_dynamic_offers_dynamic_variant() {
+		// Arrange
+		$dynamic_prop = Dynamic_Prop_Type::make();
+
+		$prop_type = Union_Prop_Type::make()
+			->add_prop_type( String_Prop_Type::make() )
+			->add_prop_type( $dynamic_prop );
+
+		// Act
+		$result = $prop_type->to_json_schema();
+
+		// Assert
+		$dynamic_variant = $this->find_variant_by_type( $result['anyOf'] ?? [], 'dynamic' );
+		$this->assertNotNull( $dynamic_variant, 'Dynamic variant should be present' );
+		$this->assertSame( [ 'name' ], $dynamic_variant['properties']['value']['required'] );
+		$this->assertArrayNotHasKey( 'group', $dynamic_variant['properties']['value']['properties'] );
+	}
+
+	public function test_to_json_schema__union_with_dynamic_constrains_tag_names_via_resolver() {
+		// Arrange
+		Dynamic_Prop_Type::set_tag_names_resolver( fn( $categories ) => [ 'post-title', 'site-title' ] );
+
+		$dynamic_prop = Dynamic_Prop_Type::make()->categories( [ 'text' ] );
+
+		$prop_type = Union_Prop_Type::make()
+			->add_prop_type( String_Prop_Type::make() )
+			->add_prop_type( $dynamic_prop );
+
+		// Act
+		$result = $prop_type->to_json_schema();
+
+		// Assert
+		$dynamic_variant = $this->find_variant_by_type( $result['anyOf'] ?? [], 'dynamic' );
+		$this->assertSame(
+			[ 'post-title', 'site-title' ],
+			$dynamic_variant['properties']['value']['properties']['name']['enum']
+		);
+	}
+
+	public function test_to_json_schema__union_with_overridable_skips_overridable_variant() {
+		// Arrange
+		$overridable_prop = Overridable_Prop_Type::make();
+
+		$prop_type = Union_Prop_Type::make()
+			->add_prop_type( String_Prop_Type::make() )
+			->add_prop_type( $overridable_prop );
+
+		// Act
+		$result = $prop_type->to_json_schema();
+
+		// Assert
+		$overridable_variant = $this->find_variant_by_type( $result['anyOf'] ?? [], 'overridable' );
+		$this->assertNull( $overridable_variant, 'Overridable variant should be skipped' );
+		$this->assertCount( 1, $result['anyOf'] );
+	}
+
+	public function test_to_json_schema__nested_union_suppresses_dynamic_at_inner_level() {
+		// Arrange
+		$dynamic_prop = Dynamic_Prop_Type::make();
+
+		$inner_union = Union_Prop_Type::make()
+			->add_prop_type( String_Prop_Type::make() )
+			->add_prop_type( $dynamic_prop );
+
+		$outer_union = Union_Prop_Type::make()
+			->add_prop_type( $this->create_object_with_content_field( $inner_union ) )
+			->add_prop_type( $dynamic_prop );
+
+		// Act
+		$result = $outer_union->to_json_schema();
+
+		// Assert — outer level should have dynamic
+		$outer_dynamic = $this->find_variant_by_type( $result['anyOf'] ?? [], 'dynamic' );
+		$this->assertNotNull( $outer_dynamic, 'Outer dynamic variant should be present' );
+
+		// Assert — inner level should NOT have dynamic (suppressed because outer already offers it)
+		$object_variant = $this->find_variant_by_type( $result['anyOf'] ?? [], 'test-object' );
+		$this->assertNotNull( $object_variant );
+		$content_field = $object_variant['properties']['value']['properties']['content'] ?? [];
+		$inner_dynamic = $this->find_variant_by_type( $content_field['anyOf'] ?? [], 'dynamic' );
+		$this->assertNull( $inner_dynamic, 'Inner dynamic variant should be suppressed' );
 	}
 
 	public function test_to_json_schema__object_prop_type() {
@@ -191,6 +292,17 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 		$this->assertSame( [ 'type' => 'object' ], $result['properties']['value'] );
 	}
 
+	private function find_variant_by_type( array $variants, string $type ): ?array {
+		foreach ( $variants as $variant ) {
+			if ( isset( $variant['properties']['$$type']['const'] ) &&
+				$variant['properties']['$$type']['const'] === $type ) {
+				return $variant;
+			}
+		}
+
+		return null;
+	}
+
 	private function create_plain_prop_type_without_override(): Prop_Type {
 		return new class extends \Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type {
 			public static function get_key(): string {
@@ -231,6 +343,27 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 				return [
 					'required_field' => String_Prop_Type::make()->required(),
 					'optional_field' => String_Prop_Type::make(),
+				];
+			}
+		};
+	}
+
+	private function create_object_with_content_field( Prop_Type $content_type ): Object_Prop_Type {
+		return new class( $content_type ) extends Object_Prop_Type {
+			private Prop_Type $content_type;
+
+			public function __construct( Prop_Type $content_type ) {
+				$this->content_type = $content_type;
+				parent::__construct();
+			}
+
+			public static function get_key(): string {
+				return 'test-object';
+			}
+
+			protected function define_shape(): array {
+				return [
+					'content' => $this->content_type,
 				];
 			}
 		};

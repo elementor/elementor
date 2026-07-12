@@ -34,7 +34,10 @@ interface Prop_Type extends \JsonSerializable {
 	 * Returns a JSON Schema representation of this prop type's enveloped ({$$type, value}) input
 	 * format, mirroring the frontend's propTypeToJsonSchema converter.
 	 *
+	 * @param bool $suppress_dynamic When true, an ancestor union already offered the "dynamic" option
+	 *                               for this branch, so nested unions should not offer it again.
+	 *
 	 * @return array JSON Schema array.
 	 */
-	public function to_json_schema(): array;
+	public function to_json_schema( bool $suppress_dynamic = false ): array;
 }

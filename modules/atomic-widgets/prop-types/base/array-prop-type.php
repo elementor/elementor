@@ -125,7 +125,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return $this->dependencies;
 	}
 
-	public function to_json_schema(): array {
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
 		$schema = $this->with_json_schema_meta( [] );
 
 		$schema['type'] = 'object';
@@ -133,7 +133,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		$value_schema = [ 'type' => 'array' ];
 
 		if ( $this->get_item_type() ) {
-			$value_schema['items'] = $this->get_item_type()->to_json_schema();
+			$value_schema['items'] = $this->get_item_type()->to_json_schema( $suppress_dynamic );
 		}
 
 		$schema['properties'] = [
