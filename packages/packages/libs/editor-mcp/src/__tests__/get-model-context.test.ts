@@ -28,7 +28,7 @@ describe( 'getModelContext', () => {
 	it( 'binds registerTool so it can be called without the host receiver', () => {
 		// Arrange.
 		const host = {
-			registerTool( _tool: McpToolDescriptor ) {
+			registerTool() {
 				if ( this !== host ) {
 					throw new TypeError( 'Illegal invocation' );
 				}
