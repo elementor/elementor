@@ -6,11 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-<<<<<<< HEAD
-		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isBirthdayEasterEgg() ) {
-=======
 		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
->>>>>>> 1bcc5f2357 (Internal: Cherry-pick PR 36471 to 4.02 with conflicts: Delete 10th BD easter egg [ED-24869])
 			className += ' elementor-element--promotion';
 		}
 
