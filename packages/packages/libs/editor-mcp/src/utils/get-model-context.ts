@@ -7,8 +7,14 @@ type ModelContextHost = {
 export function getModelContext(): ModelContext | undefined {
 	const documentModelContext =
 		typeof document !== 'undefined' ? ( document as unknown as ModelContextHost ).modelContext : undefined;
+	if ( documentModelContext?.registerTool ) {
+		return documentModelContext;
+	}
 	const navigatorModelContext =
 		typeof navigator !== 'undefined' ? ( navigator as unknown as ModelContextHost ).modelContext : undefined;
+	if ( navigatorModelContext?.registerTool ) {
+		return navigatorModelContext;
+	}
 
-	return documentModelContext || navigatorModelContext;
+	return undefined;
 }
