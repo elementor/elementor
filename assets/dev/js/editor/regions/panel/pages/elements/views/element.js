@@ -6,11 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-<<<<<<< HEAD
-		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isBirthdayEasterEgg() ) {
-=======
-		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
->>>>>>> ccce1e46a1 (Internal: Delete 10th BD easter egg [ED-24869] (#36471))
+		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() ) {
 			className += ' elementor-element--promotion';
 		}
 

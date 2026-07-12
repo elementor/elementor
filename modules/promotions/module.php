@@ -20,11 +20,6 @@ use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
-<<<<<<< HEAD
-use Elementor\Modules\Promotions\Widgets\Birthday_Easter_Egg_Promotion;
-=======
-use Elementor\Modules\Promotions\Widgets\Collection_Loop_Widget_Promotion;
->>>>>>> ccce1e46a1 (Internal: Delete 10th BD easter egg [ED-24869] (#36471))
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
