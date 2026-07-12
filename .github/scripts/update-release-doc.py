@@ -882,7 +882,90 @@ def build_internal_section(issues):
 """
 
 
-def build_auto_section(version, rows_list, internal_issues=None):
+def _get_release_date(versions):
+    """Return the GA release date (YYYY-MM-DD) from Jira version objects, or empty string."""
+    gas = [v for v in versions if "beta" not in v.get("name", "").lower()]
+    for v in gas:
+        rd = v.get("releaseDate", "")
+        if rd:
+            return rd
+    return ""
+
+
+def _parse_changelog_to_html(text):
+    """Convert generate-changelog.py stdout into Confluence storage HTML."""
+    sections = []
+    current_title = None
+    current_entries = []
+
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        if re.match(r'^= .+ =$', line):          # Free header: = X.Y.Z - DATE =
+            if current_title is not None:
+                sections.append((current_title, current_entries))
+            current_title = "Core (Free)"
+            current_entries = []
+        elif line.startswith("#### "):             # Pro header: #### X.Y.Z - DATE
+            if current_title is not None:
+                sections.append((current_title, current_entries))
+            current_title = "Pro"
+            current_entries = []
+        elif line.startswith("* ") and current_title is not None:
+            m = re.match(r'^\* (New|Tweak|Fix):\s*(.*)', line)
+            if m:
+                current_entries.append((m.group(1), m.group(2).strip()))
+
+    if current_title is not None and current_entries:
+        sections.append((current_title, current_entries))
+
+    if not sections:
+        return ""
+
+    html = "\n<p>&nbsp;</p>\n<h2>Changelog</h2>\n<p><em>Public-facing changes shipped in this release.</em></p>\n"
+    for title, entries in sections:
+        html += f"<h3>{escape(title)}</h3>\n<ul>\n"
+        for category, text in entries:
+            html += f"<li><p><strong>{escape(category)}:</strong> {escape(text)}</p></li>\n"
+        html += "</ul>\n"
+    return html
+
+
+def build_changelog_section(versions):
+    """Run generate-changelog.py as a subprocess and return Confluence HTML.
+    Only called when phase == 'released'. Returns empty string on any failure."""
+    import subprocess
+    script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "generate-changelog.py")
+    if not os.path.exists(script_path):
+        print("  generate-changelog.py not found — skipping changelog section.", file=sys.stderr)
+        return ""
+
+    run_env = {**os.environ}
+    release_date = _get_release_date(versions)
+    if release_date:
+        run_env["RELEASE_DATE"] = release_date
+    run_env.pop("SKIP_PR_CHECK", None)  # only include actually merged items
+
+    try:
+        result = subprocess.run(
+            [sys.executable, script_path],
+            capture_output=True, text=True, timeout=300, env=run_env,
+        )
+        if result.returncode != 0:
+            print(f"  Changelog script exited {result.returncode}: {result.stderr[:300]}", file=sys.stderr)
+        stdout = result.stdout.strip()
+        if not stdout:
+            print("  Changelog generator returned no output.", file=sys.stderr)
+            return ""
+        print(f"  Changelog: {len(stdout.splitlines())} lines", file=sys.stderr)
+        return _parse_changelog_to_html(stdout)
+    except Exception as e:
+        print(f"  Changelog generator error: {e}", file=sys.stderr)
+        return ""
+
+
+def build_auto_section(version, rows_list, internal_issues=None, changelog_html=None):
     # Group rows by topic (preserving order)
     topics = {}
     for r in rows_list:
@@ -982,6 +1065,9 @@ def build_auto_section(version, rows_list, internal_issues=None):
     if internal_issues:
         html += build_internal_section(internal_issues)
 
+    if changelog_html:
+        html += changelog_html
+
     html += '<p>&nbsp;</p>\n'
     html += f'<p><em>Last updated by release-doc script — PR <a href="{PR_URL}">#{PR_NUMBER}</a></em></p>\n'
     html += '<p>&nbsp;</p>\n<hr/>\n<p>&nbsp;</p>\n'
@@ -1012,7 +1098,13 @@ except Exception as e:
     print(f"Confluence search failed: {e}", file=sys.stderr)
     sys.exit(1)
 
-auto_section = build_auto_section(fix_version, sorted_rows, internal_issues)
+# Generate changelog section (released versions only — GA must be out)
+_changelog_html = ""
+if phase == "released":
+    print("Phase is 'released' — generating changelog section...", file=sys.stderr)
+    _changelog_html = build_changelog_section(matching_versions)
+
+auto_section = build_auto_section(fix_version, sorted_rows, internal_issues, changelog_html=_changelog_html)
 
 def assemble_page(top, auto, bottom):
     return top + BOT_START_MARKER + auto + BOT_END_MARKER + bottom
