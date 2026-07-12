@@ -294,7 +294,6 @@ class Module extends Base_Module {
 					2
 				);
 			}
-
 		} );
 
 		( new Atomic_Form_Widget_Promotion() )->register();
