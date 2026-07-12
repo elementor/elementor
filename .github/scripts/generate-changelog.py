@@ -182,9 +182,10 @@ def jira_search(jql, fields, max_results=300):
 
 
 def get_remote_links(key):
-    """Return (has_pr, pr_link_title) from issue's Jira remote links."""
+    """Return (has_pr, pr_link_title, gh_issue_urls) from issue's Jira remote links."""
     has_pr = False
     pr_title = ""
+    gh_issue_urls = []
     try:
         links = jira_get(f"/rest/api/3/issue/{key}/remotelink")
         for link in links:
@@ -194,9 +195,21 @@ def get_remote_links(key):
                 has_pr = True
                 if not pr_title:
                     pr_title = obj.get("title", "")
+            elif "github.com" in url and "/issues/" in url:
+                gh_issue_urls.append(url)
     except Exception:
         pass
-    return has_pr, pr_title
+    return has_pr, pr_title, gh_issue_urls
+
+
+def _format_gh_issues(urls):
+    """Format GitHub issue URLs as markdown links: ([#123](url), [#456](url))"""
+    links = []
+    for url in urls:
+        m = re.search(r'/issues/(\d+)$', url)
+        if m:
+            links.append(f"[#{m.group(1)}]({url})")
+    return " (" + ", ".join(links) + ")" if links else ""
 
 
 # ── Version helpers ────────────────────────────────────────────────────────────
@@ -434,12 +447,12 @@ for issue in raw_issues:
     line1, line2, changelog_override, category_override = _parse_rdd(f.get("customfield_19347"))
     has_rdd = bool(line1)  # Rovo ran = line1 present (changelog_override alone does NOT count as has_rdd)
 
+    # Always fetch remote links — needed for GitHub issue numbers.
+    # SKIP_PR_CHECK only bypasses the gate; we still want the issue links.
+    has_pr, pr_title, gh_issue_urls = get_remote_links(key)
+    time.sleep(0.15)
     if SKIP_PR_CHECK:
-        has_pr    = True
-        pr_title  = ""
-    else:
-        has_pr, pr_title = get_remote_links(key)
-        time.sleep(0.2)
+        has_pr = True
 
     rows_by_key[key] = {
         "key":                key,
@@ -455,6 +468,7 @@ for issue in raw_issues:
         "has_rdd":            has_rdd,
         "has_pr":             has_pr,
         "pr_title":           pr_title,
+        "gh_issues":          gh_issue_urls,
         # category set in next steps
     }
 
@@ -499,6 +513,8 @@ def _add_entry(row, text_override=None):
     # Ensure New entries start with "Introducing"
     if cat == "New" and not text.lower().startswith("introducing"):
         text = "Introducing " + text
+    # Append GitHub issue links if present
+    text += _format_gh_issues(row.get("gh_issues", []))
     entry = {"category": cat, "text": text, "key": row["key"]}
     if _is_free(row["fv_names"]):
         free_entries.append(entry)
@@ -562,6 +578,13 @@ for key, row in rows_by_key.items():
     if not _passes_gate(row):
         continue
     _add_entry(row)
+
+# Fallback: if a tier has issues but nothing passed the gate, add a generic Tweak
+_FALLBACK = {"category": "Tweak", "text": "General improvements and maintenance", "key": ""}
+if not free_entries and any(_is_free(r["fv_names"]) for r in rows_by_key.values()):
+    free_entries.append(_FALLBACK)
+if not pro_entries and any(_is_pro(r["fv_names"]) for r in rows_by_key.values()):
+    pro_entries.append(_FALLBACK)
 
 
 # ── Step 8: Format and print output ──────────────────────────────────────────
