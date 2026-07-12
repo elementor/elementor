@@ -5,7 +5,7 @@ Triggered on every PR merge to main.
 
 Flow:
   1. Extract [ED-XXXXX] from PR title
-  2. Jira: get issue → get fixVersion → skip if none / not major (X.Y.0)
+  2. Jira: get issue → get fixVersion → skip if none; picks earliest version if ticket is in multiple
   3. Jira: find ALL version names for that number (free + pro)
   4. Jira: get ALL epics + user-facing stories for those versions
   5. Jira: fetch Figma / video links per issue
@@ -13,7 +13,6 @@ Flow:
   7. Confluence: find or create "Version X.Y.Z" page → regenerate auto section,
      preserving manual top (release dates) and bottom (notes) sections
 """
-import datetime
 import json
 import os
 import re
@@ -100,6 +99,14 @@ EXCLUDE_KEYWORDS = [
 # Issues tagged with this Jira label are excluded (for one-off per-issue exclusions).
 EXCLUDE_LABEL = "release-doc-skip"
 
+# Keywords that exclude issues from BOTH the main table AND the internal section.
+# Use for product areas that are never relevant to any external or internal stakeholder
+# in this doc (e.g. site planner, accessibility panel).
+ALWAYS_EXCLUDE_KEYWORDS = [
+    "accessibility panel",
+    "planner",   # catches "site planner", "planner flow", etc.
+]
+
 # Additional filters applied only to child rows (tasks/stories under an Epic).
 # These catch implementation details that are too technical even if the parent Epic is user-facing.
 CHILD_INTERNAL_PREFIXES = (
@@ -177,54 +184,36 @@ TOPIC_DEFAULT_COLOR     = "#fff7c0"
 TOPIC_DEFAULT_COLORNAME = "Light yellow"
 
 
-# ── Page status (derived from Release Info dates) ─────────────────────────────
-def _parse_date_from_text(text):
-    """Try to parse a date string in common formats. Returns datetime.date or None."""
-    text = text.strip()
-    for fmt in ("%B %d, %Y", "%b %d, %Y", "%B %d %Y", "%b %d %Y",
-                "%m/%d/%Y", "%d/%m/%Y", "%m-%d-%Y", "%Y-%m-%d"):
-        try:
-            return datetime.datetime.strptime(text, fmt).date()
-        except ValueError:
-            pass
-    return None
-
+# ── Page status (derived from Jira version released flags) ────────────────────
 # Native Confluence page status IDs (RDDEP space)
 _STATE_DRAFT       = {"id": 740786804, "name": "DRAFT",            "color": "#ffc400"}
 _STATE_IN_PROGRESS = {"id": 687051862, "name": "In progress",      "color": "#2684ff"}
 _STATE_DONE        = {"id": 687051863, "name": "Ready for review",  "color": "#57d9a3"}
 
-def determine_page_state(top_section):
+
+def determine_phase(matching_versions):
     """
-    Parse Beta / GA dates from the Release Info section and return
-    the appropriate native Confluence content-state dict.
-      - No dates / TBD  → DRAFT
-      - Beta date passed → In progress
-      - GA date passed   → Ready for review (Done)
+    Determine release phase from Jira version objects (each has a 'released' bool).
+      'draft'       - unreleased betas exist (beta in flight)
+      'in_progress' - all betas released (or none exist) and GA not yet released
+      'released'    - GA version is released
+    Falls back to 'in_progress' when no version data is available.
     """
-    today = datetime.date.today()
-    date_re = re.compile(
-        r'(\w{3,9}\s+\d{1,2},?\s*\d{4}'   # Jan 15, 2026
-        r'|\d{1,2}[/-]\d{1,2}[/-]\d{2,4}' # 01/15/2026  or  15-01-26
-        r'|\d{4}-\d{2}-\d{2})'             # 2026-01-15
-    )
+    if not matching_versions:
+        return 'in_progress'
+    betas = [v for v in matching_versions if 'beta' in v.get('name', '').lower()]
+    gas   = [v for v in matching_versions if 'beta' not in v.get('name', '').lower()]
+    if any(v.get('released', False) for v in gas):
+        return 'released'
+    if betas and not all(v.get('released', False) for v in betas):
+        return 'draft'
+    return 'in_progress'
 
-    def extract_date(label):
-        m = re.search(rf'{label}\s*:?\s*([^\|<\n]+)', top_section, re.IGNORECASE)
-        if not m:
-            return None
-        snippet = m.group(1)
-        if re.search(r'\btbd\b', snippet, re.IGNORECASE):
-            return None
-        dm = date_re.search(snippet)
-        return _parse_date_from_text(dm.group(1)) if dm else None
 
-    ga_date   = extract_date("GA")
-    beta_date = extract_date("Beta")
-
-    if ga_date and today >= ga_date:
+def phase_to_page_state(phase):
+    if phase == 'released':
         return _STATE_DONE
-    if beta_date and today >= beta_date:
+    if phase == 'in_progress':
         return _STATE_IN_PROGRESS
     return _STATE_DRAFT
 
@@ -288,34 +277,52 @@ def get_remote_links(key):
 
 
 def extract_adf_text(adf, max_chars=200):
-    """Extract plain text from the first paragraph of Atlassian Document Format."""
+    """Extract plain text from Atlassian Document Format (handles paragraphs, tables, lists, etc)."""
     if not adf or not isinstance(adf, dict):
         return ""
-    texts = []
-    for block in adf.get("content", []):
-        if block.get("type") == "paragraph":
-            for node in block.get("content", []):
-                if node.get("type") == "text":
-                    texts.append(node.get("text", ""))
-            break
-    text = "".join(texts).strip()
+
+    def _collect(node):
+        if not isinstance(node, dict):
+            return []
+        if node.get("type") == "text":
+            return [node.get("text", "")]
+        # Skip table header cells — they're column names, not content
+        if node.get("type") == "tableHeader":
+            return []
+        parts = []
+        for child in node.get("content", []):
+            parts.extend(_collect(child))
+        return parts
+
+    texts = _collect(adf)
+    text = " ".join(t for t in texts if t.strip()).strip()
     if len(text) > max_chars:
         text = text[:max_chars].rsplit(" ", 1)[0] + "…"
     return text
 
 
 def extract_adf_paragraphs(adf):
-    """Return list of plain-text strings, one per paragraph, from ADF."""
+    """Return list of plain-text strings, one per line (paragraph or hardBreak-separated).
+    Strips lines starting with 'Changelog:' since those are for the main table only."""
     if not adf or not isinstance(adf, dict):
         return []
-    paras = []
+    lines = []
     for block in adf.get("content", []):
-        if block.get("type") == "paragraph":
-            texts = [n.get("text", "") for n in block.get("content", []) if n.get("type") == "text"]
-            line  = "".join(texts).strip()
-            if line:
-                paras.append(line)
-    return paras
+        if block.get("type") != "paragraph":
+            continue
+        current = []
+        for node in block.get("content", []):
+            if node.get("type") == "hardBreak":
+                line = "".join(current).strip()
+                if line:
+                    lines.append(line)
+                current = []
+            elif node.get("type") == "text":
+                current.append(node.get("text", ""))
+        line = "".join(current).strip()
+        if line:
+            lines.append(line)
+    return [l for l in lines if not l.lower().startswith("changelog:")]
 
 
 def conf_request(method, path, body=None):
@@ -359,9 +366,13 @@ def extract_version_number(v):
     return m.group(1) if m else None
 
 
-def is_major_version(v):
+def version_tuple(v):
+    """Return (major, minor, patch) tuple for sorting, or None if not parseable."""
     num = extract_version_number(v)
-    return bool(num) and num.split(".")[2] == "0"
+    if not num:
+        return None
+    parts = num.split(".")
+    return tuple(int(x) for x in parts)
 
 
 def get_tier(fix_version_names):
@@ -404,11 +415,27 @@ def is_excluded(summary, labels):
     s = (summary or "").lower().strip()
     if any(s.startswith(p) for p in INTERNAL_PREFIXES):
         return True
+    if any(kw.lower() in s for kw in ALWAYS_EXCLUDE_KEYWORDS):
+        return True
     if any(kw.lower() in s for kw in EXCLUDE_KEYWORDS):
         return True
     if EXCLUDE_LABEL in (labels or []):
         return True
     return False
+
+
+def is_internal_stakeholder(summary, labels):
+    """Return True if this issue belongs in the Internal Changes section:
+    excluded from the main release table but relevant to internal stakeholders
+    (e.g. onboarding changes, promotions). Purely technical issues are dropped."""
+    s = (summary or "").lower().strip()
+    if any(s.startswith(p) for p in INTERNAL_PREFIXES):
+        return False  # purely technical — drop entirely
+    if EXCLUDE_LABEL in (labels or []):
+        return False  # explicitly flagged to skip
+    if any(kw.lower() in s for kw in ALWAYS_EXCLUDE_KEYWORDS):
+        return False  # never show anywhere
+    return any(kw.lower() in s for kw in EXCLUDE_KEYWORDS)
 
 
 # ── Step 1: Extract Jira ticket from PR title ─────────────────────────────────
@@ -432,13 +459,16 @@ if not fix_versions:
     print(f"{ticket} has no fixVersion — skipping.", file=sys.stderr)
     sys.exit(0)
 
-major_versions = [v for v in fix_versions if is_major_version(v)]
-if not major_versions:
-    print(f"{ticket} fixVersions={fix_versions} — no major version (X.Y.0), skipping.", file=sys.stderr)
+versioned = [(version_tuple(v), v) for v in fix_versions if version_tuple(v)]
+if not versioned:
+    print(f"{ticket} fixVersions={fix_versions} — no recognizable version, skipping.", file=sys.stderr)
     sys.exit(0)
 
-fix_version_jira = major_versions[0]
-fix_version      = extract_version_number(fix_version_jira)  # clean "4.3.0" for page title
+# When ticket is in multiple versions (e.g. backport), pick the earliest release
+versioned.sort(key=lambda t: t[0])
+fix_version_jira = versioned[0][1]
+fix_version      = versioned[0][0]  # already a clean (major, minor, patch) tuple — convert back
+fix_version      = extract_version_number(fix_version_jira)  # clean "4.1.5" for page title
 issue_type    = (fields.get("issuetype") or {}).get("name", "")
 issue_summary = (fields.get("summary") or "").strip()
 status_name   = (fields.get("status") or {}).get("name", "")
@@ -453,23 +483,63 @@ if issue_type not in USER_FACING_TYPES:
 # e.g. both "v4.3.0 - Beta 1" and "Pro v4.3.0 - Beta 1"
 try:
     all_project_versions = jira_get(f"/rest/api/3/project/{JIRA_PROJECT}/versions")
-    matching_version_names = [
-        v["name"] for v in all_project_versions
-        if extract_version_number(v["name"]) == fix_version
+    matching_versions = [
+        v for v in all_project_versions
+        if extract_version_number(v.get("name", "")) == fix_version
     ]
+    matching_version_names = [v["name"] for v in matching_versions]
 except Exception:
+    matching_versions = []
     matching_version_names = [fix_version_jira]
 
-print(f"Querying versions: {matching_version_names}", file=sys.stderr)
+phase = determine_phase(matching_versions)
+print(f"Querying versions: {matching_version_names}  phase: {phase}", file=sys.stderr)
+
+# Build Jira version links (Core / Pro), preferring GA over beta within each tier
+def _jira_version_links(versions):
+    """Return HTML snippet with Jira version links, one per tier (Core/Pro)."""
+    by_tier = {}
+    for v in versions:
+        name = v.get('name', '')
+        tier = 'Pro' if 'pro' in name.lower() else 'Core'
+        is_beta = 'beta' in name.lower()
+        existing = by_tier.get(tier)
+        # Prefer GA over beta; among betas prefer later ones (higher name sort)
+        if not existing or (existing['_beta'] and not is_beta) or (is_beta and existing['_beta'] and name > existing['name']):
+            by_tier[tier] = {**v, '_beta': is_beta}
+    links = []
+    for tier in ('Core', 'Pro'):
+        v = by_tier.get(tier)
+        if v:
+            url = f"{JIRA_BASE}/projects/{JIRA_PROJECT}/versions/{v['id']}"
+            label = tier + (' (Beta)' if v['_beta'] else '')
+            links.append(f'<a href="{url}">{label}</a>')
+    return " &nbsp;|&nbsp; ".join(links)
+
+_version_links_html = _jira_version_links(matching_versions)
+_version_links_line = (f'<p><strong>Jira:</strong> {_version_links_html}</p>\n'
+                       if _version_links_html else '')
 
 
 # ── Step 4: Get ALL user-facing issues for this version ──────────────────────
-version_filter = " OR ".join(f'fixVersion = "{v}"' for v in matching_version_names)
+# During beta: only query unreleased betas (show beta-ready content only)
+if phase == 'draft':
+    query_version_names = [
+        v["name"] for v in matching_versions
+        if 'beta' in v.get('name', '').lower() and not v.get('released', False)
+    ] or matching_version_names
+else:
+    query_version_names = matching_version_names
+
+version_filter = " OR ".join(f'fixVersion = "{v}"' for v in query_version_names)
 jql = (
     f'project = {JIRA_PROJECT} AND ({version_filter}) '
     f'AND issuetype in (Epic, Story, Task) '
-    f'ORDER BY updated DESC'
 )
+if phase == 'released':
+    jql += 'AND status in (Done, Closed) '
+jql += 'ORDER BY updated DESC'
+
 ISSUE_FIELDS = [
     "summary", "status", "issuetype", "parent", "labels", "description",
     "fixVersions",
@@ -477,11 +547,42 @@ ISSUE_FIELDS = [
     "customfield_10459",   # Editor Team (select)
     "customfield_19347",   # Release Doc Description (Rovo-generated)
 ]
-all_issues = jira_search(jql, ISSUE_FIELDS)
-all_issues = [i for i in all_issues
-              if not is_excluded(i.get("fields", {}).get("summary", ""),
-                                 i.get("fields", {}).get("labels", []))]
-print(f"Found {len(all_issues)} user-facing issues for {fix_version} (free + pro)", file=sys.stderr)
+raw_issues = jira_search(jql, ISSUE_FIELDS)
+print(f"Found {len(raw_issues)} issues for {fix_version} (free + pro)", file=sys.stderr)
+
+main_issues = [i for i in raw_issues
+               if not is_excluded(i.get("fields", {}).get("summary", ""),
+                                  i.get("fields", {}).get("labels", []))]
+internal_issues = [i for i in raw_issues
+                   if is_internal_stakeholder(i.get("fields", {}).get("summary", ""),
+                                              i.get("fields", {}).get("labels", []))]
+print(f"  {len(main_issues)} user-facing, {len(internal_issues)} internal", file=sys.stderr)
+
+# Build parent→children map from all raw issues (used to check Epic progress)
+_raw_children_by_parent = {}
+for _i in raw_issues:
+    _pk = (_i.get("fields", {}).get("parent") or {}).get("key", "")
+    if _pk:
+        _raw_children_by_parent.setdefault(_pk, []).append(_i)
+
+# For internal Epics with no children in the version query, fetch their children
+# separately (regardless of fixVersion) so we can show what specifically changed.
+_CHILD_EXTRA_FIELDS = ["summary", "status", "issuetype", "description", "customfield_19347"]
+for _issue in internal_issues:
+    _f    = _issue.get("fields", {})
+    _key  = _issue["key"]
+    _type = (_f.get("issuetype") or {}).get("name", "")
+    if _type == "Epic" and not _raw_children_by_parent.get(_key):
+        try:
+            _extra = jira_search(
+                f'project={JIRA_PROJECT} AND parent={_key} ORDER BY updated DESC',
+                _CHILD_EXTRA_FIELDS, max_results=10
+            )
+            if _extra:
+                _raw_children_by_parent[_key] = _extra
+            time.sleep(0.2)
+        except Exception:
+            pass
 
 
 # ── Step 5: Parse PR body → extract summary bullets ──────────────────────────
@@ -502,7 +603,7 @@ pr_description = extract_pr_summary(PR_BODY) or issue_summary
 
 # ── Step 6: Build the issue table data ───────────────────────────────────────
 rows = {}
-for issue in all_issues:
+for issue in main_issues:
     f       = issue.get("fields", {})
     key     = issue["key"]
     summary = (f.get("summary") or "").strip()
@@ -650,7 +751,138 @@ THEAD = """\
 
 
 
-def build_auto_section(version, rows_list):
+def _is_active_status(status_name):
+    """Return True for In Progress, In Review, Testing, Done, Closed."""
+    s = (status_name or "").lower()
+    return any(kw in s for kw in ("in progress", "in review", "testing", "done", "closed"))
+
+
+def _issue_rdd(fields):
+    """Return (title, description) from RDD field, or (None, None) if empty.
+    Line 1 = user-facing title, Line 2 = value sentence."""
+    rovo = extract_adf_paragraphs(fields.get("customfield_19347"))
+    if not rovo:
+        return None, None
+    title = rovo[0] if len(rovo) >= 1 else None
+    desc  = rovo[1] if len(rovo) >= 2 else None
+    return title, desc
+
+
+def _issue_description(fields):
+    """Return the best available plain-text description for an issue (RDD line 2 → Jira desc → "")."""
+    _, desc = _issue_rdd(fields)
+    if desc:
+        return desc
+    return extract_adf_text(fields.get("description"), max_chars=300)
+
+
+def build_internal_section(issues):
+    """Build a simple HTML table for internal-only issues (below the main table).
+    Epics are flattened: each active child appears as its own row, with the Epic
+    name shown as italic context. Only shows In Progress or above."""
+    if not issues:
+        return ""
+    rows_html = ""
+    for issue in issues:
+        f          = issue.get("fields", {})
+        key        = issue["key"]
+        itype      = (f.get("issuetype") or {}).get("name", "")
+        status_raw = (f.get("status") or {}).get("name", "")
+
+        if not _is_active_status(status_raw):
+            continue
+
+        if itype == "Epic":
+            epic_summary = (f.get("summary") or "").strip()
+            epic_url     = f"{JIRA_BASE}/browse/{key}"
+
+            # Gate: only include if at least one Story/Task child is active.
+            # (If no typed children found, trust the Epic's own status.)
+            story_task_children = [
+                c for c in _raw_children_by_parent.get(key, [])
+                if (c.get("fields", {}).get("issuetype") or {}).get("name", "") in ("Story", "Task")
+            ]
+            if story_task_children:
+                child_active = any(
+                    _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
+                    for c in story_task_children
+                )
+                if not child_active:
+                    continue
+
+            active_children = [
+                c for c in _raw_children_by_parent.get(key, [])
+                if _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
+            ]
+
+            if active_children:
+                # Flatten: one row per child, Epic name shown as italic context
+                for child in active_children[:6]:
+                    cf          = child.get("fields", {})
+                    c_key       = child["key"]
+                    c_stat_raw  = (cf.get("status") or {}).get("name", "")
+                    c_url       = f"{JIRA_BASE}/browse/{c_key}"
+                    c_stat      = escape(status_icon(c_stat_raw))
+                    rdd_title, rdd_desc = _issue_rdd(cf)
+                    c_title     = escape(rdd_title or (cf.get("summary") or "").strip())
+                    desc        = rdd_desc or extract_adf_text(cf.get("description"), max_chars=300)
+                    desc_html   = f'<p>{escape(desc)}</p>' if desc else ""
+                    context     = f'<p><em>Part of: <a href="{epic_url}">{escape(key)}</a> — {escape(epic_summary)}</em></p>'
+                    rows_html += f"""
+    <tr>
+      <td><p><a href="{c_url}">{escape(c_key)}</a></p></td>
+      <td><p><strong>{c_title}</strong></p>{desc_html}{context}</td>
+      <td><p>{c_stat}</p></td>
+    </tr>"""
+            else:
+                # No children — show the Epic itself (no type label)
+                desc     = _issue_description(f)
+                desc_html = f'<p>{escape(desc)}</p>' if desc else ""
+                epic_stat = escape(status_icon(status_raw))
+                rows_html += f"""
+    <tr>
+      <td><p><a href="{epic_url}">{escape(key)}</a></p></td>
+      <td><p><strong>{escape(epic_summary)}</strong></p>{desc_html}</td>
+      <td><p>{epic_stat}</p></td>
+    </tr>"""
+        else:
+            # Story / Task — show directly, no type label
+            summary  = escape((f.get("summary") or "").strip())
+            stat     = escape(status_icon(status_raw))
+            jira_url = f"{JIRA_BASE}/browse/{key}"
+            desc     = _issue_description(f)
+            desc_html = f'<p>{escape(desc)}</p>' if desc else ""
+            rows_html += f"""
+    <tr>
+      <td><p><a href="{jira_url}">{escape(key)}</a></p></td>
+      <td><p><strong>{summary}</strong></p>{desc_html}</td>
+      <td><p>{stat}</p></td>
+    </tr>"""
+    if not rows_html:
+        return ""  # all issues filtered out by status/Epic rules
+    return f"""
+<p>&nbsp;</p>
+<h2>Internal Changes</h2>
+<p><em>Internal product changes — not user-facing, but worth knowing.</em></p>
+<table data-table-width="1000" data-layout="full-width">
+  <colgroup>
+    <col style="width: 100px;" />
+    <col style="width: 680px;" />
+    <col style="width: 120px;" />
+  </colgroup>
+  <tbody>
+    <tr>
+      <th><p><strong>Ticket</strong></p></th>
+      <th><p><strong>What Changed</strong></p></th>
+      <th><p><strong>Status</strong></p></th>
+    </tr>
+{rows_html}
+  </tbody>
+</table>
+"""
+
+
+def build_auto_section(version, rows_list, internal_issues=None):
     # Group rows by topic (preserving order)
     topics = {}
     for r in rows_list:
@@ -747,6 +979,9 @@ def build_auto_section(version, rows_list):
 </table>
 """
 
+    if internal_issues:
+        html += build_internal_section(internal_issues)
+
     html += '<p>&nbsp;</p>\n'
     html += f'<p><em>Last updated by release-doc script — PR <a href="{PR_URL}">#{PR_NUMBER}</a></em></p>\n'
     html += '<p>&nbsp;</p>\n<hr/>\n<p>&nbsp;</p>\n'
@@ -777,7 +1012,7 @@ except Exception as e:
     print(f"Confluence search failed: {e}", file=sys.stderr)
     sys.exit(1)
 
-auto_section = build_auto_section(fix_version, sorted_rows)
+auto_section = build_auto_section(fix_version, sorted_rows, internal_issues)
 
 def assemble_page(top, auto, bottom):
     return top + BOT_START_MARKER + auto + BOT_END_MARKER + bottom
@@ -808,9 +1043,12 @@ if existing:
     bottom_section = re.sub(r'^\s*<hr\s*/?>\s*(<p>&nbsp;</p>\s*)?', '', bottom_section)
     if not bottom_section.lstrip().startswith('<p>&nbsp;</p>'):
         bottom_section = '<p>&nbsp;</p>\n' + bottom_section.lstrip()
+    # ── Inject Jira version links if not already present ──────────────────────
+    if _version_links_line and 'href' not in top_section:
+        top_section = top_section.rstrip() + '\n' + _version_links_line
     # ──────────────────────────────────────────────────────────────────────────
 
-    page_state = determine_page_state(top_section)
+    page_state = phase_to_page_state(phase)
     page_body  = assemble_page(top_section, auto_section, bottom_section)
     print(f"Updating existing page id={page_id} v{page_version}", file=sys.stderr)
 
@@ -828,8 +1066,9 @@ if existing:
         sys.exit(1)
 
 else:
-    page_state = determine_page_state(DEFAULT_TOP_SECTION)
-    page_body  = assemble_page(DEFAULT_TOP_SECTION, auto_section, DEFAULT_BOTTOM_SECTION)
+    page_state   = phase_to_page_state(phase)
+    _new_top     = DEFAULT_TOP_SECTION + _version_links_line
+    page_body    = assemble_page(_new_top, auto_section, DEFAULT_BOTTOM_SECTION)
     print(f"Creating new page: {page_title}", file=sys.stderr)
     status, resp = conf_request("POST", "/rest/api/content", {
         "title":     page_title,
