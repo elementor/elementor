@@ -2,6 +2,7 @@
 namespace Elementor\Modules\FloatingButtons\Base;
 
 use Elementor\Modules\FloatingButtons\Classes\Render\Floating_Bars_Core_Render;
+use Elementor\Modules\MarkdownRender\Markdown_Helpers;
 use Elementor\Core\Base\Providers\Social_Network_Provider;
 
 use Elementor\Group_Control_Background;
@@ -1550,5 +1551,26 @@ abstract class Widget_Floating_Bars_Base extends Widget_Base {
 		$render_strategy = new Floating_Bars_Core_Render( $this );
 
 		$render_strategy->render();
+	}
+
+	public function render_markdown(): string {
+		$settings = $this->get_settings_for_display();
+		$blocks = [];
+
+		$announcement = Markdown_Helpers::plain_text( $settings['announcement_text'] ?? '' );
+
+		if ( '' !== $announcement ) {
+			$blocks[] = $announcement;
+		}
+
+		$cta_text = Markdown_Helpers::plain_text( $settings['cta_text'] ?? '' );
+		$cta_url = $settings['cta_link']['url'] ?? '';
+
+		if ( '' !== $cta_text || '' !== $cta_url ) {
+			$display = '' !== $cta_text ? $cta_text : $cta_url;
+			$blocks[] = Markdown_Helpers::button( $display, $cta_url );
+		}
+
+		return Markdown_Helpers::widget_section( $this->get_title(), Markdown_Helpers::join_blocks( $blocks ) );
 	}
 }
