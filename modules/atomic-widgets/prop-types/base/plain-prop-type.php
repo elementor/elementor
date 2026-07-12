@@ -21,6 +21,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	/**
 	 * @return array<Plain_Prop_Type>
@@ -93,5 +94,40 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	/**
+	 * Fallback JSON Schema for plain prop types that don't override this method (e.g. `classes`,
+	 * `dynamic`, `overridable`). Mirrors the frontend's `propTypeToJsonSchema` default case, which
+	 * only special-cases `string`/`number`/`boolean`/`unknown`.
+	 */
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['type'] = 'object';
+		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+		$schema['$$type'] = $this->get_type();
+		$schema['value'] = [ 'type' => $this->get_type() ];
+
+		return $schema;
+	}
+
+	/**
+	 * Builds the `{$$type, value}` envelope shared by the primitive prop types (string/number/boolean).
+	 */
+	protected function envelope_json_schema( array $value_schema ): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['type'] = 'object';
+		$schema['properties'] = [
+			'$$type' => [
+				'type' => 'string',
+				'const' => static::get_key(),
+			],
+			'value' => $value_schema,
+		];
+		$schema['required'] = [ '$$type', 'value' ];
+
+		return $schema;
 	}
 }
