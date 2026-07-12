@@ -580,6 +580,8 @@ def _format_section(entries, version, date_str, fmt):
     else:
         lines.append(f"#### {version} - {date_str}")
 
+    lines.append("")  # blank line between header and entries
+
     for e in new_items:
         text = e["text"]
         if not text.lower().startswith("introducing"):

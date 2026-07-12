@@ -893,20 +893,51 @@ def _get_release_date(versions):
 
 
 def _parse_changelog_to_html(text):
-    """Convert generate-changelog.py stdout into a Confluence code block (raw markdown view)."""
+    """Convert generate-changelog.py stdout into Confluence code blocks, one per tier."""
     if not text:
         return ""
-    # CDATA can't contain ']]>' — escape it if it ever appears
-    safe = text.replace("]]>", "]]]]><![CDATA[>")
-    return (
-        "\n<p>&nbsp;</p>\n"
-        "<h2>Changelog</h2>\n"
-        "<p><em>Raw changelog text (readme.txt format) — for review before publishing.</em></p>\n"
-        '<ac:structured-macro ac:name="code">'
-        '<ac:parameter ac:name="language">text</ac:parameter>'
-        f"<ac:plain-text-body><![CDATA[{safe}]]></ac:plain-text-body>"
-        "</ac:structured-macro>\n"
-    )
+
+    # Split into (title, raw_block) pairs
+    sections = []
+    current_title = None
+    current_lines = []
+    for line in text.splitlines():
+        s = line.strip()
+        if re.match(r'^= .+ =$', s):           # Free: = X.Y.Z - DATE =
+            if current_title is not None:
+                sections.append((current_title, "\n".join(current_lines)))
+            current_title = "Core (Free)"
+            current_lines = [s]
+        elif s.startswith("#### "):              # Pro: #### X.Y.Z - DATE
+            if current_title is not None:
+                sections.append((current_title, "\n".join(current_lines)))
+            current_title = "Pro"
+            current_lines = [s]
+        elif current_title is not None:
+            current_lines.append(s)
+    if current_title is not None and current_lines:
+        sections.append((current_title, "\n".join(current_lines)))
+
+    if not sections:
+        return ""
+
+    html = "\n<p>&nbsp;</p>\n<h2>Changelog</h2>\n<p><em>Changelog entries for this release.</em></p>\n"
+    for title, block in sections:
+        safe = block.replace("]]>", "]]]]><![CDATA[>")
+        code_macro = (
+            '<ac:structured-macro ac:name="code">'
+            '<ac:parameter ac:name="language">text</ac:parameter>'
+            f"<ac:plain-text-body><![CDATA[{safe}]]></ac:plain-text-body>"
+            "</ac:structured-macro>"
+        )
+        # Wrap in a full-width table so the code block spans the full page width
+        html += (
+            f"<h3>{escape(title)}</h3>\n"
+            '<table data-layout="full-width" data-table-width="1500"><tbody><tr>'
+            f"<td>{code_macro}</td>"
+            "</tr></tbody></table>\n"
+        )
+    return html
 
 
 def build_changelog_section(versions):
