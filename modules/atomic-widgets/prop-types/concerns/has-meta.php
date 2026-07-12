@@ -50,6 +50,15 @@ trait Has_Meta {
 		return $this;
 	}
 
+	/**
+	 * @return string[]
+	 */
+	public function get_aliases(): array {
+		$aliases = $this->meta['aliases'] ?? [];
+
+		return is_array( $aliases ) ? $aliases : [];
+	}
+
 	public function get_meta_item( $key, $default_value = null ) {
 		return array_key_exists( $key, $this->meta ) ? $this->meta[ $key ] : $default_value;
 	}

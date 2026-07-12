@@ -77,6 +77,8 @@ class Dynamic_Tags_Module {
 			'elementor/atomic-widgets/export/transformers/register',
 			fn ( $transformers ) => $this->register_import_export_transformer( $transformers )
 		);
+
+		Dynamic_Prop_Type::register_union_json_schema_variant();
 	}
 
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {
