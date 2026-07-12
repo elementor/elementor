@@ -6,7 +6,11 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
+<<<<<<< HEAD
 		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() && ! this.isBirthdayEasterEgg() ) {
+=======
+		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
+>>>>>>> ccce1e46a1 (Internal: Delete 10th BD easter egg [ED-24869] (#36471))
 			className += ' elementor-element--promotion';
 		}
 
@@ -20,7 +24,7 @@ module.exports = Marionette.ItemView.extend( {
 	events() {
 		const events = {};
 
-		if ( ! this.isEditable() && ! this.isBirthdayEasterEgg() ) {
+		if ( ! this.isEditable() ) {
 			events.mousedown = 'onMouseDown';
 		}
 
@@ -58,22 +62,8 @@ module.exports = Marionette.ItemView.extend( {
 		return !! this.model.get( 'atomicFormPromotion' );
 	},
 
-	isBirthdayEasterEgg() {
-		return !! this.model.get( 'birthdayEasterEgg' );
-	},
-
 	onRender() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
-
-		if ( this.isBirthdayEasterEgg() ) {
-			this.ui.element.on( 'click', () => this.openBirthdayEasterEgg() );
-			this.bindBirthdayEasterEggDrag();
-			return;
-		}
-
-		if ( ! this.isEditable() ) {
+		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
 
@@ -95,31 +85,6 @@ module.exports = Marionette.ItemView.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
-	},
-
-	bindBirthdayEasterEggDrag() {
-		this.ui.element.html5Draggable( {
-			onDragStart: () => {
-				elementor.channels.editor.reply( 'element:dragged', null );
-
-				elementor.channels.panelElements
-					.reply( 'element:selected', this )
-					.trigger( 'element:drag:start' );
-			},
-
-			onDragEnd: () => {
-				elementor.channels.panelElements.trigger( 'element:drag:end' );
-				this.openBirthdayEasterEgg();
-			},
-
-			groups: [ 'elementor-element' ],
-		} );
-	},
-
-	openBirthdayEasterEgg() {
-		document.dispatchEvent( new CustomEvent( 'birthday-easter-egg:open', {
-			detail: { target: this.el },
-		} ) );
 	},
 
 	onMouseDown( event ) {
