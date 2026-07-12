@@ -6,7 +6,7 @@ module.exports = Marionette.ItemView.extend( {
 	className() {
 		let className = 'elementor-element-wrapper';
 
-		if ( ! this.isEditable() && ! this.isAtomicWidgetPromotion() ) {
+		if ( ! this.isEditable() && ! this.isAtomicFormPromotion() ) {
 			className += ' elementor-element--promotion';
 		}
 
