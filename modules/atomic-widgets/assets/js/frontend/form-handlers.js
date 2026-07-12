@@ -3,11 +3,66 @@ import { Alpine } from '@elementor/alpinejs';
 import { getAlpineId, ATOMIC_FORM_SELECTOR, ATOMIC_FORM_FIELD_SELECTOR, getPostId, isEditorContext } from './utils';
 import _ from 'lodash';
 
+let webmcpFormListenersRegistered = false;
+
 registerBySelector( {
 	id: 'atomic-form-submit-handler',
 	selector: ATOMIC_FORM_SELECTOR,
 	callback: ( { element } ) => handleAtomicFormSubmit( element ),
 } );
+
+function registerWebmcpFormListeners() {
+	if ( webmcpFormListenersRegistered ) {
+		return;
+	}
+
+	webmcpFormListenersRegistered = true;
+
+	window.addEventListener( 'toolactivated', ( { toolName } ) => {
+		document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
+			if ( form.getAttribute( 'toolname' ) !== toolName ) {
+				return;
+			}
+
+			delete form.dataset.atomicFormSubmitting;
+			form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
+				button.disabled = false;
+			} );
+		} );
+	} );
+
+	window.addEventListener( 'toolcancel', ( { toolName } ) => {
+		document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
+			if ( form.getAttribute( 'toolname' ) !== toolName ) {
+				return;
+			}
+
+			delete form.dataset.atomicFormSubmitting;
+			form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
+				button.disabled = false;
+			} );
+		} );
+	} );
+}
+
+function buildAgentToolResponse( response, state ) {
+	const message = response?.data?.message ?? response?.message ?? '';
+
+	return {
+		success: 'success' === state,
+		state,
+		message,
+		data: response?.data?.data ?? response?.data ?? null,
+	};
+}
+
+function respondToAgentIfInvoked( event, response, state ) {
+	if ( ! event?.agentInvoked || 'function' !== typeof event.respondWith ) {
+		return;
+	}
+
+	event.respondWith( Promise.resolve( buildAgentToolResponse( response, state ) ) );
+}
 
 function registerAtomicFormAlpineData( form ) {
 	if ( ! form || ! Alpine?.data ) {
@@ -42,27 +97,32 @@ function registerAtomicFormAlpineData( form ) {
 
 			const payload = buildAtomicFormPayload( form );
 
-			if ( payload ) {
-				try {
-					const response = await submitAtomicForm( payload );
-					const state = response?.success ? 'success' : 'error';
-
-					setFormState( form, state );
-
-					if ( response?.success ) {
-						form.reset();
-
-						form.addEventListener( 'input', () => {
-							setFormState( form, 'default' );
-						}, { once: true } );
-					}
-				} catch ( error ) {
-					setFormState( form, 'error' );
-				} finally {
-					clearAtomicFormSubmittingState( form, submitButtons );
-				}
-			} else {
+			if ( ! payload ) {
 				setFormState( form, 'error' );
+				respondToAgentIfInvoked( event, { success: false, message: 'Invalid form payload.' }, 'error' );
+				clearAtomicFormSubmittingState( form, submitButtons );
+				return;
+			}
+
+			try {
+				const response = await submitAtomicForm( payload );
+				const state = response?.success ? 'success' : 'error';
+
+				setFormState( form, state );
+
+				if ( response?.success ) {
+					form.reset();
+
+					form.addEventListener( 'input', () => {
+						setFormState( form, 'default' );
+					}, { once: true } );
+				}
+
+				respondToAgentIfInvoked( event, response, state );
+			} catch ( error ) {
+				setFormState( form, 'error' );
+				respondToAgentIfInvoked( event, { success: false, message: error?.message ?? 'Submission failed.' }, 'error' );
+			} finally {
 				clearAtomicFormSubmittingState( form, submitButtons );
 			}
 		},
@@ -70,6 +130,7 @@ function registerAtomicFormAlpineData( form ) {
 }
 
 function handleAtomicFormSubmit( form ) {
+	registerWebmcpFormListeners();
 	registerAtomicFormAlpineData( form );
 
 	return refreshDom( form );

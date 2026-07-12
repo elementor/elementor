@@ -389,6 +389,40 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			expect( form.classList.contains( 'form-state-success' ) ).toBe( false );
 		} );
 
+		it( 'responds to agent-invoked submissions with respondWith', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( {
+					success: true,
+					data: { message: 'Success message' },
+				} ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: true,
+				state: 'success',
+				message: 'Success message',
+				data: null,
+			} );
+		} );
+
 		it( 'sends referer_title and referrer in FormData (atomic form / admin-ajax contract)', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
