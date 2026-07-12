@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\MarkdownRender;
 
 use Elementor\Modules\MarkdownRender\Module;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Module extends Elementor_Test_Base {
@@ -121,6 +122,71 @@ class Test_Module extends Elementor_Test_Base {
 		}
 
 		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_render_elements_data_renders_nested_widgets() {
+		$renderer = new \Elementor\Modules\MarkdownRender\Markdown_Renderer();
+		$elements_data = [
+			[
+				'id' => 'heading-1',
+				'elType' => 'widget',
+				'widgetType' => 'heading',
+				'settings' => [
+					'title' => 'Nested Heading',
+					'header_size' => 'h2',
+				],
+			],
+		];
+
+		$markdown = $renderer->render_elements_data( $elements_data );
+
+		$this->assertStringContainsString( '## Nested Heading', $markdown );
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_nested_widget_render_markdown_delegates_to_children() {
+		$nested_tabs = Plugin::$instance->widgets_manager->get_widget_types( 'nested-tabs' );
+
+		if ( ! $nested_tabs ) {
+			$this->markTestSkipped( 'Nested tabs widget not available' );
+		}
+
+		$element = Plugin::$instance->elements_manager->create_element_instance( [
+			'id' => 'nested-tabs-1',
+			'elType' => 'widget',
+			'widgetType' => 'nested-tabs',
+			'settings' => [
+				'tabs' => [
+					[ 'tab_title' => 'Tab 1' ],
+				],
+			],
+			'elements' => [
+				[
+					'id' => 'tab-container-1',
+					'elType' => 'container',
+					'settings' => [],
+					'elements' => [
+						[
+							'id' => 'tab-heading-1',
+							'elType' => 'widget',
+							'widgetType' => 'heading',
+							'settings' => [
+								'title' => 'Tab Content',
+								'header_size' => 'h3',
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		if ( ! $element ) {
+			$this->markTestSkipped( 'Nested tabs element could not be created' );
+		}
+
+		$markdown = $element->render_markdown();
+
+		$this->assertStringContainsString( '### Tab Content', $markdown );
 	}
 
 	public function test_cache_invalidation_hooks_are_registered() {

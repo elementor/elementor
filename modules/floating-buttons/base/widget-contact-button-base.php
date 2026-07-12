@@ -9,7 +9,6 @@ use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Modules\FloatingButtons\Classes\Render\Contact_Buttons_Core_Render;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
-use Elementor\Modules\MarkdownRender\Markdown_Helpers;
 use Elementor\Plugin;
 use Elementor\Repeater;
 use Elementor\Utils;
@@ -3129,79 +3128,5 @@ JS;
 		$render_strategy = new Contact_Buttons_Core_Render( $this );
 
 		$render_strategy->render();
-	}
-
-	public function render_markdown(): string {
-		$settings = $this->get_settings_for_display();
-		$blocks = [];
-		$lines = [];
-
-		$platform = $settings['chat_button_platform'] ?? '';
-
-		if ( '' !== $platform ) {
-			$link = Markdown_Helpers::format_contact_link( $platform, $settings, 'chat_button' );
-			$line = Markdown_Helpers::contact_line( esc_html__( 'Chat', 'elementor' ), $platform, $link );
-
-			if ( '' !== $line ) {
-				$lines[] = $line;
-			}
-		}
-
-		foreach ( $settings['contact_repeater'] ?? [] as $contact ) {
-			$contact_platform = $contact['contact_icon_platform'] ?? '';
-
-			if ( '' === $contact_platform ) {
-				continue;
-			}
-
-			$link = Markdown_Helpers::format_contact_link( $contact_platform, $contact, 'contact_icon' );
-			$platform_mapping = Social_Network_Provider::get_text_mapping( $contact_platform );
-			$label = $platform_mapping ? $platform_mapping : $contact_platform;
-			$line = Markdown_Helpers::contact_line( $label, $contact_platform, $link );
-
-			if ( '' !== $line ) {
-				$lines[] = $line;
-			}
-		}
-
-		if ( ! empty( $lines ) ) {
-			$blocks[] = Markdown_Helpers::bullet_list( $lines );
-		}
-
-		$top_bar_parts = [];
-		$top_bar_title = Markdown_Helpers::plain_text( $settings['top_bar_title'] ?? '' );
-
-		if ( '' !== $top_bar_title ) {
-			$top_bar_parts[] = '**' . $top_bar_title . '**';
-		}
-
-		$top_bar_subtitle = Markdown_Helpers::plain_text( $settings['top_bar_subtitle'] ?? '' );
-
-		if ( '' !== $top_bar_subtitle ) {
-			$top_bar_parts[] = $top_bar_subtitle;
-		}
-
-		if ( ! empty( $top_bar_parts ) ) {
-			$blocks[] = Markdown_Helpers::join_blocks( $top_bar_parts );
-		}
-
-		$bubble_parts = [];
-		$bubble_name = Markdown_Helpers::plain_text( $settings['message_bubble_name'] ?? '' );
-
-		if ( '' !== $bubble_name ) {
-			$bubble_parts[] = '**' . $bubble_name . '**';
-		}
-
-		$bubble_body = Markdown_Helpers::plain_text( $settings['message_bubble_body'] ?? '' );
-
-		if ( '' !== $bubble_body ) {
-			$bubble_parts[] = $bubble_body;
-		}
-
-		if ( ! empty( $bubble_parts ) ) {
-			$blocks[] = Markdown_Helpers::join_blocks( $bubble_parts );
-		}
-
-		return Markdown_Helpers::widget_section( $this->get_title(), Markdown_Helpers::join_blocks( $blocks ) );
 	}
 }
