@@ -15,6 +15,7 @@ import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property
 import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
+import { collectFormAncestorErrors, collectSubmitButtonErrors, collectEmptyMessageErrors } from '../form-structure/utils';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
@@ -292,6 +293,25 @@ export class CompositionBuilder {
 		}
 		if ( childTypeErrors.length ) {
 			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
+		}
+
+		const formAncestorErrors = collectFormAncestorErrors(this.xml);
+
+		if (formAncestorErrors.length) {
+		  throw new Error(`Invalid form structure:\n${formAncestorErrors.join('\n')}`);
+		}
+
+
+		const submitErrors = collectSubmitButtonErrors(this.xml);
+
+		if (submitErrors.length) {
+			throw new Error(`Invalid form structure:\n${submitErrors.join('\n')}`);
+		}
+
+		const emptyMessageErrors = collectEmptyMessageErrors(this.xml);
+
+		if (emptyMessageErrors.length) {
+			throw new Error(`Invalid form structure:\n${emptyMessageErrors.join('\n')}`);
 		}
 
 		const children = Array.from( this.xml.children );
