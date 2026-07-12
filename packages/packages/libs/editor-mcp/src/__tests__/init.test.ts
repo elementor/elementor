@@ -53,17 +53,6 @@ const deleteModelContext = ( target: object ): void => {
 	Reflect.deleteProperty( target, 'modelContext' );
 };
 
-const getRegisteredWebMCPAdapterContext = (): ModelContext => {
-	const { WebMCPAdapter } =
-		// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-		jest.requireActual< typeof import('../adapters/web-mcp-adapter') >( '../adapters/web-mcp-adapter' );
-	const adapter = mockRegisterMcpAdapter.mock.calls[ 0 ][ 0 ];
-
-	expect( adapter ).toBeInstanceOf( WebMCPAdapter );
-
-	return ( adapter as unknown as { ctx: ModelContext } ).ctx;
-};
-
 const flushPromises = (): Promise< void > => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 describe( 'startMCPServer', () => {
@@ -96,7 +85,9 @@ describe( 'startMCPServer', () => {
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
-		expect( getRegisteredWebMCPAdapterContext() ).toBe( documentModelContext );
+		expect( documentModelContext.registerTool ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'editor-resource-getter' } )
+		);
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -112,7 +103,9 @@ describe( 'startMCPServer', () => {
 
 		// Assert.
 		expect( mockRegisterMcpAdapter ).toHaveBeenCalledTimes( 1 );
-		expect( getRegisteredWebMCPAdapterContext() ).toBe( navigatorModelContext );
+		expect( navigatorModelContext.registerTool ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'editor-resource-getter' } )
+		);
 		expect( mockSignalMcpReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
