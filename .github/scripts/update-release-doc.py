@@ -893,43 +893,20 @@ def _get_release_date(versions):
 
 
 def _parse_changelog_to_html(text):
-    """Convert generate-changelog.py stdout into Confluence storage HTML."""
-    sections = []
-    current_title = None
-    current_entries = []
-
-    for line in text.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        if re.match(r'^= .+ =$', line):          # Free header: = X.Y.Z - DATE =
-            if current_title is not None:
-                sections.append((current_title, current_entries))
-            current_title = "Core (Free)"
-            current_entries = []
-        elif line.startswith("#### "):             # Pro header: #### X.Y.Z - DATE
-            if current_title is not None:
-                sections.append((current_title, current_entries))
-            current_title = "Pro"
-            current_entries = []
-        elif line.startswith("* ") and current_title is not None:
-            m = re.match(r'^\* (New|Tweak|Fix):\s*(.*)', line)
-            if m:
-                current_entries.append((m.group(1), m.group(2).strip()))
-
-    if current_title is not None and current_entries:
-        sections.append((current_title, current_entries))
-
-    if not sections:
+    """Convert generate-changelog.py stdout into a Confluence code block (raw markdown view)."""
+    if not text:
         return ""
-
-    html = "\n<p>&nbsp;</p>\n<h2>Changelog</h2>\n<p><em>Public-facing changes shipped in this release.</em></p>\n"
-    for title, entries in sections:
-        html += f"<h3>{escape(title)}</h3>\n<ul>\n"
-        for category, text in entries:
-            html += f"<li><p><strong>{escape(category)}:</strong> {escape(text)}</p></li>\n"
-        html += "</ul>\n"
-    return html
+    # CDATA can't contain ']]>' — escape it if it ever appears
+    safe = text.replace("]]>", "]]]]><![CDATA[>")
+    return (
+        "\n<p>&nbsp;</p>\n"
+        "<h2>Changelog</h2>\n"
+        "<p><em>Raw changelog text (readme.txt format) — for review before publishing.</em></p>\n"
+        '<ac:structured-macro ac:name="code">'
+        '<ac:parameter ac:name="language">text</ac:parameter>'
+        f"<ac:plain-text-body><![CDATA[{safe}]]></ac:plain-text-body>"
+        "</ac:structured-macro>\n"
+    )
 
 
 def build_changelog_section(versions):
