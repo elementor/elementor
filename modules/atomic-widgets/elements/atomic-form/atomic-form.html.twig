@@ -14,7 +14,9 @@
       {% endif -%}
       toolname="{{ webmcp_tool_name | e('html_attr') }}"
       tooldescription="{{ webmcp_tool_description | e('html_attr') }}"
+      {%- if settings['webmcp-autosubmit'] %}
       toolautosubmit
+      {% endif -%}
       {%- if settings['_cssid'] is not empty %}
       id="{{ settings['_cssid'] | e('html_attr') }}"
       {% endif -%}

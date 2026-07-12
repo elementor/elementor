@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Chips_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Email_Form_Action_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
@@ -18,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Emails_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
@@ -108,6 +110,8 @@ class Atomic_Form extends Atomic_Element_Base {
 				->default( [] ),
 			'form-name' => String_Prop_Type::make()
 				->default( __( 'Form', 'elementor' ) ),
+			'webmcp-autosubmit' => Boolean_Prop_Type::make()
+				->default( false ),
 			'form-state' => String_Prop_Type::make()
 				->enum( [ 'default', 'success', 'error' ] )
 				->default( 'default' )
@@ -222,6 +226,8 @@ class Atomic_Form extends Atomic_Element_Base {
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( $this->get_css_id_control_meta() ),
+					Switch_Control::bind_to( 'webmcp-autosubmit' )
+						->set_label( __( 'Agent auto-submit', 'elementor' ) ),
 				] ),
 		];
 	}
@@ -414,7 +420,7 @@ class Atomic_Form extends Atomic_Element_Base {
 		$context['form_state'] = 'default';
 
 		$form_name = (string) ( $this->get_atomic_settings()['form-name'] ?? '' );
-		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name );
+		$context['webmcp_tool_name'] = Webmcp_Utils::build_tool_name( $form_name, (string) $this->get_id() );
 		$context['webmcp_tool_description'] = Webmcp_Utils::build_tool_description( $form_name );
 
 		return $context;

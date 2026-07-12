@@ -45,14 +45,33 @@ function registerWebmcpFormListeners() {
 	} );
 }
 
+function extractAgentToolData( payload ) {
+	if ( ! payload || 'object' !== typeof payload ) {
+		return null;
+	}
+
+	if ( undefined !== payload.data ) {
+		return payload.data;
+	}
+
+	const { message: ignoredMessage, ...rest } = payload;
+
+	if ( ! Object.keys( rest ).length ) {
+		return null;
+	}
+
+	return rest;
+}
+
 function buildAgentToolResponse( response, state ) {
-	const message = response?.data?.message ?? response?.message ?? '';
+	const payload = response?.data ?? null;
+	const message = payload?.message ?? response?.message ?? '';
 
 	return {
 		success: 'success' === state,
 		state,
 		message,
-		data: response?.data?.data ?? response?.data ?? null,
+		data: extractAgentToolData( payload ),
 	};
 }
 

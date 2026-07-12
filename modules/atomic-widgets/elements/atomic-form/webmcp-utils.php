@@ -6,15 +6,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Webmcp_Utils {
-	public static function build_tool_name( string $form_name ): string {
+	public static function build_tool_name( string $form_name, string $element_id = '' ): string {
 		$slug = sanitize_title( $form_name );
 		$slug = str_replace( '-', '_', $slug );
 
 		if ( '' === $slug ) {
-			return 'submit_form';
+			$slug = 'submit_form';
 		}
 
-		return $slug;
+		$id_suffix = self::build_element_id_suffix( $element_id );
+
+		if ( '' === $id_suffix ) {
+			return $slug;
+		}
+
+		return $slug . '_' . $id_suffix;
+	}
+
+	private static function build_element_id_suffix( string $element_id ): string {
+		$suffix = sanitize_title( $element_id );
+		$suffix = str_replace( '-', '_', $suffix );
+
+		return $suffix;
 	}
 
 	public static function build_tool_description( string $form_name ): string {

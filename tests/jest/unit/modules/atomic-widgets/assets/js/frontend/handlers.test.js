@@ -423,6 +423,142 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			} );
 		} );
 
+		it( 'returns nested agent payload data without duplicating the message', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: true,
+				json: () => Promise.resolve( {
+					success: true,
+					data: {
+						message: 'Success message',
+						data: { submission_id: 42 },
+					},
+				} ),
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: true,
+				state: 'success',
+				message: 'Success message',
+				data: { submission_id: 42 },
+			} );
+		} );
+
+		it( 'responds to agent-invoked invalid payloads with an error', async () => {
+			// Arrange
+			const form = document.createElement( 'form' );
+			form.setAttribute( 'data-element_type', 'e-form' );
+			form.setAttribute( 'data-id', 'test-form' );
+			form.setAttribute( 'x-data', 'eFormtest-form' );
+			document.body.appendChild( form );
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: false,
+				state: 'error',
+				message: 'Invalid form payload.',
+				data: null,
+			} );
+			expect( form.classList.contains( 'form-state-error' ) ).toBe( true );
+		} );
+
+		it( 'responds to agent-invoked submission failures with an error', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockRejectedValue( new Error( 'Network error' ) );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: false,
+				state: 'error',
+				message: 'Network error',
+				data: null,
+			} );
+		} );
+
+		it( 're-enables submit buttons when a matching toolactivated event fires', async () => {
+			// Arrange
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolactivated' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			window.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+		} );
+
+		it( 're-enables submit buttons when a matching toolcancel event fires', async () => {
+			// Arrange
+			const { form } = createFormWithInput();
+			form.setAttribute( 'toolname', 'contact_form_test_form' );
+
+			const submitButton = form.querySelector( 'button[type="submit"]' );
+			await setupFormHandler( form );
+
+			form.dataset.atomicFormSubmitting = 'true';
+			submitButton.disabled = true;
+
+			const event = new Event( 'toolcancel' );
+			event.toolName = 'contact_form_test_form';
+
+			// Act
+			window.dispatchEvent( event );
+
+			// Assert
+			expect( form.dataset.atomicFormSubmitting ).toBeUndefined();
+			expect( submitButton.disabled ).toBe( false );
+		} );
+
 		it( 'sends referer_title and referrer in FormData (atomic form / admin-ajax contract)', async () => {
 			// Arrange
 			const { form, input } = createFormWithInput();
