@@ -945,7 +945,9 @@ def build_changelog_section(versions):
     release_date = _get_release_date(versions)
     if release_date:
         run_env["RELEASE_DATE"] = release_date
-    run_env.pop("SKIP_PR_CHECK", None)  # only include actually merged items
+    # has_rdd gate (Rovo ran on the issue) is the quality filter here —
+    # skip the GitHub PR link check which is unreliable in Jira remote links
+    run_env["SKIP_PR_CHECK"] = "1"
 
     try:
         result = subprocess.run(
@@ -1098,11 +1100,9 @@ except Exception as e:
     print(f"Confluence search failed: {e}", file=sys.stderr)
     sys.exit(1)
 
-# Generate changelog section (released versions only — GA must be out)
-_changelog_html = ""
-if phase == "released":
-    print("Phase is 'released' — generating changelog section...", file=sys.stderr)
-    _changelog_html = build_changelog_section(matching_versions)
+# Generate changelog section (always — only merged PRs appear, via has_pr gate)
+print("Generating changelog section...", file=sys.stderr)
+_changelog_html = build_changelog_section(matching_versions)
 
 auto_section = build_auto_section(fix_version, sorted_rows, internal_issues, changelog_html=_changelog_html)
 
