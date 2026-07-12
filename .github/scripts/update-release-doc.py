@@ -906,7 +906,7 @@ def _parse_changelog_to_html(text):
         if re.match(r'^= .+ =$', s):           # Free: = X.Y.Z - DATE =
             if current_title is not None:
                 sections.append((current_title, "\n".join(current_lines)))
-            current_title = "Core (Free)"
+            current_title = "Free"
             current_lines = [s]
         elif s.startswith("#### "):              # Pro: #### X.Y.Z - DATE
             if current_title is not None:
@@ -923,7 +923,7 @@ def _parse_changelog_to_html(text):
 
     html = "\n<p>&nbsp;</p>\n<h2>Changelog</h2>\n<p><em>Changelog entries for this release.</em></p>\n"
     for title, block in sections:
-        safe = block.replace("]]>", "]]]]><![CDATA[>")
+        safe = block.rstrip().replace("]]>", "]]]]><![CDATA[>")
         code_macro = (
             '<ac:structured-macro ac:name="code">'
             '<ac:parameter ac:name="language">text</ac:parameter>'
