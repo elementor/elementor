@@ -19,28 +19,23 @@ function registerWebmcpFormListeners() {
 	webmcpFormListenersRegistered = true;
 
 	window.addEventListener( 'toolactivated', ( { toolName } ) => {
-		document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
-			if ( form.getAttribute( 'toolname' ) !== toolName ) {
-				return;
-			}
-
-			delete form.dataset.atomicFormSubmitting;
-			form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
-				button.disabled = false;
-			} );
-		} );
+		resetWebmcpFormState( toolName );
 	} );
 
 	window.addEventListener( 'toolcancel', ( { toolName } ) => {
-		document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
-			if ( form.getAttribute( 'toolname' ) !== toolName ) {
-				return;
-			}
+		resetWebmcpFormState( toolName );
+	} );
+}
 
-			delete form.dataset.atomicFormSubmitting;
-			form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
-				button.disabled = false;
-			} );
+function resetWebmcpFormState( toolName ) {
+	document.querySelectorAll( ATOMIC_FORM_SELECTOR ).forEach( ( form ) => {
+		if ( form.getAttribute( 'toolname' ) !== toolName ) {
+			return;
+		}
+
+		delete form.dataset.atomicFormSubmitting;
+		form.querySelectorAll( 'button[type="submit"], input[type="submit"]' ).forEach( ( button ) => {
+			button.disabled = false;
 		} );
 	} );
 }
@@ -103,6 +98,7 @@ function registerAtomicFormAlpineData( form ) {
 			event.preventDefault();
 
 			if ( form.dataset.atomicFormSubmitting ) {
+				respondToAgentIfInvoked( event, { success: false, message: 'Form is already submitting.' }, 'error' );
 				return;
 			}
 

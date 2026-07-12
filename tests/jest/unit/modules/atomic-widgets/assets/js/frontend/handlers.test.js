@@ -515,6 +515,61 @@ describe( 'Atomic Widgets frontend handlers', () => {
 			} );
 		} );
 
+		it( 'responds to agent-invoked submissions when form is already submitting', async () => {
+			// Arrange
+			const { form } = createFormWithInput();
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			form.dataset.atomicFormSubmitting = 'true';
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			expect( respondWith ).toHaveBeenCalledTimes( 1 );
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: false,
+				state: 'error',
+				message: 'Form is already submitting.',
+				data: null,
+			} );
+		} );
+
+		it( 'responds to agent-invoked HTTP failures with an error', async () => {
+			// Arrange
+			const { form, input } = createFormWithInput();
+			input.value = 'Agent value';
+
+			const instance = await setupFormHandler( form );
+			const respondWith = jest.fn();
+
+			global.fetch = jest.fn().mockResolvedValue( {
+				ok: false,
+			} );
+
+			const event = new Event( 'submit', { cancelable: true } );
+			event.agentInvoked = true;
+			event.respondWith = respondWith;
+
+			// Act
+			await instance.submit( event );
+
+			// Assert
+			const responsePromise = respondWith.mock.calls[ 0 ][ 0 ];
+			await expect( responsePromise ).resolves.toEqual( {
+				success: false,
+				state: 'error',
+				message: '',
+				data: null,
+			} );
+		} );
+
 		it( 're-enables submit buttons when a matching toolactivated event fires', async () => {
 			// Arrange
 			const { form } = createFormWithInput();
