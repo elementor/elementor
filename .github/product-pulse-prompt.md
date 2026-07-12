@@ -25,6 +25,15 @@ Analyze a merged PR and decide if it contains product-facing changes. If yes, ge
 - Changes to the editor, canvas, or frontend rendering
 - Changes to Elementor AI behavior or UI
 
+## Type Classification
+
+Every included PR must also be classified with a `type`:
+
+- `"feature"` — a brand-new capability that didn't exist before
+- `"fix"` — resolves a bug or broken behavior users would have noticed
+- `"improvement"` — makes an existing feature faster, smoother, or easier to use, without adding new capability
+- `"internal"` — a notable change worth logging but with no direct end-user impact (e.g. new admin-only tooling)
+
 ## Product Area Detection
 
 Based on which files the PR touches, determine the product area:
@@ -47,6 +56,7 @@ Output ONLY valid JSON in this exact format:
 ```json
 {
   "skip": false,
+  "type": "feature",
   "product": "Elementor",
   "title": "Visual File Previews",
   "description": "You can now preview images, fonts, and SVG files directly in the code viewer. Instead of seeing unreadable binary data, you'll see the actual file rendered beautifully."
@@ -63,6 +73,8 @@ Or if skipping:
 ```
 
 The `product` field must be one of: `"Elementor"`, `"Editor"`, `"Elementor AI"`, `"Cloud Library"`, `"Design System"`, `"Site Navigation"`, `"Interactions"`, `"Widgets"`.
+
+The `type` field must be one of: `"feature"`, `"fix"`, `"improvement"`, `"internal"`.
 
 ## Writing Style
 
@@ -89,6 +101,7 @@ Follow Lovable's product update style:
 ```json
 {
   "skip": false,
+  "type": "feature",
   "product": "Editor",
   "title": "Drag Widgets Between Columns",
   "description": "You can now drag widgets directly from one column to another in the editor. No more copy-paste or delete-and-recreate when rearranging your layout."
@@ -116,9 +129,21 @@ Why it's bad: The title doesn't tell users WHAT the feature does.
 ```json
 {
   "skip": false,
+  "type": "feature",
   "product": "Elementor AI",
   "title": "Generate Layouts From a Prompt",
   "description": "Describe the section you want and Elementor AI will build it for you. You can refine the result without starting from scratch."
+}
+```
+
+### Good Example (Fix):
+```json
+{
+  "skip": false,
+  "type": "fix",
+  "product": "Widgets",
+  "title": "Fixed Broken Icons in Nested Tabs",
+  "description": "Custom icons in the Nested Tabs widget no longer disappear when the Inline Font Icons experiment is off."
 }
 ```
 
