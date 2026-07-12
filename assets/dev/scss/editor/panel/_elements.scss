@@ -118,10 +118,6 @@
 			color: var(--e-a-color-txt);
 		}
 
-		&[data-library-element-type="e-birthday-easter-egg"] .icon {
-			color: $e-pink-900;
-		}
-
 		&:hover,
 		&:focus {
 			background-color: var(--e-a-bg-hover);
