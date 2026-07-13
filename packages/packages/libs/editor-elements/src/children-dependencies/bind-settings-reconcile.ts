@@ -6,7 +6,7 @@ import { resolveInsertIndex } from '../sync/resolve-insert-index';
 import { type V1Element, type V1ElementConfig, type V1ElementData, type V1ElementModelProps } from '../sync/types';
 import { createChildrenStash } from './stash';
 import { type ChildDependencyRule, type ChildrenStash } from './types';
-import { ensureModelId, evaluateWhen } from './utils';
+import { evaluateWhen, resolveChildModelData } from './utils';
 
 type SettingsChangeSource = {
 	get: ( key: string ) => unknown;
@@ -85,11 +85,7 @@ function attachChildFromRule( parentId: string, rule: ChildDependencyRule, stash
 		return;
 	}
 
-	// Prefer a previously-stashed (user-customized) model, then the rule's default, else a bare element.
-	const stashed = rule.stash ? stash.get( parentId, rule.child_type ) : undefined;
-	const modelData = ensureModelId(
-		stashed ?? rule.default_model ?? ( { elType: rule.child_type } as V1ElementData )
-	);
+	const { modelData, wasStashed } = resolveChildModelData( parentId, rule, stash );
 	const insertAt = resolveInsertIndex( rule.position, currentChildren );
 
 	const attached = addModelToParent( parentId, modelData as unknown as V1ElementModelProps, { at: insertAt } );
@@ -98,7 +94,7 @@ function attachChildFromRule( parentId: string, rule: ChildDependencyRule, stash
 		return;
 	}
 
-	if ( stashed ) {
+	if ( wasStashed ) {
 		stash.clear( parentId, rule.child_type );
 	}
 
