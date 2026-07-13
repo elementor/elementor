@@ -69,13 +69,9 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setCustomCSS( customCSS );
 
 				const {
-<<<<<<< HEAD
 					invalidStyles,
 					configErrors,
-=======
-					configErrors,
 					formErrors,
->>>>>>> 717150cb86 (Fix: Atomic Form Angie support > inputs are not wrapped with an atomic form container [ED-24881] (#36488))
 					rootContainers: generatedRootContainers,
 				} = await compositionBuilder.build( targetContainer );
 
