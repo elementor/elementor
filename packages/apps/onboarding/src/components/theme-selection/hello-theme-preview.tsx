@@ -118,7 +118,7 @@ export function HelloThemePreview( { isInstalled = false }: HelloThemePreviewPro
 				</HelloCard>
 
 				<PlusOverlay>
-					<PlusIcon sx={ { fontSize: PLUS_SIZE, color: 'common.black' } } />
+					<PlusIcon sx={ { width: PLUS_SIZE, height: PLUS_SIZE, color: 'common.black' } } />
 				</PlusOverlay>
 			</PreviewRoot>
 		</Stack>

@@ -19,8 +19,8 @@ export function FooterHighlights( { items, testId = 'footer-highlights', sx }: F
 		<Stack direction="row" alignItems="center" justifyContent="center" gap={ 3 } data-testid={ testId } sx={ sx }>
 			{ items.map( ( item ) => (
 				<Stack key={ item.labelKey } direction="row" alignItems="center" gap={ 0.75 }>
-					<CircleCheckFilledIcon fontSize="tiny" sx={ { color: 'text.primary' } } />
-					<Typography variant="body2" color="text.secondary">
+					<CircleCheckFilledIcon fontSize="tiny" sx={ { color: 'text.secondary' } } />
+					<Typography variant="body2" sx={ { color: 'text.secondary' } }>
 						{ t( item.labelKey ) }
 					</Typography>
 				</Stack>

@@ -5,17 +5,17 @@ const HelloThemeIcon = React.forwardRef< SVGSVGElement, React.ComponentProps< ty
 	return (
 		<SvgIcon viewBox="0 0 32 32" { ...props } ref={ ref } width="32" height="32">
 			<rect
-				x="4.75"
-				y="4.75"
-				width="22.5"
-				height="22.5"
-				rx="1.17"
+				x="4"
+				y="4"
+				width="24"
+				height="24"
+				rx="1.25"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"
 			/>
 			<path
-				d="M12.25 12.021V21.021M19.75 12.021V21.021M4.5 11.518H27.5M4.5 20.518H27.5"
+				d="M12 11.75V21.36M20 11.75V21.36M4 11.22H28M4 20.82H28"
 				fill="none"
 				stroke="currentColor"
 				strokeWidth="1.5"

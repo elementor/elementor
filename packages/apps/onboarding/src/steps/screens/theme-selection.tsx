@@ -38,13 +38,11 @@ export function ThemeSelection() {
 					</Typography>
 				</Stack>
 
-				<HelloThemePreview isInstalled={ isInstalled } />
+				<Stack useFlexGap alignItems="center" width="100%" sx={ { gap: '60px' } }>
+					<HelloThemePreview isInstalled={ isInstalled } />
 
-				<FooterHighlights
-					items={ THEME_SELECTION_FOOTER_HIGHLIGHTS }
-					testId="theme-selection-highlights"
-					sx={ { marginBlockStart: '60px' } }
-				/>
+					<FooterHighlights items={ THEME_SELECTION_FOOTER_HIGHLIGHTS } testId="theme-selection-highlights" />
+				</Stack>
 			</Stack>
 		</Stack>
 	);
