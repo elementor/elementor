@@ -5,11 +5,13 @@ namespace Elementor\Tests\Phpunit\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Unknown_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -137,6 +139,42 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 		$this->assertSame( [ 'type' => 'string', 'const' => 'test-array' ], $result['properties']['$$type'] );
 		$this->assertSame( 'array', $result['properties']['value']['type'] );
 		$this->assertArrayHasKey( 'items', $result['properties']['value'] );
+	}
+
+	public function test_to_json_schema__classes_prop_type() {
+		// Arrange
+		$prop_type = Classes_Prop_Type::make();
+
+		// Act
+		$result = $prop_type->to_json_schema();
+
+		// Assert
+		$this->assertSame( 'object', $result['type'] );
+		$this->assertSame( [ 'type' => 'string', 'const' => 'classes' ], $result['properties']['$$type'] );
+		$this->assertSame(
+			[ 'type' => 'array', 'items' => [ 'type' => 'string' ] ],
+			$result['properties']['value']
+		);
+	}
+
+	public function test_to_json_schema__overridable_prop_type_wraps_origin_schema() {
+		// Arrange
+		$prop_type = Overridable_Prop_Type::make()->set_origin_prop_type( String_Prop_Type::make() );
+
+		// Act
+		$result = $prop_type->to_json_schema();
+
+		// Assert
+		$this->assertSame( [ 'type' => 'string', 'const' => 'overridable' ], $result['properties']['$$type'] );
+
+		$value = $result['properties']['value'];
+		$this->assertSame( 'object', $value['type'] );
+		$this->assertSame( [ 'override_key', 'origin_value' ], $value['required'] );
+		$this->assertSame( [ 'type' => 'string' ], $value['properties']['override_key'] );
+		$this->assertSame(
+			[ 'type' => 'string', 'const' => 'string' ],
+			$value['properties']['origin_value']['properties']['$$type']
+		);
 	}
 
 	public function test_to_json_schema__plain_prop_type_without_override_uses_envelope() {

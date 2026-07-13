@@ -73,4 +73,20 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 	public function get_origin_prop_type() {
 		return $this->settings['origin_prop_type'] ?? null;
 	}
+
+	public function to_json_schema(): array {
+		$origin_prop_type = $this->get_origin_prop_type();
+
+		return $this->envelope_json_schema( [
+			'type' => 'object',
+			'properties' => [
+				'override_key' => [ 'type' => 'string' ],
+				'origin_value' => $origin_prop_type
+					? $origin_prop_type->to_json_schema()
+					: [],
+			],
+			'required' => [ 'override_key', 'origin_value' ],
+			'additionalProperties' => false,
+		] );
+	}
 }
