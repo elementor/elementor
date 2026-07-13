@@ -94,6 +94,14 @@ EXCLUDE_KEYWORDS = [
     "analytics",
     "plg",
     "promotion",
+    "10bday",            # 10th-birthday promotional campaign
+    "birthday",          # promotional campaigns (birthday, anniversaries)
+    "black friday",
+    "cyber monday",
+    "pro widget",        # editor-internal V4 widget canvas issues
+    "locked widget",      # Pro upsell / activation flow (not user-facing)
+    "connect & activate", # Pro activation popover (commercial UI)
+    "license is not active", # Pro license activation state — internal/commercial
 ]
 
 # Issues tagged with this Jira label are excluded (for one-off per-issue exclusions).
@@ -404,10 +412,12 @@ def get_topic_color(topic_name):
 
 def status_icon(name):
     name = (name or "").lower()
-    if "done" in name:     return "✅ Done"
-    if "progress" in name: return "🔄 In Progress"
-    if "review" in name:   return "👀 In Review"
-    if "testing" in name:  return "🧪 Testing"
+    if "done" in name:        return "✅ Done"
+    if "progress" in name:    return "🔄 In Progress"
+    if "review" in name:      return "👀 In Review"
+    if "testing" in name:     return "🧪 Testing"
+    if "stuck" in name:       return "🔴 Stuck"
+    if "ready for merge" in name or "ready to merge" in name: return "🟢 Ready To Merge"
     return name.title()
 
 
@@ -474,7 +484,9 @@ issue_summary = (fields.get("summary") or "").strip()
 status_name   = (fields.get("status") or {}).get("name", "")
 print(f"fixVersion: {fix_version}  type: {issue_type}  status: {status_name}", file=sys.stderr)
 
-if issue_type not in USER_FACING_TYPES:
+_fv_parts_early = fix_version.split(".")
+_is_patch_anchor = len(_fv_parts_early) == 3 and _fv_parts_early[2].isdigit() and int(_fv_parts_early[2]) > 0
+if issue_type not in USER_FACING_TYPES and not _is_patch_anchor:
     print(f"Issue type '{issue_type}' is not user-facing — skipping.", file=sys.stderr)
     sys.exit(0)
 
@@ -516,7 +528,15 @@ def _jira_version_links(versions):
             links.append(f'<a href="{url}">{label}</a>')
     return " &nbsp;|&nbsp; ".join(links)
 
-_version_links_html = _jira_version_links(matching_versions)
+# Filter Jira version links to match the anchor ticket's tier
+_anchor_tier = get_tier(fix_versions)  # "Free", "Pro", or "Free + Pro"
+_tier_filtered_versions = [
+    v for v in matching_versions
+    if _anchor_tier == "Free + Pro"
+    or (_anchor_tier == "Pro"  and 'pro' in v.get('name', '').lower())
+    or (_anchor_tier == "Free" and 'pro' not in v.get('name', '').lower())
+]
+_version_links_html = _jira_version_links(_tier_filtered_versions)
 _version_links_line = (f'<p><strong>Jira:</strong> {_version_links_html}</p>\n'
                        if _version_links_html else '')
 
@@ -530,6 +550,14 @@ if phase == 'draft':
     ] or matching_version_names
 else:
     query_version_names = matching_version_names
+
+# Filter query to anchor tier — a Pro-only page should not pull free version tickets
+if _anchor_tier == "Pro":
+    query_version_names = [v for v in query_version_names if 'pro' in v.lower()] or query_version_names
+elif _anchor_tier == "Free":
+    query_version_names = [v for v in query_version_names if 'pro' not in v.lower()] or query_version_names
+# "Free + Pro" → keep all
+print(f"Anchor tier: {_anchor_tier}  Query versions: {query_version_names}", file=sys.stderr)
 
 version_filter = " OR ".join(f'fixVersion = "{v}"' for v in query_version_names)
 jql = (
@@ -553,10 +581,81 @@ print(f"Found {len(raw_issues)} issues for {fix_version} (free + pro)", file=sys
 main_issues = [i for i in raw_issues
                if not is_excluded(i.get("fields", {}).get("summary", ""),
                                   i.get("fields", {}).get("labels", []))]
-internal_issues = [i for i in raw_issues
-                   if is_internal_stakeholder(i.get("fields", {}).get("summary", ""),
-                                              i.get("fields", {}).get("labels", []))]
+
+# Detect patch release (Z > 0 in X.Y.Z)
+_fv_parts = fix_version.split(".")
+_is_patch_release = len(_fv_parts) == 3 and _fv_parts[2].isdigit() and int(_fv_parts[2]) > 0
+
+if _is_patch_release:
+    # For patches, show non-main-table issues that are stakeholder-relevant.
+    # Exclude purely-infra prefixes (package bumps, internal plumbing, research)
+    # but keep "tweak:", "fix:" etc. which may contain onboarding / UX changes.
+    _PATCH_INFRA_PREFIXES = (
+        "bump ",
+        "internal:",
+        "experiments status",
+        "unskip",
+        "chore:",
+        "refactor:",
+        "remove unused",
+        "remove per-",
+        "[research]",
+        "research:",
+        "research -",
+    )
+    _main_keys = {i["key"] for i in main_issues}
+    internal_issues = [
+        i for i in raw_issues
+        if i["key"] not in _main_keys
+        and EXCLUDE_LABEL not in (i.get("fields", {}).get("labels") or [])
+        and not any(kw.lower() in (i.get("fields", {}).get("summary") or "").lower()
+                    for kw in ALWAYS_EXCLUDE_KEYWORDS)
+        and not any((i.get("fields", {}).get("summary") or "").lower().strip().startswith(p)
+                    for p in _PATCH_INFRA_PREFIXES)
+    ]
+else:
+    internal_issues = [i for i in raw_issues
+                       if is_internal_stakeholder(i.get("fields", {}).get("summary", ""),
+                                                  i.get("fields", {}).get("labels", []))]
 print(f"  {len(main_issues)} user-facing, {len(internal_issues)} internal", file=sys.stderr)
+
+# For patch releases, fetch all Bug/Editor Bug/Security Fix issues for the "Bugs Fixed" section.
+bug_issues = []
+if _is_patch_release:
+    _bug_jql = (
+        f'project = {JIRA_PROJECT} AND ({version_filter}) '
+        f'AND issuetype in (Bug, "Editor Bug", "Security Fix") '
+        f'ORDER BY updated DESC'
+    )
+    bug_issues = jira_search(_bug_jql, ISSUE_FIELDS)
+    print(f"  {len(bug_issues)} bugs for patch release", file=sys.stderr)
+
+    # Bugs starting with "[V4]" are atomic-editor-internal — move to Internal Changes.
+    # "Fix [V4]: ..." summaries are user-facing bug fixes for V4 features, keep in Bugs Fixed.
+    _V4_BUG_RE = re.compile(r'^\[?V4\]', re.IGNORECASE)
+    _v4_bugs    = [i for i in bug_issues
+                   if _V4_BUG_RE.search((i.get("fields", {}).get("summary") or ""))]
+    bug_issues  = [i for i in bug_issues
+                   if not _V4_BUG_RE.search((i.get("fields", {}).get("summary") or ""))]
+    internal_issues = internal_issues + _v4_bugs
+    if _v4_bugs:
+        print(f"  {len(_v4_bugs)} [V4] bugs moved to Internal Changes", file=sys.stderr)
+
+    # Bugs matching EXCLUDE_KEYWORDS are promotional/internal — move to Internal Changes.
+    # Bugs matching ALWAYS_EXCLUDE_KEYWORDS are dropped entirely (never shown anywhere).
+    def _bug_summary(i):
+        return (i.get("fields", {}).get("summary") or "").lower()
+    _promo_bugs = [i for i in bug_issues
+                   if any(kw.lower() in _bug_summary(i) for kw in EXCLUDE_KEYWORDS)
+                   and not any(kw.lower() in _bug_summary(i) for kw in ALWAYS_EXCLUDE_KEYWORDS)]
+    _drop_bugs  = [i for i in bug_issues
+                   if any(kw.lower() in _bug_summary(i) for kw in ALWAYS_EXCLUDE_KEYWORDS)]
+    bug_issues      = [i for i in bug_issues if i not in _promo_bugs and i not in _drop_bugs]
+    internal_issues = internal_issues + _promo_bugs
+    if _promo_bugs:
+        print(f"  {len(_promo_bugs)} promotional/internal bugs moved to Internal Changes", file=sys.stderr)
+    if _drop_bugs:
+        print(f"  {len(_drop_bugs)} bugs dropped (always-exclude keywords)", file=sys.stderr)
 
 # Build parent→children map from all raw issues (used to check Epic progress)
 _raw_children_by_parent = {}
@@ -650,7 +749,10 @@ for issue in main_issues:
 if ticket in rows:
     if pr_description:
         rows[ticket]["description"] = pr_description
-else:
+elif not is_excluded(issue_summary, fields.get("labels", [])):
+    # Only force-add the anchor ticket if it isn't excluded (e.g. promotional or
+    # internal-only). Excluded anchor tickets are silently dropped — the run still
+    # updates the page but the ticket itself doesn't appear in Release Content.
     t_fv_names = [v["name"] for v in (fields.get("fixVersions") or [])]
     t_owner    = (fields.get("customfield_10127") or {}).get("displayName", "")
     t_teams    = [t["value"] for t in (fields.get("customfield_10459") or [])]
@@ -776,10 +878,59 @@ def _issue_description(fields):
     return extract_adf_text(fields.get("description"), max_chars=300)
 
 
-def build_internal_section(issues):
+_BUG_PREFIX_RE = re.compile(
+    r'^(Fix\s+\[V4\]:?|Fix:|Bug:|Editor Bug:|Issue:|Error:|\[V4\]|v4\.?x?:?)\s*',
+    re.IGNORECASE,
+)
+
+
+def build_bugs_section(issues):
+    """Build a 'Bugs Fixed' table for patch releases — shows all Bug/Editor Bug/Security Fix issues."""
+    if not issues:
+        return ""
+    rows_html = ""
+    for issue in issues:
+        f          = issue.get("fields", {})
+        key        = issue["key"]
+        summary    = (f.get("summary") or "").strip()
+        status_raw = (f.get("status") or {}).get("name", "")
+        jira_url   = f"{JIRA_BASE}/browse/{key}"
+        clean      = _BUG_PREFIX_RE.sub("", summary).strip() or summary
+        stat       = escape(status_icon(status_raw))
+        rows_html += f"""
+    <tr>
+      <td><p><a href="{jira_url}">{escape(key)}</a></p></td>
+      <td><p>{escape(clean)}</p></td>
+      <td><p>{stat}</p></td>
+    </tr>"""
+    if not rows_html:
+        return ""
+    return f"""
+<p>&nbsp;</p>
+<h2>Bugs Fixed</h2>
+<table data-table-width="1000" data-layout="full-width">
+  <colgroup>
+    <col style="width: 100px;" />
+    <col style="width: 680px;" />
+    <col style="width: 120px;" />
+  </colgroup>
+  <tbody>
+    <tr>
+      <th><p><strong>Ticket</strong></p></th>
+      <th><p><strong>Bug</strong></p></th>
+      <th><p><strong>Status</strong></p></th>
+    </tr>
+{rows_html}
+  </tbody>
+</table>
+"""
+
+
+def build_internal_section(issues, require_active=True):
     """Build a simple HTML table for internal-only issues (below the main table).
     Epics are flattened: each active child appears as its own row, with the Epic
-    name shown as italic context. Only shows In Progress or above."""
+    name shown as italic context. When require_active=False (patch releases), all
+    issues in the fixVersion are shown regardless of status."""
     if not issues:
         return ""
     rows_html = ""
@@ -789,7 +940,7 @@ def build_internal_section(issues):
         itype      = (f.get("issuetype") or {}).get("name", "")
         status_raw = (f.get("status") or {}).get("name", "")
 
-        if not _is_active_status(status_raw):
+        if require_active and not _is_active_status(status_raw):
             continue
 
         if itype == "Epic":
@@ -798,26 +949,35 @@ def build_internal_section(issues):
 
             # Gate: only include if at least one Story/Task child is active.
             # (If no typed children found, trust the Epic's own status.)
-            story_task_children = [
-                c for c in _raw_children_by_parent.get(key, [])
-                if (c.get("fields", {}).get("issuetype") or {}).get("name", "") in ("Story", "Task")
-            ]
-            if story_task_children:
-                child_active = any(
-                    _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
-                    for c in story_task_children
-                )
-                if not child_active:
-                    continue
+            # When require_active=False (patch releases), skip the gate entirely.
+            if require_active:
+                story_task_children = [
+                    c for c in _raw_children_by_parent.get(key, [])
+                    if (c.get("fields", {}).get("issuetype") or {}).get("name", "") in ("Story", "Task")
+                ]
+                if story_task_children:
+                    child_active = any(
+                        _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
+                        for c in story_task_children
+                    )
+                    if not child_active:
+                        continue
 
-            active_children = [
-                c for c in _raw_children_by_parent.get(key, [])
-                if _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
-            ]
+            if require_active:
+                active_children = [
+                    c for c in _raw_children_by_parent.get(key, [])
+                    if _is_active_status((c.get("fields", {}).get("status") or {}).get("name", ""))
+                ]
+            else:
+                active_children = _raw_children_by_parent.get(key, [])
 
-            if active_children:
+            # If no active children found, fall back to ALL children so we still
+            # flatten rather than collapsing to the Epic row.
+            display_children = active_children or _raw_children_by_parent.get(key, [])
+
+            if display_children:
                 # Flatten: one row per child, Epic name shown as italic context
-                for child in active_children[:6]:
+                for child in display_children[:6]:
                     cf          = child.get("fields", {})
                     c_key       = child["key"]
                     c_stat_raw  = (cf.get("status") or {}).get("name", "")
@@ -835,7 +995,7 @@ def build_internal_section(issues):
       <td><p>{c_stat}</p></td>
     </tr>"""
             else:
-                # No children — show the Epic itself (no type label)
+                # Truly no children at all — show the Epic itself
                 desc     = _issue_description(f)
                 desc_html = f'<p>{escape(desc)}</p>' if desc else ""
                 epic_stat = escape(status_icon(status_raw))
@@ -892,8 +1052,56 @@ def _get_release_date(versions):
     return ""
 
 
-def _parse_changelog_to_html(text):
-    """Convert generate-changelog.py stdout into Confluence code blocks, one per tier."""
+def _get_beta_date(versions):
+    """Return the earliest beta releaseDate (YYYY-MM-DD) from Jira versions, or ''."""
+    betas = sorted(
+        [v for v in versions if "beta" in v.get("name", "").lower()],
+        key=lambda x: x.get("name", "")
+    )
+    for v in betas:
+        rd = v.get("releaseDate", "")
+        if rd:
+            return rd
+    return ""
+
+
+def _format_jira_date(date_str):
+    """Convert YYYY-MM-DD to 'Jul 14, 2026', or 'TBD' if empty."""
+    if not date_str:
+        return "TBD"
+    try:
+        import datetime as _dt
+        d = _dt.datetime.strptime(date_str, "%Y-%m-%d")
+        return f"{d.strftime('%b')} {d.day}, {d.year}"
+    except ValueError:
+        return date_str
+
+
+# Build release info line from Jira version data — updated on every run so the
+# page reflects the actual dates once the version is released in Jira.
+_ga_date   = _get_release_date(matching_versions)
+_beta_date = _get_beta_date(matching_versions)
+if _is_patch_release:
+    _release_info_line = (
+        f'<p><strong>Release Date:</strong> {_format_jira_date(_ga_date)}</p>\n'
+    )
+else:
+    _release_info_line = (
+        f'<p><strong>Beta:</strong> {_format_jira_date(_beta_date)}'
+        f' &nbsp;&nbsp;|&nbsp;&nbsp; '
+        f'<strong>GA:</strong> {_format_jira_date(_ga_date)}</p>\n'
+    )
+
+# Regex that matches either the old Beta/GA line or a Release Date line
+_RELEASE_INFO_RE = re.compile(
+    r'<p>\s*<strong>(?:Beta|Release Date):</strong>.*?</p>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def _parse_changelog_to_html(text, tier_filter=None):
+    """Convert generate-changelog.py stdout into Confluence code blocks, one per tier.
+    tier_filter: 'Free', 'Pro', or None (show all)."""
     if not text:
         return ""
 
@@ -918,6 +1126,10 @@ def _parse_changelog_to_html(text):
     if current_title is not None and current_lines:
         sections.append((current_title, "\n".join(current_lines)))
 
+    # Filter to only the relevant tier(s)
+    if tier_filter and tier_filter != "Free + Pro":
+        sections = [(t, b) for t, b in sections if t == tier_filter]
+
     if not sections:
         return ""
 
@@ -940,7 +1152,7 @@ def _parse_changelog_to_html(text):
     return html
 
 
-def build_changelog_section(versions):
+def build_changelog_section(versions, tier=None):
     """Run generate-changelog.py as a subprocess and return Confluence HTML.
     Only called when phase == 'released'. Returns empty string on any failure."""
     import subprocess
@@ -969,26 +1181,35 @@ def build_changelog_section(versions):
             print("  Changelog generator returned no output.", file=sys.stderr)
             return ""
         print(f"  Changelog: {len(stdout.splitlines())} lines", file=sys.stderr)
-        return _parse_changelog_to_html(stdout)
+        return _parse_changelog_to_html(stdout, tier_filter=tier)
     except Exception as e:
         print(f"  Changelog generator error: {e}", file=sys.stderr)
         return ""
 
 
-def build_auto_section(version, rows_list, internal_issues=None, changelog_html=None):
+def build_auto_section(version, rows_list, internal_issues=None, changelog_html=None, bug_issues=None):
     # Group rows by topic (preserving order)
     topics = {}
     for r in rows_list:
         topics.setdefault(r["topic"], []).append(r)
 
-    html = """\
+    _toc_macro = (
+        '<ac:structured-macro ac:name="toc" ac:schema-version="1">'
+        '<ac:parameter ac:name="minLevel">2</ac:parameter>'
+        '</ac:structured-macro>'
+    )
+    html = f"""\
 <p>&nbsp;</p>
 <hr/>
 <p>&nbsp;</p>
-<p><em>Do not edit below — this section is auto-generated.</em></p>
+{_toc_macro}
 <p>&nbsp;</p>
-<h2>Release Content</h2>
+<hr/>
+<p>&nbsp;</p>
 """
+
+    if topics:
+        html += "<h2>Release Content</h2>\n"
 
     for topic_name, topic_rows in topics.items():
         color_hex, color_name = get_topic_color(topic_name)
@@ -1072,8 +1293,11 @@ def build_auto_section(version, rows_list, internal_issues=None, changelog_html=
 </table>
 """
 
+    if bug_issues:
+        html += build_bugs_section(bug_issues)
+
     if internal_issues:
-        html += build_internal_section(internal_issues)
+        html += build_internal_section(internal_issues, require_active=not _is_patch_release)
 
     if changelog_html:
         html += changelog_html
@@ -1086,12 +1310,22 @@ def build_auto_section(version, rows_list, internal_issues=None, changelog_html=
 
 # ── Step 8: Find or create the Confluence page ────────────────────────────────
 _test_run      = os.environ.get("TEST_RUN") == "1"
+_tier_label    = get_tier(fix_versions).replace(" + ", " & ")  # use anchor ticket's own fixVersions for tier
+_tier_suffix   = f" - {_tier_label}" if _tier_label else ""
 _title_suffix  = " [Test]" if _test_run else ""
-page_title     = f"Version {fix_version}{_title_suffix}"
-page_title_old = f"\U0001f6a7 Version {fix_version} [WIP]"  # legacy title format (no suffix)
+page_title     = f"Version {fix_version}{_tier_suffix}{_title_suffix}"
+page_title_old = f"\U0001f6a7 Version {fix_version} [WIP]"              # legacy title format
+page_title_old2 = f"Version {fix_version}{_title_suffix}"               # old format without tier suffix
 
-# In TEST_RUN mode only search the test title — never touch the real page
-_title_candidates = [page_title] if _test_run else [page_title, page_title_old]
+# Versions that should never be touched by the script (manually maintained pages).
+_SKIP_VERSIONS = {"4.2.0"}
+if fix_version in _SKIP_VERSIONS:
+    print(f"Version {fix_version} is manually maintained — skipping.", file=sys.stderr)
+    sys.exit(0)
+
+# In TEST_RUN mode only search the test title — never touch the real page.
+# Also search old title formats so existing pages are found and renamed.
+_title_candidates = [page_title] if _test_run else [page_title, page_title_old2, page_title_old]
 existing = []
 try:
     for title_candidate in _title_candidates:
@@ -1110,9 +1344,9 @@ except Exception as e:
 
 # Generate changelog section (always — only merged PRs appear, via has_pr gate)
 print("Generating changelog section...", file=sys.stderr)
-_changelog_html = build_changelog_section(matching_versions)
+_changelog_html = build_changelog_section(matching_versions, tier=_anchor_tier)
 
-auto_section = build_auto_section(fix_version, sorted_rows, internal_issues, changelog_html=_changelog_html)
+auto_section = build_auto_section(fix_version, sorted_rows, internal_issues, changelog_html=_changelog_html, bug_issues=bug_issues)
 
 def assemble_page(top, auto, bottom):
     return top + BOT_START_MARKER + auto + BOT_END_MARKER + bottom
@@ -1140,9 +1374,26 @@ if existing:
     top_section = re.sub(r'\s*<p><strong>Document status:</strong>.*?</p>', '', top_section)
     if not top_section.lstrip().startswith('<p>&nbsp;</p>'):
         top_section = '<p>&nbsp;</p>\n' + top_section.lstrip()
+    # ── Inject/update auto-note above Release Info ────────────────────────────
+    _AUTO_NOTE_HTML = '<p><em>This page is managed automatically. Do not edit manually.</em></p>\n'
+    _AUTO_NOTE_RE = re.compile(r'<p><em>This (?:section is auto-updated|page is managed automatically)[^<]*</em></p>\s*\n?')
+    top_section = _AUTO_NOTE_RE.sub('', top_section)
+    if '<h2>Release Info</h2>' in top_section:
+        top_section = top_section.replace('<h2>Release Info</h2>', _AUTO_NOTE_HTML + '<h2>Release Info</h2>', 1)
     bottom_section = re.sub(r'^\s*<hr\s*/?>\s*(<p>&nbsp;</p>\s*)?', '', bottom_section)
     if not bottom_section.lstrip().startswith('<p>&nbsp;</p>'):
         bottom_section = '<p>&nbsp;</p>\n' + bottom_section.lstrip()
+    # ── Update release dates from Jira on every run ───────────────────────────
+    # Replaces Beta/GA or Release Date line so the page reflects the actual
+    # Jira release date once the version is marked released there.
+    if _RELEASE_INFO_RE.search(top_section):
+        top_section = _RELEASE_INFO_RE.sub(_release_info_line.strip(), top_section, count=1)
+    elif '<h2>Release Info</h2>' in top_section:
+        top_section = top_section.replace(
+            '<h2>Release Info</h2>',
+            '<h2>Release Info</h2>\n' + _release_info_line,
+            1,
+        )
     # ── Inject Jira version links if not already present ──────────────────────
     if _version_links_line and 'href' not in top_section:
         top_section = top_section.rstrip() + '\n' + _version_links_line
@@ -1167,7 +1418,10 @@ if existing:
 
 else:
     page_state   = phase_to_page_state(phase)
-    _new_top     = DEFAULT_TOP_SECTION + _version_links_line
+    _new_top     = ('<p>&nbsp;</p>\n'
+                    '<p><em>This page is managed automatically. Do not edit manually.</em></p>\n'
+                    '<h2>Release Info</h2>\n'
+                    + _release_info_line + _version_links_line)
     page_body    = assemble_page(_new_top, auto_section, DEFAULT_BOTTOM_SECTION)
     print(f"Creating new page: {page_title}", file=sys.stderr)
     status, resp = conf_request("POST", "/rest/api/content", {

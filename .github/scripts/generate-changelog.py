@@ -72,7 +72,7 @@ _BENEFIT_OPENER_RE = re.compile(
 )
 
 _FIX_PREFIX_RE = re.compile(
-    r'^(Fix:|Bug:|Editor Bug:|Issue:|Error:|\[V4\]|v4\.?x?:?)\s*',
+    r'^(Fix\s*\[V4\]:?|Fix:|Bug:|Editor Bug:|Issue:|Error:|\[V4\]|v4\.?x?:?)\s*',
     re.IGNORECASE,
 )
 
@@ -86,6 +86,12 @@ _NAME_SUBS = [
     (re.compile(r'\bMCP\b',                            re.IGNORECASE), "AI editor tools"),
     (re.compile(r'\bAngie\b',                          re.IGNORECASE), "the AI assistant"),
     (re.compile(r'\bRovo\b',                           re.IGNORECASE), "AI"),
+    # Terminology: "atomic widget(s)" → "atomic element(s)"
+    (re.compile(r'\batomic\s+widgets?\b', re.IGNORECASE), "atomic element"),
+    # Strip leading "Product - " or "Product > " context prefix from ticket summaries
+    # e.g. "Atomic Form - Content section..." → "Content section..."
+    (re.compile(r'^Atomic\s+Form\s*[-–>]\s*', re.IGNORECASE), ""),
+    (re.compile(r'^Atomic\s+\w+\s*[-–>]\s*', re.IGNORECASE), ""),
 ]
 
 
@@ -287,9 +293,52 @@ def _classify_child_category(row, rows_by_key):
 
 
 # ── Gate ───────────────────────────────────────────────────────────────────────
+_wporg_cache = {}  # version_number -> bool
+
+
+def _wporg_version_exists(version_number):
+    """Return True if this version exists on WordPress.org (i.e. was publicly released)."""
+    if version_number in _wporg_cache:
+        return _wporg_cache[version_number]
+    url = f"https://downloads.wordpress.org/plugin/elementor.{version_number}.zip"
+    try:
+        req = urllib.request.Request(url, method="HEAD")
+        with urllib.request.urlopen(req, timeout=10) as r:
+            _wporg_cache[version_number] = (r.status == 200)
+    except urllib.error.HTTPError as e:
+        _wporg_cache[version_number] = (e.code != 404)
+    except Exception:
+        _wporg_cache[version_number] = False
+    return _wporg_cache[version_number]
+
+
+def _already_shipped_earlier(row):
+    """Return True if this issue was already shipped in a publicly released version
+    other than the current one. Checks WordPress.org as the source of truth.
+    Used to avoid duplicating entries across versions (e.g. a bug backported to
+    v4.1.5 should not also appear in the v4.3.0 changelog)."""
+    for fv_name in row.get("fv_names", []):
+        if "beta" in fv_name.lower():
+            continue  # beta fixVersions are not public releases
+        other_version = extract_version_number(fv_name)
+        if not other_version or other_version == fix_version:
+            continue  # same version — not "earlier"
+        if _wporg_version_exists(other_version):
+            return True
+    return False
+
+
+_PROMOTIONAL_SKIP_KEYWORDS = [
+    "10bday", "birthday", "anniversary", "black friday", "cyber monday",
+]
+
 def _passes_gate(row):
     """Return True if this issue should appear in the changelog."""
     if CHANGELOG_SKIP_LABEL in (row.get("labels") or []):
+        return False
+    # Exclude promotional / campaign content (applies to all versions, all issue types).
+    _s = (row.get("summary") or "").lower()
+    if any(kw.lower() in _s for kw in _PROMOTIONAL_SKIP_KEYWORDS):
         return False
     # has_rdd: Rovo ran (line1 exists) OR manual Changelog: override set
     if not row["has_rdd"] and not row.get("changelog_override"):
@@ -325,6 +374,11 @@ def _derive_text(row):
         return f"Improved code security enforcement in {raw.lower()} handling"
 
     if not line1:
+        # For Fix-category issues, strip common summary prefixes even without RDD
+        if category == "Fix":
+            text = _FIX_PREFIX_RE.sub("", summary).strip()
+            text = re.sub(r'\s*\[?PR[- ]?\d+\]?', '', text).strip()
+            return apply_name_subs(text) if text else apply_name_subs(summary)
         return apply_name_subs(summary)
 
     if category == "New":
@@ -528,6 +582,9 @@ for key, row in rows_by_key.items():
         continue
     if not _passes_gate(row):
         continue
+    if _already_shipped_earlier(row):
+        print(f"  Skipping {key} — already shipped in earlier released version", file=sys.stderr)
+        continue
 
     eff_children = effective_children_by_epic.get(key, [])
     category     = row["category"]
@@ -569,7 +626,21 @@ for key, row in rows_by_key.items():
         # Fix or override category
         _add_entry(row)
 
+def _is_patch_version(version):
+    """Return True if version is a patch release (X.Y.Z where Z > 0)."""
+    parts = version.split(".")
+    return len(parts) == 3 and parts[2].isdigit() and int(parts[2]) > 0
+
+
+_patch = _is_patch_version(fix_version)
+
 # Second pass: non-Epics
+# Build the set of Epic keys that are NEW in this release (any fixVersion matching this version).
+# Bugs whose parent is one of these epics are beta regressions introduced by the new feature —
+# they should not appear in the public changelog. Only applies to non-patch releases (patches
+# have no betas and all their bugs are genuine pre-existing fixes).
+_release_epic_keys = {k for k, r in rows_by_key.items() if r["type"] == "Epic"}
+
 for key, row in rows_by_key.items():
     if row["type"] == "Epic":
         continue
@@ -577,13 +648,71 @@ for key, row in rows_by_key.items():
         continue
     if not _passes_gate(row):
         continue
+    # For non-patch releases: exclude bugs that are children of new epics in this release.
+    # These are beta regressions (bugs introduced by the new feature) — not user-facing fixes.
+    if not _patch and row["type"] in ("Bug", "Editor Bug", "Security Fix"):
+        if row.get("parent_key") in _release_epic_keys:
+            print(f"  Skipping beta regression: {key} (parent {row['parent_key']})", file=sys.stderr)
+            continue
+    # Skip issues already shipped in an earlier publicly released version (Option B deduplication).
+    if _already_shipped_earlier(row):
+        print(f"  Skipping {key} — already shipped in earlier released version", file=sys.stderr)
+        continue
     _add_entry(row)
 
-# Fallback: if a tier has issues but nothing passed the gate, add a generic Tweak
+# Keywords in bug summaries that indicate internal-only issues — never include in public changelog.
+# Mirrors the EXCLUDE_KEYWORDS list in update-release-doc.py.
+_PATCH_CHANGELOG_SKIP_KEYWORDS = [
+    "promotion",
+    "product analytics",
+    "plg",
+    "site planner",
+    "adoption-blocking",
+    "pro widget",         # V4 editor-internal widget canvas issue
+    "locked widget",         # Pro upsell / activation flow
+    "connect & activate",    # Pro activation popover (commercial UI)
+    "license is not active", # Pro license activation state — internal/commercial
+    "birthday",              # promotional campaigns
+    "black friday",
+    "cyber monday",
+]
+
+# For patch releases: include ALL Bug/Editor Bug/Security Fix issues even without RDD.
+# Patch releases are bug-only; stakeholders want every fix, not just Rovo-described ones.
+# Exclude [V4]-prefixed bugs — those are internal atomic editor issues not for public changelog.
+if _patch:
+    _included_keys = {e["key"] for e in free_entries + pro_entries if e.get("key")}
+    for key, row in rows_by_key.items():
+        if row["type"] not in ("Bug", "Editor Bug", "Security Fix"):
+            continue
+        if key in _included_keys:
+            continue  # already captured by normal gate
+        if key in suppressed:
+            continue
+        if CHANGELOG_SKIP_LABEL in (row.get("labels") or []):
+            continue
+        if re.match(r'^\[V4\]', row["summary"], re.IGNORECASE):
+            continue  # [V4]-prefixed: atomic editor-internal — not for public changelog
+            # Note: "Fix [V4]: ..." summaries are user-facing and are NOT excluded
+        if any(kw.lower() in row["summary"].lower() for kw in _PATCH_CHANGELOG_SKIP_KEYWORDS):
+            continue  # internal-only issue (promotion, analytics, etc.)
+        text = _derive_text(row)
+        text += _format_gh_issues(row.get("gh_issues", []))
+        entry = {"category": "Fix", "text": text, "key": key}
+        if _is_free(row["fv_names"]):
+            free_entries.append(entry)
+        if _is_pro(row["fv_names"]):
+            pro_entries.append(entry)
+
+# Fallback: if a tier has issues but nothing passed the gate, add a generic Tweak.
+# Gate on whether the release itself has a Free/Pro version — not on individual issue fv_names,
+# which may contain fixVersions from other versions (e.g. an issue in v4.1.5 also tagged Pro v4.2.0).
+_has_free_version = any("pro" not in v.lower() for v in matching_version_names)
+_has_pro_version  = any("pro" in v.lower() for v in matching_version_names)
 _FALLBACK = {"category": "Tweak", "text": "General improvements and maintenance", "key": ""}
-if not free_entries and any(_is_free(r["fv_names"]) for r in rows_by_key.values()):
+if not free_entries and _has_free_version:
     free_entries.append(_FALLBACK)
-if not pro_entries and any(_is_pro(r["fv_names"]) for r in rows_by_key.values()):
+if not pro_entries and _has_pro_version:
     pro_entries.append(_FALLBACK)
 
 
@@ -619,6 +748,7 @@ def _format_section(entries, version, date_str, fmt):
 
 
 print(f"\nCounts — Free: {len(free_entries)}  Pro: {len(pro_entries)}", file=sys.stderr)
+print(f"Patch release: {_patch}", file=sys.stderr)
 
 if free_entries:
     print(_format_section(free_entries, fix_version, today, "free"))
