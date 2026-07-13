@@ -528,8 +528,14 @@ def _jira_version_links(versions):
             links.append(f'<a href="{url}">{label}</a>')
     return " &nbsp;|&nbsp; ".join(links)
 
-# Filter Jira version links to match the anchor ticket's tier
-_anchor_tier = get_tier(fix_versions)  # "Free", "Pro", or "Free + Pro"
+# For patch releases: tier is derived from the anchor ticket's own fixVersions
+# (e.g. anchor in "Pro v4.1.3" only → Pro-only page).
+# For major/minor releases: tier covers all matching versions
+# (anchor may be in one tier but the release ships both Free & Pro).
+_is_patch_release_early = _is_patch_anchor  # reuse the flag computed above
+_anchor_tier = get_tier(fix_versions) if _is_patch_release_early else get_tier(matching_version_names)
+
+# Filter Jira version links to match the page tier
 _tier_filtered_versions = [
     v for v in matching_versions
     if _anchor_tier == "Free + Pro"
@@ -551,12 +557,12 @@ if phase == 'draft':
 else:
     query_version_names = matching_version_names
 
-# Filter query to anchor tier — a Pro-only page should not pull free version tickets
-if _anchor_tier == "Pro":
-    query_version_names = [v for v in query_version_names if 'pro' in v.lower()] or query_version_names
-elif _anchor_tier == "Free":
-    query_version_names = [v for v in query_version_names if 'pro' not in v.lower()] or query_version_names
-# "Free + Pro" → keep all
+# For patch releases: filter query to anchor tier so a Pro-only patch doesn't pull free tickets
+if _is_patch_release_early:
+    if _anchor_tier == "Pro":
+        query_version_names = [v for v in query_version_names if 'pro' in v.lower()] or query_version_names
+    elif _anchor_tier == "Free":
+        query_version_names = [v for v in query_version_names if 'pro' not in v.lower()] or query_version_names
 print(f"Anchor tier: {_anchor_tier}  Query versions: {query_version_names}", file=sys.stderr)
 
 version_filter = " OR ".join(f'fixVersion = "{v}"' for v in query_version_names)
@@ -1310,7 +1316,7 @@ def build_auto_section(version, rows_list, internal_issues=None, changelog_html=
 
 # ── Step 8: Find or create the Confluence page ────────────────────────────────
 _test_run      = os.environ.get("TEST_RUN") == "1"
-_tier_label    = get_tier(fix_versions).replace(" + ", " & ")  # use anchor ticket's own fixVersions for tier
+_tier_label    = _anchor_tier.replace(" + ", " & ")  # already computed above (patch→anchor, major→all)
 _tier_suffix   = f" - {_tier_label}" if _tier_label else ""
 _title_suffix  = " [Test]" if _test_run else ""
 page_title     = f"Version {fix_version}{_tier_suffix}{_title_suffix}"
