@@ -109,10 +109,78 @@ describe( 'reconcileInitialChildren', () => {
 		} );
 
 		// Assert.
-		expect( attributes.elements ).toEqual( [ defaultModel ] );
+		expect( attributes.elements ).toEqual( [
+			{ elType: 'e-pagination', isLocked: true, id: expect.any( String ) },
+		] );
 	} );
 
-	it( 'falls back to a minimal { elType } when neither stash nor default_model exist', () => {
+	it( 'assigns a generated id when default_model has none', () => {
+		// Arrange.
+		const attributes = {
+			elements: [] as V1ElementData[],
+			settings: { pagination: { $$type: 'boolean', value: true } },
+		};
+
+		// Act.
+		reconcileInitialChildren( {
+			elementId: 'parent',
+			elementConfig: createConfig( [
+				createRule( { default_model: { elType: 'e-pagination' } as V1ElementData } ),
+			] ),
+			attributes,
+		} );
+
+		// Assert.
+		expect( attributes.elements[ 0 ]?.id ).toEqual( expect.any( String ) );
+		expect( attributes.elements[ 0 ]?.id ).not.toBe( '' );
+	} );
+
+	it( 'preserves an existing id on default_model rather than replacing it', () => {
+		// Arrange.
+		const attributes = {
+			elements: [] as V1ElementData[],
+			settings: { pagination: { $$type: 'boolean', value: true } },
+		};
+
+		// Act.
+		reconcileInitialChildren( {
+			elementId: 'parent',
+			elementConfig: createConfig( [
+				createRule( { default_model: { elType: 'e-pagination', id: 'preset-id' } as V1ElementData } ),
+			] ),
+			attributes,
+		} );
+
+		// Assert.
+		expect( attributes.elements[ 0 ]?.id ).toBe( 'preset-id' );
+	} );
+
+	it( 'strips skipDefaultChildren from an inserted default_model', () => {
+		// Arrange.
+		const defaultModel = {
+			elType: 'e-pagination',
+			skipDefaultChildren: true,
+		} as V1ElementData;
+		const attributes = {
+			elements: [] as V1ElementData[],
+			settings: { pagination: { $$type: 'boolean', value: true } },
+		};
+
+		// Act.
+		reconcileInitialChildren( {
+			elementId: 'parent',
+			elementConfig: createConfig( [ createRule( { default_model: defaultModel } ) ] ),
+			attributes,
+		} );
+
+		// Assert.
+		const inserted = attributes.elements[ 0 ] as V1ElementData & { skipDefaultChildren?: boolean };
+		expect( inserted?.skipDefaultChildren ).toBeUndefined();
+		expect( inserted?.elType ).toBe( 'e-pagination' );
+		expect( inserted?.id ).toEqual( expect.any( String ) );
+	} );
+
+	it( 'falls back to a minimal { elType } (with generated id) when neither stash nor default_model exist', () => {
 		// Arrange.
 		const attributes = {
 			elements: [] as V1ElementData[],
@@ -127,7 +195,7 @@ describe( 'reconcileInitialChildren', () => {
 		} );
 
 		// Assert.
-		expect( attributes.elements ).toEqual( [ { elType: 'e-pagination' } ] );
+		expect( attributes.elements ).toEqual( [ { elType: 'e-pagination', id: expect.any( String ) } ] );
 	} );
 
 	it( 'inserts at position kind "after_type"', () => {
@@ -151,7 +219,11 @@ describe( 'reconcileInitialChildren', () => {
 		} );
 
 		// Assert.
-		expect( attributes.elements ).toEqual( [ layout, { elType: 'e-pagination' }, other ] );
+		expect( attributes.elements ).toEqual( [
+			layout,
+			{ elType: 'e-pagination', id: expect.any( String ) },
+			other,
+		] );
 	} );
 
 	it( 'is idempotent: does nothing when state already matches the rule', () => {
