@@ -27,13 +27,13 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 		const isEmpty = 0 === this.get( 'elements' ).length;
 		const isNewElementCreate = isEmpty &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
-		const hasHydrateFlag = this.get( 'hydrateDefaultChildren' );
+		const shouldHydrate = isEmpty && this.get( 'hydrateDefaultChildren' );
 
-		if ( hasHydrateFlag ) {
+		if ( shouldHydrate ) {
 			this.unset( 'hydrateDefaultChildren', { silent: true } );
 		}
 
-		if ( isNewElementCreate || ( isEmpty && hasHydrateFlag ) ) {
+		if ( isNewElementCreate || shouldHydrate ) {
 			this.onElementCreate();
 		}
 

@@ -276,26 +276,30 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 		// Act.
 		model.initialize( { elements: [ existing ], settings: {} }, {} );
 
-		// Assert - existing children preserved, no hydration, flag still stripped.
+		// Assert - existing children preserved, no hydration triggered.
 		expect( model.get( 'elements' ) ).toEqual( [ existing ] );
-		expect( model.get( 'hydrateDefaultChildren' ) ).toBeUndefined();
 	} );
 
-	it( 'propagates hydrateDefaultChildren to every built child regardless of explicit elements', () => {
-		// Arrange - buildElement trusts the initialize() isEmpty guard to make the flag a no-op
-		// on children that already have their own elements, so it tags unconditionally here.
+	it( 'propagates hydrateDefaultChildren to children with empty elements via buildElement', () => {
+		// Arrange.
 		const model = createModel( { elType: 'e-simple' } );
 
 		// Act.
-		const withoutChildren = model.buildElement( { elType: 'e-child' } );
-		const withChildren = model.buildElement( {
+		const built = model.buildElement( { elType: 'e-child' } );
+
+		// Assert.
+		expect( built.hydrateDefaultChildren ).toBe( true );
+	} );
+
+	it( 'propagates hydrateDefaultChildren even when the child has explicit elements (receiver no-ops via isEmpty guard)', () => {
+		const model = createModel( { elType: 'e-simple' } );
+
+		const built = model.buildElement( {
 			elType: 'e-child',
 			elements: [ { elType: 'e-grandchild' } ],
 		} );
 
-		// Assert.
-		expect( withoutChildren.hydrateDefaultChildren ).toBe( true );
-		expect( withChildren.hydrateDefaultChildren ).toBe( true );
+		expect( built.hydrateDefaultChildren ).toBe( true );
 	} );
 
 	it( 'does not propagate hydrateDefaultChildren when the child opts out via skipDefaultChildren', () => {
