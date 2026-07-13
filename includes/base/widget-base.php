@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils;
 
@@ -624,7 +625,7 @@ abstract class Widget_Base extends Element_Base {
 		 *
 		 * @param Widget_Base $this The current widget.
 		 */
-		do_action( 'elementor/widget/before_render_content', $this );
+		do_action( 'elementor/widget/before_render_content', $this, [ 'mode' => Widget_Content_Render_Mode::NORMAL ] );
 
 		ob_start();
 
@@ -659,7 +660,7 @@ abstract class Widget_Base extends Element_Base {
 			 * @param string      $widget_content The content of the widget.
 			 * @param Widget_Base $this           The widget.
 			 */
-			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this );
+			$widget_content = apply_filters( 'elementor/widget/render_content', $widget_content, $this, [ 'mode' => Widget_Content_Render_Mode::NORMAL ] );
 			Utils::print_unescaped_internal_string( $widget_content );
 			?>
 		<?php if ( $this->has_widget_inner_wrapper() ) : ?>
@@ -708,7 +709,9 @@ abstract class Widget_Base extends Element_Base {
 	}
 
 	protected function get_render_content_for_markdown(): string {
-		do_action( 'elementor/widget/before_render_content', $this );
+		$render_args = [ 'mode' => Widget_Content_Render_Mode::MARKDOWN ];
+
+		do_action( 'elementor/widget/before_render_content', $this, $render_args );
 
 		ob_start();
 
@@ -727,7 +730,7 @@ abstract class Widget_Base extends Element_Base {
 			return '';
 		}
 
-		return apply_filters( 'elementor/widget/render_content', $widget_content, $this );
+		return apply_filters( 'elementor/widget/render_content', $widget_content, $this, $render_args );
 	}
 
 	/**

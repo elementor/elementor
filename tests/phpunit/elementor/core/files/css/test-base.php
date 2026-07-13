@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Files\Css;
 
-use Elementor\Modules\MarkdownRender\Module as Markdown_Render_Module;
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Tests\Phpunit\Responsive_Control_Testing_Trait;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -291,14 +291,14 @@ class Test_Base extends Elementor_Test_Base {
 	}
 
 	public function test_should_skip_enqueue_when_rendering_markdown() {
-		Markdown_Render_Module::set_rendering_markdown( true );
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::MARKDOWN );
 
 		$method = new \ReflectionMethod( $this->css_generator_class, 'should_skip_enqueue' );
 		$method->setAccessible( true );
 
 		$this->assertTrue( $method->invoke( $this->css_generator_class ) );
 
-		Markdown_Render_Module::set_rendering_markdown( false );
+		Widget_Content_Render_Mode::set_current( Widget_Content_Render_Mode::NORMAL );
 	}
 
 	public function test_should_skip_enqueue_in_editor_request() {

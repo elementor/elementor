@@ -3,6 +3,7 @@ namespace Elementor\Modules\MarkdownRender;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
@@ -16,32 +17,20 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'markdown_rendering';
 	const CACHE_META_KEY = '_elementor_markdown_cache';
 
-	private static bool $is_rendering_markdown = false;
-
 	public static function is_rendering_markdown(): bool {
-		return self::$is_rendering_markdown;
+		return Widget_Content_Render_Mode::is( Widget_Content_Render_Mode::MARKDOWN );
 	}
 
 	public static function set_rendering_markdown( bool $is_rendering ): void {
-		self::$is_rendering_markdown = $is_rendering;
+		Widget_Content_Render_Mode::set_current(
+			$is_rendering ? Widget_Content_Render_Mode::MARKDOWN : Widget_Content_Render_Mode::NORMAL
+		);
 	}
 
 	public static function execute_while_rendering_markdown( callable $callback ) {
 		// Markdown rendering must not enqueue editor CSS or parse post stylesheets.
-		// The flag lets CSS and document cache layers skip those side effects while widgets render.
-		$was_rendering_markdown = self::is_rendering_markdown();
-
-		if ( ! $was_rendering_markdown ) {
-			self::set_rendering_markdown( true );
-		}
-
-		try {
-			return $callback();
-		} finally {
-			if ( ! $was_rendering_markdown ) {
-				self::set_rendering_markdown( false );
-			}
-		}
+		// The render mode lets CSS and document cache layers skip those side effects while widgets render.
+		return Widget_Content_Render_Mode::execute_as( Widget_Content_Render_Mode::MARKDOWN, $callback );
 	}
 
 	public function get_name() {

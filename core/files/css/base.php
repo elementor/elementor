@@ -10,8 +10,8 @@ use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Frontend\Performance;
+use Elementor\Core\Frontend\Widget_Content_Render_Mode;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Modules\MarkdownRender\Module as Markdown_Render_Module;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -613,7 +613,7 @@ abstract class Base extends Base_File {
 	abstract protected function get_file_handle_id();
 
 	protected function should_skip_enqueue(): bool {
-		if ( Markdown_Render_Module::is_rendering_markdown() ) {
+		if ( Widget_Content_Render_Mode::is( Widget_Content_Render_Mode::MARKDOWN ) ) {
 			return true;
 		}
 

@@ -234,7 +234,29 @@ class Editor {
 			}
 		}
 
-		$actions = [
+		if ( $this->is_editor_admin_screen() ) {
+			return true;
+		}
+
+		return $this->is_editor_ajax_request();
+	}
+
+	private function is_editor_admin_screen(): bool {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return false;
+		}
+
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		return isset( $_GET['action'] ) && 'elementor' === $_GET['action'] && in_array( $screen->base, [ 'post', 'toplevel_page_elementor' ], true );
+	}
+
+	private function is_editor_ajax_request(): bool {
+		$actions = apply_filters( 'elementor/editor/ajax_actions', [
 			'elementor',
 
 			// Templates
@@ -244,7 +266,7 @@ class Editor {
 			'elementor_delete_template',
 			'elementor_import_template',
 			'elementor_library_direct_actions',
-		];
+		] );
 
 		return isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions, true );
 	}
