@@ -32,4 +32,8 @@ class Number_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ) {
 		return $this->is_float ? (float) $value : (int) $value;
 	}
+
+	public function to_json_schema(): array {
+		return $this->wrap_json_schema( [ 'type' => 'number' ] );
+	}
 }

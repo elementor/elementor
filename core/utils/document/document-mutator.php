@@ -136,6 +136,43 @@ class Document_Mutator {
 		return $result;
 	}
 
+	/**
+	 * Insert a subtree into the document tree, recursively generating IDs for all elements.
+	 *
+	 * @param array    $tree      The current document tree.
+	 * @param string   $parent_id Parent element ID or 'document' for root.
+	 * @param int|null $index     Insertion index (null = append).
+	 * @param array    $subtree   The subtree to insert (single element with nested children).
+	 *
+	 * @return array|\WP_Error The updated tree or error.
+	 */
+	public function insert_subtree( array $tree, string $parent_id, ?int $index, array $subtree ) {
+		$subtree_with_ids = $this->generate_ids_recursive( $subtree );
+
+		return $this->insert_at( $tree, $parent_id, $index, $subtree_with_ids );
+	}
+
+	/**
+	 * Recursively generate IDs for an element and all its children.
+	 * Always generates new IDs to avoid duplicates when inserting subtrees.
+	 *
+	 * @param array $element The element to process.
+	 *
+	 * @return array The element with new IDs assigned.
+	 */
+	private function generate_ids_recursive( array $element ): array {
+		$element['id'] = $this->generate_id();
+
+		if ( ! empty( $element['elements'] ) && is_array( $element['elements'] ) ) {
+			$element['elements'] = array_map(
+				fn( array $child ) => $this->generate_ids_recursive( $child ),
+				$element['elements']
+			);
+		}
+
+		return $element;
+	}
+
 	private function splice_into( array $children, ?int $index, array $element ): array {
 		$count = count( $children );
 
