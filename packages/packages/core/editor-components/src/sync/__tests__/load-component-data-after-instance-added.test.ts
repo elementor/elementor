@@ -48,6 +48,28 @@ describe( 'initLoadComponentDataAfterInstanceAdded', () => {
 		}
 	);
 
+	it( 'should skip containers without a model', () => {
+		// Arrange
+		initLoadComponentDataAfterInstanceAdded();
+
+		const callback = getRegisteredCallback( 'document/elements/paste' );
+
+		const mockElement = createMockElement( {
+			model: {
+				id: 'element-1',
+				widgetType: 'e-component',
+				elType: 'widget',
+			},
+		} );
+
+		// Act
+		callback( {}, [ mockElement, {} as ReturnType< typeof createMockElement > ] );
+
+		// Assert
+		expect( mockLoadComponentsAssets ).toHaveBeenCalledTimes( 1 );
+		expect( mockLoadComponentsAssets ).toHaveBeenCalledWith( [ mockElement.model.toJSON() ] );
+	} );
+
 	it( 'should handle array of elements', () => {
 		// Arrange
 		initLoadComponentDataAfterInstanceAdded();
