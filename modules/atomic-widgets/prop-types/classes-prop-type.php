@@ -45,7 +45,7 @@ class Classes_Prop_Type extends Plain_Prop_Type {
 	}
 
 	public function to_json_schema(): array {
-		return $this->envelope_json_schema( [
+		return $this->wrap_json_schema( [
 			'type' => 'array',
 			'items' => [ 'type' => 'string' ],
 		] );

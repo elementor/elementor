@@ -26,6 +26,6 @@ class Boolean_Prop_Type extends Plain_Prop_Type {
 	}
 
 	public function to_json_schema(): array {
-		return $this->envelope_json_schema( [ 'type' => 'boolean' ] );
+		return $this->wrap_json_schema( [ 'type' => 'boolean' ] );
 	}
 }

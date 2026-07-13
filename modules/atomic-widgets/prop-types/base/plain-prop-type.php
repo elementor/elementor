@@ -97,14 +97,16 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function to_json_schema(): array {
-		return $this->envelope_json_schema( [ 'type' => 'object' ] );
+		return $this->wrap_json_schema( [ 'type' => 'object' ] );
 	}
 
 	/**
-	 * Builds the `{$$type, value}` envelope shared by the primitive prop types (string/number/boolean).
+	 * Wraps the given value schema in the `{$$type, value}` shape shared by the primitive
+	 * prop types (string/number/boolean). Additional JSON schema meta may be provided by
+	 * subclasses (e.g. `title`, custom `description` overrides).
 	 */
-	protected function envelope_json_schema( array $value_schema ): array {
-		$schema = $this->with_json_schema_meta( [] );
+	protected function wrap_json_schema( array $value_schema, array $json_schema_meta = [] ): array {
+		$schema = $this->with_json_schema_meta( $json_schema_meta );
 
 		$schema['type'] = 'object';
 		$schema['properties'] = [

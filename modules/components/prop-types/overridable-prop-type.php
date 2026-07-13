@@ -77,7 +77,7 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 	public function to_json_schema(): array {
 		$origin_prop_type = $this->get_origin_prop_type();
 
-		return $this->envelope_json_schema( [
+		return $this->wrap_json_schema( [
 			'type' => 'object',
 			'properties' => [
 				'override_key' => [ 'type' => 'string' ],

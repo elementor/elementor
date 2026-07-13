@@ -84,6 +84,6 @@ class String_Prop_Type extends Plain_Prop_Type {
 			$value_schema['enum'] = $enum;
 		}
 
-		return $this->envelope_json_schema( $value_schema );
+		return $this->wrap_json_schema( $value_schema );
 	}
 }
