@@ -76,7 +76,7 @@ class String_Prop_Type extends Plain_Prop_Type {
 		}, $value );
 	}
 
-	public function to_json_schema(): array {
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
 		$value_schema = [ 'type' => 'string' ];
 
 		$enum = $this->get_enum();

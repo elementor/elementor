@@ -79,6 +79,34 @@ class Dynamic_Tags_Module {
 		);
 
 		Dynamic_Prop_Type::register_union_json_schema_variant();
+		Dynamic_Prop_Type::set_tag_names_resolver( [ $this, 'get_dynamic_tag_names_by_categories' ] );
+	}
+
+	/**
+	 * Resolves which registered dynamic tags are allowed for a prop's accepted categories, mirroring
+	 * the frontend's `getDynamicTagNamesByCategories`.
+	 *
+	 * @param string[] $categories
+	 *
+	 * @return string[] Names of the dynamic tags whose categories intersect with $categories.
+	 */
+	public function get_dynamic_tag_names_by_categories( array $categories ): array {
+		if ( empty( $categories ) ) {
+			return [];
+		}
+
+		$tags = $this->registry->get_tags();
+
+		$names = array_map(
+			function ( array $tag ) use ( $categories ) {
+				$tag_categories = $tag['categories'] ?? [];
+
+				return array_intersect( $tag_categories, $categories ) ? $tag['name'] : null;
+			},
+			$tags
+		);
+
+		return array_values( array_filter( $names ) );
 	}
 
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {

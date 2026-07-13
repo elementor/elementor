@@ -426,6 +426,71 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$this->assertEquals( [ V1DynamicTags::TEXT_CATEGORY ], $internal->get_prop_type( 'dynamic' )->get_categories() );
 	}
 
+	public function test_get_dynamic_tag_names_by_categories__returns_empty_array_for_no_categories() {
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [] );
+
+		// Assert.
+		$this->assertSame( [], $result );
+	}
+
+	public function test_get_dynamic_tag_names_by_categories__returns_names_of_tags_matching_any_category() {
+		// Arrange.
+		$text_tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+		$number_tag = $this->make_mock_tag( [ 'name' => 'number-tag', 'categories' => [ 'number' ] ] );
+		$url_tag = $this->make_mock_tag( [ 'name' => 'url-tag', 'categories' => [ 'url' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $text_tag );
+		Plugin::$instance->dynamic_tags->register( $number_tag );
+		Plugin::$instance->dynamic_tags->register( $url_tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [ 'text', 'number' ] );
+
+		// Assert.
+		$this->assertEqualSets( [ 'text-tag', 'number-tag' ], $result );
+
+		// Cleanup.
+		$text_tag->cleanup();
+		$number_tag->cleanup();
+		$url_tag->cleanup();
+	}
+
+	public function test_register_hooks__wires_dynamic_prop_type_as_union_exclusive_variant() {
+		// Arrange.
+		$tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		$dynamic_prop_type = Dynamic_Prop_Type::make()->categories( [ 'text' ] );
+
+		$union = Union_Prop_Type::make()
+			->add_prop_type( String_Prop_Type::make() )
+			->add_prop_type( $dynamic_prop_type );
+
+		// Act.
+		$schema = $union->to_json_schema();
+
+		// Assert.
+		$this->assertCount( 2, $schema['anyOf'] );
+
+		$dynamic_schema = $schema['anyOf'][1];
+
+		$this->assertSame( 'dynamic', $dynamic_schema['properties']['$$type']['const'] );
+		$this->assertSame(
+			[ 'text-tag' ],
+			$dynamic_schema['properties']['value']['properties']['name']['enum']
+		);
+
+		// Cleanup.
+		$tag->cleanup();
+		Union_Prop_Type::reset_registered_variants();
+	}
+
 	public function add_dynamic_prop_type_data_provider() {
 		return [
 			'number' => [

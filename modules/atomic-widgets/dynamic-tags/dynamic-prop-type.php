@@ -105,6 +105,14 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 		return isset( $value['$$type'] ) && self::get_key() === $value['$$type'];
 	}
 
+	/**
+	 * Delegates to the same schema builder used when this prop type is offered as a `Union_Prop_Type`
+	 * exclusive variant, so standalone calls (outside a union) stay consistent with the union path.
+	 */
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
+		return self::build_union_variant_schema( $this );
+	}
+
 	protected function validate_value( $value ): bool {
 		$is_valid_structure = (
 			isset( $value['name'] ) &&

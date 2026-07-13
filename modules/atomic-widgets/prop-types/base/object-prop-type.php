@@ -170,7 +170,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $this;
 	}
 
-	public function to_json_schema(): array {
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
 		$schema = $this->with_json_schema_meta( [] );
 
 		$schema['type'] = 'object';
@@ -179,7 +179,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$value_required = [];
 
 		foreach ( $this->get_shape() as $key => $prop_type ) {
-			$value_properties[ $key ] = $prop_type->to_json_schema();
+			$value_properties[ $key ] = $prop_type->to_json_schema( $suppress_dynamic );
 
 			if ( $prop_type->get_setting( 'required', false ) ) {
 				$value_required[] = $key;

@@ -48,7 +48,7 @@ class Unknown_Prop_Type implements Prop_Type {
 		return null;
 	}
 
-	public function to_json_schema(): array {
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
 		return [];
 	}
 
