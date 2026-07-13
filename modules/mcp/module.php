@@ -77,6 +77,9 @@ class Module extends BaseModule {
 		( new Abilities\Get_Globals_Ability() )->register();
 		( new Abilities\Create_Element_Ability() )->register();
 		( new Abilities\Style_Best_Practices_Ability() )->register();
+		( new Abilities\List_Variables_Ability() )->register();
+		( new Abilities\Manage_Variable_Ability() )->register();
+		( new Abilities\Manage_Variable_Guide_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -101,9 +104,12 @@ class Module extends BaseModule {
 				'elementor/create-page',
 				'elementor/get-globals',
 				'elementor/create-element',
+				'elementor/manage-global-variable',
 			],
 			[
 				'elementor/style-best-practices',
+				'elementor/list-variables',
+				'elementor/manage-global-variable-guide',
 			],
 			[]
 		);
