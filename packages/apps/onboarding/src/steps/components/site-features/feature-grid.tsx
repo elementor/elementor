@@ -139,7 +139,13 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 							height={ theme.spacing( 4 ) }
 							sx={ { mt: 2, mb: 1 } }
 						>
-							<Icon sx={ { width: theme.spacing( 4 ), height: theme.spacing( 4 ), fontSize: theme.spacing( 4 ) } } />
+							<Icon
+								sx={ {
+									width: theme.spacing( 4 ),
+									height: theme.spacing( 4 ),
+									fontSize: theme.spacing( 4 ),
+								} }
+							/>
 						</Box>
 						<Typography
 							variant="body2"
