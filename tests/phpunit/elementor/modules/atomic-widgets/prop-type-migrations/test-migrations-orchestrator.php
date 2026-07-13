@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -139,6 +140,17 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 1, $fetch_count );
 		$this->assertFalse( get_transient( 'elementor_migrations_manifest' ) );
+
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$this->assertNotNull( $loader->find_migration_path( 'string', 'html' ) );
+	}
+
+	private function get_orchestrator_loader( Migrations_Orchestrator $orchestrator ): Migrations_Loader {
+		$reflection = new \ReflectionClass( $orchestrator );
+		$loader_property = $reflection->getProperty( 'loader' );
+		$loader_property->setAccessible( true );
+
+		return $loader_property->getValue( $orchestrator );
 	}
 
 	private function get_sample_data(): array {

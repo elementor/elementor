@@ -71,7 +71,7 @@ class Migrations_Orchestrator {
 	public static function is_rollback(): bool {
 		/** @var Upgrade_Manager $upgrade_manager */
 		$upgrade_manager = Plugin::$instance->upgrade;
-		$stored_version = $upgrade_manager->get_current_version();
+		$stored_version = get_option( $upgrade_manager->get_version_option_name() );
 
 		if ( ! $stored_version ) {
 			return false;

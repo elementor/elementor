@@ -375,6 +375,34 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 		$this->assertFalse( get_transient( 'elementor_migrations_manifest' ) );
 	}
 
+	public function test_remote_fetch_rejects_non_2xx_and_falls_back_to_local_manifest() {
+		// Arrange
+		$fetch_count = 0;
+
+		add_filter( 'pre_http_request', function () use ( &$fetch_count ) {
+			$fetch_count++;
+			return [
+				'headers' => [],
+				'response' => [ 'code' => 500, 'message' => 'Internal Server Error' ],
+				'body' => 'error',
+			];
+		} );
+
+		$loader = Migrations_Loader::make(
+			'https://migrations.example.com/',
+			'manifest.json',
+			$this->fixtures_path
+		);
+
+		// Act
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
+
+		// Assert
+		$this->assertNotNull( $result );
+		$this->assertEquals( 1, $fetch_count );
+		$this->assertFalse( get_transient( 'elementor_migrations_manifest' ) );
+	}
+
 	private function get_fixture_manifest(): array {
 		return json_decode( file_get_contents( $this->fixtures_path . 'manifest.json' ), true );
 	}
