@@ -46,6 +46,19 @@ describe( 'useContainerWidth', () => {
 		expect( result.current ).toBe( 0 );
 	} );
 
+	it( 'should read the initial width synchronously, before the ResizeObserver fires', () => {
+		// Arrange.
+		const element = document.createElement( 'div' );
+		jest.spyOn( element, 'getBoundingClientRect' ).mockReturnValue( { width: 320 } as DOMRect );
+		const ref = { current: element };
+
+		// Act.
+		const { result } = renderHook( () => useContainerWidth( ref ) );
+
+		// Assert - the width is available immediately, without waiting for the observer callback.
+		expect( result.current ).toBe( 320 );
+	} );
+
 	it( 'should update the width when the observed element is resized', () => {
 		// Arrange.
 		const element = document.createElement( 'div' );

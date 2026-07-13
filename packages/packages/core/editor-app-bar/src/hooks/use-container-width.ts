@@ -18,6 +18,8 @@ export function useContainerWidth( ref: RefObject< HTMLElement | null > ) {
 			}
 		} );
 
+		setWidth( element.getBoundingClientRect().width );
+
 		observer.observe( element );
 
 		return () => observer.disconnect();
