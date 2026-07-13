@@ -100,19 +100,16 @@ type BaseProps< T > = {
 	showToggle?: boolean;
 	showRemove?: boolean;
 	openItem?: number;
-	isSortable?: boolean;
 	adornment?: React.FC;
 };
 
 type SortableProps< T > = BaseProps< T > & {
 	isSortable?: true;
-	adornment?: React.ComponentType< { children: React.ReactNode } >;
 	itemSettings: SortableItemSettings< T >;
 };
 
 type NonSortableProps< T > = BaseProps< T > & {
-	isSortable: false;
-	adornment?: React.ComponentType< { children: React.ReactNode } >;
+	isSortable?: false;
 	itemSettings: BaseItemSettings< T >;
 };
 
