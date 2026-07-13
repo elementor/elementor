@@ -149,7 +149,30 @@ describe( 'bindSettingsReconcile', () => {
 		settings.set( paginationOn );
 
 		// Assert.
-		expect( mockAddModelToParent ).toHaveBeenCalledWith( 'parent-1', defaultModel, { at: 0 } );
+		expect( mockAddModelToParent ).toHaveBeenCalledWith(
+			'parent-1',
+			expect.objectContaining( { elType: 'e-pagination', isLocked: true, id: expect.any( String ) } ),
+			{ at: 0 }
+		);
+	} );
+
+	it( 'generates a fresh id when default_model has none', () => {
+		mockGetContainer.mockReturnValue( createMockContainer( 'parent-1', [] ) );
+		const settings = createReactiveSettings( paginationOff );
+		const model = createReactiveModel( 'parent-1', settings );
+
+		bindSettingsReconcile( {
+			model,
+			elementConfig: createConfig( [
+				createRule( { default_model: { elType: 'e-pagination' } as V1ElementData } ),
+			] ),
+		} );
+
+		settings.set( paginationOn );
+
+		const [ , attached ] = mockAddModelToParent.mock.calls[ 0 ] ?? [];
+		expect( attached ).toEqual( expect.objectContaining( { elType: 'e-pagination', id: expect.any( String ) } ) );
+		expect( ( attached as { id: string } ).id ).not.toBe( '' );
 	} );
 
 	it( 'detaches and stashes an existing child when when() flips to unmet', () => {

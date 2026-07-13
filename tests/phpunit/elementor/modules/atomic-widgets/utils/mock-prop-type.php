@@ -66,6 +66,14 @@ class Mock_Prop_Type implements Prop_Type {
 		return $this->dependencies;
 	}
 
+	public function to_json_schema(): array {
+		return [];
+	}
+
+	public function get_aliases(): array {
+		return [];
+	}
+
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		return [
