@@ -21,6 +21,20 @@ interface Prop_Type extends \JsonSerializable {
 	public function set_dependencies( ?array $dependencies ): self;
 	public function get_dependencies(): ?array;
 	public function get_initial_value();
+
+	/**
+	 * Returns the list of alias names for this prop type.
+	 * Aliases allow the LLM to use alternative names for the same prop.
+	 *
+	 * @return string[]
+	 */
 	public function get_aliases(): array;
+
+	/**
+	 * Returns a JSON Schema representation of this prop type's enveloped ({$$type, value}) input
+	 * format, mirroring the frontend's propTypeToJsonSchema converter.
+	 *
+	 * @return array JSON Schema array.
+	 */
 	public function to_json_schema(): array;
 }
