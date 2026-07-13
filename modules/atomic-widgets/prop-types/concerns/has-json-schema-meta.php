@@ -14,12 +14,6 @@ trait Has_Json_Schema_Meta {
 			$schema['description'] = $description;
 		}
 
-		$initial_value = $this->get_initial_value();
-
-		if ( null !== $initial_value ) {
-			$schema['examples'] = [ $initial_value ];
-		}
-
 		return $schema;
 	}
 }

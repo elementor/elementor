@@ -96,20 +96,8 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return $this->dependencies;
 	}
 
-	/**
-	 * Fallback JSON Schema for plain prop types that don't override this method (e.g. `classes`,
-	 * `dynamic`, `overridable`). Mirrors the frontend's `propTypeToJsonSchema` default case, which
-	 * only special-cases `string`/`number`/`boolean`/`unknown`.
-	 */
-	public function to_json_schema( bool $suppress_dynamic = false ): array {
-		$schema = $this->with_json_schema_meta( [] );
-
-		$schema['type'] = 'object';
-		// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
-		$schema['$$type'] = $this->get_type();
-		$schema['value'] = [ 'type' => $this->get_type() ];
-
-		return $schema;
+	public function to_json_schema(): array {
+		return $this->envelope_json_schema( [ 'type' => 'object' ] );
 	}
 
 	/**
