@@ -11,13 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Markdown_Renderer {
 
 	public function render( Document $document ): string {
-		$was_rendering_markdown = Module::is_rendering_markdown();
-
-		if ( ! $was_rendering_markdown ) {
-			Module::set_rendering_markdown( true );
-		}
-
-		try {
+		return Module::execute_while_rendering_markdown( function () use ( $document ) {
 			$frontmatter = $this->build_frontmatter( $document );
 			$data = $document->get_elements_data();
 
@@ -40,21 +34,11 @@ class Markdown_Renderer {
 			$output = $frontmatter . "\n\n" . $body;
 
 			return apply_filters( 'elementor/markdown/document_output', $output, $document );
-		} finally {
-			if ( ! $was_rendering_markdown ) {
-				Module::set_rendering_markdown( false );
-			}
-		}
+		} );
 	}
 
 	public function render_elements_data( array $elements_data ): string {
-		$was_rendering_markdown = Module::is_rendering_markdown();
-
-		if ( ! $was_rendering_markdown ) {
-			Module::set_rendering_markdown( true );
-		}
-
-		try {
+		return Module::execute_while_rendering_markdown( function () use ( $elements_data ) {
 			if ( empty( $elements_data ) ) {
 				return '';
 			}
@@ -70,11 +54,7 @@ class Markdown_Renderer {
 			}
 
 			return implode( "\n\n", $sections );
-		} finally {
-			if ( ! $was_rendering_markdown ) {
-				Module::set_rendering_markdown( false );
-			}
-		}
+		} );
 	}
 
 	private function build_frontmatter( Document $document ): string {

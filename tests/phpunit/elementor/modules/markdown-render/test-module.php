@@ -189,6 +189,32 @@ class Test_Module extends Elementor_Test_Base {
 		$this->assertStringContainsString( '### Tab Content', $markdown );
 	}
 
+	public function test_execute_while_rendering_markdown_resets_flag_after_exception() {
+		try {
+			Module::execute_while_rendering_markdown( static function () {
+				throw new \RuntimeException( 'markdown render failed' );
+			} );
+			$this->fail( 'Expected RuntimeException was not thrown.' );
+		} catch ( \RuntimeException $exception ) {
+			$this->assertSame( 'markdown render failed', $exception->getMessage() );
+		}
+
+		$this->assertFalse( Module::is_rendering_markdown() );
+	}
+
+	public function test_execute_while_rendering_markdown_preserves_existing_flag_state() {
+		Module::set_rendering_markdown( true );
+
+		$result = Module::execute_while_rendering_markdown( static function () {
+			return Module::is_rendering_markdown();
+		} );
+
+		$this->assertTrue( $result );
+		$this->assertTrue( Module::is_rendering_markdown() );
+
+		Module::set_rendering_markdown( false );
+	}
+
 	public function test_cache_invalidation_hooks_are_registered() {
 		// Arrange
 		$module = new Module();

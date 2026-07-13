@@ -26,6 +26,24 @@ class Module extends BaseModule {
 		self::$is_rendering_markdown = $is_rendering;
 	}
 
+	public static function execute_while_rendering_markdown( callable $callback ) {
+		// Markdown rendering must not enqueue editor CSS or parse post stylesheets.
+		// The flag lets CSS and document cache layers skip those side effects while widgets render.
+		$was_rendering_markdown = self::is_rendering_markdown();
+
+		if ( ! $was_rendering_markdown ) {
+			self::set_rendering_markdown( true );
+		}
+
+		try {
+			return $callback();
+		} finally {
+			if ( ! $was_rendering_markdown ) {
+				self::set_rendering_markdown( false );
+			}
+		}
+	}
+
 	public function get_name() {
 		return 'markdown-render';
 	}
@@ -98,11 +116,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		// While rendering markdown we skip CSS enqueues that would trigger WP 6.9.1 notices
-		// in editor-like contexts. The flag must reset even when rendering throws.
-		self::set_rendering_markdown( true );
-
-		try {
+		self::execute_while_rendering_markdown( function () use ( $is_preview, $document, $post_id ) {
 			if ( $is_preview ) {
 				$markdown = ( new Markdown_Renderer() )->render( $document );
 			} else {
@@ -120,9 +134,7 @@ class Module extends BaseModule {
 			header( 'X-Content-Type-Options: nosniff' );
 			Utils::print_unescaped_internal_string( $markdown );
 			exit;
-		} finally {
-			self::set_rendering_markdown( false );
-		}
+		} );
 	}
 
 	private function is_valid_preview_request( int $post_id ): bool {
