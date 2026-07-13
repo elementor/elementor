@@ -7,6 +7,7 @@ type Model = {
 
 export type CreateArgs = {
 	container?: V1Element;
+	containers?: V1Element[];
 	model?: Model;
 };
 

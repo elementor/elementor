@@ -1,12 +1,13 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { isProActive } from '@elementor/utils';
 
-import { service } from '../service';
-import { getFontConfigs } from '../sync/get-font-configs';
-import { validateLabel } from '../utils/validations';
-import { generateVariablesPrompt, MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
+import { MANAGE_VARIABLES_GUIDE_URI } from './variable-tool-prompt';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
+
+const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
+const TOOL_NAME = 'manage-global-variable';
 
 const VARIABLE_TYPES = {
 	COLOR: 'global-color-variable',
@@ -14,36 +15,6 @@ const VARIABLE_TYPES = {
 	SIZE: 'global-size-variable',
 	CUSTOM_SIZE: 'global-custom-size-variable',
 } as const;
-
-const LENGTH_UNIT_PATTERN = /^(auto|\d+(\.\d+)?(px|rem|em|vh|vw|%|ch|s|ms))$/i;
-const COLOR_PATTERN = /^(#[0-9a-f]{3,8}|rgba?\(|hsl)/i;
-
-function validateValueForType( type: string, value: string ): string | null {
-	if ( type === VARIABLE_TYPES.FONT && LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
-		return `Font variable value must be a font family name (e.g. "Roboto"), not a size value like "${ value }". Use "global-size-variable" or "global-custom-size-variable" for spacing/size values.`;
-	}
-
-	if ( type === VARIABLE_TYPES.COLOR && ! COLOR_PATTERN.test( value.trim() ) ) {
-		return `Color variable value should be a CSS color (e.g. "#FF0000"), got "${ value }".`;
-	}
-
-	if ( type === VARIABLE_TYPES.SIZE && ! LENGTH_UNIT_PATTERN.test( value.trim() ) ) {
-		return `Size variable value should include a CSS unit (e.g. "16px") or be "auto", got "${ value }".`;
-	}
-
-	if ( type === VARIABLE_TYPES.FONT && ! isFontAvailable( value ) ) {
-		return `Font "${ value }" is not supported in WordPress. Please choose one of the available font families.`;
-	}
-
-	return null;
-}
-
-function isFontAvailable( font: string ) {
-	const fonts = getFontConfigs();
-	const key = font.trim();
-
-	return !! fonts?.[ key ];
-}
 
 export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool, resource } = reg;
@@ -59,13 +30,19 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 			description: 'Detailed guide for using the manage-global-variable tool',
 			mimeType: 'text/plain',
 		},
-		async ( uri: URL ) => ( {
-			contents: [ { uri: uri.href, mimeType: 'text/plain', text: generateVariablesPrompt() } ],
-		} )
+		async ( uri: URL ) => {
+			const { data } = await httpService().get< HttpResponse< string > >( MCP_PROXY_URL, {
+				params: { uri: uri.href },
+			} );
+
+			return {
+				contents: [ { uri: uri.href, mimeType: 'text/plain', text: data.data } ],
+			};
+		}
 	);
 
 	addTool( {
-		name: 'manage-global-variable',
+		name: TOOL_NAME,
 		description:
 			'Manage V4 global variables (color, font, size, custom-size). Read the guide resource before use. font = font-famliy, size = measured unit, custom-size = calculated values',
 		schema: {
@@ -96,62 +73,12 @@ export const initManageVariableTool = ( reg: MCPRegistryEntry ) => {
 		],
 		isDestructive: true,
 		handler: async ( params ) => {
-			const operations = getServiceActions( service );
-			const op = operations[ params.action ];
-			if ( op ) {
-				await op( params );
-				return { status: 'ok' };
-			}
-			throw new Error( `Unknown action ${ params.action }` );
+			await httpService().post( MCP_PROXY_URL, {
+				tool: TOOL_NAME,
+				input: params,
+			} );
+
+			return { status: 'ok' };
 		},
 	} );
 };
-
-type Opts< T extends Record< string, string > > = Partial< T > & {
-	[ k: string ]: unknown;
-};
-
-function getServiceActions( svc: typeof service ) {
-	return {
-		create( { type, label, value }: Opts< { type: string; label: string; value: string } > ) {
-			if ( ! type || ! label || ! value ) {
-				throw new Error( 'Create requires type, label, and value' );
-			}
-			if ( ( type === VARIABLE_TYPES.SIZE || type === VARIABLE_TYPES.CUSTOM_SIZE ) && ! isProActive() ) {
-				throw new Error( 'Creating size variables requires Elementor Pro.' );
-			}
-			const labelError = validateLabel( label );
-			if ( labelError ) {
-				throw new Error( labelError );
-			}
-			const valueError = validateValueForType( type, value );
-			if ( valueError ) {
-				throw new Error( valueError );
-			}
-			return svc.create( { type, label, value }, { eventData: { executedBy: 'mcp_tool' } } );
-		},
-		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
-			if ( ! id || ! label || ! value ) {
-				throw new Error( 'Update requires id, label, and value' );
-			}
-			const labelError = validateLabel( label );
-			if ( labelError ) {
-				throw new Error( labelError );
-			}
-			const existingVariable = svc.variables()[ id ];
-			if ( existingVariable ) {
-				const valueError = validateValueForType( existingVariable.type, value );
-				if ( valueError ) {
-					throw new Error( valueError );
-				}
-			}
-			return svc.update( id, { label, value }, { eventData: { executedBy: 'mcp_tool' } } );
-		},
-		delete( { id }: Opts< { id: string } > ) {
-			if ( ! id ) {
-				throw new Error( 'delete requires id' );
-			}
-			return svc.delete( id );
-		},
-	};
-}
