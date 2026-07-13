@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\ChildrenDependencies;
 
 use Elementor\Modules\AtomicWidgets\ChildrenDependencies\Child_Dependency;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\Utils\Element_Position;
@@ -32,6 +33,29 @@ class Widget_With_Builder_Rule extends Div_Block {
 	}
 }
 
+class Widget_With_Hydrated_Default_Model extends Div_Block {
+	protected function define_children_dependencies(): array {
+		return [
+			Child_Dependency::for( 'e-pagination' )
+				->when(
+					Dependency_Manager::make()->where( [
+						'operator' => 'eq',
+						'path' => [ 'pagination' ],
+						'value' => true,
+					] )
+				)
+				->position( Element_Position::last() )
+				->stash( false )
+				->default_model(
+					Element_Builder::make( 'e-pagination' )
+						->is_locked( true )
+						->hydrate_default_children( true )
+						->build()
+				),
+		];
+	}
+}
+
 class Widget_With_Raw_Rule extends Div_Block {
 	protected function define_children_dependencies(): array {
 		return [
@@ -45,7 +69,6 @@ class Widget_With_Raw_Rule extends Div_Block {
 		];
 	}
 }
-
 
 class Test_Children_Dependencies_In_Config extends Elementor_Test_Base {
 
@@ -88,6 +111,25 @@ class Test_Children_Dependencies_In_Config extends Elementor_Test_Base {
 		$this->assertTrue( $rule['stash'] );
 		$this->assertSame( [ 'elType' => 'e-pagination', 'isLocked' => true ], $rule['default_model'] );
 		$this->assertSame( [ 'pagination' ], $rule['when']['terms'][0]['path'] );
+	}
+
+	public function test_default_model_carries_hydrate_flag_when_opted_in_via_builder() {
+		// Act.
+		$config = $this->get_initial_config( $this->make_widget( Widget_With_Hydrated_Default_Model::class ) );
+
+		// Assert.
+		$default_model = $config['children_dependencies'][0]['default_model'];
+		$this->assertSame( 'e-pagination', $default_model['elType'] );
+		$this->assertTrue( $default_model['hydrateDefaultChildren'] );
+	}
+
+	public function test_default_model_omits_hydrate_flag_by_default() {
+		// Act.
+		$config = $this->get_initial_config( $this->make_widget( Widget_With_Builder_Rule::class ) );
+
+		// Assert.
+		$default_model = $config['children_dependencies'][0]['default_model'];
+		$this->assertArrayNotHasKey( 'hydrateDefaultChildren', $default_model );
 	}
 
 	public function test_raw_array_rules_are_rejected() {
