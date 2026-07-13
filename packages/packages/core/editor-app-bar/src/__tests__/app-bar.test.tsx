@@ -4,6 +4,7 @@ import { __useActiveDocument as useActiveDocument } from '@elementor/editor-docu
 import { act, screen } from '@testing-library/react';
 
 import AppBar from '../components/app-bar';
+import { MIN_APP_BAR_WIDTH } from '../constants';
 import { toolsMenu, utilitiesMenu } from '../locations';
 
 jest.mock( '@elementor/editor-documents', () => ( {
@@ -81,5 +82,21 @@ describe( '@elementor/editor-app-bar - AppBar', () => {
 
 		// Assert - narrowing the app bar moves items from the tools/utilities menus into "More" popovers.
 		expect( screen.getAllByLabelText( 'More' ) ).toHaveLength( 2 );
+	} );
+
+	it( 'should not shrink the app bar content below MIN_APP_BAR_WIDTH, so it scrolls horizontally instead', () => {
+		// Arrange.
+		renderWithTheme( <AppBar /> );
+
+		// Act.
+		act( () => {
+			MockResizeObserver.instances.forEach( ( observer ) => observer.trigger( 400 ) );
+		} );
+
+		// Assert - the grid content keeps its min-width floor regardless of how narrow the app bar itself is.
+		// eslint-disable-next-line testing-library/no-node-access -- no accessible role/label exists for this structural layout container.
+		const grid = document.querySelector( '.MuiToolbar-root > div' ) as HTMLElement;
+
+		expect( getComputedStyle( grid ).minWidth ).toBe( `${ MIN_APP_BAR_WIDTH }px` );
 	} );
 } );

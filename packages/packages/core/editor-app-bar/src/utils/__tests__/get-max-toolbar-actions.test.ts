@@ -1,3 +1,4 @@
+import { MIN_APP_BAR_WIDTH } from '../../constants';
 import { DEFAULT_MAX_TOOLBAR_ACTIONS } from '../../contexts/app-bar-size-context';
 import { getMaxToolbarActions } from '../get-max-toolbar-actions';
 
@@ -14,18 +15,22 @@ describe( 'getMaxToolbarActions', () => {
 		expect( getMaxToolbarActions( 1000 ) ).toEqual( { tools: 3, utilities: 2 } );
 	} );
 
-	it( 'should return the minimum inline actions on narrow containers', () => {
-		expect( getMaxToolbarActions( 400 ) ).toEqual( { tools: 1, utilities: 1 } );
+	it( "should return the minimum inline actions at the app bar's min-width floor", () => {
+		expect( getMaxToolbarActions( MIN_APP_BAR_WIDTH ) ).toEqual( { tools: 1, utilities: 0 } );
+	} );
+
+	it( "should fully collapse the utilities menu below the min-width floor, since its primary action button has a fixed minimum width and can't shrink further", () => {
+		expect( getMaxToolbarActions( MIN_APP_BAR_WIDTH - 1 ) ).toEqual( { tools: 0, utilities: 0 } );
 	} );
 
 	it( 'should shrink further as the container gets narrower', () => {
 		const wide = getMaxToolbarActions( 1400 );
 		const medium = getMaxToolbarActions( 1000 );
-		const narrow = getMaxToolbarActions( 400 );
+		const atFloor = getMaxToolbarActions( MIN_APP_BAR_WIDTH );
 
 		expect( medium.tools ).toBeLessThan( wide.tools );
 		expect( medium.utilities ).toBeLessThan( wide.utilities );
-		expect( narrow.tools ).toBeLessThanOrEqual( medium.tools );
-		expect( narrow.utilities ).toBeLessThanOrEqual( medium.utilities );
+		expect( atFloor.tools ).toBeLessThanOrEqual( medium.tools );
+		expect( atFloor.utilities ).toBeLessThanOrEqual( medium.utilities );
 	} );
 } );
