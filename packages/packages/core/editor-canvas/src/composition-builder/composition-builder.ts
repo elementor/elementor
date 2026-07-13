@@ -336,11 +336,8 @@ export class CompositionBuilder {
 		return {
 			configErrors,
 			styleErrors,
-<<<<<<< HEAD
 			invalidStyles,
-=======
 			formErrors,
->>>>>>> 717150cb86 (Fix: Atomic Form Angie support > inputs are not wrapped with an atomic form container [ED-24881] (#36488))
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}
