@@ -24,6 +24,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			this.set( 'isLocked', true );
 		}
 
+		// Guard: onElementCreate() overwrites elements, so never hydrate when children already exist.
 		const isEmpty = 0 === this.get( 'elements' ).length;
 		const isNewElementCreate = isEmpty &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
