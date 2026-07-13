@@ -21,6 +21,22 @@ const LOCAL_STYLE_META = {
 	breakpoint: 'desktop',
 	state: null,
 } as const;
+export class UnsupportedPropertyError extends Error {
+	public readonly elementType: string;
+	public readonly propertyName: string;
+
+	constructor( elementType: string, propertyName: string, availableProperties: string[] ) {
+		super(
+			`Property "${ propertyName }" does not exist on element type "${ elementType }". Available properties are: ${ availableProperties.join(
+				', '
+			) }`
+		);
+		this.name = 'UnsupportedPropertyError';
+		this.elementType = elementType;
+		this.propertyName = propertyName;
+	}
+}
+
 type CustomCssWriteMode = 'replace' | 'merge-with-stored';
 type OwnParams = {
 	elementId: string;
@@ -151,12 +167,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		throw new Error( `No prop schema found for element type: ${ elementType }` );
 	}
 	if ( ! elementPropSchema[ propertyName ] ) {
-		const propertyNames = Object.keys( elementPropSchema );
-		throw new Error(
-			`Property "${ propertyName }" does not exist on element type "${ elementType }". Available properties are: ${ propertyNames.join(
-				', '
-			) }`
-		);
+		throw new UnsupportedPropertyError( elementType, propertyName, Object.keys( elementPropSchema ) );
 	}
 	const propKey = elementPropSchema[ propertyName ].key;
 	const value = resolvePropValue( propertyValue, propKey );

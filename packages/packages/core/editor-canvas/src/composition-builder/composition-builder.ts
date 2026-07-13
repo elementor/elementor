@@ -11,13 +11,14 @@ import {
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
-import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
+import { doUpdateElementProperty, UnsupportedPropertyError } from '../mcp/utils/do-update-element-property';
 import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
+export type SkippedProp = { configId: string; elementType: string; propertyName: string };
 
 const CREATE_ELEMENT_INVALID_CONTAINER_MESSAGE = 'createElement did not return an element container with a model.';
 
@@ -183,6 +184,7 @@ export class CompositionBuilder {
 	private async applyProperties() {
 		const configErrors: string[] = [];
 		const styleErrors: string[] = [];
+		const skippedProps: SkippedProp[] = [];
 
 		const allConfigIds = new Set( [
 			...Object.keys( this.elementConfig ),
@@ -216,7 +218,15 @@ export class CompositionBuilder {
 							elementType: node.tagName,
 						} );
 					} catch ( error ) {
-						configErrors.push( ( error as Error ).message );
+						if ( error instanceof UnsupportedPropertyError ) {
+							skippedProps.push( {
+								configId,
+								elementType: node.tagName,
+								propertyName,
+							} );
+						} else {
+							configErrors.push( ( error as Error ).message );
+						}
 					}
 				}
 			}
@@ -266,7 +276,7 @@ export class CompositionBuilder {
 			await this.awaitViewRender( element );
 		}
 
-		return { configErrors, styleErrors };
+		return { configErrors, styleErrors, skippedProps };
 	}
 
 	async build( rootContainer: V1Element ) {
@@ -318,7 +328,7 @@ export class CompositionBuilder {
 			}
 		}
 
-		const { configErrors, styleErrors } = await this.applyProperties();
+		const { configErrors, styleErrors, skippedProps } = await this.applyProperties();
 
 		if ( typeof window !== 'undefined' ) {
 			const targetWindow = window.top || window;
@@ -332,6 +342,7 @@ export class CompositionBuilder {
 		return {
 			configErrors,
 			styleErrors,
+			skippedProps,
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}

@@ -29,6 +29,12 @@ export const inputSchema = {
 
 export const outputSchema = {
 	errors: z.string().describe( 'Error message if the composition building failed' ).optional(),
+	warnings: z
+		.string()
+		.describe(
+			'Non-fatal notices. Present when some props were skipped because the target widget schema does not support them (e.g. a "link" on a widget with no link prop). The composition was still built.'
+		)
+		.optional(),
 	xmlStructure: z
 		.string()
 		.describe(

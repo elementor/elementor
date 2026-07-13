@@ -119,7 +119,7 @@ V4 only: If MCP fails, give manual steps using V4 UI.
 V4 Editor structure:
 Panel tabs: General (→ Settings section: ID, Tag, and Link only when the widget's schema exposes a \`link\` prop), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
-Note: \`link\` is not a documented, universally-available key; never assume an element has one or instruct the user to set a link on a widget whose schema lacks it.
+Note: \`link\` is not universally available — it exists only where the widget's schema exposes a \`link\` prop. If you send \`link\` to a widget that lacks it, the prop is skipped and reported in the response \`warnings\` (other changes still apply); it does not fail the call.
 ` );
 
 	return configureElementToolPrompt.prompt();

@@ -1,5 +1,6 @@
 import { type CreateElementParams, type V1Element, type V1ElementConfig } from '@elementor/editor-elements';
 
+import { UnsupportedPropertyError } from '../../mcp/utils/do-update-element-property';
 import { CompositionBuilder } from '../composition-builder';
 
 const ROOT_CHILD_TAG = 'column';
@@ -303,6 +304,70 @@ describe( 'CompositionBuilder.build required children', () => {
 		expect( childElements.filter( ( child ) => child.elType === 'e-form-success-message' ).length ).toBe( 1 );
 		expect( childElements.filter( ( child ) => child.elType === 'e-form-error-message' ).length ).toBe( 1 );
 		expect( childElements.some( ( child ) => child.widgetType === 'e-form-input' ) ).toBe( true );
+	} );
+} );
+
+describe( 'CompositionBuilder.build unsupported props', () => {
+	const buildWithConfig = ( doUpdateElementProperty: jest.Mock, config: Record< string, unknown > ) => {
+		const createdElement = createMockPartialContainer( GENERATED_ELEMENT_ID );
+		const deleteElement = jest.fn();
+		const createElement = jest.fn().mockReturnValue( createdElement );
+		const getContainer = jest
+			.fn()
+			.mockImplementation( ( id: string ) => ( id === GENERATED_ELEMENT_ID ? createdElement : undefined ) );
+		const builder = CompositionBuilder.fromXMLString( xmlStringWithConfiguration, {
+			createElement,
+			deleteElement,
+			getContainer,
+			generateElementId: jest.fn().mockReturnValue( GENERATED_ELEMENT_ID ),
+			getWidgetsCache: jest.fn().mockReturnValue( createMinimalWidgetsCache() ),
+			doUpdateElementProperty,
+		} );
+		builder.setElementConfig( config as never );
+		return { builder, deleteElement };
+	};
+
+	it( 'collects UnsupportedPropertyError into skippedProps without rolling back, and still applies supported props', async () => {
+		// Arrange
+		const doUpdateElementProperty = jest
+			.fn()
+			.mockImplementation( ( { propertyName }: { propertyName: string } ) => {
+				if ( propertyName === 'link' ) {
+					throw new UnsupportedPropertyError( ROOT_CHILD_TAG, 'link', [ 'title' ] );
+				}
+			} );
+		const { builder, deleteElement } = buildWithConfig( doUpdateElementProperty, {
+			[ CONFIG_ID ]: {
+				[ ELEMENT_CONFIG_PROPERTY ]: ELEMENT_CONFIG_VALUE,
+				link: { $$type: 'link', value: {} },
+			},
+		} );
+
+		// Act
+		const result = await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( deleteElement ).not.toHaveBeenCalled();
+		expect( result.configErrors ).toEqual( [] );
+		expect( result.skippedProps ).toEqual( [
+			{ configId: CONFIG_ID, elementType: ROOT_CHILD_TAG, propertyName: 'link' },
+		] );
+		expect( doUpdateElementProperty ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'routes non-UnsupportedPropertyError failures to configErrors, not skippedProps', async () => {
+		// Arrange
+		const doUpdateElementProperty = jest.fn().mockImplementation( () => {
+			throw new Error( 'Invalid PropValue' );
+		} );
+		const { builder } = buildWithConfig( doUpdateElementProperty, createElementConfigPayload() );
+
+		// Act
+		const result = await builder.build( createMockRootContainer() );
+
+		// Assert
+		expect( result.skippedProps ).toEqual( [] );
+		expect( result.configErrors ).toEqual( [ 'Invalid PropValue' ] );
 	} );
 } );
 

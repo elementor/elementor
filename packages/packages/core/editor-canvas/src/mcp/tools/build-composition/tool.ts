@@ -10,7 +10,7 @@ import {
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { dispatchMcpStylesAppliedEvent } from '@elementor/editor-mcp';
 
-import { CompositionBuilder } from '../../../composition-builder/composition-builder';
+import { CompositionBuilder, type SkippedProp } from '../../../composition-builder/composition-builder';
 import { trackCanvasEvent } from '../../../utils/tracking';
 import { AVAILABLE_WIDGETS_URI_V4 } from '../../resources/available-widgets-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
@@ -70,6 +70,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 			let generatedXML: string = '';
 			const errors: Error[] = [];
+			const skippedProps: SkippedProp[] = [];
 			const rootContainers: V1Element[] = [];
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
 			const currentDocument = getCurrentDocument();
@@ -84,9 +85,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const { configErrors, rootContainers: generatedRootContainers } =
-					await compositionBuilder.build( targetContainer );
+				const {
+					configErrors,
+					skippedProps: builderSkippedProps,
+					rootContainers: generatedRootContainers,
+				} = await compositionBuilder.build( targetContainer );
 
+				skippedProps.push( ...builderSkippedProps );
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 
@@ -146,11 +151,14 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				) }`;
 				throw new Error( errorText );
 			}
+			const warnings = formatSkippedPropsWarning( skippedProps );
+
 			return {
 				xmlStructure: generatedXML,
 				errors: errors?.length
 					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
 					: undefined,
+				warnings,
 				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
 
 **CRITICAL NEXT STEPS** (Follow in order):
@@ -159,6 +167,8 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
    - Apply semantic classes (heading-primary, button-cta, etc.) to appropriate elements
 
 2. **Fine-tune if needed**: Use "configure-element" tool only for element-specific adjustments that don't warrant global classes
+
+3. **Check "warnings"**: If present, some props were skipped because the target widget's schema does not support them (e.g. a "link" on a widget that has no link prop). Nothing was rolled back — decide whether to move the value to a supported element or inform the user.
 
 Remember: Global classes ensure design consistency and reusability. Don't skip applying them!
 `,
@@ -185,6 +195,21 @@ async function convertCompositionStyles( style: Record< string, Record< string, 
 	}
 
 	return { stylesConfig, customCSS };
+}
+
+function formatSkippedPropsWarning( skippedProps: SkippedProp[] ): string | undefined {
+	if ( ! skippedProps.length ) {
+		return undefined;
+	}
+
+	const details = skippedProps
+		.map(
+			( { configId, elementType, propertyName } ) =>
+				`"${ propertyName }" on ${ elementType } (config id "${ configId }")`
+		)
+		.join( '; ' );
+
+	return `Skipped unsupported props (the target widget's schema has no such prop; nothing was rolled back): ${ details }.`;
 }
 
 function assertCompositionXmlUsesV4WidgetsOnly( xmlStructure: string ) {

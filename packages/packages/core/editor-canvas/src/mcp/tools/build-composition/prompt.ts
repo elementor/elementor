@@ -39,7 +39,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → elementConfig (props) + style (raw CSS declarations)
 - elementConfig PropValues require \`$$type\` matching schema
 - style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
-- NO LINKS in configuration — do not include a \`link\` prop here; add links afterward with the "configure-element" tool, and only on widgets whose schema exposes a \`link\` prop
+- LINKS: allowed in elementConfig, but ONLY on widgets whose schema exposes a \`link\` prop (see # LINKS). A \`link\` on a widget that has no \`link\` prop is skipped and reported in the response \`warnings\`; it is NOT an error and does not roll back the composition
 - Retry on errors up to 10x
 - Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
@@ -49,6 +49,13 @@ Some elements have internal tree structures (nesting). When using these elements
 - Provide at that node: \`{ "$$type": "dynamic", "value": { "name": "<allowed tag>", "settings": { ... } } }\`
 - Example (image): \`{ "$$type": "image", "value": { "src": { "$$type": "dynamic", "value": { "name": "<image tag>", "settings": { ... } } } } }\`
 - Do NOT send \`group\` (it is resolved automatically). Populate \`settings\` strictly per the tag's schema; use \`{}\` only when it has none.
+
+# LINKS
+- Set a link by adding a \`link\` prop to the element's elementConfig — but ONLY if the widget's schema exposes a \`link\` prop. Verify against [${ AVAILABLE_WIDGETS_URI }/v4] / the widget schema first.
+- Shape (URL destination):
+\`{ "$$type": "link", "value": { "destination": { "$$type": "url", "value": "https://example.com" }, "isTargetBlank": { "$$type": "boolean", "value": true }, "tag": { "$$type": "string", "value": "a" } } }\`
+- \`destination\` may instead be a \`query\` variant — read the widget's \`link\` schema for the exact shape; the schema is authoritative.
+- If you send \`link\` to a widget without a \`link\` prop it is skipped (reported in \`warnings\`), so do not rely on it — put the link on a linkable element (e.g. wrap content in a linkable container or use a button/heading that supports it).
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
