@@ -74,7 +74,7 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 		return $this->settings['origin_prop_type'] ?? null;
 	}
 
-	public function to_json_schema(): array {
+	public function to_json_schema( bool $suppress_dynamic = false ): array {
 		$origin_prop_type = $this->get_origin_prop_type();
 
 		return $this->wrap_json_schema( [
@@ -82,7 +82,7 @@ class Overridable_Prop_Type extends Plain_Prop_Type {
 			'properties' => [
 				'override_key' => [ 'type' => 'string' ],
 				'origin_value' => $origin_prop_type
-					? $origin_prop_type->to_json_schema()
+					? $origin_prop_type->to_json_schema( $suppress_dynamic )
 					: [],
 			],
 			'required' => [ 'override_key', 'origin_value' ],

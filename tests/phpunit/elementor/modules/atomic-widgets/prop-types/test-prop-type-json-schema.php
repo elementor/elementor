@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
