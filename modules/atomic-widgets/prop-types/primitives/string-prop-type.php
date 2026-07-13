@@ -75,4 +75,15 @@ class String_Prop_Type extends Plain_Prop_Type {
 			return $leading . sanitize_text_field( $value ) . $trailing;
 		}, $value );
 	}
+
+	public function to_json_schema(): array {
+		$value_schema = [ 'type' => 'string' ];
+
+		$enum = $this->get_enum();
+		if ( $enum ) {
+			$value_schema['enum'] = $enum;
+		}
+
+		return $this->wrap_json_schema( $value_schema );
+	}
 }

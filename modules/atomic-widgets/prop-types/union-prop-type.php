@@ -18,6 +18,7 @@ class Union_Prop_Type implements Prop_Type {
 	use Concerns\Has_Meta;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Required_Setting;
+	use Concerns\Has_Json_Schema_Meta;
 
 	protected $default = null;
 
@@ -171,5 +172,16 @@ class Union_Prop_Type implements Prop_Type {
 		}
 
 		return $this;
+	}
+
+	public function to_json_schema(): array {
+		$schema = $this->with_json_schema_meta( [] );
+
+		$schema['anyOf'] = array_map(
+			fn( $prop_type ) => $prop_type->to_json_schema(),
+			array_values( $this->get_prop_types() )
+		);
+
+		return $schema;
 	}
 }
