@@ -11,6 +11,11 @@ import {
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
+import {
+	collectEmptyMessageErrors,
+	collectFormAncestorErrors,
+	collectSubmitButtonErrors,
+} from '../form-structure/utils';
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { validateInput } from '../mcp/utils/validate-input';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
@@ -296,6 +301,12 @@ export class CompositionBuilder {
 			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
 		}
 
+		const formErrors = [
+			...collectFormAncestorErrors( this.xml ),
+			...collectSubmitButtonErrors( this.xml ),
+			...collectEmptyMessageErrors( this.xml ),
+		];
+
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
 			const modelTree = this.buildModelTree( childNode, widgetsCache );
@@ -326,6 +337,7 @@ export class CompositionBuilder {
 			configErrors,
 			styleErrors,
 			invalidStyles,
+			formErrors,
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}
