@@ -46,7 +46,9 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 		return false;
 	}
 
-	if ( ! isWithinForm( args.container ) ) {
+	const containers = args.containers ?? [ args.container ];
+
+	if ( containers.some( ( container ) => ! isWithinForm( container ) ) ) {
 		handleBlockedFormField();
 
 		return true;
