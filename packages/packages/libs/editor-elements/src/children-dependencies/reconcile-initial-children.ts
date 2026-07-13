@@ -2,7 +2,7 @@ import { resolveInsertIndex } from '../sync/resolve-insert-index';
 import { type V1ElementConfig, type V1ElementData, type V1ElementSettingsProps } from '../sync/types';
 import { createChildrenStash } from './stash';
 import { type ChildDependencyRule } from './types';
-import { evaluateWhen } from './utils';
+import { evaluateWhen, resolveChildModelData } from './utils';
 
 type ReconcileInitialChildrenArgs = {
 	elementId: string;
@@ -34,13 +34,12 @@ export function reconcileInitialChildren( {
 		const isPresent = existingIndex >= 0;
 
 		if ( isMet && ! isPresent ) {
-			const stashed = rule.stash ? stash.get( elementId, rule.child_type ) : undefined;
-			const modelData = stashed ?? rule.default_model ?? ( { elType: rule.child_type } as V1ElementData );
+			const { modelData, wasStashed } = resolveChildModelData( elementId, rule, stash );
 			const insertAt = resolveInsertIndex( rule.position, elements );
 
 			elements.splice( insertAt, 0, modelData );
 
-			if ( stashed ) {
+			if ( wasStashed ) {
 				stash.clear( elementId, rule.child_type );
 			}
 

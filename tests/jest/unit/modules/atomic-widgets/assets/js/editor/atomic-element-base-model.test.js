@@ -24,6 +24,12 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 				this._data[ key ] = value;
 			}
 
+			unset( key ) {
+				if ( this._data ) {
+					delete this._data[ key ];
+				}
+			}
+
 			initialize( attributes, options ) {
 				baseInitializeSpy( attributes, options );
 			}
@@ -216,6 +222,95 @@ describe( 'AtomicElementBaseModel - children dependencies wiring', () => {
 
 		// Cleanup.
 		global.$e.commands.currentTrace = [];
+	} );
+
+	it( 'runs onElementCreate when hydrateDefaultChildren flag is set (outside create trace)', () => {
+		// Arrange - not inside document/elements/create.
+		global.$e.commands.currentTrace = [];
+		const defaultChild = { elType: 'e-child', id: 'child-1' };
+
+		class WithDefaults extends AtomicElementBaseModel {
+			getDefaultChildren() {
+				return [ defaultChild ];
+			}
+			buildElement( element ) {
+				return element;
+			}
+		}
+
+		const model = new WithDefaults();
+		model.set( 'id', 'test-id' );
+		model.set( 'elType', 'e-simple' );
+		model.set( 'elements', [] );
+		model.set( 'hydrateDefaultChildren', true );
+
+		// Act.
+		model.initialize( { elements: [], settings: {} }, {} );
+
+		// Assert - defaults were seeded and flag was cleared.
+		expect( model.get( 'elements' ) ).toEqual( [ defaultChild ] );
+		expect( model.get( 'hydrateDefaultChildren' ) ).toBeUndefined();
+	} );
+
+	it( 'ignores hydrateDefaultChildren when elements are already present', () => {
+		// Arrange.
+		global.$e.commands.currentTrace = [];
+		const existing = { elType: 'e-existing', id: 'existing-1' };
+		const defaultChild = { elType: 'e-child', id: 'child-1' };
+
+		class WithDefaults extends AtomicElementBaseModel {
+			getDefaultChildren() {
+				return [ defaultChild ];
+			}
+			buildElement( element ) {
+				return element;
+			}
+		}
+
+		const model = new WithDefaults();
+		model.set( 'id', 'test-id' );
+		model.set( 'elType', 'e-simple' );
+		model.set( 'elements', [ existing ] );
+		model.set( 'hydrateDefaultChildren', true );
+
+		// Act.
+		model.initialize( { elements: [ existing ], settings: {} }, {} );
+
+		// Assert - existing children preserved, no hydration triggered.
+		expect( model.get( 'elements' ) ).toEqual( [ existing ] );
+	} );
+
+	it( 'propagates hydrateDefaultChildren to children with empty elements via buildElement', () => {
+		// Arrange.
+		const model = createModel( { elType: 'e-simple' } );
+
+		// Act.
+		const built = model.buildElement( { elType: 'e-child' } );
+
+		// Assert.
+		expect( built.hydrateDefaultChildren ).toBe( true );
+	} );
+
+	it( 'propagates hydrateDefaultChildren even when the child has explicit elements (receiver no-ops via isEmpty guard)', () => {
+		const model = createModel( { elType: 'e-simple' } );
+
+		const built = model.buildElement( {
+			elType: 'e-child',
+			elements: [ { elType: 'e-grandchild' } ],
+		} );
+
+		expect( built.hydrateDefaultChildren ).toBe( true );
+	} );
+
+	it( 'does not propagate hydrateDefaultChildren when the child opts out via skipDefaultChildren', () => {
+		// Arrange.
+		const model = createModel( { elType: 'e-simple' } );
+
+		// Act.
+		const built = model.buildElement( { elType: 'e-child', skipDefaultChildren: true } );
+
+		// Assert.
+		expect( built.hydrateDefaultChildren ).toBeUndefined();
 	} );
 
 	it( 'gracefully degrades to a no-op when the adapter is not set', () => {
