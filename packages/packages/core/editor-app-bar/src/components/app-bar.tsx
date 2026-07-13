@@ -24,11 +24,7 @@ export default function AppBar() {
 	return (
 		<ThemeProvider colorScheme="dark">
 			<BaseAppBar position="sticky">
-				{ /* Below MIN_APP_BAR_WIDTH the content can no longer shrink without clipping, so the
-				toolbar scrolls horizontally instead of squeezing the left/right sections further. */ }
 				<Toolbar disableGutters variant="dense" sx={ { overflowX: 'auto' } }>
-					{ /* The center column keeps its natural ("auto") width, so the left and right
-					columns (`minmax(0, 1fr)`) shrink first as the app bar narrows. */ }
 					<Box
 						ref={ containerRef }
 						display="grid"

@@ -1,5 +1,4 @@
-import { MIN_APP_BAR_WIDTH } from '../../constants';
-import { DEFAULT_MAX_TOOLBAR_ACTIONS } from '../../contexts/app-bar-size-context';
+import { DEFAULT_MAX_TOOLBAR_ACTIONS, MIN_APP_BAR_WIDTH } from '../../constants';
 import { getMaxToolbarActions } from '../get-max-toolbar-actions';
 
 describe( 'getMaxToolbarActions', () => {

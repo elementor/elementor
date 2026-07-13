@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { createContext, type PropsWithChildren, useContext } from 'react';
 
-export type MaxToolbarActions = {
-	tools: number;
-	utilities: number;
-};
-
-export const DEFAULT_MAX_TOOLBAR_ACTIONS: MaxToolbarActions = {
-	tools: 5,
-	utilities: 4,
-};
+import { DEFAULT_MAX_TOOLBAR_ACTIONS, type MaxToolbarActions } from '../constants';
 
 const AppBarSizeContext = createContext< MaxToolbarActions >( DEFAULT_MAX_TOOLBAR_ACTIONS );
 

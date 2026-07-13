@@ -1,5 +1,4 @@
-import { MIN_APP_BAR_WIDTH } from '../constants';
-import { DEFAULT_MAX_TOOLBAR_ACTIONS, type MaxToolbarActions } from '../contexts/app-bar-size-context';
+import { DEFAULT_MAX_TOOLBAR_ACTIONS, type MaxToolbarActions, MIN_APP_BAR_WIDTH } from '../constants';
 
 // Breakpoints are checked from the widest to the narrowest, so items in the left ("tools") and
 // right ("utilities") sections of the app bar collapse into their "More" popover as the app bar
