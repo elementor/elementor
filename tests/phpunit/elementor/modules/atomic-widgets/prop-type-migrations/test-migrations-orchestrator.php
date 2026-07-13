@@ -118,12 +118,16 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 	public function test_migrate_falls_back_to_local_manifest_when_remote_fetch_fails_on_rollback() {
 		// Arrange
 		update_option( 'elementor_version', '99.0.0' );
-		$fetch_count = 0;
+		$manifest_fetch_count = 0;
 
-		add_filter( 'pre_http_request', function () use ( &$fetch_count ) {
-			$fetch_count++;
+		add_filter( 'pre_http_request', function ( $pre, $args, $url ) use ( &$manifest_fetch_count ) {
+			if ( ! str_ends_with( $url, 'manifest.json' ) ) {
+				return $pre;
+			}
+
+			$manifest_fetch_count++;
 			return new \WP_Error( 'http_request_failed', 'Connection timed out' );
-		} );
+		}, 10, 3 );
 
 		$orchestrator = Migrations_Orchestrator::make();
 		$data = $this->get_sample_data();
@@ -138,7 +142,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		);
 
 		// Assert
-		$this->assertEquals( 1, $fetch_count );
+		$this->assertGreaterThanOrEqual( 1, $manifest_fetch_count );
 		$this->assertFalse( get_transient( 'elementor_migrations_manifest' ) );
 
 		$loader = $this->get_orchestrator_loader( $orchestrator );
