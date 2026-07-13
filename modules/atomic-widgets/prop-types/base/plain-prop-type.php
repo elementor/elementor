@@ -21,6 +21,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	/**
 	 * @return array<Plain_Prop_Type>

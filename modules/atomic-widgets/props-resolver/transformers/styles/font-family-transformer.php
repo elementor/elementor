@@ -31,6 +31,8 @@ class Font_Family_Transformer extends Transformer_Base {
 			return $trimmed;
 		}
 
+		// Only multi-word font names (e.g. `Open Sans`) need to be wrapped in quotes.
+		// Single-token values like `var(--x)`, `sans-serif` or `inherit` must stay unquoted to remain valid CSS.
 		return preg_match( '/\s/', $trimmed )
 			? '"' . $trimmed . '"'
 			: $trimmed;

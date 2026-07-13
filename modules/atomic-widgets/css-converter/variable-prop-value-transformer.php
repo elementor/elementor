@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -196,7 +197,7 @@ class Variable_Prop_Value_Transformer {
 		$value = $prop_value['value'] ?? null;
 
 		$string_backed_types = [
-			'color',
+			Color_Prop_Type::get_key(),
 			String_Prop_Type::get_key(),
 			Font_Family_Prop_Type::get_key(),
 		];
