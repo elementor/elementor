@@ -105,7 +105,7 @@ type BaseProps< T > = {
 };
 
 type SortableProps< T > = BaseProps< T > & {
-	isSortable: true;
+	isSortable?: true;
 	adornment?: React.ComponentType< { children: React.ReactNode } >;
 	itemSettings: SortableItemSettings< T >;
 };
