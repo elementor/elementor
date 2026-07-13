@@ -88,11 +88,18 @@ jobs:
           FILTERED_LABELS_CSV: ${{ steps.get_labels.outputs.filtered_labels_csv }}
           EVENT_ACTION: ${{ github.event.action }}
           SOURCE_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          GH_REPO: ${{ github.repository }}
         run: |
           PR_TITLE=$(echo "$PR_TITLE" | sed 's/[;&|<>`$()]//g')
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          gh label create "auto-reviewed" \
+            --repo "$GH_REPO" \
+            --description "PR has been automatically reviewed by CI" \
+            --color "0e8a16" \
+            --force 2>/dev/null || true
 
           IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS_CSV"
           for lbl in "${BRANCHES[@]}"; do
@@ -148,6 +155,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
+                    --label "auto-reviewed" \
                     --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts: ${PR_TITLE_BODY}" \
                     --body "⚠️ **Manual Resolution Required**
 
@@ -217,6 +225,7 @@ jobs:
               PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
+                --label "auto-reviewed" \
                 --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET}: ${PR_TITLE_BODY}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
