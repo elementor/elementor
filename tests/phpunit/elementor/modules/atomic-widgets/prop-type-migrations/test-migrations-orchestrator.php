@@ -58,6 +58,43 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_is_rollback_returns_false_when_running_version_is_higher() {
+		// Arrange
+		update_option( 'elementor_version', '0.0.1' );
+
+		// Act
+		$result = Migrations_Orchestrator::is_rollback();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_migrate_uses_local_manifest_during_version_upgrade() {
+		// Arrange
+		update_option( 'elementor_version', '0.0.1' );
+		$fetch_count = 0;
+
+		add_filter( 'pre_http_request', function () use ( &$fetch_count ) {
+			$fetch_count++;
+			return new \WP_Error( 'should_not_be_called', 'Remote should not be called during upgrade' );
+		} );
+
+		$orchestrator = Migrations_Orchestrator::make();
+		$data = $this->get_sample_data();
+		$post_id = 5004;
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'_elementor_data',
+			function () {}
+		);
+
+		// Assert
+		$this->assertEquals( 0, $fetch_count );
+	}
+
 	public function test_migrate_uses_local_manifest_without_remote_fetch() {
 		// Arrange
 		update_option( 'elementor_version', ELEMENTOR_VERSION );

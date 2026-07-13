@@ -21,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Migrations_Orchestrator {
 	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 	const MIGRATIONS_URL = 'https://editor.elementor.com/v1/migrations/';
+	const BUNDLED_MIGRATIONS_DIRECTORY = 'migrations/';
 
 	private static ?self $instance = null;
 
@@ -398,7 +399,7 @@ class Migrations_Orchestrator {
 			return constant( 'ELEMENTOR_MIGRATIONS_PATH' );
 		}
 
-		return ELEMENTOR_PATH . 'migrations/';
+		return ELEMENTOR_PATH . self::BUNDLED_MIGRATIONS_DIRECTORY;
 	}
 
 	private function migrate_doc( array $data, Document $document ): array {
