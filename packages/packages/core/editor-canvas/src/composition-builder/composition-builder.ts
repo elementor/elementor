@@ -295,16 +295,11 @@ export class CompositionBuilder {
 			throw new Error( `Invalid element structure:\n${ childTypeErrors.join( '\n' ) }` );
 		}
 
-		
 		const formErrors = [
 			...collectFormAncestorErrors( this.xml ),
 			...collectSubmitButtonErrors( this.xml ),
 			...collectEmptyMessageErrors( this.xml ),
 		];
-
-		if ( formErrors.length ) {
-			throw new Error( `Invalid form structure:\n${ formErrors.join( n ) }` );
-		}
 
 		const children = Array.from( this.xml.children );
 		for ( const childNode of children ) {
@@ -344,6 +339,7 @@ export class CompositionBuilder {
 		return {
 			configErrors,
 			styleErrors,
+			formErrors,
 			rootContainers: [ ...this.rootContainers ],
 		};
 	}

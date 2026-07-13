@@ -117,12 +117,7 @@ export function clipboardRootsAreAtomicForms( elements: ClipboardElement[] ): bo
 }
 
 export function hasFormAncestor(node: Element): boolean {
-	let parent = node.parentElement;
-	while (parent) {
-	  if (parent.tagName.toLowerCase() === FORM_ELEMENT_TYPE) return true;
-	  parent = parent.parentElement;
-	}
-	return false;
+    return node.closest(FORM_ELEMENT_TYPE) !== null;
 }
 
 export function collectFormAncestorErrors(xml: Document): string[] {

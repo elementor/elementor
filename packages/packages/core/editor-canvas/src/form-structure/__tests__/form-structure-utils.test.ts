@@ -1,5 +1,6 @@
 import type { V1Element } from '@elementor/editor-elements';
 
+import { parseXml } from '../../__tests__/parse-xml';
 import {
 	clipboardRootsAreAtomicForms,
 	collectFormAncestorErrors,
@@ -24,10 +25,6 @@ function mockElement( widgetType?: string, elType?: string ): V1Element {
 			},
 		},
 	} as V1Element;
-}
-
-function parseXml( xml: string ): Document {
-    return new DOMParser().parseFromString( `<root>${ xml }</root>`, 'text/xml' );
 }
 
 describe( 'form-structure utils', () => {
