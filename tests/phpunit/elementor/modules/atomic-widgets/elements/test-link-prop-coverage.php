@@ -25,14 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Guards the hardcoded linkable-widget allowlist that the MCP prompts rely on.
- *
- * If a new element registers (or drops) `Link_Prop_Type`, this test fails so the
- * allowlist in
- * `packages/packages/core/editor-canvas/src/mcp/utils/linkable-widget-types.ts`
- * (and the # LINKS prompt section) cannot silently drift out of sync.
- */
 class Test_Link_Prop_Coverage extends Elementor_Test_Base {
 
 	private const ELEMENT_CLASSES = [

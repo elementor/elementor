@@ -21,6 +21,7 @@ const LOCAL_STYLE_META = {
 	breakpoint: 'desktop',
 	state: null,
 } as const;
+
 export class UnsupportedPropertyError extends Error {
 	public readonly elementType: string;
 	public readonly propertyName: string;
