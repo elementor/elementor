@@ -23,7 +23,7 @@ jobs:
       - uses: elementor/elementor-editor-github-actions/actions/product-pulse@main
         with:
           pr-number: ${{ github.event.pull_request.number }}
-          product-areas-file: .github/product-pulse-areas.md
+          product-name: 'Elementor'
           cursor-api-key: ${{ secrets.CURSOR_APIKEY }}
           slack-token: ${{ secrets.SLACK_TOKEN }}
           slack-channel-id: ${{ secrets.SLACK_PULSE_CHANNEL_ID }}
