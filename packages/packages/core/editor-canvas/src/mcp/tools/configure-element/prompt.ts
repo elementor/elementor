@@ -2,6 +2,7 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { LINKABLE_WIDGET_TYPES_LIST } from '../../utils/linkable-widget-types';
 
 export const CONFIGURE_ELEMENT_GUIDE_URI = 'elementor://canvas/tools/configure-element-guide';
 
@@ -117,9 +118,9 @@ Do NOT send "group" (it is resolved automatically). Use { "settings": {} } only 
 V4 only: If MCP fails, give manual steps using V4 UI.
 
 V4 Editor structure:
-Panel tabs: General (→ Settings section: ID, Tag, and Link only when the widget's schema exposes a \`link\` prop), Style, Interactions.
+Panel tabs: General (→ Settings section: ID, Tag, and Link only on linkable widgets), Style, Interactions.
 NO Advanced tab. Never mention Advanced tab.
-Note: \`link\` is not universally available — it exists only where the widget's schema exposes a \`link\` prop. If you send \`link\` to a widget that lacks it, the prop is skipped and reported in the response \`warnings\` (other changes still apply); it does not fail the call.
+Note: \`link\` is supported ONLY on these types: ${ LINKABLE_WIDGET_TYPES_LIST }. Do NOT send \`link\` to any other widget — it is skipped and reported in the response \`warnings\` (other changes still apply) and the link is lost.
 ` );
 
 	return configureElementToolPrompt.prompt();

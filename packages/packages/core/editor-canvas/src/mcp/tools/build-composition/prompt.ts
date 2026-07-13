@@ -2,6 +2,7 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { AVAILABLE_WIDGETS_URI } from '../../resources/available-widgets-resource';
 import { DYNAMIC_TAGS_URI } from '../../resources/dynamic-tags-resource';
+import { LINKABLE_WIDGET_TYPES_LIST } from '../../utils/linkable-widget-types';
 
 export const BUILD_COMPOSITIONS_GUIDE_URI = 'elementor://canvas/tools/build-compositions-guide';
 
@@ -39,7 +40,7 @@ Some elements have internal tree structures (nesting). When using these elements
 - Map configuration-id → elementConfig (props) + style (raw CSS declarations)
 - elementConfig PropValues require \`$$type\` matching schema
 - style is raw CSS (property → value strings); the server converts it to native styles and stores any unconvertible declarations as the element custom CSS
-- LINKS: allowed in elementConfig, but ONLY on widgets whose schema exposes a \`link\` prop (see # LINKS). A \`link\` on a widget that has no \`link\` prop is skipped and reported in the response \`warnings\`; it is NOT an error and does not roll back the composition
+- LINKS: a \`link\` prop is allowed ONLY on the widgets listed in # LINKS. On any other widget it is silently skipped (reported in \`warnings\`) and the link is LOST — put the link on a linkable container instead
 - Retry on errors up to 10x
 - Check \`llm_guidance.default_settings\` in widget schemas — omit only keys listed there from elementConfig unless the user explicitly asks to change them
 
@@ -51,11 +52,11 @@ Some elements have internal tree structures (nesting). When using these elements
 - Do NOT send \`group\` (it is resolved automatically). Populate \`settings\` strictly per the tag's schema; use \`{}\` only when it has none.
 
 # LINKS
-- Set a link by adding a \`link\` prop to the element's elementConfig — but ONLY if the widget's schema exposes a \`link\` prop. Verify against [${ AVAILABLE_WIDGETS_URI }/v4] / the widget schema first.
+- \`link\` is supported ONLY on these types: ${ LINKABLE_WIDGET_TYPES_LIST }. NEVER attach a \`link\` prop to any other widget (e.g. e-youtube, e-tabs, e-divider, e-self-hosted-video, e-form) — it is silently skipped and the link is LOST.
+- To make any non-linkable element clickable, wrap it in a linkable container (e-div-block / e-flexbox / e-grid) and put the \`link\` on that container.
 - Shape (URL destination):
 \`{ "$$type": "link", "value": { "destination": { "$$type": "url", "value": "https://example.com" }, "isTargetBlank": { "$$type": "boolean", "value": true }, "tag": { "$$type": "string", "value": "a" } } }\`
 - \`destination\` may instead be a \`query\` variant — read the widget's \`link\` schema for the exact shape; the schema is authoritative.
-- If you send \`link\` to a widget without a \`link\` prop it is skipped (reported in \`warnings\`), so do not rely on it — put the link on a linkable element (e.g. wrap content in a linkable container or use a button/heading that supports it).
 
 Note about configuration ids: These names are visible to the end-user, make sure they make sense, related and relevant.
 
