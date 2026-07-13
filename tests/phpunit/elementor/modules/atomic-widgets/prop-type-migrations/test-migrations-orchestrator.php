@@ -121,7 +121,7 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		$manifest_fetch_count = 0;
 
 		add_filter( 'pre_http_request', function ( $pre, $args, $url ) use ( &$manifest_fetch_count ) {
-			if ( ! str_ends_with( $url, 'manifest.json' ) ) {
+			if ( 'manifest.json' !== basename( $url ) ) {
 				return $pre;
 			}
 
