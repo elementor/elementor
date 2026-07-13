@@ -3,9 +3,9 @@ import type { V1Element } from '@elementor/editor-elements';
 import { parseXml } from '../../__tests__/parse-xml';
 import {
 	clipboardRootsAreAtomicForms,
+	collectEmptyMessageErrors,
 	collectFormAncestorErrors,
 	collectSubmitButtonErrors,
-	collectEmptyMessageErrors,
 	FORM_ELEMENT_TYPE,
 	getClipboardElementType,
 	movedContainersIncludeAtomicFormRoot,
@@ -152,7 +152,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectSubmitButtonErrors( xml ) ).toHaveLength( 0 );
 		} );
-	
+
 		it( 'returns no errors when submit button is nested inside a container within e-form', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -163,7 +163,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectSubmitButtonErrors( xml ) ).toHaveLength( 0 );
 		} );
-	
+
 		it( 'returns an error when e-form has no submit button', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -174,7 +174,7 @@ describe( 'form-structure utils', () => {
 			expect( errors ).toHaveLength( 1 );
 			expect( errors[ 0 ] ).toContain( 'e-form-submit-button' );
 		} );
-	
+
 		it( 'returns an error when e-form has more than one submit button', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -186,7 +186,7 @@ describe( 'form-structure utils', () => {
 			expect( errors ).toHaveLength( 1 );
 			expect( errors[ 0 ] ).toContain( '2' );
 		} );
-	
+
 		it( 'returns one error per e-form that is missing a submit button', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -198,7 +198,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectSubmitButtonErrors( xml ) ).toHaveLength( 2 );
 		} );
-	
+
 		it( 'returns no errors when there are no e-form elements', () => {
 			const xml = parseXml( `
 				<e-flexbox>
@@ -220,7 +220,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectEmptyMessageErrors( xml ) ).toHaveLength( 0 );
 		} );
-	
+
 		it( 'returns no errors when error message has children', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -231,7 +231,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectEmptyMessageErrors( xml ) ).toHaveLength( 0 );
 		} );
-	
+
 		it( 'returns an error when success message is empty', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -242,7 +242,7 @@ describe( 'form-structure utils', () => {
 			expect( errors ).toHaveLength( 1 );
 			expect( errors[ 0 ] ).toContain( 'e-form-success-message' );
 		} );
-	
+
 		it( 'returns an error when error message is empty', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -253,7 +253,7 @@ describe( 'form-structure utils', () => {
 			expect( errors ).toHaveLength( 1 );
 			expect( errors[ 0 ] ).toContain( 'e-form-error-message' );
 		} );
-	
+
 		it( 'returns two errors when both success and error messages are empty', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -263,7 +263,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectEmptyMessageErrors( xml ) ).toHaveLength( 2 );
 		} );
-	
+
 		it( 'returns no errors when there are no message elements', () => {
 			const xml = parseXml( `
 				<e-form>
@@ -273,7 +273,7 @@ describe( 'form-structure utils', () => {
 			` );
 			expect( collectEmptyMessageErrors( xml ) ).toHaveLength( 0 );
 		} );
-	
+
 		it( 'returns no errors when message element is outside e-form but has children', () => {
 			const xml = parseXml( `
 				<e-flexbox>

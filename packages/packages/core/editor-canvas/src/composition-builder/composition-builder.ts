@@ -11,11 +11,15 @@ import {
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
+import {
+	collectEmptyMessageErrors,
+	collectFormAncestorErrors,
+	collectSubmitButtonErrors,
+} from '../form-structure/utils';
 import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property';
 import { mergeCustomCssText } from '../mcp/utils/merge-custom-css';
 import { RequiredChildrenEnforcer } from './utils/required-children-enforcer';
 import { getRequiredDefaultChildTemplates } from './utils/required-default-child-tags';
-import { collectFormAncestorErrors, collectSubmitButtonErrors, collectEmptyMessageErrors } from '../form-structure/utils';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
 type AnyConfig = Record< string, Record< string, AnyValue > >;
