@@ -38,6 +38,7 @@ describe( 'loadComponentsOverridableProps', () => {
 				[ LOADED_ID ]: { props: {}, groups: { items: {}, order: [] } },
 				[ UNLOADED_ID ]: { props: {}, groups: { items: {}, order: [] } },
 			},
+			meta: { errors: {} },
 		} );
 	} );
 
