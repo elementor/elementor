@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [labeled, synchronize, opened, reopened]
+    types: [labeled, synchronize, opened, reopened, ready_for_review]
     branches:
       - main
       - '[0-9].[0-9][0-9]'
@@ -54,14 +54,33 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  set-pending-on-draft:
+    name: Set Pending Status on Draft
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == true
+    runs-on: ubuntu-22.04
+    permissions:
+      statuses: write
+    steps:
+      - name: Lock Merge with Pending Status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.payload.pull_request.head.sha,
+              state: 'pending',
+              context: 'Playwright - Test Results',
+              description: 'Waiting for PR to be marked as Ready for Review to run tests'
+            })
+
   get-php-version:
     name: Calculate PHP Version
     uses: ./.github/workflows/calculate_php_version.yml
 
   build-plugin:
     if: |
-      contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      github.event_name == 'pull_request' ||
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
       github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
@@ -79,8 +98,7 @@ jobs:
       id-token: write
     if: |
       github.event.inputs.tag == '' &&
-      (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      github.event_name == 'pull_request' ||
+      ((github.event_name == 'pull_request' && !github.event.pull_request.draft) ||
       github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
@@ -522,7 +540,7 @@ jobs:
 
   test-result:
     needs: [Playwright, PlaywrightWithTag]
-    if: always() && (needs.Playwright.result != 'skipped')
+    if: always() && (needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     permissions:
