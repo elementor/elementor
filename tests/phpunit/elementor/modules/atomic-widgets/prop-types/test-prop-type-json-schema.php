@@ -23,12 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Prop_Type_Json_Schema extends TestCase {
 
-	public function tearDown(): void {
-		parent::tearDown();
-
-		Union_Prop_Type::reset_registered_variants();
-	}
-
 	public function test_to_json_schema__string_prop_type() {
 		// Arrange
 		$prop_type = String_Prop_Type::make()->meta( 'description', 'A string property' );
@@ -106,93 +100,6 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 		$this->assertSame( 'A union of string and number', $result['description'] );
 		$this->assertArrayHasKey( 'anyOf', $result );
 		$this->assertCount( 2, $result['anyOf'] );
-	}
-
-	public function test_to_json_schema__union_prop_type_omits_registered_variant_key() {
-		// Arrange
-		Union_Prop_Type::register_omitted_variant_key( 'number' );
-
-		$prop_type = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make() )
-			->add_prop_type( Number_Prop_Type::make() );
-
-		// Act
-		$result = $prop_type->to_json_schema();
-
-		// Assert
-		$this->assertCount( 1, $result['anyOf'] );
-		$this->assertSame( 'string', $result['anyOf'][0]['properties']['$$type']['const'] );
-	}
-
-	public function test_to_json_schema__union_prop_type_offers_exclusive_variant_once() {
-		// Arrange
-		Union_Prop_Type::register_exclusive_variant( 'number', fn ( $prop_type ) => [ 'const' => 'exclusive-number' ] );
-
-		$prop_type = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make() )
-			->add_prop_type( Number_Prop_Type::make() );
-
-		// Act
-		$result = $prop_type->to_json_schema();
-
-		// Assert
-		$this->assertCount( 2, $result['anyOf'] );
-		$this->assertSame( [ 'const' => 'exclusive-number' ], $result['anyOf'][1] );
-	}
-
-	public function test_to_json_schema__union_prop_type_suppresses_exclusive_variant_when_already_suppressed() {
-		// Arrange
-		Union_Prop_Type::register_exclusive_variant( 'number', fn ( $prop_type ) => [ 'const' => 'exclusive-number' ] );
-
-		$prop_type = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make() )
-			->add_prop_type( Number_Prop_Type::make() );
-
-		// Act
-		$result = $prop_type->to_json_schema( true );
-
-		// Assert
-		$this->assertCount( 1, $result['anyOf'] );
-		$this->assertSame( 'string', $result['anyOf'][0]['properties']['$$type']['const'] );
-	}
-
-	public function test_to_json_schema__union_prop_type_suppresses_exclusive_variant_for_nested_union() {
-		// Arrange
-		Union_Prop_Type::register_exclusive_variant( 'number', fn ( $prop_type ) => [ 'const' => 'exclusive-number' ] );
-
-		$nested_union = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make() )
-			->add_prop_type( Number_Prop_Type::make() );
-
-		$outer_object = $this->create_object_wrapping( $nested_union );
-
-		$outer_union = Union_Prop_Type::make()
-			->add_prop_type( $outer_object )
-			->add_prop_type( Number_Prop_Type::make() );
-
-		// Act
-		$result = $outer_union->to_json_schema();
-
-		// Assert - outer union offers the exclusive variant once...
-		$this->assertCount( 2, $result['anyOf'] );
-
-		$nested_schema = $result['anyOf'][0]['properties']['value']['properties']['nested'];
-
-		// ...and the nested union (inside the object branch) does not offer it again.
-		$this->assertCount( 1, $nested_schema['anyOf'] );
-		$this->assertSame( 'string', $nested_schema['anyOf'][0]['properties']['$$type']['const'] );
-	}
-
-	private function create_object_wrapping( Prop_Type $nested ): Object_Prop_Type {
-		return ( new class extends Object_Prop_Type {
-			public static function get_key(): string {
-				return 'test-object-wrapper';
-			}
-
-			protected function define_shape(): array {
-				return [];
-			}
-		} )->set_shape( [ 'nested' => $nested ] );
 	}
 
 	public function test_to_json_schema__object_prop_type() {
@@ -282,17 +189,6 @@ class Test_Prop_Type_Json_Schema extends TestCase {
 		$this->assertSame( [ '$$type', 'value' ], $result['required'] );
 		$this->assertSame( [ 'type' => 'string', 'const' => 'plain-test' ], $result['properties']['$$type'] );
 		$this->assertSame( [ 'type' => 'object' ], $result['properties']['value'] );
-	}
-
-	private function find_variant_by_type( array $variants, string $type ): ?array {
-		foreach ( $variants as $variant ) {
-			if ( isset( $variant['properties']['$$type']['const'] ) &&
-				$variant['properties']['$$type']['const'] === $type ) {
-				return $variant;
-			}
-		}
-
-		return null;
 	}
 
 	private function create_plain_prop_type_without_override(): Prop_Type {

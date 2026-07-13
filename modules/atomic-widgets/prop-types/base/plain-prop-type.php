@@ -96,7 +96,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return $this->dependencies;
 	}
 
-	public function to_json_schema( bool $suppress_dynamic = false ): array {
+	public function to_json_schema(): array {
 		return $this->wrap_json_schema( [ 'type' => 'object' ] );
 	}
 

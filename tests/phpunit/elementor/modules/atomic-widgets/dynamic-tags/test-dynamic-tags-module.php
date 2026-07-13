@@ -458,7 +458,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$url_tag->cleanup();
 	}
 
-	public function test_register_hooks__wires_dynamic_prop_type_as_union_exclusive_variant() {
+	public function test_dynamic_prop_type_includes_allowed_tag_names_from_mapping() {
 		// Arrange.
 		$tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
 
@@ -466,29 +466,24 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 
 		Dynamic_Tags_Module::fresh()->register_hooks();
 
-		$dynamic_prop_type = Dynamic_Prop_Type::make()->categories( [ 'text' ] );
-
-		$union = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make() )
-			->add_prop_type( $dynamic_prop_type );
+		$prop = String_Prop_Type::make()->default( 'test' );
 
 		// Act.
-		$schema = $union->to_json_schema();
+		$schema = apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			[ 'prop' => $prop ]
+		);
 
 		// Assert.
-		$this->assertCount( 2, $schema['anyOf'] );
+		$this->assertInstanceOf( Union_Prop_Type::class, $schema['prop'] );
 
-		$dynamic_schema = $schema['anyOf'][1];
+		$dynamic_prop_type = $schema['prop']->get_prop_type( 'dynamic' );
 
-		$this->assertSame( 'dynamic', $dynamic_schema['properties']['$$type']['const'] );
-		$this->assertSame(
-			[ 'text-tag' ],
-			$dynamic_schema['properties']['value']['properties']['name']['enum']
-		);
+		$this->assertInstanceOf( Dynamic_Prop_Type::class, $dynamic_prop_type );
+		$this->assertSame( [ 'text-tag' ], $dynamic_prop_type->get_allowed_tag_names() );
 
 		// Cleanup.
 		$tag->cleanup();
-		Union_Prop_Type::reset_registered_variants();
 	}
 
 	public function add_dynamic_prop_type_data_provider() {

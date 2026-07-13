@@ -78,8 +78,10 @@ class Dynamic_Tags_Module {
 			fn ( $transformers ) => $this->register_import_export_transformer( $transformers )
 		);
 
-		Dynamic_Prop_Type::register_union_json_schema_variant();
-		Dynamic_Prop_Type::set_tag_names_resolver( [ $this, 'get_dynamic_tag_names_by_categories' ] );
+		add_filter(
+			'elementor/atomic-widgets/llm-json-schema',
+			fn( array $schema ) => ( new LLM_Schema_Dedupe_Filter() )->apply( $schema )
+		);
 	}
 
 	/**
