@@ -65,14 +65,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
           fetch-tags: true
 
       - name: Remove old tags
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v[0-9]+\.[0-9]+\.[0-9]+$' }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+([._-].*)?$' }}
           DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || vars.DAYS_BEFORE_TAG_STALE || '90' }}
           OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
@@ -95,12 +95,16 @@ jobs:
             printf 'STALE_CLEANUP_DETAIL\t%s\n' "$1"
           }
 
-          while IFS= read -r tag_date tag_name; do
+          format_tag_date() {
+            date -u -d "@${1}" '+%Y-%m-%d %H:%M:%S UTC'
+          }
+
+          while IFS='|' read -r tag_epoch tag_name; do
             [ -z "${tag_name}" ] && continue
             [ "${deletions}" -ge "${OPERATIONS_PER_RUN}" ] && break
 
-            tag_epoch=$(date -d "${tag_date}" +%s)
             age_seconds=$((now_epoch - tag_epoch))
+            tag_date=$(format_tag_date "${tag_epoch}")
 
             if [[ "${tag_name}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
               skipped_exempt=$((skipped_exempt + 1))
@@ -113,20 +117,27 @@ jobs:
             fi
 
             deletions=$((deletions + 1))
-            log_tag_result "deleted" "${tag_name}"
 
             if [ "${DRY_RUN}" = "true" ]; then
-              log_tag_detail "dry run; last updated ${tag_date}"
+              log_tag_result "would_delete" "${tag_name}"
+              log_tag_detail "last updated ${tag_date}"
             else
+              log_tag_result "deleted" "${tag_name}"
               detail="last updated ${tag_date}"
               if gh release view "${tag_name}" >/dev/null 2>&1; then
-                gh release delete "${tag_name}" --yes
-                detail="${detail}; release deleted"
+                if gh release delete "${tag_name}" --yes; then
+                  detail="${detail}; release deleted"
+                fi
+              else
+                :
               fi
-              gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"
-              log_tag_detail "${detail}; tag deleted"
+              if gh api -X DELETE "/repos/${GITHUB_REPOSITORY}/git/refs/tags/${tag_name}"; then
+                log_tag_detail "${detail}; tag deleted"
+              else
+                log_tag_detail "${detail}; tag delete failed"
+              fi
             fi
-          done < <(git for-each-ref --sort=creatordate --format='%(creatordate:iso) %(refname:short)' refs/tags)
+          done < <(git for-each-ref --sort=creatordate --format='%(creatordate:unix)|%(refname:short)' refs/tags)
 
           printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' \
             "${skipped_exempt}" "${skipped_young}" "${deletions}"
@@ -231,7 +242,7 @@ jobs:
           render_tag_summary_section() {
             local action_log="$1"
             local parsed="$2"
-            local stats_exempt=0 stats_young=0 stats_deleted=0
+            local stats_exempt=0 stats_young=0
 
             if [ -s "${action_log}" ]; then
               stats_line=$(awk '/STALE_CLEANUP_STATS/ {
@@ -242,29 +253,42 @@ jobs:
               if [ -n "${stats_line}" ]; then
                 stats_exempt=$(echo "${stats_line}" | sed -n 's/.*exempt=\([0-9]*\).*/\1/p')
                 stats_young=$(echo "${stats_line}" | sed -n 's/.*young=\([0-9]*\).*/\1/p')
-                stats_deleted=$(echo "${stats_line}" | sed -n 's/.*deleted=\([0-9]*\).*/\1/p')
               fi
             fi
 
-            deleted_count=$(awk -F '\t' '$1 == "deleted" { c++ } END { print c + 0 }' "${parsed}")
+            action_bucket="deleted"
+            action_label="Deleted"
+            table_message="_Deleted oldest eligible non-exempt tags first._"
+            empty_message="_No tags were deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+            section_title="Stale tag cleanup"
+
+            if [ "${DRY_RUN}" = "true" ]; then
+              section_title="Stale tag cleanup (dry run)"
+              action_bucket="would_delete"
+              action_label="Would delete"
+              table_message="_Dry run: oldest eligible non-exempt tags that would be deleted._"
+              empty_message="_Dry run: no tags would be deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+            fi
+
+            action_count=$(awk -F '\t' -v bucket="${action_bucket}" '$1 == bucket { c++ } END { print c + 0 }' "${parsed}")
 
             {
-              echo "## Stale tag cleanup"
+              echo "## ${section_title}"
               echo ""
-              echo "- **Deleted:** ${deleted_count}"
+              echo "- **${action_label}:** ${action_count}"
               echo "- **Skipped (exempt):** ${stats_exempt}"
               echo "- **Skipped (too young):** ${stats_young}"
               echo ""
               if [ ! -s "${action_log}" ]; then
                 echo "_Could not parse action logs. Expand the **Remove old tags** step for details._"
-              elif [ "${deleted_count}" -eq 0 ]; then
-                echo "_No tags were deleted this run. Lower \`DAYS_BEFORE_TAG_DELETE\` or adjust \`EXEMPT_TAGS_REGEX\` if needed._"
+              elif [ "${action_count}" -eq 0 ]; then
+                echo "${empty_message}"
               else
-                echo "_Deleted oldest eligible non-exempt tags first._"
+                echo "${table_message}"
                 echo ""
                 echo "| Action | Tag | Detail |"
                 echo "| --- | --- | --- |"
-                awk -F '\t' '$1 == "deleted" { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${parsed}"
+                awk -F '\t' -v bucket="${action_bucket}" '$1 == bucket { printf "| %s | %s | %s |\n", $1, $2, $3 }' "${parsed}"
               fi
               echo ""
             } >> "${GITHUB_STEP_SUMMARY}"
