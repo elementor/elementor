@@ -1,1 +1,0 @@
-* Fix: Improved code security enforcement in query handling
