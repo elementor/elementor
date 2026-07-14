@@ -446,8 +446,8 @@ describe( 'App', () => {
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should remove site_features step after successful Pro installation', async () => {
-			// Arrange - user is on theme_selection (step 4 of 5), Pro install screen is pending
+		it( 'should switch to theme_selection after successful Pro installation on free config', async () => {
+			// Arrange
 			mockFetch.mockResolvedValue( {
 				ok: true,
 				json: () => Promise.resolve( { data: { success: true, message: 'installed' } } ),
@@ -456,34 +456,61 @@ describe( 'App', () => {
 			window.elementorAppConfig = createMockConfig( {
 				isConnected: true,
 				shouldShowProInstallScreen: true,
+				steps: [
+					{
+						id: 'building_for',
+						label: 'Who are you building for?',
+						type: 'single',
+					},
+					{
+						id: 'site_about',
+						label: 'What is your site about?',
+						type: 'multiple',
+					},
+					{
+						id: 'experience_level',
+						label: 'Experience level',
+						type: 'single',
+					},
+					{
+						id: 'site_features',
+						label: 'Site features',
+						type: 'multiple',
+					},
+				],
 				progress: {
-					current_step_id: 'theme_selection',
-					current_step_index: 3,
-					completed_steps: [ 'building_for', 'site_about', 'experience_level' ],
+					current_step_id: 'building_for',
+					current_step_index: 0,
+					completed_steps: [],
 				},
 			} );
 
 			render( <App /> );
 			expect( screen.getByTestId( 'pro-install-screen' ) ).toBeInTheDocument();
 
-			// Act - install Pro
+			// Act
 			fireEvent.click( screen.getByText( 'Install Pro on this site' ) );
 
-			// Assert - pro screen dismissed, onboarding steps shown
+			// Assert
 			await waitFor( () => {
 				expect( screen.queryByTestId( 'pro-install-screen' ) ).not.toBeInTheDocument();
 			} );
 
 			expect( screen.getByTestId( 'onboarding-steps' ) ).toBeInTheDocument();
-			fireEvent.click( screen.getByText( 'Skip' ) );
 
+			fireEvent.click( screen.getByText( 'Skip' ) );
 			await waitFor( () => {
-				expect( mockFetch ).toHaveBeenCalledWith(
-					expect.stringContaining( 'user-progress' ),
-					expect.objectContaining( {
-						body: expect.stringContaining( '"complete":true' ),
-					} )
-				);
+				expect( screen.getByText( 'What is your site about?' ) ).toBeInTheDocument();
+			} );
+
+			fireEvent.click( screen.getByText( 'Skip' ) );
+			await waitFor( () => {
+				expect( screen.getByText( 'How experienced are you with Elementor?' ) ).toBeInTheDocument();
+			} );
+
+			fireEvent.click( screen.getByText( 'Skip' ) );
+			await waitFor( () => {
+				expect( screen.getByText( 'Build faster with Hello Theme' ) ).toBeInTheDocument();
 			} );
 		} );
 	} );
