@@ -84,8 +84,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				compositionBuilder.setStylesConfig( stylesConfig );
 				compositionBuilder.setCustomCSS( customCSS );
 
-				const { configErrors, rootContainers: generatedRootContainers } =
-					await compositionBuilder.build( targetContainer );
+				const {
+					configErrors,
+					formErrors,
+					rootContainers: generatedRootContainers,
+				} = await compositionBuilder.build( targetContainer );
 
 				rootContainers.push( ...generatedRootContainers );
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
@@ -104,6 +107,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 
 				if ( configErrors.length ) {
 					errors.push( ...configErrors.map( ( msg ) => new Error( msg ) ) );
+				}
+
+				if ( formErrors.length ) {
+					errors.push( ...formErrors.map( ( msg ) => new Error( msg ) ) );
 				}
 			} catch ( error ) {
 				errors.push( error as Error );
