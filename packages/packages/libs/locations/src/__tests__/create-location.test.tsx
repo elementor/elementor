@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { lazy } from 'react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { createLocation } from '../create-location';
 
@@ -221,6 +221,36 @@ describe( 'createLocation', () => {
 		expect( screen.getByText( 'Test 1' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Test 3' ) ).toBeInTheDocument();
 		expect( mockConsoleError ).toHaveBeenCalled();
+	} );
+
+	it( 'should render a component injected after the Slot has already mounted (e.g. by a plugin loaded later)', () => {
+		// Arrange.
+		const { inject, Slot } = createLocation();
+
+		inject( {
+			id: 'test-1',
+			component: () => <div data-testid="element">First div</div>,
+		} );
+
+		// Act.
+		render( <Slot /> );
+
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		expect( screen.getAllByTestId( 'element' ) ).toHaveLength( 1 );
+
+		act( () => {
+			inject( {
+				id: 'test-2',
+				component: () => <div data-testid="element">Second div</div>,
+			} );
+		} );
+
+		// Assert.
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		const elements = screen.getAllByTestId( 'element' );
+
+		expect( elements ).toHaveLength( 2 );
+		expect( elements[ 1 ].innerHTML ).toBe( 'Second div' );
 	} );
 
 	it( 'should pass the props from Slot to the injected component', () => {

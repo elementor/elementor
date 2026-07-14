@@ -28,8 +28,8 @@ export function toGridTracks( computedStyle: CSSStyleDeclaration ): GridTracks {
 	return {
 		columns: parseTrackList( computedStyle.gridTemplateColumns ),
 		rows: parseTrackList( computedStyle.gridTemplateRows ),
-		columnGap: toPx( computedStyle.columnGap ),
-		rowGap: toPx( computedStyle.rowGap ),
+		columnGap: resolveGapPx( computedStyle.columnGap, computedStyle.width ),
+		rowGap: resolveGapPx( computedStyle.rowGap, computedStyle.height ),
 		padding: {
 			top: toPx( computedStyle.paddingTop ),
 			right: toPx( computedStyle.paddingRight ),
@@ -141,4 +141,15 @@ export function toPx( value: string ): number {
 	const parsed = parseFloat( value );
 
 	return Number.isFinite( parsed ) ? parsed : 0;
+}
+
+export function resolveGapPx( value: string, referenceSize: string ): number {
+	if ( value.trim().endsWith( '%' ) ) {
+		const percent = parseFloat( value );
+		const reference = parseFloat( referenceSize );
+
+		return Number.isFinite( percent ) && Number.isFinite( reference ) ? ( percent / 100 ) * reference : 0;
+	}
+
+	return toPx( value );
 }
