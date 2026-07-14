@@ -5,9 +5,11 @@ import { __ } from '@wordpress/i18n';
 import {
 	clipboardRootsAreAtomicForms,
 	type CreateArgs,
+	FORM_ELEMENT_TYPE,
 	FORM_FIELD_ELEMENT_TYPES,
 	getArgsElementType,
 	hasClipboardElementTypes,
+	hasElementType,
 	hasElementTypes,
 	isWithinForm,
 	type MoveArgs,
@@ -60,11 +62,14 @@ function blockFormFieldCreate( args: CreateArgs ): boolean {
 function blockFormFieldMove( args: MoveArgs ): boolean {
 	const { containers = [ args.container ], target } = args;
 
-	const hasFormFieldElement = containers.some( ( container ) =>
-		container ? hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES ) : false
+	// Form fields must not be outside a form, but can be moved while inside a form or the container IS a form [ED-23858]
+	const hasLooseFormFields = containers.some( ( container ) =>
+		container
+			? ! hasElementType( container, FORM_ELEMENT_TYPE ) && hasElementTypes( container, FORM_FIELD_ELEMENT_TYPES )
+			: false
 	);
 
-	if ( hasFormFieldElement && ! isWithinForm( target ) && ! movedContainersIncludeAtomicFormRoot( containers ) ) {
+	if ( hasLooseFormFields && ! isWithinForm( target ) && ! movedContainersIncludeAtomicFormRoot( containers ) ) {
 		handleBlockedFormField();
 
 		return true;
