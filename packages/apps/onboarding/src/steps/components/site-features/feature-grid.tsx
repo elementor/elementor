@@ -10,7 +10,7 @@ export interface FeatureOption {
 	id: string;
 	labelKey: string;
 	Icon: React.ElementType;
-	licenseType: 'core' | 'pro' | 'one';
+	licenseType: 'core' | 'installable' | 'pro' | 'one';
 }
 
 interface FeatureCardProps {
@@ -24,14 +24,14 @@ interface FeatureGridProps {
 	onFeatureClick: ( id: string ) => void;
 }
 
-const IncludedInCoreChip = styled( Chip )( ( { theme } ) => ( {
+const CornerChip = styled( Chip )( ( { theme } ) => ( {
 	position: 'absolute',
 	insetBlockStart: theme.spacing( 0.75 ),
 	insetInlineStart: theme.spacing( 0.75 ),
 	height: theme.spacing( 2.25 ),
 	'& .MuiChip-label': {
 		fontSize: theme.spacing( 1.5 ),
-		padding: `${ theme.spacing( 0.375 ) } ${ theme.spacing( 1 ) }`,
+		padding: `${ theme.spacing( 0.375 ) } ${ theme.spacing( 0.625 ) }`,
 	},
 } ) );
 
@@ -60,9 +60,11 @@ const FeatureCard = styled( Box, {
 export function FeatureGrid( { options, selectedValues, onFeatureClick }: FeatureGridProps ) {
 	const theme = useTheme();
 
+	const isPaid = ( licenseType: FeatureOption[ 'licenseType' ] ) => licenseType === 'pro' || licenseType === 'one';
+
 	const selectedPaidFeatures = selectedValues.filter( ( id ) => {
 		const featureOption = options.find( ( item ) => item.id === id );
-		return featureOption && featureOption.licenseType !== 'core';
+		return featureOption && isPaid( featureOption.licenseType );
 	} );
 
 	const shouldDisplayProPlanNotice = selectedPaidFeatures.length > 0;
@@ -98,8 +100,10 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 			{ options.map( ( option ) => {
 				const isSelected = selectedValues.includes( option.id );
 				const Icon = option.Icon;
-				const BadgeIcon = option.licenseType !== 'core' ? CrownFilledIcon : CheckIcon;
+				const isOptionPaid = isPaid( option.licenseType );
+				const BadgeIcon = isOptionPaid ? CrownFilledIcon : CheckIcon;
 				const isCore = option.licenseType === 'core';
+				const isInstallable = option.licenseType === 'installable';
 
 				const handleClick = () => onFeatureClick( option.id );
 
@@ -118,13 +122,12 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 						tabIndex={ isCore ? undefined : 0 }
 						onKeyDown={ handleKeyDownEvent }
 						aria-pressed={ isCore ? undefined : isSelected }
+						aria-label={ isCore ? undefined : t( option.labelKey ) }
 					>
-						{ isCore && <IncludedInCoreChip label={ t( 'steps.site_features.included' ) } size="small" /> }
+						{ isCore && <CornerChip label={ t( 'steps.site_features.included' ) } size="small" /> }
+						{ isInstallable && <CornerChip label={ t( 'common.recommended' ) } size="small" /> }
 						{ isSelected && (
-							<SelectionBadge
-								icon={ BadgeIcon }
-								variant={ option.licenseType !== 'core' ? 'paid' : 'free' }
-							/>
+							<SelectionBadge icon={ BadgeIcon } variant={ isOptionPaid ? 'paid' : 'free' } />
 						) }
 						<Box
 							className="feature-icon"
@@ -132,11 +135,17 @@ export function FeatureGrid( { options, selectedValues, onFeatureClick }: Featur
 							alignItems="center"
 							justifyContent="center"
 							color="primary.dark"
-							fontSize={ theme.spacing( 4 ) }
+							width={ theme.spacing( 4 ) }
 							height={ theme.spacing( 4 ) }
 							sx={ { mt: 2, mb: 1 } }
 						>
-							<Icon fontSize="inherit" />
+							<Icon
+								sx={ {
+									width: theme.spacing( 4 ),
+									height: theme.spacing( 4 ),
+									fontSize: theme.spacing( 4 ),
+								} }
+							/>
 						</Box>
 						<Typography
 							variant="body2"
