@@ -1,11 +1,4 @@
 import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
-import {
-	type ArrayPropType,
-	type ObjectPropType,
-	type PropType,
-	type TransformablePropType,
-	type UnionPropType,
-} from '@elementor/editor-props';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
 export const CANVAS_SERVER_NAME = 'editor-canvas';
@@ -84,47 +77,3 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		}
 	);
 };
-
-function cleanupPropSchema( propSchema: Record< string, PropType > ): Record< string, PropType > {
-	const result: Record< string, Partial< PropType > > = {};
-	Object.keys( propSchema ).forEach( ( propName ) => {
-		result[ propName ] = cleanupPropType( propSchema[ propName ] );
-	} );
-	return result as Record< string, PropType >;
-}
-function cleanupPropType( propType: PropType & { key?: string } ): Partial< PropType > {
-	const result: Partial< PropType > = {};
-	Object.keys( propType ).forEach( ( property ) => {
-		switch ( property ) {
-			case 'key':
-			case 'kind':
-				( result as Record< string, unknown > )[ property ] = propType[ property ];
-				break;
-			case 'meta':
-			case 'settings':
-				{
-					if ( Object.keys( propType[ property ] || {} ).length > 0 ) {
-						( result as Record< string, unknown > )[ property ] = propType[ property ];
-					}
-				}
-				break;
-		}
-	} );
-	if ( result.kind === 'plain' ) {
-		Object.defineProperty( result, 'kind', { value: 'string' } );
-	} else if ( result.kind === 'array' ) {
-		result.item_prop_type = cleanupPropType( ( propType as ArrayPropType ).item_prop_type ) as PropType;
-	} else if ( result.kind === 'object' ) {
-		const shape = ( propType as ObjectPropType ).shape as Record< string, PropType >;
-		const cleanedShape = cleanupPropSchema( shape );
-		result.shape = cleanedShape;
-	} else if ( result.kind === 'union' ) {
-		const propTypes = ( propType as UnionPropType ).prop_types;
-		const cleanedPropTypes: Record< string, Partial< PropType > > = {};
-		Object.keys( propTypes ).forEach( ( key ) => {
-			cleanedPropTypes[ key ] = cleanupPropType( propTypes[ key ] );
-		} );
-		result.prop_types = cleanedPropTypes as Record< string, TransformablePropType >;
-	}
-	return result;
-}

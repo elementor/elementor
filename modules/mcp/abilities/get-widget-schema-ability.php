@@ -15,7 +15,7 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'Get Elementor Widget Schema', 'elementor' ),
-			__( 'Returns the JSON Schema for a single widget type\'s settings, including default values and nesting guidance. Use elementor/list-widgets first to discover valid widget_type values.', 'elementor' ),
+			Prompt_Loader::load( 'get-widget-schema' ),
 			'elementor',
 			[ 'type' => 'object' ],
 			[
@@ -65,7 +65,8 @@ class Get_Widget_Schema_Ability extends Abstract_Ability {
 		}
 
 		$all_widget_configs = Widget_Context_Helper::get_llm_eligible_widgets();
+		$parents_index = Widget_Context_Helper::build_parents_index( $all_widget_configs );
 
-		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $all_widget_configs );
+		return Widget_Context_Helper::build_widget_schema( $widget_type, $config, $parents_index );
 	}
 }

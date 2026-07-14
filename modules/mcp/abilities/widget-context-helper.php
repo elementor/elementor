@@ -3,27 +3,30 @@
 namespace Elementor\Modules\Mcp\Abilities;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
-use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Builds widget metadata for the MCP abilities, mirroring the frontend's
- * `element-data-util`/`widgets-schema-resource`/`build-llm-guidance` (packages/packages/core/editor-canvas/src/mcp).
+ * Provides widget metadata for MCP abilities: eligibility checks, summaries, and JSON schemas
+ * for LLM consumption. The schema output includes property types and LLM guidance.
  */
 class Widget_Context_Helper {
+
 	const NON_CONFIGURABLE_PROP_KEYS = [ '_cssid', 'classes', 'attributes' ];
 
-	const V3_LAYOUT_CONTROL_TYPES = [ 'section', 'tab', 'tabs' ];
+	const EXCLUDED_WIDGET_TITLE = 'Component';
 
-	const DEFAULT_STYLES_INSTRUCTION = 'These are the default styles applied to the widget. Override only when necessary.';
+	const VERSION_V3 = 'v3';
 
-	const DEFAULT_SETTINGS_INSTRUCTION = 'These are the default settings applied to the widget. Omit them from elementConfig unless the user explicitly asks to change them.';
+	const VERSION_V4 = 'v4';
+
+	const V3_FALLBACK_MESSAGE = 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.';
+
+	const V3_FALLBACK_FIELDS_NOTE = 'All settings are optional; there is no JSON schema for this widget type.';
 
 	const BASE_SETTING_PROP_HINT = 'Has a widget default — omit unless user explicitly requests a change. See llm_guidance.default_settings.';
 
@@ -31,21 +34,16 @@ class Widget_Context_Helper {
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
 	 */
 	public static function get_llm_eligible_widgets(): array {
+		$all_types = Plugin::$instance->widgets_manager->get_widget_types()
+			+ Plugin::$instance->elements_manager->get_element_types();
+
 		$eligible = [];
 
-		foreach ( Plugin::$instance->widgets_manager->get_widget_types() as $widget_type => $widget ) {
-			$config = $widget->get_config();
+		foreach ( $all_types as $type => $instance ) {
+			$config = $instance->get_config();
 
 			if ( self::is_widget_eligible_for_llm( $config ) ) {
-				$eligible[ $widget_type ] = $config;
-			}
-		}
-
-		foreach ( Plugin::$instance->elements_manager->get_element_types() as $element_type => $element ) {
-			$config = $element->get_config();
-
-			if ( self::is_widget_eligible_for_llm( $config ) ) {
-				$eligible[ $element_type ] = $config;
+				$eligible[ $type ] = $config;
 			}
 		}
 
@@ -53,15 +51,9 @@ class Widget_Context_Helper {
 	}
 
 	public static function get_widget_config( string $widget_type ): ?array {
-		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		$instance = Atomic_Elements_Utils::get_element_instance( $widget_type );
 
-		if ( $widget instanceof Widget_Base ) {
-			return $widget->get_config();
-		}
-
-		$element = Plugin::$instance->elements_manager->get_element_types( $widget_type );
-
-		return $element ? $element->get_config() : null;
+		return $instance ? $instance->get_config() : null;
 	}
 
 	public static function is_widget_eligible_for_llm( array $config ): bool {
@@ -69,8 +61,7 @@ class Widget_Context_Helper {
 			return false;
 		}
 
-		// TODO: Restore component once working in compositions. Mirrors the frontend's exclusion.
-		if ( 'Component' === ( $config['title'] ?? null ) ) {
+		if ( self::EXCLUDED_WIDGET_TITLE === ( $config['title'] ?? null ) ) {
 			return false;
 		}
 
@@ -81,35 +72,49 @@ class Widget_Context_Helper {
 		return self::has_v3_controls( $config['controls'] ?? null );
 	}
 
-	public static function has_v3_controls( $controls ): bool {
+	private static function has_v3_controls( $controls ): bool {
 		return is_array( $controls ) && ! empty( $controls );
 	}
 
 	public static function get_widget_version( array $config ): string {
-		return empty( $config['atomic_props_schema'] ) ? 'v3' : 'v4';
+		return empty( $config['atomic_props_schema'] ) ? self::VERSION_V3 : self::VERSION_V4;
 	}
 
 	public static function build_widget_summary( string $widget_type, array $config ): array {
-		return array_filter(
-			[
-				'type' => $widget_type,
-				'version' => self::get_widget_version( $config ),
-				'description' => self::get_description( $config ),
-			],
-			fn( $value ) => null !== $value
-		);
+		return self::compact_nulls( [
+			'type' => $widget_type,
+			'version' => self::get_widget_version( $config ),
+			'description' => self::get_description( $config ),
+		] );
 	}
 
 	/**
-	 * Builds the JSON Schema for a widget's props, mirroring the frontend `widgets-schema-resource`.
+	 * Builds a parents index for efficient allowed_parents lookup.
+	 *
+	 * @param array<string, array> $all_configs All widget configs keyed by type.
+	 * @return array<string, string[]> child_type => parent_types[].
+	 */
+	public static function build_parents_index( array $all_configs ): array {
+		$index = [];
+
+		foreach ( $all_configs as $parent_type => $parent_config ) {
+			foreach ( $parent_config['allowed_child_types'] ?? [] as $child_type ) {
+				$index[ $child_type ][] = $parent_type;
+			}
+		}
+
+		return $index;
+	}
+
+	/**
+	 * Builds the JSON Schema for a widget's props.
 	 * Returns null for widgets that can't be schematized at all (no atomic props and no V3 controls).
 	 *
-	 * @param string               $widget_type        Widget type to build the schema for.
-	 * @param array                $config              The widget's own config, from `get_config()`.
-	 * @param array<string, array> $all_widget_configs Configs for every widget, keyed by type, used
-	 *                                                   to resolve `llm_guidance.nesting.allowed_parents`.
+	 * @param string $widget_type   Widget type to build the schema for.
+	 * @param array  $config        The widget's own config, from `get_config()`.
+	 * @param array  $parents_index Precomputed child_type => parent_types[] index for nesting guidance.
 	 */
-	public static function build_widget_schema( string $widget_type, array $config, array $all_widget_configs = [] ): ?array {
+	public static function build_widget_schema( string $widget_type, array $config, array $parents_index = [] ): ?array {
 		$props_schema = $config['atomic_props_schema'] ?? null;
 
 		if ( ! $props_schema ) {
@@ -118,24 +123,21 @@ class Widget_Context_Helper {
 			}
 
 			return [
-				'widget_version' => 'v3',
-				'message' => 'This widget exists in the editor but has no atomic props schema (V4). Use control_metadata as non-authoritative hints from legacy controls.',
-				'fields_note' => 'All settings are optional; there is no JSON schema for this widget type.',
-				'properties' => self::extract_v3_controls_metadata( $config['controls'] ),
+				'widget_version' => self::VERSION_V3,
+				'message' => self::V3_FALLBACK_MESSAGE,
+				'fields_note' => self::V3_FALLBACK_FIELDS_NOTE,
+				'properties' => V3_Controls_Metadata::extract( $config['controls'] ),
 			];
 		}
 
 		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
 
-		return array_filter(
-			[
-				'type' => 'object',
-				'properties' => $properties,
-				'description' => self::get_description( $config ),
-				'llm_guidance' => self::build_llm_guidance( $config, $widget_type, $all_widget_configs ),
-			],
-			fn( $value ) => null !== $value
-		);
+		return self::compact_nulls( [
+			'type' => 'object',
+			'properties' => $properties,
+			'description' => self::get_description( $config ),
+			'llm_guidance' => Llm_Guidance_Builder::build( $config, $widget_type, $parents_index ),
+		] );
 	}
 
 	/**
@@ -153,10 +155,20 @@ class Widget_Context_Helper {
 			$properties[ $key ] = $prop_type->to_json_schema();
 		}
 
-		return self::enrich_properties_with_base_settings_hints( $properties, array_keys( $base_settings ) );
+		$properties = self::apply_llm_schema_filters( $properties );
+
+		return self::append_base_settings_hints( $properties, array_keys( $base_settings ) );
 	}
 
-	public static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {
+	private static function apply_llm_schema_filters( array $properties ): array {
+		foreach ( $properties as $key => $schema ) {
+			$properties[ $key ] = apply_filters( 'elementor/atomic-widgets/llm-json-schema', $schema );
+		}
+
+		return $properties;
+	}
+
+	private static function is_prop_key_configurable( string $key, Prop_Type $prop_type ): bool {
 		if ( ! in_array( $key, self::NON_CONFIGURABLE_PROP_KEYS, true ) ) {
 			return true;
 		}
@@ -164,7 +176,7 @@ class Widget_Context_Helper {
 		return (bool) $prop_type->get_meta_item( 'llm_configurable', false );
 	}
 
-	private static function enrich_properties_with_base_settings_hints( array $properties, array $base_settings_keys ): array {
+	private static function append_base_settings_hints( array $properties, array $base_settings_keys ): array {
 		if ( empty( $base_settings_keys ) ) {
 			return $properties;
 		}
@@ -184,183 +196,13 @@ class Widget_Context_Helper {
 		return $properties;
 	}
 
-	/**
-	 * `$all_widget_configs` holds every widget's config, keyed by type, needed to resolve
-	 * `nesting.allowed_parents` below.
-	 */
-	public static function build_llm_guidance( array $config, string $widget_type, array $all_widget_configs ): array {
-		$guidance = [
-			'can_have_children' => ! empty( $config['meta']['is_container'] ),
-		];
-
-		$default_styles = self::collect_default_styles( $config['base_styles'] ?? [] );
-		$default_settings = $config['base_settings'] ?? [];
-
-		if ( ! empty( $default_styles ) ) {
-			$guidance['instructions'] = self::merge_instructions( $guidance['instructions'] ?? null, self::DEFAULT_STYLES_INSTRUCTION );
-			$guidance['default_styles'] = $default_styles;
-		}
-
-		if ( ! empty( $default_settings ) ) {
-			$guidance['instructions'] = self::merge_instructions( $guidance['instructions'] ?? null, self::DEFAULT_SETTINGS_INSTRUCTION );
-			$guidance['default_settings'] = $default_settings;
-		}
-
-		$nesting = self::build_nesting_guidance( $config, $widget_type, $all_widget_configs );
-
-		if ( ! empty( $nesting ) ) {
-			$guidance['nesting'] = $nesting;
-		}
-
-		$required_children = self::get_required_default_child_types( $config );
-
-		if ( ! empty( $required_children ) ) {
-			$guidance['required_direct_children'] = $required_children;
-		}
-
-		return $guidance;
-	}
-
-	/**
-	 * Collects default styles from base_styles and converts PropValue envelopes to plain CSS strings.
-	 * The LLM is expected to use plain CSS (our converter transforms it), so we show the defaults
-	 * as they would appear in CSS rather than as PropValue envelopes.
-	 *
-	 * @param array<string, array> $base_styles Style_Definition::build() output, keyed by style ID.
-	 */
-	private static function collect_default_styles( array $base_styles ): array {
-		$default_styles = [];
-
-		foreach ( $base_styles as $style ) {
-			foreach ( $style['variants'] ?? [] as $variant ) {
-				$default_styles = array_merge( $default_styles, $variant['props'] ?? [] );
-			}
-		}
-
-		return self::convert_prop_values_to_css( $default_styles );
-	}
-
-	/**
-	 * Converts an array of PropValue envelopes to plain CSS strings.
-	 * Uses the Render_Props_Resolver which transforms PropValues to their CSS representation.
-	 *
-	 * @param array<string, mixed> $props PropValue envelopes keyed by CSS property name.
-	 * @return array<string, string> Plain CSS values keyed by CSS property name.
-	 */
-	private static function convert_prop_values_to_css( array $props ): array {
-		if ( empty( $props ) ) {
-			return [];
-		}
-
-		$schema = Style_Schema::get();
-		$resolved = Render_Props_Resolver::for_styles()->resolve( $schema, $props );
-
-		return array_filter( $resolved, fn( $value ) => null !== $value && '' !== $value );
-	}
-
-	private static function merge_instructions( ?string $existing, string $additional ): string {
-		return $existing ? "{$existing} {$additional}" : $additional;
-	}
-
-	/**
-	 * `$all_widget_configs` holds every widget's config, keyed by type, needed to resolve
-	 * `allowed_parents` below.
-	 */
-	private static function build_nesting_guidance( array $config, string $widget_type, array $all_widget_configs ): array {
-		$allowed_child_types = $config['allowed_child_types'] ?? [];
-		$allowed_parents = [];
-
-		foreach ( $all_widget_configs as $parent_type => $parent_config ) {
-			if ( in_array( $widget_type, $parent_config['allowed_child_types'] ?? [], true ) ) {
-				$allowed_parents[] = $parent_type;
-			}
-		}
-
-		return array_filter(
-			[
-				'allowed_child_types' => empty( $allowed_child_types ) ? null : $allowed_child_types,
-				'allowed_parents' => empty( $allowed_parents ) ? null : $allowed_parents,
-			],
-			fn( $value ) => null !== $value
-		);
-	}
-
-	private static function get_required_default_child_types( array $config ): array {
-		$default_children = $config['default_children'] ?? null;
-
-		if ( ! is_array( $default_children ) ) {
-			return [];
-		}
-
-		$types = [];
-
-		foreach ( $default_children as $child ) {
-			if ( empty( $child['meta']['required'] ) ) {
-				continue;
-			}
-
-			$type = $child['widgetType'] ?? $child['elType'] ?? null;
-
-			if ( $type ) {
-				$types[] = $type;
-			}
-		}
-
-		return $types;
-	}
-
-	private static function extract_v3_controls_metadata( $controls ): array {
-		if ( ! self::has_v3_controls( $controls ) ) {
-			return [];
-		}
-
-		$result = [];
-
-		foreach ( $controls as $control_key => $control ) {
-			if ( ! is_array( $control ) ) {
-				continue;
-			}
-
-			$control_type = is_string( $control['type'] ?? null ) ? $control['type'] : null;
-
-			if ( $control_type && in_array( $control_type, self::V3_LAYOUT_CONTROL_TYPES, true ) ) {
-				continue;
-			}
-
-			$result[ $control_key ] = self::build_v3_control_entry( $control, $control_type );
-		}
-
-		return $result;
-	}
-
-	private static function build_v3_control_entry( array $control, ?string $control_type ): array {
-		$entry = [];
-
-		if ( array_key_exists( 'default', $control ) ) {
-			$entry['default'] = $control['default'];
-		}
-
-		if ( $control_type ) {
-			$entry['type'] = $control_type;
-		}
-
-		if ( array_key_exists( 'options', $control ) && null !== $control['options'] ) {
-			$options = $control['options'];
-			$entry['options'] = ( is_array( $options ) && self::is_associative_array( $options ) )
-				? array_keys( $options )
-				: $options;
-		}
-
-		return $entry;
-	}
-
-	private static function is_associative_array( array $options ): bool {
-		return array_keys( $options ) !== range( 0, count( $options ) - 1 );
-	}
-
 	private static function get_description( array $config ): ?string {
 		$description = $config['meta']['description'] ?? null;
 
 		return is_string( $description ) ? $description : null;
+	}
+
+	private static function compact_nulls( array $data ): array {
+		return array_filter( $data, fn( $value ) => null !== $value );
 	}
 }

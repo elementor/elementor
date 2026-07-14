@@ -15,7 +15,7 @@ class List_Widgets_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'List Elementor Widgets', 'elementor' ),
-			__( 'Returns all widget types available to the LLM, with a version marker (v3/v4) and description. Use before building compositions or fetching a widget schema, to discover which widget types exist.', 'elementor' ),
+			Prompt_Loader::load( 'list-widgets' ),
 			'elementor',
 			[
 				'type' => 'array',

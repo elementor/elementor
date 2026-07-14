@@ -22,7 +22,7 @@ class List_Dynamic_Tags_Ability extends Abstract_Ability {
 	protected function get_definition(): Ability_Definition {
 		return new Ability_Definition(
 			__( 'List Elementor Dynamic Tags', 'elementor' ),
-			__( 'Returns the available dynamic tags. To bind a property to a dynamic source, set its value to { "$$type": "dynamic", "value": { "name": <tag name>, "settings": { ... } } } using a tag whose name appears here, and populate "settings" per the tag entry\'s schema.', 'elementor' ),
+			Prompt_Loader::load( 'list-dynamic-tags' ),
 			'elementor',
 			[
 				'type' => 'array',
@@ -55,7 +55,12 @@ class List_Dynamic_Tags_Ability extends Abstract_Ability {
 	public function execute( $input = [] ) {
 		$tags = Dynamic_Tags_Module::instance()->registry->get_tags();
 
-		return array_values( array_map( [ $this, 'build_tag_entry' ], $tags ) );
+		$entries = [];
+		foreach ( $tags as $tag ) {
+			$entries[] = $this->build_tag_entry( $tag );
+		}
+
+		return $entries;
 	}
 
 	private function build_tag_entry( array $tag ): array {
