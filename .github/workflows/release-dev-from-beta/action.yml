@@ -72,7 +72,6 @@ runs:
       with:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
-        body_path: ${{ env.CHANGELOG_FILE }}
         prerelease: ${{ inputs.DRY_RUN }}
         draft: ${{ inputs.DRY_RUN }}
     - name: Publish to WordPress.org SVN
