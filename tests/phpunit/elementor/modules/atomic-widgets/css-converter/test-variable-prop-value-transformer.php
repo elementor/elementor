@@ -77,6 +77,62 @@ class Test_Variable_Prop_Value_Transformer extends TestCase {
 		$this->assertSame( [], $result['rejected'] );
 	}
 
+	public function test_eject__e_gv_prefixed_var_reference_moves_to_custom_css() {
+		// Arrange — LLM must use var(--label), not var(--e-gv-<label>)
+		$service = $this->createMock( Variables_Service::class );
+		$service->method( 'find_by_label_or_id' )->willReturnCallback(
+			function ( string $needle ) {
+				if ( 'wc26-gold' === $needle ) {
+					return [
+						'id' => 'e-gv-abc123',
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'wc26-gold',
+						'value' => '#C6A15B',
+					];
+				}
+
+				return null;
+			}
+		);
+
+		$transformer = new Variable_Prop_Value_Transformer( $service );
+		$schema = [
+			'color' => Union_Prop_Type::create_from( Color_Prop_Type::make() )
+				->add_prop_type( Color_Variable_Prop_Type::make() ),
+		];
+
+		$wrong_prefix_result = $transformer->eject_unresolved_var_props(
+			[ 'color' => Color_Prop_Type::generate( 'var(--e-gv-wc26-gold)' ) ],
+			$schema,
+			[
+				[
+					'property' => 'color',
+					'value' => 'var(--e-gv-wc26-gold)',
+					'declaration' => 'color: var(--e-gv-wc26-gold)',
+				],
+			]
+		);
+
+		// Assert — wrong prefix ejects to custom_css
+		$this->assertSame( [], $wrong_prefix_result['props'] );
+		$this->assertSame( [ 'color: var(--e-gv-wc26-gold);' ], $wrong_prefix_result['custom_css'] );
+
+		// Act — label-only reference promotes to global-color-variable
+		$label_result = $transformer->transform(
+			[ 'color' => Color_Prop_Type::generate( 'var(--wc26-gold)' ) ],
+			$schema
+		);
+
+		// Assert
+		$this->assertSame(
+			[
+				'$$type' => Color_Variable_Prop_Type::get_key(),
+				'value' => 'e-gv-abc123',
+			],
+			$label_result['color']
+		);
+	}
+
 	public function test_eject__wrong_variable_type_moves_declaration_to_rejected() {
 		$service = $this->createMock( Variables_Service::class );
 		$service->method( 'find_by_label_or_id' )->with( 'heading-font' )->willReturn( [

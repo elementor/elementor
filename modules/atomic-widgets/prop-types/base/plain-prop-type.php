@@ -21,6 +21,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
+	use Concerns\Has_Json_Schema_Meta;
 
 	/**
 	 * @return array<Plain_Prop_Type>
@@ -93,5 +94,30 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	public function to_json_schema(): array {
+		return $this->wrap_json_schema( [ 'type' => 'object' ] );
+	}
+
+	/**
+	 * Wraps the given value schema in the `{$$type, value}` shape shared by the primitive
+	 * prop types (string/number/boolean). Additional JSON schema meta may be provided by
+	 * subclasses (e.g. `title`, custom `description` overrides).
+	 */
+	protected function wrap_json_schema( array $value_schema, array $json_schema_meta = [] ): array {
+		$schema = $this->with_json_schema_meta( $json_schema_meta );
+
+		$schema['type'] = 'object';
+		$schema['properties'] = [
+			'$$type' => [
+				'type' => 'string',
+				'const' => static::get_key(),
+			],
+			'value' => $value_schema,
+		];
+		$schema['required'] = [ '$$type', 'value' ];
+
+		return $schema;
 	}
 }
