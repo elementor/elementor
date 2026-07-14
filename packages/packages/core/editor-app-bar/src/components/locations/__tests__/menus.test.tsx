@@ -7,6 +7,7 @@ jest.mock( '@elementor/editor-current-user', () => ( {
 	useCurrentUserCapabilities: () => ( { isAdmin: true, canUser: jest.fn(), capabilities: [] } ),
 } ) );
 
+import { AppBarSizeProvider } from '../../../contexts/app-bar-size-context';
 import { integrationsMenu, mainMenu, toolsMenu, utilitiesMenu } from '../../../locations';
 import MainMenuLocation from '../main-menu-location';
 import ToolsMenuLocation from '../tools-menu-location';
@@ -121,6 +122,41 @@ describe( 'Menus components', () => {
 
 			// Assert.
 			expect( screen.getAllByRole( 'menuitem' ) ).toHaveLength( extraAfterMax );
+		} );
+
+		it( 'should show fewer inline items and move the rest to the popover when the app bar is narrow', () => {
+			// Arrange.
+			const narrowMaxItems = 1;
+
+			for ( let i = 0; i < maxItems; i++ ) {
+				menu.registerAction( {
+					id: `test-${ i }`,
+					props: {
+						title: `Test ${ i }`,
+						icon: () => <span>a</span>,
+					},
+				} );
+			}
+
+			// Act.
+			renderWithTheme(
+				<AppBarSizeProvider value={ { tools: narrowMaxItems, utilities: narrowMaxItems } }>
+					<Component />
+				</AppBarSizeProvider>
+			);
+
+			// Assert.
+			const toolbarButtons = screen.getAllByRole( 'button' );
+			const popoverButton = toolbarButtons[ narrowMaxItems ];
+
+			expect( toolbarButtons ).toHaveLength( narrowMaxItems + 1 ); // Including the popover button.
+			expect( popoverButton ).toHaveAttribute( 'aria-label', 'More' );
+
+			// Act.
+			fireEvent.click( popoverButton );
+
+			// Assert.
+			expect( screen.getAllByRole( 'menuitem' ) ).toHaveLength( maxItems - narrowMaxItems );
 		} );
 	} );
 } );
