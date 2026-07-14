@@ -426,6 +426,66 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 		$this->assertEquals( [ V1DynamicTags::TEXT_CATEGORY ], $internal->get_prop_type( 'dynamic' )->get_categories() );
 	}
 
+	public function test_get_dynamic_tag_names_by_categories__returns_empty_array_for_no_categories() {
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [] );
+
+		// Assert.
+		$this->assertSame( [], $result );
+	}
+
+	public function test_get_dynamic_tag_names_by_categories__returns_names_of_tags_matching_any_category() {
+		// Arrange.
+		$text_tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+		$number_tag = $this->make_mock_tag( [ 'name' => 'number-tag', 'categories' => [ 'number' ] ] );
+		$url_tag = $this->make_mock_tag( [ 'name' => 'url-tag', 'categories' => [ 'url' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $text_tag );
+		Plugin::$instance->dynamic_tags->register( $number_tag );
+		Plugin::$instance->dynamic_tags->register( $url_tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		// Act.
+		$result = Dynamic_Tags_Module::instance()->get_dynamic_tag_names_by_categories( [ 'text', 'number' ] );
+
+		// Assert.
+		$this->assertEqualSets( [ 'text-tag', 'number-tag' ], $result );
+
+		// Cleanup.
+		$text_tag->cleanup();
+		$number_tag->cleanup();
+		$url_tag->cleanup();
+	}
+
+	public function test_dynamic_prop_type_includes_allowed_tag_names_from_mapping() {
+		// Arrange.
+		$tag = $this->make_mock_tag( [ 'name' => 'text-tag', 'categories' => [ 'text' ] ] );
+
+		Plugin::$instance->dynamic_tags->register( $tag );
+
+		Dynamic_Tags_Module::fresh()->register_hooks();
+
+		$prop = String_Prop_Type::make()->default( 'test' );
+
+		// Act.
+		$schema = apply_filters(
+			'elementor/atomic-widgets/props-schema',
+			[ 'prop' => $prop ]
+		);
+
+		// Assert.
+		$this->assertInstanceOf( Union_Prop_Type::class, $schema['prop'] );
+
+		$dynamic_prop_type = $schema['prop']->get_prop_type( 'dynamic' );
+
+		$this->assertInstanceOf( Dynamic_Prop_Type::class, $dynamic_prop_type );
+		$this->assertSame( [ 'text-tag' ], $dynamic_prop_type->get_allowed_tag_names() );
+
+		// Cleanup.
+		$tag->cleanup();
+	}
+
 	public function add_dynamic_prop_type_data_provider() {
 		return [
 			'number' => [
