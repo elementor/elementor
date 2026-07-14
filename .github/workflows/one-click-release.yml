@@ -22,7 +22,6 @@ on:
 
 env:
   CHANNEL: ${{inputs.channel}}
-  CHANGELOG_FILE: "temp-changelog.txt"
 
 permissions:
   contents: write
@@ -104,17 +103,9 @@ jobs:
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.PACKAGE_VERSION }}.zip
           PLUGIN_NAME: ${{ github.event.repository.name }}
-      - name: Generate changelog
-        uses: ./.github/workflows/generate-changelog
-        with:
-          TOKEN:  ${{ secrets.MAINTAIN_TOKEN }}
-          REPOSITORY: ${{ github.repository }}
-          HEAD_BRANCH_NAME: ${{ github.ref }}
-          BASE_TAG_NAME: ${{ env.PREVIOUS_TAG_SHA }}
-          GENERATE_EMPTY_CHANGELOG: true
       - name: Check that the version contains an updated change log
         if: github.event.inputs.channel == 'ga'
-        uses: ./.github/workflows/get-changelog-from-changelog-txt
+        uses: ./.github/workflows/verify-version-changelog
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
@@ -123,10 +114,7 @@ jobs:
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
           target_commitish: ${{ env.CLEAN_REF }}
-          files: |
-            elementor-*.zip
-            ${{ env.CHANGELOG_FILE }}
-          body_path: ${{ env.CHANGELOG_FILE }}
+          files: elementor-*.zip
       - name: Validate Build Files
         if: github.repository_owner == 'elementor'
         env:
