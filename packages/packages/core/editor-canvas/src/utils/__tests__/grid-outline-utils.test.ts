@@ -3,6 +3,7 @@ import {
 	computeCellRects,
 	computeGridLines,
 	parseTrackList,
+	resolveGapPx,
 	snapToHalfPixel,
 	toGridTracks,
 	toPx,
@@ -215,11 +216,29 @@ describe( 'toPx', () => {
 	} );
 } );
 
+describe( 'resolveGapPx', () => {
+	it( 'resolves a percentage gap against the reference size', () => {
+		expect( resolveGapPx( '20%', '1000px' ) ).toBe( 200 );
+		expect( resolveGapPx( '10%', '500px' ) ).toBe( 50 );
+	} );
+
+	it( 'falls back to px parsing for non-percentage gaps', () => {
+		expect( resolveGapPx( '16px', '1000px' ) ).toBe( 16 );
+		expect( resolveGapPx( 'normal', '1000px' ) ).toBe( 0 );
+	} );
+
+	it( 'returns 0 when the reference size is not a finite number', () => {
+		expect( resolveGapPx( '20%', 'auto' ) ).toBe( 0 );
+	} );
+} );
+
 type ComputedStyleParts = {
 	gridTemplateColumns: string;
 	gridTemplateRows: string;
 	columnGap: string;
 	rowGap: string;
+	width: string;
+	height: string;
 	paddingTop: string;
 	paddingRight: string;
 	paddingBottom: string;
@@ -233,6 +252,8 @@ function mockComputedStyle( parts: Partial< ComputedStyleParts > = {} ): CSSStyl
 		gridTemplateRows: 'none',
 		columnGap: 'normal',
 		rowGap: 'normal',
+		width: '1000px',
+		height: '500px',
 		paddingTop: '0px',
 		paddingRight: '0px',
 		paddingBottom: '0px',
@@ -246,6 +267,8 @@ function mockComputedStyle( parts: Partial< ComputedStyleParts > = {} ): CSSStyl
 		gridTemplateRows: resolved.gridTemplateRows,
 		columnGap: resolved.columnGap,
 		rowGap: resolved.rowGap,
+		width: resolved.width,
+		height: resolved.height,
 		paddingTop: resolved.paddingTop,
 		paddingRight: resolved.paddingRight,
 		paddingBottom: resolved.paddingBottom,
@@ -284,6 +307,22 @@ describe( 'toGridTracks', () => {
 
 		expect( tracks.columns ).toEqual( [] );
 		expect( tracks.rows ).toEqual( [] );
+	} );
+
+	it( 'resolves percentage gaps against the content-box width and height', () => {
+		const tracks = toGridTracks(
+			mockComputedStyle( {
+				gridTemplateColumns: '100px 100px',
+				gridTemplateRows: '80px 80px',
+				columnGap: '20%',
+				rowGap: '10%',
+				width: '1000px',
+				height: '500px',
+			} )
+		);
+
+		expect( tracks.columnGap ).toBe( 200 );
+		expect( tracks.rowGap ).toBe( 50 );
 	} );
 
 	it( 'reports gap as 0 when computed style returns "normal"', () => {
