@@ -299,7 +299,31 @@ class Editor {
 			return false;
 		}
 
-		return $this->is_editor_request();
+		/** @var Module ajax */
+		$ajax_data = Plugin::$instance->common->get_component( 'ajax' )->get_current_action_data();
+
+		if ( ! empty( $ajax_data ) && 'get_document_config' === $ajax_data['action'] ) {
+			return true;
+		}
+
+		// Ajax request as Editor mode
+		$actions = [
+			'elementor',
+
+			// Templates
+			'elementor_get_templates',
+			'elementor_save_template',
+			'elementor_get_template',
+			'elementor_delete_template',
+			'elementor_import_template',
+			'elementor_library_direct_actions',
+		];
+
+		if ( isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], $actions ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
