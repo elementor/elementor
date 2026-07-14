@@ -84,6 +84,7 @@ class Module extends BaseModule {
 		( new Abilities\Get_Widget_Schema_Ability() )->register();
 		( new Abilities\List_Widget_Schemas_Ability() )->register();
 		( new Abilities\List_Dynamic_Tags_Ability() )->register();
+		( new Abilities\Build_Composition_Ability() )->register();
 	}
 
 	public function register_server( $adapter ) {
@@ -113,6 +114,7 @@ class Module extends BaseModule {
 				'elementor/get-widget-schema',
 				'elementor/list-widget-schemas',
 				'elementor/list-dynamic-tags',
+				'elementor/build-composition',
 			],
 			[
 				'elementor/style-best-practices',
