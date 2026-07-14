@@ -5,11 +5,6 @@ const { Octokit } = require('@octokit/core');
 const { repoToOwnerAndOwner, getPrCommits } = require('./repo-utils');
 const { REPOSITORY, HEAD_BRANCH_NAME, BASE_TAG_NAME, TOKEN } = process.env;
 
-console.log('TOKEN set:', !!TOKEN);
-console.log('REPOSITORY:', REPOSITORY);
-console.log('HEAD_BRANCH_NAME:', HEAD_BRANCH_NAME);
-console.log('BASE_TAG_NAME:', BASE_TAG_NAME);
-
 if (!TOKEN) {
 	console.error('missing TOKEN env var');
 	process.exit(1);
