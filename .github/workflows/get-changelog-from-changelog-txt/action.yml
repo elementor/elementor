@@ -1,0 +1,17 @@
+name: Get change log From changelog and readme text files
+description: Get change log From changelog.txt and readme.txt text files - publish in wordpress.org.
+
+inputs:
+  VERSION:
+    description: 'Package Version'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        VERSION: ${{ inputs.VERSION }}
+      run: |
+        npm install --no-package-lock --no-save marked@12.0.2
+        node ./.github/scripts/get-changelog-from-change-txt.js
