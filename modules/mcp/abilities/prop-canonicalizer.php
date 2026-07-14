@@ -14,19 +14,29 @@ class Prop_Canonicalizer {
 	 * Resolves a property name to its canonical key in the schema.
 	 * Mirrors the frontend's resolveCanonicalPropName function.
 	 *
-	 * @param array<string, Prop_Type> $schema The widget props schema.
-	 * @param string                   $name   The property name to resolve (may be canonical or alias).
+	 * @param array<string, Prop_Type>   $schema    The widget props schema.
+	 * @param string                     $name      The property name to resolve (may be canonical or alias).
+	 * @param array<string, string>|null $alias_map Optional precomputed alias map from build_alias_map().
+	 *                                              Pass it when resolving many props against the same schema.
 	 *
 	 * @return string|null The canonical key if found, or null if unknown.
 	 */
-	public static function resolve_canonical_key( array $schema, string $name ): ?string {
+	public static function resolve_canonical_key( array $schema, string $name, ?array $alias_map = null ): ?string {
 		if ( isset( $schema[ $name ] ) ) {
 			return $name;
 		}
 
-		$alias_map = self::build_alias_to_canonical_map( $schema );
+		$alias_map = $alias_map ?? self::build_alias_map( $schema );
 
 		return $alias_map[ $name ] ?? null;
+	}
+
+	/**
+	 * @param array<string, Prop_Type> $schema The widget props schema.
+	 * @return array<string, string> Map of alias => canonical.
+	 */
+	public static function build_alias_map( array $schema ): array {
+		return self::build_alias_to_canonical_map( $schema );
 	}
 
 	/**

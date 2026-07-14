@@ -29,13 +29,10 @@ class Llm_Prop_Value_Adjuster {
 
 		if ( array_is_list( $value ) ) {
 			return array_map(
-				fn( $item ) => self::adjust(
-					$item,
-					[
-						'force_key' => $force_key,
-						'transformers' => $transformers,
-					]
-				),
+				fn( $item ) => self::adjust( $item, [
+					'force_key' => $force_key,
+					'transformers' => $transformers,
+				] ),
 				$value
 			);
 		}
@@ -66,21 +63,25 @@ class Llm_Prop_Value_Adjuster {
 		}
 
 		if ( isset( $clone['value'] ) && is_array( $clone['value'] ) ) {
-			if ( array_is_list( $clone['value'] ) ) {
-				$clone['value'] = array_map(
-					fn( $item ) => self::adjust( $item, [ 'transformers' => $transformers ] ),
-					$clone['value']
-				);
-			} else {
-				$adjusted_object = [];
-				foreach ( $clone['value'] as $key => $child_prop ) {
-					$adjusted_object[ $key ] = self::adjust( $child_prop, [ 'transformers' => $transformers ] );
-				}
-				$clone['value'] = $adjusted_object;
-			}
+			$clone['value'] = self::adjust_nested_value( $clone['value'], $transformers );
 		}
 
 		return $clone;
+	}
+
+	private static function adjust_nested_value( array $value, array $transformers ): array {
+		if ( array_is_list( $value ) ) {
+			return array_map(
+				fn( $item ) => self::adjust( $item, [ 'transformers' => $transformers ] ),
+				$value
+			);
+		}
+
+		$adjusted = [];
+		foreach ( $value as $key => $child_prop ) {
+			$adjusted[ $key ] = self::adjust( $child_prop, [ 'transformers' => $transformers ] );
+		}
+		return $adjusted;
 	}
 
 	/**
