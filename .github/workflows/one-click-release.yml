@@ -105,7 +105,7 @@ jobs:
           PLUGIN_NAME: ${{ github.event.repository.name }}
       - name: Check that the version contains an updated change log
         if: github.event.inputs.channel == 'ga'
-        uses: ./.github/workflows/get-changelog-from-changelog-txt
+        uses: ./.github/workflows/verify-version-changelog
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
