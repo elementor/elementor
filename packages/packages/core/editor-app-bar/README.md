@@ -55,7 +55,7 @@ import { EyeIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 integrationsMenu.registerToggleAction( {
-	name: 'my-custom-toggle',
+	id: 'my-custom-toggle',
 	useProps: () => {
 		const [ isSelected, setIsSelected ] = useState( false );
 
@@ -78,7 +78,7 @@ import { LinkIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 integrationsMenu.registerLink( {
-	name: 'my-custom-link',
+	id: 'my-custom-link',
 	props: {
 		title: __( 'My Custom Link', 'elementor' ),
 		icon: LinkIcon,
@@ -100,4 +100,63 @@ integrationsMenu.registerLink( {
 
 ### Custom Locations
 
-TBD
+In addition to the menus above, a few locations accept full custom React components via `injectInto*` functions:
+
+- `injectIntoPageIndication` - Injects a component next to the document title, in the center of the app bar.
+- `injectIntoResponsive` - Injects a component next to the responsive/breakpoints switcher, in the center of the app bar.
+- `injectIntoPrimaryAction` - Injects a component next to the primary action (e.g. "Publish"/"Save"), on the right side of the app bar.
+
+```tsx
+import { injectIntoPageIndication } from '@elementor/editor-app-bar';
+
+injectIntoPageIndication( {
+	id: 'my-custom-indication',
+	component: () => <div>Custom content</div>,
+	options: {
+		priority: 10, // Optional, lower value means higher priority. Default is 10.
+	},
+} );
+```
+
+> [!NOTE]
+> Both the menus (`registerAction`/`registerLink`/`registerToggleAction`) and the custom locations (`injectInto*`) are reactive:
+> registering an item at any time (including after the editor has already loaded) will make it appear immediately, so
+> plugins that load their scripts after the editor (e.g. Pro plugins, or third-party plugins) don't need to register
+> before the app bar has rendered.
+
+### Registering from outside this repository
+
+Third-party plugins (e.g. Elementor Pro, or any WordPress plugin) can register items into the app bar without being
+part of this monorepo's build, by depending on the `elementor-v2-editor-app-bar` script handle and using the
+`elementorV2.editorAppBar` global (which is the same object exported from `@elementor/editor-app-bar`):
+
+```php
+add_action( 'elementor/editor/v2/scripts/enqueue', function () {
+	wp_enqueue_script(
+		'my-plugin-editor-app-bar',
+		plugins_url( 'assets/editor-app-bar.js', __FILE__ ),
+		[ 'elementor-v2-editor-app-bar', 'elementor-v2-ui', 'elementor-v2-icons' ],
+		'1.0.0',
+		true
+	);
+} );
+```
+
+```js
+// my-plugin-editor-app-bar.js
+if ( window.elementorV2?.editorAppBar ) {
+	const { utilitiesMenu } = window.elementorV2.editorAppBar;
+
+	utilitiesMenu.registerLink( {
+		id: 'my-plugin-link',
+		props: {
+			title: 'My Plugin',
+			icon: MyIcon,
+			href: 'https://example.com',
+		},
+	} );
+}
+```
+
+Make sure to always use `id` (not `name`) when registering menu items, and to guard the call with a check for
+`window.elementorV2.editorAppBar`, since script load order across plugins is not guaranteed.
