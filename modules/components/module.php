@@ -17,6 +17,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Transformers\Override_Transformer;
 use Elementor\Modules\Components\Widgets\Component_Instance;
+use Elementor\Modules\Components\Schema\Overridable_LLM_Filter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -49,6 +50,11 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 		add_action( 'elementor/document/after_migrate', fn( Document $document, array $data ) => $this->after_component_migrate( $document, $data ), 10, 2 );
+
+		add_filter(
+			'elementor/atomic-widgets/llm-json-schema',
+			fn( array $schema ) => ( new Overridable_LLM_Filter() )->apply( $schema )
+		);
 
 		( Component_Lock_Manager::get_instance()->register_hooks() );
 		( new Component_Styles() )->register_hooks();

@@ -1,23 +1,28 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Stack, Typography, useTheme } from '@elementor/ui';
 
 import { StepTitle } from '../../components/ui/styled-components';
 import { useOnboarding } from '../../hooks/use-onboarding';
+import { useOnboardingEvent } from '../../hooks/use-onboarding-event';
 import {
 	AccessibilityToolsIcon,
 	AIGeneratorIcon,
 	ClassesVariablesIcon,
+	CookieConsentIcon,
 	CorePlaceholderIcon,
 	CustomCodeIcon,
 	EmailDeliverabilityIcon,
+	HelloThemeIcon,
 	ImageOptimizationIcon,
-	InteractionsIcon,
 	ThemeBuilderIcon,
-	WoocommerceIcon,
 } from '../../icons';
+import { getConfig } from '../../utils/get-config';
 import { t } from '../../utils/translations';
 import { FeatureGrid, type FeatureOption } from '../components/site-features';
+
+export const HELLO_THEME_FEATURE_ID = 'hello_theme';
+export const COOKIE_CONSENT_FEATURE_ID = 'cookie_consent';
 
 export const FEATURE_OPTIONS: FeatureOption[] = [
 	{
@@ -27,10 +32,10 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		licenseType: 'core',
 	},
 	{
-		id: 'interactions',
-		labelKey: 'steps.site_features.option_interactions',
-		Icon: InteractionsIcon,
-		licenseType: 'core',
+		id: HELLO_THEME_FEATURE_ID,
+		labelKey: 'steps.site_features.option_hello_theme',
+		Icon: HelloThemeIcon,
+		licenseType: 'installable',
 	},
 	{
 		id: 'theme_builder',
@@ -57,6 +62,12 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		licenseType: 'one',
 	},
 	{
+		id: COOKIE_CONSENT_FEATURE_ID,
+		labelKey: 'steps.site_features.option_cookie_consent',
+		Icon: CookieConsentIcon,
+		licenseType: 'one',
+	},
+	{
 		id: 'ai_features',
 		labelKey: 'steps.site_features.option_ai_generator',
 		Icon: AIGeneratorIcon,
@@ -74,12 +85,6 @@ export const FEATURE_OPTIONS: FeatureOption[] = [
 		Icon: AccessibilityToolsIcon,
 		licenseType: 'one',
 	},
-	{
-		id: 'woocommerce_builder',
-		labelKey: 'steps.site_features.woocommerce',
-		Icon: WoocommerceIcon,
-		licenseType: 'pro',
-	},
 ];
 
 export const CORE_FEATURE_IDS = new Set(
@@ -88,32 +93,68 @@ export const CORE_FEATURE_IDS = new Set(
 
 const FEATURE_OPTION_IDS = new Set( FEATURE_OPTIONS.map( ( featureOption ) => featureOption.id ) );
 
+export const isInstallable = ( id: string ): boolean =>
+	FEATURE_OPTIONS.some( ( option ) => option.id === id && option.licenseType === 'installable' );
+
 export function SiteFeatures() {
 	const { choices, actions } = useOnboarding();
+	const { trackThemeUnselected } = useOnboardingEvent();
 
 	const theme = useTheme();
 
-	const storedPaidFeatures = useMemo(
-		() => ( ( choices.site_features as string[] ) || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) ),
-		[ choices.site_features ]
+	const isHelloThemeActive = getConfig()?.isHelloThemeActive ?? false;
+
+	const visibleOptions = useMemo(
+		() => FEATURE_OPTIONS.filter( ( option ) => ! ( option.id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) ),
+		[ isHelloThemeActive ]
 	);
 
-	const selectedValues = useMemo( () => {
-		const combined = [ ...CORE_FEATURE_IDS, ...storedPaidFeatures ];
-		return combined.filter( ( id, index ) => combined.indexOf( id ) === index );
-	}, [ storedPaidFeatures ] );
+	const rawSiteFeatures = choices.site_features as string[] | undefined;
 
-	function handleFeatureClick( id: string ) {
-		if ( CORE_FEATURE_IDS.has( id ) && selectedValues.includes( id ) ) {
+	const storedSelectableFeatures = useMemo(
+		() =>
+			( rawSiteFeatures || [] ).filter( ( id ) => FEATURE_OPTION_IDS.has( id ) && ! CORE_FEATURE_IDS.has( id ) ),
+		[ rawSiteFeatures ]
+	);
+
+	const hasInitializedDefaults = useRef( false );
+
+	useEffect( () => {
+		if ( hasInitializedDefaults.current || isHelloThemeActive ) {
 			return;
 		}
 
-		const hasPaidFeaturesSelected = storedPaidFeatures.includes( id );
-		const updatedPaidFeatureSelection = hasPaidFeaturesSelected
-			? storedPaidFeatures.filter( ( featureId ) => featureId !== id )
-			: [ ...storedPaidFeatures, id ];
+		hasInitializedDefaults.current = true;
 
-		actions.setUserChoice( 'site_features', updatedPaidFeatureSelection );
+		if ( storedSelectableFeatures.length > 0 ) {
+			return;
+		}
+
+		actions.setUserChoice( 'site_features', [ HELLO_THEME_FEATURE_ID ] );
+	}, [ storedSelectableFeatures, isHelloThemeActive, actions ] );
+
+	const selectedValues = useMemo( () => {
+		const combined = [ ...CORE_FEATURE_IDS, ...storedSelectableFeatures ];
+		return combined
+			.filter( ( id, index ) => combined.indexOf( id ) === index )
+			.filter( ( id ) => ! ( id === HELLO_THEME_FEATURE_ID && isHelloThemeActive ) );
+	}, [ storedSelectableFeatures, isHelloThemeActive ] );
+
+	function handleFeatureClick( id: string ) {
+		if ( CORE_FEATURE_IDS.has( id ) ) {
+			return;
+		}
+
+		const isCurrentlySelected = storedSelectableFeatures.includes( id );
+		const updatedSelectableFeatures = isCurrentlySelected
+			? storedSelectableFeatures.filter( ( featureId ) => featureId !== id )
+			: [ ...storedSelectableFeatures, id ];
+
+		if ( id === HELLO_THEME_FEATURE_ID && isCurrentlySelected ) {
+			trackThemeUnselected();
+		}
+
+		actions.setUserChoice( 'site_features', updatedSelectableFeatures );
 	}
 
 	return (
@@ -128,7 +169,7 @@ export function SiteFeatures() {
 			</Stack>
 
 			<FeatureGrid
-				options={ FEATURE_OPTIONS }
+				options={ visibleOptions }
 				selectedValues={ selectedValues }
 				onFeatureClick={ handleFeatureClick }
 			/>
