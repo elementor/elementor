@@ -8,13 +8,6 @@ import * as hooks from './hooks/';
  */
 
 export default class Component extends BackwardsCompatibility {
-	/**
-	 * Footer saver behavior.
-	 *
-	 * @type {FooterSaver}
-	 */
-	footerSaver;
-
 	__construct( args = {} ) {
 		super.__construct( args );
 

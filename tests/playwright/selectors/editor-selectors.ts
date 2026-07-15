@@ -65,7 +65,7 @@ const EditorSelectors = {
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',
-			footerButton: '#elementor-editor-v2-top-bar button[aria-label="Page Settings"]',
+			footerButton: '#elementor-editor-wrapper-v2 button[aria-label="Page Settings"]',
 		},
 		siteSettings: {
 			wrapper: '#elementor-panel-page-menu',
@@ -83,7 +83,7 @@ const EditorSelectors = {
 			wrapper: '#elementor-navigator',
 			footer: '#elementor-navigator__footer',
 			closeButton: '#elementor-navigator__close',
-			footerButton: '#elementor-editor-v2-top-bar button[value="Structure"]',
+			footerButton: '#elementor-editor-wrapper-v2 button[value="Structure"]',
 			getElement: ( elementId: string ) => `#elementor-navigator .elementor-navigator__element[data-id="${ elementId }"]`,
 			getElementItem: ( elementId: string ) => `${ EditorSelectors.panels.navigator.getElement( elementId ) } .elementor-navigator__item`,
 		},

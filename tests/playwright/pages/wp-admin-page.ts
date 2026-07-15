@@ -212,7 +212,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageName(): Promise<void> {
-		const topbarLocator = this.page.locator( '#elementor-editor-v2-top-bar' );
+		const topbarLocator = this.page.locator( '#elementor-editor-wrapper-v2' );
 
 		await topbarLocator.locator( `button[${ topBarSelectors.pageSettings.attribute }="${ topBarSelectors.pageSettings.attributeValue }"]` ).click();
 
