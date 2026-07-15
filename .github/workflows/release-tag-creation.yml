@@ -1,0 +1,41 @@
+name: Release Tag Creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        type: string
+        description: 'Version to release (e.g. 4.1.0-beta1 or 4.0.11)'
+      dry_run:
+        required: false
+        type: boolean
+        default: true
+        description: Dry run — validate everything but do not push commits or create tag.
+
+jobs:
+  release-tag-creation:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test permissions
+        uses: ./.github/workflows/permissions
+        with:
+          ENVIRONMENT: ${{ vars.DEPLOYMENT_ENVIRONMENT }}
+          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED }}
+          DEPLOYMENT_REPOSITORY_OWNER: ${{ vars.DEPLOYMENT_REPOSITORY_OWNER }}
+
+      - name: Release tag creation
+        uses: elementor/elementor-editor-github-actions/actions/release-tag-creation@main
+        with:
+          version: ${{ inputs.version }}
+          dry_run: ${{ inputs.dry_run }}
+          maintain_username: ${{ secrets.MAINTAIN_USERNAME }}
+          maintain_email: ${{ secrets.MAINTAIN_EMAIL }}
