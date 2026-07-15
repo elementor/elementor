@@ -493,23 +493,16 @@ class Migrations_Orchestrator {
 			function( $migrated_data ) use ( $document ): bool {
 				$document->delete_meta( Document::CACHE_META_KEY );
 
-				// `update_json_meta` returns `bool|int`: an int (new meta id) when the row was
-				// inserted, `true` when an existing row was updated, and `false` when either the
-				// value was already identical on disk (concurrent write) or the write genuinely
-				// failed. The former is fine — the row already reflects the migrated shape — but
-				// we cannot distinguish it here without a re-read, so verify by comparing the
-				// stored value to what we intended to persist.
-				$update_result = $document->update_json_meta(
+				// `update_json_meta` returns `bool|int` — `false` means either "value already on
+				// disk is identical" or "write failed". WP does NOT fire `updated_post_meta` in
+				// either case, so our invalidation hook cannot clear the cache here; the bool
+				// return is how migrate() knows whether it is safe to mark as migrated. The
+				// "identical" edge case is rare enough that we skip the cache mark in the same
+				// way as a real failure — the next load will re-walk (a no-op) and mark then.
+				$save_ok = false !== $document->update_json_meta(
 					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
-
-				$save_ok = false !== $update_result;
-
-				if ( ! $save_ok ) {
-					$persisted = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
-					$save_ok = $persisted === $migrated_data;
-				}
 
 				if ( $save_ok ) {
 					do_action( 'elementor/document/after_migrate', $document, $migrated_data );
