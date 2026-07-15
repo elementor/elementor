@@ -85,7 +85,6 @@ class Module extends BaseModule {
 
 			Server_Events_Client::track( $event_name, array_merge( $context, $properties ) );
 		} catch ( \Throwable $e ) {
-			// Analytics failures must never break the request, mirroring the JS dispatchEvent() try/catch.
 			return;
 		}
 	}

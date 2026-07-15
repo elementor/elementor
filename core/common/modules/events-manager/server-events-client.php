@@ -8,10 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * Thin wrapper around the third-party analytics SDK, isolating it behind an Elementor-owned API so
- * the rest of the codebase never depends on the vendor library directly.
- */
 class Server_Events_Client {
 
 	const HOST = 'api-eu.mixpanel.com';
