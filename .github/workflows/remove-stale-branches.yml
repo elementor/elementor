@@ -66,7 +66,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          fetch-tags: true
+
+      - name: Fetch all tags
+        run: git fetch --no-recurse-submodules --depth=1 origin '+refs/tags/*:refs/tags/*'
 
       - name: Remove old tags
         env:
@@ -84,6 +86,12 @@ jobs:
           now_epoch=$(date -u +%s)
           min_age_seconds=$((DAYS_BEFORE_TAG_DELETE * 86400))
           tag_count=$(git tag -l | wc -l | tr -d ' ')
+
+          if [ "${tag_count}" -eq 0 ]; then
+            echo "::warning::No tags found after checkout. Tag cleanup cannot run."
+            printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' "0" "0" "0"
+            exit 0
+          fi
 
           echo "Found ${tag_count} tags; deleting up to ${OPERATIONS_PER_RUN} non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days"
 
