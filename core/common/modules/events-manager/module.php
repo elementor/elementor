@@ -26,10 +26,7 @@ class Module extends BaseModule {
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
-			Tracker::is_allow_track() &&
-			! Tracker::has_terms_changed( '2025-07-07' ) &&
-			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+		$can_send_events = self::can_send_events();
 
 		$is_flags_enabled = false;
 		$session_recording_percent = self::DEFAULT_SESSION_RECORDING_PERCENT;
@@ -67,6 +64,32 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	public static function dispatch_event( string $event_name, array $properties = [] ): void {
+		if ( ! self::can_send_events() ) {
+			return;
+		}
+
+		try {
+			$user_id = self::get_user_id();
+
+			$context = [
+				'user_id' => $user_id,
+				'distinct_id' => $user_id,
+				'subscription_id' => self::get_subscription_id(),
+				'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
+				'app_version' => ELEMENTOR_VERSION,
+				'wp_version' => get_bloginfo( 'version' ),
+				'site_language' => get_locale(),
+				'source' => 'server',
+			];
+
+			Server_Events_Client::track( $event_name, array_merge( $context, $properties ) );
+		} catch ( \Throwable $e ) {
+			// Analytics failures must never break the request, mirroring the JS dispatchEvent() try/catch.
+			return;
+		}
+	}
+
 	public static function get_experimental_data(): array {
 		return [
 			'name' => static::EXPERIMENT_NAME,
@@ -80,6 +103,13 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.32.0',
 			],
 		];
+	}
+
+	private static function can_send_events(): bool {
+		return ! empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
+			Tracker::is_allow_track() &&
+			! Tracker::has_terms_changed() &&
+			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private static function get_subscription_id() {

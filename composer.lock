@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d9867a7d4c2af17d8f202bb70ee314ce",
+    "content-hash": "8787b5728d8777e8b25fbd96b12dd2cd",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -70,6 +70,55 @@
                 ]
             },
             "time": "2026-06-24T10:34:47+00:00"
+        },
+        {
+            "name": "mixpanel/mixpanel-php",
+            "version": "2.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mixpanel/mixpanel-php.git",
+                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mixpanel/mixpanel-php/zipball/4b0fafacf2129eff5d50721e129b07f0c32687e7",
+                "reference": "4b0fafacf2129eff5d50721e129b07f0c32687e7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "2.9.*",
+                "phpunit/phpunit": "5.6.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/Mixpanel.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Mixpanel <dev@mixpanel.com>",
+                    "homepage": "https://mixpanel.com/"
+                }
+            ],
+            "description": "The Official PHP library for Mixpanel",
+            "homepage": "https://mixpanel.com/help/reference/php",
+            "keywords": [
+                "mixpanel",
+                "mixpanel php"
+            ],
+            "support": {
+                "issues": "https://github.com/mixpanel/mixpanel-php/issues",
+                "source": "https://github.com/mixpanel/mixpanel-php/tree/2.11.0"
+            },
+            "time": "2023-04-11T23:03:57+00:00"
         }
     ],
     "packages-dev": [
