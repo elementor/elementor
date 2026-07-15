@@ -101,33 +101,49 @@ class Migrations_Orchestrator {
 
 	/**
 	 * Migrations orchestrator should follow the following steps:
-	 * 1. Check cache to see if the data is already migrated
-	 * 2. Resolve the schema for the current element
-	 * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
-	 * 4. Migrate the widget keys
-	 * 5. Save migrated data to the database
-	 * 6. Save the migrated state to the cache
+	 * 1. Resolve the schema for the current element
+	 * 2. Walk through the data and migrate the props if type mismatch (between data and schema) is found
+	 * 3. Migrate the widget keys
+	 * 4. Save migrated data to the database (only when the walk actually changed the data)
+	 * 5. Save the migrated state to the cache (only when persistence succeeded)
+	 *
+	 * The walk is always executed on load. It is idempotent — a walk over already-migrated data
+	 * produces no changes — so running it every time guarantees the in-memory payload matches the
+	 * current schema even when the cache was marked "migrated" but a previous save silently failed
+	 * (leaving the row on disk in the legacy shape). The cache still short-circuits the more
+	 * expensive DB write.
 	 *
 	 * @param array    $data            Data structure to migrate will return modified data by reference
 	 * @param int      $entity_id       Unique ID for caching mechanism, so we don't run the migration again for the same data
 	 * @param string   $data_identifier Unique identifier for DB table, the data type (e.g., '_elementor_data', '_elementor_global_classes')
-	 * @param callable $save_callback   Function to persist migrated data if changes occurred
+	 * @param callable $save_callback   Function to persist migrated data if changes occurred. Callbacks
+	 *                                  may return `false` to signal that persistence didn't complete;
+	 *                                  in that case the cache is not marked and the migration is
+	 *                                  retried on the next load. Returning null/void is treated as
+	 *                                  success (backward-compatible default).
 	 */
 	public function migrate( array &$data, int $entity_id, string $data_identifier, callable $save_callback ): void {
 		$this->loader = $this->get_active_loader();
 
 		try {
-			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() ) ) {
-				return;
-			}
+			$manifest_hash = $this->loader->get_manifest_hash();
+			$is_cached_migrated = Migrations_Cache::is_migrated( $entity_id, $data_identifier, $manifest_hash );
 
 			$has_changes = $this->walk_and_migrate( $data, [] );
 
-			if ( $has_changes ) {
-				$save_callback( $data );
+			if ( ! $has_changes ) {
+				if ( ! $is_cached_migrated ) {
+					Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $manifest_hash );
+				}
+
+				return;
 			}
 
-			Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $this->loader->get_manifest_hash() );
+			if ( ! $this->run_save_callback( $save_callback, $data, $entity_id, $data_identifier ) ) {
+				return;
+			}
+
+			Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $manifest_hash );
 		} catch ( \Exception $e ) {
 			Logger::warning( 'Migration failed', [
 				'entity_id' => $entity_id,
@@ -135,6 +151,22 @@ class Migrations_Orchestrator {
 				'error' => $e->getMessage(),
 			] );
 		}
+	}
+
+	private function run_save_callback( callable $save_callback, array $data, int $entity_id, string $data_identifier ): bool {
+		try {
+			$result = $save_callback( $data );
+		} catch ( \Exception $e ) {
+			Logger::warning( 'Migration save callback threw', [
+				'entity_id' => $entity_id,
+				'data_identifier' => $data_identifier,
+				'error' => $e->getMessage(),
+			] );
+
+			return false;
+		}
+
+		return false !== $result;
 	}
 
 	private function walk_and_migrate( array &$data, array $path ): bool {
@@ -280,8 +312,17 @@ class Migrations_Orchestrator {
 			$path_result = $this->loader->find_migration_path( $found_type, $expected_type );
 
 			if ( $path_result ) {
-				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
-				$has_changes = true;
+				$migrated_value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
+
+				// Only accept the migration if the resulting prop actually reflects the expected
+				// $$type. `execute_prop_migration` returns the original value when any step throws;
+				// without this check we would report `$has_changes = true` and persist unchanged
+				// (or half-migrated) data, which then poisons the cache and hides legacy payloads
+				// from all subsequent loads.
+				if ( is_array( $migrated_value ) && ( $migrated_value['$$type'] ?? null ) === $expected_type ) {
+					$value = $migrated_value;
+					$has_changes = true;
+				}
 			}
 		}
 
@@ -335,6 +376,12 @@ class Migrations_Orchestrator {
 	}
 
 	private function execute_prop_migration( $prop_value, array $migrations, string $direction ) {
+		// Snapshot the input so a mid-chain failure can roll back atomically instead of leaving the
+		// prop in a half-migrated shape. Chained migrations (a -> b -> c) that break on step 2 used
+		// to return `$prop_value` in the intermediate `b` state, which the caller treated as
+		// successful because `has_changes` was set unconditionally.
+		$original_value = $prop_value;
+
 		foreach ( $migrations as $migration ) {
 			try {
 				$operations = $this->loader->load_operations( $migration['id'] );
@@ -355,7 +402,7 @@ class Migrations_Orchestrator {
 					'error' => $e->getMessage(),
 				] );
 
-				return $prop_value;
+				return $original_value;
 			}
 		}
 
@@ -407,15 +454,32 @@ class Migrations_Orchestrator {
 			$data,
 			$document->get_post()->ID,
 			Document::ELEMENTOR_DATA_META_KEY,
-			function( $migrated_data ) use ( $document ) {
+			function( $migrated_data ) use ( $document ): bool {
 				$document->delete_meta( Document::CACHE_META_KEY );
 
-				$document->update_json_meta(
+				// `update_json_meta` returns `bool|int`: an int (new meta id) when the row was
+				// inserted, `true` when an existing row was updated, and `false` when either the
+				// value was already identical on disk (concurrent write) or the write genuinely
+				// failed. The former is fine — the row already reflects the migrated shape — but
+				// we cannot distinguish it here without a re-read, so verify by comparing the
+				// stored value to what we intended to persist.
+				$update_result = $document->update_json_meta(
 					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
 
-				do_action( 'elementor/document/after_migrate', $document, $migrated_data );
+				$save_ok = false !== $update_result;
+
+				if ( ! $save_ok ) {
+					$persisted = $document->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+					$save_ok = $persisted === $migrated_data;
+				}
+
+				if ( $save_ok ) {
+					do_action( 'elementor/document/after_migrate', $document, $migrated_data );
+				}
+
+				return $save_ok;
 			}
 		);
 

@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Cache;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -186,6 +187,130 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		$this->assertNotNull( $loader->find_migration_path( 'string', 'html' ) );
 	}
 
+	public function test_migrate__does_not_mark_as_migrated_when_save_callback_returns_false() {
+		// Arrange - legacy string-to-html payload that requires a migration walk to produce changes.
+		$orchestrator = Migrations_Orchestrator::make();
+		$post_id = 6001;
+		$data = $this->get_migrateable_data();
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'_elementor_data',
+			fn () => false
+		);
+
+		// Assert - cache must NOT be marked as migrated, so subsequent loads retry the migration.
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$this->assertFalse( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+	}
+
+	public function test_migrate__does_not_mark_as_migrated_when_save_callback_throws() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make();
+		$post_id = 6002;
+		$data = $this->get_migrateable_data();
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'_elementor_data',
+			function () {
+				throw new \RuntimeException( 'simulated write failure' );
+			}
+		);
+
+		// Assert
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$this->assertFalse( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+	}
+
+	public function test_migrate__marks_as_migrated_when_save_callback_returns_true_or_null() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make();
+
+		foreach ( [ 6003 => fn () => true, 6004 => function () { /* returns null */ } ] as $post_id => $callback ) {
+			$data = $this->get_migrateable_data();
+
+			// Act
+			$orchestrator->migrate( $data, $post_id, '_elementor_data', $callback );
+
+			// Assert
+			$loader = $this->get_orchestrator_loader( $orchestrator );
+			$this->assertTrue(
+				Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ),
+				"Expected post $post_id to be marked migrated"
+			);
+		}
+	}
+
+	public function test_migrate__re_walks_and_returns_migrated_data_even_when_cache_says_migrated() {
+		// Arrange - bootstrap the orchestrator (which populates its loader) with a throwaway call,
+		// then pre-poison the cache: pretend a previous run marked this entity as migrated even
+		// though the on-disk payload is still in the legacy shape (as would happen when the prior
+		// save callback silently failed).
+		$orchestrator = Migrations_Orchestrator::make();
+		$bootstrap = [];
+		$orchestrator->migrate( $bootstrap, 6099, '_bootstrap_loader', fn () => true );
+
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$post_id = 6005;
+
+		Migrations_Cache::mark_as_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() );
+		$this->assertTrue( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+
+		$data = $this->get_migrateable_data();
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'_elementor_data',
+			fn () => true
+		);
+
+		// Assert - the in-memory payload must reflect the current schema regardless of cache
+		// state. Any type other than the original legacy `string` proves the walk actually ran
+		// (concrete target is `html-v3` today via the string -> html -> html-v2 -> html-v3 chain).
+		$migrated_type = $data[0]['settings']['title']['$$type'] ?? null;
+		$this->assertNotSame(
+			'string',
+			$migrated_type,
+			'Legacy $$type "string" should have been migrated even when the cache reported already-migrated.'
+		);
+		$this->assertSame( 'html-v3', $migrated_type );
+	}
+
+	public function test_migrate__marks_stale_cache_as_migrated_when_walk_produces_no_changes() {
+		// Arrange - data already in target shape, cache empty.
+		$orchestrator = Migrations_Orchestrator::make();
+		$post_id = 6006;
+
+		Migrations_Cache::clear_migration_cache( $post_id, '_elementor_data' );
+
+		$data = $this->get_target_shape_data();
+		$save_called = false;
+
+		// Act
+		$orchestrator->migrate(
+			$data,
+			$post_id,
+			'_elementor_data',
+			function () use ( &$save_called ) {
+				$save_called = true;
+				return true;
+			}
+		);
+
+		// Assert - no changes -> save should NOT be called, but the cache should still be marked
+		// so subsequent loads short-circuit the walk overhead.
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$this->assertFalse( $save_called, 'save_callback must not run when the walk produced no changes.' );
+		$this->assertTrue( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+	}
+
 	private function get_orchestrator_loader( Migrations_Orchestrator $orchestrator ): Migrations_Loader {
 		$reflection = new \ReflectionClass( $orchestrator );
 		$loader_property = $reflection->getProperty( 'loader' );
@@ -204,6 +329,49 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 					'title' => [
 						'$$type' => 'string',
 						'value' => 'Hello',
+					],
+				],
+			],
+		];
+	}
+
+	/**
+	 * Legacy payload for `e-heading.title`. The current schema expects `$$type: html-v3`, so any
+	 * walk should produce changes (has_changes = true) and invoke the save callback.
+	 */
+	private function get_migrateable_data(): array {
+		return [
+			[
+				'id' => 'heading-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'string',
+						'value' => 'Hello',
+					],
+				],
+			],
+		];
+	}
+
+	/**
+	 * Payload already in the current schema shape (`$$type: html-v3`) so the walk produces no
+	 * changes.
+	 */
+	private function get_target_shape_data(): array {
+		return [
+			[
+				'id' => 'heading-2',
+				'elType' => 'widget',
+				'widgetType' => 'e-heading',
+				'settings' => [
+					'title' => [
+						'$$type' => 'html-v3',
+						'value' => [
+							'content'  => [ '$$type' => 'string', 'value' => 'Hello' ],
+							'children' => [],
+						],
 					],
 				],
 			],
