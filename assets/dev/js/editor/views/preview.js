@@ -1,4 +1,5 @@
 import AddSectionView from './add-section/independent';
+import isFormFieldWidgetType from '../utils/is-form-field-widget-type';
 
 const BaseSectionsContainerView = require( 'elementor-views/base-sections-container' );
 
@@ -84,7 +85,7 @@ const Preview = BaseSectionsContainerView.extend( {
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! model.widgetType?.startsWith( 'e-form-' ) },
+			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! isFormFieldWidgetType( model.widgetType ) },
 		);
 	},
 
