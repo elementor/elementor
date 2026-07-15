@@ -67,7 +67,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+(-(beta|dev)[0-9]*)?$' }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+$' }}
           DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
           OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
