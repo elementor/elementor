@@ -65,10 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-
-      - name: Fetch all tags
-        run: git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
+          fetch-depth: 0
 
       - name: Remove old tags
         env:
@@ -86,6 +83,16 @@ jobs:
           now_epoch=$(date -u +%s)
           min_age_seconds=$((DAYS_BEFORE_TAG_DELETE * 86400))
           tag_count=$(git tag -l | wc -l | tr -d ' ')
+          remote_tag_count=$(git ls-remote --tags --refs origin | wc -l | tr -d ' ')
+
+          echo "Local tags: ${tag_count}; remote tags: ${remote_tag_count}"
+
+          if [ "${tag_count}" -lt "${remote_tag_count}" ]; then
+            echo "Fetching missing tags from origin"
+            git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
+            tag_count=$(git tag -l | wc -l | tr -d ' ')
+            echo "Local tags after fetch: ${tag_count}"
+          fi
 
           if [ "${tag_count}" -eq 0 ]; then
             echo "::warning::No tags found after checkout. Tag cleanup cannot run."
