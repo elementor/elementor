@@ -68,14 +68,14 @@ jobs:
           fetch-depth: 1
 
       - name: Fetch all tags
-        run: git fetch --no-recurse-submodules --depth=1 origin '+refs/tags/*:refs/tags/*'
+        run: git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
 
       - name: Remove old tags
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
           EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+([._-].*)?$' }}
-          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || vars.DAYS_BEFORE_TAG_STALE || '90' }}
+          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
           OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
           set -euo pipefail
@@ -94,6 +94,24 @@ jobs:
           fi
 
           echo "Found ${tag_count} tags; deleting up to ${OPERATIONS_PER_RUN} non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days"
+          echo "EXEMPT_TAGS_REGEX=${EXEMPT_TAGS_REGEX}"
+
+          non_exempt_count=0
+          while IFS= read -r candidate_tag; do
+            [ -z "${candidate_tag}" ] && continue
+            if [[ ! "${candidate_tag}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
+              non_exempt_count=$((non_exempt_count + 1))
+              if [ "${non_exempt_count}" -le 5 ]; then
+                echo "Non-exempt tag sample: ${candidate_tag}"
+              fi
+            fi
+          done < <(git tag -l)
+
+          echo "Non-exempt tags: ${non_exempt_count}"
+
+          if [ "${tag_count}" -gt 0 ] && [ "${non_exempt_count}" -eq 0 ]; then
+            echo "::warning::All fetched tags match EXEMPT_TAGS_REGEX. Check the EXEMPT_TAGS_REGEX repository variable — values like '.*' exempt everything."
+          fi
 
           log_tag_result() {
             printf 'STALE_CLEANUP\t%s\ttag\t%s\n' "$1" "$2"
