@@ -63,19 +63,25 @@ jobs:
     name: Remove Stale Tags
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Remove old tags
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+([._-].*)?$' }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+(-(beta|dev)[0-9]*)?$' }}
           DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
           OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
           set -euo pipefail
+
+          tags_dir="${RUNNER_TEMP}/tags-repo"
+          rm -rf "${tags_dir}"
+          mkdir -p "${tags_dir}"
+          cd "${tags_dir}"
+
+          gh auth setup-git
+          git init -q
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
 
           deletions=0
           skipped_exempt=0
@@ -88,10 +94,8 @@ jobs:
           echo "Local tags: ${tag_count}; remote tags: ${remote_tag_count}"
 
           if [ "${tag_count}" -lt "${remote_tag_count}" ]; then
-            echo "Fetching missing tags from origin"
-            git fetch --no-recurse-submodules origin '+refs/tags/*:refs/tags/*'
-            tag_count=$(git tag -l | wc -l | tr -d ' ')
-            echo "Local tags after fetch: ${tag_count}"
+            echo "::error::Fetched ${tag_count} tags but remote has ${remote_tag_count}."
+            exit 1
           fi
 
           if [ "${tag_count}" -eq 0 ]; then
