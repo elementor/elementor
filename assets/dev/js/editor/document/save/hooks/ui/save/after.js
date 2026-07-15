@@ -11,7 +11,6 @@ export class FooterSaverAfterSave extends HookUIAfter {
 
 	apply( args, result ) {
 		const { status } = args,
-			{ data } = result,
 			{ footerSaver } = $e.components.get( 'document/save' );
 
 		NProgress.done();
