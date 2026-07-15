@@ -7,7 +7,7 @@ import type { PropValue } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
 import { useSessionStorage } from '@elementor/session';
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 
 import { useStyle } from '../../../../contexts/style-context';
 import { useInheritedValues } from '../../../../contexts/styles-inheritance-context';
@@ -183,6 +183,78 @@ describe( '<PositionSection />', () => {
 			expect( screen.getByText( 'Left' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Z-index' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Fixed' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Z-index enabled/disabled scenarios', () => {
+		const getZIndexInput = () => within( screen.getByLabelText( 'Z-index control' ) ).getByRole( 'spinbutton' );
+
+		it( 'should disable z-index when position is unset with no inherited value', () => {
+			// Arrange.
+			mockStylesFieldValues( { position: null } );
+
+			// Act.
+			renderPositionSection();
+
+			// Assert.
+			expect( getZIndexInput() ).toBeDisabled();
+		} );
+
+		it( 'should disable z-index when position is explicitly static', () => {
+			// Arrange.
+			mockStylesFieldValues( { position: { $$type: 'string', value: 'static' } } );
+
+			// Act.
+			renderPositionSection();
+
+			// Assert.
+			expect( getZIndexInput() ).toBeDisabled();
+		} );
+
+		it( 'should enable z-index when position value is null but inherited value is non-static', () => {
+			// Arrange.
+			mockStylesFieldValues( { position: null } );
+			jest.mocked( useInheritedValues ).mockReturnValue( {
+				position: {
+					$$type: 'string',
+					value: 'absolute',
+				},
+			} );
+
+			// Act.
+			renderPositionSection();
+
+			// Assert.
+			expect( getZIndexInput() ).toBeEnabled();
+		} );
+
+		it( 'should enable z-index when position value is explicitly non-static', () => {
+			// Arrange.
+			mockStylesFieldValues( { position: { $$type: 'string', value: 'relative' } } );
+			mockStyleFields( { position: 'relative' } );
+
+			// Act.
+			renderPositionSection();
+
+			// Assert.
+			expect( getZIndexInput() ).toBeEnabled();
+		} );
+
+		it( 'should disable z-index when position value is null and inherited value is static', () => {
+			// Arrange.
+			mockStylesFieldValues( { position: null } );
+			jest.mocked( useInheritedValues ).mockReturnValue( {
+				position: {
+					$$type: 'string',
+					value: 'static',
+				},
+			} );
+
+			// Act.
+			renderPositionSection();
+
+			// Assert.
+			expect( getZIndexInput() ).toBeDisabled();
 		} );
 	} );
 
