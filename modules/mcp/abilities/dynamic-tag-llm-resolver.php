@@ -78,7 +78,14 @@ class Dynamic_Tag_Llm_Resolver {
 
 		$key = $prop_type::get_key();
 
-		return $key ? [ '$$type' => $key, 'value' => $raw ] : $raw;
+		if ( ! $key ) {
+			return $raw;
+		}
+
+		return [
+			'$$type' => $key,
+			'value' => $raw,
+		];
 	}
 
 	private static function default_setting_value( Prop_Type $prop_type ) {
