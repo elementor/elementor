@@ -37,13 +37,16 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		await checklistHelper.resetEditorVisitCounter( request, 0 );
 
+		const firstVisitProgress = checklistHelper.waitForUserProgressResponse( page, false );
+
 		await wpAdmin.openNewPage();
+		await firstVisitProgress;
 
 		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
 
 		await checklistHelper.resetEditorVisitCounter( request, 1 );
 
-		const shouldOpenResponse = checklistHelper.waitForShouldOpenInEditorResponse( page );
+		const shouldOpenResponse = checklistHelper.waitForUserProgressResponse( page, true );
 
 		await page.reload();
 		await wpAdmin.waitForPanel();

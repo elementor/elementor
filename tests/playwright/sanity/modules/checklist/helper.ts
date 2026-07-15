@@ -138,7 +138,7 @@ export class ChecklistHelper {
 		} );
 	}
 
-	waitForShouldOpenInEditorResponse( page: Page ) {
+	waitForUserProgressResponse( page: Page, shouldOpenInEditor: boolean ) {
 		return page.waitForResponse( async ( response ) => {
 			if ( ! response.url().includes( 'wp-json/elementor/v1/checklist/user-progress' ) || ! response.ok() ) {
 				return false;
@@ -146,7 +146,7 @@ export class ChecklistHelper {
 
 			const { data } = await response.json();
 
-			return true === data?.should_open_in_editor;
+			return shouldOpenInEditor === data?.should_open_in_editor;
 		}, { timeout: timeouts.heavyAction } );
 	}
 
