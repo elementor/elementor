@@ -41,14 +41,15 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
 
-		const checklistProgressResponse = page.waitForResponse(
-			( response ) => response.url().includes( 'wp-json/elementor/v1/checklist/user-progress' ) && response.ok(),
-		);
+		await checklistHelper.resetEditorVisitCounter( request, 1 );
+
+		const shouldOpenResponse = checklistHelper.waitForShouldOpenInEditorResponse( page );
 
 		await page.reload();
 		await wpAdmin.waitForPanel();
-		await checklistProgressResponse;
+		await shouldOpenResponse;
 
+		await expect( page.locator( selectors.topBarIcon ) ).toBeVisible( { timeout: timeouts.expect } );
 		await expect( page.locator( selectors.popup ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 	} );
 

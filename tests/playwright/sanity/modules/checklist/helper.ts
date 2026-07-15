@@ -1,9 +1,10 @@
 import EditorPage from '../../../pages/editor-page';
 import { type APIRequestContext, Page, type TestInfo } from '@playwright/test';
+import ApiRequests from '../../../assets/api-requests';
+import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
 import { proStepIds, Step, StepId } from '../../../types/checklist';
-import ApiRequests from '../../../assets/api-requests';
 
 export class ChecklistHelper {
 	readonly page: Page;
@@ -135,6 +136,18 @@ export class ChecklistHelper {
 			e_editor_counter: count,
 			last_opened_timestamp: false,
 		} );
+	}
+
+	waitForShouldOpenInEditorResponse( page: Page ) {
+		return page.waitForResponse( async ( response ) => {
+			if ( ! response.url().includes( 'wp-json/elementor/v1/checklist/user-progress' ) || ! response.ok() ) {
+				return false;
+			}
+
+			const { data } = await response.json();
+
+			return true === data?.should_open_in_editor;
+		}, { timeout: timeouts.heavyAction } );
 	}
 
 	async resetStepsInDb( request: APIRequestContext, alternativeValues = {} ) {
