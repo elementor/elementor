@@ -23,20 +23,24 @@ const SIZE = 'tiny';
 const toChipsOption = ( val: string, options: ChipsOption[] ): ChipsOption =>
 	options.find( ( opt ) => opt.value === val ) ?? { label: val, value: val };
 
+const optionValue = ( option: ChipsOption | string ): string => {
+	if ( 'string' === typeof option ) {
+		return option;
+	}
+
+	return 'string' === typeof option?.value ? option.value : '';
+};
+
 const optionLabel = ( option: ChipsOption | string ): string => {
 	if ( 'string' === typeof option ) {
 		return option;
 	}
 
-	if ( option && 'string' === typeof option.label ) {
+	if ( 'string' === typeof option?.label ) {
 		return option.label;
 	}
 
-	if ( option && 'string' === typeof option.value ) {
-		return option.value;
-	}
-
-	return '';
+	return optionValue( option );
 };
 
 export const ChipsControl = createControl( ( { options, freeChips }: ChipsControlProps ) => {
@@ -49,11 +53,7 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 	const selectedOptions = selectedValues.map( ( val ) => toChipsOption( val, options ) );
 
 	const handleChange = ( _: SyntheticEvent, newValue: ( ChipsOption | string )[] ) => {
-		setValue(
-			newValue.map( ( option ) =>
-				stringPropTypeUtil.create( 'string' === typeof option ? option : option.value )
-			)
-		);
+		setValue( newValue.map( ( option ) => stringPropTypeUtil.create( optionValue( option ) ) ) );
 	};
 
 	return (
@@ -69,7 +69,7 @@ export const ChipsControl = createControl( ( { options, freeChips }: ChipsContro
 				onChange={ handleChange }
 				options={ options }
 				getOptionLabel={ optionLabel }
-				isOptionEqualToValue={ ( option, val ) => option.value === val.value }
+				isOptionEqualToValue={ ( option, val ) => optionValue( option ) === optionValue( val ) }
 				renderInput={ ( params ) => <TextField { ...params } /> }
 				renderTags={ ( tagValues, getTagProps ) => (
 					<ChipsList getLabel={ optionLabel } getTagProps={ getTagProps } values={ tagValues } />
