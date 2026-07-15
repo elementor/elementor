@@ -57,7 +57,14 @@ class Element_Config_Applier {
 
 			$validation_error = $this->validate_settings( $node['settings'], $schema );
 			if ( $validation_error ) {
-				$errors[] = sprintf( '[%s] %s', $config_id, $validation_error );
+				$errors[] = sprintf(
+					'[%s] Settings validation failed on element type "%s": %s. Available properties are: %s. See elementor://widgets/schema/%s.',
+					$config_id,
+					$tag,
+					$validation_error,
+					implode( ', ', Prop_Canonicalizer::available_prop_names( $schema ) ),
+					$tag
+				);
 			}
 		}
 		unset( $node );

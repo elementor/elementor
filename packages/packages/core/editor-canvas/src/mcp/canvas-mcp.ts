@@ -10,7 +10,6 @@ import { initEditorStateResource } from './resources/editor-state-resource';
 import { initGeneralContextResource } from './resources/general-context-resource';
 import { initSelectedElementResource } from './resources/selected-element-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
-import { initBuildCompositionsTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
 import { initCreateElementTool } from './tools/create-element/tool';
 import { initGetElementConfigTool } from './tools/get-element-config/tool';
@@ -29,7 +28,6 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initEditorStateResource( reg );
 	initGeneralContextResource( reg );
 	initBestPracticesResource( reg );
-	initBuildCompositionsTool( reg );
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );
 	initCreateElementTool( reg );

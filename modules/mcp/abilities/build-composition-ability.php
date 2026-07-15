@@ -10,12 +10,13 @@ use Elementor\Modules\AtomicWidgets\CssConverter\Expander_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\CssConverter\Metrics\Null_Failure_Reporter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Variable_Prop_Value_Transformer;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Mcp\Abilities\Build_Composition\Composition_Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Element_Config_Applier;
-use Elementor\Modules\Mcp\Abilities\Build_Composition\Persister;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Style_Applier;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Subtree_Builder;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Widget_Type_Resolver;
 use Elementor\Modules\Mcp\Abilities\Build_Composition\Xml_Parser;
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -29,11 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Build_Composition_Ability extends Abstract_Ability {
 
 	const CONFIGURATION_ID_ATTRIBUTE = Xml_Parser::CONFIGURATION_ID_ATTRIBUTE;
-	const PROMPT_FILE_PATH = __DIR__ . '/../static-resources/build-composition/prompt.md';
 	const DEFAULT_PARENT_ID = 'document';
 
 	private ?Document_Mutator $mutator;
-	private static ?string $prompt_cache = null;
 
 	public function __construct( ?Document_Mutator $mutator = null ) {
 		$this->mutator = $mutator;
@@ -126,7 +125,7 @@ class Build_Composition_Ability extends Abstract_Ability {
 			return $this->build_response( $post_id, $document, $xml_parser, $dom, [], $style_result['warnings'] );
 		}
 
-		$persister = new Persister( $this->get_mutator(), $xml_parser );
+		$persister = new Composition_Persister( $this->get_mutator(), $xml_parser );
 		$persisted = $persister->persist( $document, $subtrees, $parent_id );
 		if ( is_wp_error( $persisted ) ) {
 			return $persisted;
@@ -137,23 +136,8 @@ class Build_Composition_Ability extends Abstract_Ability {
 		return $this->build_response( $post_id, $document, $xml_parser, $dom, $persisted['root_ids'], $style_result['warnings'] );
 	}
 
-	/**
-	 * Kept in sync with packages/packages/core/editor-canvas/src/mcp/tools/build-composition/prompt.ts
-	 */
 	private function get_ability_description(): string {
-		if ( null !== self::$prompt_cache ) {
-			return self::$prompt_cache;
-		}
-
-		if ( ! is_readable( self::PROMPT_FILE_PATH ) ) {
-			self::$prompt_cache = '';
-			return self::$prompt_cache;
-		}
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Static local prompt resource.
-		self::$prompt_cache = (string) file_get_contents( self::PROMPT_FILE_PATH );
-
-		return self::$prompt_cache;
+		return Prompt_Loader::load( 'build-composition' );
 	}
 
 	private function get_output_schema(): array {

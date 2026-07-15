@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Persister {
+class Composition_Persister {
 
 	const DOCUMENT_ROOT = 'document';
 
