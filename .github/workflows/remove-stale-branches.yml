@@ -54,9 +54,9 @@ jobs:
           exempt-protected-branches: true
           stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last {daysBeforeBranchStale} days and is marked as stale. It will be removed in {daysBeforeBranchDelete} days.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
           default-recipient: "elementorbot"
-          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE }}
-          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE }}
-          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN }}
+          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE || '90' }}
+          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE || '7' }}
+          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN || '10' }}
           ignore-unknown-authors: true
 
   remove-stale-tags:
@@ -67,9 +67,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX }}
-          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE }}
-          OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+(-(beta|dev)[0-9]*)?$' }}
+          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
+          OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
         run: |
           set -euo pipefail
 
@@ -99,30 +99,12 @@ jobs:
           fi
 
           if [ "${tag_count}" -eq 0 ]; then
-            echo "::warning::No tags found after checkout. Tag cleanup cannot run."
+            echo "::warning::No tags found after tag fetch. Tag cleanup cannot run."
             printf 'STALE_CLEANUP_STATS\texempt=%s\tyoung=%s\tdeleted=%s\n' "0" "0" "0"
             exit 0
           fi
 
           echo "Found ${tag_count} tags; deleting up to ${OPERATIONS_PER_RUN} non-exempt tags older than ${DAYS_BEFORE_TAG_DELETE} days"
-          echo "EXEMPT_TAGS_REGEX=${EXEMPT_TAGS_REGEX}"
-
-          non_exempt_count=0
-          while IFS= read -r candidate_tag; do
-            [ -z "${candidate_tag}" ] && continue
-            if [[ ! "${candidate_tag}" =~ ${EXEMPT_TAGS_REGEX} ]]; then
-              non_exempt_count=$((non_exempt_count + 1))
-              if [ "${non_exempt_count}" -le 5 ]; then
-                echo "Non-exempt tag sample: ${candidate_tag}"
-              fi
-            fi
-          done < <(git tag -l)
-
-          echo "Non-exempt tags: ${non_exempt_count}"
-
-          if [ "${tag_count}" -gt 0 ] && [ "${non_exempt_count}" -eq 0 ]; then
-            echo "::warning::All fetched tags match EXEMPT_TAGS_REGEX. Check the EXEMPT_TAGS_REGEX repository variable — values like '.*' exempt everything."
-          fi
 
           log_tag_result() {
             printf 'STALE_CLEANUP\t%s\ttag\t%s\n' "$1" "$2"
