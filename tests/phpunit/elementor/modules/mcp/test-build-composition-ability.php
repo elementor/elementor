@@ -908,8 +908,8 @@ class Fixture_Atomic_Widget_With_String_Title extends \Elementor\Widget_Base {
 		return 'e-fixture-heading';
 	}
 
-	public function get_config() {
-		return [ 'allowed_child_types' => [] ];
+	protected function get_initial_config() {
+		return array_merge( parent::get_initial_config(), [ 'allowed_child_types' => [] ] );
 	}
 
 	public static function get_props_schema(): array {
@@ -924,8 +924,8 @@ class Fixture_Atomic_Widget_With_Html_V3_Title extends \Elementor\Widget_Base {
 		return 'e-fixture-heading-v3';
 	}
 
-	public function get_config() {
-		return [ 'allowed_child_types' => [] ];
+	protected function get_initial_config() {
+		return array_merge( parent::get_initial_config(), [ 'allowed_child_types' => [] ] );
 	}
 
 	public static function get_props_schema(): array {
@@ -945,8 +945,8 @@ class Fixture_Heading_With_Tag_And_Title extends \Elementor\Widget_Base {
 		return 'e-fixture-heading-full';
 	}
 
-	public function get_config() {
-		return [ 'allowed_child_types' => [] ];
+	protected function get_initial_config() {
+		return array_merge( parent::get_initial_config(), [ 'allowed_child_types' => [] ] );
 	}
 
 	public static function get_props_schema(): array {
@@ -968,8 +968,8 @@ class Fixture_Heading_With_Union_Props extends \Elementor\Widget_Base {
 		return 'e-fixture-heading-union';
 	}
 
-	public function get_config() {
-		return [ 'allowed_child_types' => [] ];
+	protected function get_initial_config() {
+		return array_merge( parent::get_initial_config(), [ 'allowed_child_types' => [] ] );
 	}
 
 	public static function get_props_schema(): array {
@@ -995,8 +995,8 @@ class Fixture_Heading_With_Dynamic_Title extends \Elementor\Widget_Base {
 		return 'e-fixture-heading-dynamic';
 	}
 
-	public function get_config() {
-		return [ 'allowed_child_types' => [] ];
+	protected function get_initial_config() {
+		return array_merge( parent::get_initial_config(), [ 'allowed_child_types' => [] ] );
 	}
 
 	public static function get_props_schema(): array {
