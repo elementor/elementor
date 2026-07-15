@@ -1,7 +1,6 @@
 import EditorPage from '../../../pages/editor-page';
 import { type APIRequestContext, Page, type TestInfo } from '@playwright/test';
 import ApiRequests from '../../../assets/api-requests';
-import { wpCli } from '../../../assets/wp-cli';
 import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
@@ -140,9 +139,17 @@ export class ChecklistHelper {
 	}
 
 	async enableChecklistVisibilityPreference() {
-		await wpCli(
-			'wp eval update_user_meta( 1, "elementor_preferences", array_merge( (array) get_user_meta( 1, "elementor_preferences", true ), array( "show_launchpad_checklist" => "yes" ) ) );',
-		);
+		await this.editor.openUserPreferencesPanel();
+		await this.editor.openSection( 'preferences' );
+
+		const switcherControl = `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }`,
+			isEnabled = await this.page.locator( `${ switcherControl } input[type="checkbox"]` ).isChecked();
+
+		if ( ! isEnabled ) {
+			await this.editor.setSwitcherControlValue( controlIds.preferencePanel.checklistSwitcher, true );
+			await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: timeouts.heavyAction } );
+			await this.page.waitForResponse( ( response ) => response.url().includes( 'wp-admin/admin-ajax.php' ), { timeout: timeouts.heavyAction } );
+		}
 	}
 
 	waitForUserProgressResponse( page: Page, shouldOpenInEditor: boolean ) {
