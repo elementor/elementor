@@ -105,6 +105,13 @@ class Build_Composition_Ability extends Abstract_Ability {
 		}
 
 		$subtrees = $subtree_builder->build( $dom, $widget_configs );
+		if ( empty( $subtrees ) ) {
+			return new \WP_Error(
+				'empty_composition',
+				__( 'xml_structure did not contain any elements. Pass raw XML tags (e.g. <e-flexbox configuration-id="..."></e-flexbox>) — do not wrap the value in <![CDATA[...]]> or other text-only content.', 'elementor' ),
+				[ 'status' => \WP_Http::BAD_REQUEST ]
+			);
+		}
 		$index = $subtree_builder->index_by_config_id( $subtrees, $dom );
 
 		$variables_service = $this->create_variables_service();

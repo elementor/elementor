@@ -16,6 +16,7 @@ This tool supports v4 elements only.
 - Containers: "e-flexbox", "e-div-block", "e-tabs"
 - **Every element MUST have a unique "configuration-id" attribute**
 - No attributes, classes, IDs, or text nodes in XML
+- Pass the raw XML tags directly as the `xml_structure` string. Do NOT wrap the value in `<![CDATA[ ... ]]>`, code fences, quotes, or any other envelope — JSON string escaping is the only escaping needed. Wrapping in CDATA turns the whole payload into text and the tool will reject it with `empty_composition`.
 
 ## NESTED ELEMENTS
 Some elements have internal tree structures (nesting). When using these elements, you MUST build the FULL tree in XML.
