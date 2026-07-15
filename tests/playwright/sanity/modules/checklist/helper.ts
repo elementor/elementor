@@ -130,6 +130,13 @@ export class ChecklistHelper {
 		return ( await this.apiRequests.customGet( request, 'wp-json/elementor/v1/checklist/steps' ) ).data;
 	}
 
+	async resetEditorVisitCounter( request: APIRequestContext, count: number = 0 ) {
+		await this.apiRequests.customPut( request, 'wp-json/elementor/v1/checklist/user-progress', {
+			e_editor_counter: count,
+			last_opened_timestamp: false,
+		} );
+	}
+
 	async resetStepsInDb( request: APIRequestContext, alternativeValues = {} ) {
 		const steps = await this.getSteps( request );
 
