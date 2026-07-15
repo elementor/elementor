@@ -118,7 +118,7 @@ describe( 'createV4FlexboxFromPreset', () => {
 		expect( model.settings.classes ).toEqual( { $$type: 'classes', value: [ styleId ] } );
 	} );
 
-	test( '50-50 → row parent (no wrap) + 2 children at 50%, root options nested under `options`', () => {
+	test( '50-50 → row parent (no wrap) + 2 children at 50%, options spread to root', () => {
 		createV4FlexboxFromPreset( '50-50', makeFakeContainer( 'target' ), {
 			at: 0,
 			edit: false,
@@ -130,22 +130,10 @@ describe( 'createV4FlexboxFromPreset', () => {
 		expect( getProps( getModel( 1 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 		expect( getProps( getModel( 2 ) ) ).toEqual( { 'flex-direction': COLUMN, width: sizeProp( 50, '%' ) } );
 
-		expect( createCalls[ 0 ].args.options ).toEqual( { at: 0, edit: false } );
-		expect( createCalls[ 1 ].args.options ).toEqual( { edit: false } );
-	} );
-
-	// Regression test for ED-24385.
-	test( 'root options (e.g. `at`) are forwarded to `document/elements/create` nested under `options`, not spread', () => {
-		createV4FlexboxFromPreset( 'c100', makeFakeContainer( 'target' ), {
-			at: 2,
-			edit: false,
-		} );
-
-		const rootCallArgs = createCalls[ 0 ].args;
-
-		expect( rootCallArgs.options ).toEqual( { at: 2, edit: false } );
-		expect( rootCallArgs.at ).toBeUndefined();
-		expect( rootCallArgs.edit ).toBeUndefined();
+		expect( createCalls[ 0 ].args.at ).toBe( 0 );
+		expect( createCalls[ 0 ].args.edit ).toBe( false );
+		expect( createCalls[ 0 ].args.options ).toBeUndefined();
+		expect( createCalls[ 1 ].args.at ).toBeUndefined();
 	} );
 
 	test( '33-66 → maps 33/66 to 33.3333 / 66.6666', () => {

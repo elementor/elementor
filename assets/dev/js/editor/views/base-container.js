@@ -79,7 +79,7 @@ module.exports = Marionette.CompositeView.extend( {
 			this.filterSettings( newItem );
 		}
 
-		const newModel = this.addChildModel( newItem, { at: options.at } ),
+		var newModel = this.addChildModel( newItem, { at: options.at } ),
 			newView = this.children.findByModel( newModel );
 
 		if ( options.onAfterAdd ) {
@@ -249,7 +249,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	cloneItem( item ) {
-		const self = this;
+		var self = this;
 
 		if ( item instanceof Backbone.Model ) {
 			return item.clone();
