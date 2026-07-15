@@ -180,4 +180,32 @@ describe( 'ChipsControl', () => {
 		// Assert
 		expect( setValue ).toHaveBeenCalledWith( [] );
 	} );
+
+	it( 'should not crash when legacy items are not string-typed prop values', () => {
+		// Arrange - simulate legacy/unmigrated data where items are objects
+		// missing $$type/value (e.g., PHP dumped as an object literal).
+		mockUseBoundProp.mockReturnValue( {
+			value: [ { unexpected: 'shape' }, null, 42, wrap( 'email' ) ] as unknown as never,
+			setValue,
+			disabled: false,
+			propType,
+			bind: 'string-array',
+			path: [],
+			resetValue: jest.fn(),
+			restoreValue: jest.fn(),
+		} );
+
+		const props = {
+			setValue,
+			value: [],
+			bind: 'string-array',
+			propType,
+		};
+
+		// Act - render must not throw even with malformed items.
+		expect( () => renderControl( <ChipsControl options={ defaultOptions } />, props ) ).not.toThrow();
+
+		// Assert - the only recognised chip is rendered.
+		expect( screen.getByRole( 'combobox' ) ).toBeInTheDocument();
+	} );
 } );
