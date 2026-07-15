@@ -13,11 +13,14 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 } ) );
 
 const LEGACY_ANGIE_WAIT_RETRY_COUNT = 3;
-const LEGACY_ANGIE_WAIT_RETRY_DELAY_MS = 10_000;
 
-const loadGetSdk = () => {
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+type GetSdkModule = typeof import('../get-sdk');
+
+const loadGetSdk = (): GetSdkModule => {
 	jest.resetModules();
-	return require( '../get-sdk' ) as typeof import('../get-sdk');
+
+	return require( '../get-sdk' ) as GetSdkModule;
 };
 
 describe( 'getSDK', () => {

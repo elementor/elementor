@@ -4,12 +4,23 @@ jest.mock( '../../utils/is-angie-available', () => ( {
 	isLegacyAngieAvailable: () => mockIsLegacyAngieAvailable(),
 } ) );
 
+import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
+
 import { AngieMcpAdapter } from '../angie-adapter';
 
-const createSdk = () => ( {
-	waitForReady: jest.fn().mockResolvedValue( undefined ),
-	registerLocalServer: jest.fn().mockResolvedValue( undefined ),
-} );
+const createSdk = () => {
+	const waitForReady = jest.fn().mockResolvedValue( undefined );
+	const registerLocalServer = jest.fn().mockResolvedValue( undefined );
+
+	return {
+		sdk: {
+			waitForReady,
+			registerLocalServer,
+		} as unknown as AngieMcpSdk,
+		waitForReady,
+		registerLocalServer,
+	};
+};
 
 describe( 'AngieMcpAdapter', () => {
 	beforeEach( () => {
@@ -18,21 +29,21 @@ describe( 'AngieMcpAdapter', () => {
 
 	it( 'waits for SDK readiness when legacy Angie iframe detection is active', async () => {
 		mockIsLegacyAngieAvailable.mockReturnValue( true );
-		const sdk = createSdk();
+		const { sdk, waitForReady } = createSdk();
 		const adapter = new AngieMcpAdapter( sdk, () => [] );
 
 		await adapter.activate();
 
-		expect( sdk.waitForReady ).toHaveBeenCalledTimes( 1 );
+		expect( waitForReady ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'skips SDK readiness wait when the Angie plugin API is available', async () => {
 		mockIsLegacyAngieAvailable.mockReturnValue( false );
-		const sdk = createSdk();
+		const { sdk, waitForReady } = createSdk();
 		const adapter = new AngieMcpAdapter( sdk, () => [] );
 
 		await adapter.activate();
 
-		expect( sdk.waitForReady ).not.toHaveBeenCalled();
+		expect( waitForReady ).not.toHaveBeenCalled();
 	} );
 } );
