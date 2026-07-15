@@ -54,9 +54,9 @@ jobs:
           exempt-protected-branches: true
           stale-branch-message: "@{author} Your branch [{branchName}]({branchUrl}) hasn't been updated in the last {daysBeforeBranchStale} days and is marked as stale. It will be removed in {daysBeforeBranchDelete} days.\r\nIf you want to keep this branch around, delete this comment or add new commits to this branch."
           default-recipient: "elementorbot"
-          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE || '90' }}
-          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE || '7' }}
-          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN || '10' }}
+          days-before-branch-stale: ${{ vars.DAYS_BEFORE_BRANCH_STALE }}
+          days-before-branch-delete: ${{ vars.DAYS_BEFORE_STALE_BRANCH_DELETE }}
+          operations-per-run: ${{ vars.REMOVE_STALE_BRANCHES_PER_RUN }}
           ignore-unknown-authors: true
 
   remove-stale-tags:
@@ -67,9 +67,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
-          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX || '^v?[0-9]+(\.[0-9]+)+(-(beta|dev)[0-9]*)?$' }}
-          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE || '90' }}
-          OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN || '10' }}
+          EXEMPT_TAGS_REGEX: ${{ vars.EXEMPT_TAGS_REGEX }}
+          DAYS_BEFORE_TAG_DELETE: ${{ vars.DAYS_BEFORE_TAG_DELETE }}
+          OPERATIONS_PER_RUN: ${{ vars.REMOVE_STALE_TAGS_PER_RUN }}
         run: |
           set -euo pipefail
 
