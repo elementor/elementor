@@ -60,7 +60,7 @@ jobs:
         uses: ./.github/workflows/permissions
         with:
           ENVIRONMENT: ${{ env.config_deployment_environment }}
-          DEPLOYMENT_PERMITTED: ${{ env.config_deployment_permitted }}
+          DEPLOYMENT_PERMITTED: ${{ vars.DEPLOYMENT_PERMITTED_USERS }}
           DEPLOYMENT_REPOSITORY_OWNER: ${{ env.config_deployment_repository_owner }}
       - name: Install Node.js
         uses: actions/setup-node@v6
