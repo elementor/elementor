@@ -111,12 +111,21 @@ class Widget_Type_Resolver {
 
 	private function collect_child_type_errors( \DOMElement $node, array $widget_configs, array &$errors ): void {
 		$parent_tag = $this->xml_parser->get_tag_name( $node );
-		$allowed = $widget_configs[ $parent_tag ]['allowed_child_types'] ?? [];
+		$parent_config = $widget_configs[ $parent_tag ] ?? null;
+		$allowed = $parent_config['allowed_child_types'] ?? [];
+		$is_leaf_widget = $parent_config && 'widget' === ( $parent_config['elType'] ?? null );
 
 		foreach ( $this->xml_parser->get_child_elements( $node ) as $child ) {
 			$child_tag = $this->xml_parser->get_tag_name( $child );
 
-			if ( ! empty( $allowed ) && ! in_array( $child_tag, $allowed, true ) ) {
+			if ( $is_leaf_widget ) {
+				$errors[] = sprintf(
+					/* translators: 1: parent tag 2: child tag */
+					__( '"%1$s" is a leaf widget and cannot have children. "%2$s" is not allowed as a child of "%1$s".', 'elementor' ),
+					$parent_tag,
+					$child_tag
+				);
+			} elseif ( ! empty( $allowed ) && ! in_array( $child_tag, $allowed, true ) ) {
 				$errors[] = sprintf(
 					/* translators: 1: child tag 2: parent tag 3: allowed types */
 					__( '"%1$s" is not allowed as a child of "%2$s". Allowed: %3$s.', 'elementor' ),
