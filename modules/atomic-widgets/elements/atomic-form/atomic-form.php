@@ -432,7 +432,7 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	private function is_webmcp_enabled(): bool {
-		return ! Plugin::$instance->preview->is_preview_mode() && ! Plugin::$instance->editor->is_edit_mode();
+		return ! Plugin::$instance->editor->is_edit_mode();
 	}
 
 	public static function is_instance_form( $instance ): bool {
