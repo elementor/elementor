@@ -246,11 +246,10 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_migrate__re_walks_and_returns_migrated_data_even_when_cache_says_migrated() {
-		// Arrange - bootstrap the orchestrator (which populates its loader) with a throwaway call,
-		// then pre-poison the cache: pretend a previous run marked this entity as migrated even
-		// though the on-disk payload is still in the legacy shape (as would happen when the prior
-		// save callback silently failed).
+	public function test_migrate__trusts_cache_and_skips_walk_when_marked_migrated() {
+		// Arrange - bootstrap the orchestrator (populates its loader) with a throwaway call,
+		// then mark the entity as migrated so the next migrate() call must short-circuit before
+		// touching the data.
 		$orchestrator = Migrations_Orchestrator::make();
 		$bootstrap = [];
 		$orchestrator->migrate( $bootstrap, 6099, '_bootstrap_loader', fn () => true );
@@ -259,28 +258,98 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 		$post_id = 6005;
 
 		Migrations_Cache::mark_as_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() );
-		$this->assertTrue( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
 
 		$data = $this->get_migrateable_data();
+		$save_called = false;
 
 		// Act
 		$orchestrator->migrate(
 			$data,
 			$post_id,
 			'_elementor_data',
-			fn () => true
+			function () use ( &$save_called ) {
+				$save_called = true;
+				return true;
+			}
 		);
 
-		// Assert - the in-memory payload must reflect the current schema regardless of cache
-		// state. Any type other than the original legacy `string` proves the walk actually ran
-		// (concrete target is `html-v3` today via the string -> html -> html-v2 -> html-v3 chain).
-		$migrated_type = $data[0]['settings']['title']['$$type'] ?? null;
-		$this->assertNotSame(
-			'string',
-			$migrated_type,
-			'Legacy $$type "string" should have been migrated even when the cache reported already-migrated.'
+		// Assert - cache hit short-circuits: the walk should be skipped and the data returned
+		// unchanged. Cache invalidation is a separate concern handled by
+		// `maybe_invalidate_entity_cache`.
+		$this->assertFalse( $save_called, 'save_callback must not run on a cache hit.' );
+		$this->assertSame( 'string', $data[0]['settings']['title']['$$type'] ?? null );
+	}
+
+	public function test_maybe_invalidate_entity_cache__clears_cache_on_elementor_data_write() {
+		// Arrange - warm the cache for a specific entity so we can observe the invalidation.
+		$orchestrator = Migrations_Orchestrator::make();
+		$bootstrap = [];
+		$orchestrator->migrate( $bootstrap, 6099, '_bootstrap_loader', fn () => true );
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$post_id = 6010;
+
+		Migrations_Cache::mark_as_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() );
+		$this->assertTrue(
+			Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ),
+			'Precondition: cache should start out marked.'
 		);
-		$this->assertSame( 'html-v3', $migrated_type );
+
+		// Act - simulate an external write to _elementor_data. This is what any client save,
+		// import, WP-CLI mutation, or third-party plugin ultimately does.
+		Migrations_Orchestrator::maybe_invalidate_entity_cache( 0, $post_id, '_elementor_data', 'irrelevant' );
+
+		// Assert - cache is cleared so the next load walks the (potentially legacy) payload.
+		$this->assertFalse(
+			Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ),
+			'External writes to _elementor_data must invalidate the migration cache.'
+		);
+	}
+
+	public function test_maybe_invalidate_entity_cache__leaves_cache_untouched_for_other_meta_keys() {
+		// Arrange
+		$orchestrator = Migrations_Orchestrator::make();
+		$bootstrap = [];
+		$orchestrator->migrate( $bootstrap, 6099, '_bootstrap_loader', fn () => true );
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		$post_id = 6011;
+
+		Migrations_Cache::mark_as_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() );
+
+		// Act - a write to some unrelated meta key must not clear the migration cache.
+		Migrations_Orchestrator::maybe_invalidate_entity_cache( 0, $post_id, '_edit_lock', 'irrelevant' );
+
+		// Assert
+		$this->assertTrue( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+	}
+
+	public function test_update_post_meta_on_elementor_data_invalidates_the_cache_end_to_end() {
+		// Arrange - wire the hook (production does this from the module bootstrap) and warm the
+		// cache for a real WP post so update_post_meta triggers the WP action pipeline.
+		$orchestrator = Migrations_Orchestrator::make();
+		$orchestrator->register_hooks();
+
+		$bootstrap = [];
+		$orchestrator->migrate( $bootstrap, 6099, '_bootstrap_loader', fn () => true );
+
+		$post_id = wp_insert_post( [
+			'post_title'   => 'Cache invalidation E2E',
+			'post_status'  => 'draft',
+			'post_type'    => 'post',
+		] );
+		$this->assertIsInt( $post_id );
+
+		$loader = $this->get_orchestrator_loader( $orchestrator );
+		Migrations_Cache::mark_as_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() );
+
+		// Act - simulate any external actor (client save, import, WP-CLI, third-party plugin)
+		// writing to the migrated meta key.
+		update_post_meta( $post_id, '_elementor_data', wp_slash( wp_json_encode( [ 'placeholder' => true ] ) ) );
+
+		// Assert - the cache is cleared so the next editor load re-runs the migration walk.
+		$this->assertFalse( Migrations_Cache::is_migrated( $post_id, '_elementor_data', $loader->get_manifest_hash() ) );
+
+		// Cleanup
+		wp_delete_post( $post_id, true );
 	}
 
 	public function test_migrate__marks_stale_cache_as_migrated_when_walk_produces_no_changes() {

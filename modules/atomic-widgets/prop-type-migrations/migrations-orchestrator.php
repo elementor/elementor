@@ -43,6 +43,47 @@ class Migrations_Orchestrator {
 		}
 
 		add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->migrate_doc( $data, $document ), 10, 2 );
+
+		// Invalidate the migration cache whenever the underlying migrated meta is written
+		// outside our own save path. External writes (client save, template/kit import, WP-CLI,
+		// third-party plugins, autosave revert, rollback) can re-introduce a legacy prop shape,
+		// so trusting a stale "migrated" cache after such a write is what allowed unmigrated
+		// data to reach the editor and trigger the ED-24909 crash.
+		//
+		// Our own save closure also fires `updated_post_meta`, which clears the cache — but
+		// migrate() re-marks it in the same request immediately after the closure returns, so
+		// the end state is correctly cached.
+		add_action( 'updated_post_meta', [ __CLASS__, 'maybe_invalidate_entity_cache' ], 10, 4 );
+		add_action( 'added_post_meta', [ __CLASS__, 'maybe_invalidate_entity_cache' ], 10, 4 );
+	}
+
+	/**
+	 * @param int|string $meta_id
+	 * @param int|string $object_id
+	 * @param string     $meta_key
+	 * @param mixed      $meta_value
+	 */
+	public static function maybe_invalidate_entity_cache( $meta_id, $object_id, $meta_key, $meta_value ): void {
+		unset( $meta_id, $meta_value );
+
+		if ( ! in_array( $meta_key, self::get_migratable_meta_keys(), true ) ) {
+			return;
+		}
+
+		Migrations_Cache::clear_migration_cache( (int) $object_id, (string) $meta_key );
+	}
+
+	private static function get_migratable_meta_keys(): array {
+		/**
+		 * Filters the post-meta keys whose writes should invalidate the atomic-widgets
+		 * migration cache. Integrations that store elementor-shaped data under a custom meta
+		 * key can add themselves here so the migration walk re-runs after their writes.
+		 *
+		 * @param string[] $meta_keys
+		 */
+		return apply_filters( 'elementor/atomic-widgets/migrations/cache-invalidation-meta-keys', [
+			Document::ELEMENTOR_DATA_META_KEY,
+		] );
 	}
 
 	public static function is_active(): bool {
@@ -101,17 +142,17 @@ class Migrations_Orchestrator {
 
 	/**
 	 * Migrations orchestrator should follow the following steps:
-	 * 1. Resolve the schema for the current element
-	 * 2. Walk through the data and migrate the props if type mismatch (between data and schema) is found
-	 * 3. Migrate the widget keys
-	 * 4. Save migrated data to the database (only when the walk actually changed the data)
-	 * 5. Save the migrated state to the cache (only when persistence succeeded)
+	 * 1. Check cache to see if the data is already migrated
+	 * 2. Resolve the schema for the current element
+	 * 3. Walk through the data and migrate the props if type mismatch (between data and schema) is found
+	 * 4. Migrate the widget keys
+	 * 5. Save migrated data to the database (only when the walk actually changed the data)
+	 * 6. Save the migrated state to the cache (only when persistence succeeded)
 	 *
-	 * The walk is always executed on load. It is idempotent — a walk over already-migrated data
-	 * produces no changes — so running it every time guarantees the in-memory payload matches the
-	 * current schema even when the cache was marked "migrated" but a previous save silently failed
-	 * (leaving the row on disk in the legacy shape). The cache still short-circuits the more
-	 * expensive DB write.
+	 * The cache is now automatically invalidated on:
+	 *   - Manifest hash / plugin version changes (via `get_migration_state()`),
+	 *   - Direct writes to the migrated meta key (see `maybe_invalidate_entity_cache`),
+	 * so trusting a cache hit here is safe.
 	 *
 	 * @param array    $data            Data structure to migrate will return modified data by reference
 	 * @param int      $entity_id       Unique ID for caching mechanism, so we don't run the migration again for the same data
@@ -127,19 +168,14 @@ class Migrations_Orchestrator {
 
 		try {
 			$manifest_hash = $this->loader->get_manifest_hash();
-			$is_cached_migrated = Migrations_Cache::is_migrated( $entity_id, $data_identifier, $manifest_hash );
 
-			$has_changes = $this->walk_and_migrate( $data, [] );
-
-			if ( ! $has_changes ) {
-				if ( ! $is_cached_migrated ) {
-					Migrations_Cache::mark_as_migrated( $entity_id, $data_identifier, $manifest_hash );
-				}
-
+			if ( Migrations_Cache::is_migrated( $entity_id, $data_identifier, $manifest_hash ) ) {
 				return;
 			}
 
-			if ( ! $this->run_save_callback( $save_callback, $data, $entity_id, $data_identifier ) ) {
+			$has_changes = $this->walk_and_migrate( $data, [] );
+
+			if ( $has_changes && ! $this->run_save_callback( $save_callback, $data, $entity_id, $data_identifier ) ) {
 				return;
 			}
 
