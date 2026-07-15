@@ -1,29 +1,24 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type PropType, Schema } from '@elementor/editor-props';
-
-import {
-	type AtomicDynamicTag,
-	getAtomicDynamicTags,
-	OMITTED_DYNAMIC_SETTING_KEYS,
-} from '../utils/resolve-dynamic-tag';
+import { type HttpResponse, httpService } from '@elementor/http-client';
 
 export const DYNAMIC_TAGS_URI = 'elementor://dynamic-tags';
 
-const settingsSchema = ( propsSchema: AtomicDynamicTag[ 'props_schema' ] ): Record< string, unknown > => {
-	return Object.fromEntries(
-		Object.entries( propsSchema ?? {} )
-			.filter( ( [ key ] ) => ! ( OMITTED_DYNAMIC_SETTING_KEYS as readonly string[] ).includes( key ) )
-			.map( ( [ key, propType ] ) => [ key, Schema.propTypeToJsonSchema( propType as PropType ) ] )
-	);
+const MCP_PROXY_URL = 'elementor/v1/mcp-proxy';
+
+type DynamicTagEntry = {
+	name: string;
+	label: string;
+	categories: string[];
+	settings: Record< string, unknown >;
 };
 
-const buildDynamicTagsList = () => {
-	return Object.values( getAtomicDynamicTags() ).map( ( tag ) => ( {
-		name: tag.name,
-		label: tag.label,
-		categories: tag.categories,
-		settings: settingsSchema( tag.props_schema ),
-	} ) );
+const fetchDynamicTags = async (): Promise< DynamicTagEntry[] > => {
+	const { data } = await httpService().post< HttpResponse< DynamicTagEntry[] > >( MCP_PROXY_URL, {
+		tool: 'list-dynamic-tags',
+		input: {},
+	} );
+
+	return data.data ?? [];
 };
 
 export const initDynamicTagsResource = ( reg: MCPRegistryEntry ) => {
@@ -39,14 +34,18 @@ export const initDynamicTagsResource = ( reg: MCPRegistryEntry ) => {
 				'name appears in that property\'s allowed list, and populate "settings" per the tag entry here.',
 			mimeType: 'application/json',
 		},
-		async ( uri: URL ) => ( {
-			contents: [
-				{
-					uri: uri.href,
-					mimeType: 'application/json',
-					text: JSON.stringify( buildDynamicTagsList() ),
-				},
-			],
-		} )
+		async ( uri: URL ) => {
+			const tags = await fetchDynamicTags();
+
+			return {
+				contents: [
+					{
+						uri: uri.href,
+						mimeType: 'application/json',
+						text: JSON.stringify( tags ),
+					},
+				],
+			};
+		}
 	);
 };

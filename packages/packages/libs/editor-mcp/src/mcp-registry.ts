@@ -15,7 +15,7 @@ import {
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 import { getModelContext } from './utils/get-model-context';
 import { getSDK } from './utils/get-sdk';
-import { isAngieAvailable } from './utils/is-angie-available';
+import { waitForAngieReady } from './utils/is-angie-available';
 import { mergeRequiredResources, type ResourceList } from './utils/merge-required-resources';
 import { registerServerDocsResource } from './utils/register-server-docs-resource';
 import { toMCPTitle } from './utils/to-mcp-title';
@@ -58,18 +58,20 @@ export const signalMcpReady = (): void => {
 	resolveReady();
 };
 
-export const createAndRegisterAdapters = () => {
+export const createAndRegisterAdapters = async (): Promise< void > => {
 	const modelContext = getModelContext();
 
 	if ( modelContext ) {
 		registerMcpAdapter( new WebMCPAdapter( modelContext ) );
 	}
 
-	if ( isAngieAvailable() ) {
+	const isAngieReady = await waitForAngieReady();
+
+	if ( isAngieReady ) {
 		registerMcpAdapter( new AngieMcpAdapter( getSDK(), getRegisteredMcpServers ) );
 	}
 
-	registrationAdapters.forEach( ( adapter ) => adapter.activate() );
+	await Promise.all( registrationAdapters.map( ( adapter ) => adapter.activate() ) );
 };
 
 // utility function to run a callback on all MCP interfaces

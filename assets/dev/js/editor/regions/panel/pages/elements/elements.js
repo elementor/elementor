@@ -7,8 +7,8 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsWidgetCreationView = require( './views/widget-creation' ),
 	PanelElementsLayoutView;
 
-function elementorIsAngieIframeInDocument() {
-	return !! document.querySelector( 'iframe[src*="angie/"]' );
+function elementorIsAngiePluginAvailable() {
+	return !! window.angiePlugin?.available || !! document.querySelector( 'iframe[src*="angie/"]' );
 }
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -117,18 +117,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					promotionType: type,
 					widgetType: widget.name,
 				} );
-			} );
-		} );
-
-		jQuery.each( elementor.config.birthdayEasterEggWidgets || [], ( index, widget ) => {
-			elementsCollection.add( {
-				name: widget.name,
-				title: widget.title,
-				widgetType: widget.name,
-				icon: widget.icon,
-				categories: JSON.parse( widget.categories ),
-				editable: false,
-				birthdayEasterEgg: true,
 			} );
 		} );
 
@@ -331,7 +319,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		const isAngiePresent = elementorIsAngieIframeInDocument();
+		const isAngiePresent = elementorIsAngiePluginAvailable();
 		const isAdministrator = elementor.config.user.is_administrator;
 
 		if ( ! isAngiePresent && ! isAdministrator ) {
