@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Prompt_Loader {
 
 	public static function load( string $name ): string {
-		$path = __DIR__ . '/../static-resources/abilities/' . $name . '.md';
+		$path = __DIR__ . '/../../static-resources/abilities/' . $name . '.md';
 
 		if ( ! file_exists( $path ) ) {
 			return '';
