@@ -8,11 +8,7 @@ jest.mock( '@elementor-external/angie-sdk', () => ( {
 	waitForAngiePluginActive: ( timeout: number ) => mockWaitForAngiePluginActive( timeout ),
 } ) );
 
-import {
-	isAngieAvailable,
-	isLegacyAngieAvailable,
-	waitForAngieReady,
-} from '../is-angie-available';
+import { isAngieAvailable, isLegacyAngieAvailable, waitForAngieReady } from '../is-angie-available';
 
 const ANGIE_PLUGIN_DETECTION_TIMEOUT_MS = 3_000;
 
