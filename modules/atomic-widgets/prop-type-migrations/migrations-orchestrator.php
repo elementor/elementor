@@ -314,12 +314,12 @@ class Migrations_Orchestrator {
 			if ( $path_result ) {
 				$migrated_value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
 
-				// Only accept the migration if the resulting prop actually reflects the expected
-				// $$type. `execute_prop_migration` returns the original value when any step throws;
-				// without this check we would report `$has_changes = true` and persist unchanged
-				// (or half-migrated) data, which then poisons the cache and hides legacy payloads
-				// from all subsequent loads.
-				if ( is_array( $migrated_value ) && ( $migrated_value['$$type'] ?? null ) === $expected_type ) {
+				// `execute_prop_migration()` returns the *original* value (verbatim) when any step
+				// in the chain throws — see the transactional rollback there. Detect that by
+				// comparing arrays; if the interpreter produced any change we accept it (matches
+				// legacy behaviour), and only then flip `$has_changes` so callers don't persist
+				// unchanged data or poison the cache on a silent failure.
+				if ( is_array( $migrated_value ) && $migrated_value !== $value ) {
 					$value = $migrated_value;
 					$has_changes = true;
 				}
