@@ -360,6 +360,10 @@ If you want to contribute, go to our [Elementor GitHub Repository](https://githu
 
 == Changelog ==
 
+= 4.1.5 - 2026-07-14 =
+
+* Fix: AI features may not initialize correctly when opening the editor
+
 = 4.1.4 - 2026-06-21 =
 
 * Fix: Improved code security enforcement in query handling

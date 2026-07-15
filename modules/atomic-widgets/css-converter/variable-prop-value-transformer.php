@@ -5,7 +5,10 @@ namespace Elementor\Modules\AtomicWidgets\CssConverter;
 use Elementor\Modules\AtomicWidgets\CssConverter\Converter_Registry_Factory;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Font_Family_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
@@ -193,7 +196,13 @@ class Variable_Prop_Value_Transformer {
 		$type = $prop_value['$$type'] ?? '';
 		$value = $prop_value['value'] ?? null;
 
-		if ( in_array( $type, [ 'color', 'string' ], true ) && is_string( $value ) ) {
+		$string_backed_types = [
+			Color_Prop_Type::get_key(),
+			String_Prop_Type::get_key(),
+			Font_Family_Prop_Type::get_key(),
+		];
+
+		if ( in_array( $type, $string_backed_types, true ) && is_string( $value ) ) {
 			return Css_Var_Reference::parse( $value );
 		}
 
