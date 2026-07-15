@@ -18,6 +18,8 @@ export default class Component extends BackwardsCompatibility {
 	__construct( args = {} ) {
 		super.__construct( args );
 
+		this.footerSaver = new ( require( './behaviors/footer-saver' ) )();
+
 		/**
 		 * Auto save timer handlers.
 		 *
