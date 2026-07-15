@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities;
+namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -34,8 +34,10 @@ class Widget_Context_Helper {
 	 * @return array<string, array> widget_type => config, filtered to widgets eligible for LLM use.
 	 */
 	public static function get_llm_eligible_widgets(): array {
-		$all_types = Plugin::$instance->widgets_manager->get_widget_types()
-			+ Plugin::$instance->elements_manager->get_element_types();
+		$all_types = array_merge(
+			Plugin::$instance->widgets_manager->get_widget_types(),
+			Plugin::$instance->elements_manager->get_element_types()
+		);
 
 		$eligible = [];
 
@@ -81,7 +83,7 @@ class Widget_Context_Helper {
 	}
 
 	public static function build_widget_summary( string $widget_type, array $config ): array {
-		return self::compact_nulls( [
+		return self::filter_nulls( [
 			'type' => $widget_type,
 			'version' => self::get_widget_version( $config ),
 			'description' => self::get_description( $config ),
@@ -132,7 +134,7 @@ class Widget_Context_Helper {
 
 		$properties = self::build_configurable_properties_schema( $props_schema, $config['base_settings'] ?? [] );
 
-		return self::compact_nulls( [
+		return self::filter_nulls( [
 			'type' => 'object',
 			'properties' => $properties,
 			'description' => self::get_description( $config ),
@@ -202,7 +204,7 @@ class Widget_Context_Helper {
 		return is_string( $description ) ? $description : null;
 	}
 
-	private static function compact_nulls( array $data ): array {
+	private static function filter_nulls( array $data ): array {
 		return array_filter( $data, fn( $value ) => null !== $value );
 	}
 }

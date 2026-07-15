@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Mcp\Abilities;
 
+use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
+use Elementor\Modules\Mcp\Abilities\Utils\Widget_Context_Helper;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

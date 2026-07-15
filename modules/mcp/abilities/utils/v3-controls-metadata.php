@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Mcp\Abilities;
+namespace Elementor\Modules\Mcp\Abilities\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
