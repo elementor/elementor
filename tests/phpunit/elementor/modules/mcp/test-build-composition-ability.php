@@ -6,6 +6,8 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Utils\Document\Document_Mutator;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_V3_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -692,6 +694,127 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		}
 	}
 
+	// Dynamic tags
+
+	public function test_execute__accepts_dynamic_tag_binding_for_union_title() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft', 'post_type' => 'page' ] );
+
+		$mock_document = $this->stub_document_returning_empty( $post_id );
+		$captured = null;
+		$mock_document->method( 'save' )->willReturnCallback( function ( $args ) use ( &$captured ) {
+			$captured = $args;
+			return true;
+		} );
+
+		$this->stub_registries_with_class( 'e-fixture-heading-dynamic', 'widget', Fixture_Heading_With_Dynamic_Title::class );
+		$this->given_dynamic_tags( [
+			'post-title' => [
+				'name' => 'post-title',
+				'label' => 'Post Title',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [],
+			],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act - send dynamic tag binding as LLM would
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-fixture-heading-dynamic configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'title' => [
+						'$$type' => 'dynamic',
+						'value' => [
+							'name' => 'post-title',
+							'settings' => [],
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success array but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertNotNull( $captured );
+		$root_settings = $captured['elements'][0]['settings'] ?? null;
+		$this->assertSame( 'dynamic', $root_settings['title']['$$type'] ?? null );
+		$this->assertSame( 'post-title', $root_settings['title']['value']['name'] ?? null );
+		$this->assertSame( 'post', $root_settings['title']['value']['group'] ?? null, 'Group should be derived from registry' );
+	}
+
+	public function test_execute__dynamic_tag_resolver_injects_group_from_registry() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->factory()->post->create( [ 'post_status' => 'draft', 'post_type' => 'page' ] );
+
+		$mock_document = $this->stub_document_returning_empty( $post_id );
+		$captured = null;
+		$mock_document->method( 'save' )->willReturnCallback( function ( $args ) use ( &$captured ) {
+			$captured = $args;
+			return true;
+		} );
+
+		$this->stub_registries_with_class( 'e-fixture-heading-dynamic', 'widget', Fixture_Heading_With_Dynamic_Title::class );
+		$this->given_dynamic_tags( [
+			'post-excerpt' => [
+				'name' => 'post-excerpt',
+				'label' => 'Post Excerpt',
+				'group' => 'post',
+				'categories' => [ 'text' ],
+				'props_schema' => [
+					'length' => String_Prop_Type::make()->default( '55' ),
+				],
+			],
+		] );
+
+		$ability = new Build_Composition_Ability();
+
+		// Act - LLM provides raw scalar for length setting (should be wrapped)
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-fixture-heading-dynamic configuration-id="h1"/>',
+			'element_config' => [
+				'h1' => [
+					'title' => [
+						'$$type' => 'dynamic',
+						'value' => [
+							'name' => 'post-excerpt',
+							'settings' => [
+								'length' => '100',
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		// Assert
+		$this->assertIsArray( $result, 'Expected success but got: ' . ( is_wp_error( $result ) ? $result->get_error_message() : 'unknown' ) );
+		$this->assertTrue( $result['success'] );
+		$this->assertNotNull( $captured );
+		$root_settings = $captured['elements'][0]['settings'] ?? null;
+		$title = $root_settings['title'] ?? null;
+		$this->assertSame( 'dynamic', $title['$$type'] ?? null );
+		$this->assertSame( 'post-excerpt', $title['value']['name'] ?? null );
+		$this->assertSame( 'post', $title['value']['group'] ?? null );
+		$this->assertSame( [ '$$type' => 'string', 'value' => '100' ], $title['value']['settings']['length'] ?? null );
+	}
+
+	private function given_dynamic_tags( array $tags ): void {
+		$module = Dynamic_Tags_Module::fresh();
+
+		$reflection = new \ReflectionClass( $module->registry );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
+	}
+
 	// Helpers
 
 	private function make_noop_mutator(): Document_Mutator {
@@ -863,6 +986,33 @@ class Fixture_Heading_With_Union_Props extends \Elementor\Widget_Base {
 						'children' => [],
 					] )
 			),
+		];
+	}
+}
+
+class Fixture_Heading_With_Dynamic_Title extends \Elementor\Widget_Base {
+	public function get_name() {
+		return 'e-fixture-heading-dynamic';
+	}
+
+	public function get_config() {
+		return [ 'allowed_child_types' => [] ];
+	}
+
+	public static function get_props_schema(): array {
+		return [
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
+				->default( 'h2' ),
+			'title' => Union_Prop_Type::make()
+				->add(
+					Html_V3_Prop_Type::make()
+						->default( [
+							'content' => String_Prop_Type::generate( 'Default title' ),
+							'children' => [],
+						] )
+				)
+				->add( Dynamic_Prop_Type::make()->categories( [ 'text' ] ) ),
 		];
 	}
 }

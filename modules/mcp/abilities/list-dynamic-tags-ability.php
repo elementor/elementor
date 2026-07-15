@@ -5,16 +5,13 @@ namespace Elementor\Modules\Mcp\Abilities;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\Mcp\Abilities\Utils\Prompt_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Dynamic_Tag_Llm_Resolver;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class List_Dynamic_Tags_Ability extends Abstract_Ability {
-
-	// A generic render-time default added to every tag; it is noise for configuration, so it's
-	// omitted here. Mirrors the frontend's `OMITTED_DYNAMIC_SETTING_KEYS`.
-	const OMITTED_SETTING_KEYS = [ 'fallback' ];
 
 	protected function get_ability_id(): string {
 		return 'elementor/list-dynamic-tags';
@@ -73,17 +70,17 @@ class List_Dynamic_Tags_Ability extends Abstract_Ability {
 		];
 	}
 
-	private function build_settings_schema( array $props_schema ): array {
+	private function build_settings_schema( array $props_schema ): object {
 		$settings = [];
 
 		foreach ( $props_schema as $key => $prop_type ) {
-			if ( in_array( $key, self::OMITTED_SETTING_KEYS, true ) || ! $prop_type instanceof Transformable_Prop_Type ) {
+			if ( in_array( $key, Dynamic_Tag_Llm_Resolver::OMITTED_SETTING_KEYS, true ) || ! $prop_type instanceof Transformable_Prop_Type ) {
 				continue;
 			}
 
 			$settings[ $key ] = $prop_type->to_json_schema();
 		}
 
-		return $settings;
+		return (object) $settings;
 	}
 }

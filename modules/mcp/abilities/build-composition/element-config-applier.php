@@ -2,9 +2,11 @@
 
 namespace Elementor\Modules\Mcp\Abilities\Build_Composition;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Mcp\Abilities\Dynamic_Tag_Llm_Resolver;
 use Elementor\Modules\Mcp\Abilities\Llm_Prop_Value_Adjuster;
 use Elementor\Modules\Mcp\Abilities\Prop_Canonicalizer;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -29,7 +31,10 @@ class Element_Config_Applier {
 	 * @param array<string, array>                $widget_configs  Resolved type configs.
 	 */
 	public function apply( array $config_id_index, array $element_config, array $widget_configs ): ?\WP_Error {
-		$transformers = Llm_Prop_Value_Adjuster::create_global_variable_transformers( $this->variables_service );
+		$transformers = array_merge(
+			Llm_Prop_Value_Adjuster::create_global_variable_transformers( $this->variables_service ),
+			[ Dynamic_Prop_Type::get_key() => Dynamic_Tag_Llm_Resolver::make() ]
+		);
 		$errors = [];
 
 		foreach ( $element_config as $config_id => $settings ) {
