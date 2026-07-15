@@ -141,7 +141,7 @@ export class ChecklistHelper {
 
 	async enableChecklistVisibilityPreference() {
 		await wpCli(
-			'wp eval \'$preferences = (array) get_user_meta( 1, "elementor_preferences", true ); $preferences["show_launchpad_checklist"] = "yes"; update_user_meta( 1, "elementor_preferences", $preferences );\'',
+			'wp eval \'update_user_meta( 1, "elementor_preferences", array_merge( (array) get_user_meta( 1, "elementor_preferences", true ), array( "show_launchpad_checklist" => "yes" ) ) );\'',
 		);
 	}
 
