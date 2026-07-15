@@ -389,7 +389,7 @@ class Converter_Registry_Factory {
 		$converters = [];
 
 		foreach ( self::STRING_PROPERTIES as $property ) {
-			$converters[ $property ] = new String_Property_Converter( $property, $schema[ $property ]->get_enum() );
+			$converters[ $property ] = new String_Property_Converter( $property, $schema[ $property ]->get_enum(), $schema[ $property ]->get_key() );
 		}
 
 		foreach ( self::SIZE_PROPERTIES as $property ) {
