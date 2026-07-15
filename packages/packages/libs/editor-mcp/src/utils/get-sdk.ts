@@ -15,10 +15,12 @@ class RetriableAngieSDK extends AngieMcpSdk {
 				return;
 			} catch {
 				retryCount--;
+				if ( retryCount === 0 ) {
+					throw new Error( 'Angie SDK failed to become ready after retries' );
+				}
 				await sleep( LEGACY_ANGIE_WAIT_RETRY_DELAY_MS );
 			}
 		}
-		return new Promise( () => {} );
 	}
 }
 

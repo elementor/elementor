@@ -8,7 +8,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsLayoutView;
 
 function elementorIsAngiePluginAvailable() {
-	return !! window.angiePlugin?.available;
+	return !! window.angiePlugin?.available || !! document.querySelector( 'iframe[src*="angie/"]' );
 }
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
