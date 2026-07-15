@@ -80,11 +80,12 @@ const Preview = BaseSectionsContainerView.extend( {
 
 	createElementFromModel( model, options = {} ) {
 		const wrappedElementTypes = [ 'widget', 'section', 'column' ];
+		const isFormFieldWidget = 'string' === typeof model.widgetType && model.widgetType.startsWith( 'e-form-' );
 
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! model.widgetType?.startsWith( 'e-form-' ) },
+			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) && ! isFormFieldWidget },
 		);
 	},
 
