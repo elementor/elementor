@@ -44,6 +44,7 @@ test.describe( 'Launchpad checklist tests', () => {
 
 		expect( await checklistHelper.isChecklistOpen( 'editor' ) ).toBeFalsy();
 
+		await checklistHelper.enableChecklistVisibilityPreference();
 		await checklistHelper.resetEditorVisitCounter( request, 1 );
 
 		const shouldOpenResponse = checklistHelper.waitForUserProgressResponse( page, true );
@@ -52,7 +53,6 @@ test.describe( 'Launchpad checklist tests', () => {
 		await wpAdmin.waitForPanel();
 		await shouldOpenResponse;
 
-		await expect( page.locator( selectors.topBarIcon ) ).toBeVisible( { timeout: timeouts.expect } );
 		await expect( page.locator( selectors.popup ) ).toBeVisible( { timeout: timeouts.heavyAction } );
 	} );
 

@@ -1,6 +1,7 @@
 import EditorPage from '../../../pages/editor-page';
 import { type APIRequestContext, Page, type TestInfo } from '@playwright/test';
 import ApiRequests from '../../../assets/api-requests';
+import { wpCli } from '../../../assets/wp-cli';
 import { timeouts } from '../../../config/timeouts';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { controlIds, selectors } from './selectors';
@@ -136,6 +137,12 @@ export class ChecklistHelper {
 			e_editor_counter: count,
 			last_opened_timestamp: false,
 		} );
+	}
+
+	async enableChecklistVisibilityPreference() {
+		await wpCli(
+			'wp eval \'$preferences = (array) get_user_meta( 1, "elementor_preferences", true ); $preferences["show_launchpad_checklist"] = "yes"; update_user_meta( 1, "elementor_preferences", $preferences );\'',
+		);
 	}
 
 	waitForUserProgressResponse( page: Page, shouldOpenInEditor: boolean ) {
