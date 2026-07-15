@@ -113,6 +113,10 @@ class Ally_Dashboard_Widget {
 	}
 
 	public static function init(): void {
+		if ( ! is_admin() ) {
+			return;
+		}
+
 		if ( ! Hints::is_plugin_active( 'pojo-accessibility' ) ) {
 			// Register action
 			add_action( 'wp_ajax_e-ally-scanner-run', [ self::class, 'handle_click' ] );
