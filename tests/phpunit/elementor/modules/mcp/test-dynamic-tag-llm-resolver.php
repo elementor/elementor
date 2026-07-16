@@ -2,6 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Modules\Mcp;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Editor_Config;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\Mcp\Abilities\Dynamic_Tag_Llm_Resolver;
@@ -34,28 +35,15 @@ class Test_Dynamic_Tag_Llm_Resolver extends TestCase {
 	}
 
 	private function given_tags( array $tags ): void {
-		$module = $this->createMock( Dynamic_Tags_Module::class );
+		$module = Dynamic_Tags_Module::fresh();
 
-		$registry = new class( $tags ) {
-			private array $tags;
+		$reflection = new \ReflectionClass( Dynamic_Tags_Editor_Config::class );
+		$tags_prop = $reflection->getProperty( 'tags' );
+		$tags_prop->setAccessible( true );
+		$tags_prop->setValue( $module->registry, $tags );
 
-			public function __construct( array $tags ) {
-				$this->tags = $tags;
-			}
-
-			public function get_tag( string $name ): ?array {
-				return $this->tags[ $name ] ?? null;
-			}
-
-			public function get_tags(): array {
-				return $this->tags;
-			}
-		};
-
-		$module->registry = $registry;
-
-		$reflection = new \ReflectionClass( Dynamic_Tags_Module::class );
-		$instance_prop = $reflection->getProperty( 'instance' );
+		$module_reflection = new \ReflectionClass( Dynamic_Tags_Module::class );
+		$instance_prop = $module_reflection->getProperty( 'instance' );
 		$instance_prop->setAccessible( true );
 		$instance_prop->setValue( null, $module );
 	}
@@ -152,7 +140,7 @@ class Test_Dynamic_Tag_Llm_Resolver extends TestCase {
 				'group' => 'site',
 				'categories' => [ 'text' ],
 				'props_schema' => [
-					'prefix' => String_Prop_Type::make()->initial_value( [ '$$type' => 'string', 'value' => '--' ] ),
+					'prefix' => String_Prop_Type::make()->initial_value( '--' ),
 				],
 			],
 		] );
