@@ -368,6 +368,30 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 		];
 	}
 
+	public function test_execute__rejects_non_object_style_block() {
+		// Arrange
+		$this->act_as_admin();
+		$post_id = $this->create_real_document();
+
+		$ability = new Build_Composition_Ability();
+
+		// Act
+		$result = $ability->execute( [
+			'post_id' => $post_id,
+			'xml_structure' => '<e-heading configuration-id="h1"/>',
+			'style' => [
+				'h1' => 'color: #2d2a26;',
+			],
+		] );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertSame( 'elementor_invalid_styles', $result->get_error_code() );
+		$this->assertSame( \WP_Http::BAD_REQUEST, $result->get_error_data()['status'] );
+		$this->assertStringContainsString( 'h1', $result->get_error_message() );
+		$this->assertStringContainsString( 'property', $result->get_error_message() );
+	}
+
 	public function test_execute__reports_custom_css_fallback_with_warning() {
 		// Arrange
 		$this->act_as_admin();
@@ -444,9 +468,9 @@ class Test_Build_Composition_Ability extends Elementor_Test_Base {
 
 	private function normalize_snapshot( string $html ): string {
 		$html = preg_replace( '/e-[a-f0-9]+-[a-f0-9]{4}\b/', 'e-{STYLE}', $html );
-		$html = preg_replace( '/elementor-element-[a-f0-9]{7,8}/', 'elementor-element-{ID}', $html );
-		$html = preg_replace( '/data-id="[a-f0-9]{7,8}"/', 'data-id="{ID}"', $html );
-		$html = preg_replace( '/data-interaction-id="[a-f0-9]{7,8}"/', 'data-interaction-id="{ID}"', $html );
+		$html = preg_replace( '/elementor-element-[a-f0-9]{6,8}/', 'elementor-element-{ID}', $html );
+		$html = preg_replace( '/data-id="[a-f0-9]{6,8}"/', 'data-id="{ID}"', $html );
+		$html = preg_replace( '/data-interaction-id="[a-f0-9]{6,8}"/', 'data-interaction-id="{ID}"', $html );
 
 		return $html;
 	}

@@ -42,7 +42,16 @@ class Style_Applier {
 		$warnings = [];
 
 		foreach ( $styles as $config_id => $declarations ) {
-			if ( ! isset( $config_id_index[ $config_id ] ) || ! is_array( $declarations ) ) {
+			if ( ! is_array( $declarations ) ) {
+				$errors[] = sprintf(
+					'[%s] style block must be an object of CSS property → value pairs (e.g. {"color": "#2d2a26"}), got %s.',
+					$config_id,
+					gettype( $declarations )
+				);
+				continue;
+			}
+
+			if ( ! isset( $config_id_index[ $config_id ] ) ) {
 				continue;
 			}
 
